@@ -800,28 +800,38 @@ async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams,)
 
 // ── Elysia plugin ───────────────────────────────────────────
 
-async function serveChatsListDb(database: Kysely<DB>,): Promise<Response> {
-  const rows = await database
-    .selectFrom("chats",)
-    .leftJoin("worlds", "worlds.id", "chats.world_id",)
-    .leftJoin("locations", "locations.id", "chats.current_location_id",)
-    .select([
-      "chats.id",
-      "chats.name",
-      "chats.type",
-      "chats.purpose",
-      "chats.is_pinned",
-      "chats.updated_at",
-      "chats.created_at",
-      "worlds.name as world_name",
-      "locations.name as location_name",
-    ])
-    .orderBy("chats.is_pinned", "desc",)
-    .orderBy("chats.updated_at", "desc",)
-    .limit(200,)
-    .execute();
+async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const page = Math.max(1, parseInt(params.get("page",) ?? "1", 10,),);
+  const pageSize = Math.min(100, Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),),);
+  const offset = (page - 1) * pageSize;
 
-  if (rows.length === 0) {
+  const [chats, countRow] = await Promise.all([
+    database
+      .selectFrom("chats",)
+      .leftJoin("worlds", "worlds.id", "chats.world_id",)
+      .leftJoin("locations", "locations.id", "chats.current_location_id",)
+      .select([
+        "chats.id",
+        "chats.name",
+        "chats.type",
+        "chats.purpose",
+        "chats.is_pinned",
+        "chats.updated_at",
+        "chats.created_at",
+        "worlds.name as world_name",
+        "locations.name as location_name",
+      ])
+      .orderBy("chats.is_pinned", "desc",)
+      .orderBy("chats.updated_at", "desc",)
+      .limit(pageSize,)
+      .offset(offset,)
+      .execute(),
+    database.selectFrom("chats",)
+      .select((eb: any) => eb.fn.countAll().as("total",),)
+      .executeTakeFirst(),
+  ]);
+
+  if (chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">💬</div>
       <div class="title">No chats yet</div>
@@ -829,8 +839,18 @@ async function serveChatsListDb(database: Kysely<DB>,): Promise<Response> {
     </div>`,);
   }
 
-  const items = renderChatListItems(rows,);
-  return htmlResponse(items,);
+  const enriched = await enrichChats(database, chats,);
+  const total = Number((countRow as any)?.total ?? 0,);
+  const hasMore = offset + pageSize < total;
+  const items = renderChatListItems(enriched,);
+  const loadMore = hasMore
+    ? `<div style="padding:var(--space-4);text-align:center">
+        <button class="btn btn-secondary" hx-get="/dynamic/chats/list?page=${page + 1}&pageSize=${pageSize}"
+          hx-target="#chat-list-grid" hx-swap="beforeend"
+          hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
+      </div>`
+    : "";
+  return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
 }
 
 async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
@@ -838,6 +858,9 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   const worldId = params.get("world",)?.trim() ?? "";
   const chatType = params.get("type",)?.trim() ?? "";
   const sort = params.get("sort",) ?? "recent";
+  const page = Math.max(1, parseInt(params.get("page",) ?? "1", 10,),);
+  const pageSize = Math.min(100, Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),),);
+  const offset = (page - 1) * pageSize;
 
   let qb = database
     .selectFrom("chats",)
@@ -869,9 +892,12 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   else if (sort === "oldest") { qb = qb.orderBy("chats.created_at", "asc",); }
   else { qb = qb.orderBy("chats.is_pinned", "desc",).orderBy("chats.updated_at", "desc",); }
 
-  const rows = await qb.limit(200,).execute();
+  const [chats, countRow] = await Promise.all([
+    qb.limit(pageSize,).offset(offset,).execute(),
+    qb.clearOrderBy().select((eb: any) => eb.fn.countAll().as("total" as any,)).executeTakeFirst(),
+  ]);
 
-  if (rows.length === 0) {
+  if (chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">🔍</div>
       <div class="title">No chats match your search</div>
@@ -879,14 +905,53 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
     </div>`,);
   }
 
-  const items = renderChatListItems(rows,);
-  return htmlResponse(items,);
+  const enriched = await enrichChats(database, chats,);
+  const total = Number((countRow as any)?.total ?? 0,);
+  const hasMore = offset + pageSize < total;
+  const items = renderChatListItems(enriched,);
+  const loadMore = hasMore
+    ? `<div style="padding:var(--space-4);text-align:center">
+        <button class="btn btn-secondary" hx-get="/dynamic/chats/search?q=${encodeURIComponent(query,)}&world=${worldId}&type=${chatType}&sort=${sort}&page=${page + 1}&pageSize=${pageSize}"
+          hx-target="#chat-list-grid" hx-swap="beforeend"
+          hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
+      </div>`
+    : "";
+  return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
+}
+
+async function enrichChats(database: Kysely<DB>, chats: Array<{id: string; name: string; type: string; purpose: string | null; is_pinned: string; updated_at: string; created_at: string; world_name: string | null; location_name: string | null;}>,): Promise<Array<{id: string; name: string; type: string; purpose: string | null; is_pinned: string; updated_at: string; created_at: string; world_name: string | null; location_name: string | null; participant_count: number; last_message: string | null;}>> {
+  const chatIds = chats.map((c,) => c.id,);
+  const [counts, lastMsgs] = await Promise.all([
+    database.selectFrom("chat_participants",)
+      .select(["chat_id", (eb: any) => eb.fn.count("actor_id",).as("cnt",),])
+      .where("chat_id", "in", chatIds,)
+      .groupBy("chat_id",)
+      .execute(),
+    database.selectFrom("messages",)
+      .select(["chat_id", "content",])
+      .where("chat_id", "in", chatIds,)
+      .where("status", "!=", "deleted" as any,)
+      .orderBy("id", "desc",)
+      .limit(chatIds.length * 2,)
+      .execute(),
+  ]);
+  const countMap = new Map<string, number>(counts.map((r,) => [r.chat_id, Number(r.cnt,),],),);
+  const msgMap = new Map<string, string>();
+  for (const m of lastMsgs) {
+    if (!msgMap.has(m.chat_id)) { msgMap.set(m.chat_id, m.content,); }
+  }
+  return chats.map((c,) => ({
+    ...c,
+    participant_count: countMap.get(c.id,) ?? 0,
+    last_message: msgMap.get(c.id,) ?? null,
+  }),);
 }
 
 function renderChatListItems(rows: Array<{
   id: string; name: string; type: string; purpose: string | null;
   is_pinned: string; updated_at: string; created_at: string;
   world_name: string | null; location_name: string | null;
+  participant_count: number; last_message: string | null;
 }>,): string {
   const now = Date.now();
   return rows
@@ -908,6 +973,10 @@ function renderChatListItems(rows: Array<{
       else if (age < 86_400_000) { ageStr = `${Math.floor(age / 3_600_000,)}h ago`; }
       else { ageStr = `${Math.floor(age / 86_400_000,)}d ago`; }
 
+      const preview = r.last_message
+        ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${escapeHtml(r.last_message.slice(0, 80,),)}${r.last_message.length > 80 ? "…" : ""}</div>`
+        : "";
+
       return `<div class="chat-list-card" onclick="location.assign('/views/chat?chatid=${encodeURIComponent(r.id,)}')"
         style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--border-default);border-radius:var(--radius-md);cursor:pointer;background:var(--bg-primary);transition:background 0.15s"
         onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-primary)'"
@@ -917,10 +986,11 @@ function renderChatListItems(rows: Array<{
           <div style="font-weight:500;font-size:14px;display:flex;align-items:center;gap:var(--space-1)">
             ${name}${pinned ? `<span style="color:var(--accent-yellow)">${pinned}</span>` : ""}
           </div>
-          <div style="display:flex;gap:var(--space-2);margin-top:2px;flex-wrap:wrap">
+          <div style="display:flex;gap:var(--space-2);margin-top:2px;flex-wrap:wrap;align-items:center">
             ${worldTag}${locationTag}
-            ${r.purpose ? `<span style="font-size:11px;color:var(--text-secondary)">${escapeHtml(r.purpose.slice(0, 40,),)}</span>` : ""}
+            ${r.participant_count > 0 ? `<span style="font-size:11px;color:var(--text-secondary)">👥 ${r.participant_count}</span>` : ""}
           </div>
+          ${preview}
         </div>
         <span style="font-size:11px;color:var(--text-secondary);flex-shrink:0;white-space:nowrap">${ageStr}</span>
       </div>`;
@@ -996,7 +1066,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveChatsListDb(database,);
+        const url = new URL(ctx.request.url,); return await serveChatsListDb(database, url.searchParams,);
       })
       .get("/dynamic/chats/search", async (ctx,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
