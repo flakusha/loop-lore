@@ -282,6 +282,21 @@ async function start() {
   const database = getDatabase();
   const logger = getLogger();
 
+  // ── Auto-key rotation timer ────────────────────────────────
+  const { startAutoRotationTimer, } = await import("./crypto/key-rotation");
+  const rotationTimer = startAutoRotationTimer(
+    database,
+    config.encryption.keyRotationDays,
+  );
+
+  // Clean up timer on shutdown
+  process.on("SIGTERM", () => {
+    if (rotationTimer) { clearInterval(rotationTimer); }
+  },);
+  process.on("SIGINT", () => {
+    if (rotationTimer) { clearInterval(rotationTimer); }
+  },);
+
   const serverManager = new ServerExternalManager(logger,);
   const serverLogger = logger.child({ module: "server", },);
 
