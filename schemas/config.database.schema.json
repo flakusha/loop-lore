@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.database.schema.json",
+  "title": "Loop Lore Database Config",
+  "description": "Domain-specific configuration for database",
+  "type": "object",
+  "properties": {
+    "db": {
+      "type": "object",
+      "description": "Database configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "sqlite",
+            "postgres"
+          ],
+          "default": "sqlite",
+          "description": "Database type"
+        },
+        "sqliteFilename": {
+          "type": "string",
+          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/loop-lore.db",
+          "description": "SQLite database file path"
+        },
+        "url": {
+          "type": "string",
+          "description": "PostgreSQL connection URL"
+        }
+      },
+      "required": [
+        "type",
+        "sqliteFilename"
+      ]
+    }
+  },
+  "required": [
+    "db"
+  ]
+}

@@ -538,6 +538,8 @@ interface EncryptionConfig {
   compressThreshold: number;
   /** Preferred compression algorithm. Default gzip. */
   compressAlgorithm: EncryptionCompression;
+  /** Days before auto-rotating actor keys. Default 90. 0 = disabled. */
+  keyRotationDays: number;
 }
 
 interface MessagesConfig {
