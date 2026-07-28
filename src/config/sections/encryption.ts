@@ -7,6 +7,7 @@ export const ENCRYPTION_DEFAULTS = {
   compressThreshold: 128,
   compressAlgorithm: "gzip" as const,
   keyRotationDays: 90,
+  anonymous: false,
 } satisfies EncryptionConfig;
 
 export class EncryptionSection implements EncryptionConfig {
@@ -14,6 +15,7 @@ export class EncryptionSection implements EncryptionConfig {
   compressThreshold = ENCRYPTION_DEFAULTS.compressThreshold;
   compressAlgorithm = ENCRYPTION_DEFAULTS.compressAlgorithm;
   keyRotationDays = ENCRYPTION_DEFAULTS.keyRotationDays;
+  anonymous = ENCRYPTION_DEFAULTS.anonymous;
   serverEncryptionKey?: string;
 
   constructor(overrides?: Partial<EncryptionConfig>,) {
@@ -48,6 +50,11 @@ export const encryptionMeta = {
       type: "integer",
       default: ENCRYPTION_DEFAULTS.keyRotationDays,
       description: "Days before auto-rotating actor keys. 0 = disabled.",
+    },
+    anonymous: {
+      type: "boolean",
+      default: ENCRYPTION_DEFAULTS.anonymous,
+      description: "Enable anonymous chat mode. Actor identities hidden from other participants.",
     },
   },
   required: ["required", "compressThreshold", "compressAlgorithm", "keyRotationDays",] as const,
