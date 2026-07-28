@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.logging.schema.json",
+  "title": "Loop Lore Logging Config",
+  "description": "Domain-specific configuration for logging",
+  "type": "object",
+  "properties": {
+    "logging": {
+      "type": "object",
+      "description": "Logging configuration",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "default": "debug",
+          "description": "Log level"
+        },
+        "jsonlPath": {
+          "type": "string",
+          "description": "JSONL output path"
+        },
+        "jsonlMaxBytes": {
+          "type": "integer",
+          "default": 104857600,
+          "description": "Max JSONL file bytes before rotation"
+        },
+        "jsonlMaxFiles": {
+          "type": "integer",
+          "default": 5,
+          "description": "Max rotated files to keep"
+        },
+        "dbEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable DB log transport"
+        },
+        "censorEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "PII redaction"
+        },
+        "censorFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Extra PII field patterns"
+        },
+        "queueMaxSize": {
+          "type": "integer",
+          "default": 10000,
+          "description": "Max queue entries"
+        },
+        "maxMessageBytes": {
+          "type": "integer",
+          "default": 10240,
+          "description": "Max message string bytes"
+        },
+        "maxMetaBytes": {
+          "type": "integer",
+          "default": 102400,
+          "description": "Max meta blob bytes"
+        },
+        "maxMetaDepth": {
+          "type": "integer",
+          "default": 5,
+          "description": "Max meta recursion depth"
+        },
+        "maxStackBytes": {
+          "type": "integer",
+          "default": 5120,
+          "description": "Max error stack bytes"
+        }
+      },
+      "required": [
+        "level"
+      ]
+    }
+  },
+  "required": [
+    "logging"
+  ]
+}
