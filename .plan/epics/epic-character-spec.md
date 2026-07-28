@@ -13,7 +13,7 @@ optional fields, multi-level object descriptions, format conversion
 logic, validation modes (strict/relaxed), review workflow, content
 rating propagation, impersonation rules, and migration system.
 
-This epic consolidates the character setup spec (`docs/spec/character-setup.md`)
+This epic consolidates the character setup spec (`docs/spec/character-spec.md`)
 into a single authoritative document and implements the corresponding
 API endpoints.
 

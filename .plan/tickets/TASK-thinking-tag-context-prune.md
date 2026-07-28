@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Med
+**Epic:** epic-tooling-improvement
 
 ## Summary
 
@@ -108,3 +109,7 @@ LLM providers (OpenAI, Anthropic) cache `system` messages for reuse. If we modif
 ## Risk
 
 Medium — affects message storage pipeline. Tests critical. Cache pitfall mitigated by not touching system prompt.
+
+## Linked Epics
+
+- `epic-tooling-improvement.md`
