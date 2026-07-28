@@ -140,7 +140,7 @@ export class QuestService {
       .selectAll()
       .executeTakeFirst();
 
-    return quest as QuestRow | null;
+    return (quest as QuestRow) ?? null;
   }
 
   /** List quests for a world */
