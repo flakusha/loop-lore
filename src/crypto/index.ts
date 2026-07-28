@@ -26,6 +26,13 @@ export { decryptValue, encryptValue, } from "./byok";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
 export type { ChatKey, } from "./chat-keys";
 export { distributeKeysOnJoin, resolveChatKey, rotateKeyOnLeave, } from "./key-distribution";
+export {
+  findExpiredKeys,
+  runAutoRotation,
+  rotateActorKeyAndReEncrypt,
+  startAutoRotationTimer,
+} from "./key-rotation";
+export type { RotationResult, RotationSummary, } from "./key-rotation";
 export { compressThenEncrypt, decryptThenDecompress, extractKeyIdFromPayload, isEncryptedPayload, } from "./pipeline";
 export type { EncryptedPayload, PipelineConfig, } from "./pipeline";
 export { getSmk, initSmk, isEncryptionEnabled, } from "./smk";
