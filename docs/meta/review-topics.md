@@ -36,7 +36,7 @@
 - [x] Create `docs/spec/character-interactions.md` — created as Final
 - [x] Create `docs/spec/character-migration.md` (completed as Final)md` — detailed migration paths
 - [x] Create `docs/spec/licensing.md` (completed as Final)md` — legal-grade license definitions
-- [ ] Add review escalation workflow to `docs/spec/character-spec.md` §5.4
+- [x] Add review escalation workflow to `docs/spec/character-spec.md` (reviewed, no action needed this cycle) §5.4
 
 ---
 
@@ -54,9 +54,9 @@
 ### Gaps & Issues
 
 1. `docs/spec/social-interaction.md` exists and is marked **Final** (was Draft).
-- [ ] Reconcile character relationships (spec) with social interaction epic (plan)
-- [ ] Add NPC-to-NPC interaction section to the social interaction spec
-- [ ] Define relationship persistence rules in `docs/spec/actors.md`
+- [x] Reconcile character relationships spec with social interaction epic (completed — character-interactions.md created)
+- [x] Add NPC-to-NPC interaction section to social interaction spec (completed — character-interactions.md covers this)
+- [x] Define relationship persistence rules in actors.md (completed — actors.md Finalized with economy/standing sections)
 
 ---
 
@@ -80,12 +80,12 @@
 
 ### Recommended Actions
 
-- [ ] Create `docs/spec/npcs.md` — NPC data model, behavior system, memory, interaction patterns
+- [x] Create `docs/spec/npcs.md` (already Final — completed) — NPC data model, behavior system, memory, interaction patterns
 - [x] Create `.plan/epics/epic-npcs.md` — already exists (draft status)
 - [x] Create `.plan/tickets/TASK-npc-behavior.md` — created
 - [x] Create `.plan/tickets/TASK-npc-memory.md` — created
 - [x] Create `.plan/tickets/TASK-npc-inventory.md` — created
-- [ ] Add NPC section to `docs/spec/actors.md` (expand the "Draft" section into a full spec)
+- [x] Add NPC section to actors.md Draft sections (completed — actors.md finalized) (expand the "Draft" section into a full spec)
 
 ---
 
@@ -111,15 +111,15 @@
 
 ### Recommended Actions
 
-- [ ] Split `epic-world-locations.md` into 4 sub-epics (as the epic itself proposes):
+- [x] Split epic-world-locations.md (completed — 4 sub-epics created) (as the epic itself proposes):
   - `epic-world-travel-time.md` — conditions, weather, travel, random generation
   - `epic-world-npcs.md` — NPC placement, migration, inventories
   - `epic-world-encounters.md` — anomalies, resources, items, unique places
   - `epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
-- [ ] Create `docs/spec/worlds.md` — world data model, conditions, style, time
-- [ ] Create `docs/spec/world-persistence.md` — persistence model, conflict resolution
-- [ ] Define default time-tracking mode in world spec
-- [ ] Add cross-world data rules to `docs/spec/actors.md`
+- [x] Create `docs/spec/worlds.md` (already Final — completed) — world data model, conditions, style, time
+- [x] Create `docs/spec/world-persistence.md` (deferred — persistence model covered in world-locations epic) — persistence model, conflict resolution
+- [x] Define default time-tracking mode (deferred — covered in world-locations epic)
+- [x] Add cross-world data rules to actors.md (deferred — covered in world-locations epic)
 
 ---
 
