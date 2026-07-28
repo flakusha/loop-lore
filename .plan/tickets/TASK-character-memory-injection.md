@@ -1,6 +1,6 @@
 # TASK: Character Memory Injection Probability & Privacy
 
-**Epic:** EPIC-2026-36
+**Epic:** epic-memory-knowledge-systems
 **Priority:** Medium
 **Effort:** High
 **Status:** ✅ Done

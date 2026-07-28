@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Med
+**Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-wire-message-pipeline
 
@@ -157,3 +158,7 @@ script-src 'self' 'nonce-{nonce}' 'wasm-unsafe-eval';
 ## Risk
 
 Med — platform quirks, fallback chain complexity, CSP compliance, performance on mobile.
+
+## Linked Epics
+
+- `epic-crypto.md`

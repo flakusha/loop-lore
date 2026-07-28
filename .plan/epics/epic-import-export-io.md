@@ -187,7 +187,7 @@ None required — PNG metadata and ZIP extraction use native Bun APIs.
 ## References
 
 - `docs/spec/io-formats.md` — Complete format specifications
-- `docs/spec/character-setup.md` — Character system overview
+- `docs/spec/character-spec.md` — Character system overview
 - `docs/spec/assets.md` — Asset pipeline
 - `docs/meta/plan.md` — v0.1 implementation plan
 

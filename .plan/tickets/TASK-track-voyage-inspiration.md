@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low
+**Epic:** epic-emergent-narrative-design
 **Related:** epic-platform-research.md, epic-worlds-extension.md
 
 ## Summary
@@ -28,3 +29,7 @@ reference.
 - [ ] Add Voyage to `epic-platform-research.md` competitor table
 - [ ] Quarterly check: feature parity (world RPG mechanics, creator framework)
 - [ ] Note differentiators loop-lore must keep (local-first, encryption, multi-backend)
+
+## Linked Epics
+
+- `epic-emergent-narrative-design.md`

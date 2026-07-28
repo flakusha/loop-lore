@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-filtering-pagination
+**Epic:** epic-chat-lifecycle-moderation
 
 ## Summary
 

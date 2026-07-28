@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** low (moderation — postpone)
 **Effort:** Medium
-**Epic:** EPIC-2026-36
+**Epic:** epic-nsfw-game-mechanics
 
 ## Summary
 

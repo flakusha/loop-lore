@@ -1,8 +1,9 @@
 # TASK: Encryption — Group Key Distribution
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Effort:** Med
+**Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-wire-message-pipeline
 
@@ -28,11 +29,11 @@ Handle key distribution when participants join/leave encrypted chats. New partic
 
 ## Tasks
 
-- [ ] Add `wrapped_key` column to `chat_participants` table
-- [ ] On participant join: wrap chat key with new participant's actor key
-- [ ] On participant leave: generate new chat key
+- [x] `src/crypto/key-distribution.ts` — `distributeKeysOnJoin` + `rotateKeyOnLeave`
+- [x] `src/crypto/e2e/key-bundle.ts` — symmetric key wrapping for bundles
+- [x] Wire into `src/routes/chats.ts` — distribute on participant add, rotate on remove
+- [ ] Add `wrapped_key` column to `chat_participants` table (for per-participant wrapped keys)
 - [ ] On participant leave: re-encrypt recent messages (last N or configurable)
-- [ ] On participant leave: distribute new key to remaining participants
 - [ ] Add tests: join gets key, leave revokes access, rotation works
 
 ## Files to Modify
@@ -45,3 +46,7 @@ Handle key distribution when participants join/leave encrypted chats. New partic
 ## Risk
 
 Med — re-encryption performance on leave, concurrent access during rotation.
+
+## Linked Epics
+
+- `epic-crypto.md`

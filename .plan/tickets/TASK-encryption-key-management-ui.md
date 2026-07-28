@@ -1,8 +1,9 @@
 # TASK: Encryption — Key Management UI
 
-**Status:** ⬜ Not Started
+**Status:** 🟨 Partial (routes done, UI pending)
 **Priority:** High
 **Effort:** Med
+**Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-wire-message-pipeline
 
@@ -31,16 +32,21 @@ Build key management UI at `/settings/keys`. Users can view, generate, rotate, r
 
 ## Tasks
 
-- [ ] Create `src/routes/keys.ts` — key management API endpoints
+- [x] `src/routes/key-management.ts` — key CRUD endpoints (list, generate, rotate, revoke)
+- [x] `src/routes/message-encryption.ts` — GET chat encryption key
 - [ ] Create `src/frontend/alpine/key-management.ts` — Alpine.js component
 - [ ] Create `src/components/settings/key-management.html` — UI template
 - [ ] Wire into settings page navigation
 - [ ] Add re-auth gate for sensitive operations (rotate, revoke, purge)
 - [ ] Add confirmation dialogs for destructive actions
 
-## Files to Create
+## Files Created
 
-- `src/routes/keys.ts` — key management API
+- `src/routes/key-management.ts` — key management API ✅
+- `src/routes/message-encryption.ts` — chat key endpoint ✅
+
+## Files Still Needed
+
 - `src/frontend/alpine/key-management.ts` — Alpine component
 - `src/components/settings/key-management.html` — UI template
 
@@ -52,3 +58,7 @@ Build key management UI at `/settings/keys`. Users can view, generate, rotate, r
 ## Risk
 
 Med — UI complexity, re-auth flow, destructive action safeguards.
+
+## Linked Epics
+
+- `epic-crypto.md`

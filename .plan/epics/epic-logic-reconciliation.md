@@ -2,6 +2,7 @@
 
 **Status:** 🟡 Permanently Ongoing
 **Priority:** High
+**Epic ID:** EPIC-2026-36
 **Effort:** Continuous
 **Issue:** `1e37b11`
 **Type:** Ongoing Epic

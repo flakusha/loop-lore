@@ -1,39 +1,34 @@
-# EPIC: Analytics & Observability
+# Epic: Analytics & Observability
 
-**Status:** ⬜ Not Started
-**Priority:** Medium
-**Plan.md:** §50
-**Issue:** `0aa1e33`
+**Status:** 📝 Draft
+**Priority:** High
+**Effort:** Medium
+**Type:** Feature Epic
+**Tags:** analytics, observability, telemetry, dashboard, metrics
 
-## Summary
+## Overview
 
-Conversation analytics dashboard, model A/B comparison, knowledge graph visualization.
+Conversation analytics and observability dashboard. Covers per-chat cost tracking, model comparison, and memory visualization.
 
-## Tasks
+## Reference
 
-| Task                                            | Files                              | Effort | Source      |
-| ----------------------------------------------- | ---------------------------------- | ------ | ----------- |
-| Conversation analytics dashboard                | `src/routes/analytics.ts` (new)    | High   | plan.md §50 |
-| Model comparison A/B (uses `model_comparisons`) | `src/routes/analytics.ts`          | Med    | plan.md §50 |
-| Knowledge graph visualization                   | `src/routes/analytics.ts` (new)    | High   | plan.md §50 |
-| Generation quality metrics                      | `src/analytics/quality.ts` (new)   | Med    | plan.md §50 |
-| Sentiment over time per chat                    | `src/analytics/sentiment.ts`       | Med    | ideas #27   |
-| Word clouds per chat                            | `src/analytics/wordcloud.ts`       | Low    | ideas #27   |
-| Token cost tracking dashboard                   | `src/analytics/cost.ts`            | Med    | ideas #27   |
-| Story-beat map per chat                         | `src/analytics/storybeats.ts`      | Med    | ideas #27   |
-| Synthetic fine-tune data export                 | `src/analytics/finetune-export.ts` | High   | ideas #29   |
-| Automated balance playtest bot                  | `src/analytics/playtest-bot.ts`    | High   | ideas #30   |
+- Future features plan: `docs/meta/future-features-plan.md` (Tier 2)
 
-## Ideas Merged
+## Features
 
-- `docs/ideas/analytics-meta.md` — ideas #27 (conversation analytics), #28 (model comparison), #29 (fine-tune export), #30 (playtest bot)
+| Feature | ID | Effort | Description |
+| ------- | -- | ------ | ----------- |
+| Conversation analytics | FEA-2026-056 | Low | Per-chat cost + quality dashboard |
+| Model comparison | FEA-2026-057 | Low | A/B agent/model quality via `model_comparisons` |
+| Memory visualizer | FEA-2026-058 | Med | Knowledge graph over `asset_links` |
+
+## Acceptance Criteria
+
+- [ ] Per-chat cost + quality dashboard functional
+- [ ] Model comparison A/B testing works
+- [ ] Memory visualizer displays knowledge graph
 
 ## Dependencies
 
-- `model_comparisons` table (specced in `docs/spec/notifications-expansion.md`)
-- Artifacts system for fine-tune export (`docs/spec/artifacts-system.md`)
-- RPG engine for playtest bot (`docs/spec/rpg-mechanics.md`)
-
-## Linked Tasks
-
-- TASK-analytics-observability.md
+- `model_comparisons` table (existing)
+- `asset_links` table (existing)
