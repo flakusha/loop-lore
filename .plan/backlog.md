@@ -262,3 +262,13 @@ epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inli
 - `bun run check` (pre-existing TS errors in `src/routes/export.test.ts` and `src/routes/import.ts` unrelated)
 - `bun test src/`
 - `bun run docs:gen` (no such script — epics.md is canonical auto-generated index)
+
+
+## Creative Studio MVP (Tier 1)
+
+- [ ] TASK-creative-studio-search-api — Unified Search API
+- [ ] TASK-creative-studio-search-frontend — Unified Search Frontend
+- [ ] TASK-creative-studio-note-modal — Note Detail Modal
+- [ ] TASK-creative-studio-world-modal — World/Location Detail Modal
+- [ ] TASK-creative-studio-item-modal — Item Detail Modal
+- [ ] TASK-creative-studio-toolbar — Chat Toolbar
