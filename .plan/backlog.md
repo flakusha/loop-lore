@@ -246,7 +246,7 @@ epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inli
 
 #### Gaps Found
  1. Missing cross-references from tickets to epics — Some tickets reference epics by number (Epic 14, Epic 17) rather than by file path. New tickets should reference epics by file path.
- 2. No sub-epic linkbacks — Sub-epic files don't include Parent Epic references.
+ 2. No sub-epic linkbacks — Battle sub-epics (battle-core, battle-ui, battle-utilities, trading-inventory, spells-skills) lack Parent Epic linkbacks; world sub-epics already have them.
  3. epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inline but none exist as files yet.
  4. Vague effort estimates — "Medium" effort means different things across tickets.
  5. Acceptance criteria gaps — Cross-mechanics gap tickets have incomplete testable criteria.
