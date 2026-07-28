@@ -213,3 +213,7 @@ bun run version:predict
 | `GITHUB_TOKEN` | Auto-provided, creates releases/tags |
 
 No additional secrets needed for basic CI/CD.
+
+## Related Epics
+
+- `.plan/epics/epic-cicd-pipeline.md`

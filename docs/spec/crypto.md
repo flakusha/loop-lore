@@ -88,14 +88,37 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 
 ## Remaining Work
 
-- Key management UI (`/settings/keys`)
-- Wire into message write/read routes
-- Group key distribution (new participant joins encrypted chat)
-- Key rotation auto-trigger via `KEY_ROTATION_DAYS`
-- Async re-encrypt historical messages on rotation
-- Anonymous chat mode (`ANONYMOUS_CHAT=true`)
-- Browser-side pre-encrypt (`src/frontend/browser.ts` exists, integration pending)
-- `actor_keys.key_type` enum normalization
+### High Priority
+- [ ] **Crypto test isolation** — ~20 tests fail in full suite (pass isolated). Fix shared state pollution.
+- [ ] **Auto-key rotation** — `KEY_ROTATION_DAYS` config, cron/timer-based rotation, batch re-encrypt pipeline.
+
+### Medium Priority
+- [ ] **Key management UI** (`/settings/keys`) — routes exist, Alpine.js component + HTML template needed.
+- [ ] **Asset encryption** — wire `encryptAtRest`/`decryptAtRest` into `src/assets/service.ts`.
+- [ ] **Browser pre-encrypt integration** — wire `src/frontend/browser.ts` into chat UI with feature detection + fallbacks.
+- [ ] **Time-based access expiry** — `access_duration_days` column, expiry check on key retrieval.
+
+### Low Priority
+- [ ] **World/Location encryption** — schema columns, key derivation chain (world → location → chat).
+- [ ] **Asymmetric key pairs** — public/private key pair generation for true E2E private chats.
+- [ ] **Stable stored chat key** — store key in DB instead of deriving via HKDF (preserves history across joins).
+- [ ] **Anonymous chat mode** (`ANONYMOUS_CHAT=true`) — actor identities hidden, admin sees real for moderation.
+- [ ] `actor_keys.key_type` enum normalization.
+
+### Done
+- [x] SMK initialization (`src/crypto/smk.ts`)
+- [x] Actor key CRUD (`src/crypto/actor-keys.ts`)
+- [x] Chat key derivation (`src/crypto/chat-keys.ts`)
+- [x] Compress-then-encrypt pipeline (`src/crypto/pipeline.ts`)
+- [x] At-rest tier-aware layer (`src/crypto/at-rest.ts`)
+- [x] Key distribution on join/leave (`src/crypto/key-distribution.ts`)
+- [x] User key management (`src/crypto/user-keys.ts`)
+- [x] E2E key bundles (`src/crypto/e2e/key-bundle.ts`)
+- [x] BYOK API key encryption (`src/crypto/byok.ts`)
+- [x] Message route integration (encrypt on write, decrypt on read)
+- [x] Key management routes (`src/routes/key-management.ts`)
+- [x] Chat key endpoint (`src/routes/message-encryption.ts`)
+- [x] Auth route actor key creation (`src/routes/auth.ts`)
 
 ---
 
