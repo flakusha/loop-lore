@@ -540,6 +540,8 @@ interface EncryptionConfig {
   compressAlgorithm: EncryptionCompression;
   /** Days before auto-rotating actor keys. Default 0 (disabled). */
   keyRotationDays?: number;
+  /** Enable anonymous chat mode. Actor identities hidden from other participants. Default false. */
+  anonymous?: boolean;
 }
 
 interface MessagesConfig {
