@@ -74,13 +74,13 @@ Authoritative technical specs for implemented systems. These are the primary ref
 
 ### Characters, RPG & Memory
 
-| Document                                               | Topics                                                   |
-| ------------------------------------------------------ | -------------------------------------------------------- |
-| [`spec/actors.md`](./spec/actors.md)                   | Actor data model: cards, memories, lorebooks, inventory  |
-| [`spec/character-setup.md`](./spec/character-setup.md) | Character & persona system: import/export, impersonation |
-| [`spec/rpg-mechanics.md`](./spec/rpg-mechanics.md)     | Stats, combat, equipment, dice, skills, XP, loot         |
-| [`spec/memory-system.md`](./spec/memory-system.md)     | Three-tier memory: episodic, semantic, procedural        |
-| [`spec/personas.md`](./spec/personas.md)               | Persona CRUD, switching, defaults                        |
+| Document                                             | Topics                                                   |
+| ---------------------------------------------------- | -------------------------------------------------------- |
+| [`spec/actors.md`](./spec/actors.md)                 | Actor data model: cards, memories, lorebooks, inventory  |
+| [`spec/character-spec.md`](./spec/character-spec.md) | Character & persona system: import/export, impersonation |
+| [`spec/rpg-mechanics.md`](./spec/rpg-mechanics.md)   | Stats, combat, equipment, dice, skills, XP, loot         |
+| [`spec/memory-system.md`](./spec/memory-system.md)   | Three-tier memory: episodic, semantic, procedural        |
+| [`spec/personas.md`](./spec/personas.md)             | Persona CRUD, switching, defaults                        |
 
 ### Assets & Storage
 
