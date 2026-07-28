@@ -145,13 +145,13 @@ export class BlogService {
     if (post.visibility === "public" || post.visibility === "followers") {
       const followers = await this.db
         .selectFrom("blog_follows")
-        .select("user_id")
-        .where("followed_actor_id", "=", post.author_id)
+        .select("follower_id")
+        .where("author_id", "=", post.author_id)
         .execute();
       for (const f of followers) {
-        if (f.user_id === post.author_id) continue;
+        if (f.follower_id === post.author_id) continue;
         await notifyBlogPost(this.db, {
-          userId: f.user_id,
+          userId: f.follower_id,
           postId: post.id,
           title: post.title,
         });
