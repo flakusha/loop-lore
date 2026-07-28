@@ -18,7 +18,7 @@ Defines how characters interact with each other in chat, including relationship-
 ## Relationship Tiers
 
 | Tier | Dialogue Effect | Check Modifier |
-| --- | --- | ---|
+| --- | --- | --- |
 | Hostile | Aggressive/blocked options | -5 |
 | Unfriendly | Restricted options | -2 |
 | Neutral | Standard dialogue | +0 |
