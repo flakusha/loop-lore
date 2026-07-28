@@ -3,7 +3,7 @@
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** EPIC-2026-36
+**Epic:** epic-emergent-narrative-design
 
 ## Summary
 

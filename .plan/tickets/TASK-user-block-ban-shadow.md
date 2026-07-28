@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** low (moderation — postpone)
 **Effort:** High
-**Epic:** EPIC-2026-36
+**Epic:** epic-chat-lifecycle-moderation
 
 ## Summary
 

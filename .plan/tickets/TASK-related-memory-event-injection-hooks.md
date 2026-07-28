@@ -3,7 +3,7 @@
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** EPIC-2026-36
+**Epic:** epic-memory-knowledge-systems
 
 ## Summary
 

@@ -1,6 +1,6 @@
 # TASK: Context-Based Feature Permissions (UI Gating)
 
-**Epic:** EPIC-2026-36
+**Epic:** epic-chat-lifecycle-moderation
 **Priority:** Medium
 **Effort:** Medium
 **Status:** ✅ Done

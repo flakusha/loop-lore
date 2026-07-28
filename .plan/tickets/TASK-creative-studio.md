@@ -4,7 +4,7 @@
 **Priority**: medium
 **Labels**: feature, frontend, creative
 **Assignee**:
-**Epic**: EPIC-046 (Creative Studio)
+**Epic:** epic-creative-studio
 **Related**: TASK-character-template-seeding.md
 
 ### Description

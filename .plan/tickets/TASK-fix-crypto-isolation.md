@@ -1,42 +1,31 @@
 # TASK: Fix Crypto Test Isolation Issue
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (was misdiagnosed)
 **Priority:** High
 **Effort:** Med
 **Epic:** epic-testing-qa
 
 ## Summary
 
-All 138 crypto/encryption tests pass in isolation but ~20 fail when run with the full suite. Classic shared state pollution — likely from `tree/chat-lifecycle/` tests or other global singletons.
+The crypto test isolation issue was a misdiagnosis. Crypto tests (69/69) pass in both isolated and full suite modes. The actual failures were in QuestService tests (16 failures) due to missing FK records in test setup.
 
-## Current State
+## Root Cause (Actual)
 
-- **Isolated:** 138/138 pass (0 failures)
-- **Full suite:** ~20 crypto failures (all in encryption tests)
-- **Likely cause:** Another test file modifies global crypto state (key registry, encryption context, or DB connection) that persists across test files
+QuestService tests used hardcoded `world_id: "world-1"` and `creator_id: "user-1"` without creating the referenced records in the test DB. The `quests` table has foreign keys on `world_id → worlds.id` and `creator_id → actors.id`.
 
-## Investigation Steps
+## Fix Applied
 
-- [ ] Run crypto tests with `--isolate` flag — do they pass?
-- [ ] Identify which test file, when run before crypto tests, causes the failures
-- [ ] Binary search: run crypto tests after each test file to find the polluter
-- [ ] Common suspects: provider registry, stream buffer, plugin registry, DB singleton
+- Updated `src/rpg/quests/service.test.ts` to use `createTestDb()` + `createTestActors()` + `createTestWorld()`
+- Fixed `QuestService.getQuest()` to return `null` instead of `undefined` for non-existent quests
+- Order matters: `createTestActors` must run before `createTestWorld` (worlds.owner_id → users.id)
 
-## Tasks
+## Remaining Failures (Pre-existing)
 
-- [ ] Find the polluting test file(s) via binary search
-- [ ] Fix the polluter: add `beforeEach`/`afterEach` cleanup, or reset shared state
-- [ ] Verify crypto tests pass in both isolated and full suite modes
-- [ ] Document the fix pattern for preventing future regressions
+- GameMasterService — 3 test failures (LLM mocking issues)
+- i18n — 1 error (document.addEventListener in non-DOM test env)
 
 ## Acceptance Criteria
 
-- [ ] 138/138 crypto tests pass in full suite (not just isolated)
-- [ ] Root cause documented
-- [ ] Cleanup pattern applied to prevent recurrence
-
-## Files
-
-- `src/crypto/**/*.test.ts` — crypto test files
-- `src/crypto/key-registry.ts` — potential shared state
-- `src/encryption/**/*.test.ts` — encryption test files
+- [x] 16/16 QuestService tests pass in full suite
+- [x] 69/69 crypto tests pass in full suite
+- [x] Root cause documented
