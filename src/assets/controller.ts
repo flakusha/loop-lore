@@ -40,6 +40,7 @@ import {
   deleteAsset,
   detectAssetType,
   getAsset,
+  getAssetData,
   getAssetFilePath,
   getAssetLinks,
   getAssetShares,
@@ -53,6 +54,7 @@ import {
   validateMimeType,
 } from "./service";
 import type { AssetRecord, } from "./service";
+import { deriveChatKeyForChat, getSmk, } from "../crypto";
 
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
@@ -205,21 +207,27 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       },)
       // ── File serving routes ──────────────────────────
       .get("/api/assets/:id/raw", async (ctx,) => {
+        const searchParams = new URL(ctx.request.url,).searchParams;
+        const chatId = searchParams.get("chatId",) ?? undefined;
         return handleServeRaw({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
+          chatId,
         },);
       },)
       .get("/api/assets/:id/download", async (ctx,) => {
+        const searchParams = new URL(ctx.request.url,).searchParams;
+        const chatId = searchParams.get("chatId",) ?? undefined;
         return handleDownload({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
+          chatId,
         },);
       },)
       .get("/api/assets/:id/thumb", async (ctx,) => {
@@ -370,10 +378,42 @@ async function handleServeRaw({
   uploadDir,
   actorId,
   actorRole,
-}: ServeRawOpts,): Promise<Response> {
+  chatId,
+}: ServeRawOpts & { chatId?: string },): Promise<Response> {
   const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
   if (resolved instanceof Response) { return resolved; }
-  return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
+
+  const { asset, } = resolved;
+
+  // If asset is encrypted, try to decrypt
+  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+    try {
+      // Get SMK and derive chat key if chatId provided
+      const smk = getSmk();
+      if (!smk || !chatId) {
+        return new Response("Encrypted asset requires chat context", { status: 400, });
+      }
+
+      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
+      const decryptedData = await getAssetData(database, assetId, uploadDir, chatKey,);
+
+      if (!decryptedData) {
+        return notFoundResponse("Failed to decrypt asset",);
+      }
+
+      return new Response(new Uint8Array(decryptedData), {
+        headers: {
+          "Content-Type": asset.mime_type,
+          "Cache-Control": `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+        },
+      },);
+    } catch (error) {
+      return new Response("Failed to decrypt asset", { status: 500, });
+    }
+  }
+
+  // Non-encrypted asset — serve directly
+  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
 }
 
 async function handleServeCompressed({
@@ -404,11 +444,39 @@ async function handleDownload({
   uploadDir,
   actorId,
   actorRole,
-}: ServeRawOpts,): Promise<Response> {
+  chatId,
+}: ServeRawOpts & { chatId?: string },): Promise<Response> {
   const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
   if (resolved instanceof Response) { return resolved; }
   const { asset, } = resolved;
   const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
+
+  // If asset is encrypted, try to decrypt
+  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+    try {
+      const smk = getSmk();
+      if (!smk || !chatId) {
+        return new Response("Encrypted asset requires chat context", { status: 400, });
+      }
+
+      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
+      const decryptedData = await getAssetData(database, assetId, uploadDir, chatKey,);
+
+      if (!decryptedData) {
+        return notFoundResponse("Failed to decrypt asset",);
+      }
+
+      return new Response(new Uint8Array(decryptedData), {
+        headers: {
+          "Content-Type": asset.mime_type,
+          "Content-Disposition": `attachment; filename="${safeName}"`,
+        },
+      },);
+    } catch (error) {
+      return new Response("Failed to decrypt asset", { status: 500, });
+    }
+  }
+
   return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
     extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"`, },
   },);
