@@ -159,6 +159,7 @@ COMPRESS_ALGORITHM=gzip         # gzip | brotli | zstd
 | Browser pre-encrypt integration | Medium | Feature detection, fallbacks |
 | Key management UI (frontend) | Medium | Routes exist, UI pending |
 | Crypto test isolation fix | High | ~20 failures in full suite |
+| Anonymous chat mode | Medium | ✅ Done |
 
 ## References
 
