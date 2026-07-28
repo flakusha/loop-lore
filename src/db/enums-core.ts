@@ -84,6 +84,8 @@ export const NotificationType = {
   ChatInvite: "chat_invite",
   CharacterUpdate: "character_update",
   GmAction: "gm_action",
+  BlogPost: "blog_post",
+  BlogComment: "blog_comment",
   System: "system",
 } as const;
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
