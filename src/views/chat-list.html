@@ -1,0 +1,99 @@
+<header id="header-slot" class="main-header" data-page="chat-list">
+  <button class="hamburger" x-on:click="window.toggleSidebar()">☰</button>
+  <span class="title" id="page-title">Chats</span>
+  <div class="actions">
+    <a class="btn btn-primary" href="/views/new-chat"
+       hx-get="/views/new-chat" hx-target="#app-root" hx-swap="innerHTML" hx-push-url="true">
+      + New Chat
+    </a>
+  </div>
+</header>
+
+<div class="app-layout">
+  <main class="main-content" style="padding: var(--space-6); max-width: 900px; margin: 0 auto; width: 100%">
+
+    <!-- Search / Filter bar -->
+    <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-6); flex-wrap: wrap; align-items: center">
+      <input
+        id="chat-search"
+        class="form-input"
+        type="search"
+        placeholder="Search chats…"
+        aria-label="Search chats"
+        hx-get="/dynamic/chats/search"
+        hx-trigger="input changed delay:300ms, load"
+        hx-target="#chat-list-grid"
+        hx-swap="innerHTML"
+        hx-include="#chat-search"
+        name="q"
+        style="flex: 1; min-width: 200px"
+      />
+      <select id="chat-world-filter" class="form-input"
+        hx-get="/dynamic/chats/search"
+        hx-trigger="change"
+        hx-target="#chat-list-grid"
+        hx-swap="innerHTML"
+        hx-include="#chat-search, #chat-world-filter, #chat-type-filter, #chat-sort"
+        name="world"
+        style="width: 160px">
+        <option value="">All worlds</option>
+      </select>
+      <select id="chat-type-filter" class="form-input"
+        hx-get="/dynamic/chats/search"
+        hx-trigger="change"
+        hx-target="#chat-list-grid"
+        hx-swap="innerHTML"
+        hx-include="#chat-search, #chat-world-filter, #chat-type-filter, #chat-sort"
+        name="type"
+        style="width: 140px">
+        <option value="">All types</option>
+        <option value="direct">Direct</option>
+        <option value="group">Group</option>
+      </select>
+      <select id="chat-sort" class="form-input"
+        hx-get="/dynamic/chats/search"
+        hx-trigger="change"
+        hx-target="#chat-list-grid"
+        hx-swap="innerHTML"
+        hx-include="#chat-search, #chat-world-filter, #chat-type-filter, #chat-sort"
+        name="sort"
+        style="width: 140px">
+        <option value="recent">Recently updated</option>
+        <option value="name">Name A–Z</option>
+        <option value="oldest">Oldest first</option>
+      </select>
+    </div>
+
+    <!-- Chat list grid (loaded via HTMX) -->
+    <div id="chat-list-grid"
+         hx-get="/dynamic/chats/list"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="empty-state" style="padding: var(--space-12)">
+        <div class="icon">⏳</div>
+        <div class="title">Loading chats…</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Load world names for the filter dropdown -->
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('/api/worlds?pageSize=200');
+      if (!res.ok) return;
+      const data = await res.json();
+      const worlds = data.data || data || [];
+      const sel = document.getElementById('chat-world-filter');
+      if (!sel || !Array.isArray(worlds)) return;
+      for (const w of worlds) {
+        const opt = document.createElement('option');
+        opt.value = w.id;
+        opt.textContent = w.name;
+        sel.appendChild(opt);
+      }
+    } catch { /* ignore */ }
+  });
+</script>

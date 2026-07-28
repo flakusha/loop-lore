@@ -204,9 +204,9 @@ app.use(blogRoutes(handleOpts,),);
     new Response(null, { status: 302, headers: { Location: location, }, },);
 
   // Authenticated users land on the chat; everyone else on the login screen.
-  app.get("/", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/login",),);
-  app.get("/chat", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/login",),);
-  app.get("/register", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/register",),);
+  app.get("/", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat-list" : "/views/login",),);
+  app.get("/chat", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat-list" : "/views/login",),);
+  app.get("/register", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat-list" : "/views/register",),);
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
   app.all("/*", async ({ request, },) => {
