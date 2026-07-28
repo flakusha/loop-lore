@@ -326,8 +326,6 @@ async function handleRegister(request: Request, database: Kysely<DB>, config: Co
       import_spec: "raw",
       data_source_format: "json",
       data_raw: null,
-      data_source_format: "json",
-      data_raw: null,
       data_version: 0,
     },)
     .execute();
