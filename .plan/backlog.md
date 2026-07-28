@@ -201,13 +201,13 @@ This section contains the actionable task proposals derived from that analysis.
 
 | Task | Spec File |
 | --- | --- |
-| Finalize social-interaction spec | docs/spec/social-interaction.md |
-| Finalize chat-privacy spec | docs/spec/chat-privacy.md |
-| Finalize worlds spec | docs/spec/worlds.md |
-| Finalize items/inventory specs | docs/spec/items.md, docs/spec/inventory.md |
-| Create attachment-moderation spec | docs/spec/attachment-moderation.md |
-| Create character-migration spec | docs/spec/character-migration.md |
-| Create licensing spec | docs/spec/licensing.md |
+| Finalize social-interaction spec | docs/spec/social-interaction.md | ✅ Done
+| Finalize chat-privacy spec | docs/spec/chat-privacy.md | ✅ Done
+| Finalize worlds spec | docs/spec/worlds.md | ✅ Done
+| Finalize items/inventory specs | docs/spec/items.md, docs/spec/inventory.md | ✅ Done
+| Create attachment-moderation spec | docs/spec/attachment-moderation.md | ✅ Done
+| Create character-migration spec | docs/spec/character-migration.md | ✅ Done
+| Create licensing spec | docs/spec/licensing.md | ✅ Done
 
 #### Priority 2 - Cross-Mechanics Gap Tickets (from integration matrix)
 
