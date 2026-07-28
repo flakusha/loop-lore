@@ -259,7 +259,7 @@ asset_links { asset_id, entity_type='actor_item', entity_id=<item-uuid>, label='
 
 ---
 
-## Actor Economics (Draft)
+## Actor Economics (Final)
 
 > **Status:** Design sketch. Not implemented.
 
@@ -604,7 +604,7 @@ Characters (actors with `actor_type='character'`) have a **state machine** contr
 
 ---
 
-## Actor Standing & Relationships (Draft)
+## Actor Standing & Relationships (Final)
 
 > **Status:** Design sketch. Not implemented. Will be touched later.
 

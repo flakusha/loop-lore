@@ -46,7 +46,7 @@
 
 | File                                        | Type   | Status                                                                                 |
 | ------------------------------------------- | ------ | -------------------------------------------------------------------------------------- |
-| `docs/spec/actors.md`                       | Spec   | ⚠️ Has relationship tiers and standing but marked "Draft, not implemented"              |
+| `docs/spec/actors.md`                       | Spec   | ✅ Final — relationship tiers, standing, and reputation defined              |
 | `.plan/epics/epic-social-interaction.md`    | Epic   | ✅ Comprehensive — persuasion, intimidation, deception, barter, leadership, reputation |
 | `.plan/tickets/TASK-social-interaction.md`  | Ticket | ✅ Exists                                                                              |
 | `.plan/tickets/TASK-social-guild-system.md` | Ticket | ✅ Exists                                                                              |
@@ -66,7 +66,7 @@
 
 | File                                  | Type    | Status                                                                           |
 | ------------------------------------- | ------- | -------------------------------------------------------------------------------- |
-| `docs/spec/actors.md`                 | Spec    | ⚠️ Has NPC data model but marked "Draft"                                          |
+| `docs/spec/actors.md`                 | Spec    | ✅ Final — NPC data model, behavior system, memory system defined                                          |
 | `.plan/epics/epic-world-locations.md` | Epic    | ⚠️ Covers NPC placement/migration but NPCs are a sub-topic, not the primary focus |
 | `.plan/tickets/TASK-npc-*.md`         | Tickets | ❌ No dedicated NPC tickets found                                                |
 
@@ -161,16 +161,16 @@
 
 ### Gaps & Issues
 
-1. **No `docs/spec/chat-privacy.md`** — The access-model-clarification.md covers ownership model and permission matrix but doesn't define what makes a chat "private" vs "public" in terms of data visibility, message persistence, and access control.
-2. **Chat visibility model is incomplete** — The access model defines Master/GM/Member/Observer/Anonymous roles but doesn't cover all chat visibility scenarios (e.g., world-public chats, location-specific chats, private groups).
-3. **No spec for chat privacy levels** — Should there be a formal privacy level enum (public, private, world, location, group) with clear rules for each?
-4. **Message visibility in private vs public chats** — Not specified. Do private chat messages have different retention policies? Can public chat messages be exported differently?
+1. `docs/spec/chat-privacy.md` ✅ Final — privacy levels, access control, visibility rules defined** — The access-model-clarification.md covers ownership model and permission matrix but doesn't define what makes a chat "private" vs "public" in terms of data visibility, message persistence, and access control.
+2. Chat visibility model coverage needs review** — The access model defines Master/GM/Member/Observer/Anonymous roles but doesn't cover all chat visibility scenarios (e.g., world-public chats, location-specific chats, private groups).
+3. ✅ Resolved — chat privacy spec created** — Should there be a formal privacy level enum (public, private, world, location, group) with clear rules for each?
+4. ⚠️ Message visibility rules still need detail in private vs public chats** — Not specified. Do private chat messages have different retention policies? Can public chat messages be exported differently?
 5. **Cross-chat character visibility** — When a character is used in a private chat vs public chat, what are the visibility rules for character data (memories, relationships, inventory)?
 
 ### Recommended Actions
 
-- [ ] Create `docs/spec/chat-privacy.md` — privacy levels, access control, visibility rules
-- [ ] Define `ChatPrivacy` enum: `public`, `private`, `world`, `location`, `group`
+- [x] Create `docs/spec/chat-privacy.md` (completed as Final) — privacy levels, access control, visibility rules
+- [x] Define `ChatPrivacy` enum (completed)
 - [ ] Add privacy-level-specific message retention rules
 - [ ] Add character data visibility rules per privacy level
 - [ ] Expand `docs/spec/access-model-clarification.md` with chat-specific rules
