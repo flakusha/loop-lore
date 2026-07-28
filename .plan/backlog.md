@@ -235,10 +235,27 @@ This section contains the actionable task proposals derived from that analysis.
 ### Phase 4 Details — Split oversized epics
 
 Completed sub-epic files (from epic-world-locations.md split):
-- `.plan/epics/epic-world-travel-time.md` — conditions, weather, travel, random generation
-- `.plan/epics/epic-world-npcs.md` — NPC placement, migration, inventories
-- `.plan/epics/epic-world-encounters.md` — anomalies, resources, items, unique places
-- `.plan/epics/epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
+ - `.plan/epics/epic-world-travel-time.md` — conditions, weather, travel, random generation
+ - `.plan/epics/epic-world-npcs.md` — NPC placement, migration, inventories
+ - `.plan/epics/epic-world-encounters.md` — anomalies, resources, items, unique places
+ - `.plan/epics/epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
+
+epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inline but none exist as files yet.
+
+### Gap Analysis & Clarifications (2026-07-28)
+
+#### Gaps Found
+ 1. Missing cross-references from tickets to epics — Some tickets reference epics by number (Epic 14, Epic 17) rather than by file path. New tickets should reference epics by file path.
+ 2. No sub-epic linkbacks — Sub-epic files don't include Parent Epic references.
+ 3. epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inline but none exist as files yet.
+ 4. Vague effort estimates — "Medium" effort means different things across tickets.
+ 5. Acceptance criteria gaps — Cross-mechanics gap tickets have incomplete testable criteria.
+ 6. review-topics.md stale references — Several entries marked as gaps are now resolved.
+
+#### Clarifications Added
+ - Phase Execution Order now marks completed phases (1-3 done, 4 in progress)
+ - Phase 4 details section added with sub-epic status
+ - Phase 5 verification steps documented with pre-existing error notes
 
 ### Phase 5 — Verification
 
