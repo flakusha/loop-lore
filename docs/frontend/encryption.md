@@ -258,12 +258,12 @@ Actors manage keys at `/settings/keys`:
 | Server chat key derivation      | ✅ Built     | `src/crypto/chat-keys.ts`            |
 | Server encrypt/decrypt          | ✅ Built     | `src/crypto/pipeline.ts`             |
 | BYOK (API key at-rest)          | ✅ Built     | `src/crypto/byok.ts`                 |
-| Message route integration       | ❌ Not wired | Message write/read routes            |
-| Key management UI (settings)    | ❌ Not built | `/settings/keys` page                |
-| Key distribution (group)        | ❌ Not built | New participant joins encrypted chat |
-| Key rotation auto-trigger       | ❌ Not built | `KEY_ROTATION_DAYS` cron             |
-| Key revocation UI               | ❌ Not built | Revoke confirm dialog                |
-| Anonymous mode                  | ❌ Not built | `ANONYMOUS_CHAT=true`                |
+| Message route integration       | ✅ Wired     | `src/routes/messages.ts`             |
+| Key management UI (settings)    | ✅ Built     | `src/views/settings.html`            |
+| Key distribution (group)        | ✅ Built     | `src/crypto/key-distribution.ts`     |
+| Key rotation auto-trigger       | ✅ Built     | `src/crypto/key-rotation.ts`         |
+| Key revocation UI               | ✅ Built     | `src/views/settings.html`            |
+| Anonymous mode                  | ✅ Built     | `src/crypto/anonymous.ts`            |
 
 ---
 
