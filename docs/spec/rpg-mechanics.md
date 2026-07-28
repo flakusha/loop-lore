@@ -2303,7 +2303,7 @@ The GM can optionally require approval for player-to-player trades
 
 | Document                  | Covers                                     |
 | ------------------------- | ------------------------------------------ |
-| `docs/character-setup.md` | Character card system, format support      |
+| `docs/spec/character-spec.md` | Character card system, format support      |
 | `docs/actors.md`          | Actor data model, item tables              |
 | `docs/schema.md`          | Database schema                            |
 | `docs/story/`             | Story system, quests, events               |
