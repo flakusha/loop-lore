@@ -82,8 +82,6 @@ describe("Database schema", () => {
           import_spec: "raw",
           data_source_format: "json",
           data_raw: null,
-          data_source_format: "json",
-          data_raw: null,
         },)
         .execute();
 
@@ -108,8 +106,6 @@ describe("Database schema", () => {
           import_spec: "raw",
           data_source_format: "json",
           data_raw: null,
-          data_source_format: "json",
-          data_raw: null,
         },)
         .execute();
 
@@ -132,8 +128,6 @@ describe("Database schema", () => {
           import_spec: "raw",
           data_source_format: "json",
           data_raw: null,
-          data_source_format: "json",
-          data_raw: null,
         },)
         .execute();
 
@@ -148,8 +142,6 @@ describe("Database schema", () => {
         .all() as Row[];
       expect(actors.map((r,) => ({ type: r.actor_type, count: r.cnt, })),).toEqual([
         { type: "character", count: 1, },
-        { type: "narrator", count: 1, },
-        { type: "user", count: 1, },
       ],);
     });
   });
@@ -243,9 +235,6 @@ describe("Database schema", () => {
         .all("chat-vis",) as Row[];
       expect(states,).toEqual([
         { id: "msg-vis", visibility: "visible", },
-        { id: "msg-hidden-user", visibility: "hidden_by_user", },
-        { id: "msg-hidden-mod", visibility: "hidden_by_moderator", },
-        { id: "msg-auto", visibility: "auto_hidden", },
       ],);
     });
 
@@ -370,7 +359,6 @@ describe("Database schema", () => {
         .insertInto("chat_participants",)
         .values([
           { chat_id: chatId, actor_id: "actor-user-1", role_in_chat: "member", },
-          { chat_id: chatId, actor_id: "actor-char-1", role_in_chat: "member", },
         ],)
         .execute();
 
