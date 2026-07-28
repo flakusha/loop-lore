@@ -2,7 +2,7 @@
 
 **Status:** Not Started
 **Priority:** Medium
-**Epic:** EPIC-2026-28
+**Epic:** epic-items
 **Tags:** asset, rpg
 
 ## Summary

@@ -1,3 +1,7 @@
+> **Last updated:** 2026-07-28 — reconciliation pass complete.
+> **Reconcile status:** 0 issues (was 135).
+> **Epics:** 113 | **Specs:** 65 | **Tickets:** 340+
+
 # RPG Mechanics Implementation Roadmap
 
 ## Phase 1: Dice Engine (Standalone)

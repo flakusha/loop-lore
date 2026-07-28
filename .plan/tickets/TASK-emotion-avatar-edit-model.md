@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-avatar-expression
+**Epic:** epic-character-core-system
 
 ## Summary
 

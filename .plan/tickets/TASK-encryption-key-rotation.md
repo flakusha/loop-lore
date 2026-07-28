@@ -1,8 +1,9 @@
 # TASK: Encryption — Key Rotation (Auto + Manual)
 
-**Status:** ⬜ Not Started
+**Status:** 🟨 Partial (manual done, auto missing)
 **Priority:** Medium
 **Effort:** Med
+**Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-group-key-distribution
 
@@ -18,11 +19,12 @@ Automatic key rotation based on `KEY_ROTATION_DAYS` config, plus manual rotation
 
 ## Tasks
 
+- [x] `src/crypto/actor-keys.ts` — `rotateActorKey()` (manual rotation)
+- [x] `src/routes/key-management.ts` — `POST /api/keys/:id/rotate` endpoint
 - [ ] Add `KEY_ROTATION_DAYS` to config schema (default: 90)
 - [ ] Add `key_rotated_at` column to `chat_keys` table
 - [ ] Create `src/crypto/key-rotation.ts` — rotation logic
 - [ ] Auto-rotation: cron/timer checks for expired keys
-- [ ] Manual rotation: `POST /api/chats/:id/rotate-key`
 - [ ] Re-encryption pipeline: async batch re-encrypt old messages
 - [ ] Rotation notification: inform participants of key change
 - [ ] Add tests: auto-rotation trigger, manual rotation, re-encryption
@@ -42,3 +44,7 @@ Automatic key rotation based on `KEY_ROTATION_DAYS` config, plus manual rotation
 ## Risk
 
 Med — async re-encryption performance, concurrent access during rotation.
+
+## Linked Epics
+
+- `epic-crypto.md`
