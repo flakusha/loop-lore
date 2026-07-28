@@ -3,6 +3,34 @@ import type { ChatState, GroupedMessage, } from "./types";
 const getMarked = () => globalThis.__marked;
 const getDOMPurify = () => globalThis.__DOMPurify;
 
+/** Cache for anonymous mode status */
+let _anonymousModeEnabled = false;
+
+/**
+ * Check if anonymous mode is enabled on the server.
+ * Caches the result after first check.
+ */
+export async function initAnonymousModeCheck(): Promise<void> {
+  try {
+    const res = await fetch("/api/encryption/status", { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const data = await res.json();
+      _anonymousModeEnabled = data.anonymousMode ?? false;
+    } else {
+      _anonymousModeEnabled = false;
+    }
+  } catch {
+    _anonymousModeEnabled = false;
+  }
+}
+
+/**
+ * Get cached anonymous mode status.
+ */
+export function isAnonymousMode(): boolean {
+  return _anonymousModeEnabled;
+}
+
 export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   _groupedCache: null as GroupedMessage[] | null,
   _groupedKey: "",
@@ -50,10 +78,16 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     this._reactionPicker.visible = false;
   },
 
-  displayName(msg: { role: string; actor_name?: string },): string {
+  displayName(msg: { role: string; actor_name?: string; actor_id?: string },): string {
     if (msg.role === "user") { return "You"; }
     if (msg.role === "system") { return "System"; }
     if (msg.role === "narration") { return "Narrator"; }
+
+    // In anonymous mode, non-user messages show as "Anonymous"
+    if (_anonymousModeEnabled && msg.role !== "user") {
+      return "Anonymous";
+    }
+
     return msg.actor_name || "Assistant";
   },
 
