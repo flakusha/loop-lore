@@ -21,6 +21,7 @@ import type { Kysely, } from "kysely";
 import { existsSync, readFileSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import type { Config, } from "../config/schema";
+import { deriveChatKeyForChat, getSmk, } from "../crypto";
 import { AssetLinkEntity, AssetVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import {
@@ -54,7 +55,6 @@ import {
   validateMimeType,
 } from "./service";
 import type { AssetRecord, } from "./service";
-import { deriveChatKeyForChat, getSmk, } from "../crypto";
 
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
@@ -64,6 +64,10 @@ export interface UploadOpts {
   database: Kysely<DB>;
   uploadDir: string;
   maxFileSize: number;
+  /** Chat ID for encryption context (optional — public storage when omitted). */
+  chatId?: string;
+  /** App config for encryption settings. */
+  config?: Config;
 }
 interface ServeRawOpts {
   database: Kysely<DB>;
@@ -317,6 +321,8 @@ export async function handleUpload({
   database,
   uploadDir,
   maxFileSize,
+  chatId,
+  config,
 }: UploadOpts,): Promise<Response> {
   const contentType = request.headers.get("content-type",) ?? "";
 
@@ -347,6 +353,27 @@ export async function handleUpload({
 
   const altText = (formData.get("alt_text",) as string) ?? undefined;
 
+  // Wire encryption context when chatId is provided
+  let chatKey: import("../crypto/chat-keys").ChatKey | null = null;
+  const pipelineConfig = config?.encryption
+    ? {
+      threshold: config.encryption.compressThreshold,
+      algorithm: config.encryption.compressAlgorithm,
+    }
+    : undefined;
+
+  if (chatId && config?.encryption?.serverEncryptionKey) {
+    const smk = getSmk();
+    if (smk) {
+      try {
+        chatKey = await deriveChatKeyForChat(database, chatId, smk,);
+      } catch {
+        // Not in an encrypted chat — fall through to public storage
+        chatKey = null;
+      }
+    }
+  }
+
   const asset = await createAsset({
     database,
     input: {
@@ -357,6 +384,10 @@ export async function handleUpload({
       sizeBytes: buffer.length,
       buffer,
       altText,
+      encryptionTier: chatKey ? "standard" : "public",
+      chatKey,
+      keyId: chatKey?.keyId ?? null,
+      pipelineConfig,
     },
     uploadDir,
   },);
@@ -391,7 +422,7 @@ async function handleServeRaw({
       // Get SMK and derive chat key if chatId provided
       const smk = getSmk();
       if (!smk || !chatId) {
-        return new Response("Encrypted asset requires chat context", { status: 400, });
+        return new Response("Encrypted asset requires chat context", { status: 400, },);
       }
 
       const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
@@ -401,14 +432,14 @@ async function handleServeRaw({
         return notFoundResponse("Failed to decrypt asset",);
       }
 
-      return new Response(new Uint8Array(decryptedData), {
+      return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
           "Cache-Control": `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
         },
       },);
-    } catch (error) {
-      return new Response("Failed to decrypt asset", { status: 500, });
+    } catch {
+      return new Response("Failed to decrypt asset", { status: 500, },);
     }
   }
 
@@ -456,7 +487,7 @@ async function handleDownload({
     try {
       const smk = getSmk();
       if (!smk || !chatId) {
-        return new Response("Encrypted asset requires chat context", { status: 400, });
+        return new Response("Encrypted asset requires chat context", { status: 400, },);
       }
 
       const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
@@ -466,14 +497,14 @@ async function handleDownload({
         return notFoundResponse("Failed to decrypt asset",);
       }
 
-      return new Response(new Uint8Array(decryptedData), {
+      return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
           "Content-Disposition": `attachment; filename="${safeName}"`,
         },
       },);
-    } catch (error) {
-      return new Response("Failed to decrypt asset", { status: 500, });
+    } catch {
+      return new Response("Failed to decrypt asset", { status: 500, },);
     }
   }
 
