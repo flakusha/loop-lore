@@ -8,6 +8,7 @@ export interface TelemetryConfig {
   eventsEnabled: boolean;
   frontendEnabled: boolean;
   retentionDays: number;
+  playwrightEnabled?: boolean;
 }
 
 const isDev = process.env.NODE_ENV !== "production";
@@ -30,5 +31,6 @@ export function loadTelemetryConfig(): TelemetryConfig {
     eventsEnabled: resolveFlag(process.env.TELEMETRY_EVENTS_ENABLED, isDev,) || master,
     frontendEnabled: resolveFlag(process.env.TELEMETRY_FRONTEND_ENABLED, isDev,) || master,
     retentionDays: Number(process.env.TELEMETRY_RETENTION_DAYS,) || 90,
+    playwrightEnabled: resolveFlag(process.env.TELEMETRY_PLAYWRIGHT_ENABLED, isDev,),
   };
 }
