@@ -52,10 +52,11 @@ configs/characters/*.yml
 !configs/env.example.yaml
 
 # TODO Remove once confirmed AND agent-related paths
-.opencode/
+.opencode
 .hermes
 .tmp
-.omp/
+.omp
+.serena
 
 # MCPs
 .playwright-mcp/
