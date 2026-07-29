@@ -1,10 +1,13 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { readFileSync, } from "node:fs";
+import { createCharx, } from "../characters/charx";
 import { exportToCcV2Json, } from "../characters/exporters/ccv2";
 import { exportToCcV3Json, } from "../characters/exporters/ccv3";
 import { exportToToml, } from "../characters/exporters/toml";
 import { exportToYaml, } from "../characters/exporters/yaml";
 import type { CanonicalCharacter, } from "../characters/parser";
+import { getMinimalPng, insertCharacterDataIntoPng, } from "../characters/steganography";
 import { ActorType, AgentType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, uid, } from "../utils";
@@ -262,6 +265,69 @@ export function charactersRoutes(opts: HandlerOpts,) {
             headers: {
               "Content-Type": "text/plain; charset=utf-8",
               "Content-Disposition": `attachment; filename="${safeName}.toml"`,
+            },
+          },);
+        }
+        case "png": {
+          const dataObj: Record<string, unknown> = {
+            name: canonical.name,
+            description: canonical.description,
+            personality: canonical.personality,
+            scenario: canonical.scenario,
+            first_mes: canonical.welcome_message,
+            mes_example: canonical.mes_example,
+            system_prompt: canonical.system_prompt,
+            post_history_instructions: canonical.post_history_instructions,
+            creator_notes: canonical.creator_notes,
+            creator: canonical.creator,
+            character_version: canonical.character_version,
+            alternate_greetings: canonical.alternate_greetings,
+            tags: canonical.tags,
+          };
+          const pngBuf = insertCharacterDataIntoPng(getMinimalPng(), dataObj,);
+          return new Response(new Uint8Array(pngBuf,), {
+            headers: {
+              "Content-Type": "image/png",
+              "Content-Disposition": `attachment; filename="${safeName}.png"`,
+            },
+          },);
+        }
+        case "charx": {
+          const v3Data: Record<string, unknown> = {
+            spec: "chara_card_v3",
+            data: {
+              name: canonical.name,
+              description: canonical.description,
+              personality: canonical.personality,
+              scenario: canonical.scenario,
+              first_mes: canonical.welcome_message,
+              mes_example: canonical.mes_example,
+              system_prompt: canonical.system_prompt,
+              post_history_instructions: canonical.post_history_instructions,
+              creator_notes: canonical.creator_notes,
+              creator: canonical.creator,
+              character_version: canonical.character_version,
+              alternate_greetings: canonical.alternate_greetings,
+              tags: canonical.tags,
+            },
+          };
+          // Fetch linked assets for the character
+          const assetRows = await database
+            .selectFrom("asset_links",)
+            .innerJoin("assets", "assets.id", "asset_links.asset_id",)
+            .select(["assets.storage_path", "assets.filename",],)
+            .where("asset_links.entity_type", "=", "actor",)
+            .where("asset_links.entity_id", "=", ctx.params.actorId,)
+            .execute();
+          const assets = assetRows.map((a,) => ({
+            path: a.filename,
+            data: readFileSync(a.storage_path,),
+          })).filter((a,) => a.data.length > 0);
+          const charxBuf = await createCharx(v3Data, assets,);
+          return new Response(new Uint8Array(charxBuf,), {
+            headers: {
+              "Content-Type": "application/zip",
+              "Content-Disposition": `attachment; filename="${safeName}.charx"`,
             },
           },);
         }

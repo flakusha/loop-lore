@@ -12,6 +12,7 @@ import crypto from "node:crypto";
 import { exportToCcV3Json, } from "../characters/exporters/ccv3";
 import { exportToYaml, } from "../characters/exporters/yaml";
 import type { CanonicalCharacter, } from "../characters/parser";
+import { getMinimalPng, insertCharacterDataIntoPng, } from "../characters/steganography";
 import type { DB, } from "../db/schema";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { jsonParseOr, } from "../utils";
@@ -107,6 +108,25 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
             const content = exportToYaml(canonical,);
             charsFolder?.file(`${filename}.yaml`, content,);
             addChecksum(`characters/${filename}.yaml`, content,);
+          } else if (format === "png") {
+            const dataObj: Record<string, unknown> = {
+              name: canonical.name,
+              description: canonical.description,
+              personality: canonical.personality,
+              scenario: canonical.scenario,
+              first_mes: canonical.welcome_message,
+              mes_example: canonical.mes_example,
+              system_prompt: canonical.system_prompt,
+              post_history_instructions: canonical.post_history_instructions,
+              creator_notes: canonical.creator_notes,
+              creator: canonical.creator,
+              character_version: canonical.character_version,
+              alternate_greetings: canonical.alternate_greetings,
+              tags: canonical.tags,
+            };
+            const pngBuf = insertCharacterDataIntoPng(getMinimalPng(), dataObj,);
+            charsFolder?.file(`${filename}.png`, pngBuf,);
+            addChecksum(`characters/${filename}.png`, pngBuf,);
           } else {
             const content = exportToCcV3Json(canonical,);
             charsFolder?.file(`${filename}.json`, content,);
