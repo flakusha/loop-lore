@@ -22,18 +22,24 @@ Partial implementation exists in `src/`. Finishing these is current active work.
 
 Ordered by user impact × effort. Items with partial `src/` code listed first.
 
-| Epic | Item                                                                                  | Effort | Partial Code? | plan.md ref |
-| ---- | ------------------------------------------------------------------------------------- | ------ | ------------- | ----------- |
-| 14   | Import/Export — file-based character import, chat export, PNG steganography, bulk     | Low    | Yes           | Epic 14     |
-| 11   | Admin & Settings — admin middleware, page routes, user prefs modal, plugin management | Med    | Yes           | Epic 11     |
-| 17   | Encryption Foundation — AES-256-GCM, per-user keys, browser-side key derivation       | Med    | Yes           | Epic 17     |
-| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect              | Med    | ✅ Complete   | Epic 10     |
-| 15   | i18n & Accessibility — server-side i18n module, ARIA pass, keyboard nav, 10 locales   | High   | Minimal       | Epic 15     |
+| Epic | Item                                                                                  | Effort | Partial Code? | plan.md ref                               |
+| ---- | ------------------------------------------------------------------------------------- | ------ | ------------- | ----------------------------------------- |
+| 14   | Import/Export — file-based character import, chat export, PNG steganography, bulk     | Low    | Yes           | Epic 14                                   |
+| 11   | Admin & Settings — admin middleware, page routes, user prefs modal, plugin management | Med    | Yes           | Epic 11                                   |
+| 17   | Encryption Foundation — AES-256-GCM, per-user keys, browser-side key derivation       | Med    | Yes           | Epic 17                                   |
+| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect              | Med    | ✅ Complete   | Epic 10                                   |
+| —    | LLM Queue & Scheduling — request queuing, priority scheduling, rate limiting          | Large  | No            | `epic-llm-queue.md`                       |
+| —    | Provider & Plugin Ecosystem — Anthropic/Ollama/Bedrock adapters, plugin mgmt API      | Large  | Partial       | `epic-provider-plugin-ecosystem.md`       |
+| —    | Assistant Generation Extensions — image gen, intent detection, scenario source        | High   | Partial       | `epic-assistant-generation-extensions.md` |
+| —    | ComfyUI Plugin & Workflow Templates — template registry, node discovery, UI           | High   | Partial       | `epic-comfyui-plugin.md`                  |
+| —    | Plugin System & Extensibility — discovery, loading, hooks, overrides, sandboxing      | High   | Partial       | `epic-plugin-system.md`                   |
+| 15   | i18n & Accessibility — server-side i18n module, ARIA pass, keyboard nav, 10 locales   | High   | Minimal       | Epic 15                                   |
 
 ## P2 — Specified, Not Implemented
 
 | Feature                                                                 | Spec                                                                    | Notes                                                                                                              |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| API/Library Distribution Mode                                           | `epic-api-library-distribution.md`                                      | OpenAPI spec, headless mode, npm packages, runtime abstraction                                                     |
 | Multi-format character import (PNG/YAML/TOML/CHARX)                     | `docs/spec/character-spec.md`                                           | Only JSON import works                                                                                             |
 | Impersonation (`chat.impersonate_id`)                                   | `docs/spec/character-spec.md`                                           | Not implemented                                                                                                    |
 | RPG mechanics (dice, stats, combat, XP, loot)                           | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md` | `src/rpg/` does not exist                                                                                          |
@@ -45,8 +51,8 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Message archiving (cascade, restore, purge)                             | `docs/frontend/chat/archiving.md`, `docs/spec/archival-workflow.md`     | Hard delete only                                                                                                   |
 | Memory selection UI (mid-chat panel, pinning, auto-extract)             | `docs/frontend/chat/memories.md`                                        | Backend reads memories; no UI                                                                                      |
 | Server-side i18n middleware (`req.t`)                                   | `docs/frontend/internationalization.md`                                 | Minimal client-side `__()` only                                                                                    |
-| Anthropic/Ollama/Bedrock providers                                      | `docs/spec/provider-system.md`                                          | Only OpenAI-compatible exists                                                                                      |
-| Plugin management API (install/list/enable/disable)                     | `docs/spec/plugin-system.md`                                            | Plugin skeleton loads files; no API                                                                                |
+| Anthropic/Ollama/Bedrock providers                                      | `docs/spec/provider-system.md`                                          | Only OpenAI-compatible exists — now tracked in `epic-provider-plugin-ecosystem.md`                                 |
+| Plugin management API (install/list/enable/disable)                     | `docs/spec/plugin-system.md`                                            | Plugin skeleton loads files; no API — now tracked in `epic-provider-plugin-ecosystem.md`                           |
 | Signed URLs for asset downloads                                         | `docs/spec/assets.md`, `docs/spec/access-model-clarification.md`        | Uses `raw` endpoint with Bearer auth                                                                               |
 | `POST /api/auth/register`                                               | `docs/spec/auth-middleware.md`                                          | Not implemented                                                                                                    |
 | `/api/sessions` routes                                                  | `docs/spec/users-sessions.md`                                           | Not implemented                                                                                                    |
@@ -185,7 +191,15 @@ Items completed and merged to master:
 - **Epic 12 (Memory Foundation)**: ✅ Complete — keyword filtering, type enum, context compaction, A/N injection implemented — merged to master
 - **Epic 13 (Frontend Responsive)**: ✅ Complete — mobile breakpoints, touch targets, keyboard shortcuts, HTMX implemented — merged to master
 - **Epic 19 (Chat Notifications)**: ✅ Complete — cross-chat SSE, read-state schema, unread badge, toast implemented — merged to master
-- **Epic 10 (Generation Foundation)**: ✅ Complete — tool-call loop, provider failover, SSE reconnect implemented — merged to master
+- **Epic 10 (Generation Foundation)**: ✅ Complete — tool-call loop, provider failover, SSE reconnect implemented — merged to master. Remaining scope split into: `epic-llm-queue.md`, `epic-provider-plugin-ecosystem.md`, `epic-assistant-generation-extensions.md`, `epic-comfyui-plugin.md`
+
+### Generation Foundation Reconciliation (2026-07-29)
+
+- Epic 10 scope split — remaining generation work extracted into 4 standalone epics
+- `epic-provider-plugin-ecosystem.md` created (Anthropic/Ollama/Bedrock adapters + plugin management API)
+- `epic-plugin-system.md` added to backlog P1 (was only in P2 creative extensions)
+- Plugin ticket epic references normalized — 5 tickets updated from human-readable names to `epic-plugin-system`
+- 18 generation-related tickets verified across 5 epics
 
 ### Reconciled Fix Tickets (2026-07-28)
 
