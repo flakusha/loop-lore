@@ -209,6 +209,16 @@ All SDKs consume the same OpenAPI-generated types and use the shared
 - [ ] Add TypeScript type tests for all SDKs
 - [ ] Set up monorepo workspace (`packages/`)
 
+## Tasks (API-First Foundation for SDKs)
+
+- [ ] Generate OpenAPI spec from Elysia routes (`/api/openapi.json`)
+- [ ] Add headless mode config (skip frontend middleware)
+- [ ] Implement API versioning (`/api/v1/`, `/api/v2/`)
+- [ ] Add CORS middleware for external origins
+- [ ] Add API key authentication middleware
+- [ ] Create `packages/server/` with importable Elysia app
+- [ ] Document API endpoints in `docs/api/`
+
 ## Files
 
 - `src/elysia-app.ts` — app configuration
@@ -227,3 +237,7 @@ All SDKs consume the same OpenAPI-generated types and use the shared
 ## Linked Tasks
 
 - TASK-headless-alternative-frontends.md
+
+## Related Epics
+
+- **epic-api-library-distribution.md** — SDK packages depend on API-first foundation and library distribution
