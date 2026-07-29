@@ -58,6 +58,15 @@ as an alternative frontend for the headless API. Integration points:
 - [ ] Add Deno Deploy configuration (`deployctl.json`)
 - [ ] Document Fresh.js setup in `docs/spec/deno-support.md`
 
+## Tasks (Deno as Library Consumer)
+
+- [ ] Create `packages/deno/` with Deno-specific adapter
+- [ ] Add `deno.json` import map for `@loop-lore/*` packages
+- [ ] Implement Deno SQLite adapter (replace `bun:sqlite`)
+- [ ] Test `import { createLoopLore } from "@loop-lore/server"` in Deno
+- [ ] Document Deno usage: `deno run --import-map=import_map.json app.ts`
+- [ ] Add Deno Deploy deployment guide
+
 ## Files
 
 - `src/runtime/` — runtime abstraction (does not exist yet)
@@ -69,3 +78,7 @@ as an alternative frontend for the headless API. Integration points:
 ## Linked Tasks
 
 - TASK-deno-support.md
+
+## Related Epics
+
+- **epic-api-library-distribution.md** — Runtime abstraction enables Deno support; Deno adapter is part of library distribution
