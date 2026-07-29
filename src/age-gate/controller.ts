@@ -15,8 +15,9 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
-import { AgeGateMode, UserRole, } from "../db/enums";
+import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { isAdminRole, } from "../middleware/admin-gate";
 import * as AgeGateService from "./service";
 
 import { jsonError, jsonResponse, } from "../routes/http-utils";
@@ -61,13 +62,6 @@ export interface HandleAcceptOpts {
   database: Kysely<DB>;
   userId: string | null;
   body: unknown;
-}
-
-// ── Helper function ──────────────────────────────────────────
-
-/** Check if user role has admin privileges. Solo mode user = admin-equivalent. */
-function hasAdminAccess(userRole: string | null | undefined,): boolean {
-  return userRole === "admin" || userRole === UserRole.Solo;
 }
 
 // ── Route handlers ───────────────────────────────────────────
@@ -139,7 +133,7 @@ export async function handleAccept({ database, userId, body, }: HandleAcceptOpts
  * Returns the current runtime age gate config (admin-only).
  */
 export function handleAdminGetConfig(userRole: string | null | undefined,): Response {
-  if (!hasAdminAccess(userRole,)) {
+  if (!isAdminRole(userRole,)) {
     return jsonError("Forbidden", 403,);
   }
 
@@ -156,7 +150,7 @@ export function handleAdminGetConfig(userRole: string | null | undefined,): Resp
  *   { "enabled": true, "minimumAge": 18, "mode": "self-declaration" }
  */
 export function handleAdminUpdateConfig(userRole: string | null | undefined, body: unknown,): Response {
-  if (!hasAdminAccess(userRole,)) {
+  if (!isAdminRole(userRole,)) {
     return jsonError("Forbidden", 403,);
   }
 
