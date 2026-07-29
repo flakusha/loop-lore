@@ -8,6 +8,11 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { createAsset, detectAssetType, linkAsset, mimeFromExtension, } from "../assets/service";
 import { extractCharx, } from "../characters/charx";
+import {
+  AssetImportError,
+  CharacterValidationError,
+  handleImportExportError,
+} from "../characters/errors";
 import { parseCharacterCard, validateCharacter, } from "../characters/parser";
 import type { CanonicalCharacter, } from "../characters/parser";
 import type { AuthConfig, } from "../config/schema";
@@ -36,10 +41,7 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
   // Validate character
   const validationErrors = validateCharacter(character,);
   if (validationErrors.length > 0) {
-    return jsonError({
-      message: `Validation failed: ${validationErrors.join(", ",)}`,
-      status: HttpStatus.BadRequest,
-    },);
+    throw new CharacterValidationError(validationErrors,);
   }
 
   const id = uid();
@@ -119,9 +121,11 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
         }
       } catch (error) {
         // Log but don't fail import for asset errors
-        warnings.push(
-          `Failed to import asset ${asset.name}: ${error instanceof Error ? error.message : "unknown error"}`,
+        const assetError = new AssetImportError(
+          asset.name,
+          error instanceof Error ? error.message : "unknown error",
         );
+        warnings.push(assetError.message,);
       }
     }
 
@@ -231,6 +235,13 @@ async function handleImport(
         uploadDir,
       },);
     } catch (error) {
+      // Handle structured import errors
+      const handled = handleImportExportError(error,);
+      if (handled.handled) {
+        return handled.response;
+      }
+
+      // Handle other errors
       const parseError = error as { code?: string; message?: string; suggestion?: string };
       return jsonError({
         message: parseError.message ?? "Failed to parse character card",
