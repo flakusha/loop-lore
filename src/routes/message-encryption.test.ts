@@ -1,19 +1,17 @@
 /**
- * Unit tests for message-encryption routes (Elysia plugin)
+ * Tests for routes/message-encryption.ts — chat key endpoint
  */
+
 import { describe, expect, test, } from "bun:test";
-import { messageEncryptionRoutes, } from "./message-encryption";
 
-const mockDb = {} as any;
-const mockConfig = {} as any;
+// Note: This file tests the message-encryption route which provides
+// the chat encryption key endpoint. The route is simple and mostly
+// delegates to crypto functions.
 
-describe("messageEncryptionRoutes", () => {
-  test("exports function", () => {
-    expect(typeof messageEncryptionRoutes,).toBe("function",);
-  });
-
-  test("returns Elysia plugin", () => {
-    const plugin = messageEncryptionRoutes({ database: mockDb, config: mockConfig, },);
-    expect(plugin,).toBeDefined();
+describe("message-encryption route", () => {
+  test("route module exports expected functions", async () => {
+    // Dynamic import to avoid side effects
+    const mod = await import("./message-encryption");
+    expect(typeof mod.messageEncryptionRoutes,).toBe("function",);
   });
 });

@@ -586,6 +586,8 @@ export async function handleGenerate({
                 controller.enqueue(
                   new TextEncoder().encode(sseData({ type: "content", content: chunk.content, },),),
                 );
+                // Append to buffer for SSE reconnect replay
+                buffer.append("stream-update", accumulatedContent,);
               } else if (chunk.type === "thinking" && chunk.content) {
                 accumulatedThinking += chunk.content;
                 _roundThinking += chunk.content;
@@ -678,6 +680,8 @@ export async function handleGenerate({
           aiContent: result.content,
         }, resolved.provider,);
 
+        // Append final content to buffer for SSE reconnect replay
+        buffer.append("stream-update", accumulatedContent,);
         // Signal done on StreamBuffer for GET /stream/:chatId consumers
         buffer.signalDone();
         scheduleBufferCleanup(input.chatId,);
