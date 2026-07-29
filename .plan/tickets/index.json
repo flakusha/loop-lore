@@ -471,14 +471,15 @@
       "characters"
     ],
     "source": ".plan/tickets/TASK-add-ownership-checks-characters.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "60c2d8f",
-    "hash": "60c2d8f"
+    "hash": "60c2d8f",
+    "resolution": "verified-in-code-by-scout"
   },
   "TASK-AGENCY-STORY-POINTS": {
     "extid": "TASK-AGENCY-STORY-POINTS",
     "type": "TASK",
-    "title": "EPIC: Player Agency — Story Points",
+    "title": "EPIC: Player Agency \u2014 Story Points",
     "label": "task",
     "priority": "medium",
     "epic": "epic-agency-story-points",
@@ -804,7 +805,7 @@
   "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER": {
     "extid": "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER",
     "type": "TASK",
-    "title": "Branch Workflow — dev → stg → master",
+    "title": "Branch Workflow \u2014 dev \u2192 stg \u2192 master",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1052,7 +1053,7 @@
   "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC": {
     "extid": "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC",
     "type": "TASK",
-    "title": "Chat Backgrounds — Static/Dynamic with Location Sync",
+    "title": "Chat Backgrounds \u2014 Static/Dynamic with Location Sync",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1108,7 +1109,7 @@
   "TASK-CHAT-FLOW-SECTION-NAVIGATION": {
     "extid": "TASK-CHAT-FLOW-SECTION-NAVIGATION",
     "type": "TASK",
-    "title": "Chat Flow — Section Navigation & Story Spanning",
+    "title": "Chat Flow \u2014 Section Navigation & Story Spanning",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1141,7 +1142,7 @@
     "hash": "pending",
     "extid": "TASK-smart-context-pruning",
     "type": "TASK",
-    "title": "Conversation Branching — Tree-Based Chat History",
+    "title": "Conversation Branching \u2014 Tree-Based Chat History",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1205,7 +1206,7 @@
   "TASK-DATA-INTEGRITY-ACID": {
     "extid": "TASK-DATA-INTEGRITY-ACID",
     "type": "TASK",
-    "title": "Epic 27: Data Integrity & ACID Guarantees — Implementation Plan",
+    "title": "Epic 27: Data Integrity & ACID Guarantees \u2014 Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-data-integrity-acid",
@@ -1261,7 +1262,7 @@
     "hash": "pending",
     "extid": "TASK-response-length-control",
     "type": "TASK",
-    "title": "Epic 25: Deployment Topologies & Packaging — Implementation Plan",
+    "title": "Epic 25: Deployment Topologies & Packaging \u2014 Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1274,7 +1275,7 @@
   "TASK-DEV-TOOLING-UPDATES": {
     "extid": "TASK-DEV-TOOLING-UPDATES",
     "type": "TASK",
-    "title": "Dev Tooling Updates — Biome, dprint, stylelint",
+    "title": "Dev Tooling Updates \u2014 Biome, dprint, stylelint",
     "label": "task",
     "priority": "medium (chore)",
     "epic": "",
@@ -1310,7 +1311,7 @@
   "TASK-DYNAMIC-AVATARS-DOTA-STYLE": {
     "extid": "TASK-DYNAMIC-AVATARS-DOTA-STYLE",
     "type": "TASK",
-    "title": "Dynamic Avatars — Dota 2 Style Animated Mugshots",
+    "title": "Dynamic Avatars \u2014 Dota 2 Style Animated Mugshots",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1419,7 +1420,7 @@
   "TASK-EMOTIONS-AVATAR-EDIT-MODEL": {
     "extid": "TASK-EMOTIONS-AVATAR-EDIT-MODEL",
     "type": "TASK",
-    "title": "Emotions Avatar Feature — Edit Model Support",
+    "title": "Emotions Avatar Feature \u2014 Edit Model Support",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1432,7 +1433,7 @@
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
     "extid": "TASK-ENCRYPTION-ACCESS-MANAGEMENT",
     "type": "TASK",
-    "title": "Encryption — Access Management & Time-Based Expiry",
+    "title": "Encryption \u2014 Access Management & Time-Based Expiry",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1442,7 +1443,7 @@
   "TASK-ENCRYPTION-ARCHITECTURE-CLARIFICATION": {
     "extid": "TASK-ENCRYPTION-ARCHITECTURE-CLARIFICATION",
     "type": "TASK",
-    "title": "Encryption Architecture Clarification — Symmetric vs Asymmetric",
+    "title": "Encryption Architecture Clarification \u2014 Symmetric vs Asymmetric",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1452,7 +1453,7 @@
   "TASK-ENCRYPTION-ASSET-ENCRYPTION": {
     "extid": "TASK-ENCRYPTION-ASSET-ENCRYPTION",
     "type": "TASK",
-    "title": "Encryption — Asset Encryption",
+    "title": "Encryption \u2014 Asset Encryption",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1465,7 +1466,7 @@
   "TASK-ENCRYPTION-BROWSER-PRE-ENCRYPT": {
     "extid": "TASK-ENCRYPTION-BROWSER-PRE-ENCRYPT",
     "type": "TASK",
-    "title": "Encryption — Browser Pre-Encrypt Integration",
+    "title": "Encryption \u2014 Browser Pre-Encrypt Integration",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1478,7 +1479,7 @@
   "TASK-ENCRYPTION-GROUP-KEY-DISTRIBUTION": {
     "extid": "TASK-ENCRYPTION-GROUP-KEY-DISTRIBUTION",
     "type": "TASK",
-    "title": "Encryption — Group Key Distribution",
+    "title": "Encryption \u2014 Group Key Distribution",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1488,7 +1489,7 @@
   "TASK-ENCRYPTION-KEY-MANAGEMENT-UI": {
     "extid": "TASK-ENCRYPTION-KEY-MANAGEMENT-UI",
     "type": "TASK",
-    "title": "Encryption — Key Management UI",
+    "title": "Encryption \u2014 Key Management UI",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1501,7 +1502,7 @@
   "TASK-ENCRYPTION-KEY-ROTATION": {
     "extid": "TASK-ENCRYPTION-KEY-ROTATION",
     "type": "TASK",
-    "title": "Encryption — Key Rotation (Auto + Manual)",
+    "title": "Encryption \u2014 Key Rotation (Auto + Manual)",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1511,15 +1512,16 @@
   "TASK-ENCRYPTION-WIRE-MESSAGE-PIPELINE": {
     "extid": "TASK-ENCRYPTION-WIRE-MESSAGE-PIPELINE",
     "type": "TASK",
-    "title": "Encryption — Wire Message Pipeline",
+    "title": "Encryption \u2014 Wire Message Pipeline",
     "label": "task",
     "priority": "high",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-encryption-wire-message-pipeline.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "d5f7337",
-    "hash": "d5f7337"
+    "hash": "d5f7337",
+    "resolution": "verified-in-code-by-scout"
   },
   "TASK-ENEMIES-MONSTERS-SYSTEMS": {
     "extid": "TASK-ENEMIES-MONSTERS-SYSTEMS",
@@ -1561,9 +1563,9 @@
   "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION": {
     "extid": "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 11 Reconciliation — Admin & Settings Already Implemented",
+    "title": "Epic 11 Reconciliation \u2014 Admin & Settings Already Implemented",
     "label": "task",
-    "priority": "—",
+    "priority": "\u2014",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md",
@@ -1574,9 +1576,9 @@
   "TASK-EPIC14-IMPORT-EXPORT-RECONCILIATION": {
     "extid": "TASK-EPIC14-IMPORT-EXPORT-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 14 Reconciliation — Import/Export Already Implemented",
+    "title": "Epic 14 Reconciliation \u2014 Import/Export Already Implemented",
     "label": "task",
-    "priority": "—",
+    "priority": "\u2014",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md",
@@ -1585,7 +1587,7 @@
   "TASK-EPIC17-ENCRYPTION-E2E-EXPANSION": {
     "extid": "TASK-EPIC17-ENCRYPTION-E2E-EXPANSION",
     "type": "TASK",
-    "title": "Epic 17 Expansion — E2E Encryption, Asset Encryption, Access Management",
+    "title": "Epic 17 Expansion \u2014 E2E Encryption, Asset Encryption, Access Management",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1669,9 +1671,10 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-fix-crypto-isolation.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "8948c86",
-    "hash": "8948c86"
+    "hash": "8948c86",
+    "resolution": "verified-in-code-by-scout"
   },
   "TASK-FIX-DB-MIGRATIONS": {
     "extid": "TASK-FIX-DB-MIGRATIONS",
@@ -1684,7 +1687,8 @@
     "source": ".plan/tickets/TASK-fix-db-migrations.md",
     "status": "done",
     "git_issue": "f9eb9b8",
-    "hash": "f9eb9b8"
+    "hash": "f9eb9b8",
+    "resolution": "stale-fix-verified-in-code"
   },
   "TASK-FIX-IMPORT-SSRF": {
     "extid": "TASK-fix-import-ssrf",
@@ -1714,7 +1718,8 @@
       "reactions"
     ],
     "source": ".plan/tickets/TASK-fix-message-reactions-access.md",
-    "status": "open"
+    "status": "done",
+    "resolution": "stale-fix-verified-in-code"
   },
   "TASK-FIX-SERVER-STARTUP-RACE": {
     "extid": "TASK-fix-server-startup-race",
@@ -1728,7 +1733,9 @@
       "db",
       "bug"
     ],
-    "source": ".plan/tickets/TASK-fix-server-startup-race.md"
+    "source": ".plan/tickets/TASK-fix-server-startup-race.md",
+    "status": "done",
+    "resolution": "stale-fix-verified-in-code"
   },
   "TASK-FIX-TURN-NUMBER-DOUBLE-COUNT": {
     "extid": "TASK-fix-turn-number-double-count",
@@ -1742,9 +1749,10 @@
       "bug"
     ],
     "source": ".plan/tickets/TASK-fix-turn-number-double-count.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "bb2423e",
-    "hash": "bb2423e"
+    "hash": "bb2423e",
+    "resolution": "stale-fix-verified-in-code"
   },
   "TASK-FRONTEND-E2E-IMPROVEMENTS-DRAFT": {
     "extid": "TASK-FRONTEND-E2E-IMPROVEMENTS-DRAFT",
@@ -1785,7 +1793,7 @@
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "extid": "TASK-GITHUB-PAGES-VITEPRESS",
     "type": "TASK",
-    "title": "GitHub Pages — VitePress Static Site Hosting",
+    "title": "GitHub Pages \u2014 VitePress Static Site Hosting",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1929,9 +1937,10 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-implement-memory-decay-logic.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "ab3dad5",
-    "hash": "ab3dad5"
+    "hash": "ab3dad5",
+    "resolution": "verified-in-code-by-scout"
   },
   "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS": {
     "extid": "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS",
@@ -1949,7 +1958,7 @@
   "TASK-IMPORT-EXPORT-IO": {
     "extid": "TASK-IMPORT-EXPORT-IO",
     "type": "TASK",
-    "title": "Epic 14: Import/Export & Data Portability — Implementation Plan",
+    "title": "Epic 14: Import/Export & Data Portability \u2014 Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-import-export-io",
@@ -1994,7 +2003,7 @@
     "type": "TASK",
     "title": "Internal & External Flagging",
     "label": "task",
-    "priority": "low (moderation — postpone)",
+    "priority": "low (moderation \u2014 postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-internal-external-flagging.md",
@@ -2222,7 +2231,7 @@
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "extid": "TASK-MULTI-INSTANCE-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 26: Multi-Instance Reconciliation — Implementation Plan",
+    "title": "Epic 26: Multi-Instance Reconciliation \u2014 Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-multi-instance-reconciliation",
@@ -2285,7 +2294,7 @@
   "TASK-NARRATION-PIPELINE": {
     "extid": "TASK-NARRATION-PIPELINE",
     "type": "TASK",
-    "title": "Narration Pipeline — TTS + Ambient + SFX Mix",
+    "title": "Narration Pipeline \u2014 TTS + Ambient + SFX Mix",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2361,7 +2370,7 @@
     "type": "TASK",
     "title": "NSFW Gate & Moderation Events",
     "label": "task",
-    "priority": "low (moderation — postpone)",
+    "priority": "low (moderation \u2014 postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-gate-moderation-events.md",
@@ -2516,7 +2525,9 @@
     "priority": "medium",
     "epic": "epic-observability-telemetry",
     "tags": [],
-    "source": ".plan/tickets/TASK-observability-telemetry.md"
+    "source": ".plan/tickets/TASK-observability-telemetry.md",
+    "status": "in-progress",
+    "notes": "Partial implementation in src/telemetry/ (cleanup.ts, config.ts, service.ts). Ticket status was stale \"Not Started\"."
   },
   "TASK-OPENAPI-DRIVEN-API-REFERENCE": {
     "extid": "TASK-OPENAPI-DRIVEN-API-REFERENCE",
@@ -2556,7 +2567,7 @@
   "TASK-PLATFORM-INTEGRATIONS": {
     "extid": "TASK-PLATFORM-INTEGRATIONS",
     "type": "TASK",
-    "title": "EPIC: Platform Integrations (Draft — TBD)",
+    "title": "EPIC: Platform Integrations (Draft \u2014 TBD)",
     "label": "task",
     "priority": "low",
     "epic": "epic-platform-integrations",
@@ -2657,7 +2668,7 @@
   "TASK-PROMPT-LIBRARY": {
     "extid": "TASK-PROMPT-LIBRARY",
     "type": "TASK",
-    "title": "Prompt Library — Reusable Prompt Templates",
+    "title": "Prompt Library \u2014 Reusable Prompt Templates",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -2750,9 +2761,10 @@
     "epic": "epic-output-control-transforms",
     "tags": [],
     "source": ".plan/tickets/TASK-regex-output-transforms-quick-win.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "770f3fb",
-    "hash": "770f3fb"
+    "hash": "770f3fb",
+    "resolution": "verified-complete-in-backlog"
   },
   "TASK-RELATED-MEMORY-EVENT-INJECTION-HOOKS": {
     "extid": "TASK-related-memory-event-injection-hooks",
@@ -2824,7 +2836,7 @@
   "TASK-RIGGED-MODEL-BUFFER-RENDER": {
     "extid": "TASK-RIGGED-MODEL-BUFFER-RENDER",
     "type": "TASK",
-    "title": "Rigged Model Buffer Render — Pre-rendered Expressions",
+    "title": "Rigged Model Buffer Render \u2014 Pre-rendered Expressions",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -3246,7 +3258,7 @@
   "TASK-TEST-PERFORMANCE-SHARED-STATE": {
     "extid": "TASK-TEST-PERFORMANCE-SHARED-STATE",
     "type": "TASK",
-    "title": "Test Performance — Shared State Ironing",
+    "title": "Test Performance \u2014 Shared State Ironing",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -3354,7 +3366,7 @@
   "TASK-TRAVEL-PARTY-MIGRATION": {
     "extid": "TASK-TRAVEL-PARTY-MIGRATION",
     "type": "TASK",
-    "title": "Travel Mode — Party Migration Between Chats",
+    "title": "Travel Mode \u2014 Party Migration Between Chats",
     "label": "task",
     "priority": "medium",
     "epic": "epic-chat-transfer-location",
@@ -3397,7 +3409,7 @@
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "extid": "TASK-UNIT-TESTS-UNTESTED-BATCH",
     "type": "TASK",
-    "title": "Add Unit Tests — Untested Modules (Batch 2)",
+    "title": "Add Unit Tests \u2014 Untested Modules (Batch 2)",
     "label": "task",
     "priority": "medium",
     "epic": "epic-testing-qa",
@@ -3410,7 +3422,7 @@
     "type": "TASK",
     "title": "User Block, Ban & Shadow",
     "label": "task",
-    "priority": "low (moderation — postpone)",
+    "priority": "low (moderation \u2014 postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-user-block-ban-shadow.md",
@@ -3451,7 +3463,7 @@
   "TASK-VN-BRANCHING-CHOICES": {
     "extid": "TASK-VN-BRANCHING-CHOICES",
     "type": "TASK",
-    "title": "Visual Novel Mode — Branching Choices & Relationship Impact",
+    "title": "Visual Novel Mode \u2014 Branching Choices & Relationship Impact",
     "label": "task",
     "priority": "medium",
     "epic": "epic-immersion-presentation",
@@ -3461,7 +3473,7 @@
   "TASK-VN-DYNAMIC-GENERATION": {
     "extid": "TASK-VN-DYNAMIC-GENERATION",
     "type": "TASK",
-    "title": "Visual Novel Mode — Dynamic Image & Story Generation",
+    "title": "Visual Novel Mode \u2014 Dynamic Image & Story Generation",
     "label": "task",
     "priority": "medium",
     "epic": "epic-visual-novel-mode",
@@ -3471,7 +3483,7 @@
   "TASK-VN-QA-MODE": {
     "extid": "TASK-VN-QA-MODE",
     "type": "TASK",
-    "title": "Visual Novel Mode — Q&A (Question <-> Answer) Mode",
+    "title": "Visual Novel Mode \u2014 Q&A (Question <-> Answer) Mode",
     "label": "task",
     "priority": "medium",
     "epic": "epic-visual-novel-mode",
@@ -3698,7 +3710,13 @@
     "label": "feat",
     "priority": "high",
     "epic": "epic-byok-api-keys",
-    "tags": ["byok", "api-keys", "llm", "providers", "privacy"],
+    "tags": [
+      "byok",
+      "api-keys",
+      "llm",
+      "providers",
+      "privacy"
+    ],
     "source": ".plan/tickets/FEAT-byok-api-keys.md",
     "status": "open"
   },
@@ -3709,7 +3727,15 @@
     "label": "feat",
     "priority": "high",
     "epic": "epic-byok-local-models",
-    "tags": ["byok", "local-models", "wasm", "inference", "llama", "browser", "offline"],
+    "tags": [
+      "byok",
+      "local-models",
+      "wasm",
+      "inference",
+      "llama",
+      "browser",
+      "offline"
+    ],
     "source": ".plan/tickets/FEAT-byok-local-models.md",
     "status": "open"
   }
