@@ -19,3 +19,4 @@ Ongoing code quality improvements — lint rules, type coverage, formatting, and
 ## Linked Epics
 
 - `epic-code-quality.md`
+- `epic-continuous-improvement.md` — active cleanup epic (lint errors, TS error, dist artifact, test failures)
