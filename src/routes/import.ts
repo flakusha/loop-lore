@@ -2,12 +2,16 @@
 //
 // Character import routes.
 // Handles import via multipart upload with auto-detection.
+// Supports CHARX asset auto-import (avatars, audio, etc.).
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { createAsset, detectAssetType, linkAsset, mimeFromExtension, } from "../assets/service";
+import { extractCharx, } from "../characters/charx";
 import { parseCharacterCard, validateCharacter, } from "../characters/parser";
 import type { CanonicalCharacter, } from "../characters/parser";
 import type { AuthConfig, } from "../config/schema";
+import { AssetLinkEntity, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { authenticate, } from "../middleware/auth";
 import { safeJsonStringify, uid, } from "../utils";
@@ -22,10 +26,12 @@ interface ImportActorOpts {
   userId: string;
   rawSource?: string;
   sourceFormat?: string;
+  charxAssets?: { name: string; type: string; data: Buffer }[];
+  uploadDir?: string;
 }
 
 async function importActor(opts: ImportActorOpts,): Promise<Response> {
-  const { character, format, warnings, database, userId, } = opts;
+  const { character, format, warnings, database, userId, charxAssets, uploadDir, } = opts;
 
   // Validate character
   const validationErrors = validateCharacter(character,);
@@ -74,15 +80,71 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
     },)
     .execute();
 
+  // Import CHARX assets (avatars, audio, etc.)
+  if (charxAssets && charxAssets.length > 0 && uploadDir) {
+    let avatarImported = 0;
+    for (const asset of charxAssets) {
+      try {
+        const mime = mimeFromExtension(asset.name,);
+        const assetType = detectAssetType(mime,);
+
+        const assetRecord = await createAsset({
+          database,
+          input: {
+            ownerId: userId,
+            filename: asset.name,
+            mimeType: mime,
+            assetType,
+            sizeBytes: asset.data.length,
+            buffer: asset.data,
+            altText: `${character.name} - ${asset.type}`,
+          },
+          uploadDir,
+        },);
+
+        // Link asset to the imported character
+        const label = asset.type === "avatar" ? "avatar" : asset.type;
+        await linkAsset({
+          database,
+          assetId: assetRecord.id,
+          link: {
+            entityType: AssetLinkEntity.Actor,
+            entityId: id,
+            label,
+          },
+        },);
+
+        if (asset.type === "avatar") {
+          avatarImported++;
+        }
+      } catch (error) {
+        // Log but don't fail import for asset errors
+        warnings.push(
+          `Failed to import asset ${asset.name}: ${error instanceof Error ? error.message : "unknown error"}`,
+        );
+      }
+    }
+
+    if (avatarImported > 0) {
+      warnings.push(`Imported ${avatarImported} avatar(s) from CHARX`,);
+    }
+  }
+
   return jsonCreated({
     id,
     name: character.name,
     format,
     warnings,
+    assets_imported: charxAssets?.length ?? 0,
   },);
 }
 
-async function handleImport(request: Request, database: Kysely<DB>, userId: string,): Promise<Response> {
+async function handleImport(
+  request: Request,
+  database: Kysely<DB>,
+  userId: string,
+  uploadDir?: string,
+): Promise<Response> {
   if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
   const contentType = request.headers.get("content-type",) ?? "";
@@ -102,8 +164,58 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
     const filename = file.name ?? "";
 
     try {
-      // Parse character card with auto-detection
+      // Check for CHARX format (ZIP with card.json)
+      const isCharx = filename.toLowerCase().endsWith(".charx",) ||
+        (fileBytes.length > 4 &&
+          fileBytes[0] === 0x50 && fileBytes[1] === 0x4B &&
+          fileBytes[2] === 0x03 && fileBytes[3] === 0x04);
+
+      if (isCharx) {
+        // Extract CHARX assets
+        const charxResult = await extractCharx(fileBytes,);
+        const charxAssets: { name: string; type: string; data: Buffer }[] = [];
+        for (const asset of charxResult.assets) {
+          if (asset.data !== undefined) {
+            charxAssets.push({
+              name: `${asset.name}.${asset.ext}`,
+              type: asset.type,
+              data: asset.data,
+            },);
+          }
+        }
+
+        // Parse the card from CHARX
+        const cardJsonResult = safeJsonStringify(charxResult.card,);
+        const result = await parseCharacterCard(
+          Buffer.from(cardJsonResult.ok ? cardJsonResult.value : JSON.stringify(charxResult.card,), "utf8",),
+          filename,
+        );
+
+        return await importActor({
+          character: result.character,
+          format: "charx",
+          warnings: result.warnings,
+          database,
+          userId,
+          rawSource: filename,
+          sourceFormat: "charx",
+          charxAssets,
+          uploadDir,
+        },);
+      }
+
+      // Standard parse for non-CHARX formats
       const result = await parseCharacterCard(fileBytes, filename,);
+
+      // For PNG imports, the file itself is the avatar
+      let pngAvatar: { name: string; type: string; data: Buffer } | undefined;
+      if ((result.format === "png-v2" || result.format === "png-v3") && uploadDir) {
+        pngAvatar = {
+          name: `${filename.replace(/\.[^/.]+$/, "",) || "avatar"}.png`,
+          type: "avatar",
+          data: fileBytes,
+        };
+      }
 
       // Import the character
       const rawSource = fileBytes.toString("utf8",);
@@ -115,6 +227,8 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
         userId,
         rawSource,
         sourceFormat: result.format,
+        charxAssets: pngAvatar ? [pngAvatar,] : undefined,
+        uploadDir,
       },);
     } catch (error) {
       const parseError = error as { code?: string; message?: string; suggestion?: string };
@@ -128,14 +242,18 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
   return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest, },);
 }
 
-export function importRoutes({ database, config, }: { database: Kysely<DB>; config: { auth: AuthConfig } },): Elysia {
+export function importRoutes(
+  { database, config, }: { database: Kysely<DB>; config: { auth: AuthConfig; assets?: { uploadDir?: string } } },
+): Elysia {
+  const uploadDir = config.assets?.uploadDir;
+
   return new Elysia({ name: "import", },).onRequest(async (ctx: any,) => {
     const url = new URL(ctx.request.url,);
     if (ctx.request.method === "POST" && url.pathname === "/api/actors/import") {
       // onRequest runs before .derive(), so we must authenticate directly
       const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
       if (authResult instanceof Response) { return authResult; }
-      return handleImport(ctx.request, database, authResult.context.userId!,);
+      return handleImport(ctx.request, database, authResult.context.userId!, uploadDir,);
     }
   },) as unknown as Elysia;
 }
