@@ -9,9 +9,7 @@ export function exportToPng(character: any,): Buffer {
   const pngBase = getMinimalPng();
 
   // Insert character data into PNG (both V2 and V3 chunks)
-  const pngWithData = insertCharacterDataIntoPng(pngBase, character.data,);
-
-  return pngWithData;
+  return insertCharacterDataIntoPng(pngBase, character.data,);
 }
 
 /**
