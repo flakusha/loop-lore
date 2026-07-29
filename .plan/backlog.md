@@ -187,6 +187,25 @@ Items completed and merged to master:
 - **Epic 19 (Chat Notifications)**: ✅ Complete — cross-chat SSE, read-state schema, unread badge, toast implemented — merged to master
 - **Epic 10 (Generation Foundation)**: ✅ Complete — tool-call loop, provider failover, SSE reconnect implemented — merged to master
 
+### Reconciled Fix Tickets (2026-07-28)
+
+- **TASK-fix-server-startup-race**: ✅ Stale — `runMigrations()` before `serve()` already in `src/server.ts:355-359`
+- **TASK-fix-turn-number-double-count**: ✅ Stale — `debugActorId` conditional already in `src/story/game-master.ts:259`
+- **TASK-fix-message-reactions-access**: ✅ Stale — owner+participant check already in `src/routes/message-reactions.ts:148-183`
+- **TASK-fix-db-migrations**: ✅ Stale — `down()` functions already in migrations 024 and 025
+
+### Reconciled Quick-Win Tickets (2026-07-28)
+
+- **TASK-regex-output-transforms-quick-win**: ✅ Complete — regex transforms implemented in `src/`
+- **TASK-context-window-monitor**: ✅ Complete (was already marked done)
+- **TASK-smart-context-pruning**: ✅ Complete (was already marked done)
+- **TASK-quick-regen-button**: ✅ Complete (was already marked done)
+- **TASK-response-length-control**: ✅ Complete (was already marked done)
+- **TASK-wire-context-pruning**: ✅ Complete (was already marked done)
+
+### Observability Status Correction (2026-07-28)
+
+- **TASK-observability-telemetry**: Updated to in-progress — `src/telemetry/` has 3 files (cleanup.ts, config.ts, service.ts). Ticket was stale "Not Started".
 
 ---
 
@@ -198,31 +217,32 @@ This section contains the actionable task proposals derived from that analysis.
 ### Actionable Task Proposals
 
 #### Priority 1 - Close Critical Spec Gaps
-| Task | Spec File | Status |
-| --- | --- | --- |
-| Finalize social-interaction spec | docs/spec/social-interaction.md | ✅ Done
-| Finalize chat-privacy spec | docs/spec/chat-privacy.md | ✅ Done
-| Finalize worlds spec | docs/spec/worlds.md | ✅ Done
-| Finalize items/inventory specs | docs/spec/items.md, docs/spec/inventory.md | ✅ Done
-| Create attachment-moderation spec | docs/spec/attachment-moderation.md | ✅ Done
-| Create character-migration spec | docs/spec/character-migration.md | ✅ Done
-| Create licensing spec | docs/spec/licensing.md | ✅ Done
+
+| Task                              | Spec File                                  | Status  |
+| --------------------------------- | ------------------------------------------ | ------- |
+| Finalize social-interaction spec  | docs/spec/social-interaction.md            | ✅ Done |
+| Finalize chat-privacy spec        | docs/spec/chat-privacy.md                  | ✅ Done |
+| Finalize worlds spec              | docs/spec/worlds.md                        | ✅ Done |
+| Finalize items/inventory specs    | docs/spec/items.md, docs/spec/inventory.md | ✅ Done |
+| Create attachment-moderation spec | docs/spec/attachment-moderation.md         | ✅ Done |
+| Create character-migration spec   | docs/spec/character-migration.md           | ✅ Done |
+| Create licensing spec             | docs/spec/licensing.md                     | ✅ Done |
 
 #### Priority 2 - Cross-Mechanics Gap Tickets (from integration matrix)
 
-| Gap ID | Systems | Proposed Ticket |
-| --- | --- | --- |
-| G1 | Battle + Items | TASK-battle-item-integration |
-| G2 | Battle + Social | TASK-battle-social-chests |
-| G3 | Battle + NPC/Actor | TASK-battle-npc-ai |
-| G4 | Battle + Weather | TASK-battle-environment |
-| G5 | Resolution + all combat/social/magic | TASK-resolution-integration |
-| G6 | NSFW + Housing | TASK-nsfw-housing |
-| G7 | NSFW + Weather | TASK-nsfw-weather |
-| G8 | NSFW + Social | TASK-nsfw-social |
-| G9 | NSFW + Disease | TASK-nsfw-disease |
-| G10 | Housing + Companion | TASK-housing-companion |
-| G11 | Crafting + Magic | TASK-crafting-enchanting |
+| Gap ID | Systems                              | Proposed Ticket              |
+| ------ | ------------------------------------ | ---------------------------- |
+| G1     | Battle + Items                       | TASK-battle-item-integration |
+| G2     | Battle + Social                      | TASK-battle-social-chests    |
+| G3     | Battle + NPC/Actor                   | TASK-battle-npc-ai           |
+| G4     | Battle + Weather                     | TASK-battle-environment      |
+| G5     | Resolution + all combat/social/magic | TASK-resolution-integration  |
+| G6     | NSFW + Housing                       | TASK-nsfw-housing            |
+| G7     | NSFW + Weather                       | TASK-nsfw-weather            |
+| G8     | NSFW + Social                        | TASK-nsfw-social             |
+| G9     | NSFW + Disease                       | TASK-nsfw-disease            |
+| G10    | Housing + Companion                  | TASK-housing-companion       |
+| G11    | Crafting + Magic                     | TASK-crafting-enchanting     |
 
 #### Phase Execution Order
 
@@ -235,34 +255,36 @@ This section contains the actionable task proposals derived from that analysis.
 ### Phase 4 Details — Split oversized epics
 
 Completed sub-epic files (from epic-world-locations.md split):
- - `.plan/epics/epic-world-travel-time.md` — conditions, weather, travel, random generation
- - `.plan/epics/epic-world-npcs.md` — NPC placement, migration, inventories
- - `.plan/epics/epic-world-encounters.md` — anomalies, resources, items, unique places
- - `.plan/epics/epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
+
+- `.plan/epics/epic-world-travel-time.md` — conditions, weather, travel, random generation
+- `.plan/epics/epic-world-npcs.md` — NPC placement, migration, inventories
+- `.plan/epics/epic-world-encounters.md` — anomalies, resources, items, unique places
+- `.plan/epics/epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
 
 epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inline but none exist as files yet.
 
 ### Gap Analysis & Clarifications (2026-07-28)
 
 #### Gaps Found
- 1. Missing cross-references from tickets to epics — Some tickets reference epics by number (Epic 14, Epic 17) rather than by file path. New tickets should reference epics by file path.
- 2. No sub-epic linkbacks — Battle sub-epics (battle-core, battle-ui, battle-utilities, trading-inventory, spells-skills) lack Parent Epic linkbacks; world sub-epics already have them.
- 3. epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inline but none exist as files yet.
- 4. Vague effort estimates — "Medium" effort means different things across tickets.
- 5. Acceptance criteria gaps — Cross-mechanics gap tickets have incomplete testable criteria.
- 6. review-topics.md stale references — Several entries marked as gaps are now resolved.
+
+1. Missing cross-references from tickets to epics — Some tickets reference epics by number (Epic 14, Epic 17) rather than by file path. New tickets should reference epics by file path.
+2. No sub-epic linkbacks — Battle sub-epics (battle-core, battle-ui, battle-utilities, trading-inventory, spells-skills) lack Parent Epic linkbacks; world sub-epics already have them.
+3. epic-battle-action-systems.md split not yet applied — 5 sub-epics defined inline but none exist as files yet.
+4. Vague effort estimates — "Medium" effort means different things across tickets.
+5. Acceptance criteria gaps — Cross-mechanics gap tickets have incomplete testable criteria.
+6. review-topics.md stale references — Several entries marked as gaps are now resolved.
 
 #### Clarifications Added
- - Phase Execution Order now marks completed phases (1-3 done, 4 in progress)
- - Phase 4 details section added with sub-epic status
- - Phase 5 verification steps documented with pre-existing error notes
+
+- Phase Execution Order now marks completed phases (1-3 done, 4 in progress)
+- Phase 4 details section added with sub-epic status
+- Phase 5 verification steps documented with pre-existing error notes
 
 ### Phase 5 — Verification
 
 - `bun run check` (pre-existing TS errors in `src/routes/export.test.ts` and `src/routes/import.ts` unrelated)
 - `bun test src/`
 - `bun run docs:gen` (no such script — epics.md is canonical auto-generated index)
-
 
 ## Creative Studio MVP (Tier 1)
 
