@@ -126,7 +126,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(activityRoutes(handleOpts,),);
   app.use(activityStreamRoutes(handleOpts,),);
   app.use(notificationsRoutes(handleOpts,),);
-app.use(blogRoutes(handleOpts,),);
+  app.use(blogRoutes(handleOpts,),);
   app.use(apiKeysRoutes(handleOpts,),);
   app.use(settingsRoutes(handleOpts,),);
   app.use(messageEncryptionRoutes(handleOpts,),);
@@ -190,12 +190,15 @@ app.use(blogRoutes(handleOpts,),);
       return notFoundResponse("Asset system is disabled",);
     }
     const { handleUpload, } = await import("./assets/controller");
+    const chatId = (ctx.query?.chatId as string) ?? undefined;
     return handleUpload({
       request: ctx.request,
       userId,
       database,
       uploadDir: config.assets.uploadDir,
       maxFileSize: config.assets.maxFileSize,
+      chatId,
+      config,
     },);
   },);
 
