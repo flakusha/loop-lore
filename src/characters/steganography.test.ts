@@ -4,7 +4,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { deflateSync, } from "node:zlib";
-import { extractCharacterDataFromPng, } from "./steganography";
+import { extractCharacterDataFromPng, getMinimalPng, insertCharacterDataIntoPng, } from "./steganography";
 
 const PNG_SIG = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10,],);
 
@@ -163,5 +163,71 @@ describe("extractCharacterDataFromPng", () => {
   test("returns null when text is not valid JSON", () => {
     const png = pngWithTextChunk("tEXt", "chara", "gibberish{notjson",);
     expect(extractCharacterDataFromPng(png,),).toBeNull();
+  });
+});
+
+describe("insertCharacterDataIntoPng round-trip", () => {
+  const testData: Record<string, unknown> = {
+    name: "RoundTrip",
+    description: "A round-trip test character",
+    personality: "Friendly",
+    scenario: "Testing",
+    first_mes: "Hello!",
+    mes_example: "",
+    system_prompt: "",
+    creator_notes: "",
+    creator: "Tester",
+    character_version: "1.0",
+    alternate_greetings: [],
+    tags: ["test",],
+  };
+
+  test("writes and extracts V2 card from minimal PNG", () => {
+    const png = insertCharacterDataIntoPng(getMinimalPng(), testData,);
+    const result = extractCharacterDataFromPng(png,);
+    expect(result,).not.toBeNull();
+    expect(result!.spec,).toBe("chara_card_v2",);
+    expect((result!.data as { name: string }).name,).toBe("RoundTrip",);
+  });
+
+  test("V2 is returned even when both V2+V3 chunks are present", () => {
+    const png = insertCharacterDataIntoPng(getMinimalPng(), testData,);
+    const result = extractCharacterDataFromPng(png,);
+    expect(result,).not.toBeNull();
+    // V3 uses the ccv3 chunk; extract returns V2 first (chara chunk)
+    // but the V3 chunk is also present in the PNG
+    expect(result!.spec,).toBe("chara_card_v2",);
+  });
+
+  test("preserves all character data fields through round-trip", () => {
+    const png = insertCharacterDataIntoPng(getMinimalPng(), testData,);
+    const result = extractCharacterDataFromPng(png,);
+    expect(result,).not.toBeNull();
+    const d = result!.data;
+    expect(d.name,).toBe("RoundTrip",);
+    expect(d.description,).toBe("A round-trip test character",);
+    expect(d.personality,).toBe("Friendly",);
+    expect(d.creator,).toBe("Tester",);
+    expect(d.character_version,).toBe("1.0",);
+    expect(d.alternate_greetings,).toEqual([],);
+    expect(d.tags,).toEqual(["test",],);
+  });
+
+  test("produces valid PNG (correct signature)", () => {
+    const png = insertCharacterDataIntoPng(getMinimalPng(), testData,);
+    expect(png.subarray(0, 4,).toString("hex",),).toBe("89504e47",);
+  });
+
+  test("throws for non-PNG input", () => {
+    expect(() => insertCharacterDataIntoPng(Buffer.from("not a png",), testData,)).toThrow("Invalid PNG",);
+  });
+
+  test("getMinimalPng returns valid PNG signature", () => {
+    const png = getMinimalPng();
+    expect(png.length,).toBeGreaterThan(8,);
+    expect(png[0],).toBe(0x89,);
+    expect(png[1],).toBe(0x50,); // P
+    expect(png[2],).toBe(0x4E,); // N
+    expect(png[3],).toBe(0x47,); // G
   });
 });
