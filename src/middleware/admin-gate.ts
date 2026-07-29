@@ -11,7 +11,11 @@ import { UserRole, } from "../db/enums";
 import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
 import type { Middleware, } from "./types";
 
-function isAdminRole(userRole: string | null | undefined,): boolean {
+/**
+ * Check if user role has admin privileges.
+ * Admin role OR solo mode user both have full access.
+ */
+export function isAdminRole(userRole: string | null | undefined,): boolean {
   return userRole === "admin" || userRole === UserRole.Solo;
 }
 
