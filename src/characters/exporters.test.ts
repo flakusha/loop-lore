@@ -51,7 +51,7 @@ describe("exportToCcV2Json", () => {
             case_sensitive: false,
             name: "Test Lore",
             priority: 1,
-            id: "lore-1",
+            id: 1,
             comment: "",
             selective: false,
             constant: false,
@@ -141,7 +141,7 @@ describe("exportToPng", () => {
     // Verify PNG signature
     expect(pngBuffer[0],).toBe(0x89,);
     expect(pngBuffer[1],).toBe(0x50,);
-    expect(pngBuffer[2],).toBe(0x4e,);
+    expect(pngBuffer[2],).toBe(0x4E,);
     expect(pngBuffer[3],).toBe(0x47,);
   });
 
@@ -155,7 +155,7 @@ describe("exportToPng", () => {
     const buffer = Buffer.from(base64, "base64",);
     expect(buffer[0],).toBe(0x89,);
     expect(buffer[1],).toBe(0x50,);
-    expect(buffer[2],).toBe(0x4e,);
+    expect(buffer[2],).toBe(0x4E,);
     expect(buffer[3],).toBe(0x47,);
   });
 });
@@ -221,6 +221,7 @@ describe("round-trip: CCv3", () => {
 describe("round-trip: YAML", () => {
   test("YAML → canonical → YAML preserves data", () => {
     const yaml1 = exportToYaml(testCharacter,);
+    expect(yaml1,).toContain("name: Test Character",);
 
     // Parse YAML back (simplified)
     const canonical: CanonicalCharacter = {
@@ -249,6 +250,7 @@ describe("round-trip: YAML", () => {
 describe("round-trip: TOML", () => {
   test("TOML → canonical → TOML preserves data", () => {
     const toml1 = exportToToml(testCharacter,);
+    expect(toml1,).toContain('name = "Test Character"',);
 
     const canonical: CanonicalCharacter = {
       name: "Test Character",
@@ -274,22 +276,22 @@ describe("round-trip: TOML", () => {
 });
 
 describe("round-trip: PNG", () => {
-  test("PNG → canonical → PNG preserves data", () => {
+  test("PNG → canonical → PNG preserves data", async () => {
     const pngBuffer = exportToPng(testCharacter,);
 
     // Extract character data from PNG
-    const result: ParseResult = parseCharacterCard(pngBuffer,);
+    const result: ParseResult = await parseCharacterCard(pngBuffer,);
 
     expect(result.character.name,).toBe(testCharacter.name,);
     expect(result.character.description,).toBe(testCharacter.description,);
     expect(result.character.personality,).toBe(testCharacter.personality,);
   });
 
-  test("PNG base64 → canonical → PNG preserves data", () => {
+  test("PNG base64 → canonical → PNG preserves data", async () => {
     const base64 = exportToPngBase64(testCharacter,);
     const buffer = Buffer.from(base64, "base64",);
 
-    const result: ParseResult = parseCharacterCard(buffer,);
+    const result: ParseResult = await parseCharacterCard(buffer,);
 
     expect(result.character.name,).toBe(testCharacter.name,);
     expect(result.character.description,).toBe(testCharacter.description,);
