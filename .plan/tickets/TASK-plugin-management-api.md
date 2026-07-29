@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Med
-**Parent:** Epic 2026-11 (Admin & Settings)
+**Epic:** epic-provider-plugin-ecosystem
 **Blocked by:** None
 
 ## Summary
