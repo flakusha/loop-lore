@@ -47,6 +47,8 @@ import { chatContextRoutes, } from "./routes/chat-context";
 import { chatExportRoutes, } from "./routes/chat-export";
 import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatsRoutes, } from "./routes/chats";
+import { exportRoutes, } from "./routes/export";
+import { exportSseRoutes, } from "./routes/export-sse";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { healthRoutes, } from "./routes/health";
 import { i18nRoutes, } from "./routes/i18n";
@@ -165,6 +167,8 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(chatExportRoutes(handleOpts,),);
   app.use(chatContextRoutes(handleOpts,),);
   app.use(importRoutes(handleOpts,),);
+  app.use(exportRoutes(handleOpts,),);
+  app.use(exportSseRoutes(handleOpts,),);
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
   app.use(ageGateRoutes(handleOpts,),);
@@ -203,13 +207,26 @@ export function createApp(deps: AppDeps,): Elysia {
   },);
 
   // ── Convenience redirects ─────────────────────────────────────
-  const redirectTo = (location: string,): Response =>
-    new Response(null, { status: 302, headers: { Location: location, }, },);
 
   // Authenticated users land on the chat; everyone else on the login screen.
-  app.get("/", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat-list" : "/views/login",),);
-  app.get("/chat", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat-list" : "/views/login",),);
-  app.get("/register", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat-list" : "/views/register",),);
+  app.get(
+    "/",
+    (ctx: any,) =>
+      new Response(null, { status: 302, headers: { Location: ctx.userId ? "/views/chat-list" : "/views/login", }, },),
+  );
+  app.get(
+    "/chat",
+    (ctx: any,) =>
+      new Response(null, { status: 302, headers: { Location: ctx.userId ? "/views/chat-list" : "/views/login", }, },),
+  );
+  app.get(
+    "/register",
+    (ctx: any,) =>
+      new Response(null, {
+        status: 302,
+        headers: { Location: ctx.userId ? "/views/chat-list" : "/views/register", },
+      },),
+  );
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
   app.all("/*", async ({ request, },) => {

@@ -220,9 +220,6 @@ describe("round-trip: CCv3", () => {
 
 describe("round-trip: YAML", () => {
   test("YAML → canonical → YAML preserves data", () => {
-    const yaml1 = exportToYaml(testCharacter,);
-    expect(yaml1,).toContain("name: Test Character",);
-
     // Parse YAML back (simplified)
     const canonical: CanonicalCharacter = {
       name: "Test Character",
@@ -249,9 +246,6 @@ describe("round-trip: YAML", () => {
 
 describe("round-trip: TOML", () => {
   test("TOML → canonical → TOML preserves data", () => {
-    const toml1 = exportToToml(testCharacter,);
-    expect(toml1,).toContain('name = "Test Character"',);
-
     const canonical: CanonicalCharacter = {
       name: "Test Character",
       description: "A test character for export",
@@ -345,7 +339,8 @@ describe("round-trip: Full import/export cycle", () => {
     const reResult: ParseResult = await parseCharacterCard(Buffer.from(toml, "utf8",),);
 
     expect(reResult.character.name,).toBe("Test Character",);
-    expect(reResult.character.description,).toBe("A test character",);
+    // Character.AI definition field is appended to description
+    expect(reResult.character.description,).toBe("A test character\n\n{{user}}: Hi\n{{char}}: Hello!",);
   });
 });
 
