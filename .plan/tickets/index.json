@@ -149,6 +149,42 @@
     "git_issue": "4a18214",
     "hash": "4a18214"
   },
+  "FEAT-BYOK-API-KEYS": {
+    "extid": "FEAT-BYOK-API-KEYS",
+    "type": "FEAT",
+    "title": "FEAT BYOK API Keys",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-byok-api-keys",
+    "tags": [
+      "byok",
+      "api-keys",
+      "llm",
+      "providers",
+      "privacy"
+    ],
+    "source": ".plan/tickets/FEAT-byok-api-keys.md",
+    "status": "open"
+  },
+  "FEAT-BYOK-LOCAL-MODELS": {
+    "extid": "FEAT-BYOK-LOCAL-MODELS",
+    "type": "FEAT",
+    "title": "FEAT BYOK Local Models",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-byok-local-models",
+    "tags": [
+      "byok",
+      "local-models",
+      "wasm",
+      "inference",
+      "llama",
+      "browser",
+      "offline"
+    ],
+    "source": ".plan/tickets/FEAT-byok-local-models.md",
+    "status": "open"
+  },
   "FEAT-CHAT-LIFECYCLE-MODERATION": {
     "extid": "FEAT-CHAT-LIFECYCLE-MODERATION",
     "type": "FEAT",
@@ -187,6 +223,28 @@
     "status": "open",
     "git_issue": "989166a",
     "hash": "989166a"
+  },
+  "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION": {
+    "hash": "pending",
+    "extid": "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION",
+    "type": "FEAT",
+    "title": "Config File Separation — Domain Extraction",
+    "label": "feat",
+    "priority": "High",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-config-file-separation-domain-extraction.md"
+  },
+  "FEAT-CONFIG-FILE-SEPARATION-SCHEMAS": {
+    "hash": "pending",
+    "extid": "FEAT-CONFIG-FILE-SEPARATION-SCHEMAS",
+    "type": "FEAT",
+    "title": "Config File Separation — Per-Domain JSON Schemas",
+    "label": "feat",
+    "priority": "High",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-config-file-separation-schemas.md"
   },
   "FEAT-CONFIGURATION-EXTENSIONS-ECE": {
     "extid": "FEAT-CONFIGURATION-EXTENSIONS-ECE",
@@ -459,6 +517,28 @@
     "git_issue": "149948e",
     "hash": "149948e"
   },
+  "TASK-ACHIEVEMENTS": {
+    "hash": "pending",
+    "extid": "TASK-ACHIEVEMENTS",
+    "type": "TASK",
+    "title": "Achievements System",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-achievements",
+    "tags": [],
+    "source": ".plan/tickets/TASK-achievements.md"
+  },
+  "TASK-ACTORS": {
+    "hash": "pending",
+    "extid": "TASK-ACTORS",
+    "type": "TASK",
+    "title": "Actors & Entity System",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-actors",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actors.md"
+  },
   "TASK-ADD-OWNERSHIP-CHECKS-CHARACTERS": {
     "extid": "TASK-add-ownership-checks-characters",
     "type": "TASK",
@@ -479,7 +559,7 @@
   "TASK-AGENCY-STORY-POINTS": {
     "extid": "TASK-AGENCY-STORY-POINTS",
     "type": "TASK",
-    "title": "EPIC: Player Agency \u2014 Story Points",
+    "title": "EPIC: Player Agency — Story Points",
     "label": "task",
     "priority": "medium",
     "epic": "epic-agency-story-points",
@@ -546,6 +626,39 @@
     "status": "open",
     "git_issue": "0aa1e33",
     "hash": "0aa1e33"
+  },
+  "TASK-API-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-API-ROUTES",
+    "type": "TASK",
+    "title": "API Routes Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-api-routes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-api-routes.md"
+  },
+  "TASK-ARCHITECTURE": {
+    "hash": "pending",
+    "extid": "TASK-ARCHITECTURE",
+    "type": "TASK",
+    "title": "Architecture Foundation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-architecture",
+    "tags": [],
+    "source": ".plan/tickets/TASK-architecture.md"
+  },
+  "TASK-ARCHIVAL-WORKFLOW": {
+    "hash": "pending",
+    "extid": "TASK-ARCHIVAL-WORKFLOW",
+    "type": "TASK",
+    "title": "Archival Workflow",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-archival-workflow",
+    "tags": [],
+    "source": ".plan/tickets/TASK-archival-workflow.md"
   },
   "TASK-ARTIFACT-SYSTEM": {
     "extid": "TASK-ARTIFACT-SYSTEM",
@@ -708,6 +821,17 @@
     "git_issue": "b035376",
     "hash": "b035376"
   },
+  "TASK-ASYMMETRIC-KEY-PAIRS": {
+    "hash": "pending",
+    "extid": "TASK-ASYMMETRIC-KEY-PAIRS",
+    "type": "TASK",
+    "title": "Encryption — Asymmetric Key Pairs (True E2E)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asymmetric-key-pairs.md"
+  },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "extid": "TASK-AUDIO-PLAYER-COMPONENT",
     "type": "TASK",
@@ -776,6 +900,50 @@
     "source": ".plan/tickets/TASK-battle-encounter-template-system.md",
     "status": "open"
   },
+  "TASK-BATTLE-ENVIRONMENT": {
+    "hash": "pending",
+    "extid": "TASK-BATTLE-ENVIRONMENT",
+    "type": "TASK",
+    "title": "Battle-Environment Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "Battle & Action Systems, Weather & Environment",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-environment.md"
+  },
+  "TASK-BATTLE-ITEM-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-BATTLE-ITEM-INTEGRATION",
+    "type": "TASK",
+    "title": "Battle-Item Integration",
+    "label": "task",
+    "priority": "High",
+    "epic": "Battle & Action Systems, Item System Extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-item-integration.md"
+  },
+  "TASK-BATTLE-NPC-AI": {
+    "hash": "pending",
+    "extid": "TASK-BATTLE-NPC-AI",
+    "type": "TASK",
+    "title": "Battle NPC AI Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "Battle & Action Systems, NPC Navigation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-npc-ai.md"
+  },
+  "TASK-BATTLE-SOCIAL-CHESTS": {
+    "hash": "pending",
+    "extid": "TASK-BATTLE-SOCIAL-CHESTS",
+    "type": "TASK",
+    "title": "Battle-Social Checks Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "Battle & Action Systems, Social Interaction",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-social-chests.md"
+  },
   "TASK-BATTLE-TEMPLATE-ACTIONS": {
     "extid": "TASK-BATTLE-TEMPLATE-ACTIONS",
     "type": "TASK",
@@ -805,12 +973,23 @@
   "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER": {
     "extid": "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER",
     "type": "TASK",
-    "title": "Branch Workflow \u2014 dev \u2192 stg \u2192 master",
+    "title": "Branch Workflow — dev → stg → master",
     "label": "task",
     "priority": "low",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-branch-workflow-dev-stg-master.md"
+  },
+  "TASK-BYOK-API-KEYS": {
+    "hash": "pending",
+    "extid": "TASK-BYOK-API-KEYS",
+    "type": "TASK",
+    "title": "BYOK API Keys (Bring Your Own Key)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-byok-api-keys",
+    "tags": [],
+    "source": ".plan/tickets/TASK-byok-api-keys.md"
   },
   "TASK-CHARACTER-BUNDLE-RESEARCH": {
     "extid": "TASK-CHARACTER-BUNDLE-RESEARCH",
@@ -1053,7 +1232,7 @@
   "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC": {
     "extid": "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC",
     "type": "TASK",
-    "title": "Chat Backgrounds \u2014 Static/Dynamic with Location Sync",
+    "title": "Chat Backgrounds — Static/Dynamic with Location Sync",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1109,7 +1288,7 @@
   "TASK-CHAT-FLOW-SECTION-NAVIGATION": {
     "extid": "TASK-CHAT-FLOW-SECTION-NAVIGATION",
     "type": "TASK",
-    "title": "Chat Flow \u2014 Section Navigation & Story Spanning",
+    "title": "Chat Flow — Section Navigation & Story Spanning",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1209,7 +1388,7 @@
   "TASK-CHAT-SECTIONING-MULTI-LOCATION": {
     "extid": "TASK-CHAT-SECTIONING-MULTI-LOCATION",
     "type": "TASK",
-    "title": "Chat Sectioning \u2014 Multi-Location Chat Spanning",
+    "title": "Chat Sectioning — Multi-Location Chat Spanning",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1256,6 +1435,17 @@
     "git_issue": "a813daa",
     "hash": "a813daa"
   },
+  "TASK-CI-CD": {
+    "hash": "pending",
+    "extid": "TASK-CI-CD",
+    "type": "TASK",
+    "title": "CI/CD Pipeline",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-cicd-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ci-cd.md"
+  },
   "TASK-CLIENT-SIDE-ENCRYPTION-AES-256-GCM": {
     "extid": "TASK-client-side-encryption-aes-256-gcm",
     "type": "TASK",
@@ -1268,6 +1458,17 @@
     "closed_issue": "TASK-client-side-encryption-aes-256-gcm: Client-Side Encryption (AES-256-GCM)",
     "git_issue": "6195b20",
     "hash": "6195b20"
+  },
+  "TASK-CODE-QUALITY": {
+    "hash": "pending",
+    "extid": "TASK-CODE-QUALITY",
+    "type": "TASK",
+    "title": "Code Quality & Best Practices",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-code-quality.md"
   },
   "TASK-COMBINED-FILTER-SUPPORT": {
     "extid": "TASK-COMBINED-FILTER-SUPPORT",
@@ -1338,10 +1539,43 @@
     "git_issue": "37f151a",
     "hash": "37f151a"
   },
+  "TASK-CONFIG-BACKWARD-COMPAT": {
+    "hash": "pending",
+    "extid": "TASK-CONFIG-BACKWARD-COMPAT",
+    "type": "TASK",
+    "title": "Config Backward Compatibility Layer",
+    "label": "task",
+    "priority": "High",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-backward-compat.md"
+  },
+  "TASK-CONFIG-DOMAIN-LOADER": {
+    "hash": "pending",
+    "extid": "TASK-CONFIG-DOMAIN-LOADER",
+    "type": "TASK",
+    "title": "Config Domain Loader with Merging",
+    "label": "task",
+    "priority": "High",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-domain-loader.md"
+  },
+  "TASK-CONFIG-DOMAIN-VALIDATION": {
+    "hash": "pending",
+    "extid": "TASK-CONFIG-DOMAIN-VALIDATION",
+    "type": "TASK",
+    "title": "Per-Domain Config Validation",
+    "label": "task",
+    "priority": "High",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-domain-validation.md"
+  },
   "TASK-CONFIG-EXTENSIONS": {
     "extid": "TASK-CONFIG-EXTENSIONS",
     "type": "TASK",
-    "title": "Epic: Configuration Extensions \u2014 Extensible Enumerations",
+    "title": "Epic: Configuration Extensions — Extensible Enumerations",
     "label": "task",
     "priority": "medium",
     "epic": "epic-config-extensions",
@@ -1360,6 +1594,28 @@
     "status": "open",
     "git_issue": "42a1319",
     "hash": "42a1319"
+  },
+  "TASK-CONFIG-HOT-RELOAD": {
+    "hash": "pending",
+    "extid": "TASK-CONFIG-HOT-RELOAD",
+    "type": "TASK",
+    "title": "Per-Domain Config Hot-Reload",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-hot-reload.md"
+  },
+  "TASK-CONFIG-MIGRATION-TOOL": {
+    "hash": "pending",
+    "extid": "TASK-CONFIG-MIGRATION-TOOL",
+    "type": "TASK",
+    "title": "Config Migration Tool",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "EPIC-2026-39 (Config File Separation)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-migration-tool.md"
   },
   "TASK-CONTEXT-CUT-MEMORY-PROMOTION": {
     "extid": "TASK-context-cut-memory-promotion",
@@ -1395,7 +1651,7 @@
   "TASK-CONVERSATION-BRANCHING": {
     "extid": "TASK-CONVERSATION-BRANCHING",
     "type": "TASK",
-    "title": "Conversation Branching \u2014 Tree-Based Chat History",
+    "title": "Conversation Branching — Tree-Based Chat History",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1404,6 +1660,17 @@
     "status": "open",
     "git_issue": "392ea44",
     "hash": "392ea44"
+  },
+  "TASK-CRAFTING-ENCHANTING": {
+    "hash": "pending",
+    "extid": "TASK-CRAFTING-ENCHANTING",
+    "type": "TASK",
+    "title": "Crafting-Enchanting Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "Crafting & Professions, Magic & Spell Systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-crafting-enchanting.md"
   },
   "TASK-CRAFTING-PROFESSIONS": {
     "extid": "TASK-CRAFTING-PROFESSIONS",
@@ -1455,10 +1722,76 @@
     "git_issue": "2b2ef12",
     "hash": "2b2ef12"
   },
+  "TASK-CREATIVE-STUDIO-ITEM-MODAL": {
+    "hash": "pending",
+    "extid": "TASK-CREATIVE-STUDIO-ITEM-MODAL",
+    "type": "TASK",
+    "title": "Item Detail Modal",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creative-studio-item-modal.md"
+  },
+  "TASK-CREATIVE-STUDIO-NOTE-MODAL": {
+    "hash": "pending",
+    "extid": "TASK-CREATIVE-STUDIO-NOTE-MODAL",
+    "type": "TASK",
+    "title": "Note Detail Modal",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creative-studio-note-modal.md"
+  },
+  "TASK-CREATIVE-STUDIO-SEARCH-API": {
+    "hash": "pending",
+    "extid": "TASK-CREATIVE-STUDIO-SEARCH-API",
+    "type": "TASK",
+    "title": "Unified Search API Endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creative-studio-search-api.md"
+  },
+  "TASK-CREATIVE-STUDIO-SEARCH-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-CREATIVE-STUDIO-SEARCH-FRONTEND",
+    "type": "TASK",
+    "title": "Unified Search Frontend Page",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creative-studio-search-frontend.md"
+  },
+  "TASK-CREATIVE-STUDIO-TOOLBAR": {
+    "hash": "pending",
+    "extid": "TASK-CREATIVE-STUDIO-TOOLBAR",
+    "type": "TASK",
+    "title": "Creative Toolbar in Chat Input",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creative-studio-toolbar.md"
+  },
+  "TASK-CREATIVE-STUDIO-WORLD-MODAL": {
+    "hash": "pending",
+    "extid": "TASK-CREATIVE-STUDIO-WORLD-MODAL",
+    "type": "TASK",
+    "title": "World/Location Detail Modal",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creative-studio-world-modal.md"
+  },
   "TASK-DATA-INTEGRITY-ACID": {
     "extid": "TASK-DATA-INTEGRITY-ACID",
     "type": "TASK",
-    "title": "Epic 27: Data Integrity & ACID Guarantees \u2014 Implementation Plan",
+    "title": "Epic 27: Data Integrity & ACID Guarantees — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-data-integrity-acid",
@@ -1482,6 +1815,17 @@
     "status": "open",
     "git_issue": "522927b",
     "hash": "522927b"
+  },
+  "TASK-DB-CONTENT-VERSIONING": {
+    "hash": "pending",
+    "extid": "TASK-DB-CONTENT-VERSIONING",
+    "type": "TASK",
+    "title": "db content versioning",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-db-content-versioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-content-versioning.md"
   },
   "TASK-DEDUPE-MESSAGE-ACCESS-CHECKS": {
     "extid": "TASK-dedupe-message-access-checks",
@@ -1513,7 +1857,7 @@
   "TASK-DEPLOYMENT-TOPOLOGIES": {
     "extid": "TASK-DEPLOYMENT-TOPOLOGIES",
     "type": "TASK",
-    "title": "Epic 25: Deployment Topologies & Packaging \u2014 Implementation Plan",
+    "title": "Epic 25: Deployment Topologies & Packaging — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1526,7 +1870,7 @@
   "TASK-DEV-TOOLING-UPDATES": {
     "extid": "TASK-DEV-TOOLING-UPDATES",
     "type": "TASK",
-    "title": "Dev Tooling Updates \u2014 Biome, dprint, stylelint",
+    "title": "Dev Tooling Updates — Biome, dprint, stylelint",
     "label": "task",
     "priority": "medium (chore)",
     "epic": "",
@@ -1562,7 +1906,7 @@
   "TASK-DYNAMIC-AVATARS-DOTA-STYLE": {
     "extid": "TASK-DYNAMIC-AVATARS-DOTA-STYLE",
     "type": "TASK",
-    "title": "Dynamic Avatars \u2014 Dota 2 Style Animated Mugshots",
+    "title": "Dynamic Avatars — Dota 2 Style Animated Mugshots",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1671,7 +2015,7 @@
   "TASK-EMOTIONS-AVATAR-EDIT-MODEL": {
     "extid": "TASK-EMOTIONS-AVATAR-EDIT-MODEL",
     "type": "TASK",
-    "title": "Emotions Avatar Feature \u2014 Edit Model Support",
+    "title": "Emotions Avatar Feature — Edit Model Support",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1684,7 +2028,7 @@
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
     "extid": "TASK-ENCRYPTION-ACCESS-MANAGEMENT",
     "type": "TASK",
-    "title": "Encryption \u2014 Access Management & Time-Based Expiry",
+    "title": "Encryption — Access Management & Time-Based Expiry",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1694,7 +2038,7 @@
   "TASK-ENCRYPTION-ARCHITECTURE-CLARIFICATION": {
     "extid": "TASK-ENCRYPTION-ARCHITECTURE-CLARIFICATION",
     "type": "TASK",
-    "title": "Encryption Architecture Clarification \u2014 Symmetric vs Asymmetric",
+    "title": "Encryption Architecture Clarification — Symmetric vs Asymmetric",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1704,7 +2048,7 @@
   "TASK-ENCRYPTION-ASSET-ENCRYPTION": {
     "extid": "TASK-ENCRYPTION-ASSET-ENCRYPTION",
     "type": "TASK",
-    "title": "Encryption \u2014 Asset Encryption",
+    "title": "Encryption — Asset Encryption",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1714,10 +2058,21 @@
     "git_issue": "78d601d",
     "hash": "78d601d"
   },
+  "TASK-ENCRYPTION-AUTO-KEY-ROTATION": {
+    "hash": "pending",
+    "extid": "TASK-ENCRYPTION-AUTO-KEY-ROTATION",
+    "type": "TASK",
+    "title": "Encryption — Auto-Key Rotation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-encryption-auto-key-rotation.md"
+  },
   "TASK-ENCRYPTION-BROWSER-PRE-ENCRYPT": {
     "extid": "TASK-ENCRYPTION-BROWSER-PRE-ENCRYPT",
     "type": "TASK",
-    "title": "Encryption \u2014 Browser Pre-Encrypt Integration",
+    "title": "Encryption — Browser Pre-Encrypt Integration",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1730,7 +2085,7 @@
   "TASK-ENCRYPTION-GROUP-KEY-DISTRIBUTION": {
     "extid": "TASK-ENCRYPTION-GROUP-KEY-DISTRIBUTION",
     "type": "TASK",
-    "title": "Encryption \u2014 Group Key Distribution",
+    "title": "Encryption — Group Key Distribution",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1740,7 +2095,7 @@
   "TASK-ENCRYPTION-KEY-MANAGEMENT-UI": {
     "extid": "TASK-ENCRYPTION-KEY-MANAGEMENT-UI",
     "type": "TASK",
-    "title": "Encryption \u2014 Key Management UI",
+    "title": "Encryption — Key Management UI",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1753,7 +2108,7 @@
   "TASK-ENCRYPTION-KEY-ROTATION": {
     "extid": "TASK-ENCRYPTION-KEY-ROTATION",
     "type": "TASK",
-    "title": "Encryption \u2014 Key Rotation (Auto + Manual)",
+    "title": "Encryption — Key Rotation (Auto + Manual)",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1763,7 +2118,7 @@
   "TASK-ENCRYPTION-WIRE-MESSAGE-PIPELINE": {
     "extid": "TASK-ENCRYPTION-WIRE-MESSAGE-PIPELINE",
     "type": "TASK",
-    "title": "Encryption \u2014 Wire Message Pipeline",
+    "title": "Encryption — Wire Message Pipeline",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -1774,16 +2129,16 @@
     "hash": "d5f7337",
     "resolution": "verified-in-code-by-scout"
   },
-  "TASK-ENEMIES-MONSTERS-SYSTEMS": {
-    "extid": "TASK-ENEMIES-MONSTERS-SYSTEMS",
+  "TASK-ENEMIES-MONSTERS": {
+    "hash": "pending",
+    "extid": "TASK-ENEMIES-MONSTERS",
     "type": "TASK",
     "title": "Enemies & Monsters Systems",
     "label": "task",
-    "priority": "medium",
-    "epic": "epic-battle-action-systems",
+    "priority": "Medium",
+    "epic": "epic-enemies-monsters",
     "tags": [],
-    "source": ".plan/tickets/TASK-enemies-monsters-systems.md",
-    "status": "open"
+    "source": ".plan/tickets/TASK-enemies-monsters.md"
   },
   "TASK-EPIC-36-LINT-COGNITIVE-COMPLEXITY-MISC": {
     "extid": "TASK-EPIC-36-LINT-COGNITIVE-COMPLEXITY-MISC",
@@ -1814,9 +2169,9 @@
   "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION": {
     "extid": "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 11 Reconciliation \u2014 Admin & Settings Already Implemented",
+    "title": "Epic 11 Reconciliation — Admin & Settings Already Implemented",
     "label": "task",
-    "priority": "\u2014",
+    "priority": "—",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md",
@@ -1827,9 +2182,9 @@
   "TASK-EPIC14-IMPORT-EXPORT-RECONCILIATION": {
     "extid": "TASK-EPIC14-IMPORT-EXPORT-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 14 Reconciliation \u2014 Import/Export Already Implemented",
+    "title": "Epic 14 Reconciliation — Import/Export Already Implemented",
     "label": "task",
-    "priority": "\u2014",
+    "priority": "—",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md",
@@ -1838,12 +2193,23 @@
   "TASK-EPIC17-ENCRYPTION-E2E-EXPANSION": {
     "extid": "TASK-EPIC17-ENCRYPTION-E2E-EXPANSION",
     "type": "TASK",
-    "title": "Epic 17 Expansion \u2014 E2E Encryption, Asset Encryption, Access Management",
+    "title": "Epic 17 Expansion — E2E Encryption, Asset Encryption, Access Management",
     "label": "task",
     "priority": "high",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
+  },
+  "TASK-ERROR-ENVELOPE": {
+    "hash": "pending",
+    "extid": "TASK-ERROR-ENVELOPE",
+    "type": "TASK",
+    "title": "Error Envelope & Error Handling",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-error-envelope",
+    "tags": [],
+    "source": ".plan/tickets/TASK-error-envelope.md"
   },
   "TASK-EXPLORATION-DISCOVERY": {
     "extid": "TASK-EXPLORATION-DISCOVERY",
@@ -2044,7 +2410,7 @@
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "extid": "TASK-GITHUB-PAGES-VITEPRESS",
     "type": "TASK",
-    "title": "GitHub Pages \u2014 VitePress Static Site Hosting",
+    "title": "GitHub Pages — VitePress Static Site Hosting",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -2117,6 +2483,17 @@
     "git_issue": "fd70c95",
     "hash": "fd70c95"
   },
+  "TASK-HOUSING-COMPANION": {
+    "hash": "pending",
+    "extid": "TASK-HOUSING-COMPANION",
+    "type": "TASK",
+    "title": "Housing-Companion Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "Housing & Base Building, Companion Pet & Mount",
+    "tags": [],
+    "source": ".plan/tickets/TASK-housing-companion.md"
+  },
   "TASK-HOUSING-NEIGHBORHOOD": {
     "extid": "TASK-HOUSING-NEIGHBORHOOD",
     "type": "TASK",
@@ -2179,20 +2556,6 @@
     "git_issue": "80c2397",
     "hash": "80c2397"
   },
-  "TASK-IMPLEMENT-MEMORY-DECAY-LOGIC": {
-    "extid": "TASK-IMPLEMENT-MEMORY-DECAY-LOGIC",
-    "type": "TASK",
-    "title": "Implement memory decay logic",
-    "label": "task",
-    "priority": "high",
-    "epic": "epic-crafting-professions",
-    "tags": [],
-    "source": ".plan/tickets/TASK-implement-memory-decay-logic.md",
-    "status": "done",
-    "git_issue": "ab3dad5",
-    "hash": "ab3dad5",
-    "resolution": "verified-in-code-by-scout"
-  },
   "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS": {
     "extid": "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS",
     "type": "TASK",
@@ -2206,10 +2569,21 @@
     "git_issue": "0028efd",
     "hash": "0028efd"
   },
+  "TASK-IMPLEMENTATION": {
+    "hash": "pending",
+    "extid": "TASK-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Implementation Guide",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-implementation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implementation.md"
+  },
   "TASK-IMPORT-EXPORT-IO": {
     "extid": "TASK-IMPORT-EXPORT-IO",
     "type": "TASK",
-    "title": "Epic 14: Import/Export & Data Portability \u2014 Implementation Plan",
+    "title": "Epic 14: Import/Export & Data Portability — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-import-export-io",
@@ -2254,13 +2628,35 @@
     "type": "TASK",
     "title": "Internal & External Flagging",
     "label": "task",
-    "priority": "low (moderation \u2014 postpone)",
+    "priority": "low (moderation — postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-internal-external-flagging.md",
     "status": "open",
     "git_issue": "532218b",
     "hash": "532218b"
+  },
+  "TASK-INVENTORY": {
+    "hash": "pending",
+    "extid": "TASK-INVENTORY",
+    "type": "TASK",
+    "title": "inventory",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-inventory",
+    "tags": [],
+    "source": ".plan/tickets/TASK-inventory.md"
+  },
+  "TASK-IO-FORMATS": {
+    "hash": "pending",
+    "extid": "TASK-IO-FORMATS",
+    "type": "TASK",
+    "title": "I/O Formats",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-io-formats",
+    "tags": [],
+    "source": ".plan/tickets/TASK-io-formats.md"
   },
   "TASK-ITEM-SPEC-PARAMETERS": {
     "extid": "TASK-ITEM-SPEC-PARAMETERS",
@@ -2285,6 +2681,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-item-system-extensions.md",
     "status": "open"
+  },
+  "TASK-LICENSING": {
+    "hash": "pending",
+    "extid": "TASK-LICENSING",
+    "type": "TASK",
+    "title": "Licensing",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-licensing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-licensing.md"
   },
   "TASK-LLM-QUEUE": {
     "extid": "TASK-LLM-QUEUE",
@@ -2324,6 +2731,17 @@
     "closed_issue": "TASK-local-random-event-generator: Local Random Event Generator",
     "git_issue": "36632b3",
     "hash": "36632b3"
+  },
+  "TASK-LOGGING": {
+    "hash": "pending",
+    "extid": "TASK-LOGGING",
+    "type": "TASK",
+    "title": "Logging & Structured Logging",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-logging",
+    "tags": [],
+    "source": ".plan/tickets/TASK-logging.md"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
     "extid": "TASK-MAGIC-SPELL-CRAFTING",
@@ -2453,6 +2871,17 @@
     "git_issue": "6bd88be",
     "hash": "6bd88be"
   },
+  "TASK-MESSAGES": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGES",
+    "type": "TASK",
+    "title": "Messages & Message Pipeline",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-messages",
+    "tags": [],
+    "source": ".plan/tickets/TASK-messages.md"
+  },
   "TASK-MODEL-COMPARISON-REACTIONS": {
     "extid": "TASK-MODEL-COMPARISON-REACTIONS",
     "type": "TASK",
@@ -2482,7 +2911,7 @@
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "extid": "TASK-MULTI-INSTANCE-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 26: Multi-Instance Reconciliation \u2014 Implementation Plan",
+    "title": "Epic 26: Multi-Instance Reconciliation — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-multi-instance-reconciliation",
@@ -2545,7 +2974,7 @@
   "TASK-NARRATION-PIPELINE": {
     "extid": "TASK-NARRATION-PIPELINE",
     "type": "TASK",
-    "title": "Narration Pipeline \u2014 TTS + Ambient + SFX Mix",
+    "title": "Narration Pipeline — TTS + Ambient + SFX Mix",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2568,6 +2997,61 @@
     "git_issue": "8ddbd79",
     "hash": "8ddbd79"
   },
+  "TASK-NPC-BEHAVIOR": {
+    "hash": "pending",
+    "extid": "TASK-NPC-BEHAVIOR",
+    "type": "TASK",
+    "title": "NPC Behavior State Machine",
+    "label": "task",
+    "priority": "High",
+    "epic": "NPC/Actor System, NPC Navigation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-behavior.md"
+  },
+  "TASK-NPC-INVENTORY": {
+    "hash": "pending",
+    "extid": "TASK-NPC-INVENTORY",
+    "type": "TASK",
+    "title": "NPC Inventory and Trading",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "NPC/Actor System, Economy & Trading",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-inventory.md"
+  },
+  "TASK-NPC-MEMORY": {
+    "hash": "pending",
+    "extid": "TASK-NPC-MEMORY",
+    "type": "TASK",
+    "title": "NPC Memory System",
+    "label": "task",
+    "priority": "High",
+    "epic": "NPC/Actor System, Memory & Knowledge Systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-memory.md"
+  },
+  "TASK-NPC-NAVIGATION": {
+    "hash": "pending",
+    "extid": "TASK-NPC-NAVIGATION",
+    "type": "TASK",
+    "title": "NPC Navigation System",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-npc-navigation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-navigation.md"
+  },
+  "TASK-NPCS": {
+    "hash": "pending",
+    "extid": "TASK-NPCS",
+    "type": "TASK",
+    "title": "npcs",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-npcs",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npcs.md"
+  },
   "TASK-NSFW-BODY-PHYSICAL": {
     "extid": "TASK-NSFW-BODY-PHYSICAL",
     "type": "TASK",
@@ -2580,6 +3064,17 @@
     "status": "open",
     "git_issue": "f9e27d1",
     "hash": "f9e27d1"
+  },
+  "TASK-NSFW-DISEASE": {
+    "hash": "pending",
+    "extid": "TASK-NSFW-DISEASE",
+    "type": "TASK",
+    "title": "NSFW-Disease Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "NSFW Game Mechanics, Disease & Poison Systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-disease.md"
   },
   "TASK-NSFW-ENCOUNTER-SYSTEM": {
     "extid": "TASK-NSFW-ENCOUNTER-SYSTEM",
@@ -2621,13 +3116,24 @@
     "type": "TASK",
     "title": "NSFW Gate & Moderation Events",
     "label": "task",
-    "priority": "low (moderation \u2014 postpone)",
+    "priority": "low (moderation — postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-gate-moderation-events.md",
     "status": "open",
     "git_issue": "acdae7a",
     "hash": "acdae7a"
+  },
+  "TASK-NSFW-HOUSING": {
+    "hash": "pending",
+    "extid": "TASK-NSFW-HOUSING",
+    "type": "TASK",
+    "title": "NSFW-Housing Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "NSFW Game Mechanics, Housing & Base Building",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-housing.md"
   },
   "TASK-NSFW-INTIMACY-SYSTEM": {
     "extid": "TASK-NSFW-INTIMACY-SYSTEM",
@@ -2744,6 +3250,17 @@
     "git_issue": "e288126",
     "hash": "e288126"
   },
+  "TASK-NSFW-SOCIAL": {
+    "hash": "pending",
+    "extid": "TASK-NSFW-SOCIAL",
+    "type": "TASK",
+    "title": "NSFW-Social Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "NSFW Game Mechanics, Social Interaction",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-social.md"
+  },
   "TASK-NSFW-SPECIES-MECHANICS": {
     "extid": "TASK-NSFW-SPECIES-MECHANICS",
     "type": "TASK",
@@ -2767,6 +3284,17 @@
     "status": "open",
     "git_issue": "aca19dd",
     "hash": "aca19dd"
+  },
+  "TASK-NSFW-WEATHER": {
+    "hash": "pending",
+    "extid": "TASK-NSFW-WEATHER",
+    "type": "TASK",
+    "title": "NSFW-Weather Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "NSFW Game Mechanics, Weather & Environment",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-weather.md"
   },
   "TASK-OBSERVABILITY-TELEMETRY": {
     "extid": "TASK-OBSERVABILITY-TELEMETRY",
@@ -2815,10 +3343,21 @@
     "source": ".plan/tickets/TASK-output-control-transforms.md",
     "status": "open"
   },
+  "TASK-PARTY-MIGRATION": {
+    "hash": "pending",
+    "extid": "TASK-PARTY-MIGRATION",
+    "type": "TASK",
+    "title": "Party Migration & Travel",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-party-migration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-party-migration.md"
+  },
   "TASK-PLATFORM-INTEGRATIONS": {
     "extid": "TASK-PLATFORM-INTEGRATIONS",
     "type": "TASK",
-    "title": "EPIC: Platform Integrations (Draft \u2014 TBD)",
+    "title": "EPIC: Platform Integrations (Draft — TBD)",
     "label": "task",
     "priority": "low",
     "epic": "epic-platform-integrations",
@@ -2916,10 +3455,21 @@
     "source": ".plan/tickets/TASK-plugin-system.md",
     "status": "open"
   },
+  "TASK-PRECOMPILED-HOT-BINARIES": {
+    "hash": "pending",
+    "extid": "TASK-PRECOMPILED-HOT-BINARIES",
+    "type": "TASK",
+    "title": "Pre-Compiled Hot Binary Modules",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-precompiled-hot-binaries",
+    "tags": [],
+    "source": ".plan/tickets/TASK-precompiled-hot-binaries.md"
+  },
   "TASK-PROMPT-LIBRARY": {
     "extid": "TASK-PROMPT-LIBRARY",
     "type": "TASK",
-    "title": "Prompt Library \u2014 Reusable Prompt Templates",
+    "title": "Prompt Library — Reusable Prompt Templates",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -2952,6 +3502,17 @@
     "status": "open",
     "git_issue": "4da10d6",
     "hash": "4da10d6"
+  },
+  "TASK-QUESTS-ENCOUNTERS": {
+    "hash": "pending",
+    "extid": "TASK-QUESTS-ENCOUNTERS",
+    "type": "TASK",
+    "title": "quests encounters",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-quests-encounters",
+    "tags": [],
+    "source": ".plan/tickets/TASK-quests-encounters.md"
   },
   "TASK-QUICK-REGEN-BUTTON": {
     "extid": "TASK-quick-regen-button",
@@ -3030,6 +3591,17 @@
     "git_issue": "3506045",
     "hash": "3506045"
   },
+  "TASK-RELATIONSHIPS": {
+    "hash": "pending",
+    "extid": "TASK-RELATIONSHIPS",
+    "type": "TASK",
+    "title": "Relationships System Implementation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-relationships",
+    "tags": [],
+    "source": ".plan/tickets/TASK-relationships.md"
+  },
   "TASK-REPETITION-HALLUCINATION-GUARDS": {
     "extid": "TASK-repetition-hallucination-guards",
     "type": "TASK",
@@ -3043,6 +3615,17 @@
     "git_issue": "4cec862",
     "hash": "4cec862"
   },
+  "TASK-REPLAYABILITY": {
+    "hash": "pending",
+    "extid": "TASK-REPLAYABILITY",
+    "type": "TASK",
+    "title": "Replayability System",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-replayability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replayability.md"
+  },
   "TASK-RESOLUTION-FAMILY-DECISION": {
     "extid": "TASK-RESOLUTION-FAMILY-DECISION",
     "type": "TASK",
@@ -3055,6 +3638,17 @@
     "status": "open",
     "git_issue": "8ad130c",
     "hash": "8ad130c"
+  },
+  "TASK-RESOLUTION-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-RESOLUTION-INTEGRATION",
+    "type": "TASK",
+    "title": "Resolution System Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "RPG Mechanics, Battle & Action Systems, Social Interaction, Magic & Spell Systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resolution-integration.md"
   },
   "TASK-RESOLUTION-SYSTEM": {
     "extid": "TASK-RESOLUTION-SYSTEM",
@@ -3087,7 +3681,7 @@
   "TASK-RIGGED-MODEL-BUFFER-RENDER": {
     "extid": "TASK-RIGGED-MODEL-BUFFER-RENDER",
     "type": "TASK",
-    "title": "Rigged Model Buffer Render \u2014 Pre-rendered Expressions",
+    "title": "Rigged Model Buffer Render — Pre-rendered Expressions",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -3262,6 +3856,17 @@
     "source": ".plan/tickets/TASK-rpg-mechanics.md",
     "status": "open"
   },
+  "TASK-RPG-PATTERNS": {
+    "hash": "pending",
+    "extid": "TASK-RPG-PATTERNS",
+    "type": "TASK",
+    "title": "Flexible RPG Patterns",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-patterns",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-patterns.md"
+  },
   "TASK-RPG-PLAYER-AGENCY-STORY-POINTS": {
     "extid": "TASK-RPG-PLAYER-AGENCY-STORY-POINTS",
     "type": "TASK",
@@ -3340,6 +3945,17 @@
     "git_issue": "9bd0f42",
     "hash": "9bd0f42"
   },
+  "TASK-SCHEMA": {
+    "hash": "pending",
+    "extid": "TASK-SCHEMA",
+    "type": "TASK",
+    "title": "Database Schema",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-schema",
+    "tags": [],
+    "source": ".plan/tickets/TASK-schema.md"
+  },
   "TASK-SERVER-SIDE-I18N-MIDDLEWARE": {
     "extid": "TASK-SERVER-SIDE-I18N-MIDDLEWARE",
     "type": "TASK",
@@ -3378,6 +3994,17 @@
     "status": "open",
     "git_issue": "4396076",
     "hash": "4396076"
+  },
+  "TASK-SKILLS": {
+    "hash": "pending",
+    "extid": "TASK-SKILLS",
+    "type": "TASK",
+    "title": "Skills System Implementation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-skills.md"
   },
   "TASK-SMART-CONTEXT-PRUNING": {
     "extid": "TASK-smart-context-pruning",
@@ -3509,7 +4136,7 @@
   "TASK-TEST-PERFORMANCE-SHARED-STATE": {
     "extid": "TASK-TEST-PERFORMANCE-SHARED-STATE",
     "type": "TASK",
-    "title": "Test Performance \u2014 Shared State Ironing",
+    "title": "Test Performance — Shared State Ironing",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -3580,6 +4207,28 @@
     "tags": [],
     "source": ".plan/tickets/TASK-thinking-tag-context-prune.md"
   },
+  "TASK-TIME-SCALE": {
+    "hash": "pending",
+    "extid": "TASK-TIME-SCALE",
+    "type": "TASK",
+    "title": "Time Scale System",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-time-scale",
+    "tags": [],
+    "source": ".plan/tickets/TASK-time-scale.md"
+  },
+  "TASK-TOOLING-IMPROVEMENT": {
+    "hash": "pending",
+    "extid": "TASK-TOOLING-IMPROVEMENT",
+    "type": "TASK",
+    "title": "Tooling Support & Improvement",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-tooling-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-improvement.md"
+  },
   "TASK-TRACK-VOYAGE-INSPIRATION": {
     "extid": "TASK-TRACK-VOYAGE-INSPIRATION",
     "type": "TASK",
@@ -3617,7 +4266,7 @@
   "TASK-TRAVEL-PARTY-MIGRATION": {
     "extid": "TASK-TRAVEL-PARTY-MIGRATION",
     "type": "TASK",
-    "title": "Travel Mode \u2014 Party Migration Between Chats",
+    "title": "Travel Mode — Party Migration Between Chats",
     "label": "task",
     "priority": "medium",
     "epic": "epic-chat-transfer-location",
@@ -3633,6 +4282,17 @@
     "epic": "epic-audio-video-sound",
     "tags": [],
     "source": ".plan/tickets/TASK-tts-edge-integration.md"
+  },
+  "TASK-TUI": {
+    "hash": "pending",
+    "extid": "TASK-TUI",
+    "type": "TASK",
+    "title": "Terminal UI (TUI)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui.md"
   },
   "TASK-TWO-FACTOR-MULTI-FACTOR-AUTH": {
     "extid": "TASK-TWO-FACTOR-MULTI-FACTOR-AUTH",
@@ -3660,7 +4320,7 @@
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "extid": "TASK-UNIT-TESTS-UNTESTED-BATCH",
     "type": "TASK",
-    "title": "Add Unit Tests \u2014 Untested Modules (Batch 2)",
+    "title": "Add Unit Tests — Untested Modules (Batch 2)",
     "label": "task",
     "priority": "medium",
     "epic": "epic-testing-qa",
@@ -3668,12 +4328,23 @@
     "source": ".plan/tickets/TASK-unit-tests-untested-batch.md",
     "status": "open"
   },
+  "TASK-USE-CASE-AGENTIC-WORKSPACE": {
+    "hash": "pending",
+    "extid": "TASK-USE-CASE-AGENTIC-WORKSPACE",
+    "type": "TASK",
+    "title": "Use Case: Agentic Workspace",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-use-case-agentic-workspace",
+    "tags": [],
+    "source": ".plan/tickets/TASK-use-case-agentic-workspace.md"
+  },
   "TASK-USER-BLOCK-BAN-SHADOW": {
     "extid": "TASK-USER-BLOCK-BAN-SHADOW",
     "type": "TASK",
     "title": "User Block, Ban & Shadow",
     "label": "task",
-    "priority": "low (moderation \u2014 postpone)",
+    "priority": "low (moderation — postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-user-block-ban-shadow.md",
@@ -3693,6 +4364,17 @@
     "status": "open",
     "git_issue": "f51cf0f",
     "hash": "f51cf0f"
+  },
+  "TASK-USER-STORIES": {
+    "hash": "pending",
+    "extid": "TASK-USER-STORIES",
+    "type": "TASK",
+    "title": "User Story & Use Case Improvements",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-user-stories",
+    "tags": [],
+    "source": ".plan/tickets/TASK-user-stories.md"
   },
   "TASK-VISUAL-NOVEL-MODE": {
     "extid": "TASK-visual-novel-mode",
@@ -3714,7 +4396,7 @@
   "TASK-VN-BRANCHING-CHOICES": {
     "extid": "TASK-VN-BRANCHING-CHOICES",
     "type": "TASK",
-    "title": "Visual Novel Mode \u2014 Branching Choices & Relationship Impact",
+    "title": "Visual Novel Mode — Branching Choices & Relationship Impact",
     "label": "task",
     "priority": "medium",
     "epic": "epic-immersion-presentation",
@@ -3724,7 +4406,7 @@
   "TASK-VN-DYNAMIC-GENERATION": {
     "extid": "TASK-VN-DYNAMIC-GENERATION",
     "type": "TASK",
-    "title": "Visual Novel Mode \u2014 Dynamic Image & Story Generation",
+    "title": "Visual Novel Mode — Dynamic Image & Story Generation",
     "label": "task",
     "priority": "medium",
     "epic": "epic-visual-novel-mode",
@@ -3734,7 +4416,7 @@
   "TASK-VN-QA-MODE": {
     "extid": "TASK-VN-QA-MODE",
     "type": "TASK",
-    "title": "Visual Novel Mode \u2014 Q&A (Question <-> Answer) Mode",
+    "title": "Visual Novel Mode — Q&A (Question <-> Answer) Mode",
     "label": "task",
     "priority": "medium",
     "epic": "epic-visual-novel-mode",
@@ -3907,6 +4589,17 @@
     "source": ".plan/tickets/TASK-world-event-system.md",
     "status": "open"
   },
+  "TASK-WORLD-LOCATION-ENCRYPTION": {
+    "hash": "pending",
+    "extid": "TASK-WORLD-LOCATION-ENCRYPTION",
+    "type": "TASK",
+    "title": "Encryption — World/Location Encryption",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-world-location-encryption.md"
+  },
   "TASK-WORLD-LOCATIONS": {
     "extid": "TASK-WORLD-LOCATIONS",
     "type": "TASK",
@@ -3953,41 +4646,5 @@
     "status": "open",
     "git_issue": "6c84baa",
     "hash": "6c84baa"
-  },
-  "FEAT-BYOK-API-KEYS": {
-    "extid": "FEAT-BYOK-API-KEYS",
-    "type": "FEAT",
-    "title": "FEAT BYOK API Keys",
-    "label": "feat",
-    "priority": "high",
-    "epic": "epic-byok-api-keys",
-    "tags": [
-      "byok",
-      "api-keys",
-      "llm",
-      "providers",
-      "privacy"
-    ],
-    "source": ".plan/tickets/FEAT-byok-api-keys.md",
-    "status": "open"
-  },
-  "FEAT-BYOK-LOCAL-MODELS": {
-    "extid": "FEAT-BYOK-LOCAL-MODELS",
-    "type": "FEAT",
-    "title": "FEAT BYOK Local Models",
-    "label": "feat",
-    "priority": "high",
-    "epic": "epic-byok-local-models",
-    "tags": [
-      "byok",
-      "local-models",
-      "wasm",
-      "inference",
-      "llama",
-      "browser",
-      "offline"
-    ],
-    "source": ".plan/tickets/FEAT-byok-local-models.md",
-    "status": "open"
   }
 }
