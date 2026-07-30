@@ -90,7 +90,14 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonPaginated({ data: chats, total, page, pageSize, },);
         },
-        { query: PaginationQuery, },
+        {
+          query: PaginationQuery,
+          detail: {
+            summary: "List chats",
+            description: "List chats for the authenticated user, ordered by most recently updated.",
+            tags: ["Chats",],
+          },
+        },
       )
       .post(
         "/api/chats",
