@@ -19,7 +19,7 @@
 
         <form id="create-chat-form" data-testid="create-chat-form">
           <div class="form-group">
-            <label class="form-label" for="chat-name">Chat Name</label>
+            <label class="form-label" for="chat-name">{{{t("chatSettings.chatName")}}}</label>
             <input
               class="form-input"
               type="text"
@@ -119,8 +119,11 @@
             </div>
           </div>
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
-            <a class="btn btn-secondary" href="/views/chat" data-testid="cancel-create-chat">Cancel</a>
-            <button type="submit" class="btn btn-primary" data-testid="create-chat-btn">Create Chat</button>
+            <a class="btn btn-secondary" href="/views/chat" data-testid="cancel-create-chat"
+            >{{{t("common.cancel")}}}</a>
+            <button type="submit" class="btn btn-primary" data-testid="create-chat-btn">
+              {{{t("worlds.createChat")}}}
+            </button>
           </div>
         </form>
       </div>
