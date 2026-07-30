@@ -247,7 +247,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
 
           const msgResult = await getMessageWithAccess(
@@ -274,7 +274,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/variants",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
 
           const msgResult = await getMessageWithAccess(
@@ -314,7 +314,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/variant",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVariantBody.static;
 
@@ -337,7 +337,10 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
           const selected = variants[body.variantIndex];
           if (!selected) {
-            return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest, },);
+            return jsonError({
+              message: ctx.t?.("messages.invalidVariantIndex",) ?? "Invalid variant index",
+              status: HttpStatus.BadRequest,
+            },);
           }
 
           return jsonResponse(selected,);
@@ -348,7 +351,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id",
         async (ctx: any,) => {
           const actorId = ctx.userId as string | null;
-          if (!actorId) { return unauthorized(); }
+          if (!actorId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
@@ -356,7 +359,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!message) { return notFound("Message not found",); }
+          if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
 
           await database
             .updateTable("messages",)
@@ -372,14 +375,14 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as { content?: string };
           const newContent = body?.content;
 
           if (!newContent || typeof newContent !== "string" || newContent.trim().length === 0) {
             return jsonError({
-              message: "Content is required",
+              message: ctx.t?.("messages.contentRequired",) ?? "Content is required",
               status: HttpStatus.BadRequest,
               code: ErrorCode.ValidationError,
             },);
@@ -391,11 +394,11 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!msg) { return notFound("Message not found",); }
+          if (!msg) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
 
           if (msg.actor_id !== userId && (ctx.userRole as string | null) !== "admin") {
             return jsonError({
-              message: "Cannot edit this message",
+              message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -403,7 +406,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
           if (msg.role !== "user") {
             return jsonError({
-              message: "Only user messages can be edited",
+              message: ctx.t?.("messages.onlyUserEditable",) ?? "Only user messages can be edited",
               status: HttpStatus.BadRequest,
               code: ErrorCode.ValidationError,
             },);
@@ -457,7 +460,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/visibility",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVisibilityUpdateBody.static;
 
@@ -480,7 +483,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/status",
         async (ctx: any,) => {
           const userRole = ctx.userRole as string | null;
-          if (userRole !== "admin") { return forbidden(); }
+          if (userRole !== "admin") { return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageStatusUpdateBody.static;
 
@@ -493,7 +496,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/messages",
         async (ctx: any,) => {
           const actorId = ctx.userId as string | null;
-          if (!actorId) { return unauthorized(); }
+          if (!actorId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const { id: chatId, } = ctx.params as { id: string };
           const body = ctx.body as typeof MessageCreateBody.static;
 
@@ -927,7 +930,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/archive",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
@@ -935,14 +938,14 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!message) { return notFound("Message not found",); }
+          if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
           const chat = await database
             .selectFrom("chats",)
             .select("created_by",)
             .where("id", "=", message.chat_id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
-            return notFound("Message not found",);
+            return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
           }
           await database
             .updateTable("messages",)
@@ -957,7 +960,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/restore",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
@@ -965,14 +968,14 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!message) { return notFound("Message not found",); }
+          if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
           const chat = await database
             .selectFrom("chats",)
             .select("created_by",)
             .where("id", "=", message.chat_id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
-            return notFound("Message not found",);
+            return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
           }
           await database
             .updateTable("messages",)
@@ -987,7 +990,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/messages/purge",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const { id: chatId, } = ctx.params as { id: string };
 
           const chat = await database
@@ -996,7 +999,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .where("id", "=", chatId,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
-            return notFound("Chat not found",);
+            return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",);
           }
           const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,).toISOString();
           const result = await database
