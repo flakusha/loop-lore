@@ -85,7 +85,7 @@
         </svg>
         <span class="badge" x-show="unreadCount > 0" x-text="unreadCount"></span>
       </button>
-      <div class="notif-dropdown" x-show="open" @click.outside="open = false">
+      <div class="notif-dropdown" x-show="open" @click.outside="open = false" role="region" aria-label="Notification list">
         <div class="notif-header">
           <span>{{{t("chats.notifications")}}}</span>
           <button
