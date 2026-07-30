@@ -71,9 +71,9 @@ export async function getAlpineStore<T = Record<string, unknown>,>(
 ): Promise<T> {
   return page.evaluate((name,) => {
     if (typeof Alpine === "undefined") { throw new Error("Alpine not loaded",); }
-    // structuredClone fails on Alpine Proxy objects (DataCloneError).
-    // JSON round-trip strips proxies and React-like internals safely.
-    return structuredClone(Alpine.store(name,),);
+    // JSON round-trip strips Alpine Proxy objects safely.
+    // eslint-disable-next-line unicorn/prefer-structured-clone -- Alpine Proxy objects cannot be structuredClone'd
+    return JSON.parse(JSON.stringify(Alpine.store(name,),),);
   }, storeName,) as Promise<T>;
 }
 
