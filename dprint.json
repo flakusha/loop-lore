@@ -29,6 +29,9 @@
     "src/views/gallery.html",
     "src/views/worlds.html",
     "src/components/chat/character-info-panel.html",
+    "src/components/chat/input-area.html",
+    "src/components/chat/media-preview-modal.html",
+    "src/partials/gallery/preview-modal.html",
     ".github/templates/**",
     ".githooks/**",
     "*.sh"
