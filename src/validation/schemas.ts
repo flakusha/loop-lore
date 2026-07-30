@@ -826,7 +826,7 @@ export type StoryItemInstanceInput = Static<typeof StoryItemInstanceBody>;
 
 export const ErrorResponse = t.Object({
   message: t.String(),
-  status: t.Optional(t.Number()),
+  status: t.Optional(t.Number(),),
 },);
 
 export const SuccessResponse = t.Object({
@@ -836,12 +836,12 @@ export const SuccessResponse = t.Object({
 export const MoodStateResponse = t.Object({
   id: t.String(),
   actorId: t.String(),
-  worldId: t.Optional(t.String()),
+  worldId: t.Optional(t.String(),),
   happiness: t.Number(),
-  baseMood: t.Optional(t.String()),
-  currentMood: t.Optional(t.String()),
-  moodStability: t.Optional(t.Number()),
-  expressionModifiers: t.Optional(t.Record(t.String(), t.Number())),
+  baseMood: t.Optional(t.String(),),
+  currentMood: t.Optional(t.String(),),
+  moodStability: t.Optional(t.Number(),),
+  expressionModifiers: t.Optional(t.Record(t.String(), t.Number(),),),
 },);
 
 export const RelationshipResponse = t.Object({
@@ -849,54 +849,54 @@ export const RelationshipResponse = t.Object({
   sourceActorId: t.String(),
   targetActorId: t.String(),
   relationshipType: t.String(),
-  standing: t.Optional(t.Number()),
-  trust: t.Optional(t.Number()),
+  standing: t.Optional(t.Number(),),
+  trust: t.Optional(t.Number(),),
   events: t.Optional(t.Array(t.Object({
     eventType: t.String(),
     timestamp: t.String(),
-    standingDelta: t.Optional(t.Number()),
-    trustDelta: t.Optional(t.Number()),
-  }))),
+    standingDelta: t.Optional(t.Number(),),
+    trustDelta: t.Optional(t.Number(),),
+  },),),),
 },);
 
 export const AvatarResponse = t.Object({
   id: t.String(),
   actorId: t.String(),
-  label: t.Optional(t.String()),
+  label: t.Optional(t.String(),),
   url: t.String(),
-  isPrimary: t.Optional(t.Boolean()),
-  sortOrder: t.Optional(t.Number()),
-  tags: t.Optional(t.Array(t.String())),
+  isPrimary: t.Optional(t.Boolean(),),
+  sortOrder: t.Optional(t.Number(),),
+  tags: t.Optional(t.Array(t.String(),),),
 },);
 
 export const TraitResponse = t.Object({
   id: t.String(),
   actorId: t.String(),
   traitType: t.String(),
-  category: t.Optional(t.String()),
+  category: t.Optional(t.String(),),
   name: t.String(),
-  description: t.Optional(t.String()),
-  metadata: t.Optional(t.Record(t.String(), t.Any())),
+  description: t.Optional(t.String(),),
+  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
 },);
 
 export const QuestResponse = t.Object({
   id: t.String(),
   worldId: t.String(),
   title: t.String(),
-  description: t.Optional(t.String()),
-  questType: t.Optional(t.String()),
-  status: t.Optional(t.String()),
-  progress: t.Optional(t.Number()),
-  maxProgress: t.Optional(t.Number()),
+  description: t.Optional(t.String(),),
+  questType: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  progress: t.Optional(t.Number(),),
+  maxProgress: t.Optional(t.Number(),),
 },);
 
 export const StoryItemResponse = t.Object({
   id: t.String(),
   worldId: t.String(),
-  actorId: t.Optional(t.String()),
+  actorId: t.Optional(t.String(),),
   definitionId: t.String(),
-  quantity: t.Optional(t.Number()),
-  metadata: t.Optional(t.Record(t.String(), t.Any())),
+  quantity: t.Optional(t.Number(),),
+  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
 },);
 
 export const BlogPostResponse = t.Object({
@@ -904,12 +904,12 @@ export const BlogPostResponse = t.Object({
   authorId: t.String(),
   title: t.String(),
   body: t.String(),
-  visibility: t.Optional(t.String()),
-  status: t.Optional(t.String()),
-  category: t.Optional(t.String()),
-  tags: t.Optional(t.Array(t.String())),
-  createdAt: t.Optional(t.String()),
-  updatedAt: t.Optional(t.String()),
+  visibility: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  category: t.Optional(t.String(),),
+  tags: t.Optional(t.Array(t.String(),),),
+  createdAt: t.Optional(t.String(),),
+  updatedAt: t.Optional(t.String(),),
 },);
 
 export const BlogCommentResponse = t.Object({
@@ -917,30 +917,32 @@ export const BlogCommentResponse = t.Object({
   postId: t.String(),
   authorId: t.String(),
   body: t.String(),
-  status: t.Optional(t.String()),
-  createdAt: t.Optional(t.String()),
+  status: t.Optional(t.String(),),
+  createdAt: t.Optional(t.String(),),
 },);
 
 export const ApiKeyResponse = t.Object({
   id: t.String(),
   providerName: t.String(),
   createdAt: t.String(),
-  lastUsedAt: t.Optional(t.String()),
+  lastUsedAt: t.Optional(t.String(),),
 },);
 
 /** List response wrapper */
-export const ListResponse = <T extends TSchema,>(itemSchema: T,) => t.Object({
-  data: t.Array(itemSchema,),
-  total: t.Number(),
-},);
+export const ListResponse = <T extends TSchema,>(itemSchema: T,) =>
+  t.Object({
+    data: t.Array(itemSchema,),
+    total: t.Number(),
+  },);
 
 /** Paginated list response wrapper */
-export const PaginatedResponse = <T extends TSchema,>(itemSchema: T,) => t.Object({
-  data: t.Array(itemSchema,),
-  pagination: t.Object({
-    total: t.Number(),
-    page: t.Number(),
-    pageSize: t.Number(),
-    totalPages: t.Number(),
-  },),
-},);
+export const PaginatedResponse = <T extends TSchema,>(itemSchema: T,) =>
+  t.Object({
+    data: t.Array(itemSchema,),
+    pagination: t.Object({
+      total: t.Number(),
+      page: t.Number(),
+      pageSize: t.Number(),
+      totalPages: t.Number(),
+    },),
+  },);
