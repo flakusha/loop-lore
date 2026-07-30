@@ -21,30 +21,42 @@
   />
   <select
     class="form-select list-sort"
-    aria-label="Filter type"
+    :aria-label="t('filter.filterType')"
     x-model="typeFilter"
     @change="triggerSearch()"
     x-show="$el.closest('[data-show-type-filter]')?.dataset.showTypeFilter === 'true'"
   >
-    <option value="all">All types</option>
-    <option value="image">Images</option>
-    <option value="audio">Audio</option>
-    <option value="video">Video</option>
+    <option value="all">{{{t("filter.allTypes")}}}</option>
+    <option value="image">{{{t("filter.images")}}}</option>
+    <option value="audio">{{{t("filter.audio")}}}</option>
+    <option value="video">{{{t("filter.video")}}}</option>
   </select>
-  <select class="form-select list-sort" aria-label="Sort" x-model="sortBy" @change="triggerSearch()">
-    <option value="name">Sort: Name</option>
-    <option value="newest">Sort: Newest</option>
-    <option value="oldest">Sort: Oldest</option>
+  <select class="form-select list-sort" :aria-label="t('filter.sort')" x-model="sortBy" @change="triggerSearch()">
+    <option value="name">{{{t("filter.sortName")}}}</option>
+    <option value="newest">{{{t("filter.sortNewest")}}}</option>
+    <option value="oldest">{{{t("filter.sortOldest")}}}</option>
   </select>
   <template x-if="activeChips.length > 0">
     <div class="filter-chips" data-testid="filter-chips">
       <template x-for="chip in activeChips" :key="chip.key">
         <span class="tag active">
           <span x-text="chip.label"></span>
-          <button class="btn-xs" @click="removeChip(chip.key)" aria-label="Remove filter">&times;</button>
+          <button
+            class="btn-xs"
+            @click="removeChip(chip.key)"
+            :aria-label="t('common.removeFilter') + ' ' + chip.label"
+          >
+            &times;
+          </button>
         </span>
       </template>
-      <button class="btn-xs" @click="clearAll()" aria-label="Clear all filters">Clear all</button>
+      <button
+        class="btn-xs"
+        @click="clearAll()"
+        :aria-label="t('common.clearAll')"
+      >
+        {{{t("common.clearAll")}}}
+      </button>
     </div>
   </template>
   {{> filter-chips.html}}
