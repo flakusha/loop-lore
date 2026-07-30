@@ -25,6 +25,25 @@ export class NsfwHook implements HookHandler {
     const log = getLogger();
     log.debug("nsfw-hook: checking content against policy", { policy: _context.nsfwPolicy, },);
 
+    // Check effective NSFW setting (per-chat > per-world > user pref)
+    // Gracefully fall back if DB not available (e.g. in tests)
+    try {
+      const svc = this.getModService(_context,);
+      const effective = await svc.getEffectiveNsfw(_context.chatId, _context.userId,);
+      if (!effective.enabled) {
+        log.debug("nsfw-hook: NSFW disabled by override", { source: effective.source, },);
+        return {
+          handled: true,
+          eventType: "nsfw_gate",
+          data: { nsfwLevel: "blocked_by_override", blocked: true, source: effective.source, },
+          suppressContent: true,
+          reason: `NSFW disabled by ${effective.source}`,
+        };
+      }
+    } catch {
+      // DB not available or query failed — fall through to policy check
+    }
+
     const nsfwLevel = this.detectNsfwLevel(_content,);
     if (nsfwLevel === "none") {
       return { handled: false, eventType: "nsfw_gate", };
@@ -67,12 +86,14 @@ export class NsfwHook implements HookHandler {
         actionType: allowed ? "nsfw_detected" : "nsfw_blocked",
         targetUserId: context.actorId,
         performedBy: "system",
-        reason: `NSFW ${allowed ? "detected" : "blocked"}: level "${nsfwLevel}" ${allowed ? "within" : "exceeds"} policy "${context.nsfwPolicy}"`,
+        reason: `NSFW ${allowed ? "detected" : "blocked"}: level "${nsfwLevel}" ${
+          allowed ? "within" : "exceeds"
+        } policy "${context.nsfwPolicy}"`,
         scope: "chat",
         scopeId: context.chatId,
       },);
     } catch (err) {
-      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(err), },);
+      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(err,), },);
     }
   }
 

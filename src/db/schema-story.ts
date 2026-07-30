@@ -54,6 +54,8 @@ export interface Worlds {
   difficulty_modifier: number;
   difficulty_reroll: DifficultyReroll;
   difficulty_state: DifficultyState;
+  /** NSFW override: null = use user pref, "enabled" = force on, "disabled" = force off */
+  nsfw_override: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
