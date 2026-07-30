@@ -89,6 +89,7 @@ export interface DB {
   nsfw_user_preferences: import("./schema-moderation").NsfwUserPreferences;
   moderation_actions: import("./schema-moderation").ModerationActions;
   content_flags: import("./schema-moderation").ContentFlags;
+  moderation_appeals: import("./schema-moderation").ModerationAppeals;
   // Crafting systems
   crafting_recipes: import("./schema-crafting").CraftingRecipes;
   crafting_recipe_materials: import("./schema-crafting").CraftingRecipeMaterials;
