@@ -15,7 +15,7 @@
       {{> auth-form-fields.html}}
 
       <button id="login-submit" type="submit" class="btn btn-primary login-btn" data-testid="login-submit">
-        Log In
+        {{{t("auth.loginButton")}}}
       </button>
     </form>
 
@@ -29,11 +29,11 @@
       hx-swap="outerHTML"
       data-testid="demo-login"
     >
-      Continue in demo mode
+      {{{t("auth.demoMode")}}}
     </a>
 
     <a href="/register" class="login-signup-link" data-testid="signup-link">
-      Don't have an account? Sign up
+      {{{t("auth.signupLink")}}}
     </a>
   </div>
 </div>
