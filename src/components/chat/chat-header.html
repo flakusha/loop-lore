@@ -52,8 +52,8 @@
     </button>
     <button
       class="btn-icon"
-      :title="window.isChatPaused($store.chat?.currentChat) ? 'Resume AI generation' : 'Pause AI generation'"
-      :aria-label="window.isChatPaused($store.chat?.currentChat) ? 'Resume AI generation' : 'Pause AI generation'"
+      :title="window.isChatPaused($store.chat?.currentChat) ? t('chats.resumeAI') : t('chats.pauseAI')"
+      :aria-label="window.isChatPaused($store.chat?.currentChat) ? t('chats.resumeAI') : t('chats.pauseAI')"
       @click="window.toggleGroupPause()"
       x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"
       :style="window.isChatPaused($store.chat?.currentChat) ? 'color: #f59e0b' : ''"
@@ -63,7 +63,12 @@
       <span x-show="window.isChatPaused($store.chat?.currentChat)">{{icon:player-play}}</span>
     </button>
     <div class="notif-bell" x-data="notificationsBell()" x-init="init()">
-      <button class="btn-icon" title="Notifications" aria-label="Notifications" @click="toggle()">
+      <button
+        class="btn-icon"
+        x-bind:title="t('chats.notifications')"
+        x-bind:aria-label="t('chats.notifications')"
+        @click="toggle()"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -82,8 +87,14 @@
       </button>
       <div class="notif-dropdown" x-show="open" @click.outside="open = false">
         <div class="notif-header">
-          <span>Notifications</span>
-          <button class="btn-link" x-on:click="markAllRead()" x-show="unreadCount > 0">Mark all read</button>
+          <span>{{{t("chats.notifications")}}}</span>
+          <button
+            class="btn-link"
+            x-on:click="markAllRead()"
+            x-show="unreadCount > 0"
+          >
+            {{{t("chats.markAllRead")}}}
+          </button>
         </div>
         <template x-for="n in items" :key="n.id">
           <div class="notif-item" :class="{ unread: !n.read }" @click="goTo(n.link)">
@@ -92,13 +103,18 @@
               <div class="notif-title" x-text="n.title"></div>
               <div class="notif-sub" x-text="n.body" x-show="n.body"></div>
             </div>
-            <button class="btn-icon-sm" title="Dismiss" @click.stop="dismiss(n.id)">✕</button>
-            <button class="btn-icon-sm" title="Mark read" x-show="!n.read" @click.stop="markRead(n.id)">
+            <button class="btn-icon-sm" x-bind:title="t('chats.dismiss')" @click.stop="dismiss(n.id)">✕</button>
+            <button
+              class="btn-icon-sm"
+              x-bind:title="t('chats.markRead')"
+              x-show="!n.read"
+              @click.stop="markRead(n.id)"
+            >
               ✓
             </button>
           </div>
         </template>
-        <div class="notif-empty" x-show="items.length === 0">No notifications</div>
+        <div class="notif-empty" x-show="items.length === 0">{{{t("chats.noNotifications")}}}</div>
       </div>
     </div>
   </div>
