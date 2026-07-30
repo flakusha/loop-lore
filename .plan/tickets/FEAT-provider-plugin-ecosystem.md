@@ -1,6 +1,6 @@
 # FEAT: Provider & Plugin Ecosystem
 
-**Status:** 🟡 Partial (see epic)
+**Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-provider-plugin-ecosystem

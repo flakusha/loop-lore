@@ -1,6 +1,6 @@
 # TASK: EPIC: Blog System
 
-**Status:** 🟡 Partial (see epic)
+**Status:** 🟡 Partial (core CRUD + comments + follows + moderation built)
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-blog-system
