@@ -181,14 +181,20 @@ export async function safeFetch<T = unknown,>(
     : controller.signal;
 
   try {
-    // Safely serialize body if provided
+    // Safely serialize body if provided.
+    // If body is already a string (e.g. from jsonBody()), use it as-is
+    // to avoid double-serialization.
     let serializedBody: string | undefined;
     if (body !== undefined && body !== null) {
-      const jsonResult = safeJsonStringify(body,);
-      if (!jsonResult.ok) {
-        return { ok: false, error: jsonResult.error, };
+      if (typeof body === "string") {
+        serializedBody = body;
+      } else {
+        const jsonResult = safeJsonStringify(body,);
+        if (!jsonResult.ok) {
+          return { ok: false, error: jsonResult.error, };
+        }
+        serializedBody = jsonResult.value;
       }
-      serializedBody = jsonResult.value;
     }
 
     // Merge auth headers with any provided headers
