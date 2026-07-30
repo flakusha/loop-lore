@@ -1,6 +1,6 @@
 # EPIC: Assistant/GM Flows Reconciliation
 
-**Status:** 📝 Draft
+**Status:** 🟡 In Progress
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -8,7 +8,26 @@
 
 ## Summary
 
-Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations, etc. with API call integrations AND confirmation/quality gating.
+Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations, etc. with API call integrations AND confirmation/quality gating. Also encompasses GM-guided story creation where the user acts as Game Master, guiding LLM characters in chat/group-chat to create a story together.
+
+## Current State (2026-07-31)
+
+### Frontend: 🟡 Partial
+
+- ✅ GM panel sidebar (shadow notes + whitenotes)
+- ✅ Command buttons expanded (guide, scene, summarize, rewrite, translate)
+- ✅ GmConfig extended with GM fields
+- ❌ GM role switching UI wiring
+- ❌ Assistant command execution + intent detection
+- ❌ Slash command parser
+- ❌ Tool call display
+
+### Backend: ❌ Not Started
+
+- No generation prompt templates
+- No quality validation pipeline
+- No confirmation gating
+- No shadow notes/whitenotes API routes
 
 ## Reference
 
@@ -22,6 +41,7 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - API call integrations (external services)
 - Confirmation gating (user approval)
 - Quality gating (validation, consistency)
+- **GM-guided story creation** — user as GM, guiding LLM characters in chat/group-chat to collaboratively create a story
 
 ## Design
 
@@ -49,6 +69,7 @@ User request → Assistant processes → Generate content → Quality check → 
 - [ ] Confirmation dialog component
 - [ ] Quality validation pipeline
 - [ ] Generated content preview
+- [ ] GM-guided story creation — user as GM guiding LLM characters in chat/group-chat (`TASK-gm-guided-story-creation.md`)
 
 ## Files
 
@@ -64,6 +85,7 @@ User request → Assistant processes → Generate content → Quality check → 
 - [ ] User confirmation required before entity creation
 - [ ] Generated content preview shows what will be created
 - [ ] Tests passing
+- [ ] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order
 
 ## Related Epics
 
@@ -74,6 +96,7 @@ User request → Assistant processes → Generate content → Quality check → 
 ### Narrative Agency
 
 - `epic-agency-story-points.md` — player meta-currency (Bennies/Fate Points) spent to influence generation. Connects to quality gating: player can spend points to override or enhance generated content.
+- **Gm-guided story creation** — user as GM with direct narrative control; complement to the agency/points system
 
 ### Content Generation Targets
 
@@ -89,7 +112,12 @@ User request → Assistant processes → Generate content → Quality check → 
 - `epic-rpg-mechanics.md` — stat generation follows RPG rules
 - `epic-plugin-system.md` — generation may use plugins for custom templates
 
+### Story-Mode UI
+
+- `epic-story-mode-ui.md` — story mode frontend GM panel, turn order, quest log; GM-guided story uses this infrastructure
+
 ## Tickets
 
 - `TASK-assistant-gm-flows.md` — main implementation tasks
 - `TASK-assistant-gm-flows-reconciliation.md` — reconciliation tasks
+- `TASK-gm-guided-story-creation.md` — user as GM guiding LLM characters in chat/group-chat to create a story together
