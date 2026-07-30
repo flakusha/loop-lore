@@ -23,6 +23,7 @@ ComfyUI is first-class citizen. Finalized workflow files are the API contract.
 ## Acceptance Criteria
 
 ### Phase 1: Core Template System (MVP)
+
 - [ ] `WorkflowTemplate` interface defined with `build()` function
 - [ ] Template registry supports add/remove/list/get operations
 - [ ] Parameter schema with type validation + defaults
@@ -31,16 +32,19 @@ ComfyUI is first-class citizen. Finalized workflow files are the API contract.
 - [ ] Unit tests for parameter validation
 
 ### Phase 2: Text-Guided Editing (High Priority)
+
 - [ ] FLUX.1 Kontext editing template
 - [ ] Qwen Image Edit template (fallback)
 - [ ] LoRA application template (LoraLoader node, coeff 0.3-0.7)
 
 ### Phase 3: Supporting Templates (Medium Priority)
+
 - [ ] txt2img template
 - [ ] img2img template
 - [ ] Upscale template (ESRGAN)
 
 ### Phase 4: Low Priority
+
 - [ ] ControlNet template (manual setup needed)
 - [ ] Inpainting template (users prefer Krita)
 - [ ] IP-Adapter template (mostly for older models)

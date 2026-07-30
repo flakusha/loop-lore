@@ -19,15 +19,15 @@ Battle has NPC enemies but never references the Actor system for personality-dri
 
 ### Personality-Driven Combat AI
 
-| Personality Trait | Combat Behavior |
-| --- | --- |
-| Aggressive | Attacks strongest target, no retreat |
-| Defensive | Keeps distance, uses cover |
-| Tactical | Targets weakest, uses feints |
-| Cowardly | Flee at low HP, panic at allies falling |
-| Brave | Fight to death, no retreat |
-| Sadistic | Lingers on defeated foes |
-| Merciful | Offers surrender at low HP |
+| Personality Trait | Combat Behavior                         |
+| ----------------- | --------------------------------------- |
+| Aggressive        | Attacks strongest target, no retreat    |
+| Defensive         | Keeps distance, uses cover              |
+| Tactical          | Targets weakest, uses feints            |
+| Cowardly          | Flee at low HP, panic at allies falling |
+| Brave             | Fight to death, no retreat              |
+| Sadistic          | Lingers on defeated foes                |
+| Merciful          | Offers surrender at low HP              |
 
 ### Memory System
 

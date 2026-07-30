@@ -11,26 +11,27 @@ Fix `bun run check` failures: ESLint errors (73), TypeScript error (1), stale di
 
 ## Current State (2026-07-29)
 
-| Gate                  | Status | Details                                      |
-| --------------------- | ------ | -------------------------------------------- |
-| lint - ts             | FAIL   | 73 errors, 839 warnings                      |
-| typecheck - backend   | FAIL   | 1 TS2322 in exporters.test.ts                |
-| test - unit           | FAIL   | 7 fail, 1 error (2029/2036 pass)             |
-| test - e2e            | FAIL   | 1 fail (no servers available — expected)     |
-| format - dprint       | FAIL   | formatting drift                             |
-| md - lint             | FAIL   | markdown lint                                |
-| lint - html - scripts | FAIL   | inline script blocks exceed 10L limit        |
-| dist/server.js        | WARN   | 3.8MB build artifact on disk, not gitignored |
+| Gate                  | Status   | Details                                                         |
+| --------------------- | -------- | --------------------------------------------------------------- |
+| lint - ts             | FAIL     | 73 errors, 839 warnings                                         |
+| typecheck - backend   | FAIL     | 1 TS2322 in exporters.test.ts                                   |
+| test - unit           | FAIL     | 7 fail, 1 error (2029/2036 pass)                                |
+| test - e2e            | FAIL     | 1 fail (no servers available — expected)                        |
+| format - dprint       | FAIL     | formatting drift                                                |
+| md - lint             | FAIL     | markdown lint                                                   |
+| lint - html - scripts | FAIL     | inline script blocks exceed 10L limit                           |
+| dist/server.js        | RESOLVED | `dist/` already in `.gitignore`; artifact removed on next build |
 
 ## Linked Tasks
 
-| Task                           | Title                                         | Priority | Status      |
-| ------------------------------ | --------------------------------------------- | -------- | ----------- |
-| TASK-fix-eslint-errors         | Fix 73 ESLint errors across 16 files          | High     | Not Started |
-| TASK-fix-ts2322-exporters-test | Fix TS2322 type error in exporters.test.ts    | High     | Not Started |
-| TASK-remove-dist-artifact      | Remove dist/server.js + add to .gitignore     | Medium   | Not Started |
-| TASK-fix-test-failures         | Fix 7 unit test failures (db schema, mocks)   | High     | Not Started |
-| TASK-fix-html-inline-scripts   | Extract inline <script> blocks to frontend TS | Medium   | Not Started |
+| Task                           | Title                                            | Priority | Status      |
+| ------------------------------ | ------------------------------------------------ | -------- | ----------- |
+| TASK-fix-eslint-errors         | Fix 73 ESLint errors across 16 files             | High     | Not Started |
+| TASK-fix-ts2322-exporters-test | Fix TS2322 type error in exporters.test.ts       | High     | Not Started |
+| TASK-remove-dist-artifact      | Remove dist/server.js (dist/ already gitignored) | Medium   | Not Started |
+| TASK-fix-test-failures         | Fix 7 unit test failures (db schema, mocks)      | High     | Not Started |
+| TASK-fix-html-inline-scripts   | Extract inline <script> blocks to frontend TS    | Medium   | Not Started |
+| TASK-promote-size-check-to-ci  | Promote check-file-size.ts from warn to CI gate  | Medium   | Not Started |
 
 ## ESLint Error Breakdown (73 errors)
 
@@ -109,6 +110,8 @@ Fix `bun run check` failures: ESLint errors (73), TypeScript error (1), stale di
 - [ ] `bun run lint` passes with 0 errors
 - [ ] `bunx tsc --noEmit` passes with 0 errors
 - [ ] `bun test src/` passes with 0 failures
-- [ ] `dist/server.js` removed and dist/ gitignored
+- [ ] `dist/server.js` removed (dist/ already in `.gitignore`)
 - [ ] `bun run check` passes 15/15 gates
 - [ ] Test coverage ≥ 75% statements (maintain current)
+- [ ] `check-file-size.ts --strict` integrated into CI gate
+- [ ] Bundle size < 260KB total (see `epic-frontend-bundle-optimization`)

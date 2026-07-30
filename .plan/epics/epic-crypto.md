@@ -14,26 +14,31 @@ scenarios.
 ## Scope
 
 ### Client-Side Pre-Encryption
+
 - Browser encrypts before send (zero-knowledge server)
 - WebCrypto API integration
 - Key derivation from user passphrase
 
 ### Wire Message Pipeline
+
 - Encrypt/decrypt in message send/receive pipeline
 - Transparent to existing chat logic
 - Metadata preserved (timestamps, sender) while content encrypted
 
 ### Key Management
+
 - Key generation, storage, rotation UI
 - Per-user and per-chat key sets
 - Recovery key generation and backup
 
 ### Group Key Distribution
+
 - Multi-party key agreement for group chats
 - Key rotation on member join/leave
 - Forward secrecy guarantees
 
 ### Access Management
+
 - Role-based access to decryption keys
 - Admin key escrow (optional, configurable)
 - Audit log for key access
@@ -48,17 +53,19 @@ scenarios.
 ## Integration Points
 
 ### Systems This Epic Depends On
-| System | What It Provides | How Used |
-|--------|-----------------|----------|
-| Chat Lifecycle | Message pipeline hooks | Encrypt/decrypt in transit |
-| Auth Middleware | User identity | Key ownership verification |
+
+| System          | What It Provides       | How Used                   |
+| --------------- | ---------------------- | -------------------------- |
+| Chat Lifecycle  | Message pipeline hooks | Encrypt/decrypt in transit |
+| Auth Middleware | User identity          | Key ownership verification |
 
 ### Systems That Depend On This Epic
-| System | What It Consumes | How Used |
-|--------|-----------------|----------|
-| Chat Privacy | Encryption primitives | Message confidentiality |
-| Asset System | Asset encryption | Encrypted media storage |
-| Plugin System | Crypto hooks | Custom encryption backends |
+
+| System        | What It Consumes      | How Used                   |
+| ------------- | --------------------- | -------------------------- |
+| Chat Privacy  | Encryption primitives | Message confidentiality    |
+| Asset System  | Asset encryption      | Encrypted media storage    |
+| Plugin System | Crypto hooks          | Custom encryption backends |
 
 ## Tickets
 

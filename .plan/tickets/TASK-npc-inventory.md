@@ -30,4 +30,3 @@ NPCs need inventories for items they carry, trade, or sell. Merchant NPCs need d
 - [ ] NPC inventory affects trade availability
 - [ ] NPC inventory persists per world
 - [ ] Player can trade with NPC inventories
-

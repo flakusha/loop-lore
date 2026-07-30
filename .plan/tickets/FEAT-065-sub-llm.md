@@ -96,7 +96,6 @@ interface LlmTemplateSection {
 
 ---
 
-
 ## Linked Epics
 
 - `epic-items.md`

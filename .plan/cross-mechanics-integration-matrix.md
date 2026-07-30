@@ -138,27 +138,27 @@ These epics have `## Related Epics` but no `## Integration Points`:
 
 ### Systems This Epic Depends On
 
-| System | What It Provides | How Used |
-| ------ | ---------------- | -------- |
-| Testing & Benchmarking | Performance benchmarks for native modules | Measure native vs JS speed |
+| System                        | What It Provides                               | How Used                    |
+| ----------------------------- | ---------------------------------------------- | --------------------------- |
+| Testing & Benchmarking        | Performance benchmarks for native modules      | Measure native vs JS speed  |
 | Multi-Instance Reconciliation | Native module initialization in multi-instance | Binary loading per instance |
 
 ### Systems That Depend On This Epic
 
-| System | What It Consumes | How Used |
-| ------ | ---------------- | -------- |
-| Headless & Alternative Frontends | SDK distribution strategy | Native modules in SDK packages |
-| Testing & Benchmarking | Native module benchmarks | Performance regression detection |
+| System                           | What It Consumes          | How Used                         |
+| -------------------------------- | ------------------------- | -------------------------------- |
+| Headless & Alternative Frontends | SDK distribution strategy | Native modules in SDK packages   |
+| Testing & Benchmarking           | Native module benchmarks  | Performance regression detection |
 
 ### Shared Data Contracts
 
-| Contract | Shared With | Purpose |
-| -------- | ----------- | ------- |
+| Contract       | Shared With    | Purpose                                   |
+| -------------- | -------------- | ----------------------------------------- |
 | ModuleManifest | Security audit | Binary verification + capability checking |
 
 ### Cross-System Events
 
-| Event | Direction | Purpose |
-| ----- | --------- | ------- |
-| binary.loaded | emits | Notify system when native module loaded |
-| binary.fallback | emits | Notify system when falling back to JS |
+| Event           | Direction | Purpose                                 |
+| --------------- | --------- | --------------------------------------- |
+| binary.loaded   | emits     | Notify system when native module loaded |
+| binary.fallback | emits     | Notify system when falling back to JS   |

@@ -48,13 +48,13 @@ type ResponseStyle = "short" | "default" | "detailed" | "custom";
 
 ### Why This Separation
 
-| Chat | ChatType | ChatMode | ResponseStyle | Example |
-|---|---|---|---|---|
-| 1:1 literary RP | `direct` | `story` | `detailed` | Long literary exchanges with a single character |
-| Quick DM combat | `direct` | `battle` | `short` | Fast attack/defend with GM |
-| Party dungeon crawl | `group` | `battle` | `short` | Quick tactical combat with party |
-| Group quest planning | `group` | `question` | `default` | Normal conversation with party |
-| Solo inventory management | `direct` | `inventory` | `default` | Browsing items, crafting |
+| Chat                      | ChatType | ChatMode    | ResponseStyle | Example                                         |
+| ------------------------- | -------- | ----------- | ------------- | ----------------------------------------------- |
+| 1:1 literary RP           | `direct` | `story`     | `detailed`    | Long literary exchanges with a single character |
+| Quick DM combat           | `direct` | `battle`    | `short`       | Fast attack/defend with GM                      |
+| Party dungeon crawl       | `group`  | `battle`    | `short`       | Quick tactical combat with party                |
+| Group quest planning      | `group`  | `question`  | `default`     | Normal conversation with party                  |
+| Solo inventory management | `direct` | `inventory` | `default`     | Browsing items, crafting                        |
 
 ### DB Migration
 
@@ -71,8 +71,8 @@ ALTER TABLE chats ADD COLUMN response_style_custom INTEGER DEFAULT NULL;
 ```typescript
 // BEFORE (broken)
 export const ChatMode = {
-  Direct: "direct",  // ← belongs in ChatType
-  Group: "group",    // ← belongs in ChatType
+  Direct: "direct", // ← belongs in ChatType
+  Group: "group", // ← belongs in ChatType
   Story: "story",
 } as const;
 
@@ -123,8 +123,7 @@ Replace the single mode selector with three independent controls:
   </select>
   <div x-show="_responseStyle === 'custom'" class="form-group">
     <label>Custom length: <span x-text="_responseStyleCustom"></span> tokens</label>
-    <input type="range" min="50" max="2000" step="50"
-           x-model.number="_responseStyleCustom" />
+    <input type="range" min="50" max="2000" step="50" x-model.number="_responseStyleCustom" />
   </div>
 </div>
 ```
@@ -151,7 +150,8 @@ Each mode adds behavioral instructions:
 ```typescript
 const MODE_INSTRUCTIONS: Record<ChatMode, string> = {
   story: "", // Default — no special instructions
-  battle: "This is a combat encounter. Keep descriptions tight. Prioritize action sequences. Use initiative-based turn order.",
+  battle:
+    "This is a combat encounter. Keep descriptions tight. Prioritize action sequences. Use initiative-based turn order.",
   question: "This is a Q&A focused chat. Answer questions directly. Minimize narrative filler.",
   inventory: "This is an inventory/item management session. Describe items clearly. Focus on stats and effects.",
 };
