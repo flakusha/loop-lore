@@ -46,7 +46,11 @@
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "忘记密码？",
     "needAnAccount": "没有账号？",
-    "alreadyHaveAccount": "已有账号？"
+    "alreadyHaveAccount": "已有账号？",
+    "registrationClosed": "注册已关闭。",
+    "usernameLength": "用户名必须为3-32个字符。",
+    "passwordLength": "密码必须至少6个字符。",
+    "usernameTaken": "用户名已被占用。"
   },
   "chat": {
     "sendMessage": "Send Message",
