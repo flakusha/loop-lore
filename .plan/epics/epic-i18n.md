@@ -1,6 +1,6 @@
 # Epic: Internationalization (i18n)
 
-**Status:** 🟡 In Progress
+**Status:** 🟡 In Progress (Phases 1-5 complete, Phase 1.5 + templates remaining)
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -18,28 +18,29 @@ Full internationalization of loop-lore UI. Infrastructure is complete (custom i1
 
 ## Current State
 
-| Component                                 | Status                        |
-| ----------------------------------------- | ----------------------------- |
-| i18n module (types, loader, translator)   | ✅ Complete                   |
-| Elysia middleware (`ctx.t`)               | ✅ Complete                   |
-| API routes (`GET/PATCH /api/i18n/locale`) | ✅ Complete                   |
-| `en.json` catalog (234 keys)              | ✅ Complete                   |
-| Non-English locales (71/234 keys each)    | ⏸ 30% complete                |
-| Route adoption (`ctx.t()` calls)          | 🔲 0% — all hardcoded         |
-| Template adoption (`{{ t() }}` bindings)  | 🔲 0% — all hardcoded         |
-| Alpine.js `$t` magic property             | 🔲 Not implemented            |
-| Settings locale switcher wiring           | 🔲 Frontend doesn't re-render |
+| Component                                 | Status                         |
+| ----------------------------------------- | ------------------------------ |
+| i18n module (types, loader, translator)   | ✅ Complete                    |
+| Elysia middleware (`ctx.t`)               | ✅ Complete                    |
+| API routes (`GET/PATCH /api/i18n/locale`) | ✅ Complete                    |
+| `en.json` catalog (301 keys)              | ✅ Complete                    |
+| Non-English locales (301 keys each)       | ✅ Complete (Phase 1)          |
+| Route adoption (`ctx.t()` calls)          | ✅ Complete (Phase 2)          |
+| Template adoption (`{{{t()}}}` bindings)  | ⏸ In progress (ticket created) |
+| Alpine.js `$t` magic property             | ✅ Complete (Phase 4)          |
+| Settings locale switcher wiring           | ✅ Complete (Phase 5)          |
+| Reconciliation script                     | ⬜ Not started (Phase 1.5)     |
 
 ## Features
 
-| Feature               | Ticket                          | Effort | Phase | Description                                        |
-| --------------------- | ------------------------------- | ------ | ----- | -------------------------------------------------- |
-| Locale completion     | TASK-i18n-locale-completion     | Medium | 1     | Fill missing 163 keys × 9 non-English locales      |
-| Reconciliation script | TASK-i18n-reconciliation-script | Small  | 1.5   | Validate locale files, detect drift, auto-fix      |
-| Route adoption        | TASK-i18n-route-adoption        | Large  | 2     | Wire `ctx.t()` into route error messages           |
-| Template adoption     | TASK-i18n-template-adoption     | Large  | 3     | Replace hardcoded strings in 17 HTML views         |
-| Alpine.js client      | TASK-i18n-alpine-client         | Medium | 4     | Add `$t` magic property for client-side reactivity |
-| Settings wiring       | TASK-i18n-settings-wiring       | Small  | 5     | Wire locale switcher to re-render UI               |
+| Feature               | Ticket                          | Effort | Phase | Status         | Description                                        |
+| --------------------- | ------------------------------- | ------ | ----- | -------------- | -------------------------------------------------- |
+| Locale completion     | TASK-i18n-locale-completion     | Medium | 1     | ✅ Complete    | Fill missing 163 keys × 9 non-English locales      |
+| Reconciliation script | TASK-i18n-reconciliation-script | Small  | 1.5   | ⬜ Not started | Validate locale files, detect drift, auto-fix      |
+| Route adoption        | TASK-i18n-route-adoption        | Large  | 2     | ✅ Complete    | Wire `ctx.t()` into route error messages           |
+| Template adoption     | TASK-i18n-template-adoption     | Large  | 3     | ⏸ In progress  | Replace hardcoded strings in 17 HTML views         |
+| Alpine.js client      | TASK-i18n-alpine-client         | Medium | 4     | ✅ Complete    | Add `$t` magic property for client-side reactivity |
+| Settings wiring       | TASK-i18n-settings-wiring       | Small  | 5     | ✅ Complete    | Wire locale switcher to re-render UI               |
 
 ## Phases
 
@@ -93,10 +94,10 @@ Wire the settings locale switcher to actually re-render the UI.
 
 ## Acceptance Criteria
 
-- [ ] All 10 locales have complete 234-key catalogs
-- [ ] Route error messages use `ctx.t()` (no hardcoded English in routes)
-- [ ] HTML templates use `{{ t() }}` (no hardcoded English in views)
-- [ ] Alpine.js `$t` magic property works for client-side reactivity
-- [ ] Settings locale switcher re-renders UI without page reload
+- [x] All 10 locales have complete 301-key catalogs
+- [x] Route error messages use `ctx.t()` (no hardcoded English in routes)
+- [ ] HTML templates use `{{{t()}}}` (no hardcoded English in views)
+- [x] Alpine.js `$t` magic property works for client-side reactivity
+- [x] Settings locale switcher re-renders UI without page reload
 - [ ] `bun run check` passes
 - [ ] Existing tests still pass

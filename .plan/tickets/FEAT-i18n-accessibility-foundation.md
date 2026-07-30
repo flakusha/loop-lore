@@ -15,10 +15,10 @@ Server-side i18n module (req.t), ARIA pass, keyboard navigation, 10 locales. Cli
 | ------------------------------- | ----- | ------------------------------------ | -------------- |
 | TASK-i18n-locale-completion     | 1     | Complete non-English locale files    | ✅ Complete    |
 | TASK-i18n-reconciliation-script | 1.5   | Validate locale files, detect drift  | ⬜ Not Started |
-| TASK-i18n-route-adoption        | 2     | Wire ctx.t() into route handlers     | ⬜ Not Started |
-| TASK-i18n-template-adoption     | 3     | Replace hardcoded strings in views   | ⬜ Not Started |
-| TASK-i18n-alpine-client         | 4     | Add Alpine.js $t magic property      | ⬜ Not Started |
-| TASK-i18n-settings-wiring       | 5     | Wire locale switcher to re-render UI | ⬜ Not Started |
+| TASK-i18n-route-adoption        | 2     | Wire ctx.t() into route handlers     | ✅ Complete    |
+| TASK-i18n-template-adoption     | 3     | Replace hardcoded strings in views   | ⏸ In progress  |
+| TASK-i18n-alpine-client         | 4     | Add Alpine.js $t magic property      | ✅ Complete    |
+| TASK-i18n-settings-wiring       | 5     | Wire locale switcher to re-render UI | ✅ Complete    |
 
 ## Acceptance Criteria
 
