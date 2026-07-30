@@ -22,6 +22,7 @@ import {
 } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
+import type { TranslatorFn, } from "../i18n/types";
 import { getLogger, type Logger, } from "../logger";
 import { notifyChatInvite, } from "../notifications/service";
 import { safeJsonStringify, uid, } from "../utils";
@@ -68,7 +69,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const t = ctx.t as TranslatorFn | undefined;
+          if (!userId) { return unauthorized(undefined, t,); }
           const page = (ctx.query.page as number) ?? 1;
           const pageSize = (ctx.query.pageSize as number) ?? 20;
           const offset = (page - 1) * pageSize;
@@ -96,7 +98,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const t = ctx.t as TranslatorFn | undefined;
+          if (!userId) { return unauthorized(undefined, t,); }
 
           const ageGateConfig = getRuntimeConfig();
           if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
