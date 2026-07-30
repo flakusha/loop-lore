@@ -340,7 +340,6 @@ function validateDomainConfig(domain: string, parsed: Record<string, unknown>, f
   switch (domain) {
     case "server": {
       const server = parsed.server as Record<string, unknown> | undefined;
-<<<<<<< ours — function `validateDomainConfig` (F, confidence: medium)
 // hint: Logic changed on both sides. Requires understanding intent of each change.
       if (server?.port !== undefined) {
         const port = Number(server.port,);
@@ -384,49 +383,6 @@ function validateDomainConfig(domain: string, parsed: Record<string, unknown>, f
           `Invalid headers.xFrameOptions in ${filePath}: "${headers
             .xFrameOptions as unknown as string}". Must be DENY or SAMEORIGIN`,
         );
-=======
-      if (server) {
-        if (server.port !== undefined) {
-          const port = Number(server.port,);
-          if (isNaN(port,) || port < 0 || port > 65_535) {
-            throw new Error(`Invalid server.port in ${filePath}: ${server.port}. Must be 0-65535`,);
-          }
-        }
-      }
-      break;
-    }
-    case "database": {
-      const db = parsed.db as Record<string, unknown> | undefined;
-      if (db) {
-        if (db.type !== undefined && !["sqlite", "postgres",].includes(db.type as string,)) {
-          throw new Error(`Invalid db.type in ${filePath}: "${db.type}". Must be "sqlite" or "postgres"`,);
-        }
-        if (db.type === "postgres" && !db.url) {
-          throw new Error(`db.url is required when db.type is 'postgres' in ${filePath}`,);
-        }
-      }
-      break;
-    }
-    case "logging": {
-      const logging = parsed.logging as Record<string, unknown> | undefined;
-      if (logging) {
-        if (logging.level !== undefined && !["debug", "info", "warn", "error",].includes(logging.level as string,)) {
-          throw new Error(`Invalid logging.level in ${filePath}: "${logging.level}". Must be debug/info/warn/error`,);
-        }
-      }
-      break;
-    }
-    case "headers": {
-      const headers = parsed.headers as Record<string, unknown> | undefined;
-      if (headers) {
-        if (headers.xFrameOptions !== undefined && headers.xFrameOptions !== null) {
-          if (!["DENY", "SAMEORIGIN",].includes(headers.xFrameOptions as string,)) {
-            throw new Error(
-              `Invalid headers.xFrameOptions in ${filePath}: "${headers.xFrameOptions}". Must be DENY or SAMEORIGIN`,
-            );
-          }
-        }
->>>>>>> theirs — function `validateDomainConfig` (F, confidence: medium)
       }
       break;
     }
