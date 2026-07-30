@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { safeJsonStringify, } from "../utils";
 import { computeActivity, } from "./activity";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
@@ -119,6 +120,10 @@ export function activityStreamRoutes({ database, }: { database: Kysely<DB> },) {
     const streamer = new ActivityStreamer(database, userId,);
     return streamer.open();
   }, {
+    response: {
+      200: SuccessResponse,
+      401: ErrorResponse,
+    },
     detail: {
       summary: "Stream activity via SSE",
       description:
