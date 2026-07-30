@@ -94,6 +94,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
         },
         {
           query: PaginationQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            401: ErrorResponse,
+          },
           detail: {
             summary: "List chats",
             description: "List chats for the authenticated user, ordered by most recently updated.",
