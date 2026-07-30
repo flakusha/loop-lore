@@ -104,7 +104,10 @@
     "copyCode": "Code kopieren",
     "viewOriginal": "Original anzeigen",
     "translated": "Übersetzt",
-    "original": "Original"
+    "original": "Original",
+    "stop": "Stop",
+    "caption": "Caption:",
+    "playingAs": "Playing as"
   },
   "settings": {
     "title": "Settings",
@@ -182,7 +185,9 @@
     "rotateKey": "Rotate Key",
     "rotateWarning": "This will generate a new primary key and mark the old one as expired.",
     "forwardSecrecy": "⚠️ Forward Secrecy",
-    "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages."
+    "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
+    "preferences": "Preferences",
+    "generation": "Generation"
   },
   "admin": {
     "title": "Administration",
@@ -426,7 +431,27 @@
     "invalidAvatarData": "Invalid avatar data",
     "emotionJobNotFound": "Job not found",
     "emotionJobAlreadyCompleted": "Job not found or already completed",
-    "editCharacter": "Edit Character"
+    "editCharacter": "Edit Character",
+    "type": "Type",
+    "character": "Character",
+    "persona": "Persona",
+    "systemPrompt": "System Prompt",
+    "mood": "Mood",
+    "neutral": "Neutral",
+    "startChat": "Start Chat",
+    "exportFormat": "Export Format",
+    "pngRecommended": "PNG (Recommended)",
+    "sillyTavernCompatible": "SillyTavern compatible",
+    "jsonV3": "JSON (V3)",
+    "standardFormat": "Standard format",
+    "yaml": "YAML",
+    "humanReadable": "Human-readable",
+    "toml": "TOML",
+    "configStyle": "Config-style",
+    "uploadCharacterCard": "Upload a character card",
+    "supportedFormats": "Supported Formats",
+    "characterCards": "Character Cards",
+    "fileFormats": "File Formats"
   },
   "worlds": {
     "title": "Worlds",
@@ -482,7 +507,11 @@
     "downloadSelected": "Auswahl herunterladen",
     "preview": "Vorschau",
     "searchAssets": "Search assets…",
-    "assetGallery": "Asset Gallery"
+    "assetGallery": "Asset Gallery",
+    "uploadAsset": "Upload Asset",
+    "copyUrl": "Copy URL",
+    "labelOptional": "Label (optional)",
+    "orClickToBrowse": "or click to browse"
   },
   "navigation": {
     "chat": "Chat",
