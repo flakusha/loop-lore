@@ -49,17 +49,17 @@ const checks = {
 
 const PROJECT_ROOT = import.meta.dir + "/..";
 
-async function runCheck(name, command) {
-  const commandParts = ["-c", command];
+async function runCheck(name, command,) {
+  const commandParts = ["-c", command,];
   try {
-    const proc = Bun.spawn(["bash", ...commandParts], {
+    const proc = Bun.spawn(["bash", ...commandParts,], {
       cwd: PROJECT_ROOT,
       stdout: "pipe",
       stderr: "pipe",
-    });
+    },);
     const exitCode = await proc.exited;
-    const stdout = await new Response(proc.stdout).text();
-    const stderr = await new Response(proc.stderr).text();
+    const stdout = await new Response(proc.stdout,).text();
+    const stderr = await new Response(proc.stderr,).text();
     return {
       name,
       passed: exitCode === 0,
@@ -77,32 +77,32 @@ async function runCheck(name, command) {
 }
 
 async function runAllChecks() {
-  console.log("=== loop-lore parallel check runner ===");
-  console.log(`Running ${Object.keys(checks).length} checks in parallel...\n`);
+  console.log("=== loop-lore parallel check runner ===",);
+  console.log(`Running ${Object.keys(checks,).length} checks in parallel...\n`,);
 
-  const promises = Object.entries(checks).map(([name, command]) => runCheck(name, command));
-  return Promise.all(promises);
+  const promises = Object.entries(checks,).map(([name, command,],) => runCheck(name, command,));
+  return Promise.all(promises,);
 }
 
-function reportResults(results) {
+function reportResults(results,) {
   let passed = 0;
   let failed = 0;
 
   for (const result of results) {
     if (result.passed) {
-      console.log(`✓ PASS: ${result.name}`);
+      console.log(`✓ PASS: ${result.name}`,);
       passed++;
     } else {
-      console.log(`✗ FAIL: ${result.name}`);
-      console.log(`  Output: ${result.output.split("\n").slice(0, 10).join("\n  ")}`);
+      console.log(`✗ FAIL: ${result.name}`,);
+      console.log(`  Output: ${result.output.split("\n",).slice(0, 10,).join("\n  ",)}`,);
       failed++;
     }
   }
 
-  console.log("\n=== Summary ===");
-  console.log(`Total: ${results.length}`);
-  console.log(`Passed: ${passed}`);
-  console.log(`Failed: ${failed}`);
+  console.log("\n=== Summary ===",);
+  console.log(`Total: ${results.length}`,);
+  console.log(`Passed: ${passed}`,);
+  console.log(`Failed: ${failed}`,);
 
   return failed;
 }
@@ -110,60 +110,64 @@ function reportResults(results) {
 // ── Non-blocking checks ─────────────────────────────────────────
 
 async function runNonBlockingChecks() {
-  console.log("\n=== Non-blocking checks ===");
+  console.log("\n=== Non-blocking checks ===",);
 
   // Version drift check
   try {
-    const tagProc = Bun.spawn(["bash", "-c", "git tag --list v*"], {
+    const tagProc = Bun.spawn(["bash", "-c", "git tag --list v*",], {
       cwd: PROJECT_ROOT,
       stdout: "pipe",
       stderr: "pipe",
-    });
+    },);
     await tagProc.exited;
-    const tagText = await new Response(tagProc.stdout).text();
-    const tags = tagText.trim().split("\n").filter(Boolean);
-    const latestTag = tags.at(-1);
+    const tagText = await new Response(tagProc.stdout,).text();
+    const tags = tagText.trim().split("\n",).filter(Boolean,);
+    const latestTag = tags.at(-1,);
 
-    const packageProc = Bun.spawn(["bash", "-c", "bun -p JSON.parse(require(\"fs\").readFileSync(\"package.json\",\"utf8\")).version"], {
+    const packageProc = Bun.spawn([
+      "bash",
+      "-c",
+      'bun -p JSON.parse(require("fs").readFileSync("package.json","utf8")).version',
+    ], {
       cwd: PROJECT_ROOT,
       stdout: "pipe",
       stderr: "pipe",
-    });
+    },);
     await packageProc.exited;
-    const packageText = await new Response(packageProc.stdout).text();
+    const packageText = await new Response(packageProc.stdout,).text();
     const packageVersion = packageText.trim();
 
     if (latestTag && packageVersion) {
-      const tagVersion = latestTag.replace(/^v/, "");
+      const tagVersion = latestTag.replace(/^v/, "",);
       if (tagVersion === packageVersion) {
-        console.log(`✓ Version in sync: ${packageVersion}`);
+        console.log(`✓ Version in sync: ${packageVersion}`,);
       } else {
-        console.log(`⚠ Version drift: package.json=${packageVersion}, latest tag=${tagVersion}`);
-        console.log("  Run 'bun run version:sync' to reconcile");
+        console.log(`⚠ Version drift: package.json=${packageVersion}, latest tag=${tagVersion}`,);
+        console.log("  Run 'bun run version:sync' to reconcile",);
       }
     }
   } catch {
-    console.log("⚠ Version check skipped");
+    console.log("⚠ Version check skipped",);
   }
 
   // Code duplication check
   try {
-    const jscpdProc = Bun.spawn(["bash", "-c", "bun run jscpd:full"], {
+    const jscpdProc = Bun.spawn(["bash", "-c", "bun run jscpd:full",], {
       cwd: PROJECT_ROOT,
       stdout: "pipe",
       stderr: "pipe",
-    });
+    },);
     await jscpdProc.exited;
-    const jscpdText = await new Response(jscpdProc.stdout).text();
-    if (jscpdText.includes("Found")) {
-      const cloneCount = (jscpdText.match(/Clone found/g) ?? []).length;
-      console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones`);
-      console.log("  Run 'bun run jscpd:full' for full report");
+    const jscpdText = await new Response(jscpdProc.stdout,).text();
+    if (jscpdText.includes("Found",)) {
+      const cloneCount = (jscpdText.match(/Clone found/g,) ?? []).length;
+      console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones`,);
+      console.log("  Run 'bun run jscpd:full' for full report",);
     } else {
-      console.log("✓ No code duplication issues (jscpd:full)");
+      console.log("✓ No code duplication issues (jscpd:full)",);
     }
   } catch {
-    console.log("✓ No code duplication issues (jscpd:full)");
+    console.log("✓ No code duplication issues (jscpd:full)",);
   }
 }
 
@@ -171,19 +175,19 @@ async function runNonBlockingChecks() {
 
 async function main() {
   const results = await runAllChecks();
-  const failed = reportResults(results);
+  const failed = reportResults(results,);
 
   await runNonBlockingChecks();
 
   if (failed > 0) {
-    console.log(`\n=== ${failed} check(s) failed ===`);
-    process.exit(1);
+    console.log(`\n=== ${failed} check(s) failed ===`,);
+    process.exit(1,);
   }
 
-  console.log("\n=== All checks passed ===");
+  console.log("\n=== All checks passed ===",);
 }
 
-main().catch((error) => {
-  console.error("❌ Check runner failed:", error.message);
-  process.exit(1);
-});
+main().catch((error,) => {
+  console.error("❌ Check runner failed:", error.message,);
+  process.exit(1,);
+},);
