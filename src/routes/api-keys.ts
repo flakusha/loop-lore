@@ -37,6 +37,12 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         .execute();
 
       return jsonResponse(keys,);
+    }, {
+      detail: {
+        summary: "List user's stored API keys",
+        description: "Returns all BYO API keys stored by the authenticated user, showing provider name and timestamps.",
+        tags: ["Admin", "API Keys",],
+      },
     },)
     .post("/api/user-api-keys", async (ctx,) => {
       const userId = requireUserId(ctx,);
@@ -125,6 +131,13 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         .execute();
 
       return jsonResponse({ ok: true, provider: providerName, },);
+    }, {
+      detail: {
+        summary: "Store or update a BYO API key",
+        description:
+          "Encrypts and stores an API key for the specified provider. Upserts if the provider already has a key.",
+        tags: ["Admin", "API Keys",],
+      },
     },)
     .delete("/api/user-api-keys/:provider", async (ctx,) => {
       const params = (ctx as any).params as { provider: string };
@@ -146,5 +159,11 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
       await database.deleteFrom("user_api_keys",).where("id", "=", existing.id,).execute();
 
       return new Response(null, { status: 204, },);
+    }, {
+      detail: {
+        summary: "Delete a stored API key",
+        description: "Permanently removes the stored API key for the specified provider.",
+        tags: ["Admin", "API Keys",],
+      },
     },);
 }

@@ -233,6 +233,12 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
         userId,
         userRole,
       );
+    }, {
+      detail: {
+        summary: "List world quests",
+        description: "List quests in a world. Paginated.",
+        tags: ["Quests",],
+      },
     },)
     .post(
       "/api/worlds/:worldId/quests",
@@ -247,12 +253,25 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
           ctx.body as Record<string, unknown>,
         );
       },
-      { body: QuestCreateBody, },
+      {
+        body: QuestCreateBody,
+        detail: {
+          summary: "Create quest",
+          description: "Create a new quest in a world.",
+          tags: ["Quests",],
+        },
+      },
     )
     .get("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleQuest(database, "GET", ctx.params.id as string, userId, userRole,);
+    }, {
+      detail: {
+        summary: "Get quest",
+        description: "Get a single quest by ID.",
+        tags: ["Quests",],
+      },
     },)
     .put("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -265,11 +284,23 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
         userRole,
         ctx.body as Record<string, unknown>,
       );
+    }, {
+      detail: {
+        summary: "Update quest",
+        description: "Update a quest's properties (title, description, status, objectives).",
+        tags: ["Quests",],
+      },
     },)
     .delete("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleAbandonQuest(database, ctx.params.id as string, userId, userRole,);
+    }, {
+      detail: {
+        summary: "Abandon quest",
+        description: "Abandon/delete a quest by ID.",
+        tags: ["Quests",],
+      },
     },)
     .post("/api/quests/:id/progress", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -282,6 +313,12 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
         userRole,
         ctx.body as Record<string, unknown>,
       );
+    }, {
+      detail: {
+        summary: "Update quest progress",
+        description: "Update quest progress for a quest. Optionally link to a chat session.",
+        tags: ["Quests",],
+      },
     },)
     .get("/api/quests/:id/progress/:chatId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -293,5 +330,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
         userId,
         userRole,
       );
+    }, {
+      detail: {
+        summary: "Get quest progress by chat",
+        description: "Get quest progress for a specific chat session.",
+        tags: ["Quests",],
+      },
     },) as unknown as Elysia;
 }
