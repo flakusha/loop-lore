@@ -101,7 +101,14 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
           return jsonResponse({ data: users, total, page, pageSize, },);
         },
-        { query: PaginationQuery, },
+        {
+          query: PaginationQuery,
+          detail: {
+            summary: "List users",
+            description: "List all users with search, role, and status filtering. Admin only.",
+            tags: ["Admin",],
+          },
+        },
       )
       .get(
         "/api/admin/users/:id",
@@ -141,7 +148,14 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           }
           return jsonResponse(user,);
         },
-        { params: UserIdParams, },
+        {
+          params: UserIdParams,
+          detail: {
+            summary: "Get user",
+            description: "Get a user's full profile including settings and birth date. Admin only.",
+            tags: ["Admin",],
+          },
+        },
       )
       .patch(
         "/api/admin/users/:id/role",
