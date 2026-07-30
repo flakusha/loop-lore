@@ -49,7 +49,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       response: {
-        200: t.Array(RelationshipResponse),
+        200: t.Array(RelationshipResponse,),
         401: ErrorResponse,
         404: ErrorResponse,
       },
@@ -142,7 +142,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       params: ActorIdParams,
       body: RelationshipCreateBody,
       response: {
-        201: t.Object({ id: t.String(), }),
+        201: t.Object({ id: t.String(), },),
         401: ErrorResponse,
         404: ErrorResponse,
       },

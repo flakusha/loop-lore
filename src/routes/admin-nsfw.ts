@@ -9,7 +9,7 @@
  * Requires admin role.
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getConfig, setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
@@ -85,10 +85,7 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
           },);
         }
 
-        const body = ctx.body as {
-          allowNsfw?: boolean;
-          nsfwMinAge?: number;
-        };
+        const body = ctx.body;
 
         try {
           if (body.allowNsfw !== undefined) {
@@ -111,6 +108,10 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
         }
       },
       {
+        body: t.Object({
+          allowNsfw: t.Optional(t.Boolean(),),
+          nsfwMinAge: t.Optional(t.Numeric(),),
+        },),
         detail: {
           summary: "Update NSFW configuration",
           description: "Update server-wide NSFW policy settings. Admin role required.",

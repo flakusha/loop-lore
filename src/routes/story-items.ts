@@ -13,13 +13,14 @@
  *   DELETE /api/worlds/:worldId/item-instances/:instanceId — destroy instance
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { ItemCategory, ItemRarity, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { ItemsService, } from "../story/items";
 import { safeJsonStringify, uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
+import { Id, StoryItemInstanceBody, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 /** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
@@ -213,19 +214,13 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .post("/api/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      const worldId = ctx.params.worldId as string;
+      const { worldId, } = ctx.params;
 
       if (!(await checkWorldOwnership(database, worldId, userId, userRole,))) {
         return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
-      const itemId = body.itemId as string;
-      const locationId = body.locationId as string;
-      const quantity = (body.quantity as number) ?? 1;
-
-      if (!itemId) { return jsonError({ message: "itemId is required", status: HttpStatus.BadRequest, },); }
-      if (!locationId) { return jsonError({ message: "locationId is required", status: HttpStatus.BadRequest, },); }
+      const { itemId, locationId, quantity = 1, } = ctx.body;
 
       const id = uid();
       await database
@@ -243,6 +238,8 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
 
       return jsonCreated({ id, },);
     }, {
+      params: t.Object({ worldId: Id, },),
+      body: StoryItemInstanceBody,
       detail: {
         summary: "Place item in world",
         description: "Place an item instance at a location in a world.",
@@ -252,7 +249,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .get("/api/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      const worldId = ctx.params.worldId as string;
+      const { worldId, } = ctx.params;
 
       if (!(await checkWorldOwnership(database, worldId, userId, userRole,))) {
         return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
@@ -266,6 +263,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       const instances = await query.execute();
       return jsonResponse(instances,);
     }, {
+      params: t.Object({ worldId: Id, },),
       detail: {
         summary: "List item instances",
         description: "List all item instances in a world, optionally filtered by location.",
@@ -275,14 +273,10 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .get("/api/worlds/:worldId/items/:itemId/instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleInstances(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.itemId as string,
-        userId,
-        userRole,
-      );
+      const { worldId, itemId, } = ctx.params;
+      return handleInstances(database, worldId, itemId, userId, userRole,);
     }, {
+      params: t.Object({ worldId: Id, itemId: Id, },),
       detail: {
         summary: "List instances of item",
         description: "List all placed instances of a specific item definition in a world.",
@@ -292,15 +286,10 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .get("/api/worlds/:worldId/items/:itemId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleDefinition(
-        database,
-        "GET",
-        ctx.params.worldId as string,
-        ctx.params.itemId as string,
-        userId,
-        userRole,
-      );
+      const { worldId, itemId, } = ctx.params;
+      return handleDefinition(database, "GET", worldId, itemId, userId, userRole,);
     }, {
+      params: t.Object({ worldId: Id, itemId: Id, },),
       detail: {
         summary: "Get item definition",
         description: "Get a single item definition by ID.",
@@ -310,16 +299,10 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .put("/api/worlds/:worldId/items/:itemId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleDefinition(
-        database,
-        "PUT",
-        ctx.params.worldId as string,
-        ctx.params.itemId as string,
-        userId,
-        userRole,
-        ctx.body as Record<string, unknown>,
-      );
+      const { worldId, itemId, } = ctx.params;
+      return handleDefinition(database, "PUT", worldId, itemId, userId, userRole, ctx.body as Record<string, unknown>,);
     }, {
+      params: t.Object({ worldId: Id, itemId: Id, },),
       detail: {
         summary: "Update item definition",
         description: "Update an item definition's properties (name, description, category, rarity, etc).",
@@ -329,14 +312,10 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .delete("/api/worlds/:worldId/items/:itemId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleDeleteDefinition(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.itemId as string,
-        userId,
-        userRole,
-      );
+      const { worldId, itemId, } = ctx.params;
+      return handleDeleteDefinition(database, worldId, itemId, userId, userRole,);
     }, {
+      params: t.Object({ worldId: Id, itemId: Id, },),
       detail: {
         summary: "Delete item definition",
         description: "Delete an item definition and all its instances.",
@@ -346,11 +325,12 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .get("/api/worlds/:worldId/items", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
+      const { worldId, } = ctx.params;
       const category = ctx.query?.category as string | undefined;
       return handleDefinitions(
         database,
         "GET",
-        ctx.params.worldId as string,
+        worldId,
         userId,
         userRole,
         Number(ctx.query?.page,) || 1,
@@ -358,6 +338,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
         category,
       );
     }, {
+      params: t.Object({ worldId: Id, },),
       detail: {
         summary: "List item definitions",
         description: "List all item definitions in a world, optionally filtered by category. Paginated.",
@@ -367,10 +348,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .post("/api/worlds/:worldId/items", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
+      const { worldId, } = ctx.params;
       return handleDefinitions(
         database,
         "POST",
-        ctx.params.worldId as string,
+        worldId,
         userId,
         userRole,
         1,
@@ -379,6 +361,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
         ctx.body as Record<string, unknown>,
       );
     }, {
+      params: t.Object({ worldId: Id, },),
       detail: {
         summary: "Create item definition",
         description: "Create a new item definition in a world. Requires a name.",
@@ -388,15 +371,17 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .post("/api/worlds/:worldId/item-instances/:instanceId/transfer", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
+      const { worldId, instanceId, } = ctx.params;
       return handleTransfer(
         database,
-        ctx.params.worldId as string,
-        ctx.params.instanceId as string,
+        worldId,
+        instanceId,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     }, {
+      params: t.Object({ worldId: Id, instanceId: Id, },),
       detail: {
         summary: "Transfer item instance",
         description: "Transfer an item instance between locations or actors.",
@@ -406,14 +391,10 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .delete("/api/worlds/:worldId/item-instances/:instanceId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleInstance(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.instanceId as string,
-        userId,
-        userRole,
-      );
+      const { worldId, instanceId, } = ctx.params;
+      return handleInstance(database, worldId, instanceId, userId, userRole,);
     }, {
+      params: t.Object({ worldId: Id, instanceId: Id, },),
       detail: {
         summary: "Destroy item instance",
         description: "Destroy an item instance from the world.",
