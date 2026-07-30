@@ -130,13 +130,6 @@ describe("Characters flow E2E", () => {
       await page.locator("[data-testid^='character-card-']",).first().click();
       await page.locator("[data-testid='character-detail-modal']",).waitFor({ state: "visible", timeout: 5000, },);
       await page.locator("[data-testid='start-chat-btn']",).click();
-      // Direct call in case onclick handler is blocked
-      await page.evaluate(() => {
-        const btn = document.querySelector("[data-testid='start-chat-btn']") as HTMLElement;
-        if (btn && typeof (window as any).startChatFromChar === "function") {
-          (window as any).startChatFromChar(btn,);
-        }
-      },);
       // Should redirect to chat page
       await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 8000, },);
       expect(page.url(),).toContain("/views/chat",);
