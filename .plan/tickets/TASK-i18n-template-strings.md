@@ -1,6 +1,6 @@
 # TASK: i18n Template String Replacement
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** High
 **Epic:** epic-i18n (Phase 3)
 
@@ -31,19 +31,36 @@ Replace hardcoded English strings in HTML templates with `{{{t("key")}}}` bindin
 
 ## Pattern
 
-Before:
-
-```html
-<h1>Settings</h1>
-<button>Save</button>
-```
-
-After:
+### Text Content (triple-brace)
 
 ```html
 <h1>{{{t("settings.title")}}}</h1>
 <button>{{{t("common.save")}}}</button>
 ```
+
+### HTML Attributes (x-bind)
+
+Formatter chokes on `{{{t()}}}` inside attributes. Use Alpine x-bind:
+
+```html
+<input placeholder="{{{t("key")}}}" aria-label="{{{t("key")}}}">
+<!-- Becomes: -->
+<input x-bind:placeholder="t('key')" x-bind:aria-label="t('key')">
+```
+
+## Completed
+
+| File                        | Status     | Notes                              |
+| --------------------------- | ---------- | ---------------------------------- |
+| `src/views/layout.html`     | ✅ Done    | Already translated                 |
+| `src/views/login.html`      | ✅ Done    | Log In, demo mode, signup link     |
+| `src/views/register.html`   | ✅ Done    | Sign Up, login link                |
+| `src/components/auth-form-fields.html` | ✅ Done | Username/Password labels |
+| `src/components/chat/chat-header.html` | ✅ Done | 5 buttons via x-bind |
+| `src/views/settings.html`   | 🟡 Partial | 3 placeholders + 2 aria-labels    |
+| `src/views/admin.html`      | 🟡 Partial | 4 search placeholders             |
+| `src/views/chat-list.html`  | ✅ Done    | search placeholder + aria-label    |
+| `src/views/new-chat.html`   | 🟡 Partial | cancel + create buttons            |
 
 ## Key Mapping
 

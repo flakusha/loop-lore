@@ -1,6 +1,6 @@
 <header id="header-slot" class="main-header" data-page="chat-list">
   <button class="hamburger" x-on:click="window.toggleSidebar()">☰</button>
-  <span class="title" id="page-title">Chats</span>
+  <span class="title" id="page-title">{{{t("chats.title")}}}</span>
   <div class="actions">
     <a
       class="btn btn-primary"
@@ -10,7 +10,7 @@
       hx-swap="innerHTML"
       hx-push-url="true"
     >
-      + New Chat
+      {{{t("chats.newChat")}}}
     </a>
   </div>
 </header>
@@ -23,8 +23,8 @@
         id="chat-search"
         class="form-input"
         type="search"
-        placeholder="Search chats…"
-        aria-label="Search chats"
+        x-bind:placeholder="t('chats.searchPlaceholder')"
+        x-bind:aria-label="t('chats.searchPlaceholder')"
         hx-get="/dynamic/chats/search"
         hx-trigger="input changed delay:300ms, load"
         hx-target="#chat-list-grid"
@@ -44,7 +44,7 @@
         name="world"
         style="width: 160px"
       >
-        <option value="">All worlds</option>
+        <option value="">{{{t("chats.allWorlds")}}}</option>
       </select>
       <select
         id="chat-type-filter"
@@ -57,9 +57,9 @@
         name="type"
         style="width: 140px"
       >
-        <option value="">All types</option>
-        <option value="direct">Direct</option>
-        <option value="group">Group</option>
+        <option value="">{{{t("chats.allTypes")}}}</option>
+        <option value="direct">{{{t("chats.direct")}}}</option>
+        <option value="group">{{{t("chats.group")}}}</option>
       </select>
       <select
         id="chat-sort"
@@ -72,9 +72,9 @@
         name="sort"
         style="width: 140px"
       >
-        <option value="recent">Recently updated</option>
-        <option value="name">Name A–Z</option>
-        <option value="oldest">Oldest first</option>
+        <option value="recent">{{{t("chats.recentlyUpdated")}}}</option>
+        <option value="name">{{{t("chats.nameAZ")}}}</option>
+        <option value="oldest">{{{t("chats.oldestFirst")}}}</option>
       </select>
     </div>
 
@@ -82,7 +82,7 @@
     <div id="chat-list-grid" hx-get="/dynamic/chats/list?pageSize=50" hx-trigger="load" hx-swap="innerHTML">
       <div class="empty-state" style="padding: var(--space-12)">
         <div class="icon">⏳</div>
-        <div class="title">Loading chats…</div>
+        <div class="title">{{{t("chats.loading")}}}</div>
       </div>
     </div>
   </main>
