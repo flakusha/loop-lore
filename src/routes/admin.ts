@@ -156,6 +156,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         },
         {
           params: UserIdParams,
+          response: {
+            200: t.Any(),
+            403: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Get user",
             description: "Get a user's full profile including settings and birth date. Admin only.",
@@ -181,7 +186,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
           return jsonResponse({ ok: true, },);
         },
-        { body: AdminRoleUpdateBody, params: UserIdParams, },
+        {
+          body: AdminRoleUpdateBody,
+          params: UserIdParams,
+          response: { 200: SuccessResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .delete(
         "/api/admin/users/:id",
@@ -199,7 +208,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           await db.deleteFrom("users",).where("id", "=", id,).execute();
           return jsonNoContent();
         },
-        { params: UserIdParams, },
+        { params: UserIdParams, response: { 204: t.Void(), 403: ErrorResponse, }, },
       )
       // ── Stats ──────────────────────────────────────────────
       .get("/api/admin/stats", async (ctx: any,) => {
@@ -231,6 +240,17 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           characters: characterCount?.n ?? 0,
           assets: assetCount?.n ?? 0,
         },);
+      }, {
+        response: {
+          200: t.Object({
+            users: t.Number(),
+            chats: t.Number(),
+            messages: t.Number(),
+            characters: t.Number(),
+            assets: t.Number(),
+          },),
+          403: ErrorResponse,
+        },
       },)
       // ── Provider management ────────────────────────────────
       .get("/api/admin/providers", (ctx: any,) => {
@@ -259,6 +279,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         },);
 
         return jsonResponse({ providers, },);
+      }, {
+        response: {
+          200: t.Object({ providers: t.Array(t.Any(),), },),
+          403: ErrorResponse,
+        },
       },)
       .get("/api/admin/providers/:name/models", (ctx: any,) => {
         const { params, } = ctx;
@@ -278,6 +303,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           models: health.models,
           status: health.status,
         },);
+      }, {
+        response: {
+          200: t.Object({ name: t.String(), label: t.String(), models: t.Array(t.Any(),), status: t.String(), },),
+          404: ErrorResponse,
+        },
       },)
       .post("/api/admin/providers/rescan", async (ctx: any,) => {
         const { userRole, } = ctx;
@@ -293,6 +323,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         return jsonResponse({
           providers: results.map((p,) => providerToSummary(p,)),
         },);
+      }, {
+        response: {
+          200: t.Object({ providers: t.Array(t.Any(),), },),
+          403: ErrorResponse,
+        },
       },)
       // ── Model role overrides ───────────────────────────────
       .get("/api/admin/model-roles", async (ctx: any,) => {
@@ -309,6 +344,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const overrides = await getModelRoleOverrides(opts.database,);
 
         return jsonResponse({ roles: resolved, overrides, validRoles: VALID_ROLES, },);
+      }, {
+        response: {
+          200: t.Object({ roles: t.Array(t.Any(),), overrides: t.Array(t.Any(),), validRoles: t.Array(t.String(),), },),
+          403: ErrorResponse,
+        },
       },)
       .get("/api/admin/model-roles/:role", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
@@ -332,6 +372,12 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const resolved = await resolveAllModelRoles(opts.config, opts.database,);
         const roleConfig = resolved.find((r,) => r.role === role) ?? null;
         return jsonResponse({ role, config: roleConfig, },);
+      }, {
+        response: {
+          200: t.Object({ role: t.String(), config: t.Any(), },),
+          400: ErrorResponse,
+          403: ErrorResponse,
+        },
       },)
       .put(
         "/api/admin/model-roles/:role",
@@ -367,7 +413,10 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             },);
           }
         },
-        { body: AdminModelRoleOverrideBody, },
+        {
+          body: AdminModelRoleOverrideBody,
+          response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, },
+        },
       )
       .delete("/api/admin/model-roles/:role", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
@@ -390,6 +439,12 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
         await clearModelRoleOverride(role as ModelRole, opts.database,);
         return jsonNoContent();
+      }, {
+        response: {
+          204: t.Void(),
+          400: ErrorResponse,
+          403: ErrorResponse,
+        },
       },)
       // ── SD.CPP status ──────────────────────────────────────
       .get("/api/admin/sd-status", async (ctx: any,) => {
@@ -423,6 +478,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           port: sdPort,
           latencyMs,
         },);
+      }, {
+        response: {
+          200: t.Object({ status: t.String(), port: t.Number(), latencyMs: t.Optional(t.Number(),), },),
+          403: ErrorResponse,
+        },
       },)
       // ── System configuration ───────────────────────────────
       .get("/api/admin/system-config", async (ctx: any,) => {
@@ -436,6 +496,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         }
         const configs = await getAllConfig(opts.database,);
         return jsonResponse(configs,);
+      }, {
+        response: {
+          200: t.Any(),
+          403: ErrorResponse,
+        },
       },)
       .patch(
         "/api/admin/system-config",
@@ -452,7 +517,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           await setConfig(opts.database, key, value, description,);
           return jsonResponse({ ok: true, },);
         },
-        { body: AdminSystemConfigBody, },
+        { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
       )
       .delete("/api/admin/system-config/:key", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
@@ -466,6 +531,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const key = p.key as string;
         await deleteConfig(opts.database, key,);
         return jsonNoContent();
+      }, {
+        response: {
+          204: t.Void(),
+          403: ErrorResponse,
+        },
       },)
       // ── World management ───────────────────────────────────
       .get(
@@ -506,7 +576,13 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
           return jsonResponse({ data: worlds, total, page, pageSize, },);
         },
-        { query: PaginationQuery, },
+        {
+          query: PaginationQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            403: ErrorResponse,
+          },
+        },
       )
       .get(
         "/api/admin/worlds/:id",
@@ -544,7 +620,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             locationCount: locationCount?.n ?? 0,
           },);
         },
-        { params: WorldIdParams, },
+        { params: WorldIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .delete(
         "/api/admin/worlds/:id",
@@ -561,7 +637,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           await opts.database.deleteFrom("worlds",).where("id", "=", id,).execute();
           return jsonNoContent();
         },
-        { params: WorldIdParams, },
+        { params: WorldIdParams, response: { 204: t.Void(), 403: ErrorResponse, }, },
       )
       // ── Chat management ────────────────────────────────────
       .get(
@@ -607,7 +683,13 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
           return jsonResponse({ data: chats, total, page, pageSize, },);
         },
-        { query: PaginationQuery, },
+        {
+          query: PaginationQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            403: ErrorResponse,
+          },
+        },
       )
       .get(
         "/api/admin/chats/:id",
@@ -652,7 +734,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             participants,
           },);
         },
-        { params: ChatIdParams, },
+        { params: ChatIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .patch(
         "/api/admin/chats/:id",
@@ -683,7 +765,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { body: AdminChatUpdateBody, params: ChatIdParams, },
+        {
+          body: AdminChatUpdateBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, },
+        },
       )
       .delete(
         "/api/admin/chats/:id",
@@ -700,7 +786,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           await opts.database.deleteFrom("chats",).where("id", "=", id,).execute();
           return jsonNoContent();
         },
-        { params: ChatIdParams, },
+        { params: ChatIdParams, response: { 204: t.Void(), 403: ErrorResponse, }, },
       )
       // ── Template management ─────────────────────────────────
       .get("/api/admin/templates", async (ctx: any,) => {
@@ -719,6 +805,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           .executeTakeFirst();
         const profiles = row ? JSON.parse(row.value,) : {};
         return jsonResponse(profiles,);
+      }, {
+        response: {
+          200: t.Any(),
+          403: ErrorResponse,
+        },
       },)
       .put(
         "/api/admin/templates/:id",
@@ -763,7 +854,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .execute();
           return jsonResponse(profiles[id],);
         },
-        { body: AdminTemplateUpdateBody, },
+        { body: AdminTemplateUpdateBody, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .post(
         "/api/admin/templates",
@@ -808,7 +899,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .execute();
           return jsonResponse(profile,);
         },
-        { body: AdminTemplateCreateBody, },
+        { body: AdminTemplateCreateBody, response: { 200: t.Any(), 400: ErrorResponse, 403: ErrorResponse, }, },
       )
       .delete("/api/admin/templates/:id", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
@@ -847,6 +938,12 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           )
           .execute();
         return jsonNoContent();
+      }, {
+        response: {
+          204: t.Void(),
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
       },)
       // ── Audit log ──────────────────────────────────────────
       .get(
