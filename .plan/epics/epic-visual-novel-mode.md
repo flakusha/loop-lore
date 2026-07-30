@@ -1,6 +1,6 @@
 # EPIC: Visual Novel Mode — Dynamic Generation & Q&A Mode
 
-**Status:** 📝 Draft
+**Status:** 🟡 In Progress
 **Priority:** Medium
 **Effort:** Very High
 **Type:** Feature Epic
@@ -12,10 +12,21 @@ Extend Visual Novel Mode with dynamic image and story generation capabilities, p
 
 ## How It Extends Existing Work
 
-- `TASK-visual-novel-mode.md` — base VN rendering (backend complete)
+- `TASK-visual-novel-mode.md` — base VN rendering (backend ✅, frontend foundation ✅)
 - `TASK-vn-branching-choices.md` — branching choices with relationship impact
 - `TASK-vn-dynamic-generation.md` — dynamic image/story generation (this epic)
 - `TASK-vn-qa-mode.md` — question<->answer VN mode (this epic)
+
+## Current State (2026-07-31)
+
+### Base VN Rendering: 🟡 Foundation Complete
+
+- ✅ Backend: DB schema, API, service, routes, validation
+- ✅ Frontend: scene-renderer, portrait-manager, transition-engine, typewriter, settings, CSS
+- ❌ Chat.html wiring (conditional VN vs bubble layout)
+- ❌ Image preloading
+
+### Extended VN (Dynamic Generation & Q&A): ❌ Not Started
 
 ## Core Features
 

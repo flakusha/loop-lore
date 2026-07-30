@@ -1,13 +1,13 @@
 # TASK: Chat: Visual Novel Mode
 
-**Status:** 🟡 Backend Complete / Frontend Not Started
+**Status:** 🟡 In Progress — Frontend Foundation Complete
 **Priority:** medium
 **Effort:** Medium-High (frontend rendering)
 **Epic:** epic-immersion-presentation
 
 ## Summary
 
-Visual novel mode: image + text overlay, transitions, typewriter effect, 3 layout modes. Backend complete, frontend rendering needed.
+Visual novel mode: image + text overlay, transitions, typewriter effect, 3 layout modes. Backend complete, frontend rendering foundation complete (2026-07-31).
 
 ## Scope
 
@@ -17,19 +17,20 @@ Visual novel mode: image + text overlay, transitions, typewriter effect, 3 layou
 - Scene transition logic
 - Choice/branching system
 
-### Frontend (Needed)
+### Frontend (Foundation Complete, Wiring Pending)
 
-- VN renderer component
-- Image display with transitions
-- Text overlay with typewriter effect
-- Choice/branching UI
-- 3 layout modes (full, split, overlay)
+- ✅ VN renderer component (`src/frontend/vn/scene-renderer.ts`)
+- ✅ Image display with transitions (`src/frontend/vn/transition-engine.ts`)
+- ✅ Text overlay with typewriter effect (`src/frontend/vn/typewriter.ts`)
+- ❌ Choice/branching UI (not started)
+- ✅ 3 layout modes (overlay, below, split) — CSS + renderer
+- ❌ Not yet wired into `chat.html` (conditional VN vs bubble layout)
 
 ### Layout Modes
 
-- **Full** — Image takes full screen, text overlay
-- **Split** — Image left, text right
-- **Overlay** — Image background, text box overlay
+- **Full (overlay)** — Image takes full screen, text overlay ✅
+- **Split** — Image left, text right ✅
+- **Below** — Image top, text bottom ✅
 
 ## Linked Epics
 
@@ -37,19 +38,20 @@ Visual novel mode: image + text overlay, transitions, typewriter effect, 3 layou
 
 ## Acceptance Criteria
 
-- [ ] VN renderer component implemented
-- [ ] Image display with transitions (fade, slide, etc.)
-- [ ] Text overlay with typewriter effect
+- [x] VN renderer component implemented
+- [x] Image display with transitions (fade, slide, etc.)
+- [x] Text overlay with typewriter effect
 - [ ] Choice/branching UI
-- [ ] 3 layout modes (full, split, overlay)
-- [ ] Scene transition animations
-- [ ] Mobile-responsive design
-- [ ] Integration with backend VN state
+- [x] 3 layout modes (overlay, below, split)
+- [x] Scene transition animations
+- [ ] Mobile-responsive design (needs testing)
+- [ ] Integration with backend VN state (needs chat.html wiring)
 - [ ] Unit tests for VN renderer
 - [ ] Integration tests for VN workflow
 
 ## Notes
 
-- Backend is complete — focus on frontend rendering
-- Follow existing Alpine.js patterns
-- Reference `TASK-visual-novel-mode.md` for full VN implementation
+- Backend is complete — frontend foundation done 2026-07-31
+- VN module at `src/frontend/vn/` — 6 files: settings, typewriter, transition-engine, portrait-manager, scene-renderer, index
+- GmConfig extended with 12 VN fields; ChatState extended with VN state
+- Next: wire into `chat.html` for conditional VN vs bubble rendering
