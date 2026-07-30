@@ -14,7 +14,7 @@
   data-testid="gallery-sidebar"
 >
   <button class="btn-icon" @click="$store.ui.showGallery = false" title="Close">&times;</button>
-  <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
+  <div class="nav-section-title" style="margin-bottom: var(--space-3)">{{{t("chats.chatAssets")}}}</div>
   <template x-if="activeChat">
     <div style="margin-bottom: var(--space-3)">
       <button
@@ -26,7 +26,7 @@
         hx-on::after-request="window.openModal('upload-modal')"
         data-testid="gallery-upload-link"
       >
-        + Upload & Link
+        {{{t("chats.uploadLink")}}}
       </button>
     </div>
   </template>
@@ -34,13 +34,13 @@
     <template x-if="!activeChat">
       <div class="gallery-empty">
         <div class="icon">📁</div>
-        <div class="text">Select a chat to see linked assets</div>
+        <div class="text">{{{t("chats.selectChatForAssets")}}}</div>
       </div>
     </template>
     <template x-if="activeChat && galleryAssets.length === 0">
       <div class="gallery-empty">
         <div class="icon">📁</div>
-        <div class="text">No assets linked to this chat</div>
+        <div class="text">{{{t("chats.noAssets")}}}</div>
       </div>
     </template>
     <template x-for="asset in galleryAssets" :key="asset.id">

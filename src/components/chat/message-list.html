@@ -2,26 +2,26 @@
 <div class="chat-area" id="message-list" x-ref="messageList" data-testid="message-list">
   <div x-ref="scrollSentinel" id="scroll-sentinel" style="height: 1px"></div>
   <div x-show="loadingOlder" class="loading-older">
-    <span class="spinner"></span> Loading older messages...
+    <span class="spinner"></span> {{{t("chats.loadingOlder")}}}
   </div>
   <template x-if="!activeChat">
     <div class="empty-state">
       <div class="icon">💬</div>
-      <div class="title">Select a chat</div>
-      <div class="description">Choose a conversation from the sidebar or create a new one.</div>
+      <div class="title">{{{t("chats.selectChat")}}}</div>
+      <div class="description">{{{t("chats.selectChatDescription")}}}</div>
     </div>
   </template>
   <template x-if="activeChat && messages.length === 0 && !loadingMessages">
     <div class="empty-state">
       <div class="icon">💬</div>
-      <div class="title">No messages yet</div>
-      <div class="description">Start a conversation below. Messages are persisted automatically.</div>
+      <div class="title">{{{t("chats.noMessages")}}}</div>
+      <div class="description">{{{t("chats.noMessagesHint")}}}</div>
     </div>
   </template>
   <template x-if="activeChat && loadingMessages">
     <div class="empty-state">
       <div class="icon">⏳</div>
-      <div class="title">Loading messages...</div>
+      <div class="title">{{{t("chats.loadingMessages")}}}</div>
     </div>
   </template>
   <template x-if="activeChat && loadingError">
@@ -64,7 +64,8 @@
                 class="time"
                 x-text="msg.group ? formatTimeShort(msg.created_at) : formatTime(msg.created_at)"
               ></span>
-              <span class="edited-label" x-show="msg.edited_at" data-testid="edited-indicator">(edited)</span>
+              <span class="edited-label" x-show="msg.edited_at" data-testid="edited-indicator"
+              >{{{t("chats.edited")}}}</span>
             </div>
             <!-- Thinking: Immersion = hidden, Basic = 💭 indicator, Detailed = collapsible -->
             <template x-if="msg.thinking && detailLevel === 'Basic'">
@@ -73,12 +74,12 @@
                 @click="$dispatch('toggle-thinking', { msgId: msg.id })"
                 data-testid="thinking-indicator"
               >
-                💭 Thinking…
+                💭 {{{t("chats.thinking")}}}
               </div>
             </template>
             <template x-if="msg.thinking && detailLevel === 'Detailed'">
               <details class="thinking-block" data-testid="thinking-block">
-                <summary>Thinking process</summary>
+                <summary>{{{t("chats.thinkingProcess")}}}</summary>
                 <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
               </details>
             </template>
@@ -94,8 +95,8 @@
                   @keydown.ctrl.enter="saveEdit(msg.id)"
                 ></textarea>
                 <div class="edit-actions">
-                  <button class="btn btn-ghost btn-sm" @click="cancelEdit()">Cancel</button>
-                  <button class="btn btn-primary btn-sm" @click="saveEdit(msg.id)">Save</button>
+                  <button class="btn btn-ghost btn-sm" @click="cancelEdit()">{{{t("common.cancel")}}}</button>
+                  <button class="btn btn-primary btn-sm" @click="saveEdit(msg.id)">{{{t("common.save")}}}</button>
                 </div>
               </div>
             </template>
@@ -130,23 +131,29 @@
             </template>
             <!-- Detailed (nerd) mode: full button row + stats -->
             <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
-              <button class="btn-icon-action" @click="copyMessage(msg.id, $event)" title="Copy">📋</button>
-              <button class="btn-icon-action" @click="startEdit(msg.id)" title="Edit">✏️</button>
+              <button class="btn-icon-action" @click="copyMessage(msg.id, $event)" x-bind:title="t('chats.copy')">
+                📋
+              </button>
+              <button class="btn-icon-action" @click="startEdit(msg.id)" x-bind:title="t('common.edit')">✏️</button>
               <template x-if="msg.role === 'assistant'">
-                <button class="btn-icon-action" title="Regenerate" @click="regenerateVariant(msg.id)">
+                <button class="btn-icon-action" x-bind:title="t('chats.regenerate')" @click="regenerateVariant(msg.id)">
                   ♻
                 </button>
               </template>
               <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
                 <span class="variant-switcher">
-                  <button class="btn-icon-action" title="Previous variant" @click="switchVariant(msg.id, -1)">
+                  <button
+                    class="btn-icon-action"
+                    x-bind:title="t('common.previous')"
+                    @click="switchVariant(msg.id, -1)"
+                  >
                     ◀
                   </button>
                   <span
                     class="variant-counter"
                     x-text="(msg.variantIndex ?? 0) + 1 + '/' + msg.totalVariants"
                   ></span>
-                  <button class="btn-icon-action" title="Next variant" @click="switchVariant(msg.id, 1)">
+                  <button class="btn-icon-action" x-bind:title="t('common.next')" @click="switchVariant(msg.id, 1)">
                     ▶
                   </button>
                 </span>
@@ -154,7 +161,7 @@
               <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
                 <button
                   class="btn-icon-action action-continue"
-                  title="Continue"
+                  x-bind:title="t('chats.continueAction')"
                   @click="continueMessage(msg.id)"
                 >
                   ↳
@@ -173,19 +180,19 @@
               <button
                 class="btn-icon-action"
                 @click="generateImageFromMessage(msg.id)"
-                title="Generate image"
+                x-bind:title="t('chats.generateImage')"
               >
                 🖼
               </button>
               <template x-if="msg.attachments && msg.attachments.length > 0">
-                <button class="btn-icon-action" @click="captionMessage(msg.id)" title="Caption images">
+                <button class="btn-icon-action" @click="captionMessage(msg.id)" x-bind:title="t('chats.captionImages')">
                   💬
                 </button>
               </template>
               <button
                 class="btn-icon-action action-remove"
                 @click="removeMessage(msg.id, $event)"
-                title="Remove"
+                x-bind:title="t('common.remove')"
               >
                 🗑
               </button>
@@ -209,27 +216,33 @@
             <template x-if="_debugView && msg.model_id">
               <div class="debug-panel" data-testid="debug-panel">
                 <div class="debug-row">
-                  <span class="debug-label">Model</span> <span x-text="msg.model_id"></span>
+                  <span class="debug-label">{{{t("chats.model")}}}</span> <span x-text="msg.model_id"></span>
                 </div>
                 <div class="debug-row" x-show="msg.provider">
-                  <span class="debug-label">Provider</span> <span x-text="msg.provider"></span>
+                  <span class="debug-label">{{{t("chats.provider")}}}</span> <span x-text="msg.provider"></span>
                 </div>
                 <div class="debug-row" x-show="msg.token_count_prompt != null">
-                  <span class="debug-label">Prompt tokens</span> <span x-text="msg.token_count_prompt"></span>
+                  <span class="debug-label">{{{t("chats.promptTokens")}}}</span> <span
+                    x-text="msg.token_count_prompt"
+                  ></span>
                 </div>
                 <div class="debug-row" x-show="msg.token_count_completion != null">
-                  <span class="debug-label">Completion tokens</span>
+                  <span class="debug-label">{{{t("chats.completionTokens")}}}</span>
                   <span x-text="msg.token_count_completion"></span>
                 </div>
                 <div class="debug-row" x-show="msg.token_count_total != null">
-                  <span class="debug-label">Total tokens</span> <span x-text="msg.token_count_total"></span>
+                  <span class="debug-label">{{{t("chats.totalTokens")}}}</span> <span
+                    x-text="msg.token_count_total"
+                  ></span>
                 </div>
                 <div class="debug-row" x-show="msg.generation_time_ms != null">
-                  <span class="debug-label">Gen time</span>
+                  <span class="debug-label">{{{t("chats.genTime")}}}</span>
                   <span x-text="formattedGenerationTime(msg.generation_time_ms)"></span>
                 </div>
                 <div class="debug-row" x-show="msg.tokens_per_second != null">
-                  <span class="debug-label">Speed</span> <span x-text="formattedTokensPerSecond(msg)"></span>
+                  <span class="debug-label">{{{t("chats.speed")}}}</span> <span
+                    x-text="formattedTokensPerSecond(msg)"
+                  ></span>
                 </div>
               </div>
             </template>
@@ -252,27 +265,29 @@
                   @click.outside="_hamburgerOpen[msg.id] = false"
                 >
                   <button @click="copyMessage(msg.id, $event); _hamburgerOpen[msg.id] = false">
-                    📋 Copy
+                    📋 {{{t("chats.copy")}}}
                   </button>
-                  <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">✏️ Edit</button>
+                  <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">
+                    ✏️ {{{t("common.edit")}}}
+                  </button>
                   <template x-if="msg.role === 'assistant'">
                     <button @click="regenerateVariant(msg.id); _hamburgerOpen[msg.id] = false">
-                      ♻ Regenerate
+                      ♻ {{{t("chats.regenerate")}}}
                     </button>
                   </template>
                   <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
                     <button @click="switchVariant(msg.id, -1); _hamburgerOpen[msg.id] = false">
-                      ◀ Prev Variant
+                      ◀ {{{t("chats.prevVariant")}}}
                     </button>
                   </template>
                   <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
                     <button @click="switchVariant(msg.id, 1); _hamburgerOpen[msg.id] = false">
-                      ▶ Next Variant
+                      ▶ {{{t("chats.nextVariant")}}}
                     </button>
                   </template>
                   <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
                     <button @click="continueMessage(msg.id); _hamburgerOpen[msg.id] = false">
-                      ↳ Continue
+                      ↳ {{{t("chats.continueAction")}}}
                     </button>
                   </template>
                   <template x-if="msg.role === 'assistant'">
@@ -280,22 +295,22 @@
                       @click="toggleImpersonate(); _hamburgerOpen[msg.id] = false"
                       :class="impersonationActive ? 'dropdown-active' : ''"
                     >
-                      🎭 Impersonate
+                      🎭 {{{t("chats.impersonateAction")}}}
                     </button>
                   </template>
                   <button @click="generateImageFromMessage(msg.id); _hamburgerOpen[msg.id] = false">
-                    🖼 Generate Image
+                    🖼 {{{t("chats.generateImage")}}}
                   </button>
                   <template x-if="msg.attachments && msg.attachments.length > 0">
                     <button @click="captionMessage(msg.id); _hamburgerOpen[msg.id] = false">
-                      💬 Caption
+                      💬 {{{t("chats.captionImages")}}}
                     </button>
                   </template>
                   <button
                     class="dropdown-danger"
                     @click="removeMessage(msg.id, $event); _hamburgerOpen[msg.id] = false"
                   >
-                    🗑 Remove
+                    🗑 {{{t("common.remove")}}}
                   </button>
                 </div>
               </div>
@@ -314,7 +329,7 @@
     @click="scrollToBottomSmooth()"
     data-testid="new-message-btn"
   >
-    ↓ New messages
+    {{{t("chats.newMessages")}}}
   </button>
 
   <!-- Context menu (right-click / long-press) -->
@@ -327,27 +342,31 @@
     data-testid="context-menu"
     x-cloak
   >
-    <button @click="copyMessage(_contextMenu.messageId, $event); closeContextMenu()">📋 Copy</button>
-    <button @click="startEdit(_contextMenu.messageId); closeContextMenu()">✏️ Edit</button>
+    <button @click="copyMessage(_contextMenu.messageId, $event); closeContextMenu()">📋 {{{t("chats.copy")}}}</button>
+    <button @click="startEdit(_contextMenu.messageId); closeContextMenu()">✏️ {{{t("common.edit")}}}</button>
     <template
       x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()"
     >
-      <button @click="regenerateVariant(_contextMenu.messageId); closeContextMenu()">♻ Regenerate</button>
+      <button @click="regenerateVariant(_contextMenu.messageId); closeContextMenu()">
+        ♻ {{{t("chats.regenerate")}}}
+      </button>
     </template>
     <template
       x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && (m.status === 'cancelled' || m.status === 'partial'); })()"
     >
-      <button @click="continueMessage(_contextMenu.messageId); closeContextMenu()">↳ Continue</button>
+      <button @click="continueMessage(_contextMenu.messageId); closeContextMenu()">
+        ↳ {{{t("chats.continueAction")}}}
+      </button>
     </template>
     <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">
-      🖼 Generate Image
+      🖼 {{{t("chats.generateImage")}}}
     </button>
     <div class="context-menu-divider"></div>
     <button
       class="dropdown-danger"
       @click="removeMessage(_contextMenu.messageId, $event); closeContextMenu()"
     >
-      🗑 Remove
+      🗑 {{{t("common.remove")}}}
     </button>
   </div>
 
