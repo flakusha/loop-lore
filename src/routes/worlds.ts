@@ -617,6 +617,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
       },
       {
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Initialize world states",
           description: "Initialize default state machines for a world's locations and NPCs.",
