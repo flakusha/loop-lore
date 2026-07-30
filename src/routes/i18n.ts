@@ -56,7 +56,7 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
           return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",);
         }
 
-        const body = ctx.body as { locale?: string };
+        const body = ctx.body;
         const newLocale = body.locale;
 
         if (!newLocale) {

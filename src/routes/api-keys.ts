@@ -16,6 +16,7 @@ import { encryptValue, } from "../crypto";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { forbidden, notFound, } from "../validation/middleware";
+import { ApiKeyCreateBody, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config },) {
@@ -52,26 +53,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         return forbidden("BYO API key feature is disabled",);
       }
 
-      const body = ctx.body as Record<string, unknown> | undefined;
-      if (!body || typeof body !== "object") {
-        return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest, },);
-      }
-
-      const providerName = body.providerName as string | undefined;
-      if (!providerName) {
-        return jsonError({
-          message: (ctx as any).t?.("apiKeys.providerRequired",) ?? "providerName is required",
-          status: HttpStatus.BadRequest,
-        },);
-      }
-
-      const apiKey = body.apiKey as string | undefined;
-      if (!apiKey) {
-        return jsonError({
-          message: (ctx as any).t?.("apiKeys.apiKeyRequired",) ?? "apiKey is required",
-          status: HttpStatus.BadRequest,
-        },);
-      }
+      const { providerName, apiKey, } = ctx.body;
 
       const encryptionSecret = config.byoKey.encryptionKey;
       if (!encryptionSecret) {
@@ -132,6 +114,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
 
       return jsonResponse({ ok: true, provider: providerName, },);
     }, {
+      body: ApiKeyCreateBody,
       detail: {
         summary: "Store or update a BYO API key",
         description:

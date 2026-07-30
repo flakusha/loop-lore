@@ -12,13 +12,14 @@
  *   POST /api/worlds/:worldId/states                 — take snapshot
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { notifyGmAction, } from "../notifications/service";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, } from "../utils";
 import { notFound, } from "../validation/middleware";
+import { Id, LocationStateBody, NpcStateBody, PaginationQuery, WorldStateCreateBody, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────
@@ -228,15 +229,10 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .get("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleNpcState(
-        database,
-        "GET",
-        ctx.params.worldId as string,
-        ctx.params.actorId as string,
-        userId,
-        userRole,
-      );
+      const { worldId, actorId, } = ctx.params;
+      return handleNpcState(database, "GET", worldId, actorId, userId, userRole,);
     }, {
+      params: t.Object({ worldId: Id, actorId: Id, },),
       detail: {
         summary: "Get NPC state",
         description: "Get the current state of an NPC in a world.",
@@ -246,16 +242,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .put("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleNpcState(
-        database,
-        "PUT",
-        ctx.params.worldId as string,
-        ctx.params.actorId as string,
-        userId,
-        userRole,
-        ctx.body as Record<string, unknown>,
-      );
+      const { worldId, actorId, } = ctx.params;
+      return handleNpcState(database, "PUT", worldId, actorId, userId, userRole, ctx.body as Record<string, unknown>,);
     }, {
+      params: t.Object({ worldId: Id, actorId: Id, },),
+      body: NpcStateBody,
       detail: {
         summary: "Update NPC state",
         description: "Update the state of an NPC in a world (location, status, mood, etc).",
@@ -265,14 +256,10 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .get("/api/worlds/:worldId/npcs-at/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleNpcsAtLocation(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.locationId as string,
-        userId,
-        userRole,
-      );
+      const { worldId, locationId, } = ctx.params;
+      return handleNpcsAtLocation(database, worldId, locationId, userId, userRole,);
     }, {
+      params: t.Object({ worldId: Id, locationId: Id, },),
       detail: {
         summary: "List NPCs at location",
         description: "List all NPCs currently at a specific location in a world.",
@@ -282,8 +269,9 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .get("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleLocationState(database, "GET", ctx.params.worldId as string, userId, userRole,);
+      return handleLocationState(database, "GET", ctx.params.id, userId, userRole,);
     }, {
+      params: t.Object({ id: Id, },),
       detail: {
         summary: "Get location state",
         description: "Get the current state of a location.",
@@ -296,12 +284,14 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
       return handleLocationState(
         database,
         "PUT",
-        ctx.params.worldId as string,
+        ctx.params.id,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     }, {
+      params: t.Object({ id: Id, },),
+      body: LocationStateBody,
       detail: {
         summary: "Update location state",
         description: "Update the state of a location (weather, time of day, events, etc).",
@@ -311,16 +301,19 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .get("/api/worlds/:worldId/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
+      const { worldId, } = ctx.params;
       return handleWorldStates(
         database,
         "GET",
-        ctx.params.worldId as string,
+        worldId,
         userId,
         userRole,
         Number(ctx.query?.page,) || 1,
         Number(ctx.query?.pageSize,) || 20,
       );
     }, {
+      params: t.Object({ worldId: Id, },),
+      query: PaginationQuery,
       detail: {
         summary: "List world states",
         description: "List all world states for a world. Paginated.",
@@ -330,10 +323,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .post("/api/worlds/:worldId/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
+      const { worldId, } = ctx.params;
       return handleWorldStates(
         database,
         "POST",
-        ctx.params.worldId as string,
+        worldId,
         userId,
         userRole,
         1,
@@ -341,6 +335,8 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         ctx.body as Record<string, unknown>,
       );
     }, {
+      params: t.Object({ worldId: Id, },),
+      body: WorldStateCreateBody,
       detail: {
         summary: "Create world state",
         description: "Create a new world state snapshot for a world.",
