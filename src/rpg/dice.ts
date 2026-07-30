@@ -6,10 +6,6 @@
  * and standard NdS±M notation parsing.
  */
 
-import { getLogger, type Logger, } from "../logger";
-
-const getLog = (): Logger => getLogger().child({ module: "rpg-dice", },);
-
 // ── Types ────────────────────────────────────────────────
 
 /** Standard RPG dice types */
@@ -110,7 +106,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
   natural20: boolean;
   natural1: boolean;
   advantageMode: AdvantageMode;
-  rawRolls: [number, number] | [number];
+  rawRolls: [number, number,] | [number,];
 } {
   if (mode === "normal") {
     const value = rollDie(20,);
@@ -119,7 +115,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
       natural20: value === 20,
       natural1: value === 1,
       advantageMode: mode,
-      rawRolls: [value],
+      rawRolls: [value,],
     };
   }
 
@@ -134,7 +130,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
     natural20: kept === 20,
     natural1: kept === 1,
     advantageMode: mode,
-    rawRolls: [roll1, roll2],
+    rawRolls: [roll1, roll2,],
   };
 }
 
@@ -163,10 +159,9 @@ export function rollDice(
   const dice: DieResult[] = [];
 
   if (sides === 20 && advantage !== "normal") {
-    const { value, natural20, natural1, advantageMode, rawRolls, } =
-      rollD20WithAdvantage(advantage,);
+    const { value, natural20, natural1, advantageMode, rawRolls, } = rollD20WithAdvantage(advantage,);
 
-    dice.push({ sides: 20, value: rawRolls[0]!, exploded: false, },);
+    dice.push({ sides: 20, value: rawRolls[0], exploded: false, },);
     if (rawRolls.length > 1) {
       dice.push({ sides: 20, value: rawRolls[1]!, exploded: false, },);
     }
@@ -193,8 +188,21 @@ export function rollDice(
     }
   }
 
-  const rawTotal = dice.reduce((sum, d,) => sum + d.value, 0,);
+  let rawTotal = 0;
+  for (const d of dice) {
+    rawTotal += d.value;
+  }
   const total = Math.max(1, rawTotal + modifier,);
+
+  let hasNat20 = false;
+  if (sides === 20) {
+    for (const d of dice) {
+      if (d.value === 20) {
+        hasNat20 = true;
+        break;
+      }
+    }
+  }
 
   return {
     dice,
@@ -202,7 +210,7 @@ export function rollDice(
     modifier,
     total,
     advantageMode: "normal",
-    natural20: sides === 20 && dice.some((d,) => d.value === 20,),
+    natural20: hasNat20,
     natural1: sides === 20 && dice.length === 1 && dice[0]!.value === 1,
   };
 }
@@ -222,28 +230,27 @@ export function rollDice(
  * @returns Parsed dice components, or null if invalid
  */
 export function parseDiceNotation(notation: string,): ParsedDice | null {
-  const cleaned = notation.trim().toLowerCase().replace(/\s+/g, " ",);
-  const match = cleaned.match(/^(\d*)d(\d+)([+-]\d+)?\s*(adv|dis)?\s*(x)?$/,);
+  const cleaned = notation.trim().toLowerCase().replaceAll(/\s+/g, " ",);
+  const match = /^(\d*)d(\d+)([+-]\d+)?\s*(adv|dis)?\s*(x)?$/.exec(cleaned,);
 
   if (!match) {
-    getLog().debug("Invalid dice notation", { notation, },);
     return null;
   }
 
   const count = match[1] !== undefined && match[1] !== "" ? parseInt(match[1], 10,) : 1;
-  const sides = parseInt(match[2] ?? "20", 10,) as DiceSides;
+  const sides = Number(match[2] ?? "20",) as DiceSides;
 
   if (![4, 6, 8, 10, 12, 20, 100,].includes(sides,)) {
-    getLog().debug("Invalid die sides", { sides, notation, },);
     return null;
   }
 
   const modifier = match[3] ? parseInt(match[3], 10,) : 0;
-  const advantage: AdvantageMode = match[4] === "adv"
-    ? "advantage"
-    : match[4] === "dis"
-      ? "disadvantage"
-      : "normal";
+  let advantage: AdvantageMode = "normal";
+  if (match[4] === "adv") {
+    advantage = "advantage";
+  } else if (match[4] === "dis") {
+    advantage = "disadvantage";
+  }
 
   return { count, sides, modifier, advantage, };
 }

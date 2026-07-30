@@ -1330,6 +1330,17 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("moderation_appeals", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    action_id: col("text", { notNull: true, },),
+    reason: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    reviewed_by: col("text",),
+    review_note: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text",),
+  },)
   // ── Message Translations ─────────────────────────────────────
   .table("message_translations", {
     id: col("text", { primaryKey: true, },),

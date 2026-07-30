@@ -6,7 +6,7 @@
  * distributing across six stats (8–15 each).
  */
 
-import { rollDie, type DiceSides, } from "./dice.js";
+import { rollDie, } from "./dice";
 
 // ── Types ────────────────────────────────────────────────
 
@@ -25,7 +25,12 @@ export const ABILITY_DISPLAY: Record<AbilityName, string> = {
 
 /** All ability names in standard order */
 export const ALL_ABILITIES: AbilityName[] = [
-  "str", "dex", "con", "int", "wis", "cha",
+  "str",
+  "dex",
+  "con",
+  "int",
+  "wis",
+  "cha",
 ];
 
 /** Complete stat block for a character */
@@ -58,11 +63,24 @@ export interface SaveProficiency {
 
 /** Skill tied to an ability */
 export type SkillName =
-  | "acrobatics" | "animal_handling" | "arcana" | "athletics"
-  | "deception" | "history" | "insight" | "intimidation"
-  | "investigation" | "medicine" | "nature" | "perception"
-  | "performance" | "persuasion" | "religion" | "sleight_of_hand"
-  | "stealth" | "survival";
+  | "acrobatics"
+  | "animal_handling"
+  | "arcana"
+  | "athletics"
+  | "deception"
+  | "history"
+  | "insight"
+  | "intimidation"
+  | "investigation"
+  | "medicine"
+  | "nature"
+  | "perception"
+  | "performance"
+  | "persuasion"
+  | "religion"
+  | "sleight_of_hand"
+  | "stealth"
+  | "survival";
 
 /** Mapping of skills to their governing ability */
 export const SKILL_ABILITY: Record<SkillName, AbilityName> = {
@@ -88,9 +106,26 @@ export const SKILL_ABILITY: Record<SkillName, AbilityName> = {
 
 /** Proficiency bonus by character level (D&D 5e standard) */
 export const PROFICIENCY_BY_LEVEL: Record<number, number> = {
-  1: 2, 2: 2, 3: 2, 4: 2, 5: 3, 6: 3, 7: 3, 8: 3,
-  9: 4, 10: 4, 11: 4, 12: 4, 13: 5, 14: 5, 15: 5, 16: 5,
-  17: 6, 18: 6, 19: 6, 20: 6,
+  1: 2,
+  2: 2,
+  3: 2,
+  4: 2,
+  5: 3,
+  6: 3,
+  7: 3,
+  8: 3,
+  9: 4,
+  10: 4,
+  11: 4,
+  12: 4,
+  13: 5,
+  14: 5,
+  15: 5,
+  16: 5,
+  17: 6,
+  18: 6,
+  19: 6,
+  20: 6,
 };
 
 // ── Modifier calculation ─────────────────────────────────
@@ -132,7 +167,14 @@ export function getModifier(stats: StatBlock, ability: AbilityName,): number {
 
 /** Point-buy costs: stat value → cost in points */
 const POINT_BUY_COST: Record<number, number> = {
-  8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9,
+  8: 0,
+  9: 1,
+  10: 2,
+  11: 3,
+  12: 4,
+  13: 5,
+  14: 7,
+  15: 9,
 };
 
 /**
@@ -182,13 +224,13 @@ export function rollStats4d6(): number[] {
   for (let i = 0; i < 6; i++) {
     const rolls: number[] = [];
     for (let j = 0; j < 4; j++) {
-      rolls.push(rollDie(6 as DiceSides,),);
+      rolls.push(rollDie(6,),);
     }
-    rolls.sort((a, b,) => b - a,);
+    rolls.sort((a, b,) => b - a);
     stats.push(rolls[0]! + rolls[1]! + rolls[2]!,);
   }
 
-  stats.sort((a, b,) => b - a,);
+  stats.sort((a, b,) => b - a);
   return stats;
 }
 
