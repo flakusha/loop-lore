@@ -6,17 +6,17 @@
 >
   <div class="modal">
     <div class="modal-header">
-      <span class="title">Export Character Card</span>
+      <span class="title">{{{ t("characters.exportCharacter") }}}</span>
       <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
       <div style="margin-bottom: var(--space-4)">
-        <div style="font-weight: 600; margin-bottom: var(--space-2)">Character:</div>
+        <div style="font-weight: 600; margin-bottom: var(--space-2)">{{{ t("characters.title") }}}:</div>
         <div id="export-character-name" style="color: var(--text-secondary)"></div>
       </div>
 
       <div style="margin-bottom: var(--space-4)">
-        <div style="font-weight: 600; margin-bottom: var(--space-2)">Export Format:</div>
+        <div style="font-weight: 600; margin-bottom: var(--space-2)">{{{ t("characters.exportFormat") }}}:</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
           <label
             class="format-option"
@@ -24,8 +24,10 @@
           >
             <input type="radio" name="export-format" value="png" checked />
             <div>
-              <div style="font-weight: 500">PNG (Recommended)</div>
-              <div style="font-size: 0.85em; color: var(--text-secondary)">SillyTavern compatible</div>
+              <div style="font-weight: 500">{{{ t("characters.pngRecommended") }}}</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">
+                {{{ t("characters.sillyTavernCompatible") }}}
+              </div>
             </div>
           </label>
           <label
@@ -34,8 +36,8 @@
           >
             <input type="radio" name="export-format" value="json" />
             <div>
-              <div style="font-weight: 500">JSON (V3)</div>
-              <div style="font-size: 0.85em; color: var(--text-secondary)">Standard format</div>
+              <div style="font-weight: 500">{{{ t("characters.jsonV3") }}}</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">{{{ t("characters.standardFormat") }}}</div>
             </div>
           </label>
           <label
@@ -44,8 +46,8 @@
           >
             <input type="radio" name="export-format" value="yaml" />
             <div>
-              <div style="font-weight: 500">YAML</div>
-              <div style="font-size: 0.85em; color: var(--text-secondary)">Human-readable</div>
+              <div style="font-weight: 500">{{{ t("characters.yaml") }}}</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">{{{ t("characters.humanReadable") }}}</div>
             </div>
           </label>
           <label
@@ -54,22 +56,24 @@
           >
             <input type="radio" name="export-format" value="toml" />
             <div>
-              <div style="font-weight: 500">TOML</div>
-              <div style="font-size: 0.85em; color: var(--text-secondary)">Config-style</div>
+              <div style="font-weight: 500">{{{ t("characters.toml") }}}</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">{{{ t("characters.configStyle") }}}</div>
             </div>
           </label>
         </div>
       </div>
 
       <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-        <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
+        <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+          {{{ t("common.cancel") }}}
+        </button>
         <button
           type="button"
           class="btn btn-primary"
           x-on:click="window.exportCharacter($el)"
           data-testid="export-character-btn"
         >
-          Export
+          {{{ t("common.export") }}}
         </button>
       </div>
     </div>
