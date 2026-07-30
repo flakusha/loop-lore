@@ -35,6 +35,7 @@ Rich context requires diverse sources:
 ### Phase 1: Feed Sources (RSS/Atom)
 
 - [ ] Create context source interface (`src/rag/sources/provider.ts`)
+
   ```typescript
   export interface ContextSource {
     name: string;
@@ -68,6 +69,7 @@ Rich context requires diverse sources:
   - Category/tag organization
 
 - [ ] Add feed API (`/api/rag/sources/feeds`)
+
   ```typescript
   POST /api/rag/sources/feeds          // Add feed
   GET  /api/rag/sources/feeds          // List feeds
@@ -85,6 +87,7 @@ Rich context requires diverse sources:
   - Search across email content
 
 - [ ] Add email ingestion options
+
   ```typescript
   export interface EmailIngestOptions {
     folders: string[]; // INBOX, Support, etc.
@@ -96,6 +99,7 @@ Rich context requires diverse sources:
   ```
 
 - [ ] Create email API (`/api/rag/sources/email`)
+
   ```typescript
   POST / api / rag / sources / email / connect; // Configure IMAP
   GET / api / rag / sources / email / status; // Connection status
@@ -124,6 +128,7 @@ Rich context requires diverse sources:
   - Space-based organization
 
 - [ ] Create unified chat API (`/api/rag/sources/chat`)
+
   ```typescript
   POST / api / rag / sources / chat / connect; // Configure provider
   GET / api / rag / sources / chat / channels; // List channels
@@ -159,6 +164,7 @@ Rich context requires diverse sources:
   - Semantic traversal for context
 
 - [ ] Add entity types
+
   ```typescript
   export type EntityType =
     | "person"
@@ -188,6 +194,7 @@ Rich context requires diverse sources:
   ```
 
 - [ ] Create knowledge graph API (`/api/rag/knowledge-graph`)
+
   ```typescript
   GET  /api/rag/knowledge-graph/entities        // List entities
   GET  /api/rag/knowledge-graph/relationships   // List relationships
@@ -199,6 +206,7 @@ Rich context requires diverse sources:
 ### Phase 6: Unified Context Enrichment
 
 - [ ] Create context enrichment pipeline (`src/rag/enrichment/pipeline.ts`)
+
   ```typescript
   export interface EnrichmentPipeline {
     enrich(query: string, options: EnrichmentOptions,): Promise<EnrichedContext>;
