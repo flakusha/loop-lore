@@ -18,6 +18,7 @@ import type { Config, } from "../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../crypto";
 import { UserRole, UserStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import type { TranslatorFn, } from "../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { createRateLimiter, } from "../middleware/rate-limit";
 import { jsonParseOr, uid, } from "../utils";
@@ -115,13 +116,21 @@ function getTokenFromCookie(request: Request,): string | null {
 
 // ── Handlers ──────────────────────────────────────────────────
 
-async function handleLogin(request: Request, database: Kysely<DB>, config: Config,): Promise<Response> {
+async function handleLogin(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  t?: TranslatorFn,
+): Promise<Response> {
   const ip = getClientIp(request,);
   if (!loginLimiter.check(ip,)) {
-    return new Response('<p class="error-msg">Too many attempts. Try again later.</p>', {
-      status: HttpStatus.TooManyRequests,
-      headers: { "Content-Type": "text/html; charset=utf-8", },
-    },);
+    return new Response(
+      `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many attempts. Try again later."}</p>`,
+      {
+        status: HttpStatus.TooManyRequests,
+        headers: { "Content-Type": "text/html; charset=utf-8", },
+      },
+    );
   }
 
   let formData: URLSearchParams;
@@ -129,14 +138,14 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     const text = await request.text();
     formData = new URLSearchParams(text,);
   } catch {
-    return jsonError({ message: "Invalid request body", status: HttpStatus.BadRequest, },);
+    return jsonError({ message: "errors.badRequest", status: HttpStatus.BadRequest, t, },);
   }
 
   const username = formData.get("username",)?.trim();
   const password = formData.get("password",);
 
   if (!username || !password) {
-    return errorHtml("Username and password are required.",);
+    return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
   }
 
   const user = await database
@@ -145,14 +154,14 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     .where("username", "=", username,)
     .executeTakeFirst();
 
-  if (!user) { return errorHtml("Invalid username or password.",); }
+  if (!user) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
   if (user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
-    return errorHtml("Account is disabled.",);
+    return errorHtml(t ? t("auth.accountLocked",) : "Account is disabled.",);
   }
-  if (!user.password_hash) { return errorHtml("Invalid username or password.",); }
+  if (!user.password_hash) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
 
   const passwordValid = await Bun.password.verify(password, user.password_hash,);
-  if (!passwordValid) { return errorHtml("Invalid username or password.",); }
+  if (!passwordValid) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
 
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
@@ -177,8 +186,9 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
   const jwtSecret = config.auth.jwtSecret;
   if (!jwtSecret) {
     return jsonError({
-      message: "Server misconfigured: JWT secret not set",
+      message: "errors.serverError",
       status: HttpStatus.InternalServerError,
+      t,
     },);
   }
 
@@ -197,12 +207,18 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
   },);
 }
 
-async function handleDemoLogin(request: Request, database: Kysely<DB>, config: Config,): Promise<Response> {
+async function handleDemoLogin(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  t?: TranslatorFn,
+): Promise<Response> {
   const soloUser = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername,);
   if (!soloUser) {
     return jsonError({
-      message: "Server misconfigured: no solo user",
+      message: "errors.serverError",
       status: HttpStatus.InternalServerError,
+      t,
     },);
   }
 
@@ -250,18 +266,26 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
   },);
 }
 
-async function handleRegister(request: Request, database: Kysely<DB>, config: Config,): Promise<Response> {
+async function handleRegister(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  t?: TranslatorFn,
+): Promise<Response> {
   // Gate: registration must be open
   if (!config.auth.registrationOpen) {
-    return errorHtml("Registration is closed.",);
+    return errorHtml(t ? t("auth.registrationClosed",) : "Registration is closed.",);
   }
 
   const ip = getClientIp(request,);
   if (!registerLimiter.check(ip,)) {
-    return new Response('<p class="error-msg">Too many registration attempts. Try again later.</p>', {
-      status: HttpStatus.TooManyRequests,
-      headers: { "Content-Type": "text/html; charset=utf-8", },
-    },);
+    return new Response(
+      `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many registration attempts. Try again later."}</p>`,
+      {
+        status: HttpStatus.TooManyRequests,
+        headers: { "Content-Type": "text/html; charset=utf-8", },
+      },
+    );
   }
 
   let formData: URLSearchParams;
@@ -269,22 +293,22 @@ async function handleRegister(request: Request, database: Kysely<DB>, config: Co
     const text = await request.text();
     formData = new URLSearchParams(text,);
   } catch {
-    return errorHtml("Invalid request body",);
+    return errorHtml(t ? t("errors.badRequest",) : "Invalid request body",);
   }
 
   const username = formData.get("username",)?.trim();
   const password = formData.get("password",);
 
   if (!username || !password) {
-    return errorHtml("Username and password are required.",);
+    return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
   }
 
   if (username.length < 3 || username.length > 32) {
-    return errorHtml("Username must be 3–32 characters.",);
+    return errorHtml(t ? t("auth.usernameLength",) : "Username must be 3–32 characters.",);
   }
 
   if (password.length < 6) {
-    return errorHtml("Password must be at least 6 characters.",);
+    return errorHtml(t ? t("auth.passwordLength",) : "Password must be at least 6 characters.",);
   }
 
   const existing = await database
@@ -294,7 +318,7 @@ async function handleRegister(request: Request, database: Kysely<DB>, config: Co
     .executeTakeFirst();
 
   if (existing) {
-    return errorHtml("Username already taken.",);
+    return errorHtml(t ? t("auth.usernameTaken",) : "Username already taken.",);
   }
 
   const passwordHash = await Bun.password.hash(password,);
@@ -419,11 +443,20 @@ async function handleMe(
 
 export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
   return new Elysia({ name: "auth-public", },)
-    .post("/api/auth/login", async ({ request, },) => handleLogin(request, database, config,),)
-    .post("/api/demo-login", async ({ request, },) => handleDemoLogin(request, database, config,),)
+    .post(
+      "/api/auth/login",
+      async ({ request, ...rest },) =>
+        handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+    )
+    .post(
+      "/api/demo-login",
+      async ({ request, ...rest },) =>
+        handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+    )
     .post(
       "/api/auth/register",
-      async ({ request, },) => handleRegister(request, database, config,),
+      async ({ request, ...rest },) =>
+        handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
     ) as unknown as Elysia;
 }
 

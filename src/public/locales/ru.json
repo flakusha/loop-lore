@@ -46,7 +46,11 @@
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "Забыли пароль?",
     "needAnAccount": "Нет аккаунта?",
-    "alreadyHaveAccount": "Уже есть аккаунт?"
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "registrationClosed": "Регистрация закрыта.",
+    "usernameLength": "Имя пользователя должно содержать 3–32 символа.",
+    "passwordLength": "Пароль должен содержать не менее 6 символов.",
+    "usernameTaken": "Имя пользователя уже занято."
   },
   "chat": {
     "sendMessage": "Send Message",

@@ -46,7 +46,11 @@
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "パスワードをお忘れですか？",
     "needAnAccount": "アカウントをお持ちでないですか？",
-    "alreadyHaveAccount": "アカウントをお持ちですか？"
+    "alreadyHaveAccount": "アカウントをお持ちですか？",
+    "registrationClosed": "登録は关闭されています。",
+    "usernameLength": "ユーザー名は3〜32文字で入力してください。",
+    "passwordLength": "パスワードは6文字以上で入力してください。",
+    "usernameTaken": "そのユーザー名は既に使用されています。"
   },
   "chat": {
     "sendMessage": "Send Message",
