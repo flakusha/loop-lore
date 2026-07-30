@@ -152,103 +152,105 @@ export async function up(database: Kysely<any>,): Promise<void> {
 
   // ── Message Translations ──────────────────────────────────
   // Table may not exist in all environments — skip if missing
-  const hasMt = await sql<{ tbl: number }>`SELECT 1 as tbl FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
+  const hasMt = await sql<
+    { tbl: number }
+  >`SELECT 1 as tbl FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
   if (hasMt.rows[0]?.tbl) {
     await database.schema
-      .createIndex("idx_message_translations_created_at")
-      .on("message_translations")
-      .column("created_at")
+      .createIndex("idx_message_translations_created_at",)
+      .on("message_translations",)
+      .column("created_at",)
       .execute();
   }
 
   // ── Story Tables ──────────────────────────────────────────
   await database.schema
-    .createIndex("idx_worlds_created_at")
-    .on("worlds")
-    .column("created_at")
+    .createIndex("idx_worlds_created_at",)
+    .on("worlds",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_locations_created_at")
-    .on("locations")
-    .column("created_at")
+    .createIndex("idx_locations_created_at",)
+    .on("locations",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_story_turns_created_at")
-    .on("story_turns")
-    .column("created_at")
+    .createIndex("idx_story_turns_created_at",)
+    .on("story_turns",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_quests_created_at")
-    .on("quests")
-    .column("created_at")
+    .createIndex("idx_quests_created_at",)
+    .on("quests",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_quest_progress_created_at")
-    .on("quest_progress")
-    .column("created_at")
+    .createIndex("idx_quest_progress_created_at",)
+    .on("quest_progress",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_actor_memories_created_at")
-    .on("actor_memories")
-    .column("created_at")
+    .createIndex("idx_actor_memories_created_at",)
+    .on("actor_memories",)
+    .column("created_at",)
     .execute();
 
   // ── Generation ────────────────────────────────────────────
   await database.schema
-    .createIndex("idx_generation_attempts_created_at")
-    .on("generation_attempts")
-    .column("created_at")
+    .createIndex("idx_generation_attempts_created_at",)
+    .on("generation_attempts",)
+    .column("created_at",)
     .execute();
 
   // ── Crafting ──────────────────────────────────────────────
   await database.schema
-    .createIndex("idx_crafting_recipes_created_at")
-    .on("crafting_recipes")
-    .column("created_at")
+    .createIndex("idx_crafting_recipes_created_at",)
+    .on("crafting_recipes",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_crafting_attempts_created_at")
-    .on("crafting_attempts")
-    .column("created_at")
+    .createIndex("idx_crafting_attempts_created_at",)
+    .on("crafting_attempts",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_crafting_orders_created_at")
-    .on("crafting_orders")
-    .column("created_at")
+    .createIndex("idx_crafting_orders_created_at",)
+    .on("crafting_orders",)
+    .column("created_at",)
     .execute();
 
   // ── Telemetry ─────────────────────────────────────────────
   await database.schema
-    .createIndex("idx_telemetry_events_created_at")
-    .on("telemetry_events")
-    .column("created_at")
+    .createIndex("idx_telemetry_events_created_at",)
+    .on("telemetry_events",)
+    .column("created_at",)
     .execute();
 
   // ── Moderation ────────────────────────────────────────────
   await database.schema
-    .createIndex("idx_content_flags_created_at")
-    .on("content_flags")
-    .column("created_at")
+    .createIndex("idx_content_flags_created_at",)
+    .on("content_flags",)
+    .column("created_at",)
     .execute();
-  
+
   await database.schema
-    .createIndex("idx_moderation_actions_created_at")
-    .on("moderation_actions")
-    .column("created_at")
+    .createIndex("idx_moderation_actions_created_at",)
+    .on("moderation_actions",)
+    .column("created_at",)
     .execute();
 
   // ── Assets ────────────────────────────────────────────────
   await database.schema
-    .createIndex("idx_assets_created_at")
-    .on("assets")
-    .column("created_at")
+    .createIndex("idx_assets_created_at",)
+    .on("assets",)
+    .column("created_at",)
     .execute();
 }
 
