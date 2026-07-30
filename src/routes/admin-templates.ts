@@ -107,6 +107,12 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           status: HttpStatus.InternalServerError,
         },);
       }
+    }, {
+      detail: {
+        summary: "List image model profiles",
+        description: "List all image model profiles (builtin + custom) with summary info.",
+        tags: ["Admin", "Templates",],
+      },
     },)
     // ── Get full registry (all profiles with templates) ────
     .get("/api/admin/templates/registry", async (ctx: any,) => {
@@ -134,6 +140,12 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           status: HttpStatus.InternalServerError,
         },);
       }
+    }, {
+      detail: {
+        summary: "Get template registry",
+        description: "Get the full image model template registry with all profiles and templates.",
+        tags: ["Admin", "Templates",],
+      },
     },)
     // ── Get one profile ───────────────────────────────────
     .get("/api/admin/templates/:id", async (ctx: any,) => {
@@ -161,6 +173,12 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         ...profile,
         isBuiltin: id in BUILTIN_PROFILES,
       },);
+    }, {
+      detail: {
+        summary: "Get image model profile",
+        description: "Get a single image model profile by ID.",
+        tags: ["Admin", "Templates",],
+      },
     },)
     // ── Update template text for a profile ────────────────
     .put(
@@ -218,6 +236,13 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         log().info(`Template updated: ${id}/${body.detail}/${body.mode}`,);
         return jsonResponse({ ok: true, profileId: id, },);
       },
+      {
+        detail: {
+          summary: "Update profile template",
+          description: "Update a template text for a specific detail level and mode in a profile.",
+          tags: ["Admin", "Templates",],
+        },
+      },
     )
     // ── Update model defaults for a profile ───────────────
     .put(
@@ -266,6 +291,13 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
 
         log().info(`Model defaults updated: ${id}`,);
         return jsonResponse({ ok: true, profileId: id, },);
+      },
+      {
+        detail: {
+          summary: "Update profile defaults",
+          description: "Update the default generation parameters (cfg scale, steps, sampler, etc) for a profile.",
+          tags: ["Admin", "Templates",],
+        },
       },
     )
     // ── Create custom profile ─────────────────────────────
@@ -344,6 +376,13 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         log().info(`Custom profile created: ${body.id}`,);
         return jsonResponse({ ok: true, profileId: body.id, },);
       },
+      {
+        detail: {
+          summary: "Create custom profile",
+          description: "Create a new custom image model profile.",
+          tags: ["Admin", "Templates",],
+        },
+      },
     )
     // ── Delete custom profile ─────────────────────────────
     .delete(
@@ -381,6 +420,13 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
 
         log().info(`Custom profile deleted: ${id}`,);
         return jsonResponse({ ok: true, },);
+      },
+      {
+        detail: {
+          summary: "Delete custom profile",
+          description: "Delete a custom image model profile. Cannot delete builtin profiles.",
+          tags: ["Admin", "Templates",],
+        },
       },
     );
 }

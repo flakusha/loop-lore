@@ -64,6 +64,13 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
         .execute();
 
       return jsonPaginated({ data: turns, total: Number(total,), page, pageSize, },);
+    }, {
+      detail: {
+        summary: "List story turns for a chat",
+        description:
+          "Returns paginated story turns for a chat, ordered by turn number. Requires chat ownership or admin/solo role.",
+        tags: ["Story Turns",],
+      },
     },)
     .get("/api/chats/:id/story-turns/:turnId", async (ctx: any,) => {
       const { params, userId, userRole, error, } = ctx;
@@ -93,5 +100,11 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
         return notFound("Story turn not found",);
       }
       return jsonResponse(turn,);
+    }, {
+      detail: {
+        summary: "Get a single story turn",
+        description: "Returns a single story turn by ID within a chat. Requires chat ownership or admin/solo role.",
+        tags: ["Story Turns",],
+      },
     },) as unknown as Elysia;
 }
