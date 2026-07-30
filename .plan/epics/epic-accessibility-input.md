@@ -1,6 +1,6 @@
 # EPIC: Accessibility & Input Systems
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -224,36 +224,36 @@ interface TouchGesture {
 
 ## Acceptance Criteria
 
-- [ ] All interactive elements keyboard accessible
-- [ ] Visible focus indicators on all focusable elements
-- [ ] Tab order logical and predictable
-- [ ] Escape closes all modals/popups
+- [x] All interactive elements keyboard accessible
+- [x] Visible focus indicators on all focusable elements
+- [x] Tab order logical and predictable
+- [x] Escape closes all modals/popups
 - [ ] Screen reader can navigate entire application
-- [ ] ARIA labels on all interactive elements
-- [ ] Live regions for dynamic content
-- [ ] Mobile touch targets 44x44px minimum
-- [ ] Swipe gestures for common actions
+- [x] ARIA labels on all interactive elements
+- [x] Live regions for dynamic content
+- [x] Mobile touch targets 44x44px minimum
+- [x] Swipe gestures for common actions
 - [ ] Responsive design at all breakpoints
-- [ ] Reduced motion support
-- [ ] High contrast mode support
-- [ ] No keyboard traps
-- [ ] Skip links for main content
+- [x] Reduced motion support
+- [x] High contrast mode support
+- [x] No keyboard traps
+- [x] Skip links for main content
 
 ## Implementation Phases
 
-### Phase 1: Core Accessibility
+### Phase 1: Core Accessibility ✅ (2026-07-31)
 
-- Focus management system
-- Keyboard navigation
-- ARIA labels
-- Screen reader support
+- Focus management system (`src/frontend/alpine/focus.ts`)
+- Keyboard navigation (tab order, escape key)
+- ARIA labels on interactive elements
+- Screen reader support (partial — live regions added)
 
-### Phase 2: Mobile Support
+### Phase 2: Mobile Support 🟡 Partial
 
-- Touch gesture system
-- Responsive breakpoints
+- Touch gesture system (`src/frontend/touch.ts` — swipe/tap/long-press)
+- Responsive breakpoints (partial)
 - Mobile-specific patterns
-- Touch target sizing
+- Touch target sizing (44px CSS in `app.css`)
 
 ### Phase 3: Keyboard Shortcuts
 
@@ -264,9 +264,7 @@ interface TouchGesture {
 
 ### Phase 4: Advanced Features
 
-- Reduced motion support
-- High contrast mode
-- Screen reader optimizations
+- Screen reader optimizations (ARIA live regions done; full navigation pending)
 - Keyboard shortcuts for power users
 
 ### Phase 5: Testing & Polish
