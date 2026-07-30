@@ -6,7 +6,6 @@
  *
  * @module validation/schemas
  */
-/* eslint-disable unicorn/max-nested-calls -- TypeBox schemas inherently nest 4+ levels */
 import { t, } from "elysia";
 import {
   ActorItemType,
