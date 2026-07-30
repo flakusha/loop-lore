@@ -6,6 +6,23 @@ describe("Characters flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
+    // Login via demo endpoint so API calls requiring auth work
+    const res = await fetch(`${ctx.url}/api/demo-login`, { method: "POST", },);
+    const setCookie = res.headers.get("set-cookie",);
+    if (setCookie) {
+      const match = /ll_token=([^;]+)/.exec(setCookie,);
+      if (match) {
+        // Inject into browser context via Playwright's context (not page)
+        const ctx_ = ctx.browser as any;
+        if (ctx_.addCookies) {
+          await ctx_.addCookies([{
+            name: "ll_token",
+            value: match[1]!,
+            url: ctx.url,
+          },],);
+        }
+      }
+    }
   }, 45_000,);
 
   afterAll(async () => {
