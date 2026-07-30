@@ -92,7 +92,7 @@ const RARITY_LEVEL_BONUS: Record<Rarity, number> = {
 export function effectiveWeight(rarity: Rarity, level: number,): number {
   const base = RARITY_WEIGHTS[rarity];
   const bonus = RARITY_LEVEL_BONUS[rarity];
-  return base + (level >= 10 ? bonus * 5 : level >= 5 ? bonus * 2 : 0);
+  return base + (level >= 10 ? bonus * 5 : (level >= 5 ? bonus * 2 : 0));
 }
 
 // ── Loot Generation ──────────────────────────────────────
@@ -161,7 +161,7 @@ function rollOneDrop(
   }
 
   // Roll weighted random
-  const roll = rollDie(100 as DiceSides,);
+  const roll = rollDie(100,);
   const adjustedRoll = Math.max(1, roll - luckModifier,);
   const threshold = (adjustedRoll / 100) * totalWeight;
 
@@ -286,7 +286,7 @@ export const WEAPON_LOOT: LootEntry[] = [
     minQuantity: 1,
     maxQuantity: 1,
     minLevel: 15,
-    goldValue: 50000,
+    goldValue: 50_000,
     metadata: { damage: "1d8+3", damageType: "slashing", bonus: 3, vorpal: true, },
   },
 ];
@@ -326,7 +326,7 @@ export const ARMOR_LOOT: LootEntry[] = [
     minQuantity: 1,
     maxQuantity: 1,
     minLevel: 10,
-    goldValue: 10000,
+    goldValue: 10_000,
     metadata: { ac: 17, type: "heavy", resistances: ["fire"], },
   },
 ];
@@ -337,7 +337,7 @@ export const ARMOR_LOOT: LootEntry[] = [
  * Create a simple loot table from a list of items.
  */
 export function createLootTable(
-  items: Array<{ name: string; rarity: Rarity; weight?: number; minLevel?: number }>,
+  items: { name: string; rarity: Rarity; weight?: number; minLevel?: number }[],
 ): LootEntry[] {
   return items.map((item,) => ({
     name: item.name,

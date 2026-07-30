@@ -162,7 +162,7 @@ export function rollDice(
     const { value, natural20, natural1, advantageMode, rawRolls, } =
       rollD20WithAdvantage(advantage,);
 
-    dice.push({ sides: 20, value: rawRolls[0]!, exploded: false, },);
+    dice.push({ sides: 20, value: rawRolls[0], exploded: false, },);
     if (rawRolls.length > 1) {
       dice.push({ sides: 20, value: rawRolls[1]!, exploded: false, },);
     }
@@ -232,7 +232,7 @@ export function rollDice(
  */
 export function parseDiceNotation(notation: string,): ParsedDice | null {
   const cleaned = notation.trim().toLowerCase().replaceAll(/\s+/g, " ",);
-  const match = cleaned.match(/^(\d*)d(\d+)([+-]\d+)?\s*(adv|dis)?\s*(x)?$/,);
+  const match = /^(\d*)d(\d+)([+-]\d+)?\s*(adv|dis)?\s*(x)?$/.exec(cleaned);
 
   if (!match) {
     return null;
