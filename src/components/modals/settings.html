@@ -1,11 +1,11 @@
 <!-- User Settings Modal — overlay accessible from chat -->
+<div x-data="settingsModal()">
+<template x-if="open">
 <div
-  x-data="settingsModal()"
+  class="modal-overlay open"
   x-on:keydown.escape.window="open = false"
   x-on:settings-modal.window="open = true; load()"
-  class="modal-overlay"
-  style="display: none; position: fixed; inset: 0; pointer-events: none; background: rgba(0, 0, 0, 0.5); z-index: var(--z-modal, 1000); align-items: center; justify-content: center"
-  x-bind:style="open ? { display: 'flex', pointerEvents: 'auto' } : { display: 'none', pointerEvents: 'none' }"
+  @click.self="open = false"
 >
   <div
     class="modal-content"
@@ -117,4 +117,6 @@
       </button>
     </div>
   </div>
+</div>
+</template>
 </div>
