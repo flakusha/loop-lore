@@ -13,12 +13,12 @@
       <div id="world-edit-form" data-world-id="{{worldId}}">
         <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">Loading world...</div>
+          <div class="title">{{{t("worlds.loading")}}}</div>
         </div>
 
         <div x-show="!loading && error" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⚠️</div>
-          <div class="title">Failed to load world</div>
+          <div class="title">{{{t("worlds.loadFailed")}}}</div>
         </div>
 
         <template x-if="!loading && !error && world">
@@ -30,14 +30,14 @@
                 :class="{ active: activeTab === 'general' }"
                 @click="activeTab = 'general'"
               >
-                General
+                {{{t("worlds.tabGeneral")}}}
               </button>
               <button
                 class="world-edit-tab"
                 :class="{ active: activeTab === 'locations' }"
                 @click="activeTab = 'locations'; loadLocations()"
               >
-                Locations
+                {{{t("worlds.tabLocations")}}}
               </button>
             </div>
 
@@ -45,11 +45,11 @@
             <div x-show="activeTab === 'general'">
               <form @submit.prevent="saveWorld()" data-testid="edit-world-form">
                 <div class="form-group">
-                  <label class="form-label" for="edit-name">Name</label>
+                  <label class="form-label" for="edit-name">{{{t("worlds.name")}}}</label>
                   <input class="form-input" type="text" id="edit-name" x-model="world.name" required />
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="edit-description">Description</label>
+                  <label class="form-label" for="edit-description">{{{t("worlds.description")}}}</label>
                   <textarea
                     class="form-input form-textarea"
                     id="edit-description"
@@ -58,7 +58,7 @@
                   ></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="edit-lore">Lore</label>
+                  <label class="form-label" for="edit-lore">{{{t("worlds.lore")}}}</label>
                   <textarea
                     class="form-input form-textarea"
                     id="edit-lore"
@@ -67,19 +67,20 @@
                   ></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="world-tags">Tags</label>
+                  <label class="form-label" for="world-tags">{{{t("worlds.tags")}}}</label>
                   <input
                     type="text"
                     class="form-input"
                     id="world-tags"
                     x-model="tagsStr"
-                    placeholder="fantasy, adventure (comma separated)"
+                    :placeholder="t('worlds.tagsPlaceholder')"
                   />
                 </div>
                 <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
-                  <a href="/worlds/{{worldId}}" class="btn btn-secondary" data-testid="cancel-edit-world">Cancel</a>
+                  <a href="/worlds/{{worldId}}" class="btn btn-secondary" data-testid="cancel-edit-world"
+                  >{{{t("common.cancel")}}}</a>
                   <button type="submit" class="btn btn-primary" data-testid="save-world-btn">
-                    Save World
+                    {{{t("worlds.saveWorld")}}}
                   </button>
                 </div>
               </form>
@@ -88,47 +89,47 @@
             <!-- Locations Tab (Alpine-rendered from loadLocations()) -->
             <div x-show="activeTab === 'locations'">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
-                <h3 style="margin: 0">Locations</h3>
+                <h3 style="margin: 0">{{{t("worlds.tabLocations")}}}</h3>
                 <button
                   class="btn btn-primary"
                   @click="showAddForm = !showAddForm"
-                  x-text="showAddForm ? 'Cancel' : '+ Add Location'"
+                  x-text="showAddForm ? t('common.cancel') : t('worlds.addLocation')"
                 >
                 </button>
               </div>
 
               <div class="add-location-form" x-show="showAddForm" x-cloak>
                 <div class="form-group">
-                  <label class="form-label" for="loc-name">Name *</label>
+                  <label class="form-label" for="loc-name">{{{t("worlds.locationNameRequired")}}}</label>
                   <input
                     class="form-input"
                     type="text"
                     id="loc-name"
                     x-model="newLocName"
-                    placeholder="e.g., Dark Forest"
+                    :placeholder="t('worlds.locationNamePlaceholder')"
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="loc-desc">Description</label>
+                  <label class="form-label" for="loc-desc">{{{t("worlds.description")}}}</label>
                   <textarea
                     class="form-input form-textarea"
                     id="loc-desc"
                     x-model="newLocDesc"
                     rows="2"
-                    placeholder="Optional description"
+                    :placeholder="t('worlds.locationDescriptionPlaceholder')"
                   ></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="loc-parent">Parent Location</label>
+                  <label class="form-label" for="loc-parent">{{{t("worlds.parentLocation")}}}</label>
                   <select class="form-input" id="loc-parent" x-model="newLocParentId">
-                    <option value="">None</option>
+                    <option value="">{{{t("worlds.none")}}}</option>
                     <template x-for="loc in locations" :key="loc.id">
                       <option :value="loc.id" x-text="loc.name"></option>
                     </template>
                   </select>
                 </div>
                 <div class="form-group" x-show="locations.length > 0">
-                  <span class="form-label">Connections (travel links)</span>
+                  <span class="form-label">{{{t("worlds.connections")}}}</span>
                   <template x-for="loc in locations" :key="loc.id">
                     <label
                       style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)"
@@ -139,13 +140,13 @@
                   </template>
                 </div>
                 <button class="btn btn-primary" @click="addLocation()" :disabled="!newLocName.trim()">
-                  Add
+                  {{{t("common.add")}}}
                 </button>
               </div>
 
               <div x-show="loadingLocations" class="empty-state" style="padding: var(--space-8)">
                 <div class="icon">⏳</div>
-                <div class="title">Loading locations...</div>
+                <div class="title">{{{t("worlds.loadingLocations")}}}</div>
               </div>
 
               <div x-show="!loadingLocations && locations.length > 0">
@@ -171,7 +172,7 @@
                           style="font-size: var(--fs-sm); padding: var(--space-1) var(--space-3)"
                           @click="deleteLocation(loc.id)"
                         >
-                          Delete
+                          {{{t("common.delete")}}}
                         </button>
                       </div>
                     </div>
@@ -191,14 +192,14 @@
                           rows="2"
                           style="font-size: var(--fs-base-sm)"
                           x-model="editLocDesc"
-                          placeholder="Description"
+                          :placeholder="t('worlds.description')"
                         ></textarea>
                         <button
                           class="btn btn-primary btn-xs"
                           @click="saveLocation(loc.id)"
                           style="justify-self: flex-start"
                         >
-                          Save
+                          {{{t("common.save")}}}
                         </button>
                       </div>
                     </div>
@@ -212,8 +213,8 @@
                 style="padding: var(--space-12)"
               >
                 <div class="icon">🗺️</div>
-                <div class="title">No locations yet</div>
-                <div class="description">Add locations to build your world map.</div>
+                <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
+                <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
               </div>
             </div>
           </div>
