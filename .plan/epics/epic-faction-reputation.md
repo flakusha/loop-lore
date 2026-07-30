@@ -3,6 +3,8 @@
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High
+**Type:** Feature Epic
+**Tags:** factions, reputation, standing, territory, consequences
 **Source:** .plan/research/rpg-landscape.md §6.6, §6.8, §9, §10
 **Spec:** `docs/spec/quests-encounters.md` (data model, schema, implementation notes)
 

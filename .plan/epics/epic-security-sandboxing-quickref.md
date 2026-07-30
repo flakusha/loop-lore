@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Type:** Infrastructure Epic
+**Tags:** security, sandboxing, llm, prompt-injection, testing
 
 ## Architecture
 

@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Type:** Feature Epic
+**Tags:** social-hub, adapters, discord, telegram, email, nostr
 
 ## Architecture
 
