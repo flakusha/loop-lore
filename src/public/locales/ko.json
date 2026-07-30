@@ -46,7 +46,11 @@
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "비밀번호를 잊으셨나요?",
     "needAnAccount": "계정이 없으신가요?",
-    "alreadyHaveAccount": "이미 계정이 있으신가요?"
+    "alreadyHaveAccount": "이미 계정이 있으신가요?",
+    "registrationClosed": "등록이 마감되었습니다.",
+    "usernameLength": "사용자 이름은 3~32자여야 합니다.",
+    "passwordLength": "비밀번호는 6자 이상이어야 합니다.",
+    "usernameTaken": "이미 사용 중인 사용자 이름입니다."
   },
   "chat": {
     "sendMessage": "Send Message",
