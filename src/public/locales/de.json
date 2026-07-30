@@ -44,7 +44,9 @@
     "thinking": "thinking",
     "tools": "tools",
     "selectAll": "Select All",
-    "pin": "Pin"
+    "pin": "Pin",
+    "clearAll": "Clear all",
+    "removeFilter": "Remove filter"
   },
   "auth": {
     "login": "Log In",
@@ -355,7 +357,17 @@
     "mixed": "Mixed",
     "titleLabel": "Title",
     "thinking": "thinking",
-    "tools": "tools"
+    "tools": "tools",
+    "allEntities": "All entities",
+    "auth": "Auth",
+    "chat": "Chat",
+    "world": "World",
+    "asset": "Asset",
+    "plugin": "Plugin",
+    "date": "Date",
+    "events": "Events",
+    "comfyuiEnabled": "Enabled",
+    "comfyuiUrl": "URL"
   },
   "errors": {
     "notFound": "Not found",
@@ -819,5 +831,16 @@
   },
   "sessions": {
     "cannotDeleteCurrent": "Cannot delete current session. Use /api/auth/logout instead."
+  },
+  "filter": {
+    "allTypes": "All types",
+    "images": "Images",
+    "audio": "Audio",
+    "video": "Video",
+    "sortName": "Sort: Name",
+    "sortNewest": "Sort: Newest",
+    "sortOldest": "Sort: Oldest",
+    "filterType": "Filter type",
+    "sort": "Sort"
   }
 }

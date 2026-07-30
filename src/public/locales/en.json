@@ -44,7 +44,9 @@
     "thinking": "thinking",
     "tools": "tools",
     "selectAll": "Select All",
-    "pin": "Pin"
+    "pin": "Pin",
+    "clearAll": "Clear all",
+    "removeFilter": "Remove filter"
   },
   "auth": {
     "login": "Log In",
@@ -248,6 +250,13 @@
     "confirmDelete": "Confirm Delete",
     "searchAudit": "Search audit messages...",
     "allEventTypes": "All event types",
+    "allEntities": "All entities",
+    "auth": "Auth",
+    "chat": "Chat",
+    "world": "World",
+    "asset": "Asset",
+    "system": "System",
+    "plugin": "Plugin",
     "noAuditEntries": "No audit entries found",
     "loadingProviders": "Loading providers...",
     "rescanProviders": "Rescan Providers",
@@ -357,7 +366,12 @@
     "mixed": "Mixed",
     "titleLabel": "Title",
     "thinking": "thinking",
-    "tools": "tools"
+    "tools": "tools",
+    "allEntities": "All entities",
+    "date": "Date",
+    "events": "Events",
+    "comfyuiEnabled": "Enabled",
+    "comfyuiUrl": "URL"
   },
   "errors": {
     "notFound": "Not found",
@@ -375,6 +389,17 @@
     "apiError": "API error",
     "connectionFailed": "Connection failed",
     "timeout": "Request timed out"
+  },
+  "filter": {
+    "allTypes": "All types",
+    "images": "Images",
+    "audio": "Audio",
+    "video": "Video",
+    "sortName": "Sort: Name",
+    "sortNewest": "Sort: Newest",
+    "sortOldest": "Sort: Oldest",
+    "filterType": "Filter type",
+    "sort": "Sort"
   },
   "characters": {
     "title": "Characters",
