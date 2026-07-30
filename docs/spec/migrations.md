@@ -55,13 +55,13 @@ When swapping from `bun:sqlite` to PostgreSQL:
 
 ### Type Mappings
 
-| SQLite | PostgreSQL |
-|--------|-----------|
-| INTEGER | BIGINT |
-| TEXT | VARCHAR/TEXT |
-| REAL | DOUBLE PRECISION |
-| BLOB | BYTEA |
-| BOOLEAN (0/1) | BOOLEAN |
+| SQLite        | PostgreSQL       |
+| ------------- | ---------------- |
+| INTEGER       | BIGINT           |
+| TEXT          | VARCHAR/TEXT     |
+| REAL          | DOUBLE PRECISION |
+| BLOB          | BYTEA            |
+| BOOLEAN (0/1) | BOOLEAN          |
 
 ## Rollback Procedures
 

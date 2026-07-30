@@ -37,10 +37,10 @@ interface RPGPlugin {
   name: string;
   version: string;
   hooks: {
-    onTurnStart?: (ctx: TurnContext) => void;
-    onTurnEnd?: (ctx: TurnContext) => void;
-    onAction?: (ctx: ActionContext) => Result;
-    onStateChange?: (ctx: StateContext) => void;
+    onTurnStart?: (ctx: TurnContext,) => void;
+    onTurnEnd?: (ctx: TurnContext,) => void;
+    onAction?: (ctx: ActionContext,) => Result;
+    onStateChange?: (ctx: StateContext,) => void;
   };
   schema: ZodSchema; // config schema for this plugin
 }
@@ -61,12 +61,12 @@ Actions flow through a resolution chain:
 Player/entity states use finite state machines:
 
 ```typescript
-type PlayerState = 
-  | { type: 'idle' }
-  | { type: 'in-combat'; encounter: Encounter }
-  | { type: 'in-dialogue'; npc: NPCId }
-  | { type: 'crafting'; recipe: RecipeId }
-  | { type: 'exploring'; location: LocationId };
+type PlayerState =
+  | { type: "idle" }
+  | { type: "in-combat"; encounter: Encounter }
+  | { type: "in-dialogue"; npc: NPCId }
+  | { type: "crafting"; recipe: RecipeId }
+  | { type: "exploring"; location: LocationId };
 ```
 
 ### Effect System Pattern
@@ -77,7 +77,7 @@ Temporary and permanent effects stack:
 interface Effect {
   id: string;
   source: string;
-  duration: number | 'permanent';
+  duration: number | "permanent";
   modifiers: StatModifier[];
   conditions: Condition[];
 }
@@ -88,10 +88,10 @@ interface Effect {
 Subsystems communicate via events:
 
 ```typescript
-type RPGEvent = 
-  | { type: 'combat:hit'; attacker: Id; target: Id; damage: number }
-  | { type: 'craft:complete'; player: Id; item: ItemId }
-  | { type: 'faction:reputation-change'; faction: Id; delta: number };
+type RPGEvent =
+  | { type: "combat:hit"; attacker: Id; target: Id; damage: number }
+  | { type: "craft:complete"; player: Id; item: ItemId }
+  | { type: "faction:reputation-change"; faction: Id; delta: number };
 ```
 
 ## Configuration Patterns
@@ -118,7 +118,7 @@ interface DifficultyProfile {
   diceModifier: number;
   enemyScaling: number;
   resourceScarcity: number;
-  deathPenalty: 'none' | 'light' | 'heavy' | 'permadeath';
+  deathPenalty: "none" | "light" | "heavy" | "permadeath";
 }
 ```
 

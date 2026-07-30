@@ -47,9 +47,9 @@ Create a single search endpoint that searches across notes, memories, items, wor
     }
   ],
   "facets": {
-    "types": {"notes": 15, "memories": 23},
-    "chats": {"chat-789": 12},
-    "statuses": {"active": 30, "expired": 11}
+    "types": { "notes": 15, "memories": 23 },
+    "chats": { "chat-789": 12 },
+    "statuses": { "active": 30, "expired": 11 }
   },
   "total": 46
 }
