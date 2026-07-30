@@ -46,6 +46,13 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       }
 
       return jsonError({ message: `Unsupported format: ${format}`, status: HttpStatus.BadRequest, },);
+    }, {
+      detail: {
+        summary: "Export character systems data as JSON",
+        description:
+          "Exports character systems data (traits, mood, relationships, avatars, licensing, availability) as a downloadable JSON file.",
+        tags: ["Characters", "Import/Export",],
+      },
     },)
     // ── Export Systems Data (POST for complex queries) ──────
     .post("/api/actors/:actorId/systems/export", async (ctx: any,) => {
@@ -82,6 +89,13 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       };
 
       return jsonResponse(filtered,);
+    }, {
+      detail: {
+        summary: "Export character systems data with filters",
+        description:
+          "Exports character systems data with fine-grained control over which sections to include via POST body options.",
+        tags: ["Characters", "Import/Export",],
+      },
     },)
     // ── Import Systems Data ─────────────────────────────────
     .post("/api/actors/:actorId/systems/import", async (ctx: any,) => {
@@ -119,6 +133,13 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         },
         errors: result.errors,
       },);
+    }, {
+      detail: {
+        summary: "Import character systems data from body",
+        description:
+          "Imports character systems data from a JSON payload in the request body. Validates version and returns import results.",
+        tags: ["Characters", "Import/Export",],
+      },
     },)
     // ── Import Systems Data from URL ────────────────────────
     .post("/api/actors/:actorId/systems/import/url", async (ctx: any,) => {
@@ -193,5 +214,12 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         const msg = error instanceof Error ? error.message : String(error,);
         return jsonError({ message: `Failed to import from URL: ${msg}`, status: HttpStatus.BadRequest, },);
       }
+    }, {
+      detail: {
+        summary: "Import character systems data from URL",
+        description:
+          "Fetches character systems data from a remote URL and imports it. Includes SSRF protection blocking private IPs and non-HTTP protocols.",
+        tags: ["Characters", "Import/Export",],
+      },
     },);
 }

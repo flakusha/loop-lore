@@ -47,6 +47,11 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({ id: t.String(), },),
+          detail: {
+            summary: "List pinned messages in a chat",
+            description: "Returns all pinned messages for a chat, ordered by pin date.",
+            tags: ["Chats", "Pins",],
+          },
         },
       )
       // Pin a message
@@ -109,6 +114,11 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         {
           params: t.Object({ id: t.String(), },),
           body: t.Object({ messageId: t.String(), },),
+          detail: {
+            summary: "Pin a message in a chat",
+            description: "Pins a message to the chat. Requires chat ownership, admin role, or participant status.",
+            tags: ["Chats", "Pins",],
+          },
         },
       )
       // Unpin a message
@@ -151,6 +161,11 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({ id: t.String(), pinId: t.String(), },),
+          detail: {
+            summary: "Unpin a message from a chat",
+            description: "Removes a pin from a message. Requires pin ownership, chat ownership, or admin role.",
+            tags: ["Chats", "Pins",],
+          },
         },
       )
   );

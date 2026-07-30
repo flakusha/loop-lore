@@ -36,6 +36,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
 
       const relationships = await relationshipsService.getRelationships(actorId, worldId,);
       return jsonResponse(relationships,);
+    }, {
+      detail: {
+        summary: "List actor relationships",
+        description: "List all relationships for an actor, optionally filtered by world.",
+        tags: ["Character Relationships",],
+      },
     },)
     .get("/api/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -64,6 +70,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(relationship,);
+    }, {
+      detail: {
+        summary: "Get actor relationship",
+        description: "Get a specific relationship between two actors.",
+        tags: ["Character Relationships",],
+      },
     },)
     .post("/api/actors/:actorId/relationships", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -112,6 +124,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         metadata,
       },);
       return jsonCreated({ id: relationshipId, },);
+    }, {
+      detail: {
+        summary: "Create actor relationship",
+        description: "Create a new relationship between two actors.",
+        tags: ["Character Relationships",],
+      },
     },)
     .put("/api/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -147,6 +165,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         metadata,
       },);
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Update actor relationship",
+        description: "Update the properties of a relationship between two actors.",
+        tags: ["Character Relationships",],
+      },
     },)
     .delete("/api/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -169,6 +193,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
 
       await relationshipsService.deleteRelationship(actorId, targetActorId, worldId,);
       return jsonNoContent();
+    }, {
+      detail: {
+        summary: "Delete actor relationship",
+        description: "Delete a relationship between two actors.",
+        tags: ["Character Relationships",],
+      },
     },)
     .post("/api/actors/:actorId/relationships/events", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -210,5 +240,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         familiarityDelta: familiarityDelta ?? 0,
       },);
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Log relationship event",
+        description: "Log a relationship event with deltas for standing, trust, and familiarity.",
+        tags: ["Character Relationships",],
+      },
     },);
 }

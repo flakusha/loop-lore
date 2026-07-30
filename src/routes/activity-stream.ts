@@ -118,5 +118,12 @@ export function activityStreamRoutes({ database, }: { database: Kysely<DB> },) {
     }
     const streamer = new ActivityStreamer(database, userId,);
     return streamer.open();
+  }, {
+    detail: {
+      summary: "Stream activity via SSE",
+      description:
+        "Server-Sent Events stream of cross-chat activity, emitting per-chat unseen counts and last message timestamps.",
+      tags: ["Activity", "Stream",],
+    },
   },);
 }

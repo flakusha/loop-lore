@@ -33,6 +33,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       }
       const avatars = await avatarService.getAvatars(actorId,);
       return jsonResponse(avatars,);
+    }, {
+      detail: {
+        summary: "List actor avatars",
+        description: "List all avatars for a given actor.",
+        tags: ["Avatars",],
+      },
     },)
     .get("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -61,6 +67,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(avatar,);
+    }, {
+      detail: {
+        summary: "Get actor avatar",
+        description: "Get a specific avatar by ID for a given actor.",
+        tags: ["Avatars",],
+      },
     },)
     .post("/api/actors/:actorId/avatars", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -100,6 +112,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         sortOrder: sortOrder ?? 0,
       },);
       return jsonCreated({ id: avatarId, },);
+    }, {
+      detail: {
+        summary: "Create actor avatar",
+        description: "Create a new avatar for an actor. Requires an assetId.",
+        tags: ["Avatars",],
+      },
     },)
     .put("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -133,6 +151,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         sortOrder,
       },);
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Update actor avatar",
+        description: "Update an existing avatar's label, tags, primary flag, or sort order.",
+        tags: ["Avatars",],
+      },
     },)
     .delete("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -155,6 +179,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
 
       await avatarService.deleteAvatar(avatarId,);
       return jsonNoContent();
+    }, {
+      detail: {
+        summary: "Delete actor avatar",
+        description: "Delete an avatar by ID.",
+        tags: ["Avatars",],
+      },
     },)
     .post("/api/actors/:actorId/avatars/select", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -193,6 +223,13 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       }, worldId,);
       if (!avatar) { return jsonError({ message: "No avatar found", status: HttpStatus.NotFound, },); }
       return jsonResponse(avatar,);
+    }, {
+      detail: {
+        summary: "Select context-aware avatar",
+        description:
+          "Select the best avatar for an actor based on context (emotion, mood, action, location, time, outfit).",
+        tags: ["Avatars",],
+      },
     },)
     .get("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -213,6 +250,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       }
       const config = await avatarService.getAvatarConfig(actorId,);
       return jsonResponse(config,);
+    }, {
+      detail: {
+        summary: "Get avatar selection config",
+        description: "Get the avatar selection configuration for an actor.",
+        tags: ["Avatars",],
+      },
     },)
     .put("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -243,6 +286,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         fallbackChain: fallbackChain as any,
       },);
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Update avatar selection config",
+        description: "Update the avatar selection configuration (rule, weights, fallback chain) for an actor.",
+        tags: ["Avatars",],
+      },
     },)
     .get("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -264,6 +313,12 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
 
       const config = await avatarService.getWorldAvatarConfig(actorId, worldId,);
       return jsonResponse(config,);
+    }, {
+      detail: {
+        summary: "Get world avatar config",
+        description: "Get the world-specific avatar configuration override for an actor.",
+        tags: ["Avatars",],
+      },
     },)
     .put("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -292,5 +347,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         weightsOverride,
       },);
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Update world avatar config",
+        description: "Update the world-specific avatar configuration override for an actor.",
+        tags: ["Avatars",],
+      },
     },);
 }
