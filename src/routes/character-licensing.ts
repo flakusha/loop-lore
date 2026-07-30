@@ -5,7 +5,7 @@
  * including CC0 public domain and custom licenses.
  */
 import { Elysia, } from "elysia";
-import { ActorIdParams, LicensingBody, } from "../validation/schemas";
+import { ActorIdParams, ErrorResponse, LicensingBody, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -53,6 +53,11 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
       return jsonResponse(licensing,);
     }, {
       params: ActorIdParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get character licensing information",
         description: "Returns the licensing details (CC0, custom, or proprietary) for the specified actor.",
@@ -124,6 +129,11 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: LicensingBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Create or update character licensing",
         description:
@@ -158,6 +168,11 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
       return jsonResponse({ ok: true, },);
     }, {
       params: ActorIdParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Delete character licensing",
         description: "Removes all licensing information for the specified actor.",
