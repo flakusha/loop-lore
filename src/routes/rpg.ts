@@ -16,25 +16,25 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema.js";
+import type { DB, } from "../db/schema.js";
+import { getLogger, type Logger, } from "../logger";
 import {
+  type AdvantageMode,
+  type DiceSides,
+  rollDice,
+  rollFromNotation,
+} from "../rpg/dice.js";
+import {
+  type AbilityName,
   computeModifiers,
   defaultStatBlock,
   pointBuy,
   rollStats4d6,
   standardArray,
-  validateStatBlock,
-  type AbilityName,
   type StatBlock,
+  validateStatBlock,
 } from "../rpg/stats.js";
-import {
-  rollDice,
-  rollFromNotation,
-  type DiceSides,
-  type AdvantageMode,
-} from "../rpg/dice.js";
-import type { Config, } from "../config/schema.js";
-import type { DB, } from "../db/schema.js";
-import { getLogger, type Logger, } from "../logger";
 import { SuccessResponse, } from "../validation/schemas.js";
 import { jsonError, jsonResponse, } from "./http-utils.js";
 
@@ -139,7 +139,6 @@ export function rpgRoutes(opts: HandlerOpts,) {
           },
         },
       )
-
       // ── Stats: Calculate ──────────────────────────────────
 
       .post(
@@ -207,7 +206,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
               case "4d6_drop_lowest": {
                 const rolls = rollStats4d6();
                 const stats = defaultStatBlock();
-                const abilities = ["str", "dex", "con", "int", "wis", "cha"] as const;
+                const abilities = ["str", "dex", "con", "int", "wis", "cha",] as const;
                 for (let i = 0; i < 6; i++) {
                   (stats as Record<string, number>)[abilities[i]!] = rolls[i]!;
                 }

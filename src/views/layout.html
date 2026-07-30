@@ -54,7 +54,7 @@
   </head>
   <body x-data="app()" hx-ext="alpine-morph">
     <!-- Toast container (fixed, outside layout) -->
-    <div class="toast-container" id="toast-container" data-testid="toast-container"></div>
+    <div class="toast-container" id="toast-container" data-testid="toast-container" aria-live="polite" aria-atomic="false" role="region" aria-label="Notifications"></div>
 
     <!-- Skip to content (first focusable element for keyboard users) -->
     <a class="skip-to-content" href="#app-root" data-testid="skip-to-content">{{{t("accessibility.skipToContent")}}}</a>

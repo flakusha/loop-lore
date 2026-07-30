@@ -86,12 +86,14 @@ export class NsfwHook implements HookHandler {
         actionType: allowed ? "nsfw_detected" : "nsfw_blocked",
         targetUserId: context.actorId,
         performedBy: "system",
-        reason: `NSFW ${allowed ? "detected" : "blocked"}: level "${nsfwLevel}" ${allowed ? "within" : "exceeds"} policy "${context.nsfwPolicy}"`,
+        reason: `NSFW ${allowed ? "detected" : "blocked"}: level "${nsfwLevel}" ${
+          allowed ? "within" : "exceeds"
+        } policy "${context.nsfwPolicy}"`,
         scope: "chat",
         scopeId: context.chatId,
       },);
     } catch (err) {
-      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(err), },);
+      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(err,), },);
     }
   }
 

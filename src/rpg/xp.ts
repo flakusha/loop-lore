@@ -36,8 +36,8 @@ export const MAX_LEVEL = 20;
 
 /** HP gain per level by hit die */
 export const HP_PER_LEVEL: Record<number, number> = {
-  1: 1,  // First level: max hit die
-  2: 1,  // Subsequent levels: average roll
+  1: 1, // First level: max hit die
+  2: 1, // Subsequent levels: average roll
   3: 1,
   4: 1,
   6: 1,
@@ -252,5 +252,5 @@ export function grantsAsi(level: number,): boolean {
  * Get maximum ASI increases remaining for a character.
  */
 export function asiRemaining(currentLevel: number,): number {
-  return (ASI_LEVELS as readonly number[]).filter((l,) => l > currentLevel,).length;
+  return (ASI_LEVELS as readonly number[]).filter((l,) => l > currentLevel).length;
 }

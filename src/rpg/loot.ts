@@ -5,7 +5,7 @@
  * and loot generation from enemies/chests/quests.
  */
 
-import { rollDie, type DiceSides, } from "./dice.js";
+import { type DiceSides, rollDie, } from "./dice.js";
 
 // ── Types ────────────────────────────────────────────────
 
@@ -153,7 +153,7 @@ function rollOneDrop(
   // Calculate total weight
   let totalWeight = 0;
   for (const entry of entries) {
-    totalWeight += effectiveWeight(entry.rarity, level) * entry.weight;
+    totalWeight += effectiveWeight(entry.rarity, level,) * entry.weight;
   }
 
   if (totalWeight === 0) {
@@ -167,7 +167,7 @@ function rollOneDrop(
 
   let cumulative = 0;
   for (const entry of entries) {
-    cumulative += effectiveWeight(entry.rarity, level) * entry.weight;
+    cumulative += effectiveWeight(entry.rarity, level,) * entry.weight;
     if (cumulative >= threshold) {
       const quantity = rollQuantity(entry.minQuantity, entry.maxQuantity,);
       return {
@@ -206,7 +206,7 @@ function rollQuantity(min: number, max: number,): number {
     return min;
   }
   const range = max - min + 1;
-  return min + (rollDie(Math.min(range, 100) as DiceSides,) - 1);
+  return min + (rollDie(Math.min(range, 100,) as DiceSides,) - 1);
 }
 
 // ── Loot Table Templates ────────────────────────────────
@@ -235,7 +235,7 @@ export const COMMON_CONSUMABLES: LootEntry[] = [
     maxQuantity: 1,
     minLevel: 1,
     goldValue: 50,
-    metadata: { cures: ["poison", "disease"], },
+    metadata: { cures: ["poison", "disease",], },
   },
 ];
 
@@ -327,7 +327,7 @@ export const ARMOR_LOOT: LootEntry[] = [
     maxQuantity: 1,
     minLevel: 10,
     goldValue: 10_000,
-    metadata: { ac: 17, type: "heavy", resistances: ["fire"], },
+    metadata: { ac: 17, type: "heavy", resistances: ["fire",], },
   },
 ];
 
@@ -350,7 +350,7 @@ export function createLootTable(
     minLevel: item.minLevel ?? 1,
     goldValue: 0,
     metadata: {},
-  }),);
+  }));
 }
 
 /**
