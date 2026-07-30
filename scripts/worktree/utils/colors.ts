@@ -5,29 +5,29 @@
  * Color output utilities for terminal
  */
 export const Colors = {
-  RED: '\x1b[0;31m',
-  GREEN: '\x1b[0;32m',
-  YELLOW: '\x1b[1;33m',
-  CYAN: '\x1b[0;36m',
-  NC: '\x1b[0m', // No Color
+  RED: "\x1b[0;31m",
+  GREEN: "\x1b[0;32m",
+  YELLOW: "\x1b[1;33m",
+  CYAN: "\x1b[0;36m",
+  NC: "\x1b[0m", // No Color
 } as const;
 
-export function colorize(text: string, color: keyof typeof Colors): string {
+export function colorize(text: string, color: keyof typeof Colors,): string {
   return `${Colors[color]}${text}${Colors.NC}`;
 }
 
-export function error(message: string): string {
-  return colorize(message, 'RED');
+export function error(message: string,): string {
+  return colorize(message, "RED",);
 }
 
-export function success(message: string): string {
-  return colorize(message, 'GREEN');
+export function success(message: string,): string {
+  return colorize(message, "GREEN",);
 }
 
-export function warning(message: string): string {
-  return colorize(message, 'YELLOW');
+export function warning(message: string,): string {
+  return colorize(message, "YELLOW",);
 }
 
-export function info(message: string): string {
-  return colorize(message, 'CYAN');
+export function info(message: string,): string {
+  return colorize(message, "CYAN",);
 }
