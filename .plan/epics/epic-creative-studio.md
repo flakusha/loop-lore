@@ -2,6 +2,9 @@
 
 **Status:** 📝 Draft → 🟡 In Progress (MVP scoped)
 **Priority:** High (MVP), Medium (full)
+**Effort:** High
+**Type:** Feature Epic
+**Tags:** creative-studio, search, modals, toolbar, unified-search
 **Plan.md:** §46
 **Issue:** `EPIC-046`
 **Spec:** `docs/spec/creative-studio.md`, `docs/spec/gm-shadow-notes.md`

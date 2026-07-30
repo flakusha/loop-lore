@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic / Configuration
+**Tags:** llm, sd, avatar, image-edit, templates, yaml, merge
 **Proposed Epic Branch:** epic/config-templates
 **Depends on:** existing config loader, prompt templates, template registry
 

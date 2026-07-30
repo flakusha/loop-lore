@@ -3,8 +3,8 @@
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Very High
-**Issue:** `e8b0c6b`
 **Type:** Feature Epic
+**Tags:** plugin, extensibility, hooks, marketplace, sandboxing
 
 ## Summary
 

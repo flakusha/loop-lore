@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Type:** Infrastructure Epic
+**Tags:** openapi, validation, rate-limiting, telemetry, offloading
 
 ## Architecture
 

@@ -5,6 +5,7 @@
 **Effort:** High
 **Issue:** `e8b0c6b`
 **Type:** Feature Epic
+**Tags:** battle, items, social, npc, weather, resolution, integration
 
 ## Summary
 

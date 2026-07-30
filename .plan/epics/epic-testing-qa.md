@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** Continuous
 **Type:** Ongoing Epic
+**Tags:** testing, quality-assurance, unit-tests, e2e, coverage
 
 ## Summary
 

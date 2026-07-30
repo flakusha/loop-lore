@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** Continuous
 **Type:** Ongoing Epic
+**Tags:** eslint, linting, code-quality, best-practices, refactoring
 
 ## Summary
 
