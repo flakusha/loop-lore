@@ -36,12 +36,14 @@ import { safeJsonParse, safeJsonStringify, uid, } from "../utils";
 import { forbidden, notFound, unauthorized, } from "../validation/middleware";
 import {
   ChatIdParams,
+  ErrorResponse,
   MessageCreateBody,
   MessageIdParams,
   MessagesQuery,
   MessageStatusUpdateBody,
   MessageVariantBody,
   MessageVisibilityUpdateBody,
+  SuccessResponse,
 } from "../validation/schemas";
 import {
   ErrorCode,
@@ -244,6 +246,10 @@ export function messagesRoutes(opts: HandlerOpts,) {
         {
           params: ChatIdParams,
           query: MessagesQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            401: ErrorResponse,
+          },
           detail: {
             summary: "List messages",
             description: "List messages in a chat. Supports pagination and parent filtering for branching.",
@@ -276,7 +282,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
           }
           return jsonResponse({ ...message, content, attachments, },);
         },
-        { params: MessageIdParams, },
+        { params: MessageIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .get(
         "/api/messages/:id/variants",
@@ -316,7 +322,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
           return jsonResponse(enriched,);
         },
-        { params: MessageIdParams, },
+        { params: MessageIdParams, response: { 200: t.Array(t.Any(),), 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .put(
         "/api/messages/:id/variant",
@@ -353,7 +359,11 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
           return jsonResponse(selected,);
         },
-        { params: MessageIdParams, body: MessageVariantBody, },
+        {
+          params: MessageIdParams,
+          body: MessageVariantBody,
+          response: { 200: t.Any(), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .delete(
         "/api/messages/:id",
@@ -376,7 +386,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonNoContent();
         },
-        { params: MessageIdParams, },
+        { params: MessageIdParams, response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       // ── Edit message content (user messages only) ─────────────
       .patch(
@@ -462,6 +472,13 @@ export function messagesRoutes(opts: HandlerOpts,) {
         {
           params: t.Object({ id: t.String(), },),
           body: t.Object({ content: t.String(), },),
+          response: {
+            200: t.Object({ id: t.String(), content: t.String(), edited_at: t.Boolean(), },),
+            400: ErrorResponse,
+            401: ErrorResponse,
+            403: ErrorResponse,
+            404: ErrorResponse,
+          },
         },
       )
       .put(
@@ -485,7 +502,11 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams, body: MessageVisibilityUpdateBody, },
+        {
+          params: MessageIdParams,
+          body: MessageVisibilityUpdateBody,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .put(
         "/api/messages/:id/status",
@@ -498,7 +519,11 @@ export function messagesRoutes(opts: HandlerOpts,) {
           await database.updateTable("messages",).set({ status: body.status, },).where("id", "=", id,).execute();
           return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams, body: MessageStatusUpdateBody, },
+        {
+          params: MessageIdParams,
+          body: MessageStatusUpdateBody,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .post(
         "/api/chats/:id/messages",
@@ -931,7 +956,16 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
           return jsonCreated({ id, },);
         },
-        { params: ChatIdParams, body: MessageCreateBody, },
+        {
+          params: ChatIdParams,
+          body: MessageCreateBody,
+          response: {
+            201: t.Object({ id: t.String(), },),
+            401: ErrorResponse,
+            403: ErrorResponse,
+            404: ErrorResponse,
+          },
+        },
       )
       // ── Message archiving ──────────────────────────────────────
       .post(
@@ -962,7 +996,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams, },
+        { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .post(
         "/api/messages/:id/restore",
@@ -992,7 +1026,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams, },
+        { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .post(
         "/api/chats/:id/messages/purge",
@@ -1018,7 +1052,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, purged: Number(result[0]?.numDeletedRows ?? 0,), },);
         },
-        { params: ChatIdParams, },
+        { params: ChatIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
       )
   );
 }
