@@ -15,19 +15,19 @@ describe("Domain Config Loading", () => {
     // Create domain config files
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.server.toml",),
-      "[server]\nport = 8080\nhost = \"0.0.0.0\"\n",
+      '[server]\nport = 8080\nhost = "0.0.0.0"\n',
     );
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.database.toml",),
-      "[db]\ntype = \"sqlite\"\nsqliteFilename = \"./test.db\"\n",
+      '[db]\ntype = "sqlite"\nsqliteFilename = "./test.db"\n',
     );
 
     const config = loadConfig(TEST_DIR,);
 
-    expect(config.server.port).toBe(8080,);
-    expect(config.server.host).toBe("0.0.0.0",);
-    expect(config.db.type).toBe("sqlite",);
-    expect(config.db.sqliteFilename).toBe("./test.db",);
+    expect(config.server.port,).toBe(8080,);
+    expect(config.server.host,).toBe("0.0.0.0",);
+    expect(config.db.type,).toBe("sqlite",);
+    expect(config.db.sqliteFilename,).toBe("./test.db",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
@@ -39,7 +39,7 @@ describe("Domain Config Loading", () => {
     // Create main config
     writeFileSync(
       path.join(TEST_DIR, "config.toml",),
-      "[server]\nport = 7171\nhost = \"localhost\"\n",
+      '[server]\nport = 7171\nhost = "localhost"\n',
     );
 
     // Create domain config that overrides main config
@@ -51,9 +51,9 @@ describe("Domain Config Loading", () => {
     const config = loadConfig(TEST_DIR,);
 
     // Domain config should override main config
-    expect(config.server.port).toBe(9090,);
+    expect(config.server.port,).toBe(9090,);
     // Main config value should be preserved where not overridden
-    expect(config.server.host).toBe("localhost",);
+    expect(config.server.host,).toBe("localhost",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
@@ -64,13 +64,13 @@ describe("Domain Config Loading", () => {
 
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.server.yaml",),
-      "server:\n  port: 8080\n  host: \"0.0.0.0\"\n",
+      'server:\n  port: 8080\n  host: "0.0.0.0"\n',
     );
 
     const config = loadConfig(TEST_DIR,);
 
-    expect(config.server.port).toBe(8080,);
-    expect(config.server.host).toBe("0.0.0.0",);
+    expect(config.server.port,).toBe(8080,);
+    expect(config.server.host,).toBe("0.0.0.0",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
@@ -92,7 +92,7 @@ describe("Domain Config Loading", () => {
     const config = loadConfig(TEST_DIR,);
 
     // YAML should win (first in DOMAIN_CONFIG_EXTENSIONS)
-    expect(config.server.port).toBe(8080,);
+    expect(config.server.port,).toBe(8080,);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
@@ -106,7 +106,7 @@ describe("Domain Config Loading", () => {
       "[server]\nport = 99999\n",
     );
 
-    expect(() => loadConfig(TEST_DIR,),).toThrow("Invalid server.port",);
+    expect(() => loadConfig(TEST_DIR,)).toThrow("Invalid server.port",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
@@ -117,10 +117,10 @@ describe("Domain Config Loading", () => {
 
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.database.toml",),
-      "[db]\ntype = \"mysql\"\n",
+      '[db]\ntype = "mysql"\n',
     );
 
-    expect(() => loadConfig(TEST_DIR,),).toThrow("Invalid db.type",);
+    expect(() => loadConfig(TEST_DIR,)).toThrow("Invalid db.type",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
@@ -131,10 +131,10 @@ describe("Domain Config Loading", () => {
 
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.logging.toml",),
-      "[logging]\nlevel = \"verbose\"\n",
+      '[logging]\nlevel = "verbose"\n',
     );
 
-    expect(() => loadConfig(TEST_DIR,),).toThrow("Invalid logging.level",);
+    expect(() => loadConfig(TEST_DIR,)).toThrow("Invalid logging.level",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);

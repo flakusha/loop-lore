@@ -4,8 +4,8 @@
  * Uses the same compress-then-encrypt pipeline as messages.
  * Assets inherit encryption tier from parent entity.
  */
-import { compressThenEncrypt, decryptThenDecompress, type PipelineConfig } from "./pipeline";
-import type { ChatKey } from "./chat-keys";
+import type { ChatKey, } from "./chat-keys";
+import { compressThenEncrypt, decryptThenDecompress, type PipelineConfig, } from "./pipeline";
 
 export interface AssetEncryptionResult {
   encrypted: boolean;
@@ -40,18 +40,18 @@ export async function encryptAssetBlob(
   }
 
   // Encrypt the blob using the raw CryptoKey from ChatKey
-  const plaintext = buffer.toString("base64");
+  const plaintext = buffer.toString("base64",);
   const encryptedJson = await compressThenEncrypt({
     plaintext,
     chatKey: chatKey.key,
     keyId,
     config,
-  });
+  },);
 
   return {
     encrypted: true,
     keyId,
-    data: Buffer.from(encryptedJson, "utf8"),
+    data: Buffer.from(encryptedJson, "utf8",),
   };
 }
 
@@ -67,19 +67,19 @@ export async function decryptAssetBlob(
   buffer: Buffer,
   chatKey: ChatKey,
 ): Promise<Buffer> {
-  const encryptedJson = buffer.toString("utf8");
-  const base64 = await decryptThenDecompress(encryptedJson, chatKey.key);
-  return Buffer.from(base64, "base64");
+  const encryptedJson = buffer.toString("utf8",);
+  const base64 = await decryptThenDecompress(encryptedJson, chatKey.key,);
+  return Buffer.from(base64, "base64",);
 }
 
 /**
  * Check if an asset blob is encrypted (has valid JSON structure).
  */
-export function isEncryptedAsset(buffer: Buffer): boolean {
+export function isEncryptedAsset(buffer: Buffer,): boolean {
   try {
-    const str = buffer.toString("utf8").trim();
-    if (!str.startsWith("{")) return false;
-    const parsed = JSON.parse(str);
+    const str = buffer.toString("utf8",).trim();
+    if (!str.startsWith("{",)) { return false; }
+    const parsed = JSON.parse(str,);
     return typeof parsed === "object" && parsed !== null && "enc" in parsed && "nonce" in parsed;
   } catch {
     return false;

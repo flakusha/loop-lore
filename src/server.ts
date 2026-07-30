@@ -20,8 +20,8 @@ import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugin
 import { ensureTlsCerts, } from "./config/cert";
 import { generateNonce, } from "./middleware/csp-nonce";
 import { getDatabase, } from "./db/index";
+import { initAnonymousMode, initSmk, } from "./crypto";
 import { initDefaultHooks, } from "./generation/hooks";
-import { initSmk, initAnonymousMode, } from "./crypto";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist",);
@@ -166,9 +166,9 @@ export function createRequestHandler(
     // Generate a unique request ID for traceability
     const requestId = crypto.randomUUID();
     // Attach request ID to the cloned request so downstream handlers can read it
-    const taggedRequest = new Request(request, {
-      headers: new Headers([...request.headers, ["x-request-id", requestId,],],),
-    },);
+    const headers = new Headers(request.headers,);
+    headers.set("x-request-id", requestId,);
+    const taggedRequest = new Request(request, { headers, },);
     generateNonce(taggedRequest,);
     let response = await app.fetch(taggedRequest,);
     // Return the request ID in the response header
@@ -292,10 +292,10 @@ async function start() {
 
   // Clean up timer on shutdown
   process.on("SIGTERM", () => {
-    if (rotationTimer) { clearInterval(rotationTimer); }
+    if (rotationTimer) { clearInterval(rotationTimer,); }
   },);
   process.on("SIGINT", () => {
-    if (rotationTimer) { clearInterval(rotationTimer); }
+    if (rotationTimer) { clearInterval(rotationTimer,); }
   },);
 
   const serverManager = new ServerExternalManager(logger,);

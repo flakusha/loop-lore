@@ -22,16 +22,10 @@ export const characterTraitsSection: SectionBuilder = {
         .execute();
 
       if (worldTraits.length > 0) {
-        const grouped = worldTraits.reduce<Record<string, typeof worldTraits>>((
-          acc,
-          t,
-        ) => {
-          (acc[t.trait_category] ??= []).push(t,);
-          return acc;
-        }, {},);
+        const grouped = Object.groupBy(worldTraits, (t,) => t.trait_category,);
         for (const [cat, traits,] of Object.entries(grouped,)) {
           const lines = traits
-            .map((t,) => `${t.trait_name}: ${t.trait_value}`,)
+            .map((t,) => `${t.trait_name}: ${t.trait_value}`)
             .join(", ",);
           parts.push(`[${cat}] ${lines}`,);
         }
@@ -52,7 +46,7 @@ export const characterTraitsSection: SectionBuilder = {
             const mods: string[] = [];
             if (t.bonus > 0) { mods.push(`+${t.bonus}`,); }
             if (t.penalty > 0) { mods.push(`-${t.penalty}`,); }
-            const mod = mods.length > 0 ? ` (${mods.join("/",) })` : "";
+            const mod = mods.length > 0 ? ` (${mods.join("/",)})` : "";
             return `${t.trait_name}: ${t.trait_value}${mod}`;
           },)
           .join("; ",);

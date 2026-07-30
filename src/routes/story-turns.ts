@@ -39,7 +39,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
         userRole as string | null,
       );
       if (!hasAccess) {
-        return error(HttpStatus.NotFound, { message: "Chat not found", },);
+        return error(HttpStatus.NotFound, { message: ctx.t?.("chats.chatNotFound",) ?? "Chat not found", },);
       }
 
       const searchParams = new URL(request.url,).searchParams;
@@ -77,7 +77,9 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
         userRole as string | null,
       );
       if (!hasAccess) {
-        return error(HttpStatus.NotFound, { message: "Story turn not found", },);
+        return error(HttpStatus.NotFound, {
+          message: ctx.t?.("story.storyTurnNotFound",) ?? "Story turn not found",
+        },);
       }
 
       const turn = await opts.database

@@ -23,7 +23,12 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     // ── Export Systems Data ─────────────────────────────────
     .get("/api/actors/:actorId/systems/export", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const worldId = ctx.query.worldId as string | undefined;
@@ -45,7 +50,12 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     // ── Export Systems Data (POST for complex queries) ──────
     .post("/api/actors/:actorId/systems/export", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
@@ -76,13 +86,21 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     // ── Import Systems Data ─────────────────────────────────
     .post("/api/actors/:actorId/systems/import", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as CharacterSystemsExport;
 
       if (!body?.version) {
-        return jsonError({ message: "Invalid import data: missing version", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: ctx.t?.("import.invalidImportData",) ?? "Invalid import data: missing version",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       const worldId = body.characterId === actorId ? undefined : undefined; // Use export's worldId if different
@@ -105,7 +123,12 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     // ── Import Systems Data from URL ────────────────────────
     .post("/api/actors/:actorId/systems/import/url", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;

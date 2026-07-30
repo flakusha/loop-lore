@@ -31,8 +31,8 @@ const CONSTRAINTS: Record<string, FieldConstraints> = {
   personality: { minLength: 1, maxLength: 2000, required: true, },
   scenario: { maxLength: 5000, required: false, },
   welcome_message: { maxLength: 5000, required: false, },
-  mes_example: { maxLength: 10000, required: false, },
-  system_prompt: { maxLength: 10000, required: false, },
+  mes_example: { maxLength: 10_000, required: false, },
+  system_prompt: { maxLength: 10_000, required: false, },
   post_history_instructions: { maxLength: 5000, required: false, },
   alternate_greetings: { maxItems: 10, maxItemLength: 5000, required: false, },
   tags: { maxItems: 20, maxItemLength: 32, required: false, },
@@ -134,7 +134,7 @@ function validateRequiredString(
   const value = character[field];
   if (typeof value !== "string" || value.trim() === "") {
     errors.push({
-      field: field as string,
+      field: field,
       code: "REQUIRED",
       message: `${field} is required and must be a non-empty string`,
       value,
@@ -154,7 +154,7 @@ function validateStringLength(
   if (typeof value !== "string") { return; }
 
   const constraint = CONSTRAINTS[field];
-  if (!constraint || constraint.maxLength === undefined) { return; }
+  if (constraint?.maxLength === undefined) { return; }
 
   if (value.length > constraint.maxLength) {
     if (mode === "strict") {
@@ -208,8 +208,7 @@ function validateArrayConstraints(
   }
 
   const maxItemLen = constraint.maxItemLength;
-  for (let i = 0; i < value.length; i++) {
-    const item = value[i];
+  for (const [i, item,] of value.entries()) {
     if (typeof item !== "string") {
       errors.push({
         field: `${field}[${i}]`,
@@ -276,7 +275,7 @@ function validateOptionalFields(
     const value = character[field];
     if (value !== undefined && value !== null && typeof value !== "string") {
       errors.push({
-        field: field as string,
+        field: field,
         code: "INVALID_TYPE",
         message: `${field} must be a string if provided`,
         value,
@@ -325,8 +324,7 @@ function validateExtensions(
   // Validate inventory items if present
   const inventory = extensions.inventory;
   if (inventory !== undefined && Array.isArray(inventory,)) {
-    for (let i = 0; i < inventory.length; i++) {
-      const item = inventory[i];
+    for (const [i, item,] of inventory.entries()) {
       if (!item || typeof item !== "object") {
         errors.push({
           field: `extensions.inventory[${i}]`,
@@ -377,8 +375,7 @@ function validateExtensions(
       "student",
       "neutral",
     ];
-    for (let i = 0; i < relationships.length; i++) {
-      const rel = relationships[i];
+    for (const [i, rel,] of relationships.entries()) {
       if (!rel || typeof rel !== "object") {
         errors.push({
           field: `extensions.relationships[${i}]`,
@@ -388,7 +385,7 @@ function validateExtensions(
         },);
         continue;
       }
-      if (rel.type && !validTypes.includes(rel.type as string,)) {
+      if (rel.type && !validTypes.includes(rel.type,)) {
         errors.push({
           field: `extensions.relationships[${i}].type`,
           code: "INVALID_VALUE",
@@ -427,7 +424,7 @@ function validateFeatureFlags(
   warnings: ValidationWarning[],
   mode: ValidationMode,
 ): void {
-  const validKeys = [
+  const validKeys = new Set([
     "rpg_mechanics",
     "inventory",
     "relationships",
@@ -436,10 +433,10 @@ function validateFeatureFlags(
     "lorebook",
     "assets",
     "nsfw",
-  ];
+  ],);
 
   for (const key of Object.keys(flags,)) {
-    if (!validKeys.includes(key,)) {
+    if (!validKeys.has(key,)) {
       warnings.push({
         field: `feature_flags.${key}`,
         code: "UNKNOWN_FLAG",

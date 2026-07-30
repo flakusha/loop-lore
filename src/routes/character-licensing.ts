@@ -21,12 +21,20 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
     // ── Get licensing for an actor ─────────────────────────────
     .get("/api/actors/:actorId/licensing", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const licensing = await database
@@ -36,19 +44,30 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         .executeTakeFirst();
 
       if (!licensing) {
-        return jsonError({ message: "Licensing not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.licensingNotFound",) ?? "Licensing not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       return jsonResponse(licensing,);
     },)
     // ── Create or update licensing ─────────────────────────────
     .post("/api/actors/:actorId/licensing", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -105,12 +124,20 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
     // ── Delete licensing ───────────────────────────────────────
     .delete("/api/actors/:actorId/licensing", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       await database

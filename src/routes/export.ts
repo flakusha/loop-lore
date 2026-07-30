@@ -43,7 +43,12 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
     const url = new URL(ctx.request.url,);
     if (ctx.request.method === "POST" && url.pathname === "/api/export") {
       const userId = await resolveUserId(ctx.request, database,);
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       let body: Record<string, unknown> = {};
       try {

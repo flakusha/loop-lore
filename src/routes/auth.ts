@@ -246,7 +246,7 @@ async function handleDemoLogin(
   const jwtSecret = config.auth.jwtSecret;
   if (!jwtSecret) {
     return jsonError({
-      message: "Server misconfigured: JWT secret not set",
+      message: t?.("auth.jwtSecretMissing",) ?? "Server misconfigured: JWT secret not set",
       status: HttpStatus.InternalServerError,
     },);
   }
@@ -377,7 +377,7 @@ async function handleRegister(
   const jwtSecret = config.auth.jwtSecret;
   if (!jwtSecret) {
     return jsonError({
-      message: "Server misconfigured: JWT secret not set",
+      message: t?.("auth.jwtSecretMissing",) ?? "Server misconfigured: JWT secret not set",
       status: HttpStatus.InternalServerError,
     },);
   }

@@ -25,7 +25,7 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/chat/:chatId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: 401, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
       }
 
       if (!isTelemetryEnabled()) {
@@ -63,7 +63,7 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/overview", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: 401, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
       }
 
       if (!isTelemetryEnabled()) {
