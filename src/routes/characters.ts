@@ -1,4 +1,4 @@
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { readFileSync, } from "node:fs";
 import { createCharx, } from "../characters/charx";
@@ -17,6 +17,8 @@ import {
   ActorIdParams,
   ActorsQuery,
   ActorUpdateBody,
+  ErrorResponse,
+  SuccessResponse,
 } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
@@ -56,6 +58,10 @@ export function charactersRoutes(opts: HandlerOpts,) {
       },
       {
         query: ActorsQuery,
+        response: {
+          200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "List actors",
           description: "List characters and other actors. Supports pagination and type filtering.",
@@ -109,6 +115,10 @@ export function charactersRoutes(opts: HandlerOpts,) {
       },
       {
         body: ActorCreateBody,
+        response: {
+          201: t.Object({ id: t.String(), },),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Create actor",
           description: "Create a new character or actor. Requires authentication.",
@@ -135,6 +145,11 @@ export function charactersRoutes(opts: HandlerOpts,) {
       },
       {
         params: ActorIdParams,
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get actor",
           description: "Get a character or actor by ID. Respects visibility rules.",
@@ -184,6 +199,11 @@ export function charactersRoutes(opts: HandlerOpts,) {
       },
       {
         params: ActorIdParams,
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get character card",
           description: "Get actor as a Chara Card v2 specification. Used for import/export compatibility.",
@@ -271,6 +291,13 @@ export function charactersRoutes(opts: HandlerOpts,) {
       {
         params: ActorIdParams,
         body: ActorUpdateBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+          409: ErrorResponse,
+        },
         detail: {
           summary: "Update actor",
           description: "Update a character or actor. Owner or admin only.",
@@ -300,6 +327,12 @@ export function charactersRoutes(opts: HandlerOpts,) {
       },
       {
         params: ActorIdParams,
+        response: {
+          204: t.Void(),
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Delete actor",
           description: "Delete a character or actor. Owner or admin only.",
@@ -463,5 +496,9 @@ export function charactersRoutes(opts: HandlerOpts,) {
       }
     }, {
       params: ActorIdParams,
+      response: {
+        200: t.Any(),
+        404: ErrorResponse,
+      },
     },);
 }

@@ -20,7 +20,7 @@ import type { DB, } from "../db/schema";
 import { ItemsService, } from "../story/items";
 import { safeJsonStringify, uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
-import { Id, StoryItemInstanceBody, } from "../validation/schemas";
+import { ErrorResponse, Id, ListResponse, StoryItemInstanceBody, StoryItemResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 /** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
@@ -240,6 +240,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     }, {
       params: t.Object({ worldId: Id, },),
       body: StoryItemInstanceBody,
+      response: {
+        201: t.Object({ id: t.String(), },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Place item in world",
         description: "Place an item instance at a location in a world.",
@@ -264,6 +269,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       return jsonResponse(instances,);
     }, {
       params: t.Object({ worldId: Id, },),
+      response: {
+        200: ListResponse(StoryItemResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List item instances",
         description: "List all item instances in a world, optionally filtered by location.",
@@ -277,6 +287,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       return handleInstances(database, worldId, itemId, userId, userRole,);
     }, {
       params: t.Object({ worldId: Id, itemId: Id, },),
+      response: {
+        200: ListResponse(StoryItemResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List instances of item",
         description: "List all placed instances of a specific item definition in a world.",
@@ -290,6 +305,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       return handleDefinition(database, "GET", worldId, itemId, userId, userRole,);
     }, {
       params: t.Object({ worldId: Id, itemId: Id, },),
+      response: {
+        200: StoryItemResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get item definition",
         description: "Get a single item definition by ID.",
@@ -303,6 +323,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       return handleDefinition(database, "PUT", worldId, itemId, userId, userRole, ctx.body as Record<string, unknown>,);
     }, {
       params: t.Object({ worldId: Id, itemId: Id, },),
+      response: {
+        200: StoryItemResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update item definition",
         description: "Update an item definition's properties (name, description, category, rarity, etc).",
@@ -316,6 +341,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       return handleDeleteDefinition(database, worldId, itemId, userId, userRole,);
     }, {
       params: t.Object({ worldId: Id, itemId: Id, },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Delete item definition",
         description: "Delete an item definition and all its instances.",
@@ -339,6 +369,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       );
     }, {
       params: t.Object({ worldId: Id, },),
+      response: {
+        200: ListResponse(StoryItemResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List item definitions",
         description: "List all item definitions in a world, optionally filtered by category. Paginated.",
@@ -362,6 +397,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       );
     }, {
       params: t.Object({ worldId: Id, },),
+      response: {
+        200: StoryItemResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Create item definition",
         description: "Create a new item definition in a world. Requires a name.",
@@ -382,6 +422,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       );
     }, {
       params: t.Object({ worldId: Id, instanceId: Id, },),
+      response: {
+        200: StoryItemResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Transfer item instance",
         description: "Transfer an item instance between locations or actors.",
@@ -395,6 +440,11 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       return handleInstance(database, worldId, instanceId, userId, userRole,);
     }, {
       params: t.Object({ worldId: Id, instanceId: Id, },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Destroy item instance",
         description: "Destroy an item instance from the world.",

@@ -9,10 +9,14 @@ import { TraitsService, } from "../characters/services/traits-service";
 import type { TranslatorFn, } from "../i18n/types";
 import {
   ActorIdParams,
+  ErrorResponse,
   Id,
+  ListResponse,
   LocationTraitCreateBody,
   LocationTraitUpdateBody,
+  SuccessResponse,
   TraitCreateBody,
+  TraitResponse,
   TraitUpdateBody,
   WorldTraitCreateBody,
 } from "../validation/schemas";
@@ -43,6 +47,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
       {
         params: ActorIdParams,
+        response: {
+          200: ListResponse(TraitResponse,),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "List permanent traits",
           description: "Get all permanent traits for an actor (Layer 0).",
@@ -68,6 +77,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
       {
         params: t.Object({ actorId: Id, traitName: t.String(), },),
+        response: {
+          200: TraitResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get permanent trait",
           description: "Get a specific permanent trait by name.",
@@ -100,6 +114,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       {
         params: t.Object({ actorId: Id, },),
         body: TraitCreateBody,
+        response: {
+          200: TraitResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Create permanent trait",
           description: "Create a new permanent trait for an actor.",
