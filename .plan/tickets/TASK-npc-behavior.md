@@ -30,4 +30,3 @@ NPCs need behavior state machines that drive autonomous decisions — patrol, ch
 - [ ] Faction membership influences behavior towards player and other NPCs
 - [ ] Behavior transitions are deterministic based on game state
 - [ ] NPC behavior is visible in combat and exploration modes
-

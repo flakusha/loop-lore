@@ -18,6 +18,7 @@ Locations specification — covers world locations, travel mechanics, place prop
 ## Location Systems
 
 ### Core Location Model
+
 interface Location {
 }
 interface LocationType {

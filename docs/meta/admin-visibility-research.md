@@ -430,7 +430,7 @@ Compliance-focused epic for data export, deletion, and privacy controls.
 
 ### P2 — Next Cycle
 
-5. **Epic 56: User Engagement & Leaderboards** — Medium impact, engagement driver
+1. **Epic 56: User Engagement & Leaderboards** — Medium impact, engagement driver
    - Start with: leaderboards, activity streaks, personal dashboard
 
 ### P3 — Deferred

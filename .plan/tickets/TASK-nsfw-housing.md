@@ -21,12 +21,12 @@ NSFW defines NSFWLocation types (bedroom, bath); Housing provides private spaces
 
 Housing locations can have comfort bonuses for NSFW encounters:
 
-| Housing Feature | Comfort Bonus |
-| --- | --- |
-| Private bedroom | +2 to NSFW check DC |
-| Hot tub/bath | +1 to persuasion in NSFW context |
-| Outdoor/secluded | No bonus, no penalty |
-| Crowded/shared | -2 to NSFW check DC |
+| Housing Feature  | Comfort Bonus                    |
+| ---------------- | -------------------------------- |
+| Private bedroom  | +2 to NSFW check DC              |
+| Hot tub/bath     | +1 to persuasion in NSFW context |
+| Outdoor/secluded | No bonus, no penalty             |
+| Crowded/shared   | -2 to NSFW check DC              |
 
 ### NSFWLocation ↔ Housing
 

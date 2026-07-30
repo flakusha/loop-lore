@@ -11,20 +11,20 @@
 
 ### Built
 
-| Component | File | Status |
-|-----------|------|--------|
-| ComfyUI HTTP client | `src/generation/providers/comfyui.ts` (234 lines) | submit/poll/WS/download |
-| sd-server integration | `src/generation/image-gen-route.ts` (290 lines) | 3 API families |
-| Provider registry | `src/generation/providers/registry.ts` | failover, circuit breaker |
+| Component             | File                                              | Status                    |
+| --------------------- | ------------------------------------------------- | ------------------------- |
+| ComfyUI HTTP client   | `src/generation/providers/comfyui.ts` (234 lines) | submit/poll/WS/download   |
+| sd-server integration | `src/generation/image-gen-route.ts` (290 lines)   | 3 API families            |
+| Provider registry     | `src/generation/providers/registry.ts`            | failover, circuit breaker |
 
 ### Planned (Not Built)
 
-| Component | Epic | Status |
-|-----------|------|--------|
-| ComfyUI workflow templates | `epic-comfyui-plugin.md` | Not started |
-| Node discovery (`/object_info`) | `epic-comfyui-plugin.md` | Not started |
-| `/image` command | `epic-assistant-generation-extensions.md` | Not started |
-| SD adapter for entity creation | `epic-assistant-generation-extensions.md` | Not started |
+| Component                       | Epic                                      | Status      |
+| ------------------------------- | ----------------------------------------- | ----------- |
+| ComfyUI workflow templates      | `epic-comfyui-plugin.md`                  | Not started |
+| Node discovery (`/object_info`) | `epic-comfyui-plugin.md`                  | Not started |
+| `/image` command                | `epic-assistant-generation-extensions.md` | Not started |
+| SD adapter for entity creation  | `epic-assistant-generation-extensions.md` | Not started |
 
 ### Integration Model
 
@@ -34,11 +34,11 @@
 
 ### Existing API Endpoints (sd-server)
 
-| Endpoint | Use Case | Edit Support |
-|----------|----------|--------------|
-| `POST /v1/images/edits` | OpenAI-compatible img2img | mask + prompt |
-| `POST /sdapi/v1/img2img` | WebUI-compatible img2img | init_images + mask + denoising_strength |
-| `POST /sdcpp/v1/img_gen` | Async job-based | init_image + mask_image |
+| Endpoint                 | Use Case                  | Edit Support                            |
+| ------------------------ | ------------------------- | --------------------------------------- |
+| `POST /v1/images/edits`  | OpenAI-compatible img2img | mask + prompt                           |
+| `POST /sdapi/v1/img2img` | WebUI-compatible img2img  | init_images + mask + denoising_strength |
+| `POST /sdcpp/v1/img_gen` | Async job-based           | init_image + mask_image                 |
 
 ---
 
@@ -48,22 +48,22 @@ First-hand testing on RX 7900 XT (20GB VRAM).
 
 ### Tested Models
 
-| Model | Status | Notes |
-|-------|--------|-------|
-| **Qwen Image Edit** | Works, decent quality | Slow (VAE + CLIP overhead). Real usage >20GB. Needs layer rotation to avoid OOM. |
-| **Krea 2 "Edit"** | Not working in ComfyUI | Samples look good in examples. Edit approach is fine. Needs retesting -- possibly machine-specific issue. |
-| **Klein 4B** | Strange results | Most of the time produces odd output. Could be setup issue, needs more testing. |
-| **Klein 9B** | Strange results | Same as Klein 4B. Needs more testing. |
-| **FLUX.1 Kontext** | Not tested | Never tried. High priority for next testing round. |
+| Model               | Status                 | Notes                                                                                                     |
+| ------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Qwen Image Edit** | Works, decent quality  | Slow (VAE + CLIP overhead). Real usage >20GB. Needs layer rotation to avoid OOM.                          |
+| **Krea 2 "Edit"**   | Not working in ComfyUI | Samples look good in examples. Edit approach is fine. Needs retesting -- possibly machine-specific issue. |
+| **Klein 4B**        | Strange results        | Most of the time produces odd output. Could be setup issue, needs more testing.                           |
+| **Klein 9B**        | Strange results        | Same as Klein 4B. Needs more testing.                                                                     |
+| **FLUX.1 Kontext**  | Not tested             | Never tried. High priority for next testing round.                                                        |
 
 ### Tested Features
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| **ControlNet + inpainting** | Minor testing | Manual setup needed most of the time. Low priority -- users can use Krita or similar for inpainting. |
-| **IP-Adapter** | Not tested | Krea 2 has style reference built in. IP-Adapters are mostly for older but still good SD/SDXL/Illustrious/Noob/Pony models. Not worth deep research if not programmatically definable. |
-| **LoRA discovery** | Works | Usually works across backends. |
-| **LoRA application** | Works | Approach differs by backend. sd.cpp: LoRA inclusion in prompt. ComfyUI API: may need more effort. Results usually good. Application coefficient: 0.1-1.0 (common 0.3-0.7). |
+| Feature                     | Status        | Notes                                                                                                                                                                                 |
+| --------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ControlNet + inpainting** | Minor testing | Manual setup needed most of the time. Low priority -- users can use Krita or similar for inpainting.                                                                                  |
+| **IP-Adapter**              | Not tested    | Krea 2 has style reference built in. IP-Adapters are mostly for older but still good SD/SDXL/Illustrious/Noob/Pony models. Not worth deep research if not programmatically definable. |
+| **LoRA discovery**          | Works         | Usually works across backends.                                                                                                                                                        |
+| **LoRA application**        | Works         | Approach differs by backend. sd.cpp: LoRA inclusion in prompt. ComfyUI API: may need more effort. Results usually good. Application coefficient: 0.1-1.0 (common 0.3-0.7).            |
 
 ### Key Takeaways
 
@@ -80,50 +80,50 @@ First-hand testing on RX 7900 XT (20GB VRAM).
 
 ### 1. Image Editing (Primary Use Case)
 
-| Model | VRAM (FP16) | VRAM (GGUF Q4) | Quality | Speed | Tested | sd.cpp | ComfyUI |
-|-------|-------------|-----------------|---------|-------|--------|--------|---------|
-| **FLUX.1 Kontext [dev]** | ~24GB | ~4-6GB (--clip-on-cpu) | Excellent | Medium | No | Yes | Yes |
-| **Qwen-Image-Edit-2509** | ~16GB | ~8GB | Very Good | Slow | Yes | Yes | Yes |
-| Krea 2 (Edit LoRAs) | ~24GB | ~12GB | Very Good | Medium | Partial | Yes | Yes (needs retest) |
-| Klein 4B/9B | ~8-16GB | ~4-8GB | Unknown | Fast | Yes (issues) | Yes | Yes |
-| InstructPix2Pix (SDXL) | ~8GB | ~4GB | Good | Fast | No | Yes | Yes |
+| Model                    | VRAM (FP16) | VRAM (GGUF Q4)         | Quality   | Speed  | Tested       | sd.cpp | ComfyUI            |
+| ------------------------ | ----------- | ---------------------- | --------- | ------ | ------------ | ------ | ------------------ |
+| **FLUX.1 Kontext [dev]** | ~24GB       | ~4-6GB (--clip-on-cpu) | Excellent | Medium | No           | Yes    | Yes                |
+| **Qwen-Image-Edit-2509** | ~16GB       | ~8GB                   | Very Good | Slow   | Yes          | Yes    | Yes                |
+| Krea 2 (Edit LoRAs)      | ~24GB       | ~12GB                  | Very Good | Medium | Partial      | Yes    | Yes (needs retest) |
+| Klein 4B/9B              | ~8-16GB     | ~4-8GB                 | Unknown   | Fast   | Yes (issues) | Yes    | Yes                |
+| InstructPix2Pix (SDXL)   | ~8GB        | ~4GB                   | Good      | Fast   | No           | Yes    | Yes                |
 
 **Recommendation:** FLUX.1 Kontext for quality (untested but well-supported), Qwen Image Edit as fallback (tested, works but slow/heavy).
 
 ### 2. Inpainting (Low Priority)
 
-| Model | VRAM (FP16) | VRAM (GGUF Q4) | Quality | Speed | sd.cpp | ComfyUI |
-|-------|-------------|-----------------|---------|-------|--------|---------|
-| FLUX.1 Fill [dev] | ~24GB | ~8-12GB | Excellent | Medium | Yes | Yes |
-| SDXL Inpainting | ~8GB | ~4GB | Very Good | Medium | Yes | Yes |
-| SD 1.5 Inpainting | ~4GB | ~2GB | Good | Fast | Yes | Yes |
+| Model             | VRAM (FP16) | VRAM (GGUF Q4) | Quality   | Speed  | sd.cpp | ComfyUI |
+| ----------------- | ----------- | -------------- | --------- | ------ | ------ | ------- |
+| FLUX.1 Fill [dev] | ~24GB       | ~8-12GB        | Excellent | Medium | Yes    | Yes     |
+| SDXL Inpainting   | ~8GB        | ~4GB           | Very Good | Medium | Yes    | Yes     |
+| SD 1.5 Inpainting | ~4GB        | ~2GB           | Good      | Fast   | Yes    | Yes     |
 
 **Recommendation:** Low priority for programmatic integration. Users prefer manual tools (Krita). If needed, SDXL Inpainting for speed, FLUX.1 Fill for quality.
 
 ### 3. ControlNet (Low Priority)
 
-| Model | VRAM | Use Case | sd.cpp | ComfyUI |
-|-------|------|----------|--------|---------|
-| ControlNet Union (SDXL) | ~8GB | Multi-control (canny, depth, pose) | Yes | Yes |
-| ControlNet Canny (SD 1.5) | ~4GB | Edge-guided generation | Yes | Yes |
+| Model                     | VRAM | Use Case                           | sd.cpp | ComfyUI |
+| ------------------------- | ---- | ---------------------------------- | ------ | ------- |
+| ControlNet Union (SDXL)   | ~8GB | Multi-control (canny, depth, pose) | Yes    | Yes     |
+| ControlNet Canny (SD 1.5) | ~4GB | Edge-guided generation             | Yes    | Yes     |
 
 **Recommendation:** Low priority. Manual setup needed. Users can handle this in ComfyUI directly.
 
 ### 4. Upscaling
 
-| Model | VRAM | Scale | sd.cpp | ComfyUI |
-|-------|------|-------|--------|---------|
-| ESRGAN (4x) | ~2GB | 4x | Yes | Yes |
-| RealESRGAN | ~2GB | 4x | Yes | Yes |
+| Model       | VRAM | Scale | sd.cpp | ComfyUI |
+| ----------- | ---- | ----- | ------ | ------- |
+| ESRGAN (4x) | ~2GB | 4x    | Yes    | Yes     |
+| RealESRGAN  | ~2GB | 4x    | Yes    | Yes     |
 
 **Recommendation:** ESRGAN/RealESRGAN for fast upscaling. Already supported in sd.cpp via `--esrgan-path`.
 
 ### 5. Style Transfer
 
-| Model | VRAM | Approach | Notes |
-|-------|------|----------|-------|
-| Krea 2 Style Reference | ~24GB | Reference image to style | Built into Krea 2, not yet tested |
-| IP-Adapter (SD 1.5/SDXL) | ~8GB | Reference image to style | For older models, not programmable priority |
+| Model                    | VRAM  | Approach                 | Notes                                       |
+| ------------------------ | ----- | ------------------------ | ------------------------------------------- |
+| Krea 2 Style Reference   | ~24GB | Reference image to style | Built into Krea 2, not yet tested           |
+| IP-Adapter (SD 1.5/SDXL) | ~8GB  | Reference image to style | For older models, not programmable priority |
 
 **Recommendation:** Krea 2 style reference if it works. IP-Adapter only for legacy SD/SDXL workflows.
 
@@ -133,14 +133,15 @@ First-hand testing on RX 7900 XT (20GB VRAM).
 
 ### How LoRA Works Across Backends
 
-| Backend | LoRA Loading | Application | Coefficient Range |
-|---------|-------------|-------------|-------------------|
-| **sd.cpp** | Prompt injection (`<lora:name:0.5>`) | In prompt string | 0.1-1.0 (typical 0.3-0.7) |
-| **ComfyUI** | Dedicated node (`LoraLoader`) | Node in workflow JSON | 0.1-1.0 (typical 0.3-0.7) |
+| Backend     | LoRA Loading                         | Application           | Coefficient Range         |
+| ----------- | ------------------------------------ | --------------------- | ------------------------- |
+| **sd.cpp**  | Prompt injection (`<lora:name:0.5>`) | In prompt string      | 0.1-1.0 (typical 0.3-0.7) |
+| **ComfyUI** | Dedicated node (`LoraLoader`)        | Node in workflow JSON | 0.1-1.0 (typical 0.3-0.7) |
 
 ### LoRA Discovery
 
 Both backends support LoRA discovery:
+
 - **sd.cpp:** `GET /sdapi/v1/loras` endpoint
 - **ComfyUI:** Read from `models/loras/` directory, or use `/object_info` to discover loaded LoRAs
 
@@ -156,11 +157,11 @@ Both backends support LoRA discovery:
 
 ## VRAM Budget Summary (RX 7900 XT = 20GB)
 
-| Scenario | Model Stack | VRAM Usage |
-|----------|-------------|------------|
-| **Conservative** | Qwen Image Edit (GGUF Q4) + ESRGAN | ~12GB |
-| **Balanced** | FLUX.1 Kontext (GGUF Q8) + ESRGAN | ~16GB |
-| **Maximum** | FLUX.1 Kontext + FLUX.1 Fill + ESRGAN | ~20GB |
+| Scenario         | Model Stack                           | VRAM Usage |
+| ---------------- | ------------------------------------- | ---------- |
+| **Conservative** | Qwen Image Edit (GGUF Q4) + ESRGAN    | ~12GB      |
+| **Balanced**     | FLUX.1 Kontext (GGUF Q8) + ESRGAN     | ~16GB      |
+| **Maximum**      | FLUX.1 Kontext + FLUX.1 Fill + ESRGAN | ~20GB      |
 
 **Note:** Qwen Image Edit requires layer rotation in practice (>20GB real usage). FLUX.1 Kontext with `--clip-on-cpu` is more VRAM-efficient.
 
@@ -175,21 +176,27 @@ ComfyUI workflows are JSON files that can be submitted via the existing HTTP cli
 **Key workflows for editing:**
 
 **1. Instruction-Based Editing (FLUX.1 Kontext)**
+
 ```
 LoadImage -> FLUXKontextSampler -> VAEDecode -> SaveImage
 ```
+
 Nodes: `LoadImage`, `FLUXKontextSampler`, `VAEDecode`, `SaveImage`
 
 **2. Qwen Image Edit**
+
 ```
 LoadImage -> QwenImageEdit -> SaveImage
 ```
+
 Nodes: `LoadImage`, `QwenImageEdit`, `SaveImage`
 
 **3. LoRA Application (ComfyUI)**
+
 ```
 LoadImage -> LoraLoader -> KSampler -> VAEDecode -> SaveImage
 ```
+
 Nodes: `LoadImage`, `LoraLoader` (with strength_model/strength_clip params), `KSampler`, `VAEDecode`, `SaveImage`
 
 ### sd.cpp Integration (Secondary)
@@ -197,12 +204,14 @@ Nodes: `LoadImage`, `LoraLoader` (with strength_model/strength_clip params), `KS
 sd-server supports editing via existing API endpoints. Model loaded at startup via `--model /path/to/model.gguf`.
 
 **LoRA in sd.cpp:**
+
 ```bash
 # Include LoRA in prompt
 sd-cli -p "a landscape <lora:my_lora:0.5>" --diffusion-model model.gguf
 ```
 
 **Image edit via WebUI API:**
+
 ```bash
 curl -X POST http://localhost:9000/sdapi/v1/img2img \
   -H "Content-Type: application/json" \
@@ -217,13 +226,13 @@ curl -X POST http://localhost:9000/sdapi/v1/img2img \
 
 ### Model Download Locations
 
-| Model | Source | Size |
-|-------|--------|------|
-| FLUX.1 Kontext [dev] GGUF | `QuantStack/FLUX.1-Kontext-dev-GGUF` | ~4-15GB (varies by quant) |
-| Qwen-Image-Edit-2509 GGUF | `QuantStack/Qwen-Image-Edit-2509-GGUF` | ~8GB |
-| FLUX.1 Fill [dev] GGUF | `city96/FLUX.1-Fill-dev-gguf` | ~8-12GB |
-| SDXL Inpainting | `diffusers/stable-diffusion-xl-1.0-inpainting-0.1` | ~6.5GB |
-| ESRGAN | `xinntao/Real-ESRGAN` | ~64MB |
+| Model                     | Source                                             | Size                      |
+| ------------------------- | -------------------------------------------------- | ------------------------- |
+| FLUX.1 Kontext [dev] GGUF | `QuantStack/FLUX.1-Kontext-dev-GGUF`               | ~4-15GB (varies by quant) |
+| Qwen-Image-Edit-2509 GGUF | `QuantStack/Qwen-Image-Edit-2509-GGUF`             | ~8GB                      |
+| FLUX.1 Fill [dev] GGUF    | `city96/FLUX.1-Fill-dev-gguf`                      | ~8-12GB                   |
+| SDXL Inpainting           | `diffusers/stable-diffusion-xl-1.0-inpainting-0.1` | ~6.5GB                    |
+| ESRGAN                    | `xinntao/Real-ESRGAN`                              | ~64MB                     |
 
 ---
 
@@ -236,6 +245,7 @@ curl -X POST http://localhost:9000/sdapi/v1/img2img \
 **VLM:** No (reference image passed directly to DiT via VAE)
 
 **CLI Example:**
+
 ```bash
 sd-cli -r reference.png \
   --diffusion-model flux1-kontext-dev-q8_0.gguf \
@@ -257,13 +267,13 @@ sd-cli -r reference.png \
 
 ### Reference Image Args (`--ref-image-args`)
 
-| Preset | VLM | RoPE Index | Use Case |
-|--------|-----|------------|----------|
-| `flux_kontext` | No | fixed | FLUX.1 Kontext editing |
-| `qwen` | Yes | increase | Qwen Image Edit |
-| `qwen_layered` | Yes | decrease | Qwen layered editing |
-| `flux2` | Yes | increase | FLUX.2 models |
-| `krea2_ostris_edit` | Yes | increase | Krea2 community edit LoRAs |
+| Preset              | VLM | RoPE Index | Use Case                   |
+| ------------------- | --- | ---------- | -------------------------- |
+| `flux_kontext`      | No  | fixed      | FLUX.1 Kontext editing     |
+| `qwen`              | Yes | increase   | Qwen Image Edit            |
+| `qwen_layered`      | Yes | decrease   | Qwen layered editing       |
+| `flux2`             | Yes | increase   | FLUX.2 models              |
+| `krea2_ostris_edit` | Yes | increase   | Krea2 community edit LoRAs |
 
 ---
 

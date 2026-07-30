@@ -246,24 +246,24 @@ Actors manage keys at `/settings/keys`:
 
 ## Implementation Status
 
-| Component                       | Status       | File / Ref                           |
-| ------------------------------- | ------------ | ------------------------------------ |
-| Client compress/decompress      | ✅ Built     | `src/frontend/browser.ts`            |
-| Client encrypt/decrypt          | ✅ Built     | `src/frontend/browser.ts`            |
-| Client key import/export/gen    | ✅ Built     | `src/frontend/browser.ts`            |
-| Compress-then-encrypt wrapper   | ✅ Built     | `src/crypto/pipeline.ts`             |
-| Decrypt-then-decompress wrapper | ✅ Built     | `src/crypto/pipeline.ts`             |
-| Server SMK loading              | ✅ Built     | `src/crypto/smk.ts`                  |
-| Server actor key CRUD           | ✅ Built     | `src/crypto/actor-keys.ts`           |
-| Server chat key derivation      | ✅ Built     | `src/crypto/chat-keys.ts`            |
-| Server encrypt/decrypt          | ✅ Built     | `src/crypto/pipeline.ts`             |
-| BYOK (API key at-rest)          | ✅ Built     | `src/crypto/byok.ts`                 |
-| Message route integration       | ✅ Wired     | `src/routes/messages.ts`             |
-| Key management UI (settings)    | ✅ Built     | `src/views/settings.html`            |
-| Key distribution (group)        | ✅ Built     | `src/crypto/key-distribution.ts`     |
-| Key rotation auto-trigger       | ✅ Built     | `src/crypto/key-rotation.ts`         |
-| Key revocation UI               | ✅ Built     | `src/views/settings.html`            |
-| Anonymous mode                  | ✅ Built     | `src/crypto/anonymous.ts`            |
+| Component                       | Status   | File / Ref                       |
+| ------------------------------- | -------- | -------------------------------- |
+| Client compress/decompress      | ✅ Built | `src/frontend/browser.ts`        |
+| Client encrypt/decrypt          | ✅ Built | `src/frontend/browser.ts`        |
+| Client key import/export/gen    | ✅ Built | `src/frontend/browser.ts`        |
+| Compress-then-encrypt wrapper   | ✅ Built | `src/crypto/pipeline.ts`         |
+| Decrypt-then-decompress wrapper | ✅ Built | `src/crypto/pipeline.ts`         |
+| Server SMK loading              | ✅ Built | `src/crypto/smk.ts`              |
+| Server actor key CRUD           | ✅ Built | `src/crypto/actor-keys.ts`       |
+| Server chat key derivation      | ✅ Built | `src/crypto/chat-keys.ts`        |
+| Server encrypt/decrypt          | ✅ Built | `src/crypto/pipeline.ts`         |
+| BYOK (API key at-rest)          | ✅ Built | `src/crypto/byok.ts`             |
+| Message route integration       | ✅ Wired | `src/routes/messages.ts`         |
+| Key management UI (settings)    | ✅ Built | `src/views/settings.html`        |
+| Key distribution (group)        | ✅ Built | `src/crypto/key-distribution.ts` |
+| Key rotation auto-trigger       | ✅ Built | `src/crypto/key-rotation.ts`     |
+| Key revocation UI               | ✅ Built | `src/views/settings.html`        |
+| Anonymous mode                  | ✅ Built | `src/crypto/anonymous.ts`        |
 
 ---
 

@@ -11,31 +11,31 @@ Defines the visual novel data model, scene format, branching narrative mechanics
 
 ### Scene
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Unique scene identifier |
-| `background` | string | Background asset reference |
-| `character_portraits` | map | Character → portrait asset reference |
-| `lines` | array | Dialogue lines in display order |
-| `choices` | array | Player choices leading to next scenes |
-| `next` | string | Next scene ID (auto-advance if no choices) |
+| Field                 | Type   | Description                                |
+| --------------------- | ------ | ------------------------------------------ |
+| `id`                  | string | Unique scene identifier                    |
+| `background`          | string | Background asset reference                 |
+| `character_portraits` | map    | Character → portrait asset reference       |
+| `lines`               | array  | Dialogue lines in display order            |
+| `choices`             | array  | Player choices leading to next scenes      |
+| `next`                | string | Next scene ID (auto-advance if no choices) |
 
 ### Branching
 
-| Mechanic | Description |
-| --- | --- |
-| Choice nodes | Player selects from 2-4 options |
+| Mechanic             | Description                                  |
+| -------------------- | -------------------------------------------- |
+| Choice nodes         | Player selects from 2-4 options              |
 | Conditional branches | Choices gated by stats, flags, relationships |
-| State flags | Boolean flags set by player decisions |
-| Flag checks | Branch logic evaluates flag state |
+| State flags          | Boolean flags set by player decisions        |
+| Flag checks          | Branch logic evaluates flag state            |
 
 ### Q&A Mechanics
 
-| Element | Description |
-| --- | --- |
-| Question prompts | NPC asks player questions |
-| Answer options | 2-4 choices per question |
-| Response generation | NPC responds based on answer |
+| Element             | Description                   |
+| ------------------- | ----------------------------- |
+| Question prompts    | NPC asks player questions     |
+| Answer options      | 2-4 choices per question      |
+| Response generation | NPC responds based on answer  |
 | Relationship impact | Answers shift NPC disposition |
 
 ## Asset References
