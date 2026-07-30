@@ -383,24 +383,51 @@ async function handleDeleteLocation(
 
 export function worldsRoutes({ database, }: HandleOpts,): Elysia {
   return new Elysia({ name: "worlds", },)
-    .get("/api/worlds", async (ctx: any,) => {
-      const { userId, } = extractAuth(ctx,);
-      const page = Number(ctx.query?.page,) || 1;
-      const pageSize = Number(ctx.query?.pageSize,) || 20;
-      return handleListWorlds(database, page, pageSize, userId,);
-    },)
+    .get(
+      "/api/worlds",
+      async (ctx: any,) => {
+        const { userId, } = extractAuth(ctx,);
+        const page = Number(ctx.query?.page,) || 1;
+        const pageSize = Number(ctx.query?.pageSize,) || 20;
+        return handleListWorlds(database, page, pageSize, userId,);
+      },
+      {
+        detail: {
+          summary: "List worlds",
+          description: "List all worlds visible to the authenticated user.",
+          tags: ["Worlds",],
+        },
+      },
+    )
     .post(
       "/api/worlds",
       async (ctx: any,) => {
         const { userId, } = extractAuth(ctx,);
         return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId,);
       },
-      { body: WorldCreateBody, },
+      {
+        body: WorldCreateBody,
+        detail: {
+          summary: "Create world",
+          description: "Create a new world. Requires authentication.",
+          tags: ["Worlds",],
+        },
+      },
     )
-    .get("/api/worlds/:worldId", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
-    },)
+    .get(
+      "/api/worlds/:worldId",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
+      },
+      {
+        detail: {
+          summary: "Get world",
+          description: "Get a world by ID with its locations.",
+          tags: ["Worlds",],
+        },
+      },
+    )
     .put(
       "/api/worlds/:worldId",
       async (ctx: any,) => {
@@ -413,61 +440,138 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
           userRole,
         );
       },
-      { body: WorldUpdateBody, },
+      {
+        body: WorldUpdateBody,
+        detail: {
+          summary: "Update world",
+          description: "Update a world's properties. Owner or admin only.",
+          tags: ["Worlds",],
+        },
+      },
     )
-    .delete("/api/worlds/:worldId", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
-    },)
-    .get("/api/worlds/:worldId/locations", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      const page = Number(ctx.query?.page,) || 1;
-      const pageSize = Number(ctx.query?.pageSize,) || 20;
-      return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole,);
-    },)
-    .post("/api/worlds/:worldId/locations", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleCreateLocation(
-        database,
-        ctx.params.worldId as string,
-        ctx.body as Record<string, unknown>,
-        userId,
-        userRole,
-      );
-    },)
-    .get("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleGetLocation(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.locId as string,
-        userId,
-        userRole,
-      );
-    },)
-    .put("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleUpdateLocation(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.locId as string,
-        ctx.body as Record<string, unknown>,
-        userId,
-        userRole,
-      );
-    },)
-    .delete("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleDeleteLocation(
-        database,
-        ctx.params.worldId as string,
-        ctx.params.locId as string,
-        userId,
-        userRole,
-      );
-    },)
-    .post("/api/worlds/:worldId/initialize-states", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
-      return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
-    },) as unknown as Elysia;
+    .delete(
+      "/api/worlds/:worldId",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
+      },
+      {
+        detail: {
+          summary: "Delete world",
+          description: "Delete a world and all its locations. Owner or admin only.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .get(
+      "/api/worlds/:worldId/locations",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        const page = Number(ctx.query?.page,) || 1;
+        const pageSize = Number(ctx.query?.pageSize,) || 20;
+        return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole,);
+      },
+      {
+        detail: {
+          summary: "List locations",
+          description: "List locations in a world.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .post(
+      "/api/worlds/:worldId/locations",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleCreateLocation(
+          database,
+          ctx.params.worldId as string,
+          ctx.body as Record<string, unknown>,
+          userId,
+          userRole,
+        );
+      },
+      {
+        detail: {
+          summary: "Create location",
+          description: "Create a new location in a world.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .get(
+      "/api/worlds/:worldId/locations/:locId",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleGetLocation(
+          database,
+          ctx.params.worldId as string,
+          ctx.params.locId as string,
+          userId,
+          userRole,
+        );
+      },
+      {
+        detail: {
+          summary: "Get location",
+          description: "Get a location by ID.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .put(
+      "/api/worlds/:worldId/locations/:locId",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleUpdateLocation(
+          database,
+          ctx.params.worldId as string,
+          ctx.params.locId as string,
+          ctx.body as Record<string, unknown>,
+          userId,
+          userRole,
+        );
+      },
+      {
+        detail: {
+          summary: "Update location",
+          description: "Update a location's properties.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .delete(
+      "/api/worlds/:worldId/locations/:locId",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleDeleteLocation(
+          database,
+          ctx.params.worldId as string,
+          ctx.params.locId as string,
+          userId,
+          userRole,
+        );
+      },
+      {
+        detail: {
+          summary: "Delete location",
+          description: "Delete a location from a world.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .post(
+      "/api/worlds/:worldId/initialize-states",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
+      },
+      {
+        detail: {
+          summary: "Initialize world states",
+          description: "Initialize default state machines for a world's locations and NPCs.",
+          tags: ["Worlds",],
+        },
+      },
+    ) as unknown as Elysia;
 }

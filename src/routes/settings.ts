@@ -98,11 +98,21 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
 
 export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "settings", },)
-    .get("/api/settings", async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      return handleGetSettings(database, userId,);
-    },)
+    .get(
+      "/api/settings",
+      async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        return handleGetSettings(database, userId,);
+      },
+      {
+        detail: {
+          summary: "Get settings",
+          description: "Get the authenticated user's settings (models, generation, UI preferences).",
+          tags: ["Settings",],
+        },
+      },
+    )
     .patch(
       "/api/settings",
       async (ctx: any,) => {
@@ -111,11 +121,28 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
         const body = ctx.body as Record<string, unknown>;
         return handleUpdateSettings(database, userId, body,);
       },
-      { body: t.Any(), },
+      {
+        body: t.Any(),
+        detail: {
+          summary: "Update settings",
+          description: "Merge partial settings into the authenticated user's existing settings.",
+          tags: ["Settings",],
+        },
+      },
     )
-    .get("/api/settings/export", async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      return handleExportAll(database, userId,);
-    },);
+    .get(
+      "/api/settings/export",
+      async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        return handleExportAll(database, userId,);
+      },
+      {
+        detail: {
+          summary: "Export settings",
+          description: "Export all user settings as a downloadable JSON file.",
+          tags: ["Settings",],
+        },
+      },
+    );
 }
