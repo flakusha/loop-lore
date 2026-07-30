@@ -21,29 +21,30 @@ Implement asset versioning to track changes, enable rollbacks, and maintain hist
 ### Version Management
 
 - List all versions of an asset
-- View specific version
-- Rollback to previous version
-- Delete specific version
+- View version details (diff, metadata)
+- Compare versions side-by-side
+- Restore previous version
 
-### API Endpoints
+### Storage Optimization
 
-- `GET /api/assets/:id/versions` — List versions
-- `GET /api/assets/:id/versions/:version` — Get version
-- `POST /api/assets/:id/versions` — Upload new version
-- `PATCH /api/assets/:id/versions/:version` — Update version metadata
-- `DELETE /api/assets/:id/versions/:version` — Delete version
+- Incremental storage (delta only)
+- Compression for old versions
+- Cleanup policies for old versions
 
-## Implementation
+## Acceptance Criteria
 
-1. Create `asset_versions` table migration
-2. Extend `createAsset` to create version records
-3. Add version endpoints to controller
-4. Create version selector UI component
-5. Update asset preview to show version history
+- [ ] `asset_versions` table with version metadata
+- [ ] Version creation on upload
+- [ ] Version listing and browsing
+- [ ] Version comparison (side-by-side)
+- [ ] Version rollback/restore
+- [ ] Incremental storage optimization
+- [ ] Compression for old versions
+- [ ] Unit tests for versioning logic
+- [ ] Integration tests for version workflow
 
-## Files
+## Notes
 
-- `src/db/migrations/019_asset_versions.sql` — Migration
-- `src/assets/service.ts` — Version-aware create
-- `src/assets/controller.ts` — Version endpoints
-- `src/frontend/components/asset-version-modal.html`
+- Reference `epic-items.md` for asset system design
+- Consider storage costs vs. version retention
+- Balance version history vs. cleanup
