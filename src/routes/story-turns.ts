@@ -10,6 +10,7 @@ import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { notFound, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonPaginated, jsonResponse, } from "./http-utils";
 
 async function checkChatOwnership(
@@ -65,6 +66,11 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
 
       return jsonPaginated({ data: turns, total: Number(total,), page, pageSize, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List story turns for a chat",
         description:
@@ -101,6 +107,11 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
       }
       return jsonResponse(turn,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get a single story turn",
         description: "Returns a single story turn by ID within a chat. Requires chat ownership or admin/solo role.",
