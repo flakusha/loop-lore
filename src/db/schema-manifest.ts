@@ -1228,6 +1228,16 @@ export const SCHEMA = new SchemaManifest()
     confidence: col("real", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  // ── Message Translations ───────────────────────────────
+  .table("message_translations", {
+    id: col("text", { primaryKey: true, },),
+    message_id: col("text", { notNull: true, },),
+    locale: col("text", { notNull: true, },),
+    content: col("text", { notNull: true, },),
+    provider: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text",),
+  },)
   // ── Blog System ───────────────────────────────────────
   .table("blog_posts", {
     id: col("text", { primaryKey: true, },),
@@ -1317,4 +1327,14 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { notNull: true, },),
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
+  },)
+  // ── Message Translations ─────────────────────────────────────
+  .table("message_translations", {
+    id: col("text", { primaryKey: true, },),
+    message_id: col("text", { notNull: true, },),
+    locale: col("text", { notNull: true, },),
+    content: col("text", { notNull: true, },),
+    provider: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text",),
   },);
