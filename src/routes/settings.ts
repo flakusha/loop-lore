@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
 import { ActorType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { ErrorResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 async function handleGetSettings(database: Kysely<DB>, userId: string,): Promise<Response> {
