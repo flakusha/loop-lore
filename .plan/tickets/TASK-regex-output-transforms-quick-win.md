@@ -1,6 +1,6 @@
 # TASK: Regex Output Transforms (Quick Win)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed via git issue)
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-output-control-transforms
