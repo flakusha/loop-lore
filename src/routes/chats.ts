@@ -184,7 +184,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           return jsonCreated({ id: newChatId, },);
         },
-        { body: ChatCreateBody, },
+        { body: ChatCreateBody, response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 403: ErrorResponse, }, },
       )
       // ── Batch chat operations ──────────────────────────────────
       .post(
@@ -197,10 +197,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           if (archived.length === 0) { return notFound(ctx.t?.("chats.noChatsFound",) ?? "No chats found",); }
           return jsonResponse({ ok: true, archived: archived.length, },);
         },
-        { body: BatchIdsBody, },
-      )
-      .post(
-        "/api/chats/batch/delete",
+        { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(undefined, ctx.t,); }
