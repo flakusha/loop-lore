@@ -214,5 +214,40 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       } catch (error: unknown) {
         return jsonError(error instanceof Error ? error.message : String(error,), 500,);
       }
-    }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },);
+    }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
+    // ── Per-Chat/World NSFW Override ──────────────────────────
+    .get("/api/nsfw/moderation/effective/:chatId", async (ctx: any,) => {
+      try {
+        const result = await svc.getEffectiveNsfw(ctx.params.chatId, ctx.request?.headers?.get("x-user-id") ?? "anonymous",);
+        return jsonResponse({ ...SuccessResponse, data: result, },);
+      } catch (error: unknown) {
+        return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+      }
+    }, { params: t.Object({ chatId: t.String(), },), response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
+    .put("/api/nsfw/moderation/chat/:chatId", async (ctx: any,) => {
+      try {
+        const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
+        await svc.setChatNsfwOverride(ctx.params.chatId, override,);
+        return jsonResponse(SuccessResponse,);
+      } catch (error: unknown) {
+        return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+      }
+    }, {
+      params: t.Object({ chatId: t.String(), },),
+      body: t.Object({ override: t.Union([t.Literal("enabled",), t.Literal("disabled",), t.Null(),],), },),
+      response: { 200: SuccessResponse, 500: ErrorResponse, },
+    },)
+    .put("/api/nsfw/moderation/world/:worldId", async (ctx: any,) => {
+      try {
+        const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
+        await svc.setWorldNsfwOverride(ctx.params.worldId, override,);
+        return jsonResponse(SuccessResponse,);
+      } catch (error: unknown) {
+        return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+      }
+    }, {
+      params: t.Object({ worldId: t.String(), },),
+      body: t.Object({ override: t.Union([t.Literal("enabled",), t.Literal("disabled",), t.Null(),],), },),
+      response: { 200: SuccessResponse, 500: ErrorResponse, },
+    },);
 }
