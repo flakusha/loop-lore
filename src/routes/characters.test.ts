@@ -87,7 +87,7 @@ describe("charactersRoutes", () => {
     expect(res.status,).toBe(401,);
   });
 
-  test("POST /api/actors returns 400 without displayName", async () => {
+  test("POST /api/actors returns 422 without displayName", async () => {
     const app = createApp(db, userId,);
     const res = await app.handle(
       new Request("http://localhost/api/actors", {
@@ -96,7 +96,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ description: "No name", },),
       },),
     );
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
   });
 
   // ── GET /api/actors (after creating) ────────────────────────
