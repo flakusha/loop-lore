@@ -6,7 +6,7 @@
 **Assignee**:
 **Epic**: EPIC-046 (Creative Studio)
 
-### Description
+## Description
 
 Character relationships as a graph system. Supports NPC-to-NPC and character-to-character relationships with strength, opinion, and status.
 

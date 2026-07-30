@@ -6,7 +6,7 @@
 **Assignee**:
 **Epic**: EPIC-046 (Creative Studio)
 
-### Description
+## Description
 
 Add optional licensing metadata to character templates. Supports CC0, CC-BY, CC-BY-SA, and custom licenses. Defaults to public domain.
 

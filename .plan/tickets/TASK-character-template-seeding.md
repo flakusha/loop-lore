@@ -7,7 +7,7 @@
 **Epic**: EPIC-046 (Creative Studio)
 **Related**: configs/characters/*.yaml, src/config/character-loader.ts
 
-### Description
+## Description
 
 Character templates are automatically seeded on app start from `configs/characters/` directory. Supports both single-character and multi-character files in YAML/TOML. Built-in defaults provide 6 starter characters. Hard IDs enable deterministic test reseeding.
 
