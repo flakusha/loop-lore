@@ -1,6 +1,6 @@
 # TASK: Local Random Event Generator
 
-**Status:** ✅ Done
+**Status:** ✅ Done (closed via git issue)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-emergent-narrative-design

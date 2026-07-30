@@ -1,6 +1,6 @@
 # EPIC: Provider & Plugin Ecosystem
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic
@@ -27,9 +27,9 @@ and the plugin lifecycle.
 | Circuit breaker              | `src/generation/providers/circuit-breaker.ts`   | ✅ Built                                           |
 | `LLMProvider` interface      | `src/generation/providers/types.ts`             | ✅ Built                                           |
 | `ProviderCapabilities.type`  | `src/generation/providers/types.ts`             | ✅ Includes `"anthropic" \| "ollama" \| "bedrock"` |
-| Anthropic adapter            | —                                               | ❌ Not started                                     |
-| Ollama adapter               | —                                               | ❌ Not started                                     |
-| Bedrock adapter              | —                                               | ❌ Not started                                     |
+| Anthropic adapter            | —                                               | ⏸ Deferred (closed FEAT-076, uses openai-compatible shim) |
+| Ollama adapter               | —                                               | ⏸ Deferred (closed FEAT-082, uses openai-compatible shim) |
+| Bedrock adapter              | —                                               | ⏸ Deferred (uses openai-compatible shim) |
 | Plugin management API        | —                                               | ❌ Not started                                     |
 | Plugin override system       | —                                               | ❌ Not started                                     |
 | Plugin security sandboxing   | —                                               | ❌ Not started                                     |

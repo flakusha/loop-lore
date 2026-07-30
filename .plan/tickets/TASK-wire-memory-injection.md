@@ -1,6 +1,6 @@
 # TASK: Wire memory injection into generation pipeline
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed via git issue)
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-logic-reconciliation
