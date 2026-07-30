@@ -1,6 +1,6 @@
 # TASK: Assistant/GM Flows
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — GM Panel + Command Buttons Done
 **Priority:** High
 **Effort:** High
 **Epic:** epic-assistant-gm-flows
@@ -8,6 +8,25 @@
 ## Summary
 
 Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations with API call integrations AND confirmation/quality gating. From `epic-assistant-gm-flows.md`.
+
+## Current State (2026-07-31)
+
+### Frontend: 🟡 Partial
+
+- ✅ GM panel sidebar (`src/components/chat/gm-panel.html`) with shadow notes + whitenotes tabs
+- ✅ GM panel Alpine component (`src/frontend/alpine/gm-panel.ts`) — full CRUD
+- ✅ Command buttons expanded: guide, scene, summarize, rewrite, translate added
+- ✅ GmConfig extended with GM fields (gmTurnOrder, questEnabled)
+- ❌ GM role switching UI in chat settings (dropdown exists but not wired)
+- ❌ Assistant command execution with intent detection
+- ❌ Slash command parser wiring
+- ❌ Tool call display in chat bubbles
+
+### Backend: ❌ Not Started
+
+- No generation prompt templates
+- No quality validation pipeline
+- No confirmation gating
 
 ## Scope
 

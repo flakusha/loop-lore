@@ -1,7 +1,7 @@
 # Immediate Plan
 
-> **Last updated:** 2026-07-31 — P0/P1 complete; P2 emphasis on frontend gaps + GM-guided story creation
-> **Status:** P0 foundations in progress; P1 complete; P2 next
+> **Last updated:** 2026-07-31 — P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial
+> **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress
 
 ---
 
@@ -48,39 +48,44 @@
 
 ### P2 — Priority Tiers
 
-| Tier | Topic | Ticket(s) | Status |
-| ---- | ----- | --------- | ------ |
-| **P2-A** | **Visual Novel Mode** | [`TASK-visual-novel-mode.md`](TASK-visual-novel-mode.md), [`TASK-chat-visual-novel-mode.md`](TASK-chat-visual-novel-mode.md), [`TASK-vn-branching-choices.md`](TASK-vn-branching-choices.md), [`TASK-vn-dynamic-generation.md`](TASK-vn-dynamic-generation.md), [`TASK-vn-qa-mode.md`](TASK-vn-qa-mode.md), [`TASK-vn-scene-template-system.md`](TASK-vn-scene-template-system.md), [`TASK-vn-template-actions.md`](TASK-vn-template-actions.md) | ⬜ Not Started |
-| **P2-B** | **Chat System** | [`TASK-chat-autorenaming.md`](TASK-chat-autorenaming.md), [`TASK-chat-backgrounds-location-sync.md`](TASK-chat-backgrounds-location-sync.md), [`TASK-chat-external-music-linking.md`](TASK-chat-external-music-linking.md), [`TASK-chat-room-search-join.md`](TASK-chat-room-search-join.md), [`TASK-chat-room-filters.md`](TASK-chat-room-filters.md), [`TASK-chat-message-search.md`](TASK-chat-message-search.md), [`TASK-chat-sectioning-multi-location.md`](TASK-chat-sectioning-multi-location.md), [`TASK-chat-transfer-location.md`](TASK-chat-transfer-location.md) | ⬜ Not Started |
-| **P2-C** | **Assistant & Tool Calling** | [`TASK-assistant-commands-extension.md`](TASK-assistant-commands-extension.md), [`TASK-assistant-command-execution-intent-detection.md`](TASK-assistant-command-execution-intent-detection.md), [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md), [`TASK-wire-gm-service-story-mode.md`](TASK-wire-gm-service-story-mode.md) | ⬜ Not Started |
-| **P2-D** | **GM Flows** | [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-gm-shadow-notes.md`](TASK-gm-shadow-notes.md), [`TASK-gm-whitenotes.md`](TASK-gm-whitenotes.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md) | ⬜ Not Started |
-| **P2-Da** | **GM-Guided Story Creation** *(NEW)* | New task — user as GM guiding LLM characters in chat/group-chat to create a story | ⬜ Not Started |
-| **P2-E** | **Authorization & Access** | [`TASK-auth-register-route.md`](TASK-auth-register-route.md), [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md), [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md), [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md), [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md), [`TASK-authoring-creation.md`](TASK-authoring-creation.md) | ⬜ Not Started |
-| **P2-F** | **Gallery** | [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md), [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) | ⬜ Not Started |
+| Tier      | Topic                                | Ticket(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Status                            |
+| --------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **P2-A**  | **Visual Novel Mode**                | [`TASK-visual-novel-mode.md`](TASK-visual-novel-mode.md), [`TASK-chat-visual-novel-mode.md`](TASK-chat-visual-novel-mode.md), [`TASK-vn-branching-choices.md`](TASK-vn-branching-choices.md), [`TASK-vn-dynamic-generation.md`](TASK-vn-dynamic-generation.md), [`TASK-vn-qa-mode.md`](TASK-vn-qa-mode.md), [`TASK-vn-scene-template-system.md`](TASK-vn-scene-template-system.md), [`TASK-vn-template-actions.md`](TASK-vn-template-actions.md)                                                                                                                             | 🟡 Foundation done                |
+| **P2-B**  | **Chat System**                      | [`TASK-chat-autorenaming.md`](TASK-chat-autorenaming.md), [`TASK-chat-backgrounds-location-sync.md`](TASK-chat-backgrounds-location-sync.md), [`TASK-chat-external-music-linking.md`](TASK-chat-external-music-linking.md), [`TASK-chat-room-search-join.md`](TASK-chat-room-search-join.md), [`TASK-chat-room-filters.md`](TASK-chat-room-filters.md), [`TASK-chat-message-search.md`](TASK-chat-message-search.md), [`TASK-chat-sectioning-multi-location.md`](TASK-chat-sectioning-multi-location.md), [`TASK-chat-transfer-location.md`](TASK-chat-transfer-location.md) | ⬜ Not Started                    |
+| **P2-C**  | **Assistant & Tool Calling**         | [`TASK-assistant-commands-extension.md`](TASK-assistant-commands-extension.md), [`TASK-assistant-command-execution-intent-detection.md`](TASK-assistant-command-execution-intent-detection.md), [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md), [`TASK-wire-gm-service-story-mode.md`](TASK-wire-gm-service-story-mode.md)                                                                                                                                             | 🟡 Command buttons expanded       |
+| **P2-D**  | **GM Flows**                         | [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-gm-shadow-notes.md`](TASK-gm-shadow-notes.md), [`TASK-gm-whitenotes.md`](TASK-gm-whitenotes.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md)                                                                                                                                                                                                                                                                                                                 | 🟡 Frontend done, backend pending |
+| **P2-Da** | **GM-Guided Story Creation** _(NEW)_ | [TASK-gm-guided-story-creation.md](TASK-gm-guided-story-creation.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | ⬜ Not Started                    |
+| **P2-E**  | **Authorization & Access**           | [`TASK-auth-register-route.md`](TASK-auth-register-route.md), [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md), [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md), [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md), [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md), [`TASK-authoring-creation.md`](TASK-authoring-creation.md)                                                                                                                     | ⬜ Not Started                    |
+| **P2-F**  | **Gallery**                          | [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md), [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md)                                                                                                                                                                                                                                                                                                                                                                                   | ⬜ Not Started                    |
 
 ---
 
-### P2-A — Visual Novel Mode (Start here)
+### P2-A — Visual Novel Mode
 
-**Epic**: `epic-visual-novel-mode.md` — Backend `src/story/` exists (6 story route files); **frontend not started**.
+**Epic**: `epic-visual-novel-mode.md` — Backend `src/story/` exists (6 story route files); **frontend foundation complete** (2026-07-31).
 
-#### Frontend Gap Tasks (file-level evidence)
+#### Frontend Status
 
-| Gap | Evidence File | What to Build |
-| --- | --- | --- |
-| VN frontend page | `src/frontend/pages/` has no `visual-novel.ts` page; `docs/frontend/chat/visual-novel-mode.md` (316 lines) spec exists | Create `src/frontend/pages/visual-novel.ts` htmx/Alpine page |
-| VN types exist | `src/frontend/alpine/chat-types.ts` defines `GmConfig.visualNovel?: boolean` (line 125-129) | Wire existing `GmConfig` type into VN page component |
-| Scene renderer with image overlay | — | htmx partial for VN scene display with CSS transition effects |
-| Typewriter animation | — | Alpine.js component or CSS `@keyframes` for text reveal (use `chat-types.ts` `Message` type for content) |
-| Branching choices UI | `TASK-vn-branching-choices.md` | htmx form with choice buttons, `data-action` for scene navigation |
-| Dynamic generation display | `TASK-vn-dynamic-generation.md` | Stream VN scene generation into overlay via SSE |
-| QA mode UI | `TASK-vn-qa-mode.md` | Validation panel showing spec compliance for VN scenes |
-| Scene template editor | `TASK-vn-scene-template-system.md` | Template management UI with variable substitution preview |
-| Template action system | `TASK-vn-template-actions.md` | UI for auto-fill, variables, conditional logic in templates |
+| Component          | Status     | File                                                 |
+| ------------------ | ---------- | ---------------------------------------------------- |
+| Scene renderer     | ✅ Done    | `src/frontend/vn/scene-renderer.ts`                  |
+| Portrait manager   | ✅ Done    | `src/frontend/vn/portrait-manager.ts`                |
+| Transition engine  | ✅ Done    | `src/frontend/vn/transition-engine.ts`               |
+| Typewriter         | ✅ Done    | `src/frontend/vn/typewriter.ts`                      |
+| Settings           | ✅ Done    | `src/frontend/vn/settings.ts`                        |
+| CSS                | ✅ Done    | `src/frontend/vn/styles.css` + appended to `app.css` |
+| GmConfig extension | ✅ Done    | `chat-types.ts` (12 VN fields)                       |
+| Chat settings UI   | ✅ Done    | `chat-settings-modal.html`                           |
+| Chat.html wiring   | ❌ Pending | Conditional VN vs bubble layout                      |
+| Image preloading   | ❌ Pending | —                                                    |
 
-- [ ] Wire `src/story/` backend to new htmx/Alpine frontend (`src/frontend/pages/visual-novel.ts`)
-- [ ] Implement VN scene renderer with image overlay + CSS transitions (leverage `GmConfig` from `chat-types.ts`)
-- [ ] Add typewriter animation component (Alpine.js or CSS `@keyframes`)
+- [x] Wire `src/frontend/vn/` scene renderer with image overlay + CSS transitions
+- [x] Add typewriter animation component (`src/frontend/vn/typewriter.ts`)
+- [x] Implement transition engine (fade/cut/dissolve/slide/wipe)
+- [x] Implement portrait manager (left/right/center positioning)
+- [x] Add VN settings UI to chat-settings-modal.html
+- [x] Wire VN settings load/save in chat-settings.ts
+- [ ] Wire VN mode into `chat.html` (conditional VN vs bubble layout)
 - [ ] Implement branching choices system (`TASK-vn-branching-choices.md`)
 - [ ] Implement dynamic generation for VN scenes (`TASK-vn-dynamic-generation.md`)
 - [ ] Build QA mode for VN content validation (`TASK-vn-qa-mode.md`)
@@ -162,20 +167,23 @@
 
 ### P2-D — GM Flows
 
-#### Frontend Gap Tasks (file-level evidence)
+#### Frontend Status
 
-| Gap | Evidence File | What to Build |
-| --- | --- | ---|
-| `GmConfig` type exists | `src/frontend/alpine/chat-types.ts` line 125-129: `GmConfig { assistantRole?, visualNovel? }` — minimal, needs expansion | Extend `GmConfig` with story-mode fields (gm_role, turn_order, quest_enabled) |
-| `multi-llm-story.md` spec exists | `docs/frontend/chat/multi-llm-story.md` (521 lines) — fully designed but "frontend UI does NOT exist" | Build GM panel, quest log, story control bar as htmx partials |
-| GM shadow notes spec exists | `docs/spec/gm-shadow-notes.md` | Sidebar panel showing GM-only annotations |
-| GM whitenotes spec exists | `TASK-gm-whitenotes.md` | Visible in-chat annotations with GM authorship marker |
-| Story mode backend exists | `src/story/` (6 files: game-master, turn manager, quest engine, world state) | Wire story-mode frontend to existing story API endpoints |
-| GM ↔ assistant reconciliation | `TASK-assistant-gm-flows-reconciliation.md` | Unified view of assistant and GM-generated content |
+| Component                   | Status     | File                                        |
+| --------------------------- | ---------- | ------------------------------------------- |
+| GM panel sidebar            | ✅ Done    | `src/components/chat/gm-panel.html`         |
+| Shadow notes UI             | ✅ Done    | `src/frontend/alpine/gm-panel.ts`           |
+| Whitenotes UI               | ✅ Done    | `src/frontend/alpine/gm-panel.ts`           |
+| GmConfig GM fields          | ✅ Done    | `chat-types.ts` (gmTurnOrder, questEnabled) |
+| Shadow notes API routes     | ❌ Pending | DB table + routes                           |
+| Whitenotes API routes       | ❌ Pending | DB table + routes                           |
+| GM role switching UI wiring | ❌ Pending | —                                           |
 
-- [ ] Extend `GmConfig` type in `chat-types.ts` with story-mode fields (gm_role, turn_order, quest_enabled)
-- [ ] Implement GM shadow notes system (`TASK-gm-shadow-notes.md`)
-- [ ] Implement GM whitenotes (visible GM annotations) (`TASK-gm-whitenotes.md`)
+- [x] Extend `GmConfig` type in `chat-types.ts` with story-mode fields (gm_role, turn_order, quest_enabled)
+- [x] Implement GM shadow notes frontend panel (`TASK-gm-shadow-notes.md`)
+- [x] Implement GM whitenotes frontend panel (`TASK-gm-whitenotes.md`)
+- [ ] Implement GM shadow notes API routes + DB table
+- [ ] Implement GM whitenotes API routes + DB table
 - [ ] Wire GM panels into chat UI (story mode frontend) — `docs/frontend/chat/multi-llm-story.md` (521 lines, spec complete)
 - [ ] Wire GM ↔ assistant unified view in chat (`TASK-assistant-gm-flows-reconciliation.md`)
 - [ ] Build quest log UI component (links to `src/story/` quest engine)
@@ -184,6 +192,8 @@
 ---
 
 ### P2-Da — GM-Guided Story Creation *(NEW)*
+
+**Ticket**: [`TASK-gm-guided-story-creation.md`](TASK-gm-guided-story-creation.md)
 
 > The user acts as Game Master, guiding LLM characters in chat or group-chat to collaboratively generate a story. This extends the existing GM flows (P2-D) with a specific UX: the user has direct control over narrative direction while LLMs handle character voices and scene details.
 
@@ -316,12 +326,13 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 - **GM-guided story creation** is a natural extension of existing GM flows — the user becomes the turn orchestrator while LLMs handle character voices. Uses existing `group-chat.md` infrastructure, `GmConfig` types, and story-mode backend.
 - **Frontend architecture** — all new frontend work uses htmx + Alpine.js per project conventions (`AGENTS.md`). New `.ts` modules in `src/frontend/alpine/` or `.ts` pages in `src/frontend/pages/`.
 - **Key existing frontend files reused across P2**:
-  | File | Purpose | P2 Tier |
-  | ---- | ------- | ------- |
-  | `src/frontend/alpine/chat-types.ts` | `GmConfig`, `ChatState`, `Message`, `RpgStats`, `MemoryPanelState` types | A, C, D, Da |
-  | `src/frontend/alpine/command-buttons.ts` | Command button toolbar with 8 functional buttons (image, video, sfx, music, caption, improve, quest, roll) | C, Da |
-  | `src/frontend/alpine/chat-settings.ts` | Chat settings modal with `_assistantRole`, `gm_config` parsing, persona/impersonation | C, D, Da |
-  | `src/frontend/fe-fetch.ts` | Unified fetch with CSRF/session token injection, 401 redirect | E |
-  | `src/frontend/alpine/admin-users.ts` | Admin user list, role editing, pagination, search/filter | E |
-  | `src/frontend/pages/gallery.ts` | Gallery page with search, preview, download, delete, type filtering | F |
+
+  | File                                     | Purpose                                                                                                    | P2 Tier     |
+  | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------- |
+  | `src/frontend/alpine/chat-types.ts`      | `GmConfig`, `ChatState`, `Message`, `RpgStats`, `MemoryPanelState` types                                   | A, C, D, Da |
+  | `src/frontend/alpine/command-buttons.ts` | Command button toolbar with 8 functional buttons (image, video, sfx, music, caption, improve, quest, roll) | C, Da       |
+  | `src/frontend/alpine/chat-settings.ts`   | Chat settings modal with `_assistantRole`, `gm_config` parsing, persona/impersonation                      | C, D, Da    |
+  | `src/frontend/fe-fetch.ts`               | Unified fetch with CSRF/session token injection, 401 redirect                                              | E           |
+  | `src/frontend/alpine/admin-users.ts`     | Admin user list, role editing, pagination, search/filter                                                   | E           |
+  | `src/frontend/pages/gallery.ts`          | Gallery page with search, preview, download, delete, type filtering                                        | F           |
 - **Reconciliation complete** — backlog/roadmap now reflect actual implementation state (see `backlog.md`)
