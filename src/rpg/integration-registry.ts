@@ -809,7 +809,7 @@ function buildEdges(): IntegrationEdge[] {
       source: "blog",
       target: "social",
       direction: "depends_on",
-      interfaces: ["Notification"],
+      interfaces: ["Notification",],
       events: [
         {
           id: "blog.post_created",
@@ -833,7 +833,7 @@ function buildEdges(): IntegrationEdge[] {
       source: "world_location_traits",
       target: "character_core",
       direction: "depends_on",
-      interfaces: ["WorldTraitRow", "LocationTraitRow"],
+      interfaces: ["WorldTraitRow", "LocationTraitRow",],
       events: [
         {
           id: "traits.world_trait_changed",
@@ -851,7 +851,7 @@ function buildEdges(): IntegrationEdge[] {
         },
       ],
       notes: "World/location traits feed into prompt assembly for character context",
-    }
+    },
   ];
 }
 
@@ -981,5 +981,6 @@ export function renderIntegrationMermaid(): string {
       .map((p,) => `'${p}' -.->|'produces ${l.id}'|('${l.id}'),`)
   ).join("\n",);
 
-  return `flowchart LR\n${owners.map((o,) => `'${o}',`).join("\n",)}\n${ownerEdges}\n${producerEdges}`;
+  const ownerNodes = owners.map((o,) => `'${o}',`).join("\n",);
+  return `flowchart LR\n${ownerNodes}\n${ownerEdges}\n${producerEdges}`;
 }

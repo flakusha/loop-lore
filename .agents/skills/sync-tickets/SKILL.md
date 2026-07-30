@@ -68,7 +68,7 @@ The sync script matches extid → git issue using word overlap:
 indexTitleNorm.includes(issueTitleClean.slice(0, 15,),);
 issueTitleClean.includes(indexTitleNorm.slice(0, 15,),);
 overlap.length >= 2; // 2+ words match
-overlap.length >= 1 && extidWords.length <= 3; // 1 match for short extids
+overlap.length > 0 && extidWords.length <= 3; // 1 match for short extids
 ```
 
 **Examples:**
