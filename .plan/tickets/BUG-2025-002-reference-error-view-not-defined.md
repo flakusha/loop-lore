@@ -7,7 +7,7 @@
 **Epic**: (if applicable)
 **Related**: characters-flow E2E test, server log output
 
-### Description
+## Description
 
 During the characters-flow browser E2E test, the server logs a client-side error:
 
