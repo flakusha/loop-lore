@@ -34,6 +34,7 @@ Self-hosted users need:
 ### Phase 1: Local Search Providers
 
 - [ ] Create local search provider interface (`src/rag/search/local/provider.ts`)
+
   ```typescript
   export interface LocalSearchProvider extends SearchProvider {
     type: "local";
@@ -64,6 +65,7 @@ Self-hosted users need:
 ### Phase 2: Cache Infrastructure
 
 - [ ] Create cache layer interface (`src/rag/search/cache/interface.ts`)
+
   ```typescript
   export interface SearchCache {
     get(key: string,): Promise<CacheEntry | null>;
@@ -121,6 +123,7 @@ Self-hosted users need:
   - Eviction statistics
 
 - [ ] Create cache API (`GET /api/rag/search/cache`)
+
   ```typescript
   // Cache stats
   GET /api/rag/search/cache/stats

@@ -7,7 +7,7 @@
 **Epic:** epic-creative-studio
 **Related**: TASK-character-template-seeding.md
 
-### Description
+## Description
 
 Creative Studio provides unified creative tools in chat UI: context menus for image creation, modals for locations/worlds/notes/stories, and book compilation.
 
