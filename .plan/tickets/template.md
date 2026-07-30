@@ -1,6 +1,6 @@
 # Issue Template
 
-Replace TYPE with: BUG, FEA (feature), FIX, IDEA, EPIC, TASK, SOL (solution)
+Replace TYPE with: BUG, FEAT, FIX, IDEA, EPIC, TASK, SOL (solution)
 
 ## TYPE-2025-XXX: <Title>
 
