@@ -10,102 +10,102 @@
 >
   <div class="modal" style="max-width: 420px">
     <div class="modal-header">
-      <span class="title">Chat Settings</span>
+      <span class="title">{{{t("chats.chatSettings")}}}</span>
       <button class="btn-icon" @click="$store.ui.showChatSettings = false">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label" for="settings-chat-name">Chat Name</label>
+        <label class="form-label" for="settings-chat-name">{{{t("chats.chatName")}}}</label>
         <input
           class="form-input"
           type="text"
           id="settings-chat-name"
           x-model="_chatSettingsName"
-          placeholder="Chat name"
+          x-bind:placeholder="t('chats.chatName')"
           data-testid="settings-chat-name"
         />
       </div>
       <div class="form-group">
-        <label class="form-label" for="settings-chat-mode">Mode</label>
+        <label class="form-label" for="settings-chat-mode">{{{t("chats.mode")}}}</label>
         <select
           class="form-input"
           id="settings-chat-mode"
           x-model="_chatSettingsMode"
           data-testid="settings-chat-mode"
         >
-          <option value="chat">Chat</option>
-          <option value="roleplay">Roleplay</option>
+          <option value="chat">{{{t("chats.modeChat")}}}</option>
+          <option value="roleplay">{{{t("chats.modeRoleplay")}}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label" for="settings-turn-strategy">Turn Strategy</label>
+        <label class="form-label" for="settings-turn-strategy">{{{t("chats.turnStrategy")}}}</label>
         <select
           class="form-input"
           id="settings-turn-strategy"
           x-model="_chatSettingsTurnStrategy"
           data-testid="settings-turn-strategy"
         >
-          <option value="round_robin">Round Robin</option>
-          <option value="scene_based">Scene Based</option>
-          <option value="initiative">Initiative (Weighted)</option>
-          <option value="quest_driven">Quest Driven</option>
-          <option value="hybrid">Hybrid</option>
+          <option value="round_robin">{{{t("chats.roundRobin")}}}</option>
+          <option value="scene_based">{{{t("chats.sceneBased")}}}</option>
+          <option value="initiative">{{{t("chats.initiativeWeighted")}}}</option>
+          <option value="quest_driven">{{{t("chats.questDriven")}}}</option>
+          <option value="hybrid">{{{t("chats.hybrid")}}}</option>
         </select>
       </div>
       <div class="form-group" x-show="currentChat?.type === 'group'">
         <label style="display: flex; align-items: center; gap: var(--space-2)">
           <input type="checkbox" x-model="_groupPaused" />
-          Pause AI Generation
+          {{{t("chats.pauseAi")}}}
         </label>
-        <small style="color: var(--text-secondary)">When paused, only user messages are allowed</small>
+        <small style="color: var(--text-secondary)">{{{t("chats.pauseAiHint")}}}</small>
       </div>
       <div class="form-group">
-        <label class="form-label" for="settings-persona">Persona</label>
+        <label class="form-label" for="settings-persona">{{{t("chats.persona")}}}</label>
         <select
           class="form-input"
           id="settings-persona"
           x-model="_selectedPersonaId"
           data-testid="settings-persona"
         >
-          <option value="">Default</option>
+          <option value="">{{{t("chats.default")}}}</option>
           <template x-for="p in _personas" :key="p.id">
             <option :value="p.id" x-text="p.name"></option>
           </template>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label" for="settings-streaming">Streaming</label>
+        <label class="form-label" for="settings-streaming">{{{t("chats.streaming")}}}</label>
         <select
           class="form-input"
           id="settings-streaming"
           x-model="_chatSettingsStreaming"
           data-testid="settings-streaming"
         >
-          <option value="default">Use default</option>
-          <option value="on">Stream responses</option>
-          <option value="off">Show full response at once</option>
+          <option value="default">{{{t("chats.useDefault")}}}</option>
+          <option value="on">{{{t("chats.streamResponses")}}}</option>
+          <option value="off">{{{t("chats.showFullResponse")}}}</option>
         </select>
-        <small style="color: var(--text-secondary)">Token-by-token display when enabled.</small>
+        <small style="color: var(--text-secondary)">{{{t("chats.streamingHint")}}}</small>
       </div>
       <div class="form-group" x-show="currentCharacter">
         <label style="display: flex; align-items: center; gap: var(--space-2)">
           <input type="checkbox" x-model="impersonationActive" />
-          Impersonate
+          {{{t("chats.impersonate")}}}
           <span x-text="currentCharacter?.display_name || currentCharacter?.name || 'character'"></span>
         </label>
       </div>
       <div class="form-group" x-show="currentChat?.mode === 'story'">
-        <label class="form-label" for="settings-assistant-role">Assistant Role</label>
+        <label class="form-label" for="settings-assistant-role">{{{t("chats.assistantRole")}}}</label>
         <select
           class="form-input"
           id="settings-assistant-role"
           x-model="_assistantRole"
           data-testid="settings-assistant-role"
         >
-          <option value="off">Off</option>
-          <option value="helper">Helper (text/image)</option>
-          <option value="gm">Game Master</option>
-          <option value="moderator">Moderator</option>
+          <option value="off">{{{t("chats.assistantOff")}}}</option>
+          <option value="helper">{{{t("chats.assistantHelper")}}}</option>
+          <option value="gm">{{{t("chats.assistantGM")}}}</option>
+          <option value="moderator">{{{t("chats.assistantModerator")}}}</option>
         </select>
       </div>
 
@@ -113,7 +113,7 @@
       <template x-if="_moodCanEdit">
         <div class="form-group">
           <label class="form-label" for="mood-happiness-slider">
-            Character Happiness (<span x-text="_mood?.happiness ?? 50"></span>%)
+            {{{t("chats.characterHappiness")}}} (<span x-text="_mood?.happiness ?? 50"></span>%)
           </label>
           <input
             type="range"
@@ -125,25 +125,24 @@
             data-testid="mood-happiness-slider"
           />
           <div style="display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-secondary)">
-            <span>Miserable</span>
-            <span>Neutral</span>
-            <span>Ecstatic</span>
+            <span>{{{t("chats.miserable")}}}</span>
+            <span>{{{t("chats.neutral")}}}</span>
+            <span>{{{t("chats.ecstatic")}}}</span>
           </div>
           <div x-show="_mood" style="margin-top: var(--space-2)">
             <span x-text="_getMoodEmoji(_mood.currentMood)" style="font-size: 20px"></span>
             <span x-text="_mood.currentMood" style="margin-left: var(--space-2)"></span>
           </div>
           <small style="color: var(--text-secondary); display: block; margin-top: var(--space-2)">
-            GM/Admin only: Direct mood manipulation. Character mood is normally managed by interactions and story
-            development.
+            {{{t("chats.moodEditHint")}}}
           </small>
         </div>
       </template>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">Cancel</button>
+      <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">{{{t("common.cancel")}}}</button>
       <button class="btn btn-primary" @click="saveChatSettings()" data-testid="settings-save-btn">
-        Save
+        {{{t("common.save")}}}
       </button>
     </div>
   </div>

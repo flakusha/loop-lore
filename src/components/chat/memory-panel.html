@@ -15,7 +15,7 @@
 >
   <button class="btn-icon" @click="$store.ui.showMemoryPanel = false" title="Close">&times;</button>
   <div class="panel-content">
-    <div class="nav-section-title">Memories</div>
+    <div class="nav-section-title">{{{t("chats.memories")}}}</div>
 
     <!-- Tab Navigation -->
     <div style="display: flex; gap: var(--space-1); margin-bottom: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
@@ -24,34 +24,36 @@
         class="btn btn-secondary btn-xs"
         @click="memoryPanel.activeTab = 'character'"
       >
-        Character
+        {{{t("chats.tabCharacter")}}}
       </button>
       <button
         :class="{'tab-active': memoryPanel.activeTab === 'assistant'}"
         class="btn btn-secondary btn-xs"
         @click="memoryPanel.activeTab = 'assistant'"
       >
-        Assistant
+        {{{t("chats.tabAssistant")}}}
       </button>
       <button
         :class="{'tab-active': memoryPanel.activeTab === 'world'}"
         class="btn btn-secondary btn-xs"
         @click="memoryPanel.activeTab = 'world'"
       >
-        World
+        {{{t("chats.tabWorld")}}}
       </button>
     </div>
 
     <!-- Token Budget -->
     <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-3)">
-      Tokens: <span x-text="memoryPanel.tokensUsed"></span>/<span x-text="memoryPanel.tokenBudget"></span>
+      {{{t("chats.tokens")}}} <span x-text="memoryPanel.tokensUsed"></span>/<span
+        x-text="memoryPanel.tokenBudget"
+      ></span>
     </div>
 
     <!-- Search -->
     <input
       class="form-input"
       style="font-size: 13px; margin-bottom: var(--space-3)"
-      placeholder="Search memories..."
+      x-bind:placeholder="t('chats.searchMemories')"
       x-model="memoryPanel.searchQuery"
       @input="searchMemories()"
     />
@@ -62,7 +64,7 @@
       style="width: 100%; margin-bottom: var(--space-3)"
       @click="memoryPanel.showCreateForm = !memoryPanel.showCreateForm"
     >
-      + Add Memory
+      {{{t("chats.addMemory")}}}
     </button>
 
     <div x-show="memoryPanel.showCreateForm" style="margin-bottom: var(--space-3)">
@@ -70,12 +72,14 @@
         class="form-input form-textarea"
         rows="2"
         style="font-size: 13px; margin-bottom: var(--space-2)"
-        placeholder="Enter memory content..."
+        x-bind:placeholder="t('chats.enterMemory')"
         x-model="memoryPanel.newMemoryContent"
       ></textarea>
       <div style="display: flex; gap: var(--space-2)">
-        <button class="btn btn-secondary btn-xs" @click="memoryPanel.showCreateForm = false">Cancel</button>
-        <button class="btn btn-primary btn-xs" @click="createMemory()">Save</button>
+        <button class="btn btn-secondary btn-xs" @click="memoryPanel.showCreateForm = false">
+          {{{t("common.cancel")}}}
+        </button>
+        <button class="btn btn-primary btn-xs" @click="createMemory()">{{{t("common.save")}}}</button>
       </div>
     </div>
 
@@ -90,11 +94,11 @@
                 class="btn-icon"
                 :class="{'text-warning': mem.pinned}"
                 @click="toggleMemoryPin(mem.id)"
-                title="Pin"
+                x-bind:title="t('chats.pin')"
               >
                 📌
               </button>
-              <button class="btn-icon" @click="deleteMemory(mem.id)" title="Delete">🗑</button>
+              <button class="btn-icon" @click="deleteMemory(mem.id)" x-bind:title="t('common.delete')">🗑</button>
             </div>
           </div>
           <div style="display: flex; gap: var(--space-2); font-size: 10px; color: var(--text-secondary)">
@@ -107,7 +111,7 @@
     </div>
 
     <div x-show="getFilteredMemories().length === 0" class="empty-state" style="padding: var(--space-6)">
-      <div class="title">No memories found</div>
+      <div class="title">{{{t("chats.noMemories")}}}</div>
     </div>
   </div>
 </aside>
