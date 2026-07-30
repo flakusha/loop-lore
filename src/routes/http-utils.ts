@@ -66,6 +66,14 @@ export class ForbiddenError extends Error {
   }
 }
 
+/**
+ * Create a translated error message.
+ * If `t` is provided, translates the key; otherwise returns the key as-is.
+ */
+export function translateError(key: string, t?: TranslatorFn,): string {
+  return t ? t(key,) : key;
+}
+
 // ── Response type shorthands ──────────────────────────────────
 
 export interface ApiError {
@@ -106,15 +114,18 @@ export interface JsonErrorOptions {
   message: string;
   status?: HttpStatusCode;
   code?: ErrorCode;
+  /** Translation function — if provided, message is treated as i18n key */
+  t?: TranslatorFn;
 }
 
 /**
  * JSON error response with optional machine-readable code.
  *
  * Accepts either positional args (legacy) or an options object.
+ * When `t` is provided, message is treated as an i18n key.
  *
  * @example
- *   jsonError({ message: "Not found", status: HttpStatus.NotFound })
+ *   jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t })
  *   jsonError("Not found", HttpStatus.NotFound)
  *   jsonError({ message: "Expired token", status: HttpStatus.Unauthorized, code: "UNAUTHORIZED" })
  */
@@ -136,12 +147,12 @@ export function jsonError(
   status: HttpStatusCode = HttpStatus.BadRequest,
   code?: ErrorCode,
 ): Response {
-  const message = typeof messageOrOptions === "string" ? messageOrOptions : messageOrOptions.message;
-  const resolvedStatus = typeof messageOrOptions === "string"
-    ? status
-    : (messageOrOptions.status ?? HttpStatus.BadRequest);
-  const resolvedCode = (typeof messageOrOptions === "string" ? code : messageOrOptions.code) ??
-    STATUS_TO_CODE[resolvedStatus];
+  const opts = typeof messageOrOptions === "string"
+    ? { message: messageOrOptions, status, code, }
+    : messageOrOptions;
+  const message = opts.t ? opts.t(opts.message,) : opts.message;
+  const resolvedStatus = opts.status ?? (typeof messageOrOptions === "string" ? status : HttpStatus.BadRequest);
+  const resolvedCode = opts.code ?? STATUS_TO_CODE[resolvedStatus];
   const body: ApiError = { error: message, code: resolvedCode, };
   return Response.json(body, { status: resolvedStatus, },);
 }
