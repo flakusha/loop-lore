@@ -670,7 +670,7 @@ export const LocationStateBody = t.Object({
 },);
 
 export const WorldStateCreateBody = t.Object({
-  name: t.String({ minLength: 1, },),
+  name: t.Optional(t.String(),),
   description: t.Optional(t.String(),),
   data: t.Optional(t.Record(t.String(), t.Any(),),),
 },);
