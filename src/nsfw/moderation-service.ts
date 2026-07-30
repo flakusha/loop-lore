@@ -450,6 +450,91 @@ export class NsfwModerationService {
     };
   }
 
+  // ── Appeals ────────────────────────────────────────────────
+
+  /** Submit an appeal for a moderation action. */
+  async submitAppeal(userId: string, actionId: string, reason: string,): Promise<{ id: string; status: string }> {
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
+    await this.db.insertInto("moderation_appeals" as any,).values({
+      id,
+      user_id: userId,
+      action_id: actionId,
+      reason,
+      status: "pending",
+      created_at: now,
+    },).execute();
+    this.log.info("Appeal submitted", { userId, actionId, },);
+    return { id, status: "pending", };
+  }
+
+  /** Get appeals for a user. */
+  async getUserAppeals(userId: string,): Promise<Array<{ id: string; actionId: string; reason: string; status: string; reviewedBy: string | null; reviewNote: string | null; createdAt: string }>> {
+    const rows = await this.db.selectFrom("moderation_appeals" as any,)
+      .where("user_id", "=", userId,)
+      .orderBy("created_at", "desc",)
+      .execute() as Array<{ id: string; user_id: string; action_id: string; reason: string; status: string; reviewed_by: string | null; review_note: string | null; created_at: string }>;
+    return rows.map((r) => ({
+      id: r.id,
+      actionId: r.action_id,
+      reason: r.reason,
+      status: r.status,
+      reviewedBy: r.reviewed_by,
+      reviewNote: r.review_note,
+      createdAt: r.created_at,
+    }),);
+  }
+
+  /** Get pending appeals (admin). */
+  async getPendingAppeals(limit = 50,): Promise<Array<{ id: string; userId: string; actionId: string; reason: string; createdAt: string }>> {
+    const rows = await this.db.selectFrom("moderation_appeals" as any,)
+      .where("status", "=", "pending",)
+      .orderBy("created_at", "asc",)
+      .limit(limit,)
+      .execute() as Array<{ id: string; user_id: string; action_id: string; reason: string; created_at: string }>;
+    return rows.map((r) => ({
+      id: r.id,
+      userId: r.user_id,
+      actionId: r.action_id,
+      reason: r.reason,
+      createdAt: r.created_at,
+    }),);
+  }
+
+  /** Review an appeal (approve or deny). */
+  async reviewAppeal(appealId: string, reviewedBy: string, status: "approved" | "denied", reviewNote: string,): Promise<void> {
+    const now = new Date().toISOString();
+    await this.db.updateTable("moderation_appeals" as any,)
+      .set({ status, reviewed_by: reviewedBy, review_note: reviewNote, updated_at: now, },)
+      .where("id", "=", appealId,)
+      .execute();
+
+    // If approved, reverse the original action
+    if (status === "approved") {
+      const appeal = await this.db.selectFrom("moderation_appeals" as any,)
+        .select("action_id",)
+        .where("id", "=", appealId,)
+        .executeTakeFirst() as { action_id: string } | undefined;
+      if (appeal) {
+        const action = await this.db.selectFrom("moderation_actions",)
+          .select(["action_type", "target_user_id",])
+          .where("id", "=", appeal.action_id,)
+          .executeTakeFirst();
+        if (action) {
+          const reverseMap: Record<string, () => Promise<ModAction>> = {
+            block: () => this.unblockUser(action.target_user_id, reviewedBy, "Appeal approved",),
+            ban: () => this.unbanUser(action.target_user_id, reviewedBy, "Appeal approved",),
+            shadow: () => this.unshadowUser(action.target_user_id, reviewedBy, "Appeal approved",),
+          };
+          const reverser = reverseMap[action.action_type];
+          if (reverser) { await reverser(); }
+        }
+      }
+    }
+
+    this.log.info("Appeal reviewed", { appealId, status, reviewedBy, },);
+  }
+
   private async notifyUser(userId: string, actionType: string, reason: string,): Promise<void> {
     const titles: Record<string, string> = {
       block: "You have been blocked from NSFW content",
