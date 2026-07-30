@@ -18,6 +18,7 @@ NPC system specification — covers NPC behavior models, dialogue systems, AI-dr
 ## NPC Systems
 
 ### Core NPC Model
+
 interface NPC {
 }
 interface NPCBehavior {

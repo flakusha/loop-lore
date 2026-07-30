@@ -18,6 +18,7 @@ Inventory system specification — covers item storage, equipment slots, invento
 ## Inventory Systems
 
 ### Core Inventory Model
+
 interface Inventory {
 }
 interface InventorySlot {

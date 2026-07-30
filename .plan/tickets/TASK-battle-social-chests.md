@@ -19,12 +19,12 @@ Social interaction lists "Intimidation in combat" as an integration point, but B
 
 ### Combat Social Checks
 
-| Social Skill | Combat Application | DC |
-| --- | --- | --- |
-| Intimidation | Break enemy morale (flee, surrender) | 10 + enemy HD |
-| Persuasion | Negotiate parley, ceasefire | 15 + enemy HD |
-| Deception | Feint in combat (advantage on next attack) | 12 + enemy HD |
-| Leadership | Rally allies (remove fear, grant temp HP) | 13 + allies affected |
+| Social Skill | Combat Application                         | DC                   |
+| ------------ | ------------------------------------------ | -------------------- |
+| Intimidation | Break enemy morale (flee, surrender)       | 10 + enemy HD        |
+| Persuasion   | Negotiate parley, ceasefire                | 15 + enemy HD        |
+| Deception    | Feint in combat (advantage on next attack) | 12 + enemy HD        |
+| Leadership   | Rally allies (remove fear, grant temp HP)  | 13 + allies affected |
 
 ### Morale System
 
