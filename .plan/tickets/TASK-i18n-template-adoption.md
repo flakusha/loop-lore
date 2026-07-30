@@ -1,13 +1,13 @@
 # TASK: i18n Template Adoption (Phase 3)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Priority:** High
 **Effort:** Large
 **Epic:** epic-i18n
 
 ## Summary
 
-Replace hardcoded English strings in 17 HTML templates with `{{ t() }}` bindings. 300+ strings across all views.
+Replace hardcoded English strings in HTML templates with `{{{t()}}}` bindings. 39/44 templates converted (5 remaining are data-driven with no hardcoded text). 36 new keys added to en.json (818 total).
 
 ## Scope
 
