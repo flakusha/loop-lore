@@ -57,18 +57,18 @@
     <div class="toast-container" id="toast-container" data-testid="toast-container"></div>
 
     <!-- Skip to content (first focusable element for keyboard users) -->
-    <a class="skip-to-content" href="#app-root" data-testid="skip-to-content">Skip to content</a>
+    <a class="skip-to-content" href="#app-root" data-testid="skip-to-content">{{{t("accessibility.skipToContent")}}}</a>
 
     <!-- Persistent sidebar -->
     <aside class="sidebar" id="layout-sidebar" data-testid="sidebar" aria-label="Main navigation">
       <div class="sidebar-header">
         <span class="logo">loop-lore</span>
-        <button class="btn-icon" x-on:click="window.closeSidebar()" title="Close" aria-label="Close sidebar">
+        <button class="btn-icon" x-on:click="window.closeSidebar()" title="{{{t("navigation.closeSidebar")}}}" aria-label="{{{t("navigation.closeSidebar")}}}">
           &times;
         </button>
       </div>
 
-      <nav class="sidebar-nav" aria-label="Primary">
+      <nav class="sidebar-nav" aria-label="{{{t("accessibility.navigation")}}}">
         <a
           class="nav-item"
           href="/views/chat-list"
@@ -79,7 +79,7 @@
           x-on:click="window.closeSidebar()"
           data-testid="nav-chat"
         >
-          <span>💬</span> <span>Chat</span>
+          <span>💬</span> <span>{{{t("navigation.chat")}}}</span>
         </a>
 
         <div class="nav-divider" aria-hidden="true"></div>
@@ -94,7 +94,7 @@
           x-on:click="window.closeSidebar()"
           data-testid="nav-characters"
         >
-          <span>👤</span> <span>Characters</span>
+          <span>👤</span> <span>{{{t("navigation.characters")}}}</span>
         </a>
 
         <a
@@ -107,7 +107,7 @@
           x-on:click="window.closeSidebar()"
           data-testid="nav-personas"
         >
-          <span>🎭</span> <span>Personas</span>
+          <span>🎭</span> <span>{{{t("navigation.personas")}}}</span>
         </a>
 
         <a
@@ -120,7 +120,7 @@
           x-on:click="window.closeSidebar()"
           data-testid="nav-worlds"
         >
-          <span>🌍</span> <span>Worlds</span>
+          <span>🌍</span> <span>{{{t("navigation.worlds")}}}</span>
         </a>
 
         <div class="nav-divider" aria-hidden="true"></div>
@@ -135,7 +135,7 @@
           x-on:click="window.closeSidebar()"
           data-testid="nav-gallery"
         >
-          <span>🖼</span> <span>Gallery</span>
+          <span>🖼</span> <span>{{{t("navigation.gallery")}}}</span>
         </a>
 
         <div class="nav-divider" aria-hidden="true"></div>
@@ -150,7 +150,7 @@
           x-on:click="window.closeSidebar()"
           data-testid="nav-admin"
         >
-          <span>🛡</span> <span>Admin</span>
+          <span>🛡</span> <span>{{{t("navigation.admin")}}}</span>
         </a>
       </nav>
 
@@ -159,7 +159,7 @@
           <img
             class="avatar"
             src="/img/characters/default-avatar.svg"
-            alt="User avatar"
+            alt="{{{t("accessibility.userAvatar")}}}"
             style="background: var(--bg-tertiary)"
             data-avatar="user"
           />
@@ -170,8 +170,8 @@
           <button
             class="btn-icon"
             x-on:click="logout()"
-            title="Log out"
-            aria-label="Log out"
+            title="{{{t("navigation.logout")}}}"
+            aria-label="{{{t("navigation.logout")}}}"
             data-testid="nav-logout"
           >
             ⏻
@@ -183,7 +183,7 @@
             hx-swap="innerHTML"
             hx-push-url="true"
             x-on:click="window.closeSidebar()"
-            title="Settings"
+            title="{{{t("navigation.settings")}}}"
             data-testid="nav-settings"
           >
             ⚙
