@@ -228,6 +228,8 @@ export const SCHEMA = new SchemaManifest()
     import_spec: col("text", { notNull: true, },),
     content_rating: col("text", { notNull: true, },),
     template_overrides: col("text", { notNull: true, },),
+    data_source_format: col("text", { notNull: true, },),
+    data_raw: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -413,6 +415,8 @@ export const SCHEMA = new SchemaManifest()
     height: col("integer",),
     duration_secs: col("real",),
     alt_text: col("text",),
+    encryption_tier: col("text", { notNull: true, },),
+    encrypted_key_id: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
   // ── Content: Asset Links ─────────────────────────────────────
@@ -661,6 +665,8 @@ export const SCHEMA = new SchemaManifest()
     priority: col("integer", { notNull: true, },),
     comment: col("text",),
     sort_order: col("integer", { notNull: true, },),
+    cooldown_seconds: col("integer", { notNull: true, },),
+    last_activated: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -681,6 +687,8 @@ export const SCHEMA = new SchemaManifest()
     priority: col("integer", { notNull: true, },),
     comment: col("text",),
     sort_order: col("integer", { notNull: true, },),
+    cooldown_seconds: col("integer", { notNull: true, },),
+    last_activated: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -1266,5 +1274,47 @@ export const SCHEMA = new SchemaManifest()
     title: col("text", { notNull: true, },),
     relevance_score: col("real", { notNull: true, },),
     snippet: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW Moderation ──────────────────────────────────────────
+  .table("nsfw_user_preferences", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    nsfw_enabled: col("integer", { notNull: true, },),
+    max_rating: col("text", { notNull: true, },),
+    blocked_from_nsfw: col("integer", { notNull: true, },),
+    banned_from_nsfw: col("integer", { notNull: true, },),
+    shadow_nsfw: col("integer", { notNull: true, },),
+    block_reason: col("text",),
+    banned_at: col("text",),
+    banned_by: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  .table("content_flags", {
+    id: col("text", { primaryKey: true, },),
+    reporter_id: col("text", { notNull: true, },),
+    content_type: col("text", { notNull: true, },),
+    content_id: col("text", { notNull: true, },),
+    chat_id: col("text",),
+    world_id: col("text",),
+    flag_reason: col("text", { notNull: true, },),
+    description: col("text",),
+    status: col("text", { notNull: true, },),
+    resolution: col("text",),
+    resolved_by: col("text",),
+    resolved_at: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
+  .table("moderation_actions", {
+    id: col("text", { primaryKey: true, },),
+    action_type: col("text", { notNull: true, },),
+    target_user_id: col("text", { notNull: true, },),
+    performed_by: col("text", { notNull: true, },),
+    reason: col("text", { notNull: true, },),
+    scope: col("text", { notNull: true, },),
+    scope_id: col("text",),
+    metadata: col("text", { notNull: true, },),
+    expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
   },);

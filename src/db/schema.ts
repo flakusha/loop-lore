@@ -12,6 +12,8 @@ export * from "./schema-generation";
 export * from "./schema-story";
 export * from "./schema-synthetic";
 export * from "./schema-telemetry";
+export * from "./schema-moderation";
+export * from "./schema-moderation";
 
 // ── DB Aggregate ────────────────────────────────────────────────────
 export interface DB {
@@ -83,6 +85,10 @@ export interface DB {
   character_heat_cycle: import("./schema-character").CharacterHeatCycle;
   character_fantasies: import("./schema-character").CharacterFantasies;
   location_nsfw_config: import("./schema-character").LocationNsfwConfig;
+  // NSFW Moderation
+  nsfw_user_preferences: import("./schema-moderation").NsfwUserPreferences;
+  moderation_actions: import("./schema-moderation").ModerationActions;
+  content_flags: import("./schema-moderation").ContentFlags;
   // Crafting systems
   crafting_recipes: import("./schema-crafting").CraftingRecipes;
   crafting_recipe_materials: import("./schema-crafting").CraftingRecipeMaterials;
