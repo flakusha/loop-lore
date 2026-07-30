@@ -9,6 +9,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLocaleInfo, getSupportedLocales, isLocale, } from "../i18n/locale-registry";
 import { unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -42,6 +43,9 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
         default: "en",
       },);
     }, {
+      response: {
+        200: SuccessResponse,
+      },
       detail: {
         summary: "List supported locales",
         description: "Retrieve all supported locales with metadata including native name and text direction.",
@@ -93,6 +97,10 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
       },
       {
         body: t.Object({ locale: t.String(), },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Set user locale",
           description: "Update the authenticated user's preferred locale setting.",

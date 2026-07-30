@@ -15,6 +15,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonResponse, } from "./http-utils";
 
 interface ActivityEntry {
@@ -118,6 +119,10 @@ export function activityRoutes({ database, }: { database: Kysely<DB> },) {
     const chats = await computeActivity(database, userId,);
     return jsonResponse({ chats, } satisfies ActivityResponse,);
   }, {
+    response: {
+      200: SuccessResponse,
+      401: ErrorResponse,
+    },
     detail: {
       summary: "Get per-chat unseen message counts",
       description:
