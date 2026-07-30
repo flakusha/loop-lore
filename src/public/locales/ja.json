@@ -460,7 +460,8 @@
     "sortBySize": "サイズで並べ替え",
     "deleteSelected": "選択を削除",
     "downloadSelected": "選択をダウンロード",
-    "preview": "プレビュー"
+    "preview": "プレビュー",
+    "searchAssets": "Search assets…"
   },
   "navigation": {
     "chat": "チャット",

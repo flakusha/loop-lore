@@ -460,7 +460,8 @@
     "sortBySize": "Сортировать по размеру",
     "deleteSelected": "Удалить выбранное",
     "downloadSelected": "Скачать выбранное",
-    "preview": "Предпросмотр"
+    "preview": "Предпросмотр",
+    "searchAssets": "Search assets…"
   },
   "navigation": {
     "chat": "Чат",
