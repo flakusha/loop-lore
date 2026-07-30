@@ -460,7 +460,8 @@
     "sortBySize": "Trier par taille",
     "deleteSelected": "Supprimer la sélection",
     "downloadSelected": "Télécharger la sélection",
-    "preview": "Aperçu"
+    "preview": "Aperçu",
+    "searchAssets": "Search assets…"
   },
   "navigation": {
     "chat": "Chat",
