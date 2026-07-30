@@ -242,6 +242,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       }
       return new NotificationStreamer(database, userId,).open();
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Notification SSE stream",
         description: "Server-Sent Events stream that pushes notification updates in real-time.",

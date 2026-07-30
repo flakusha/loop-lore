@@ -11,13 +11,18 @@ import type { TranslatorFn, } from "../i18n/types";
 import { BlogService, } from "../rpg/blog/service.js";
 import {
   BlogCommentCreateBody,
+  BlogCommentResponse,
   BlogPostCreateBody,
+  BlogPostResponse,
   BlogPostStatusBody,
   BlogPostUpdateBody,
+  ErrorResponse,
   Id,
+  ListResponse,
+  SuccessResponse,
 } from "../validation/schemas";
 import { type HandlerOpts, } from "./actor-auth.js";
-import { extractAuth, HttpStatus, jsonError, } from "./http-utils.js";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "./http-utils.js";
 
 export function blogRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
@@ -46,9 +51,13 @@ export function blogRoutes(opts: HandlerOpts,) {
         metadata: ctx.body.metadata,
       },);
 
-      return { success: true, post, };
+      return jsonResponse({ success: true, post, },);
     }, {
       body: BlogPostCreateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Create blog post",
         description: "Create a new blog post with title, body, and optional metadata.",
@@ -62,8 +71,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       await svc.incrementViewCount(post.id,);
-      return { success: true, post, };
+      return jsonResponse({ success: true, post, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get blog post",
         description: "Get a single blog post by ID and increment its view count.",
@@ -81,8 +94,11 @@ export function blogRoutes(opts: HandlerOpts,) {
         limit: query.limit ? Number(query.limit,) : undefined,
         offset: query.offset ? Number(query.offset,) : undefined,
       },);
-      return { success: true, posts, count: posts.length, };
+      return jsonResponse({ success: true, posts, count: posts.length, },);
     }, {
+      response: {
+        200: ListResponse(BlogPostResponse,),
+      },
       detail: {
         summary: "List blog posts",
         description: "List blog posts with optional filters for author, visibility, status, category, and world.",
@@ -114,10 +130,15 @@ export function blogRoutes(opts: HandlerOpts,) {
         metadata: ctx.body.metadata,
       },);
 
-      return { success: true, post: updated, };
+      return jsonResponse({ success: true, post: updated, },);
     }, {
       params: t.Object({ id: Id, },),
       body: BlogPostUpdateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update blog post",
         description: "Update a blog post. Only the author or an admin can update.",
@@ -140,8 +161,13 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
 
       await svc.deletePost(ctx.params.id,);
-      return { success: true, };
+      return jsonResponse({ success: true, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Delete blog post",
         description: "Delete a blog post. Only the author or an admin can delete.",
@@ -167,10 +193,15 @@ export function blogRoutes(opts: HandlerOpts,) {
         body: ctx.body.body,
       },);
 
-      return { success: true, comment, };
+      return jsonResponse({ success: true, comment, },);
     }, {
       params: t.Object({ id: Id, },),
       body: BlogCommentCreateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Add comment to post",
         description: "Add a comment to a blog post.",
@@ -182,8 +213,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
       },);
-      return { success: true, comments, count: comments.length, };
+      return jsonResponse({ success: true, comments, count: comments.length, },);
     }, {
+      response: {
+        200: ListResponse(BlogCommentResponse,),
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List comments on post",
         description: "List comments on a blog post with optional pagination.",
@@ -211,10 +246,15 @@ export function blogRoutes(opts: HandlerOpts,) {
       if (!ok) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      return { success: true, };
+      return jsonResponse({ success: true, },);
     }, {
       params: t.Object({ id: Id, },),
       body: BlogPostStatusBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Moderate comment",
         description: "Set a comment's visibility status (visible, hidden, deleted). Admin only.",
@@ -245,10 +285,15 @@ export function blogRoutes(opts: HandlerOpts,) {
       if (!updated) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      return { success: true, post: updated, };
+      return jsonResponse({ success: true, post: updated, },);
     }, {
       params: t.Object({ id: Id, },),
       body: BlogPostStatusBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Moderate blog post",
         description: "Set a blog post's status (draft, published, hidden, disabled). Admin only.",
@@ -264,8 +309,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
 
       await svc.follow(userId, ctx.params.authorId,);
-      return { success: true, };
+      return jsonResponse({ success: true, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Follow author",
         description: "Follow a blog author to receive updates.",
@@ -280,8 +329,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
 
       await svc.unfollow(userId, ctx.params.authorId,);
-      return { success: true, };
+      return jsonResponse({ success: true, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Unfollow author",
         description: "Stop following a blog author.",
@@ -296,8 +349,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
 
       const following = await svc.isFollowing(userId, ctx.params.authorId,);
-      return { success: true, following, };
+      return jsonResponse({ success: true, following, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Check follow status",
         description: "Check if the current user follows a specific author.",
@@ -306,8 +363,11 @@ export function blogRoutes(opts: HandlerOpts,) {
     },)
     .get("/api/blog/authors/:authorId/followers", async (ctx: any,) => {
       const followers = await svc.getFollowers(ctx.params.authorId,);
-      return { success: true, followers, count: followers.length, };
+      return jsonResponse({ success: true, followers, count: followers.length, },);
     }, {
+      response: {
+        200: ListResponse(BlogPostResponse,),
+      },
       detail: {
         summary: "List author followers",
         description: "List all followers of a blog author.",
@@ -317,8 +377,11 @@ export function blogRoutes(opts: HandlerOpts,) {
     // ── RAG Sources ──────────────────────────────────────
     .get("/api/blog/posts/:id/sources", async (ctx: any,) => {
       const sources = await svc.getRAGSources(ctx.params.id,);
-      return { success: true, sources, count: sources.length, };
+      return jsonResponse({ success: true, sources, count: sources.length, },);
     }, {
+      response: {
+        200: ListResponse(BlogPostResponse,),
+      },
       detail: {
         summary: "List RAG sources",
         description: "List RAG (Retrieval-Augmented Generation) sources linked to a post.",
@@ -341,8 +404,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         snippet: (body.snippet as string) ?? "",
       },);
 
-      return { success: true, source, };
+      return jsonResponse({ success: true, source, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Add RAG source",
         description: "Add a RAG source to a blog post. Admin only.",

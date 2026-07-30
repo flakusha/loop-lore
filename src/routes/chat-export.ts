@@ -10,6 +10,7 @@ import type { Kysely, } from "kysely";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { notFound, unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -312,6 +313,11 @@ export function chatExportRoutes(opts: HandlerOpts,) {
         },),
         /* eslint-enable unicorn/max-nested-calls */
       ),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Export chat in requested format",
         description:

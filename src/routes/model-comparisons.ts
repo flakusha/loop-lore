@@ -12,6 +12,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 
 interface HandleOpts {
@@ -96,6 +97,10 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
         created_at: now,
       }, 201,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Submit a model comparison",
         description:
@@ -135,6 +140,10 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse({ leaderboard, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get model comparison leaderboard",
         description:
@@ -161,6 +170,10 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse({ comparisons: rows, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List recent comparisons",
         description: "Retrieve recent model comparisons for the authenticated user, ordered by creation date.",

@@ -7,6 +7,8 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { notFound, unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
+import { jsonResponse, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -79,14 +81,19 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
             grouped.set(r.emoji, existing,);
           }
 
-          return [...grouped,].map(([emoji, data,],) => ({
+          return jsonResponse([...grouped,].map(([emoji, data,],) => ({
             emoji,
             count: data.count,
             userReacted: data.userReacted,
-          }));
+          })),);
         },
         {
           params: t.Object({ id: t.String(), },),
+          response: {
+            200: t.Array(t.Object({ emoji: t.String(), count: t.Number(), userReacted: t.Boolean(), },),),
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Get grouped reactions for a message",
             description:
@@ -96,7 +103,11 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         },
       )
       // GET /api/messages/quick-emojis — available emoji list
-      .get("/api/messages/quick-emojis", () => QUICK_EMOJIS, {
+      .get("/api/messages/quick-emojis", () => jsonResponse(QUICK_EMOJIS,), {
+        response: {
+          200: t.Array(t.String(),),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Get available quick emoji list",
           description: "Returns the curated list of quick-select emojis available for reactions.",
@@ -128,7 +139,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           if (existing) {
             // Remove (un-react)
             await database.deleteFrom("message_reactions",).where("id", "=", existing.id,).execute();
-            return { toggled: false, emoji, };
+            return jsonResponse({ toggled: false, emoji, },);
           }
 
           // Check max unique reactions
@@ -150,11 +161,16 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
             .insertInto("message_reactions",)
             .values({ id: uid(), message_id: messageId, user_id: userId, emoji, },)
             .execute();
-          return { toggled: true, emoji, };
+          return jsonResponse({ toggled: true, emoji, },);
         },
         {
           params: t.Object({ id: t.String(), },),
           body: t.Object({ emoji: t.String(), },),
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Toggle a reaction on a message",
             description:
@@ -196,10 +212,15 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
             .where("user_id", "=", userId,)
             .execute();
 
-          return { ok: true, };
+          return jsonResponse({ ok: true, },);
         },
         {
           params: t.Object({ id: t.String(), },),
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Remove all user reactions from a message",
             description: "Deletes all reactions the authenticated user has on the specified message.",
