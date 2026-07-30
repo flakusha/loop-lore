@@ -247,6 +247,10 @@ export interface ActorLoreEntries {
   priority: number;
   comment: string | null;
   sort_order: number;
+  /** Cooldown in seconds before this entry can be activated again (0 = no cooldown) */
+  cooldown_seconds: Generated<number>;
+  /** Timestamp of last activation (null = never activated) */
+  last_activated: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -268,6 +272,10 @@ export interface WorldLoreEntries {
   priority: number;
   comment: string | null;
   sort_order: number;
+  /** Cooldown in seconds before this entry can be activated again (0 = no cooldown) */
+  cooldown_seconds: Generated<number>;
+  /** Timestamp of last activation (null = never activated) */
+  last_activated: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

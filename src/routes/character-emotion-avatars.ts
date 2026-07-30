@@ -9,6 +9,11 @@ import type { Kysely, } from "kysely";
 import { EmotionAvatarService, } from "../characters/services/emotion-avatar-service";
 import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import {
+  ActorIdParams,
+  ActorJobParams,
+  EmotionAvatarBatchBody,
+} from "../validation/schemas";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -31,10 +36,11 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const jobs = emotionAvatarService.listJobs(actorId,);
+      const { actorId, } = ctx.params;
+      const jobs = emotionAvatarService.listJobs(actorId as string,);
       return jsonResponse(jobs,);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "List emotion avatar jobs",
         description: "List batch generation jobs for emotion avatars.",
@@ -51,8 +57,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { jobId, } = ctx.params as { jobId: string };
-      const job = emotionAvatarService.getJobStatus(jobId as any,);
+      const { jobId, } = ctx.params;
+      const job = emotionAvatarService.getJobStatus(jobId,);
       if (!job) {
         return jsonError({
           message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
@@ -61,6 +67,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(job,);
     }, {
+      params: ActorJobParams,
       detail: {
         summary: "Get emotion avatar job status",
         description: "Get the status of a specific batch generation job.",
@@ -77,8 +84,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { jobId, } = ctx.params as { jobId: string };
-      const cancelled = emotionAvatarService.cancelJob(jobId as any,);
+      const { jobId, } = ctx.params;
+      const cancelled = emotionAvatarService.cancelJob(jobId,);
       if (!cancelled) {
         return jsonError({
           message: ctx.t?.("characters.emotionJobAlreadyCompleted",) ?? "Job not found or already completed",
@@ -87,6 +94,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse({ ok: true, cancelled: true, },);
     }, {
+      params: ActorJobParams,
       detail: {
         summary: "Cancel emotion avatar job",
         description: "Cancel a running batch generation job.",
@@ -103,38 +111,16 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
-
-      const baseAvatarId = body.baseAvatarId as string | undefined;
-      const emotionsParam = body.emotions as string[] | undefined;
-      const promptPrefix = body.promptPrefix as string | undefined;
-      const negativePrompt = body.negativePrompt as string | undefined;
-
-      if (!baseAvatarId) {
-        return jsonError({ message: "baseAvatarId is required", status: HttpStatus.BadRequest, },);
-      }
-
-      // Validate emotions if provided
-      if (emotionsParam && emotionsParam.length > 0) {
-        const validEmotions = Object.values(EmotionType,) as string[];
-        for (const e of emotionsParam) {
-          if (!validEmotions.includes(e,)) {
-            return jsonError({ message: `Invalid emotion: ${e}`, status: HttpStatus.BadRequest, },);
-          }
-        }
-      }
-
-      // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
-      const emotions = emotionsParam ? emotionsParam as EmotionType[] : undefined;
+      const { actorId, } = ctx.params;
+      const { baseAvatarId, emotions: emotionsParam, promptPrefix, negativePrompt, } = ctx.body;
 
       try {
         const jobId = await emotionAvatarService.startBatchGeneration({
-          actorId,
-          baseAvatarId,
-          emotions,
-          promptPrefix,
-          negativePrompt,
+          actorId: actorId as string,
+          baseAvatarId: baseAvatarId as string,
+          emotions: emotionsParam as EmotionType[] | undefined,
+          promptPrefix: promptPrefix as string | undefined,
+          negativePrompt: negativePrompt as string | undefined,
         },);
         return jsonCreated({ jobId, },);
       } catch (error) {
@@ -142,6 +128,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         return jsonError({ message, status: HttpStatus.BadRequest, },);
       }
     }, {
+      params: ActorIdParams,
+      body: EmotionAvatarBatchBody,
       detail: {
         summary: "Start emotion avatar batch generation",
         description: "Start a batch generation job to create emotion variants of an avatar.",
