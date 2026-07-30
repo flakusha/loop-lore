@@ -6,6 +6,10 @@
  * distributing across six stats (8–15 each).
  */
 
+import { rollDie, } from "./dice";
+
+import { rollDie, } from "./dice";
+
 
 // ── Types ────────────────────────────────────────────────
 
