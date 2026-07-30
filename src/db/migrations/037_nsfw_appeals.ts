@@ -11,8 +11,9 @@ export async function up(database: Kysely<any>,): Promise<void> {
     .createTable("moderation_appeals",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("user_id", "text", (col,) => col.notNull(),)
-    .addColumn("action_id", "text", (col,) => col.notNull()
-      .references("moderation_actions.id").onDelete("cascade",),)
+    .addColumn("action_id", "text", (col,) =>
+      col.notNull()
+        .references("moderation_actions.id",).onDelete("cascade",),)
     .addColumn("reason", "text", (col,) => col.notNull(),)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("pending",),) // pending | approved | denied
     .addColumn("reviewed_by", "text",)

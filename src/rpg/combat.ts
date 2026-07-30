@@ -6,10 +6,10 @@
  */
 
 import {
-  rollDice,
-  type DiceSides,
   type AdvantageMode,
   type DiceRollResult,
+  type DiceSides,
+  rollDice,
 } from "./dice.js";
 import {
   abilityModifier,
@@ -189,7 +189,7 @@ export function rollInitiative(combatant: Combatant,): InitiativeResult {
  * Ties broken by DEX score (higher goes first).
  */
 export function sortByInitiative(combatants: Combatant[],): Combatant[] {
-  return [...combatants].sort((a, b,) => {
+  return [...combatants,].sort((a, b,) => {
     if (b.initiative !== a.initiative) {
       return b.initiative - a.initiative;
     }
@@ -441,7 +441,7 @@ export function resetTurnActions(combatant: Combatant,): Combatant {
  * Reset reactions for a new round (start of turn cycle).
  */
 export function resetRoundReactions(combatants: Combatant[],): Combatant[] {
-  return combatants.map((c,) => ({ ...c, reactions: BASE_REACTIONS, }),);
+  return combatants.map((c,) => ({ ...c, reactions: BASE_REACTIONS, }));
 }
 
 // ── Damage Application ──────────────────────────────────
@@ -486,9 +486,7 @@ export function healCombatant(
  * Check if a combatant is incapacitated (can't take actions).
  */
 export function isIncapacitated(combatant: Combatant,): boolean {
-  return combatant.conditions.some((c,) =>
-    ["stunned", "paralyzed", "unconscious", "petrified",].includes(c,),
-  );
+  return combatant.conditions.some((c,) => ["stunned", "paralyzed", "unconscious", "petrified",].includes(c,));
 }
 
 /**
@@ -505,9 +503,9 @@ export function isCombatOver(combatants: Combatant[],): {
   over: boolean;
   winner: "player" | "enemy" | null;
 } {
-  const alive = combatants.filter((c,) => c.hp > 0,);
-  const players = alive.filter((c,) => !c.isNpc,);
-  const enemies = alive.filter((c,) => c.isNpc,);
+  const alive = combatants.filter((c,) => c.hp > 0);
+  const players = alive.filter((c,) => !c.isNpc);
+  const enemies = alive.filter((c,) => c.isNpc);
 
   if (players.length === 0) {
     return { over: true, winner: "enemy", };

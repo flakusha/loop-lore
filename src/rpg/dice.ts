@@ -106,7 +106,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
   natural20: boolean;
   natural1: boolean;
   advantageMode: AdvantageMode;
-  rawRolls: [number, number] | [number];
+  rawRolls: [number, number,] | [number,];
 } {
   if (mode === "normal") {
     const value = rollDie(20,);
@@ -115,7 +115,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
       natural20: value === 20,
       natural1: value === 1,
       advantageMode: mode,
-      rawRolls: [value],
+      rawRolls: [value,],
     };
   }
 
@@ -130,7 +130,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
     natural20: kept === 20,
     natural1: kept === 1,
     advantageMode: mode,
-    rawRolls: [roll1, roll2],
+    rawRolls: [roll1, roll2,],
   };
 }
 
@@ -159,8 +159,7 @@ export function rollDice(
   const dice: DieResult[] = [];
 
   if (sides === 20 && advantage !== "normal") {
-    const { value, natural20, natural1, advantageMode, rawRolls, } =
-      rollD20WithAdvantage(advantage,);
+    const { value, natural20, natural1, advantageMode, rawRolls, } = rollD20WithAdvantage(advantage,);
 
     dice.push({ sides: 20, value: rawRolls[0], exploded: false, },);
     if (rawRolls.length > 1) {
@@ -232,7 +231,7 @@ export function rollDice(
  */
 export function parseDiceNotation(notation: string,): ParsedDice | null {
   const cleaned = notation.trim().toLowerCase().replaceAll(/\s+/g, " ",);
-  const match = /^(\d*)d(\d+)([+-]\d+)?\s*(adv|dis)?\s*(x)?$/.exec(cleaned);
+  const match = /^(\d*)d(\d+)([+-]\d+)?\s*(adv|dis)?\s*(x)?$/.exec(cleaned,);
 
   if (!match) {
     return null;

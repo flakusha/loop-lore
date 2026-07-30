@@ -367,7 +367,7 @@ export class NsfwModerationService {
 
     // 1. Check chat-level override
     const chat = await this.db.selectFrom("chats",)
-      .select(["nsfw_override", "world_id", "type",])
+      .select(["nsfw_override", "world_id", "type",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
     if (chat?.nsfw_override === "enabled") { return { enabled: true, source: "chat_override", }; }
@@ -432,7 +432,7 @@ export class NsfwModerationService {
     // Notify the target user of the action (skip for system actions)
     if (params.performedBy !== "system") {
       await this.notifyUser(params.targetUserId, params.actionType, params.reason,).catch(
-        (err: unknown) => this.log.warn("Failed to send moderation notification", { error: String(err), },),
+        (err: unknown,) => this.log.warn("Failed to send moderation notification", { error: String(err,), },),
       );
     }
 
@@ -469,12 +469,37 @@ export class NsfwModerationService {
   }
 
   /** Get appeals for a user. */
-  async getUserAppeals(userId: string,): Promise<Array<{ id: string; actionId: string; reason: string; status: string; reviewedBy: string | null; reviewNote: string | null; createdAt: string }>> {
+  async getUserAppeals(
+    userId: string,
+  ): Promise<
+    Array<
+      {
+        id: string;
+        actionId: string;
+        reason: string;
+        status: string;
+        reviewedBy: string | null;
+        reviewNote: string | null;
+        createdAt: string;
+      }
+    >
+  > {
     const rows = await this.db.selectFrom("moderation_appeals" as any,)
       .where("user_id", "=", userId,)
       .orderBy("created_at", "desc",)
-      .execute() as Array<{ id: string; user_id: string; action_id: string; reason: string; status: string; reviewed_by: string | null; review_note: string | null; created_at: string }>;
-    return rows.map((r) => ({
+      .execute() as Array<
+        {
+          id: string;
+          user_id: string;
+          action_id: string;
+          reason: string;
+          status: string;
+          reviewed_by: string | null;
+          review_note: string | null;
+          created_at: string;
+        }
+      >;
+    return rows.map((r,) => ({
       id: r.id,
       actionId: r.action_id,
       reason: r.reason,
@@ -482,27 +507,34 @@ export class NsfwModerationService {
       reviewedBy: r.reviewed_by,
       reviewNote: r.review_note,
       createdAt: r.created_at,
-    }),);
+    }));
   }
 
   /** Get pending appeals (admin). */
-  async getPendingAppeals(limit = 50,): Promise<Array<{ id: string; userId: string; actionId: string; reason: string; createdAt: string }>> {
+  async getPendingAppeals(
+    limit = 50,
+  ): Promise<Array<{ id: string; userId: string; actionId: string; reason: string; createdAt: string }>> {
     const rows = await this.db.selectFrom("moderation_appeals" as any,)
       .where("status", "=", "pending",)
       .orderBy("created_at", "asc",)
       .limit(limit,)
       .execute() as Array<{ id: string; user_id: string; action_id: string; reason: string; created_at: string }>;
-    return rows.map((r) => ({
+    return rows.map((r,) => ({
       id: r.id,
       userId: r.user_id,
       actionId: r.action_id,
       reason: r.reason,
       createdAt: r.created_at,
-    }),);
+    }));
   }
 
   /** Review an appeal (approve or deny). */
-  async reviewAppeal(appealId: string, reviewedBy: string, status: "approved" | "denied", reviewNote: string,): Promise<void> {
+  async reviewAppeal(
+    appealId: string,
+    reviewedBy: string,
+    status: "approved" | "denied",
+    reviewNote: string,
+  ): Promise<void> {
     const now = new Date().toISOString();
     await this.db.updateTable("moderation_appeals" as any,)
       .set({ status, reviewed_by: reviewedBy, review_note: reviewNote, updated_at: now, },)
@@ -517,7 +549,7 @@ export class NsfwModerationService {
         .executeTakeFirst() as { action_id: string } | undefined;
       if (appeal) {
         const action = await this.db.selectFrom("moderation_actions",)
-          .select(["action_type", "target_user_id",])
+          .select(["action_type", "target_user_id",],)
           .where("id", "=", appeal.action_id,)
           .executeTakeFirst();
         if (action) {
@@ -611,7 +643,7 @@ export class NsfwModerationService {
       reason: row.reason,
       scope: row.scope,
       scopeId: row.scope_id,
-      metadata: jsonParseOr<Record<string, unknown>>(row.metadata, {}),
+      metadata: jsonParseOr<Record<string, unknown>>(row.metadata, {},),
       expiresAt: row.expires_at,
       createdAt: row.created_at,
     };

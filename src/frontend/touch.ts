@@ -15,38 +15,38 @@ export interface SwipeOptions {
   /** Maximum time in ms for a swipe gesture (default: 300) */
   maxDuration?: number;
   /** Called on swipe */
-  onSwipe: (direction: SwipeDirection, delta: { x: number; y: number }) => void;
+  onSwipe: (direction: SwipeDirection, delta: { x: number; y: number },) => void;
 }
 
 export interface TapOptions {
   /** Called on tap */
-  onTap: (event: Event) => void;
+  onTap: (event: Event,) => void;
 }
 
 export interface LongPressOptions {
   /** Delay in ms before long-press fires (default: 500) */
   delay?: number;
   /** Called on long-press */
-  onLongPress: (event: Event) => void;
+  onLongPress: (event: Event,) => void;
 }
 
 /** Check if user prefers reduced motion */
 function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return window.matchMedia("(prefers-reduced-motion: reduce)",).matches;
 }
 
 /**
  * Attach swipe detection to an element.
  * Returns a cleanup function.
  */
-export function onSwipe(element: Element, options: SwipeOptions): () => void {
-  const { threshold = 50, maxDuration = 300, onSwipe: callback } = options;
+export function onSwipe(element: Element, options: SwipeOptions,): () => void {
+  const { threshold = 50, maxDuration = 300, onSwipe: callback, } = options;
 
   let startX = 0;
   let startY = 0;
   let startTime = 0;
 
-  const onStart = (e: Event): void => {
+  const onStart = (e: Event,): void => {
     const touch = (e as TouchEvent).touches[0];
     if (!touch) { return; }
     startX = touch.clientX;
@@ -54,7 +54,7 @@ export function onSwipe(element: Element, options: SwipeOptions): () => void {
     startTime = Date.now();
   };
 
-  const onEnd = (e: Event): void => {
+  const onEnd = (e: Event,): void => {
     const elapsed = Date.now() - startTime;
     if (elapsed > maxDuration) { return; }
 
@@ -62,8 +62,8 @@ export function onSwipe(element: Element, options: SwipeOptions): () => void {
     if (!touch) { return; }
     const dx = touch.clientX - startX;
     const dy = touch.clientY - startY;
-    const absDx = Math.abs(dx);
-    const absDy = Math.abs(dy);
+    const absDx = Math.abs(dx,);
+    const absDy = Math.abs(dy,);
 
     if (absDx < threshold && absDy < threshold) { return; }
 
@@ -74,15 +74,15 @@ export function onSwipe(element: Element, options: SwipeOptions): () => void {
       direction = dy > 0 ? "down" : "up";
     }
 
-    callback(direction, { x: dx, y: dy });
+    callback(direction, { x: dx, y: dy, },);
   };
 
-  element.addEventListener("touchstart", onStart as EventListener, { passive: true });
-  element.addEventListener("touchend", onEnd as EventListener, { passive: true });
+  element.addEventListener("touchstart", onStart as EventListener, { passive: true, },);
+  element.addEventListener("touchend", onEnd as EventListener, { passive: true, },);
 
   return () => {
-    element.removeEventListener("touchstart", onStart as EventListener);
-    element.removeEventListener("touchend", onEnd as EventListener);
+    element.removeEventListener("touchstart", onStart as EventListener,);
+    element.removeEventListener("touchend", onEnd as EventListener,);
   };
 }
 
@@ -91,20 +91,20 @@ export function onSwipe(element: Element, options: SwipeOptions): () => void {
  * Uses click as fallback for reduced-motion or non-touch devices.
  * Returns a cleanup function.
  */
-export function onTap(element: Element, options: TapOptions): () => void {
-  const { onTap: callback } = options;
+export function onTap(element: Element, options: TapOptions,): () => void {
+  const { onTap: callback, } = options;
 
-  const handler = (e: Event): void => {
-    callback(e);
+  const handler = (e: Event,): void => {
+    callback(e,);
   };
 
   if (prefersReducedMotion() || !("ontouchstart" in window)) {
-    element.addEventListener("click", handler);
-    return () => element.removeEventListener("click", handler);
+    element.addEventListener("click", handler,);
+    return () => element.removeEventListener("click", handler,);
   }
 
-  element.addEventListener("touchend", handler as EventListener, { passive: true });
-  return () => element.removeEventListener("touchend", handler as EventListener);
+  element.addEventListener("touchend", handler as EventListener, { passive: true, },);
+  return () => element.removeEventListener("touchend", handler as EventListener,);
 }
 
 /**
@@ -112,35 +112,35 @@ export function onTap(element: Element, options: TapOptions): () => void {
  * Falls back to right-click context menu for non-touch / reduced-motion.
  * Returns a cleanup function.
  */
-export function onLongPress(element: Element, options: LongPressOptions): () => void {
-  const { delay = 500, onLongPress: callback } = options;
+export function onLongPress(element: Element, options: LongPressOptions,): () => void {
+  const { delay = 500, onLongPress: callback, } = options;
 
   let timer: ReturnType<typeof setTimeout> | null = null;
 
-  const onStart = (e: Event): void => {
+  const onStart = (e: Event,): void => {
     timer = setTimeout(() => {
-      callback(e);
+      callback(e,);
       timer = null;
-    }, delay);
+    }, delay,);
   };
 
   const onCancel = (): void => {
     if (timer !== null) {
-      clearTimeout(timer);
+      clearTimeout(timer,);
       timer = null;
     }
   };
 
-  element.addEventListener("touchstart", onStart as EventListener, { passive: true });
-  element.addEventListener("touchmove", onCancel, { passive: true });
-  element.addEventListener("touchend", onCancel, { passive: true });
-  element.addEventListener("touchcancel", onCancel, { passive: true });
+  element.addEventListener("touchstart", onStart as EventListener, { passive: true, },);
+  element.addEventListener("touchmove", onCancel, { passive: true, },);
+  element.addEventListener("touchend", onCancel, { passive: true, },);
+  element.addEventListener("touchcancel", onCancel, { passive: true, },);
 
   return () => {
     onCancel();
-    element.removeEventListener("touchstart", onStart as EventListener);
-    element.removeEventListener("touchmove", onCancel);
-    element.removeEventListener("touchend", onCancel);
-    element.removeEventListener("touchcancel", onCancel);
+    element.removeEventListener("touchstart", onStart as EventListener,);
+    element.removeEventListener("touchmove", onCancel,);
+    element.removeEventListener("touchend", onCancel,);
+    element.removeEventListener("touchcancel", onCancel,);
   };
 }
