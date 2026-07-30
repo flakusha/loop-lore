@@ -27,13 +27,11 @@
     "export": "Export",
     "import": "Import",
     "retry": "Retry",
-    "cancel": "Cancel",
     "skip": "Skip",
     "done": "Done",
     "clear": "Clear",
     "reset": "Reset",
-    "submit": "Submit",
-    "cancel": "Cancel"
+    "submit": "Submit"
   },
   "auth": {
     "login": "Log In",
@@ -258,5 +256,88 @@
     "navigation": "Navigation",
     "search": "Search",
     "help": "Help"
+  },
+  "tooltips": {
+    "viewChats": "View chats",
+    "toggleGallery": "Toggle gallery sidebar",
+    "characterInfo": "Character info",
+    "chatSettings": "Chat settings",
+    "userPreferences": "User preferences",
+    "pauseGeneration": "Pause AI generation",
+    "resumeGeneration": "Resume AI generation",
+    "notifications": "Notifications",
+    "dismiss": "Dismiss",
+    "markRead": "Mark read",
+    "markAllRead": "Mark all read",
+    "noNotifications": "No notifications",
+    "close": "Close",
+    "archiveSelected": "Archive selected",
+    "deleteSelected": "Delete selected",
+    "exportSelected": "Export selected",
+    "clearSelection": "Clear selection",
+    "rename": "Rename",
+    "delete": "Delete",
+    "expandStats": "Expand stats",
+    "cancelGeneration": "Cancel generation",
+    "send": "Send",
+    "filterChats": "Filter chats"
+  },
+  "placeholders": {
+    "chatName": "Chat name",
+    "filter": "Filter…",
+    "searchMemories": "Search memories...",
+    "enterMemory": "Enter memory content...",
+    "typeMessage": "Type a message...",
+    "impersonateAs": "Respond as {name}..."
+  },
+  "chatSettings": {
+    "chatName": "Chat Name",
+    "mode": "Mode",
+    "turnStrategy": "Turn Strategy",
+    "persona": "Persona",
+    "streaming": "Streaming",
+    "assistantRole": "Assistant Role",
+    "storyMode": "Story Mode",
+    "groupChat": "Group Chat",
+    "自由記述": "Freeform"
+  },
+  "mood": {
+    "adjustHappiness": "Adjust Happiness"
+  },
+  "help": {
+    "settings": {
+      "theme": "Choose a color scheme. Changes apply immediately.",
+      "language": "Select your interface language. All UI text will be translated.",
+      "fontSize": "Adjust the base font size for all UI text.",
+      "uiDensity": "Compact reduces spacing; Spacious increases it.",
+      "enterToSend": "When enabled, pressing Enter sends your message. Hold Shift for newlines.",
+      "autoScroll": "Automatically scroll to the latest message when new content arrives.",
+      "inlinePreview": "Show image previews directly in the chat instead of as links.",
+      "detailLevel": "Basic shows only messages; Detailed shows timestamps and metadata.",
+      "generationLanguage": "Controls what language the AI responds in.",
+      "provider": "Choose your AI provider. Each has different models and pricing.",
+      "apiKey": "Your API key for the selected provider. Never share this.",
+      "apiEndpoint": "Custom API endpoint URL. Leave empty for provider default.",
+      "model": "Which AI model to use for generating responses.",
+      "maxTokens": "Maximum context window size. Larger values use more memory.",
+      "temperature": "Higher values make responses more creative; lower values more focused."
+    },
+    "character": {
+      "personality": "Core behavioral traits that shape how the character responds.",
+      "backstory": "Background history that informs the character's knowledge and perspective.",
+      "scenario": "The situation or setting where conversations take place.",
+      "firstMessage": "The character's opening message when starting a new chat.",
+      "exampleDialogue": "Sample conversations showing how the character should speak.",
+      "tags": "Keywords for organizing and finding characters.",
+      "visibility": "Public characters are visible to all users; Private only to you."
+    },
+    "world": {
+      "name": "The name of your world or setting.",
+      "description": "A brief description of the world's theme and atmosphere.",
+      "lore": "Background knowledge and history for the world.",
+      "location": "A named place within the world with its own rules.",
+      "tags": "Keywords for organizing and finding worlds.",
+      "visibility": "Public worlds are visible to all users; Private only to you."
+    }
   }
 }
