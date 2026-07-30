@@ -1,228 +1,122 @@
 <!-- User Settings Modal — overlay accessible from chat -->
 <div x-data="settingsModal()">
-<template x-if="open">
-<div
-  class="modal-overlay open"
-  x-on:keydown.escape.window="open = false"
-  x-on:settings-modal.window="open = true; load()"
-  @click.self="open = false"
->
-  <div
-    class="modal-content"
-    style="background: var(--bg-secondary, #f8f9fa); border-radius: var(--radius-lg, 12px); max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto; padding: var(--space-6)"
-    @click.stop
-  >
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
-      <h2 style="font-size: 18px; font-weight: 600" data-testid="settings-modal-title">
-        {{{ t("settings.preferences") }}}
-      </h2>
-      <button class="btn btn-secondary btn-sm" @click="open = false" data-testid="settings-modal-close">
-        &times;
-      </button>
-    </div>
-||||||| parent of 33aba09f (fix: resolve typecheck, test, and lint issues from cleanup)
-<template x-if="open">
-<div
-  class="modal-overlay open"
-  x-on:keydown.escape.window="open = false"
-  x-on:settings-modal.window="open = true; load()"
-  @click.self="open = false"
->
-  <div
-    class="modal-content"
-    style="background: var(--bg-secondary, #f8f9fa); border-radius: var(--radius-lg, 12px); max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto; padding: var(--space-6)"
-    @click.stop
-  >
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
-      <h2 style="font-size: 18px; font-weight: 600" data-testid="settings-modal-title">Preferences</h2>
-      <button class="btn btn-secondary btn-sm" @click="open = false" data-testid="settings-modal-close">
-        &times;
-      </button>
-    </div>
+  <template x-if="open">
+    <div
+      class="modal-overlay open"
+      x-on:keydown.escape.window="open = false"
+      x-on:settings-modal.window="open = true; load()"
+      @click.self="open = false"
+    >
+      <div
+        class="modal-content"
+        style="background: var(--bg-secondary, #f8f9fa); border-radius: var(--radius-lg, 12px); max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto; padding: var(--space-6)"
+        @click.stop
+      >
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+          <h2 style="font-size: 18px; font-weight: 600" data-testid="settings-modal-title">
+            {{{ t("settings.preferences") }}}
+          </h2>
+          <button class="btn btn-secondary btn-sm" @click="open = false" data-testid="settings-modal-close">
+            &times;
+          </button>
+        </div>
 
-    <!-- Tab bar -->
-    <div class="world-edit-tabs" style="margin-bottom: var(--space-4)">
-      <button class="world-edit-tab" :class="{ active: tab === 'theme' }" @click="tab = 'theme'">
-        {{{ t("settings.theme") }}}
-      </button>
-      <button class="world-edit-tab" :class="{ active: tab === 'chat' }" @click="tab = 'chat'">
-        {{{ t("settings.chat") }}}
-      </button>
-      <button class="world-edit-tab" :class="{ active: tab === 'generation' }" @click="tab = 'generation'">
-        {{{ t("settings.generation") }}}
-      </button>
-    </div>
-||||||| parent of 33aba09f (fix: resolve typecheck, test, and lint issues from cleanup)
-    <!-- Tab bar -->
-    <div class="world-edit-tabs" style="margin-bottom: var(--space-4)">
-      <button class="world-edit-tab" :class="{ active: tab === 'theme' }" @click="tab = 'theme'">
-        Theme
-      </button>
-      <button class="world-edit-tab" :class="{ active: tab === 'chat' }" @click="tab = 'chat'">Chat</button>
-      <button class="world-edit-tab" :class="{ active: tab === 'generation' }" @click="tab = 'generation'">
-        Generation
-      </button>
-    </div>
+        <!-- Tab bar -->
+        <div class="world-edit-tabs" style="margin-bottom: var(--space-4)">
+          <button class="world-edit-tab" :class="{ active: tab === 'theme' }" @click="tab = 'theme'">
+            {{{ t("settings.theme") }}}
+          </button>
+          <button class="world-edit-tab" :class="{ active: tab === 'chat' }" @click="tab = 'chat'">
+            {{{ t("settings.chat") }}}
+          </button>
+          <button class="world-edit-tab" :class="{ active: tab === 'generation' }" @click="tab = 'generation'">
+            {{{ t("settings.generation") }}}
+          </button>
+        </div>
 
-    <!-- Theme tab -->
-    <div x-show="tab === 'theme'">
-      <div class="form-group">
-        <label class="form-label" for="settings-theme">{{{ t("settings.theme") }}}</label>
-        <select id="settings-theme" class="form-select" x-model="theme" @change="save('theme')">
-          <option value="default">{{{ t("settings.themeDefault") }}}</option>
-          <option value="light">{{{ t("settings.themeLight") }}}</option>
-          <option value="dracula">{{{ t("settings.themeDracula") }}}</option>
-          <option value="nord">{{{ t("settings.themeNord") }}}</option>
-          <option value="github-dark">{{{ t("settings.themeGithubDark") }}}</option>
-          <option value="material">{{{ t("settings.themeMaterial") }}}</option>
-        </select>
-      </div>
-    </div>
-||||||| parent of 33aba09f (fix: resolve typecheck, test, and lint issues from cleanup)
-    <!-- Theme tab -->
-    <div x-show="tab === 'theme'">
-      <div class="form-group">
-        <label class="form-label" for="settings-theme">Theme</label>
-        <select id="settings-theme" class="form-select" x-model="theme" @change="save('theme')">
-          <option value="default">Default (Dark)</option>
-          <option value="light">Light</option>
-          <option value="dracula">Dracula</option>
-          <option value="nord">Nord</option>
-          <option value="github-dark">GitHub Dark</option>
-          <option value="material">Material</option>
-        </select>
-      </div>
-    </div>
+        <!-- Theme tab -->
+        <div x-show="tab === 'theme'">
+          <div class="form-group">
+            <label class="form-label" for="settings-theme">{{{ t("settings.theme") }}}</label>
+            <select id="settings-theme" class="form-select" x-model="theme" @change="save('theme')">
+              <option value="default">{{{ t("settings.themeDefault") }}}</option>
+              <option value="light">{{{ t("settings.themeLight") }}}</option>
+              <option value="dracula">{{{ t("settings.themeDracula") }}}</option>
+              <option value="nord">{{{ t("settings.themeNord") }}}</option>
+              <option value="github-dark">{{{ t("settings.themeGithubDark") }}}</option>
+              <option value="material">{{{ t("settings.themeMaterial") }}}</option>
+            </select>
+          </div>
+        </div>
 
-    <!-- Chat tab -->
-    <div x-show="tab === 'chat'">
-      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
-        <span>{{{ t("settings.enterToSend") }}}</span>
-        <label class="toggle"><input type="checkbox" x-model="enterToSend" @change="save('chat')" /><span
-            class="toggle-slider"
-          ></span></label>
-      </div>
-      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
-        <span>{{{ t("settings.autoScroll") }}}</span>
-        <label class="toggle"><input type="checkbox" x-model="autoScroll" @change="save('chat')" /><span
-            class="toggle-slider"
-          ></span></label>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="settings-detail-level">{{{ t("settings.detailLevel") }}}</label>
-        <select id="settings-detail-level" class="form-select" x-model="detailLevel" @change="save('chat')">
-          <option value="Immersion">{{{ t("settings.immersion") }}}</option>
-          <option value="Basic">{{{ t("settings.basic") }}}</option>
-          <option value="Detailed">{{{ t("settings.detailed") }}}</option>
-        </select>
-      </div>
-    </div>
-||||||| parent of 33aba09f (fix: resolve typecheck, test, and lint issues from cleanup)
-    <!-- Chat tab -->
-    <div x-show="tab === 'chat'">
-      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
-        <span>Enter to send</span>
-        <label class="toggle"><input type="checkbox" x-model="enterToSend" @change="save('chat')" /><span
-            class="toggle-slider"
-          ></span></label>
-      </div>
-      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
-        <span>Auto-scroll</span>
-        <label class="toggle"><input type="checkbox" x-model="autoScroll" @change="save('chat')" /><span
-            class="toggle-slider"
-          ></span></label>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="settings-detail-level">Detail Level</label>
-        <select id="settings-detail-level" class="form-select" x-model="detailLevel" @change="save('chat')">
-          <option value="Immersion">Immersion</option>
-          <option value="Basic">Basic</option>
-          <option value="Detailed">Detailed</option>
-        </select>
-      </div>
-    </div>
+        <!-- Chat tab -->
+        <div x-show="tab === 'chat'">
+          <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
+            <span>{{{ t("settings.enterToSend") }}}</span>
+            <label class="toggle"><input type="checkbox" x-model="enterToSend" @change="save('chat')" /><span
+                class="toggle-slider"
+              ></span></label>
+          </div>
+          <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
+            <span>{{{ t("settings.autoScroll") }}}</span>
+            <label class="toggle"><input type="checkbox" x-model="autoScroll" @change="save('chat')" /><span
+                class="toggle-slider"
+              ></span></label>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="settings-detail-level">{{{ t("settings.detailLevel") }}}</label>
+            <select id="settings-detail-level" class="form-select" x-model="detailLevel" @change="save('chat')">
+              <option value="Immersion">{{{ t("settings.immersion") }}}</option>
+              <option value="Basic">{{{ t("settings.basic") }}}</option>
+              <option value="Detailed">{{{ t("settings.detailed") }}}</option>
+            </select>
+          </div>
+        </div>
 
-    <!-- Generation tab -->
-    <div x-show="tab === 'generation'">
-      <div class="form-group">
-        <label class="form-label" for="settings-provider">{{{ t("settings.provider") }}}</label>
-        <select id="settings-provider" class="form-select" x-model="provider" @change="save('api')">
-          <option value="OpenAI">{{{ t("settings.openai") }}}</option>
-          <option value="Anthropic">{{{ t("settings.anthropic") }}}</option>
-          <option value="OpenRouter">{{{ t("settings.openrouter") }}}</option>
-          <option value="Custom">{{{ t("settings.custom") }}}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="settings-model">{{{ t("settings.model") }}}</label>
-        <input
-          id="settings-model"
-          class="form-input"
-          type="text"
-          x-model="model"
-          placeholder="e.g. gpt-4o"
-          @change="save('api')"
-        />
-      </div>
-      <div class="form-group">
-        <label class="form-label">{{{ t("settings.temperature") }}}: <span
-            x-text="Number(temperature).toFixed(1)"
-          ></span></label>
-        <input
-          type="range"
-          x-model="temperature"
-          min="0"
-          max="2"
-          step="0.1"
-          style="width: 100%"
-          @change="save('api')"
-        />
-      </div>
-    </div>
-||||||| parent of 33aba09f (fix: resolve typecheck, test, and lint issues from cleanup)
-    <!-- Generation tab -->
-    <div x-show="tab === 'generation'">
-      <div class="form-group">
-        <label class="form-label" for="settings-provider">Provider</label>
-        <select id="settings-provider" class="form-select" x-model="provider" @change="save('api')">
-          <option value="OpenAI">OpenAI</option>
-          <option value="Anthropic">Anthropic</option>
-          <option value="OpenRouter">OpenRouter</option>
-          <option value="Custom">Custom</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="settings-model">Model</label>
-        <input
-          id="settings-model"
-          class="form-input"
-          type="text"
-          x-model="model"
-          placeholder="e.g. gpt-4o"
-          @change="save('api')"
-        />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Temperature: <span x-text="Number(temperature).toFixed(1)"></span></label>
-        <input
-          type="range"
-          x-model="temperature"
-          min="0"
-          max="2"
-          step="0.1"
-          style="width: 100%"
-          @change="save('api')"
-        />
-      </div>
-    </div>
+        <!-- Generation tab -->
+        <div x-show="tab === 'generation'">
+          <div class="form-group">
+            <label class="form-label" for="settings-provider">{{{ t("settings.provider") }}}</label>
+            <select id="settings-provider" class="form-select" x-model="provider" @change="save('api')">
+              <option value="OpenAI">{{{ t("settings.openai") }}}</option>
+              <option value="Anthropic">{{{ t("settings.anthropic") }}}</option>
+              <option value="OpenRouter">{{{ t("settings.openrouter") }}}</option>
+              <option value="Custom">{{{ t("settings.custom") }}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="settings-model">{{{ t("settings.model") }}}</label>
+            <input
+              id="settings-model"
+              class="form-input"
+              type="text"
+              x-model="model"
+              placeholder="e.g. gpt-4o"
+              @change="save('api')"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{{ t("settings.temperature") }}}: <span
+                x-text="Number(temperature).toFixed(1)"
+              ></span></label>
+            <input
+              type="range"
+              x-model="temperature"
+              min="0"
+              max="2"
+              step="0.1"
+              style="width: 100%"
+              @change="save('api')"
+            />
+          </div>
+        </div>
 
-    <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4)">
-      <button class="btn btn-primary" @click="open = false" data-testid="settings-modal-done">
-        {{{ t("common.done") }}}
-      </button>
-||||||| parent of 33aba09f (fix: resolve typecheck, test, and lint issues from cleanup)
-    <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4)">
-      <button class="btn btn-primary" @click="open = false" data-testid="settings-modal-done">Done</button>
+        <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4)">
+          <button class="btn btn-primary" @click="open = false" data-testid="settings-modal-done">
+            {{{ t("common.done") }}}
+          </button>
+        </div>
+      </div>
     </div>
   </template>
 </div>
