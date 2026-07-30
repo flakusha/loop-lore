@@ -4,8 +4,12 @@
  * Centralizes all `t.Object` definitions so route handlers
  * share a single source of truth for request validation.
  *
+ * Type inference: use `Static<typeof Schema>` from `@sinclair/typebox`
+ * to derive TypeScript types from schemas — eliminates duplicate interfaces.
+ *
  * @module validation/schemas
  */
+import { type Static, type TSchema, } from "@sinclair/typebox";
 import { t, } from "elysia";
 import {
   ActorItemType,
@@ -572,6 +576,7 @@ export const TraitCreateBody = t.Object({
 },);
 
 export const TraitUpdateBody = t.Object({
+  name: t.String({ minLength: 1, },),
   value: t.String({ minLength: 1, },),
 },);
 
@@ -590,6 +595,7 @@ export const LocationTraitCreateBody = t.Object({
 },);
 
 export const LocationTraitUpdateBody = t.Object({
+  name: t.String({ minLength: 1, },),
   value: t.String({ minLength: 1, },),
   bonus: t.Optional(t.Numeric(),),
   penalty: t.Optional(t.Numeric(),),
@@ -751,4 +757,190 @@ export const AdminOverrideCreateBody = t.Object({
 export const ApiKeyCreateBody = t.Object({
   providerName: t.String({ minLength: 1, },),
   apiKey: t.String({ minLength: 1, },),
+},);
+
+// ── Type Inference (deduplicate with service interfaces) ─────
+//
+// Use these types instead of manually declaring interfaces in services.
+// Example: `opts: MoodCreateInput` instead of `opts: CreateMoodOpts`
+
+/** Input type for MoodService.createMood (body only — actorId comes from params) */
+export type MoodCreateInput = Static<typeof MoodCreateBody>;
+/** Input type for MoodService.updateMood */
+export type MoodUpdateInput = Static<typeof MoodUpdateBody>;
+/** Input type for MoodService.logEvent */
+export type MoodEventInput = Static<typeof MoodEventBody>;
+
+/** Input type for RelationshipsService.create */
+export type RelationshipCreateInput = Static<typeof RelationshipCreateBody>;
+/** Input type for RelationshipsService.update */
+export type RelationshipUpdateInput = Static<typeof RelationshipUpdateBody>;
+/** Input type for RelationshipsService.logEvent */
+export type RelationshipEventInput = Static<typeof RelationshipEventBody>;
+
+/** Input type for AvatarService.create */
+export type AvatarCreateInput = Static<typeof AvatarCreateBody>;
+/** Input type for AvatarService.update */
+export type AvatarUpdateInput = Static<typeof AvatarUpdateBody>;
+
+/** Input type for TraitsService.createPermanent */
+export type TraitCreateInput = Static<typeof TraitCreateBody>;
+/** Input type for TraitsService.updatePermanent */
+export type TraitUpdateInput = Static<typeof TraitUpdateBody>;
+/** Input type for TraitsService.createWorld */
+export type WorldTraitCreateInput = Static<typeof WorldTraitCreateBody>;
+/** Input type for TraitsService.createLocation */
+export type LocationTraitCreateInput = Static<typeof LocationTraitCreateBody>;
+/** Input type for TraitsService.updateLocation */
+export type LocationTraitUpdateInput = Static<typeof LocationTraitUpdateBody>;
+
+/** Input type for EmotionAvatarService.batchGenerate */
+export type EmotionAvatarBatchInput = Static<typeof EmotionAvatarBatchBody>;
+
+/** Input type for BlogService.createPost */
+export type BlogPostCreateInput = Static<typeof BlogPostCreateBody>;
+/** Input type for BlogService.updatePost */
+export type BlogPostUpdateInput = Static<typeof BlogPostUpdateBody>;
+/** Input type for BlogService.createComment */
+export type BlogCommentCreateInput = Static<typeof BlogCommentCreateBody>;
+
+/** Input type for licensing update */
+export type LicensingInput = Static<typeof LicensingBody>;
+/** Input type for availability update */
+export type AvailabilityInput = Static<typeof AvailabilityBody>;
+
+/** Input type for QuestService.create */
+export type QuestCreateInput = Static<typeof QuestCreateBody>;
+/** Input type for QuestService.update */
+export type QuestUpdateInput = Static<typeof QuestUpdateBody>;
+/** Input type for QuestService.addProgress */
+export type QuestProgressInput = Static<typeof QuestProgressBody>;
+
+/** Input type for StoryItemService.createInstance */
+export type StoryItemInstanceInput = Static<typeof StoryItemInstanceBody>;
+
+// ── Response Schemas ──────────────────────────────────────────
+//
+// Define response shapes for OpenAPI documentation and runtime validation.
+// Use `response:` option in route definitions to enable response validation.
+
+export const ErrorResponse = t.Object({
+  message: t.String(),
+  status: t.Optional(t.Number()),
+},);
+
+export const SuccessResponse = t.Object({
+  success: t.Boolean(),
+},);
+
+export const MoodStateResponse = t.Object({
+  id: t.String(),
+  actorId: t.String(),
+  worldId: t.Optional(t.String()),
+  happiness: t.Number(),
+  baseMood: t.Optional(t.String()),
+  currentMood: t.Optional(t.String()),
+  moodStability: t.Optional(t.Number()),
+  expressionModifiers: t.Optional(t.Record(t.String(), t.Number())),
+},);
+
+export const RelationshipResponse = t.Object({
+  id: t.String(),
+  sourceActorId: t.String(),
+  targetActorId: t.String(),
+  relationshipType: t.String(),
+  standing: t.Optional(t.Number()),
+  trust: t.Optional(t.Number()),
+  events: t.Optional(t.Array(t.Object({
+    eventType: t.String(),
+    timestamp: t.String(),
+    standingDelta: t.Optional(t.Number()),
+    trustDelta: t.Optional(t.Number()),
+  }))),
+},);
+
+export const AvatarResponse = t.Object({
+  id: t.String(),
+  actorId: t.String(),
+  label: t.Optional(t.String()),
+  url: t.String(),
+  isPrimary: t.Optional(t.Boolean()),
+  sortOrder: t.Optional(t.Number()),
+  tags: t.Optional(t.Array(t.String())),
+},);
+
+export const TraitResponse = t.Object({
+  id: t.String(),
+  actorId: t.String(),
+  traitType: t.String(),
+  category: t.Optional(t.String()),
+  name: t.String(),
+  description: t.Optional(t.String()),
+  metadata: t.Optional(t.Record(t.String(), t.Any())),
+},);
+
+export const QuestResponse = t.Object({
+  id: t.String(),
+  worldId: t.String(),
+  title: t.String(),
+  description: t.Optional(t.String()),
+  questType: t.Optional(t.String()),
+  status: t.Optional(t.String()),
+  progress: t.Optional(t.Number()),
+  maxProgress: t.Optional(t.Number()),
+},);
+
+export const StoryItemResponse = t.Object({
+  id: t.String(),
+  worldId: t.String(),
+  actorId: t.Optional(t.String()),
+  definitionId: t.String(),
+  quantity: t.Optional(t.Number()),
+  metadata: t.Optional(t.Record(t.String(), t.Any())),
+},);
+
+export const BlogPostResponse = t.Object({
+  id: t.String(),
+  authorId: t.String(),
+  title: t.String(),
+  body: t.String(),
+  visibility: t.Optional(t.String()),
+  status: t.Optional(t.String()),
+  category: t.Optional(t.String()),
+  tags: t.Optional(t.Array(t.String())),
+  createdAt: t.Optional(t.String()),
+  updatedAt: t.Optional(t.String()),
+},);
+
+export const BlogCommentResponse = t.Object({
+  id: t.String(),
+  postId: t.String(),
+  authorId: t.String(),
+  body: t.String(),
+  status: t.Optional(t.String()),
+  createdAt: t.Optional(t.String()),
+},);
+
+export const ApiKeyResponse = t.Object({
+  id: t.String(),
+  providerName: t.String(),
+  createdAt: t.String(),
+  lastUsedAt: t.Optional(t.String()),
+},);
+
+/** List response wrapper */
+export const ListResponse = <T extends TSchema,>(itemSchema: T,) => t.Object({
+  data: t.Array(itemSchema,),
+  total: t.Number(),
+},);
+
+/** Paginated list response wrapper */
+export const PaginatedResponse = <T extends TSchema,>(itemSchema: T,) => t.Object({
+  data: t.Array(itemSchema,),
+  pagination: t.Object({
+    total: t.Number(),
+    page: t.Number(),
+    pageSize: t.Number(),
+    totalPages: t.Number(),
+  },),
 },);
