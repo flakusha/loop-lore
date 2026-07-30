@@ -564,6 +564,12 @@ interface NsfwConfig {
   allowNsfw: boolean;
   /** Minimum age for NSFW content. Checked against user birth_date. Default 18. */
   nsfwMinAge: number;
+  /** Default NSFW scope for new chats. Default "chat". */
+  defaultNsfwScope: "chat" | "user" | "world";
+  /** Whether NSFW consent is required before encounters. Default true. */
+  consentRequired: boolean;
+  /** Whether to log NSFW gate decisions to audit trail. Default true. */
+  auditLogging: boolean;
 }
 
 // ── Characters (Template Seeding) ────────────────────────────

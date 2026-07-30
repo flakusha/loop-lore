@@ -124,7 +124,7 @@ export class ConfigSchema {
 
   readonly messages = new MessagesSection();
 
-  readonly nsfw = new NsfwSection();
+"26: @ours\n27: @ours"
 
 "21: @ours\n22: @ours"
 
@@ -192,106 +192,7 @@ export class ConfigSchema {
     }
   }
 
-  // ── ENV_MAP generation (auto-walk) ─────────────────────
-
-  /** Build flat ENV_VAR → dot.path mapping from all section fields */
-  static envMap(): EnvMap {
-    const map: EnvMap = {};
-    const s = new ConfigSchema();
-
-    const add = (prefix: string, obj: Record<string, unknown>,) => {
-      for (const [key, val,] of Object.entries(obj,)) {
-        const path = `${prefix}.${key}`;
-        const envKey = path.replaceAll(".", "_",).toUpperCase();
-        if (val && typeof val === "object" && !Array.isArray(val,)) {
-          add(path, val as Record<string, unknown>,);
-        } else {
-          map[envKey] = path;
-        }
-      }
-    };
-
-    add("server", s.server as unknown as Record<string, unknown>,);
-    add("db", s.db as unknown as Record<string, unknown>,);
-    add("assets", s.assets as unknown as Record<string, unknown>,);
-    add("assistant", s.assistant as unknown as Record<string, unknown>,);
-    add("logging", s.logging as unknown as Record<string, unknown>,);
-    add("tui", s.tui as unknown as Record<string, unknown>,);
-    add("docs", s.docs as unknown as Record<string, unknown>,);
-    add("ageGate", s.ageGate as unknown as Record<string, unknown>,);
-    add("auth", s.auth as unknown as Record<string, unknown>,);
-    add("transport", s.transport as unknown as Record<string, unknown>,);
-    add("messages", s.messages as unknown as Record<string, unknown>,);
-    add("nsfw", s.nsfw as unknown as Record<string, unknown>,);
-    add("generation", s.generation as unknown as Record<string, unknown>,);
-    add("byoKey", s.byoKey as unknown as Record<string, unknown>,);
-    add("encryption", s.encryption as unknown as Record<string, unknown>,);
-    add("headers", s.headers as unknown as Record<string, unknown>,);
-    add("dynamicResponse", s.dynamicResponse as unknown as Record<string, unknown>,);
-
-    // Manual overrides for renamed/mapped env vars that don't follow
-    // the SECTION_FIELD → SECTION_FIELD convention
-    const RENAMED: Record<string, string> = {
-      PORT: "server.port",
-      HOST: "server.host",
-      DB_TYPE: "db.type",
-      SQLITE_FILENAME: "db.sqliteFilename",
-      DATABASE_URL: "db.url",
-      ENABLE_ASSETS: "assets.enabled",
-      ASSETS_UPLOAD_DIR: "assets.uploadDir",
-      ASSETS_MAX_FILE_SIZE: "assets.maxFileSize",
-      ASSETS_COMPRESSION: "assets.compression",
-      ENABLE_ASSISTANT: "assistant.enabled",
-      LOG_LEVEL: "logging.level",
-      ENABLE_TUI: "tui.enabled",
-      ENABLE_DOCS: "docs.enabled",
-      AGE_GATE_ENABLED: "ageGate.enabled",
-      AGE_GATE_MINIMUM_AGE: "ageGate.minimumAge",
-      AGE_GATE_MODE: "ageGate.mode",
-      TLS_KEY: "server.tls.key",
-      TLS_CERT: "server.tls.cert",
-      AUTH_REQUIRED: "auth.required",
-      AUTH_REGISTRATION_OPEN: "auth.registrationOpen",
-      SESSION_TIMEOUT_HOURS: "auth.sessionTimeoutHours",
-      SESSION_MAX_PER_USER: "auth.maxSessionsPerUser",
-      DEMO_USERNAME: "auth.demoUsername",
-      DEMO_AUTO_SETUP: "auth.demoAutoSetup",
-      AUTH_ADMIN_USERNAME: "auth.adminUsername",
-      // eslint-disable-next-line sonarjs/no-hardcoded-passwords
-      AUTH_ADMIN_PASSWORD: "auth.adminPassword",
-      TRANSPORT_DEFAULT_PROTOCOL: "transport.defaultProtocol",
-      TRANSPORT_ENABLE_WEBSOCKET: "transport.enableWebSocket",
-      TRANSPORT_ENABLE_WEBTRANSPORT: "transport.enableWebTransport",
-      TRANSPORT_ENABLE_H2: "transport.enableH2",
-      TRANSPORT_ENABLE_H3: "transport.enableH3",
-      TRANSPORT_COMPRESSION_ENABLED: "transport.compression.enabled",
-      TRANSPORT_COMPRESSION_DEFAULT: "transport.compression.default",
-      TRANSPORT_COMPRESSION_THRESHOLD: "transport.compression.threshold",
-      TRANSPORT_MAX_FRAME_SIZE: "transport.limits.maxFrameSize",
-      TRANSPORT_MAX_PAYLOAD: "transport.limits.maxPayload",
-      TRANSPORT_MAX_CONCURRENT_STREAMS: "transport.limits.maxConcurrentStreams",
-      MESSAGE_AUTO_HIDE_INVALID: "messages.autoHideInvalid",
-      MESSAGE_HIDE_CONFIRMATION: "messages.hideConfirmation",
-      MESSAGE_MAX_LENGTH: "messages.maxLength",
-      MESSAGE_MAX_GENERATION_RETRIES: "messages.maxGenerationRetries",
-      MESSAGE_GENERATION_TIMEOUT_MS: "messages.generationTimeoutMs",
-      MESSAGE_IDEMPOTENCY_EXPIRY_HOURS: "messages.idempotencyExpiryHours",
-      ALLOW_NSFW: "nsfw.allowNsfw",
-      NSFW_MIN_AGE: "nsfw.nsfwMinAge",
-      LLM_DEFAULT_PROVIDER: "generation.defaultProvider",
-      BYO_KEY_ENABLED: "byoKey.enabled",
-      BYO_KEY_ENCRYPTION_KEY: "byoKey.encryptionKey",
-      SERVER_ENCRYPTION_KEY: "encryption.serverEncryptionKey",
-      ENCRYPTION_REQUIRED: "encryption.required",
-      COMPRESS_THRESHOLD: "encryption.compressThreshold",
-      COMPRESS_ALGORITHM: "encryption.compressAlgorithm",
-      TESTING_LLAMA_MODEL: "testing.llamaModel",
-      TESTING_SD_MODEL: "testing.sdModel",
-      TESTING_LLAMA_PORT: "testing.llamaPort",
-      TESTING_SD_PORT: "testing.sdPort",
-    };
-
-    Object.assign(map, RENAMED,);
+"26: @ours\n27: @ours"
     return map;
   }
 
@@ -347,7 +248,6 @@ export class ConfigSchema {
     }
   }
 
-"21: @ours\n22: @ours"
       required: [
         "server",
         "db",
