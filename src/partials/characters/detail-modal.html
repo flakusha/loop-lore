@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">System Prompt</label>
+        <label class="form-label">{{{ t("characters.systemPrompt") }}}</label>
         <div
           style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 200px; overflow-y: auto"
           data-field="system-prompt"
@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Personality</label>
+        <label class="form-label">{{{ t("characters.personality") }}}</label>
         <div
           style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 120px; overflow-y: auto"
           data-field="personality"
@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Scenario</label>
+        <label class="form-label">{{{ t("characters.scenario") }}}</label>
         <div
           style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 120px; overflow-y: auto"
           data-field="scenario"
@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Welcome Message</label>
+        <label class="form-label">{{{ t("characters.firstMessage") }}}</label>
         <div
           style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 120px; overflow-y: auto"
           data-field="welcome-message"
@@ -59,7 +59,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Tags</label>
+        <label class="form-label">{{{ t("characters.tags") }}}</label>
         <div
           style="display: flex; flex-wrap: wrap; gap: var(--space-2)"
           data-field="tags"
@@ -68,11 +68,13 @@
       </div>
       <!-- Mood Display -->
       <div class="form-group" data-field="mood-section" style="display: none">
-        <label class="form-label">Mood</label>
+        <label class="form-label">{{{ t("characters.mood") }}}</label>
         <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-sm)">
           <span style="font-size: 24px" data-field="mood-emoji">😐</span>
           <div style="flex: 1">
-            <div style="font-size: var(--fs-base-sm); font-weight: 500" data-field="mood-label">Neutral</div>
+            <div style="font-size: var(--fs-base-sm); font-weight: 500" data-field="mood-label">
+              {{{ t("characters.neutral") }}}
+            </div>
             <div style="height: 4px; background: var(--border-default); border-radius: 2px; margin-top: 4px; overflow: hidden">
               <div
                 style="height: 100%; width: 50%; background: var(--text-secondary); border-radius: 2px"
@@ -91,7 +93,7 @@
           onclick="startChatFromChar(this,)"
           data-testid="start-chat-btn"
         >
-          💬 Start Chat
+          {{{ t("characters.startChat") }}}
         </button>
         <button
           class="btn btn-secondary"
@@ -99,7 +101,7 @@
           onclick="editCharacter(this,)"
           data-testid="edit-character-btn"
         >
-          ✏️ Edit
+          ✏️ {{{ t("common.edit") }}}
         </button>
         <button
           class="btn btn-danger"
@@ -107,7 +109,7 @@
           onclick="deleteCharacter(this,)"
           data-testid="delete-character-btn"
         >
-          🗑 Delete
+          🗑 {{{ t("common.delete") }}}
         </button>
       </div>
     </div>
