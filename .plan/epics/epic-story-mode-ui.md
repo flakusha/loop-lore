@@ -8,7 +8,7 @@
 
 ## Summary
 
-Complete story mode interface including GM control panel, quest log, world state display, and turn order visualization. Required to make the story system usable.
+Complete story mode interface including GM control panel, quest log, world state display, turn order visualization, and GM-guided story creation. Required to make the story system usable. GM-guided story creation lets the user act as Game Master, directly guiding LLM characters in chat/group-chat to collaboratively create a story.
 
 ## Core Features
 
@@ -19,6 +19,16 @@ Complete story mode interface including GM control panel, quest log, world state
 - Quality evaluation display
 - Regeneration controls
 - World state controls
+
+### GM-Guided Story Creation
+
+The user as Game Master has explicit control over narrative direction in group-chat mode:
+
+- **Direct character prompts** — GM can target specific characters to respond
+- **Scene description** — GM sets the current scene for all participants
+- **Narrative constraints** — GM can constrain responses (in-character, topic, tone)
+- **Turn priority** — GM can set high/medium/low priority for participant turns
+- **Guidance commands** — `/guide`, `/target`, `/constraint`, `/scene`, `/skip`, `/priority` slash commands
 
 ### Quest Log
 
@@ -93,6 +103,26 @@ Complete story mode interface including GM control panel, quest log, world state
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### GM Guidance Panel
+
+```
+┌─ GM Guidance ─────────────────────────────────────────────┐
+│ Narrative Direction:                                       │
+│ [ Focus on the mysterious door ] [Explore the forest]     │
+│                                                          │
+│ Target Character: [▼ Character Name]                     │
+│ Constraints:                                               │
+│ ☐ Stay in-character as a cautious elf                   │
+│ ☑ No magic in this scene                                │
+│ ☐ Tone: Mysterious                                      │
+│                                                          │
+│ Turn Priority:                                           │
+│ Alice [High]  Bob [Medium]  Narrator [Low]              │
+│                                                          │
+│ [Apply Guidance] [Clear All]                            │
+└─────────────────────────────────────────────────────────┘
+```
+
 ### Quest Log Layout
 
 ```
@@ -100,70 +130,39 @@ Complete story mode interface including GM control panel, quest log, world state
 │ Quest Log                                           [+ New] │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│ ┌─ Active Quests (3) ──────────────────────────────────────┐│
+│ ┌─ Active Quests (3) ──────────────────────────────────┐│
 │ │                                                          ││
-│ │ ⭐ Main Quest: The Ancient Prophecy                      ││
-│ │    Objective: Find the three sacred artifacts            ││
-│ │    Progress: 1/3 artifacts found                         ││
-│ │    [View Details]                                        ││
+│ │ ⭐ Main Quest: The Ancient Prophecy                    ││
+│ │    Objective: Find the three sacred artifacts           ││
+│ │    Progress: 1/3 artifacts found                        ││
+│ │    [View Details]                                       ││
 │ │                                                          ││
-│ │ 📜 Side Quest: Help the Village                          ││
-│ │    Objective: Retrieve the stolen supplies               ││
-│ │    Progress: 50% complete                                ││
-│ │    [View Details]                                        ││
+│ │ 📜 Side Quest: Help the Village                         ││
+│ │    Objective: Retrieve the stolen supplies              ││
+│ │    Progress: 50% complete                               ││
+│ │    [View Details]                                       ││
 │ │                                                          ││
-│ │ 🔍 Exploration: Ancient Ruins                            ││
-│ │    Objective: Explore the hidden chambers                ││
-│ │    Progress: 2/5 chambers discovered                     ││
-│ │    [View Details]                                        ││
+│ │ 🔍 Exploration: Ancient Ruins                           ││
+│ │    Objective: Explore the hidden chambers               ││
+│ │    Progress: 2/5 chambers discovered                    ││
+│ │    [View Details]                                       ││
 │ │                                                          ││
 │ └─────────────────────────────────────────────────────────┘│
 │                                                             │
-│ ┌─ Completed Quests (5) ───────────────────────────────────┐│
-│ │ ✅ Welcome to the Village                                ││
-│ │ ✅ First Steps                                           ││
-│ │ ✅ The Merchant's Request                                ││
-│ │ ✅ Into the Wild                                         ││
-│ │ ✅ The Old Bridge                                        ││
+│ ┌─ Completed Quests (5) ─────────────────────────────────┐│
+│ │ ✅ Welcome to the Village                               ││
+│ │ ✅ First Steps                                          ││
+│ │ ✅ The Merchant's Request                               ││
+│ │ ✅ Into the Wild                                        ││
+│ │ ✅ The Old Bridge                                       ││
 │ └─────────────────────────────────────────────────────────┘│
 │                                                             │
-│ ┌─ Failed Quests (1) ──────────────────────────────────────┐│
-│ │ ❌ Race Against Time                                     ││
-│ │    Reason: Time limit expired                            ││
+│ ┌─ Failed Quests (1) ───────────────────────────────────┐│
+│ │ ❌ Race Against Time                                    ││
+│ │    Reason: Time limit expired                           ││
 │ └─────────────────────────────────────────────────────────┘│
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
-```
-
-### Quest Details Panel
-
-```
-┌─ Quest Details ────────────────────────────────────────────────┐
-│                                                               │
-│ ⭐ Main Quest: The Ancient Prophecy                           │
-│ ─────────────────────────────────────────────────────────────│
-│                                                               │
-│ Description:                                                  │
-│ An ancient prophecy speaks of three sacred artifacts          │
-│ that must be united to prevent a great catastrophe.           │
-│                                                               │
-│ Objectives:                                                   │
-│   ☑️ Find the Sword of Light                                  │
-│   ☑️ Find the Shield of Darkness                             │
-│   ☐ Find the Crown of Wisdom                                 │
-│                                                               │
-│ Progress: 2/3 (67%)                                          │
-│                                                               │
-│ Rewards:                                                      │
-│   - 500 XP                                                   │
-│   - Legendary Weapon                                          │
-│   - World Reputation +50                                      │
-│                                                               │
-│ Time Limit: 7 days (3 days remaining)                        │
-│                                                               │
-│ [Abandon Quest] [View History] [Edit Quest]                   │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
 ```
 
 ## Integration Points
@@ -185,6 +184,16 @@ Complete story mode interface including GM control panel, quest log, world state
 | Timeline     | Quest, World, Battle | Reusable history display  |
 | Actor card   | Story, Battle, NPC   | Reusable actor display    |
 
+### GM-Guided Story Creation Dependencies
+
+| System                              | How It Integrates                                                                                                     |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `epic-assistant-gm-flows.md`        | GM-guided story uses the same reconciliation infrastructure; the user-GM variant complements the assistant-GM variant |
+| `epic-chat-lifecycle-moderation.md` | Group chat infrastructure provides participant management, turn order, message tree                                   |
+| `docs/frontend/chat/group-chat.md`  | GM-guided story is documented as a variant of group chat                                                              |
+| `docs/frontend/chat/assistant.md`   | Assistant-GM and user-GM are complementary roles                                                                      |
+| `TASK-gm-guided-story-creation.md`  | Implementation tasks for GM-guided story creation                                                                     |
+
 ## Acceptance Criteria
 
 - [ ] GM control panel with turn management
@@ -199,6 +208,8 @@ Complete story mode interface including GM control panel, quest log, world state
 - [ ] Mobile responsive
 - [ ] Keyboard accessible
 - [ ] Screen reader support
+- [ ] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order
+- [ ] `/guide`, `/target`, `/constraint`, `/scene`, `/skip`, `/priority` commands functional
 
 ## Implementation Phases
 
@@ -220,7 +231,14 @@ Complete story mode interface including GM control panel, quest log, world state
 - Change history
 - State editing
 
-### Phase 4: Polish
+### Phase 4: GM-Guided Story Creation
+
+- GM guidance panel (narrative direction, character targeting, constraints, turn priority)
+- `/guide` and related slash commands
+- GM role wiring in group chat participant types
+- GM-guided story variant documentation
+
+### Phase 5: Polish
 
 - Mobile responsive
 - Keyboard accessible
@@ -228,13 +246,14 @@ Complete story mode interface including GM control panel, quest log, world state
 
 ## Tasks
 
-| Task                      | Priority | Status         |
-| ------------------------- | -------- | -------------- |
-| TASK-gm-panel.md          | P0       | ⬜ Not Started |
-| TASK-quest-log.md         | P0       | ⬜ Not Started |
-| TASK-story-world-state.md | P0       | ⬜ Not Started |
-| TASK-story-turn-order.md  | P0       | ⬜ Not Started |
-| TASK-story-alpine.md      | P0       | ⬜ Not Started |
+| Task                             | Priority | Status         |
+| -------------------------------- | -------- | -------------- |
+| TASK-gm-panel.md                 | P0       | ⬜ Not Started |
+| TASK-quest-log.md                | P0       | ⬜ Not Started |
+| TASK-story-world-state.md        | P0       | ⬜ Not Started |
+| TASK-story-turn-order.md         | P0       | ⬜ Not Started |
+| TASK-story-alpine.md             | P0       | ⬜ Not Started |
+| TASK-gm-guided-story-creation.md | P1       | ⬜ Not Started |
 
 ## Files to Create
 
@@ -243,9 +262,12 @@ Complete story mode interface including GM control panel, quest log, world state
 - `src/frontend/story/world-state.ts` — World state display
 - `src/frontend/story/turn-order.ts` — Turn order visualization
 - `src/frontend/alpine/story.ts` — Alpine.js story logic
+- `src/frontend/alpine/gm-guidance.ts` — GM guidance panel (new)
 
 ## Related Epics
 
 - **Epic Story Mode** — Backend story system
 - **Epic Quest System** — Backend quest system
 - **Epic World & Locations** — Backend world system
+- **Epic Assistant/GM Flows** — GM flow reconciliation; GM-guided story uses same infrastructure
+- **Epic Chat Lifecycle & Moderation** — Group chat infrastructure
