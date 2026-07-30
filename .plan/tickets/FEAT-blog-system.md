@@ -1,6 +1,6 @@
 # FEAT: Blog System
 
-**Status:** 🟡 Partial (see epic)
+**Status:** 🟡 Partial (core CRUD + comments + follows + moderation built)
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-blog-system
