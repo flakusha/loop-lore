@@ -26,5 +26,11 @@ export function healthRoutes(_opts: { database: Db; config: Config },): Elysia {
       timestamp,
       providers: providerList,
     },);
+  }, {
+    detail: {
+      summary: "Health check",
+      description: "Returns server health status including provider connectivity. No authentication required.",
+      tags: ["Health",],
+    },
   },) as unknown as Elysia;
 }
