@@ -15,6 +15,7 @@
 
 import { Elysia, } from "elysia";
 import { getLogger, } from "../logger";
+import { SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 interface FrontendLogEntry {
@@ -79,6 +80,9 @@ export function frontendLogsRoutes() {
 
     return jsonResponse({ ok: true, ingested: body.entries.length, },);
   }, {
+    response: {
+      200: SuccessResponse,
+    },
     detail: {
       summary: "Ingest frontend logs",
       description:

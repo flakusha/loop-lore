@@ -4,7 +4,7 @@
 // POST /api/export/progress — Returns SSE stream with progress events.
 // GET /api/export/download/:jobId — Downloads the completed export ZIP.
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
@@ -15,6 +15,7 @@ import type { CanonicalCharacter, } from "../characters/parser";
 import type { DB, } from "../db/schema";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { jsonParseOr, } from "../utils";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, } from "./http-utils";
 
 interface HandlerOpts {
@@ -541,6 +542,10 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
         },
       },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Start export with SSE progress",
         description: "Start a character export job and receive real-time progress via Server-Sent Events.",
@@ -574,6 +579,11 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
         },
       },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Download export",
         description: "Download a completed character export as a ZIP file.",
@@ -604,6 +614,11 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
         error: job.error,
       };
     }, {
+      response: {
+        200: t.Any(),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get export job status",
         description: "Get the current status and progress of an export job.",

@@ -8,7 +8,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
-import { AdminOverrideCreateBody, Id, } from "../validation/schemas";
+import { AdminOverrideCreateBody, ErrorResponse, Id, SuccessResponse, } from "../validation/schemas";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -44,6 +44,10 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
 
       return jsonResponse(overrides,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List all character overrides",
         description: "Returns all admin character overrides across all actors. Requires admin role.",
@@ -77,6 +81,10 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
 
       return jsonResponse(overrides,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List overrides for a specific actor",
         description: "Returns all character overrides for a specific actor. Requires admin role.",
@@ -123,6 +131,10 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     }, {
       params: t.Object({ actorId: Id, },),
       body: AdminOverrideCreateBody,
+      response: {
+        201: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Create a character override",
         description:
@@ -156,6 +168,10 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
 
       return jsonResponse({ ok: true, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Delete a character override",
         description: "Removes an admin character override by ID. Requires admin role.",
