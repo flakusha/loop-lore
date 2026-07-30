@@ -46,7 +46,11 @@
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "Mot de passe oublié ?",
     "needAnAccount": "Pas encore de compte ?",
-    "alreadyHaveAccount": "Déjà un compte ?"
+    "alreadyHaveAccount": "Déjà un compte ?",
+    "registrationClosed": "L'inscription est fermée.",
+    "usernameLength": "Le nom d'utilisateur doit faire 3–32 caractères.",
+    "passwordLength": "Le mot de passe doit faire au moins 6 caractères.",
+    "usernameTaken": "Le nom d'utilisateur est déjà pris."
   },
   "chat": {
     "sendMessage": "Send Message",
