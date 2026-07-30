@@ -1,7 +1,7 @@
 # Immediate Plan
 
-> **Last updated:** 2026-07-31 — P0 all complete (NSFW moderation infra committed); P1 complete; P2 actionable now
-> **Status:** P0 ✅ complete; P1 ✅ complete; P2 actionable now
+> **Last updated:** 2026-07-31 — P0/P1 complete; P1.5 accessibility gaps filled; P2 actionable now
+> **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 actionable now
 
 ---
 
@@ -30,11 +30,17 @@
 
 ## P1.5 — Accessibility (Next after P0/residual)
 
-| Priority | Epic / Task                        | Key Deliverables                                                                                                                                                                      | Status       | Effort | Ticket |
-| -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------ | ------ |
-| **P1.5** | **Accessibility — remaining gaps** | • `focus-visible` CSS on all focusable elements<br>• Focus trap for modals<br>• Skip links<br>• Screen reader live regions<br>• Touch gesture library<br>• 44×44px mobile tap targets | 🟡 ~60% done | Medium | — |
+| Priority | Epic / Task                        | Key Deliverables                                                                                                                                                                      | Status      | Effort | Ticket |
+| -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------ | ------ |
+| **P1.5** | **Accessibility — remaining gaps** | • `focus-visible` CSS on all focusable elements<br>• Focus trap for modals<br>• Skip links<br>• Screen reader live regions<br>• Touch gesture library<br>• 44×44px mobile tap targets | ✅ Complete  | Medium | — |
 
-**Next action**: Create `src/frontend/a11y/` module — focus-manager, touch-gestures, screen-reader utils, responsive helpers. Then add `a11y.css` (focus-visible, reduced-motion, high-contrast). Then wire skip links and modal focus traps in existing HTML templates.
+> P1.5 complete as of 2026-07-31. All 6 items done:
+> - Skip link HTML in `layout.html` (already existed)
+> - Modal focus traps wired in `ui.ts` (focus trap + restore + `role="dialog"`)
+> - `aria-live="polite"` on toast container; `role="region"` on notification dropdown
+> - `@media (prefers-reduced-motion: reduce)` kills animations/transitions
+> - `@media (prefers-contrast: more)` bolder outlines, brighter borders
+> - Touch gesture utility `src/frontend/touch.ts` (swipe/tap/long-press with cleanup)
 
 ---
 
