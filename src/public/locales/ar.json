@@ -460,7 +460,8 @@
     "sortBySize": "排序 حسب الحجم",
     "deleteSelected": "حذف المحدد",
     "downloadSelected": "تنزيل المحدد",
-    "preview": "معاينة"
+    "preview": "معاينة",
+    "searchAssets": "Search assets…"
   },
   "navigation": {
     "chat": "محادثة",
