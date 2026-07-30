@@ -4,14 +4,17 @@
  * API endpoints for managing character relationships,
  * standing, trust, and familiarity.
  */
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { RelationshipsService, } from "../characters/services/relationships-service";
 import {
   ActorIdParams,
   ActorTargetParams,
+  ErrorResponse,
   RelationshipCreateBody,
   RelationshipEventBody,
+  RelationshipResponse,
   RelationshipUpdateBody,
+  SuccessResponse,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
@@ -45,6 +48,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       return jsonResponse(relationships,);
     }, {
       params: ActorIdParams,
+      response: {
+        200: t.Array(RelationshipResponse),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List actor relationships",
         description: "List all relationships for an actor, optionally filtered by world.",
@@ -80,6 +88,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       return jsonResponse(relationship,);
     }, {
       params: ActorTargetParams,
+      response: {
+        200: RelationshipResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get actor relationship",
         description: "Get a specific relationship between two actors.",
@@ -128,6 +141,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: RelationshipCreateBody,
+      response: {
+        201: t.Object({ id: t.String(), }),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Create actor relationship",
         description: "Create a new relationship between two actors.",
@@ -164,6 +182,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorTargetParams,
       body: RelationshipUpdateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update actor relationship",
         description: "Update the properties of a relationship between two actors.",
@@ -193,6 +216,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       return jsonNoContent();
     }, {
       params: ActorTargetParams,
+      response: {
+        204: t.Void(),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Delete actor relationship",
         description: "Delete a relationship between two actors.",
@@ -235,6 +263,11 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: RelationshipEventBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Log relationship event",
         description: "Log a relationship event with deltas for standing, trust, and familiarity.",
