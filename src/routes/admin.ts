@@ -15,7 +15,7 @@
  *   DELETE /api/admin/model-roles/:role — clear role override
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { deleteConfig, getAllConfig, setConfig, } from "../admin/config";
 import {
   clearModelRoleOverride,
@@ -38,7 +38,9 @@ import {
   AdminTemplateCreateBody,
   AdminTemplateUpdateBody,
   ChatIdParams,
+  ErrorResponse,
   PaginationQuery,
+  SuccessResponse,
   UserIdParams,
   WorldIdParams,
 } from "../validation/schemas";
@@ -103,6 +105,10 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         },
         {
           query: PaginationQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            403: ErrorResponse,
+          },
           detail: {
             summary: "List users",
             description: "List all users with search, role, and status filtering. Admin only.",
