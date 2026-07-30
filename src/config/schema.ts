@@ -480,7 +480,7 @@ interface ModelRoleAssignment {
   model: string;
 }
 
-interface RegexTransform {
+export interface RegexTransform {
   /** Human-readable name for this transform */
   name: string;
   /** Regex pattern string */
@@ -699,7 +699,7 @@ interface HeadersConfig {
   nel: string | null;
 }
 
-interface FrontendConfig {
+export interface FrontendConfig {
   /** Frontend rendering mode: "htmx" for htmx partials (default), "spa" for single-page app, "none" for API-only */
   mode: "htmx" | "spa" | "none";
 }

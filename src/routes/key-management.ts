@@ -22,6 +22,7 @@ import {
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { notFound, unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 function log(): Logger {
@@ -46,6 +47,10 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List actor encryption keys",
         description: "Returns all encryption keys for the authenticated user.",
@@ -100,6 +105,10 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       },
       {
         body: t.Object({ name: t.String(), },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Generate a new named encryption key",
           description: "Creates a new encryption key with the given name for the authenticated user.",
@@ -142,6 +151,10 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Rotate the primary encryption key",
         description:
@@ -192,6 +205,11 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       },
       {
         params: t.Object({ id: t.String(), },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Revoke an encryption key",
           description: "Irreversibly revokes a key. Messages encrypted with this key become inaccessible.",
