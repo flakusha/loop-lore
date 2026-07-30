@@ -16,7 +16,7 @@ import {
   isTelemetryEnabled,
   record,
 } from "../telemetry/service";
-import { TelemetryEventBody, } from "../validation/schemas";
+import { ErrorResponse, SuccessResponse, TelemetryEventBody, } from "../validation/schemas";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -40,6 +40,10 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
       return jsonResponse({ ok: true, },);
     }, {
       body: TelemetryEventBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Record telemetry event",
         description: "Record a frontend telemetry event (requires telemetry to be enabled).",
@@ -72,6 +76,11 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse(result ?? { total: 0, distinct_sessions: 0, distinct_users: 0, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get analytics summary",
         description: "Get a summary of telemetry analytics (total events, distinct sessions/users). Admin only.",
@@ -102,6 +111,11 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse(rows,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get model analytics",
         description: "Get generation event counts by type (started, completed, failed). Admin only.",
@@ -133,6 +147,11 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse(rows,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get error analytics",
         description: "Get recent failed telemetry events. Admin only.",
@@ -169,6 +188,11 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse(rows,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get daily analytics",
         description: "Get daily event counts and active users over time. Admin only.",
@@ -196,6 +220,10 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
 
       return jsonResponse({ ok: true, purged: true, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Purge old telemetry",
         description: "Delete telemetry events older than the retention period (default 90 days). Admin only.",
