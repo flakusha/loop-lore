@@ -9,21 +9,21 @@ Defines how characters interact with each other in chat, including relationship-
 
 ## Interaction Types
 
-| Type | Trigger | Check | Outcome |
-| --- | --- | --- | --- |
-| Dialogue modifier | Character relationship tier | None | Modified response tone/vocabulary |
-| Social check | Persuasion, intimidation, deception | Charisma-based | Success/failure with degree |
-| Relationship shift | Significant interaction | Persuasion vs. target disposition | Standing change |
+| Type               | Trigger                             | Check                             | Outcome                           |
+| ------------------ | ----------------------------------- | --------------------------------- | --------------------------------- |
+| Dialogue modifier  | Character relationship tier         | None                              | Modified response tone/vocabulary |
+| Social check       | Persuasion, intimidation, deception | Charisma-based                    | Success/failure with degree       |
+| Relationship shift | Significant interaction             | Persuasion vs. target disposition | Standing change                   |
 
 ## Relationship Tiers
 
-| Tier | Dialogue Effect | Check Modifier |
-| --- | --- | --- |
-| Hostile | Aggressive/blocked options | -5 |
-| Unfriendly | Restricted options | -2 |
-| Neutral | Standard dialogue | +0 |
-| Friendly | Additional options | +2 |
-| Ally | Open options, shared info | +5 |
+| Tier       | Dialogue Effect            | Check Modifier |
+| ---------- | -------------------------- | -------------- |
+| Hostile    | Aggressive/blocked options | -5             |
+| Unfriendly | Restricted options         | -2             |
+| Neutral    | Standard dialogue          | +0             |
+| Friendly   | Additional options         | +2             |
+| Ally       | Open options, shared info  | +5             |
 
 ## Interaction Rules
 

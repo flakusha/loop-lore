@@ -19,11 +19,11 @@ NSFW seduction/reputation overlap with Social's reputation and persuasion. Neith
 
 ### Social Prerequisites for NSFW
 
-| NSFW Action | Required Social Skill | DC |
-| --- | --- | --- |
-| Seduction attempt | Persuasion | 12 |
-| Charm effect | Persuasion | 14 |
-| Deceptive seduction | Deception | 13 |
+| NSFW Action           | Required Social Skill  | DC |
+| --------------------- | ---------------------- | -- |
+| Seduction attempt     | Persuasion             | 12 |
+| Charm effect          | Persuasion             | 14 |
+| Deceptive seduction   | Deception              | 13 |
 | Intimate conversation | Empathy (Wisdom check) | 10 |
 
 ### Shared Reputation

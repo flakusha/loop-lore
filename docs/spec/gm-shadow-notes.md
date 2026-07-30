@@ -13,28 +13,28 @@ Actor notes are short, structured context blocks (lore, combat intel, relationsh
 
 Current columns (from `schema-manifest.ts`):
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | text PK | |
-| `actor_id` | text NOT NULL | |
-| `title` | text NOT NULL | |
-| `content` | text NOT NULL | The actual note text injected into LLM context |
-| `category` | text NOT NULL | Enum: general, combat, lore, relationships, reminders, system, etc. |
-| `pinned` | text NOT NULL | Boolean — pinned notes bypass TTL |
-| `sort_order` | integer NOT NULL | Display + injection priority |
-| `created_at` | text NOT NULL | |
-| `updated_at` | text NOT NULL | |
+| Column       | Type             | Notes                                                               |
+| ------------ | ---------------- | ------------------------------------------------------------------- |
+| `id`         | text PK          |                                                                     |
+| `actor_id`   | text NOT NULL    |                                                                     |
+| `title`      | text NOT NULL    |                                                                     |
+| `content`    | text NOT NULL    | The actual note text injected into LLM context                      |
+| `category`   | text NOT NULL    | Enum: general, combat, lore, relationships, reminders, system, etc. |
+| `pinned`     | text NOT NULL    | Boolean — pinned notes bypass TTL                                   |
+| `sort_order` | integer NOT NULL | Display + injection priority                                        |
+| `created_at` | text NOT NULL    |                                                                     |
+| `updated_at` | text NOT NULL    |                                                                     |
 
 ### Proposed Columns
 
-| Column | Type | Default | Description |
-|---|---|---|---|
-| `visibility` | text NOT NULL | `'visible'` | `visible` = injected into LLM context, `invisible` = exists but excluded from injection |
-| `ttl_messages` | integer NOT NULL | `10` | Number of assistant messages before note auto-expires. Default 10 (5 turns). `null` = no expiry (only via pinned). |
-| `ttl_remaining` | integer | `null` | Countdown decremented on each assistant message. Initialized to `ttl_messages` on creation. |
-| `status` | text NOT NULL | `'active'` | `active`, `inactive`, `expired` |
-| `scope` | text | `null` | `null` = applies to all chats for this actor, or a specific `chat_id` to restrict injection |
-| `author_type` | text NOT NULL | `'user'` | `user`, `assistant`, `gm` — who created the note (affects TTL defaults and shadow behavior) |
+| Column          | Type             | Default     | Description                                                                                                        |
+| --------------- | ---------------- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| `visibility`    | text NOT NULL    | `'visible'` | `visible` = injected into LLM context, `invisible` = exists but excluded from injection                            |
+| `ttl_messages`  | integer NOT NULL | `10`        | Number of assistant messages before note auto-expires. Default 10 (5 turns). `null` = no expiry (only via pinned). |
+| `ttl_remaining` | integer          | `null`      | Countdown decremented on each assistant message. Initialized to `ttl_messages` on creation.                        |
+| `status`        | text NOT NULL    | `'active'`  | `active`, `inactive`, `expired`                                                                                    |
+| `scope`         | text             | `null`      | `null` = applies to all chats for this actor, or a specific `chat_id` to restrict injection                        |
+| `author_type`   | text NOT NULL    | `'user'`    | `user`, `assistant`, `gm` — who created the note (affects TTL defaults and shadow behavior)                        |
 
 **Migration note:** Existing notes get `visibility='visible'`, `status='active'`, `ttl_messages=10`, `author_type='user'`. Behavior identical to today until TTL decrement logic is wired.
 
@@ -42,12 +42,12 @@ Current columns (from `schema-manifest.ts`):
 
 Notes expire by default. TTL values are determined by chat type and actor count:
 
-| Context | Default TTL | Rationale |
-|---|---|---|
-| **1x1 chat** (user ↔ assistant/GM) | 10 messages (5 turns) | Enough for a scene, auto-clears when topic shifts |
-| **Group chat** (2-3 actors) | 5 turns | Shorter — more actors = faster context bloat |
-| **Group chat** (4+ actors) | 3 turns | Aggressive — many actors multiply context pressure |
-| **Story mode** | Per-turn (matches `turn_strategy`) | Aligns with story turn cadence |
+| Context                            | Default TTL                        | Rationale                                          |
+| ---------------------------------- | ---------------------------------- | -------------------------------------------------- |
+| **1x1 chat** (user ↔ assistant/GM) | 10 messages (5 turns)              | Enough for a scene, auto-clears when topic shifts  |
+| **Group chat** (2-3 actors)        | 5 turns                            | Shorter — more actors = faster context bloat       |
+| **Group chat** (4+ actors)         | 3 turns                            | Aggressive — many actors multiply context pressure |
+| **Story mode**                     | Per-turn (matches `turn_strategy`) | Aligns with story turn cadence                     |
 
 **Override at creation:** User/GM can set custom `ttl_messages` when creating a note. Set to `null` only via explicit "persistent" flag (bypasses TTL).
 
@@ -55,14 +55,14 @@ Notes expire by default. TTL values are determined by chat type and actor count:
 
 Certain categories get TTL adjustments on top of the context base:
 
-| Category | Modifier | Example |
-|---|---|---|
-| `combat` | -2 messages (shorter) | "Goblins flanking left" — expires fast |
-| `lore` | +5 messages (longer) | "The kingdom fell 300 years ago" — stays relevant |
-| `relationships` | +3 messages (longer) | "Elara distrusts strangers" — persistent trait |
-| `reminders` | -3 messages (shorter) | "Check the north gate" — one-shot |
-| `system` | No modifier | Neutral |
-| `general` | No modifier | Neutral |
+| Category        | Modifier              | Example                                           |
+| --------------- | --------------------- | ------------------------------------------------- |
+| `combat`        | -2 messages (shorter) | "Goblins flanking left" — expires fast            |
+| `lore`          | +5 messages (longer)  | "The kingdom fell 300 years ago" — stays relevant |
+| `relationships` | +3 messages (longer)  | "Elara distrusts strangers" — persistent trait    |
+| `reminders`     | -3 messages (shorter) | "Check the north gate" — one-shot                 |
+| `system`        | No modifier           | Neutral                                           |
+| `general`       | No modifier           | Neutral                                           |
 
 Final TTL = `context_default + category_modifier`. Floor of 1 message minimum.
 
@@ -97,19 +97,19 @@ Shadow notes are a subset of notes with special behavior:
 
 `GET /api/actors/:actorId/notes/search?q=:query`
 
-| Parameter | Type | Description |
-|---|---|---|
-| `q` | string | Full-text search across title + content |
-| `category` | string | Filter by category |
-| `status` | string | `active`, `inactive`, `expired`, `all` (default: `active`) |
-| `visibility` | string | `visible`, `invisible`, `all` (default: `all`) |
-| `scope` | string | Chat ID or `null` for global |
-| `author_type` | string | `user`, `assistant`, `gm`, `all` (default: `all`) |
-| `pinned` | boolean | Filter pinned-only |
-| `sort` | string | `created_at`, `updated_at`, `sort_order`, `ttl_remaining` (default: `sort_order`) |
-| `order` | string | `asc`, `desc` (default: `asc`) |
-| `limit` | integer | Results per page (default: 50, max: 200) |
-| `offset` | integer | Pagination offset |
+| Parameter     | Type    | Description                                                                       |
+| ------------- | ------- | --------------------------------------------------------------------------------- |
+| `q`           | string  | Full-text search across title + content                                           |
+| `category`    | string  | Filter by category                                                                |
+| `status`      | string  | `active`, `inactive`, `expired`, `all` (default: `active`)                        |
+| `visibility`  | string  | `visible`, `invisible`, `all` (default: `all`)                                    |
+| `scope`       | string  | Chat ID or `null` for global                                                      |
+| `author_type` | string  | `user`, `assistant`, `gm`, `all` (default: `all`)                                 |
+| `pinned`      | boolean | Filter pinned-only                                                                |
+| `sort`        | string  | `created_at`, `updated_at`, `sort_order`, `ttl_remaining` (default: `sort_order`) |
+| `order`       | string  | `asc`, `desc` (default: `asc`)                                                    |
+| `limit`       | integer | Results per page (default: 50, max: 200)                                          |
+| `offset`      | integer | Pagination offset                                                                 |
 
 ### Search Response
 
@@ -228,12 +228,12 @@ Or via API: `POST /api/actors/:actorId/notes/:noteId/reactivate`
 
 Notifications are context-dependent:
 
-| Context | Notification Behavior |
-|---|---|
+| Context                                 | Notification Behavior                                                         |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
 | **Assistant-driven chat** (1x1 with AI) | Required — assistant/GM drives the story, needs to know when steering expires |
-| **User-driven chat** (1x1 with human) | Optional — opt-in via user config or chat settings |
-| **Group chat** | Required for assistant/GM participants only |
-| **Story mode** | Required — turn-based, expiry aligns with turn completion |
+| **User-driven chat** (1x1 with human)   | Optional — opt-in via user config or chat settings                            |
+| **Group chat**                          | Required for assistant/GM participants only                                   |
+| **Story mode**                          | Required — turn-based, expiry aligns with turn completion                     |
 
 ### Notification Payload
 
@@ -258,11 +258,11 @@ Notifications are context-dependent:
 
 ## Scope Resolution
 
-| Event | Behavior |
-|---|---|
-| Chat deleted | Notes with `scope = :chatId` → set `scope = null` (become global) and `status = 'inactive'` |
-| Actor deleted | Cascade delete all notes (existing FK behavior) |
-| Chat created | No action — notes remain global until explicitly scoped |
+| Event         | Behavior                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| Chat deleted  | Notes with `scope = :chatId` → set `scope = null` (become global) and `status = 'inactive'` |
+| Actor deleted | Cascade delete all notes (existing FK behavior)                                             |
+| Chat created  | No action — notes remain global until explicitly scoped                                     |
 
 ## Dev Mode: Full Message Contents Debug
 
@@ -314,6 +314,7 @@ In dev mode, each chat message shows an expandable debug panel:
 `GET /api/chats/:chatId/messages/:messageId/debug`
 
 Returns full message with:
+
 - Complete injected context (notes, memories, system prompts)
 - Token counts per component
 - Model used
@@ -325,6 +326,7 @@ Returns full message with:
 ### GET `/api/actors/:actorId/notes`
 
 Add query parameters:
+
 - `?status=active|inactive|expired|all` (default: `active`)
 - `?visibility=visible|invisible|all` (default: `all`)
 - `?scope=:chatId` (filter by scope)
@@ -333,6 +335,7 @@ Add query parameters:
 ### POST `/api/actors/:actorId/notes`
 
 Accept new fields in body:
+
 ```json
 {
   "title": "Scout Report",
@@ -350,6 +353,7 @@ Accept new fields in body:
 ### PATCH `/api/actors/:actorId/notes/:noteId`
 
 Accept partial updates of any field, including:
+
 - `status`: manual activate/deactivate/expire
 - `ttl_remaining`: manual reset
 - `ttl_messages`: change TTL without resetting countdown
@@ -365,6 +369,7 @@ Convenience endpoint: resets `status = 'active'`, `ttl_remaining = ttl_messages`
 ### Note Card (List View)
 
 Each note card shows:
+
 - Title + category badge
 - Content preview (first 120 chars, full in dev mode)
 - **Status indicator:** 🟢 active / 🟡 inactive / 🔴 expired
@@ -376,6 +381,7 @@ Each note card shows:
 ### Note Detail Modal
 
 Full edit form with:
+
 - Title, content (textarea), category (dropdown)
 - Visibility radio: visible / invisible
 - TTL: integer input + "messages" label (default: 10, blank = no expiry)
@@ -402,16 +408,16 @@ Full edit form with:
 
 ## Edge Cases
 
-| Case | Behavior |
-|---|---|
-| Note has `ttl_messages=0` | Expires immediately on next generation cycle (useful for one-shot directives) |
-| Note has `ttl_messages=null, pinned=true` | Never expires, always active |
-| Note has `ttl_messages=5, pinned=true` | TTL is ignored; note stays active indefinitely |
-| Scope chat is deleted | Note becomes `scope=null` + `status='inactive'` (preserved, not orphaned) |
-| Actor is deleted | Cascade delete all notes (existing FK behavior) |
-| Multiple notes with same sort_order | Stable sort by `created_at` as tiebreaker |
-| Shadow note created by user | Rejected — only assistant/GM can create shadow notes |
-| TTL category modifier pushes below 1 | Floor at 1 message minimum |
+| Case                                      | Behavior                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| Note has `ttl_messages=0`                 | Expires immediately on next generation cycle (useful for one-shot directives) |
+| Note has `ttl_messages=null, pinned=true` | Never expires, always active                                                  |
+| Note has `ttl_messages=5, pinned=true`    | TTL is ignored; note stays active indefinitely                                |
+| Scope chat is deleted                     | Note becomes `scope=null` + `status='inactive'` (preserved, not orphaned)     |
+| Actor is deleted                          | Cascade delete all notes (existing FK behavior)                               |
+| Multiple notes with same sort_order       | Stable sort by `created_at` as tiebreaker                                     |
+| Shadow note created by user               | Rejected — only assistant/GM can create shadow notes                          |
+| TTL category modifier pushes below 1      | Floor at 1 message minimum                                                    |
 
 ## Migration
 
@@ -428,7 +434,6 @@ ALTER TABLE actor_notes ADD COLUMN author_type text NOT NULL DEFAULT 'user';
 
 Existing notes: `visibility='visible'`, `status='active'`, `ttl_messages=10`, `author_type='user'` — identical behavior to today until TTL decrement logic is wired.
 
-
 ## Unified Search Interface (Notes + Memories + Extensible)
 
 Shared search/browse UI for notes, memories, and future item types (lore entries, items, etc.). Single consistent API and frontend component.
@@ -439,26 +444,26 @@ One search bar, one filter panel, one results grid — works across all "context
 
 ### Registered Item Types
 
-| Type | Source Table | Icon | Color |
-|---|---|---|---|
-| Notes | `actor_notes` | 📝 | Blue |
-| Memories | `actor_memories` | 🧠 | Purple |
-| Lore entries | `actor_lore_entries` | 📜 | Amber |
-| World lore | `world_lore_entries` | 🌍 | Green |
+| Type         | Source Table         | Icon | Color  |
+| ------------ | -------------------- | ---- | ------ |
+| Notes        | `actor_notes`        | 📝   | Blue   |
+| Memories     | `actor_memories`     | 🧠   | Purple |
+| Lore entries | `actor_lore_entries` | 📜   | Amber  |
+| World lore   | `world_lore_entries` | 🌍   | Green  |
 
 Future types register via a manifest:
 
 ```typescript
 interface SearchableItemType {
-  id: string;                    // 'notes' | 'memories' | 'lore' | ...
-  label: string;                 // 'Notes' | 'Memories' | ...
-  icon: string;                  // emoji
-  color: string;                 // tailwind class
-  table: string;                 // DB table name
-  searchFields: string[];        // columns to full-text search
-  filterFields: FilterField[];   // available filters
-  sortFields: SortField[];       // available sort options
-  injectable: boolean;           // can be injected into LLM context
+  id: string; // 'notes' | 'memories' | 'lore' | ...
+  label: string; // 'Notes' | 'Memories' | ...
+  icon: string; // emoji
+  color: string; // tailwind class
+  table: string; // DB table name
+  searchFields: string[]; // columns to full-text search
+  filterFields: FilterField[]; // available filters
+  sortFields: SortField[]; // available sort options
+  injectable: boolean; // can be injected into LLM context
 }
 ```
 
@@ -466,17 +471,17 @@ interface SearchableItemType {
 
 `GET /api/actors/:actorId/search`
 
-| Parameter | Type | Description |
-|---|---|---|
-| `q` | string | Full-text search across all registered item types |
-| `types` | string | Comma-separated: `notes,memories,lore` (default: all) |
-| `chat_id` | string | Filter items linked to this chat |
-| `interaction_id` | string | Filter items from this interaction/turn |
-| `status` | string | `active`, `inactive`, `expired`, `all` (default: `active`) |
-| `sort` | string | `created_at`, `updated_at`, `relevance` (default: `relevance`) |
-| `order` | string | `asc`, `desc` (default: `desc`) |
-| `limit` | integer | Results per page (default: 50, max: 200) |
-| `offset` | integer | Pagination offset |
+| Parameter        | Type    | Description                                                    |
+| ---------------- | ------- | -------------------------------------------------------------- |
+| `q`              | string  | Full-text search across all registered item types              |
+| `types`          | string  | Comma-separated: `notes,memories,lore` (default: all)          |
+| `chat_id`        | string  | Filter items linked to this chat                               |
+| `interaction_id` | string  | Filter items from this interaction/turn                        |
+| `status`         | string  | `active`, `inactive`, `expired`, `all` (default: `active`)     |
+| `sort`           | string  | `created_at`, `updated_at`, `relevance` (default: `relevance`) |
+| `order`          | string  | `asc`, `desc` (default: `desc`)                                |
+| `limit`          | integer | Results per page (default: 50, max: 200)                       |
+| `offset`         | integer | Pagination offset                                              |
 
 ### Response
 
@@ -507,9 +512,9 @@ interface SearchableItemType {
     }
   ],
   "facets": {
-    "types": {"notes": 15, "memories": 23, "lore": 8},
-    "chats": {"chat-789": 12, "chat-101": 8},
-    "statuses": {"active": 30, "inactive": 5, "expired": 11}
+    "types": { "notes": 15, "memories": 23, "lore": 8 },
+    "chats": { "chat-789": 12, "chat-101": 8 },
+    "statuses": { "active": 30, "inactive": 5, "expired": 11 }
   },
   "total": 46
 }
@@ -542,13 +547,14 @@ interface SearchableItemType {
 
 The interaction filter shows chat turns/interations as filterable units:
 
-| Interaction | Description | Item Count |
-|---|---|---|
-| Turn 5 | "Dragon encounter" | 4 |
-| Turn 4 | "Goblin ambush" | 6 |
-| Turn 3 | "Arrival at village" | 3 |
+| Interaction | Description          | Item Count |
+| ----------- | -------------------- | ---------- |
+| Turn 5      | "Dragon encounter"   | 4          |
+| Turn 4      | "Goblin ambush"      | 6          |
+| Turn 3      | "Arrival at village" | 3          |
 
 Items linked to a turn via:
+
 - `actor_notes.scope` matching the chat
 - `actor_memories.source_turn` or `actor_memories.source_chat`
 - `actor_lore_entries` linked to the same chat
@@ -557,11 +563,11 @@ Items linked to a turn via:
 
 All item types support time-based sorting:
 
-| Sort Option | Description |
-|---|---|
-| `created_at` | When item was created |
-| `updated_at` | When item was last modified |
-| `relevance` | Full-text search relevance score |
+| Sort Option     | Description                               |
+| --------------- | ----------------------------------------- |
+| `created_at`    | When item was created                     |
+| `updated_at`    | When item was last modified               |
+| `relevance`     | Full-text search relevance score          |
 | `ttl_remaining` | Notes only — items expiring soonest first |
 
 **Default sort:** `relevance` when searching, `updated_at` when browsing.
@@ -569,6 +575,7 @@ All item types support time-based sorting:
 ### Unified Result Card
 
 Each result shows:
+
 - **Type badge:** 📝 / 🧠 / 📜 / 🌍 with color
 - **Title** (bold)
 - **Content preview** (first 150 chars, with search term highlighted)
@@ -601,16 +608,16 @@ Plugins can register additional types:
 ```typescript
 // Plugin example: quest objectives
 SEARCHABLE_TYPES.push({
-  id: 'quest-objectives',
-  label: 'Quest Objectives',
-  icon: '🎯',
-  color: 'orange',
-  table: 'quest_objectives',
-  searchFields: ['title', 'description'],
-  filterFields: ['status', 'quest_id'],
-  sortFields: ['created_at', 'due_at'],
+  id: "quest-objectives",
+  label: "Quest Objectives",
+  icon: "🎯",
+  color: "orange",
+  table: "quest_objectives",
+  searchFields: ["title", "description",],
+  filterFields: ["status", "quest_id",],
+  sortFields: ["created_at", "due_at",],
   injectable: true,
-});
+},);
 ```
 
 ### Frontend Page
@@ -648,9 +655,9 @@ Every note operation emits structured logs with correlation IDs:
   "notes_injected": 3,
   "notes_expired": 1,
   "ttl_states": [
-    {"id": "note-1", "ttl_remaining": 7, "category": "lore"},
-    {"id": "note-2", "ttl_remaining": 3, "category": "combat"},
-    {"id": "note-3", "ttl_remaining": 0, "status": "expired"}
+    { "id": "note-1", "ttl_remaining": 7, "category": "lore" },
+    { "id": "note-2", "ttl_remaining": 3, "category": "combat" },
+    { "id": "note-3", "ttl_remaining": 0, "status": "expired" }
   ],
   "correlation_id": "gen-abc-123",
   "timestamp": "2026-07-28T12:00:00Z"
@@ -659,25 +666,25 @@ Every note operation emits structured logs with correlation IDs:
 
 ### Trace Events
 
-| Event | Logged When | Payload |
-|---|---|---|
-| `note.created` | Note created | Full note object |
-| `note.updated` | Note patched | Changed fields only |
-| `note.expired` | TTL hits 0 | Note ID, category, TTL was |
-| `note.reactivated` | Manual reactivation | Note ID, new TTL |
-| `note.injected` | Context assembly | Note IDs, token count, injection order |
-| `note.scope.resolved` | Chat deleted, scope fallback | Note IDs, old scope, new scope |
-| `note.shadow.created` | Shadow note by assistant/GM | Note ID, author_type |
-| `note.shadow.injected` | Shadow note in context | Note IDs, position in injection |
+| Event                  | Logged When                  | Payload                                |
+| ---------------------- | ---------------------------- | -------------------------------------- |
+| `note.created`         | Note created                 | Full note object                       |
+| `note.updated`         | Note patched                 | Changed fields only                    |
+| `note.expired`         | TTL hits 0                   | Note ID, category, TTL was             |
+| `note.reactivated`     | Manual reactivation          | Note ID, new TTL                       |
+| `note.injected`        | Context assembly             | Note IDs, token count, injection order |
+| `note.scope.resolved`  | Chat deleted, scope fallback | Note IDs, old scope, new scope         |
+| `note.shadow.created`  | Shadow note by assistant/GM  | Note ID, author_type                   |
+| `note.shadow.injected` | Shadow note in context       | Note IDs, position in injection        |
 
 ### Log Levels
 
-| Level | Use |
-|---|---|
-| `debug` | Individual note injection details, TTL decrement per-note |
-| `info` | Batch operations (expiry check, scope resolution), note CRUD |
-| `warn` | TTL floor hit (modifier pushed below 1), shadow note scope mismatch |
-| `error` | Injection failure, DB constraint violation |
+| Level   | Use                                                                 |
+| ------- | ------------------------------------------------------------------- |
+| `debug` | Individual note injection details, TTL decrement per-note           |
+| `info`  | Batch operations (expiry check, scope resolution), note CRUD        |
+| `warn`  | TTL floor hit (modifier pushed below 1), shadow note scope mismatch |
+| `error` | Injection failure, DB constraint violation                          |
 
 ### Tracing Integration
 
@@ -748,23 +755,23 @@ Dedicated notes management page, similar to gallery. Accessible from main naviga
 
 ### Sections
 
-| Section | Contents | Default View |
-|---|---|---|
-| **Active** | Notes with `status='active'` | Expanded |
+| Section          | Contents                           | Default View                |
+| ---------------- | ---------------------------------- | --------------------------- |
+| **Active**       | Notes with `status='active'`       | Expanded                    |
 | **Shadow Notes** | Notes with `author_type != 'user'` | Collapsed (click to expand) |
-| **Expired** | Notes with `status='expired'` | Collapsed |
-| **Inactive** | Notes with `status='inactive'` | Collapsed |
+| **Expired**      | Notes with `status='expired'`      | Collapsed                   |
+| **Inactive**     | Notes with `status='inactive'`     | Collapsed                   |
 
 ### Note Card Actions
 
-| Action | Icon | Behavior |
-|---|---|---|
-| Edit | ✏️ | Opens detail modal |
-| Pin/Unpin | 📌 | Toggle pinned status |
-| Visibility toggle | 👁️/🚫 | Toggle visible/invisible |
-| Reactivate | 🔄 | Reset TTL, set active |
-| Delete | 🗑️ | Permanent delete (with confirmation) |
-| Request from assistant | 🤖 | Flags note for assistant to reference in next response |
+| Action                 | Icon | Behavior                                               |
+| ---------------------- | ---- | ------------------------------------------------------ |
+| Edit                   | ✏️    | Opens detail modal                                     |
+| Pin/Unpin              | 📌   | Toggle pinned status                                   |
+| Visibility toggle      | 👁️/🚫 | Toggle visible/invisible                               |
+| Reactivate             | 🔄   | Reset TTL, set active                                  |
+| Delete                 | 🗑️    | Permanent delete (with confirmation)                   |
+| Request from assistant | 🤖   | Flags note for assistant to reference in next response |
 
 ### Request from Assistant
 
@@ -782,6 +789,7 @@ The "Request from assistant" action is a **soft signal** — it doesn't force th
 ```
 
 **Behavior:**
+
 - Requested notes get a `📌` priority boost in injection order
 - Assistant sees a hint: "User requested you reference: Kingdom History"
 - Assistant can acknowledge or ignore — it's a suggestion, not a command
@@ -800,6 +808,7 @@ Creative Studio
 ```
 
 **Cross-linking:**
+
 - Notes can reference gallery assets (via `asset_id` field on notes)
 - Gallery assets can show "Referenced by: 3 notes" badge
 - Notes page has a "Link Asset" button that opens gallery picker
@@ -807,6 +816,7 @@ Creative Studio
 ### Note Detail Modal
 
 Full edit form with:
+
 - Title, content (textarea), category (dropdown)
 - Visibility radio: visible / invisible
 - TTL: integer input + "messages" label (default: 10, blank = no expiry)
@@ -822,13 +832,14 @@ Full edit form with:
 - Bulk TTL reset (reactivate expired notes)
 - Bulk scope assignment
 - Bulk visibility toggle
+
 ## Integration Points
 
-| System | Relationship |
-|---|---|
-| `memory-injection.ts` | Primary consumer — reads active, visible notes for LLM context |
-| `actor_memories.ts` | Parallel system — notes are intentional, memories are organic |
-| `chat/service.ts` | Triggers TTL decrement on assistant message completion |
-| `turning/` | Story mode also triggers TTL decrement on turn completion |
-| `notifications/` | Expiry notifications (context-dependent) |
-| `frontend/dev-mode.ts` | Enhanced debug display when devMode active |
+| System                 | Relationship                                                   |
+| ---------------------- | -------------------------------------------------------------- |
+| `memory-injection.ts`  | Primary consumer — reads active, visible notes for LLM context |
+| `actor_memories.ts`    | Parallel system — notes are intentional, memories are organic  |
+| `chat/service.ts`      | Triggers TTL decrement on assistant message completion         |
+| `turning/`             | Story mode also triggers TTL decrement on turn completion      |
+| `notifications/`       | Expiry notifications (context-dependent)                       |
+| `frontend/dev-mode.ts` | Enhanced debug display when devMode active                     |

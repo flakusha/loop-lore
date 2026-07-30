@@ -18,6 +18,7 @@ Chat privacy specification — covers message encryption, access control, privac
 ## Chat Privacy Systems
 
 ### Core Privacy Model
+
 interface ChatPrivacySettings {
 }
 interface MessageAccessControl {

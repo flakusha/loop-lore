@@ -38,22 +38,22 @@ sdcpp API families. Good for fast txt2img and basic img2img.
 
 ### Generation Targets
 
-| Entity    | Asset kind     | Model (Primary)       | Model (Fallback)      |
-| --------- | -------------- | --------------------- | --------------------- |
-| Character | Portrait       | FLUX.1 Kontext        | Qwen Image Edit       |
-| Item      | Icon / render  | FLUX.1 Kontext        | Qwen Image Edit       |
-| Location  | Scene art      | FLUX.1 Kontext        | Qwen Image Edit       |
-| World     | Map / mood art | FLUX.1 Kontext        | Qwen Image Edit       |
+| Entity    | Asset kind     | Model (Primary) | Model (Fallback) |
+| --------- | -------------- | --------------- | ---------------- |
+| Character | Portrait       | FLUX.1 Kontext  | Qwen Image Edit  |
+| Item      | Icon / render  | FLUX.1 Kontext  | Qwen Image Edit  |
+| Location  | Scene art      | FLUX.1 Kontext  | Qwen Image Edit  |
+| World     | Map / mood art | FLUX.1 Kontext  | Qwen Image Edit  |
 
 ### Editing Models (Tested 2026-07-28)
 
-| Model | Status | VRAM | Notes |
-|-------|--------|------|-------|
-| FLUX.1 Kontext | Not tested | 4-6GB (--clip-on-cpu) | High priority, best potential |
-| Qwen Image Edit | Works | >20GB real | Slow, needs layer rotation |
-| Krea 2 Edit | Not working | ~12GB | Needs retest |
-| Klein 4B/9B | Strange results | 4-16GB | Needs investigation |
-| LoRA | Works | Varies | Coeff 0.3-0.7 typical |
+| Model           | Status          | VRAM                  | Notes                         |
+| --------------- | --------------- | --------------------- | ----------------------------- |
+| FLUX.1 Kontext  | Not tested      | 4-6GB (--clip-on-cpu) | High priority, best potential |
+| Qwen Image Edit | Works           | >20GB real            | Slow, needs layer rotation    |
+| Krea 2 Edit     | Not working     | ~12GB                 | Needs retest                  |
+| Klein 4B/9B     | Strange results | 4-16GB                | Needs investigation           |
+| LoRA            | Works           | Varies                | Coeff 0.3-0.7 typical         |
 
 ### Request Interface
 
@@ -62,7 +62,7 @@ interface ImageGenRequest {
   prompt: string;
   negative_prompt?: string;
   entity_ref?: EntityRef;
-  size: [number, number];
+  size: [number, number,];
   seed?: number;
   // Editing
   mode: "txt2img" | "edit" | "style" | "upscale";
@@ -114,23 +114,27 @@ interface ScenarioSource {
 ## Tasks
 
 ### Phase 1: Core Image Generation (MVP)
+
 - [ ] Image generation request/response adapter (ComfyUI primary, sd.cpp secondary)
 - [ ] `/image <prompt>` command (txt2img via ComfyUI workflow)
 - [ ] Entity-to-asset mapping for characters/items/locations/worlds
 - [ ] Backend routing logic (ComfyUI for complex, sd.cpp for simple)
 
 ### Phase 2: Text-Guided Editing (High Priority)
+
 - [ ] `/image edit <prompt> --ref <file>` command (FLUX.1 Kontext template)
 - [ ] FLUX.1 Kontext ComfyUI workflow template
 - [ ] Qwen Image Edit ComfyUI workflow template (fallback)
 - [ ] LoRA application in workflows (LoraLoader node, coeff 0.3-0.7)
 
 ### Phase 3: Supporting Features (Medium Priority)
+
 - [ ] `/image style <ref-image>` command (Krea 2 style reference or LoRA)
 - [ ] `/image upscale <file>` command (ESRGAN template)
 - [ ] Intent detection model + routing table
 
 ### Phase 4: Advanced Features (Lower Priority)
+
 - [ ] `/image edit <prompt> --mask <file>` command (inpainting, low priority)
 - [ ] Approved tool-execution allowlist + policy
 - [ ] External API call policy gate

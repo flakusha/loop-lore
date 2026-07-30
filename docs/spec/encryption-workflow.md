@@ -28,11 +28,11 @@ SERVER_ENCRYPTION_KEY (env var, hex 64 chars = 256 bit)
 
 Chats have three encryption levels, set at creation via `chats.encryption_level`:
 
-| Tier | Behaviour | Status |
-|------|-----------|--------|
-| `public` | Plaintext, no crypto | ✅ Built |
-| `standard` | Server-mediated AES-256-GCM via chat keys | ✅ Built |
-| `private` | E2E — clients pre-encrypt, server cannot decrypt | ⬜ Not wired |
+| Tier       | Behaviour                                        | Status       |
+| ---------- | ------------------------------------------------ | ------------ |
+| `public`   | Plaintext, no crypto                             | ✅ Built     |
+| `standard` | Server-mediated AES-256-GCM via chat keys        | ✅ Built     |
+| `private`  | E2E — clients pre-encrypt, server cannot decrypt | ⬜ Not wired |
 
 ## Compress-Encrypt Pipeline — `src/crypto/pipeline.ts` ✅
 
@@ -57,8 +57,8 @@ Chats have three encryption levels, set at creation via `chats.encryption_level`
 
 ```typescript
 interface PipelineConfig {
-  threshold: number;    // COMPRESS_THRESHOLD (default 128)
-  algorithm: "gzip" | "brotli" | "zstd";  // COMPRESS_ALGORITHM
+  threshold: number; // COMPRESS_THRESHOLD (default 128)
+  algorithm: "gzip" | "brotli" | "zstd"; // COMPRESS_ALGORITHM
 }
 ```
 
@@ -127,15 +127,15 @@ Tier-aware wrapper around the pipeline:
 
 ## Error Handling
 
-| Layer | Failure | Behaviour |
-|-------|---------|-----------|
-| SMK | Env missing + required=true | Throws on startup — refuses to start |
-| SMK | Env missing + required=false | Dev mode — no encryption, warning |
-| Encrypt | Key invalid/null | 500. No partial write. |
-| Decrypt | Auth tag mismatch | Throw — tampered |
-| Decrypt | Key missing/revoked | 403 |
-| Decompress | Corrupt data | Return raw bytes, log warning |
-| Parse | Malformed JSON | Return error, log audit event |
+| Layer      | Failure                      | Behaviour                            |
+| ---------- | ---------------------------- | ------------------------------------ |
+| SMK        | Env missing + required=true  | Throws on startup — refuses to start |
+| SMK        | Env missing + required=false | Dev mode — no encryption, warning    |
+| Encrypt    | Key invalid/null             | 500. No partial write.               |
+| Decrypt    | Auth tag mismatch            | Throw — tampered                     |
+| Decrypt    | Key missing/revoked          | 403                                  |
+| Decompress | Corrupt data                 | Return raw bytes, log warning        |
+| Parse      | Malformed JSON               | Return error, log audit event        |
 
 ## Configuration
 
@@ -149,17 +149,17 @@ COMPRESS_ALGORITHM=gzip         # gzip | brotli | zstd
 
 ## Remaining Work
 
-| Item | Priority | Blocked By |
-|------|----------|------------|
-| Auto-key rotation (cron/timer) | Medium | None |
-| Asset encryption | Medium | Wire message pipeline (done) |
-| Time-based access expiry | Medium | Group key distribution (done) |
-| World/Location encryption | Low | Schema design |
-| Asymmetric key pairs (E2E) | Low | Architecture clarification |
-| Browser pre-encrypt integration | Medium | Feature detection, fallbacks |
-| Key management UI (frontend) | Medium | Routes exist, UI pending |
-| Crypto test isolation fix | High | ~20 failures in full suite |
-| Anonymous chat mode | Medium | ✅ Done |
+| Item                            | Priority | Blocked By                    |
+| ------------------------------- | -------- | ----------------------------- |
+| Auto-key rotation (cron/timer)  | Medium   | None                          |
+| Asset encryption                | Medium   | Wire message pipeline (done)  |
+| Time-based access expiry        | Medium   | Group key distribution (done) |
+| World/Location encryption       | Low      | Schema design                 |
+| Asymmetric key pairs (E2E)      | Low      | Architecture clarification    |
+| Browser pre-encrypt integration | Medium   | Feature detection, fallbacks  |
+| Key management UI (frontend)    | Medium   | Routes exist, UI pending      |
+| Crypto test isolation fix       | High     | ~20 failures in full suite    |
+| Anonymous chat mode             | Medium   | ✅ Done                       |
 
 ## References
 

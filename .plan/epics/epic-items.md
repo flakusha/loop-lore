@@ -18,6 +18,7 @@ Items specification — covers item types, properties, interactions, loot tables
 ## Item Systems
 
 ### Core Item Model
+
 interface Item {
 }
 interface ItemType {
