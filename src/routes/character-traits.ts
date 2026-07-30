@@ -208,6 +208,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
       {
         params: t.Object({ actorId: Id, worldId: Id, },),
+        response: {
+          200: ListResponse(TraitResponse,),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "List world traits",
           description: "Get all world-specific traits for an actor.",
@@ -233,6 +238,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
       {
         params: t.Object({ actorId: Id, worldId: Id, traitName: t.String(), },),
+        response: {
+          200: TraitResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get world trait",
           description: "Get a specific world trait by name.",
