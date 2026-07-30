@@ -1,6 +1,6 @@
 # TASK: Related Memory & Event Injection Hooks
 
-**Status:** ✅ Done
+**Status:** ✅ Done (closed via git issue)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems

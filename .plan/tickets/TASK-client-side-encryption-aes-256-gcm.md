@@ -1,6 +1,6 @@
 # TASK: Client-Side Encryption (AES-256-GCM)
 
-**Status:** ✅ Done
+**Status:** ✅ Done (closed via git issue)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-encryption-foundation
