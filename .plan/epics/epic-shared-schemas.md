@@ -189,26 +189,26 @@ const NSFW_RATING_HIERARCHY = [
 
 ### Core Schema Implementation (High Priority)
 
-- [ ] **Unified ReputationScore Schema**
-  - Define `ReputationScore` interface
-  - Define `ReputationModifier` interface
-  - Define tier mapping constants
+- [x] **Unified ReputationScore Schema**
+  - Define `ReputationScore` interface — ✅ TypeBox schema in `src/validation/schemas.ts`
+  - Define `ReputationModifier` interface — ✅ TypeBox schema
+  - Define tier mapping constants — ✅ `ReputationTier` union literal
   - Create migration plan for Social, Faction, NSFW
   - Update Social epic to use shared schema
   - Update Faction epic to use shared schema
   - Update NSFW epic to use shared schema
 
-- [ ] **Unified ConsentState Schema**
-  - Define `ConsentState` interface
-  - Define `ConsentAuditEntry` interface
+- [x] **Unified ConsentState Schema**
+  - Define `ConsentState` interface — ✅ TypeBox schema in `src/validation/schemas.ts`
+  - Define `ConsentAuditEntry` interface — ✅ `ConsentUpdateBody` schema
   - Integration with Chat Lifecycle NSFW toggle
   - Integration with NSFW encounter mechanics
   - Audit trail for consent decisions
   - Revocation mechanism
 
-- [ ] **NSFWContentRating Enforcement Contract**
-  - Define `NSFWContentRating` enum
-  - Define `NSFWRatingEnforcement` interface
+- [x] **NSFWContentRating Enforcement Contract**
+  - Define `NSFWContentRating` enum — ✅ `ContentRating` enum in `src/db/enums-character.ts`
+  - Define `NSFWRatingEnforcement` interface — ✅ TypeBox schema in `src/validation/schemas.ts`
   - Runtime enforcement at generation boundary
   - Content filtering based on rating
   - User preference override with warnings
