@@ -2901,3 +2901,50 @@ html {
   color: #000;
   font-weight: 600;
 }
+
+/* ── Accessibility: Reduced Motion ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .toast {
+    animation: none !important;
+  }
+
+  .sidebar,
+  .modal-overlay,
+  .notif-dropdown {
+    transition: none !important;
+  }
+}
+
+/* ── Accessibility: High Contrast ───────────────────────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --border-default: #fff;
+    --border-strong: #fff;
+    --border-subtle: #ccc;
+    --text-primary: #fff;
+    --text-secondary: #ddd;
+  }
+
+  .btn:focus-visible,
+  .btn-icon:focus-visible,
+  .form-input:focus-visible,
+  .form-select:focus-visible,
+  .text-input:focus-visible,
+  .world-edit-tab:focus-visible {
+    outline-width: 3px;
+    outline-style: solid;
+  }
+
+  .modal-overlay {
+    border: 2px solid #fff;
+  }
+}
