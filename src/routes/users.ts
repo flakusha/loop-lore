@@ -9,13 +9,13 @@
  *   PUT  /api/users/:id/settings   — update user settings
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { validateAge, } from "../age-gate/service";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { forbidden, notFound, } from "../validation/middleware";
-import { UserIdParams, UserProfileUpdateBody, } from "../validation/schemas";
+import { ErrorResponse, SuccessResponse, UserIdParams, UserProfileUpdateBody, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
 export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
@@ -36,6 +36,11 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         return jsonResponse(user,);
       },
       {
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get current user",
           description: "Get the authenticated user's profile.",

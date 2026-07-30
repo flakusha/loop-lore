@@ -367,6 +367,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       return jsonResponse(traits,);
     }, {
       params: t.Object({ actorId: Id, locationId: Id, },),
+      response: {
+        200: ListResponse(TraitResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
     },)
     .get("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -383,6 +388,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       return jsonResponse(trait,);
     }, {
       params: t.Object({ actorId: Id, locationId: Id, traitName: t.String(), },),
+      response: {
+        200: TraitResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
     },)
     .post("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -409,6 +419,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     }, {
       params: t.Object({ actorId: Id, locationId: Id, },),
       body: LocationTraitCreateBody,
+      response: {
+        200: TraitResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
     },)
     .put("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -433,6 +448,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     }, {
       params: t.Object({ actorId: Id, locationId: Id, traitName: t.String(), },),
       body: LocationTraitUpdateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
     },)
     .delete("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -448,6 +468,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       return jsonNoContent();
     }, {
       params: t.Object({ actorId: Id, locationId: Id, traitName: t.String(), },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
     },)
     // ── Bulk Traits ─────────────────────────────────────────
     .get("/api/actors/:actorId/traits", async (ctx: any,) => {
@@ -466,5 +491,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       return jsonResponse(traits,);
     }, {
       params: t.Object({ actorId: Id, },),
+      response: {
+        200: ListResponse(TraitResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
     },);
 }

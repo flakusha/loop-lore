@@ -95,7 +95,12 @@ export function chatsRoutes(opts: HandlerOpts,) {
         {
           query: PaginationQuery,
           response: {
-            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            200: t.Object({
+              data: t.Array(t.Any(),),
+              total: t.Number(),
+              page: t.Number(),
+              pageSize: t.Number(),
+            },),
             401: ErrorResponse,
           },
           detail: {
@@ -184,7 +189,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           return jsonCreated({ id: newChatId, },);
         },
-        { body: ChatCreateBody, response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 403: ErrorResponse, }, },
+        {
+          body: ChatCreateBody,
+          response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 403: ErrorResponse, },
+        },
       )
       // ── Batch chat operations ──────────────────────────────────
       .post(
@@ -245,6 +253,9 @@ export function chatsRoutes(opts: HandlerOpts,) {
           return jsonResponse({ ...result.chat, participants: result.participants, },);
         },
         { params: ChatIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
+      )
+      .put(
+        "/api/chats/:id",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
@@ -276,7 +287,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
           }
           return jsonResponse({ ok: true, },);
         },
-        { body: ChatUpdateBody, params: ChatIdParams, },
+        {
+          body: ChatUpdateBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .delete(
         "/api/chats/:id",
@@ -292,7 +307,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           await deleteChat(database, id,);
           return jsonNoContent();
         },
-        { params: ChatIdParams, },
+        { params: ChatIdParams, response: { 204: t.Void(), 401: ErrorResponse, 403: ErrorResponse, }, },
       )
       .get(
         "/api/chats/:id/export",
@@ -379,7 +394,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             },
           },);
         },
-        { params: ChatIdParams, },
+        { params: ChatIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .get(
         "/api/chats/:id/participants",
@@ -405,7 +420,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse(participants,);
         },
-        { params: ChatIdParams, },
+        { params: ChatIdParams, response: { 200: t.Array(t.Any(),), 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .post(
         "/api/chats/:id/participants",
@@ -470,6 +485,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
           params: ChatIdParams,
           // eslint-disable-next-line unicorn/max-nested-calls
           body: t.Object({ actorId: t.String({ minLength: 1, },), role: t.Optional(t.String(),), },),
+          response: {
+            201: t.Object({ id: t.String(), },),
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
         },
       )
       .put(
@@ -508,7 +528,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { params: ChatParticipantParams, body: ChatParticipantUpdateBody, },
+        {
+          params: ChatParticipantParams,
+          body: ChatParticipantUpdateBody,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .delete(
         "/api/chats/:id/participants/:actorId",
@@ -559,7 +583,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           return jsonNoContent();
         },
-        { params: ChatParticipantParams, },
+        { params: ChatParticipantParams, response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .put(
         "/api/chats/:id/location",
@@ -615,7 +639,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name, },);
         },
-        { body: ChatLocationUpdateBody, params: ChatIdParams, },
+        {
+          body: ChatLocationUpdateBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .put(
         "/api/chats/:id/persona",
@@ -643,7 +671,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { body: ChatPersonaUpdateBody, params: ChatIdParams, },
+        {
+          body: ChatPersonaUpdateBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .put(
         "/api/chats/:id/impersonate",
@@ -671,7 +703,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        { body: ChatImpersonateBody, params: ChatIdParams, },
+        {
+          body: ChatImpersonateBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
       .put(
         "/api/chats/:id/mark-read",
@@ -708,7 +744,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           return jsonResponse({ ok: true, },);
         },
-        { body: ChatMarkReadBody, params: ChatIdParams, },
+        {
+          body: ChatMarkReadBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        },
       )
   );
 }
