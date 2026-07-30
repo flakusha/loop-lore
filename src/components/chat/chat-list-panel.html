@@ -24,7 +24,7 @@
         x-model="_chatFilter"
         style="width: 140px; font-size: 12px; height: 26px"
       />
-      <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
+      <button class="btn-icon" @click="$store.ui.showChatList = false" x-bind:title="t('common.close')">&times;</button>
     </div>
   </div>
   <!-- Batch action bar -->
