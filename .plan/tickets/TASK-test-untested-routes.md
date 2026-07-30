@@ -1,6 +1,6 @@
 # TASK: Add tests for untested routes (13 files)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed via git issue)
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-logic-reconciliation

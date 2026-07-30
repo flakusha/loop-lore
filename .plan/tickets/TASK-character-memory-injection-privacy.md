@@ -1,6 +1,6 @@
 # TASK: Character: Memory Injection & Privacy
 
-**Status:** ✅ Done
+**Status:** ✅ Done (closed via git issue)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-character-core-system
