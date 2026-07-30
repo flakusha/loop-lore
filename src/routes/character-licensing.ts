@@ -50,6 +50,12 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(licensing,);
+    }, {
+      detail: {
+        summary: "Get character licensing information",
+        description: "Returns the licensing details (CC0, custom, or proprietary) for the specified actor.",
+        tags: ["Characters", "Licensing",],
+      },
     },)
     // ── Create or update licensing ─────────────────────────────
     .post("/api/actors/:actorId/licensing", async (ctx: any,) => {
@@ -120,6 +126,13 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonCreated({ id, },);
+    }, {
+      detail: {
+        summary: "Create or update character licensing",
+        description:
+          "Upserts licensing information for an actor including license type, custom text, attribution, and derivative/commercial/share-alike flags.",
+        tags: ["Characters", "Licensing",],
+      },
     },)
     // ── Delete licensing ───────────────────────────────────────
     .delete("/api/actors/:actorId/licensing", async (ctx: any,) => {
@@ -146,5 +159,11 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Delete character licensing",
+        description: "Removes all licensing information for the specified actor.",
+        tags: ["Characters", "Licensing",],
+      },
     },);
 }

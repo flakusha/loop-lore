@@ -61,11 +61,24 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config },)
           status: HttpStatus.InternalServerError,
         },);
       }
+    }, {
+      detail: {
+        summary: "Get chat encryption key",
+        description:
+          "Derive and return the encryption key for a specific chat, used for client-side message encryption.",
+        tags: ["Messages", "Encryption",],
+      },
     },)
     .get("/api/encryption/status", async () => {
       return jsonResponse({
         encryptionEnabled: isEncryptionEnabled(),
         anonymousMode: isAnonymousModeEnabled(),
       },);
+    }, {
+      detail: {
+        summary: "Get encryption status",
+        description: "Check whether encryption and anonymous mode are enabled on the server.",
+        tags: ["Messages", "Encryption",],
+      },
     },) as unknown as Elysia;
 }

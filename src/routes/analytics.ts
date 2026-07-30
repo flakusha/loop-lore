@@ -59,6 +59,13 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
         avgLatencyMs: stats?.avgLatencyMs ?? 0,
         costEstimate,
       },);
+    }, {
+      detail: {
+        summary: "Get chat analytics",
+        description:
+          "Retrieve per-chat statistics including message count, token usage, average latency, and cost estimate.",
+        tags: ["Analytics",],
+      },
     },)
     .get("/api/analytics/overview", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -104,5 +111,12 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
         costEstimate,
         failedGenerations: failed?.failedGenerations ?? 0,
       },);
+    }, {
+      detail: {
+        summary: "Get analytics overview",
+        description:
+          "Retrieve aggregate statistics across all chats including total messages, tokens, latency, and cost estimate.",
+        tags: ["Analytics",],
+      },
     },) as unknown as Elysia;
 }

@@ -50,6 +50,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       },);
 
       return { success: true, post, };
+    }, {
+      detail: {
+        summary: "Create blog post",
+        description: "Create a new blog post with title, body, and optional metadata.",
+        tags: ["Blog",],
+      },
     },)
     .get("/api/blog/posts/:id", async (ctx: any,) => {
       const t = ctx.t as TranslatorFn | undefined;
@@ -59,6 +65,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
       await svc.incrementViewCount(post.id,);
       return { success: true, post, };
+    }, {
+      detail: {
+        summary: "Get blog post",
+        description: "Get a single blog post by ID and increment its view count.",
+        tags: ["Blog",],
+      },
     },)
     .get("/api/blog/posts", async (ctx: any,) => {
       const query = ctx.query as Record<string, string>;
@@ -72,6 +84,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         offset: query.offset ? Number(query.offset,) : undefined,
       },);
       return { success: true, posts, count: posts.length, };
+    }, {
+      detail: {
+        summary: "List blog posts",
+        description: "List blog posts with optional filters for author, visibility, status, category, and world.",
+        tags: ["Blog",],
+      },
     },)
     .patch("/api/blog/posts/:id", async (ctx: any,) => {
       const { userId, userRole, } = extractAuth(ctx,);
@@ -100,6 +118,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       },);
 
       return { success: true, post: updated, };
+    }, {
+      detail: {
+        summary: "Update blog post",
+        description: "Update a blog post. Only the author or an admin can update.",
+        tags: ["Blog",],
+      },
     },)
     .delete("/api/blog/posts/:id", async (ctx: any,) => {
       const { userId, userRole, } = extractAuth(ctx,);
@@ -118,6 +142,12 @@ export function blogRoutes(opts: HandlerOpts,) {
 
       await svc.deletePost(ctx.params.id,);
       return { success: true, };
+    }, {
+      detail: {
+        summary: "Delete blog post",
+        description: "Delete a blog post. Only the author or an admin can delete.",
+        tags: ["Blog",],
+      },
     },)
     // ── Comments ─────────────────────────────────────────
     .post("/api/blog/posts/:id/comments", async (ctx: any,) => {
@@ -145,6 +175,12 @@ export function blogRoutes(opts: HandlerOpts,) {
       },);
 
       return { success: true, comment, };
+    }, {
+      detail: {
+        summary: "Add comment to post",
+        description: "Add a comment to a blog post.",
+        tags: ["Blog",],
+      },
     },)
     .get("/api/blog/posts/:id/comments", async (ctx: any,) => {
       const comments = await svc.listComments(ctx.params.id, {
@@ -152,6 +188,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
       },);
       return { success: true, comments, count: comments.length, };
+    }, {
+      detail: {
+        summary: "List comments on post",
+        description: "List comments on a blog post with optional pagination.",
+        tags: ["Blog",],
+      },
     },)
     // ── Moderation ───────────────────────────────────────
     .patch("/api/blog/comments/:id/moderate", async (ctx: any,) => {
@@ -176,6 +218,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       return { success: true, };
+    }, {
+      detail: {
+        summary: "Moderate comment",
+        description: "Set a comment's visibility status (visible, hidden, deleted). Admin only.",
+        tags: ["Blog", "Moderation",],
+      },
     },)
     .patch("/api/blog/posts/:id/moderate", async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
@@ -204,6 +252,12 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       return { success: true, post: updated, };
+    }, {
+      detail: {
+        summary: "Moderate blog post",
+        description: "Set a blog post's status (draft, published, hidden, disabled). Admin only.",
+        tags: ["Blog", "Moderation",],
+      },
     },)
     // ── Follows ──────────────────────────────────────────
     .post("/api/blog/follow/:authorId", async (ctx: any,) => {
@@ -215,6 +269,12 @@ export function blogRoutes(opts: HandlerOpts,) {
 
       await svc.follow(userId, ctx.params.authorId,);
       return { success: true, };
+    }, {
+      detail: {
+        summary: "Follow author",
+        description: "Follow a blog author to receive updates.",
+        tags: ["Blog", "Follows",],
+      },
     },)
     .delete("/api/blog/follow/:authorId", async (ctx: any,) => {
       const { userId, } = extractAuth(ctx,);
@@ -225,6 +285,12 @@ export function blogRoutes(opts: HandlerOpts,) {
 
       await svc.unfollow(userId, ctx.params.authorId,);
       return { success: true, };
+    }, {
+      detail: {
+        summary: "Unfollow author",
+        description: "Stop following a blog author.",
+        tags: ["Blog", "Follows",],
+      },
     },)
     .get("/api/blog/follow/:authorId/status", async (ctx: any,) => {
       const { userId, } = extractAuth(ctx,);
@@ -235,15 +301,33 @@ export function blogRoutes(opts: HandlerOpts,) {
 
       const following = await svc.isFollowing(userId, ctx.params.authorId,);
       return { success: true, following, };
+    }, {
+      detail: {
+        summary: "Check follow status",
+        description: "Check if the current user follows a specific author.",
+        tags: ["Blog", "Follows",],
+      },
     },)
     .get("/api/blog/authors/:authorId/followers", async (ctx: any,) => {
       const followers = await svc.getFollowers(ctx.params.authorId,);
       return { success: true, followers, count: followers.length, };
+    }, {
+      detail: {
+        summary: "List author followers",
+        description: "List all followers of a blog author.",
+        tags: ["Blog", "Follows",],
+      },
     },)
     // ── RAG Sources ──────────────────────────────────────
     .get("/api/blog/posts/:id/sources", async (ctx: any,) => {
       const sources = await svc.getRAGSources(ctx.params.id,);
       return { success: true, sources, count: sources.length, };
+    }, {
+      detail: {
+        summary: "List RAG sources",
+        description: "List RAG (Retrieval-Augmented Generation) sources linked to a post.",
+        tags: ["Blog",],
+      },
     },)
     .post("/api/blog/posts/:id/sources", async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
@@ -262,5 +346,11 @@ export function blogRoutes(opts: HandlerOpts,) {
       },);
 
       return { success: true, source, };
+    }, {
+      detail: {
+        summary: "Add RAG source",
+        description: "Add a RAG source to a blog post. Admin only.",
+        tags: ["Blog",],
+      },
     },);
 }

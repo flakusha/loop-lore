@@ -42,6 +42,12 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(mood,);
+    }, {
+      detail: {
+        summary: "Get actor mood",
+        description: "Get the current mood state for an actor.",
+        tags: ["Character Mood",],
+      },
     },)
     .post("/api/actors/:actorId/mood", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -75,6 +81,12 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         moodStability,
       },);
       return jsonCreated({ id: moodId, },);
+    }, {
+      detail: {
+        summary: "Create actor mood",
+        description: "Create a new mood state for an actor.",
+        tags: ["Character Mood",],
+      },
     },)
     .put("/api/actors/:actorId/mood", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -108,6 +120,12 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         expressionModifiers,
       },);
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Update actor mood",
+        description: "Update an actor's mood (happiness, current mood, stability, expression modifiers).",
+        tags: ["Character Mood",],
+      },
     },)
     .post("/api/actors/:actorId/mood/delta", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -137,6 +155,12 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
 
       const mood = await moodService.applyHappinessDelta(actorId, worldId, delta,);
       return jsonResponse(mood,);
+    }, {
+      detail: {
+        summary: "Apply happiness delta",
+        description: "Apply a happiness change (delta) to an actor's mood.",
+        tags: ["Character Mood",],
+      },
     },)
     .post("/api/actors/:actorId/mood/events", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -181,6 +205,12 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         sourceId,
       },);
       return jsonCreated({ id: eventId, },);
+    }, {
+      detail: {
+        summary: "Log mood event",
+        description: "Log a mood event with happiness delta and optional mood override.",
+        tags: ["Character Mood",],
+      },
     },)
     .get("/api/actors/:actorId/mood/events", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -204,5 +234,11 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
 
       const events = await moodService.getEvents(actorId, worldId, limit,);
       return jsonResponse(events,);
+    }, {
+      detail: {
+        summary: "List mood events",
+        description: "List mood events for an actor, optionally filtered by world.",
+        tags: ["Character Mood",],
+      },
     },);
 }
