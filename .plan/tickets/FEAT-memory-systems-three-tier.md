@@ -7,20 +7,46 @@
 
 ## Summary
 
-Three-tier memory system: episodic (recent events), semantic (facts/knowledge), procedural (skills/habits). Only actor_memories table exists. From docs/spec/memory-system.md.
+Three-tier memory system: episodic (recent events), semantic (facts/knowledge), procedural (skills/abilities). From `epic-memory-systems.md`.
+
+## Scope
+
+### Three Tiers
+
+- **Episodic** — Recent events, conversation history
+- **Semantic** — Facts, knowledge, world info
+- **Procedural** — Skills, abilities, learned behaviors
+
+### Memory Management
+
+- Memory formation and consolidation
+- Memory decay and forgetting
+- Memory promotion between tiers
+
+### Integration
+
+- Context window injection
+- Character personality
+- World state
+
+## Linked Epics
+
+- `epic-memory-systems.md`
 
 ## Acceptance Criteria
 
-- [x] Implementation complete (episodic, semantic, procedural types exist)
-- [x] Tests passing
-- [ ] Documentation updated
+- [ ] Episodic memory system (recent events)
+- [ ] Semantic memory system (facts/knowledge)
+- [ ] Procedural memory system (skills/abilities)
+- [ ] Memory formation and consolidation
+- [ ] Memory decay and forgetting
+- [ ] Memory promotion between tiers
+- [ ] Context window integration
+- [ ] Unit tests for memory calculations
+- [ ] Integration tests for memory workflow
 
-## Files
+## Notes
 
-- `src/memory/types.ts` — memory types with three-tier support (✅ exists)
-- `src/memory/extraction.ts` — memory extraction with three-tier types (✅ exists)
-- `src/memory/purge.ts` — memory decay and purge (✅ exists)
-- `src/memory/injection.ts` — memory injection (✅ exists)
-- `src/memory/provision.ts` — memory provision (✅ exists)
-- `src/memory/budget.ts` — memory budget (✅ exists)
-- `src/memory/shareability.ts` — memory shareability (✅ exists)
+- Reference `epic-memory-systems.md` for full system design
+- Consider memory capacity limits
+- Balance memory retention vs. forgetting

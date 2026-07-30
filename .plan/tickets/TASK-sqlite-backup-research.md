@@ -7,29 +7,44 @@
 
 ## Summary
 
-Research SQLite backup mechanisms in Bun runtime. Determine if `bun:sqlite` supports `.backup()` API, WAL archiving, and point-in-time recovery. Document capabilities and limitations.
+Research SQLite backup mechanisms in Bun runtime. Evaluate backup strategies for disaster recovery. From `epic-db-asset-snapshot-recovery.md`.
 
-## Research Questions
+## Scope
 
-1. Does `bun:sqlite` expose SQLite's `.backup()` API?
-2. Can we archive WAL segments for incremental recovery?
-3. What locks are required for consistent backups?
-4. Is `VACUUM INTO` supported for file-based backups?
-5. Can we snapshot without blocking writes?
+### Research Areas
 
-## Deliverable
+- SQLite backup APIs in Bun
+- Online vs. offline backup
+- Backup compression and optimization
 
-Document in `docs/meta/db-backup-research.md`:
+### Strategies
 
-- Bun SQLite backup capabilities
-- Recommended backup strategy
-- Limitations and workarounds
+- Hot backup (online, non-blocking)
+- Cold backup (offline, consistent)
+- Incremental backup
+- WAL checkpoint backup
 
-## Risk
+### Implementation Considerations
 
-Low — research only, no code changes.
+- Backup scheduling
+- Storage location
+- Recovery procedures
 
-## Related
+## Linked Epics
 
-- `src/db/` — current DB implementation
-- `src/config/sections/database.ts` — DB config
+- `epic-db-asset-snapshot-recovery.md`
+
+## Acceptance Criteria
+
+- [ ] SQLite backup API research complete
+- [ ] Backup strategy comparison document
+- [ ] Implementation recommendations
+- [ ] Recovery procedure documentation
+- [ ] Performance benchmarks for backup methods
+- [ ] Storage requirements analysis
+
+## Notes
+
+- Reference `epic-db-asset-snapshot-recovery.md` for full system design
+- Consider Bun-specific SQLite implementation
+- Balance backup frequency vs. performance impact
