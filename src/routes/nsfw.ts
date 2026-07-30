@@ -89,6 +89,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
+        {
+          detail: {
+            summary: "Get intimacy pair",
+            description: "Get the intimacy relationship between two actors.",
+            tags: ["NSFW",],
+          },
+        },
       )
       .get(
         "/api/nsfw/intimacy/:actorId",
@@ -104,6 +111,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to get actor pairs", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
+        },
+        {
+          detail: {
+            summary: "Get actor intimacy pairs",
+            description: "Get all intimacy relationships for an actor.",
+            tags: ["NSFW",],
+          },
         },
       )
       .post(
@@ -132,6 +146,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
+        {
+          detail: {
+            summary: "Apply intimacy action",
+            description: "Apply an intimacy action between two actors (e.g., touch, kiss).",
+            tags: ["NSFW",],
+          },
+        },
       )
       // ── Seduction ───────────────────────────────────────
 
@@ -145,6 +166,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to get desire profile", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
+        },
+        {
+          detail: {
+            summary: "Get desire profile",
+            description: "Get an actor's desire and seduction preferences.",
+            tags: ["NSFW",],
+          },
         },
       )
       .put(
@@ -161,6 +189,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to update desire profile", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
+        },
+        {
+          detail: {
+            summary: "Update desire profile",
+            description: "Update an actor's desire and seduction preferences.",
+            tags: ["NSFW",],
+          },
         },
       )
       .get(
