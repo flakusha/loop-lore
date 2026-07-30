@@ -6,6 +6,13 @@
  */
 import { Elysia, } from "elysia";
 import { RelationshipsService, } from "../characters/services/relationships-service";
+import {
+  ActorIdParams,
+  ActorTargetParams,
+  RelationshipCreateBody,
+  RelationshipEventBody,
+  RelationshipUpdateBody,
+} from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -24,7 +31,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -32,11 +39,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const worldId = ctx.query.worldId as string | undefined;
+      const worldId = ctx.query.worldId;
 
       const relationships = await relationshipsService.getRelationships(actorId, worldId,);
       return jsonResponse(relationships,);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "List actor relationships",
         description: "List all relationships for an actor, optionally filtered by world.",
@@ -52,7 +60,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, targetActorId, } = ctx.params as { actorId: string; targetActorId: string };
+      const { actorId, targetActorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -60,7 +68,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const worldId = ctx.query.worldId as string | undefined;
+      const worldId = ctx.query.worldId;
 
       const relationship = await relationshipsService.getRelationship(actorId, targetActorId, worldId,);
       if (!relationship) {
@@ -71,6 +79,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(relationship,);
     }, {
+      params: ActorTargetParams,
       detail: {
         summary: "Get actor relationship",
         description: "Get a specific relationship between two actors.",
@@ -86,7 +95,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -94,16 +103,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
-
-      const targetActorId = body.targetActorId as string | undefined;
-      const worldId = body.worldId as string | undefined;
-      const relationshipType = body.relationshipType as string | undefined;
-      const standing = body.standing as number | undefined;
-      const trust = body.trust as number | undefined;
-      const familiarity = body.familiarity as number | undefined;
-      const isBidirectional = body.isBidirectional as boolean | undefined;
-      const metadata = body.metadata as Record<string, unknown> | undefined;
+      const { targetActorId, worldId, relationshipType, standing, trust, familiarity, isBidirectional, metadata, } =
+        ctx.body;
 
       if (!targetActorId || !relationshipType) {
         return jsonError({
@@ -116,7 +117,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         actorId,
         targetActorId,
         worldId,
-        relationshipType: relationshipType as any,
+        relationshipType,
         standing: standing ?? 0,
         trust: trust ?? 0,
         familiarity: familiarity ?? 50,
@@ -125,6 +126,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },);
       return jsonCreated({ id: relationshipId, },);
     }, {
+      params: ActorIdParams,
+      body: RelationshipCreateBody,
       detail: {
         summary: "Create actor relationship",
         description: "Create a new relationship between two actors.",
@@ -140,7 +143,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, targetActorId, } = ctx.params as { actorId: string; targetActorId: string };
+      const { actorId, targetActorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -148,17 +151,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
-
-      const worldId = body.worldId as string | undefined;
-      const relationshipType = body.relationshipType as string | undefined;
-      const standing = body.standing as number | undefined;
-      const trust = body.trust as number | undefined;
-      const familiarity = body.familiarity as number | undefined;
-      const metadata = body.metadata as Record<string, unknown> | undefined;
+      const { worldId, relationshipType, standing, trust, familiarity, metadata, } = ctx.body;
 
       await relationshipsService.updateRelationship(actorId, targetActorId, worldId, {
-        relationshipType: relationshipType as any,
+        relationshipType,
         standing,
         trust,
         familiarity,
@@ -166,6 +162,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },);
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorTargetParams,
+      body: RelationshipUpdateBody,
       detail: {
         summary: "Update actor relationship",
         description: "Update the properties of a relationship between two actors.",
@@ -181,7 +179,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, targetActorId, } = ctx.params as { actorId: string; targetActorId: string };
+      const { actorId, targetActorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -189,11 +187,12 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const worldId = ctx.query.worldId as string | undefined;
+      const worldId = ctx.query.worldId;
 
       await relationshipsService.deleteRelationship(actorId, targetActorId, worldId,);
       return jsonNoContent();
     }, {
+      params: ActorTargetParams,
       detail: {
         summary: "Delete actor relationship",
         description: "Delete a relationship between two actors.",
@@ -209,7 +208,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -217,14 +216,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
-
-      const targetActorId = body.targetActorId as string | undefined;
-      const worldId = body.worldId as string | undefined;
-      const eventType = body.eventType as string | undefined;
-      const standingDelta = body.standingDelta as number | undefined;
-      const trustDelta = body.trustDelta as number | undefined;
-      const familiarityDelta = body.familiarityDelta as number | undefined;
+      const { targetActorId, worldId, eventType, standingDelta, trustDelta, familiarityDelta, } = ctx.body;
 
       if (!targetActorId || !eventType) {
         return jsonError({ message: "targetActorId and eventType are required", status: HttpStatus.BadRequest, },);
@@ -234,13 +226,15 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
         actorId,
         targetActorId,
         worldId,
-        eventType: eventType as any,
+        eventType: eventType,
         standingDelta: standingDelta ?? 0,
         trustDelta: trustDelta ?? 0,
         familiarityDelta: familiarityDelta ?? 0,
       },);
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorIdParams,
+      body: RelationshipEventBody,
       detail: {
         summary: "Log relationship event",
         description: "Log a relationship event with deltas for standing, trust, and familiarity.",
