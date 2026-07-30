@@ -1,6 +1,6 @@
 # Backlog
 
-> **Last updated:** 2026-07-30 — Post-reconciliation priorities; P0/P1 status synced with validated code state
+> **Last updated:** 2026-07-31 — Post-reconciliation priorities; P0/P1/P1.5 status synced with validated code state
 > Features not under active development. `immediate.md` tracks active work; `docs/meta/open-items.md` tracks bugs/debt.
 
 ## P0 — Critical Path (Blocking)
@@ -86,7 +86,7 @@
 | Character licensing (CC0 to all_rights)                     | `epic-character-core-system.md`               | Creator-controlled OR public domain                                  |
 | Character multi-avatar system                               | `epic-character-core-system.md`               | Context/mood/action-aware avatars                                    |
 
-## Completed (moved from P0/P1)
+## Completed (moved from P0/P1/P1.5)
 
 | Epic | Item                                                                        | Status                                                |
 | ---- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -97,6 +97,7 @@
 | 11   | Admin & Settings — admin middleware, page routes, user prefs modal          | ✅ Complete (core)                                    |
 | 17   | Client-Side Encryption — AES-256-GCM, browser crypto, key hierarchy         | ✅ Partial (browser crypto done; integration pending) |
 | 14   | Import/Export — file-based character import, chat export                    | ✅ Partial (JSON import works; PNG/CHARX pending)     |
+| —    | Accessibility P1.5 — focus traps, aria-live, reduced-motion, contrast, touch | ✅ Complete (2026-07-31)                             |
 
 ## Reconciliation Notes
 
