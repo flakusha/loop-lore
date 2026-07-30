@@ -16,9 +16,9 @@
         <span class="tag" data-field="size"></span>
       </div>
       <div style="display: flex; gap: var(--space-2)">
-        <button class="btn btn-ghost" x-on:click="window.copyAssetUrl()" title="Copy URL">📋 Copy URL</button>
-        <button class="btn btn-ghost" x-on:click="window.downloadAsset()" title="Download">⬇ Download</button>
-        <button class="btn btn-danger" x-on:click="window.deleteAssetPreview()">🗑 Delete</button>
+        <button class="btn btn-ghost" x-on:click="window.copyAssetUrl()" title="{{{ t("gallery.copyUrl") }}}">{{{ t("gallery.copyUrl") }}}</button>
+        <button class="btn btn-ghost" x-on:click="window.downloadAsset()" title="{{{ t("common.download") }}}">⬇ {{{ t("common.download") }}}</button>
+        <button class="btn btn-danger" x-on:click="window.deleteAssetPreview()">🗑 {{{ t("common.delete") }}}</button>
       </div>
     </div>
   </div>

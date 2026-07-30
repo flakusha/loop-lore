@@ -34,19 +34,19 @@
       <button
         class="btn btn-ghost btn-cancel"
         @click="cancelGeneration()"
-        title="Cancel generation"
+        title="{{{ t("chat.cancelGeneration") }}}"
         data-testid="cancel-generation"
       >
-        ⏹ Cancel
+        ⏹ {{{ t("common.cancel") }}}
       </button>
     </div>
   </div>
 
   <form x-ref="messageForm" @submit.prevent="sendMessage()" data-testid="message-form">
     <div x-show="impersonationActive && !isGenerating" class="impersonation-banner">
-      🎭 Playing as <strong x-text="currentCharacter?.display_name || currentCharacter?.name"></strong>
+      🎭 {{{ t("chat.playingAs") }}} <strong x-text="currentCharacter?.display_name || currentCharacter?.name"></strong>
       —
-      <button class="btn-impersonation-cancel" @click="toggleImpersonate()">Stop</button>
+      <button class="btn-impersonation-cancel" @click="toggleImpersonate()">{{{ t("chat.stop") }}}</button>
     </div>
     <div class="input-row" style="position: relative">
       <!-- Slash command palette -->
