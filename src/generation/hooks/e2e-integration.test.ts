@@ -156,7 +156,13 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       userId,
       content: "She smiled with joy and happiness, delighted by the news.",
       config: {} as any,
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
       db,
     };
 
@@ -177,7 +183,13 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       userId,
       content: "Alice laughed with pure joy, her smile warm and full of delight.",
       config: {} as any,
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
       db,
     };
 
@@ -196,7 +208,13 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       content: "The suggestive and provocative dance was steamy and passionate.",
       nsfwPolicy: "moderate",
       config: {} as any,
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
       db,
     };
 
@@ -225,7 +243,13 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       content: "Alice was so happy and filled with joy, her smile showing pure delight and love.",
       nsfwPolicy: "moderate",
       config: {} as any,
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
       db,
     };
 
@@ -251,7 +275,13 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       content: "The explicit and graphic scene was brutal with hate and violence.",
       nsfwPolicy: "mild",
       config: {} as any,
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
       db,
     };
 
@@ -273,7 +303,13 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       nsfwPolicy: "mild",
       eventTypes: ["mood_shift",], // Only run mood hooks
       config: {} as any,
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
       db,
     };
 

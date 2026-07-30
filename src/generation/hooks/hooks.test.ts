@@ -22,7 +22,13 @@ function makeContext(overrides?: Partial<HookContext>,): HookContext {
     userId: "user-1",
     content: "Hello world",
     config: {} as any,
-    nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+    nsfwConfig: {
+      allowNsfw: true,
+      nsfwMinAge: 18,
+      defaultNsfwScope: "chat",
+      consentRequired: true,
+      auditLogging: true,
+    },
     db: {} as any,
     ...overrides,
   };
@@ -182,7 +188,13 @@ describe("NsfwHook", () => {
   test("canHandle returns false when NSFW disabled", async () => {
     const ctx = makeContext({
       content: "This is suggestive content with enough length.",
-      nsfwConfig: { allowNsfw: false, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: false,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(false,);
   });
@@ -190,7 +202,13 @@ describe("NsfwHook", () => {
   test("canHandle returns false for short content", async () => {
     const ctx = makeContext({
       content: "Short",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     expect(await hook.canHandle("Short", ctx,),).toBe(false,);
   });
@@ -198,7 +216,13 @@ describe("NsfwHook", () => {
   test("canHandle returns true when NSFW enabled and content long enough", async () => {
     const ctx = makeContext({
       content: "This is suggestive content with enough length.",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(true,);
   });
@@ -207,7 +231,13 @@ describe("NsfwHook", () => {
     const ctx = makeContext({
       content: "The graphic and explicit scene was brutal and violent.",
       nsfwPolicy: "mild",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await hook.execute("The graphic and explicit scene was brutal and violent.", ctx,);
     expect(result.handled,).toBe(true,);
@@ -220,7 +250,13 @@ describe("NsfwHook", () => {
     const ctx = makeContext({
       content: "The suggestive and provocative dance was steamy.",
       nsfwPolicy: "intense",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
     expect(result.handled,).toBe(true,);
@@ -233,7 +269,13 @@ describe("NsfwHook", () => {
     const ctx = makeContext({
       content: "They walked through the garden and admired the flowers.",
       nsfwPolicy: "mild",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await hook.execute("They walked through the garden and admired the flowers.", ctx,);
     expect(result.handled,).toBe(false,);
@@ -297,7 +339,13 @@ describe("runHookChain", () => {
   test("chain allows clean content", async () => {
     const ctx = makeContext({
       content: "The weather is pleasant today.",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     expect(result.allowed,).toBe(true,);
@@ -308,7 +356,13 @@ describe("runHookChain", () => {
     const ctx = makeContext({
       content: "The graphic and explicit scene was brutal and violent with hate.",
       nsfwPolicy: "mild",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     expect(result.allowed,).toBe(false,);
@@ -320,7 +374,13 @@ describe("runHookChain", () => {
   test("chain runs mood and emotion hooks on emotional content", async () => {
     const ctx = makeContext({
       content: "She was so happy and filled with joy and love today!",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     expect(result.allowed,).toBe(true,);
@@ -332,7 +392,13 @@ describe("runHookChain", () => {
   test("chain skips hooks that cannot handle content", async () => {
     const ctx = makeContext({
       content: "Short",
-      nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+      },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     // All hooks require content > 10 or > 20 chars, so none run

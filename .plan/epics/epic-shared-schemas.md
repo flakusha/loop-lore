@@ -1,6 +1,6 @@
 # EPIC: Shared Schemas — Reputation, Consent, NSFW Content Rating
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

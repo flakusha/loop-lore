@@ -1,7 +1,7 @@
 import { describe, expect, test, } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
-import { coerceValue, deepMerge, loadConfig, setByPath, validateConfig, } from "./load";
+import { coerceValue, deepMerge, loadConfig, setByPath, validateConfig, validateDatabaseSafety, } from "./load";
 import type { Config, } from "./schema";
 import { ConfigSchema, } from "./schema-class";
 
@@ -398,6 +398,82 @@ configPath = "~/models/llama-swap.yaml"
       expect(config.generation.autoStart?.llamaSwap?.configPath,).toBe("~/models/llama-swap.yaml",);
     } finally {
       cleanup();
+    }
+  });
+});
+
+describe("validateDatabaseSafety", () => {
+  function sqliteConfig(overrides?: Partial<Config["db"]>,): Config {
+    const defaults = structuredClone(new ConfigSchema().defaults,);
+    defaults.db.type = "sqlite";
+    defaults.db.sqliteFilename = "/tmp/test.db";
+    if (overrides) { Object.assign(defaults.db, overrides,); }
+    return defaults;
+  }
+
+  test("allows sqlite with instance_count=1", () => {
+    const original = process.env.INSTANCE_COUNT;
+    try {
+      process.env.INSTANCE_COUNT = "1";
+      expect(() => {
+        validateDatabaseSafety(sqliteConfig(),);
+      },).not.toThrow();
+    } finally {
+      if (original === undefined) { delete process.env.INSTANCE_COUNT; }
+      else { process.env.INSTANCE_COUNT = original; }
+    }
+  });
+
+  test("rejects sqlite with instance_count > 1", () => {
+    const original = process.env.INSTANCE_COUNT;
+    try {
+      process.env.INSTANCE_COUNT = "3";
+      expect(() => {
+        validateDatabaseSafety(sqliteConfig(),);
+      },).toThrow(/not safe with 3 instances/,);
+    } finally {
+      if (original === undefined) { delete process.env.INSTANCE_COUNT; }
+      else { process.env.INSTANCE_COUNT = original; }
+    }
+  });
+
+  test("rejects sqlite when UNSAFE_SQLITE_MULTIINSTANCE is set", () => {
+    const original = process.env.UNSAFE_SQLITE_MULTIINSTANCE;
+    try {
+      process.env.UNSAFE_SQLITE_MULTIINSTANCE = "true";
+      expect(() => {
+        validateDatabaseSafety(sqliteConfig(),);
+      },).toThrow(/UNSAFE_SQLITE_MULTIINSTANCE=true is set/,);
+    } finally {
+      if (original === undefined) { delete process.env.UNSAFE_SQLITE_MULTIINSTANCE; }
+      else { process.env.UNSAFE_SQLITE_MULTIINSTANCE = original; }
+    }
+  });
+
+  test("allows postgres with any instance count", () => {
+    const original = process.env.INSTANCE_COUNT;
+    try {
+      process.env.INSTANCE_COUNT = "10";
+      const config = sqliteConfig({ type: "postgres", url: "postgresql://localhost/db", },);
+      expect(() => {
+        validateDatabaseSafety(config,);
+      },).not.toThrow();
+    } finally {
+      if (original === undefined) { delete process.env.INSTANCE_COUNT; }
+      else { process.env.INSTANCE_COUNT = original; }
+    }
+  });
+
+  test("allows sqlite when INSTANCE_COUNT is unset (defaults to 1)", () => {
+    const original = process.env.INSTANCE_COUNT;
+    try {
+      delete process.env.INSTANCE_COUNT;
+      expect(() => {
+        validateDatabaseSafety(sqliteConfig(),);
+      },).not.toThrow();
+    } finally {
+      if (original === undefined) { delete process.env.INSTANCE_COUNT; }
+      else { process.env.INSTANCE_COUNT = original; }
     }
   });
 });
