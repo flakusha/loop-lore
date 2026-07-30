@@ -1264,6 +1264,172 @@ cmd_sync() {
   bun run "$REPO_ROOT/scripts/sync-ticket-index.ts" $fix_flag $verbose_flag
 }
 
+cmd_branches() {
+  # List branches with status (merged/pending) and worktree markers
+  # Usage: ./scripts/worktree.sh branches
+  local current_branch
+  current_branch=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
+
+  echo -e "${CYAN}Branches:${NC}"
+  echo ""
+
+  # Get all local branches
+  local branches
+  branches=$(git -C "$REPO_ROOT" for-each-ref --format='%(refname:short)' refs/heads/)
+
+  # Get worktree branches
+  local wt_branches
+  wt_branches=$(git -C "$REPO_ROOT" worktree list --porcelain 2>/dev/null | \
+    grep "^branch " | sed 's|^branch refs/heads/||')
+
+  for branch in $branches; do
+    # Check if branch is protected
+    local is_protected="no"
+    if is_protected "$branch"; then
+      is_protected="yes"
+    fi
+
+    # Check if in worktree
+    local wt_marker=""
+    if echo "$wt_branches" | grep -q "^${branch}$"; then
+      wt_marker=" [wt]"
+    fi
+
+    # Check if merged (merged into master)
+    local status="pending"
+    if git -C "$REPO_ROOT" merge-base --is-ancestor "$branch" master 2>/dev/null; then
+      status="merged"
+    elif git -C "$REPO_ROOT" merge-base --is-ancestor master "$branch" 2>/dev/null; then
+      status="behind"
+    fi
+
+    # Check ahead/behind count
+    local ahead behind
+    ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
+    behind=$(git -C "$REPO_ROOT" rev-list --count "$branch"..master 2>/dev/null || echo "0")
+
+    # Highlight current branch
+    local prefix=""
+    if [[ "$branch" == "$current_branch" ]]; then
+      prefix="*"
+    else
+      prefix=" "
+    fi
+
+    # Format output
+    if [[ "$status" == "merged" ]]; then
+      echo -e "  ${prefix}${branch}${wt_marker} ${GREEN}(merged)${NC}"
+    elif [[ "$status" == "behind" ]]; then
+      echo -e "  ${prefix}${branch}${wt_marker} ${YELLOW}(behind by ${behind})${NC}"
+    else
+      echo -e "  ${prefix}${branch}${wt_marker} (ahead: ${ahead})"
+    fi
+  done
+}
+
+cmd_diff() {
+  # Show diff between branch and master (ahead count, changed files)
+  # Usage: ./scripts/worktree.sh diff <branch>
+  local branch="$1"
+
+  if [[ -z "$branch" ]]; then
+    echo -e "${RED}Error: branch name required${NC}"
+    echo "Usage: $(basename "$0") diff <branch>"
+    exit 1
+  fi
+
+  # Resolve branch name
+  local resolved
+  resolved="$(resolve_branch "$branch")"
+  if [[ -n "$resolved" ]] && [[ "$resolved" != "$branch" ]]; then
+    branch="$resolved"
+  fi
+
+  # Check if branch exists
+  if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+    echo -e "${RED}Error: branch '$branch' not found${NC}"
+    exit 1
+  fi
+
+  # Calculate ahead/behind
+  local ahead behind
+  ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
+  behind=$(git -C "$REPO_ROOT" rev-list --count "$branch"..master 2>/dev/null || echo "0")
+
+  echo -e "${CYAN}Diff for '$branch':${NC}"
+  echo ""
+
+  if [[ "$ahead" -eq 0 ]] && [[ "$behind" -eq 0 ]]; then
+    echo "  Branch is up to date with master"
+    return 0
+  fi
+
+  if [[ "$ahead" -gt 0 ]]; then
+    echo -e "  Ahead: ${GREEN}${ahead}${NC} commits"
+    echo ""
+    echo "  Changed files:"
+    git -C "$REPO_ROOT" diff --name-only master.."$branch" 2>/dev/null | while read -r file; do
+      echo -e "    ${CYAN}•${NC} $file"
+    done
+  fi
+
+  if [[ "$behind" -gt 0 ]]; then
+    echo ""
+    echo -e "  Behind: ${RED}${behind}${NC} commits"
+  fi
+
+  echo ""
+}
+
+cmd_status() {
+  # Show current branch status
+  # Usage: ./scripts/worktree.sh status [branch]
+  local branch="$1"
+
+  if [[ -z "$branch" ]]; then
+    branch=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
+    if [[ -z "$branch" ]]; then
+      echo -e "${RED}Error: not on a branch${NC}"
+      exit 1
+    fi
+  fi
+
+  echo -e "${CYAN}Branch status:${NC}"
+  echo ""
+
+  # Check if branch exists
+  if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+    echo -e "${RED}Error: branch '$branch' not found${NC}"
+    exit 1
+  fi
+
+  # Show branch info
+  echo "  Branch: $branch"
+  local commit
+  commit=$(git -C "$REPO_ROOT" rev-parse --short "$branch" 2>/dev/null)
+  echo "  Commit: $commit"
+
+  # Show ahead/behind
+  local ahead behind
+  ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
+  behind=$(git -C "$REPO_ROOT" rev-list --count "$branch"..master 2>/dev/null || echo "0")
+
+  echo "  Ahead: $ahead"
+  echo "  Behind: $behind"
+
+  # Show if in worktree
+  local worktree_path
+  worktree_path="$(find_worktree "$branch")"
+  if [[ -n "$worktree_path" ]]; then
+    echo "  Worktree: $worktree_path"
+  fi
+
+  # Show last commit message
+  local msg
+  msg=$(git -C "$REPO_ROOT" log -1 --pretty=format:'%s' "$branch" 2>/dev/null)
+  echo "  Last commit: $msg"
+}
+
 # Main
 case "${1:-}" in
     create)
