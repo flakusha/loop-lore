@@ -58,7 +58,7 @@ Domain logic isolated in service modules. Each service depends only on the DB ad
 
 ### Data Layer
 
-Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). Swappable to Postgres for multi-user production.
+Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config, local solo use). Swappable to Postgres for multi-user production. SQLite is rejected for multi-instance deployments — see `src/config/load.ts` `validateDatabaseSafety()` for enforcement. Source of truth: `src/config/sections/database.ts`.
 
 ## Request Flow (Web)
 
