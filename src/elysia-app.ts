@@ -111,6 +111,8 @@ export function createApp(deps: AppDeps,): Elysia {
         },)
         : new Elysia(),
     )
+    // ── Redirect /docs/api → /openapi (Scalar UI) ───────────────────────────
+    .get("/docs/api", () => new Response(null, { status: 302, headers: { Location: "/openapi", }, },),)
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request, },) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth, },);
