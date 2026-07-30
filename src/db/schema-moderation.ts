@@ -54,3 +54,15 @@ export interface ModerationActions {
   expires_at: string | null;
   created_at: Generated<string>;
 }
+
+export interface ModerationAppeals {
+  id: Generated<string>;
+  user_id: string;
+  action_id: string;
+  reason: string;
+  status: Generated<string>; // pending | approved | denied
+  reviewed_by: string | null;
+  review_note: string | null;
+  created_at: Generated<string>;
+  updated_at: string | null;
+}
