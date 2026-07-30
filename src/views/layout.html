@@ -49,14 +49,7 @@
       globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};
     </script>
     <!-- Initialize locale from cookie/localStorage before page renders -->
-    <script nonce="{{cspNonce}}">
-      (function() {
-        var saved = localStorage.getItem('locale') || 'en';
-        document.documentElement.lang = saved;
-        document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
-        globalThis.currentLocale = saved;
-      })();
-    </script>
+    <script src="/locale-init.js" nonce="{{cspNonce}}" defer></script>
 
   </head>
   <body x-data="app()" hx-ext="alpine-morph">
