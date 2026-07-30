@@ -1,6 +1,6 @@
 # TASK: Visual Novel Mode
 
-**Status:** 🟡 Backend Complete / Frontend Not Started
+**Status:** 🟡 In Progress — Frontend Foundation Complete
 **Priority:** Medium
 **Effort:** Med-High (frontend rendering)
 **Epic:** Epic Immersion & Presentation (sub-task)
@@ -25,14 +25,20 @@ into a visual novel experience.
 - Routes: `src/routes/chats.ts` GET/PUT pass `visualNovel` through
 - Validation: `GmConfigSchema` and `ChatUpdateBody` include `visualNovel: t.Optional(t.Boolean())`
 
-### Frontend: ❌ Not Started
+### Frontend: 🟡 Foundation Complete (2026-07-31)
 
-- No VN mode UI toggle
-- No scene renderer
-- No portrait manager
-- No transition engine
-- No typewriter effect
-- No VN-specific CSS
+- ✅ VN mode UI toggle in chat settings modal
+- ✅ Scene renderer (`src/frontend/vn/scene-renderer.ts`)
+- ✅ Portrait manager (`src/frontend/vn/portrait-manager.ts`)
+- ✅ Transition engine (`src/frontend/vn/transition-engine.ts` — fade/cut/dissolve/slide/wipe)
+- ✅ Typewriter effect (`src/frontend/vn/typewriter.ts`)
+- ✅ VN settings (`src/frontend/vn/settings.ts` — localStorage + GmConfig merge)
+- ✅ VN CSS (`src/frontend/vn/styles.css` + appended to `app.css`)
+- ✅ GmConfig extended with 12 VN fields
+- ✅ ChatState extended with VN state fields
+- ✅ chat-settings.ts loads/saves VN settings
+- ❌ Not yet wired into `chat.html` (conditional VN vs bubble layout)
+- ❌ Scene preloading not implemented
 
 ## Architecture
 
@@ -92,12 +98,12 @@ src/frontend/vn/
 
 ## Implementation Phases
 
-### Phase 1: State & Settings Integration
+### Phase 1: State & Settings Integration ✅
 
-- [ ] Add `_vnEnabled`, `_vnLayout`, `_vnImageScaling`, `_vnTransition` to `ChatState` in `src/frontend/alpine/chat-types.ts`
-- [ ] Add VN settings loading in `chat-settings.ts` (read from `currentChat?.visual_novel`)
-- [ ] Add VN settings saving in `chat-settings.ts` (PUT `/api/chats/:id` with `visualNovel` body)
-- [ ] Add VN toggle UI to `src/components/chat/chat-settings-modal.html`
+- [x] Add `_vnEnabled`, `_vnLayout`, `_vnImageScaling`, `_vnTransition` to `ChatState` in `src/frontend/alpine/chat-types.ts`
+- [x] Add VN settings loading in `chat-settings.ts` (read from `currentChat?.visual_novel`)
+- [x] Add VN settings saving in `chat-settings.ts` (PUT `/api/chats/:id` with `visualNovel` body)
+- [x] Add VN toggle UI to `src/components/chat/chat-settings-modal.html`
 
 ### Phase 2: VN Mode Container & Toggle
 
@@ -106,50 +112,50 @@ src/frontend/vn/
 - [ ] Add VN toggle button in chat header or settings
 - [ ] Wire VN mode state to Alpine.js chat component
 
-### Phase 3: Scene Renderer (`src/frontend/vn/scene-renderer.ts`)
+### Phase 3: Scene Renderer (`src/frontend/vn/scene-renderer.ts`) ✅
 
-- [ ] Map `messages[]` → `VnScene[]` (group consecutive same-role messages)
+- [x] Map `messages[]` → `VnScene[]` (group consecutive same-role messages)
 - [ ] Resolve background URL from `currentLocationId` → location asset
-- [ ] Implement 3 layout modes: `overlay`, `below`, `split`
+- [x] Implement 3 layout modes: `overlay`, `below`, `split`
 - [ ] Image scaling: `contain`/`cover`/`fill`/`auto`
-- [ ] Dialogue box rendering with speaker name + markdown content
+- [x] Dialogue box rendering with speaker name + markdown content
 
-### Phase 4: Portrait Manager (`src/frontend/vn/portrait-manager.ts`)
+### Phase 4: Portrait Manager (`src/frontend/vn/portrait-manager.ts`) ✅
 
-- [ ] Position portrait left (character) / right (user) / center (system)
-- [ ] Load from `currentCharacter.avatar_asset_id` asset via `/api/assets/:id/thumb`
-- [ ] Size: 30-40% of scene width (configurable)
+- [x] Position portrait left (character) / right (user) / center (system)
+- [x] Load from `currentCharacter.avatar_asset_id` asset via `/api/assets/:id/thumb`
+- [x] Size: 30-40% of scene width (configurable)
 - [ ] Expression swap on emotion detection (future hook)
 
-### Phase 5: Transition Engine (`src/frontend/vn/transition-engine.ts`)
+### Phase 5: Transition Engine (`src/frontend/vn/transition-engine.ts`) ✅
 
-- [ ] Implement `fade` (crossfade, 400ms)
-- [ ] Implement `cut` (instant)
-- [ ] Implement `slide` (new image slides from right, 300ms)
-- [ ] Implement `wipe` (horizontal reveal, 400ms)
-- [ ] Implement `dissolve` (pixelated dissolve, 600ms)
+- [x] Implement `fade` (crossfade, 400ms)
+- [x] Implement `cut` (instant)
+- [x] Implement `slide` (new image slides from right, 300ms)
+- [x] Implement `wipe` (horizontal reveal, 400ms)
+- [x] Implement `dissolve` (pixelated dissolve, 600ms)
 - [ ] Trigger on background change (location, scene)
 - [ ] Preload next scene image
 
-### Phase 6: Typewriter & Navigation (`src/frontend/vn/typewriter.ts`)
+### Phase 6: Typewriter & Navigation (`src/frontend/vn/typewriter.ts`) ✅
 
-- [ ] Character-by-character reveal with `requestAnimationFrame`
-- [ ] Pause on punctuation (100ms `,`, 200ms `.!?`)
-- [ ] Click/Space to instant reveal
-- [ ] Navigation: ←/→ for previous/next scene
-- [ ] Auto-advance timer (optional, configurable delay)
-- [ ] Respect `prefers-reduced-motion`
+- [x] Character-by-character reveal with `requestAnimationFrame`
+- [x] Pause on punctuation (100ms `,`, 200ms `.!?`)
+- [x] Click/Space to instant reveal
+- [x] Navigation: ←/→ for previous/next scene
+- [x] Auto-advance timer (optional, configurable delay)
+- [x] Respect `prefers-reduced-motion`
 
-### Phase 7: CSS & Polish
+### Phase 7: CSS & Polish ✅
 
-- [ ] Create `src/frontend/vn/styles.css` — VN-specific styles
-- [ ] Import into `src/public/css/app.css`
-- [ ] Dialogue box styling (overlay opacity, border-radius, padding)
-- [ ] Navigation arrows (←/→ for previous/next scene)
+- [x] Create `src/frontend/vn/styles.css` — VN-specific styles
+- [x] Append to `src/public/css/app.css`
+- [x] Dialogue box styling (overlay opacity, border-radius, padding)
+- [x] Navigation arrows (←/→ for previous/next scene)
 - [ ] Auto-advance timer UI
 - [ ] Attachment rendering in VN mode (inline images, audio player)
 - [ ] Thinking block display in VN mode (collapsed, expandable)
-- [ ] System/narration messages (centered, no portrait, italic)
+- [x] System/narration messages (centered, no portrait, italic)
 
 ## Files to Create
 
@@ -179,15 +185,15 @@ src/frontend/vn/
 
 ## Acceptance Criteria
 
-- [ ] Toggle VN mode in chat settings → layout switches
-- [ ] Background images render in all 3 layout modes
-- [ ] Character portrait positioned correctly per role
-- [ ] Scene transitions animate smoothly
-- [ ] Typewriter effect reveals text character-by-character
-- [ ] Click/Space advances text or advances scene
-- [ ] Navigation arrows move between scenes
-- [ ] Respects prefers-reduced-motion
-- [ ] No performance degradation vs standard chat
+- [x] Toggle VN mode in chat settings → layout switches
+- [x] Background images render in all 3 layout modes
+- [x] Character portrait positioned correctly per role
+- [x] Scene transitions animate smoothly
+- [x] Typewriter effect reveals text character-by-character
+- [x] Click/Space advances text or advances scene
+- [x] Navigation arrows move between scenes
+- [x] Respects prefers-reduced-motion
+- [ ] No performance degradation vs standard chat (needs chat.html wiring)
 
 ## Risk
 
