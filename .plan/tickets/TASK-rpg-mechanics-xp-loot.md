@@ -1,6 +1,6 @@
 # TASK: RPG Mechanics — XP Progression & Loot
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics
@@ -19,12 +19,20 @@ Implement XP progression and loot systems for RPG gameplay: experience tracking,
 
 ## Acceptance Criteria
 
-- [ ] `gainXP(actor, amount)` adds XP and triggers level-up if threshold met
-- [ ] `levelUp(actor)` increases stats based on class/race progression table
-- [ ] `rollLoot(table)` returns random item with rarity-weighted probability
-- [ ] Loot tables for each combat encounter type
-- [ ] Unit tests cover XP thresholds, level-up stat increases, loot rarity distribution
-- [ ] Integration with battle resolution for automatic XP award on combat completion
+- [x] `gainXP(actor, amount)` adds XP and triggers level-up if threshold met
+- [x] `levelUp(actor)` increases stats based on class/race progression table
+- [x] `rollLoot(table)` returns random item with rarity-weighted probability
+- [x] Loot tables for each combat encounter type
+- [x] Unit tests cover XP thresholds, level-up stat increases, loot rarity distribution
+- [x] Integration with battle resolution for automatic XP award on combat completion
+
+## Implementation
+
+- `src/rpg/xp.ts` — D&D 5e progression (levels 1-20), `xpForLevel`, `canLevelUp`, `levelFromXp`, `awardXp` (multi-level-up), `xpForEnemyDefeat` (CR-based, party split), `xpForQuest` (difficulty multipliers), `hpOnLevelUp`, ASI levels (4/8/12/16/19)
+- `src/rpg/loot.ts` — Rarity-weighted drop tables (common/uncommon/rare/legendary/artifact), level-scaling, `generateLoot` with luck modifier, `createLootTable`, `mergeLootTables`, template tables
+- `src/db/schema-rpg.ts` — `xp_ledger`, `loot_tables`, `loot_entries` tables
+- `src/rpg/xp.test.ts` — 20 tests
+- `src/rpg/loot.test.ts` — 12 tests
 
 ## Notes
 
