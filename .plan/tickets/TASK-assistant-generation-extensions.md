@@ -50,3 +50,7 @@ ComfyUI is the primary backend. Finalized workflow files are the API contract.
 - [ ] Approved tool-execution allowlist + policy
 - [ ] External API call policy gate
 - [ ] Scenario source store + reuse in generation
+
+## Related
+
+- **Feature spec:** `FEAT-assistant-generation-extensions.md`

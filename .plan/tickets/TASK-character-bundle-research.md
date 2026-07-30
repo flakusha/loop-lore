@@ -13,25 +13,24 @@ Research character bundle format for portable export/import. Define specificatio
 
 1. Single-file (zip/tar) vs directory-based bundles?
 2. What metadata belongs in manifest (version, assets, dependencies)?
-3. How to handle asset references (embed vs link)?
-4. Compression options (gzip, zstd, none)?
-5. Integrity checking (CRC32, SHA-256)?
-6. Backward compatibility strategy?
+3. How to handle asset references (inline vs external)?
+4. Integrity checking (checksums, signatures)?
+5. Compression strategies?
+6. Backward compatibility approach?
 
-## Deliverable
+## Acceptance Criteria
 
-Document in `docs/meta/character-bundle-spec.md`:
+- [ ] Format comparison document (zip/tar/directory)
+- [ ] Manifest schema specification
+- [ ] Asset reference strategy documented
+- [ ] Integrity checking approach defined
+- [ ] Compression recommendations
+- [ ] Backward compatibility plan
+- [ ] Implementation recommendations
+- [ ] Performance benchmarks for format options
 
-- Bundle format specification
-- Manifest schema
-- Integrity checking approach
+## Notes
 
-## Risk
-
-Low — research only, no code changes.
-
-## Related
-
-- `src/characters/exporters/` — current export formats
-- `src/characters/charx.ts` — CharX format
-- `src/characters/parser.ts` — CanonicalCharacter parser
+- Reference `epic-db-asset-snapshot-recovery.md` for recovery context
+- Consider cross-platform compatibility
+- Balance file size vs. portability

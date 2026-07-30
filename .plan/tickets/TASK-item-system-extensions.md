@@ -61,6 +61,10 @@ history = ["Forged in Dragonfire", "Broke during siege of X"]
 - [ ] Instance-based inventory with `item_instance_id` / `definition_ref`
 - [ ] Item history tracking (forged, broken, enchanted)
 
-### Notes
+### Related
+
+- **Feature spec:** `FEAT-item-system-extensions.md`
+
+## Notes
 
 Link to character template seeding — items can be seeded with characters as starting equipment.

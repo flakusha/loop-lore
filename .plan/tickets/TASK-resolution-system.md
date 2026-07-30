@@ -1,4 +1,4 @@
-# TASK: EPIC: Resolution System & Ruleset Family
+# TASK: Resolution System & Ruleset Family
 
 **Status:** ⬜ Not Started
 **Priority:** High
@@ -7,11 +7,28 @@
 
 ## Summary
 
-loop-lore's RPG layer needs a single, coherent resolution mechanic for "who wins / what
-happens" when dice are rolled. Research (§6.3) shows TTRPG resolution families split into
-**narrative-light** (PbtA, FATE) vs **simulation-heavy** (GURPS, D&D/Pathfinder). Adopt
-**ONE** family as the default and, optionally, a heavier sim only on the battle mode
-switch. Mixing families risks inconsistency and a dominant strategy.
+loop-lore's RPG layer needs a single, coherent resolution system that supports multiple ruleset families (D20, PbtA, Forged in the Dark, etc.). From `epic-resolution-system.md` (inferred).
+
+## Scope
+
+### Resolution Mechanics
+
+- Core resolution (skill checks, opposed checks)
+- Degree of success/failure
+- Advantage/disadvantage system
+
+### Ruleset Families
+
+- D20 system (D&D/Pathfinder style)
+- PbtA system (Powered by the Apocalypse)
+- Forged in the Dark (Blades in the Dark style)
+- Custom ruleset support
+
+### Configuration
+
+- Per-world ruleset selection
+- house rules and modifications
+- Resolution speed settings
 
 ## Linked Epics
 
@@ -19,6 +36,19 @@ switch. Mixing families risks inconsistency and a dominant strategy.
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Core resolution mechanics (skill checks, opposed checks)
+- [ ] Degree of success/failure system
+- [ ] Advantage/disadvantage mechanics
+- [ ] D20 ruleset family implementation
+- [ ] PbtA ruleset family implementation
+- [ ] Forged in the Dark ruleset family implementation
+- [ ] Per-world ruleset configuration
+- [ ] House rules support
+- [ ] Unit tests for resolution calculations
+- [ ] Integration tests for resolution workflow
+
+## Notes
+
+- Reference `epic-resolution-system.md` for full system design
+- Consider resolution speed (fast vs. tactical)
+- Balance flexibility vs. complexity

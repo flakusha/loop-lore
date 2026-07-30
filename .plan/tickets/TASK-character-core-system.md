@@ -1,4 +1,4 @@
-# TASK: EPIC: Character Core System
+# TASK: Character Core System
 
 **Status:** ⬜ Not Started
 **Priority:** High
@@ -7,7 +7,27 @@
 
 ## Summary
 
-Consolidated character system improvements: mandatory/optional field definitions, NSFW content rating, permanent traits, world/location traits, personality integrity enforcement, mood & relationships, licensing (creator-controlled OR full public domain), and context-aware multi-avatar system with config extensibility.
+Consolidated character system improvements: mandatory/optional fields, RPG stats, personality traits, validation, and unified character API. From `epic-character-core-system.md`.
+
+## Scope
+
+### Character Model
+
+- Mandatory fields: name, description, personality
+- Optional fields: nickname, scenario, welcome_message, etc.
+- RPG stats (STR, DEX, CON, INT, WIS, CHA)
+
+### Validation
+
+- Character validation schemas
+- Field length limits
+- Required field enforcement
+
+### Unified API
+
+- Character CRUD operations
+- Character search and filtering
+- Character import/export
 
 ## Linked Epics
 
@@ -15,6 +35,18 @@ Consolidated character system improvements: mandatory/optional field definitions
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Character model with mandatory/optional fields
+- [ ] RPG stat system with base stats and modifiers
+- [ ] Personality trait system
+- [ ] Character validation schemas
+- [ ] Unified character API (CRUD, search, filter)
+- [ ] Character import/export support
+- [ ] Integration with actor system
+- [ ] Unit tests for character calculations
+- [ ] Integration tests for character workflow
+
+## Notes
+
+- Reference `epic-character-core-system.md` for full system design
+- See `docs/spec/character-spec.md` for authoritative spec
+- Characters are actors — this epic focuses on character-specific fields

@@ -4,26 +4,52 @@
 **Priority:** medium
 **Effort:** Medium-High (frontend rendering)
 **Epic:** epic-immersion-presentation
-**Git Issues:** `8be84a7` (frontend implementation), `cb9e1b7` (chat settings toggle)
 
 ## Summary
 
-Visual novel mode: image + text overlay, transitions, typewriter effect, 3 layout modes. From docs/frontend/chat/visual-novel-mode.md.
+Visual novel mode: image + text overlay, transitions, typewriter effect, 3 layout modes. Backend complete, frontend rendering needed.
+
+## Scope
+
+### Backend (Complete)
+
+- VN mode state management
+- Scene transition logic
+- Choice/branching system
+
+### Frontend (Needed)
+
+- VN renderer component
+- Image display with transitions
+- Text overlay with typewriter effect
+- Choice/branching UI
+- 3 layout modes (full, split, overlay)
+
+### Layout Modes
+
+- **Full** — Image takes full screen, text overlay
+- **Split** — Image left, text right
+- **Overlay** — Image background, text box overlay
+
+## Linked Epics
+
+- `epic-immersion-presentation.md`
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete (frontend)
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] VN renderer component implemented
+- [ ] Image display with transitions (fade, slide, etc.)
+- [ ] Text overlay with typewriter effect
+- [ ] Choice/branching UI
+- [ ] 3 layout modes (full, split, overlay)
+- [ ] Scene transition animations
+- [ ] Mobile-responsive design
+- [ ] Integration with backend VN state
+- [ ] Unit tests for VN renderer
+- [ ] Integration tests for VN workflow
 
-## Backend Status: ✅ Complete
+## Notes
 
-- DB column `chats.visual_novel` (migration `027_gm_config_visual_novel`)
-- API `ChatCreateBody`/`ChatUpdateBody` accept `visualNovel: boolean`
-- `src/chat/service.ts` handles `visualNovel` → `visual_novel`
-- `src/routes/chats.ts` GET/PUT pass `visualNovel` through
-- `src/validation/schemas.ts` includes `visualNovel` in `GmConfigSchema`, `ChatCreateBody`, `ChatUpdateBody`
-
-## Frontend Plan
-
-See `TASK-visual-novel-mode.md` for the full phased implementation plan.
+- Backend is complete — focus on frontend rendering
+- Follow existing Alpine.js patterns
+- Reference `TASK-visual-novel-mode.md` for full VN implementation

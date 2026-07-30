@@ -7,29 +7,43 @@
 
 ## Summary
 
-Research asset storage snapshot options. Evaluate content-addressable storage, filesystem snapshots, and application-level bundling for disaster recovery.
+Research asset storage snapshot options. Evaluate backup strategies for asset files (images, audio, video). From `epic-db-asset-snapshot-recovery.md`.
 
-## Research Questions
+## Scope
 
-1. Is content-addressable storage (SHA-256 dedup) worth complexity for local filesystem?
-2. Can we use OS-level snapshots (LVM/ZFS/Btrfs) instead of app-level?
-3. What's the cost of full-copy versioning for images/media?
-4. Should assets be bundled with character exports?
-5. How to handle orphaned assets (no entity links)?
+### Research Areas
 
-## Deliverable
+- Asset storage backends (local, S3, etc.)
+- Snapshot mechanisms per backend
+- Compression and deduplication
 
-Document in `docs/meta/asset-snapshot-research.md`:
+### Strategies
 
-- Storage snapshot strategies comparison
-- Cost/benefit analysis
-- Recommended approach
+- Full snapshot (complete copy)
+- Incremental snapshot (changed files only)
+- Differential snapshot (changes since last full)
 
-## Risk
+### Implementation Considerations
 
-Low — research only, no code changes.
+- Snapshot scheduling
+- Storage requirements
+- Recovery time objectives
 
-## Related
+## Linked Epics
 
-- `src/assets/` — current asset handling
-- `src/db/schema-content.ts` — asset tables
+- `epic-db-asset-snapshot-recovery.md`
+
+## Acceptance Criteria
+
+- [ ] Asset storage backend analysis
+- [ ] Snapshot mechanism comparison
+- [ ] Compression and deduplication options
+- [ ] Implementation recommendations
+- [ ] Storage requirements analysis
+- [ ] Recovery time estimates
+
+## Notes
+
+- Reference `epic-db-asset-snapshot-recovery.md` for full system design
+- Consider asset types (images, audio, video, 3D models)
+- Balance snapshot frequency vs. storage costs

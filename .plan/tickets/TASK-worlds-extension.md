@@ -18,3 +18,7 @@ Implementation for EPIC: Worlds Extension (Shareability, Epochs, Maps, Mode Swit
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Related
+
+- **Feature spec:** `FEAT-worlds-extension.md`

@@ -1,4 +1,4 @@
-# TASK: EPIC: Factions, Reputation & Persistent Consequences
+# TASK: Factions, Reputation & Persistent Consequences
 
 **Status:** ⬜ Not Started
 **Priority:** High
@@ -7,10 +7,27 @@
 
 ## Summary
 
-Worlds can define **factions** that control territory, issue quests, and track
-**per-character standing**. Player choices shift standing, which alters available
-quests/NPCs — and, **Undertale-style**, consequences persist in world state. This is the
-social layer that predates engines (forum-RP reputation/consent systems, §4.3).
+Worlds can define factions with reputation tracking, standing changes, and persistent consequences for player actions. From `epic-faction-reputation.md` (inferred).
+
+## Scope
+
+### Faction System
+
+- Faction definitions and hierarchy
+- Faction relationships (allied, neutral, hostile)
+- Faction territories and influence
+
+### Reputation Tracking
+
+- Reputation points per faction
+- Standing tiers (hostile, unfriendly, neutral, friendly, revered)
+- Reputation decay over time
+
+### Consequences
+
+- Faction-specific quests and rewards
+- Access restrictions based on standing
+- Faction warfare and diplomacy
 
 ## Linked Epics
 
@@ -18,6 +35,18 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Faction definition system with hierarchy
+- [ ] Faction relationships (allied, neutral, hostile)
+- [ ] Reputation tracking per faction
+- [ ] Standing tiers with mechanical effects
+- [ ] Reputation decay over time
+- [ ] Faction-specific quests and rewards
+- [ ] Access restrictions based on standing
+- [ ] Unit tests for reputation calculations
+- [ ] Integration tests for faction workflow
+
+## Notes
+
+- Reference `epic-faction-reputation.md` for full system design
+- Consider faction warfare mechanics
+- Balance reputation gains/losses for meaningful choices
