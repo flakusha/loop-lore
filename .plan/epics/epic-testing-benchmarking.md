@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** Very High
 **Type:** Infrastructure Epic
+**Tags:** testing, benchmarking, performance, load-testing, profiling
 
 ## Summary
 

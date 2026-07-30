@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** Medium
 **Type:** Improvement Epic
+**Tags:** lint, typecheck, build, coverage, eslint, typescript
 
 ## Summary
 

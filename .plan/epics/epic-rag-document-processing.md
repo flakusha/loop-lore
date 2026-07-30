@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
+**Tags:** rag, document-processing, embeddings, vector-store, search
 
 ## Summary
 
