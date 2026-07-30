@@ -1,11 +1,11 @@
 <header id="header-slot" class="main-header" data-testid="chat-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title" id="page-title">Welcome to loop-lore</span>
+  <span class="title" id="page-title">{{{t("gallery.viewChats")}}}</span>
   <div class="actions">
     <button
       class="btn-icon"
-      title="View chats"
-      aria-label="View chats"
+      x-bind:title="t('gallery.viewChats')"
+      x-bind:aria-label="t('gallery.viewChats')"
       @click="$store.ui.showChatList = !$store.ui.showChatList"
       data-testid="toggle-chat-list"
     >
@@ -13,8 +13,8 @@
     </button>
     <button
       class="btn-icon"
-      title="Toggle gallery sidebar"
-      aria-label="Toggle gallery sidebar"
+      x-bind:title="t('gallery.toggleGallery')"
+      x-bind:aria-label="t('gallery.toggleGallery')"
       @click="$store.ui.showGallery = !$store.ui.showGallery"
       x-show="$store.ui.hasActiveChat"
       data-testid="toggle-gallery"
@@ -23,8 +23,8 @@
     </button>
     <button
       class="btn-icon"
-      title="Character info"
-      aria-label="Character info"
+      x-bind:title="t('gallery.characterInfo')"
+      x-bind:aria-label="t('gallery.characterInfo')"
       @click="$store.ui.showCharacterInfo = true"
       x-show="$store.ui.hasActiveChat"
       data-testid="toggle-character-info"
@@ -33,8 +33,8 @@
     </button>
     <button
       class="btn-icon"
-      title="Chat settings"
-      aria-label="Chat settings"
+      x-bind:title="t('gallery.chatSettings')"
+      x-bind:aria-label="t('gallery.chatSettings')"
       @click="$store.ui.showChatSettings = true"
       x-show="$store.ui.hasActiveChat"
       data-testid="toggle-chat-settings"
@@ -43,8 +43,8 @@
     </button>
     <button
       class="btn-icon"
-      title="User preferences"
-      aria-label="User preferences"
+      x-bind:title="t('gallery.userPreferences')"
+      x-bind:aria-label="t('gallery.userPreferences')"
       @click="window.dispatchEvent(new CustomEvent('settings-modal'))"
       data-testid="toggle-user-preferences"
     >

@@ -1,9 +1,9 @@
 <!-- World Edit Page -->
 <header id="header-slot" class="main-header" data-testid="world-edit-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">Edit World</span>
+  <span class="title">{{{t("worlds.editTitle")}}}</span>
   <div class="actions">
-    <a href="/worlds/{{worldId}}" class="btn btn-ghost" data-testid="back-to-world">Back</a>
+    <a href="/worlds/{{worldId}}" class="btn btn-ghost" data-testid="back-to-world">{{{t("common.back")}}}</a>
   </div>
 </header>
 
