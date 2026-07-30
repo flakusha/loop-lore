@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Type:** Architecture Epic
+**Tags:** tor, i2p, mesh, byok, radicle, anonymous, decentralization
 
 ## Architecture
 

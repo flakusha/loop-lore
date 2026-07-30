@@ -6,6 +6,7 @@
 **Effort:** Continuous
 **Issue:** `1e37b11`
 **Type:** Ongoing Epic
+**Tags:** chat, group-chat, permissions, blog, encryption, nsfw, moderation
 
 ## Summary
 
