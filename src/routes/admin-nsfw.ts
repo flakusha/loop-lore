@@ -13,6 +13,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getConfig, setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
+import type { TranslatorFn, } from "../i18n/types";
 import { getLogger, type Logger, } from "../logger";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -36,8 +37,11 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
     .get("/api/admin/nsfw", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      if (userRole !== "admin") {
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
+      }
 
       try {
         const allowRaw = await getConfig(database, NSFW_ALLOW_KEY,);
@@ -52,8 +56,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to get NSFW config: ${String(error,)}`,);
         return jsonError({
-          message: "Failed to get NSFW config",
+          message: "errors.serverError",
           status: HttpStatus.InternalServerError,
+          t,
         },);
       }
     },)
@@ -63,8 +68,15 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         const userRole = ctx.userRole as string | null;
-        if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-        if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+        const t = ctx.t as TranslatorFn | undefined;
+        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        if (userRole !== "admin") {
+          return jsonError({
+            message: "errors.forbidden",
+            status: HttpStatus.Forbidden,
+            t,
+          },);
+        }
 
         const body = ctx.body as {
           allowNsfw?: boolean;
@@ -85,8 +97,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
         } catch (error) {
           log().error(`Failed to update NSFW config: ${String(error,)}`,);
           return jsonError({
-            message: "Failed to update NSFW config",
+            message: "errors.serverError",
             status: HttpStatus.InternalServerError,
+            t,
           },);
         }
       },
@@ -95,8 +108,11 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
     .get("/api/admin/nsfw/policy", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      if (userRole !== "admin") {
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
+      }
 
       try {
         const policies = await database
@@ -109,8 +125,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to list NSFW policies: ${String(error,)}`,);
         return jsonError({
-          message: "Failed to list NSFW policies",
+          message: "errors.serverError",
           status: HttpStatus.InternalServerError,
+          t,
         },);
       }
     },);
