@@ -56,7 +56,6 @@ function watchDomainConfigs(configsDir: string, onReload: DomainReloadCallback,)
     log.info(`Domain config changed: ${filename} (${domain})`,);
 
     // Reload the domain config
-<<<<<<< ours — function `watchDomainConfigs` (F, confidence: medium)
 // hint: Logic changed on both sides. Requires understanding intent of each change.
     // Dynamic import to avoid circular dependencies
     void import("./load").then(({ loadConfig, },) => {
@@ -68,22 +67,6 @@ function watchDomainConfigs(configsDir: string, onReload: DomainReloadCallback,)
         `Failed to reload domain config ${domain}: ${error instanceof Error ? error.message : String(error,)}`,
       );
     },);
-=======
-    try {
-      // Dynamic import to avoid circular dependencies
-      void import("./load").then(({ loadConfig, },) => {
-        const config = loadConfig();
-        onReload(domain, config,);
-        log.info(`Reloaded domain config: ${domain}`,);
-      },).catch((error,) => {
-        log.error(
-          `Failed to reload domain config ${domain}: ${error instanceof Error ? error.message : String(error,)}`,
-        );
-      },);
-    } catch (error) {
-      log.error(`Failed to watch domain config ${domain}: ${error instanceof Error ? error.message : String(error,)}`,);
-    }
->>>>>>> theirs — function `watchDomainConfigs` (F, confidence: medium)
   },);
 
   log.info(`Watching domain configs in ${configsDir}`,);
