@@ -64,7 +64,7 @@ export interface Users {
   settings: string;
   birth_date: string | null;
   age_gate_accepted_at: string | null;
-  data_version: Generated<number>;
+  format_version: Generated<number>;
   created_at: Generated<string>;
   last_seen_at: string | null;
 }
@@ -78,7 +78,7 @@ export interface Personas {
   description: string | null;
   title: string | null;
   is_default: Generated<DefaultState>;
-  data_version: Generated<number>;
+  format_version: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -121,6 +121,8 @@ export interface Chats {
   streaming: Generated<number | null>;
   /** NSFW override: null = use user pref, "enabled" = force on, "disabled" = force off */
   nsfw_override: string | null;
+  /** Name source: "manual", "auto-rule", or "auto-llm" */
+  name_source: "manual" | "auto-rule" | "auto-llm" | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -137,7 +139,7 @@ export interface Actors {
   system_prompt: string | null;
   agent_type: AgentType;
   settings: string;
-  data_version: Generated<number>;
+  format_version: Generated<number>;
   visibility: Generated<ActorVisibility>;
   content_rating: Generated<ContentRating>;
   welcome_message: string | null;
@@ -242,7 +244,7 @@ export interface Messages {
   idempotency_key: string | null;
   continuation_index: number | null;
   swipe_index: number | null;
-  data_version: Generated<number>;
+  format_version: Generated<number>;
   created_at: Generated<string>;
   edited_at: string | null;
   archived_at: string | null;

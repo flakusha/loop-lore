@@ -1,16 +1,16 @@
 /**
- * Migration 018 — Data version columns + tracking table
+ * Migration 006 — Format version columns + data migration tracking
  *
- * Adds `data_version` to tables that carry user-facing structured data:
- * - `users.data_version`: tracks settings JSON format version
- * - `personas.data_version`: tracks persona fields format version
- * - `messages.data_version`: tracks content/encoding format version
+ * Adds `format_version` to tables that carry user-facing structured data:
+ * - `users.format_version`: tracks settings JSON format version
+ * - `personas.format_version`: tracks persona fields format version
+ * - `messages.format_version`: tracks content/encoding format version
  *
  * Creates `data_migrations` table for tracking data migration scripts.
  *
- * `actors.data_version` already exists from 001_init.
+ * `actors.format_version` already exists from 001_init.
  *
- * Default 1 = current format. Data migration scripts bump old rows
+ * Default 0 = initial format. Data migration scripts bump old rows
  * to newer versions when format actually changes.
  */
 import { type Kysely, sql, } from "kysely";
@@ -18,17 +18,17 @@ import { type Kysely, sql, } from "kysely";
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("users",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   await database.schema
     .alterTable("personas",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   await database.schema
     .alterTable("messages",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   await database.schema
@@ -44,7 +44,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("data_migrations",).execute();
-  await database.schema.alterTable("messages",).dropColumn("data_version",).execute();
-  await database.schema.alterTable("personas",).dropColumn("data_version",).execute();
-  await database.schema.alterTable("users",).dropColumn("data_version",).execute();
+  await database.schema.alterTable("messages",).dropColumn("format_version",).execute();
+  await database.schema.alterTable("personas",).dropColumn("format_version",).execute();
+  await database.schema.alterTable("users",).dropColumn("format_version",).execute();
 }

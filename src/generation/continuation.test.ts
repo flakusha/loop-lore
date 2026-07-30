@@ -52,7 +52,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       display_name TEXT NOT NULL,
       agent_type TEXT NOT NULL DEFAULT 'none',
       settings TEXT NOT NULL DEFAULT '{}',
-      data_version INTEGER NOT NULL DEFAULT 1,
+      format_version INTEGER NOT NULL DEFAULT 0,
       import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -105,7 +105,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       continuation_count INTEGER DEFAULT 0,
       partial_content TEXT,
       step_index INTEGER DEFAULT 0,
-      total_steps INTEGER DEFAULT 1,
+      total_steps INTEGER DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
@@ -272,7 +272,7 @@ describe("handleContinueGeneration", () => {
         display_name: "AI",
         agent_type: "ai",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
         import_spec: "{}",
       },)
       .execute();
@@ -442,7 +442,7 @@ describe("handleRetryGeneration", () => {
         display_name: "AI",
         agent_type: "ai",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
         import_spec: "{}",
       },)
       .execute();

@@ -2,13 +2,12 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
 /**
- * Migration 009 — Group chat foundations
+ * Migration 003 — Group chat foundations
  *
  * Adds:
  * - `talkativity` on `chat_participants`: per-chat participation weight (1-10)
  * - `initiative` on `chat_participants`: per-chat initiative score for initiative strategy
  * - `parent_chat_id` on `chats`: links side-chats / notes channels to parent
- * - `chat_purpose` on `chats`: distinguishes main / side / notes channels
  * - `group_initiatives` table: scene-level initiative state for initiative turn strategy
  * - `chat_mentions` table: @mention tracking for turn-selection override
  *
@@ -36,11 +35,6 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("chats",)
     .addColumn("parent_chat_id", "text", (col,) => col.references("chats.id",).onUpdate("cascade",),)
-    .execute();
-
-  await database.schema
-    .alterTable("chats",)
-    .addColumn("chat_purpose", "text", (col,) => col.notNull().defaultTo("main",),)
     .execute();
 
   await database.schema
@@ -98,7 +92,6 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("group_initiatives",).execute();
 
   await database.schema.dropIndex("idx_chats_parent",).execute();
-  await database.schema.alterTable("chats",).dropColumn("chat_purpose",).execute();
   await database.schema.alterTable("chats",).dropColumn("parent_chat_id",).execute();
 
   await database.schema.alterTable("chat_participants",).dropColumn("initiative",).execute();

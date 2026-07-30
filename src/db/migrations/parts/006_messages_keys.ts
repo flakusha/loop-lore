@@ -55,6 +55,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("expires_at", "text",)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
+    .addColumn("public_key", "text",)
     .execute();
 
   await database.schema.createIndex("idx_actor_keys_actor_id",).on("actor_keys",).column("actor_id",).execute();
