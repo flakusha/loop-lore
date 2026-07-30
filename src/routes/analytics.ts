@@ -11,8 +11,8 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
-import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { isTelemetryEnabled, } from "../telemetry/service";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
 interface HandleOpts {
   database: Kysely<DB>;
