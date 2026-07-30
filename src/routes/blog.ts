@@ -5,31 +5,34 @@
  * Blog records reuse chat-shaped content; routes manage the
  * blog-specific metadata layer.
  */
-import { Elysia } from "elysia";
-import { BlogService } from "../rpg/blog/service.js";
-import { type HandlerOpts } from "./actor-auth.js";
-import { HttpStatus, extractAuth, jsonError } from "./http-utils.js";
+import { Elysia, } from "elysia";
+import type { TranslatorFn, } from "../i18n/types";
+import { BlogService, } from "../rpg/blog/service.js";
+import { type HandlerOpts, } from "./actor-auth.js";
+import { extractAuth, HttpStatus, jsonError, } from "./http-utils.js";
 
-export function blogRoutes(opts: HandlerOpts) {
-  const { database } = opts;
-  const svc = new BlogService(database);
+export function blogRoutes(opts: HandlerOpts,) {
+  const { database, } = opts;
+  const svc = new BlogService(database,);
 
-  return new Elysia({ name: "blog" })
+  return new Elysia({ name: "blog", },)
     // ── Posts ────────────────────────────────────────────
-    .post("/api/blog/posts", async (ctx: any) => {
-      const { userId } = extractAuth(ctx);
+    .post("/api/blog/posts", async (ctx: any,) => {
+      const { userId, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
       const body = ctx.body as Record<string, unknown>;
       const title = body.title as string | undefined;
       const contentBody = body.body as string | undefined;
       if (!title || !contentBody) {
-        return jsonError(
-          "title and body are required",
-          HttpStatus.BadRequest,
-        );
+        return jsonError({
+          message: "errors.missingField",
+          status: HttpStatus.BadRequest,
+          t,
+        },);
       }
 
       const post = await svc.createPost({
@@ -44,21 +47,20 @@ export function blogRoutes(opts: HandlerOpts) {
         tags: body.tags as string[] | undefined,
         scheduled_at: body.scheduled_at as string | undefined,
         metadata: body.metadata as Record<string, unknown> | undefined,
-      });
+      },);
 
-      return { success: true, post };
-    })
-
-    .get("/api/blog/posts/:id", async (ctx: any) => {
-      const post = await svc.getPost(ctx.params.id);
+      return { success: true, post, };
+    },)
+    .get("/api/blog/posts/:id", async (ctx: any,) => {
+      const t = ctx.t as TranslatorFn | undefined;
+      const post = await svc.getPost(ctx.params.id,);
       if (!post) {
-        return jsonError("Post not found", HttpStatus.NotFound);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      await svc.incrementViewCount(post.id);
-      return { success: true, post };
-    })
-
-    .get("/api/blog/posts", async (ctx: any) => {
+      await svc.incrementViewCount(post.id,);
+      return { success: true, post, };
+    },)
+    .get("/api/blog/posts", async (ctx: any,) => {
       const query = ctx.query as Record<string, string>;
       const posts = await svc.listPosts({
         author_id: query.author_id,
@@ -66,25 +68,25 @@ export function blogRoutes(opts: HandlerOpts) {
         status: query.status as any,
         category: query.category,
         world_id: query.world_id,
-        limit: query.limit ? Number(query.limit) : undefined,
-        offset: query.offset ? Number(query.offset) : undefined,
-      });
-      return { success: true, posts, count: posts.length };
-    })
-
-    .patch("/api/blog/posts/:id", async (ctx: any) => {
-      const { userId, userRole } = extractAuth(ctx);
+        limit: query.limit ? Number(query.limit,) : undefined,
+        offset: query.offset ? Number(query.offset,) : undefined,
+      },);
+      return { success: true, posts, count: posts.length, };
+    },)
+    .patch("/api/blog/posts/:id", async (ctx: any,) => {
+      const { userId, userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
       const body = ctx.body as Record<string, unknown>;
-      const post = await svc.getPost(ctx.params.id);
+      const post = await svc.getPost(ctx.params.id,);
       if (!post) {
-        return jsonError("Post not found", HttpStatus.NotFound);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       if (post.author_id !== userId && userRole !== "admin") {
-        return jsonError("Forbidden", HttpStatus.Forbidden);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
       const updated = await svc.updatePost(ctx.params.id, {
@@ -95,160 +97,159 @@ export function blogRoutes(opts: HandlerOpts) {
         category: body.category as string | undefined,
         tags: body.tags as string[] | undefined,
         metadata: body.metadata as Record<string, unknown> | undefined,
-      });
+      },);
 
-      return { success: true, post: updated };
-    })
-
-    .delete("/api/blog/posts/:id", async (ctx: any) => {
-      const { userId, userRole } = extractAuth(ctx);
+      return { success: true, post: updated, };
+    },)
+    .delete("/api/blog/posts/:id", async (ctx: any,) => {
+      const { userId, userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      const post = await svc.getPost(ctx.params.id);
+      const post = await svc.getPost(ctx.params.id,);
       if (!post) {
-        return jsonError("Post not found", HttpStatus.NotFound);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       if (post.author_id !== userId && userRole !== "admin") {
-        return jsonError("Forbidden", HttpStatus.Forbidden);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
-      await svc.deletePost(ctx.params.id);
-      return { success: true };
-    })
-
+      await svc.deletePost(ctx.params.id,);
+      return { success: true, };
+    },)
     // ── Comments ─────────────────────────────────────────
-    .post("/api/blog/posts/:id/comments", async (ctx: any) => {
-      const { userId } = extractAuth(ctx);
+    .post("/api/blog/posts/:id/comments", async (ctx: any,) => {
+      const { userId, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
       const body = ctx.body as Record<string, unknown>;
       const commentBody = body.body as string | undefined;
       if (!commentBody) {
-        return jsonError("body is required", HttpStatus.BadRequest);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
-      const post = await svc.getPost(ctx.params.id);
+      const post = await svc.getPost(ctx.params.id,);
       if (!post) {
-        return jsonError("Post not found", HttpStatus.NotFound);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
       const comment = await svc.createComment({
         post_id: ctx.params.id,
         author_id: userId,
         body: commentBody,
-      });
+      },);
 
-      return { success: true, comment };
-    })
-
-    .get("/api/blog/posts/:id/comments", async (ctx: any) => {
+      return { success: true, comment, };
+    },)
+    .get("/api/blog/posts/:id/comments", async (ctx: any,) => {
       const comments = await svc.listComments(ctx.params.id, {
-        limit: ctx.query.limit ? Number(ctx.query.limit) : undefined,
-        offset: ctx.query.offset ? Number(ctx.query.offset) : undefined,
-      });
-      return { success: true, comments, count: comments.length };
-    })
-
+        limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
+        offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
+      },);
+      return { success: true, comments, count: comments.length, };
+    },)
     // ── Moderation ───────────────────────────────────────
-    .patch("/api/blog/comments/:id/moderate", async (ctx: any) => {
-      const { userRole } = extractAuth(ctx);
+    .patch("/api/blog/comments/:id/moderate", async (ctx: any,) => {
+      const { userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {
-        return jsonError("Admin access required", HttpStatus.Forbidden);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
       const body = ctx.body as Record<string, unknown>;
       const status = body.status as string | undefined;
-      if (!status || !["visible", "hidden", "deleted"].includes(status)) {
-        return jsonError(
-          "status must be visible, hidden, or deleted",
-          HttpStatus.BadRequest,
-        );
+      if (!status || !["visible", "hidden", "deleted",].includes(status,)) {
+        return jsonError({
+          message: "errors.invalidInput",
+          status: HttpStatus.BadRequest,
+          t,
+        },);
       }
 
-      const ok = await svc.moderateComment(ctx.params.id, status as any);
+      const ok = await svc.moderateComment(ctx.params.id, status as any,);
       if (!ok) {
-        return jsonError("Comment not found", HttpStatus.NotFound);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      return { success: true };
-    })
-
-    .patch("/api/blog/posts/:id/moderate", async (ctx: any) => {
-      const { userRole } = extractAuth(ctx);
+      return { success: true, };
+    },)
+    .patch("/api/blog/posts/:id/moderate", async (ctx: any,) => {
+      const { userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {
-        return jsonError("Admin access required", HttpStatus.Forbidden);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
       const body = ctx.body as Record<string, unknown>;
       const status = body.status as string | undefined;
       if (
         !status ||
-        !["draft", "published", "hidden", "disabled"].includes(status)
+        !["draft", "published", "hidden", "disabled",].includes(status,)
       ) {
-        return jsonError(
-          "status must be draft, published, hidden, or disabled",
-          HttpStatus.BadRequest,
-        );
+        return jsonError({
+          message: "errors.invalidInput",
+          status: HttpStatus.BadRequest,
+          t,
+        },);
       }
 
       const updated = await svc.updatePost(ctx.params.id, {
         status: status as any,
-      });
+      },);
       if (!updated) {
-        return jsonError("Post not found", HttpStatus.NotFound);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      return { success: true, post: updated };
-    })
-
+      return { success: true, post: updated, };
+    },)
     // ── Follows ──────────────────────────────────────────
-    .post("/api/blog/follow/:authorId", async (ctx: any) => {
-      const { userId } = extractAuth(ctx);
+    .post("/api/blog/follow/:authorId", async (ctx: any,) => {
+      const { userId, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      await svc.follow(userId, ctx.params.authorId);
-      return { success: true };
-    })
-
-    .delete("/api/blog/follow/:authorId", async (ctx: any) => {
-      const { userId } = extractAuth(ctx);
+      await svc.follow(userId, ctx.params.authorId,);
+      return { success: true, };
+    },)
+    .delete("/api/blog/follow/:authorId", async (ctx: any,) => {
+      const { userId, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      await svc.unfollow(userId, ctx.params.authorId);
-      return { success: true };
-    })
-
-    .get("/api/blog/follow/:authorId/status", async (ctx: any) => {
-      const { userId } = extractAuth(ctx);
+      await svc.unfollow(userId, ctx.params.authorId,);
+      return { success: true, };
+    },)
+    .get("/api/blog/follow/:authorId/status", async (ctx: any,) => {
+      const { userId, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError("Unauthorized", HttpStatus.Unauthorized);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      const following = await svc.isFollowing(userId, ctx.params.authorId);
-      return { success: true, following };
-    })
-
-    .get("/api/blog/authors/:authorId/followers", async (ctx: any) => {
-      const followers = await svc.getFollowers(ctx.params.authorId);
-      return { success: true, followers, count: followers.length };
-    })
-
+      const following = await svc.isFollowing(userId, ctx.params.authorId,);
+      return { success: true, following, };
+    },)
+    .get("/api/blog/authors/:authorId/followers", async (ctx: any,) => {
+      const followers = await svc.getFollowers(ctx.params.authorId,);
+      return { success: true, followers, count: followers.length, };
+    },)
     // ── RAG Sources ──────────────────────────────────────
-    .get("/api/blog/posts/:id/sources", async (ctx: any) => {
-      const sources = await svc.getRAGSources(ctx.params.id);
-      return { success: true, sources, count: sources.length };
-    })
-
-    .post("/api/blog/posts/:id/sources", async (ctx: any) => {
-      const { userRole } = extractAuth(ctx);
+    .get("/api/blog/posts/:id/sources", async (ctx: any,) => {
+      const sources = await svc.getRAGSources(ctx.params.id,);
+      return { success: true, sources, count: sources.length, };
+    },)
+    .post("/api/blog/posts/:id/sources", async (ctx: any,) => {
+      const { userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {
-        return jsonError("Admin access required", HttpStatus.Forbidden);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
       const body = ctx.body as Record<string, unknown>;
@@ -258,8 +259,8 @@ export function blogRoutes(opts: HandlerOpts) {
         title: body.title as string,
         relevance_score: (body.relevance_score as number) ?? 0,
         snippet: (body.snippet as string) ?? "",
-      });
+      },);
 
-      return { success: true, source };
-    });
+      return { success: true, source, };
+    },);
 }
