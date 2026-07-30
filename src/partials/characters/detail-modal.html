@@ -1,13 +1,13 @@
 <div
   id="character-detail-modal"
   class="modal-overlay"
-  x-on:click="window.closeModalOnBackdrop($event)"
+  onclick="if (event.target === this) { closeModal(this,); }"
   data-testid="character-detail-modal"
 >
   <div class="modal">
     <div class="modal-header">
       <span class="title" data-field="name"></span>
-      <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
+      <button class="btn-icon" onclick="closeModal(this.closest('.modal-overlay',),)">&times;</button>
     </div>
     <div class="modal-body">
       <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
@@ -88,7 +88,7 @@
         <button
           class="btn btn-secondary"
           data-action="start-chat"
-          x-on:click="window.startChatFromChar($el)"
+          onclick="startChatFromChar(this,)"
           data-testid="start-chat-btn"
         >
           💬 Start Chat
@@ -96,7 +96,7 @@
         <button
           class="btn btn-secondary"
           data-action="edit-char"
-          x-on:click="window.editCharacter($el)"
+          onclick="editCharacter(this,)"
           data-testid="edit-character-btn"
         >
           ✏️ Edit
@@ -104,7 +104,7 @@
         <button
           class="btn btn-danger"
           data-action="delete-char"
-          x-on:click="window.deleteCharacter($el)"
+          onclick="deleteCharacter(this,)"
           data-testid="delete-character-btn"
         >
           🗑 Delete
