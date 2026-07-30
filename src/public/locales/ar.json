@@ -46,7 +46,11 @@
     "selectAll": "Select All",
     "pin": "Pin",
     "clearAll": "Clear all",
-    "removeFilter": "Remove filter"
+    "removeFilter": "Remove filter",
+    "unpin": "Unpin",
+    "rename": "Rename",
+    "filter": "Filter…",
+    "archive": "Archive"
   },
   "auth": {
     "login": "Log In",
@@ -738,7 +742,22 @@
     "initializeMood": "Initialize Mood",
     "loadingMood": "Loading mood...",
     "renameChat": "Rename Chat",
-    "pin": "Pin"
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "rename": "Rename",
+    "resumeAI": "Resume AI generation",
+    "pauseAI": "Pause AI generation",
+    "notifications": "Notifications",
+    "markAllRead": "Mark all read",
+    "dismiss": "Dismiss",
+    "markRead": "Mark read",
+    "noNotifications": "No notifications",
+    "archiveSelected": "Archive selected",
+    "deleteSelected": "Delete selected",
+    "exportSelected": "Export selected",
+    "clearSelection": "Clear selection",
+    "noChatsYet": "No chats yet",
+    "filterChats": "Filter chats"
   },
   "personas": {
     "title": "Personas",
