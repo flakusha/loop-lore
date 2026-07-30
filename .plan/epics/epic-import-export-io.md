@@ -1,196 +1,121 @@
-# Epic 14: Import/Export & Data Portability — Implementation Plan
+# Epic 14: Import/Export & Data Portability
 
-**Status:** 📝 Doc reconciled — feature NOT yet built (reconciled 2026-07-19)\
-**Worktree:** `tree/feat-14-io`\
-**Branch:** `feat-14-io`
+**Status:** ✅ Implemented (updated 2026-07-30 — code audit)
+**Priority:** Medium
+**Effort:** ~~High~~ Low (remaining work)
+**Type:** Feature Epic
+**Tags:** import, export, characters, steganography, io-formats
 
----
+## Summary
 
-## Current State Assessment
+Character and chat import/export system — auto-detection, format normalizers, exporters, PNG steganography, CHARX bundles, and chat export. **Core system fully implemented.**
 
-### Existing Code
+## Reference
 
-| File                              | Lines | Status  | Gaps                                                       |
-| --------------------------------- | ----- | ------- | ---------------------------------------------------------- |
-| `src/routes/import.ts`            | 148   | Partial | Only JSON/PNG/YAML/TOML; no CCv3/CHARX; no lorebook import |
-| `src/routes/chat-export.ts`       | 125   | Partial | Only Markdown/JSON; no HTML/text; no bulk export           |
-| `src/characters/steganography.ts` | 116   | Partial | PNG extraction only; no writing; no V3 chunk support       |
+- Spec: `docs/spec/io-formats.md`
+- Spec: `docs/spec/character-spec.md`
 
-### Documentation Created
+## Current State (Code Audit)
 
-- `docs/spec/io-formats.md` — Complete format specifications (10 sections)
-- Covers: CCv2, CCv3, Character.AI, PNG, CHARX, YAML, TOML, chat exports, bulk export
+### ✅ Implemented — Import
 
----
+| Component                               | File                                                | Status  |
+| --------------------------------------- | --------------------------------------------------- | ------- |
+| Auto-detection (PNG/ZIP/JSON/TOML/YAML) | `src/characters/parser.ts` (191L)                   | ✅ Done |
+| CCv2 normalizer                         | `src/characters/normalizers/ccv2.ts` + test         | ✅ Done |
+| CCv3 normalizer                         | `src/characters/normalizers/ccv3.ts` + test         | ✅ Done |
+| Character.AI normalizer                 | `src/characters/normalizers/character-ai.ts` + test | ✅ Done |
+| JSON flat normalizer                    | `src/characters/normalizers/json-flat.ts` + test    | ✅ Done |
+| TOML normalizer                         | `src/characters/normalizers/toml.ts` + test         | ✅ Done |
+| YAML normalizer                         | `src/characters/normalizers/yaml.ts` + test         | ✅ Done |
+| Import route                            | `src/routes/import.ts` (274L)                       | ✅ Done |
+| Character validation                    | `src/characters/validator.ts`                       | ✅ Done |
 
-## Implementation Phases
+### ✅ Implemented — Export
 
-### Phase 1: Core Import (Week 1)
+| Component                  | File                               | Status  |
+| -------------------------- | ---------------------------------- | ------- |
+| CCv2 exporter              | `src/characters/exporters/ccv2.ts` | ✅ Done |
+| CCv3 exporter              | `src/characters/exporters/ccv3.ts` | ✅ Done |
+| PNG exporter (dual chunks) | `src/characters/exporters/png.ts`  | ✅ Done |
+| YAML exporter              | `src/characters/exporters/yaml.ts` | ✅ Done |
+| TOML exporter              | `src/characters/exporters/toml.ts` | ✅ Done |
+| Export route               | `src/routes/export.ts` (292L)      | ✅ Done |
+| Export SSE stream          | `src/routes/export-sse.ts`         | ✅ Done |
 
-**Goal:** Auto-detection + all character format normalizers
+### ✅ Implemented — PNG Steganography
 
-| Task                     | Files                                              | Effort |
-| ------------------------ | -------------------------------------------------- | ------ |
-| Auto-detection algorithm | `src/characters/parser.ts` (new)                   | Med    |
-| CCv2 normalizer          | `src/characters/normalizers/ccv2.ts` (new)         | Low    |
-| CCv3 normalizer          | `src/characters/normalizers/ccv3.ts` (new)         | Med    |
-| Character.AI normalizer  | `src/characters/normalizers/character-ai.ts` (new) | Low    |
-| JSON flat normalizer     | `src/characters/normalizers/json-flat.ts` (new)    | Low    |
-| Update import route      | `src/routes/import.ts`                             | Low    |
+| Component              | File                                     | Status  |
+| ---------------------- | ---------------------------------------- | ------- |
+| PNG extraction         | `src/characters/steganography.ts` (243L) | ✅ Done |
+| PNG insertion (writer) | `src/characters/steganography.ts`        | ✅ Done |
+| CRC32 checksum         | `src/characters/steganography.ts`        | ✅ Done |
+| Tests                  | `src/characters/steganography.test.ts`   | ✅ Done |
 
-### Phase 2: PNG + CHARX (Week 2)
+### ✅ Implemented — CHARX Bundles
 
-**Goal:** Full PNG read/write + CHARX bundles
+| Component               | File                            | Status  |
+| ----------------------- | ------------------------------- | ------- |
+| CHARX extraction        | `src/characters/charx.ts` (96L) | ✅ Done |
+| CHARX creation (export) | `src/characters/charx.ts`       | ✅ Done |
+| Embedded URI resolution | `src/characters/charx.ts`       | ✅ Done |
 
-| Task                    | Files                             | Effort |
-| ----------------------- | --------------------------------- | ------ |
-| PNG chunk writer        | `src/characters/steganography.ts` | Med    |
-| V3 PNG support          | `src/characters/steganography.ts` | Low    |
-| CHARX extraction        | `src/characters/charx.ts` (new)   | Med    |
-| CHARX export            | `src/characters/charx.ts`         | Med    |
-| Asset import from CHARX | `src/characters/charx.ts`         | Med    |
+### ✅ Implemented — Chat Export
 
-### Phase 3: Export (Week 3)
+| Component         | File                               | Status  |
+| ----------------- | ---------------------------------- | ------- |
+| Markdown export   | `src/routes/chat-export.ts` (323L) | ✅ Done |
+| JSON export       | `src/routes/chat-export.ts`        | ✅ Done |
+| HTML export       | `src/routes/chat-export.ts`        | ✅ Done |
+| Plain text export | `src/routes/chat-export.ts`        | ✅ Done |
+| Tests             | `src/routes/chat-export.test.ts`   | ✅ Done |
 
-**Goal:** All export formats + bulk export
+### ✅ Implemented — Supporting
 
-| Task                       | Files                                     | Effort |
-| -------------------------- | ----------------------------------------- | ------ |
-| YAML exporter              | `src/characters/exporters/yaml.ts` (new)  | Low    |
-| TOML exporter              | `src/characters/exporters/toml.ts` (new)  | Low    |
-| PNG exporter (dual chunks) | `src/characters/exporters/png.ts` (new)   | Med    |
-| CHARX exporter             | `src/characters/exporters/charx.ts` (new) | Med    |
-| Bulk ZIP export            | `src/routes/export.ts` (new)              | Med    |
+| Component                 | File                                            | Status  |
+| ------------------------- | ----------------------------------------------- | ------- |
+| Canonical character model | `src/characters/spec.ts` (421L)                 | ✅ Done |
+| Error types               | `src/characters/errors.ts` (183L)               | ✅ Done |
+| Exporter index            | `src/characters/exporters/index.ts`             | ✅ Done |
+| Normalizer index          | `src/characters/normalizers/index.ts`           | ✅ Done |
+| Character-systems bridge  | `src/characters/importers/character-systems.ts` | ✅ Done |
+| Frontend import modal     | `src/partials/characters/import-modal.html`     | ✅ Done |
+| Frontend export modal     | `src/partials/characters/export-modal.html`     | ✅ Done |
 
-### Phase 4: Chat Export (Week 3-4)
+## Remaining Work (if any)
 
-**Goal:** All chat export formats
+- [x] Lorebook import with characters (implemented 2026-07-30)
+- [x] Lorebook export round-trip fidelity → `TASK-lorebook-export.md`
+- [ ] URL import from Chub.ai → `TASK-url-import-chub.md` (deferred to v2)
+- [ ] CLI commands → `TASK-cli-import-export.md` (deferred to v2)
+- [ ] Bulk ZIP export (verify — route exists but scope unclear)
 
-| Task                    | Files                       | Effort |
-| ----------------------- | --------------------------- | ------ |
-| HTML chat export        | `src/routes/chat-export.ts` | Low    |
-| Plain text chat export  | `src/routes/chat-export.ts` | Low    |
-| Chat export with assets | `src/routes/chat-export.ts` | Med    |
+## Tasks
 
----
+- [x] Auto-detection algorithm
+- [x] CCv2/CCv3/Character.AI/JSON/TOML/YAML normalizers
+- [x] Import route with all formats
+- [x] PNG steganography (read + write)
+- [x] CHARX extraction + export
+- [x] All exporters (CCv2, CCv3, PNG, YAML, TOML)
+- [x] Export route
+- [x] Lorebook import with character cards
+- [x] Chat export (Markdown, JSON, HTML, plain text)
 
-## Questions for User
+## Files
 
-### Priority Questions
+- `src/characters/` — full character I/O system (parser, normalizers, exporters, steganography, charx)
+- `src/routes/import.ts` — import API
+- `src/routes/export.ts` — export API
+- `src/routes/chat-export.ts` — chat export API
+- `src/routes/export-sse.ts` — SSE streaming export
 
-1. **Format Priority:** Which formats are most important to implement first?
-   - [ ] CCv2 (SillyTavern/Chub) — highest compatibility
-   - [ ] CCv3 (RisuAI) — modern standard with assets
-   - [ ] Character.AI — popular platform
-   - [ ] PNG-embedded — sharing format
-   - [ ] CHARX — bundle format with assets
+## Related Epics
 
-2. **Export Scope:** What chat export formats do you need?
-   - [ ] JSON (structured, full metadata)
-   - [ ] Markdown (readable, shareable)
-   - [ ] HTML (styled, self-contained)
-   - [ ] Plain text (minimal)
-   - [ ] All of the above
+- `epic-actors.md` — imported characters become actors
+- `epic-archival-workflow.md` — export interacts with archival
+- `epic-plugin-system.md` — potential plugin-based format support
 
-3. **Bulk Export:** Do you need bulk export (ZIP archive) in v1?
-   - [ ] Yes — full backup/restore capability
-   - [ ] No — single character/chat export only
-   - [ ] Defer to v2
+## Tickets
 
-4. **Lorebook Import:** Should lorebook entries be imported with characters?
-   - [ ] Yes — full lorebook support
-   - [ ] No — character data only, lorebooks separately
-   - [ ] Partial — basic entries only (keys + content)
-
-5. **Asset Handling:** How should embedded assets (CHARX, V3) be handled?
-   - [ ] Auto-import to asset system
-   - [ ] Prompt user for each asset
-   - [ ] Skip assets, import card only
-
-### Technical Questions
-
-1. **PNG Writing:** Should we write both V2+V3 chunks for maximum compatibility?
-   - [ ] Yes — always write both (recommended)
-   - [ ] V3 only — modern format
-   - [ ] Configurable via settings
-
-2. **Error Handling:** How strict should format validation be?
-   - [ ] Strict — reject invalid cards
-   - [ ] Lenient — import with warnings
-   - [ ] Configurable per format
-
-3. **Testing:** What test coverage target?
-   - [ ] Unit tests for all normalizers
-   - [ ] Integration tests for import/export pipeline
-   - [ ] Round-trip tests (import → export → import)
-   - [ ] All of the above
-
-### Scope Questions
-
-1. **URL Import:** Should we support importing from URLs (Chub.ai, direct links)?
-   - [ ] Yes — fetch from URL
-   - [ ] No — file upload only
-   - [ ] Defer to v2
-
-2. **CLI Support:** Should we add CLI commands for import/export?
-   - [ ] Yes — `loop-lore import/export` commands
-   - [ ] No — web UI only
-   - [ ] Defer to v2
-
----
-
-## Recommended Priority
-
-Based on research and existing code:
-
-1. **CCv2 + PNG** — Highest compatibility, existing steganography code
-2. **CCv3 + CHARX** — Modern standard, asset support
-3. **Character.AI** — Popular platform, simple format
-4. **YAML/TOML** — Loop-lore native, already supported in import
-5. **Bulk Export** — Full backup capability
-
----
-
-## Next Steps
-
-1. **Await user decisions** on questions above
-2. **Create task breakdown** based on decisions
-3. **Start Phase 1** with auto-detection + CCv2 normalizer
-4. **Iterate** based on testing and feedback
-
----
-
-## Dependencies
-
-### Already in package.json
-
-- `js-yaml` — YAML parsing
-- `smol-toml` — TOML parsing
-
-### New Dependencies
-
-None required — PNG metadata and ZIP extraction use native Bun APIs.
-
----
-
-## Testing Strategy
-
-| Test Type   | Coverage                    | Files                                   |
-| ----------- | --------------------------- | --------------------------------------- |
-| Unit        | Auto-detection, normalizers | `src/characters/*.test.ts`              |
-| Integration | Import/export pipeline      | `src/characters/integration.test.ts`    |
-| Round-trip  | Import → Export → Import    | `src/characters/roundtrip.test.ts`      |
-| E2E         | Full user workflow          | `tests/e2e/flows/import-export.test.ts` |
-
----
-
-## References
-
-- `docs/spec/io-formats.md` — Complete format specifications
-- `docs/spec/character-spec.md` — Character system overview
-- `docs/spec/assets.md` — Asset pipeline
-- `docs/meta/plan.md` — v0.1 implementation plan
-
-## Linked Tasks
-
-- TASK-import-export-io.md
+- `TASK-import-export-io.md` — implementation tasks (STUB — needs update)
