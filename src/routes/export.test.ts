@@ -81,7 +81,7 @@ describe("exportRoutes", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -138,7 +138,7 @@ describe("exportRoutes", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

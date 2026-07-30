@@ -35,12 +35,14 @@ import {
   ChatParticipantParams,
   ChatParticipantUpdateBody,
   ChatPersonaUpdateBody,
+  ChatRenameBody,
   ChatUpdateBody,
   ErrorResponse,
   PaginationQuery,
   SuccessResponse,
 } from "../validation/schemas";
 import {
+  ErrorCode,
   forbiddenResponse as forbidden,
   HttpStatus,
   jsonCreated,
@@ -308,6 +310,57 @@ export function chatsRoutes(opts: HandlerOpts,) {
           return jsonNoContent();
         },
         { params: ChatIdParams, response: { 204: t.Void(), 401: ErrorResponse, 403: ErrorResponse, }, },
+      )
+      .post(
+        "/api/chats/:id/rename",
+        async (ctx: any,) => {
+          const userId = ctx.userId as string | null;
+          const userRole = ctx.userRole as string | null;
+          const id = (ctx.params as { id: string }).id;
+          const body = ctx.body as typeof ChatRenameBody.static;
+          if (!userId) { return unauthorized(undefined, ctx.t,); }
+
+          const access = await checkChatAccess(database, id, userId, userRole,);
+          if (!access.ok) { return forbidden(undefined, ctx.t,); }
+
+          // Validate name length
+          if (!body.name || body.name.length > 60) {
+            return jsonError("Name must be 1-60 characters", HttpStatus.BadRequest, ErrorCode.BadRequest,);
+          }
+
+          // Validate name_source
+          const validSources = ["manual", "auto-rule", "auto-llm",];
+          if (!body.name_source || !validSources.includes(body.name_source,)) {
+            return jsonError("Invalid name_source value", HttpStatus.BadRequest, ErrorCode.BadRequest,);
+          }
+
+          // Check for duplicate name in same chat (different chat with same name)
+          const existing = await database
+            .selectFrom("chats",)
+            .select("id",)
+            .where("name", "=", body.name,)
+            .where("id", "!=", id,)
+            .where("created_by", "=", userId,)
+            .executeTakeFirst();
+
+          if (existing) {
+            return jsonError("Name already in use", HttpStatus.BadRequest, ErrorCode.BadRequest,);
+          }
+
+          // Update chat with new name
+          await database
+            .updateTable("chats",)
+            .set({ name: body.name, name_source: body.name_source, },)
+            .where("id", "=", id,)
+            .execute();
+
+          return jsonResponse({ ok: true, },);
+        },
+        {
+          body: ChatRenameBody,
+          params: ChatIdParams,
+          response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, },
+        },
       )
       .get(
         "/api/chats/:id/export",
