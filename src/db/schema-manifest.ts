@@ -199,6 +199,7 @@ export const SCHEMA = new SchemaManifest()
     response_length_custom: col("text",),
     context_max_tokens: col("integer",),
     streaming: col("integer",),
+    nsfw_override: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -483,6 +484,7 @@ export const SCHEMA = new SchemaManifest()
     difficulty_modifier: col("integer", { notNull: true, },),
     difficulty_reroll: col("text", { notNull: true, },),
     difficulty_state: col("text", { notNull: true, },),
+    nsfw_override: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
