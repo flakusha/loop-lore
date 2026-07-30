@@ -442,7 +442,19 @@ export default tseslint.config(
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────
   {
-    files: ["src/scripts/**/*.ts",],
+    files: ["src/scripts/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mjs",],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        allowDefaultProject: true,
+        tsconfigRootDir: projectRoot,
+      },
+      globals: {
+        ...globals.bun,
+        ...globals.node,
+      },
+    },
+    plugins: tsPlugins,
     rules: {
       "unicorn/text-encoding-identifier-case": "off",
       "unicorn/escape-case": "off",
@@ -451,6 +463,7 @@ export default tseslint.config(
       "unicorn/prefer-split-limit": "off",
       "unicorn/no-useless-template-literals": "off",
       "unicorn/prefer-string-raw": "off",
+      "unicorn/no-process-exit": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",

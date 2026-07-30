@@ -25,9 +25,15 @@ detect_agent_push() {
     local agent_email="${AGENT_GPG_EMAIL:-}"
     [[ -n "$agent_email" ]] || return 0
 
+    # Protected branches — agent commits must be finalized before push
+    local protected="refs/heads/(main|master|dev|stg)$"
+
     while read local_ref local_sha remote_ref remote_sha; do
         # Skip delete pushes
         [[ "$local_sha" != "0000000000000000000000000000000000000000" ]] || continue
+
+        # Only enforce on protected branches
+        [[ "$local_ref" =~ $protected ]] || continue
 
         # Determine commit range
         local range
@@ -47,7 +53,7 @@ detect_agent_push() {
             red ""
             red "❌ PUSH BLOCKED: Agent commits detected in $local_ref"
             red ""
-            red "   Agent commits cannot be pushed directly."
+            red "   Agent commits cannot be pushed to protected branches."
             red "   Use: ./scripts/worktree.sh finalize <branch>"
             red "   Then: git push (as human)"
             red ""
