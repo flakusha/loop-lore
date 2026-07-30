@@ -40,7 +40,6 @@ function main() {
   for (const [domain, paths,] of Object.entries(DOMAINS,)) {
     // Extract domain-specific properties from full schema
     const domainSchema: Record<string, unknown> = {
-// hint: Structural and logic conflict. Both design and behavior differ.
       $schema: "https://json-schema.org/draft-07/schema#",
       $id: `loop-lore-config.${domain}.schema.json`,
       title: `Loop Lore ${domain.charAt(0,).toUpperCase() + domain.slice(1,)} Config`,
