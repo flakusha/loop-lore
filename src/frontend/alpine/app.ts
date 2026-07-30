@@ -1,3 +1,4 @@
+import { $, } from "../dom";
 import {
   applyDirection,
   getSavedLocale,
@@ -47,7 +48,7 @@ globalThis.app = function() {
       const themes = globalThis.__THEMES ?? [];
       if (!themeId || themes.every((t: { id: string },) => t.id !== themeId)) { return; }
       for (const t of themes) {
-        const link = document.querySelector(`#theme-${t.id}`,) as HTMLLinkElement | null;
+        const link = $<HTMLLinkElement>(`#theme-${t.id}`,);
         if (link) { link.disabled = t.id !== themeId; }
       }
       document.body.classList.toggle("theme-no-icons", themeId === "no-icons",);

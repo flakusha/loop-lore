@@ -1,6 +1,7 @@
 // ── Worlds page: search, create ──────────────────────────────
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
+import { eventTarget, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { filterCards, } from "./shared";
@@ -29,7 +30,8 @@ globalThis.filterWorlds = function() {
 
 globalThis.createWorld = async function(event: Event,) {
   event.preventDefault();
-  const form = event.target as HTMLFormElement;
+  const form = eventTarget<HTMLFormElement>(event,);
+  if (!form) { return; }
   const formData = new FormData(form,);
   const data: Record<string, unknown> = {};
   formData.forEach((value, key,) => {
