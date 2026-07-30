@@ -20,7 +20,16 @@ import { QuestEngine, } from "../story/quest-engine";
 import type { QuestConfig, } from "../story/types";
 import { safeJsonStringify, } from "../utils";
 import { notFound, } from "../validation/middleware";
-import { Id, QuestCreateBody, QuestProgressBody, QuestUpdateBody, } from "../validation/schemas";
+import {
+  ErrorResponse,
+  Id,
+  ListResponse,
+  QuestCreateBody,
+  QuestProgressBody,
+  QuestResponse,
+  QuestUpdateBody,
+  SuccessResponse,
+} from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────
@@ -234,6 +243,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
         userRole,
       );
     }, {
+      response: {
+        200: ListResponse(QuestResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List world quests",
         description: "List quests in a world. Paginated.",
@@ -255,6 +269,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       },
       {
         body: QuestCreateBody,
+        response: {
+          200: QuestResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Create quest",
           description: "Create a new quest in a world.",
@@ -268,6 +287,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       return handleQuest(database, "GET", ctx.params.id, userId, userRole,);
     }, {
       params: t.Object({ id: Id, },),
+      response: {
+        200: QuestResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get quest",
         description: "Get a single quest by ID.",
@@ -288,6 +312,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
     }, {
       params: t.Object({ id: Id, },),
       body: QuestUpdateBody,
+      response: {
+        200: QuestResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update quest",
         description: "Update a quest's properties (title, description, status, objectives).",
@@ -300,6 +329,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       return handleAbandonQuest(database, ctx.params.id, userId, userRole,);
     }, {
       params: t.Object({ id: Id, },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Abandon quest",
         description: "Abandon/delete a quest by ID.",
@@ -320,6 +354,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
     }, {
       params: t.Object({ id: Id, },),
       body: QuestProgressBody,
+      response: {
+        200: QuestResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update quest progress",
         description: "Update quest progress for a quest. Optionally link to a chat session.",
@@ -338,6 +377,11 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       );
     }, {
       params: t.Object({ id: Id, chatId: Id, },),
+      response: {
+        200: ListResponse(QuestResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get quest progress by chat",
         description: "Get quest progress for a specific chat session.",
