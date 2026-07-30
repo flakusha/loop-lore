@@ -51,6 +51,15 @@ describe("ConfigSchema", () => {
     expect(map.TRANSPORT_MAX_FRAME_SIZE,).toBe("transport.limits.maxFrameSize",);
   });
 
+  test("envMap includes nsfw config", () => {
+    const map = ConfigSchema.envMap();
+    expect(map.ALLOW_NSFW,).toBe("nsfw.allowNsfw",);
+    expect(map.NSFW_MIN_AGE,).toBe("nsfw.nsfwMinAge",);
+    expect(map.NSFW_DEFAULT_SCOPE,).toBe("nsfw.defaultNsfwScope",);
+    expect(map.NSFW_CONSENT_REQUIRED,).toBe("nsfw.consentRequired",);
+    expect(map.NSFW_AUDIT_LOGGING,).toBe("nsfw.auditLogging",);
+  });
+
   test("envMap includes testing config", () => {
     const map = ConfigSchema.envMap();
     expect(map.TESTING_LLAMA_MODEL,).toBe("testing.llamaModel",);

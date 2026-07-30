@@ -9,6 +9,110 @@ import type { ProviderInstanceConfig, } from "./schema";
 import { ConfigSchema, } from "./schema-class";
 import { loadTemplateConfig, } from "./templates-loader";
 
+// ── Database Safety Guards ────────────────────────────────────
+
+/** Known network filesystem mount prefixes (Linux/macOS). */
+const NETWORK_FS_PREFIXES = [
+  "/mnt/efs", // AWS EFS
+  "/mnt/nfs", // generic NFS
+  "/nfs/", // NFS mounts
+  "/net/", // automount
+  "/cifs/", // SMB/CIFS
+  "/smb/", // SMB
+  "/Volumes/", // macOS network volumes
+  "/gpfs/", // IBM Spectrum Scale
+  "/lustre/", // Lustre filesystem
+  "/afs/", // Andrew File System
+  "/orangefs/", // OrangeFS
+  "/pvfs2/", // PVFS2
+  "/beegfs/", // BeeGFS
+];
+
+/**
+ * Detect if a path is on a network filesystem.
+ * Checks mount prefixes and /proc/mounts when available.
+ */
+function isNetworkFilesystem(filePath: string,): boolean {
+  const normalized = path.normalize(filePath,);
+  if (NETWORK_FS_PREFIXES.some((prefix,) => normalized.startsWith(prefix,))) {
+    return true;
+  }
+  // Linux: check /proc/mounts for the path's device
+  try {
+    const mounts = readFileSync("/proc/mounts", "utf8",);
+    const lines = mounts.split("\n",);
+    for (const line of lines) {
+      const parts = line.split(" ",);
+      const mountPoint = parts[1];
+      const fsType = parts[2];
+      if (mountPoint == null || fsType == null) { continue; }
+      if (parts.length >= 3 && normalized.startsWith(mountPoint,)) {
+        // Network filesystem types
+        const networkTypes = [
+          "nfs",
+          "nfs4",
+          "cifs",
+          "smb",
+          "smbfs",
+          "fuse.s3fs",
+          "fuse.gcsfuse",
+          "fuse.sshfs",
+          "fuse.s3",
+          "fuse.efs",
+          "fuse.juicefs",
+          "fuse.goofys",
+        ];
+        for (const netType of networkTypes) {
+          if (fsType === netType) { return true; }
+        }
+      }
+    }
+  } catch {
+    // Not on Linux or /proc not available — fall through to prefix-only check
+  }
+  return false;
+}
+
+/**
+ * Validate database safety constraints.
+ * Rejects SQLite for multi-instance deployments and warns on network filesystems.
+ *
+ * @throws {Error} When SQLite is used in an unsafe multi-instance configuration
+ */
+export function validateDatabaseSafety(config: Config,): void {
+  const { db, } = config;
+  const instanceCount = Number(process.env.INSTANCE_COUNT ?? "1",);
+  const unsafeMultiInstance = process.env.UNSAFE_SQLITE_MULTIINSTANCE === "true";
+
+  // ── Guard 1: Reject SQLite + multi-instance ──
+  if (db.type === "sqlite" && instanceCount > 1) {
+    throw new Error(
+      `DATABASE SAFETY: SQLite backend is not safe with ${instanceCount} instances. ` +
+        "SQLite uses file-level locking that corrupts data when multiple processes " +
+        "write concurrently over a network filesystem. " +
+        'Fix: Switch to Postgres (db.type = "postgres") or set INSTANCE_COUNT=1.',
+    );
+  }
+
+  if (db.type === "sqlite" && unsafeMultiInstance) {
+    throw new Error(
+      "DATABASE SAFETY: UNSAFE_SQLITE_MULTIINSTANCE=true is set but SQLite is configured. " +
+        "This environment variable is a safety override that should only be used " +
+        "during controlled migrations. Remove it or switch to Postgres.",
+    );
+  }
+
+  // ── Guard 2: Warn on network filesystem ──
+  if (db.type === "sqlite" && db.sqliteFilename && isNetworkFilesystem(db.sqliteFilename,)) {
+    console.warn(
+      `DATABASE WARNING: SQLite WAL path "${db.sqliteFilename}" appears to be on a network filesystem. ` +
+        "SQLite over NFS/EFS is unreliable and may cause data corruption. " +
+        "Mitigations: (1) move DB to local storage, (2) switch to Postgres, " +
+        "(3) set UNSAFE_SQLITE_MULTIINSTANCE=true to suppress.",
+    );
+  }
+}
+
 // Map flat env var names to dot-separated config paths
 // Source of truth: ConfigSchema.envMap() — auto-generated from class hierarchy.
 const ENV_MAP: Record<string, string> = ConfigSchema.envMap();
@@ -418,6 +522,7 @@ function loadConfig(cwd?: string,): Config {
   }
 
   validateConfig(config,);
+  validateDatabaseSafety(config,);
   return config;
 }
 
