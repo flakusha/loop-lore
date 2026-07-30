@@ -125,6 +125,9 @@ CHECKS[md - lint]="bun run md:lint"
 CHECKS[size - check]="bun run scripts/check-file-size.ts"
 CHECKS[size - strict]="bun run scripts/check-file-size.ts --strict"
 
+# Context weight analysis (non-blocking; --strict makes it a gate)
+CHECKS[context - weight]="bun run scripts/check-context-weight.ts"
+
 # Tests
 CHECKS[test - unit]="bun run test:unit"
 CHECKS[test - e2e]="E2E_SAFEGUARD=1 bun run test:e2e"
