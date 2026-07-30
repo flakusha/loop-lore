@@ -312,6 +312,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     }, {
       params: t.Object({ id: Id, },),
       body: LocationStateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update location state",
         description: "Update the state of a location (weather, time of day, events, etc).",
@@ -334,6 +339,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     }, {
       params: t.Object({ worldId: Id, },),
       query: PaginationQuery,
+      response: {
+        200: t.Object({ data: t.Array(t.Object({ id: t.String(), },),), total: t.Number(), page: t.Number(), pageSize: t.Number(), totalPages: t.Number(), },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List world states",
         description: "List all world states for a world. Paginated.",
@@ -357,6 +367,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     }, {
       params: t.Object({ worldId: Id, },),
       body: WorldStateCreateBody,
+      response: {
+        200: t.Object({ id: t.String(), },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Create world state",
         description: "Create a new world state snapshot for a world.",
