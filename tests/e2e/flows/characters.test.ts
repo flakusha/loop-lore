@@ -55,7 +55,7 @@ describe("Characters E2E", () => {
   test("POST /api/actors requires displayName", async () => {
     const res = await api.post("/api/actors", { actorType: "character", },);
     expect(res.ok,).toBe(false,);
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
