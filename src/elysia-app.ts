@@ -63,6 +63,7 @@ import { messagesRoutes, } from "./routes/messages";
 import { modelComparisonsRoutes, } from "./routes/model-comparisons";
 import { notificationsRoutes, } from "./routes/notifications";
 import { nsfwRoutes, } from "./routes/nsfw";
+import { nsfwModerationRoutes, } from "./routes/nsfw-moderation";
 import { pluginRoutes, } from "./routes/plugins";
 import { questsRoutes, } from "./routes/quests";
 import { sessionsRoutes, } from "./routes/sessions";
@@ -197,6 +198,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(generationRoutes(handleOpts,),);
   app.use(ageGateRoutes(handleOpts,),);
   app.use(nsfwRoutes(handleOpts,),);
+  app.use(nsfwModerationRoutes(handleOpts,),);
   app.use(battleRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
