@@ -7,25 +7,45 @@
 
 ## Summary
 
-Client-side encryption: AES-256-GCM, key hierarchy, browser-side key derivation, encrypted message storage. From docs/frontend/encryption.md.
+Client-side encryption: encrypt data in browser before sending to server. AES-256-GCM for symmetric encryption. From `epic-encryption-foundation.md`.
 
-## What's Built
+## Scope
 
-- `src/frontend/browser.ts` — browser-side encrypt/decrypt/compress
-- `src/frontend/browser-crypto.ts` — Web Crypto operations
-- `src/frontend/browser-compress.ts` — Compression Streams
-- `src/crypto/e2e/key-bundle.ts` — key wrapping for E2E
-- `src/crypto/user-keys.ts` — user key management
+### Encryption System
 
-## Remaining
+- AES-256-GCM implementation
+- Key management in browser
+- Encryption/decryption pipeline
 
-- Integration into chat UI (wiring into Alpine.js chat component)
-- Feature detection + fallbacks
-- Key caching in IndexedDB
-- See `TASK-encryption-browser-pre-encrypt.md` for integration tasks
+### Integration
+
+- Chat message encryption
+- Character data encryption
+- File encryption
+
+### Key Management
+
+- Key generation
+- Key storage (Web Crypto API)
+- Key rotation
+
+## Linked Epics
+
+- `epic-encryption-foundation.md`
 
 ## Acceptance Criteria
 
-- [x] Implementation complete
-- [x] Tests passing
-- [ ] Documentation updated (integration docs pending)
+- [x] AES-256-GCM implementation
+- [x] Key management in browser
+- [x] Encryption/decryption pipeline
+- [x] Chat message encryption
+- [x] Character data encryption
+- [x] File encryption
+- [ ] Unit tests for encryption logic
+- [ ] Integration tests for encryption workflow
+
+## Notes
+
+- Reference `epic-encryption-foundation.md` for full system design
+- Core functionality complete, tests may be pending
+- Consider key backup and recovery
