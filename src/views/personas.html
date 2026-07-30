@@ -1,14 +1,14 @@
 <!-- Personas List Page -->
 <header id="header-slot" class="main-header" data-page="personas" data-testid="personas-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">Personas</span>
+  <span class="title">{{{t("personas.title")}}}</span>
   <div class="actions">
     <button
       class="btn btn-primary"
       @click="$store.ui.activePersona = null; $store.ui.showPersonaForm = true"
       data-testid="create-persona"
     >
-      + New Persona
+      {{{t("personas.newPersona")}}}
     </button>
   </div>
 </header>
@@ -20,8 +20,8 @@
         <input
           class="form-input list-search"
           type="search"
-          placeholder="Search personas…"
-          aria-label="Search personas"
+          :placeholder="t('personas.searchPlaceholder')"
+          x-bind:aria-label="t('personas.searchPlaceholder')"
           x-model="search"
           @input="filterList()"
           data-testid="persona-search"
@@ -31,23 +31,22 @@
         <template x-if="loading">
           <div class="empty-state" style="padding: var(--space-12)">
             <div class="icon">⏳</div>
-            <div class="title">Loading personas...</div>
+            <div class="title">{{{t("personas.loading")}}}</div>
           </div>
         </template>
         <template x-if="!loading && filtered.length === 0 && personas.length === 0">
           <div class="empty-state" style="padding: var(--space-12)">
             <div class="icon">🎭</div>
-            <div class="title">No personas yet</div>
+            <div class="title">{{{t("personas.noPersonasYet")}}}</div>
             <div class="description">
-              Create a persona to define your identity in chats. Personas are separate from characters — they
-              represent you, the user.
+              {{{t("personas.emptyHint")}}}
             </div>
           </div>
         </template>
         <template x-if="!loading && filtered.length === 0 && personas.length > 0">
           <div class="empty-state" style="padding: var(--space-12)">
             <div class="icon">🔍</div>
-            <div class="title">No personas match your search</div>
+            <div class="title">{{{t("personas.noResults")}}}</div>
           </div>
         </template>
         <template x-for="p in filtered" :key="p.id">
@@ -62,18 +61,18 @@
               <div style="font-weight: 600" x-text="p.name"></div>
               <div
                 style="font-size: var(--fs-base-sm); color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                x-text="p.description || 'No description'"
+                x-text="p.description || t('personas.noDescription')"
               >
               </div>
             </div>
             <div style="display: flex; gap: var(--space-2); flex-shrink: 0">
               <template x-if="p.is_default">
                 <span style="font-size: var(--fs-sm); color: var(--accent-green); padding: 0 var(--space-2)"
-                >default</span>
+                >{{{t("personas.default")}}}</span>
               </template>
               <button
                 class="btn-icon"
-                title="Delete"
+                x-bind:title="t('common.delete')"
                 @click.stop="deletePersona(p.id)"
                 data-testid="delete-persona"
               >
@@ -96,55 +95,58 @@
   >
     <div class="modal" style="max-width: 480px">
       <div class="modal-header">
-        <span class="title" x-text="$store.ui.activePersona ? 'Edit Persona' : 'New Persona'"></span>
+        <span
+          class="title"
+          x-text="$store.ui.activePersona ? t('personas.editPersona') : t('personas.newPersonaTitle')"
+        ></span>
         <button class="btn-icon" @click="$store.ui.showPersonaForm = false">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label" for="persona-name">Name</label>
+          <label class="form-label" for="persona-name">{{{t("personas.name")}}}</label>
           <input
             class="form-input"
             type="text"
             id="persona-name"
             x-model="formName"
-            placeholder="Your persona name"
+            :placeholder="t('personas.namePlaceholder')"
             data-testid="persona-name"
           />
         </div>
         <div class="form-group">
-          <label class="form-label" for="persona-title">Title (optional)</label>
+          <label class="form-label" for="persona-title">{{{t("personas.titleField")}}}</label>
           <input
             class="form-input"
             type="text"
             id="persona-title"
             x-model="formTitle"
-            placeholder="e.g., Warrior of Light"
+            :placeholder="t('personas.titlePlaceholder')"
           />
         </div>
         <div class="form-group">
-          <label class="form-label" for="persona-description">Description</label>
+          <label class="form-label" for="persona-description">{{{t("personas.description")}}}</label>
           <textarea
             class="form-input form-textarea"
             id="persona-description"
             x-model="formDescription"
             rows="4"
-            placeholder="Physical/mental traits, backstory..."
+            :placeholder="t('personas.descriptionPlaceholder')"
           ></textarea>
         </div>
         <div class="form-group">
           <label style="display: flex; align-items: center; gap: var(--space-2)">
             <input type="checkbox" x-model="formIsDefault" @change="onDefaultChange()" />
-            Set as default persona
+            {{{t("personas.setDefault")}}}
           </label>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-ghost" @click="$store.ui.showPersonaForm = false">Cancel</button>
+        <button class="btn btn-ghost" @click="$store.ui.showPersonaForm = false">{{{t("common.cancel")}}}</button>
         <button
           class="btn btn-primary"
           @click="savePersona()"
           :disabled="!formName.trim() || saving"
-          x-text="saving ? 'Saving...' : $store.ui.activePersona ? 'Update' : 'Create'"
+          x-text="saving ? t('personas.saving') : $store.ui.activePersona ? t('personas.update') : t('personas.create')"
           data-testid="persona-save-btn"
         >
         </button>
