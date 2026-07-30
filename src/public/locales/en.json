@@ -376,6 +376,7 @@
   },
   "characters": {
     "title": "Characters",
+    "editCharacter": "Edit Character",
     "create": "Create Character",
     "edit": "Edit Character",
     "delete": "Delete Character",
@@ -413,6 +414,7 @@
   },
   "worlds": {
     "title": "Worlds",
+    "worldDetails": "World Details",
     "create": "Create World",
     "edit": "Edit World",
     "delete": "Delete World",
@@ -448,6 +450,7 @@
   },
   "gallery": {
     "title": "Gallery",
+    "assetGallery": "Asset Gallery",
     "upload": "Upload",
     "noAssets": "No assets yet",
     "dragDrop": "Drag and drop files here",
