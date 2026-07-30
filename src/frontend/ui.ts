@@ -3,6 +3,7 @@
  * Chat page still uses Alpine for its complex state.
  */
 import { eventCurrentTarget, eventTarget, } from "./dom";
+import { trapFocus, } from "./alpine/focus";
 
 // ── Sidebar ──────────────────────────────────────────────────
 
@@ -105,17 +106,69 @@ if (!(document as any)[LISTENER_KEY]) {
 
 // ── Modal helpers ──────────────────────────────────────────────
 
+let modalFocusCleanup: (() => void) | null = null;
+let previousFocusElement: HTMLElement | null = null;
+
 export function openModal(id: string,): void {
-  document.querySelector(`#${CSS.escape(id,)}`,)?.classList.add("open",);
+  const modal = document.querySelector(`#${CSS.escape(id,)}`,);
+  if (!modal) { return; }
+
+  // Store current focus to restore later
+  previousFocusElement = document.activeElement as HTMLElement | null;
+
+  modal.classList.add("open",);
+
+  // Set role=dialog if not already set
+  if (!modal.getAttribute("role")) {
+    modal.setAttribute("role", "dialog",);
+  }
+  if (!modal.getAttribute("aria-modal")) {
+    modal.setAttribute("aria-modal", "true",);
+  }
+
+  // Trap focus inside modal
+  modalFocusCleanup = trapFocus(modal,);
+
+  // Focus first focusable element inside modal
+  const first = modal.querySelector<HTMLElement>(
+    'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+  );
+  first?.focus();
 }
 
 export function closeModal(el: Element,): void {
-  el.closest(".modal-overlay",)?.classList.remove("open",);
+  const overlay = el.closest(".modal-overlay",);
+  overlay?.classList.remove("open",);
+
+  // Release focus trap
+  modalFocusCleanup?.();
+  modalFocusCleanup = null;
+
+  // Restore previous focus
+  if (previousFocusElement) {
+    previousFocusElement.focus();
+    previousFocusElement = null;
+  } else {
+    // Fallback: focus main content
+    const main = document.querySelector<HTMLElement>('[role="main"], #app-root',);
+    main?.focus();
+  }
 }
 
 export function closeModalOnBackdrop(event: Event,): void {
   if (event.target === event.currentTarget) {
-    eventCurrentTarget<HTMLElement>(event,)?.classList.remove("open",);
+    const overlay = eventCurrentTarget<HTMLElement>(event,);
+    overlay?.classList.remove("open",);
+
+    // Release focus trap
+    modalFocusCleanup?.();
+    modalFocusCleanup = null;
+
+    // Restore previous focus
+    if (previousFocusElement) {
+      previousFocusElement.focus();
+      previousFocusElement = null;
+    }
   }
 }
 

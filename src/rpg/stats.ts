@@ -6,8 +6,7 @@
  * distributing across six stats (8–15 each).
  */
 
-import { rollDie, } from "./dice";
-
+import { rollDie, type DiceSides, } from "./dice.js";
 
 // ── Types ────────────────────────────────────────────────
 
@@ -183,7 +182,7 @@ export function rollStats4d6(): number[] {
   for (let i = 0; i < 6; i++) {
     const rolls: number[] = [];
     for (let j = 0; j < 4; j++) {
-      rolls.push(rollDie(6,),);
+      rolls.push(rollDie(6 as DiceSides,),);
     }
     rolls.sort((a, b,) => b - a,);
     stats.push(rolls[0]! + rolls[1]! + rolls[2]!,);

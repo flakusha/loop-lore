@@ -1350,4 +1350,85 @@ export const SCHEMA = new SchemaManifest()
     provider: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text",),
+  },)
+  // ── RPG: Dice Roll History ──────────────────────────────────
+  .table("dice_roll_history", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    chat_id: col("text",),
+    actor_id: col("text",),
+    sides: col("integer", { notNull: true, },),
+    count: col("integer", { notNull: true, },),
+    modifier: col("integer", { notNull: true, },),
+    advantage_mode: col("text", { notNull: true, },),
+    exploding: col("integer", { notNull: true, },),
+    raw_rolls: col("text", { notNull: true, },),
+    raw_total: col("integer", { notNull: true, },),
+    total: col("integer", { notNull: true, },),
+    purpose: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── RPG: Character Stats ────────────────────────────────────
+  .table("character_stats", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    level: col("integer", { notNull: true, },),
+    hp: col("integer", { notNull: true, },),
+    max_hp: col("integer", { notNull: true, },),
+    temp_hp: col("integer", { notNull: true, },),
+    mp: col("integer", { notNull: true, },),
+    max_mp: col("integer", { notNull: true, },),
+    ac: col("integer", { notNull: true, },),
+    speed: col("integer", { notNull: true, },),
+    str: col("integer", { notNull: true, },),
+    dex: col("integer", { notNull: true, },),
+    con: col("integer", { notNull: true, },),
+    int: col("integer", { notNull: true, },),
+    wis: col("integer", { notNull: true, },),
+    cha: col("integer", { notNull: true, },),
+    hit_dice: col("text", { notNull: true, },),
+    death_save_successes: col("integer", { notNull: true, },),
+    death_save_failures: col("integer", { notNull: true, },),
+    xp: col("integer", { notNull: true, },),
+    xp_to_next: col("integer", { notNull: true, },),
+    data_version: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── RPG: XP Ledger ─────────────────────────────────────────
+  .table("xp_ledger", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    amount: col("integer", { notNull: true, },),
+    source: col("text", { notNull: true, },),
+    description: col("text",),
+    reference_id: col("text",),
+    chat_id: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── RPG: Loot Tables ───────────────────────────────────────
+  .table("loot_tables", {
+    id: col("text", { primaryKey: true, },),
+    name: col("text", { notNull: true, },),
+    source_type: col("text", { notNull: true, },),
+    source_id: col("text",),
+    total_weight: col("real", { notNull: true, },),
+    used: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── RPG: Loot Entries ──────────────────────────────────────
+  .table("loot_entries", {
+    id: col("text", { primaryKey: true, },),
+    loot_table_id: col("text", { notNull: true, },),
+    item_name: col("text", { notNull: true, },),
+    description: col("text",),
+    item_type: col("text", { notNull: true, },),
+    rarity: col("text", { notNull: true, },),
+    weight: col("real", { notNull: true, },),
+    min_quantity: col("integer", { notNull: true, },),
+    max_quantity: col("integer", { notNull: true, },),
+    min_level: col("integer", { notNull: true, },),
+    metadata: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
   },);

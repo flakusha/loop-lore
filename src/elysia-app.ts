@@ -66,6 +66,7 @@ import { nsfwRoutes, } from "./routes/nsfw";
 import { nsfwModerationRoutes, } from "./routes/nsfw-moderation";
 import { pluginRoutes, } from "./routes/plugins";
 import { questsRoutes, } from "./routes/quests";
+import { rpgRoutes, } from "./routes/rpg";
 import { sessionsRoutes, } from "./routes/sessions";
 import { settingsRoutes, } from "./routes/settings";
 import { storyItemsRoutes, } from "./routes/story-items";
@@ -200,6 +201,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(nsfwRoutes(handleOpts,),);
   app.use(nsfwModerationRoutes(handleOpts,),);
   app.use(battleRoutes(handleOpts,),);
+  app.use(rpgRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 
