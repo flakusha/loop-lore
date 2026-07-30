@@ -3,9 +3,9 @@
 // Usage: bun run src/config/migrate-config.ts --input configs/config.toml --dry-run
 //        bun run src/config/migrate-config.ts --input configs/config.toml
 
+import { load as parseYaml, } from "js-yaml";
 import { existsSync, mkdirSync, readFileSync, writeFileSync, } from "node:fs";
 import path from "node:path";
-import { load as parseYaml, } from "js-yaml";
 import { parse as parseToml, } from "smol-toml";
 import { createLogger, } from "../logger";
 
@@ -62,8 +62,8 @@ function parseArgs(): MigrationOptions {
   }
 
   if (!options.input) {
-    log.error("Missing required argument: --input <config-file>");
-    process.exit(1);
+    log.error("Missing required argument: --input <config-file>",);
+    process.exit(1,);
   }
 
   return options;
@@ -99,25 +99,25 @@ function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",)
   if (format === "yaml") {
     // Simple YAML formatting
     const lines: string[] = [];
-    for (const [key, value] of Object.entries(config)) {
+    for (const [key, value,] of Object.entries(config,)) {
       if (typeof value === "object" && value !== null) {
         lines.push(`${key}:`,);
-        for (const [subKey, subValue] of Object.entries(value as Record<string, unknown>)) {
+        for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
           lines.push(`  ${subKey}: ${JSON.stringify(subValue,)}`,);
         }
       } else {
         lines.push(`${key}: ${JSON.stringify(value,)}`,);
       }
     }
-    return lines.join("\n",) + "\n";
+    return `${lines.join("\n",)}\n`;
   }
 
   // TOML formatting
   const lines: string[] = [];
-  for (const [key, value] of Object.entries(config)) {
+  for (const [key, value,] of Object.entries(config,)) {
     if (typeof value === "object" && value !== null) {
       lines.push(`[${key}]`,);
-      for (const [subKey, subValue] of Object.entries(value as Record<string, unknown>)) {
+      for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
         if (typeof subValue === "string") {
           lines.push(`${subKey} = "${subValue}"`,);
         } else {
@@ -141,12 +141,12 @@ function main() {
 
   // Read and parse input config
   if (!existsSync(options.input,)) {
-    log.error(`Input file not found: ${options.input}`);
-    process.exit(1);
+    log.error(`Input file not found: ${options.input}`,);
+    process.exit(1,);
   }
 
   const fullConfig = parseConfigFile(options.input,);
-  log.info(`Parsed config file: ${options.input}`);
+  log.info(`Parsed config file: ${options.input}`,);
 
   // Create output directory if not dry-run
   if (!options.dryRun) {
@@ -155,11 +155,11 @@ function main() {
 
   // Extract and write domain configs
   let migrated = 0;
-  for (const [domain, paths] of Object.entries(DOMAINS)) {
+  for (const [domain, paths,] of Object.entries(DOMAINS,)) {
     const domainConfig = extractDomainConfig(fullConfig, paths,);
 
-    if (Object.keys(domainConfig).length === 0) {
-      log.info(`Skipping ${domain}: no config found`);
+    if (Object.keys(domainConfig,).length === 0) {
+      log.info(`Skipping ${domain}: no config found`,);
       continue;
     }
 
@@ -168,18 +168,18 @@ function main() {
     const content = formatConfig(domainConfig, options.format,);
 
     if (options.dryRun) {
-      log.info(`[DRY RUN] Would create: ${outputPath}`);
-      log.info(`Content:\n${content}`);
+      log.info(`[DRY RUN] Would create: ${outputPath}`,);
+      log.info(`Content:\n${content}`,);
     } else {
       writeFileSync(outputPath, content,);
-      log.info(`Created: ${outputPath}`);
+      log.info(`Created: ${outputPath}`,);
     }
     migrated++;
   }
 
-  log.info(`Migrated ${migrated} domain configs`);
+  log.info(`Migrated ${migrated} domain configs`,);
   if (options.dryRun) {
-    log.info("Dry run complete. No files were written.");
+    log.info("Dry run complete. No files were written.",);
   }
 }
 

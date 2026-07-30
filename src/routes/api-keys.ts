@@ -53,16 +53,25 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
 
       const providerName = body.providerName as string | undefined;
       if (!providerName) {
-        return jsonError({ message: "providerName is required", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: (ctx as any).t?.("apiKeys.providerRequired",) ?? "providerName is required",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       const apiKey = body.apiKey as string | undefined;
-      if (!apiKey) { return jsonError({ message: "apiKey is required", status: HttpStatus.BadRequest, },); }
+      if (!apiKey) {
+        return jsonError({
+          message: (ctx as any).t?.("apiKeys.apiKeyRequired",) ?? "apiKey is required",
+          status: HttpStatus.BadRequest,
+        },);
+      }
 
       const encryptionSecret = config.byoKey.encryptionKey;
       if (!encryptionSecret) {
         return jsonError({
-          message: "Server encryption key not configured — contact administrator",
+          message: (ctx as any).t?.("crypto.encryptionKeyMissing",) ??
+            "Server encryption key not configured — contact administrator",
           status: HttpStatus.InternalServerError,
         },);
       }
@@ -80,7 +89,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         encrypted = await encryptValue(apiKey, encryptionSecret,);
       } catch {
         return jsonError({
-          message: "Failed to encrypt API key",
+          message: (ctx as any).t?.("crypto.keyEncryptFailed",) ?? "Failed to encrypt API key",
           status: HttpStatus.InternalServerError,
         },);
       }

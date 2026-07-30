@@ -69,7 +69,7 @@ export async function rotateActorKeyAndReEncrypt(
   database: Kysely<DB>,
   actorId: string,
   smk: CryptoKey,
-  reEncryptLimit: number = 100,
+  reEncryptLimit = 100,
 ): Promise<RotationResult> {
   const log2 = log();
 
@@ -96,13 +96,13 @@ export async function rotateActorKeyAndReEncrypt(
       );
       totalReEncrypted += reEncrypted;
     } catch (error) {
-      log2.warn(`Failed to re-encrypt messages in chat ${chatId}: ${String(error)}`,);
+      log2.warn(`Failed to re-encrypt messages in chat ${chatId}: ${String(error,)}`,);
     }
   }
 
   // 4. Find old key ID
   const keys = await listActorKeys(database, actorId,);
-  const oldKey = keys.find((k,) => k.id !== newKeyId && k.status === "active",);
+  const oldKey = keys.find((k,) => k.id !== newKeyId && k.status === "active");
 
   log2.info(`Rotated key for actor ${actorId}: ${oldKey?.id ?? "unknown"} → ${newKeyId}`,);
 
@@ -189,7 +189,7 @@ async function reEncryptChatMessages(
 export async function runAutoRotation(
   database: Kysely<DB>,
   rotationDays: number,
-  reEncryptLimit: number = 100,
+  reEncryptLimit = 100,
 ): Promise<RotationSummary> {
   const log2 = log();
 
@@ -206,7 +206,7 @@ export async function runAutoRotation(
   const smk = getSmk();
   if (!smk) {
     log2.warn("SMK not loaded, cannot rotate keys",);
-    return { checked: 0, rotated: 0, results: [], errors: ["SMK not loaded"], };
+    return { checked: 0, rotated: 0, results: [], errors: ["SMK not loaded",], };
   }
 
   // Find expired keys
@@ -233,7 +233,7 @@ export async function runAutoRotation(
       );
       results.push(result,);
     } catch (error) {
-      const errMsg = `Failed to rotate key for actor ${actorId}: ${String(error)}`;
+      const errMsg = `Failed to rotate key for actor ${actorId}: ${String(error,)}`;
       log2.error(errMsg,);
       errors.push(errMsg,);
     }
@@ -271,14 +271,14 @@ export function startAutoRotationTimer(
   log().info(`Starting auto-rotation timer (check every ${intervalMs / 1000}s, rotate after ${rotationDays} days)`,);
 
   // Run immediately on start
-  void runAutoRotation(database, rotationDays,).catch((err,) => {
-    log().error(`Auto-rotation failed: ${String(err)}`,);
+  void runAutoRotation(database, rotationDays,).catch((error,) => {
+    log().error(`Auto-rotation failed: ${String(error,)}`,);
   },);
 
   // Then run periodically
   return setInterval(() => {
-    void runAutoRotation(database, rotationDays,).catch((err,) => {
-      log().error(`Auto-rotation failed: ${String(err)}`,);
+    void runAutoRotation(database, rotationDays,).catch((error,) => {
+      log().error(`Auto-rotation failed: ${String(error,)}`,);
     },);
   }, intervalMs,);
 }

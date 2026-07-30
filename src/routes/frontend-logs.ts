@@ -30,16 +30,22 @@ interface LogBatch {
 }
 
 export function frontendLogsRoutes() {
-  return new Elysia({ name: "frontend-logs", },).post("/api/frontend/logs", async ({ request, },) => {
+  return new Elysia({ name: "frontend-logs", },).post("/api/frontend/logs", async ({ request, ...rest },) => {
     let body: LogBatch;
     try {
       body = (await request.json()) as LogBatch;
     } catch {
-      return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest, },);
+      return jsonError({
+        message: (rest as any).t?.("errors.badRequest",) ?? "Invalid JSON body",
+        status: HttpStatus.BadRequest,
+      },);
     }
 
     if (!Array.isArray(body.entries,) || body.entries.length === 0) {
-      return jsonError({ message: "entries must be a non-empty array", status: HttpStatus.BadRequest, },);
+      return jsonError({
+        message: (rest as any).t?.("frontendLogs.entriesRequired",) ?? "entries must be a non-empty array",
+        status: HttpStatus.BadRequest,
+      },);
     }
 
     const log = getLogger();

@@ -111,7 +111,7 @@ export function activityStreamRoutes({ database, }: { database: Kysely<DB> },) {
     const userId = (ctx as any).userId as string | null;
     if (!userId) {
       return jsonError({
-        message: "Unauthorized",
+        message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",
         status: HttpStatus.Unauthorized,
         code: ErrorCode.Unauthorized,
       },);

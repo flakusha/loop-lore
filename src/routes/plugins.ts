@@ -38,7 +38,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
 
       return jsonResponse(plugins,);
     },)
-    .post("/api/plugins/:name/enable", async ({ params, userRole, }: any,) => {
+    .post("/api/plugins/:name/enable", async ({ params, userRole, ...rest }: any,) => {
       if (userRole !== "admin") {
         return forbidden("Admin access required",);
       }
@@ -46,11 +46,17 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
       const name = params.name as string;
       const plugin = registry.getPlugin(name,);
       if (!plugin) {
-        return jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: rest.t?.("plugins.notFound",) ?? "Plugin not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       if (registry.isEnabled(name,)) {
-        return jsonError({ message: "Plugin already enabled", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: rest.t?.("plugins.alreadyEnabled",) ?? "Plugin already enabled",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       registry.setEnabled(name, true,);
@@ -69,7 +75,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
       log().info("Plugin enabled", { plugin: name, },);
       return jsonResponse({ ok: true, },);
     },)
-    .post("/api/plugins/:name/disable", async ({ params, userRole, }: any,) => {
+    .post("/api/plugins/:name/disable", async ({ params, userRole, ...rest }: any,) => {
       if (userRole !== "admin") {
         return forbidden("Admin access required",);
       }
@@ -77,11 +83,17 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
       const name = params.name as string;
       const plugin = registry.getPlugin(name,);
       if (!plugin) {
-        return jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: rest.t?.("plugins.notFound",) ?? "Plugin not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       if (!registry.isEnabled(name,)) {
-        return jsonError({ message: "Plugin already disabled", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: rest.t?.("plugins.alreadyDisabled",) ?? "Plugin already disabled",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       registry.setEnabled(name, false,);

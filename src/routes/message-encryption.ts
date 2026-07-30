@@ -13,8 +13,8 @@ import type { Config, } from "../config/schema";
 import {
   deriveChatKeyForChat,
   getSmk,
-  isEncryptionEnabled,
   isAnonymousModeEnabled,
+  isEncryptionEnabled,
 } from "../crypto";
 import type { Db, } from "../db";
 import { getLogger, type Logger, } from "../logger";
@@ -26,12 +26,12 @@ function log(): Logger {
 
 export function messageEncryptionRoutes(opts: { database: Db; config: Config },): Elysia {
   return new Elysia()
-    .get("/api/chats/:id/encryption-key", async ({ params, },) => {
+    .get("/api/chats/:id/encryption-key", async ({ params, ...rest },) => {
       const chatId = params.id;
 
       if (!isEncryptionEnabled()) {
         return jsonError({
-          message: "Encryption not enabled on this server",
+          message: (rest as any).t?.("crypto.encryptionNotEnabled",) ?? "Encryption not enabled on this server",
           status: HttpStatus.NotImplemented,
         },);
       }
@@ -39,7 +39,7 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config },)
       const smk = getSmk();
       if (!smk) {
         return jsonError({
-          message: "Encryption not configured",
+          message: (rest as any).t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
           status: HttpStatus.InternalServerError,
         },);
       }
@@ -57,7 +57,7 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config },)
       } catch (error) {
         log().error(`Failed to derive chat key for ${chatId}: ${String(error,)}`,);
         return jsonError({
-          message: "Failed to get encryption key",
+          message: (rest as any).t?.("crypto.encryptionKeyNotFound",) ?? "Failed to get encryption key",
           status: HttpStatus.InternalServerError,
         },);
       }

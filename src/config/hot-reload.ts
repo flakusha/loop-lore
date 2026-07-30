@@ -12,9 +12,20 @@ const log = createLogger({ level: "info", },);
 // Domain config file patterns
 const DOMAIN_CONFIG_EXTENSIONS = [".yaml", ".yml", ".toml",];
 const DOMAINS = [
-  "server", "database", "assets", "logging", "tui", "docs",
-  "auth", "transport", "messages", "nsfw", "generation", "byokey",
-  "encryption", "headers",
+  "server",
+  "database",
+  "assets",
+  "logging",
+  "tui",
+  "docs",
+  "auth",
+  "transport",
+  "messages",
+  "nsfw",
+  "generation",
+  "byokey",
+  "encryption",
+  "headers",
 ] as const;
 
 type DomainReloadCallback = (domain: string, config: Config,) => void;
@@ -32,33 +43,29 @@ function watchDomainConfigs(configsDir: string, onReload: DomainReloadCallback,)
 
     // Check if this is a domain config file
     const isDomainConfig = DOMAINS.some((domain,) =>
-      DOMAIN_CONFIG_EXTENSIONS.some((ext,) => filename === `config.${domain}${ext}`,),
+      DOMAIN_CONFIG_EXTENSIONS.some((ext,) => filename === `config.${domain}${ext}`)
     );
 
     if (!isDomainConfig) { return; }
 
     // Extract domain name from filename
-    const domain = DOMAINS.find((d,) =>
-      DOMAIN_CONFIG_EXTENSIONS.some((ext,) => filename === `config.${d}${ext}`,),
-    );
+    const domain = DOMAINS.find((d,) => DOMAIN_CONFIG_EXTENSIONS.some((ext,) => filename === `config.${d}${ext}`));
 
     if (!domain) { return; }
 
     log.info(`Domain config changed: ${filename} (${domain})`,);
 
     // Reload the domain config
-    try {
-      // Dynamic import to avoid circular dependencies
-      void import("./load",).then(({ loadConfig, }) => {
-        const config = loadConfig();
-        onReload(domain, config,);
-        log.info(`Reloaded domain config: ${domain}`,);
-      },).catch((error,) => {
-        log.error(`Failed to reload domain config ${domain}: ${error instanceof Error ? error.message : String(error,)}`,);
-      },);
-    } catch (error) {
-      log.error(`Failed to watch domain config ${domain}: ${error instanceof Error ? error.message : String(error,)}`,);
-    }
+    // Dynamic import to avoid circular dependencies
+    void import("./load").then(({ loadConfig, },) => {
+      const config = loadConfig();
+      onReload(domain, config,);
+      log.info(`Reloaded domain config: ${domain}`,);
+    },).catch((error,) => {
+      log.error(
+        `Failed to reload domain config ${domain}: ${error instanceof Error ? error.message : String(error,)}`,
+      );
+    },);
   },);
 
   log.info(`Watching domain configs in ${configsDir}`,);
@@ -75,4 +82,4 @@ function stopWatchingDomainConfigs(watcher: FSWatcher,): void {
   log.info("Stopped watching domain configs",);
 }
 
-export { watchDomainConfigs, stopWatchingDomainConfigs, };
+export { stopWatchingDomainConfigs, watchDomainConfigs, };
