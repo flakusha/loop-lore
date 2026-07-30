@@ -3,15 +3,19 @@
  *
  * API endpoints for managing character avatars with context-aware selection.
  */
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { AvatarService, } from "../characters/services/avatar-service";
 import {
   ActorIdAvatarIdParams,
   ActorIdAvatarParams,
   AvatarConfigBody,
   AvatarCreateBody,
+  AvatarResponse,
   AvatarSelectBody,
   AvatarUpdateBody,
+  ErrorResponse,
+  ListResponse,
+  SuccessResponse,
   WorldActorParams,
   WorldAvatarConfigBody,
 } from "../validation/schemas";
@@ -45,6 +49,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse(avatars,);
     }, {
       params: ActorIdAvatarParams,
+      response: {
+        200: ListResponse(AvatarResponse,),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List actor avatars",
         description: "List all avatars for a given actor.",
@@ -79,6 +88,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse(avatar,);
     }, {
       params: ActorIdAvatarIdParams,
+      response: {
+        200: AvatarResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get actor avatar",
         description: "Get a specific avatar by ID for a given actor.",
@@ -117,6 +131,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdAvatarParams,
       body: AvatarCreateBody,
+      response: {
+        200: AvatarResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Create actor avatar",
         description: "Create a new avatar for an actor. Requires an assetId.",
@@ -153,6 +172,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdAvatarIdParams,
       body: AvatarUpdateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update actor avatar",
         description: "Update an existing avatar's label, tags, primary flag, or sort order.",
