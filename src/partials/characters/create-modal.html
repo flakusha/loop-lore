@@ -6,7 +6,7 @@
 >
   <div class="modal">
     <div class="modal-header">
-      <span class="title">Create Character</span>
+      <span class="title">{{{ t("characters.create") }}}</span>
       <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
@@ -18,7 +18,7 @@
         data-testid="create-character-form"
       >
         <div class="form-group">
-          <label class="form-label" for="char-name">Character Name</label>
+          <label class="form-label" for="char-name">{{{ t("characters.name") }}}</label>
           <input
             class="form-input"
             type="text"
@@ -29,14 +29,14 @@
           />
         </div>
         <div class="form-group">
-          <label class="form-label" for="char-type">Type</label>
+          <label class="form-label" for="char-type">{{{ t("characters.type") }}}</label>
           <select class="form-select" name="actorType" id="char-type">
-            <option value="character">Character</option>
-            <option value="persona">Persona</option>
+            <option value="character">{{{ t("characters.character") }}}</option>
+            <option value="persona">{{{ t("characters.persona") }}}</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label" for="char-desc">Description</label>
+          <label class="form-label" for="char-desc">{{{ t("characters.description") }}}</label>
           <textarea
             class="form-input form-textarea"
             name="description"
@@ -46,7 +46,7 @@
           ></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label" for="char-personality">Personality</label>
+          <label class="form-label" for="char-personality">{{{ t("characters.personality") }}}</label>
           <textarea
             class="form-input form-textarea"
             name="personality"
@@ -56,7 +56,7 @@
           ></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label" for="char-scenario">Scenario</label>
+          <label class="form-label" for="char-scenario">{{{ t("characters.scenario") }}}</label>
           <textarea
             class="form-input form-textarea"
             name="scenario"
@@ -66,7 +66,7 @@
           ></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label" for="char-greeting">Welcome Message</label>
+          <label class="form-label" for="char-greeting">{{{ t("characters.firstMessage") }}}</label>
           <textarea
             class="form-input form-textarea"
             name="welcomeMessage"
@@ -76,7 +76,7 @@
           ></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label" for="char-tags">Tags</label>
+          <label class="form-label" for="char-tags">{{{ t("characters.tags") }}}</label>
           <input
             class="form-input"
             type="text"
@@ -86,8 +86,10 @@
           />
         </div>
         <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create</button>
+          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+            {{{ t("common.cancel") }}}
+          </button>
+          <button type="submit" class="btn btn-primary">{{{ t("common.create") }}}</button>
         </div>
       </form>
     </div>

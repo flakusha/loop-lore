@@ -6,7 +6,7 @@
 >
   <div class="modal">
     <div class="modal-header">
-      <span class="title">Edit World</span>
+      <span class="title">{{{ t("worlds.edit") }}}</span>
       <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
@@ -19,20 +19,22 @@
         data-testid="edit-world-form"
       >
         <div class="form-group">
-          <label class="form-label" for="edit-name">Name</label>
+          <label class="form-label" for="edit-name">{{{ t("worlds.name") }}}</label>
           <input class="form-input" type="text" name="name" id="edit-name" required />
         </div>
         <div class="form-group">
-          <label class="form-label" for="edit-description">Description</label>
+          <label class="form-label" for="edit-description">{{{ t("worlds.description") }}}</label>
           <textarea class="form-input" name="description" id="edit-description" rows="2"></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label" for="edit-lore">Lore</label>
+          <label class="form-label" for="edit-lore">{{{ t("worlds.lore") }}}</label>
           <textarea class="form-input" name="lore" id="edit-lore" rows="4"></textarea>
         </div>
         <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+            {{{ t("common.cancel") }}}
+          </button>
+          <button type="submit" class="btn btn-primary">{{{ t("common.save") }}}</button>
         </div>
       </form>
     </div>
