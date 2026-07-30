@@ -428,6 +428,14 @@ export class NsfwModerationService {
       metadata: "{}",
       created_at: now,
     },).execute();
+
+    // Notify the target user of the action (skip for system actions)
+    if (params.performedBy !== "system") {
+      await this.notifyUser(params.targetUserId, params.actionType, params.reason,).catch(
+        (err: unknown) => this.log.warn("Failed to send moderation notification", { error: String(err), },),
+      );
+    }
+
     return {
       id,
       actionType: params.actionType,
@@ -440,6 +448,28 @@ export class NsfwModerationService {
       expiresAt: null,
       createdAt: now,
     };
+  }
+
+  private async notifyUser(userId: string, actionType: string, reason: string,): Promise<void> {
+    const titles: Record<string, string> = {
+      block: "You have been blocked from NSFW content",
+      unblock: "Your NSFW access has been restored",
+      ban: "You have been banned from NSFW content",
+      unban: "Your NSFW ban has been lifted",
+      shadow: "Your NSFW access has been restricted",
+      unshadow: "Your NSFW access restrictions have been lifted",
+    };
+    const title = titles[actionType] ?? `Moderation action: ${actionType}`;
+    await this.db.insertInto("notifications",).values({
+      id: crypto.randomUUID(),
+      user_id: userId,
+      type: "moderation",
+      title,
+      body: reason,
+      link: null,
+      data: JSON.stringify({ actionType, },),
+      created_at: new Date().toISOString(),
+    },).execute();
   }
 
   private mapPrefs(
