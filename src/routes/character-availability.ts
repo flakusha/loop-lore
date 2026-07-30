@@ -45,6 +45,13 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(availability,);
+    }, {
+      detail: {
+        summary: "Get character availability settings",
+        description:
+          "Returns the availability status, usage policy, activity restrictions, and content policy for the specified actor.",
+        tags: ["Characters", "Availability",],
+      },
     },)
     // ── Create or update availability ──────────────────────────
     .post("/api/actors/:actorId/availability", async (ctx: any,) => {
@@ -114,6 +121,13 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonCreated({ id, },);
+    }, {
+      detail: {
+        summary: "Create or update character availability",
+        description:
+          "Upserts availability settings for an actor including status, usage policy, activity restrictions, content policy, and NSFW policy.",
+        tags: ["Characters", "Availability",],
+      },
     },)
     // ── Delete availability ────────────────────────────────────
     .delete("/api/actors/:actorId/availability", async (ctx: any,) => {
@@ -140,5 +154,11 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Delete character availability settings",
+        description: "Removes all availability settings for the specified actor.",
+        tags: ["Characters", "Availability",],
+      },
     },);
 }

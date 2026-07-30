@@ -1,17 +1,21 @@
 /**
  * Telemetry Routes
  *
- *   POST /api/telemetry/event         — accept frontend event (sendBeacon)
- *   GET  /api/telemetry/analytics/*   — admin analytics (admin-gated)
- *   DELETE /api/telemetry/analytics/purge — purge old events (admin-gated)
+ * Frontend event ingestion plus admin analytics dashboard.
+ * Two config gates:
+ *   – frontend-telemetry-enabled  → POST /api/telemetry/event
+ *   – telemetry-enabled           → GET  /api/telemetry/analytics/*
  */
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../routes/http-utils";
-import { isFrontendTelemetryEnabled, isTelemetryEnabled, } from "../telemetry/service";
-import { record, } from "../telemetry/service";
+import {
+  isFrontendTelemetryEnabled,
+  isTelemetryEnabled,
+  record,
+} from "../telemetry/service";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -41,6 +45,12 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
       },);
 
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Record telemetry event",
+        description: "Record a frontend telemetry event (requires telemetry to be enabled).",
+        tags: ["Telemetry",],
+      },
     },)
     .get("/api/telemetry/analytics/summary", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
@@ -67,6 +77,12 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         .executeTakeFirst();
 
       return jsonResponse(result ?? { total: 0, distinct_sessions: 0, distinct_users: 0, },);
+    }, {
+      detail: {
+        summary: "Get analytics summary",
+        description: "Get a summary of telemetry analytics (total events, distinct sessions/users). Admin only.",
+        tags: ["Telemetry", "Analytics",],
+      },
     },)
     .get("/api/telemetry/analytics/models", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
@@ -91,6 +107,12 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         .execute();
 
       return jsonResponse(rows,);
+    }, {
+      detail: {
+        summary: "Get model analytics",
+        description: "Get generation event counts by type (started, completed, failed). Admin only.",
+        tags: ["Telemetry", "Analytics",],
+      },
     },)
     .get("/api/telemetry/analytics/errors", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
@@ -116,6 +138,12 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         .execute();
 
       return jsonResponse(rows,);
+    }, {
+      detail: {
+        summary: "Get error analytics",
+        description: "Get recent failed telemetry events. Admin only.",
+        tags: ["Telemetry", "Analytics",],
+      },
     },)
     .get("/api/telemetry/analytics/daily", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
@@ -146,6 +174,12 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         .execute();
 
       return jsonResponse(rows,);
+    }, {
+      detail: {
+        summary: "Get daily analytics",
+        description: "Get daily event counts and active users over time. Admin only.",
+        tags: ["Telemetry", "Analytics",],
+      },
     },)
     .delete("/api/telemetry/analytics/purge", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
@@ -167,5 +201,11 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
       },);
 
       return jsonResponse({ ok: true, purged: true, },);
+    }, {
+      detail: {
+        summary: "Purge old telemetry",
+        description: "Delete telemetry events older than the retention period (default 90 days). Admin only.",
+        tags: ["Telemetry", "Analytics",],
+      },
     },) as unknown as Elysia;
 }

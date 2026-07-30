@@ -236,6 +236,12 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         userId,
         userRole,
       );
+    }, {
+      detail: {
+        summary: "Get NPC state",
+        description: "Get the current state of an NPC in a world.",
+        tags: ["Story States",],
+      },
     },)
     .put("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -249,6 +255,12 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         userRole,
         ctx.body as Record<string, unknown>,
       );
+    }, {
+      detail: {
+        summary: "Update NPC state",
+        description: "Update the state of an NPC in a world (location, status, mood, etc).",
+        tags: ["Story States",],
+      },
     },)
     .get("/api/worlds/:worldId/npcs-at/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -260,11 +272,23 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         userId,
         userRole,
       );
+    }, {
+      detail: {
+        summary: "List NPCs at location",
+        description: "List all NPCs currently at a specific location in a world.",
+        tags: ["Story States",],
+      },
     },)
     .get("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleLocationState(database, "GET", ctx.params.worldId as string, userId, userRole,);
+    }, {
+      detail: {
+        summary: "Get location state",
+        description: "Get the current state of a location.",
+        tags: ["Story States",],
+      },
     },)
     .put("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -277,6 +301,12 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         userRole,
         ctx.body as Record<string, unknown>,
       );
+    }, {
+      detail: {
+        summary: "Update location state",
+        description: "Update the state of a location (weather, time of day, events, etc).",
+        tags: ["Story States",],
+      },
     },)
     .get("/api/worlds/:worldId/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -290,6 +320,12 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         Number(ctx.query?.page,) || 1,
         Number(ctx.query?.pageSize,) || 20,
       );
+    }, {
+      detail: {
+        summary: "List world states",
+        description: "List all world states for a world. Paginated.",
+        tags: ["Story States",],
+      },
     },)
     .post("/api/worlds/:worldId/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -304,5 +340,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         20,
         ctx.body as Record<string, unknown>,
       );
+    }, {
+      detail: {
+        summary: "Create world state",
+        description: "Create a new world state snapshot for a world.",
+        tags: ["Story States",],
+      },
     },) as unknown as Elysia;
 }

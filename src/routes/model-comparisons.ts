@@ -95,6 +95,13 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
         confidence,
         created_at: now,
       }, 201,);
+    }, {
+      detail: {
+        summary: "Submit a model comparison",
+        description:
+          "Record a user's preference between two models for a given message, with optional confidence score.",
+        tags: ["Analytics", "Comparisons",],
+      },
     },)
     // ── GET /api/analytics/comparisons/leaderboard ─────────────
     .get("/api/analytics/comparisons/leaderboard", async (ctx: Record<string, unknown>,) => {
@@ -127,6 +134,13 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
       }));
 
       return jsonResponse({ leaderboard, },);
+    }, {
+      detail: {
+        summary: "Get model comparison leaderboard",
+        description:
+          "Aggregate comparison statistics grouped by reference model, including preference counts and average confidence.",
+        tags: ["Analytics", "Comparisons",],
+      },
     },)
     // ── GET /api/analytics/comparisons ─────────────────────────
     .get("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
@@ -146,5 +160,11 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
         .execute();
 
       return jsonResponse({ comparisons: rows, },);
+    }, {
+      detail: {
+        summary: "List recent comparisons",
+        description: "Retrieve recent model comparisons for the authenticated user, ordered by creation date.",
+        tags: ["Analytics", "Comparisons",],
+      },
     },) as unknown as Elysia;
 }

@@ -34,6 +34,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       const { actorId, } = ctx.params as { actorId: string };
       const jobs = emotionAvatarService.listJobs(actorId,);
       return jsonResponse(jobs,);
+    }, {
+      detail: {
+        summary: "List emotion avatar jobs",
+        description: "List batch generation jobs for emotion avatars.",
+        tags: ["Emotion Avatars",],
+      },
     },)
     // ── Get specific job status ───────────────────────────────────
     .get("/api/actors/:actorId/emotion-avatars/jobs/:jobId", async (ctx: any,) => {
@@ -54,6 +60,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(job,);
+    }, {
+      detail: {
+        summary: "Get emotion avatar job status",
+        description: "Get the status of a specific batch generation job.",
+        tags: ["Emotion Avatars",],
+      },
     },)
     // ── Cancel a running job ──────────────────────────────────────
     .post("/api/actors/:actorId/emotion-avatars/jobs/:jobId/cancel", async (ctx: any,) => {
@@ -74,6 +86,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse({ ok: true, cancelled: true, },);
+    }, {
+      detail: {
+        summary: "Cancel emotion avatar job",
+        description: "Cancel a running batch generation job.",
+        tags: ["Emotion Avatars",],
+      },
     },)
     // ── Start batch generation ───────────────────────────────────
     .post("/api/actors/:actorId/emotion-avatars", async (ctx: any,) => {
@@ -123,6 +141,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         const message = error instanceof Error ? error.message : "Failed to start generation";
         return jsonError({ message, status: HttpStatus.BadRequest, },);
       }
+    }, {
+      detail: {
+        summary: "Start emotion avatar batch generation",
+        description: "Start a batch generation job to create emotion variants of an avatar.",
+        tags: ["Emotion Avatars",],
+      },
     },)
     // ── Get emotion prompt modifier ──────────────────────────────
     .get("/api/emotions/prompt-modifier/:emotion", async (ctx: any,) => {
@@ -141,6 +165,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       }
       const modifier = emotionAvatarService.getEmotionPromptModifier(emotion as EmotionType,);
       return jsonResponse({ emotion, modifier, },);
+    }, {
+      detail: {
+        summary: "Get emotion prompt modifier",
+        description: "Get the prompt modifier for a specific emotion type.",
+        tags: ["Emotion Avatars",],
+      },
     },)
     // ── List available emotion types ───────────────────────────
     .get("/api/emotions/types", async (ctx: any,) => {
@@ -157,5 +187,11 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
         displayName: emotion.charAt(0,).toUpperCase() + emotion.slice(1,),
       }));
       return jsonResponse(emotions,);
+    }, {
+      detail: {
+        summary: "List emotion types",
+        description: "List all available emotion types for avatar generation.",
+        tags: ["Emotion Avatars",],
+      },
     },);
 }

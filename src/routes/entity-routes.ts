@@ -151,6 +151,12 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       const entities = await query.limit(pageSize,).offset(offset,).execute();
 
       return jsonPaginated({ data: entities, total, page, pageSize, },);
+    }, {
+      detail: {
+        summary: `List ${config.entityName}`,
+        description: `List all ${config.entityName} entities for a parent. Paginated.`,
+        tags: [config.entityName,],
+      },
     },)
     .post(
       basePath,
@@ -183,7 +189,14 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
 
         return jsonCreated(created,);
       },
-      { body: EntityCreateBody, },
+      {
+        body: EntityCreateBody,
+        detail: {
+          summary: `Create ${config.entityName}`,
+          description: `Create a new ${config.entityName} entity.`,
+          tags: [config.entityName,],
+        },
+      },
     )
     .get(withIdPath, async (ctx,) => {
       const db = opts.database as any;
@@ -206,6 +219,12 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
 
       if (!entity) { return notFound(`${config.entityName} not found`,); }
       return jsonResponse(entity,);
+    }, {
+      detail: {
+        summary: `Get ${config.entityName}`,
+        description: `Get a single ${config.entityName} entity by ID.`,
+        tags: [config.entityName,],
+      },
     },)
     .put(
       withIdPath,
@@ -244,7 +263,14 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
 
         return jsonResponse(updated,);
       },
-      { body: EntityUpdateBody, },
+      {
+        body: EntityUpdateBody,
+        detail: {
+          summary: `Update ${config.entityName}`,
+          description: `Update an existing ${config.entityName} entity.`,
+          tags: [config.entityName,],
+        },
+      },
     )
     .delete(withIdPath, async (ctx,) => {
       const db = opts.database as any;
@@ -268,5 +294,11 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         return notFound(`${config.entityName} not found`,);
       }
       return jsonNoContent();
+    }, {
+      detail: {
+        summary: `Delete ${config.entityName}`,
+        description: `Delete a ${config.entityName} entity by ID.`,
+        tags: [config.entityName,],
+      },
     },);
 }

@@ -39,6 +39,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse(emotions,);
+    }, {
+      detail: {
+        summary: "List actor emotions",
+        description: "List all emotions currently active for an actor.",
+        tags: ["Character Emotions",],
+      },
     },)
     // ── Get a specific emotion ─────────────────────────────────
     .get("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
@@ -73,6 +79,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         },);
       }
       return jsonResponse(emotion,);
+    }, {
+      detail: {
+        summary: "Get actor emotion",
+        description: "Get a specific emotion by ID for an actor.",
+        tags: ["Character Emotions",],
+      },
     },)
     // ── Set/update an emotion for an actor ─────────────────────
     .post("/api/actors/:actorId/emotions", async (ctx: any,) => {
@@ -141,6 +153,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonCreated({ id, },);
+    }, {
+      detail: {
+        summary: "Set actor emotion",
+        description: "Set or update an emotion for an actor. Upserts by emotion ID.",
+        tags: ["Character Emotions",],
+      },
     },)
     // ── Delete an emotion ──────────────────────────────────────
     .delete("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
@@ -168,6 +186,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Delete actor emotion",
+        description: "Remove an emotion from an actor.",
+        tags: ["Character Emotions",],
+      },
     },)
     // ── List all emotion definitions ───────────────────────────
     .get("/api/emotions", async (ctx: any,) => {
@@ -185,6 +209,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse(emotions,);
+    }, {
+      detail: {
+        summary: "List emotion definitions",
+        description: "List all available emotion definitions (name, valence, arousal, etc).",
+        tags: ["Character Emotions",],
+      },
     },)
     // ── Create a new emotion definition ────────────────────────
     .post("/api/emotions", async (ctx: any,) => {
@@ -230,5 +260,11 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonCreated({ id, },);
+    }, {
+      detail: {
+        summary: "Create emotion definition",
+        description: "Create a new emotion definition with name, category, valence, and arousal.",
+        tags: ["Character Emotions",],
+      },
     },);
 }

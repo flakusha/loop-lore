@@ -540,6 +540,12 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
           "Connection": "keep-alive",
         },
       },);
+    }, {
+      detail: {
+        summary: "Start export with SSE progress",
+        description: "Start a character export job and receive real-time progress via Server-Sent Events.",
+        tags: ["Export",],
+      },
     },)
     // GET /api/export/download/:jobId — Download completed export
     .get("/api/export/download/:jobId", async (ctx: any,) => {
@@ -567,6 +573,12 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
           "Content-Disposition": `attachment; filename="loop-lore-export-${timestamp}.zip"`,
         },
       },);
+    }, {
+      detail: {
+        summary: "Download export",
+        description: "Download a completed character export as a ZIP file.",
+        tags: ["Export",],
+      },
     },)
     // GET /api/export/status/:jobId — Get job status
     .get("/api/export/status/:jobId", (ctx: any,) => {
@@ -591,5 +603,11 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
         completedAt: job.completedAt?.toISOString(),
         error: job.error,
       };
+    }, {
+      detail: {
+        summary: "Get export job status",
+        description: "Get the current status and progress of an export job.",
+        tags: ["Export",],
+      },
     },) as unknown as Elysia;
 }
