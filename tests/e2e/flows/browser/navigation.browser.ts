@@ -76,8 +76,8 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='hamburger']",).click();
         await page.locator("[data-testid='nav-chat']",).waitFor({ state: "attached", timeout: 5000, },);
         await clickNav(page, "[data-testid='nav-chat']",);
-        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 8000, },);
-        expect(page.url(),).toContain("/views/chat",);
+        await page.locator("#page-title",).waitFor({ state: "attached", timeout: 8000, },);
+        expect(page.url(),).toContain("/views/chat-list",);
       } finally {
         await page.close();
       }
