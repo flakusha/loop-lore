@@ -4,7 +4,7 @@
     <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
       ☰
     </button>
-    <span class="title" x-text="'Settings'"></span>
+    <span class="title" x-text="t('settings.title')"></span>
     <div class="actions">
       <template x-if="activeTab === 'general'">
         <button
@@ -14,7 +14,7 @@
           data-testid="save-general"
           type="submit"
         >
-          Save General
+          {{{t("settings.saveGeneral")}}}
         </button>
       </template>
       <template x-if="activeTab === 'api'">
@@ -25,7 +25,7 @@
           @click="saveApi()"
           data-testid="save-api"
         >
-          Save API Settings
+          {{{t("settings.saveApi")}}}
         </button>
       </template>
     </div>
@@ -43,7 +43,7 @@
           :aria-selected="activeTab === 'general'"
           id="tab-general"
         >
-          General
+          {{{t("settings.general")}}}
         </button>
         <button
           class="world-edit-tab"
@@ -53,7 +53,7 @@
           :aria-selected="activeTab === 'chat'"
           id="tab-chat"
         >
-          Chat
+          {{{t("settings.chat")}}}
         </button>
         <button
           class="world-edit-tab"
@@ -63,7 +63,7 @@
           :aria-selected="activeTab === 'api'"
           id="tab-api"
         >
-          API
+          {{{t("settings.api")}}}
         </button>
         <button
           class="world-edit-tab"
@@ -73,7 +73,7 @@
           :aria-selected="activeTab === 'notifications'"
           id="tab-notifications"
         >
-          Notifications
+          {{{t("settings.notifications")}}}
         </button>
         <button
           class="world-edit-tab"
@@ -83,10 +83,10 @@
           :aria-selected="activeTab === 'data'"
           id="tab-data"
         >
-          Data
+          {{{t("settings.data")}}}
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'keys' }" @click="activeTab = 'keys'">
-          Keys
+          {{{t("settings.keys")}}}
         </button>
       </div>
 
@@ -101,55 +101,55 @@
       >
         <div class="settings-section">
           <div class="form-group">
-            <label class="form-label" for="displayName">Display Name</label>
+            <label class="form-label" for="displayName">{{{t("settings.displayName")}}}</label>
             <input
               type="text"
               class="form-input"
               id="displayName"
               name="displayName"
               x-model="displayName"
-              placeholder="Your display name"
+              x-bind:placeholder="t('settings.displayNamePlaceholder')"
               required
             />
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="birthDate">Birth Date (for age-gated content)</label>
+            <label class="form-label" for="birthDate">{{{t("settings.birthDate")}}}</label>
             <input type="date" class="form-input" id="birthDate" name="birthDate" x-model="birthDate" />
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="theme-select">Theme</label>
+            <label class="form-label" for="theme-select">{{{t("settings.theme")}}}</label>
             <select
               class="form-select"
               id="theme-select"
               data-testid="theme-select"
               x-model="theme"
               @change="saveGeneral()"
-              aria-label="Theme selection"
+              x-bind:aria-label="t('settings.theme')"
             >
-              <option value="default">Default (Dark)</option>
-              <option value="light">Light</option>
-              <option value="bright">Bright</option>
-              <option value="colorful">Colorful</option>
-              <option value="monochrome">Monochrome</option>
-              <option value="no-icons">No Icons</option>
-              <option value="dracula">Dracula</option>
-              <option value="nord">Nord</option>
-              <option value="github-dark">GitHub Dark</option>
-              <option value="material">Material</option>
+              <option value="default">{{{t("settings.themeDefault")}}}</option>
+              <option value="light">{{{t("settings.themeLight")}}}</option>
+              <option value="bright">{{{t("settings.themeBright")}}}</option>
+              <option value="colorful">{{{t("settings.themeColorful")}}}</option>
+              <option value="monochrome">{{{t("settings.themeMonochrome")}}}</option>
+              <option value="no-icons">{{{t("settings.themeNoIcons")}}}</option>
+              <option value="dracula">{{{t("settings.themeDracula")}}}</option>
+              <option value="nord">{{{t("settings.themeNord")}}}</option>
+              <option value="github-dark">{{{t("settings.themeGithubDark")}}}</option>
+              <option value="material">{{{t("settings.themeMaterial")}}}</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="locale-select">Language</label>
+            <label class="form-label" for="locale-select">{{{t("settings.language")}}}</label>
             <select
               class="form-select"
               id="locale-select"
               data-testid="locale-select"
               x-model="locale"
               @change="saveGeneral()"
-              aria-label="Language selection"
+              x-bind:aria-label="t('settings.language')"
             >
               <template x-for="loc in locales" :key="loc.id">
                 <option :value="loc.id" :data-lang="loc.direction" :selected="loc.id === locale">
@@ -165,32 +165,32 @@
       <div x-show="activeTab === 'chat'" class="settings-tab-content" data-testid="settings-chat">
         <div class="settings-section">
           <div class="form-group">
-            <span class="form-label">Enter to send</span>
+            <span class="form-label">{{{t("settings.enterToSend")}}}</span>
             <label class="toggle">
               <input type="checkbox" id="enter-to-send" x-model="enterToSend" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
-            <span class="form-label">Auto-scroll to bottom</span>
+            <span class="form-label">{{{t("settings.autoScroll")}}}</span>
             <label class="toggle">
               <input type="checkbox" id="auto-scroll" x-model="autoScroll" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
-            <span class="form-label">Inline image preview</span>
+            <span class="form-label">{{{t("settings.inlinePreview")}}}</span>
             <label class="toggle">
               <input type="checkbox" id="inline-preview" x-model="inlinePreview" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
-            <label class="form-label" for="detail-level">Message detail level</label>
+            <label class="form-label" for="detail-level">{{{t("settings.detailLevel")}}}</label>
             <select class="form-select" id="detail-level" x-model="detailLevel" @change="saveChat()">
-              <option value="Immersion">Immersion</option>
-              <option value="Basic">Basic</option>
-              <option value="Detailed">Detailed</option>
+              <option value="Immersion">{{{t("settings.immersion")}}}</option>
+              <option value="Basic">{{{t("settings.basic")}}}</option>
+              <option value="Detailed">{{{t("settings.detailed")}}}</option>
             </select>
           </div>
         </div>
@@ -200,7 +200,7 @@
       <div x-show="activeTab === 'api'" class="settings-tab-content" data-testid="settings-api">
         <div class="settings-section">
           <div class="form-group">
-            <label class="form-label" for="api-provider">Provider</label>
+            <label class="form-label" for="api-provider">{{{t("settings.provider")}}}</label>
             <select
               class="form-select"
               id="api-provider"
@@ -209,14 +209,14 @@
               x-model="provider"
               @change="onProviderChange(); saveApi()"
             >
-              <option value="OpenAI">OpenAI</option>
-              <option value="Anthropic">Anthropic</option>
-              <option value="OpenRouter">OpenRouter</option>
-              <option value="Custom">Custom</option>
+              <option value="OpenAI">{{{t("settings.openai")}}}</option>
+              <option value="Anthropic">{{{t("settings.anthropic")}}}</option>
+              <option value="OpenRouter">{{{t("settings.openrouter")}}}</option>
+              <option value="Custom">{{{t("settings.custom")}}}</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="apiKey">API Key</label>
+            <label class="form-label" for="apiKey">{{{t("settings.apiKey")}}}</label>
             <div class="form-row">
               <input
                 type="password"
@@ -224,13 +224,13 @@
                 id="apiKey"
                 name="apiKey"
                 x-model="apiKey"
-                placeholder="Enter your API key"
+                x-bind:placeholder="t('settings.enterApiKey')"
               />
-              <button type="button" class="btn btn-secondary" @click="clearApiKey()">Clear</button>
+              <button type="button" class="btn btn-secondary" @click="clearApiKey()">{{{t("common.clear")}}}</button>
             </div>
           </div>
           <div class="form-group" id="api-endpoint-group" style="display: none">
-            <label class="form-label" for="apiEndpoint">API Endpoint URL</label>
+            <label class="form-label" for="apiEndpoint">{{{t("settings.apiEndpoint")}}}</label>
             <input
               type="text"
               class="form-input"
@@ -241,7 +241,7 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label" for="model">Model</label>
+            <label class="form-label" for="model">{{{t("settings.model")}}}</label>
             <input
               type="text"
               class="form-input"
@@ -252,7 +252,7 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label" for="maxTokens">Max context tokens</label>
+            <label class="form-label" for="maxTokens">{{{t("settings.maxTokens")}}}</label>
             <input
               type="number"
               class="form-input"
@@ -265,7 +265,7 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Temperature: <span
+            <label class="form-label">{{{t("settings.temperature")}}}: <span
                 id="temp-value"
                 x-text="Number(temperature).toFixed(1)"
               ></span></label>
@@ -283,7 +283,7 @@
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" :disabled="saving" @click="testConnection()">
-              Test Connection
+              {{{t("settings.testConnection")}}}
             </button>
           </div>
         </div>
@@ -296,23 +296,23 @@
         data-testid="settings-notifications"
       >
         <div class="settings-section" x-data="notificationPrefs()" x-init="init()">
-          <h3>Notification Preferences</h3>
-          <p class="muted">Choose which events notify you.</p>
+          <h3>{{{t("settings.notificationPrefs")}}}</h3>
+          <p class="muted">{{{t("settings.chooseNotifications")}}}</p>
           <template x-for="t in types" :key="t.key">
             <label class="pref-row">
               <input type="checkbox" :checked="enabled[t.key]" @change="toggleType(t.key)" />
               <span x-text="t.label"></span>
             </label>
           </template>
-          <h3>Muted Worlds</h3>
-          <p class="muted">World IDs to silence (comma-separated).</p>
+          <h3>{{{t("settings.mutedWorlds")}}}</h3>
+          <p class="muted">{{{t("settings.mutedWorldsDesc")}}}</p>
           <input
             type="text"
             class="text-input"
             :value="mutedWorlds.join(', ')"
             @change="mutedWorlds = $event.target.value.split(',').map(s => s.trim()).filter(Boolean); save()"
           />
-          <p class="muted" x-show="saving">Saving…</p>
+          <p class="muted" x-show="saving">{{{t("settings.saving")}}}</p>
         </div>
       </div>
 
@@ -321,14 +321,14 @@
         <div class="settings-section">
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" @click="exportAllData()" data-testid="export-all">
-              Export All Data
+              {{{t("settings.exportAll")}}}
             </button>
-            <button type="button" class="btn btn-secondary">Import Chats</button>
+            <button type="button" class="btn btn-secondary">{{{t("settings.importChats")}}}</button>
           </div>
           <div class="danger-zone">
-            <div class="zone-title">⚠ Danger Zone</div>
+            <div class="zone-title">{{{t("settings.dangerZone")}}}</div>
             <p class="zone-description">
-              This action permanently deletes all data. Type <strong>DELETE</strong> to confirm.
+              {{{t("settings.deleteAllDescription")}}}
             </p>
             <input
               type="text"
@@ -336,7 +336,7 @@
               id="confirm-delete-input"
               x-model="confirmDeleteText"
               @input="onConfirmDeleteInput()"
-              placeholder='Type "DELETE" to confirm'
+              x-bind:placeholder="t('settings.deleteAllPlaceholder')"
             />
             <button
               type="button"
@@ -346,7 +346,7 @@
               @click="deleteAllData()"
               data-testid="delete-all"
             >
-              Delete All Data
+              {{{t("settings.deleteAll")}}}
             </button>
           </div>
         </div>
@@ -355,9 +355,9 @@
       <!-- Keys Tab -->
       <div x-show="activeTab === 'keys'" class="settings-tab-content" data-testid="settings-keys">
         <div class="settings-section" x-data="keyManagement()" x-init="init()">
-          <div class="section-title">Encryption Keys</div>
+          <div class="section-title">{{{t("settings.encryptionKeys")}}}</div>
           <div class="section-description">
-            Manage your encryption keys for end-to-end encrypted messages.
+            {{{t("settings.encryptionKeysDescription")}}}
           </div>
 
           <!-- Error message -->
@@ -381,17 +381,17 @@
           <!-- Actions -->
           <div class="flex gap-2 flex-wrap mb-4">
             <button @click="showGenerateModal = true" class="btn btn-primary">
-              Generate New Key
+              {{{t("settings.generateNewKey")}}}
             </button>
             <button @click="showRotateConfirm = true" :disabled="loading" class="btn btn-warning">
-              Rotate Primary Key
+              {{{t("settings.rotatePrimaryKey")}}}
             </button>
           </div>
 
           <!-- Keys list -->
           <div class="space-y-2">
             <template x-if="!loading && keys.length === 0">
-              <p class="text-gray-500 text-sm">No encryption keys found.</p>
+              <p class="text-gray-500 text-sm">{{{t("settings.noEncryptionKeys")}}}</p>
             </template>
 
             <template x-for="key in keys" :key="key.id">
@@ -414,7 +414,7 @@
                   ></span>
                   <template x-if="key.status === 'active'">
                     <button @click="confirmRevoke(key)" class="text-red-600 hover:text-red-700 text-sm">
-                      Revoke
+                      {{{t("settings.revoke")}}}
                     </button>
                   </template>
                 </div>
@@ -429,15 +429,15 @@
               @click.self="showGenerateModal = false"
             >
               <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md space-y-4">
-                <h3 class="text-lg font-semibold">Generate New Key</h3>
+                <h3 class="text-lg font-semibold">{{{t("settings.generateNewKey")}}}</h3>
                 <div>
-                  <label class="block text-sm font-medium mb-1">Key Name</label>
+                  <label class="block text-sm font-medium mb-1">{{{t("settings.keyName")}}}</label>
                   <input
                     type="text"
                     x-model="newKeyName"
                     @keydown.enter="generateKey()"
                     class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                    placeholder="e.g., backup-key"
+                    x-bind:placeholder="t('settings.keyNamePlaceholder')"
                     autofocus
                   >
                 </div>
@@ -446,14 +446,14 @@
                     @click="showGenerateModal = false"
                     class="px-3 py-1.5 text-gray-600 hover:text-gray-800 text-sm"
                   >
-                    Cancel
+                    {{{t("common.cancel")}}}
                   </button>
                   <button
                     @click="generateKey()"
                     :disabled="!newKeyName.trim() || loading"
                     class="btn btn-primary disabled:opacity-50"
                   >
-                    Generate
+                    {{{t("settings.generate")}}}
                   </button>
                 </div>
               </div>
@@ -467,23 +467,22 @@
               @click.self="showRevokeModal = false"
             >
               <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md space-y-4">
-                <h3 class="text-lg font-semibold text-red-600">Revoke Key</h3>
+                <h3 class="text-lg font-semibold text-red-600">{{{t("settings.revokeKey")}}}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                  Warning: This action is irreversible. Messages encrypted with this key will become permanently
-                  inaccessible.
+                  {{{t("settings.revokeWarning")}}}
                 </p>
                 <p class="text-sm font-medium">
-                  Key to revoke: <span class="text-red-600" x-text="revokeKeyName"></span>
+                  {{{t("settings.keyToRevoke")}}} <span class="text-red-600" x-text="revokeKeyName"></span>
                 </p>
                 <div class="flex justify-end gap-2">
                   <button
                     @click="showRevokeModal = false"
                     class="px-3 py-1.5 text-gray-600 hover:text-gray-800 text-sm"
                   >
-                    Cancel
+                    {{{t("common.cancel")}}}
                   </button>
                   <button @click="revokeKey()" :disabled="loading" class="btn btn-danger disabled:opacity-50">
-                    Revoke Key
+                    {{{t("settings.revokeKey")}}}
                   </button>
                 </div>
               </div>
@@ -497,17 +496,16 @@
               @click.self="showRotateConfirm = false"
             >
               <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md space-y-4">
-                <h3 class="text-lg font-semibold text-yellow-600">Rotate Primary Key</h3>
+                <h3 class="text-lg font-semibold text-yellow-600">{{{t("settings.rotateKey")}}}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                  This will generate a new primary key and mark the old one as expired.
+                  {{{t("settings.rotateWarning")}}}
                 </p>
                 <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                   <p class="text-sm text-yellow-800 dark:text-yellow-200 font-medium">
-                    ⚠️ Forward Secrecy
+                    {{{t("settings.forwardSecrecy")}}}
                   </p>
                   <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                    Messages encrypted with the old key will become inaccessible. This is by design for privacy — it
-                    ensures that if someone leaves a group chat, they cannot read new messages.
+                    {{{t("settings.forwardSecrecyDescription")}}}
                   </p>
                 </div>
                 <div class="flex justify-end gap-2">
@@ -515,14 +513,14 @@
                     @click="showRotateConfirm = false"
                     class="px-3 py-1.5 text-gray-600 hover:text-gray-800 text-sm"
                   >
-                    Cancel
+                    {{{t("common.cancel")}}}
                   </button>
                   <button
                     @click="rotateKey(); showRotateConfirm = false"
                     :disabled="loading"
                     class="btn btn-warning disabled:opacity-50"
                   >
-                    Rotate Key
+                    {{{t("settings.rotateKey")}}}
                   </button>
                 </div>
               </div>
