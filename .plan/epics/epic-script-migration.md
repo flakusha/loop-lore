@@ -6,9 +6,11 @@
 **Type:** Infrastructure
 
 ## Objective
+
 Refactor scripts folder into modular architecture with improved maintainability and testability.
 
 ### Tasks
+
 1. Create `scripts/lib` directory for shared utilities ✅
 2. Migrate shared functions to TypeScript modules ✅ (check-utils.ts already moved)
 3. Convert shell scripts to ES modules (decide: .mjs vs .ts)
@@ -16,6 +18,7 @@ Refactor scripts folder into modular architecture with improved maintainability 
 5. Create test suite for new architecture
 
 ### Implementation Path
+
 1. Create directory structure:
    `src/scripts/lib/` for shared utilities
 2. Convert `scripts/*.sh` to `.mjs` with TypeScript types
@@ -25,37 +28,42 @@ Refactor scripts folder into modular architecture with improved maintainability 
 
 ### Key Decision: .mjs vs .ts
 
-| Aspect | .mjs (ES Modules) | .ts (TypeScript) |
-|--------|-------------------|------------------|
-| Type Safety | JSDoc only | Full TypeScript |
-| Compilation | None (native) | Required (bun build) |
-| IDE Support | Good | Excellent |
-| Runtime | Direct | Via bun |
-| Migration Effort | Lower | Higher |
-| Long-term Maintainability | Medium | High |
+| Aspect                    | .mjs (ES Modules) | .ts (TypeScript)     |
+| ------------------------- | ----------------- | -------------------- |
+| Type Safety               | JSDoc only        | Full TypeScript      |
+| Compilation               | None (native)     | Required (bun build) |
+| IDE Support               | Good              | Excellent            |
+| Runtime                   | Direct            | Via bun              |
+| Migration Effort          | Lower             | Higher               |
+| Long-term Maintainability | Medium            | High                 |
 
 **Recommendation**: Use `.ts` for:
+
 - Shared libraries (`scripts/lib/`)
 - Complex commands with business logic
 - Anything needing strict types
 
 Use `.mjs` for:
+
 - Simple CLI entry points
 - Thin wrappers
 - Performance-critical hot paths
 
 ### Current State (as of migration start)
+
 - `scripts/lib/` exists with: `check-utils.ts`, `colors.sh`, `assertions.sh`
 - `worktree.sh` (44K) - main migration target
 - `check-parallel.sh` (5K) - validation integration target
 - Other check-* scripts: may stay as-is or be modularized
 
 ### Dependencies
+
 - lean-ctx tools
 - bun build system
 - TypeScript configuration
 
 ### Status
+
 - [x] Directory structure created
 - [x] Shared utilities identified
 - [x] Migration roadmap defined
@@ -64,6 +72,7 @@ Use `.mjs` for:
 - [ ] Worktree command extraction started
 
 ### Relevant Files
+
 - `src/scripts/worktree.sh` (current structure)
 - `src/scripts/lib/` (new location)
 - `src/scripts-workflow.md` (roadmap)

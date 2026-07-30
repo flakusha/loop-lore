@@ -19,20 +19,20 @@ and the plugin lifecycle.
 
 ## Current State
 
-| Area                         | File                                            | State                                              |
-| ---------------------------- | ----------------------------------------------- | -------------------------------------------------- |
-| OpenAI-compatible provider   | `src/generation/providers/openai-compatible.ts` | ✅ Built                                           |
-| ComfyUI client (image)       | `src/generation/providers/comfyui.ts`           | ✅ Built                                           |
-| Provider registry + failover | `src/generation/providers/registry.ts`          | ✅ Built                                           |
-| Circuit breaker              | `src/generation/providers/circuit-breaker.ts`   | ✅ Built                                           |
-| `LLMProvider` interface      | `src/generation/providers/types.ts`             | ✅ Built                                           |
-| `ProviderCapabilities.type`  | `src/generation/providers/types.ts`             | ✅ Includes `"anthropic" \| "ollama" \| "bedrock"` |
+| Area                         | File                                            | State                                                     |
+| ---------------------------- | ----------------------------------------------- | --------------------------------------------------------- |
+| OpenAI-compatible provider   | `src/generation/providers/openai-compatible.ts` | ✅ Built                                                  |
+| ComfyUI client (image)       | `src/generation/providers/comfyui.ts`           | ✅ Built                                                  |
+| Provider registry + failover | `src/generation/providers/registry.ts`          | ✅ Built                                                  |
+| Circuit breaker              | `src/generation/providers/circuit-breaker.ts`   | ✅ Built                                                  |
+| `LLMProvider` interface      | `src/generation/providers/types.ts`             | ✅ Built                                                  |
+| `ProviderCapabilities.type`  | `src/generation/providers/types.ts`             | ✅ Includes `"anthropic" \| "ollama" \| "bedrock"`        |
 | Anthropic adapter            | —                                               | ⏸ Deferred (closed FEAT-076, uses openai-compatible shim) |
 | Ollama adapter               | —                                               | ⏸ Deferred (closed FEAT-082, uses openai-compatible shim) |
-| Bedrock adapter              | —                                               | ⏸ Deferred (uses openai-compatible shim) |
-| Plugin management API        | —                                               | ❌ Not started                                     |
-| Plugin override system       | —                                               | ❌ Not started                                     |
-| Plugin security sandboxing   | —                                               | ❌ Not started                                     |
+| Bedrock adapter              | —                                               | ⏸ Deferred (uses openai-compatible shim)                  |
+| Plugin management API        | —                                               | ❌ Not started                                            |
+| Plugin override system       | —                                               | ❌ Not started                                            |
+| Plugin security sandboxing   | —                                               | ❌ Not started                                            |
 
 ## Design
 
