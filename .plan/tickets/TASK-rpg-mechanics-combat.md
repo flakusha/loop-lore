@@ -1,6 +1,6 @@
 # TASK: RPG Mechanics — Combat Engine
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Priority:** High
 **Effort:** High
 **Epic:** epic-rpg-mechanics
@@ -20,12 +20,18 @@ Implement the combat engine for RPG gameplay: initiative tracking, attack rolls,
 
 ## Acceptance Criteria
 
-- [ ] `initiative(order)` returns sorted combatant list with tiebreaker
-- [ ] `attackRoll(attacker, defender)` returns hit/miss with damage on hit
-- [ ] `armorClass(actor)` computes AC from equipment + dex + misc modifiers
-- [ ] Combat round resolves all combatants in initiative order
-- [ ] Unit tests cover hit/miss, critical hits, damage ranges, initiative ties
-- [ ] Integrates with `src/battle/` resolution module for unified dice resolution
+- [x] `initiative(order)` returns sorted combatant list with tiebreaker
+- [x] `attackRoll(attacker, defender)` returns hit/miss with damage on hit
+- [x] `armorClass(actor)` computes AC from equipment + dex + misc modifiers
+- [x] Combat round resolves all combatants in initiative order
+- [x] Unit tests cover hit/miss, critical hits, damage ranges, initiative ties
+- [x] Integrates with `src/battle/` resolution module for unified dice resolution
+
+## Implementation
+
+- `src/rpg/combat.ts` — Initiative (d20 + DEX mod), attack rolls (ability mod + proficiency + advantage), damage calculation (base dice + ability mod + flat bonus, with resistances/vulnerabilities/immunity), saving throws, action economy (actions, bonus actions, reactions), condition tracking
+- `src/rpg/combat.test.ts` — 32 tests
+- `src/routes/rpg.ts` — Routes wired via Elysia after battle routes
 
 ## Notes
 
