@@ -104,7 +104,15 @@ describe("cancelGenerationByChat", () => {
     } as unknown as ActiveGeneration,);
     chatToAttempt.set("chat-1", "attempt-1",);
 
-    const mockDb = {} as any;
+    const mockDb = {
+      updateTable: () => ({
+        set: () => ({
+          where: () => ({
+            execute: () => Promise.resolve(),
+          }),
+        }),
+      }),
+    } as any;
     const result = cancelGenerationByChat({
       db: mockDb,
       chatId: "chat-1",
