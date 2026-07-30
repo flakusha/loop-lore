@@ -238,6 +238,12 @@ export class ContextInjector {
 - [ ] Add query intent detection
 - [ ] Create RAG configuration UI (`src/frontend/alpine/rag.ts`)
 
+### Phase 3.5: Search Providers & Context Enrichment
+
+- [ ] **TASK-rag-search-providers.md** — Web search providers (DuckDuckGo, SearXNG, Brave, Google, Bing, Tavily)
+- [ ] **TASK-rag-local-search-cache.md** — Local search providers & caching (SQLite FTS5, memory/disk cache, offline mode)
+- [ ] **TASK-rag-context-enrichment.md** — Context enrichment (RSS, email, Slack/Discord, databases, knowledge graph)
+
 ### Phase 4: Business Features
 
 - [ ] Implement access control (`src/rag/access.ts`)
@@ -430,6 +436,14 @@ CREATE TABLE rag_access (
 - [ ] Can view analytics dashboard
 - [ ] All tests pass
 - [ ] Documentation covers setup and business use cases
+
+## Related Tasks
+
+- **TASK-rag-pipeline-context.md** — RAG retrieval, context assembly, prompt injection
+- **TASK-rag-business-features.md** — Enterprise features (access, audit, compliance)
+- **TASK-rag-search-providers.md** — Web search providers integration
+- **TASK-rag-local-search-cache.md** — Local search & caching for self-hosted
+- **TASK-rag-context-enrichment.md** — RSS, email, chat, database, knowledge graph
 
 ## Related Epics
 
