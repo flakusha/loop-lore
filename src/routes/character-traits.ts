@@ -276,6 +276,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       {
         params: t.Object({ actorId: Id, worldId: Id, },),
         body: WorldTraitCreateBody,
+        response: {
+          200: TraitResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Create world trait",
           description: "Create a new world-specific trait for an actor.",

@@ -198,6 +198,9 @@ export function chatsRoutes(opts: HandlerOpts,) {
           return jsonResponse({ ok: true, archived: archived.length, },);
         },
         { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
+      )
+      .post(
+        "/api/chats/batch/delete",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(undefined, ctx.t,); }
@@ -206,7 +209,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           if (deleted === 0) { return notFound(ctx.t?.("chats.noChatsFound",) ?? "No chats found",); }
           return jsonResponse({ ok: true, deleted, },);
         },
-        { body: BatchIdsBody, },
+        { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .post(
         "/api/chats/batch/export",
