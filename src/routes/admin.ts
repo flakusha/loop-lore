@@ -56,7 +56,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -109,7 +109,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -134,7 +134,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
           if (!user) {
             return jsonError({
-              message: "User not found",
+              message: ctx.t?.("admin.userNotFound",) ?? "User not found",
               status: HttpStatus.NotFound,
               code: ErrorCode.NotFound,
             },);
@@ -149,7 +149,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, body, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -169,7 +169,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -186,7 +186,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -217,7 +217,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -247,7 +247,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const health = getProviderHealth(providerName,);
         if (!health) {
           return jsonError({
-            message: "Provider not found",
+            message: ctx.t?.("admin.providerNotFound",) ?? "Provider not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           },);
@@ -263,7 +263,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -279,7 +279,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -294,7 +294,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -319,7 +319,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, body, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -353,7 +353,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -376,7 +376,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -409,7 +409,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -423,7 +423,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -438,7 +438,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -454,7 +454,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -494,7 +494,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -507,7 +507,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .executeTakeFirst();
           if (!world) {
             return jsonError({
-              message: "World not found",
+              message: ctx.t?.("admin.worldNotFound",) ?? "World not found",
               status: HttpStatus.NotFound,
               code: ErrorCode.NotFound,
             },);
@@ -532,7 +532,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -550,7 +550,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -595,7 +595,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -608,7 +608,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .executeTakeFirst();
           if (!chat) {
             return jsonError({
-              message: "Chat not found",
+              message: ctx.t?.("admin.chatNotFound",) ?? "Chat not found",
               status: HttpStatus.NotFound,
               code: ErrorCode.NotFound,
             },);
@@ -640,7 +640,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -651,7 +651,10 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           if (is_pinned !== undefined) { updates.is_pinned = is_pinned; }
           if (world_id !== undefined) { updates.world_id = world_id; }
           if (Object.keys(updates,).length === 0) {
-            return jsonError({ message: "No updatable fields", status: HttpStatus.BadRequest, },);
+            return jsonError({
+              message: ctx.t?.("admin.noUpdatableFields",) ?? "No updatable fields",
+              status: HttpStatus.BadRequest,
+            },);
           }
           await opts.database
             .updateTable("chats",)
@@ -668,7 +671,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -684,7 +687,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -703,7 +706,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { params: p, userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -718,7 +721,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
           if (!profiles[id]) {
             return jsonError({
-              message: "Template not found",
+              message: ctx.t?.("admin.templateNotFound",) ?? "Template not found",
               status: HttpStatus.NotFound,
               code: ErrorCode.NotFound,
             },);
@@ -748,7 +751,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -763,7 +766,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
           if (profiles[id]) {
             return jsonError({
-              message: "Template already exists",
+              message: ctx.t?.("admin.templateAlreadyExists",) ?? "Template already exists",
               status: HttpStatus.BadRequest,
               code: ErrorCode.BadRequest,
             },);
@@ -791,7 +794,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -805,7 +808,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
         if (!profiles[id]) {
           return jsonError({
-            message: "Template not found",
+            message: ctx.t?.("admin.templateNotFound",) ?? "Template not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           },);
@@ -832,7 +835,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           const { userRole, request, } = ctx;
           if (!isAdminRole(userRole,)) {
             return jsonError({
-              message: "Admin access required",
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
             },);
@@ -895,7 +898,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -908,7 +911,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           .executeTakeFirst();
         if (!entry) {
           return jsonError({
-            message: "Log entry not found",
+            message: ctx.t?.("admin.logEntryNotFound",) ?? "Log entry not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           },);
@@ -920,7 +923,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
-            message: "Admin access required",
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
             code: ErrorCode.Forbidden,
           },);
@@ -931,7 +934,8 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
         if (rotationDays <= 0) {
           return jsonError({
-            message: "Auto-rotation is disabled (keyRotationDays = 0)",
+            message: ctx.t?.("admin.autoRotationDisabled",) ??
+              "Auto-rotation is disabled (keyRotationDays = 0)",
             status: HttpStatus.BadRequest,
           },);
         }
