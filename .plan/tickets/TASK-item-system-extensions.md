@@ -6,7 +6,7 @@
 **Assignee**:
 **Epic**: EPIC-039 (Item System Extensions)
 
-### Description
+## Description
 
 Extend item system with state machines for item types: usable, collectable, consumable. Items linked to characters via inventory slots.
 

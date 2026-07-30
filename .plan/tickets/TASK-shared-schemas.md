@@ -1,6 +1,6 @@
 # TASK: Shared Schemas — Reputation, Consent, NSFW Content Rating
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-character-core-system
