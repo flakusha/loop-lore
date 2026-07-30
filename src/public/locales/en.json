@@ -343,5 +343,14 @@
       "tags": "Keywords for organizing and finding worlds.",
       "visibility": "Public worlds are visible to all users; Private only to you."
     }
+  },
+  "chats": {
+    "noChatsFound": "No chats found",
+    "chatNotFound": "Chat not found",
+    "noValidFields": "No valid fields to update",
+    "noWorldAssigned": "Chat has no world assigned",
+    "locationNotFound": "Location not found in this world",
+    "notParticipant": "Not a participant of this chat",
+    "messageNotFound": "Message not found in this chat"
   }
 }
