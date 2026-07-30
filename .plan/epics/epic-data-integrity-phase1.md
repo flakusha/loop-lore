@@ -1,6 +1,6 @@
 # TASK: Data Integrity Phase 1 — Config Guards & Backend Selection
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 **Priority:** High
 **Effort:** Low
 **Issue:** `e8b0c6b`
@@ -21,25 +21,25 @@ Phase 1 of the Data Integrity epic: Backend selection guards and config validati
 
 ### Backend Selection Guard
 
-- [ ] Reject `type=sqlite` when `INSTANCE_COUNT > 1`
-- [ ] Reject `type=sqlite` when `UNSAFE_SQLITE_MULTIINSTANCE` is set
-- [ ] Clear error message explaining why SQLite is unsafe for multi-instance
-- [ ] Suggest Postgres as alternative for multi-instance deployments
-- [ ] Config validation tests for rejection logic
+- [x] Reject `type=sqlite` when `INSTANCE_COUNT > 1`
+- [x] Reject `type=sqlite` when `UNSAFE_SQLITE_MULTIINSTANCE` is set
+- [x] Clear error message explaining why SQLite is unsafe for multi-instance
+- [x] Suggest Postgres as alternative for multi-instance deployments
+- [x] Config validation tests for rejection logic
 
 ### Network Filesystem Warning
 
-- [ ] Detect NFS/EFS/etc. in SQLite WAL path
-- [ ] Warn (not error) when WAL path is on network filesystem
-- [ ] Include mitigation advice in warning message
-- [ ] Allow override with explicit acknowledgment
+- [x] Detect NFS/EFS/etc. in SQLite WAL path
+- [x] Warn (not error) when WAL path is on network filesystem
+- [x] Include mitigation advice in warning message
+- [x] Allow override with explicit acknowledgment
 
 ### Documentation Correction
 
-- [ ] Remove stale MySQL claim from `docs/spec/architecture.md`
-- [ ] Update to state Postgres-only (config is source of truth)
-- [ ] Cross-reference `src/config/sections/database.ts` as authoritative
-- [ ] Link to Epic 27 for full ACID matrix
+- [x] Remove stale MySQL claim from `docs/spec/architecture.md`
+- [x] Update to state Postgres-only (config is source of truth)
+- [x] Cross-reference `src/config/sections/database.ts` as authoritative
+- [x] Link to Epic 27 for full ACID matrix
 
 ## Files
 
