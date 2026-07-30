@@ -19,7 +19,7 @@ import { notifyGmAction, } from "../notifications/service";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, } from "../utils";
 import { notFound, } from "../validation/middleware";
-import { Id, LocationStateBody, NpcStateBody, PaginationQuery, WorldStateCreateBody, } from "../validation/schemas";
+import { ErrorResponse, Id, LocationStateBody, NpcStateBody, PaginationQuery, SuccessResponse, WorldStateCreateBody, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────

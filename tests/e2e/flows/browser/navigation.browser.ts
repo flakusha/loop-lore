@@ -154,7 +154,9 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 8000, },);
         // loadNewChatPage() is only called on htmx:load — page.goto() bypasses htmx,
         // so we must manually initialize the form submit handler
-        await page.evaluate(() => { (globalThis as any).loadNewChatPage?.(); },);
+        await page.evaluate(() => {
+          (globalThis as any).loadNewChatPage?.();
+        },);
         await page.locator("[data-testid='chat-name-input']",).fill("Browser Test Chat",);
         await page.locator("[data-testid='create-chat-btn']",).click();
         await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 8000, },);
