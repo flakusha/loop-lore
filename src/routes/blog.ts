@@ -6,8 +6,16 @@
  * blog-specific metadata layer.
  */
 import { Elysia, } from "elysia";
+import { t, } from "elysia";
 import type { TranslatorFn, } from "../i18n/types";
 import { BlogService, } from "../rpg/blog/service.js";
+import {
+  BlogCommentCreateBody,
+  BlogPostCreateBody,
+  BlogPostStatusBody,
+  BlogPostUpdateBody,
+  Id,
+} from "../validation/schemas";
 import { type HandlerOpts, } from "./actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, } from "./http-utils.js";
 
@@ -24,33 +32,23 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
-      const title = body.title as string | undefined;
-      const contentBody = body.body as string | undefined;
-      if (!title || !contentBody) {
-        return jsonError({
-          message: "errors.missingField",
-          status: HttpStatus.BadRequest,
-          t,
-        },);
-      }
-
       const post = await svc.createPost({
         author_id: userId,
-        title,
-        body: contentBody,
-        visibility: body.visibility as any,
-        author_type: body.author_type as any,
-        category: body.category as string | undefined,
-        world_id: body.world_id as string | undefined,
-        character_id: body.character_id as string | undefined,
-        tags: body.tags as string[] | undefined,
-        scheduled_at: body.scheduled_at as string | undefined,
-        metadata: body.metadata as Record<string, unknown> | undefined,
+        title: ctx.body.title,
+        body: ctx.body.body,
+        visibility: ctx.body.visibility,
+        author_type: ctx.body.author_type,
+        category: ctx.body.category,
+        world_id: ctx.body.world_id,
+        character_id: ctx.body.character_id,
+        tags: ctx.body.tags,
+        scheduled_at: ctx.body.scheduled_at,
+        metadata: ctx.body.metadata,
       },);
 
       return { success: true, post, };
     }, {
+      body: BlogPostCreateBody,
       detail: {
         summary: "Create blog post",
         description: "Create a new blog post with title, body, and optional metadata.",
@@ -98,7 +96,6 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
       const post = await svc.getPost(ctx.params.id,);
       if (!post) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
@@ -108,17 +105,19 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
 
       const updated = await svc.updatePost(ctx.params.id, {
-        title: body.title as string | undefined,
-        body: body.body as string | undefined,
-        visibility: body.visibility as any,
-        status: body.status as any,
-        category: body.category as string | undefined,
-        tags: body.tags as string[] | undefined,
-        metadata: body.metadata as Record<string, unknown> | undefined,
+        title: ctx.body.title,
+        body: ctx.body.body,
+        visibility: ctx.body.visibility,
+        status: ctx.body.status,
+        category: ctx.body.category,
+        tags: ctx.body.tags,
+        metadata: ctx.body.metadata,
       },);
 
       return { success: true, post: updated, };
     }, {
+      params: t.Object({ id: Id, },),
+      body: BlogPostUpdateBody,
       detail: {
         summary: "Update blog post",
         description: "Update a blog post. Only the author or an admin can update.",
@@ -157,12 +156,6 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
-      const commentBody = body.body as string | undefined;
-      if (!commentBody) {
-        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
-      }
-
       const post = await svc.getPost(ctx.params.id,);
       if (!post) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
@@ -171,11 +164,13 @@ export function blogRoutes(opts: HandlerOpts,) {
       const comment = await svc.createComment({
         post_id: ctx.params.id,
         author_id: userId,
-        body: commentBody,
+        body: ctx.body.body,
       },);
 
       return { success: true, comment, };
     }, {
+      params: t.Object({ id: Id, },),
+      body: BlogCommentCreateBody,
       detail: {
         summary: "Add comment to post",
         description: "Add a comment to a blog post.",
@@ -203,9 +198,8 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
-      const status = body.status as string | undefined;
-      if (!status || !["visible", "hidden", "deleted",].includes(status,)) {
+      const { status, } = ctx.body;
+      if (!["visible", "hidden", "deleted",].includes(status,)) {
         return jsonError({
           message: "errors.invalidInput",
           status: HttpStatus.BadRequest,
@@ -213,12 +207,14 @@ export function blogRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const ok = await svc.moderateComment(ctx.params.id, status as any,);
+      const ok = await svc.moderateComment(ctx.params.id, status,);
       if (!ok) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       return { success: true, };
     }, {
+      params: t.Object({ id: Id, },),
+      body: BlogPostStatusBody,
       detail: {
         summary: "Moderate comment",
         description: "Set a comment's visibility status (visible, hidden, deleted). Admin only.",
@@ -232,10 +228,8 @@ export function blogRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
-      const status = body.status as string | undefined;
+      const { status, } = ctx.body;
       if (
-        !status ||
         !["draft", "published", "hidden", "disabled",].includes(status,)
       ) {
         return jsonError({
@@ -246,13 +240,15 @@ export function blogRoutes(opts: HandlerOpts,) {
       }
 
       const updated = await svc.updatePost(ctx.params.id, {
-        status: status as any,
+        status: status,
       },);
       if (!updated) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       return { success: true, post: updated, };
     }, {
+      params: t.Object({ id: Id, },),
+      body: BlogPostStatusBody,
       detail: {
         summary: "Moderate blog post",
         description: "Set a blog post's status (draft, published, hidden, disabled). Admin only.",
