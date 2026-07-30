@@ -26,8 +26,8 @@ This ticket elevates the NSFW moderation tasks to High Priority and adds consent
 
 - [ ] NSFW enable/disable at per-chat, per-user, per-world level
 - [ ] Non-public audit log of NSFW gate decisions
-- [ ] NSFW content rating enforcement (5-tier from Character Core)
-- [ ] Consent state tracking (from TASK-shared-schemas)
+- [x] NSFW content rating enforcement (5-tier from Character Core) — `ContentRating` enum + TypeBox schema
+- [x] Consent state tracking (from TASK-shared-schemas) — `ConsentState` TypeBox schema
 - [ ] Integration with generation boundary (LLM request filtering)
 
 ### User Block / Ban / Shadow
@@ -89,8 +89,8 @@ This ticket elevates the NSFW moderation tasks to High Priority and adds consent
 
 - [ ] NSFW enable/disable at per-chat, per-user, per-world level
 - [ ] Non-public audit log of NSFW gate decisions
-- [ ] NSFW content rating enforcement (5-tier from Character Core)
-- [ ] Consent state tracking (from TASK-shared-schemas)
+- [x] NSFW content rating enforcement (5-tier from Character Core) — `ContentRating` enum + TypeBox schema
+- [x] Consent state tracking (from TASK-shared-schemas) — `ConsentState` TypeBox schema
 - [ ] Integration with generation boundary (LLM request filtering)
 
 ### User Block / Ban / Shadow

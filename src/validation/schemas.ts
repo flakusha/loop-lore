@@ -24,6 +24,7 @@ import {
   ChatParticipantRole,
   ChatType,
   ContentEncoding,
+  ContentRating,
   EmotionType,
   GenerationStatus,
   ItemCategory,
@@ -36,6 +37,7 @@ import {
   MessageVisibility,
   ModelRole,
   NoteCategory,
+  NsfwEncounterType,
   PinnedState,
   QuestStatus,
   QuestType,
@@ -926,6 +928,101 @@ export const ApiKeyResponse = t.Object({
   providerName: t.String(),
   createdAt: t.String(),
   lastUsedAt: t.Optional(t.String(),),
+},);
+
+// ── Shared Cross-System Schemas ─────────────────────────────
+
+/** Reputation tier — maps numeric score to social standing label. */
+export const ReputationTier = t.Union([
+  t.Literal("hostile",),
+  t.Literal("unfriendly",),
+  t.Literal("neutral",),
+  t.Literal("friendly",),
+  t.Literal("allied",),
+  t.Literal("devoted",),
+], { description: "Reputation tier based on score value", },);
+export type ReputationTier = Static<typeof ReputationTier>;
+
+/** Source system that modified reputation. */
+export const ReputationSource = t.Union([
+  t.Literal("social",),
+  t.Literal("faction",),
+  t.Literal("nsfw",),
+  t.Literal("combined",),
+], { description: "System that produced the reputation score", },);
+
+/** Single reputation modifier entry — tracks what changed the score. */
+export const ReputationModifier = t.Object({
+  source: t.String({ description: "What caused the change (e.g. quest name, NPC id)", },),
+  amount: t.Number({ minimum: -100, maximum: 100, description: "Score delta (+/-)", },),
+  timestamp: t.String({ format: "date-time", description: "When the change occurred", },),
+  reason: t.String({ description: "Human-readable reason for the change", },),
+  context: t.Optional(t.Record(t.String(), t.Unknown(),),),
+},);
+
+/** Unified reputation score — used by Social, Faction, and NSFW systems. */
+export const ReputationScore = t.Object({
+  value: t.Number({ minimum: -100, maximum: 100, description: "Reputation value (-100 to +100)", },),
+  tier: ReputationTier,
+  source: ReputationSource,
+  lastModified: t.String({ format: "date-time", },),
+  decayRate: t.Number({ minimum: 0, maximum: 1, description: "Decay per day (0 = no decay)", },),
+  modifiers: t.Array(ReputationModifier,),
+},);
+export type ReputationScore = Static<typeof ReputationScore>;
+
+/** Request body to update reputation for an actor. */
+export const ReputationUpdateBody = t.Object({
+  source: ReputationSource,
+  amount: t.Number({ minimum: -100, maximum: 100, },),
+  reason: t.String({ minLength: 1, },),
+  context: t.Optional(t.Record(t.String(), t.Unknown(),),),
+},);
+
+/** NSFW content rating — 5-tier system from Character Core. */
+export const NsfwContentRatingSchema = t.UnionEnum(ev(ContentRating,),);
+export type NsfwContentRatingSchema = Static<typeof NsfwContentRatingSchema>;
+
+/** Consent scope — where consent applies. */
+export const ConsentScope = t.Union([
+  t.Literal("chat",),
+  t.Literal("user",),
+  t.Literal("world",),
+  t.Literal("global",),
+], { description: "Scope at which consent is recorded", },);
+
+/** Consent state — tracks user consent for NSFW content. */
+export const ConsentState = t.Object({
+  userId: t.String({ format: "uuid", },),
+  scope: ConsentScope,
+  scopeId: t.Optional(t.String({ description: "Chat or world ID when scope is chat/world", },),),
+  consentGiven: t.Boolean(),
+  consentVersion: t.Number({ minimum: 1, description: "Schema version for consent format changes", },),
+  createdAt: t.String({ format: "date-time", },),
+  revokedAt: t.Optional(t.String({ format: "date-time", },),),
+  revokedBy: t.Optional(t.String({ format: "uuid", },),),
+  reason: t.Optional(t.String({ description: "Reason for granting or revoking consent", },),),
+},);
+export type ConsentState = Static<typeof ConsentState>;
+
+/** Request body to grant or revoke consent. */
+export const ConsentUpdateBody = t.Object({
+  scope: ConsentScope,
+  scopeId: t.Optional(t.String(),),
+  consentGiven: t.Boolean(),
+  reason: t.Optional(t.String(),),
+},);
+
+/** NSFW encounter type — from Character Core enums. */
+export const NsfwEncounterTypeSchema = t.UnionEnum(ev(NsfwEncounterType,),);
+export type NsfwEncounterTypeSchema = Static<typeof NsfwEncounterTypeSchema>;
+
+/** NSFW content rating enforcement — runtime gate for generation boundary. */
+export const NsfwRatingEnforcement = t.Object({
+  allowed: t.Boolean({ description: "Whether this rating passes the gate", },),
+  rating: NsfwContentRatingSchema,
+  maxAllowed: NsfwContentRatingSchema,
+  reason: t.Optional(t.String(),),
 },);
 
 /** List response wrapper */
