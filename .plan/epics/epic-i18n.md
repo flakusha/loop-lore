@@ -32,13 +32,14 @@ Full internationalization of loop-lore UI. Infrastructure is complete (custom i1
 
 ## Features
 
-| Feature           | Ticket                      | Effort | Phase | Description                                        |
-| ----------------- | --------------------------- | ------ | ----- | -------------------------------------------------- |
-| Locale completion | TASK-i18n-locale-completion | Medium | 1     | Fill missing 163 keys × 9 non-English locales      |
-| Route adoption    | TASK-i18n-route-adoption    | Large  | 2     | Wire `ctx.t()` into route error messages           |
-| Template adoption | TASK-i18n-template-adoption | Large  | 3     | Replace hardcoded strings in 17 HTML views         |
-| Alpine.js client  | TASK-i18n-alpine-client     | Medium | 4     | Add `$t` magic property for client-side reactivity |
-| Settings wiring   | TASK-i18n-settings-wiring   | Small  | 5     | Wire locale switcher to re-render UI               |
+| Feature               | Ticket                          | Effort | Phase | Description                                        |
+| --------------------- | ------------------------------- | ------ | ----- | -------------------------------------------------- |
+| Locale completion     | TASK-i18n-locale-completion     | Medium | 1     | Fill missing 163 keys × 9 non-English locales      |
+| Reconciliation script | TASK-i18n-reconciliation-script | Small  | 1.5   | Validate locale files, detect drift, auto-fix      |
+| Route adoption        | TASK-i18n-route-adoption        | Large  | 2     | Wire `ctx.t()` into route error messages           |
+| Template adoption     | TASK-i18n-template-adoption     | Large  | 3     | Replace hardcoded strings in 17 HTML views         |
+| Alpine.js client      | TASK-i18n-alpine-client         | Medium | 4     | Add `$t` magic property for client-side reactivity |
+| Settings wiring       | TASK-i18n-settings-wiring       | Small  | 5     | Wire locale switcher to re-render UI               |
 
 ## Phases
 
