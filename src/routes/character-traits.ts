@@ -149,6 +149,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       {
         params: t.Object({ actorId: Id, traitName: t.String(), },),
         body: TraitUpdateBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update permanent trait",
           description: "Update a permanent trait's value.",
@@ -173,6 +178,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
       {
         params: t.Object({ actorId: Id, traitName: t.String(), },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Delete permanent trait",
           description: "Delete a permanent trait.",
