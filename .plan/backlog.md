@@ -1,34 +1,34 @@
 # Backlog
 
-> **Last updated:** 2026-07-30 — Post-reconciliation priorities
+> **Last updated:** 2026-07-30 — Post-reconciliation priorities; P0/P1 status synced with validated code state
 > Features not under active development. `immediate.md` tracks active work; `docs/meta/open-items.md` tracks bugs/debt.
 
 ## P0 — Critical Path (Blocking)
 
-| Epic | Item                                                                      | Effort | Status         |
-| ---- | ------------------------------------------------------------------------- | ------ | -------------- |
-| 27   | Data Integrity Phase 1 — config guards, backend selection, doc correction | Low    | ⬜ Not Started |
-| —    | NSFW Moderation Safety Infrastructure — gate, consent, audit, flagging    | Medium | ⬜ Not Started |
-| —    | Shared Schemas — Reputation, Consent, NSFW Content Rating                 | Medium | ⬜ Not Started |
+| Epic | Item                                                                      | Effort | Status      |
+| ---- | ------------------------------------------------------------------------- | ------ | ----------- |
+| 27   | Data Integrity Phase 1 — config guards, backend selection, doc correction | Low    | ✅ Complete |
+| —    | NSFW Moderation Safety Infrastructure — gate, consent, audit, flagging    | Medium | ✅ Complete |
+| —    | Shared Schemas — Reputation, Consent, NSFW Content Rating                 | Medium | ✅ Complete |
 
 ## P1 — High Priority (Post-P0)
 
-| Epic | Item                                                              | Effort | Status         |
-| ---- | ----------------------------------------------------------------- | ------ | -------------- |
-| —    | NSFW Integration Gaps — Housing, Weather, Social, Disease         | Medium | ⬜ Not Started |
-| —    | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High   | ⬜ Not Started |
-| 27   | Data Integrity Phase 2 — `data_version` optimistic concurrency    | Medium | ⬜ Not Started |
+| Epic | Item                                                              | Effort | Status      |
+| ---- | ----------------------------------------------------------------- | ------ | ----------- |
+| —    | NSFW Integration Gaps — Housing, Weather, Social, Disease         | Medium | ✅ Complete |
+| —    | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High   | ✅ Complete |
+| 27   | Data Integrity Phase 2 — `data_version` optimistic concurrency    | Medium | ✅ Complete |
 
 ## P2 — Core Gameplay Systems (Post-P1)
 
-| Feature                                                 | Spec                                                                    | Effort    | Status         |
-| ------------------------------------------------------- | ----------------------------------------------------------------------- | --------- | -------------- |
-| RPG mechanics (dice, stats, combat, XP, loot)           | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md` | Very High | ⬜ Not Started |
-| Character multi-personality (switching, locking)        | `TASK-character-multi-personality.md`                                   | Medium    | ⬜ Not Started |
-| Mood swings & happiness meter                           | `TASK-character-mood-happiness.md`                                      | Medium    | ⬜ Not Started |
-| Memory injection probability & privacy                  | `TASK-character-memory-injection.md`                                    | Medium    | ⬜ Not Started |
-| Three-tier memory system (episodic/semantic/procedural) | `docs/spec/memory-system.md`                                            | Large     | ⬜ Not Started |
-| World & Locations (discovery, travel, NPC)              | `epic-world-locations.md`                                               | Very High | ⬜ Not Started |
+| Feature                                                 | Spec                                  | Effort    | Status         |
+| ------------------------------------------------------- | ------------------------------------- | --------- | -------------- |
+| RPG mechanics (dice, stats, combat, XP, loot)           | `docs/spec/rpg-mechanics.md`          | Very High | ⬜ Not Started |
+| Character multi-personality (switching, locking)        | `TASK-character-multi-personality.md` | Medium    | ⬜ Not Started |
+| Mood swings & happiness meter                           | `TASK-character-mood-happiness.md`    | Medium    | 🟡 In Progress |
+| Memory injection probability & privacy                  | `TASK-character-memory-injection.md`  | Medium    | ✅ Done        |
+| Three-tier memory system (episodic/semantic/procedural) | `docs/spec/memory-system.md`          | Large     | 🟡 In Progress |
+| World & Locations (discovery, travel, NPC)              | `epic-world-locations.md`             | Very High | ⬜ Not Started |
 
 ## P3 — Advanced Features (Post-P2)
 
@@ -106,3 +106,5 @@
 - **Epic 14 (Import/Export)** marked partial — JSON import works, other formats pending
 - **Epic 16 (Observability)** moved from P0 to completed — already implemented
 - **New P0 priorities** added: Data Integrity Phase 1, NSFW Moderation, Shared Schemas
+- **2026-07-30 status sync**: P0 NSFW Moderation → 🟡 Partial; P0 Shared Schemas → ✅ Complete; P1 NSFW Integration Gaps → ✅ Complete; P1 Battle Integration Gaps → ✅ Complete; P1 Data Integrity Phase 2 → ✅ Complete; P1 Memory Tiers Wiring was already ✅ Complete in Completed section
+- **2026-07-30 consistency fixes**: Mood swings & happiness meter → 🟡 In Progress (per TASK-character-mood-happiness.md); Memory injection probability & privacy → ✅ Done (per TASK-character-memory-injection.md); Three-tier memory system → 🟡 In Progress (per FEAT-memory-systems-three-tier.md); Removed non-existent `docs/spec/rpg-implementation-roadmap.md` from RPG mechanics spec reference
