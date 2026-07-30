@@ -9,13 +9,12 @@
 
 1. [Game Catalog](#game-catalog)
 2. [Integration Modes](#integration-modes)
-3. [UI/UX Patterns](#uiux-patterns)
-4. [Chat Logic](#chat-logic)
-5. [VN Integration](#vn-integration)
-6. [Battle Integration](#battle-integration)
-7. [NPC Behavior](#npc-behavior)
-8. [Economy & Rewards](#economy--rewards)
-9. [Social Features](#social-features)
+3. [Chat Mode](#chat-mode)
+4. [VN Mode](#vn-mode)
+5. [Battle Mode](#battle-mode)
+6. [NPC Behavior](#npc-behavior)
+7. [Economy & Rewards](#economy--rewards)
+8. [Social Features](#social-features)
 
 ---
 

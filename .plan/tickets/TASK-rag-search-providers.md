@@ -34,6 +34,7 @@ Document-only RAG is insufficient for:
 ### Phase 1: Provider Abstraction & Core Providers
 
 - [ ] Create search provider interface (`src/rag/search/provider.ts`)
+
   ```typescript
   export interface SearchProvider {
     name: string;
@@ -120,6 +121,7 @@ Document-only RAG is insufficient for:
   - Report generation with source attribution
 
 - [ ] Add research API (`POST /api/rag/research`)
+
   ```json
   {
     "query": "What are the latest trends in AI agent frameworks?",
