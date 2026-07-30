@@ -26,12 +26,12 @@ Housing has animal pens but never references Companion for stable mechanics, pet
 
 ### Housing Features for Companions
 
-| Housing Feature | Companion Benefit |
-| --- | --- |
-| Pet bed | +10% companion XP gain |
-| Stable | Mount access, faster travel |
-| Animal pen | Farm animal products |
-| Kennel | Guard companion bonus |
+| Housing Feature | Companion Benefit           |
+| --------------- | --------------------------- |
+| Pet bed         | +10% companion XP gain      |
+| Stable          | Mount access, faster travel |
+| Animal pen      | Farm animal products        |
+| Kennel          | Guard companion bonus       |
 
 ## Acceptance Criteria
 

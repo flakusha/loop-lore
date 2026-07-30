@@ -27,12 +27,12 @@ result = d20 + attribute_modifier + skill_bonus + situational_modifiers
 
 ### Resolution Contracts
 
-| System | Input | Output |
-| --- | --- | --- |
-| Battle | attack roll | hit/miss, damage |
-| Social | skill check | success/failure, degree |
-| Magic | spell attack/save | hit/miss, effect |
-| Skill | ability check | success/failure |
+| System | Input             | Output                  |
+| ------ | ----------------- | ----------------------- |
+| Battle | attack roll       | hit/miss, damage        |
+| Social | skill check       | success/failure, degree |
+| Magic  | spell attack/save | hit/miss, effect        |
+| Skill  | ability check     | success/failure         |
 
 ### Shared Dice Engine
 

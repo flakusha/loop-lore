@@ -21,12 +21,12 @@ Pregnancy/reproduction never references Disease for reproductive health ailments
 
 NSFW encounters can transmit diseases:
 
-| Disease | Transmission | Severity |
-| --- | --- | --- |
-| Common cold | Physical contact | Mild |
-| Flu | Physical contact | Moderate |
-| STD | Unprotected NSFW | Severe |
-| Pregnancy | Unprotected NSFW | Permanent (adds new NPC) |
+| Disease     | Transmission     | Severity                 |
+| ----------- | ---------------- | ------------------------ |
+| Common cold | Physical contact | Mild                     |
+| Flu         | Physical contact | Moderate                 |
+| STD         | Unprotected NSFW | Severe                   |
+| Pregnancy   | Unprotected NSFW | Permanent (adds new NPC) |
 
 ### Integration Points
 
