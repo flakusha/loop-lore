@@ -13,7 +13,7 @@
   x-cloak
   data-testid="character-info-panel"
 >
-  <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" title="Close">&times;</button>
+      <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" x-bind:title="t('common.close')">&times;</button>
   <div class="panel-content">
     <div class="nav-section-title">{{{t("chats.characterInfo")}}}</div>
     <template x-if="currentCharacter">
