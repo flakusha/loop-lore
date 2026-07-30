@@ -1,5 +1,4 @@
 // ── Chat page component (chat.html) — core state + init ────
-import type { AlpineState, ChatState, } from "./types";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -12,12 +11,12 @@ import { chatPanels, } from "./chat-panels";
 import { chatSettings, } from "./chat-settings";
 import { chatUtils, initAnonymousModeCheck, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
-import { createMoodPanelState, } from "./mood-panel";
-import { getLogger, } from "./logger";
 import { jsonParseOr, } from "./json";
+import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
-import { moodState, } from "./mood";
+import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
+import type { AlpineState, ChatState, } from "./types";
 
 const g = globalThis as Record<string, unknown>;
 
@@ -47,9 +46,6 @@ globalThis.chatState = function() {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
-    chats: [] as { id: string; name?: string }[],
-    chats: [] as { id: string; name?: string }[],
-    chats: [] as { id: string; name?: string }[],
     chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
     messages: [] as {
