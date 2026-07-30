@@ -11,13 +11,13 @@ Implement keyboard navigation system with tab order management, focus trapping f
 
 ## Acceptance Criteria
 
-- [ ] Tab order logical across all pages
-- [ ] Focus visible indicators (2px outline, high contrast)
-- [ ] Focus trapping in modals/popups
-- [ ] Escape to close modals
-- [ ] Skip links for main content
-- [ ] Focus restoration after modal close
-- [ ] No keyboard traps
+- [x] Tab order logical across all pages
+- [x] Focus visible indicators (2px outline, high contrast)
+- [x] Focus trapping in modals/popups
+- [x] Escape to close modals
+- [x] Skip links for main content
+- [x] Focus restoration after modal close
+- [x] No keyboard traps
 - [ ] Screen reader can navigate all content
 
 ## Implementation Details
