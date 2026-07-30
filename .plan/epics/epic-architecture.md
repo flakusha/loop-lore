@@ -2,6 +2,9 @@
 
 **Status:** ⬜ Not Started
 **Priority:** High
+**Effort:** Medium
+**Type:** Architecture Epic
+**Tags:** architecture, system-design, deployment, infrastructure
 
 ## Summary
 

@@ -2,6 +2,9 @@
 
 **Status:** 🟡 Partial
 **Priority:** High
+**Effort:** High
+**Type:** Feature Epic
+**Tags:** encryption, aes-256-gcm, key-management, e2ee, browser-crypto
 **Epic ID:** EPIC-2026-CRYPTO
 
 ## Summary

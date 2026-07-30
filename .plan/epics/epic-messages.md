@@ -2,6 +2,9 @@
 
 **Status:** ⬜ Not Started
 **Priority:** High
+**Effort:** Medium
+**Type:** Feature Epic
+**Tags:** messages, pipeline, chat, persistence, retrieval
 
 ## Summary
 
