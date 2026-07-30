@@ -15,7 +15,7 @@
 >
   <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" title="Close">&times;</button>
   <div class="panel-content">
-    <div class="nav-section-title">Character Info</div>
+    <div class="nav-section-title">{{{t("chats.characterInfo")}}}</div>
     <template x-if="currentCharacter">
       <div>
         <h3 class="name" x-text="currentCharacter.display_name || currentCharacter.name"></h3>
@@ -25,7 +25,7 @@
     <template x-if="!currentCharacter">
       <div class="empty-state character-panel-empty">
         <div class="icon">👤</div>
-        <div class="description">Character info will appear here when a chat is selected.</div>
+        <div class="description">{{{t("chats.selectChatHint")}}}</div>
       </div>
     </template>
 
@@ -36,7 +36,7 @@
     <template x-if="rpgStats">
       <div class="rpg-stats-section">
         <div class="rpg-stats-header">
-          <h4 class="rpg-stats-title">Stats</h4>
+          <h4 class="rpg-stats-title">{{{t("chats.stats")}}}</h4>
           <button class="btn btn-secondary btn-xs" @click="showRpgPanel = !showRpgPanel" title="Expand stats">
             <span x-text="showRpgPanel ? '−' : '+'"></span>
           </button>
@@ -62,8 +62,8 @@
             <!-- Level and XP -->
             <div class="rpg-xp-section">
               <div class="rpg-xp-row">
-                <span>Level <span x-text="rpgStats?.level || 1"></span></span>
-                <span>XP: <span x-text="rpgStats?.xp || 0"></span>/<span
+                <span>{{{t("chats.level")}}} <span x-text="rpgStats?.level || 1"></span></span>
+                <span>{{{t("chats.xp")}}}: <span x-text="rpgStats?.xp || 0"></span>/<span
                     x-text="rpgStats?.xpToNext || 100"
                   ></span></span>
               </div>
@@ -124,7 +124,7 @@
     <template x-if="_mood">
       <div class="mood-section">
         <div class="mood-header">
-          <h4 class="mood-title">Mood</h4>
+          <h4 class="mood-title">{{{t("chats.mood")}}}</h4>
           <span x-text="_getMoodEmoji(_mood.currentMood)" style="font-size: 24px"></span>
         </div>
         <div class="mood-happiness-bar">
@@ -144,7 +144,7 @@
         </div>
         <template x-if="_moodCanEdit">
           <div class="mood-edit-hint">
-            <small>GM/Admin: Adjust mood in chat settings</small>
+            <small>{{{t("chats.adjustMoodHint")}}}</small>
           </div>
         </template>
       </div>
