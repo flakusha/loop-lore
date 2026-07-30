@@ -175,7 +175,9 @@ describe("Panel toggles + Escape key", () => {
     // Open chat list panel via evaluate — avoids Playwright hit-test
     // issues with force:true and Alpine @click binding
     await page.evaluate(() => {
-      document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(new MouseEvent("click", { bubbles: true, }));
+      document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
+        new MouseEvent("click", { bubbles: true, },),
+      );
     },);
     await page.waitForTimeout(400,);
     let uiState = await getAlpineStore(page, "ui",);
@@ -218,7 +220,9 @@ describe("Panel toggles + Escape key", () => {
 
       // Open panel and press Escape — handler from init() should still work
       await page.evaluate(() => {
-        document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(new MouseEvent("click", { bubbles: true, }));
+        document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
+          new MouseEvent("click", { bubbles: true, },),
+        );
       },);
       await page.waitForTimeout(400,);
       await page.keyboard.press("Escape",);
