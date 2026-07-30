@@ -136,7 +136,7 @@
                 x-show="userSearch || userRoleFilter || userStatusFilter"
                 @click="clearUserFilters()"
               >
-                Clear
+                {{{t("common.clear")}}}
               </button>
             </div>
             <table class="admin-table">
@@ -193,10 +193,10 @@
                       </template>
                       <template x-if="editRoleUserId !== u.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">Role</button>
+                          <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">{{{t("admin.role")}}}</button>
                           <template x-if="confirmDeleteUser !== u.id">
                             <button class="btn btn-danger btn-xs" @click="confirmDeleteUser = u.id">
-                              Delete
+                              {{{t("common.delete")}}}
                             </button>
                           </template>
                           <template x-if="confirmDeleteUser === u.id">
@@ -205,7 +205,7 @@
                                 {{{t("common.confirm")}}}
                               </button>
                               <button class="btn btn-secondary btn-xs" @click="confirmDeleteUser = ''">
-                                Cancel
+                                {{{t("common.cancel")}}}
                               </button>
                             </div>
                           </template>
@@ -225,18 +225,18 @@
                 :disabled="userPage === 1"
                 @click="goUsersPage(userPage - 1)"
               >
-                Prev
+                {{{t("common.prev")}}}
               </button>
               <span
                 style="display: flex; align-items: center; font-size: 13px"
-                x-text="'Page ' + userPage + ' of ' + userPages"
+                x-text="t('common.pageOf', {page: userPage, total: userPages})"
               ></span>
               <button
                 class="btn btn-secondary btn-xs"
                 :disabled="userPage >= userPages"
                 @click="goUsersPage(userPage + 1)"
               >
-                Next
+                {{{t("common.next")}}}
               </button>
             </div>
           </div>
@@ -261,7 +261,7 @@
                 style="flex: 1; min-width: 200px"
               />
               <button class="btn btn-secondary btn-xs" x-show="worldSearch" @click="clearWorldFilters()">
-                Clear
+                {{{t("common.clear")}}}
               </button>
             </div>
             <table class="admin-table">
@@ -270,7 +270,7 @@
                   <th>{{{t("admin.nameLabel")}}}</th>
                   <th>{{{t("admin.id")}}}</th>
                   <th>{{{t("admin.created")}}}</th>
-                  <th>Actions</th>
+                  <th>{{{t("admin.actions")}}}</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
@@ -289,14 +289,14 @@
                     <td>
                       <template x-if="confirmDeleteWorld !== w.id">
                         <button class="btn btn-danger btn-xs" @click="confirmDeleteWorld = w.id">
-                          Delete
+                          {{{t("common.delete")}}}
                         </button>
                       </template>
                       <template x-if="confirmDeleteWorld === w.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">Confirm</button>
+                          <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">{{{t("common.confirm")}}}</button>
                           <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorld = ''">
-                            Cancel
+                            {{{t("common.cancel")}}}
                           </button>
                         </div>
                       </template>
@@ -314,18 +314,18 @@
                 :disabled="worldPage === 1"
                 @click="goWorldsPage(worldPage - 1)"
               >
-                Prev
+                {{{t("common.prev")}}}
               </button>
               <span
                 style="display: flex; align-items: center; font-size: 13px"
-                x-text="'Page ' + worldPage + ' of ' + worldPages"
+                x-text="t('common.pageOf', {page: worldPage, total: worldPages})"
               ></span>
               <button
                 class="btn btn-secondary btn-xs"
                 :disabled="worldPage >= worldPages"
                 @click="goWorldsPage(worldPage + 1)"
               >
-                Next
+                {{{t("common.next")}}}
               </button>
             </div>
           </div>
@@ -359,7 +359,7 @@
                 x-show="chatSearch || chatTypeFilter"
                 @click="clearChatFilters()"
               >
-                Clear
+                {{{t("common.clear")}}}
               </button>
             </div>
             <table class="admin-table">
@@ -367,8 +367,8 @@
                 <tr>
                   <th>{{{t("admin.titleLabel")}}}</th>
                   <th>{{{t("admin.type")}}}</th>
-                  <th>Created</th>
-                  <th>Actions</th>
+                  <th>{{{t("admin.created")}}}</th>
+                  <th>{{{t("admin.actions")}}}</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
@@ -387,7 +387,7 @@
                     <td>
                       <template x-if="confirmDeleteChat !== c.id">
                         <button class="btn btn-danger btn-xs" @click="confirmDeleteChat = c.id">
-                          Delete
+                          {{{t("common.delete")}}}
                         </button>
                       </template>
                       <template x-if="confirmDeleteChat === c.id">
@@ -396,7 +396,7 @@
                             {{{t("admin.confirmDelete")}}}
                           </button>
                           <button class="btn btn-secondary btn-xs" @click="confirmDeleteChat = ''">
-                            Cancel
+                            {{{t("common.cancel")}}}
                           </button>
                         </div>
                       </template>
@@ -414,18 +414,18 @@
                 :disabled="chatPage === 1"
                 @click="goChatsPage(chatPage - 1)"
               >
-                Prev
+                {{{t("common.prev")}}}
               </button>
               <span
                 style="display: flex; align-items: center; font-size: 13px"
-                x-text="'Page ' + chatPage + ' of ' + chatPages"
+                x-text="t('common.pageOf', {page: chatPage, total: chatPages})"
               ></span>
               <button
                 class="btn btn-secondary btn-xs"
                 :disabled="chatPage >= chatPages"
                 @click="goChatsPage(chatPage + 1)"
               >
-                Next
+                {{{t("common.next")}}}
               </button>
             </div>
           </div>
@@ -446,27 +446,27 @@
             />
             <select class="form-input" style="width: auto" x-model="auditEventType" @change="searchAudit()">
               <option value="">{{{t("admin.allEventTypes")}}}</option>
-              <option value="auth">Auth</option>
-              <option value="user">User</option>
-              <option value="chat">Chat</option>
-              <option value="world">World</option>
-              <option value="asset">Asset</option>
-              <option value="system">System</option>
-              <option value="plugin">Plugin</option>
+              <option value="auth">{{{t("admin.auth")}}}</option>
+              <option value="user">{{{t("admin.user")}}}</option>
+              <option value="chat">{{{t("admin.chat")}}}</option>
+              <option value="world">{{{t("admin.world")}}}</option>
+              <option value="asset">{{{t("admin.asset")}}}</option>
+              <option value="system">{{{t("admin.system")}}}</option>
+              <option value="plugin">{{{t("admin.plugin")}}}</option>
             </select>
             <select class="form-input" style="width: auto" x-model="auditEntityType" @change="searchAudit()">
               <option value="">{{{t("admin.allEntities")}}}</option>
-              <option value="user">User</option>
-              <option value="chat">Chat</option>
-              <option value="world">World</option>
-              <option value="asset">Asset</option>
+              <option value="user">{{{t("admin.user")}}}</option>
+              <option value="chat">{{{t("admin.chat")}}}</option>
+              <option value="world">{{{t("admin.world")}}}</option>
+              <option value="asset">{{{t("admin.asset")}}}</option>
             </select>
             <button
               class="btn btn-secondary btn-xs"
               x-show="auditSearch || auditEventType || auditEntityType"
               @click="clearAuditFilters()"
             >
-              Clear
+              {{{t("common.clear")}}}
             </button>
           </div>
           <div x-show="loadingAudit" class="empty-state" style="padding: var(--space-8)">
@@ -514,18 +514,18 @@
                   :disabled="auditPage === 1"
                   @click="goAuditPage(auditPage - 1)"
                 >
-                  Prev
+                  {{{t("common.prev")}}}
                 </button>
                 <span
                   style="display: flex; align-items: center; font-size: 13px"
-                  x-text="'Page ' + auditPage + ' of ' + auditPages"
+                  x-text="t('common.pageOf', {page: auditPage, total: auditPages})"
                 ></span>
                 <button
                   class="btn btn-secondary btn-xs"
                   :disabled="auditPage >= auditPages"
                   @click="goAuditPage(auditPage + 1)"
                 >
-                  Next
+                  {{{t("common.next")}}}
                 </button>
               </div>
             </div>
@@ -546,13 +546,13 @@
                 class="btn btn-secondary btn-sm"
                 @click="rescanProviders()"
                 :disabled="scanning"
-                x-text="scanning ? 'Scanning...' : 'Rescan Providers'"
+                x-text="scanning ? t('admin.scanning') : t('admin.rescanProviders')"
               >
               </button>
             </div>
             <div style="margin-bottom: var(--space-6)">
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
-                Model Role Assignments
+                {{{t("admin.modelRoleAssignments")}}}
               </h3>
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="r in modelRoleList" :key="r.role">
@@ -583,14 +583,14 @@
                           @click="saveModelRole(r.role)"
                           :disabled="!r.provider || !r.model"
                         >
-                          Save
+                          {{{t("common.save")}}}
                         </button>
                         <button
                           class="btn btn-secondary btn-xs"
                           @click="clearModelRole(r.role)"
                           x-show="overrides[r.role]"
                         >
-                          Clear
+                          {{{t("common.clear")}}}
                         </button>
                       </div>
                     </div>
@@ -634,7 +634,7 @@
                         <button
                           class="btn btn-secondary btn-xs"
                           @click="expandProvider = expandProvider === p.name ? '' : p.name"
-                          x-text="expandProvider === p.name ? 'Collapse' : 'Expand'"
+                          x-text="expandProvider === p.name ? t('admin.collapse') : t('admin.expand')"
                         >
                         </button>
                       </div>
@@ -647,7 +647,7 @@
                     </div>
                     <div x-show="expandProvider === p.name" style="margin-top: var(--space-2)">
                       <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-1)">
-                        Available Models:
+                        {{{t("admin.availableModels")}}}
                       </div>
                       <div style="display: flex; flex-wrap: wrap; gap: 8px">
                         <template x-for="m in getProviderModels(p.name)" :key="m.id">
@@ -703,7 +703,7 @@
                 <button
                   class="btn btn-secondary btn-xs"
                   @click="showSdConfig = !showSdConfig"
-                  x-text="showSdConfig ? 'Hide Config' : 'Show Config'"
+                  x-text="showSdConfig ? t('admin.hideConfig') : t('admin.showConfig')"
                 >
                 </button>
               </div>
@@ -715,9 +715,9 @@
                     :style="{background: sdStatus === 'running' ? '#28a745' : sdStatus === 'stopped' ? '#dc3545' : '#ffc107'}"
                   ></span>
                   <strong
-                    x-text="sdStatus === 'running' ? 'Running' : sdStatus === 'stopped' ? 'Stopped' : 'Unknown'"
+                    x-text="sdStatus === 'running' ? t('admin.running') : sdStatus === 'stopped' ? t('admin.stopped') : t('admin.unknown')"
                   ></strong>
-                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">— Port <span
+                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">— {{{t("admin.port")}}}<span
                       x-text="sdPort"
                     ></span></span>
                   <button class="btn btn-secondary btn-xs" @click="loadSdStatus()" style="margin-left: auto">
@@ -726,7 +726,7 @@
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); font-size: 13px; margin-bottom: var(--space-3)">
                   <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">{{{t("admin.status")}}}</div>
                     <div
                       style="font-weight: 500"
                       x-text="sdStatus === 'running' ? t('admin.activeStatus') : sdStatus === 'stopped' ? t('admin.notRunning') : t('admin.unknown')"
@@ -802,17 +802,17 @@
                   </div>
 
                   <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2); margin-top: var(--space-3)">
-                    ComfyUI
+                    {{{t("admin.comfyui")}}}
                   </h4>
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >Enabled</label>
+                      >{{{t("admin.comfyuiEnabled")}}}</label>
                       <input type="checkbox" x-model="comfyuiConfig.enabled" style="width: 16px; height: 16px" />
                     </div>
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >URL</label>
+                      >{{{t("admin.comfyuiUrl")}}}</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -870,7 +870,7 @@
                   <div style="display: flex; align-items: center; gap: var(--space-3)">
                     <span
                       :class="p.enabled ? 'status-badge status-active' : 'status-badge status-disabled'"
-                      x-text="p.enabled ? 'Enabled' : 'Disabled'"
+                      x-text="p.enabled ? t('common.enabled') : t('common.disabled')"
                     ></span>
                     <template x-if="p.enabled">
                       <button class="btn btn-secondary btn-xs" @click="togglePlugin(p.name, false)">
@@ -946,7 +946,7 @@
                     <input type="checkbox" x-model="nsfwConfig.allowNsfw" style="width: 16px; height: 16px" />
                     <span
                       style="font-size: 12px; color: var(--text-secondary)"
-                      x-text="nsfwConfig.allowNsfw ? 'Enabled' : 'Disabled'"
+                      x-text="nsfwConfig.allowNsfw ? t('common.enabled') : t('common.disabled')"
                     ></span>
                   </div>
                 </div>
@@ -983,21 +983,21 @@
               <h3 style="font-size: 16px; font-weight: 600">{{{t("admin.telemetrySummary")}}}</h3>
               <div style="display: flex; gap: var(--space-2)">
                 <button class="btn btn-secondary btn-xs" @click="loadAnalytics()">{{{t("admin.refresh")}}}</button>
-                <button class="btn btn-danger btn-xs" @click="purgeAnalytics()">Purge Old</button>
+                <button class="btn btn-danger btn-xs" @click="purgeAnalytics()">{{{t("admin.purgeOld")}}}</button>
               </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)">
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.total">0</div>
-                <div class="admin-stat-label">Total Events</div>
+                <div class="admin-stat-label">{{{t("admin.totalEvents")}}}</div>
               </div>
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.distinct_sessions">0</div>
-                <div class="admin-stat-label">Sessions</div>
+                <div class="admin-stat-label">{{{t("admin.sessions")}}}</div>
               </div>
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.distinct_users">0</div>
-                <div class="admin-stat-label">Active Users</div>
+                <div class="admin-stat-label">{{{t("admin.activeUsers")}}}</div>
               </div>
             </div>
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
@@ -1008,14 +1008,14 @@
               class="empty-state"
               style="padding: var(--space-4); font-size: 13px"
             >
-              No daily data available
+              {{{t("admin.noDailyData")}}}
             </div>
             <table x-show="dailyStats.length > 0" class="admin-table" style="margin-bottom: var(--space-6)">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Events</th>
-                  <th>Active Users</th>
+                  <th>{{{t("admin.date")}}}</th>
+                  <th>{{{t("admin.events")}}}</th>
+                  <th>{{{t("admin.activeUsers")}}}</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
@@ -1036,7 +1036,7 @@
               class="empty-state"
               style="padding: var(--space-4); font-size: 13px"
             >
-              No errors recorded
+              {{{t("admin.noErrorsRecorded")}}}
             </div>
             <table x-show="errorEvents.length > 0" class="admin-table">
               <thead>
