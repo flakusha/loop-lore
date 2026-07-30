@@ -2,6 +2,7 @@
  * Vanilla UI helpers — replaces Alpine for sidebar, toast, theme on non-chat pages.
  * Chat page still uses Alpine for its complex state.
  */
+import { eventCurrentTarget, eventTarget, } from "./dom";
 
 // ── Sidebar ──────────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ export function closeModal(el: Element,): void {
 
 export function closeModalOnBackdrop(event: Event,): void {
   if (event.target === event.currentTarget) {
-    (event.currentTarget as HTMLElement).classList.remove("open",);
+    eventCurrentTarget<HTMLElement>(event,)?.classList.remove("open",);
   }
 }
 
@@ -168,7 +169,7 @@ export function setLocale(localeId: string,): void {
 document.addEventListener(
   "error",
   (e: Event,) => {
-    const img = e.target as HTMLImageElement;
+    const img = eventTarget<HTMLImageElement>(e,);
     if (img?.dataset?.avatar === "user") { img.style.display = "none"; }
   },
   { capture: true, },
