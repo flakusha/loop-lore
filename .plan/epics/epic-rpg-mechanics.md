@@ -1,6 +1,6 @@
 # EPIC: RPG Mechanics & Extensible Game Systems
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Phase 1 Complete — Core systems (dice, stats, combat, XP, loot) implemented in `src/rpg/`
 **Priority:** Medium
 **Effort:** Very High
 **Type:** Feature Epic
@@ -139,14 +139,14 @@ interface WorldMechanicsConfig {
 
 ## Tasks
 
-- [ ] Mechanics registry system
-- [ ] Dice system enhancements
-- [ ] Stats system (configurable models)
+- [x] Mechanics registry system (via routes/rpg.ts)
+- [x] Dice system enhancements — crypto-grade entropy, NdS±M notation
+- [x] Stats system (D&D 5e model — 6 core abilities)
 - [ ] Character traits system
-- [ ] Combat system (turn-based)
+- [x] Combat system (turn-based) — initiative, attacks, damage, action economy
 - [ ] Skill/ability system
-- [ ] XP/leveling system
-- [ ] Loot system
+- [x] XP/leveling system — D&D 5e progression
+- [x] Loot system — rarity-weighted tables
 - [ ] Quest system (main, side, chains, story end conditions)
 - [ ] Achievement system
 - [ ] Buffs/debuffs system
@@ -211,19 +211,32 @@ interface WorldMechanicsConfig {
 
 ## Implementation Phases
 
-### Phase 1: Core Systems
+### Phase 1: Core Systems ✅ Complete (2026-07-31)
 
-- Mechanics registry
-- Stats system
-- Dice system
-- Combat basics
+- [x] Dice engine — `src/rpg/dice.ts` (crypto-grade entropy, NdS±M notation, advantage/disadvantage, exploding dice)
+- [x] Stats system — `src/rpg/stats.ts` (6 core abilities, D&D 5e modifiers, point-buy, 4d6-drop-lowest, standard array)
+- [x] Combat system — `src/rpg/combat.ts` (initiative, attack rolls, damage, AC, saving throws, action economy, conditions)
+- [x] XP system — `src/rpg/xp.ts` (D&D 5e progression, enemy CR, quests, skill challenges, ASI tracking)
+- [x] Loot system — `src/rpg/loot.ts` (rarity-weighted tables, level-scaling, pre-built weapon/armor/consumable tables)
+- [x] DB schema — `src/db/schema-rpg.ts` (dice_roll_history, character_stats, xp_ledger, loot_tables, loot_entries)
+- [x] Routes — `src/routes/rpg.ts` (6 endpoints under /api/rpg/)
+- [x] Tests — 189 tests across 5 test files
 
 ### Phase 2: Extended Systems
 
-- Quest system
-- Crafting system
-- Item system
-- Inventory system
+- [ ] Quest system (main, side, chains, story end conditions)
+- [ ] Achievement system
+- [ ] Buffs/debuffs system
+- [ ] Inventory system
+- [ ] Item system with parameters and gameplay impact
+- [ ] Item economics and money
+- [ ] Unique items
+- [ ] Crafting system (recipes, limitations, pre-compiled items)
+- [ ] RPG chat with question-based gameplay
+- [ ] Per-world mechanics configuration
+- [ ] Plugin mechanics API
+- [ ] Admin/GM mechanics UI
+- [ ] Mechanics disable/enable per world
 
 ### Phase 3: Advanced Features
 
@@ -241,23 +254,30 @@ interface WorldMechanicsConfig {
 
 ## Files
 
-- `src/rpg/` — RPG mechanics (does not exist yet)
+- `src/rpg/dice.ts` — Dice engine (crypto-grade entropy, NdS±M notation)
+- `src/rpg/stats.ts` — Stats system (6 core abilities, D&D 5e modifiers)
+- `src/rpg/combat.ts` — Combat engine (initiative, attacks, damage, action economy)
+- `src/rpg/xp.ts` — XP progression (D&D 5e levels 1-20)
+- `src/rpg/loot.ts` — Loot system (rarity-weighted tables)
+- `src/db/schema-rpg.ts` — RPG tables (5 tables)
+- `src/routes/rpg.ts` — RPG API (6 endpoints)
+- `src/rpg/dice.test.ts` — Dice engine tests
+- `src/rpg/stats.test.ts` — Stats tests
+- `src/rpg/combat.test.ts` — Combat tests
+- `src/rpg/xp.test.ts` — XP tests
+- `src/rpg/loot.test.ts` — Loot tests
+
+### Not yet implemented
+
 - `src/rpg/registry.ts` — mechanics registry
-- `src/rpg/dice.ts` — dice system
-- `src/rpg/stats.ts` — stats system
 - `src/rpg/traits.ts` — character traits
-- `src/rpg/combat.ts` — combat system
 - `src/rpg/skills.ts` — skill system
-- `src/rpg/xp.ts` — XP/leveling
-- `src/rpg/loot.ts` — loot system
 - `src/rpg/quests.ts` — quest system
 - `src/rpg/achievements.ts` — achievement system
 - `src/rpg/buffs.ts` — buffs/debuffs system
 - `src/rpg/inventory.ts` — inventory system
 - `src/rpg/items.ts` — item system
 - `src/rpg/economics.ts` — item economics and money
-- `src/db/schema-rpg.ts` — RPG tables
-- `src/routes/rpg.ts` — RPG API
 - `plugins/core/` — built-in mechanics plugins
 
 ## References
