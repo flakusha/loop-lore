@@ -1,6 +1,6 @@
 # TASK: Repetition & Hallucination Guards
 
-**Status:** ✅ Done
+**Status:** ✅ Done (closed via git issue)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-testing-benchmarking

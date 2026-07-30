@@ -1,6 +1,6 @@
 # FEAT: Provider & Plugin Ecosystem
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial (see epic)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-provider-plugin-ecosystem

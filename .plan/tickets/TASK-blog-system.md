@@ -1,6 +1,6 @@
 # TASK: EPIC: Blog System
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial (see epic)
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-blog-system

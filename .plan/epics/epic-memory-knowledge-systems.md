@@ -1,6 +1,6 @@
 # Epic: Memory & Knowledge Systems
 
-**Status:** 📝 Draft
+**Status:** 🟡 Partial (budget, extraction, injection, provision, purge, shareability built)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
