@@ -161,12 +161,14 @@ function notFoundView(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Response {
+  const translatedTitle = t ? t("errors.notFound",) : title;
   const content = `<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">${escapeHtml(message,)}</div>
     </div>`;
-  return respond(content, isHtmx, title, userId, sessionId, request,);
+  return respond(content, isHtmx, translatedTitle, userId, sessionId, request,);
 }
 
 function htmlResponse(body: string,): Response {
@@ -358,7 +360,7 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
         ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
         : "<span>👤</span>";
       const name = escapeHtml(c.display_name,);
-      const desc = escapeHtml(c.description || "No description",);
+      const desc = escapeHtml(c.description || "",);
       return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
@@ -386,7 +388,7 @@ async function serveWorldsListDb(database: Kysely<DB>,): Promise<Response> {
   const items = worlds
     .map((w,) => {
       const name = escapeHtml(w.name,);
-      const desc = escapeHtml(w.description || "No description",);
+      const desc = escapeHtml(w.description || "",);
       return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
       <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
       <div class="world-description">${desc}</div>
@@ -410,7 +412,7 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>,): 
 
   const name = escapeHtml(world.name,);
   const desc = escapeHtml(world.description || "",);
-  const lore = escapeHtml(world.lore || "No lore provided.",);
+  const lore = escapeHtml(world.lore || "",);
 
   const locations = await database
     .selectFrom("locations",)
@@ -745,7 +747,7 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
         ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
         : "<span>👤</span>";
       const name = escapeHtml(c.display_name,);
-      const desc = escapeHtml(c.description || "No description",);
+      const desc = escapeHtml(c.description || "",);
       return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
@@ -786,7 +788,7 @@ async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams,)
   const items = worlds
     .map((w,) => {
       const name = escapeHtml(w.name,);
-      const desc = escapeHtml(w.description || "No description",);
+      const desc = escapeHtml(w.description || "",);
       return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
       <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
       <div class="world-description">${desc}</div>
@@ -802,10 +804,11 @@ async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams,)
 
 async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const page = Math.max(1, parseInt(params.get("page",) ?? "1", 10,),);
-  const pageSize = Math.min(100, Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),),);
+  const rawPageSize = Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),);
+  const pageSize = Math.min(100, rawPageSize,);
   const offset = (page - 1) * pageSize;
 
-  const [chats, countRow] = await Promise.all([
+  const [chats, countRow,] = await Promise.all([
     database
       .selectFrom("chats",)
       .leftJoin("worlds", "worlds.id", "chats.world_id",)
@@ -820,16 +823,16 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
         "chats.created_at",
         "worlds.name as world_name",
         "locations.name as location_name",
-      ])
+      ],)
       .orderBy("chats.is_pinned", "desc",)
       .orderBy("chats.updated_at", "desc",)
       .limit(pageSize,)
       .offset(offset,)
       .execute(),
     database.selectFrom("chats",)
-      .select((eb: any) => eb.fn.countAll().as("total",),)
+      .select((eb: any,) => eb.fn.countAll().as("total",))
       .executeTakeFirst(),
-  ]);
+  ],);
 
   if (chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
@@ -859,7 +862,8 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   const chatType = params.get("type",)?.trim() ?? "";
   const sort = params.get("sort",) ?? "recent";
   const page = Math.max(1, parseInt(params.get("page",) ?? "1", 10,),);
-  const pageSize = Math.min(100, Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),),);
+  const rawPageSize = Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),);
+  const pageSize = Math.min(100, rawPageSize,);
   const offset = (page - 1) * pageSize;
 
   let qb = database
@@ -876,7 +880,7 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
       "chats.created_at",
       "worlds.name as world_name",
       "locations.name as location_name",
-    ]);
+    ],);
 
   if (query) {
     qb = qb.where("chats.name", "like", `%${query}%`,);
@@ -892,10 +896,10 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   else if (sort === "oldest") { qb = qb.orderBy("chats.created_at", "asc",); }
   else { qb = qb.orderBy("chats.is_pinned", "desc",).orderBy("chats.updated_at", "desc",); }
 
-  const [chats, countRow] = await Promise.all([
+  const [chats, countRow,] = await Promise.all([
     qb.limit(pageSize,).offset(offset,).execute(),
-    qb.clearOrderBy().select((eb: any) => eb.fn.countAll().as("total" as any,)).executeTakeFirst(),
-  ]);
+    qb.clearOrderBy().select((eb: any,) => eb.fn.countAll().as("total" as any,)).executeTakeFirst(),
+  ],);
 
   if (chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
@@ -911,7 +915,9 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   const items = renderChatListItems(enriched,);
   const loadMore = hasMore
     ? `<div style="padding:var(--space-4);text-align:center">
-        <button class="btn btn-secondary" hx-get="/dynamic/chats/search?q=${encodeURIComponent(query,)}&world=${worldId}&type=${chatType}&sort=${sort}&page=${page + 1}&pageSize=${pageSize}"
+        <button class="btn btn-secondary" hx-get="/dynamic/chats/search?q=${
+      encodeURIComponent(query,)
+    }&world=${worldId}&type=${chatType}&sort=${sort}&page=${page + 1}&pageSize=${pageSize}"
           hx-target="#chat-list-grid" hx-swap="beforeend"
           hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
       </div>`
@@ -919,40 +925,74 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
 }
 
-async function enrichChats(database: Kysely<DB>, chats: Array<{id: string; name: string; type: string; purpose: string | null; is_pinned: string; updated_at: string; created_at: string; world_name: string | null; location_name: string | null;}>,): Promise<Array<{id: string; name: string; type: string; purpose: string | null; is_pinned: string; updated_at: string; created_at: string; world_name: string | null; location_name: string | null; participant_count: number; last_message: string | null;}>> {
-  const chatIds = chats.map((c,) => c.id,);
-  const [counts, lastMsgs] = await Promise.all([
+async function enrichChats(
+  database: Kysely<DB>,
+  chats: {
+    id: string;
+    name: string;
+    type: string;
+    purpose: string | null;
+    is_pinned: string;
+    updated_at: string;
+    created_at: string;
+    world_name: string | null;
+    location_name: string | null;
+  }[],
+): Promise<
+  {
+    id: string;
+    name: string;
+    type: string;
+    purpose: string | null;
+    is_pinned: string;
+    updated_at: string;
+    created_at: string;
+    world_name: string | null;
+    location_name: string | null;
+    participant_count: number;
+    last_message: string | null;
+  }[]
+> {
+  const chatIds = chats.map((c,) => c.id);
+  const [counts, lastMsgs,] = await Promise.all([
     database.selectFrom("chat_participants",)
-      .select(["chat_id", (eb: any) => eb.fn.count("actor_id",).as("cnt",),])
+      .select(["chat_id", (eb: any,) => eb.fn.count("actor_id",).as("cnt",),],)
       .where("chat_id", "in", chatIds,)
       .groupBy("chat_id",)
       .execute(),
     database.selectFrom("messages",)
-      .select(["chat_id", "content",])
+      .select(["chat_id", "content",],)
       .where("chat_id", "in", chatIds,)
       .where("status", "!=", "deleted" as any,)
       .orderBy("id", "desc",)
       .limit(chatIds.length * 2,)
       .execute(),
-  ]);
-  const countMap = new Map<string, number>(counts.map((r,) => [r.chat_id, Number(r.cnt,),],),);
+  ],);
+  const countMap = new Map<string, number>(counts.map((r,) => [r.chat_id, Number(r.cnt,),]),);
   const msgMap = new Map<string, string>();
   for (const m of lastMsgs) {
-    if (!msgMap.has(m.chat_id)) { msgMap.set(m.chat_id, m.content,); }
+    if (!msgMap.has(m.chat_id,)) { msgMap.set(m.chat_id, m.content,); }
   }
   return chats.map((c,) => ({
     ...c,
     participant_count: countMap.get(c.id,) ?? 0,
     last_message: msgMap.get(c.id,) ?? null,
-  }),);
+  }));
 }
 
-function renderChatListItems(rows: Array<{
-  id: string; name: string; type: string; purpose: string | null;
-  is_pinned: string; updated_at: string; created_at: string;
-  world_name: string | null; location_name: string | null;
-  participant_count: number; last_message: string | null;
-}>,): string {
+function renderChatListItems(rows: {
+  id: string;
+  name: string;
+  type: string;
+  purpose: string | null;
+  is_pinned: string;
+  updated_at: string;
+  created_at: string;
+  world_name: string | null;
+  location_name: string | null;
+  participant_count: number;
+  last_message: string | null;
+}[],): string {
   const now = Date.now();
   return rows
     .map((r,) => {
@@ -960,10 +1000,14 @@ function renderChatListItems(rows: Array<{
       const typeLabel = r.type === "group" ? "👥" : "💬";
       const pinned = r.is_pinned === "pinned" ? " ★" : "";
       const worldTag = r.world_name
-        ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">🌍 ${escapeHtml(r.world_name,)}</span>`
+        ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">🌍 ${
+          escapeHtml(r.world_name,)
+        }</span>`
         : "";
       const locationTag = r.location_name
-        ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">📍 ${escapeHtml(r.location_name,)}</span>`
+        ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">📍 ${
+          escapeHtml(r.location_name,)
+        }</span>`
         : "";
       const ts = new Date(r.updated_at,).getTime();
       const age = now - ts;
@@ -974,7 +1018,9 @@ function renderChatListItems(rows: Array<{
       else { ageStr = `${Math.floor(age / 86_400_000,)}d ago`; }
 
       const preview = r.last_message
-        ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${escapeHtml(r.last_message.slice(0, 80,),)}${r.last_message.length > 80 ? "…" : ""}</div>`
+        ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${
+          escapeHtml(r.last_message.slice(0, 80,),)
+        }${r.last_message.length > 80 ? "…" : ""}</div>`
         : "";
 
       return `<div class="chat-list-card" onclick="location.assign('/views/chat?chatid=${encodeURIComponent(r.id,)}')"
@@ -988,7 +1034,11 @@ function renderChatListItems(rows: Array<{
           </div>
           <div style="display:flex;gap:var(--space-2);margin-top:2px;flex-wrap:wrap;align-items:center">
             ${worldTag}${locationTag}
-            ${r.participant_count > 0 ? `<span style="font-size:11px;color:var(--text-secondary)">👥 ${r.participant_count}</span>` : ""}
+            ${
+        r.participant_count > 0
+          ? `<span style="font-size:11px;color:var(--text-secondary)">👥 ${r.participant_count}</span>`
+          : ""
+      }
           </div>
           ${preview}
         </div>
@@ -997,7 +1047,6 @@ function renderChatListItems(rows: Array<{
     },)
     .join("\n",);
 }
-
 
 export function viewRoutes({ database, }: { database: Kysely<DB> },) {
   return (
@@ -1060,14 +1109,15 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         }
         const url = new URL(ctx.request.url,);
         return await serveWorldsSearch(database, url.searchParams,);
-      })
+      },)
       .get("/dynamic/chats/list", async (ctx,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        const url = new URL(ctx.request.url,); return await serveChatsListDb(database, url.searchParams,);
-      })
+        const url = new URL(ctx.request.url,);
+        return await serveChatsListDb(database, url.searchParams,);
+      },)
       .get("/dynamic/chats/search", async (ctx,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
@@ -1075,7 +1125,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         }
         const url = new URL(ctx.request.url,);
         return await serveChatsSearch(database, url.searchParams,);
-      })
+      },)
       .get("/dynamic/worlds/:id/detail", async (ctx,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
