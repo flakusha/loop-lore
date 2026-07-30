@@ -5,6 +5,7 @@
  * usage policies, activity restrictions, and content policies.
  */
 import { Elysia, } from "elysia";
+import { ActorIdParams, AvailabilityBody, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -23,7 +24,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -46,6 +47,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(availability,);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "Get character availability settings",
         description:
@@ -63,7 +65,8 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
+      const { status, usagePolicy, activityRestrictions, contentPolicy, nsfwPolicy, } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -71,13 +74,6 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
-
-      const status = body.status as string | undefined;
-      const usagePolicy = body.usagePolicy as string | undefined;
-      const activityRestrictions = body.activityRestrictions as string[] | undefined;
-      const contentPolicy = body.contentPolicy as string | undefined;
-      const nsfwPolicy = body.nsfwPolicy as string | undefined;
 
       // Upsert
       const existing = await database
@@ -90,7 +86,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         await database
           .updateTable("character_availability",)
           .set({
-            status: (status as any) ?? existing.status,
+            status: status ?? existing.status,
             usage_policy: usagePolicy ?? existing.usage_policy,
             activity_restrictions: activityRestrictions
               ? JSON.stringify(activityRestrictions,)
@@ -110,7 +106,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         .values({
           id,
           actor_id: actorId,
-          status: (status as any) ?? "available",
+          status: status ?? "available",
           usage_policy: usagePolicy ?? null,
           activity_restrictions: activityRestrictions ? JSON.stringify(activityRestrictions,) : "[]",
           content_policy: contentPolicy ?? null,
@@ -122,6 +118,8 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
 
       return jsonCreated({ id, },);
     }, {
+      params: ActorIdParams,
+      body: AvailabilityBody,
       detail: {
         summary: "Create or update character availability",
         description:
@@ -139,7 +137,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -155,6 +153,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
 
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "Delete character availability settings",
         description: "Removes all availability settings for the specified actor.",

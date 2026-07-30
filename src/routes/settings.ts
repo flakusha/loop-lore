@@ -118,7 +118,7 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
-        const body = ctx.body as Record<string, unknown>;
+        const body = ctx.body;
         return handleUpdateSettings(database, userId, body,);
       },
       {

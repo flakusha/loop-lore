@@ -11,7 +11,7 @@
  *   GET    /api/quests/:id/progress/:chatId         — get chat progress
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { QuestType as QuestTypeEnum, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -20,7 +20,7 @@ import { QuestEngine, } from "../story/quest-engine";
 import type { QuestConfig, } from "../story/types";
 import { safeJsonStringify, } from "../utils";
 import { notFound, } from "../validation/middleware";
-import { QuestCreateBody, } from "../validation/schemas";
+import { Id, QuestCreateBody, QuestProgressBody, QuestUpdateBody, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────
@@ -265,8 +265,9 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
     .get("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleQuest(database, "GET", ctx.params.id as string, userId, userRole,);
+      return handleQuest(database, "GET", ctx.params.id, userId, userRole,);
     }, {
+      params: t.Object({ id: Id, },),
       detail: {
         summary: "Get quest",
         description: "Get a single quest by ID.",
@@ -279,12 +280,14 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       return handleQuest(
         database,
         "PUT",
-        ctx.params.id as string,
+        ctx.params.id,
         userId,
         userRole,
-        ctx.body as Record<string, unknown>,
+        ctx.body,
       );
     }, {
+      params: t.Object({ id: Id, },),
+      body: QuestUpdateBody,
       detail: {
         summary: "Update quest",
         description: "Update a quest's properties (title, description, status, objectives).",
@@ -294,8 +297,9 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
     .delete("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleAbandonQuest(database, ctx.params.id as string, userId, userRole,);
+      return handleAbandonQuest(database, ctx.params.id, userId, userRole,);
     }, {
+      params: t.Object({ id: Id, },),
       detail: {
         summary: "Abandon quest",
         description: "Abandon/delete a quest by ID.",
@@ -307,13 +311,15 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       const userRole = ctx.userRole as string | null;
       return handleProgress(
         database,
-        ctx.params.id as string,
+        ctx.params.id,
         undefined,
         userId,
         userRole,
-        ctx.body as Record<string, unknown>,
+        ctx.body,
       );
     }, {
+      params: t.Object({ id: Id, },),
+      body: QuestProgressBody,
       detail: {
         summary: "Update quest progress",
         description: "Update quest progress for a quest. Optionally link to a chat session.",
@@ -325,12 +331,13 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       const userRole = ctx.userRole as string | null;
       return handleProgress(
         database,
-        ctx.params.id as string,
-        ctx.params.chatId as string,
+        ctx.params.id,
+        ctx.params.chatId,
         userId,
         userRole,
       );
     }, {
+      params: t.Object({ id: Id, chatId: Id, },),
       detail: {
         summary: "Get quest progress by chat",
         description: "Get quest progress for a specific chat session.",
