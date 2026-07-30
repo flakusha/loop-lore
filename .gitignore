@@ -78,3 +78,6 @@ docs/.vitepress/cache/
 
 # Auto-generated issue tracker (regenerate with docs:gen)
 docs/meta/issues.md
+
+# OpenAPI spec (generated via `bun run openapi`)
+docs/reference/openapi.json

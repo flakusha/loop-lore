@@ -241,7 +241,15 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
           return jsonPaginated({ data: enriched, total, page, pageSize, },);
         },
-        { params: ChatIdParams, query: MessagesQuery, },
+        {
+          params: ChatIdParams,
+          query: MessagesQuery,
+          detail: {
+            summary: "List messages",
+            description: "List messages in a chat. Supports pagination and parent filtering for branching.",
+            tags: ["Messages",],
+          },
+        },
       )
       .get(
         "/api/messages/:id",
