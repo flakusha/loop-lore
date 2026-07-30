@@ -8,7 +8,7 @@
 import { type Kysely, sql, } from "kysely";
 
 export async function up(database: Kysely<any>,): Promise<void> {
-  const hasTable = await sql<{ exists: number }>`SELECT 1 as exists FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
+  const hasTable = await sql<{ tbl: number }>`SELECT 1 as tbl FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
 
   if (!hasTable.rows[0]?.exists) {
     await database.schema
