@@ -18,3 +18,7 @@ Implementation tasks for BYOK API Keys (Bring Your Own Key). See `.plan/epics/ep
 - [ ] Tests passing
 - [ ] Documentation updated
 - [ ] Integration verified
+
+## Related
+
+- **Feature spec:** `FEAT-byok-api-keys.md`

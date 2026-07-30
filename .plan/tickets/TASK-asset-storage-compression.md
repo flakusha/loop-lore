@@ -14,62 +14,53 @@ Implement compression pipeline for compressible assets (JSON, text, documents) a
 ### Current State
 
 - Flat filesystem storage with UUID-derived paths (`raw/ab/cd/uuid.jpg`)
-- No encryption — assets readable by server
-- No compression — raw files stored as-is
+- No encryption — assets readable by system users
+- No compression — all assets stored at full size
 
-### Future State
+### Target State
 
-- Encryption-at-rest (AES-256-GCM) for private assets
-- Compression pipeline (gzip/zstd/brotli) for compressible data
-- Object store backend (S3/GCS) as alternative to local FS
+- Compression pipeline for text-based assets
+- Encryption-at-rest for sensitive assets
+- Transparent decompression on read
+- Key management for encryption
 
 ## Requirements
 
 ### Compression Pipeline
 
-- Detect compressible MIME types: `application/json`, `text/*`, `application/pdf`
-- Apply gzip/zstd/brotli based on config
-- Store compressed variant alongside original
-- Serve pre-compressed variant when supported
+- Detect compressible assets (JSON, text, markdown, XML)
+- Compress on upload (gzip/brotli)
+- Transparent decompression on read
+- Compression ratio tracking
 
-### Encryption Pipeline
+### Encryption-at-Rest
 
-- Per-user key derivation (Argon2id)
-- Asset-level encryption for private assets
-- Transparent decryption on serve
-- Key rotation support
+- AES-256-GCM for sensitive assets
+- Key management (per-user or system-wide)
+- Encrypted metadata storage
+- Decryption on authorized access
 
-### Configuration
+### Storage Optimization
 
-```yaml
-# Asset storage backend
-ASSET_STORAGE_BACKEND: "local" | "s3" | "gcs"
+- Deduplication for identical assets
+- Tiered storage (hot/warm/cold)
+- Cleanup policies for orphaned assets
 
-# Encryption settings
-ASSET_ENCRYPTION_ENABLED: true # Default false for MVP
-ASSET_ENCRYPTION_PROVIDER: "user-key" | "chat-key"
+## Acceptance Criteria
 
-# Compression settings
-ASSET_COMPRESSION_ENABLED: true
-ASSET_COMPRESSION_LEVEL: 6 # 1-9 for gzip, 1-22 for zstd
-ASSET_COMPRESSION_MIN_SIZE: 1024 # Don't compress tiny files
-```
+- [ ] Compression pipeline for text-based assets
+- [ ] Transparent decompression on read
+- [ ] Compression ratio tracking and reporting
+- [ ] Encryption-at-rest for sensitive assets
+- [ ] Key management system
+- [ ] Encrypted metadata storage
+- [ ] Asset deduplication
+- [ ] Tiered storage policies
+- [ ] Unit tests for compression/encryption
+- [ ] Integration tests for storage workflow
 
-## Implementation
+## Notes
 
-1. Extend `StorageBackend` enum with `S3`, `GCS`
-2. Create `src/assets/storage/backend.ts` — abstraction layer
-3. Create `src/assets/storage/local.ts` — current FS implementation
-4. Create `src/assets/storage/encrypted.ts` — encryption wrapper
-5. Create `src/assets/storage/compressed.ts` — compression wrapper
-6. Extend service to use storage abstraction
-
-## Files
-
-- `src/db/enums.ts` — Extend StorageBackend
-- `src/assets/storage/backend.ts` — Abstraction interface
-- `src/assets/storage/local.ts` — Local FS implementation
-- `src/assets/storage/encrypted.ts` — Encryption wrapper
-- `src/assets/storage/compressed.ts` — Compression wrapper
-- `src/assets/service.ts` — Use abstraction
-- `src/config/schema.ts` — Add compression/encryption config
+- Reference `epic-items.md` for asset system design
+- Consider compression speed vs. ratio tradeoff
+- Balance security vs. performance for encryption

@@ -20,38 +20,38 @@ Implement RPG-specific asset types: tokens for characters/NPCs, battle maps with
 
 ### Battle Map Assets
 
-- Grid overlay computation (square/hex)
-- Fog of war masking
-- Measurement tool integration
-- Dynamic lighting zones
+- Grid overlay (square/hex)
+- Fog of war support
+- Layer support (terrain, objects, tokens)
+- Annotation/markup tools
 
 ### Item Card Assets
 
-- Template-based rendering
-- Rarity color coding
-- Stat block injection
-- Tooltip on hover
+- Rarity-based styling (Common → Legendary)
+- Stat display layouts
+- Icon slots for stats/effects
+- Tooltip integration
 
-### Spell Icon Assets
+### Spell/Ability Icons
 
-- Sprite sheet support
-- Icon sizing presets (16x16, 32x32, 64x64)
-- Animation support (future)
+- Standardized icon sizes
+- Category organization
+- Custom icon upload support
 
-## Implementation
+## Acceptance Criteria
 
-1. Extend `AssetType` enum with `RpgToken`, `RpgMap`, `RpgItemCard`, `RpgSpellIcon`
-2. Add `asset_subtype` column to `assets` table
-3. Create token overlay service in `src/assets/token-overlay.ts`
-4. Create battle map grid service in `src/assets/battlemap.ts`
-5. Extend metadata extraction for RPG-specific dimensions
-6. Add preview components for each type
+- [ ] Token asset system with grid support
+- [ ] Battle map assets with grid overlay
+- [ ] Item card templates with rarity styling
+- [ ] Spell/ability icon system
+- [ ] Condition marker assets
+- [ ] Token status overlay system
+- [ ] Asset upload and management
+- [ ] Unit tests for asset calculations
+- [ ] Integration tests for asset workflow
 
-## Files
+## Notes
 
-- `src/db/enums.ts` — Extend AssetType
-- `src/assets/token-overlay.ts` — Token rendering
-- `src/assets/battlemap.ts` — Grid computation
-- `src/assets/metadata.ts` — Extended extraction
-- `src/frontend/components/asset-token-preview.html`
-- `src/frontend/components/asset-map-preview.html`
+- Reference `epic-items.md` for asset system design
+- Consider asset compression for performance
+- Balance detail vs. file size

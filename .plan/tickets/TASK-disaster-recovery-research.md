@@ -7,31 +7,43 @@
 
 ## Summary
 
-Research disaster recovery procedures. Define RTO/RPO targets, backup schedules, verification scripts, and rollback procedures.
+Research disaster recovery procedures. Document recovery strategies for database and asset corruption. From `epic-db-asset-snapshot-recovery.md`.
 
-## Research Questions
+## Scope
 
-1. What RTO/RPO targets are realistic for single-user/self-hosted?
-2. How often should full backups run (hourly, daily)?
-3. How to verify backup integrity without full restore?
-4. What's the minimum viable restore procedure?
-5. How to handle partial failures (DB OK, assets corrupted)?
-6. Rollback procedures for failed migrations?
+### Research Areas
 
-## Deliverable
+- Database corruption recovery
+- Asset corruption recovery
+- Point-in-time recovery
 
-Document in `docs/meta/disaster-recovery-procedures.md`:
+### Procedures
 
-- RTO/RPO targets
-- Backup schedule recommendations
-- Verification procedures
-- Minimum viable restore
+- Database restore from backup
+- Asset restore from snapshot
+- Partial recovery (selective restore)
 
-## Risk
+### Testing
 
-Low — research only, no code changes.
+- Recovery procedure testing
+- Recovery time measurement
+- Data integrity verification
 
-## Related
+## Linked Epics
 
-- `src/db/migrations/` — migration patterns
-- `src/reinit.ts` — DB reinitialization
+- `epic-db-asset-snapshot-recovery.md`
+
+## Acceptance Criteria
+
+- [ ] Database corruption recovery procedures
+- [ ] Asset corruption recovery procedures
+- [ ] Point-in-time recovery strategy
+- [ ] Recovery procedure documentation
+- [ ] Recovery time measurements
+- [ ] Data integrity verification methods
+
+## Notes
+
+- Reference `epic-db-asset-snapshot-recovery.md` for full system design
+- Consider automated vs. manual recovery
+- Balance recovery speed vs. data completeness

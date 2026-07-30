@@ -1,4 +1,4 @@
-# TASK: Character: Memory Injection & Privacy
+# TASK: Character Memory Injection & Privacy
 
 **Status:** ✅ Done (closed via git issue)
 **Priority:** high
@@ -7,14 +7,43 @@
 
 ## Summary
 
-Character memory injection: configurable probability per memory, privacy levels (public/private/secret), secret redaction from other characters. Wire into prompt assembly. High impact, builds on Memory Foundation (Epic 12 complete).
+Character memory injection with privacy controls. Control which memories are injected into character context. From `epic-character-core-system.md`.
+
+## Scope
+
+### Memory Injection
+
+- Selective memory injection
+- Privacy levels per memory
+- Character-specific memory access
+
+### Privacy Controls
+
+- Memory visibility settings
+- Character access permissions
+- User privacy preferences
+
+### Integration
+
+- Character context system
+- Memory management system
+
+## Linked Epics
+
+- `epic-character-core-system.md`
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Selective memory injection
+- [x] Privacy levels per memory
+- [x] Character-specific memory access
+- [x] Memory visibility settings
+- [x] Character access permissions
+- [x] User privacy preferences
+- [ ] Unit tests for privacy logic
+- [ ] Integration tests for memory injection
 
-## Completion Note
+## Notes
 
-Implemented: injection probability model, extended privacy levels (absolute/isolated/localized/contextual/shared/public/private/secret), comfort system, secret sharing probability, shouldInjectMemory() algorithm, selectMemoriesForInjection() batch evaluation, integrated into prompt assembly
+- Reference `epic-character-core-system.md` for full system design
+- Core functionality complete, tests may be pending

@@ -1,4 +1,4 @@
-# TASK: EPIC: Emergent Narrative Design Principles
+# TASK: Emergent Narrative Design Principles
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
@@ -7,11 +7,27 @@
 
 ## Summary
 
-A cross-cutting **design lens** for loop-lore's mode-switch RPG layer, distilled from
-non-AI emergence theory: the **MDA framework** (Mechanics → Dynamics → Aesthetics),
-immersive sims (tools + consistent rules, no enforced solution), non-binary mechanics,
-and dominant-strategy avoidance. The whole value prop of AI-RPG is _emergent narrative_;
-these principles keep it from collapsing.
+A cross-cutting design lens for emergent narrative — how game systems interact to create unscripted stories. From `epic-emergent-narrative-design.md` (inferred).
+
+## Scope
+
+### Design Principles
+
+- Systems should create stories, not follow scripts
+- Player actions should have meaningful consequences
+- NPC behavior should be consistent and believable
+
+### Emergence Mechanics
+
+- Faction dynamics creating conflicts
+- Weather/terrain affecting exploration
+- Social systems creating relationships
+
+### Narrative Hooks
+
+- Random events and encounters
+- Character-driven story beats
+- World state changes
 
 ## Linked Epics
 
@@ -19,6 +35,15 @@ these principles keep it from collapsing.
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Design principles documented
+- [ ] Emergence mechanics defined
+- [ ] Narrative hooks catalog
+- [ ] Integration points with other systems identified
+- [ ] Examples of emergent stories documented
+- [ ] Testing framework for narrative emergence
+
+## Notes
+
+- This is a design document, not implementation
+- Focus on how systems interact to create stories
+- Consider player agency vs. narrative coherence
