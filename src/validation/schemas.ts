@@ -148,6 +148,15 @@ export const ChatIdParams = t.Object({
   id: Id,
 },);
 
+export const ChatRenameBody = t.Object({
+  name: Name,
+  name_source: t.Union([
+    t.Literal("manual",),
+    t.Literal("auto-rule",),
+    t.Literal("auto-llm",),
+  ],),
+},);
+
 export const ChatParticipantParams = t.Object({
   id: Id,
   actorId: Id,
@@ -252,7 +261,7 @@ export const ActorUpdateBody = t.Object({
   creator: t.Optional(t.String(),),
   characterVersion: t.Optional(t.String(),),
   settings: t.Optional(t.Any(),),
-  /** Optimistic concurrency: current data_version from client. Required for updates. */
+  /** Format version: current format_version from client. Required for updates. */
   dataVersion: t.Optional(t.Number(),),
 },);
 

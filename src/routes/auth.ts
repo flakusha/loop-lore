@@ -351,7 +351,7 @@ async function handleRegister(
       import_spec: "raw",
       data_source_format: "json",
       data_raw: null,
-      data_version: 0,
+      format_version: 0,
     },)
     .execute();
 
