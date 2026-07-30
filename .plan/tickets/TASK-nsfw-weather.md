@@ -19,13 +19,13 @@ NSFW defines location modifiers; Weather defines environmental mood. Neither ref
 
 ### Weather Mood Effects on NSFW
 
-| Weather | Mood Effect | NSFW Impact |
-| --- | --- | --- |
-| Clear, warm | Relaxed | +1 to comfort checks |
-| Rain, cold | Cozy (indoor) | Bonus for indoor encounters |
-| Storm | Tension | +1 to intensity checks |
-| Fog | Mysterious | Bonus for seduction |
-| Extreme heat | Irritable | -1 to patience checks |
+| Weather      | Mood Effect   | NSFW Impact                 |
+| ------------ | ------------- | --------------------------- |
+| Clear, warm  | Relaxed       | +1 to comfort checks        |
+| Rain, cold   | Cozy (indoor) | Bonus for indoor encounters |
+| Storm        | Tension       | +1 to intensity checks      |
+| Fog          | Mysterious    | Bonus for seduction         |
+| Extreme heat | Irritable     | -1 to patience checks       |
 
 ### Location Availability
 

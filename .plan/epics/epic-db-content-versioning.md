@@ -17,13 +17,13 @@ Track DB schema version, content format versions, fix migration gaps. Ensures th
 
 ## Features
 
-| Feature | ID | Effort | Description |
-| ------- | -- | ------ | ----------- |
-| Schema version table | FEA-2026-040 | Low | `schema_version` table + queryable getter |
-| Migration reconciliation | FEA-2026-041 | Med | Document gaps (002-007), add migration index doc |
-| Content versioning framework | FEA-2026-042 | Med | Registry + batch runner for `data_version` columns |
-| Migration testing | FEA-2026-043 | Med | Validate migrations against :memory: schemas |
-| Migration documentation | FEA-2026-044 | Low | `docs/spec/migrations.md` with full index |
+| Feature                      | ID           | Effort | Description                                        |
+| ---------------------------- | ------------ | ------ | -------------------------------------------------- |
+| Schema version table         | FEA-2026-040 | Low    | `schema_version` table + queryable getter          |
+| Migration reconciliation     | FEA-2026-041 | Med    | Document gaps (002-007), add migration index doc   |
+| Content versioning framework | FEA-2026-042 | Med    | Registry + batch runner for `data_version` columns |
+| Migration testing            | FEA-2026-043 | Med    | Validate migrations against :memory: schemas       |
+| Migration documentation      | FEA-2026-044 | Low    | `docs/spec/migrations.md` with full index          |
 
 ## Acceptance Criteria
 

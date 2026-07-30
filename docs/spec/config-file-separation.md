@@ -17,22 +17,22 @@ Split the monolithic `config.toml` / `config.yaml` into domain-specific config f
 
 Domain config files are stored in `configs/` directory with naming pattern `config.<domain>.toml`:
 
-| Domain | File | Config Paths |
-|--------|------|--------------|
-| server | `config.server.toml` | `[server]`, `[server.tls]` |
-| database | `config.database.toml` | `[db]` |
-| assets | `config.assets.toml` | `[assets]` |
-| logging | `config.logging.toml` | `[logging]` |
-| tui | `config.tui.toml` | `[tui]` |
-| docs | `config.docs.toml` | `[docs]` |
-| auth | `config.auth.toml` | `[auth]`, `[ageGate]` |
-| transport | `config.transport.toml` | `[transport]` |
-| messages | `config.messages.toml` | `[messages]` |
-| nsfw | `config.nsfw.toml` | `[nsfw]` |
-| generation | `config.generation.toml` | `[generation]` |
-| byokey | `config.byokey.toml` | `[byoKey]` |
-| encryption | `config.encryption.toml` | `[encryption]` |
-| headers | `config.headers.toml` | `[headers]` |
+| Domain     | File                     | Config Paths               |
+| ---------- | ------------------------ | -------------------------- |
+| server     | `config.server.toml`     | `[server]`, `[server.tls]` |
+| database   | `config.database.toml`   | `[db]`                     |
+| assets     | `config.assets.toml`     | `[assets]`                 |
+| logging    | `config.logging.toml`    | `[logging]`                |
+| tui        | `config.tui.toml`        | `[tui]`                    |
+| docs       | `config.docs.toml`       | `[docs]`                   |
+| auth       | `config.auth.toml`       | `[auth]`, `[ageGate]`      |
+| transport  | `config.transport.toml`  | `[transport]`              |
+| messages   | `config.messages.toml`   | `[messages]`               |
+| nsfw       | `config.nsfw.toml`       | `[nsfw]`                   |
+| generation | `config.generation.toml` | `[generation]`             |
+| byokey     | `config.byokey.toml`     | `[byoKey]`                 |
+| encryption | `config.encryption.toml` | `[encryption]`             |
+| headers    | `config.headers.toml`    | `[headers]`                |
 
 ### Config Loading Order
 
@@ -65,10 +65,12 @@ Each domain has its own JSON schema in `schemas/`:
 ### Implementation
 
 **Source files:**
+
 - `src/config/load.ts` — `loadDomainConfigs()` function
 - `src/config/generate-domain-schemas.ts` — schema generation script
 
 **Tests:**
+
 - `src/config/domain-configs.test.ts` — domain config loading tests
 
 ## Integration Points

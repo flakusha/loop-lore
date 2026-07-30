@@ -19,24 +19,24 @@ Weather lists "Combat System" as an integration; Battle never references weather
 
 ### Weather Modifiers
 
-| Condition | Effect |
-| --- | --- |
-| Rain | -2 to ranged attacks, difficult terrain |
-| Fog | 50% concealment |
-| Wind | Disrupts flying, spreads fires |
-| Snow | Slow movement, cold exposure |
-| Extreme Heat | Heat exhaustion |
+| Condition    | Effect                                  |
+| ------------ | --------------------------------------- |
+| Rain         | -2 to ranged attacks, difficult terrain |
+| Fog          | 50% concealment                         |
+| Wind         | Disrupts flying, spreads fires          |
+| Snow         | Slow movement, cold exposure            |
+| Extreme Heat | Heat exhaustion                         |
 
 ### Terrain Cover
 
-| Terrain | Cover |
-| --- | --- |
-| Low wall | +2 AC |
-| Tall wall | +5 AC, total cover |
-| Dense foliage | +2 AC, concealment |
-| Open field | None |
-| Water (shallow) | Half cover |
-| Water (deep) | 3/4 cover |
+| Terrain         | Cover              |
+| --------------- | ------------------ |
+| Low wall        | +2 AC              |
+| Tall wall       | +5 AC, total cover |
+| Dense foliage   | +2 AC, concealment |
+| Open field      | None               |
+| Water (shallow) | Half cover         |
+| Water (deep)    | 3/4 cover          |
 
 ## Acceptance Criteria
 

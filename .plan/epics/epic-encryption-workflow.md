@@ -27,6 +27,7 @@ Full encryption lifecycle: compress→encrypt→decrypt→decompress pipeline, t
 ## Remaining Tasks
 
 ### Phase 2a: Auto-Key Rotation
+
 - [ ] `KEY_ROTATION_DAYS` config option
 - [ ] `src/crypto/key-rotation.ts` — standalone rotation module
 - [ ] Timer/cron-based auto-rotation trigger
@@ -34,24 +35,28 @@ Full encryption lifecycle: compress→encrypt→decrypt→decompress pipeline, t
 - [ ] Rotation notification to participants
 
 ### Phase 2b: Asset Encryption
+
 - [ ] Wire `encryptAtRest`/`decryptAtRest` into `src/assets/service.ts`
 - [ ] Add `encryption_tier` + `encrypted_key_id` columns to `assets` table
 - [ ] Key derivation: parent key → asset key (HKDF)
 - [ ] Tests: encrypt on upload, decrypt on download
 
 ### Phase 2c: Key Management UI
+
 - [ ] `src/frontend/alpine/key-management.ts` — Alpine.js component
 - [ ] `src/components/settings/key-management.html` — UI template
 - [ ] Wire into `/settings/keys` page
 - [ ] Re-auth gate for sensitive operations
 
 ### Phase 3: Time-Based Access
+
 - [ ] `access_duration_days` column on `chats`
 - [ ] `expires_at` / `revoked_at` columns on `chat_participants`
 - [ ] Expiry check on key retrieval
 - [ ] Admin endpoint: grant/revoke/extend access
 
 ### Phase 4: Advanced Encryption
+
 - [ ] World/Location encryption (schema + key derivation chain)
 - [ ] Asymmetric key pairs for true E2E
 - [ ] Browser pre-encrypt integration (feature detection + fallbacks)

@@ -73,7 +73,6 @@ interface ImagePromptTemplateRow {
 
 ---
 
-
 ## Linked Epics
 
 - `epic-items.md`

@@ -54,15 +54,15 @@ configs/
 
 ## Features
 
-| Feature | ID | Effort | Description | Status |
-| ------- | -- | ------ | ----------- |--------|
-| Domain config file extraction | FEA-2026-073 | High | Split config.toml into domain files | ✅ Done |
-| Per-domain JSON schema generation | FEA-2026-074 | High | Generate schemas for each domain config | ✅ Done |
-| Config loader with domain merging | FEA-2026-075 | Med | Load and merge domain configs | ✅ Done |
-| Backward compatibility layer | FEA-2026-076 | Med | Support old monolithic config format | ✅ Done |
-| Config validation per domain | FEA-2026-077 | Med | Validate each domain config against schema | ✅ Done |
-| Config hot-reload per domain | FEA-2026-078 | Low | Reload individual domain configs without restart | ✅ Done |
-| Migration from monolithic to domain | FEA-2026-079 | Med | Tool to split existing config.toml into domain files | ✅ Done |
+| Feature                             | ID           | Effort | Description                                          | Status  |
+| ----------------------------------- | ------------ | ------ | ---------------------------------------------------- | ------- |
+| Domain config file extraction       | FEA-2026-073 | High   | Split config.toml into domain files                  | ✅ Done |
+| Per-domain JSON schema generation   | FEA-2026-074 | High   | Generate schemas for each domain config              | ✅ Done |
+| Config loader with domain merging   | FEA-2026-075 | Med    | Load and merge domain configs                        | ✅ Done |
+| Backward compatibility layer        | FEA-2026-076 | Med    | Support old monolithic config format                 | ✅ Done |
+| Config validation per domain        | FEA-2026-077 | Med    | Validate each domain config against schema           | ✅ Done |
+| Config hot-reload per domain        | FEA-2026-078 | Low    | Reload individual domain configs without restart     | ✅ Done |
+| Migration from monolithic to domain | FEA-2026-079 | Med    | Tool to split existing config.toml into domain files | ✅ Done |
 
 ## Acceptance Criteria
 

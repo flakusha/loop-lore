@@ -17,12 +17,12 @@ Wire up registered-but-unwired plugin extension points. The plugin system has ty
 
 ## Features
 
-| Feature | ID | Effort | Description |
-| ------- | -- | ------ | ----------- |
-| EventBus | FEA-2026-048 | Med | `src/plugins/events.ts` — pub/sub for loose coupling |
-| ToolExecutor | FEA-2026-049 | Med | `src/plugins/tools.ts` — AI-executable function registry |
-| UI component mounting | FEA-2026-050 | Low | `GET /api/plugins/ui-components` route |
-| Config merge | FEA-2026-051 | Low | Wire `configSchema` from plugins into config loader |
+| Feature               | ID           | Effort | Description                                              |
+| --------------------- | ------------ | ------ | -------------------------------------------------------- |
+| EventBus              | FEA-2026-048 | Med    | `src/plugins/events.ts` — pub/sub for loose coupling     |
+| ToolExecutor          | FEA-2026-049 | Med    | `src/plugins/tools.ts` — AI-executable function registry |
+| UI component mounting | FEA-2026-050 | Low    | `GET /api/plugins/ui-components` route                   |
+| Config merge          | FEA-2026-051 | Low    | Wire `configSchema` from plugins into config loader      |
 
 ## Acceptance Criteria
 

@@ -16,11 +16,11 @@ Conversation analytics and observability dashboard. Covers per-chat cost trackin
 
 ## Features
 
-| Feature | ID | Effort | Description |
-| ------- | -- | ------ | ----------- |
-| Conversation analytics | FEA-2026-056 | Low | Per-chat cost + quality dashboard |
-| Model comparison | FEA-2026-057 | Low | A/B agent/model quality via `model_comparisons` |
-| Memory visualizer | FEA-2026-058 | Med | Knowledge graph over `asset_links` |
+| Feature                | ID           | Effort | Description                                     |
+| ---------------------- | ------------ | ------ | ----------------------------------------------- |
+| Conversation analytics | FEA-2026-056 | Low    | Per-chat cost + quality dashboard               |
+| Model comparison       | FEA-2026-057 | Low    | A/B agent/model quality via `model_comparisons` |
+| Memory visualizer      | FEA-2026-058 | Med    | Knowledge graph over `asset_links`              |
 
 ## Acceptance Criteria
 

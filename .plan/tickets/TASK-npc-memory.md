@@ -30,4 +30,3 @@ NPCs need memory of player interactions, past events, and relationships. Without
 - [ ] NPCs recall relevant memories during conversations
 - [ ] Memory affects NPC disposition and dialogue
 - [ ] NPC memory persists across world sessions
-
