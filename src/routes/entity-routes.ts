@@ -14,7 +14,7 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { jsonStringifyOr, uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
-import { EntityCreateBody, EntityUpdateBody, } from "../validation/schemas";
+import { EntityCreateBody, EntityUpdateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 export interface EntityConfig {
@@ -152,6 +152,11 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
 
       return jsonPaginated({ data: entities, total, page, pageSize, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: `List ${config.entityName}`,
         description: `List all ${config.entityName} entities for a parent. Paginated.`,
@@ -191,6 +196,11 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       },
       {
         body: EntityCreateBody,
+        response: {
+          201: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: `Create ${config.entityName}`,
           description: `Create a new ${config.entityName} entity.`,
@@ -220,6 +230,11 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       if (!entity) { return notFound(`${config.entityName} not found`,); }
       return jsonResponse(entity,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: `Get ${config.entityName}`,
         description: `Get a single ${config.entityName} entity by ID.`,
@@ -265,6 +280,11 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       },
       {
         body: EntityUpdateBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: `Update ${config.entityName}`,
           description: `Update an existing ${config.entityName} entity.`,
@@ -295,6 +315,11 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       }
       return jsonNoContent();
     }, {
+      response: {
+        204: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: `Delete ${config.entityName}`,
         description: `Delete a ${config.entityName} entity by ID.`,

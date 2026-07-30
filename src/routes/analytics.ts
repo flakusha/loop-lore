@@ -11,6 +11,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { isTelemetryEnabled, } from "../telemetry/service";
 
 interface HandleOpts {
@@ -60,6 +61,10 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
         costEstimate,
       },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get chat analytics",
         description:
@@ -112,6 +117,10 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
         failedGenerations: failed?.failedGenerations ?? 0,
       },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get analytics overview",
         description:

@@ -9,7 +9,7 @@ import type { DB, } from "../db/schema";
 import { NotificationService, } from "../notifications/service";
 import { safeJsonStringify, } from "../utils";
 import { unauthorized, } from "../validation/middleware";
-import { Id, NotificationPreferencesBody, } from "../validation/schemas";
+import { ErrorResponse, Id, NotificationPreferencesBody, SuccessResponse, } from "../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
@@ -108,6 +108,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       const items = await new NotificationService(database,).list(userId, unreadOnly,);
       return jsonResponse({ items, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List notifications",
         description: "List notifications for the current user. Optionally filter to unread only.",
@@ -120,6 +124,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       const count = await new NotificationService(database,).getUnreadCount(userId,);
       return jsonResponse({ count, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get unread count",
         description: "Get the count of unread notifications for the current user.",
@@ -139,6 +147,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       {
         params: idParams,
         body: markReadBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Mark notification read",
           description: "Mark a single notification as read.",
@@ -152,6 +164,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       await new NotificationService(database,).markAllRead(userId,);
       return jsonResponse({ ok: true, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Mark all notifications read",
         description: "Mark all notifications as read for the current user.",
@@ -165,6 +181,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       return jsonResponse({ ok: true, },);
     }, {
       params: t.Object({ id: Id, },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Delete notification",
         description: "Delete a notification by ID.",
@@ -177,6 +197,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       const prefs = await new NotificationService(database,).getPrefs(userId,);
       return jsonResponse(prefs,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get notification preferences",
         description: "Get the current user's notification preferences.",
@@ -196,6 +220,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
       {
         body: NotificationPreferencesBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Update notification preferences",
           description: "Update notification preferences (enabled channels, muted worlds).",

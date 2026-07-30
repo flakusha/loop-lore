@@ -8,6 +8,7 @@ import { Elysia, } from "elysia";
 import { getHealthCache, hasUnhealthyProviders, providerToSummary, } from "../admin/provider-health";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { SuccessResponse, } from "../validation/schemas";
 import { jsonResponse, } from "./http-utils";
 
 const startTime = Date.now();
@@ -27,6 +28,9 @@ export function healthRoutes(_opts: { database: Db; config: Config },): Elysia {
       providers: providerList,
     },);
   }, {
+    response: {
+      200: SuccessResponse,
+    },
     detail: {
       summary: "Health check",
       description: "Returns server health status including provider connectivity. No authentication required.",
