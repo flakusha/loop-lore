@@ -119,6 +119,8 @@ export interface Chats {
   context_max_tokens: number | null;
   /** Streaming mode: true = stream, false = non-stream, null = use provider/config default */
   streaming: Generated<number | null>;
+  /** NSFW override: null = use user pref, "enabled" = force on, "disabled" = force off */
+  nsfw_override: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
