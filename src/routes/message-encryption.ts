@@ -18,6 +18,7 @@ import {
 } from "../crypto";
 import type { Db, } from "../db";
 import { getLogger, type Logger, } from "../logger";
+import { SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 function log(): Logger {
@@ -62,6 +63,9 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config },)
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+      },
       detail: {
         summary: "Get chat encryption key",
         description:
@@ -75,6 +79,9 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config },)
         anonymousMode: isAnonymousModeEnabled(),
       },);
     }, {
+      response: {
+        200: SuccessResponse,
+      },
       detail: {
         summary: "Get encryption status",
         description: "Check whether encryption and anonymous mode are enabled on the server.",

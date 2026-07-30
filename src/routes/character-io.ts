@@ -13,6 +13,8 @@ import {
   ActorIdParams,
   CharacterSystemsExportBody,
   CharacterSystemsImportUrlBody,
+  ErrorResponse,
+  SuccessResponse,
 } from "../validation/schemas";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -53,6 +55,10 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       return jsonError({ message: `Unsupported format: ${format}`, status: HttpStatus.BadRequest, },);
     }, {
       params: ActorIdParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Export character systems data as JSON",
         description:
@@ -98,6 +104,10 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: CharacterSystemsExportBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Export character systems data with filters",
         description:
@@ -142,6 +152,10 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       },);
     }, {
       params: ActorIdParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Import character systems data from body",
         description:
@@ -224,6 +238,10 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: CharacterSystemsImportUrlBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Import character systems data from URL",
         description:

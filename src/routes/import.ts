@@ -22,6 +22,7 @@ import type { DB, } from "../db/schema";
 import { authenticate, } from "../middleware/auth";
 import { safeJsonStringify, uid, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, } from "./http-utils";
 
 interface ImportActorOpts {
@@ -322,6 +323,10 @@ export function importRoutes(
     if (authResult instanceof Response) { return authResult; }
     return handleImport(ctx.request, database, authResult.context.userId!, uploadDir,);
   }, {
+    response: {
+      200: SuccessResponse,
+      401: ErrorResponse,
+    },
     detail: {
       summary: "Import a character",
       description:

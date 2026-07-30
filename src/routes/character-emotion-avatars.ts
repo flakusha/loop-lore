@@ -13,6 +13,8 @@ import {
   ActorIdParams,
   ActorJobParams,
   EmotionAvatarBatchBody,
+  ErrorResponse,
+  SuccessResponse,
 } from "../validation/schemas";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -41,6 +43,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse(jobs,);
     }, {
       params: ActorIdParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List emotion avatar jobs",
         description: "List batch generation jobs for emotion avatars.",
@@ -68,6 +74,11 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse(job,);
     }, {
       params: ActorJobParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get emotion avatar job status",
         description: "Get the status of a specific batch generation job.",
@@ -95,6 +106,11 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse({ ok: true, cancelled: true, },);
     }, {
       params: ActorJobParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Cancel emotion avatar job",
         description: "Cancel a running batch generation job.",
@@ -130,6 +146,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: EmotionAvatarBatchBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Start emotion avatar batch generation",
         description: "Start a batch generation job to create emotion variants of an avatar.",
@@ -154,6 +174,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       const modifier = emotionAvatarService.getEmotionPromptModifier(emotion as EmotionType,);
       return jsonResponse({ emotion, modifier, },);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get emotion prompt modifier",
         description: "Get the prompt modifier for a specific emotion type.",
@@ -176,6 +200,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       }));
       return jsonResponse(emotions,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List emotion types",
         description: "List all available emotion types for avatar generation.",
