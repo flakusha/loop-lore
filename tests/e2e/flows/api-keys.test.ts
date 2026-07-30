@@ -57,13 +57,13 @@ describe("API Keys E2E", () => {
   test("POST /api/user-api-keys requires providerName", async () => {
     const res = await api.post("/api/user-api-keys", { apiKey: "sk-test", },);
     expect(res.ok,).toBe(false,);
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
   });
 
   test("POST /api/user-api-keys requires apiKey", async () => {
     const res = await api.post("/api/user-api-keys", { providerName: "test-provider", },);
     expect(res.ok,).toBe(false,);
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
   });
 
   test("POST /api/user-api-keys rejects unknown provider", async () => {
