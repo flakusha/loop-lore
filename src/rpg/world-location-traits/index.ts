@@ -1,7 +1,7 @@
 /**
  * World & Location Traits — Public API
  */
-export { WorldLocationTraitsService } from "./service.js";
+export { WorldLocationTraitsService, } from "./service.js";
 export type {
   CreateLocationTraitInput,
   CreateWorldTraitInput,

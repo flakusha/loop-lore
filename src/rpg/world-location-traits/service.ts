@@ -5,8 +5,8 @@
  * World traits apply per-world bonuses/penalties; location traits are
  * more granular per-location effects with equipment overrides.
  */
-import type { Kysely } from "kysely";
-import { uid } from "../../utils.js";
+import type { Kysely, } from "kysely";
+import { uid, } from "../../utils.js";
 
 // ── Types ────────────────────────────────────────────────
 export type WorldTraitCategory =
@@ -78,7 +78,7 @@ export interface UpdateLocationTraitInput {
 
 // ── Service ──────────────────────────────────────────────
 export class WorldLocationTraitsService {
-  constructor(private readonly db: Kysely<any>) {}
+  constructor(private readonly db: Kysely<any>,) {}
 
   // ── World Traits (Layer 2) ───────────────────────────
   async createWorldTrait(
@@ -98,8 +98,8 @@ export class WorldLocationTraitsService {
     };
 
     await this.db
-      .insertInto("character_world_traits")
-      .values(trait)
+      .insertInto("character_world_traits",)
+      .values(trait,)
       .execute();
 
     return trait;
@@ -110,11 +110,11 @@ export class WorldLocationTraitsService {
     worldId: string,
   ): Promise<WorldTraitRow[]> {
     return this.db
-      .selectFrom("character_world_traits")
+      .selectFrom("character_world_traits",)
       .selectAll()
-      .where("actor_id", "=", actorId)
-      .where("world_id", "=", worldId)
-      .orderBy("trait_category", "asc")
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", worldId,)
+      .orderBy("trait_category", "asc",)
       .execute() as Promise<WorldTraitRow[]>;
   }
 
@@ -126,32 +126,33 @@ export class WorldLocationTraitsService {
       updated_at: new Date().toISOString(),
     };
 
-    if (input.trait_category !== undefined)
+    if (input.trait_category !== undefined) {
       updates.trait_category = input.trait_category;
-    if (input.trait_name !== undefined) updates.trait_name = input.trait_name;
-    if (input.trait_value !== undefined) updates.trait_value = input.trait_value;
+    }
+    if (input.trait_name !== undefined) { updates.trait_name = input.trait_name; }
+    if (input.trait_value !== undefined) { updates.trait_value = input.trait_value; }
 
     const result = await this.db
-      .updateTable("character_world_traits")
-      .set(updates)
-      .where("id", "=", id)
+      .updateTable("character_world_traits",)
+      .set(updates,)
+      .where("id", "=", id,)
       .executeTakeFirst();
 
-    if (Number(result?.numUpdatedRows ?? 0) === 0) return undefined;
+    if (Number(result?.numUpdatedRows ?? 0,) === 0) { return undefined; }
 
     return this.db
-      .selectFrom("character_world_traits")
+      .selectFrom("character_world_traits",)
       .selectAll()
-      .where("id", "=", id)
+      .where("id", "=", id,)
       .executeTakeFirst() as Promise<WorldTraitRow | undefined>;
   }
 
-  async deleteWorldTrait(id: string): Promise<boolean> {
+  async deleteWorldTrait(id: string,): Promise<boolean> {
     const result = await this.db
-      .deleteFrom("character_world_traits")
-      .where("id", "=", id)
+      .deleteFrom("character_world_traits",)
+      .where("id", "=", id,)
       .executeTakeFirst();
-    return Number(result?.numDeletedRows ?? 0) > 0;
+    return Number(result?.numDeletedRows ?? 0,) > 0;
   }
 
   // ── Location Traits (Layer 3) ────────────────────────
@@ -168,15 +169,15 @@ export class WorldLocationTraitsService {
       trait_value: input.trait_value,
       bonus: input.bonus ?? 0,
       penalty: input.penalty ?? 0,
-      effects: JSON.stringify(input.effects ?? {}),
-      equipment_override: JSON.stringify(input.equipment_override ?? {}),
+      effects: JSON.stringify(input.effects ?? {},),
+      equipment_override: JSON.stringify(input.equipment_override ?? {},),
       created_at: now,
       updated_at: now,
     };
 
     await this.db
-      .insertInto("character_location_traits")
-      .values(trait)
+      .insertInto("character_location_traits",)
+      .values(trait,)
       .execute();
 
     return trait;
@@ -187,10 +188,10 @@ export class WorldLocationTraitsService {
     locationId: string,
   ): Promise<LocationTraitRow[]> {
     return this.db
-      .selectFrom("character_location_traits")
+      .selectFrom("character_location_traits",)
       .selectAll()
-      .where("actor_id", "=", actorId)
-      .where("location_id", "=", locationId)
+      .where("actor_id", "=", actorId,)
+      .where("location_id", "=", locationId,)
       .execute() as Promise<LocationTraitRow[]>;
   }
 
@@ -202,36 +203,38 @@ export class WorldLocationTraitsService {
       updated_at: new Date().toISOString(),
     };
 
-    if (input.trait_name !== undefined) updates.trait_name = input.trait_name;
-    if (input.trait_value !== undefined) updates.trait_value = input.trait_value;
-    if (input.bonus !== undefined) updates.bonus = input.bonus;
-    if (input.penalty !== undefined) updates.penalty = input.penalty;
-    if (input.effects !== undefined)
-      updates.effects = JSON.stringify(input.effects);
-    if (input.equipment_override !== undefined)
-      updates.equipment_override = JSON.stringify(input.equipment_override);
+    if (input.trait_name !== undefined) { updates.trait_name = input.trait_name; }
+    if (input.trait_value !== undefined) { updates.trait_value = input.trait_value; }
+    if (input.bonus !== undefined) { updates.bonus = input.bonus; }
+    if (input.penalty !== undefined) { updates.penalty = input.penalty; }
+    if (input.effects !== undefined) {
+      updates.effects = JSON.stringify(input.effects,);
+    }
+    if (input.equipment_override !== undefined) {
+      updates.equipment_override = JSON.stringify(input.equipment_override,);
+    }
 
     const result = await this.db
-      .updateTable("character_location_traits")
-      .set(updates)
-      .where("id", "=", id)
+      .updateTable("character_location_traits",)
+      .set(updates,)
+      .where("id", "=", id,)
       .executeTakeFirst();
 
-    if (Number(result?.numUpdatedRows ?? 0) === 0) return undefined;
+    if (Number(result?.numUpdatedRows ?? 0,) === 0) { return undefined; }
 
     return this.db
-      .selectFrom("character_location_traits")
+      .selectFrom("character_location_traits",)
       .selectAll()
-      .where("id", "=", id)
+      .where("id", "=", id,)
       .executeTakeFirst() as Promise<LocationTraitRow | undefined>;
   }
 
-  async deleteLocationTrait(id: string): Promise<boolean> {
+  async deleteLocationTrait(id: string,): Promise<boolean> {
     const result = await this.db
-      .deleteFrom("character_location_traits")
-      .where("id", "=", id)
+      .deleteFrom("character_location_traits",)
+      .where("id", "=", id,)
       .executeTakeFirst();
-    return Number(result?.numDeletedRows ?? 0) > 0;
+    return Number(result?.numDeletedRows ?? 0,) > 0;
   }
 
   // ── Aggregate queries ────────────────────────────────
@@ -242,17 +245,17 @@ export class WorldLocationTraitsService {
     locationTraits: LocationTraitRow[];
   }> {
     const worldTraits = (await this.db
-      .selectFrom("character_world_traits")
+      .selectFrom("character_world_traits",)
       .selectAll()
-      .where("actor_id", "=", actorId)
+      .where("actor_id", "=", actorId,)
       .execute()) as WorldTraitRow[];
 
     const locationTraits = (await this.db
-      .selectFrom("character_location_traits")
+      .selectFrom("character_location_traits",)
       .selectAll()
-      .where("actor_id", "=", actorId)
+      .where("actor_id", "=", actorId,)
       .execute()) as LocationTraitRow[];
 
-    return { worldTraits, locationTraits };
+    return { worldTraits, locationTraits, };
   }
 }

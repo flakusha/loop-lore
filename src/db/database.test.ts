@@ -142,6 +142,8 @@ describe("Database schema", () => {
         .all() as Row[];
       expect(actors.map((r,) => ({ type: r.actor_type, count: r.cnt, })),).toEqual([
         { type: "character", count: 1, },
+        { type: "narrator", count: 1, },
+        { type: "user", count: 1, },
       ],);
     });
   });
@@ -235,6 +237,9 @@ describe("Database schema", () => {
         .all("chat-vis",) as Row[];
       expect(states,).toEqual([
         { id: "msg-vis", visibility: "visible", },
+        { id: "msg-hidden-user", visibility: "hidden_by_user", },
+        { id: "msg-hidden-mod", visibility: "hidden_by_moderator", },
+        { id: "msg-auto", visibility: "auto_hidden", },
       ],);
     });
 

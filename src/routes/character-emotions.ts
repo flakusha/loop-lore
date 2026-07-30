@@ -16,12 +16,20 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     // ── List emotions for an actor ─────────────────────────────
     .get("/api/actors/:actorId/emotions", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const emotions = await database
@@ -35,13 +43,21 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     // ── Get a specific emotion ─────────────────────────────────
     .get("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const { emotionId, } = ctx.params as { emotionId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const emotion = await database
@@ -51,19 +67,30 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         .executeTakeFirst();
 
       if (!emotion) {
-        return jsonError({ message: "Emotion not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       return jsonResponse(emotion,);
     },)
     // ── Set/update an emotion for an actor ─────────────────────
     .post("/api/actors/:actorId/emotions", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -118,13 +145,21 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     // ── Delete an emotion ──────────────────────────────────────
     .delete("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const { emotionId, } = ctx.params as { emotionId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       await database
@@ -137,7 +172,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     // ── List all emotion definitions ───────────────────────────
     .get("/api/emotions", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const emotions = await database
         .selectFrom("emotions",)
@@ -149,7 +189,12 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     // ── Create a new emotion definition ────────────────────────
     .post("/api/emotions", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const body = ctx.body as Record<string, unknown>;
 

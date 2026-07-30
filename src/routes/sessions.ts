@@ -66,7 +66,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
         const userRole = (ctx as any).userRole as string | null;
         const sessionId = (ctx as any).sessionId as string | null;
 
-        if (!userId) { return unauthorized(); }
+        if (!userId) { return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
         const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
         const isAdmin = userRole === "admin";
@@ -115,7 +115,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
           const session = await database
             .selectFrom("sessions",)
@@ -149,7 +149,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
           const session = await database
             .selectFrom("sessions",)
@@ -165,7 +165,8 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
 
           if (targetId === currentSessionId) {
             return jsonError({
-              message: "Cannot delete current session. Use /api/auth/logout instead.",
+              message: (ctx as any).t?.("sessions.cannotDeleteCurrent",) ??
+                "Cannot delete current session. Use /api/auth/logout instead.",
               status: HttpStatus.BadRequest,
             },);
           }

@@ -29,6 +29,32 @@ bun run check && bun test src/
 
 ⚠️ **Zod/TypeBox trap**: Specs describe Zod in `src/schemas/` — **does not exist**. Real stack: **Elysia `t` (TypeBox)** in `src/validation/schemas.ts`.
 
+## Context Loading
+
+Repo-local context in `.opencode/context/` takes precedence over global `~/.config/opencode/context/`.
+
+| Context Type | Repo-Local (priority)                                  | Global (fallback)                                               |
+| ------------ | ------------------------------------------------------ | --------------------------------------------------------------- |
+| Tech stack   | `.opencode/context/project-intelligence/tech-stack.md` | `~/.config/opencode/context/project-intelligence/tech-stack.md` |
+| Patterns     | `.opencode/context/project-intelligence/patterns.md`   | `~/.config/opencode/context/project-intelligence/patterns.md`   |
+| Security     | `.opencode/context/project-intelligence/security.md`   | `~/.config/opencode/context/project-intelligence/security.md`   |
+| Navigation   | `.opencode/context/core/navigation.md`                 | `~/.config/opencode/context/core/navigation.md`                 |
+
+Budget profiles: `ultra_lean` (8k), `lean` (12k), `balanced` (15k) — see lean-ctx docs.
+
+## Coding Conventions (Summary)
+
+See **`.agents/references/recommendations.md`** for full patterns (options-object params, factory functions, discriminated unions, exhaustiveness checking, branded types, Result type, async hygiene, structured logging, input validation checklist).
+
+Key rules in this file:
+
+- **Types**: Interfaces > types; enums for fixed sets; strict mode
+- **Files**: One feature per file; <200 lines; `index.ts` exports public API
+- **Naming**: camelCase vars/fns, PascalCase classes, UPPER_SNAKE constants
+- **Async**: Always handle promises; no bare `.then()` chains
+- **JSDoc**: All public exports — @param, @returns, @throws, @example
+- **Imports**: Never import DB-specific modules in services (use Kysely types)
+
 ## Project Overview
 
 Reimplement SillyTavern RPG chat:
@@ -88,15 +114,6 @@ docs/spec/               # Core specs
 docs/frontend/           # UX specs
 .plan/                   # Task tracking (source of truth)
 ```
-
-## Coding Conventions
-
-- **Types**: Interfaces > types; enums for fixed sets; strict mode
-- **Files**: One feature per file; <200 lines; `index.ts` exports public API
-- **Naming**: camelCase vars/fns, PascalCase classes, UPPER_SNAKE constants
-- **Async**: Always handle promises; no bare `.then()` chains
-- **JSDoc**: All public exports — @param, @returns, @throws, @example
-- **Imports**: Never import DB-specific modules in services (use Kysely types)
 
 ## Anti-Patterns (Enforced in Review)
 
