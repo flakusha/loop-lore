@@ -3,7 +3,7 @@
  *
  * Re-exports blog services for use by routes and other modules.
  */
-export { BlogService } from "./service.js";
+export { BlogService, } from "./service.js";
 export type {
   BlogAuthorType,
   BlogCommentRow,

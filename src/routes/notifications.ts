@@ -105,14 +105,14 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "notifications", },)
     .get("/api/notifications", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
       const unreadOnly = ctx.query?.unread === "true";
       const items = await new NotificationService(database,).list(userId, unreadOnly,);
       return jsonResponse({ items, },);
     },)
     .get("/api/notifications/unread-count", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
       const count = await new NotificationService(database,).getUnreadCount(userId,);
       return jsonResponse({ count, },);
     },)
@@ -120,7 +120,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       "/api/notifications/:id",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(); }
+        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
         const id = ctx.params.id as string;
         const body = ctx.body as { read?: boolean };
         if (body.read === true) {
@@ -132,19 +132,19 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
     )
     .patch("/api/notifications/read-all", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
       await new NotificationService(database,).markAllRead(userId,);
       return jsonResponse({ ok: true, },);
     },)
     .delete("/api/notifications/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
       await new NotificationService(database,).delete(ctx.params.id as string, userId,);
       return jsonResponse({ ok: true, },);
     },)
     .get("/api/notifications/preferences", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
       const prefs = await new NotificationService(database,).getPrefs(userId,);
       return jsonResponse(prefs,);
     },)
@@ -152,7 +152,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       "/api/notifications/preferences",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(); }
+        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
         const body = ctx.body as {
           enabled?: Record<string, boolean>;
           mutedWorlds?: string[];
@@ -171,7 +171,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       const userId = ctx.userId as string | null;
       if (!userId) {
         return jsonError({
-          message: "Unauthorized",
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
           status: HttpStatus.Unauthorized,
           code: ErrorCode.Unauthorized,
         },);

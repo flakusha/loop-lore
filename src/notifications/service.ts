@@ -367,7 +367,6 @@ export async function notifySystem(
   },);
 }
 
-
 export async function notifyBlogPost(
   db: Kysely<DB>,
   opts: { userId: string; postId: string; title: string },

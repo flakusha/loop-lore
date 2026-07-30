@@ -50,11 +50,19 @@ export function charactersRoutes(opts: HandlerOpts,) {
     .post("/api/actors", async (ctx: any,) => {
       const body = ctx.body as Record<string, unknown>;
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const displayName = body.displayName as string | undefined;
       if (!displayName) {
-        return jsonError({ message: "displayName is required", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: ctx.t?.("characters.displayNameRequired",) ?? "displayName is required",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       const id = uid();
@@ -90,12 +98,20 @@ export function charactersRoutes(opts: HandlerOpts,) {
         .selectAll()
         .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
-      if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
+      if (!actor) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
 
       // Solo role is admin-equivalent for own actors (instance owner)
       const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
       if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       return jsonResponse(actor,);
     },)
@@ -105,12 +121,20 @@ export function charactersRoutes(opts: HandlerOpts,) {
         .selectAll()
         .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
-      if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
+      if (!actor) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
 
       // Solo role is admin-equivalent for own actors
       const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
       if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const settings = jsonParseOr(actor.settings, {},) as Record<string, unknown>;
@@ -140,17 +164,30 @@ export function charactersRoutes(opts: HandlerOpts,) {
     .put("/api/actors/:actorId", async (ctx: any,) => {
       const body = ctx.body as Record<string, unknown>;
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
         .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
-      if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
+      if (!actor) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
 
       if (actor.owner_id !== userId && ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+        },);
       }
 
       const updates: Record<string, unknown> = {};
@@ -169,7 +206,10 @@ export function charactersRoutes(opts: HandlerOpts,) {
       if (body.settings) {
         const settingsResult = safeJsonStringify(body.settings,);
         if (!settingsResult.ok) {
-          return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
+          return jsonError({
+            message: ctx.t?.("users.invalidSettingsData",) ?? "Invalid settings data",
+            status: HttpStatus.BadRequest,
+          },);
         }
         updates.settings = settingsResult.value;
       }
@@ -180,17 +220,30 @@ export function charactersRoutes(opts: HandlerOpts,) {
     },)
     .delete("/api/actors/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
         .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
-      if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
+      if (!actor) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
 
       if (actor.owner_id !== userId && ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+        },);
       }
 
       await database.deleteFrom("actors",).where("id", "=", ctx.params.actorId,).execute();
@@ -204,12 +257,20 @@ export function charactersRoutes(opts: HandlerOpts,) {
         .selectAll()
         .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
-      if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
+      if (!actor) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
 
       // Solo role is admin-equivalent for own actors
       const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
       if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       // Convert to canonical format

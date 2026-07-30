@@ -26,7 +26,10 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
 
       const body = ctx.body as Record<string, unknown> | undefined;
       if (!body?.type) {
-        return jsonError({ message: "event type is required", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: ctx.t?.("telemetry.eventTypeRequired",) ?? "event type is required",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       await record(database, {
@@ -41,10 +44,17 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
     },)
     .get("/api/telemetry/analytics/summary", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
       }
       if (!isTelemetryEnabled()) {
-        return jsonError({ message: "Telemetry is disabled", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const result = await database
@@ -60,10 +70,17 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
     },)
     .get("/api/telemetry/analytics/models", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
       }
       if (!isTelemetryEnabled()) {
-        return jsonError({ message: "Telemetry is disabled", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const rows = await database
@@ -77,10 +94,17 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
     },)
     .get("/api/telemetry/analytics/errors", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
       }
       if (!isTelemetryEnabled()) {
-        return jsonError({ message: "Telemetry is disabled", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const rows = await database
@@ -95,10 +119,17 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
     },)
     .get("/api/telemetry/analytics/daily", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
       }
       if (!isTelemetryEnabled()) {
-        return jsonError({ message: "Telemetry is disabled", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const limit = Number(ctx.query.limit,) || 30;
@@ -118,7 +149,11 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
     },)
     .delete("/api/telemetry/analytics/purge", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
       }
 
       const retentionDays = Number(ctx.query.days,) || 90;

@@ -24,7 +24,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     // ── List batch generation jobs ────────────────────────────────
     .get("/api/actors/:actorId/emotion-avatars/jobs", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const jobs = emotionAvatarService.listJobs(actorId,);
@@ -33,29 +38,52 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     // ── Get specific job status ───────────────────────────────────
     .get("/api/actors/:actorId/emotion-avatars/jobs/:jobId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
-      if (!job) { return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },); }
+      if (!job) {
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
       return jsonResponse(job,);
     },)
     // ── Cancel a running job ──────────────────────────────────────
     .post("/api/actors/:actorId/emotion-avatars/jobs/:jobId/cancel", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { jobId, } = ctx.params as { jobId: string };
       const cancelled = emotionAvatarService.cancelJob(jobId as any,);
       if (!cancelled) {
-        return jsonError({ message: "Job not found or already completed", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobAlreadyCompleted",) ?? "Job not found or already completed",
+          status: HttpStatus.NotFound,
+        },);
       }
       return jsonResponse({ ok: true, cancelled: true, },);
     },)
     // ── Start batch generation ───────────────────────────────────
     .post("/api/actors/:actorId/emotion-avatars", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
@@ -99,7 +127,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     // ── Get emotion prompt modifier ──────────────────────────────
     .get("/api/emotions/prompt-modifier/:emotion", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { emotion, } = ctx.params as { emotion: string };
       const validEmotions = Object.values(EmotionType,) as string[];
@@ -112,7 +145,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     // ── List available emotion types ───────────────────────────
     .get("/api/emotions/types", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const emotions = Object.values(EmotionType,).map((emotion,) => ({
         value: emotion,

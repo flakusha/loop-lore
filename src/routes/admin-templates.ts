@@ -73,7 +73,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .get("/api/admin/templates", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
       }
 
       try {
@@ -100,7 +103,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to list templates: ${String(error,)}`,);
         return jsonError({
-          message: "Failed to list templates",
+          message: ctx.t?.("admin.templateListFailed",) ?? "Failed to list templates",
           status: HttpStatus.InternalServerError,
         },);
       }
@@ -109,7 +112,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .get("/api/admin/templates/registry", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
       }
 
       try {
@@ -124,7 +130,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to get registry: ${String(error,)}`,);
         return jsonError({
-          message: "Failed to get registry",
+          message: ctx.t?.("admin.templateRegistryFailed",) ?? "Failed to get registry",
           status: HttpStatus.InternalServerError,
         },);
       }
@@ -133,7 +139,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .get("/api/admin/templates/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
       }
 
       const { id, } = ctx.params as { id: string };
@@ -142,7 +151,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       const profile = merged[id];
 
       if (!profile) {
-        return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       return jsonResponse({
@@ -156,7 +168,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+          return jsonError({
+            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+            status: HttpStatus.Unauthorized,
+          },);
         }
 
         const { id, } = ctx.params as { id: string };
@@ -178,7 +193,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         const existing = merged[id];
 
         if (!existing) {
-          return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
+          return jsonError({
+            message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
+            status: HttpStatus.NotFound,
+          },);
         }
 
         // Deep clone the profile
@@ -207,7 +225,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+          return jsonError({
+            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+            status: HttpStatus.Unauthorized,
+          },);
         }
 
         const { id, } = ctx.params as { id: string };
@@ -225,7 +246,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         const existing = merged[id];
 
         if (!existing) {
-          return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
+          return jsonError({
+            message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
+            status: HttpStatus.NotFound,
+          },);
         }
 
         const updated = structuredClone(existing,);
@@ -250,7 +274,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+          return jsonError({
+            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+            status: HttpStatus.Unauthorized,
+          },);
         }
 
         const body = ctx.body as {
@@ -324,7 +351,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
+          return jsonError({
+            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+            status: HttpStatus.Unauthorized,
+          },);
         }
 
         const { id, } = ctx.params as { id: string };
@@ -339,7 +369,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         const stored = await loadStoredTemplates(database,);
 
         if (!stored.profiles[id]) {
-          return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
+          return jsonError({
+            message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
+            status: HttpStatus.NotFound,
+          },);
         }
 
         const { [id]: _, ...rest } = stored.profiles;

@@ -37,12 +37,12 @@ function main() {
   const fullSchema = ConfigSchema.jsonSchema();
   let generated = 0;
 
-  for (const [domain, paths] of Object.entries(DOMAINS)) {
+  for (const [domain, paths,] of Object.entries(DOMAINS,)) {
     // Extract domain-specific properties from full schema
     const domainSchema: Record<string, unknown> = {
-      $schema: "http://json-schema.org/draft-07/schema#",
+      $schema: "https://json-schema.org/draft-07/schema#",
       $id: `loop-lore-config.${domain}.schema.json`,
-      title: `Loop Lore ${domain.charAt(0).toUpperCase() + domain.slice(1)} Config`,
+      title: `Loop Lore ${domain.charAt(0,).toUpperCase() + domain.slice(1,)} Config`,
       description: `Domain-specific configuration for ${domain}`,
       type: "object",
       properties: {},
@@ -55,13 +55,15 @@ function main() {
     const domainRequired: string[] = [];
 
     for (const path of paths) {
-      if (fullProperties[path]) {
-        domainProperties[path] = fullProperties[path];
-        // Check if required in full schema
-        const fullRequired = fullSchema.required as string[] | undefined;
-        if (fullRequired?.includes(path)) {
-          domainRequired.push(path,);
-        }
+      if (!fullProperties[path]) {
+        continue;
+      }
+
+      domainProperties[path] = fullProperties[path];
+      // Check if required in full schema
+      const fullRequired = fullSchema.required as string[] | undefined;
+      if (fullRequired?.includes(path,)) {
+        domainRequired.push(path,);
       }
     }
 
