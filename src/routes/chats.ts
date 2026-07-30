@@ -36,7 +36,9 @@ import {
   ChatParticipantUpdateBody,
   ChatPersonaUpdateBody,
   ChatUpdateBody,
+  ErrorResponse,
   PaginationQuery,
+  SuccessResponse,
 } from "../validation/schemas";
 import {
   forbiddenResponse as forbidden,
