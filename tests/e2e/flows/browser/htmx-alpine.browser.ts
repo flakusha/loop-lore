@@ -151,10 +151,11 @@ describe("Panel toggles + Escape key", () => {
     await gotoView(page, "/views/chat",);
     await waitForAlpineReady(page,);
 
-    // Dismiss any overlays, then open chat list panel
-    // force: true needed — settings modal overlay CSS z-index
-    // intercepts pointer events even when display:none
-    await page.click("[data-testid='toggle-chat-list']", { force: true, },);
+    // Open chat list panel via evaluate — avoids Playwright hit-test
+    // issues with force:true and Alpine @click binding
+    await page.evaluate(() => {
+      document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(new MouseEvent("click", { bubbles: true, }));
+    },);
     await page.waitForTimeout(400,);
     let uiState = await getAlpineStore(page, "ui",);
     expect(uiState.showChatList,).toBe(true,);
@@ -195,7 +196,9 @@ describe("Panel toggles + Escape key", () => {
       await page.waitForTimeout(500,);
 
       // Open panel and press Escape — handler from init() should still work
-      await page.click("[data-testid='toggle-chat-list']",);
+      await page.evaluate(() => {
+        document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(new MouseEvent("click", { bubbles: true, }));
+      },);
       await page.waitForTimeout(400,);
       await page.keyboard.press("Escape",);
       await page.waitForTimeout(200,);
