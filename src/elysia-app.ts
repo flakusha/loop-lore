@@ -34,6 +34,7 @@ import { adminTemplateRoutes, } from "./routes/admin-templates";
 import { analyticsRoutes, } from "./routes/analytics";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
+import { battleRoutes, } from "./routes/battle";
 import { blogRoutes, } from "./routes/blog";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
 import { characterAvatarsRoutes, } from "./routes/character-avatars";
@@ -196,6 +197,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(generationRoutes(handleOpts,),);
   app.use(ageGateRoutes(handleOpts,),);
   app.use(nsfwRoutes(handleOpts,),);
+  app.use(battleRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 
