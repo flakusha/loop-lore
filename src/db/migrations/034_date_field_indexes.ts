@@ -152,8 +152,8 @@ export async function up(database: Kysely<any>,): Promise<void> {
 
   // ── Message Translations ──────────────────────────────────
   // Table may not exist in all environments — skip if missing
-  const hasMt = await sql<{ exists: number }>`SELECT 1 as exists FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
-  if (hasMt.rows[0]?.exists) {
+  const hasMt = await sql<{ tbl: number }>`SELECT 1 as tbl FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
+  if (hasMt.rows[0]?.tbl) {
     await database.schema
       .createIndex("idx_message_translations_created_at")
       .on("message_translations")
