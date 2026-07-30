@@ -95,7 +95,6 @@ globalThis.selectCharacterCard = async function(id: string,) {
 
 globalThis.startChatFromChar = async function(btn: HTMLElement,) {
   const id = btn.dataset.id;
-  console.log("[DEBUG] startChatFromChar called, id=", id,);
   if (!id) { return; }
   try {
     const res = await feFetch("/api/chats", {
