@@ -46,7 +46,11 @@
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "نسيت كلمة المرور؟",
     "needAnAccount": "ليس لديك حساب؟",
-    "alreadyHaveAccount": "لديك حساب بالفعل؟"
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "registrationClosed": "التسجيل مغلق.",
+    "usernameLength": "يجب أن يكون اسم المستخدم 3-32 حرفًا.",
+    "passwordLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+    "usernameTaken": "اسم المستخدم مستخدم بالفعل."
   },
   "chat": {
     "sendMessage": "Send Message",
