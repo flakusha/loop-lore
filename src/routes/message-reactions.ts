@@ -41,7 +41,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const messageId = ctx.params.id;
 
           // Verify message exists and user has access
@@ -96,7 +96,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const messageId = ctx.params.id;
           const { emoji, } = ctx.body as { emoji: string };
 
@@ -150,7 +150,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
           const messageId = ctx.params.id;
 
           // Verify message exists and user has access

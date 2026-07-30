@@ -22,29 +22,29 @@ export {
   rotateActorKey,
 } from "./actor-keys";
 export type { ActorKeyData, ActorKeyMeta, } from "./actor-keys";
+export {
+  getAnonymousAvatar,
+  getAnonymousDisplayName,
+  initAnonymousMode,
+  isAnonymousModeEnabled,
+} from "./anonymous";
+export {
+  decryptAssetBlob,
+  encryptAssetBlob,
+  isEncryptedAsset,
+} from "./asset-encryption";
+export type { AssetEncryptionResult, } from "./asset-encryption";
 export { decryptValue, encryptValue, } from "./byok";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
 export type { ChatKey, } from "./chat-keys";
 export { distributeKeysOnJoin, resolveChatKey, rotateKeyOnLeave, } from "./key-distribution";
 export {
   findExpiredKeys,
-  runAutoRotation,
   rotateActorKeyAndReEncrypt,
+  runAutoRotation,
   startAutoRotationTimer,
 } from "./key-rotation";
 export type { RotationResult, RotationSummary, } from "./key-rotation";
 export { compressThenEncrypt, decryptThenDecompress, extractKeyIdFromPayload, isEncryptedPayload, } from "./pipeline";
 export type { EncryptedPayload, PipelineConfig, } from "./pipeline";
 export { getSmk, initSmk, isEncryptionEnabled, } from "./smk";
-export {
-  encryptAssetBlob,
-  decryptAssetBlob,
-  isEncryptedAsset,
-} from "./asset-encryption";
-export type { AssetEncryptionResult, } from "./asset-encryption";
-export {
-  initAnonymousMode,
-  isAnonymousModeEnabled,
-  getAnonymousDisplayName,
-  getAnonymousAvatar,
-} from "./anonymous";

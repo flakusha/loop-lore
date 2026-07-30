@@ -113,7 +113,7 @@ export function activityRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "activity", },).get("/api/chats/activity", async (ctx,) => {
     const userId = (ctx as any).userId as string | null;
     if (!userId) {
-      return unauthorized();
+      return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",);
     }
     const chats = await computeActivity(database, userId,);
     return jsonResponse({ chats, } satisfies ActivityResponse,);

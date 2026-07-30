@@ -3,10 +3,10 @@
  */
 import { beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { createTestActors, createTestWorld, } from "../../characters/services/test-helpers";
 import { QuestStatus, QuestType, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { createTestActors, createTestWorld, } from "../../characters/services/test-helpers";
 import { QuestService, } from "./service";
 
 describe("QuestService", () => {

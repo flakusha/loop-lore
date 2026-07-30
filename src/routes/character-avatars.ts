@@ -16,39 +16,68 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-avatars", },)
     .get("/api/actors/:actorId/avatars", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const avatars = await avatarService.getAvatars(actorId,);
       return jsonResponse(avatars,);
     },)
     .get("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const { avatarId, } = ctx.params as { avatarId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const avatar = await avatarService.getAvatar(avatarId,);
-      if (!avatar) { return jsonError({ message: "Avatar not found", status: HttpStatus.NotFound, },); }
+      if (!avatar) {
+        return jsonError({
+          message: ctx.t?.("characters.avatarNotFound",) ?? "Avatar not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
       return jsonResponse(avatar,);
     },)
     .post("/api/actors/:actorId/avatars", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -74,14 +103,22 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     },)
     .put("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const { avatarId, } = ctx.params as { avatarId: string };
       const body = ctx.body as Record<string, unknown>;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const label = body.label as string | undefined;
@@ -99,13 +136,21 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     },)
     .delete("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const { avatarId, } = ctx.params as { avatarId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       await avatarService.deleteAvatar(avatarId,);
@@ -113,12 +158,20 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     },)
     .post("/api/actors/:actorId/avatars/select", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -143,24 +196,40 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     },)
     .get("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const config = await avatarService.getAvatarConfig(actorId,);
       return jsonResponse(config,);
     },)
     .put("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -177,12 +246,20 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     },)
     .get("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const config = await avatarService.getWorldAvatarConfig(actorId, worldId,);
@@ -190,13 +267,21 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     },)
     .put("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
       const body = ctx.body as Record<string, unknown>;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       const selectionRuleOverride = body.selectionRuleOverride as string | undefined;

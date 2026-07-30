@@ -80,6 +80,7 @@ function wrapWithLayout(
   userId?: string | null,
   sessionId?: string | null,
   cspNonce?: string | null,
+  t?: (key: string,) => string,
 ): string {
   const layoutPath = join(VIEWS_DIR, "layout.html",);
   if (!existsSync(layoutPath,)) { return content; }
@@ -91,6 +92,10 @@ function wrapWithLayout(
   layout = layout.replace("{{sessionId}}", () => JSON.stringify(sessionId ?? null,),);
   layout = layout.replaceAll("{{cspNonce}}", () => cspNonce ?? "",);
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
+  // i18n: replace {{{t("key")}}} with translated string
+  if (t) {
+    layout = layout.replaceAll(/\{\{\{t\("([^"]+)"\)\}\}\}/g, (_match, key,) => t(key,),);
+  }
   return layout;
 }
 
@@ -146,9 +151,10 @@ function respond(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Response {
   const nonce = request ? getNonce(request,) : null;
-  const body = isHtmx ? content : wrapWithLayout(content, title, userId, sessionId, nonce,);
+  const body = isHtmx ? content : wrapWithLayout(content, title, userId, sessionId, nonce, t,);
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
@@ -168,7 +174,7 @@ function notFoundView(
       <div class="icon">⚠️</div>
       <div class="title">${escapeHtml(message,)}</div>
     </div>`;
-  return respond(content, isHtmx, translatedTitle, userId, sessionId, request,);
+  return respond(content, isHtmx, translatedTitle, userId, sessionId, request, t,);
 }
 
 function htmlResponse(body: string,): Response {
@@ -191,6 +197,7 @@ function serveView(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Response | null {
   viewName = viewName === "assets" ? "gallery" : viewName;
   if (!ALLOWED_VIEWS.has(viewName,)) { return null; }
@@ -199,7 +206,7 @@ function serveView(
   if (!content) { return null; }
 
   const title = viewName === "index" ? undefined : viewName.charAt(0,).toUpperCase() + viewName.slice(1,);
-  return respond(content, isHtmx, title, userId, sessionId, request,);
+  return respond(content, isHtmx, title, userId, sessionId, request, t,);
 }
 
 function serveCharacterChatList(
@@ -208,12 +215,13 @@ function serveCharacterChatList(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Response | null {
   let content = loadView("character-chat-list",);
   if (!content) { return null; }
 
   content = content.replace("{{characterSlug}}", () => slug,);
-  return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId, request,);
+  return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId, request, t,);
 }
 
 function serveCharacterChat(
@@ -223,11 +231,12 @@ function serveCharacterChat(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Response | null {
   const content = loadView("chat",);
   if (!content) { return null; }
 
-  return respond(content, isHtmx, `${slug} — Chat`, userId, sessionId, request,);
+  return respond(content, isHtmx, `${slug} — Chat`, userId, sessionId, request, t,);
 }
 
 function serveWorldsList(
@@ -235,8 +244,9 @@ function serveWorldsList(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Response | null {
-  return serveView("worlds", isHtmx, userId, sessionId, request,);
+  return serveView("worlds", isHtmx, userId, sessionId, request, t,);
 }
 
 async function serveWorldDetail(
@@ -246,6 +256,7 @@ async function serveWorldDetail(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Promise<Response | null> {
   const world = await database.selectFrom("worlds",).select("id",).where("id", "=", worldId,).executeTakeFirst();
   if (!world) { return notFoundView("World not found", isHtmx, "World not found", userId, sessionId, request,); }
@@ -254,7 +265,7 @@ async function serveWorldDetail(
   if (!content) { return null; }
 
   content = content.replace("{{worldId}}", () => worldId,);
-  return respond(content, isHtmx, "World — Details", userId, sessionId, request,);
+  return respond(content, isHtmx, "World — Details", userId, sessionId, request, t,);
 }
 
 async function serveWorldEdit(
@@ -264,6 +275,7 @@ async function serveWorldEdit(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Promise<Response | null> {
   const world = await database.selectFrom("worlds",).select("id",).where("id", "=", worldId,).executeTakeFirst();
   if (!world) { return notFoundView("World not found", isHtmx, "World not found", userId, sessionId, request,); }
@@ -272,7 +284,7 @@ async function serveWorldEdit(
   if (!content) { return null; }
 
   content = content.replace("{{worldId}}", () => worldId,);
-  return respond(content, isHtmx, "Edit World", userId, sessionId, request,);
+  return respond(content, isHtmx, "Edit World", userId, sessionId, request, t,);
 }
 
 async function serveCharacterEdit(
@@ -282,6 +294,7 @@ async function serveCharacterEdit(
   userId?: string | null,
   sessionId?: string | null,
   request?: Request | null,
+  t?: (key: string,) => string,
 ): Promise<Response | null> {
   const actor = await database
     .selectFrom("actors",)
@@ -303,7 +316,7 @@ async function serveCharacterEdit(
   if (!content) { return null; }
 
   content = content.replace("{{characterId}}", () => characterId,);
-  return respond(content, isHtmx, "Edit Character", userId, sessionId, request,);
+  return respond(content, isHtmx, "Edit Character", userId, sessionId, request, t,);
 }
 
 // ── Static partials (read from file) ─────────────────────────
@@ -1163,6 +1176,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
           ctx.userId,
           ctx.sessionId,
           ctx.request,
+          ctx.t,
         );
         if (result) { return result; }
         return new Response("Not found", { status: 404, },);
@@ -1196,19 +1210,35 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
       // ── World routes ───────────────────────────────────────────
       .get("/worlds", (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-        const result = serveWorldsList(isHtmx, ctx.userId, ctx.sessionId, ctx.request,);
+        const result = serveWorldsList(isHtmx, ctx.userId, ctx.sessionId, ctx.request, ctx.t,);
         if (result) { return result; }
         return new Response("Not found", { status: 404, },);
       },)
       .get("/worlds/:id", async (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-        const result = await serveWorldDetail(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId, ctx.request,);
+        const result = await serveWorldDetail(
+          ctx.params.id,
+          database,
+          isHtmx,
+          ctx.userId,
+          ctx.sessionId,
+          ctx.request,
+          ctx.t,
+        );
         if (result) { return result; }
         return new Response("Not found", { status: 404, },);
       },)
       .get("/worlds/:id/edit", async (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-        const result = await serveWorldEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId, ctx.request,);
+        const result = await serveWorldEdit(
+          ctx.params.id,
+          database,
+          isHtmx,
+          ctx.userId,
+          ctx.sessionId,
+          ctx.request,
+          ctx.t,
+        );
         if (result) { return result; }
         return new Response("Not found", { status: 404, },);
       },)
@@ -1216,7 +1246,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
       .guard({ beforeHandle: adminViewGuard, }, (app,) =>
         app.get("/views/admin", (ctx: any,) => {
           const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-          const result = serveView("admin", isHtmx, ctx.userId, ctx.sessionId, ctx.request,);
+          const result = serveView("admin", isHtmx, ctx.userId, ctx.sessionId, ctx.request, ctx.t,);
           if (result) { return result; }
           return new Response("Not found", { status: 404, },);
         },),)
@@ -1238,7 +1268,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
 
-        const result = serveView(name, isHtmx, ctx.userId, ctx.sessionId, ctx.request,);
+        const result = serveView(name, isHtmx, ctx.userId, ctx.sessionId, ctx.request, ctx.t,);
         if (result) { return result; }
         return new Response("Not found", { status: 404, },);
       },)

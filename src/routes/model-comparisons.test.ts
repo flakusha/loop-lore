@@ -82,7 +82,7 @@ describe("POST /api/analytics/comparisons", () => {
     expect(body.message_id,).toBe("msg-test-1",);
     expect(body.reference_model,).toBe("gpt-4",);
     expect(body.preference,).toBe("better",);
-    expect(body.confidence,).toBe(0.85,);
+    expect(body.confidence,).toBeCloseTo(0.85,);
     expect(typeof body.created_at,).toBe("string",);
   });
 
@@ -148,7 +148,7 @@ describe("GET /api/analytics/comparisons", () => {
         message_id: `msg-list-${i}`,
         user_id: userId,
         reference_model: "gpt-4",
-        preference: i === 0 ? "better" : i === 1 ? "worse" : "same",
+        preference: i === 0 ? "better" : (i === 1 ? "worse" : "same"),
         confidence: 0.5 + i * 0.1,
         created_at: new Date(Date.now() + i * 1000,).toISOString(),
       },).execute();
@@ -238,14 +238,14 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
     );
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
-      leaderboard: Array<{
+      leaderboard: {
         reference_model: string;
         totalComparisons: number;
         betterCount: number;
         worseCount: number;
         sameCount: number;
         avgConfidence: number;
-      }>;
+      }[];
     };
     expect(Array.isArray(body.leaderboard,),).toBe(true,);
     expect(body.leaderboard.length,).toBeGreaterThanOrEqual(2,);

@@ -12,7 +12,7 @@ describe("Telemetry Service", () => {
       chatId: "3",
       data: { test: true, },
     },);
-    const result = await db.selectFrom("telemetry_events",).limit(1,).execute();
+    const result = await db.selectFrom("telemetry_events",).selectAll().limit(1,).execute();
     expect(result.length,).toBe(1,);
   });
 });
