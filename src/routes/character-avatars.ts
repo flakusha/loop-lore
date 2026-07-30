@@ -3,7 +3,7 @@
  *
  * API endpoints for managing character avatars with context-aware selection.
  */
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import { AvatarService, } from "../characters/services/avatar-service";
 import {
   ActorIdAvatarIdParams,
@@ -205,6 +205,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       return jsonNoContent();
     }, {
       params: ActorIdAvatarIdParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Delete actor avatar",
         description: "Delete an avatar by ID.",
@@ -244,6 +249,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdAvatarParams,
       body: AvatarSelectBody,
+      response: {
+        200: AvatarResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Select context-aware avatar",
         description:
@@ -272,6 +282,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse(config,);
     }, {
       params: ActorIdAvatarParams,
+      response: {
+        200: AvatarResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get avatar selection config",
         description: "Get the avatar selection configuration for an actor.",
@@ -307,6 +322,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdAvatarParams,
       body: AvatarConfigBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update avatar selection config",
         description: "Update the avatar selection configuration (rule, weights, fallback chain) for an actor.",
@@ -335,6 +355,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       return jsonResponse(config,);
     }, {
       params: WorldActorParams,
+      response: {
+        200: AvatarResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get world avatar config",
         description: "Get the world-specific avatar configuration override for an actor.",
@@ -369,6 +394,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
     }, {
       params: WorldActorParams,
       body: WorldAvatarConfigBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update world avatar config",
         description: "Update the world-specific avatar configuration override for an actor.",
