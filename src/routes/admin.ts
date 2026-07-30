@@ -1009,7 +1009,13 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
 
           return jsonResponse({ data: entries, total, page, pageSize, },);
         },
-        { query: PaginationQuery, response: { 200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },), 403: ErrorResponse, }, },
+        {
+          query: PaginationQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            403: ErrorResponse,
+          },
+        },
       )
       .get("/api/admin/audit/:id", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
