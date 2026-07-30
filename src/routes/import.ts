@@ -258,13 +258,17 @@ export function importRoutes(
 ): Elysia {
   const uploadDir = config.assets?.uploadDir;
 
-  return new Elysia({ name: "import", },).onRequest(async (ctx: any,) => {
-    const url = new URL(ctx.request.url,);
-    if (ctx.request.method === "POST" && url.pathname === "/api/actors/import") {
-      // onRequest runs before .derive(), so we must authenticate directly
-      const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
-      if (authResult instanceof Response) { return authResult; }
-      return handleImport(ctx.request, database, authResult.context.userId!, uploadDir,);
-    }
+  return new Elysia({ name: "import", },).post("/api/actors/import", async (ctx: any,) => {
+    // authenticate directly before .derive()
+    const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
+    if (authResult instanceof Response) { return authResult; }
+    return handleImport(ctx.request, database, authResult.context.userId!, uploadDir,);
+  }, {
+    detail: {
+      summary: "Import a character",
+      description:
+        "Import a character card from a file upload. Supports CHARX, PNG, and JSON formats with auto-detection and asset import.",
+      tags: ["Import",],
+    },
   },) as unknown as Elysia;
 }

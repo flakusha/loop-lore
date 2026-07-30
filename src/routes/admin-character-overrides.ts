@@ -42,6 +42,12 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse(overrides,);
+    }, {
+      detail: {
+        summary: "List all character overrides",
+        description: "Returns all admin character overrides across all actors. Requires admin role.",
+        tags: ["Admin", "Characters",],
+      },
     },)
     // ── List overrides for a specific actor ────────────────────
     .get("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
@@ -69,6 +75,12 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse(overrides,);
+    }, {
+      detail: {
+        summary: "List overrides for a specific actor",
+        description: "Returns all character overrides for a specific actor. Requires admin role.",
+        tags: ["Admin", "Characters",],
+      },
     },)
     // ── Create a new override ──────────────────────────────────
     .post("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
@@ -117,6 +129,13 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonCreated({ id, },);
+    }, {
+      detail: {
+        summary: "Create a character override",
+        description:
+          "Creates a new admin override for a specific actor with action, visibility, license, reason, and expiration.",
+        tags: ["Admin", "Characters",],
+      },
     },)
     // ── Delete an override ─────────────────────────────────────
     .delete("/api/admin/character-overrides/:overrideId", async (ctx: any,) => {
@@ -143,5 +162,11 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
         .execute();
 
       return jsonResponse({ ok: true, },);
+    }, {
+      detail: {
+        summary: "Delete a character override",
+        description: "Removes an admin character override by ID. Requires admin role.",
+        tags: ["Admin", "Characters",],
+      },
     },);
 }

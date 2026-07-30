@@ -219,7 +219,7 @@ export class BlogService {
       .selectFrom("blog_tags",)
       .select(["post_id", "tag",],)
       .where("post_id", "in", postIds,)
-      .execute()) as { post_id: string; tag: string }[];
+      .execute()) as Array<{ post_id: string; tag: string }>;
 
     const tagsByPost = new Map<string, string[]>();
     for (const tr of tagRows) {
