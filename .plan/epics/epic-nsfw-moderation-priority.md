@@ -28,7 +28,7 @@ This ticket elevates the NSFW moderation tasks to High Priority and adds consent
 - [ ] Non-public audit log of NSFW gate decisions
 - [x] NSFW content rating enforcement (5-tier from Character Core) — `ContentRating` enum + TypeBox schema
 - [x] Consent state tracking (from TASK-shared-schemas) — `ConsentState` TypeBox schema
-- [ ] Integration with generation boundary (LLM request filtering)
+- [x] Integration with generation boundary (LLM request filtering) — wired at `src/generation/auto-gen.ts:412`
 
 ### User Block / Ban / Shadow
 
@@ -91,7 +91,7 @@ This ticket elevates the NSFW moderation tasks to High Priority and adds consent
 - [ ] Non-public audit log of NSFW gate decisions
 - [x] NSFW content rating enforcement (5-tier from Character Core) — `ContentRating` enum + TypeBox schema
 - [x] Consent state tracking (from TASK-shared-schemas) — `ConsentState` TypeBox schema
-- [ ] Integration with generation boundary (LLM request filtering)
+- [x] Integration with generation boundary (LLM request filtering) — wired at `src/generation/auto-gen.ts:412`
 
 ### User Block / Ban / Shadow
 
