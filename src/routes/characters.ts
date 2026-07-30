@@ -9,8 +9,15 @@ import { exportToYaml, } from "../characters/exporters/yaml";
 import type { CanonicalCharacter, } from "../characters/parser";
 import { getMinimalPng, insertCharacterDataIntoPng, } from "../characters/steganography";
 import { ActorType, AgentType, } from "../db/enums";
+import { updateWithVersionCheck, } from "../db/optimistic-locking";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, uid, } from "../utils";
+import {
+  ActorCreateBody,
+  ActorIdParams,
+  ActorsQuery,
+  ActorUpdateBody,
+} from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 interface HandlerOpts {
@@ -24,17 +31,15 @@ export function charactersRoutes(opts: HandlerOpts,) {
     .get(
       "/api/actors",
       async (ctx: any,) => {
-        const page = Number(ctx.query.page,) || 1;
-        const pageSize = Number(ctx.query.pageSize,) || 20;
+        const { page, pageSize, type, } = ctx.query;
         const offset = (page - 1) * pageSize;
-        const type = ctx.query.type as string | undefined;
 
         let countQuery = database.selectFrom("actors",).select(database.fn.countAll<number>().as("total",),);
         let listQuery = database.selectFrom("actors",).selectAll();
 
         if (type) {
-          countQuery = countQuery.where("actor_type", "=", type as ActorType,);
-          listQuery = listQuery.where("actor_type", "=", type as ActorType,);
+          countQuery = countQuery.where("actor_type", "=", type,);
+          listQuery = listQuery.where("actor_type", "=", type,);
         }
 
         const userId = ctx.userId as string | null;
@@ -50,6 +55,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonPaginated({ data: actors, total, page, pageSize, },);
       },
       {
+        query: ActorsQuery,
         detail: {
           summary: "List actors",
           description: "List characters and other actors. Supports pagination and type filtering.",
@@ -60,32 +66,37 @@ export function charactersRoutes(opts: HandlerOpts,) {
     .post(
       "/api/actors",
       async (ctx: any,) => {
-        const body = ctx.body as Record<string, unknown>;
+        const {
+          displayName,
+          tags,
+          actorType,
+          agentType,
+          description,
+          personality,
+          scenario,
+          welcomeMessage,
+          systemPrompt,
+        } = ctx.body;
         const userId = ctx.userId as string | null;
         if (!userId) { return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
-        const displayName = body.displayName as string | undefined;
-        if (!displayName) {
-          return jsonError({ message: ctx.t?.("characters.displayNameRequired",) ?? "displayName is required", status: HttpStatus.BadRequest, },);
-        }
-
         const id = uid();
-        const tags = body.tags ? (body.tags as string).split(",",).map((t: string,) => t.trim()).filter(Boolean,) : [];
-        const settings = tags.length > 0 ? JSON.stringify({ tags, },) : "{}";
+        const parsedTags = tags ? tags.split(",",).map((t: string,) => t.trim()).filter(Boolean,) : [];
+        const settings = parsedTags.length > 0 ? JSON.stringify({ tags: parsedTags, },) : "{}";
         await database
           .insertInto("actors",)
           .values({
             id,
-            actor_type: (body.actorType as ActorType | undefined) ?? ActorType.Character,
+            actor_type: actorType ?? ActorType.Character,
             display_name: displayName,
             user_id: userId,
             owner_id: userId,
-            agent_type: (body.agentType as AgentType | undefined) ?? AgentType.Ai,
-            description: (body.description as string | undefined) ?? null,
-            personality: (body.personality as string | undefined) ?? null,
-            scenario: (body.scenario as string | undefined) ?? null,
-            welcome_message: (body.welcomeMessage as string | undefined) ?? null,
-            system_prompt: (body.systemPrompt as string | undefined) ?? null,
+            agent_type: agentType ?? AgentType.Ai,
+            description: description ?? null,
+            personality: personality ?? null,
+            scenario: scenario ?? null,
+            welcome_message: welcomeMessage ?? null,
+            system_prompt: systemPrompt ?? null,
             settings,
             import_spec: "raw",
             data_source_format: "json",
@@ -97,6 +108,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonCreated({ id, },);
       },
       {
+        body: ActorCreateBody,
         detail: {
           summary: "Create actor",
           description: "Create a new character or actor. Requires authentication.",
@@ -122,6 +134,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonResponse(actor,);
       },
       {
+        params: ActorIdParams,
         detail: {
           summary: "Get actor",
           description: "Get a character or actor by ID. Respects visibility rules.",
@@ -170,6 +183,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonResponse(card,);
       },
       {
+        params: ActorIdParams,
         detail: {
           summary: "Get character card",
           description: "Get actor as a Chara Card v2 specification. Used for import/export compatibility.",
@@ -180,7 +194,22 @@ export function charactersRoutes(opts: HandlerOpts,) {
     .put(
       "/api/actors/:actorId",
       async (ctx: any,) => {
-        const body = ctx.body as Record<string, unknown>;
+        const {
+          displayName,
+          description,
+          systemPrompt,
+          avatarAssetId,
+          personality,
+          welcomeMessage,
+          mesExample,
+          scenario,
+          postHistoryInstructions,
+          creatorNotes,
+          creator,
+          characterVersion,
+          settings,
+          dataVersion,
+        } = ctx.body;
         const userId = ctx.userId as string | null;
         if (!userId) { return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
@@ -195,32 +224,53 @@ export function charactersRoutes(opts: HandlerOpts,) {
           return jsonError({ message: ctx.t?.("errors.forbidden",) ?? "Forbidden", status: HttpStatus.Forbidden, },);
         }
 
+        // Optimistic concurrency check
+        if (dataVersion !== undefined && dataVersion !== actor.data_version) {
+          return jsonError({
+            message: "Version conflict: record was modified by another process",
+            status: HttpStatus.Conflict,
+          },);
+        }
+
         const updates: Record<string, unknown> = {};
-        if (body.displayName) { updates.display_name = body.displayName; }
-        if (body.description) { updates.description = body.description; }
-        if (body.systemPrompt) { updates.system_prompt = body.systemPrompt; }
-        if (body.avatarAssetId !== undefined) { updates.avatar_asset_id = body.avatarAssetId; }
-        if (body.personality) { updates.personality = body.personality; }
-        if (body.welcomeMessage) { updates.welcome_message = body.welcomeMessage; }
-        if (body.mesExample) { updates.mes_example = body.mesExample; }
-        if (body.scenario) { updates.scenario = body.scenario; }
-        if (body.postHistoryInstructions) { updates.post_history_instructions = body.postHistoryInstructions; }
-        if (body.creatorNotes) { updates.creator_notes = body.creatorNotes; }
-        if (body.creator) { updates.creator = body.creator; }
-        if (body.characterVersion) { updates.character_version = body.characterVersion; }
-        if (body.settings) {
-          const settingsResult = safeJsonStringify(body.settings,);
+        if (displayName) { updates.display_name = displayName; }
+        if (description) { updates.description = description; }
+        if (systemPrompt) { updates.system_prompt = systemPrompt; }
+        if (avatarAssetId !== undefined) { updates.avatar_asset_id = avatarAssetId; }
+        if (personality) { updates.personality = personality; }
+        if (welcomeMessage) { updates.welcome_message = welcomeMessage; }
+        if (mesExample) { updates.mes_example = mesExample; }
+        if (scenario) { updates.scenario = scenario; }
+        if (postHistoryInstructions) { updates.post_history_instructions = postHistoryInstructions; }
+        if (creatorNotes) { updates.creator_notes = creatorNotes; }
+        if (creator) { updates.creator = creator; }
+        if (characterVersion) { updates.character_version = characterVersion; }
+        if (settings) {
+          const settingsResult = safeJsonStringify(settings,);
           if (!settingsResult.ok) {
             return jsonError({ message: ctx.t?.("users.invalidSettingsData",) ?? "Invalid settings data", status: HttpStatus.BadRequest, },);
           }
           updates.settings = settingsResult.value;
         }
-        updates.updated_at = new Date().toISOString();
 
-        await database.updateTable("actors",).set(updates,).where("id", "=", ctx.params.actorId,).execute();
-        return jsonResponse({ ok: true, },);
+        // Use optimistic locking
+        const result = await updateWithVersionCheck(
+          database,
+          "actors",
+          ctx.params.actorId,
+          actor.data_version,
+          updates,
+        );
+
+        if (!result.ok) {
+          return jsonError({ message: result.error ?? "Update failed", status: HttpStatus.Conflict, },);
+        }
+
+        return jsonResponse({ ok: true, dataVersion: actor.data_version + 1, },);
       },
       {
+        params: ActorIdParams,
+        body: ActorUpdateBody,
         detail: {
           summary: "Update actor",
           description: "Update a character or actor. Owner or admin only.",
@@ -249,6 +299,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonNoContent();
       },
       {
+        params: ActorIdParams,
         detail: {
           summary: "Delete actor",
           description: "Delete a character or actor. Owner or admin only.",
@@ -257,7 +308,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
       },
     )
     .get("/api/actors/:actorId/export", async (ctx: any,) => {
-      const format = (ctx.query.format as string) ?? "json";
+      const format = ctx.query.format ?? "json";
 
       const actor = await database
         .selectFrom("actors",)
@@ -410,5 +461,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           },);
         }
       }
+    }, {
+      params: ActorIdParams,
     },);
 }

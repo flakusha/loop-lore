@@ -79,6 +79,10 @@ export interface CreateChatParams {
   participantIds?: string[];
   gmConfig?: Record<string, unknown> | null;
   visualNovel?: boolean;
+  /** Memory carry mode: "full" (default), "selective", or "fresh" */
+  memoryCarry?: "full" | "selective" | "fresh";
+  /** Specific memory IDs to carry forward (when memoryCarry === "selective") */
+  memoryCarryIds?: string[];
 }
 
 /**
