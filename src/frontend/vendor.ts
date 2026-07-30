@@ -15,6 +15,34 @@ g.htmx = htmx;
 g.Alpine = Alpine;
 Alpine.plugin(morph,);
 
+// Register $t magic property for client-side i18n
+Alpine.magic("t", (el: HTMLElement,) => {
+  // Resolve translation key using the app's locale strings
+  const resolve = (key: string,): string => {
+    const appData = Alpine.$data(el,);
+    if (appData?.localeStrings) {
+      const keys = key.split(".",);
+      let value: any = appData.localeStrings;
+      for (const k of keys) {
+        value = value?.[k];
+      }
+      if (typeof value === "string") { return value; }
+    }
+    // Fallback to global locale strings
+    const globalStrings = (globalThis as any).__localeStrings;
+    if (globalStrings) {
+      const keys = key.split(".",);
+      let value: any = globalStrings;
+      for (const k of keys) {
+        value = value?.[k];
+      }
+      if (typeof value === "string") { return value; }
+    }
+    return key; // Return key as fallback
+  };
+  return resolve;
+},);
+
 // htmx extensions reference `htmx` as a free variable.
 // Bun's require() inlines them in the same module scope where `htmx` is defined.
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- CJS required for htmx extension side effects
