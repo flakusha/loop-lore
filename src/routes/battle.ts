@@ -609,8 +609,8 @@ export function battleRoutes(opts: HandlerOpts,) {
               disadvantage?: boolean;
             };
             const mods: RollModifier[] = [];
-            if (body.advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", }); }
-            if (body.disadvantage) { mods.push({ source: "disadvantage", value: -2, type: "penalty", }); }
+            if (body.advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", },); }
+            if (body.disadvantage) { mods.push({ source: "disadvantage", value: -2, type: "penalty", },); }
             const result = makeAttackRoll(body.attackBonus, body.targetAC, mods,);
             return jsonResponse(result,);
           } catch (error) {
@@ -638,8 +638,8 @@ export function battleRoutes(opts: HandlerOpts,) {
               disadvantage?: boolean;
             };
             const mods: RollModifier[] = [];
-            if (body.advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", }); }
-            if (body.disadvantage) { mods.push({ source: "disadvantage", value: -2, type: "penalty", }); }
+            if (body.advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", },); }
+            if (body.disadvantage) { mods.push({ source: "disadvantage", value: -2, type: "penalty", },); }
             const dc: DifficultyClass = { name: "defense", value: body.incomingAttack, description: "Defense DC", };
             const result = makeSavingThrow(body.defenseBonus, dc, mods,);
             return jsonResponse(result,);
@@ -671,14 +671,20 @@ export function battleRoutes(opts: HandlerOpts,) {
               currentHP: Record<string, number>;
             };
             // Process combat round: each combatant makes an attack against the next
-            const actions: { attacker: string; target: string; roll: number; hit: boolean; currentHP: number; }[] = [];
+            const actions: { attacker: string; target: string; roll: number; hit: boolean; currentHP: number }[] = [];
             for (let i = 0; i < body.combatants.length; i++) {
               const c = body.combatants[i];
               const target = body.combatants[(i + 1) % body.combatants.length];
               if (!c || !target) { continue; }
               const roll = makeAttackRoll(c.attackBonus, 10 + target.defenseBonus, [],);
               const hp = body.currentHP[c.id] ?? 0;
-              actions.push({ attacker: c.id, target: target.id, roll: roll.roll.total, hit: roll.hit, currentHP: hp, });
+              actions.push({
+                attacker: c.id,
+                target: target.id,
+                roll: roll.roll.total,
+                hit: roll.hit,
+                currentHP: hp,
+              },);
             }
             return jsonResponse({ round: 1, actions, summary: `Processed ${actions.length} actions`, },);
           } catch (error) {

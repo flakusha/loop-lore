@@ -48,8 +48,8 @@ import { FantasyService, } from "../rpg/fantasies/service";
 import { IntimacyService, } from "../rpg/intimacy/service";
 import { LocationNsfwService, } from "../rpg/location-nsfw/service";
 import { SeductionService, } from "../rpg/seduction/service";
-import { jsonError, jsonResponse, } from "./http-utils";
 import { SuccessResponse, } from "../validation/schemas";
+import { jsonError, jsonResponse, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "nsfw-routes", },);
