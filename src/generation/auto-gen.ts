@@ -420,7 +420,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         privacyLevel: "standard",
         eventTypes: enabledEventTypes,
         config,
-        nsfwConfig: config.nsfw ?? { allowNsfw: false, nsfwMinAge: 0, },
+        nsfwConfig: config.nsfw ??
+          { allowNsfw: false, nsfwMinAge: 0, defaultNsfwScope: "chat", consentRequired: true, auditLogging: true, },
         db: database,
       },
     },);
