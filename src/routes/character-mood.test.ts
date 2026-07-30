@@ -132,7 +132,7 @@ describe("Mood CRUD", () => {
     expect(body,).toBe(75,);
   });
 
-  test("POST /api/actors/:actorId/mood/delta returns 400 without delta", async () => {
+  test("POST /api/actors/:actorId/mood/delta returns 422 without delta", async () => {
     const app = createMoodApp(db, userId,);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/mood/delta`, {
@@ -141,7 +141,7 @@ describe("Mood CRUD", () => {
         body: JSON.stringify({},),
       },),
     );
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
   });
 
   test("POST /api/actors/:actorId/mood/events creates event", async () => {
@@ -162,7 +162,7 @@ describe("Mood CRUD", () => {
     expect(body.id,).toBeTruthy();
   });
 
-  test("POST /api/actors/:actorId/mood/events returns 400 without required fields", async () => {
+  test("POST /api/actors/:actorId/mood/events returns 422 without required fields", async () => {
     const app = createMoodApp(db, userId,);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/mood/events`, {
@@ -171,7 +171,7 @@ describe("Mood CRUD", () => {
         body: JSON.stringify({ eventType: "test", },),
       },),
     );
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
   });
 
   test("GET /api/actors/:actorId/mood/events returns events", async () => {

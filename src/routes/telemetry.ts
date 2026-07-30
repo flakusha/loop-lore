@@ -16,6 +16,7 @@ import {
   isTelemetryEnabled,
   record,
 } from "../telemetry/service";
+import { TelemetryEventBody, } from "../validation/schemas";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -28,24 +29,17 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         return jsonResponse({ ok: true, dropped: "frontend telemetry disabled", },);
       }
 
-      const body = ctx.body as Record<string, unknown> | undefined;
-      if (!body?.type) {
-        return jsonError({
-          message: ctx.t?.("telemetry.eventTypeRequired",) ?? "event type is required",
-          status: HttpStatus.BadRequest,
-        },);
-      }
-
       await record(database, {
-        eventType: body.type as string,
-        sessionId: body.sessionId as string | undefined,
-        userId: body.userId as string | undefined,
-        chatId: body.chatId as string | undefined,
-        data: (body.data as Record<string, unknown>) ?? {},
+        eventType: ctx.body.type,
+        sessionId: ctx.body.sessionId,
+        userId: ctx.body.userId,
+        chatId: ctx.body.chatId,
+        data: ctx.body.data ?? {},
       },);
 
       return jsonResponse({ ok: true, },);
     }, {
+      body: TelemetryEventBody,
       detail: {
         summary: "Record telemetry event",
         description: "Record a frontend telemetry event (requires telemetry to be enabled).",

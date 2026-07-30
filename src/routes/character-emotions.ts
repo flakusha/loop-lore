@@ -5,6 +5,12 @@
  * emotion intensity, and context tracking.
  */
 import { Elysia, } from "elysia";
+import {
+  ActorEmotionParams,
+  ActorIdParams,
+  CharacterEmotionBody,
+  EmotionDefinitionCreateBody,
+} from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -23,7 +29,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -40,6 +46,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
 
       return jsonResponse(emotions,);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "List actor emotions",
         description: "List all emotions currently active for an actor.",
@@ -56,8 +63,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const { emotionId, } = ctx.params as { emotionId: string };
+      const { actorId, emotionId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -80,6 +86,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(emotion,);
     }, {
+      params: ActorEmotionParams,
       detail: {
         summary: "Get actor emotion",
         description: "Get a specific emotion by ID for an actor.",
@@ -96,7 +103,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -104,16 +111,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
 
-      const emotionId = body.emotionId as string | undefined;
-      const intensity = body.intensity as number | undefined;
-      const context = body.context as string | undefined;
-      const expiresAt = body.expiresAt as string | undefined;
-
-      if (!emotionId) {
-        return jsonError({ message: "emotionId is required", status: HttpStatus.BadRequest, },);
-      }
+      const { emotionId, intensity, context, expiresAt, } = ctx.body;
 
       // Upsert: check if emotion already exists for this actor
       const existing = await database
@@ -154,6 +153,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
 
       return jsonCreated({ id, },);
     }, {
+      params: ActorIdParams,
+      body: CharacterEmotionBody,
       detail: {
         summary: "Set actor emotion",
         description: "Set or update an emotion for an actor. Upserts by emotion ID.",
@@ -170,8 +171,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const { emotionId, } = ctx.params as { emotionId: string };
+      const { actorId, emotionId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -187,6 +187,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
 
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorEmotionParams,
       detail: {
         summary: "Delete actor emotion",
         description: "Remove an emotion from an actor.",
@@ -226,23 +227,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const body = ctx.body as Record<string, unknown>;
-
-      const name = body.name as string | undefined;
-      const displayName = body.displayName as string | undefined;
-      const category = body.category as string | undefined;
-      const valence = body.valence as number | undefined;
-      const arousal = body.arousal as number | undefined;
-      const icon = body.icon as string | undefined;
-
-      if (
-        !name || displayName === undefined || category === undefined || valence === undefined || arousal === undefined
-      ) {
-        return jsonError({
-          message: "name, displayName, category, valence, and arousal are required",
-          status: HttpStatus.BadRequest,
-        },);
-      }
+      const { name, displayName, category, valence, arousal, icon, } = ctx.body;
 
       const id = crypto.randomUUID();
       await database
@@ -261,6 +246,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
 
       return jsonCreated({ id, },);
     }, {
+      body: EmotionDefinitionCreateBody,
       detail: {
         summary: "Create emotion definition",
         description: "Create a new emotion definition with name, category, valence, and arousal.",

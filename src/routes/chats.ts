@@ -128,6 +128,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
             participantIds: body.participantIds,
             gmConfig: body.gmConfig ?? undefined,
             visualNovel: body.visualNovel ?? undefined,
+            memoryCarry: body.memoryCarry ?? undefined,
+            memoryCarryIds: body.memoryCarryIds ?? undefined,
           },);
 
           const characterActors = await database

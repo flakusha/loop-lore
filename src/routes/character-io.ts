@@ -9,6 +9,11 @@ import { exportCharacterSystems, exportCharacterSystemsJson, } from "../characte
 import type { CharacterSystemsExport, } from "../characters/exporters/character-systems";
 import { importCharacterSystems, } from "../characters/importers/character-systems";
 import type { DB, } from "../db/schema";
+import {
+  ActorIdParams,
+  CharacterSystemsExportBody,
+  CharacterSystemsImportUrlBody,
+} from "../validation/schemas";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -30,7 +35,7 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
       const worldId = ctx.query.worldId as string | undefined;
       const format = ctx.query.format as string | undefined;
 
@@ -40,13 +45,14 @@ export function characterIoRoutes(opts: HandlerOpts,) {
           status: 200,
           headers: {
             "Content-Type": "application/json",
-            "Content-Disposition": `attachment; filename="character-${actorId}-systems.json"`,
+            "Content-Disposition": `attachment; filename="character-${String(actorId,)}-systems.json"`,
           },
         },);
       }
 
       return jsonError({ message: `Unsupported format: ${format}`, status: HttpStatus.BadRequest, },);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "Export character systems data as JSON",
         description:
@@ -64,16 +70,16 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
-
-      const worldId = body.worldId as string | undefined;
-      const includeTraits = body.includeTraits as boolean ?? true;
-      const includeMood = body.includeMood as boolean ?? true;
-      const includeRelationships = body.includeRelationships as boolean ?? true;
-      const includeAvatars = body.includeAvatars as boolean ?? true;
-      const includeLicensing = body.includeLicensing as boolean ?? true;
-      const includeAvailability = body.includeAvailability as boolean ?? true;
+      const { actorId, } = ctx.params;
+      const {
+        worldId,
+        includeTraits = true,
+        includeMood = true,
+        includeRelationships = true,
+        includeAvatars = true,
+        includeLicensing = true,
+        includeAvailability = true,
+      } = ctx.body;
 
       const exportData = await exportCharacterSystems(database, actorId, worldId,);
 
@@ -90,6 +96,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
 
       return jsonResponse(filtered,);
     }, {
+      params: ActorIdParams,
+      body: CharacterSystemsExportBody,
       detail: {
         summary: "Export character systems data with filters",
         description:
@@ -107,19 +115,18 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as CharacterSystemsExport;
+      const { actorId, } = ctx.params;
 
-      if (!body?.version) {
+      if (!ctx.body?.version) {
         return jsonError({
           message: ctx.t?.("import.invalidImportData",) ?? "Invalid import data: missing version",
           status: HttpStatus.BadRequest,
         },);
       }
 
-      const worldId = body.characterId === actorId ? undefined : undefined; // Use export's worldId if different
+      const worldId = ctx.body.characterId === actorId ? undefined : undefined; // Use export's worldId if different
 
-      const result = await importCharacterSystems(database, actorId, body, worldId,);
+      const result = await importCharacterSystems(database, actorId, ctx.body, worldId,);
 
       return jsonCreated({
         success: result.errors.length === 0,
@@ -134,6 +141,7 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         errors: result.errors,
       },);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "Import character systems data from body",
         description:
@@ -151,10 +159,9 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { actorId, } = ctx.params;
 
-      const url = body.url as string | undefined;
+      const url = ctx.body.url;
       if (!url) {
         return jsonError({ message: "url is required", status: HttpStatus.BadRequest, },);
       }
@@ -215,6 +222,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         return jsonError({ message: `Failed to import from URL: ${msg}`, status: HttpStatus.BadRequest, },);
       }
     }, {
+      params: ActorIdParams,
+      body: CharacterSystemsImportUrlBody,
       detail: {
         summary: "Import character systems data from URL",
         description:

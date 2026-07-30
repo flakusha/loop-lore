@@ -5,9 +5,10 @@
  * visibility overrides, license overrides, bans, approvals, restrictions.
  * Requires admin role.
  */
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
+import { AdminOverrideCreateBody, Id, } from "../validation/schemas";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -99,18 +100,8 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
-
-      const action = body.action as string | undefined;
-      const visibilityOverride = body.visibilityOverride as string | undefined;
-      const licenseOverride = body.licenseOverride as string | undefined;
-      const reason = body.reason as string | undefined;
-      const expiresAt = body.expiresAt as string | undefined;
-
-      if (!action) {
-        return jsonError({ message: "action is required", status: HttpStatus.BadRequest, },);
-      }
+      const { actorId, } = ctx.params;
+      const { action, visibilityOverride, licenseOverride, reason, expiresAt, } = ctx.body;
 
       const id = crypto.randomUUID();
       await database
@@ -119,9 +110,9 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
           id,
           actor_id: actorId,
           admin_id: userId,
-          action: action as any,
-          visibility_override: (visibilityOverride as any) ?? null,
-          license_override: (licenseOverride as any) ?? null,
+          action,
+          visibility_override: visibilityOverride ?? null,
+          license_override: licenseOverride ?? null,
           reason: reason ?? null,
           expires_at: expiresAt ?? null,
           created_at: new Date().toISOString(),
@@ -130,6 +121,8 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
 
       return jsonCreated({ id, },);
     }, {
+      params: t.Object({ actorId: Id, },),
+      body: AdminOverrideCreateBody,
       detail: {
         summary: "Create a character override",
         description:
