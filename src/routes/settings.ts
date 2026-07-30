@@ -107,6 +107,10 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
         return handleGetSettings(database, userId,);
       },
       {
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Get settings",
           description: "Get the authenticated user's settings (models, generation, UI preferences).",
@@ -124,6 +128,11 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
       },
       {
         body: t.Any(),
+        response: {
+          200: t.Any(),
+          400: ErrorResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Update settings",
           description: "Merge partial settings into the authenticated user's existing settings.",
@@ -139,6 +148,10 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
         return handleExportAll(database, userId,);
       },
       {
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Export settings",
           description: "Export all user settings as a downloadable JSON file.",
