@@ -84,7 +84,7 @@ export interface CharacterStats {
   /** XP to next level */
   xp_to_next: Generated<number>;
   /** Data version for optimistic concurrency */
-  data_version: Generated<number>;
+  format_version: Generated<number>;
   /** Created timestamp */
   created_at: Generated<string>;
   /** Updated timestamp */
