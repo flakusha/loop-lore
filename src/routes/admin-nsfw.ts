@@ -61,6 +61,13 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
           t,
         },);
       }
+    }, {
+      detail: {
+        summary: "Get NSFW configuration",
+        description:
+          "Retrieve the current server-wide NSFW policy settings including content allowance and minimum age.",
+        tags: ["Admin", "NSFW",],
+      },
     },)
     // ── Update NSFW config ────────────────────────────────
     .put(
@@ -103,6 +110,13 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
           },);
         }
       },
+      {
+        detail: {
+          summary: "Update NSFW configuration",
+          description: "Update server-wide NSFW policy settings. Admin role required.",
+          tags: ["Admin", "NSFW",],
+        },
+      },
     )
     // ── List character NSFW policies ──────────────────────
     .get("/api/admin/nsfw/policy", async (ctx: any,) => {
@@ -130,5 +144,11 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
           t,
         },);
       }
+    }, {
+      detail: {
+        summary: "List character NSFW policies",
+        description: "Retrieve all characters with non-SFW content ratings. Admin role required.",
+        tags: ["Admin", "NSFW",],
+      },
     },);
 }

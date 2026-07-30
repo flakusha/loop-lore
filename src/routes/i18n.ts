@@ -41,6 +41,12 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
         locales,
         default: "en",
       },);
+    }, {
+      detail: {
+        summary: "List supported locales",
+        description: "Retrieve all supported locales with metadata including native name and text direction.",
+        tags: ["i18n",],
+      },
     },)
     .patch(
       "/api/i18n/locale",
@@ -85,6 +91,13 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
 
         return jsonResponse({ locale: newLocale, },);
       },
-      { body: t.Object({ locale: t.String(), },), },
+      {
+        body: t.Object({ locale: t.String(), },),
+        detail: {
+          summary: "Set user locale",
+          description: "Update the authenticated user's preferred locale setting.",
+          tags: ["i18n",],
+        },
+      },
     );
 }

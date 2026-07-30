@@ -312,6 +312,12 @@ export function chatExportRoutes(opts: HandlerOpts,) {
         },),
         /* eslint-enable unicorn/max-nested-calls */
       ),
+      detail: {
+        summary: "Export chat in requested format",
+        description:
+          "Export a chat's messages as Markdown, JSON, HTML, or plain text. Supports only confirmed, visible messages from the authenticated user's chats.",
+        tags: ["Chats", "Export",],
+      },
     },
   );
 }

@@ -78,5 +78,12 @@ export function frontendLogsRoutes() {
     }
 
     return jsonResponse({ ok: true, ingested: body.entries.length, },);
+  }, {
+    detail: {
+      summary: "Ingest frontend logs",
+      description:
+        "Accept a batch of browser-side log entries and write them through the server-side logger for production visibility.",
+      tags: ["Logs",],
+    },
   },);
 }

@@ -45,6 +45,12 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
           status: HttpStatus.InternalServerError,
         },);
       }
+    }, {
+      detail: {
+        summary: "List actor encryption keys",
+        description: "Returns all encryption keys for the authenticated user.",
+        tags: ["Admin", "Keys",],
+      },
     },)
     // ── Generate new named key ─────────────────────────────────
     .post(
@@ -92,7 +98,14 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
           },);
         }
       },
-      { body: t.Object({ name: t.String(), },), },
+      {
+        body: t.Object({ name: t.String(), },),
+        detail: {
+          summary: "Generate a new named encryption key",
+          description: "Creates a new encryption key with the given name for the authenticated user.",
+          tags: ["Admin", "Keys",],
+        },
+      },
     )
     // ── Rotate primary key ─────────────────────────────────────
     .post("/api/keys/rotate", async (ctx: any,) => {
@@ -128,6 +141,13 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
           status: HttpStatus.InternalServerError,
         },);
       }
+    }, {
+      detail: {
+        summary: "Rotate the primary encryption key",
+        description:
+          "Generates a new primary key and marks the old one as expired. Previous keys cannot be used for new encryptions.",
+        tags: ["Admin", "Keys",],
+      },
     },)
     // ── Revoke key (irreversible) ──────────────────────────────
     .delete(
@@ -170,6 +190,13 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
           },);
         }
       },
-      { params: t.Object({ id: t.String(), },), },
+      {
+        params: t.Object({ id: t.String(), },),
+        detail: {
+          summary: "Revoke an encryption key",
+          description: "Irreversibly revokes a key. Messages encrypted with this key become inaccessible.",
+          tags: ["Admin", "Keys",],
+        },
+      },
     );
 }

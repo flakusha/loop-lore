@@ -117,5 +117,12 @@ export function activityRoutes({ database, }: { database: Kysely<DB> },) {
     }
     const chats = await computeActivity(database, userId,);
     return jsonResponse({ chats, } satisfies ActivityResponse,);
+  }, {
+    detail: {
+      summary: "Get per-chat unseen message counts",
+      description:
+        "Polls for unseen message counts per chat the authenticated user belongs to. Returns a dict of chatId to unseenCount, lastMessageCreatedAt, and chatName.",
+      tags: ["Activity",],
+    },
   },);
 }

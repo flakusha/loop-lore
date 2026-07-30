@@ -87,10 +87,22 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({ id: t.String(), },),
+          detail: {
+            summary: "Get grouped reactions for a message",
+            description:
+              "Returns all reactions on a message grouped by emoji, with counts and whether the current user reacted.",
+            tags: ["Messages", "Reactions",],
+          },
         },
       )
       // GET /api/messages/quick-emojis — available emoji list
-      .get("/api/messages/quick-emojis", () => QUICK_EMOJIS,)
+      .get("/api/messages/quick-emojis", () => QUICK_EMOJIS, {
+        detail: {
+          summary: "Get available quick emoji list",
+          description: "Returns the curated list of quick-select emojis available for reactions.",
+          tags: ["Messages", "Reactions",],
+        },
+      },)
       // POST /api/messages/:id/reactions — toggle reaction
       .post(
         "/api/messages/:id/reactions",
@@ -143,6 +155,12 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         {
           params: t.Object({ id: t.String(), },),
           body: t.Object({ emoji: t.String(), },),
+          detail: {
+            summary: "Toggle a reaction on a message",
+            description:
+              "Adds a reaction if the user hasn't reacted with that emoji, removes it if they have. Max 8 unique emojis per message.",
+            tags: ["Messages", "Reactions",],
+          },
         },
       )
       // DELETE /api/messages/:id/reactions — remove user's all reactions
@@ -182,6 +200,11 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({ id: t.String(), },),
+          detail: {
+            summary: "Remove all user reactions from a message",
+            description: "Deletes all reactions the authenticated user has on the specified message.",
+            tags: ["Messages", "Reactions",],
+          },
         },
       )
   );
