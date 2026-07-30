@@ -1,7 +1,7 @@
 <!-- New Chat Form -->
 <header id="header-slot" class="main-header" data-page="new-chat" data-testid="new-chat-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">New Chat</span>
+  <span class="title">{{{t("chats.newChatTitle")}}}</span>
 </header>
 
 <div class="app-layout">
@@ -13,8 +13,8 @@
       <div style="width: 100%; max-width: 480px; margin: 0 auto; padding: 0 var(--space-4)">
         <div class="empty-state" style="margin-bottom: var(--space-6)">
           <div class="icon">💬</div>
-          <div class="title">Start a New Conversation</div>
-          <div class="description">Choose a chat type and add participants to begin.</div>
+          <div class="title">{{{t("chats.startNewConversation")}}}</div>
+          <div class="description">{{{t("chats.chooseChatType")}}}</div>
         </div>
 
         <form id="create-chat-form" data-testid="create-chat-form">
@@ -31,27 +31,27 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label" for="chat-type">Chat Type</label>
+            <label class="form-label" for="chat-type">{{{t("chats.chatType")}}}</label>
             <select class="form-select" name="type" id="chat-type" data-testid="chat-type-select">
-              <option value="direct">1-on-1 Chat</option>
-              <option value="group">Group Chat</option>
+              <option value="direct">{{{t("chats.direct")}}}</option>
+              <option value="group">{{{t("chats.group")}}}</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="chat-mode">Chat Mode</label>
+            <label class="form-label" for="chat-mode">{{{t("chats.chatMode")}}}</label>
             <select class="form-select" name="mode" id="chat-mode" data-testid="chat-mode-select">
-              <option value="direct">Chat</option>
-              <option value="story">Roleplay / Story</option>
+              <option value="direct">{{{t("chats.direct")}}}</option>
+              <option value="story">{{{t("chats.roleplayStory")}}}</option>
             </select>
           </div>
           <div class="form-group" id="participant-group">
-            <label class="form-label" for="participant-search">Character / Participant</label>
+            <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>
             <div style="position: relative">
               <input
                 type="text"
                 class="form-input"
                 id="participant-search"
-                placeholder="Search characters..."
+                x-bind:placeholder="t('chats.searchCharacters')"
                 autocomplete="off"
                 data-testid="participant-search"
               />
@@ -70,33 +70,33 @@
             <div class="form-group" id="impersonate-group" style="display: none; margin-top: var(--space-3)">
               <label class="form-label" style="display: flex; align-items: center; gap: var(--space-2)">
                 <input type="checkbox" id="impersonate-toggle" />
-                Impersonate character (play as them)
+                {{{t("chats.impersonateCharacter")}}}
               </label>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label" for="persona-select">Your Persona</label>
+            <label class="form-label" for="persona-select">{{{t("chats.yourPersona")}}}</label>
             <select class="form-select" id="persona-select" data-testid="persona-select">
-              <option value="">Default</option>
+              <option value="">{{{t("chats.default")}}}</option>
             </select>
           </div>
           <div class="form-group" id="memory-carry-group" style="display: none">
-            <label class="form-label">Memory Carry</label>
+            <label class="form-label">{{{t("chats.memoryCarry")}}}</label>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-2)">
-              Choose which memories the character brings into this chat.
+              {{{t("chats.memoryCarryDescription")}}}
             </p>
             <div style="display: flex; flex-direction: column; gap: var(--space-2)">
               <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer">
                 <input type="radio" name="memory_carry" value="full" checked />
-                Full carry — all memories included (default)
+                {{{t("chats.fullCarry")}}}
               </label>
               <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer">
                 <input type="radio" name="memory_carry" value="selective" />
-                Selective — pick specific memories
+                {{{t("chats.selectiveCarry")}}}
               </label>
               <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer">
                 <input type="radio" name="memory_carry" value="fresh" />
-                Start fresh — no memories carried forward
+                {{{t("chats.startFresh")}}}
               </label>
             </div>
             <!-- Selective memory list -->
