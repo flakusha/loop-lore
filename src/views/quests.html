@@ -104,14 +104,14 @@
           <!-- Loading -->
           <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
             <div class="icon">⏳</div>
-            <div class="title">Loading quests...</div>
+            <div class="title">{{{t("quests.loading")}}}</div>
           </div>
 
           <!-- Quest list -->
           <template x-if="!loading">
             <div>
               <div x-show="quests.length === 0" class="empty-state" style="padding: var(--space-8)">
-                <div class="title">No quests found</div>
+                <div class="title">{{{t("quests.noQuestsFound")}}}</div>
                 <div class="description">Create a quest to start an adventure.</div>
               </div>
               <div style="display: grid; gap: var(--space-3)">
@@ -198,7 +198,9 @@
                           </label>
                         </div>
                         <div style="display: flex; gap: var(--space-2); flex-wrap: wrap">
-                          <button class="btn btn-primary btn-xs" @click="saveQuest(q.id)">Save</button>
+                          <button class="btn btn-primary btn-xs" @click="saveQuest(q.id)">
+                            {{{t("common.save")}}}
+                          </button>
                           <button class="btn btn-secondary btn-xs" @click="advanceQuest(q.id)">
                             Advance Progress
                           </button>
