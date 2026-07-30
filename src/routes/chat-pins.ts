@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { notFound, unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -47,6 +48,11 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({ id: t.String(), },),
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "List pinned messages in a chat",
             description: "Returns all pinned messages for a chat, ordered by pin date.",
@@ -114,6 +120,11 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         {
           params: t.Object({ id: t.String(), },),
           body: t.Object({ messageId: t.String(), },),
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Pin a message in a chat",
             description: "Pins a message to the chat. Requires chat ownership, admin role, or participant status.",
@@ -161,6 +172,11 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({ id: t.String(), pinId: t.String(), },),
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Unpin a message from a chat",
             description: "Removes a pin from a message. Requires pin ownership, chat ownership, or admin role.",

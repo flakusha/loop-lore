@@ -18,7 +18,7 @@ import type { DB, } from "../db/schema";
 import { cancelGenerationByChat, } from "../generation/cancellation-manager";
 import { isValidRegenStyle, type RegenStyle, } from "../generation/smart-regen";
 import { getLogger, } from "../logger";
-import { ChatIdParams, } from "../validation/schemas";
+import { ChatIdParams, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import {
   ErrorCode,
   HttpStatus,
@@ -213,6 +213,11 @@ export function chatContextRoutes(opts: HandlerOpts,): Elysia {
       },
       {
         params: ChatIdParams,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
       },
     )
     .post(
@@ -235,6 +240,11 @@ export function chatContextRoutes(opts: HandlerOpts,): Elysia {
       },
       {
         body: regenerateBodySchema,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
       },
     ) as unknown as Elysia;
 }
