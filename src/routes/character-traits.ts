@@ -6,6 +6,7 @@
  */
 import { Elysia, } from "elysia";
 import { TraitsService, } from "../characters/services/traits-service";
+import type { TranslatorFn, } from "../i18n/types";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -18,37 +19,40 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     // ── Permanent Traits (Layer 0) ──────────────────────────
     .get("/api/actors/:actorId/traits/permanent", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const traits = await traitsService.getPermanentTraits(actorId,);
       return jsonResponse(traits,);
     },)
     .get("/api/actors/:actorId/traits/permanent/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const trait = await traitsService.getPermanentTrait(actorId, traitName,);
-      if (!trait) { return jsonError({ message: "Trait not found", status: HttpStatus.NotFound, },); }
+      if (!trait) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },); }
       return jsonResponse(trait,);
     },)
     .post("/api/actors/:actorId/traits/permanent", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -57,7 +61,7 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       const value = body.value as string | undefined;
 
       if (!category || !name || !value) {
-        return jsonError({ message: "category, name, and value are required", status: HttpStatus.BadRequest, },);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
       const traitId = await traitsService.createPermanentTrait({
@@ -70,18 +74,19 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     .put("/api/actors/:actorId/traits/permanent/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const body = ctx.body as Record<string, unknown>;
 
       const value = body.value as string | undefined;
       if (!value) {
-        return jsonError({ message: "value is required", status: HttpStatus.BadRequest, },);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
       await traitsService.updatePermanentTrait(actorId, {
@@ -92,12 +97,13 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     .delete("/api/actors/:actorId/traits/permanent/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       await traitsService.deletePermanentTrait(actorId, traitName,);
       return jsonNoContent();
@@ -105,37 +111,40 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     // ── World Traits (Layer 2) ──────────────────────────────
     .get("/api/actors/:actorId/traits/world/:worldId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, worldId, } = ctx.params as { actorId: string; worldId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const traits = await traitsService.getWorldTraits(actorId, worldId,);
       return jsonResponse(traits,);
     },)
     .get("/api/actors/:actorId/traits/world/:worldId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const trait = await traitsService.getWorldTrait(actorId, worldId, traitName,);
-      if (!trait) { return jsonError({ message: "Trait not found", status: HttpStatus.NotFound, },); }
+      if (!trait) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },); }
       return jsonResponse(trait,);
     },)
     .post("/api/actors/:actorId/traits/world/:worldId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, worldId, } = ctx.params as { actorId: string; worldId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -144,7 +153,7 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       const value = body.value as string | undefined;
 
       if (!category || !name || !value) {
-        return jsonError({ message: "category, name, and value are required", status: HttpStatus.BadRequest, },);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
       const traitId = await traitsService.createWorldTrait({
@@ -158,18 +167,19 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     .put("/api/actors/:actorId/traits/world/:worldId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const body = ctx.body as Record<string, unknown>;
 
       const value = body.value as string | undefined;
       if (!value) {
-        return jsonError({ message: "value is required", status: HttpStatus.BadRequest, },);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
       await traitsService.updateWorldTrait(actorId, worldId, {
@@ -180,12 +190,13 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     .delete("/api/actors/:actorId/traits/world/:worldId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       await traitsService.deleteWorldTrait(actorId, worldId, traitName,);
       return jsonNoContent();
@@ -193,19 +204,21 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     // ── Location Traits (Layer 3) ───────────────────────────
     .get("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, locationId, } = ctx.params as { actorId: string; locationId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const traits = await traitsService.getLocationTraits(actorId, locationId,);
       return jsonResponse(traits,);
     },)
     .get("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, locationId, traitName, } = ctx.params as {
         actorId: string;
@@ -214,20 +227,21 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const trait = await traitsService.getLocationTrait(actorId, locationId, traitName,);
-      if (!trait) { return jsonError({ message: "Trait not found", status: HttpStatus.NotFound, },); }
+      if (!trait) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },); }
       return jsonResponse(trait,);
     },)
     .post("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, locationId, } = ctx.params as { actorId: string; locationId: string };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -238,7 +252,7 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       const effects = body.effects as Record<string, unknown> | undefined;
 
       if (!name || !value) {
-        return jsonError({ message: "name and value are required", status: HttpStatus.BadRequest, },);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
       const traitId = await traitsService.createLocationTrait({
@@ -254,7 +268,8 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     .put("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, locationId, traitName, } = ctx.params as {
         actorId: string;
@@ -263,7 +278,7 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       const body = ctx.body as Record<string, unknown>;
 
@@ -273,7 +288,7 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       const effects = body.effects as Record<string, unknown> | undefined;
 
       if (!value) {
-        return jsonError({ message: "value is required", status: HttpStatus.BadRequest, },);
+        return jsonError({ message: "errors.missingField", status: HttpStatus.BadRequest, t, },);
       }
 
       await traitsService.updateLocationTrait(actorId, locationId, {
@@ -287,7 +302,8 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     .delete("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
 
       const { actorId, locationId, traitName, } = ctx.params as {
         actorId: string;
@@ -296,7 +312,7 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       };
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       await traitsService.deleteLocationTrait(actorId, locationId, traitName,);
       return jsonNoContent();
