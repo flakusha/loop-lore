@@ -7,35 +7,15 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
+import type { MoodCreateInput, MoodEventInput, MoodUpdateInput, } from "../../validation/schemas";
 import { guardNotExists, withWorldId, } from "./shared-service-utils";
 
-/** Options for creating mood state */
-export interface CreateMoodOpts {
-  actorId: string;
-  worldId?: string;
-  happiness?: number;
-  baseMood?: string;
-  moodStability?: number;
-}
-
+/** Options for creating mood state (body + actorId from params) */
+export type CreateMoodOpts = MoodCreateInput & { actorId: string };
 /** Options for updating mood */
-export interface UpdateMoodOpts {
-  happiness?: number;
-  currentMood?: string;
-  moodStability?: number;
-  expressionModifiers?: Record<string, number>;
-}
-
-/** Options for logging a mood event */
-export interface LogMoodEventOpts {
-  actorId: string;
-  worldId?: string;
-  eventType: string;
-  happinessDelta: number;
-  moodOverride?: string;
-  source: string;
-  sourceId?: string;
-}
+export type UpdateMoodOpts = MoodUpdateInput;
+/** Options for logging a mood event (body + actorId from params) */
+export type LogMoodEventOpts = MoodEventInput & { actorId: string };
 
 /** Mood state with expression modifiers */
 export interface MoodState {

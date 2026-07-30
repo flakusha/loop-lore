@@ -4,8 +4,18 @@
  * API endpoints for managing character mood, happiness meter,
  * and expression modifiers.
  */
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { MoodService, } from "../characters/services/mood-service";
+import {
+  ActorIdParams,
+  ErrorResponse,
+  MoodCreateBody,
+  MoodDeltaBody,
+  MoodEventBody,
+  MoodStateResponse,
+  MoodUpdateBody,
+  SuccessResponse,
+} from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -24,8 +34,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const worldId = ctx.query.worldId as string | undefined;
+      const { actorId, } = ctx.params;
+      const worldId = ctx.query.worldId;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -43,6 +53,12 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(mood,);
     }, {
+      params: ActorIdParams,
+      response: {
+        200: MoodStateResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get actor mood",
         description: "Get the current mood state for an actor.",
@@ -58,8 +74,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { actorId, } = ctx.params;
+      const { worldId, happiness, baseMood, moodStability, } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -67,11 +83,6 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-
-      const worldId = body.worldId as string | undefined;
-      const happiness = body.happiness as number | undefined;
-      const baseMood = body.baseMood as string | undefined;
-      const moodStability = body.moodStability as number | undefined;
 
       const moodId = await moodService.createMood({
         actorId,
@@ -82,6 +93,13 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },);
       return jsonCreated({ id: moodId, },);
     }, {
+      params: ActorIdParams,
+      body: MoodCreateBody,
+      response: {
+        201: t.Object({ id: t.String(), }),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Create actor mood",
         description: "Create a new mood state for an actor.",
@@ -97,8 +115,14 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { actorId, } = ctx.params;
+      const {
+        worldId,
+        happiness,
+        currentMood,
+        moodStability,
+        expressionModifiers,
+      } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -106,12 +130,6 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-
-      const worldId = body.worldId as string | undefined;
-      const happiness = body.happiness as number | undefined;
-      const currentMood = body.currentMood as string | undefined;
-      const moodStability = body.moodStability as number | undefined;
-      const expressionModifiers = body.expressionModifiers as Record<string, number> | undefined;
 
       await moodService.updateMood(actorId, worldId, {
         happiness,
@@ -121,6 +139,13 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },);
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorIdParams,
+      body: MoodUpdateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update actor mood",
         description: "Update an actor's mood (happiness, current mood, stability, expression modifiers).",
@@ -136,8 +161,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { actorId, } = ctx.params;
+      const { worldId, delta, } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -146,16 +171,16 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const worldId = body.worldId as string | undefined;
-      const delta = body.delta as number | undefined;
-
-      if (delta === undefined) {
-        return jsonError({ message: "delta is required", status: HttpStatus.BadRequest, },);
-      }
-
       const mood = await moodService.applyHappinessDelta(actorId, worldId, delta,);
       return jsonResponse(mood,);
     }, {
+      params: ActorIdParams,
+      body: MoodDeltaBody,
+      response: {
+        200: MoodStateResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Apply happiness delta",
         description: "Apply a happiness change (delta) to an actor's mood.",
@@ -171,27 +196,20 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { actorId, } = ctx.params;
+      const {
+        worldId,
+        eventType,
+        happinessDelta,
+        moodOverride,
+        source,
+        sourceId,
+      } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
           message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
           status: HttpStatus.NotFound,
-        },);
-      }
-
-      const worldId = body.worldId as string | undefined;
-      const eventType = body.eventType as string | undefined;
-      const happinessDelta = body.happinessDelta as number | undefined;
-      const moodOverride = body.moodOverride as string | undefined;
-      const source = body.source as string | undefined;
-      const sourceId = body.sourceId as string | undefined;
-
-      if (!eventType || happinessDelta === undefined || !source) {
-        return jsonError({
-          message: "eventType, happinessDelta, and source are required",
-          status: HttpStatus.BadRequest,
         },);
       }
 
@@ -206,6 +224,13 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },);
       return jsonCreated({ id: eventId, },);
     }, {
+      params: ActorIdParams,
+      body: MoodEventBody,
+      response: {
+        201: t.Object({ id: t.String(), }),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Log mood event",
         description: "Log a mood event with happiness delta and optional mood override.",
@@ -221,9 +246,9 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const worldId = ctx.query.worldId as string | undefined;
-      const limit = Number(ctx.query.limit,) || 50;
+      const { actorId, } = ctx.params;
+      const worldId = ctx.query.worldId;
+      const limit = ctx.query.limit;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -235,6 +260,22 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       const events = await moodService.getEvents(actorId, worldId, limit,);
       return jsonResponse(events,);
     }, {
+      params: ActorIdParams,
+      response: {
+        200: t.Array(t.Object({
+          id: t.String(),
+          actorId: t.String(),
+          worldId: t.Optional(t.String()),
+          eventType: t.String(),
+          happinessDelta: t.Number(),
+          moodOverride: t.Optional(t.String()),
+          source: t.String(),
+          sourceId: t.Optional(t.String()),
+          createdAt: t.Optional(t.String()),
+        })),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List mood events",
         description: "List mood events for an actor, optionally filtered by world.",
