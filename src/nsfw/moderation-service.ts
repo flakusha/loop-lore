@@ -352,6 +352,54 @@ export class NsfwModerationService {
     this.log.info("Moderation data deleted for user", { userId, },);
   }
 
+  // ── Per-Chat/World NSFW Override ──────────────────────────
+
+  /**
+   * Get the effective NSFW setting for a chat, considering chat override,
+   * world override, and user preference in that order.
+   */
+  async getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }> {
+    // 1. Check chat-level override
+    const chat = await this.db.selectFrom("chats",)
+      .select(["nsfw_override", "world_id",])
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    if (chat?.nsfw_override === "enabled") { return { enabled: true, source: "chat_override", }; }
+    if (chat?.nsfw_override === "disabled") { return { enabled: false, source: "chat_override", }; }
+
+    // 2. Check world-level override (if chat has a world)
+    if (chat?.world_id) {
+      const world = await this.db.selectFrom("worlds",)
+        .select("nsfw_override",)
+        .where("id", "=", chat.world_id,)
+        .executeTakeFirst();
+      if (world?.nsfw_override === "enabled") { return { enabled: true, source: "world_override", }; }
+      if (world?.nsfw_override === "disabled") { return { enabled: false, source: "world_override", }; }
+    }
+
+    // 3. Fall back to user preference
+    const prefs = await this.getPreferences(userId,);
+    return { enabled: prefs.nsfwEnabled, source: "user_preference", };
+  }
+
+  /** Set NSFW override for a chat. Pass null to clear (revert to user pref). */
+  async setChatNsfwOverride(chatId: string, override: "enabled" | "disabled" | null,): Promise<void> {
+    await this.db.updateTable("chats",)
+      .set({ nsfw_override: override, },)
+      .where("id", "=", chatId,)
+      .execute();
+    this.log.info("Chat NSFW override updated", { chatId, override, },);
+  }
+
+  /** Set NSFW override for a world. Pass null to clear (revert to user pref). */
+  async setWorldNsfwOverride(worldId: string, override: "enabled" | "disabled" | null,): Promise<void> {
+    await this.db.updateTable("worlds",)
+      .set({ nsfw_override: override, },)
+      .where("id", "=", worldId,)
+      .execute();
+    this.log.info("World NSFW override updated", { worldId, override, },);
+  }
+
   async recordAction(
     params: {
       actionType: string;
