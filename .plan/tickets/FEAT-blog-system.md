@@ -1,6 +1,6 @@
 # FEAT: Blog System
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial (see epic)
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-blog-system

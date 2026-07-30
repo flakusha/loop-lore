@@ -1,6 +1,6 @@
 # EPIC: Blog System
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial (core CRUD + comments + follows + moderation built)
 **Priority:** Medium
 **Effort:** High
 **Issue:** `8b193c8`
