@@ -156,10 +156,11 @@ function isLocalIPv4(ip: string,): boolean {
   const d = parseInt(parts[3]!, 10,);
   if (isNaN(a,) || isNaN(b,) || isNaN(c,) || isNaN(d,)) { return false; }
 
-  const addr = (a << 24) | (b << 16) | (c << 8) | d;
+  // Use unsigned arithmetic to avoid sign extension issues
+  const addr = (a * 16_777_216) + (b * 65_536) + (c * 256) + d;
 
   for (const range of LOCAL_IPV4_RANGES) {
-    if ((addr & range.mask) === range.network) { return true; }
+    if (((addr & range.mask) >>> 0) === range.network) { return true; }
   }
   return false;
 }
