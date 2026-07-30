@@ -6,22 +6,6 @@ describe("Characters flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-    // Login via demo endpoint so API calls requiring auth work
-    // Use page.evaluate so the cookie is set in the browser context
-    const page = await ctx.browser.newPage();
-    await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
-    // Click demo-login button (htmx POST → sets cookie → redirect)
-    const demoBtn = page.locator("[data-testid='demo-login']",);
-    if (await demoBtn.isVisible({ timeout: 3000, }).catch(() => false,)) {
-      await demoBtn.click();
-      await page.waitForURL("**/views/**", { timeout: 5000, },).catch(() => {},);
-    } else {
-      // Fallback: direct fetch from page context
-      await page.evaluate(async (url: string,) => {
-        await fetch(`${url}/api/demo-login`, { method: "POST", },);
-      }, ctx.url,);
-    }
-    await page.close();
   }, 45_000,);
 
   afterAll(async () => {
