@@ -16,7 +16,7 @@ import { encryptValue, } from "../crypto";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { forbidden, notFound, } from "../validation/middleware";
-import { ApiKeyCreateBody, } from "../validation/schemas";
+import { ApiKeyCreateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config },) {
@@ -39,6 +39,10 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
 
       return jsonResponse(keys,);
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List user's stored API keys",
         description: "Returns all BYO API keys stored by the authenticated user, showing provider name and timestamps.",
@@ -115,6 +119,10 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
       return jsonResponse({ ok: true, provider: providerName, },);
     }, {
       body: ApiKeyCreateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Store or update a BYO API key",
         description:
@@ -143,6 +151,9 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
 
       return new Response(null, { status: 204, },);
     }, {
+      response: {
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Delete a stored API key",
         description: "Permanently removes the stored API key for the specified provider.",
