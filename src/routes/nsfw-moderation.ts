@@ -15,7 +15,9 @@ function log(): Logger {
   return getLogger().child({ module: "nsfw-moderation-routes", },);
 }
 
-interface HandlerOpts { database: Kysely<DB>; }
+interface HandlerOpts {
+  database: Kysely<DB>;
+}
 
 // ── Extracted schemas (avoid nesting depth lint) ──────────
 const userIdParam = t.Object({ userId: t.String(), },);
@@ -51,7 +53,7 @@ const flagQuery = t.Object({
 const resolveFlagBody = t.Object({
   resolvedBy: t.String(),
   resolution: t.String(),
-  status: t.Union([t.Literal("resolved",), t.Literal("dismissed",), t.Literal("upheld",)],),
+  status: t.Union([t.Literal("resolved",), t.Literal("dismissed",), t.Literal("upheld",),],),
 },);
 const auditQuery = t.Object({
   limit: t.Optional(t.String(),),
@@ -62,7 +64,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
   const svc = new NsfwModerationService(opts.database,);
 
   return new Elysia({ name: "nsfw-moderation", },)
-
     // ── User Preferences ───────────────────────────────
 
     .get("/api/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
@@ -75,7 +76,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(msg, 500,);
       }
     }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-
     .put("/api/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
       try {
         const prefs = await svc.updatePreferences(ctx.params.userId, ctx.body,);
@@ -85,7 +85,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(msg, 500,);
       }
     }, { params: userIdParam, body: updatePrefsBody, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-
     // ── Block / Ban / Shadow ─────────────────────────
 
     .post("/api/nsfw/moderation/block", async (ctx: any,) => {
@@ -97,7 +96,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: blockBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     .post("/api/nsfw/moderation/unblock", async (ctx: any,) => {
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
@@ -107,7 +105,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: unblockBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     .post("/api/nsfw/moderation/ban", async (ctx: any,) => {
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
@@ -117,7 +114,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     .post("/api/nsfw/moderation/unban", async (ctx: any,) => {
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
@@ -127,7 +123,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     .post("/api/nsfw/moderation/shadow", async (ctx: any,) => {
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
@@ -137,7 +132,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     .post("/api/nsfw/moderation/unshadow", async (ctx: any,) => {
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
@@ -147,7 +141,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     // ── Content Flags ────────────────────────────────
 
     .post("/api/nsfw/moderation/flags", async (ctx: any,) => {
@@ -158,19 +151,17 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 400,);
       }
     }, { body: flagBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-
     .get("/api/nsfw/moderation/flags", async (ctx: any,) => {
       try {
         const status = (ctx.query.status as string) ?? "pending";
         const limit = Number(ctx.query.limit ?? 50,);
         const offset = Number(ctx.query.offset ?? 0,);
-        const result = await svc.getFlagQueue({ status, limit, offset, });
+        const result = await svc.getFlagQueue({ status, limit, offset, },);
         return jsonResponse({ ...SuccessResponse, data: result, },);
       } catch (error: unknown) {
         return jsonError(error instanceof Error ? error.message : String(error,), 500,);
       }
     }, { query: flagQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-
     .put("/api/nsfw/moderation/flags/:id", async (ctx: any,) => {
       try {
         const { resolvedBy, resolution, status, } = ctx.body;
@@ -184,20 +175,18 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       body: resolveFlagBody,
       response: { 200: SuccessResponse, 400: ErrorResponse, },
     },)
-
     // ── Audit & GDPR ────────────────────────────────
 
     .get("/api/nsfw/moderation/audit/:userId", async (ctx: any,) => {
       try {
         const limit = Number(ctx.query.limit ?? 100,);
         const offset = Number(ctx.query.offset ?? 0,);
-        const actions = await svc.getAuditLog(ctx.params.userId, { limit, offset, });
+        const actions = await svc.getAuditLog(ctx.params.userId, { limit, offset, },);
         return jsonResponse({ ...SuccessResponse, data: actions, },);
       } catch (error: unknown) {
         return jsonError(error instanceof Error ? error.message : String(error,), 500,);
       }
     }, { params: userIdParam, query: auditQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-
     .get("/api/nsfw/moderation/export/:userId", async (ctx: any,) => {
       try {
         const data = await svc.exportUserData(ctx.params.userId,);
@@ -206,7 +195,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
         return jsonError(error instanceof Error ? error.message : String(error,), 500,);
       }
     }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-
     .delete("/api/nsfw/moderation/export/:userId", async (ctx: any,) => {
       try {
         await svc.deleteUserData(ctx.params.userId,);

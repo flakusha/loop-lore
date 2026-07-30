@@ -8,14 +8,17 @@
 import { type Kysely, sql, } from "kysely";
 
 export async function up(database: Kysely<any>,): Promise<void> {
-  const hasTable = await sql<{ tbl: number }>`SELECT 1 as tbl FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
+  const hasTable = await sql<
+    { tbl: number }
+  >`SELECT 1 as tbl FROM sqlite_master WHERE type = 'table' AND name = 'message_translations'`.execute(database,);
 
   if (!hasTable.rows[0]?.tbl) {
     await database.schema
       .createTable("message_translations",)
       .addColumn("id", "text", (col,) => col.primaryKey(),)
-      .addColumn("message_id", "text", (col,) => col.notNull()
-        .references("messages.id").onDelete("cascade",),)
+      .addColumn("message_id", "text", (col,) =>
+        col.notNull()
+          .references("messages.id",).onDelete("cascade",),)
       .addColumn("locale", "text", (col,) => col.notNull(),)
       .addColumn("content", "text", (col,) => col.notNull(),)
       .addColumn("provider", "text",)

@@ -216,9 +216,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
               case "standard_array": {
                 return jsonResponse({ method: "standard_array", array: standardArray(), },);
               }
-              default: {
+              default:
                 return jsonError("Unknown generation method", 400,);
-              }
             }
           } catch (error) {
             log().error("Failed to generate stats", error instanceof Error ? error : undefined,);

@@ -7,11 +7,11 @@
 
 ## P0 — Critical Path (Blocking)
 
-| Priority | Epic / Task                                                    | Key Deliverables                                                                                                                                                                  | Status                                             |
-| -------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| **P0**   | **Data Integrity Phase 1** — Config Guards & Backend Selection | • Reject `sqlite` when `INSTANCE_COUNT > 1`<br>• Warn on network filesystem WAL path<br>• Fix stale MySQL claim in `architecture.md`                                              | ✅ Complete — `src/config/load.ts`, tests passing |
-| **P0**   | **NSFW Moderation Safety Infrastructure**                      | • NSFW enable/disable per chat/user/world<br>• Non-public audit log of NSFW gate decisions<br>• Consent state tracking (from Shared Schemas)<br>• Generation boundary integration | 🟡 Partial — mechanics exist, safety infra missing |
-| **P0**   | **Shared Schemas** — Reputation, Consent, NSFW Rating          | • Unified `ReputationScore` (Social, Faction, NSFW)<br>• Unified `ConsentState` (NSFW + Chat Lifecycle)<br>• `NSFWContentRating` runtime enforcement at generation boundary       | ✅ Complete — `src/schemas/` implemented           |
+| Priority | Epic / Task                                                    | Key Deliverables                                                                                                                                                                  | Status                                                                    |
+| -------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **P0**   | **Data Integrity Phase 1** — Config Guards & Backend Selection | • Reject `sqlite` when `INSTANCE_COUNT > 1`<br>• Warn on network filesystem WAL path<br>• Fix stale MySQL claim in `architecture.md`                                              | ✅ Complete — `src/config/load.ts`, tests passing                         |
+| **P0**   | **NSFW Moderation Safety Infrastructure**                      | • NSFW enable/disable per chat/user/world<br>• Non-public audit log of NSFW gate decisions<br>• Consent state tracking (from Shared Schemas)<br>• Generation boundary integration | ✅ Complete — `src/nsfw/moderation-service.ts`, 14 endpoints, 3 DB tables |
+| **P0**   | **Shared Schemas** — Reputation, Consent, NSFW Rating          | • Unified `ReputationScore` (Social, Faction, NSFW)<br>• Unified `ConsentState` (NSFW + Chat Lifecycle)<br>• `NSFWContentRating` runtime enforcement at generation boundary       | ✅ Complete — `src/schemas/` implemented                                  |
 
 ---
 
@@ -30,14 +30,21 @@
 
 ## P1.5 — Accessibility
 
-> ✅ Complete as of 2026-07-31
+| Priority | Epic / Task                        | Key Deliverables                                                                                                                                                                      | Status       | Effort | Ticket |
+| -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------ | ------ |
+| **P1.5** | **Accessibility — remaining gaps** | • `focus-visible` CSS on all focusable elements<br>• Focus trap for modals<br>• Skip links<br>• Screen reader live regions<br>• Touch gesture library<br>• 44×44px mobile tap targets | 🟡 ~60% done | Medium | —      |
+
+**Next action**: Create `src/frontend/a11y/` module — focus-manager, touch-gestures, screen-reader utils, responsive helpers. Then add `a11y.css` (focus-visible, reduced-motion, high-contrast). Then wire skip links and modal focus traps in existing HTML templates.
 
 ---
 
 ## P2 — Core Workstream (Next Work)
 
-> **Emphasis**: VN mode, chat, assistant, tool calling, GM flows, authorization, access control, gallery. RPG mechanics deferred to P2-later.
-> **New**: GM-guided story creation — user as Game Master, guiding LLM characters in chat/group-chat to build a story together.
+| Priority | Epic                 | Key Deliverables                                                                | Status         | Ticket(s)                                                                                                                                                                                                |
+| -------- | -------------------- | ------------------------------------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P2**   | **RPG Mechanics**    | Dice engine, stat system, combat engine, XP/loot                                | ⬜ Not Started | [`TASK-rpg-mechanics-dice-stats.md`](TASK-rpg-mechanics-dice-stats.md), [`TASK-rpg-mechanics-combat.md`](TASK-rpg-mechanics-combat.md), [`TASK-rpg-mechanics-xp-loot.md`](TASK-rpg-mechanics-xp-loot.md) |
+| **P2**   | **Character System** | Multi-personality switching, mood/happiness meter, memory injection probability | ⬜ Not Started | [`TASK-character-system-p2.md`](TASK-character-system-p2.md)                                                                                                                                             |
+| **P2**   | **World Locations**  | Location discovery, travel time, world NPC integration                          | ⬜ Not Started | [`TASK-world-locations.md`](TASK-world-locations.md), [`TASK-exploration-discovery.md`](TASK-exploration-discovery.md)                                                                                   |
 
 ### P2 — Priority Tiers
 
@@ -268,13 +275,14 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 
 ## P3 — Advanced Features (Post-P2)
 
-| Priority | Epic                  | Key Deliverables                               | Status         | Ticket(s)                                                                                     |
-| -------- | --------------------- | ---------------------------------------------- | -------------- | --------------------------------------------------------------------------------------------- |
-| **P3**   | **Plugin Ecosystem**  | Plugin management API, marketplace, sandboxing | ⬜ Not Started | [`TASK-plugin-system.md`](TASK-plugin-system.md), [`TASK-plugin-management-api.md`](TASK-plugin-management-api.md), [`TASK-plugin-api-system.md`](TASK-plugin-api-system.md) |
-| **P3**   | **Three-Tier Memory** | Episodic/semantic/procedural memory tiers      | ⬜ Not Started | [`FEAT-memory-systems-three-tier.md`](FEAT-memory-systems-three-tier.md)                       |
-| **P3**   | **Artifact System**   | Code/docs/datasets as assets                   | ⬜ Not Started | [`TASK-artifact-system.md`](TASK-artifact-system.md)                                          |
-| **P3**   | **ComfyUI Integration** | Node discovery, workflow templates          | ⬜ Not Started | [`TASK-comfyui-node-discovery.md`](TASK-comfyui-node-discovery.md), [`FEAT-comfyui-plugin-workflow-templates.md`](FEAT-comfyui-plugin-workflow-templates.md) |
-| **P3**   | **Provider Ecosystem** | Anthropic/Ollama/Bedrock support           | ⬜ Not Started | [`FEAT-provider-plugin-ecosystem.md`](FEAT-provider-plugin-ecosystem.md)                       |
+| Priority | Epic                    | Key Deliverables                               | Status         | Ticket(s)                                                                                                                                                                    |
+| -------- | ----------------------- | ---------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P3**   | **Artifact System**     | Code/docs/datasets as assets                   | ⬜ Not Started | [`TASK-artifact-system.md`](TASK-artifact-system.md)                                                                                                                         |
+| **P3**   | **Visual Novel Mode**   | Image + text overlay, transitions, typewriter  | ⬜ Not Started | [`TASK-visual-novel-mode.md`](TASK-visual-novel-mode.md), [`TASK-chat-visual-novel-mode.md`](TASK-chat-visual-novel-mode.md)                                                 |
+| **P3**   | **Plugin Ecosystem**    | Plugin management API, marketplace, sandboxing | ⬜ Not Started | [`TASK-plugin-system.md`](TASK-plugin-system.md), [`TASK-plugin-management-api.md`](TASK-plugin-management-api.md), [`TASK-plugin-api-system.md`](TASK-plugin-api-system.md) |
+| **P3**   | **Three-Tier Memory**   | Episodic/semantic/procedural memory tiers      | ⬜ Not Started | [`FEAT-memory-systems-three-tier.md`](FEAT-memory-systems-three-tier.md)                                                                                                     |
+| **P3**   | **ComfyUI Integration** | Node discovery, workflow templates             | ⬜ Not Started | [`TASK-comfyui-node-discovery.md`](TASK-comfyui-node-discovery.md), [`FEAT-comfyui-plugin-workflow-templates.md`](FEAT-comfyui-plugin-workflow-templates.md)                 |
+| **P3**   | **Provider Ecosystem**  | Anthropic/Ollama/Bedrock support               | ⬜ Not Started | [`FEAT-provider-plugin-ecosystem.md`](FEAT-provider-plugin-ecosystem.md)                                                                                                     |
 
 ### P3 — Next Actions (After P2 complete)
 
@@ -290,7 +298,7 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 
 | Gate       | Trigger | Criteria                                                                                                                                                                                         |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Gate A** | Post-P0 | All observability + testing infrastructure stable; Data Integrity Phase 1 complete; NSFW moderation live; Shared schemas enforced                                                                |
+| **Gate A** | Post-P0 | ✅ All P0 items complete: Data Integrity Phase 1, NSFW moderation safety infra, Shared Schemas enforced                                                                                          |
 | **Gate B** | Post-P1 | Import/Export + Admin functional with encryption; NSFW integrations complete; Battle integrations complete; Data Integrity Phase 2 complete; Memory tiers wired with UI + cross-chat persistence |
 | **Gate C** | Post-P2 | VN mode wired; chat system functional; assistant + tool calling integrated; GM flows operational; GM-guided story creation implemented; auth/access controls live; gallery usable                                                   |
 | **Gate D** | Post-P3 | Advanced features + plugin ecosystem operational                                                                                                                                                 |
