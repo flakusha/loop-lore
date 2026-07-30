@@ -83,6 +83,11 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
       },
       {
         body: UserProfileUpdateBody,
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Update current user",
           description: "Update the authenticated user's profile (display name, birth date, settings).",
@@ -114,6 +119,12 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
       },
       {
         params: UserIdParams,
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get user by ID",
           description: "Get a user's profile by ID. Admin only.",
@@ -160,6 +171,12 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
       {
         body: UserProfileUpdateBody,
         params: UserIdParams,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update user by ID",
           description: "Update a user's profile. Users can update their own; admins can update any.",
@@ -197,6 +214,12 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         return jsonResponse({ ok: true, },);
       },
       {
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Patch current user settings",
           description: "Merge partial settings into the authenticated user's existing settings.",
@@ -241,6 +264,12 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
       },
       {
         params: UserIdParams,
+        response: {
+          200: t.Any(),
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+        },
         detail: {
           summary: "Replace user settings",
           description: "Replace a user's settings entirely. Users can update their own; admins can update any.",
@@ -264,6 +293,11 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
       },
       {
         params: UserIdParams,
+        response: {
+          204: t.Void(),
+          401: ErrorResponse,
+          403: ErrorResponse,
+        },
         detail: {
           summary: "Delete user",
           description: "Delete a user. Admin only.",

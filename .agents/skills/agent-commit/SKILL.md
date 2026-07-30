@@ -35,8 +35,20 @@ AGENT_GPG_NAME="<committer name>"
 AGENT_GPG_EMAIL="<committer email>"
 ```
 
-The script `scripts/worktree.sh` sources this file automatically. For
-manual commits, read the values and use them in the canonical command below.
+Shared loader: `scripts/worktree/utils/credentials.mjs` — single source
+of truth for both bash and mjs scripts. Usage:
+
+```bash
+# Bash — eval into shell
+eval "$(bun run scripts/worktree/utils/credentials.mjs)"
+
+# mjs — import
+import { credentials } from "./utils/credentials.mjs";
+```
+
+`scripts/worktree.sh` and `scripts/worktree/index.mjs` both use
+this loader. For manual commits, read values with the loader or
+parse `.credentials.env` directly.
 
 **Never hardcode agent identity.** If `.credentials.env` is missing,
 ask the user to create it from `.credentials.env.example`.
@@ -109,18 +121,28 @@ the unlock command above **in their terminal**, then retry.
 
 ## Canonical Commit Command
 
-Read agent identity from `.credentials.env`, then:
+**Worktree commits** — use the mjs CLI (recommended):
 
 ```bash
-GIT_COMMITTER_NAME="<AGENT_GPG_NAME>" \
-GIT_COMMITTER_EMAIL="<AGENT_GPG_EMAIL>" \
-git -c user.signingkey=<AGENT_GPG_KEY_ID> \
+# Via worktree.sh (delegates to mjs):
+./scripts/worktree.sh agent-commit <branch> "<type>(<scope>): <subject>"
+
+# Direct mjs:
+bun run scripts/worktree/index.mjs agent-commit <branch> "<message>"
+```
+
+**Main repo commits** — load credentials and use raw git:
+
+```bash
+eval "$(bun run scripts/worktree/utils/credentials.mjs)"
+GIT_COMMITTER_NAME="$AGENT_GPG_NAME" \
+GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
+git -c user.signingkey="$AGENT_GPG_KEY_ID" \
     -c commit.gpgsign=true \
     commit -S \
+    --no-verify \
     --author="<user name> <<user email>>" \
-    -m "<type>(<scope>): <subject>
-
-Co-authored-by: <AGENT_GPG_NAME> <<AGENT_GPG_EMAIL>>"
+    -m "<type>(<scope>): <subject>"
 ```
 
 Result: Author=user, Committer=agent, GPG signature=agent key.
