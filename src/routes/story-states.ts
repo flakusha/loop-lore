@@ -233,6 +233,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
       return handleNpcState(database, "GET", worldId, actorId, userId, userRole,);
     }, {
       params: t.Object({ worldId: Id, actorId: Id, },),
+      response: {
+        200: t.Object({ id: t.String(), actorId: t.String(), worldId: t.Optional(t.String(),), status: t.Optional(t.String(),), },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get NPC state",
         description: "Get the current state of an NPC in a world.",
