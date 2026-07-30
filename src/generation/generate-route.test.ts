@@ -50,7 +50,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       system_prompt TEXT, personality TEXT, description TEXT, scenario TEXT,
       mes_example TEXT, post_history_instructions TEXT,
       agent_type TEXT NOT NULL DEFAULT 'none', settings TEXT NOT NULL DEFAULT '{}',
-      data_version INTEGER NOT NULL DEFAULT 1, import_spec TEXT NOT NULL DEFAULT '{}',
+      format_version INTEGER NOT NULL DEFAULT 0, import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `,);
@@ -80,7 +80,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       repetition_score REAL, repetition_analysis TEXT, policy_analysis TEXT,
       response_count_in_turn INTEGER,
       parent_attempt_id TEXT, continuation_count INTEGER DEFAULT 0,
-      partial_content TEXT, step_index INTEGER DEFAULT 0, total_steps INTEGER DEFAULT 1,
+      partial_content TEXT, step_index INTEGER DEFAULT 0, total_steps INTEGER DEFAULT 0,
       started_at TEXT NOT NULL DEFAULT (datetime('now')),
       completed_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -89,13 +89,13 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
 
   // Tables needed by PromptAssembler (lore, memories, locations)
   sqlite.run(
-    `CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+    `CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 000, priority INTEGER DEFAULT 000, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
   sqlite.run(
-    `CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+    `CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 000, priority INTEGER DEFAULT 000, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
   sqlite.run(
-    `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+    `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 0, importance INTEGER NOT NULL DEFAULT 0, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
   sqlite.run(
     `CREATE TABLE locations (id TEXT PRIMARY KEY, world_id TEXT, name TEXT NOT NULL, description TEXT, connections TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
@@ -135,7 +135,7 @@ async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, 
       display_name: "Bot",
       agent_type: "ai",
       settings: "{}",
-      data_version: 1,
+      format_version: 0,
       import_spec: "{}",
       ...overrides,
     },)

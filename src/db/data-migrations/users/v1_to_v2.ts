@@ -7,6 +7,6 @@ export const migration: DataMigration = {
   description: "Users v1 → v2: current format baseline (no transform)",
 
   async up(db,) {
-    await db.updateTable("users",).set({ data_version: 2, },).where("data_version", "=", 1,).execute();
+    await db.updateTable("users",).set({ format_version: 2, },).where("format_version", "=", 1,).execute();
   },
 };

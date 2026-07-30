@@ -141,7 +141,7 @@ async function seedUser(db: Kysely<DB>,) {
       owner_id: userId,
       agent_type: "none",
       settings: "{}",
-      data_version: 1,
+      format_version: 0,
       visibility: "private",
       import_spec: "{}",
     },)
@@ -164,7 +164,7 @@ async function createAiActor(
       owner_id: null,
       agent_type: "ai",
       settings: "{}",
-      data_version: 1,
+      format_version: 0,
       visibility: "private",
       import_spec: "{}",
     },)
@@ -381,7 +381,7 @@ describe("triggerGroupCascade edge cases", () => {
         owner_id: userId2,
         agent_type: "none",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

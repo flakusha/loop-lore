@@ -47,7 +47,7 @@ describe("chatsRoutes", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -191,6 +191,105 @@ describe("chatsRoutes", () => {
     // Verify update persisted
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(chat?.name,).toBe("New Name",);
+  });
+
+  // ── POST /api/chats/:id/rename ───────────────────────────────
+
+  test("POST /api/chats/:id/rename updates chat name", async () => {
+    const app = createApp(db, userId,);
+    const chatCreate = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Original Name", },),
+      },),
+    );
+    const { id, } = (await chatCreate.json()) as { id: string };
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${id}/rename`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Renamed Chat", name_source: "manual", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { ok: boolean };
+    expect(body.ok,).toBe(true,);
+
+    // Verify rename persisted
+    const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
+    expect(chat?.name,).toBe("Renamed Chat",);
+    expect(chat?.name_source,).toBe("manual",);
+  });
+
+  test("POST /api/chats/:id/rename rejects invalid name length", async () => {
+    const app = createApp(db, userId,);
+    const chatCreate = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Test", },),
+      },),
+    );
+    const { id, } = (await chatCreate.json()) as { id: string };
+    const longName = "A".repeat(61,);
+    const renameBody = JSON.stringify({ name: longName, name_source: "manual", },);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${id}/rename`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: renameBody,
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string; code: string };
+    expect(body.error,).toContain("1-60 characters",);
+  });
+
+  test("POST /api/chats/:id/rename rejects duplicate name", async () => {
+    const app = createApp(db, userId,);
+
+    // Create first chat
+    const chat1Create = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Chat One", },),
+      },),
+    );
+    const { id: id1, } = (await chat1Create.json()) as { id: string };
+
+    // Create second chat
+    const chat2Create = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Chat Two", },),
+      },),
+    );
+    const { id: id2, } = (await chat2Create.json()) as { id: string };
+
+    // Rename first chat to "Chat One"
+    await app.handle(
+      new Request(`http://localhost/api/chats/${id1}/rename`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Chat One", name_source: "manual", },),
+      },),
+    );
+
+    // Try to rename second chat to same name
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${id2}/rename`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Chat One", name_source: "manual", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string; code: string };
+    expect(body.error,).toContain("already in use",);
   });
 
   // ── DELETE /api/chats/:id ────────────────────────────────────
