@@ -27,7 +27,7 @@
 
 ## P2 — Core Workstream (Next Work)
 
-> **Emphasis**: Visual Novel mode, chat system, assistant & tool calling, GM flows, authorization & access, gallery. RPG mechanics deferred to P2-later.
+> **Emphasis**: VN mode, chat, assistant, tool calling, GM flows, GM-guided story creation, authorization/access, gallery. RPG mechanics deferred to P2-later.
 
 | Tier | Topic | Ticket(s) | Status |
 | ---- | ----- | --------- | ------ |
@@ -35,9 +35,10 @@
 | **P2-B** | **Chat System** | [`TASK-chat-autorenaming.md`](TASK-chat-autorenaming.md), [`TASK-chat-backgrounds-location-sync.md`](TASK-chat-backgrounds-location-sync.md), [`TASK-chat-external-music-linking.md`](TASK-chat-external-music-linking.md), [`TASK-chat-room-search-join.md`](TASK-chat-room-search-join.md), [`TASK-chat-room-filters.md`](TASK-chat-room-filters.md), [`TASK-chat-message-search.md`](TASK-chat-message-search.md), [`TASK-chat-sectioning-multi-location.md`](TASK-chat-sectioning-multi-location.md), [`TASK-chat-transfer-location.md`](TASK-chat-transfer-location.md) | ⬜ Not Started |
 | **P2-C** | **Assistant & Tool Calling** | [`TASK-assistant-commands-extension.md`](TASK-assistant-commands-extension.md), [`TASK-assistant-command-execution-intent-detection.md`](TASK-assistant-command-execution-intent-detection.md), [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md), [`TASK-wire-gm-service-story-mode.md`](TASK-wire-gm-service-story-mode.md) | ⬜ Not Started |
 | **P2-D** | **GM Flows** | [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-gm-shadow-notes.md`](TASK-gm-shadow-notes.md), [`TASK-gm-whitenotes.md`](TASK-gm-whitenotes.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md) | ⬜ Not Started |
+| **P2-Da** | **GM-Guided Story Creation** *(new)* — user as GM guiding LLM characters in chat/group-chat | New task (see immediate.md P2-Da) | ⬜ Not Started |
 | **P2-E** | **Authorization & Access** | [`TASK-auth-register-route.md`](TASK-auth-register-route.md), [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md), [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md), [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md), [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md), [`TASK-authoring-creation.md`](TASK-authoring-creation.md) | ⬜ Not Started |
 | **P2-F** | **Gallery** | [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md), [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) | ⬜ Not Started |
-| **P2-later** | **RPG Mechanics** (dice, stats, combat, XP, loot) | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md` | ✅ Complete (2026-07-31) |
+| **P2-later** | **RPG Mechanics** (dice, stats, combat, XP, loot) | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md` | ⬜ Deferred |
 | P2-later | **Character System** — multi-personality, mood, memory injection | `TASK-character-system-p2.md` | ⬜ Deferred |
 | P2-later | **World & Locations** (discovery, travel, NPC) | `epic-world-locations.md` | ⬜ Deferred |
 
@@ -47,9 +48,9 @@
 | ------------------------------------------------------ | ----------------------------------------- | ----------- | -------------- |
 | Plugin system & extensibility                          | `epic-plugin-system.md`                   | Very High   | ⬜ Not Started |
 | Three-tier memory system                                 | `FEAT-memory-systems-three-tier.md`       | Large       | ⬜ Not Started |
-| Artifact system (code/docs/datasets as assets)        | `docs/spec/artifacts-system.md`           | Medium      | ⬜ Not Started |
+| Artifact system (code/docs/datasets as assets)         | `docs/spec/artifacts-system.md`           | Medium      | ⬜ Not Started |
 | Visual novel mode (image + text overlay)               | `docs/frontend/chat/visual-novel-mode.md` | Medium-High | ⬜ Not Started |
-| ComfyUI Plugin & Workflow Templates                    | `epic-comfyui-plugin.md`                  | High        | ⬜ Not Started |
+| ComfyUI Plugin & Workflow Templates                      | `epic-comfyui-plugin.md`                  | High        | ⬜ Not Started |
 | Provider & Plugin Ecosystem (Anthropic/Ollama/Bedrock) | `epic-provider-plugin-ecosystem.md`       | Large       | ⬜ Not Started |
 
 ## P4 — Specified, Not Implemented
@@ -57,46 +58,46 @@
 | Feature                                                     | Spec                                          | Notes                                                                |
 | ----------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------- |
 | RAG & Document Processing (Enterprise Knowledge Management) | `epic-rag-document-processing.md`             | Ingestion, embedding, vector search, compliance                      |
-| Communications Integrations (Matrix, XMPP, IM, Email)      | `epic-communications-integrations.md`         | Federation, E2EE, bridges                                            |
-| Social Hub (Messengers, Social Networks, Email)            | `epic-social-hub.md`                          | Cross-platform adapters, Nostr, AT Protocol                          |
-| Anonymity & Decentralization (Tor, I2P, Mesh, BYOK)        | `epic-anonymity-decentralization.md`          | Anonymous access, P2P resource sharing                               |
-| Security & Sandboxing (LLM, Testing, Escape Prevention)    | `epic-security-sandboxing.md`                 | LLM sandboxing, prompt injection defense                             |
+| Communications Integrations (Matrix, XMPP, IM, Email)       | `epic-communications-integrations.md`         | Federation, E2EE, bridges                                            |
+| Social Hub (Messengers, Social Networks, Email)             | `epic-social-hub.md`                          | Cross-platform adapters, Nostr, AT Protocol                          |
+| Anonymity & Decentralization (Tor, I2P, Mesh, BYOK)       | `epic-anonymity-decentralization.md`          | Anonymous access, P2P resource sharing                               |
+| Security & Sandboxing (LLM, Testing, Escape Prevention)   | `epic-security-sandboxing.md`                 | LLM sandboxing, prompt injection defense                             |
 | API Governance (OpenAPI, Validation, Rate Limiting)        | `epic-api-governance.md`                      | OpenAPI spec, rate limiting, telemetry                               |
-| API/Library Distribution Mode                                | `epic-api-library-distribution.md`            | OpenAPI spec, headless mode, npm packages                            |
+| API/Library Distribution Mode                               | `epic-api-library-distribution.md`            | OpenAPI spec, headless mode, npm packages                            |
 | Multi-format character import (PNG/YAML/TOML/CHARX)        | `docs/spec/character-spec.md`                 | Only JSON import works                                               |
 | Impersonation (`chat.impersonate_id`)                      | `docs/spec/character-spec.md`                 | Not implemented                                                      |
 | Three-tier memory system                                     | `docs/spec/memory-system.md`                  | Only `actor_memories` table exists                                   |
 | Client-side encryption (AES-256-GCM, key hierarchy)        | `docs/frontend/encryption.md`                 | ✅ Partial — browser crypto exists; messages stored as plaintext     |
-| Frontend story mode UI (GM panel, quest log)               | `docs/frontend/chat/multi-llm-story.md`       | Backend `src/story/` exists; no frontend                             |
-| Message archiving (cascade, restore, purge)                | `docs/frontend/chat/archiving.md`             | Hard delete only                                                     |
-| Memory selection UI (mid-chat panel, pinning)              | `docs/frontend/chat/memories.md`              | Backend reads memories; no UI                                        |
-| Server-side i18n middleware (`req.t`)                      | `docs/frontend/internationalization.md`       | Minimal client-side `__()` only                                      |
-| Anthropic/Ollama/Bedrock providers                         | `docs/spec/provider-system.md`                | Only OpenAI-compatible exists                                        |
+| Frontend story mode UI (GM panel, quest log)                | `docs/frontend/chat/multi-llm-story.md`       | Backend `src/story/` exists; no frontend                             |
+| Message archiving (cascade, restore, purge)                 | `docs/frontend/chat/archiving.md`             | Hard delete only                                                     |
+| Memory selection UI (mid-chat panel, pinning)               | `docs/frontend/chat/memories.md`              | Backend reads memories; no UI                                        |
+| Server-side i18n middleware (`req.t`)                       | `docs/frontend/internationalization.md`       | Minimal client-side `__()` only                                      |
+| Anthropic/Ollama/Bedrock providers                          | `docs/spec/provider-system.md`                | Only OpenAI-compatible exists                                        |
 | Plugin management API (install/list/enable/disable)        | `docs/spec/plugin-system.md`                  | Plugin skeleton loads files; no API                                  |
-| Signed URLs for asset downloads                            | `docs/spec/assets.md`                         | Uses `raw` endpoint with Bearer auth                                 |
-| `POST /api/auth/register`                                    | `docs/spec/auth-middleware.md`                | Not implemented                                                      |
-| `/api/sessions` routes                                       | `docs/spec/users-sessions.md`                 | Not implemented                                                      |
-| Notification system with noise filtering                     | `docs/spec/notifications-expansion.md`        | Basic toasts exist                                                   |
-| Model comparison reactions                                   | `docs/spec/notifications-expansion.md`        | Reactions table exists; no comparison API                            |
-| Assistant `/commands` extension                              | `docs/spec/assistant-commands.md`             | Command parser exists; no slash commands wired                       |
-| Combined filter support                                      | `docs/spec/filtering-pagination.md`           | Single filter only                                                   |
-| Chat room search & join                                      | `docs/frontend/chat/search-and-filter.md`     | `TASK-chat-room-search-join.md`                                      |
-| Chat room filters                                            | `docs/frontend/chat/search-and-filter.md`     | `TASK-chat-room-filters.md`                                          |
-| Chat message search & filter                                 | `docs/frontend/chat/search-and-filter.md`     | `TASK-chat-message-search.md`                                        |
-| Chat autorenaming                                            | `docs/frontend/chat/overview.md`              | `TASK-chat-autorenaming.md`                                          |
-| Visual novel mode                                            | `docs/frontend/chat/visual-novel-mode.md`     | `TASK-visual-novel-mode.md` — backend complete, frontend not started |
-| 3D view modes                                                | `TASK-3d-view-modes.md`                       | Consolidated from 3 old tasks                                        |
-| Text effects & overlays                                      | `docs/frontend/chat/text-effects-overlays.md` | `TASK-text-effects-overlays.md`                                      |
-| Info bubbles                                                 | `TASK-info-bubbles.md`                        | `epic-immersion-presentation.md`                                     |
-| Character multi-personality                                  | `TASK-character-multi-personality.md`         | Mood system needs personality switching                              |
-| Mood swings & happiness meter                                | `TASK-character-mood-happiness.md`            | Happiness affects personality/dialogue                               |
-| Memory injection probability & privacy                       | `TASK-character-memory-injection.md`          | Privacy levels, comfort-based sharing                                |
-| Chat external music linking                                  | `TASK-chat-external-music-linking.md`         | Browser-native embeds                                                |
-| Character NSFW content rating                                | `epic-character-core-system.md`               | 5-tier rating; no runtime enforcement                                |
-| Character permanent traits (Layer 0)                         | `epic-character-core-system.md`               | Immutable personality; PROHIBITS personality change                  |
-| Character world/location traits (Layer 2)                    | `epic-character-core-system.md`               | Contextual trait overrides                                           |
-| Character licensing (CC0 to all_rights)                      | `epic-character-core-system.md`               | Creator-controlled OR public domain                                  |
-| Character multi-avatar system                                | `epic-character-core-system.md`               | Context/mood/action-aware avatars                                    |
+| Signed URLs for asset downloads                             | `docs/spec/assets.md`                         | Uses `raw` endpoint with Bearer auth                                 |
+| `POST /api/auth/register`                                   | `docs/spec/auth-middleware.md`                | Not implemented                                                      |
+| `/api/sessions` routes                                      | `docs/spec/users-sessions.md`                 | Not implemented                                                      |
+| Notification system with noise filtering                    | `docs/spec/notifications-expansion.md`        | Basic toasts exist                                                   |
+| Model comparison reactions                                  | `docs/spec/notifications-expansion.md`        | Reactions table exists; no comparison API                            |
+| Assistant `/commands` extension                             | `docs/spec/assistant-commands.md`             | Command parser exists; no slash commands wired                       |
+| Combined filter support                                     | `docs/spec/filtering-pagination.md`           | Single filter only                                                   |
+| Chat room search & join                                     | `docs/frontend/chat/search-and-filter.md`     | `TASK-chat-room-search-join.md`                                      |
+| Chat room filters                                           | `docs/frontend/chat/search-and-filter.md`     | `TASK-chat-room-filters.md`                                          |
+| Chat message search & filter                                | `docs/frontend/chat/search-and-filter.md`     | `TASK-chat-message-search.md`                                        |
+| Chat autorenaming                                           | `docs/frontend/chat/overview.md`              | `TASK-chat-autorenaming.md`                                          |
+| Visual novel mode                                           | `docs/frontend/chat/visual-novel-mode.md`     | `TASK-visual-novel-mode.md` — backend complete, frontend not started |
+| 3D view modes                                               | `TASK-3d-view-modes.md`                       | Consolidated from 3 old tasks                                        |
+| Text effects & overlays                                     | `docs/frontend/chat/text-effects-overlays.md` | `TASK-text-effects-overlays.md`                                      |
+| Info bubbles                                                | `TASK-info-bubbles.md`                        | `epic-immersion-presentation.md`                                     |
+| Character multi-personality                                 | `TASK-character-multi-personality.md`         | Mood system needs personality switching                              |
+| Mood swings & happiness meter                               | `TASK-character-mood-happiness.md`            | Happiness affects personality/dialogue                               |
+| Memory injection probability & privacy                      | `TASK-character-memory-injection.md`          | Privacy levels, comfort-based sharing                                |
+| Chat external music linking                                 | `TASK-chat-external-music-linking.md`         | Browser-native embeds                                                |
+| Character NSFW content rating                               | `epic-character-core-system.md`               | 5-tier rating; no runtime enforcement                                |
+| Character permanent traits (Layer 0)                        | `epic-character-core-system.md`               | Immutable personality; PROHIBITS personality change                  |
+| Character world/location traits (Layer 2)                   | `epic-character-core-system.md`               | Contextual trait overrides                                           |
+| Character licensing (CC0 to all_rights)                     | `epic-character-core-system.md`               | Creator-controlled OR public domain                                  |
+| Character multi-avatar system                               | `epic-character-core-system.md`               | Context/action-aware avatars                                    |
 
 ## Completed (moved from P0/P1/P1.5)
 
@@ -121,5 +122,6 @@
 - **New P0 priorities** added: Data Integrity Phase 1, NSFW Moderation, Shared Schemas
 - **2026-07-30 status sync**: P0 NSFW Moderation → ✅ Complete (was 🟡 Partial); P0 Shared Schemas → ✅ Complete; P1 NSFW Integration Gaps → ✅ Complete; P1 Battle Integration Gaps → ✅ Complete; P1 Data Integrity Phase 2 → ✅ Complete; P1 Memory Tiers Wiring was already ✅ Complete in Completed section
 - **2026-07-30 consistency fixes**: Mood swings & happiness meter → 🟡 In Progress (per TASK-character-mood-happiness.md); Memory injection probability & privacy → ✅ Done (per TASK-character-memory-injection.md); Three-tier memory system → 🟡 In Progress (per FEAT-memory-systems-three-tier.md); Removed non-existent `docs/spec/rpg-implementation-roadmap.md` from RPG mechanics spec reference
-- **2026-07-31 P2 reordering**: VN mode, chat, assistant/tool calling, GM flows, authorization/access, gallery elevated as P2 emphasis; RPG mechanics and Character System deferred to P2-later
+- **2026-07-31 P2 reordering**: VN mode, chat, assistant/tool calling, GM flows, GM-guided story creation, authorization/access, gallery elevated as P2 emphasis; RPG mechanics and Character System deferred to P2-later
 - **P1.5 Accessibility marked complete** (2026-07-31)
+- **2026-07-31 GM-guided story creation added as P2-Da**: user as GM guiding LLM characters in chat/group-chat to create a story; leverages existing `group-chat.md` infrastructure, `GmConfig` types in `chat-types.ts`, and story-mode backend
