@@ -15,8 +15,9 @@ import {
 } from "../characters/errors";
 import { parseCharacterCard, validateCharacter, } from "../characters/parser";
 import type { CanonicalCharacter, } from "../characters/parser";
+import type { LorebookData, } from "../characters/spec";
 import type { AuthConfig, } from "../config/schema";
-import { AssetLinkEntity, } from "../db/enums";
+import { AssetLinkEntity, LoreEntryStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { authenticate, } from "../middleware/auth";
 import { safeJsonStringify, uid, } from "../utils";
@@ -33,6 +34,54 @@ interface ImportActorOpts {
   sourceFormat?: string;
   charxAssets?: { name: string; type: string; data: Buffer }[];
   uploadDir?: string;
+}
+
+/**
+ * Import lorebook entries for a character.
+ * Maps LorebookData from parsed character card to actor_lore_entries table.
+ */
+async function importLorebook(
+  database: Kysely<DB>,
+  actorId: string,
+  lorebook: LorebookData,
+  warnings: string[],
+): Promise<number> {
+  let imported = 0;
+
+  for (const entry of lorebook.entries) {
+    try {
+      await database
+        .insertInto("actor_lore_entries",)
+        .values({
+          id: uid(),
+          actor_id: actorId,
+          name: entry.name || null,
+          content: entry.content,
+          keys: (() => {
+            const r = safeJsonStringify(entry.keys,);
+            return r.ok ? r.value : "[]";
+          })(),
+          secondary_keys: "[]",
+          selective: entry.selective ? 1 : 0,
+          case_sensitive: entry.case_sensitive ? 1 : 0,
+          enabled: entry.enabled ? LoreEntryStatus.Enabled : LoreEntryStatus.Disabled,
+          constant: entry.constant ? 1 : 0,
+          position: entry.position,
+          insertion_order: entry.insertion_order,
+          priority: entry.priority,
+          comment: entry.comment ?? null,
+          sort_order: entry.id ?? imported,
+        },)
+        .execute();
+      imported++;
+    } catch (error) {
+      const entryName = entry.name ?? `#${entry.id}`;
+      const errorMsg = error instanceof Error ? error.message : "unknown error";
+      warnings.push(`Failed to import lore entry "${entryName}": ${errorMsg}`,);
+    }
+  }
+
+  return imported;
 }
 
 async function importActor(opts: ImportActorOpts,): Promise<Response> {
@@ -134,12 +183,21 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
     }
   }
 
+  // Import lorebook entries if present
+  if (character.lorebook && character.lorebook.entries.length > 0) {
+    const loreCount = await importLorebook(database, id, character.lorebook, warnings,);
+    if (loreCount > 0) {
+      warnings.push(`Imported ${loreCount} lore entries`,);
+    }
+  }
+
   return jsonCreated({
     id,
     name: character.name,
     format,
     warnings,
     assets_imported: charxAssets?.length ?? 0,
+    lore_entries_imported: character.lorebook?.entries.length ?? 0,
   },);
 }
 
