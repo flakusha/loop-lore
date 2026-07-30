@@ -252,6 +252,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     }, {
       params: t.Object({ worldId: Id, actorId: Id, },),
       body: NpcStateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Update NPC state",
         description: "Update the state of an NPC in a world (location, status, mood, etc).",
@@ -265,6 +270,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
       return handleNpcsAtLocation(database, worldId, locationId, userId, userRole,);
     }, {
       params: t.Object({ worldId: Id, locationId: Id, },),
+      response: {
+        200: t.Array(t.Object({ actorId: t.String(), displayName: t.String(), },),),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List NPCs at location",
         description: "List all NPCs currently at a specific location in a world.",
