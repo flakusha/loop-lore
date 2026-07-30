@@ -1,170 +1,211 @@
+# CI Pipeline
+#
+# Runs on push to main/develop and on PRs.
+# Steps: typecheck → lint → format → test → build
 name: CI
 
 on:
-  pull_request:
-    branches: [master, release/**]
   push:
-    branches: [master, release/**]
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  BUN_VERSION: "1.2.x"
-  E2E_SAFEGUARD: "1"
-
 jobs:
-  quality:
-    name: Quality Checks
+  check:
+    name: Typecheck + Lint + Format
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Cache bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          bun-version: latest
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Run quality checks (CI mode)
-        run: bun run check:ci
+      - name: Build frontend
+        run: bun run build:frontend
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Typecheck frontend
+        run: bun run typecheck:frontend
+
+      - name: Type coverage
+        run: bun run typecheck:coverage
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Lint CSS
+        run: bun run lint:css
+
+      - name: Lint HTML
+        run: bun run lint:html
+
+      - name: Format check
+        run: bun run format:dprint
+
+      - name: Markdown lint
+        run: bun run md:lint
 
   test-unit:
     name: Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
+    needs: check
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Cache bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          bun-version: latest
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Run unit tests (parallel)
-        run: bun run test:unit:parallel
+      - name: Run unit tests
+        run: bun test src/ --isolate --coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/
 
   test-e2e:
-    name: E2E Browser Tests
+    name: E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
+    needs: check
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Cache bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          bun-version: latest
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Setup Playwright
-        uses: microsoft/playwright-github-action@v1
+      - name: Build frontend
+        run: bun run build:frontend
 
       - name: Run E2E tests
-        run: E2E_SAFEGUARD=1 bun run test:e2e
+        env:
+          E2E_SAFEGUARD: "1"
+          HTTP_PROXY: ""
+          NO_PROXY: "*"
+        run: bun test tests/e2e/ --isolate
+
+  test-browser:
+    name: Browser E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: bunx playwright install chromium --with-deps
+
+      - name: Build frontend
+        run: bun run build:frontend
+
+      - name: Run browser tests
+        env:
+          E2E_SAFEGUARD: "1"
+        run: |
+          for f in tests/e2e/flows/browser/*.browser.ts; do
+            echo "Running $f..."
+            bun test --max-concurrency=1 "./$f" || exit 1
+            sleep 0.3
+          done
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-results
+          path: test-results/
+          retention-days: 7
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
 
   build:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [quality, test-unit]
+    needs: [test-unit, test-e2e]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Cache bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          bun-version: latest
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build frontend + server
-        run: bun run build
+      - name: Build frontend
+        run: bun run build:frontend
 
-  version-predict:
-    name: Predict Version
+      - name: Build server
+        run: bun run build:server
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist/
+
+  telemetry:
+    name: Telemetry Validation
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/'))
+    needs: check
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Cache bun install
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          bun-version: latest
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Predict next version
-        run: bun run version:predict
+      - name: Run telemetry tests
+        run: bun test src/telemetry/ --isolate
+
+      - name: Verify telemetry config
+        run: |
+          echo "Checking telemetry module exports..."
+          bun -e "
+            const { loadTelemetryConfig } = require('./src/telemetry/config');
+            const config = loadTelemetryConfig();
+            console.log('Telemetry config:', JSON.stringify(config, null, 2));
+            if (typeof config.enabled !== 'boolean') throw new Error('enabled must be boolean');
+            if (typeof config.retentionDays !== 'number') throw new Error('retentionDays must be number');
+            console.log('✓ Telemetry config valid');
+          "
