@@ -39,7 +39,7 @@
       <div class="rpg-stats-section">
         <div class="rpg-stats-header">
           <h4 class="rpg-stats-title">{{{t("chats.stats")}}}</h4>
-          <button class="btn btn-secondary btn-xs" @click="showRpgPanel = !showRpgPanel" title="Expand stats">
+          <button class="btn btn-secondary btn-xs" @click="showRpgPanel = !showRpgPanel" x-bind:title="t('tooltips.expandStats')">
             <span x-text="showRpgPanel ? '−' : '+'"></span>
           </button>
         </div>
