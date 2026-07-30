@@ -1,6 +1,6 @@
 # Immediate Plan
 
-> **Last updated:** 2026-07-30 — P0/P1 complete; P2 reordered by emphasis
+> **Last updated:** 2026-07-31 — P0/P1 complete; P2 emphasis on frontend gaps + GM-guided story creation
 > **Status:** P0 foundations in progress; P1 complete; P2 next
 
 ---
@@ -20,7 +20,7 @@
 | Priority | Epic / Task                                                           | Key Deliverables                                                                                                                                                                                                  | Status                                      |
 | -------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
 | **P1**   | **Memory Tiers Wiring** — Selection UI, Lorebook, Cross-Chat          | • Memory selection UI (pinning, mid-chat panel)<br>• Lorebook activation with cooldowns<br>• Cross-chat memory persistence across workspaces<br>• Full generation pipeline integration                            | ✅ Complete                                 |
-| **P1**   | **NSFW Integration Gaps** — Housing, Weather, Social, Disease         | • Housing: private spaces → encounter modifiers<br>• Weather: mood/pheromone/location availability<br>• Social: shared reputation, skill prerequisites<br>• Disease: reproductive health, STD transmission        | ✅ Complete                                 |
+| **P1**   | **NSFW Integration Gaps** — Housing, Weather, Social, Disease         | • Housing: private spaces → encounter modifiers<br>• Weather: mood/pheromone/location availability<br>• Social: shared reputation, skill prerequisites<br>• Disease: reproductive health, STD transmissions        | ✅ Complete                                 |
 | **P1**   | **Battle Integration Gaps** — Items, Social, NPC, Weather, Resolution | • Equipment stats → combat modifiers<br>• Social skills (intimidate/negotiate) in combat<br>• NPC personality-driven AI<br>• Weather/terrain environmental modifiers<br>• Unified dice resolution for all systems | ✅ Complete — `src/battle/` (54KB, 6 files) |
 | **P1**   | **Data Integrity Phase 2** — `data_version` Optimistic Concurrency    | • `UPDATE ... WHERE data_version = ?` on high-contention tables<br>• `409 Conflict` on version mismatch<br>• Unit + integration tests                                                                             | ✅ Complete                                 |
 
@@ -28,19 +28,16 @@
 
 ---
 
-## P1.5 — Accessibility (Next after P0 residual)
+## P1.5 — Accessibility
 
-| Priority | Epic / Task                        | Key Deliverables                                                                                                                                                                      | Status       | Effort |
-| -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------ |
-| **P1.5** | **Accessibility — remaining gaps** | • `focus-visible` CSS on all focusable elements<br>• Focus trap for modals<br>• Skip links<br>• Screen reader live regions<br>• Touch gesture library<br>• 44×44px mobile tap targets | 🟡 ~60% done | Medium |
-
-**Next action**: Create `src/frontend/a11y/` module — focus-manager, touch-gestures, screen-reader utils, responsive helpers. Then add `a11y.css` (focus-visible, reduced-motion, high-contrast). Then wire skip links and modal focus traps in existing HTML templates.
+> ✅ Complete as of 2026-07-31
 
 ---
 
 ## P2 — Core Workstream (Next Work)
 
 > **Emphasis**: VN mode, chat, assistant, tool calling, GM flows, authorization, access control, gallery. RPG mechanics deferred to P2-later.
+> **New**: GM-guided story creation — user as Game Master, guiding LLM characters in chat/group-chat to build a story together.
 
 ### P2 — Priority Tiers
 
@@ -50,6 +47,7 @@
 | **P2-B** | **Chat System** | [`TASK-chat-autorenaming.md`](TASK-chat-autorenaming.md), [`TASK-chat-backgrounds-location-sync.md`](TASK-chat-backgrounds-location-sync.md), [`TASK-chat-external-music-linking.md`](TASK-chat-external-music-linking.md), [`TASK-chat-room-search-join.md`](TASK-chat-room-search-join.md), [`TASK-chat-room-filters.md`](TASK-chat-room-filters.md), [`TASK-chat-message-search.md`](TASK-chat-message-search.md), [`TASK-chat-sectioning-multi-location.md`](TASK-chat-sectioning-multi-location.md), [`TASK-chat-transfer-location.md`](TASK-chat-transfer-location.md) | ⬜ Not Started |
 | **P2-C** | **Assistant & Tool Calling** | [`TASK-assistant-commands-extension.md`](TASK-assistant-commands-extension.md), [`TASK-assistant-command-execution-intent-detection.md`](TASK-assistant-command-execution-intent-detection.md), [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md), [`TASK-wire-gm-service-story-mode.md`](TASK-wire-gm-service-story-mode.md) | ⬜ Not Started |
 | **P2-D** | **GM Flows** | [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-gm-shadow-notes.md`](TASK-gm-shadow-notes.md), [`TASK-gm-whitenotes.md`](TASK-gm-whitenotes.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md) | ⬜ Not Started |
+| **P2-Da** | **GM-Guided Story Creation** *(NEW)* | New task — user as GM guiding LLM characters in chat/group-chat to create a story | ⬜ Not Started |
 | **P2-E** | **Authorization & Access** | [`TASK-auth-register-route.md`](TASK-auth-register-route.md), [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md), [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md), [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md), [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md), [`TASK-authoring-creation.md`](TASK-authoring-creation.md) | ⬜ Not Started |
 | **P2-F** | **Gallery** | [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md), [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) | ⬜ Not Started |
 
@@ -57,11 +55,25 @@
 
 ### P2-A — Visual Novel Mode (Start here)
 
-**Epic**: `epic-visual-novel-mode.md` — Backend `src/story/` exists; frontend not started.
+**Epic**: `epic-visual-novel-mode.md` — Backend `src/story/` exists (6 story route files); **frontend not started**.
 
-- [ ] Wire `src/story/` backend to new htmx/Alpine frontend
-- [ ] Implement image overlay component with transition effects
-- [ ] Add typewriter animation support
+#### Frontend Gap Tasks (file-level evidence)
+
+| Gap | Evidence File | What to Build |
+| --- | --- | --- |
+| VN frontend page | `src/frontend/pages/` has no `visual-novel.ts` page; `docs/frontend/chat/visual-novel-mode.md` (316 lines) spec exists | Create `src/frontend/pages/visual-novel.ts` htmx/Alpine page |
+| VN types exist | `src/frontend/alpine/chat-types.ts` defines `GmConfig.visualNovel?: boolean` (line 125-129) | Wire existing `GmConfig` type into VN page component |
+| Scene renderer with image overlay | — | htmx partial for VN scene display with CSS transition effects |
+| Typewriter animation | — | Alpine.js component or CSS `@keyframes` for text reveal (use `chat-types.ts` `Message` type for content) |
+| Branching choices UI | `TASK-vn-branching-choices.md` | htmx form with choice buttons, `data-action` for scene navigation |
+| Dynamic generation display | `TASK-vn-dynamic-generation.md` | Stream VN scene generation into overlay via SSE |
+| QA mode UI | `TASK-vn-qa-mode.md` | Validation panel showing spec compliance for VN scenes |
+| Scene template editor | `TASK-vn-scene-template-system.md` | Template management UI with variable substitution preview |
+| Template action system | `TASK-vn-template-actions.md` | UI for auto-fill, variables, conditional logic in templates |
+
+- [ ] Wire `src/story/` backend to new htmx/Alpine frontend (`src/frontend/pages/visual-novel.ts`)
+- [ ] Implement VN scene renderer with image overlay + CSS transitions (leverage `GmConfig` from `chat-types.ts`)
+- [ ] Add typewriter animation component (Alpine.js or CSS `@keyframes`)
 - [ ] Implement branching choices system (`TASK-vn-branching-choices.md`)
 - [ ] Implement dynamic generation for VN scenes (`TASK-vn-dynamic-generation.md`)
 - [ ] Build QA mode for VN content validation (`TASK-vn-qa-mode.md`)
@@ -69,8 +81,37 @@
 - [ ] Implement template actions (auto-fill, variables, conditions) (`TASK-vn-template-actions.md`)
 - [ ] **Verification**: `bun run check && bun test src/story/`
 
+---
+
 ### P2-B — Chat System
 
+#### Frontend Gap Tasks (file-level evidence)
+
+| Gap | Evidence File | What to Build |
+| --- | --- | --- |
+| Chat types exist | `src/frontend/alpine/chat-types.ts` — `ChatState`, `GmConfig`, `Message`, `MessageAttachment`, `GroupedMessage`, `RpgStats`, `MemoryPanelState` (571 lines) | Extend `ChatState` with chat UI state for new features |
+| Command buttons (tool calling UI) | `src/frontend/alpine/command-buttons.ts` — exists (27 buttons: image, video, sfx, music, caption, improve, quest, roll) — **only tool calling UI, no command parser** | Wire `/` slash command parser; expand command palette |
+| GM role switching exists | `src/frontend/alpine/chat-settings.ts` — `_assistantRole: "off"`, `chat?.gm_config` parsed with `GmConfig` type (line 33-36) | Build GM role switching UI (dropdown: off/helper/gm/moderator) |
+| Auth basics exist | `src/frontend/fe-fetch.ts` — CSRF + session token injection, 401 redirect to login | Build login/register pages that use `feFetch` |
+| Admin user mgmt exists | `src/frontend/alpine/admin-users.ts` — role editing, user list, pagination, search, filter | Extend with access control panels |
+| Gallery page exists | `src/frontend/pages/gallery.ts` — search, preview, download, delete, type filtering (image/audio/video) | Wire `src/routes/gallery.ts` backend route (missing) |
+| Chat room management | `docs/frontend/chat/overview.md` | Room list, create/rename/delete room components |
+| Chat autorenaming | `TASK-chat-autorenaming.md` | Auto-label chat sessions based on first exchange |
+| Chat backgrounds + location sync | `TASK-chat-backgrounds-location-sync.md` | Background image picker; location indicator in chat header |
+| External music linking | `TASK-chat-external-music-linking.md` | Music embed component (browser-native `<audio>` or iframe) |
+| Room search & join | `TASK-chat-room-search-join.md`, `docs/frontend/chat/search-and-filter.md` | Searchable room list, join via htmx |
+| Room filters | `TASK-chat-room-filters.md` | Filter rooms by world, character, date |
+| Message search & filter | `TASK-chat-message-search.md`, `docs/frontend/chat/search-and-filter.md` | In-chat message search with highlight |
+| Multi-location sectioning | `TASK-chat-sectioning-multi-location.md` | Location tabs/segments in chat view |
+| Chat transfer + location change | `TASK-chat-transfer-location.md`, `FEAT-chat-transfer-location-change.md` | Transfer chat between characters/worlds UI |
+| Group chat UI | `docs/frontend/chat/group-chat.md` (194 lines, partially implemented) | Multi-participant chat view, participant list, side-chat creation |
+| Assistant panel | `docs/frontend/chat/assistant.md` (147 lines, designed but not implemented) | Assistant context panel in chat sidebar |
+| Message actions | `docs/frontend/chat/message-actions.md` | Edit, delete, pin, react to messages in UI |
+
+- [ ] Wire command buttons (`src/frontend/alpine/command-buttons.ts`) into slash command parser (`TASK-assistant-commands-extension.md`)
+- [ ] Build GM role switching UI from existing `_assistantRole` field in `chat-settings.ts`
+- [ ] Build registration form frontend page (`docs/frontend/login.md`, 41 lines) using `feFetch` (`src/frontend/fe-fetch.ts`)
+- [ ] Build login page with htmx submission using `feFetch` auth flow
 - [ ] Implement chat autorenaming (`TASK-chat-autorenaming.md`)
 - [ ] Implement chat backgrounds + location sync (`TASK-chat-backgrounds-location-sync.md`)
 - [ ] Implement external music linking (`TASK-chat-external-music-linking.md`)
@@ -79,47 +120,149 @@
 - [ ] Implement chat message search & filter (`TASK-chat-message-search.md`)
 - [ ] Implement multi-location chat sectioning (`TASK-chat-sectioning-multi-location.md`)
 - [ ] Implement chat transfer + location change (`TASK-chat-transfer-location.md`)
+- [ ] Wire group chat UI (`docs/frontend/chat/group-chat.md`)
+- [ ] Wire assistant panel into chat sidebar (`docs/frontend/chat/assistant.md`)
+- [ ] Wire message actions UI — edit, delete, pin, react (`docs/frontend/chat/message-actions.md`)
 - [ ] **Verification**: `bun run check && bun test src/routes/`
+
+---
 
 ### P2-C — Assistant & Tool Calling
 
+#### Frontend Gap Tasks (file-level evidence)
+
+| Gap | Evidence File | What to Build |
+| --- | --- | --- |
+| Assistant role types exist | `src/frontend/alpine/chat-types.ts` line 125-129: `GmConfig` with `assistantRole?: "off" | "helper" | "gm" | "moderator"` | Build UI to switch assistant role per chat |
+| `_assistantRole` field exists | `src/frontend/alpine/chat-settings.ts` line 15: `_assistantRole: "off"` — stored but not exposed in UI | Expose role dropdown in chat settings panel |
+| Command buttons exist | `src/frontend/alpine/command-buttons.ts` — 8 functional buttons (image, video, sfx, music, caption, improve, quest, roll) | Expand command palette; add text generation commands (summarize, rewrite, translate) |
+| Chat settings page exists | `src/frontend/alpine/chat-settings.ts` — chat settings modal with mode, turn strategy, streaming, persona, impersonation | Add assistant role + GM config to settings modal |
+| Tool calling display | — | Show function calls, parameters, and LLM tool results in chat bubbles |
+| GM service wiring | `TASK-wire-gm-service-story-mode.md` | Connect GM service to assistant for story-mode responses |
+| Assistant ↔ GM reconciliation | `TASK-assistant-gm-flows-reconciliation.md` | Unified assistant/GM interface in chat UI |
+
+- [ ] Expose GM role switching (`"off" | "helper" | "gm" | "moderator"`) in chat settings UI (uses existing `_assistantRole` + `GmConfig` from `chat-types.ts`)
+- [ ] Expand command buttons (`src/frontend/alpine/command-buttons.ts`) with text generation commands for assistant
+- [ ] Add assistant role selector to chat settings modal (`chat-settings.ts`)
 - [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`)
 - [ ] Wire slash commands (`/`) into assistant pipeline (`TASK-assistant-commands-extension.md`)
-- [ ] Implement assistant tool calling (function-calling pattern for LLM)
+- [ ] Implement assistant tool calling display (function-call UI in chat — show tool call + params + result in message bubbles)
 - [ ] Integrate GM service into assistant flow (`TASK-wire-gm-service-story-mode.md`)
 - [ ] Reconcile assistant ↔ GM flow interfaces (`TASK-assistant-gm-flows-reconciliation.md`)
 - [ ] **Verification**: `bun run check && bun test src/assistant/`
 
+---
+
 ### P2-D — GM Flows
 
+#### Frontend Gap Tasks (file-level evidence)
+
+| Gap | Evidence File | What to Build |
+| --- | --- | ---|
+| `GmConfig` type exists | `src/frontend/alpine/chat-types.ts` line 125-129: `GmConfig { assistantRole?, visualNovel? }` — minimal, needs expansion | Extend `GmConfig` with story-mode fields (gm_role, turn_order, quest_enabled) |
+| `multi-llm-story.md` spec exists | `docs/frontend/chat/multi-llm-story.md` (521 lines) — fully designed but "frontend UI does NOT exist" | Build GM panel, quest log, story control bar as htmx partials |
+| GM shadow notes spec exists | `docs/spec/gm-shadow-notes.md` | Sidebar panel showing GM-only annotations |
+| GM whitenotes spec exists | `TASK-gm-whitenotes.md` | Visible in-chat annotations with GM authorship marker |
+| Story mode backend exists | `src/story/` (6 files: game-master, turn manager, quest engine, world state) | Wire story-mode frontend to existing story API endpoints |
+| GM ↔ assistant reconciliation | `TASK-assistant-gm-flows-reconciliation.md` | Unified view of assistant and GM-generated content |
+
+- [ ] Extend `GmConfig` type in `chat-types.ts` with story-mode fields (gm_role, turn_order, quest_enabled)
 - [ ] Implement GM shadow notes system (`TASK-gm-shadow-notes.md`)
 - [ ] Implement GM whitenotes (visible GM annotations) (`TASK-gm-whitenotes.md`)
-- [ ] Wire GM panels into chat UI (story mode frontend)
-- [ ] Reconcile GM ↔ assistant flow (`TASK-assistant-gm-flows-reconciliation.md`)
+- [ ] Wire GM panels into chat UI (story mode frontend) — `docs/frontend/chat/multi-llm-story.md` (521 lines, spec complete)
+- [ ] Wire GM ↔ assistant unified view in chat (`TASK-assistant-gm-flows-reconciliation.md`)
+- [ ] Build quest log UI component (links to `src/story/` quest engine)
 - [ ] **Verification**: `bun run check`
+
+---
+
+### P2-Da — GM-Guided Story Creation *(NEW)*
+
+> The user acts as Game Master, guiding LLM characters in chat or group-chat to collaboratively generate a story. This extends the existing GM flows (P2-D) with a specific UX: the user has direct control over narrative direction while LLMs handle character voices and scene details.
+
+#### Why This Is a Natural Extension
+
+The existing infrastructure already supports this pattern:
+- **Group chat** (`docs/frontend/chat/group-chat.md`, 194 lines) supports multiple participants. Adding a "user-GM" participant type is an extension, not a new pattern.
+- **GM role** (`GmConfig.assistantRole = "gm"`) already exists in `src/frontend/alpine/chat-types.ts` line 125-129. The `moderator` variant handles enforcement; the `gm` variant needs narrative guidance UX.
+- **Story mode** (`src/story/`, 6 backend files) has turn orchestration. The GM-guided variant makes the user the turn orchestrator instead of the system.
+- **Assistant as GM** (`docs/frontend/chat/assistant.md`) describes the GM role as "orchestrates the session: turn order, response evaluation." The user-GM variant gives that power to the human.
+
+#### Design
+
+| Concept | Implementation | File |
+| --- | --- | --- |
+| User as GM participant | New chat participant type `"gm"` in group chat | `src/frontend/alpine/chat-types.ts` (extend GroupChatParticipant type) |
+| GM guidance commands | `/guide` slash command to give narrative direction to characters | `src/frontend/alpine/command-buttons.ts` (add guide button) |
+| Character response steering | GM can prompt specific characters or set narrative constraints | `src/frontend/alpine/chat-settings.ts` (GM guidance panel) |
+| Story arc tracking | Lightweight story arc list visible in GM panel | `docs/frontend/chat/multi-llm-story.md` (use existing quest/state infrastructure) |
+| Group chat + GM integration | GM controls turn order in group chat; characters respond in sequence | `docs/frontend/chat/group-chat.md` (22) |
+
+**Frontend Gap Files**:
+- `src/frontend/alpine/chat-types.ts` — extend participant types to include `"gm"` role
+- `src/frontend/alpine/command-buttons.ts` — add `/guide` command button
+- `src/frontend/alpine/chat-settings.ts` — add GM guidance panel (narrative constraints, character targeting)
+- `src/frontend/alpine/chat.ts` — wire GM turn-order control into group chat message flow
+- `docs/frontend/chat/group-chat.md` — document GM-guided story variant
+
+- [ ] Extend participant types in `chat-types.ts` to include user-as-GM role
+- [ ] Add `/guide` command button to `command-buttons.ts` with narrative direction input
+- [ ] Add GM guidance panel to `chat-settings.ts` (narrative constraints, character targeting, turn control)
+- [ ] Wire GM turn-order control into group chat message flow (`chat.ts`)
+- [ ] Document GM-guided story variant in `group-chat.md` spec
+- [ ] **Verification**: `bun run check`
+
+---
 
 ### P2-E — Authorization & Access
 
-- [ ] Implement `POST /api/auth/register` route (`TASK-auth-register-route.md`) — currently not implemented
-- [ ] Implement two-factor/MFA auth (`TASK-two-factor-multi-factor-auth.md`)
-- [ ] Implement message-level access checks (`TASK-dedupe-message-access-checks.md`)
-- [ ] Implement encryption + access management (`TASK-encryption-access-management.md`)
-- [ ] Fix message reactions access check (`TASK-fix-message-reactions-access.md`)
-- [ ] Implement authoring/creation ownership checks (`TASK-authoring-creation.md`)
-- [ ] **Verification**: `bun run check && bun test src/routes/ src/auth/`
+#### Frontend Gap Tasks (file-level evidence)
+
+| Gap | Evidence File | What to Build |
+| --- | --- | --- |
+| Auth route exists | `src/routes/auth.ts` has `POST /api/auth/register` and login endpoints | Frontend pages for these endpoints |
+| feFetch handles 401 | `src/frontend/fe-fetch.ts` — redirects to `/views/login` on 401 | Build the `/views/login` page (referenced but may not exist) |
+| Admin user mgmt exists | `src/frontend/alpine/admin-users.ts` — role editing, user list, search/filter | Extend with MFA management, access control panels |
+| `GmConfig` assistantRole | `chat-types.ts` — `assistantRole?: "off" | "helper" | "gm" | "moderator"` | Access gating per role (which features are visible) |
+| Encryption exists | `src/frontend/browser-crypto.ts` — browser-side AES | Show encryption status in access control UI |
+| Access check gaps | `TASK-dedupe-message-access-checks.md`, `TASK-fix-message-reactions-access.md` | UI-level access check feedback |
+
+- [ ] Build registration form frontend page using `feFetch` (`src/frontend/fe-fetch.ts`) — `POST /api/auth/register`
+- [ ] Build login page with htmx submission using `feFetch` auth flow
+- [ ] Implement two-factor/MFA auth with setup UI (`TASK-two-factor-multi-factor-auth.md`)
+- [ ] Implement message-level access check UI (`TASK-dedupe-message-access-checks.md`)
+- [ ] Implement encryption + access management display (`TASK-encryption-access-management.md`)
+- [ ] Fix message reactions access check in UI (`TASK-fix-message-reactions-access.md`)
+- [ ] Implement authoring/creation ownership indicators (`TASK-authoring-creation.md`)
+- [ ] **Verification**: `bun run check && bun test src/routes/auth.ts src/auth/`
+
+---
 
 ### P2-F — Gallery
 
-- [ ] Implement minimal image asset viewer (`TASK-gallery-minimal-image-asset-viewer.md`)
+#### Frontend Gap Tasks (file-level evidence)
+
+| Gap | Evidence File | What to Build |
+| --- | --- | --- |
+| Gallery page exists | `src/frontend/pages/gallery.ts` — search, preview (lightbox), download, delete, type filter (image/audio/video), card filtering via `filterCards()` (82 lines) | Backend route + wire into navigation |
+| Gallery route MISSING | `src/routes/gallery.ts` does NOT exist — no API route to serve gallery data | Create `src/routes/gallery.ts` backend route |
+| Attachment ID issue | `TASK-config-gallery-attachment-idempotent.md` — duplicate upload handling | Fix duplicate attachment ID handling in `gallery.ts` upload flow |
+| Gallery wiring | — | Gallery tab in character detail, story view navigation |
+
+- [ ] Create `src/routes/gallery.ts` — gallery API route (does not exist)
+- [ ] Wire gallery route into navigation so `src/frontend/pages/gallery.ts` is reachable
+- [ ] Implement minimal image asset viewer improvements (`TASK-gallery-minimal-image-asset-viewer.md`)
 - [ ] Make gallery attachment ID handling idempotent (`TASK-config-gallery-attachment-idempotent.md`)
-- [ ] Wire gallery into character and story views
+- [ ] Wire gallery into character and story views (add attachments tab)
 - [ ] **Verification**: `bun run check`
+
+---
 
 ### P2-later — RPG Mechanics (deferred from earlier plan)
 
 Tickets: `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md`
 
-Deferred until P2-A through P2-F are in progress or complete.
+Deferred until P2-A through P2-F (including the new GM-guided story creation task) are in progress or complete.
 
 ---
 
@@ -149,7 +292,7 @@ Deferred until P2-A through P2-F are in progress or complete.
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Gate A** | Post-P0 | All observability + testing infrastructure stable; Data Integrity Phase 1 complete; NSFW moderation live; Shared schemas enforced                                                                |
 | **Gate B** | Post-P1 | Import/Export + Admin functional with encryption; NSFW integrations complete; Battle integrations complete; Data Integrity Phase 2 complete; Memory tiers wired with UI + cross-chat persistence |
-| **Gate C** | Post-P2 | VN mode wired; chat system functional; assistant + tool calling integrated; GM flows operational; auth/access controls live; gallery usable                                                   |
+| **Gate C** | Post-P2 | VN mode wired; chat system functional; assistant + tool calling integrated; GM flows operational; GM-guided story creation implemented; auth/access controls live; gallery usable                                                   |
 | **Gate D** | Post-P3 | Advanced features + plugin ecosystem operational                                                                                                                                                 |
 
 ---
@@ -157,9 +300,20 @@ Deferred until P2-A through P2-F are in progress or complete.
 ## Notes
 
 - **P0 items are blocking** — no safe multi-instance deployment without Data Integrity Phase 1; no NSFW content without moderation infrastructure; no cross-system data integrity without Shared Schemas
-- **P2 emphasis**: VN mode → chat → assistant/tool calling → GM flows → authorization/access → gallery. RPG mechanics deferred to P2-later stream.
-- **VN mode is the highest P2 priority** — backend (`src/story/`) exists, frontend is the gap
-- **Chat system ties directly to assistant and GM flows** — implement in order: chat → assistant → GM
-- **Authorization + access are blocking** — no safe multi-user deployment without register route, MFA, and access checks
-- **Gallery is a user-facing quality-of-life feature** — low effort, high visibility
+- **P2 emphasis**: VN mode → chat → assistant/tool calling → GM flows → GM-guided story creation → authorization/access → gallery. RPG mechanics deferred to P2-later.
+- **VN mode is the highest P2 priority** — backend (`src/story/`, 6 route files) exists; frontend page does not. Start with `src/frontend/pages/visual-novel.ts`.
+- **Chat system ties directly to assistant and GM flows** — implement in order: chat → assistant → GM → GM-guided story. Chat frontend has the most existing infrastructure (htmx + Alpine.js).
+- **Authorization + access are blocking** — no safe multi-user deployment without register route, MFA, and access checks. `src/routes/auth.ts` has the route; frontend login/register pages need building.
+- **Gallery** — `src/frontend/pages/gallery.ts` exists (82 lines, functional search/preview/download/delete) but `src/routes/gallery.ts` does not. Low-effort, high-visibility.
+- **GM-guided story creation** is a natural extension of existing GM flows — the user becomes the turn orchestrator while LLMs handle character voices. Uses existing `group-chat.md` infrastructure, `GmConfig` types, and story-mode backend.
+- **Frontend architecture** — all new frontend work uses htmx + Alpine.js per project conventions (`AGENTS.md`). New `.ts` modules in `src/frontend/alpine/` or `.ts` pages in `src/frontend/pages/`.
+- **Key existing frontend files reused across P2**:
+  | File | Purpose | P2 Tier |
+  | ---- | ------- | ------- |
+  | `src/frontend/alpine/chat-types.ts` | `GmConfig`, `ChatState`, `Message`, `RpgStats`, `MemoryPanelState` types | A, C, D, Da |
+  | `src/frontend/alpine/command-buttons.ts` | Command button toolbar with 8 functional buttons (image, video, sfx, music, caption, improve, quest, roll) | C, Da |
+  | `src/frontend/alpine/chat-settings.ts` | Chat settings modal with `_assistantRole`, `gm_config` parsing, persona/impersonation | C, D, Da |
+  | `src/frontend/fe-fetch.ts` | Unified fetch with CSRF/session token injection, 401 redirect | E |
+  | `src/frontend/alpine/admin-users.ts` | Admin user list, role editing, pagination, search/filter | E |
+  | `src/frontend/pages/gallery.ts` | Gallery page with search, preview, download, delete, type filtering | F |
 - **Reconciliation complete** — backlog/roadmap now reflect actual implementation state (see `backlog.md`)
