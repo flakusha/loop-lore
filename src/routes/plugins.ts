@@ -7,12 +7,13 @@
  *   POST /api/plugins/:name/disable — disable a plugin
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { registry, } from "../plugins/registry";
 import { forbidden, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 function log() {
@@ -41,6 +42,10 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
         return jsonResponse(plugins,);
       },
       {
+        response: {
+          200: t.Array(t.Any(),),
+          403: ErrorResponse,
+        },
         detail: {
           summary: "List plugins",
           description: "List all loaded plugins with their status. Admin only.",
@@ -82,6 +87,12 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
         return jsonResponse({ ok: true, },);
       },
       {
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Enable plugin",
           description: "Enable a loaded plugin. Admin only.",
@@ -119,6 +130,12 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
         return jsonResponse({ ok: true, },);
       },
       {
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Disable plugin",
           description: "Disable a loaded plugin. Admin only.",
