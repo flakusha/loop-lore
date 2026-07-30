@@ -1,5 +1,6 @@
 // ── New Chat page: actor search, participant selection, form ──
 import { jsonBody, } from "../alpine/json";
+import { $, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { escapeHtml, filterActors, getErrorMessage, } from "./shared";
@@ -28,7 +29,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   try {
     const res = await feFetch("/api/personas",);
     const personas = await res.json();
-    const personaSelect = document.querySelector("#persona-select",) as HTMLSelectElement | null;
+    const personaSelect = $<HTMLSelectElement>("#persona-select",);
     if (personaSelect && Array.isArray(personas,)) {
       for (const p of personas) {
         const opt = document.createElement("option",);
@@ -42,23 +43,23 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     /* ignore */
   }
 
-  const searchInput = document.querySelector("#participant-search",) as HTMLInputElement | null;
-  const resultsEl = document.querySelector<HTMLElement>("#participant-results",);
-  const selectedEl = document.querySelector("#selected-participants",);
-  const chatType = document.querySelector("#chat-type",) as HTMLSelectElement | null;
-  const form = document.querySelector("#create-chat-form",);
+  const searchInput = $<HTMLInputElement>("#participant-search",);
+  const resultsEl = $<HTMLElement>("#participant-results",);
+  const selectedEl = $<HTMLElement>("#selected-participants",);
+  const chatType = $<HTMLSelectElement>("#chat-type",);
+  const form = $<HTMLFormElement>("#create-chat-form",);
 
   if (!searchInput || !resultsEl || !selectedEl || !chatType || !form) { return; }
 
-  const impersonateGroup = document.querySelector("#impersonate-group",) as HTMLElement | null;
-  const impersonateToggle = document.querySelector("#impersonate-toggle",) as HTMLInputElement | null;
-  const memoryCarryGroup = document.querySelector("#memory-carry-group",) as HTMLElement | null;
-  const memorySelectiveList = document.querySelector("#memory-selective-list",) as HTMLElement | null;
-  const memoryCheckboxList = document.querySelector("#memory-checkbox-list",) as HTMLElement | null;
-  const memoryCountLabel = document.querySelector("#memory-count-label",) as HTMLElement | null;
-  const memoryTokenEstimate = document.querySelector("#memory-token-estimate",) as HTMLElement | null;
-  const memoryTokenCount = document.querySelector("#memory-token-count",) as HTMLElement | null;
-  const memorySelectAllBtn = document.querySelector("#memory-select-all-btn",) as HTMLButtonElement | null;
+  const impersonateGroup = $<HTMLElement>("#impersonate-group",);
+  const impersonateToggle = $<HTMLInputElement>("#impersonate-toggle",);
+  const memoryCarryGroup = $<HTMLElement>("#memory-carry-group",);
+  const memorySelectiveList = $<HTMLElement>("#memory-selective-list",);
+  const memoryCheckboxList = $<HTMLElement>("#memory-checkbox-list",);
+  const memoryCountLabel = $<HTMLElement>("#memory-count-label",);
+  const memoryTokenEstimate = $<HTMLElement>("#memory-token-estimate",);
+  const memoryTokenCount = $<HTMLElement>("#memory-token-count",);
+  const memorySelectAllBtn = $<HTMLButtonElement>("#memory-select-all-btn",);
 
   const isGroup = () => chatType.value === "group";
 
@@ -275,10 +276,9 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     }
 
     try {
-      const personaId = (document.querySelector("#persona-select",) as HTMLSelectElement)?.value || undefined;
+      const personaId = $<HTMLSelectElement>("#persona-select",)?.value || undefined;
       const impersonateId = impersonateToggle?.checked && selected.length === 1 ? selected[0].id : undefined;
-      const memoryCarryMode =
-        (document.querySelector('input[name="memory_carry"]:checked',) as HTMLInputElement)?.value || "full";
+      const memoryCarryMode = $<HTMLInputElement>('input[name="memory_carry"]:checked',)?.value || "full";
       const memoryCarryIds = memoryCarryMode === "selective"
         ? Array.from(selectedMemoryIds,)
         : undefined;
@@ -288,7 +288,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
         body: jsonBody({
           name,
           type: chatType.value,
-          mode: (document.querySelector("#chat-mode",) as HTMLSelectElement)?.value,
+          mode: $<HTMLSelectElement>("#chat-mode",)?.value,
           participantIds: selected.map((a: any,) => a.id),
           personaId,
           impersonateActorId: impersonateId,
