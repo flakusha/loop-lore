@@ -6,7 +6,7 @@
 **Assignee**:
 **Epic**: EPIC-046 (Creative Studio)
 
-### Description
+## Description
 
 Add optional RPG stats system to characters using state machines. Opt-in per world configuration. Supports ability scores, hit points, skills, equipment, and dynamic state.
 
