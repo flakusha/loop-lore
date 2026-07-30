@@ -18,7 +18,11 @@ export function waitForAlpineReady(page: Page, timeoutMs = 5000,): Promise<void>
       new Promise<void>((resolve, reject,) => {
         const start = Date.now();
         const check = () => {
-          if (typeof Alpine !== "undefined" && Alpine.store("ui",)) {
+          // Wait for both: Alpine store exists AND Alpine has processed DOM elements
+          // (x-on:click handlers attached, _x_dataStack present on x-data elements)
+          const storeReady = typeof Alpine !== "undefined" && Alpine.store("ui",);
+          const domReady = (document.querySelector("[x-data]",) as any)?._x_dataStack;
+          if (storeReady && domReady) {
             resolve();
           } else if (Date.now() - start > timeout) {
             reject(new Error("Alpine not ready within timeout",),);
