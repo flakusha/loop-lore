@@ -5,6 +5,7 @@
     "": {
       "name": "loop-lore",
       "dependencies": {
+        "@elysia/openapi": "^1.4.15",
         "blessed": "^0.1.81",
         "blessed-contrib": "^4.11.0",
         "clean-css": "^5.3.3",
@@ -179,6 +180,8 @@
     "@dprint/win32-arm64": ["@dprint/win32-arm64@0.55.2", "", { "os": "win32", "cpu": "arm64" }, "sha512-dxDdxU4a6wQ4K0omdAxW7o0mUdOI03z0/Ah3N6O9Ja7wAMQI5sbfzq7DOJ739UVXtHSB4zBTtYuk1MrBOIyVQQ=="],
 
     "@dprint/win32-x64": ["@dprint/win32-x64@0.55.2", "", { "os": "win32", "cpu": "x64" }, "sha512-UTiDSShHbrkx+z719/MffgwGYD8PaypdVmG4vVJVjmF5Hoin6EfugHhSoBf8+G6U9rF+uDIIl0idZq+6Bifzwg=="],
+
+    "@elysia/openapi": ["@elysia/openapi@1.4.15", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-MrVGCPo5hnRF4/yWGOyH5ddjt4DlSIbeC5rrkupQtHY8TEQe+XdJa2YM9aUOrtgtRcy4UNGyiVlLl/jllPkPQA=="],
 
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.21.5", "", { "os": "aix", "cpu": "ppc64" }, "sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ=="],
 

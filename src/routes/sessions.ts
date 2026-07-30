@@ -100,6 +100,13 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
           data: sessions,
           pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize,), },
         },);
+      }, {
+        detail: {
+          summary: "List sessions",
+          description:
+            "List sessions for the authenticated user. Admin users see all sessions; regular users only see their own.",
+          tags: ["Sessions",],
+        },
       },)
       /**
        * GET /api/sessions/:id
@@ -131,7 +138,15 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
 
           return jsonResponse(sanitizeSession(session, currentSessionId,),);
         },
-        { params: t.Object({ id: t.String(), },), },
+        {
+          params: t.Object({ id: t.String(), },),
+          detail: {
+            summary: "Get session",
+            description:
+              "Get details for a specific session. Admin can view any session; regular users can only view their own.",
+            tags: ["Sessions",],
+          },
+        },
       )
       /**
        * DELETE /api/sessions/:id
@@ -177,7 +192,15 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
 
           return jsonNoContent();
         },
-        { params: t.Object({ id: t.String(), },), },
+        {
+          params: t.Object({ id: t.String(), },),
+          detail: {
+            summary: "Delete session",
+            description:
+              "Force-logout a session. Admin can delete any session; regular users can only delete their own. Cannot delete current session (use /api/auth/logout instead).",
+            tags: ["Sessions",],
+          },
+        },
       ) as unknown as Elysia
   );
 }

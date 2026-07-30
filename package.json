@@ -21,6 +21,7 @@
     "docs:dev": "bunx vitepress dev docs",
     "docs:build": "bunx vitepress build docs",
     "docs:preview": "bunx vitepress preview docs",
+    "openapi": "bun run scripts/gen-openapi.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:css": "stylelint \"src/public/**/*.css\"",
@@ -75,6 +76,7 @@
     "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
   },
   "dependencies": {
+    "@elysia/openapi": "^1.4.15",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.11.0",
     "clean-css": "^5.3.3",

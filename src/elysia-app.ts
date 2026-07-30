@@ -9,8 +9,10 @@
  * Uses closure injection (not .state()/.decorate()) to avoid Elysia's
  * complex type inference issues when merging plugins.
  */
+import { openapi, } from "@elysia/openapi";
 import { Elysia, } from "elysia";
 import { BunAdapter, } from "elysia/adapter/bun";
+import { readFileSync, } from "node:fs";
 import { ageGateRoutes, } from "./age-gate/controller";
 import { assetRoutes, } from "./assets/controller";
 import type { Config, } from "./config/schema";
@@ -86,10 +88,29 @@ export function createApp(deps: AppDeps,): Elysia {
 
   const handleOpts = { database, config, };
 
+  // Read version from package.json for OpenAPI spec
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url,), "utf8",),) as { version: string };
+  const appVersion: string = pkg.version;
+
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Validation error handler (must be first) ─────────────
 
     .onError((ctx: any,) => onValidationError(ctx.code, ctx.error, ctx.set,))
+    // ── OpenAPI / Scalar UI (dev-only, gated on docs.enabled) ──────────────
+    .use(
+      config.docs.enabled
+        ? openapi({
+          path: "/openapi",
+          documentation: {
+            info: {
+              title: "Loop Lore API",
+              version: appVersion,
+              description: "Loop Lore — SillyTavern RPG chat reimplementation API reference.",
+            },
+          },
+        },)
+        : new Elysia(),
+    )
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request, },) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth, },);
