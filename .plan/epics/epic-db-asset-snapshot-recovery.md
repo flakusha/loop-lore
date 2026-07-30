@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** High
 **Type:** Research & Planning Epic
+**Tags:** database, backup, recovery, snapshots, disaster-recovery
 
 ## Summary
 

@@ -2,6 +2,9 @@
 
 **Status:** ⬜ Not Started
 **Priority:** High
+**Effort:** Medium
+**Type:** Feature Epic
+**Tags:** api, routes, rest, endpoints, middleware
 
 ## Summary
 

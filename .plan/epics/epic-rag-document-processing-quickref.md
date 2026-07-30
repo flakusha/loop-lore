@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Type:** Feature Epic
+**Tags:** rag, document-processing, ingestion, chunking, embedding
 
 ## Four Phases
 
