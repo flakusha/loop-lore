@@ -37,7 +37,7 @@
 | **P2-D** | **GM Flows** | [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-gm-shadow-notes.md`](TASK-gm-shadow-notes.md), [`TASK-gm-whitenotes.md`](TASK-gm-whitenotes.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md) | ⬜ Not Started |
 | **P2-E** | **Authorization & Access** | [`TASK-auth-register-route.md`](TASK-auth-register-route.md), [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md), [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md), [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md), [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md), [`TASK-authoring-creation.md`](TASK-authoring-creation.md) | ⬜ Not Started |
 | **P2-F** | **Gallery** | [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md), [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) | ⬜ Not Started |
-| **P2-later** | **RPG Mechanics** (dice, stats, combat, XP, loot) | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md` | ⬜ Deferred |
+| **P2-later** | **RPG Mechanics** (dice, stats, combat, XP, loot) | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md` | ✅ Complete (2026-07-31) |
 | P2-later | **Character System** — multi-personality, mood, memory injection | `TASK-character-system-p2.md` | ⬜ Deferred |
 | P2-later | **World & Locations** (discovery, travel, NPC) | `epic-world-locations.md` | ⬜ Deferred |
 
