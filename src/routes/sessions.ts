@@ -14,6 +14,7 @@ import type { Db, } from "../db";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
 import { notFound, unauthorized, } from "../validation/middleware";
+import { ErrorResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "./http-utils";
 
 function log(): Logger {
@@ -101,6 +102,10 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
           pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize,), },
         },);
       }, {
+        response: {
+          200: t.Object({ data: t.Array(t.Any(),), pagination: t.Object({ page: t.Number(), pageSize: t.Number(), total: t.Number(), totalPages: t.Number(), },), },),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "List sessions",
           description:
@@ -140,6 +145,11 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
         },
         {
           params: t.Object({ id: t.String(), },),
+          response: {
+            200: t.Any(),
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Get session",
             description:
@@ -194,6 +204,12 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
         },
         {
           params: t.Object({ id: t.String(), },),
+          response: {
+            204: t.Void(),
+            400: ErrorResponse,
+            401: ErrorResponse,
+            404: ErrorResponse,
+          },
           detail: {
             summary: "Delete session",
             description:
