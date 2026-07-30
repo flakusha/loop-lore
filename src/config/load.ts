@@ -340,7 +340,6 @@ function validateDomainConfig(domain: string, parsed: Record<string, unknown>, f
   switch (domain) {
     case "server": {
       const server = parsed.server as Record<string, unknown> | undefined;
-// hint: Logic changed on both sides. Requires understanding intent of each change.
       if (server?.port !== undefined) {
         const port = Number(server.port,);
         if (isNaN(port,) || port < 0 || port > 65_535) {

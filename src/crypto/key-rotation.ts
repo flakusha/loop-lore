@@ -271,14 +271,14 @@ export function startAutoRotationTimer(
   log().info(`Starting auto-rotation timer (check every ${intervalMs / 1000}s, rotate after ${rotationDays} days)`,);
 
   // Run immediately on start
-  void runAutoRotation(database, rotationDays,).catch((err,) => {
-    log().error(`Auto-rotation failed: ${String(err,)}`,);
+  void runAutoRotation(database, rotationDays,).catch((error,) => {
+    log().error(`Auto-rotation failed: ${String(error,)}`,);
   },);
 
   // Then run periodically
   return setInterval(() => {
-    void runAutoRotation(database, rotationDays,).catch((err,) => {
-      log().error(`Auto-rotation failed: ${String(err,)}`,);
+    void runAutoRotation(database, rotationDays,).catch((error,) => {
+      log().error(`Auto-rotation failed: ${String(error,)}`,);
     },);
   }, intervalMs,);
 }

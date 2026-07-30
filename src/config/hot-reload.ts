@@ -56,7 +56,6 @@ function watchDomainConfigs(configsDir: string, onReload: DomainReloadCallback,)
     log.info(`Domain config changed: ${filename} (${domain})`,);
 
     // Reload the domain config
-// hint: Logic changed on both sides. Requires understanding intent of each change.
     // Dynamic import to avoid circular dependencies
     void import("./load").then(({ loadConfig, },) => {
       const config = loadConfig();
