@@ -151,7 +151,17 @@
     "unbanUser": "Unban User",
     "deleteUser": "Delete User",
     "userBanned": "User banned",
-    "userUnbanned": "User unbanned"
+    "userUnbanned": "User unbanned",
+    "adminAccessRequired": "Admin access required",
+    "userNotFound": "User not found",
+    "providerNotFound": "Provider not found",
+    "worldNotFound": "World not found",
+    "chatNotFound": "Chat not found",
+    "noUpdatableFields": "No updatable fields",
+    "templateNotFound": "Template not found",
+    "templateAlreadyExists": "Template already exists",
+    "logEntryNotFound": "Log entry not found",
+    "autoRotationDisabled": "Auto-rotation is disabled (keyRotationDays = 0)"
   },
   "errors": {
     "notFound": "Not found",
@@ -352,5 +362,13 @@
     "locationNotFound": "Location not found in this world",
     "notParticipant": "Not a participant of this chat",
     "messageNotFound": "Message not found in this chat"
+  },
+  "messages": {
+    "invalidVariantIndex": "Invalid variant index",
+    "contentRequired": "Content is required",
+    "cannotEditMessage": "Cannot edit this message",
+    "onlyUserEditable": "Only user messages can be edited",
+    "messageNotFound": "Message not found",
+    "chatNotFound": "Chat not found"
   }
 }
