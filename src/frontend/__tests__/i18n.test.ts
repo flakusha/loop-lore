@@ -14,7 +14,6 @@ import {
   saveLocale,
   SUPPORTED_LOCALES,
 } from "../i18n";
-import { t, } from "../ui";
 
 // Mock localStorage for Bun test environment
 const storage = new Map<string, string>();
@@ -43,8 +42,16 @@ const mockDocument = {
     lang: "en",
     dir: "ltr",
   },
+  addEventListener: () => {},
 };
 Object.defineProperty(globalThis, "document", { value: mockDocument, writable: true, },);
+
+// Dynamic import for ui.ts to avoid module-level side effects
+let t: (key: string, params?: Record<string, string>,) => string;
+beforeEach(async () => {
+  const ui = await import("../ui");
+  t = ui.t;
+},);
 
 describe("resolveKey", () => {
   const map = {
