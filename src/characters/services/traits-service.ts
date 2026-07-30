@@ -6,61 +6,28 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import type {
-  TraitCategory,
-  WorldTraitCategory,
-} from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type {
+  LocationTraitCreateInput,
+  LocationTraitUpdateInput,
+  TraitCreateInput,
+  TraitUpdateInput,
+  WorldTraitCreateInput,
+} from "../../validation/schemas";
 import { guardNotExists, } from "./shared-service-utils";
 
-/** Options for creating a permanent trait */
-export interface CreatePermanentTraitOpts {
-  actorId: string;
-  category: TraitCategory;
-  name: string;
-  value: string;
-}
-
-/** Options for creating a world trait */
-export interface CreateWorldTraitOpts {
-  actorId: string;
-  worldId: string;
-  category: WorldTraitCategory;
-  name: string;
-  value: string;
-}
-
-/** Options for creating a location trait */
-export interface CreateLocationTraitOpts {
-  actorId: string;
-  locationId: string;
-  name: string;
-  value: string;
-  bonus?: number;
-  penalty?: number;
-  effects?: Record<string, unknown>;
-}
-
+/** Options for creating a permanent trait (body + actorId from params) */
+export type CreatePermanentTraitOpts = TraitCreateInput & { actorId: string };
+/** Options for creating a world trait (body + actorId/worldId from params) */
+export type CreateWorldTraitOpts = WorldTraitCreateInput & { actorId: string; worldId: string };
+/** Options for creating a location trait (body + actorId/locationId from params) */
+export type CreateLocationTraitOpts = LocationTraitCreateInput & { actorId: string; locationId: string };
 /** Options for updating a permanent trait */
-export interface UpdatePermanentTraitOpts {
-  name: string;
-  value: string;
-}
-
+export type UpdatePermanentTraitOpts = TraitUpdateInput;
 /** Options for updating a world trait */
-export interface UpdateWorldTraitOpts {
-  name: string;
-  value: string;
-}
-
+export type UpdateWorldTraitOpts = TraitUpdateInput;
 /** Options for updating a location trait */
-export interface UpdateLocationTraitOpts {
-  name: string;
-  value: string;
-  bonus?: number;
-  penalty?: number;
-  effects?: Record<string, unknown>;
-}
+export type UpdateLocationTraitOpts = LocationTraitUpdateInput;
 
 /**
  * Character Traits Service
