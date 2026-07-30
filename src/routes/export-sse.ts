@@ -198,19 +198,20 @@ async function processExport(
         }
 
         // Add to asset manifest
+        let charExt = "json";
+        if (format === "yaml") { charExt = "yaml"; }
+        else if (format === "png") { charExt = "png"; }
+        let charSize = exportToCcV3Json(canonical,).length;
+        if (format === "yaml") { charSize = exportToYaml(canonical,).length; }
+        else if (format === "png") { charSize = exportToPng(canonical,).length; }
         assetManifest.push({
           id: char.id,
           type: "character",
           name: char.display_name,
           format,
-          filename: `${filename}.${format === "yaml" ? "yaml" : format === "png" ? "png" : "json"}`,
-          checksum:
-            checksums[`characters/${filename}.${format === "yaml" ? "yaml" : format === "png" ? "png" : "json"}`] ?? "",
-          size: format === "yaml"
-            ? exportToYaml(canonical,).length
-            : format === "png"
-            ? exportToPng(canonical,).length
-            : exportToCcV3Json(canonical,).length,
+          filename: `${filename}.${charExt}`,
+          checksum: checksums[`characters/${filename}.${charExt}`] ?? "",
+          size: charSize,
         },);
 
         processedItems++;
@@ -347,7 +348,7 @@ async function processExport(
           id: asset.id,
           type: "asset",
           name: asset.filename,
-          format: asset.mime_type?.split("/",)[1] ?? "unknown",
+          format: asset.mime_type?.split("/", 2,)[1] ?? "unknown",
           filename: name,
           checksum: checksums[`assets/${name}`] ?? "",
           size: buffer.byteLength,
@@ -449,7 +450,12 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
     // POST /api/export/progress — Start export and return SSE stream
     .post("/api/export/progress", async (ctx: any,) => {
       const userId = await resolveUserId(ctx.request, database,);
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
 
       const jobId = crypto.randomUUID();
       const job: ExportJob = {
@@ -489,24 +495,29 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
             }
 
             // Send progress update
-            controller.enqueue(encoder.encode(sseData({
+            const percentage = currentJob.total > 0
+              ? Math.round((currentJob.progress / currentJob.total) * 100,)
+              : 0;
+            const progressData = sseData({
               type: "progress",
               jobId,
               progress: currentJob.progress,
               total: currentJob.total,
-              percentage: currentJob.total > 0 ? Math.round((currentJob.progress / currentJob.total) * 100,) : 0,
+              percentage,
               currentStep: currentJob.currentStep,
-            },),),);
+            },);
+            controller.enqueue(encoder.encode(progressData,),);
 
             // Send completion event
             if (currentJob.status === "completed") {
-              controller.enqueue(encoder.encode(sseData({
+              const completedData = sseData({
                 type: "completed",
                 jobId,
                 downloadUrl: `/api/export/download/${jobId}`,
                 totalItems: currentJob.total,
                 completedAt: currentJob.completedAt?.toISOString(),
-              },),),);
+              },);
+              controller.enqueue(encoder.encode(completedData,),);
               clearInterval(interval,);
               controller.close();
             } else if (currentJob.status === "failed") {
@@ -536,11 +547,17 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
       const job = jobs.get(jobId,);
 
       if (!job) {
-        return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       if (job.status !== "completed" || !job.zipBuffer) {
-        return jsonError({ message: "Export not ready", status: HttpStatus.BadRequest, },);
+        return jsonError({
+          message: ctx.t?.("exportJob.exportNotReady",) ?? "Export not ready",
+          status: HttpStatus.BadRequest,
+        },);
       }
 
       const timestamp = job.createdAt.toISOString().slice(0, 10,);
@@ -557,7 +574,10 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
       const job = jobs.get(jobId,);
 
       if (!job) {
-        return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       return {

@@ -23,8 +23,18 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     .get("/api/admin/character-overrides", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
+      if (userRole !== "admin") {
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+        },);
+      }
 
       const overrides = await database
         .selectFrom("admin_character_overrides",)
@@ -37,8 +47,18 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     .get("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
+      if (userRole !== "admin") {
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
 
@@ -54,8 +74,18 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     .post("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
+      if (userRole !== "admin") {
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+        },);
+      }
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
@@ -92,8 +122,18 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     .delete("/api/admin/character-overrides/:overrideId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      if (!userId) {
+        return jsonError({
+          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
+      }
+      if (userRole !== "admin") {
+        return jsonError({
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
+        },);
+      }
 
       const { overrideId, } = ctx.params as { overrideId: string };
 

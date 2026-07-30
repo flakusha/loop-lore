@@ -33,7 +33,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     // ── List actor keys ────────────────────────────────────────
     .get("/api/keys", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
       try {
         const keys = await listActorKeys(database, userId,);
@@ -41,7 +41,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to list keys for actor ${userId}: ${String(error,)}`,);
         return jsonError({
-          message: "Failed to list keys",
+          message: ctx.t?.("crypto.keyListFailed",) ?? "Failed to list keys",
           status: HttpStatus.InternalServerError,
         },);
       }
@@ -51,12 +51,12 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       "/api/keys",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(); }
+        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
         const body = ctx.body as { name: string };
         if (!body.name || typeof body.name !== "string" || body.name.trim().length === 0) {
           return jsonError({
-            message: "Key name is required",
+            message: ctx.t?.("crypto.keyNameRequired",) ?? "Key name is required",
             status: HttpStatus.BadRequest,
           },);
         }
@@ -65,7 +65,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
           const smk = getSmk();
           if (!smk) {
             return jsonError({
-              message: "Encryption not configured",
+              message: ctx.t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
               status: HttpStatus.InternalServerError,
             },);
           }
@@ -87,7 +87,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
         } catch (error) {
           log().error(`Failed to generate key for actor ${userId}: ${String(error,)}`,);
           return jsonError({
-            message: "Failed to generate key",
+            message: ctx.t?.("crypto.keyGenerateFailed",) ?? "Failed to generate key",
             status: HttpStatus.InternalServerError,
           },);
         }
@@ -97,13 +97,13 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     // ── Rotate primary key ─────────────────────────────────────
     .post("/api/keys/rotate", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
       try {
         const smk = getSmk();
         if (!smk) {
           return jsonError({
-            message: "Encryption not configured",
+            message: ctx.t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
             status: HttpStatus.InternalServerError,
           },);
         }
@@ -134,7 +134,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       "/api/keys/:id",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(); }
+        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
         const keyId = (ctx.params as { id: string }).id;
 

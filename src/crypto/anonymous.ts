@@ -7,14 +7,14 @@
  * Admin sees real identities for moderation.
  */
 
-import type { Config } from "../config/schema";
+import type { Config, } from "../config/schema";
 
 let _anonymousEnabled = false;
 
 /**
  * Initialize anonymous chat mode from config.
  */
-export function initAnonymousMode(config: Config): void {
+export function initAnonymousMode(config: Config,): void {
   _anonymousEnabled = config.encryption.anonymous ?? false;
 }
 

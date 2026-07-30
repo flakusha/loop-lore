@@ -395,7 +395,6 @@ describe("handleGenerate — streaming (SSE)", () => {
     // Consume the SSE stream to trigger the start() callback which stores the message
     const reader = res.body?.getReader();
     if (reader) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       while (true) {
         const { done, } = await reader.read();
         if (done) { break; }

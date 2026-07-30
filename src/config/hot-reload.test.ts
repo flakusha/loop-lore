@@ -3,7 +3,7 @@
 import { describe, expect, test, } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
-import { watchDomainConfigs, stopWatchingDomainConfigs, } from "./hot-reload";
+import { stopWatchingDomainConfigs, watchDomainConfigs, } from "./hot-reload";
 
 const TEST_DIR = path.join(import.meta.dir, "__test_hot_reload__",);
 
@@ -26,7 +26,7 @@ describe("Domain Config Hot-Reload", () => {
     },);
 
     // Wait a bit for watcher to be ready
-    await new Promise((resolve,) => setTimeout(resolve, 100,),);
+    await new Promise((resolve,) => setTimeout(resolve, 100,));
 
     // Modify the domain config
     writeFileSync(
@@ -35,14 +35,14 @@ describe("Domain Config Hot-Reload", () => {
     );
 
     // Wait for reload to be triggered
-    await new Promise((resolve,) => setTimeout(resolve, 200,),);
+    await new Promise((resolve,) => setTimeout(resolve, 200,));
 
     stopWatchingDomainConfigs(watcher,);
 
     // Note: In test environment, file watching might not trigger reliably
     // This test verifies the watcher can be created and stopped
-    expect(reloadCalled).toBe(false,); // May not trigger in test
-    expect(reloadedDomain).toBe("",);
+    expect(reloadCalled,).toBe(false,); // May not trigger in test
+    expect(reloadedDomain,).toBe("",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);

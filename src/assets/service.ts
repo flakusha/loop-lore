@@ -6,19 +6,19 @@
  * Supports optional encryption for standard/private tier assets.
  */
 import type { Kysely, } from "kysely";
-import { existsSync, mkdirSync, unlinkSync, writeFileSync, readFileSync, } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
+import {
+  decryptAssetBlob,
+  encryptAssetBlob,
+} from "../crypto/asset-encryption";
+import type { ChatKey, } from "../crypto/chat-keys";
+import type { PipelineConfig, } from "../crypto/pipeline";
 import type { AssetType as AssetTypeT, } from "../db/enums";
 import { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { extractImageMetadata, } from "./metadata";
-import {
-  encryptAssetBlob,
-  decryptAssetBlob,
-} from "../crypto/asset-encryption";
-import type { ChatKey, } from "../crypto/chat-keys";
-import type { PipelineConfig, } from "../crypto/pipeline";
 
 export interface AssetRecord {
   id: string;
@@ -429,19 +429,19 @@ export async function getAssetData(
   chatKey?: ChatKey,
 ): Promise<Buffer | null> {
   const asset = await getAsset(database, assetId,);
-  if (!asset) return null;
+  if (!asset) { return null; }
 
   const filePath = getAssetFilePath(uploadDir, asset.storage_path,);
-  if (!existsSync(filePath,)) return null;
+  if (!existsSync(filePath,)) { return null; }
 
   const fileData = readFileSync(filePath,);
 
   // If asset is encrypted, decrypt it
   if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
     if (!chatKey) {
-      throw new Error("Chat key required to decrypt encrypted asset");
+      throw new Error("Chat key required to decrypt encrypted asset",);
     }
-    return decryptAssetBlob(fileData, chatKey);
+    return decryptAssetBlob(fileData, chatKey,);
   }
 
   return fileData;
@@ -455,7 +455,7 @@ export async function isAssetEncrypted(
   assetId: string,
 ): Promise<boolean> {
   const asset = await getAsset(database, assetId,);
-  if (!asset) return false;
+  if (!asset) { return false; }
   return asset.encryption_tier !== "public" && asset.encrypted_key_id !== null;
 }
 

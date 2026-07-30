@@ -5,8 +5,8 @@
  */
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
-import { chatHistorySection, } from "./sections/chat-history";
 import { characterTraitsSection, } from "./sections/character-traits";
+import { chatHistorySection, } from "./sections/chat-history";
 import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
 import { eventSection, } from "./sections/events";

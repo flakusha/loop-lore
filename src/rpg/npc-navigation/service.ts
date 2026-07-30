@@ -233,20 +233,25 @@ export class NpcNavigationService {
     const pattern = (schedule.movementPattern as string) ?? MovementPattern.Stationary;
 
     switch (pattern) {
-      case MovementPattern.Patrol:
+      case MovementPattern.Patrol: {
         return this.processPatrolMovement(actorId, worldId, currentLocationId, schedule,);
+      }
 
-      case MovementPattern.Wander:
+      case MovementPattern.Wander: {
         return this.processWanderMovement(actorId, worldId, currentLocationId, schedule,);
+      }
 
-      case MovementPattern.Follow:
+      case MovementPattern.Follow: {
         return this.processFollowMovement(actorId, worldId, currentLocationId, schedule,);
+      }
 
-      case MovementPattern.Flee:
+      case MovementPattern.Flee: {
         return this.processFleeMovement(actorId, worldId, currentLocationId, schedule,);
+      }
 
-      default:
+      default: {
         return null;
+      }
     }
   }
 
@@ -417,7 +422,7 @@ export class NpcNavigationService {
       .limit(5,) // Limit to nearby locations
       .execute();
 
-    return nearbyLocations.map((l,) => l.location_id).filter(Boolean,) as string[];
+    return nearbyLocations.map((l,) => l.location_id).filter(Boolean,);
   }
 
   /**

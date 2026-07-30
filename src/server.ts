@@ -10,7 +10,7 @@ import { ensureTlsCerts, } from "./config/cert";
 import { loadConfig, } from "./config/load";
 import { compressAssets, copyDirectory, } from "./content/compress";
 import { injectContentHashes, } from "./content/hash-injection";
-import { initSmk, initAnonymousMode, } from "./crypto";
+import { initAnonymousMode, initSmk, } from "./crypto";
 import { getDatabase, } from "./db/index";
 import { runMigrations, } from "./db/migrate";
 import { seedDefaultActors, } from "./db/seed";
@@ -166,9 +166,9 @@ export function createRequestHandler(
     // Generate a unique request ID for traceability
     const requestId = crypto.randomUUID();
     // Attach request ID to the cloned request so downstream handlers can read it
-    const taggedRequest = new Request(request, {
-      headers: new Headers([...request.headers, ["x-request-id", requestId,],],),
-    },);
+    const headers = new Headers(request.headers,);
+    headers.set("x-request-id", requestId,);
+    const taggedRequest = new Request(request, { headers, },);
     generateNonce(taggedRequest,);
     let response = await app.fetch(taggedRequest,);
     // Return the request ID in the response header
@@ -292,10 +292,10 @@ async function start() {
 
   // Clean up timer on shutdown
   process.on("SIGTERM", () => {
-    if (rotationTimer) { clearInterval(rotationTimer); }
+    if (rotationTimer) { clearInterval(rotationTimer,); }
   },);
   process.on("SIGINT", () => {
-    if (rotationTimer) { clearInterval(rotationTimer); }
+    if (rotationTimer) { clearInterval(rotationTimer,); }
   },);
 
   const serverManager = new ServerExternalManager(logger,);

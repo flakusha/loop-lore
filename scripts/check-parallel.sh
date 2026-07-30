@@ -121,6 +121,10 @@ CHECKS[build - backend]="bun build --target bun --outdir $BUILD_TMP ./src/server
 CHECKS[format - dprint]="bun run format:dprint"
 CHECKS[md - lint]="bun run md:lint"
 
+# Size check (non-blocking by default; --strict makes it a gate)
+CHECKS[size - check]="bun run scripts/check-file-size.ts"
+CHECKS[size - strict]="bun run scripts/check-file-size.ts --strict"
+
 # Tests
 CHECKS[test - unit]="bun run test:unit"
 CHECKS[test - e2e]="E2E_SAFEGUARD=1 bun run test:e2e"
