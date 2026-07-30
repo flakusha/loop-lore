@@ -123,7 +123,7 @@ describe("Import E2E", () => {
 
     const res = await api.upload("/api/actors/import", form,);
     expect(res.ok,).toBe(false,);
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(422,);
     expect(res.error,).toContain("Name is required",);
   });
 });

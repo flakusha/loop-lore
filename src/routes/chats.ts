@@ -113,7 +113,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
               .where("id", "=", userId,)
               .executeTakeFirst();
             const st = getStatus(ageGateConfig, user ?? null,);
-            if (!st.hasPassed) { return forbidden(undefined, ctx.t,); }
+            if (!st.hasPassed) { return forbidden("Age gate not accepted",); }
           }
 
           const body = ctx.body as typeof ChatCreateBody.static;
