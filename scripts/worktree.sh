@@ -5,6 +5,7 @@ set -euo pipefail
 # Usage: ./scripts/worktree.sh <command> [args]
 
 REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TREE_DIR="${TREE_DIR:-$REPO_ROOT/tree}"
 
 # Source agent credentials if available (GPG signing for worktrees)
@@ -1116,9 +1117,7 @@ cmd_agent_merge() {
 }
 
 cmd_agent_commit() {
-  # Agent commit — standardized GPG-signed commit from worktree
-  # Usage: ./scripts/worktree.sh agent-commit <branch> <message>
-  # Agent MUST use this instead of raw 'git commit' commands.
+  # Delegate to mjs CLI for agent-commit
   local branch="$1"
   local message="$2"
 
@@ -1136,74 +1135,8 @@ cmd_agent_commit() {
     exit 1
   fi
 
-  local worktree_path
-  worktree_path="$(require_worktree "$branch")"
-
-  # Check for staged changes
-  if git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
-    echo -e "${RED}Error: no staged changes in worktree${NC}"
-    echo "  Stage files first: cd $worktree_path && git add <files>"
-    exit 1
-  fi
-
-  # Verify agent credentials
-  if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
-    echo -e "${RED}Error: AGENT_GPG_KEY_ID not set in .credentials.env${NC}"
-    exit 1
-  fi
-
-  if [[ -z "${AGENT_GPG_NAME:-}" ]] || [[ -z "${AGENT_GPG_EMAIL:-}" ]]; then
-    echo -e "${RED}Error: AGENT_GPG_NAME/AGENT_GPG_EMAIL not set in .credentials.env${NC}"
-    exit 1
-  fi
-
-  # Get author from worktree's local git config
-  local author_name
-  local author_email
-  author_name=$(git -C "$worktree_path" config user.name)
-  author_email=$(git -C "$worktree_path" config user.email)
-
-  if [[ -z "$author_name" ]] || [[ -z "$author_email" ]]; then
-    echo -e "${RED}Error: worktree user.name/user.email not configured${NC}"
-    echo "  Run: ./scripts/worktree.sh sign $branch"
-    exit 1
-  fi
-
-  # Verify GPG key is available
-  if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
-    echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
-    echo "  Run: ./scripts/gpg-unlock.sh"
-    exit 1
-  fi
-
-  echo -e "${CYAN}Creating GPG-signed commit in '$branch'...${NC}"
-  echo -e "  Author: $author_name <$author_email>"
-  echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
-  echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
-
-  # Execute commit with proper identity
-  # --no-verify: agent MUST run checks separately before committing
-  # The pre-commit hook is for manual commits; agent workflow is:
-  # 1. Run bun run check && bun test src/
-  # 2. ./scripts/worktree.sh agent-commit <branch> "<message>"
-  GIT_COMMITTER_NAME="$AGENT_GPG_NAME" \
-    GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
-    git -C "$worktree_path" \
-    -c user.signingkey="$AGENT_GPG_KEY_ID" \
-    -c commit.gpgsign=true \
-    commit -S \
-    --no-verify \
-    --author="$author_name <$author_email>" \
-    -m "$message"
-
-  # Verify signature
-  local commit_sha
-  commit_sha=$(git -C "$worktree_path" rev-parse HEAD)
-  if git -C "$worktree_path" verify-commit "$commit_sha" &>/dev/null; then
-    echo -e "${GREEN}✓ Commit created and GPG-signed: $commit_sha${NC}"
-  else
-    echo -e "${YELLOW}⚠ Commit created but signature verification failed${NC}"
-  fi
+  # Delegate to mjs CLI
+  bun run "${SCRIPT_DIR}/worktree/index.mjs" agent-commit "$branch" "$message"
 }
 
 cmd_commit() {
