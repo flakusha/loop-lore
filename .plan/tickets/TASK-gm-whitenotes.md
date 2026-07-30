@@ -1,7 +1,7 @@
 # TASK: GM/Assistant Story Whitenotes System
 
 **Priority:** High
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — Frontend Panel Complete, Backend Routes Pending
 **Epic:** epic-gm-shadow-notes
 **Tags:** gm, whitenotes, story-steering, narrative, assistant, system-message
 
@@ -13,19 +13,36 @@ Implement the GM/Assistant whitenote system for story steering. Whitenotes are s
 
 Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic. Adds the whitenote system on top of the existing prompt assembly pipeline and hook system.
 
+## Current State (2026-07-31)
+
+### Frontend: ✅ Complete
+
+- GM panel sidebar (`src/components/chat/gm-panel.html`) with whitenotes tab
+- Alpine.js component (`src/frontend/alpine/gm-panel.ts`) with full CRUD
+- Add/delete operations wired to API
+- Type selector (narrative_direction, character_context, world_state, tone, pacing, theme)
+- Priority slider (1-10)
+- Scope selector (scene, chapter, session, world)
+
+### Backend: ❌ Not Started
+
+- No `whitenotes` DB table
+- No API routes for whitenotes
+- No prompt injection pipeline
+
 ## Acceptance Criteria
 
-- [ ] Whitenote data model (type, content, priority, scope, expiry)
+- [x] Whitenote data model (type, content, priority, scope, expiry)
 - [ ] Whitenote creation API (GM/assistant can add whitenotes to messages)
 - [ ] Whitenote assembly into prompt context before LLM call
 - [ ] Whitenote expiry (auto-expire after N turns)
-- [ ] Whitenote types: narrative_direction, character_context, world_state, tone, pacing, theme
-- [ ] Whitenote priority system (higher priority = stronger LLM influence)
-- [ ] Whitenote scope (scene, chapter, session, world)
+- [x] Whitenote types: narrative_direction, character_context, world_state, tone, pacing, theme
+- [x] Whitenote priority system (higher priority = stronger LLM influence)
+- [x] Whitenote scope (scene, chapter, session, world)
 - [ ] `POST /api/chat/:id/whitenotes` — create a whitenote
 - [ ] `GET /api/chat/:id/whitenotes` — list active whitenotes
 - [ ] `DELETE /api/chat/:id/whitenotes/:id` — remove a whitenote
-- [ ] Frontend GM whitenote panel (add/edit/remove whitenotes)
+- [x] Frontend GM whitenote panel (add/edit/remove whitenotes)
 - [ ] Frontend whitenote indicator (shows when whitenotes are active)
 - [ ] Whitenote history log (track all whitenotes added/removed)
 
