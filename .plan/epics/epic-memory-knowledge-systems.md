@@ -17,12 +17,12 @@ Three-tier memory system — episodic, semantic, and procedural memory. Covers m
 
 ## Features
 
-| Feature | ID | Effort | Description |
-| ------- | -- | ------ | ----------- |
-| Three-tier memory | FEA-2026-052 | High | Episodic/semantic/procedural per spec |
-| Memory selection UI | FEA-2026-053 | Med | Mid-chat panel for pinning, selection |
-| Lorebook activation | FEA-2026-054 | Med | Sticky entries, cooldowns, activation conditions |
-| Cross-chat memory | FEA-2026-055 | Med | Persistent persona/knowledge across workspaces |
+| Feature             | ID           | Effort | Description                                      |
+| ------------------- | ------------ | ------ | ------------------------------------------------ |
+| Three-tier memory   | FEA-2026-052 | High   | Episodic/semantic/procedural per spec            |
+| Memory selection UI | FEA-2026-053 | Med    | Mid-chat panel for pinning, selection            |
+| Lorebook activation | FEA-2026-054 | Med    | Sticky entries, cooldowns, activation conditions |
+| Cross-chat memory   | FEA-2026-055 | Med    | Persistent persona/knowledge across workspaces   |
 
 ## Acceptance Criteria
 

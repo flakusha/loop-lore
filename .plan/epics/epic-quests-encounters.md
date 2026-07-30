@@ -18,6 +18,7 @@ Quests and encounters system specification — covers quest generation, encounte
 ## Quest & Encounter Systems
 
 ### Core Quest Model
+
 interface Quest {
 }
 interface QuestObjective {

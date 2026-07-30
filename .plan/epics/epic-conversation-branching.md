@@ -16,11 +16,11 @@ Enable draft/alternative flows via tree-structured message history. Allows users
 
 ## Features
 
-| Feature | ID | Effort | Description |
-| ------- | -- | ------ | ----------- |
-| Branch navigation | FEA-2026-045 | Low | `parent_id` already in schema; add tree traversal queries |
-| Branch UI | FEA-2026-046 | Med | Visual branch selector in chat view |
-| Branch merge | FEA-2026-047 | Med | Merge alternative branches back to main thread |
+| Feature           | ID           | Effort | Description                                               |
+| ----------------- | ------------ | ------ | --------------------------------------------------------- |
+| Branch navigation | FEA-2026-045 | Low    | `parent_id` already in schema; add tree traversal queries |
+| Branch UI         | FEA-2026-046 | Med    | Visual branch selector in chat view                       |
+| Branch merge      | FEA-2026-047 | Med    | Merge alternative branches back to main thread            |
 
 ## Acceptance Criteria
 

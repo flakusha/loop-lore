@@ -12,60 +12,70 @@ exploration, achievements, and replayability systems.
 ## Extension Systems
 
 ### Crafting & Professions
+
 - Recipe-based crafting with material requirements
 - Profession skill trees and specialization
 - Discovery mechanics for rare recipes
 - See: `epic-crafting-professions.md`
 
 ### Faction & Reputation
+
 - Faction standing with reputation scores
 - Quest-gating based on faction alignment
 - Inter-faction relationships and conflicts
 - See: `epic-faction-reputation.md`
 
 ### Disease & Poison
+
 - Disease transmission and symptoms
 - Poison mechanics and antidotes
 - Environmental disease zones
 - See: `epic-disease-poison.md`
 
 ### Weather & Environment
+
 - Dynamic weather affecting gameplay
 - Terrain modifiers for combat/exploration
 - Seasonal events and cycles
 - See: `epic-weather-environment.md`
 
 ### Stealth & Crime
+
 - Stealth detection mechanics
 - Crime system with witnesses and bounties
 - Thieves guild and underground economy
 - See: `epic-stealth-crime.md`
 
 ### Economy & Trading
+
 - Currency system and gold sinks
 - Player shops and auction house
 - NPC merchants with dynamic pricing
 - See: `epic-economy-trading.md`
 
 ### Companion, Pet & Mount
+
 - Companion bonding and loyalty
 - Pet collection and care
 - Mount mechanics and travel speed
 - See: `epic-companion-pet-mount.md`
 
 ### Exploration & Discovery
+
 - Fog of war and map reveal
 - Hidden areas and secret finding
 - Expedition teams and exploration rewards
 - See: `epic-exploration-discovery.md`
 
 ### Achievements & Badges
+
 - Achievement tracking and display
 - Badge collection and showcase
 - Achievement-gated content
 - See: `epic-achievements.md`
 
 ### Replayability & New Game+
+
 - New Game+ with carried progress
 - Alternate story paths
 - Challenge modes and modifiers
@@ -74,6 +84,7 @@ exploration, achievements, and replayability systems.
 ## Integration Matrix
 
 All extension systems integrate with:
+
 - **RPG Core** (dice, stats, combat) — shared resolution
 - **Character System** — stats, inventory, skills
 - **World/Locations** — spatial context for all systems

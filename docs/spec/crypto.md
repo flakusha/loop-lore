@@ -89,16 +89,19 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 ## Remaining Work
 
 ### High Priority
+
 - [ ] **Crypto test isolation** — ~20 tests fail in full suite (pass isolated). Fix shared state pollution.
 - [ ] **Auto-key rotation** — `KEY_ROTATION_DAYS` config, cron/timer-based rotation, batch re-encrypt pipeline.
 
 ### Medium Priority
+
 - [ ] **Key management UI** (`/settings/keys`) — routes exist, Alpine.js component + HTML template needed.
 - [ ] **Asset encryption** — wire `encryptAtRest`/`decryptAtRest` into `src/assets/service.ts`.
 - [ ] **Browser pre-encrypt integration** — wire `src/frontend/browser.ts` into chat UI with feature detection + fallbacks.
 - [ ] **Time-based access expiry** — `access_duration_days` column, expiry check on key retrieval.
 
 ### Low Priority
+
 - [ ] **World/Location encryption** — schema columns, key derivation chain (world → location → chat).
 - [ ] **Asymmetric key pairs** — public/private key pair generation for true E2E private chats.
 - [ ] **Stable stored chat key** — store key in DB instead of deriving via HKDF (preserves history across joins).
@@ -106,6 +109,7 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 - [ ] `actor_keys.key_type` enum normalization.
 
 ### Done
+
 - [x] SMK initialization (`src/crypto/smk.ts`)
 - [x] Actor key CRUD (`src/crypto/actor-keys.ts`)
 - [x] Chat key derivation (`src/crypto/chat-keys.ts`)

@@ -13,7 +13,7 @@
 | File                                                | Type   | Status                                                                                          |
 | --------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------- |
 | `docs/spec/character-spec.md`                       | Spec   | ✅ Comprehensive — fields, NSFW, impersonation, format conversion, API design, validation modes |
-| `docs/spec/character-spec.md`                      | Spec   | ⚠️ Superseded by character-spec.md but still referenced                                          |
+| `docs/spec/character-spec.md`                       | Spec   | ⚠️ Superseded by character-spec.md but still referenced                                          |
 | `docs/spec/actors.md`                               | Spec   | ✅ Actor data model, memories, notes, lorebooks, items, economics                               |
 | `.plan/epics/epic-character-core-system.md`         | Epic   | ✅ Covers traits, personality integrity, mood, relationships, licensing, avatars                |
 | `.plan/tickets/TASK-character-core-system.md`       | Ticket | ✅ Exists                                                                                       |
@@ -46,7 +46,7 @@
 
 | File                                        | Type   | Status                                                                                 |
 | ------------------------------------------- | ------ | -------------------------------------------------------------------------------------- |
-| `docs/spec/actors.md`                       | Spec   | ✅ Final — relationship tiers, standing, and reputation defined              |
+| `docs/spec/actors.md`                       | Spec   | ✅ Final — relationship tiers, standing, and reputation defined                        |
 | `.plan/epics/epic-social-interaction.md`    | Epic   | ✅ Comprehensive — persuasion, intimidation, deception, barter, leadership, reputation |
 | `.plan/tickets/TASK-social-interaction.md`  | Ticket | ✅ Exists                                                                              |
 | `.plan/tickets/TASK-social-guild-system.md` | Ticket | ✅ Exists                                                                              |
@@ -54,6 +54,7 @@
 ### Gaps & Issues
 
 1. `docs/spec/social-interaction.md` exists and is marked **Final** (was Draft).
+
 - [x] Reconcile character relationships spec with social interaction epic (completed — character-interactions.md created)
 - [x] Add NPC-to-NPC interaction section to social interaction spec (completed — character-interactions.md covers this)
 - [x] Define relationship persistence rules in actors.md (completed — actors.md Finalized with economy/standing sections)
@@ -66,7 +67,7 @@
 
 | File                                  | Type    | Status                                                                           |
 | ------------------------------------- | ------- | -------------------------------------------------------------------------------- |
-| `docs/spec/actors.md`                 | Spec    | ✅ Final — NPC data model, behavior system, memory system defined                                          |
+| `docs/spec/actors.md`                 | Spec    | ✅ Final — NPC data model, behavior system, memory system defined                |
 | `.plan/epics/epic-world-locations.md` | Epic    | ⚠️ Covers NPC placement/migration but NPCs are a sub-topic, not the primary focus |
 | `.plan/tickets/TASK-npc-*.md`         | Tickets | ❌ No dedicated NPC tickets found                                                |
 
