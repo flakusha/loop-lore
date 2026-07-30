@@ -166,6 +166,14 @@ type LocaleInfoArray = LocaleInfo[];
             headers: { "Content-Type": "application/json", Accept: "application/json", },
             body: jsonBody({ locale: payload.locale, },),
           },);
+          // Reload translations in the app
+          const appEl = document.querySelector("[x-data]",) as HTMLElement | null;
+          if (appEl) {
+            const appData = Alpine.$data(appEl,) as any;
+            if (appData?.setLocale) {
+              appData.setLocale(payload.locale as string,);
+            }
+          }
         }
         const res = await fetch("/api/users/me/settings", {
           method: "PATCH",
