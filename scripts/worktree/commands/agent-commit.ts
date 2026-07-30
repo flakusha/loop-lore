@@ -6,10 +6,14 @@
  */
 
 import { existsSync } from "fs";
-import { resolve } from "path";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 import { credentials } from "../utils/credentials.mjs";
 import { gitSync } from "../utils/git";
 import { log } from "../utils/output";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev"];
 
@@ -33,7 +37,7 @@ export async function agentCommit(args: string[]): Promise<void> {
   }
 
   // Find repo root and worktree path
-  const repoRoot = resolve(import.meta.url, "..", "..", "..");
+  const repoRoot = resolve(__dirname, "..", "..", "..");
   const wtPath = resolve(repoRoot, "tree", branch);
 
   if (!existsSync(resolve(wtPath, ".git"))) {
