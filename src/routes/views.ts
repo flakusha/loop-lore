@@ -93,9 +93,7 @@ function wrapWithLayout(
   layout = layout.replaceAll("{{cspNonce}}", () => cspNonce ?? "",);
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
   // i18n: replace {{{t("key")}}} with translated string
-  if (t) {
-    layout = layout.replaceAll(/\{\{\{t\("([^"]+)"\)\}\}\}/g, (_match, key,) => t(key,),);
-  }
+  layout = applyI18n(layout, t,);
   return layout;
 }
 
@@ -144,6 +142,11 @@ function loadView(viewName: string,): string {
   return resolved;
 }
 
+function applyI18n(content: string, t?: (key: string,) => string,): string {
+  if (!t) { return content; }
+  return content.replaceAll(/\{\{\{t\("([^"]+)"\)\}\}\}/g, (_match, key,) => t(key,),);
+}
+
 function respond(
   content: string,
   isHtmx: boolean,
@@ -154,7 +157,7 @@ function respond(
   t?: (key: string,) => string,
 ): Response {
   const nonce = request ? getNonce(request,) : null;
-  const body = isHtmx ? content : wrapWithLayout(content, title, userId, sessionId, nonce, t,);
+  const body = isHtmx ? applyI18n(content, t,) : wrapWithLayout(content, title, userId, sessionId, nonce, t,);
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);

@@ -193,7 +193,9 @@
                       </template>
                       <template x-if="editRoleUserId !== u.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">{{{t("admin.role")}}}</button>
+                          <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">
+                            {{{t("admin.role")}}}
+                          </button>
                           <template x-if="confirmDeleteUser !== u.id">
                             <button class="btn btn-danger btn-xs" @click="confirmDeleteUser = u.id">
                               {{{t("common.delete")}}}
@@ -294,7 +296,9 @@
                       </template>
                       <template x-if="confirmDeleteWorld === w.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">{{{t("common.confirm")}}}</button>
+                          <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">
+                            {{{t("common.confirm")}}}
+                          </button>
                           <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorld = ''">
                             {{{t("common.cancel")}}}
                           </button>
@@ -629,7 +633,7 @@
                         ></span>
                       </div>
                       <div style="display: flex; align-items: center; gap: var(--space-3); font-size: 12px; color: var(--text-secondary, #6c757d)">
-                        <span x-text="p.modelCount + ' model(s)'"></span>
+                        <span x-text="t('admin.modelCount', {count: p.modelCount})"></span>
                         <span x-show="p.latencyMs" x-text="p.latencyMs + 'ms'"></span>
                         <button
                           class="btn btn-secondary btn-xs"
@@ -711,9 +715,8 @@
                   <strong
                     x-text="sdStatus === 'running' ? t('admin.running') : sdStatus === 'stopped' ? t('admin.stopped') : t('admin.unknown')"
                   ></strong>
-                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">— {{{t("admin.port")}}}<span
-                      x-text="sdPort"
-                    ></span></span>
+                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">—
+                    {{{t("admin.port")}}}<span x-text="sdPort"></span></span>
                   <button class="btn btn-secondary btn-xs" @click="loadSdStatus()" style="margin-left: auto">
                     {{{t("admin.refresh")}}}
                   </button>
@@ -1095,7 +1098,7 @@
                   x-text="healthProviders.filter(p => p.status === 'healthy').length"
                 >
                 </div>
-                <div class="admin-stat-label">Healthy</div>
+                <div class="admin-stat-label">{{{t("admin.healthy")}}}</div>
               </div>
               <div class="admin-stat-card">
                 <div
@@ -1103,14 +1106,14 @@
                   x-text="healthProviders.filter(p => p.status !== 'healthy').length"
                 >
                 </div>
-                <div class="admin-stat-label">Degraded</div>
+                <div class="admin-stat-label">{{{t("admin.degraded")}}}</div>
               </div>
             </div>
             <div
               x-show="healthTimestamp"
               style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-4)"
             >
-              Last checked: <span x-text="healthTimestamp"></span>
+              {{{t("admin.lastChecked")}}} <span x-text="healthTimestamp"></span>
             </div>
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
             <div style="display: grid; gap: var(--space-3)">
@@ -1128,7 +1131,7 @@
                   ></span>
                   <span
                     style="font-size: 12px; color: var(--text-secondary)"
-                    x-text="p.models?.length + ' model(s)'"
+                    x-text="t('admin.modelCount', {count: p.models?.length})"
                   ></span>
                   <span
                     x-show="p.latencyMs"
@@ -1159,13 +1162,17 @@
               <div>
                 <h3 style="font-size: 16px; font-weight: 600; margin: 0">{{{t("admin.imagePromptTemplates")}}}</h3>
                 <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px">
-                  <span x-text="builtinCount + ' builtin'"></span> · <span x-text="customCount + ' custom'"></span>
-                  profiles
+                  <span x-text="t('admin.builtinCount', {count: builtinCount})"></span> · <span
+                    x-text="t('admin.customCount', {count: customCount})"
+                  ></span>
+                  {{{t("admin.profiles")}}}
                 </div>
               </div>
               <div style="display: flex; gap: var(--space-2)">
                 <button class="btn btn-secondary btn-xs" @click="loadTemplates()">{{{t("admin.refresh")}}}</button>
-                <button class="btn btn-primary btn-xs" @click="showCreateModal = true">New Profile</button>
+                <button class="btn btn-primary btn-xs" @click="showCreateModal = true">
+                  {{{t("admin.newProfile")}}}
+                </button>
               </div>
             </div>
 
@@ -1177,10 +1184,11 @@
                     <h4 style="font-size: 14px; font-weight: 600; margin: 0" x-text="selectedProfile.name"></h4>
                     <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px">
                       <span x-text="selectedProfile.id"></span>
-                      · <span x-text="selectedProfile.promptFormat"></span> format · <span
-                        x-text="selectedProfile.maxTokenHint + ' max tokens'"
+                      · <span x-text="selectedProfile.promptFormat"></span> {{{t("admin.formatLabel")}}} · <span
+                        x-text="t('admin.maxTokensCount', {count: selectedProfile.maxTokenHint})"
                       ></span>
-                      <span x-show="selectedProfile.isBuiltin" style="color: var(--color-primary)"> · builtin</span>
+                      <span x-show="selectedProfile.isBuiltin" style="color: var(--color-primary)">
+                        · {{{t("admin.builtin")}}}</span>
                     </div>
                   </div>
                   <button class="btn btn-secondary btn-xs" @click="clearSelection()">
@@ -1238,7 +1246,9 @@
                 </div>
 
                 <!-- Templates Grid -->
-                <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Templates</div>
+                <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">
+                  {{{t("admin.templates")}}}
+                </div>
                 <div style="display: grid; gap: var(--space-3)">
                   <template x-for="detail in ['instant', 'balanced', 'detailed']" :key="detail">
                     <div>
@@ -1271,9 +1281,11 @@
                                     @click="saveTemplate()"
                                     :disabled="savingTemplate"
                                   >
-                                    Save
+                                    {{{t("common.save")}}}
                                   </button>
-                                  <button class="btn btn-secondary btn-xs" @click="cancelEditTemplate()">Cancel</button>
+                                  <button class="btn btn-secondary btn-xs" @click="cancelEditTemplate()">
+                                    {{{t("common.cancel")}}}
+                                  </button>
                                 </div>
                               </div>
                             </template>
@@ -1281,14 +1293,14 @@
                               <div style="flex: 1; display: flex; gap: var(--space-2); align-items: flex-start">
                                 <div
                                   style="flex: 1; font-size: 11px; font-family: monospace; padding: 6px 8px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px; white-space: pre-wrap; max-height: 80px; overflow-y: auto"
-                                  x-text="selectedProfile.templates?.[detail]?.[mode] || '(empty)'"
+                                  x-text="selectedProfile.templates?.[detail]?.[mode] || t('admin.empty')"
                                 >
                                 </div>
                                 <button
                                   class="btn btn-secondary btn-xs"
                                   @click="startEditTemplate(detail, mode, selectedProfile.templates?.[detail]?.[mode] || '')"
                                 >
-                                  Edit
+                                  {{{t("common.edit")}}}
                                 </button>
                               </div>
                             </template>
@@ -1333,15 +1345,15 @@
                       <div style="display: flex; align-items: center; gap: var(--space-3)">
                         <span
                           style="font-size: 12px; color: var(--text-secondary)"
-                          x-text="p.templateCount + ' templates'"
+                          x-text="t('admin.templateCount', {count: p.templateCount})"
                         ></span>
                         <span
                           style="font-size: 12px; color: var(--text-secondary)"
-                          x-text="p.promptFormat + ' format'"
+                          x-text="t('admin.formatLabel', {format: p.promptFormat})"
                         ></span>
                         <span
                           style="font-size: 12px; color: var(--text-secondary)"
-                          x-text="p.maxTokenHint + ' tokens'"
+                          x-text="t('admin.tokenCount', {count: p.maxTokenHint})"
                         ></span>
                         <template x-if="!p.isBuiltin && p.id !== defaultProfileId">
                           <button class="btn btn-danger btn-xs" @click.stop="deleteProfile(p.id)">
@@ -1351,12 +1363,14 @@
                       </div>
                     </div>
                     <div style="font-size: 11px; color: var(--text-secondary); margin-top: var(--space-2)">
-                      Families: <span x-text="p.families.join(', ')"></span>
+                      {{{t("admin.families")}}}: <span x-text="p.families.join(', ')"></span>
                     </div>
                     <div style="font-size: 11px; color: var(--text-secondary)">
-                      Defaults: CFG <span x-text="p.defaults.cfgScale"></span> · Steps <span
-                        x-text="p.defaults.steps"
-                      ></span> · <span x-text="p.defaults.sampler"></span>
+                      {{{t("admin.defaultsLabel")}}}: {{{t("admin.cfgLabel")}}} <span
+                        x-text="p.defaults.cfgScale"
+                      ></span> · {{{t("admin.steps")}}} <span x-text="p.defaults.steps"></span> · <span
+                        x-text="p.defaults.sampler"
+                      ></span>
                     </div>
                   </div>
                 </template>
@@ -1382,7 +1396,8 @@
                     />
                   </div>
                   <div>
-                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">Name</label>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                    >{{{t("admin.nameLabel")}}}</label>
                     <input
                       class="form-input"
                       style="font-size: 13px"

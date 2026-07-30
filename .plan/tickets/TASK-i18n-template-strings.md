@@ -50,17 +50,17 @@ Formatter chokes on `{{{t()}}}` inside attributes. Use Alpine x-bind:
 
 ## Completed
 
-| File                        | Status     | Notes                              |
-| --------------------------- | ---------- | ---------------------------------- |
-| `src/views/layout.html`     | ✅ Done    | Already translated                 |
-| `src/views/login.html`      | ✅ Done    | Log In, demo mode, signup link     |
-| `src/views/register.html`   | ✅ Done    | Sign Up, login link                |
-| `src/components/auth-form-fields.html` | ✅ Done | Username/Password labels |
-| `src/components/chat/chat-header.html` | ✅ Done | 5 buttons via x-bind |
-| `src/views/settings.html`   | 🟡 Partial | 3 placeholders + 2 aria-labels    |
-| `src/views/admin.html`      | 🟡 Partial | 4 search placeholders             |
-| `src/views/chat-list.html`  | ✅ Done    | search placeholder + aria-label    |
-| `src/views/new-chat.html`   | 🟡 Partial | cancel + create buttons            |
+| File                                   | Status     | Notes                           |
+| -------------------------------------- | ---------- | ------------------------------- |
+| `src/views/layout.html`                | ✅ Done    | Already translated              |
+| `src/views/login.html`                 | ✅ Done    | Log In, demo mode, signup link  |
+| `src/views/register.html`              | ✅ Done    | Sign Up, login link             |
+| `src/components/auth-form-fields.html` | ✅ Done    | Username/Password labels        |
+| `src/components/chat/chat-header.html` | ✅ Done    | 5 buttons via x-bind            |
+| `src/views/settings.html`              | 🟡 Partial | 3 placeholders + 2 aria-labels  |
+| `src/views/admin.html`                 | 🟡 Partial | 4 search placeholders           |
+| `src/views/chat-list.html`             | ✅ Done    | search placeholder + aria-label |
+| `src/views/new-chat.html`              | 🟡 Partial | cancel + create buttons         |
 
 ## Key Mapping
 
