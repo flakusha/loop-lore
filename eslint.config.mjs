@@ -252,18 +252,20 @@ export default tseslint.config(
       "bun.lock",
       "*.har",
       "*.example.*",
+      ".agents/**/*.md",
     ],
   },
   // ── Markdown files: extract & lint code blocks ─────────────────
   ...markdown.configs.recommended,
   {
-    files: ["**/*.md/**",],
+    files: ["**/*.md",],
     rules: {
       "no-undef": "off",
       "no-unused-vars": "off",
       "no-unused-expressions": "off",
       "padded-blocks": "off",
       "eol-last": "off",
+      "unicorn/filename-case": "off",
     },
   },
   // ── Server TypeScript: Bun/Node env, full type-checked rules ───

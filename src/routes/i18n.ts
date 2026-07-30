@@ -47,18 +47,24 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return unauthorized();
+          return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",);
         }
 
         const body = ctx.body as { locale?: string };
         const newLocale = body.locale;
 
         if (!newLocale) {
-          return jsonError({ message: "Locale is required", status: HttpStatus.BadRequest, },);
+          return jsonError({
+            message: ctx.t?.("i18n.localeRequired",) ?? "Locale is required",
+            status: HttpStatus.BadRequest,
+          },);
         }
 
         if (!isLocale(newLocale,)) {
-          return jsonError({ message: "Invalid locale", status: HttpStatus.BadRequest, },);
+          return jsonError({
+            message: ctx.t?.("i18n.invalidLocale",) ?? "Invalid locale",
+            status: HttpStatus.BadRequest,
+          },);
         }
 
         // Update user settings with locale preference

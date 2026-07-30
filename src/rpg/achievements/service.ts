@@ -173,7 +173,7 @@ export class AchievementsService {
    */
   async listAchievements(
     category?: AchievementCategory,
-    includeSecret: boolean = false,
+    includeSecret = false,
   ): Promise<Achievement[]> {
     let query = (this.db as any)
       .selectFrom("achievements",)
@@ -271,7 +271,7 @@ export class AchievementsService {
   async updateProgress(
     playerId: string,
     achievementId: string,
-    progressIncrement: number = 1,
+    progressIncrement = 1,
   ): Promise<ProgressUpdateResult> {
     const achievement = await this.getAchievement(achievementId,);
     if (!achievement) { throw new Error("Achievement not found",); }

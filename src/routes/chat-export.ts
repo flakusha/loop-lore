@@ -227,7 +227,7 @@ export function chatExportRoutes(opts: HandlerOpts,) {
     "/api/chats/:id/export",
     async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(); }
+      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
       const chatId = ctx.params.id as string;
       const format = (ctx.query.format as string) ?? "markdown";

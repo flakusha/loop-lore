@@ -12,18 +12,16 @@
  *   const filtered = withWorldId(qb, worldId);
  *   const result = await filtered.selectAll().executeTakeFirst();
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
   // Kysely's $if is typed per-table; the generic cast is unavoidable here.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const chain = (qb as any).$if(
     !!worldId,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (q: any,) => q.where(worldCol, "=", worldId!,),
   );
   return chain.$if(
     !worldId,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (q: any,) => q.where(worldCol, "is", null,),
   ) as T;
 }

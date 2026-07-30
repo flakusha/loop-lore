@@ -50,7 +50,8 @@
     "registrationClosed": "Registration is closed.",
     "usernameLength": "Username must be 3–32 characters.",
     "passwordLength": "Password must be at least 6 characters.",
-    "usernameTaken": "Username already taken."
+    "usernameTaken": "Username already taken.",
+    "jwtSecretMissing": "Server misconfigured: JWT secret not set"
   },
   "chat": {
     "sendMessage": "Send Message",
@@ -161,7 +162,9 @@
     "templateNotFound": "Template not found",
     "templateAlreadyExists": "Template already exists",
     "logEntryNotFound": "Log entry not found",
-    "autoRotationDisabled": "Auto-rotation is disabled (keyRotationDays = 0)"
+    "autoRotationDisabled": "Auto-rotation is disabled (keyRotationDays = 0)",
+    "templateListFailed": "Failed to list templates",
+    "templateRegistryFailed": "Failed to get registry"
   },
   "errors": {
     "notFound": "Not found",
@@ -203,7 +206,19 @@
     "duplicate": "Duplicate Character",
     "noAvatar": "No avatar",
     "uploadAvatar": "Upload Avatar",
-    "removeAvatar": "Remove Avatar"
+    "removeAvatar": "Remove Avatar",
+    "actorNotFound": "Actor not found",
+    "avatarNotFound": "Avatar not found",
+    "emotionNotFound": "Emotion not found",
+    "moodNotFound": "Mood not found",
+    "relationshipNotFound": "Relationship not found",
+    "availabilityNotFound": "Availability not found",
+    "licensingNotFound": "Licensing not found",
+    "profileNotFound": "Profile not found",
+    "displayNameRequired": "displayName is required",
+    "invalidAvatarData": "Invalid avatar data",
+    "emotionJobNotFound": "Job not found",
+    "emotionJobAlreadyCompleted": "Job not found or already completed"
   },
   "worlds": {
     "title": "Worlds",
@@ -370,5 +385,66 @@
     "onlyUserEditable": "Only user messages can be edited",
     "messageNotFound": "Message not found",
     "chatNotFound": "Chat not found"
+  },
+  "story": {
+    "itemNotFound": "Item not found",
+    "itemInstanceNotFound": "Item instance not found",
+    "npcStateNotFound": "NPC state not found",
+    "locationNotFound": "Location not found",
+    "worldNotFound": "World not found",
+    "storyTurnNotFound": "Story turn not found",
+    "nameRequired": "name is required",
+    "locationSelfConnect": "Location cannot connect to itself",
+    "invalidConnections": "Invalid connections data"
+  },
+  "crypto": {
+    "encryptionNotConfigured": "Encryption not configured",
+    "encryptionNotEnabled": "Encryption not enabled on this server",
+    "keyNameRequired": "Key name is required",
+    "keyListFailed": "Failed to list keys",
+    "keyGenerateFailed": "Failed to generate key",
+    "keyEncryptFailed": "Failed to encrypt API key",
+    "encryptionKeyMissing": "Server encryption key not configured — contact administrator",
+    "encryptionKeyNotFound": "Failed to get encryption key"
+  },
+  "plugins": {
+    "notFound": "Plugin not found",
+    "alreadyEnabled": "Plugin already enabled",
+    "alreadyDisabled": "Plugin already disabled"
+  },
+  "telemetry": {
+    "eventTypeRequired": "event type is required",
+    "telemetryDisabled": "Telemetry is disabled"
+  },
+  "apiKeys": {
+    "providerRequired": "providerName is required",
+    "apiKeyRequired": "apiKey is required"
+  },
+  "modelComparisons": {
+    "messageIdRequired": "messageId is required (string)",
+    "referenceModelRequired": "referenceModel is required (string)",
+    "invalidPreference": "preference must be one of: better, worse, same"
+  },
+  "users": {
+    "invalidSettingsData": "Invalid settings data"
+  },
+  "import": {
+    "fileRequired": "file field is required",
+    "expectedMultipart": "Expected multipart/form-data",
+    "invalidImportData": "Invalid import data: missing version"
+  },
+  "exportJob": {
+    "jobNotFound": "Job not found",
+    "exportNotReady": "Export not ready"
+  },
+  "frontendLogs": {
+    "entriesRequired": "entries must be a non-empty array"
+  },
+  "i18n": {
+    "localeRequired": "Locale is required",
+    "invalidLocale": "Invalid locale"
+  },
+  "sessions": {
+    "cannotDeleteCurrent": "Cannot delete current session. Use /api/auth/logout instead."
   }
 }

@@ -33,7 +33,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .post("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: 401, },);
+        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
       }
 
       const request = ctx.request as Request;
@@ -47,13 +47,24 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
       const { messageId, referenceModel, preference, confidence, } = body;
 
       if (typeof messageId !== "string" || !messageId) {
-        return jsonError({ message: "messageId is required (string)", status: 400, },);
+        return jsonError({
+          message: (ctx as any).t?.("modelComparisons.messageIdRequired",) ?? "messageId is required (string)",
+          status: 400,
+        },);
       }
       if (typeof referenceModel !== "string" || !referenceModel) {
-        return jsonError({ message: "referenceModel is required (string)", status: 400, },);
+        return jsonError({
+          message: (ctx as any).t?.("modelComparisons.referenceModelRequired",) ??
+            "referenceModel is required (string)",
+          status: 400,
+        },);
       }
       if (!VALID_PREFERENCES.includes(preference as (typeof VALID_PREFERENCES)[number],)) {
-        return jsonError({ message: "preference must be one of: better, worse, same", status: 400, },);
+        return jsonError({
+          message: (ctx as any).t?.("modelComparisons.invalidPreference",) ??
+            "preference must be one of: better, worse, same",
+          status: 400,
+        },);
       }
       if (typeof confidence !== "number" || confidence < 0 || confidence > 1) {
         return jsonError({ message: "confidence must be a number between 0 and 1", status: 400, },);
@@ -89,7 +100,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/comparisons/leaderboard", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: 401, },);
+        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
       }
 
       const rows = await database
@@ -108,11 +119,11 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
 
       const leaderboard = rows.map((r,) => ({
         reference_model: r.reference_model,
-        totalComparisons: Number(r.totalComparisons,),
-        betterCount: Number(r.betterCount,),
-        worseCount: Number(r.worseCount,),
-        sameCount: Number(r.sameCount,),
-        avgConfidence: Math.round(Number(r.avgConfidence,) * 100,) / 100,
+        totalComparisons: r.totalComparisons,
+        betterCount: r.betterCount,
+        worseCount: r.worseCount,
+        sameCount: r.sameCount,
+        avgConfidence: Math.round(r.avgConfidence * 100,) / 100,
       }));
 
       return jsonResponse({ leaderboard, },);
@@ -121,7 +132,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: "Unauthorized", status: 401, },);
+        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
       }
 
       const query = ctx.query as Record<string, string> | undefined;

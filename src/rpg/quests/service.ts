@@ -129,7 +129,7 @@ export class QuestService {
     };
 
     await this.db.insertInto("quests",).values(questData,).execute();
-    return questData as QuestRow;
+    return questData;
   }
 
   /** Get a quest by ID */
@@ -255,7 +255,7 @@ export class QuestService {
   }
 
   /** Update quest progress */
-  async updateProgress(questId: string, increment: number = 1,): Promise<QuestRow> {
+  async updateProgress(questId: string, increment = 1,): Promise<QuestRow> {
     const quest = await this.getQuest(questId,);
     if (!quest) { throw new Error("Quest not found",); }
 
@@ -267,12 +267,10 @@ export class QuestService {
       .set({
         progress: newProgress,
         updated_at: now,
-        ...(newProgress >= quest.target
-          ? {
-            status: QuestStatus.Completed,
-            completed_at: now,
-          }
-          : {}),
+        ...((newProgress >= quest.target) && {
+          status: QuestStatus.Completed,
+          completed_at: now,
+        }),
       },)
       .where("id", "=", questId,)
       .execute();
