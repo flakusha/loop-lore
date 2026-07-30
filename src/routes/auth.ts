@@ -447,25 +447,63 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
       "/api/auth/login",
       async ({ request, ...rest },) =>
         handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+      {
+        detail: {
+          summary: "Login",
+          description: "Authenticate with username/password, create session, return JWT in cookie.",
+          tags: ["Auth",],
+        },
+      },
     )
     .post(
       "/api/demo-login",
       async ({ request, ...rest },) =>
         handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+      {
+        detail: {
+          summary: "Demo login",
+          description: "Solo/demo mode login — no password required. Creates or reuses the demo user.",
+          tags: ["Auth",],
+        },
+      },
     )
     .post(
       "/api/auth/register",
       async ({ request, ...rest },) =>
         handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+      {
+        detail: {
+          summary: "Register",
+          description: "Create a new account and automatically log in. Rate-limited to 3 attempts per hour.",
+          tags: ["Auth",],
+        },
+      },
     ) as unknown as Elysia;
 }
 
 export function authProtectedRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "auth-protected", },)
-    .post("/api/auth/logout", async ({ request, },) => handleLogout(request, database,),)
+    .post(
+      "/api/auth/logout",
+      async ({ request, },) => handleLogout(request, database,),
+      {
+        detail: {
+          summary: "Logout",
+          description: "Revoke current session and clear authentication cookie.",
+          tags: ["Auth",],
+        },
+      },
+    )
     .get(
       "/api/auth/me",
       async ({ request, ...rest },) => handleMe(request, database, (rest as any).userId as string | null | undefined,),
+      {
+        detail: {
+          summary: "Current user",
+          description: "Get the authenticated user's profile.",
+          tags: ["Auth",],
+        },
+      },
     ) as unknown as Elysia;
 }
 

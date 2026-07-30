@@ -20,19 +20,29 @@ import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } fr
 
 export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
   return new Elysia({ name: "users", },)
-    .get("/api/users/me", async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(
+      "/api/users/me",
+      async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
-      const user = await opts.database
-        .selectFrom("users",)
-        .select(["id", "username", "display_name", "role", "created_at", "last_seen_at",],)
-        .where("id", "=", userId,)
-        .executeTakeFirst();
+        const user = await opts.database
+          .selectFrom("users",)
+          .select(["id", "username", "display_name", "role", "created_at", "last_seen_at",],)
+          .where("id", "=", userId,)
+          .executeTakeFirst();
 
-      if (!user) { return notFound("User not found",); }
-      return jsonResponse(user,);
-    },)
+        if (!user) { return notFound("User not found",); }
+        return jsonResponse(user,);
+      },
+      {
+        detail: {
+          summary: "Get current user",
+          description: "Get the authenticated user's profile.",
+          tags: ["Users",],
+        },
+      },
+    )
     .put(
       "/api/users/me",
       async (ctx,) => {
@@ -57,10 +67,7 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         if (body.settings) {
           const settingsResult = safeJsonStringify(body.settings,);
           if (!settingsResult.ok) {
-            return jsonError({
-              message: (ctx as any).t?.("users.invalidSettingsData",) ?? "Invalid settings data",
-              status: HttpStatus.BadRequest,
-            },);
+            return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
           }
           updates.settings = settingsResult.value;
         }
@@ -69,7 +76,14 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
 
         return jsonResponse({ ok: true, },);
       },
-      { body: UserProfileUpdateBody, },
+      {
+        body: UserProfileUpdateBody,
+        detail: {
+          summary: "Update current user",
+          description: "Update the authenticated user's profile (display name, birth date, settings).",
+          tags: ["Users",],
+        },
+      },
     )
     .get(
       "/api/users/:id",
@@ -81,7 +95,7 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
 
         // Non-admin can only view own profile via /api/users/me
         if (userRole !== "admin") {
-          return forbidden((ctx as any).t?.("errors.forbidden",) ?? "Forbidden",);
+          return forbidden();
         }
 
         const user = await opts.database
@@ -93,7 +107,14 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         if (!user) { return notFound("User not found",); }
         return jsonResponse(user,);
       },
-      { params: UserIdParams, },
+      {
+        params: UserIdParams,
+        detail: {
+          summary: "Get user by ID",
+          description: "Get a user's profile by ID. Admin only.",
+          tags: ["Users",],
+        },
+      },
     )
     .put(
       "/api/users/:id",
@@ -106,7 +127,7 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
 
         // User can update own profile; admin can update any
         if (targetId !== userId && userRole !== "admin") {
-          return forbidden((ctx as any).t?.("errors.forbidden",) ?? "Forbidden",);
+          return forbidden();
         }
 
         const updates: Record<string, unknown> = {};
@@ -114,10 +135,7 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         if (body.settings) {
           const settingsResult = safeJsonStringify(body.settings,);
           if (!settingsResult.ok) {
-            return jsonError({
-              message: (ctx as any).t?.("users.invalidSettingsData",) ?? "Invalid settings data",
-              status: HttpStatus.BadRequest,
-            },);
+            return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
           }
           updates.settings = settingsResult.value;
         }
@@ -134,38 +152,53 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
 
         return jsonResponse({ ok: true, },);
       },
-      { body: UserProfileUpdateBody, params: UserIdParams, },
+      {
+        body: UserProfileUpdateBody,
+        params: UserIdParams,
+        detail: {
+          summary: "Update user by ID",
+          description: "Update a user's profile. Users can update their own; admins can update any.",
+          tags: ["Users",],
+        },
+      },
     )
-    .patch("/api/users/me/settings", async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .patch(
+      "/api/users/me/settings",
+      async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
-      const body = (ctx as any).body as Record<string, unknown>;
-      const user = await opts.database
-        .selectFrom("users",)
-        .select(["id", "settings",],)
-        .where("id", "=", userId,)
-        .executeTakeFirst();
+        const body = (ctx as any).body as Record<string, unknown>;
+        const user = await opts.database
+          .selectFrom("users",)
+          .select(["id", "settings",],)
+          .where("id", "=", userId,)
+          .executeTakeFirst();
 
-      if (!user) { return notFound("User not found",); }
+        if (!user) { return notFound("User not found",); }
 
-      const currentSettings = jsonParseOr<Record<string, unknown>>(user.settings ?? "", {},);
-      const mergedResult = safeJsonStringify({ ...currentSettings, ...body, },);
-      if (!mergedResult.ok) {
-        return jsonError({
-          message: (ctx as any).t?.("users.invalidSettingsData",) ?? "Invalid settings data",
-          status: HttpStatus.BadRequest,
-        },);
-      }
+        const currentSettings = jsonParseOr<Record<string, unknown>>(user.settings ?? "", {},);
+        const mergedResult = safeJsonStringify({ ...currentSettings, ...body, },);
+        if (!mergedResult.ok) {
+          return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
+        }
 
-      await opts.database
-        .updateTable("users",)
-        .set({ settings: mergedResult.value, },)
-        .where("id", "=", userId,)
-        .execute();
+        await opts.database
+          .updateTable("users",)
+          .set({ settings: mergedResult.value, },)
+          .where("id", "=", userId,)
+          .execute();
 
-      return jsonResponse({ ok: true, },);
-    },)
+        return jsonResponse({ ok: true, },);
+      },
+      {
+        detail: {
+          summary: "Patch current user settings",
+          description: "Merge partial settings into the authenticated user's existing settings.",
+          tags: ["Users",],
+        },
+      },
+    )
     .put(
       "/api/users/:id/settings",
       async (ctx,) => {
@@ -176,7 +209,7 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         const body = (ctx as any).body as Record<string, unknown>;
 
         if (targetId !== userId && userRole !== "admin") {
-          return forbidden((ctx as any).t?.("errors.forbidden",) ?? "Forbidden",);
+          return forbidden();
         }
 
         const current = await opts.database
@@ -190,10 +223,7 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
 
         const mergedResult = safeJsonStringify(merged,);
         if (!mergedResult.ok) {
-          return jsonError({
-            message: (ctx as any).t?.("users.invalidSettingsData",) ?? "Invalid settings data",
-            status: HttpStatus.BadRequest,
-          },);
+          return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
         }
 
         await opts.database
@@ -204,7 +234,14 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
 
         return jsonResponse(merged,);
       },
-      { params: UserIdParams, },
+      {
+        params: UserIdParams,
+        detail: {
+          summary: "Replace user settings",
+          description: "Replace a user's settings entirely. Users can update their own; admins can update any.",
+          tags: ["Users",],
+        },
+      },
     )
     .delete(
       "/api/users/:id",
@@ -213,13 +250,20 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
         const targetId = (ctx as any).params.id as string;
 
         if (userRole !== "admin") {
-          return forbidden((ctx as any).t?.("errors.forbidden",) ?? "Forbidden",);
+          return forbidden();
         }
 
         await opts.database.deleteFrom("users",).where("id", "=", targetId,).execute();
 
         return jsonNoContent();
       },
-      { params: UserIdParams, },
+      {
+        params: UserIdParams,
+        detail: {
+          summary: "Delete user",
+          description: "Delete a user. Admin only.",
+          tags: ["Users",],
+        },
+      },
     ) as unknown as Elysia;
 }
