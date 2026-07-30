@@ -1,10 +1,10 @@
 <!-- Quests Page (world-scoped) -->
 <header id="header-slot" class="main-header" data-page="quests" data-testid="quests-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">Quests</span>
+  <span class="title">{{{t("quests.title")}}}</span>
   <div class="actions">
     <template x-if="worldId">
-      <a :href="'/worlds/' + worldId" class="btn btn-secondary btn-sm">Back to World</a>
+      <a :href="'/worlds/' + worldId" class="btn btn-secondary btn-sm">{{{t("quests.backToWorld")}}}</a>
     </template>
   </div>
 </header>
@@ -16,9 +16,9 @@
       <div x-show="!worldId" style="padding: var(--space-6)">
         <div class="empty-state" style="padding: var(--space-8)">
           <div class="icon">📋</div>
-          <div class="title">Select a World</div>
+          <div class="title">{{{t("quests.selectWorld")}}}</div>
           <div class="description" style="margin-bottom: var(--space-4)">
-            Quests belong to worlds. Choose a world to view its quests.
+            {{{t("quests.selectWorldDescription")}}}
           </div>
           <select
             class="form-input"
@@ -26,7 +26,7 @@
             x-model="selectedWorldId"
             @change="goToWorld(selectedWorldId)"
           >
-            <option value="">Select a world...</option>
+            <option value="">{{{t("quests.selectWorldPlaceholder")}}}</option>
             <template x-for="w in worldOptions" :key="w.id">
               <option :value="w.id" x-text="w.name"></option>
             </template>
@@ -39,7 +39,7 @@
         <div style="padding: var(--space-6)">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
             <h2 style="font-size: 18px; font-weight: 600" x-text="worldName || 'Quests'"></h2>
-            <button class="btn btn-primary btn-sm" @click="showCreateForm = true">+ New Quest</button>
+            <button class="btn btn-primary btn-sm" @click="showCreateForm = true">{{{t("quests.newQuest")}}}</button>
           </div>
 
           <!-- Create Form -->
@@ -47,39 +47,41 @@
             x-show="showCreateForm"
             style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); margin-bottom: var(--space-4)"
           >
-            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Create Quest</h3>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
+              {{{t("quests.createQuest")}}}
+            </h3>
             <div style="display: grid; gap: var(--space-3)">
               <label class="form-label" style="font-size: 12px">
-                Name
+                {{{t("quests.name")}}}
                 <input
                   class="form-input"
                   style="font-size: 13px"
                   x-model="createName"
-                  placeholder="Quest name"
+                  :placeholder="t('quests.questName')"
                 />
               </label>
               <label class="form-label" style="font-size: 12px">
-                Description
+                {{{t("quests.description")}}}
                 <textarea
                   class="form-input form-textarea"
                   rows="2"
                   style="font-size: 13px"
                   x-model="createDescription"
-                  placeholder="Quest description"
+                  :placeholder="t('quests.questDescription')"
                 ></textarea>
               </label>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
                 <label class="form-label" style="font-size: 12px">
-                  Type
+                  {{{t("quests.type")}}}
                   <select class="form-input" style="font-size: 13px" x-model="createType">
-                    <option value="main">Main</option>
-                    <option value="side">Side</option>
-                    <option value="bounty">Bounty</option>
-                    <option value="daily">Daily</option>
+                    <option value="main">{{{t("quests.main")}}}</option>
+                    <option value="side">{{{t("quests.side")}}}</option>
+                    <option value="bounty">{{{t("quests.bounty")}}}</option>
+                    <option value="daily">{{{t("quests.daily")}}}</option>
                   </select>
                 </label>
                 <label class="form-label" style="font-size: 12px">
-                  Priority
+                  {{{t("quests.priority")}}}
                   <input
                     class="form-input"
                     type="number"
@@ -91,8 +93,10 @@
                 </label>
               </div>
               <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
-                <button class="btn btn-secondary btn-xs" @click="showCreateForm = false">Cancel</button>
-                <button class="btn btn-primary btn-xs" @click="createQuest()">Create</button>
+                <button class="btn btn-secondary btn-xs" @click="showCreateForm = false">
+                  {{{t("common.cancel")}}}
+                </button>
+                <button class="btn btn-primary btn-xs" @click="createQuest()">{{{t("common.create")}}}</button>
               </div>
             </div>
           </div>
