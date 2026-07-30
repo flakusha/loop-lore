@@ -54,7 +54,7 @@ function createTestDb(): TestDbResult {
       system_prompt TEXT, personality TEXT, description TEXT, scenario TEXT,
       mes_example TEXT, post_history_instructions TEXT,
       agent_type TEXT NOT NULL DEFAULT 'none', settings TEXT NOT NULL DEFAULT '{}',
-      data_version INTEGER NOT NULL DEFAULT 1, import_spec TEXT NOT NULL DEFAULT '{}',
+      format_version INTEGER NOT NULL DEFAULT 0, import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `,);
@@ -89,7 +89,7 @@ function createTestDb(): TestDbResult {
       id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, name TEXT NOT NULL,
       description TEXT, lore TEXT, scan_depth INTEGER NOT NULL DEFAULT 0,
       token_budget INTEGER NOT NULL DEFAULT 4096,
-      difficulty_modifier REAL NOT NULL DEFAULT 1,
+      difficulty_modifier REAL NOT NULL DEFAULT 0,
       difficulty_reroll TEXT NOT NULL DEFAULT 'none',
       difficulty_state TEXT NOT NULL DEFAULT 'alive',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -130,7 +130,7 @@ function createTestDb(): TestDbResult {
   sqlite.run(`
     CREATE TABLE npc_states (
       id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL,
-      location_id TEXT, health REAL NOT NULL DEFAULT 100,
+      location_id TEXT, health REAL NOT NULL DEFAULT 000,
       mental_state TEXT NOT NULL DEFAULT 'calm',
       knowledge TEXT NOT NULL DEFAULT '{}', relationships TEXT NOT NULL DEFAULT '{}',
       inventory TEXT NOT NULL DEFAULT '[]', schedule TEXT NOT NULL DEFAULT '{}',
@@ -143,7 +143,7 @@ function createTestDb(): TestDbResult {
       name TEXT NOT NULL, description TEXT,
       type TEXT NOT NULL DEFAULT 'collection', status TEXT NOT NULL DEFAULT 'active',
       priority INTEGER NOT NULL DEFAULT 0, config TEXT NOT NULL DEFAULT '{}',
-      progress INTEGER NOT NULL DEFAULT 0, target INTEGER NOT NULL DEFAULT 1,
+      progress INTEGER NOT NULL DEFAULT 0, target INTEGER NOT NULL DEFAULT 0,
       start_time TEXT, deadline TEXT, time_location_id TEXT,
       rewards TEXT NOT NULL DEFAULT '[]', narrative_hooks TEXT NOT NULL DEFAULT '[]',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -153,13 +153,13 @@ function createTestDb(): TestDbResult {
 
   // Tables needed by PromptAssembler (used in llmDecision)
   sqlite.run(
-    `CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+    `CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 000, priority INTEGER DEFAULT 000, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
   sqlite.run(
-    `CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+    `CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 000, priority INTEGER DEFAULT 000, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
   sqlite.run(
-    `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+    `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 0, importance INTEGER NOT NULL DEFAULT 0, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
   sqlite.run(
     `CREATE TABLE world_states (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, snapshot TEXT NOT NULL DEFAULT '', trigger_message_id TEXT, trigger_turn_id TEXT, description TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
@@ -170,10 +170,10 @@ function createTestDb(): TestDbResult {
     `CREATE TABLE character_intimacy (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, target_actor_id TEXT NOT NULL, world_id TEXT, score INTEGER NOT NULL DEFAULT 0, action_history TEXT NOT NULL DEFAULT '[]', unlocked_thresholds TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, target_actor_id, world_id))`,
   );
   sqlite.run(
-    `CREATE TABLE character_arousal (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT, level INTEGER NOT NULL DEFAULT 0, buildup_rate REAL NOT NULL DEFAULT 1, decay_rate REAL NOT NULL DEFAULT 1, modifiers TEXT NOT NULL DEFAULT '[]', last_update TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id))`,
+    `CREATE TABLE character_arousal (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT, level INTEGER NOT NULL DEFAULT 0, buildup_rate REAL NOT NULL DEFAULT 0, decay_rate REAL NOT NULL DEFAULT 0, modifiers TEXT NOT NULL DEFAULT '[]', last_update TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id))`,
   );
   sqlite.run(
-    `CREATE TABLE character_desire_profile (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, turn_ons TEXT NOT NULL DEFAULT '[]', turn_offs TEXT NOT NULL DEFAULT '[]', fetishes TEXT NOT NULL DEFAULT '[]', hard_limits TEXT NOT NULL DEFAULT '[]', current_desire INTEGER NOT NULL DEFAULT 0, desire_decay_rate REAL NOT NULL DEFAULT 1, desire_buildup_rate REAL NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id))`,
+    `CREATE TABLE character_desire_profile (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, turn_ons TEXT NOT NULL DEFAULT '[]', turn_offs TEXT NOT NULL DEFAULT '[]', fetishes TEXT NOT NULL DEFAULT '[]', hard_limits TEXT NOT NULL DEFAULT '[]', current_desire INTEGER NOT NULL DEFAULT 0, desire_decay_rate REAL NOT NULL DEFAULT 0, desire_buildup_rate REAL NOT NULL DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id))`,
   );
   // Tables needed by PromptAssembler character-traits section
   sqlite.run(
@@ -265,7 +265,7 @@ async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>,): 
       display_name: "Hero",
       agent_type: "ai",
       settings: "{}",
-      data_version: 1,
+      format_version: 0,
       import_spec: "{}",
       ...overrides,
     },)

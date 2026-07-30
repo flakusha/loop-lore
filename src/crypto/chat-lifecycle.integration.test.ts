@@ -101,7 +101,7 @@ async function insertActor(id: string, type: "user" | "character",) {
     data_raw: null,
     user_id: type === "user" ? id : null,
     owner_id: type === "user" ? id : null,
-    data_version: 0,
+    format_version: 0,
     visibility: "private",
   },).execute();
 }

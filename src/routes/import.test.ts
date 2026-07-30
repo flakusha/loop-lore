@@ -42,7 +42,7 @@ async function createTestDatabase() {
     .addColumn("data_raw", "text",)
     .addColumn("alternate_greetings", "text",)
     .addColumn("settings", "text", (col,) => col.notNull().defaultTo("{}",),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
@@ -94,7 +94,7 @@ describe("lorebook import database operations", () => {
         import_spec: "ccv2",
         data_source_format: "ccv2",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
       },)
       .execute();
 
@@ -194,7 +194,7 @@ describe("lorebook import database operations", () => {
         import_spec: "ccv2",
         data_source_format: "ccv2",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
       },)
       .execute();
 
@@ -245,7 +245,7 @@ describe("lorebook import database operations", () => {
         import_spec: "ccv2",
         data_source_format: "ccv2",
         settings: "{}",
-        data_version: 1,
+        format_version: 0,
       },)
       .execute();
 
