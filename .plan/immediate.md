@@ -1,7 +1,7 @@
 # Immediate Plan
 
-> **Last updated:** 2026-07-30 — Added Memory Tiers Wiring to P1
-> **Status:** P0 foundations in progress
+> **Last updated:** 2026-07-30 — Validated P0/P1 against code; accessibility assessed
+> **Status:** P0 foundations in progress; P1 partially complete; accessibility ~60% done
 
 ---
 
@@ -10,8 +10,8 @@
 | Priority | Epic / Task                                                    | Key Deliverables                                                                                                                                                                  | Status         |
 | -------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | **P0**   | **Data Integrity Phase 1** — Config Guards & Backend Selection | • Reject `sqlite` when `INSTANCE_COUNT > 1`<br>• Warn on network filesystem WAL path<br>• Fix stale MySQL claim in `architecture.md`                                              | ⬜ Not Started |
-| **P0**   | **NSFW Moderation Safety Infrastructure**                      | • NSFW enable/disable per chat/user/world<br>• Non-public audit log of NSFW gate decisions<br>• Consent state tracking (from Shared Schemas)<br>• Generation boundary integration | ⬜ Not Started |
-| **P0**   | **Shared Schemas** — Reputation, Consent, NSFW Rating          | • Unified `ReputationScore` (Social, Faction, NSFW)<br>• Unified `ConsentState` (NSFW + Chat Lifecycle)<br>• `NSFWContentRating` runtime enforcement at generation boundary       | ⬜ Not Started |
+| **P0**   | **NSFW Moderation Safety Infrastructure**                      | • NSFW enable/disable per chat/user/world<br>• Non-public audit log of NSFW gate decisions<br>• Consent state tracking (from Shared Schemas)<br>• Generation boundary integration | 🟡 Partial — mechanics exist, safety infra missing |
+| **P0**   | **Shared Schemas** — Reputation, Consent, NSFW Rating          | • Unified `ReputationScore` (Social, Faction, NSFW)<br>• Unified `ConsentState` (NSFW + Chat Lifecycle)<br>• `NSFWContentRating` runtime enforcement at generation boundary       | ✅ Complete — `src/schemas/` implemented |
 
 ---
 
@@ -21,8 +21,19 @@
 | -------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | **P1**   | **Memory Tiers Wiring** — Selection UI, Lorebook, Cross-Chat          | • Memory selection UI (pinning, mid-chat panel)<br>• Lorebook activation with cooldowns<br>• Cross-chat memory persistence across workspaces<br>• Full generation pipeline integration                            | ✅ Complete |
 | **P1**   | **NSFW Integration Gaps** — Housing, Weather, Social, Disease         | • Housing: private spaces → encounter modifiers<br>• Weather: mood/pheromone/location availability<br>• Social: shared reputation, skill prerequisites<br>• Disease: reproductive health, STD transmission        | ✅ Complete |
-| **P1**   | **Battle Integration Gaps** — Items, Social, NPC, Weather, Resolution | • Equipment stats → combat modifiers<br>• Social skills (intimidate/negotiate) in combat<br>• NPC personality-driven AI<br>• Weather/terrain environmental modifiers<br>• Unified dice resolution for all systems | ✅ Complete |
+| **P1**   | **Battle Integration Gaps** — Items, Social, NPC, Weather, Resolution | • Equipment stats → combat modifiers<br>• Social skills (intimidate/negotiate) in combat<br>• NPC personality-driven AI<br>• Weather/terrain environmental modifiers<br>• Unified dice resolution for all systems | ❌ **NOT COMPLETE** — zero battle files in src/rpg/ |
 | **P1**   | **Data Integrity Phase 2** — `data_version` Optimistic Concurrency    | • `UPDATE ... WHERE data_version = ?` on high-contention tables<br>• `409 Conflict` on version mismatch<br>• Unit + integration tests                                                                             | ✅ Complete |
+
+---
+
+## P1.5 — Accessibility (Parallel with P1 residual)
+
+| Priority | Epic / Task                                                  | Key Deliverables                                                                                             | Status         | Effort |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | -------------- | ------ |
+| **P1.5** | **Accessibility — remaining gaps**                           | • `focus-visible` CSS on all focusable elements<br>• Focus trap for modals<br>• Skip links<br>• Screen reader live regions<br>• Touch gesture library<br>• 44×44px mobile tap targets | 🟡 ~60% done   | Medium |
+
+**Already done**: i18n phases 1-5 ✅, keyboard shortcuts (4 bindings), 43 ARIA attributes in HTML, template adoption (39/44 templates)
+**Remaining**: `src/frontend/a11y/` module (focus-manager, touch-gestures, screen-reader utils, responsive helpers), `a11y.css` (focus-visible, reduced-motion, high-contrast), skip links, modal focus traps
 
 ---
 
