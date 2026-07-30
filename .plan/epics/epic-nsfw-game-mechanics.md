@@ -3,6 +3,7 @@
 **Status:** Draft
 **Priority:** High
 **Effort:** Very High
+**Type:** Feature Epic
 **Issue:** `30a1b4b`
 **Tags:** nsfw, rpg, game-mechanics, adult, intimacy, relationships
 

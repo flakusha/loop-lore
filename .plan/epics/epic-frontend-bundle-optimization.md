@@ -4,6 +4,7 @@
 **Priority:** High
 **Effort:** Medium
 **Type:** Optimization Epic
+**Tags:** frontend, bundle, code-splitting, lazy-loading, performance
 
 ## Summary
 
