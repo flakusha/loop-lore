@@ -311,6 +311,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       {
         params: t.Object({ actorId: Id, worldId: Id, traitName: t.String(), },),
         body: TraitUpdateBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update world trait",
           description: "Update a world-specific trait's value.",
@@ -335,6 +340,11 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
       {
         params: t.Object({ actorId: Id, worldId: Id, traitName: t.String(), },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Delete world trait",
           description: "Delete a world-specific trait.",
