@@ -183,14 +183,6 @@ function createTestDb(): TestDbResult {
     `CREATE TABLE character_location_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, location_id TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, bonus INTEGER DEFAULT 0, penalty INTEGER DEFAULT 0, effects TEXT DEFAULT '{}', equipment_override TEXT DEFAULT '{}', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, location_id, trait_name))`,
   );
 
-  // Tables needed by PromptAssembler character-traits section
-  sqlite.run(
-    `CREATE TABLE character_world_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL, trait_category TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id, trait_name))`,
-  );
-  sqlite.run(
-    `CREATE TABLE character_location_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, location_id TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, bonus INTEGER DEFAULT 0, penalty INTEGER DEFAULT 0, effects TEXT DEFAULT '{}', equipment_override TEXT DEFAULT '{}', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, location_id, trait_name))`,
-  );
-
   return { sqlite, db, };
 }
 
