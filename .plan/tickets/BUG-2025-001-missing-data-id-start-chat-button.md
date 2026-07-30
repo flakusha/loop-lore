@@ -7,11 +7,12 @@
 **Epic**: (if applicable)
 **Related**: characters-flow E2E test "start chat button in detail modal redirects to chat"
 
-### Description
+## Description
 
 The "Start Chat" button in the character detail modal (`src/partials/characters/detail-modal.html`) does not have a `data-id` attribute with the character's ID. This causes `startChatFromChar()` in `src/frontend/pages/characters.ts` to return early without creating a chat.
 
 The button HTML:
+
 ```html
 <button
   class="btn btn-secondary"
@@ -22,6 +23,7 @@ The button HTML:
 ```
 
 But `startChatFromChar()` checks `btn.dataset.id`:
+
 ```typescript
 globalThis.startChatFromChar = async function(btn: HTMLElement) {
   const id = btn.dataset.id;
