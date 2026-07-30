@@ -42,7 +42,12 @@ async function resolveUserId(request: Request, database: Kysely<DB>,): Promise<s
 export function exportRoutes({ database, }: HandlerOpts,): Elysia {
   return new Elysia({ name: "export", },).post("/api/export", async (ctx: any,) => {
     const userId = await resolveUserId(ctx.request, database,);
-    if (!userId) { return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },); }
+    if (!userId) {
+      return jsonError({
+        message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
+        status: HttpStatus.Unauthorized,
+      },);
+    }
 
     let body: Record<string, unknown> = {};
     try {
@@ -283,13 +288,13 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
         "Content-Disposition": `attachment; filename="loop-lore-export-${timestamp}.zip"`,
       },
     },);
-    }, {
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-      },
-      detail: {
-        summary: "Export data as ZIP archive",
+  }, {
+    response: {
+      200: SuccessResponse,
+      401: ErrorResponse,
+    },
+    detail: {
+      summary: "Export data as ZIP archive",
       description: "Bulk export characters, chats, worlds, and assets as a ZIP archive with manifest and checksums.",
       tags: ["Export",],
     },
