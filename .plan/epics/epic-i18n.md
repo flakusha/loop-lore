@@ -1,6 +1,6 @@
 # Epic: Internationalization (i18n)
 
-**Status:** 🟡 In Progress (Phases 1-5 complete, Phase 1.5 + templates remaining)
+**Status:** 🟡 In Progress (Phases 1, 1.5, 2, 4, 5 complete, Phase 3 remaining)
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -33,14 +33,14 @@ Full internationalization of loop-lore UI. Infrastructure is complete (custom i1
 
 ## Features
 
-| Feature               | Ticket                          | Effort | Phase | Status         | Description                                        |
-| --------------------- | ------------------------------- | ------ | ----- | -------------- | -------------------------------------------------- |
-| Locale completion     | TASK-i18n-locale-completion     | Medium | 1     | ✅ Complete    | Fill missing 163 keys × 9 non-English locales      |
-| Reconciliation script | TASK-i18n-reconciliation-script | Small  | 1.5   | ⬜ Not started | Validate locale files, detect drift, auto-fix      |
-| Route adoption        | TASK-i18n-route-adoption        | Large  | 2     | ✅ Complete    | Wire `ctx.t()` into route error messages           |
-| Template adoption     | TASK-i18n-template-adoption     | Large  | 3     | ⏸ In progress  | Replace hardcoded strings in 17 HTML views         |
-| Alpine.js client      | TASK-i18n-alpine-client         | Medium | 4     | ✅ Complete    | Add `$t` magic property for client-side reactivity |
-| Settings wiring       | TASK-i18n-settings-wiring       | Small  | 5     | ✅ Complete    | Wire locale switcher to re-render UI               |
+| Feature               | Ticket                          | Effort | Phase | Status        | Description                                        |
+| --------------------- | ------------------------------- | ------ | ----- | ------------- | -------------------------------------------------- |
+| Locale completion     | TASK-i18n-locale-completion     | Medium | 1     | ✅ Complete   | Fill missing 163 keys × 9 non-English locales      |
+| Reconciliation script | TASK-i18n-reconciliation-script | Small  | 1.5   | ✅ Complete   | Validate locale files, detect drift, auto-fix      |
+| Route adoption        | TASK-i18n-route-adoption        | Large  | 2     | ✅ Complete   | Wire `ctx.t()` into route error messages           |
+| Template adoption     | TASK-i18n-template-adoption     | Large  | 3     | ⏸ In progress | Replace hardcoded strings in 17 HTML views         |
+| Alpine.js client      | TASK-i18n-alpine-client         | Medium | 4     | ✅ Complete   | Add `$t` magic property for client-side reactivity |
+| Settings wiring       | TASK-i18n-settings-wiring       | Small  | 5     | ✅ Complete   | Wire locale switcher to re-render UI               |
 
 ## Phases
 
