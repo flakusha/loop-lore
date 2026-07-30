@@ -227,7 +227,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             },
           },);
         },
-        { body: BatchIdsBody, },
+        { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
       )
       .get(
         "/api/chats/:id",
@@ -244,10 +244,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           if (!result) { return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",); }
           return jsonResponse({ ...result.chat, participants: result.participants, },);
         },
-        { params: ChatIdParams, },
-      )
-      .put(
-        "/api/chats/:id",
+        { params: ChatIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
