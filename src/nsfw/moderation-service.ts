@@ -359,9 +359,15 @@ export class NsfwModerationService {
    * world override, and user preference in that order.
    */
   async getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }> {
+    // 0. Check if user is shadow-banned from NSFW (overrides everything)
+    const prefs = await this.getPreferences(userId,);
+    if (prefs.shadowNsfw) {
+      return { enabled: false, source: "shadow_ban", };
+    }
+
     // 1. Check chat-level override
     const chat = await this.db.selectFrom("chats",)
-      .select(["nsfw_override", "world_id",])
+      .select(["nsfw_override", "world_id", "type",])
       .where("id", "=", chatId,)
       .executeTakeFirst();
     if (chat?.nsfw_override === "enabled") { return { enabled: true, source: "chat_override", }; }
@@ -378,7 +384,6 @@ export class NsfwModerationService {
     }
 
     // 3. Fall back to user preference
-    const prefs = await this.getPreferences(userId,);
     return { enabled: prefs.nsfwEnabled, source: "user_preference", };
   }
 
