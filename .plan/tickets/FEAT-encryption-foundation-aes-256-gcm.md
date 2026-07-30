@@ -1,6 +1,6 @@
 # FEAT: Encryption Foundation (AES-256-GCM)
 
-**Status:** 🟨 Partial (core built, wiring pending)
+**Status:** ✅ Done (closed via git issue)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-encryption-foundation

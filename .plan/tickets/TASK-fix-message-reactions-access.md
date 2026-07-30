@@ -1,6 +1,6 @@
 # TASK: Fix message-reactions DELETE access check
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed via git issue)
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-logic-reconciliation
