@@ -19,7 +19,15 @@ import { notifyGmAction, } from "../notifications/service";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, } from "../utils";
 import { notFound, } from "../validation/middleware";
-import { ErrorResponse, Id, LocationStateBody, NpcStateBody, PaginationQuery, SuccessResponse, WorldStateCreateBody, } from "../validation/schemas";
+import {
+  ErrorResponse,
+  Id,
+  LocationStateBody,
+  NpcStateBody,
+  PaginationQuery,
+  SuccessResponse,
+  WorldStateCreateBody,
+} from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────
@@ -234,7 +242,12 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     }, {
       params: t.Object({ worldId: Id, actorId: Id, },),
       response: {
-        200: t.Object({ id: t.String(), actorId: t.String(), worldId: t.Optional(t.String(),), status: t.Optional(t.String(),), },),
+        200: t.Object({
+          id: t.String(),
+          actorId: t.String(),
+          worldId: t.Optional(t.String(),),
+          status: t.Optional(t.String(),),
+        },),
         401: ErrorResponse,
         404: ErrorResponse,
       },
@@ -340,7 +353,13 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
       params: t.Object({ worldId: Id, },),
       query: PaginationQuery,
       response: {
-        200: t.Object({ data: t.Array(t.Object({ id: t.String(), },),), total: t.Number(), page: t.Number(), pageSize: t.Number(), totalPages: t.Number(), },),
+        200: t.Object({
+          data: t.Array(t.Object({ id: t.String(), },),),
+          total: t.Number(),
+          page: t.Number(),
+          pageSize: t.Number(),
+          totalPages: t.Number(),
+        },),
         401: ErrorResponse,
         404: ErrorResponse,
       },
