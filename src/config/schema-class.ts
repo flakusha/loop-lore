@@ -149,6 +149,9 @@ export class ConfigSchema {
   readonly nsfw = {
     allowNsfw: true,
     nsfwMinAge: 18,
+    defaultNsfwScope: "chat",
+    consentRequired: true,
+    auditLogging: true,
   } satisfies NsfwConfig;
 
   readonly hooks = {
@@ -312,6 +315,9 @@ export class ConfigSchema {
     map.MESSAGE_IDEMPOTENCY_EXPIRY_HOURS = "messages.idempotencyExpiryHours";
     map.ALLOW_NSFW = "nsfw.allowNsfw";
     map.NSFW_MIN_AGE = "nsfw.nsfwMinAge";
+    map.NSFW_DEFAULT_SCOPE = "nsfw.defaultNsfwScope";
+    map.NSFW_CONSENT_REQUIRED = "nsfw.consentRequired";
+    map.NSFW_AUDIT_LOGGING = "nsfw.auditLogging";
     map.ENABLE_MOOD_HOOKS = "hooks.enableMoodHooks";
     map.ENABLE_EMOTION_HOOKS = "hooks.enableEmotionHooks";
     map.ENABLE_NSFW_HOOKS = "hooks.enableNsfwHooks";

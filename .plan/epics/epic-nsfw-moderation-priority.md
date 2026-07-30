@@ -1,8 +1,10 @@
 # TASK: NSFW Moderation Safety Infrastructure — Priority Elevation
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** High
 **Effort:** Medium
+**Type:** Feature Epic
+**Tags:** nsfw, moderation, safety, consent, audit, flagging
 **Epic:** epic-chat-lifecycle-moderation
 
 ## Summary
