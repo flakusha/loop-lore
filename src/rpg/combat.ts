@@ -252,9 +252,7 @@ export function makeAttackRoll(
   const actualDamageDice = damageDice * (criticalHit ? 2 : 1);
   const damageRoll = rollDice(damageSides, actualDamageDice,);
 
-  const abilityDmgMod = attackAbility === "str"
-    ? abilityModifier(attacker.stats.str,)
-    : abilityModifier(attacker.stats.dex,);
+  const abilityDmgMod = abilityModifier(attacker.stats[attackAbility],);
 
   const totalBeforeResist = damageRoll.total + abilityDmgMod + extraDamage;
 
