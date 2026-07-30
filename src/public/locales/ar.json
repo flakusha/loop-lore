@@ -407,7 +407,8 @@
     "displayNameRequired": "displayName is required",
     "invalidAvatarData": "Invalid avatar data",
     "emotionJobNotFound": "Job not found",
-    "emotionJobAlreadyCompleted": "Job not found or already completed"
+    "emotionJobAlreadyCompleted": "Job not found or already completed",
+    "editCharacter": "Edit Character"
   },
   "worlds": {
     "title": "Worlds",
@@ -442,7 +443,8 @@
     "connections": "Connections (travel links)",
     "loadingLocations": "Loading locations...",
     "noLocationsYet": "No locations yet",
-    "addLocationsHint": "Add locations to build your world map."
+    "addLocationsHint": "Add locations to build your world map.",
+    "worldDetails": "World Details"
   },
   "gallery": {
     "title": "المعرض",
@@ -461,7 +463,8 @@
     "deleteSelected": "حذف المحدد",
     "downloadSelected": "تنزيل المحدد",
     "preview": "معاينة",
-    "searchAssets": "Search assets…"
+    "searchAssets": "Search assets…",
+    "assetGallery": "Asset Gallery"
   },
   "navigation": {
     "chat": "محادثة",
