@@ -15,7 +15,7 @@
  *   POST   /api/worlds/:worldId/initialize-states      — initialize location & NPC states
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { DifficultyReroll, DifficultyState, } from "../db/enums-story";
@@ -23,7 +23,7 @@ import type { DB, } from "../db/schema";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, uid, } from "../utils";
 import { notFound, unauthorized, } from "../validation/middleware";
-import { WorldCreateBody, WorldUpdateBody, } from "../validation/schemas";
+import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../validation/schemas";
 import {
   ErrorCode,
   extractAuth,
@@ -392,6 +392,10 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         return handleListWorlds(database, page, pageSize, userId,);
       },
       {
+        response: {
+          200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "List worlds",
           description: "List all worlds visible to the authenticated user.",
@@ -407,6 +411,10 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       },
       {
         body: WorldCreateBody,
+        response: {
+          201: t.Object({ id: t.String(), },),
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Create world",
           description: "Create a new world. Requires authentication.",
@@ -421,6 +429,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
       },
       {
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get world",
           description: "Get a world by ID with its locations.",
@@ -442,6 +455,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       },
       {
         body: WorldUpdateBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update world",
           description: "Update a world's properties. Owner or admin only.",
@@ -456,6 +474,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
       },
       {
+        response: {
+          204: t.Void(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Delete world",
           description: "Delete a world and all its locations. Owner or admin only.",
@@ -472,6 +495,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole,);
       },
       {
+        response: {
+          200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "List locations",
           description: "List locations in a world.",
@@ -492,6 +520,12 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         );
       },
       {
+        response: {
+          201: t.Object({ id: t.String(), },),
+          400: ErrorResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Create location",
           description: "Create a new location in a world.",
@@ -512,6 +546,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         );
       },
       {
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Get location",
           description: "Get a location by ID.",
@@ -533,6 +572,12 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         );
       },
       {
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update location",
           description: "Update a location's properties.",
@@ -553,6 +598,11 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
         );
       },
       {
+        response: {
+          204: t.Void(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Delete location",
           description: "Delete a location from a world.",

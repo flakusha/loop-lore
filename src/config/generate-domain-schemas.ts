@@ -40,7 +40,6 @@ function main() {
   for (const [domain, paths,] of Object.entries(DOMAINS,)) {
     // Extract domain-specific properties from full schema
     const domainSchema: Record<string, unknown> = {
-<<<<<<< ours — function `main` (S+F, confidence: low)
 // hint: Structural and logic conflict. Both design and behavior differ.
       $schema: "https://json-schema.org/draft-07/schema#",
       $id: `loop-lore-config.${domain}.schema.json`,
@@ -66,30 +65,6 @@ function main() {
       const fullRequired = fullSchema.required as string[] | undefined;
       if (fullRequired?.includes(path,)) {
         domainRequired.push(path,);
-=======
-      $schema: "http://json-schema.org/draft-07/schema#",
-      $id: `loop-lore-config.${domain}.schema.json`,
-      title: `Loop Lore ${domain.charAt(0,).toUpperCase() + domain.slice(1,)} Config`,
-      description: `Domain-specific configuration for ${domain}`,
-      type: "object",
-      properties: {},
-      required: [],
-    };
-
-    // Extract properties for this domain
-    const fullProperties = fullSchema.properties as Record<string, unknown>;
-    const domainProperties: Record<string, unknown> = {};
-    const domainRequired: string[] = [];
-
-    for (const path of paths) {
-      if (fullProperties[path]) {
-        domainProperties[path] = fullProperties[path];
-        // Check if required in full schema
-        const fullRequired = fullSchema.required as string[] | undefined;
-        if (fullRequired?.includes(path,)) {
-          domainRequired.push(path,);
-        }
->>>>>>> theirs — function `main` (S+F, confidence: low)
       }
     }
 
