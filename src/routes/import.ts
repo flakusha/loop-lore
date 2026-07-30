@@ -128,7 +128,7 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
       data_raw: opts.rawSource ?? null,
       alternate_greetings: alternateGreetings,
       settings: "{}",
-      data_version: 1,
+      format_version: 0,
     },)
     .execute();
 

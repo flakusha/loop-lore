@@ -1,12 +1,11 @@
 /**
- * Migration 036 — Add per-chat and per-world NSFW override columns
+ * Migration 023 — Chat schema additions: NSFW override + name_source
  *
- * Allows chat/world owners to override the global NSFW policy:
- *   null = use user preference (default)
- *   "enabled" = force NSFW on for this chat/world
- *   "disabled" = force NSFW off for this chat/world
- *
- * Precedence: global config > per-chat > per-world > user preference
+ * Adds:
+ * - `nsfw_override` on `chats` and `worlds`: per-chat/world NSFW policy override
+ *   (null = use user pref, "enabled" = force on, "disabled" = force off)
+ * - `name_source` on `chats`: tracks how the chat name was generated
+ *   ("manual", "auto-rule", or "auto-llm")
  */
 import { type Kysely, } from "kysely";
 
@@ -22,9 +21,16 @@ export async function up(database: Kysely<any>,): Promise<void> {
     .alterTable("worlds",)
     .addColumn("nsfw_override", "text",)
     .execute();
+
+  // Add name_source to chats for auto-rename tracking
+  await database.schema
+    .alterTable("chats",)
+    .addColumn("name_source", "text",)
+    .execute();
 }
 
 export async function down(database: Kysely<any>,): Promise<void> {
+  await database.schema.alterTable("chats",).dropColumn("name_source",).execute();
   await database.schema.alterTable("worlds",).dropColumn("nsfw_override",).execute();
   await database.schema.alterTable("chats",).dropColumn("nsfw_override",).execute();
 }
