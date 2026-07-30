@@ -31,7 +31,7 @@ export function isProtected(branch: string,): boolean {
 }
 
 export function gitSync(repoRoot: string, ...args: string[]): string {
-  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args], { stdout: "pipe", stderr: "pipe" },);
+  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], { stdout: "pipe", stderr: "pipe", },);
   return result.stdout.toString().trim();
 }
 
@@ -55,18 +55,18 @@ export async function getWorktrees(repoRoot: string,): Promise<GitWorktree[]> {
 
   for (const line of output.split("\n",)) {
     const trimmed = line.trim();
-    if (!trimmed) continue;
+    if (!trimmed) { continue; }
 
     // Porcelain format: first line after blank is "worktree <path>"
     // or bare path on older git versions
-    if (trimmed.startsWith("worktree ")) {
+    if (trimmed.startsWith("worktree ",)) {
       if (current) { worktrees.push(current,); }
       current = { path: trimmed.slice(9,), branch: "", HEAD: "", };
-    } else if (trimmed.startsWith("HEAD ")) {
+    } else if (trimmed.startsWith("HEAD ",)) {
       if (current) { current.HEAD = trimmed.slice(5,); }
-    } else if (trimmed.startsWith("branch ")) {
+    } else if (trimmed.startsWith("branch ",)) {
       if (current) { current.branch = trimmed.slice(7,); }
-    } else if (!current && !trimmed.startsWith("bare") && !trimmed.startsWith("detached")) {
+    } else if (!current && !trimmed.startsWith("bare",) && !trimmed.startsWith("detached",)) {
       // Older git: bare path on first line
       current = { path: trimmed, branch: "", HEAD: "", };
     }
