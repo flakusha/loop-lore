@@ -249,7 +249,7 @@ export function makeAttackRoll(
   }
 
   // Damage roll
-  const actualDamageDice = criticalHit ? damageDice * 2 : damageDice;
+  const actualDamageDice = damageDice * (criticalHit ? 2 : 1);
   const damageRoll = rollDice(damageSides, actualDamageDice,);
 
   const abilityDmgMod = attackAbility === "str"
