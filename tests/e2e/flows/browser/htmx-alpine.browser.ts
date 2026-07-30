@@ -128,8 +128,8 @@ describe("Morph swap state reset", () => {
       // Navigate away via htmx morph
       await navigateViaHtmx(page, "nav-characters", "characters-header",);
 
-      // Navigate back to chat
-      await navigateViaHtmx(page, "nav-chat", "chat-header",);
+      // Navigate back to chat (chat-list has no testid, wait for app-root)
+      await navigateViaHtmx(page, "nav-chat",);
 
       // After morph re-init, chatState.init() should reset store
       await page.waitForTimeout(500,);
@@ -151,8 +151,10 @@ describe("Panel toggles + Escape key", () => {
     await gotoView(page, "/views/chat",);
     await waitForAlpineReady(page,);
 
-    // Open chat list panel
-    await page.click("[data-testid='toggle-chat-list']",);
+    // Dismiss any overlays, then open chat list panel
+    // force: true needed — settings modal overlay CSS z-index
+    // intercepts pointer events even when display:none
+    await page.click("[data-testid='toggle-chat-list']", { force: true, },);
     await page.waitForTimeout(400,);
     let uiState = await getAlpineStore(page, "ui",);
     expect(uiState.showChatList,).toBe(true,);
@@ -189,7 +191,7 @@ describe("Panel toggles + Escape key", () => {
 
       // Navigate away and back via morph
       await navigateViaHtmx(page, "nav-characters", "characters-header",);
-      await navigateViaHtmx(page, "nav-chat", "chat-header",);
+      await navigateViaHtmx(page, "nav-chat",);
       await page.waitForTimeout(500,);
 
       // Open panel and press Escape — handler from init() should still work
