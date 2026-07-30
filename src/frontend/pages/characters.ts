@@ -2,6 +2,7 @@
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
 import { fetchMood, happinessColor, moodToEmoji, moodToLabel, } from "../alpine/mood-panel";
+import { $, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { fetchPartial, filterCards, } from "./shared";
@@ -143,9 +144,7 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
     return;
   }
 
-  const format = (
-    modal.querySelector('input[name="export-format"]:checked',) as HTMLInputElement | null
-  )?.value;
+  const format = $<HTMLInputElement>('input[name="export-format"]:checked', modal,)?.value;
   const characterId = (modal as HTMLElement).dataset.characterId;
 
   if (!characterId) {
@@ -164,15 +163,15 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
   const form = document.querySelector<HTMLFormElement>("#char-edit-form",);
   if (!form) { return; }
 
-  const name = (form.querySelector("#edit-name",) as HTMLInputElement)?.value ?? "";
-  const desc = (form.querySelector("#edit-desc",) as HTMLTextAreaElement)?.value ?? "";
-  const systemPrompt = (form.querySelector("#edit-system",) as HTMLTextAreaElement)?.value ?? "";
-  const personality = (form.querySelector("#edit-personality",) as HTMLTextAreaElement)?.value ?? "";
-  const greeting = (form.querySelector("#edit-greeting",) as HTMLTextAreaElement)?.value ?? "";
-  const scenario = (form.querySelector("#edit-scenario",) as HTMLTextAreaElement)?.value ?? "";
-  const mesExample = (form.querySelector("#edit-example",) as HTMLTextAreaElement)?.value ?? "";
-  const postHistory = (form.querySelector("#edit-post-history",) as HTMLTextAreaElement)?.value ?? "";
-  const avatarId = (form.querySelector("#char-avatar-id",) as HTMLInputElement)?.value ?? "";
+  const name = $<HTMLInputElement>("#edit-name", form,)?.value ?? "";
+  const desc = $<HTMLTextAreaElement>("#edit-desc", form,)?.value ?? "";
+  const systemPrompt = $<HTMLTextAreaElement>("#edit-system", form,)?.value ?? "";
+  const personality = $<HTMLTextAreaElement>("#edit-personality", form,)?.value ?? "";
+  const greeting = $<HTMLTextAreaElement>("#edit-greeting", form,)?.value ?? "";
+  const scenario = $<HTMLTextAreaElement>("#edit-scenario", form,)?.value ?? "";
+  const mesExample = $<HTMLTextAreaElement>("#edit-example", form,)?.value ?? "";
+  const postHistory = $<HTMLTextAreaElement>("#edit-post-history", form,)?.value ?? "";
+  const avatarId = $<HTMLInputElement>("#char-avatar-id", form,)?.value ?? "";
 
   const body: Record<string, unknown> = {
     displayName: name,
