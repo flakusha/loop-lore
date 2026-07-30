@@ -287,6 +287,11 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
       return handleLocationState(database, "GET", ctx.params.id, userId, userRole,);
     }, {
       params: t.Object({ id: Id, },),
+      response: {
+        200: t.Object({ id: t.String(), locationId: t.String(), state: t.Record(t.String(), t.Any(),), },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get location state",
         description: "Get the current state of a location.",
