@@ -4,12 +4,15 @@
  * API endpoints for managing character emotions,
  * emotion intensity, and context tracking.
  */
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import {
   ActorEmotionParams,
   ActorIdParams,
   CharacterEmotionBody,
   EmotionDefinitionCreateBody,
+  ErrorResponse,
+  ListResponse,
+  SuccessResponse,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
@@ -47,6 +50,18 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       return jsonResponse(emotions,);
     }, {
       params: ActorIdParams,
+      response: {
+        200: ListResponse(t.Object({
+          id: t.String(),
+          actorId: t.String(),
+          emotionId: t.String(),
+          intensity: t.Number(),
+          context: t.Optional(t.String(),),
+          expiresAt: t.Optional(t.String(),),
+        },),),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "List actor emotions",
         description: "List all emotions currently active for an actor.",
@@ -87,6 +102,18 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       return jsonResponse(emotion,);
     }, {
       params: ActorEmotionParams,
+      response: {
+        200: t.Object({
+          id: t.String(),
+          actorId: t.String(),
+          emotionId: t.String(),
+          intensity: t.Number(),
+          context: t.Optional(t.String(),),
+          expiresAt: t.Optional(t.String(),),
+        },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get actor emotion",
         description: "Get a specific emotion by ID for an actor.",
@@ -155,6 +182,11 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     }, {
       params: ActorIdParams,
       body: CharacterEmotionBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Set actor emotion",
         description: "Set or update an emotion for an actor. Upserts by emotion ID.",
@@ -188,6 +220,11 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       return jsonResponse({ ok: true, },);
     }, {
       params: ActorEmotionParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Delete actor emotion",
         description: "Remove an emotion from an actor.",
@@ -211,6 +248,18 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
 
       return jsonResponse(emotions,);
     }, {
+      response: {
+        200: ListResponse(t.Object({
+          id: t.String(),
+          name: t.String(),
+          displayName: t.Optional(t.String(),),
+          category: t.String(),
+          valence: t.Number(),
+          arousal: t.Number(),
+          icon: t.Optional(t.String(),),
+        },),),
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List emotion definitions",
         description: "List all available emotion definitions (name, valence, arousal, etc).",
@@ -247,6 +296,10 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       return jsonCreated({ id, },);
     }, {
       body: EmotionDefinitionCreateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Create emotion definition",
         description: "Create a new emotion definition with name, category, valence, and arousal.",
