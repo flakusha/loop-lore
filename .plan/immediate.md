@@ -68,9 +68,22 @@
 
 ## Remaining Work
 
-1. **TEST.5** — E2E test ordering: chat-flow.browser.ts has Alpine timing issues (panels visible before store init)
-2. **TEST.3** — Browser chat flow: Alpine `x-show`/`:style` not evaluating in time for some assertions
-3. **TEST.4** — Route handler isolation: not yet addressed
+### Blocked on Inline Script Extraction (another agent)
+
+| Test Suite      | Pass | Fail | Root Cause                                   |
+| --------------- | ---- | ---- | -------------------------------------------- |
+| navigation      | 0    | 13   | Alpine x-show not init → sidebar/htmx broken |
+| htmx-alpine     | 2    | 15   | Alpine store/directives not evaluating       |
+| characters-flow | 9    | 1    | Detail modal x-show timing                   |
+
+**42/73 tests pass** across all browser suites. Blocked tests all share the same root cause: Alpine.js directives (`x-show`, `:style`, `:disabled`) not evaluating before assertions run. Will resolve when inline script extraction lands.
+
+### Other Blocking Items
+
+| ID     | Title                     | Status                                            |
+| ------ | ------------------------- | ------------------------------------------------- |
+| TEST.5 | E2E test ordering fragile | 🟡 Partially addressed (try/finally page cleanup) |
+| TEST.4 | Route handler isolation   | 🔲 Not started                                    |
 
 ## References
 
