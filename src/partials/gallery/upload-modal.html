@@ -6,7 +6,7 @@
 >
   <div class="modal">
     <div class="modal-header">
-      <span class="title">Upload Asset</span>
+      <span class="title">{{{ t("gallery.uploadAsset") }}}</span>
       <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
@@ -21,8 +21,8 @@
       >
         <div class="drop-zone" style="margin-bottom: var(--space-4)" id="upload-dropzone">
           <div class="icon">📤</div>
-          <div class="text">Drag & drop files here</div>
-          <div class="hint">or click to browse</div>
+          <div class="text">{{{ t("gallery.dragDrop") }}}</div>
+          <div class="hint">{{{ t("gallery.orClickToBrowse") }}}</div>
           <input
             type="file"
             name="file"
@@ -32,7 +32,7 @@
           />
         </div>
         <div class="form-group" style="margin-top: var(--space-4)">
-          <label class="form-label" for="asset-label">Label (optional)</label>
+          <label class="form-label" for="asset-label">{{{ t("gallery.labelOptional") }}}</label>
           <input
             class="form-input"
             type="text"
@@ -42,8 +42,10 @@
           />
         </div>
         <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
-          <button type="submit" class="btn btn-primary">Upload</button>
+          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+            {{{ t("common.cancel") }}}
+          </button>
+          <button type="submit" class="btn btn-primary">{{{ t("common.upload") }}}</button>
         </div>
       </form>
     </div>
