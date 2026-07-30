@@ -13,7 +13,9 @@
   x-cloak
   data-testid="gallery-sidebar"
 >
-      <button class="btn-icon" @click="$store.ui.showGallery = false" x-bind:title="t('common.close')">&times;</button>
+  <button class="btn-icon" @click="$store.ui.showGallery = false" x-bind:title="t('common.close')">
+    &times;
+  </button>
   <div class="nav-section-title" style="margin-bottom: var(--space-3)">{{{t("chats.chatAssets")}}}</div>
   <template x-if="activeChat">
     <div style="margin-bottom: var(--space-3)">
