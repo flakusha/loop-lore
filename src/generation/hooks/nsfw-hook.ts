@@ -1,16 +1,20 @@
 /**
  * NSFW Hook — Checks content against NSFW policy and age gates.
  *
- * Uses the LLM to detect NSFW content and gates generation
- * based on the character's nsfw_policy and the global NsfwConfig.
+ * Uses keyword detection to classify content NSFW level and gates
+ * generation based on the character's nsfw_policy and the global NsfwConfig.
+ * Writes moderation audit logs for blocked content.
  */
 
 import { getLogger, } from "../../logger";
+import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
 export class NsfwHook implements HookHandler {
   readonly name = "nsfw";
   readonly eventTypes: HookEventType[] = ["nsfw_gate", "privacy_check",];
+
+  private modService: NsfwModerationService | null = null;
 
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     if (!_context.nsfwConfig.allowNsfw) { return false; }
@@ -27,6 +31,10 @@ export class NsfwHook implements HookHandler {
     }
 
     const allowed = this.isAllowed(nsfwLevel, _context,);
+
+    // Write audit log for NSFW content detection
+    await this.recordAudit(_context, nsfwLevel, allowed,);
+
     if (!allowed) {
       log.warn("nsfw-hook: content blocked by policy gate", { nsfwLevel, policy: _context.nsfwPolicy, },);
       return {
@@ -43,6 +51,29 @@ export class NsfwHook implements HookHandler {
       eventType: "nsfw_gate",
       data: { nsfwLevel, allowed: true, },
     };
+  }
+
+  private getModService(context: HookContext,): NsfwModerationService {
+    if (!this.modService) {
+      this.modService = new NsfwModerationService(context.db,);
+    }
+    return this.modService;
+  }
+
+  private async recordAudit(context: HookContext, nsfwLevel: string, allowed: boolean,): Promise<void> {
+    try {
+      const svc = this.getModService(context,);
+      await svc.recordAction({
+        actionType: allowed ? "nsfw_detected" : "nsfw_blocked",
+        targetUserId: context.actorId,
+        performedBy: "system",
+        reason: `NSFW ${allowed ? "detected" : "blocked"}: level "${nsfwLevel}" ${allowed ? "within" : "exceeds"} policy "${context.nsfwPolicy}"`,
+        scope: "chat",
+        scopeId: context.chatId,
+      },);
+    } catch (err) {
+      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(err), },);
+    }
   }
 
   private detectNsfwLevel(content: string,): "none" | "mild" | "moderate" | "intense" | "extreme" {
