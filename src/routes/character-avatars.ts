@@ -5,6 +5,16 @@
  */
 import { Elysia, } from "elysia";
 import { AvatarService, } from "../characters/services/avatar-service";
+import {
+  ActorIdAvatarIdParams,
+  ActorIdAvatarParams,
+  AvatarConfigBody,
+  AvatarCreateBody,
+  AvatarSelectBody,
+  AvatarUpdateBody,
+  WorldActorParams,
+  WorldAvatarConfigBody,
+} from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -23,7 +33,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -34,6 +44,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       const avatars = await avatarService.getAvatars(actorId,);
       return jsonResponse(avatars,);
     }, {
+      params: ActorIdAvatarParams,
       detail: {
         summary: "List actor avatars",
         description: "List all avatars for a given actor.",
@@ -49,8 +60,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const { avatarId, } = ctx.params as { avatarId: string };
+      const { actorId, avatarId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -68,6 +78,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(avatar,);
     }, {
+      params: ActorIdAvatarIdParams,
       detail: {
         summary: "Get actor avatar",
         description: "Get a specific avatar by ID for a given actor.",
@@ -83,7 +94,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -91,17 +102,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
 
-      const assetId = body.assetId as string | undefined;
-      const label = body.label as string | undefined;
-      const tags = body.tags as Record<string, string[]> | undefined;
-      const isPrimary = body.isPrimary as boolean | undefined;
-      const sortOrder = body.sortOrder as number | undefined;
-
-      if (!assetId) {
-        return jsonError({ message: "assetId is required", status: HttpStatus.BadRequest, },);
-      }
+      const { assetId, label, tags, isPrimary, sortOrder, } = ctx.body;
 
       const avatarId = await avatarService.createAvatar({
         actorId,
@@ -113,6 +115,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },);
       return jsonCreated({ id: avatarId, },);
     }, {
+      params: ActorIdAvatarParams,
+      body: AvatarCreateBody,
       detail: {
         summary: "Create actor avatar",
         description: "Create a new avatar for an actor. Requires an assetId.",
@@ -128,9 +132,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const { avatarId, } = ctx.params as { avatarId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { actorId, avatarId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -139,10 +141,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const label = body.label as string | undefined;
-      const tags = body.tags as Record<string, string[]> | undefined;
-      const isPrimary = body.isPrimary as boolean | undefined;
-      const sortOrder = body.sortOrder as number | undefined;
+      const { label, tags, isPrimary, sortOrder, } = ctx.body;
 
       await avatarService.updateAvatar(avatarId, {
         label,
@@ -152,6 +151,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },);
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorIdAvatarIdParams,
+      body: AvatarUpdateBody,
       detail: {
         summary: "Update actor avatar",
         description: "Update an existing avatar's label, tags, primary flag, or sort order.",
@@ -167,8 +168,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
-      const { avatarId, } = ctx.params as { avatarId: string };
+      const { actorId, avatarId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -180,6 +180,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       await avatarService.deleteAvatar(avatarId,);
       return jsonNoContent();
     }, {
+      params: ActorIdAvatarIdParams,
       detail: {
         summary: "Delete actor avatar",
         description: "Delete an avatar by ID.",
@@ -195,7 +196,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -203,15 +204,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
 
-      const emotion = body.emotion as string | undefined;
-      const mood = body.mood as string | undefined;
-      const action = body.action as string | undefined;
-      const location = body.location as string | undefined;
-      const time = body.time as string | undefined;
-      const outfit = body.outfit as string | undefined;
-      const worldId = body.worldId as string | undefined;
+      const { emotion, mood, action, location, time, outfit, worldId, } = ctx.body;
 
       const avatar = await avatarService.selectAvatar(actorId, {
         emotion,
@@ -224,6 +218,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!avatar) { return jsonError({ message: "No avatar found", status: HttpStatus.NotFound, },); }
       return jsonResponse(avatar,);
     }, {
+      params: ActorIdAvatarParams,
+      body: AvatarSelectBody,
       detail: {
         summary: "Select context-aware avatar",
         description:
@@ -240,7 +236,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -251,6 +247,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       const config = await avatarService.getAvatarConfig(actorId,);
       return jsonResponse(config,);
     }, {
+      params: ActorIdAvatarParams,
       detail: {
         summary: "Get avatar selection config",
         description: "Get the avatar selection configuration for an actor.",
@@ -266,7 +263,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -274,19 +271,18 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
 
-      const selectionRule = body.selectionRule as string | undefined;
-      const weights = body.weights as Record<string, number> | undefined;
-      const fallbackChain = body.fallbackChain as string[] | undefined;
+      const { selectionRule, weights, fallbackChain, } = ctx.body;
 
       await avatarService.upsertAvatarConfig(actorId, {
-        selectionRule: selectionRule as any,
+        selectionRule,
         weights,
-        fallbackChain: fallbackChain as any,
+        fallbackChain,
       },);
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorIdAvatarParams,
+      body: AvatarConfigBody,
       detail: {
         summary: "Update avatar selection config",
         description: "Update the avatar selection configuration (rule, weights, fallback chain) for an actor.",
@@ -302,7 +298,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
+      const { worldId, actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -314,6 +310,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       const config = await avatarService.getWorldAvatarConfig(actorId, worldId,);
       return jsonResponse(config,);
     }, {
+      params: WorldActorParams,
       detail: {
         summary: "Get world avatar config",
         description: "Get the world-specific avatar configuration override for an actor.",
@@ -329,8 +326,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
-      const body = ctx.body as Record<string, unknown>;
+      const { worldId, actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -339,15 +335,16 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const selectionRuleOverride = body.selectionRuleOverride as string | undefined;
-      const weightsOverride = body.weightsOverride as Record<string, number> | undefined;
+      const { selectionRuleOverride, weightsOverride, } = ctx.body;
 
       await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
-        selectionRuleOverride: selectionRuleOverride as any,
+        selectionRuleOverride,
         weightsOverride,
       },);
       return jsonResponse({ ok: true, },);
     }, {
+      params: WorldActorParams,
+      body: WorldAvatarConfigBody,
       detail: {
         summary: "Update world avatar config",
         description: "Update the world-specific avatar configuration override for an actor.",
