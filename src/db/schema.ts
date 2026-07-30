@@ -102,4 +102,10 @@ export interface DB {
   gathering_node_instances: import("./schema-crafting").GatheringNodeInstances;
   crafting_attempts: import("./schema-crafting").CraftingAttempts;
   crafting_orders: import("./schema-crafting").CraftingOrders;
+  // RPG systems
+  dice_roll_history: import("./schema-rpg").DiceRollHistory;
+  character_stats: import("./schema-rpg").CharacterStats;
+  xp_ledger: import("./schema-rpg").XpLedger;
+  loot_tables: import("./schema-rpg").LootTables;
+  loot_entries: import("./schema-rpg").LootEntries;
 }
