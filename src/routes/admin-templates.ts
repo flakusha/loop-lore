@@ -25,6 +25,7 @@ import {
   type ImageModelProfile,
 } from "../generation/prompt-templates";
 import { getLogger, type Logger, } from "../logger";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -107,6 +108,9 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+      },
       detail: {
         summary: "List image model profiles",
         description: "List all image model profiles (builtin + custom) with summary info.",
@@ -140,6 +144,9 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+      },
       detail: {
         summary: "Get template registry",
         description: "Get the full image model template registry with all profiles and templates.",
@@ -174,6 +181,11 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       },);
     }, {
       params: t.Object({ id: t.String(), },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Get image model profile",
         description: "Get a single image model profile by ID.",
@@ -239,6 +251,11 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           mode: t.String(),
           template: t.String(),
         },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update profile template",
           description: "Update a template text for a specific detail level and mode in a profile.",
@@ -297,6 +314,11 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           clipSkip: t.Optional(t.Numeric(),),
           maxTokenHint: t.Optional(t.Numeric(),),
         },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Update profile defaults",
           description: "Update the default generation parameters (cfg scale, steps, sampler, etc) for a profile.",
@@ -382,6 +404,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
             scheduler: t.Optional(t.String(),),
           },),),
         },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Create custom profile",
           description: "Create a new custom image model profile.",
@@ -428,6 +454,11 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       },
       {
         params: t.Object({ id: t.String(), },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: {
           summary: "Delete custom profile",
           description: "Delete a custom image model profile. Cannot delete builtin profiles.",
