@@ -1,6 +1,6 @@
 # Backlog
 
-> **Last updated:** 2026-07-30 — Post-reconciliation priorities; P0/P1 status synced with validated code state
+> **Last updated:** 2026-07-31 — Post-reconciliation priorities; P0/P1/P1.5 status synced with validated code state
 > Features not under active development. `immediate.md` tracks active work; `docs/meta/open-items.md` tracks bugs/debt.
 
 ## P0 — Critical Path (Blocking)
@@ -19,24 +19,36 @@
 | —    | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High   | ✅ Complete |
 | 27   | Data Integrity Phase 2 — `data_version` optimistic concurrency    | Medium | ✅ Complete |
 
-## P2 — Core Gameplay Systems (Post-P1)
+## P1.5 — Accessibility
 
-| Feature                                                 | Spec                                  | Effort    | Status         |
-| ------------------------------------------------------- | ------------------------------------- | --------- | -------------- |
-| RPG mechanics (dice, stats, combat, XP, loot)           | `docs/spec/rpg-mechanics.md`          | Very High | ⬜ Not Started |
-| Character multi-personality (switching, locking)        | `TASK-character-multi-personality.md` | Medium    | ⬜ Not Started |
-| Mood swings & happiness meter                           | `TASK-character-mood-happiness.md`    | Medium    | 🟡 In Progress |
-| Memory injection probability & privacy                  | `TASK-character-memory-injection.md`  | Medium    | ✅ Done        |
-| Three-tier memory system (episodic/semantic/procedural) | `docs/spec/memory-system.md`          | Large     | 🟡 In Progress |
-| World & Locations (discovery, travel, NPC)              | `epic-world-locations.md`             | Very High | ⬜ Not Started |
+| Epic / Task                    | Status                   |
+| ------------------------------ | ------------------------ |
+| Accessibility — remaining gaps | ✅ Complete (2026-07-31) |
+
+## P2 — Core Workstream (Next Work)
+
+> **Emphasis**: Visual Novel mode, chat system, assistant & tool calling, GM flows, authorization & access, gallery. RPG mechanics deferred to P2-later.
+
+| Tier         | Topic                                                            | Ticket(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Status                   |
+| ------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **P2-A**     | **Visual Novel Mode**                                            | [`TASK-visual-novel-mode.md`](TASK-visual-novel-mode.md), [`TASK-chat-visual-novel-mode.md`](TASK-chat-visual-novel-mode.md), [`TASK-vn-branching-choices.md`](TASK-vn-branching-choices.md), [`TASK-vn-dynamic-generation.md`](TASK-vn-dynamic-generation.md), [`TASK-vn-qa-mode.md`](TASK-vn-qa-mode.md), [`TASK-vn-scene-template-system.md`](TASK-vn-scene-template-system.md), [`TASK-vn-template-actions.md`](TASK-vn-template-actions.md)                                                                                                                             | ⬜ Not Started           |
+| **P2-B**     | **Chat System**                                                  | [`TASK-chat-autorenaming.md`](TASK-chat-autorenaming.md), [`TASK-chat-backgrounds-location-sync.md`](TASK-chat-backgrounds-location-sync.md), [`TASK-chat-external-music-linking.md`](TASK-chat-external-music-linking.md), [`TASK-chat-room-search-join.md`](TASK-chat-room-search-join.md), [`TASK-chat-room-filters.md`](TASK-chat-room-filters.md), [`TASK-chat-message-search.md`](TASK-chat-message-search.md), [`TASK-chat-sectioning-multi-location.md`](TASK-chat-sectioning-multi-location.md), [`TASK-chat-transfer-location.md`](TASK-chat-transfer-location.md) | ⬜ Not Started           |
+| **P2-C**     | **Assistant & Tool Calling**                                     | [`TASK-assistant-commands-extension.md`](TASK-assistant-commands-extension.md), [`TASK-assistant-command-execution-intent-detection.md`](TASK-assistant-command-execution-intent-detection.md), [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md), [`TASK-wire-gm-service-story-mode.md`](TASK-wire-gm-service-story-mode.md)                                                                                                                                             | ⬜ Not Started           |
+| **P2-D**     | **GM Flows**                                                     | [`TASK-assistant-gm-flows.md`](TASK-assistant-gm-flows.md), [`TASK-gm-shadow-notes.md`](TASK-gm-shadow-notes.md), [`TASK-gm-whitenotes.md`](TASK-gm-whitenotes.md), [`TASK-assistant-gm-flows-reconciliation.md`](TASK-assistant-gm-flows-reconciliation.md)                                                                                                                                                                                                                                                                                                                 | ⬜ Not Started           |
+| **P2-E**     | **Authorization & Access**                                       | [`TASK-auth-register-route.md`](TASK-auth-register-route.md), [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md), [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md), [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md), [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md), [`TASK-authoring-creation.md`](TASK-authoring-creation.md)                                                                                                                     | ⬜ Not Started           |
+| **P2-F**     | **Gallery**                                                      | [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md), [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md)                                                                                                                                                                                                                                                                                                                                                                                   | ⬜ Not Started           |
+| **P2-later** | **RPG Mechanics** (dice, stats, combat, XP, loot)                | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | ✅ Complete (2026-07-31) |
+| P2-later     | **Character System** — multi-personality, mood, memory injection | `TASK-character-system-p2.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | ⬜ Deferred              |
+| P2-later     | **World & Locations** (discovery, travel, NPC)                   | `epic-world-locations.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | ⬜ Deferred              |
 
 ## P3 — Advanced Features (Post-P2)
 
 | Feature                                                | Spec                                      | Effort      | Status         |
 | ------------------------------------------------------ | ----------------------------------------- | ----------- | -------------- |
+| Plugin system & extensibility                          | `epic-plugin-system.md`                   | Very High   | ⬜ Not Started |
+| Three-tier memory system                               | `FEAT-memory-systems-three-tier.md`       | Large       | ⬜ Not Started |
 | Artifact system (code/docs/datasets as assets)         | `docs/spec/artifacts-system.md`           | Medium      | ⬜ Not Started |
 | Visual novel mode (image + text overlay)               | `docs/frontend/chat/visual-novel-mode.md` | Medium-High | ⬜ Not Started |
-| Plugin system & extensibility                          | `epic-plugin-system.md`                   | Very High   | ⬜ Not Started |
 | ComfyUI Plugin & Workflow Templates                    | `epic-comfyui-plugin.md`                  | High        | ⬜ Not Started |
 | Provider & Plugin Ecosystem (Anthropic/Ollama/Bedrock) | `epic-provider-plugin-ecosystem.md`       | Large       | ⬜ Not Started |
 
@@ -86,17 +98,18 @@
 | Character licensing (CC0 to all_rights)                     | `epic-character-core-system.md`               | Creator-controlled OR public domain                                  |
 | Character multi-avatar system                               | `epic-character-core-system.md`               | Context/mood/action-aware avatars                                    |
 
-## Completed (moved from P0/P1)
+## Completed (moved from P0/P1/P1.5)
 
-| Epic | Item                                                                        | Status                                                |
-| ---- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 12   | Memory Foundation — keyword filtering, type enum, context compaction        | ✅ Complete                                           |
-| 13   | Frontend Responsive — mobile breakpoints, touch targets, keyboard shortcuts | ✅ Complete                                           |
-| 19   | Chat Notifications — cross-chat SSE, read-state schema, unread badge        | ✅ Complete                                           |
-| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect    | ✅ Complete                                           |
-| 11   | Admin & Settings — admin middleware, page routes, user prefs modal          | ✅ Complete (core)                                    |
-| 17   | Client-Side Encryption — AES-256-GCM, browser crypto, key hierarchy         | ✅ Partial (browser crypto done; integration pending) |
-| 14   | Import/Export — file-based character import, chat export                    | ✅ Partial (JSON import works; PNG/CHARX pending)     |
+| Epic | Item                                                                         | Status                                                |
+| ---- | ---------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 12   | Memory Foundation — keyword filtering, type enum, context compaction         | ✅ Complete                                           |
+| 13   | Frontend Responsive — mobile breakpoints, touch targets, keyboard shortcuts  | ✅ Complete                                           |
+| 19   | Chat Notifications — cross-chat SSE, read-state schema, unread badge         | ✅ Complete                                           |
+| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect     | ✅ Complete                                           |
+| 11   | Admin & Settings — admin middleware, page routes, user prefs modal           | ✅ Complete (core)                                    |
+| 17   | Client-Side Encryption — AES-256-GCM, browser crypto, key hierarchy          | ✅ Partial (browser crypto done; integration pending) |
+| 14   | Import/Export — file-based character import, chat export                     | ✅ Partial (JSON import works; PNG/CHARX pending)     |
+| —    | Accessibility P1.5 — focus traps, aria-live, reduced-motion, contrast, touch | ✅ Complete (2026-07-31)                              |
 
 ## Reconciliation Notes
 
@@ -106,5 +119,7 @@
 - **Epic 14 (Import/Export)** marked partial — JSON import works, other formats pending
 - **Epic 16 (Observability)** moved from P0 to completed — already implemented
 - **New P0 priorities** added: Data Integrity Phase 1, NSFW Moderation, Shared Schemas
-- **2026-07-30 status sync**: P0 NSFW Moderation → 🟡 Partial; P0 Shared Schemas → ✅ Complete; P1 NSFW Integration Gaps → ✅ Complete; P1 Battle Integration Gaps → ✅ Complete; P1 Data Integrity Phase 2 → ✅ Complete; P1 Memory Tiers Wiring was already ✅ Complete in Completed section
+- **2026-07-30 status sync**: P0 NSFW Moderation → ✅ Complete (was 🟡 Partial); P0 Shared Schemas → ✅ Complete; P1 NSFW Integration Gaps → ✅ Complete; P1 Battle Integration Gaps → ✅ Complete; P1 Data Integrity Phase 2 → ✅ Complete; P1 Memory Tiers Wiring was already ✅ Complete in Completed section
 - **2026-07-30 consistency fixes**: Mood swings & happiness meter → 🟡 In Progress (per TASK-character-mood-happiness.md); Memory injection probability & privacy → ✅ Done (per TASK-character-memory-injection.md); Three-tier memory system → 🟡 In Progress (per FEAT-memory-systems-three-tier.md); Removed non-existent `docs/spec/rpg-implementation-roadmap.md` from RPG mechanics spec reference
+- **2026-07-31 P2 reordering**: VN mode, chat, assistant/tool calling, GM flows, authorization/access, gallery elevated as P2 emphasis; RPG mechanics and Character System deferred to P2-later
+- **P1.5 Accessibility marked complete** (2026-07-31)
