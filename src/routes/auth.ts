@@ -23,6 +23,7 @@ import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { createRateLimiter, } from "../middleware/rate-limit";
 import { jsonParseOr, uid, } from "../utils";
 import { notFound, unauthorized, } from "../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 interface HandleOpts {
@@ -448,6 +449,9 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
       async ({ request, ...rest },) =>
         handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
+        response: {
+          200: SuccessResponse,
+        },
         detail: {
           summary: "Login",
           description: "Authenticate with username/password, create session, return JWT in cookie.",
@@ -460,6 +464,9 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
       async ({ request, ...rest },) =>
         handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
+        response: {
+          200: SuccessResponse,
+        },
         detail: {
           summary: "Demo login",
           description: "Solo/demo mode login — no password required. Creates or reuses the demo user.",
@@ -472,6 +479,9 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
       async ({ request, ...rest },) =>
         handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
+        response: {
+          200: SuccessResponse,
+        },
         detail: {
           summary: "Register",
           description: "Create a new account and automatically log in. Rate-limited to 3 attempts per hour.",
@@ -487,6 +497,10 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> },): E
       "/api/auth/logout",
       async ({ request, },) => handleLogout(request, database,),
       {
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Logout",
           description: "Revoke current session and clear authentication cookie.",
@@ -498,6 +512,10 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> },): E
       "/api/auth/me",
       async ({ request, ...rest },) => handleMe(request, database, (rest as any).userId as string | null | undefined,),
       {
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Current user",
           description: "Get the authenticated user's profile.",

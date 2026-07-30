@@ -16,6 +16,7 @@ import { getMinimalPng, insertCharacterDataIntoPng, } from "../characters/stegan
 import type { DB, } from "../db/schema";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { jsonParseOr, } from "../utils";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, } from "./http-utils";
 
 interface HandlerOpts {
@@ -282,9 +283,13 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
         "Content-Disposition": `attachment; filename="loop-lore-export-${timestamp}.zip"`,
       },
     },);
-  }, {
-    detail: {
-      summary: "Export data as ZIP archive",
+    }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
+      detail: {
+        summary: "Export data as ZIP archive",
       description: "Bulk export characters, chats, worlds, and assets as a ZIP archive with manifest and checksums.",
       tags: ["Export",],
     },

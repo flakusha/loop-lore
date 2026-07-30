@@ -15,6 +15,7 @@ import { getConfig, setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import type { TranslatorFn, } from "../i18n/types";
 import { getLogger, type Logger, } from "../logger";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -62,6 +63,10 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "Get NSFW configuration",
         description:
@@ -112,6 +117,10 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
           allowNsfw: t.Optional(t.Boolean(),),
           nsfwMinAge: t.Optional(t.Numeric(),),
         },),
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+        },
         detail: {
           summary: "Update NSFW configuration",
           description: "Update server-wide NSFW policy settings. Admin role required.",
@@ -146,6 +155,10 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
         },);
       }
     }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
       detail: {
         summary: "List character NSFW policies",
         description: "Retrieve all characters with non-SFW content ratings. Admin role required.",
