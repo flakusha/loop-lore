@@ -18,3 +18,7 @@ Implementation for Epic: AO NSFW Game Mechanics
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Related
+
+- **Feature spec:** `FEAT-nsfw-game-mechanics.md`

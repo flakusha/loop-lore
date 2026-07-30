@@ -1,4 +1,4 @@
-# TASK: EPIC: Blog System
+# TASK: Blog System
 
 **Status:** 🟡 Partial (core CRUD + comments + follows + moderation built)
 **Priority:** Medium
@@ -7,14 +7,41 @@
 
 ## Summary
 
-Implementation for EPIC: Blog System
+Blog subsystem supporting both LLM-authored and human-authored posts. Core CRUD + comments + follows + moderation built. Remaining: LLM authoring modes, RAG integration, visibility tiers. From `epic-blog-system.md`.
+
+## Scope
+
+### Already Built
+
+- Blog post CRUD
+- Comments and follows
+- Content moderation
+
+### Remaining
+
+- LLM authoring modes (automated / deep research / news)
+- RAG pipeline integration for internal-only information
+- Visibility tiers with follower-based access
+- Creative world generation in blog content
 
 ## Linked Epics
 
 - `epic-blog-system.md`
+- **Feature spec:** `FEAT-blog-system.md`
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] LLM authoring modes (automated, deep research, news)
+- [ ] RAG pipeline integration for internal information gathering
+- [ ] Visibility tiers with follower-based access
+- [ ] Creative world generation in blog content
+- [ ] Blog post schema reuses chat message model
+- [ ] Content moderation for generated and user-authored posts
+- [ ] Unit tests for LLM authoring modes
+- [ ] Integration tests for blog workflow
+
+## Notes
+
+- Reference `epic-blog-system.md` for full system design
+- Blog records reuse chat message schema and infrastructure
+- Consider moderation for LLM-generated content

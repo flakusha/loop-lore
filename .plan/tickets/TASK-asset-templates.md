@@ -19,34 +19,34 @@ Create asset templates and presets for common use cases, enabling one-click gene
 - Document templates (business report formats)
 - Presentation templates (slide layouts)
 
-### Template Features
+### Template Management
 
-- User-created templates
-- World-scoped templates
-- Community template sharing
-- Preset dimensions (1024x1024, 1920x1080, etc.)
-- Style presets (dark, light, fantasy, sci-fi)
+- Template browsing and selection
+- Custom template creation
+- Template sharing
+- Template versioning
 
-### API Endpoints
+### One-Click Generation
 
-- `GET /api/templates` — List templates
-- `POST /api/templates` — Create template
-- `GET /api/templates/:id` — Get template
-- `PUT /api/templates/:id` — Update template
-- `DELETE /api/templates/:id` — Delete template
-- `POST /api/assets/from-template` — Generate from template
+- Pre-filled templates
+- Customization options
+- Batch generation
+- Preview before save
 
-## Implementation
+## Acceptance Criteria
 
-1. Create `asset_templates` table
-2. Add template CRUD to service
-3. Create template UI component
-4. Add template selector to upload flow
-5. Implement preset rendering
+- [ ] Character token templates with customization
+- [ ] Map templates with grid/fog presets
+- [ ] Item card templates with rarity styling
+- [ ] Template browsing and selection UI
+- [ ] Custom template creation
+- [ ] Template sharing between users
+- [ ] One-click generation workflow
+- [ ] Unit tests for template logic
+- [ ] Integration tests for template workflow
 
-## Files
+## Notes
 
-- `src/db/migrations/020_asset_templates.sql` — Migration
-- `src/assets/templates.ts` — Template service
-- `src/assets/controller.ts` — Template endpoints
-- `src/frontend/components/asset-template-selector.html`
+- Reference `epic-items.md` for asset system design
+- Consider template marketplace
+- Balance preset options vs. customization

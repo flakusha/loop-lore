@@ -7,12 +7,53 @@
 
 ## Summary
 
-**Opt-in by default**: NSFW features are disabled by default, require explicit user opt-in. Relevant apps do not have them, creating a competitive advantage.
+Game mechanics for adult/NSFW content — intimacy systems, seduction, relationship progression, adult encounters, desires, fetishes, pregnancy/reproduction, body systems, pheromones, aphrodisiacs. From `epic-nsfw-game-mechanics.md`.
 
-NSFW game mechanics: intimacy system, seduction/desire, pheromones/chemistry, pregnancy/reproduction, trauma/recovery, species mechanics, body/physical, mood/emotional, location/environment, reputation/social, skills/experience. From Epic 43.
+## Scope
+
+### Opt-In System
+
+- NSFW features disabled by default
+- User opt-in required
+- Content filtering controls
+
+### Intimacy System
+
+- Relationship progression
+- Intimacy mechanics
+- Consent system
+
+### Body Systems
+
+- Physical state tracking
+- Pheromones and chemistry
+- Pregnancy/reproduction
+
+### Content Controls
+
+- Content rating system
+- User preferences
+- Moderation tools
+
+## Linked Epics
+
+- `epic-nsfw-game-mechanics.md`
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] NSFW opt-in system with content filtering
+- [ ] Intimacy system with relationship progression
+- [ ] Consent mechanics
+- [ ] Body state tracking
+- [ ] Pheromones and chemistry system
+- [ ] Pregnancy/reproduction mechanics
+- [ ] Content rating system
+- [ ] User preference controls
+- [ ] Unit tests for NSFW mechanics
+- [ ] Integration tests for NSFW workflow
+
+## Notes
+
+- Reference `epic-nsfw-game-mechanics.md` for full system design
+- NSFW features must be opt-in by default
+- Balance explicit content vs. gameplay

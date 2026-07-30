@@ -1,4 +1,4 @@
-# TASK: Epic: Configuration Extensions — Extensible Enumerations
+# TASK: Configuration Extensions — Extensible Enumerations
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
@@ -7,16 +7,28 @@
 
 ## Summary
 
-A generalized **config-extension mechanism** for value sets that are _closed but extensible_: the
-system ships a built-in default set, operators/users extend it with custom values, and the
-runtime/intent layer consumes a **precompiled, validated, merged enumeration** (defaults ∪
-extensions) rather than discovering allowed values dynamically.
+A generalized config-extension mechanism for value sets that are closed but extensible: the system ships a built-in default set, operators/users extend it with custom values. From `epic-config-extensions.md`.
 
-Flagship instance: **avatar emotions** — a default emotion range is auto-generated, can be extended
-with new emotion values, and a per-message intent to change the avatar relies on the _full_
-precompiled emotion list so any emotion (built-in or custom) can be targeted reliably.
+## Scope
 
----
+### Extension Mechanism
+
+- Default value sets per system
+- Custom value addition
+- Value validation and type safety
+
+### Systems Using Extensions
+
+- Character traits and personalities
+- World settings and styles
+- Item types and rarities
+- Quest types and categories
+
+### Management UI
+
+- Admin UI for extensions
+- User custom values
+- Import/export extensions
 
 ## Linked Epics
 
@@ -24,6 +36,18 @@ precompiled emotion list so any emotion (built-in or custom) can be targeted rel
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Extension mechanism for value sets
+- [ ] Default value sets per system
+- [ ] Custom value addition with validation
+- [ ] Type safety for extended values
+- [ ] Admin UI for managing extensions
+- [ ] User custom values support
+- [ ] Import/export for extensions
+- [ ] Unit tests for extension logic
+- [ ] Integration tests for extension workflow
+
+## Notes
+
+- Reference `epic-config-extensions.md` for full system design
+- Consider backward compatibility for extensions
+- Balance flexibility vs. validation
