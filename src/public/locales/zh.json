@@ -460,7 +460,8 @@
     "sortBySize": "按大小排序",
     "deleteSelected": "删除选中",
     "downloadSelected": "下载选中",
-    "preview": "预览"
+    "preview": "预览",
+    "searchAssets": "Search assets…"
   },
   "navigation": {
     "chat": "聊天",
