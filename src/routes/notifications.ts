@@ -9,6 +9,7 @@ import type { DB, } from "../db/schema";
 import { NotificationService, } from "../notifications/service";
 import { safeJsonStringify, } from "../utils";
 import { unauthorized, } from "../validation/middleware";
+import { Id, NotificationPreferencesBody, } from "../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
@@ -99,9 +100,6 @@ export class NotificationStreamer {
 export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
   const idParams = t.Object({ id: t.String(), },);
   const markReadBody = t.Object({ read: t.Optional(t.Boolean(),), },);
-  const enabledSchema = t.Optional(t.Record(t.String(), t.Boolean(),),);
-  const mutedWorldsSchema = t.Optional(t.Array(t.String(),),);
-  const prefsBody = t.Object({ enabled: enabledSchema, mutedWorlds: mutedWorldsSchema, },);
   return new Elysia({ name: "notifications", },)
     .get("/api/notifications", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -133,10 +131,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
-        const id = ctx.params.id as string;
-        const body = ctx.body as { read?: boolean };
-        if (body.read === true) {
-          await new NotificationService(database,).markRead(id, userId,);
+        if (ctx.body.read === true) {
+          await new NotificationService(database,).markRead(ctx.params.id, userId,);
         }
         return jsonResponse({ ok: true, },);
       },
@@ -165,9 +161,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
     .delete("/api/notifications/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
-      await new NotificationService(database,).delete(ctx.params.id as string, userId,);
+      await new NotificationService(database,).delete(ctx.params.id, userId,);
       return jsonResponse({ ok: true, },);
     }, {
+      params: t.Object({ id: Id, },),
       detail: {
         summary: "Delete notification",
         description: "Delete a notification by ID.",
@@ -191,18 +188,14 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
-        const body = ctx.body as {
-          enabled?: Record<string, boolean>;
-          mutedWorlds?: string[];
-        };
         const prefs = await new NotificationService(database,).setPrefs(userId, {
-          enabled: body.enabled,
-          mutedWorlds: body.mutedWorlds,
+          enabled: ctx.body.enabled,
+          mutedWorlds: ctx.body.mutedWorlds,
         },);
         return jsonResponse(prefs,);
       },
       {
-        body: prefsBody,
+        body: NotificationPreferencesBody,
         detail: {
           summary: "Update notification preferences",
           description: "Update notification preferences (enabled channels, muted worlds).",

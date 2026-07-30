@@ -5,6 +5,7 @@
  * including CC0 public domain and custom licenses.
  */
 import { Elysia, } from "elysia";
+import { ActorIdParams, LicensingBody, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -28,7 +29,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -51,6 +52,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(licensing,);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "Get character licensing information",
         description: "Returns the licensing details (CC0, custom, or proprietary) for the specified actor.",
@@ -67,7 +69,8 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
+      const { licenseType, customLicenseText, attribution, allowDerivatives, allowCommercial, shareAlike, } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -75,14 +78,6 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
           status: HttpStatus.NotFound,
         },);
       }
-      const body = ctx.body as Record<string, unknown>;
-
-      const licenseType = body.licenseType as string | undefined;
-      const customLicenseText = body.customLicenseText as string | undefined;
-      const attribution = body.attribution as string | undefined;
-      const allowDerivatives = body.allowDerivatives as boolean | undefined;
-      const allowCommercial = body.allowCommercial as boolean | undefined;
-      const shareAlike = body.shareAlike as boolean | undefined;
 
       // Upsert
       const existing = await database
@@ -95,7 +90,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         await database
           .updateTable("character_licensing",)
           .set({
-            license_type: (licenseType as any) ?? existing.license_type,
+            license_type: licenseType ?? existing.license_type,
             custom_license_text: customLicenseText ?? existing.custom_license_text,
             attribution: attribution ?? existing.attribution,
             allow_derivatives: booleanToInt(allowDerivatives, existing.allow_derivatives,),
@@ -114,7 +109,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         .values({
           id,
           actor_id: actorId,
-          license_type: (licenseType as any) ?? "proprietary",
+          license_type: licenseType ?? "proprietary",
           custom_license_text: customLicenseText ?? null,
           attribution: attribution ?? null,
           allow_derivatives: booleanToInt(allowDerivatives, 1,),
@@ -127,6 +122,8 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
 
       return jsonCreated({ id, },);
     }, {
+      params: ActorIdParams,
+      body: LicensingBody,
       detail: {
         summary: "Create or update character licensing",
         description:
@@ -144,7 +141,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const { actorId, } = ctx.params as { actorId: string };
+      const { actorId, } = ctx.params;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -160,6 +157,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
 
       return jsonResponse({ ok: true, },);
     }, {
+      params: ActorIdParams,
       detail: {
         summary: "Delete character licensing",
         description: "Removes all licensing information for the specified actor.",

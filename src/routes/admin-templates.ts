@@ -14,7 +14,7 @@
  *   DELETE /api/admin/templates/:id         — delete custom profile
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getConfig, setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
@@ -23,7 +23,6 @@ import {
   DEFAULT_PROFILE_REGISTRY,
   type DetailLevel,
   type ImageModelProfile,
-  type SdGenMode,
 } from "../generation/prompt-templates";
 import { getLogger, type Logger, } from "../logger";
 import { jsonError, jsonResponse, } from "./http-utils";
@@ -157,7 +156,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         },);
       }
 
-      const { id, } = ctx.params as { id: string };
+      const { id, } = ctx.params;
       const stored = await loadStoredTemplates(database,);
       const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
       const profile = merged[id];
@@ -174,6 +173,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         isBuiltin: id in BUILTIN_PROFILES,
       },);
     }, {
+      params: t.Object({ id: t.String(), },),
       detail: {
         summary: "Get image model profile",
         description: "Get a single image model profile by ID.",
@@ -192,12 +192,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           },);
         }
 
-        const { id, } = ctx.params as { id: string };
-        const body = ctx.body as {
-          detail?: DetailLevel;
-          mode?: SdGenMode;
-          template?: string;
-        };
+        const { id, } = ctx.params;
+        const body = ctx.body;
 
         if (!body.detail || !body.mode || !body.template) {
           return jsonError({
@@ -224,7 +220,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         if (!updated.templates) {
           updated.templates = {} as Record<DetailLevel, any>;
         }
-        if (!updated.templates[body.detail]) {
+        if (!updated.templates[body.detail as DetailLevel]) {
           (updated.templates as any)[body.detail] = {};
         }
         (updated.templates as any)[body.detail][body.mode] = body.template;
@@ -237,6 +233,12 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         return jsonResponse({ ok: true, profileId: id, },);
       },
       {
+        params: t.Object({ id: t.String(), },),
+        body: t.Object({
+          detail: t.String(),
+          mode: t.String(),
+          template: t.String(),
+        },),
         detail: {
           summary: "Update profile template",
           description: "Update a template text for a specific detail level and mode in a profile.",
@@ -256,15 +258,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           },);
         }
 
-        const { id, } = ctx.params as { id: string };
-        const body = ctx.body as {
-          cfgScale?: number;
-          steps?: number;
-          sampler?: string;
-          scheduler?: string;
-          clipSkip?: number;
-          maxTokenHint?: number;
-        };
+        const { id, } = ctx.params;
+        const body = ctx.body;
 
         const stored = await loadStoredTemplates(database,);
         const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
@@ -293,6 +288,15 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         return jsonResponse({ ok: true, profileId: id, },);
       },
       {
+        params: t.Object({ id: t.String(), },),
+        body: t.Object({
+          cfgScale: t.Optional(t.Numeric(),),
+          steps: t.Optional(t.Numeric(),),
+          sampler: t.Optional(t.String(),),
+          scheduler: t.Optional(t.String(),),
+          clipSkip: t.Optional(t.Numeric(),),
+          maxTokenHint: t.Optional(t.Numeric(),),
+        },),
         detail: {
           summary: "Update profile defaults",
           description: "Update the default generation parameters (cfg scale, steps, sampler, etc) for a profile.",
@@ -312,19 +316,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           },);
         }
 
-        const body = ctx.body as {
-          id: string;
-          name: string;
-          families: string[];
-          promptFormat?: string;
-          maxTokenHint?: number;
-          defaults?: {
-            cfgScale: number;
-            steps: number;
-            sampler: string;
-            scheduler?: string;
-          };
-        };
+        const body = ctx.body;
 
         if (!body.id || !body.name || !body.families?.length) {
           return jsonError({
@@ -377,6 +369,19 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         return jsonResponse({ ok: true, profileId: body.id, },);
       },
       {
+        body: t.Object({
+          id: t.String({ minLength: 1, },),
+          name: t.String({ minLength: 1, },),
+          families: t.Array(t.String(),),
+          promptFormat: t.Optional(t.String(),),
+          maxTokenHint: t.Optional(t.Numeric(),),
+          defaults: t.Optional(t.Object({
+            cfgScale: t.Numeric(),
+            steps: t.Numeric(),
+            sampler: t.String(),
+            scheduler: t.Optional(t.String(),),
+          },),),
+        },),
         detail: {
           summary: "Create custom profile",
           description: "Create a new custom image model profile.",
@@ -396,7 +401,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           },);
         }
 
-        const { id, } = ctx.params as { id: string };
+        const { id, } = ctx.params;
 
         if (id in BUILTIN_PROFILES) {
           return jsonError({
@@ -422,6 +427,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         return jsonResponse({ ok: true, },);
       },
       {
+        params: t.Object({ id: t.String(), },),
         detail: {
           summary: "Delete custom profile",
           description: "Delete a custom image model profile. Cannot delete builtin profiles.",
