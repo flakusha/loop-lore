@@ -137,7 +137,6 @@ export async function _handleImportRequest(request: Request, database: Kysely<DB
           })()
           : null,
         settings: "{}",
-        data_version: 1,
       },)
       .execute();
     return jsonCreated({ id, },);
