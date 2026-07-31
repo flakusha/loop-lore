@@ -213,6 +213,14 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
         },);
       }
 
+      if (typeof happinessDelta !== "number" || typeof source !== "string") {
+        return jsonError({
+          message: ctx.t?.("validation.requiredFields",) ??
+            "Missing required fields: happinessDelta (number), source (string)",
+          status: HttpStatus.UnprocessableEntity,
+        },);
+      }
+
       const eventId = await moodService.logEvent({
         actorId,
         worldId,
