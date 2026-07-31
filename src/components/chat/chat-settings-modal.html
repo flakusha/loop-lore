@@ -125,6 +125,53 @@
           </small>
         </div>
       </template>
+
+      <!-- Visual Novel Mode Settings -->
+      <div class="form-group">
+        <label style="display: flex; align-items: center; gap: var(--space-2)">
+          <input type="checkbox" x-model="_vnEnabled" data-testid="vn-toggle" />
+          Visual Novel Mode
+        </label>
+        <small style="color: var(--text-secondary)">Cinematic scene display with backgrounds and portraits</small>
+      </div>
+      <template x-if="_vnEnabled">
+        <div>
+          <div class="form-group">
+            <label class="form-label" for="vn-layout">Layout</label>
+            <select class="form-input" id="vn-layout" x-model="_vnLayout" data-testid="vn-layout">
+              <option value="overlay">Overlay (text over image)</option>
+              <option value="below">Below (image top, text bottom)</option>
+              <option value="split">Split (portrait left, text right)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: var(--space-2)">
+              <input type="checkbox" x-model="_vnTypewriter" data-testid="vn-typewriter" />
+              Typewriter Text Effect
+            </label>
+          </div>
+          <div class="form-group" x-show="_vnTypewriter">
+            <label class="form-label">Text Speed (<span x-text="_vnTypewriterSpeed"></span>ms)</label>
+            <input type="range" min="10" max="100" x-model.number="_vnTypewriterSpeed" data-testid="vn-speed" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="vn-transition">Transition</label>
+            <select class="form-input" id="vn-transition" x-model="_vnTransition" data-testid="vn-transition">
+              <option value="fade">Fade</option>
+              <option value="cut">Cut (instant)</option>
+              <option value="dissolve">Dissolve</option>
+              <option value="slide">Slide</option>
+              <option value="wipe">Wipe</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: var(--space-2)">
+              <input type="checkbox" x-model="_vnAutoAdvance" data-testid="vn-auto-advance" />
+              Auto-Advance Scenes
+            </label>
+          </div>
+        </div>
+      </template>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">Cancel</button>

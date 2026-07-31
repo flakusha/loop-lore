@@ -6,11 +6,26 @@
   <main class="main-content">
     {{> chat/chat-list-panel.html }}
 
-    <!-- Chat container (centered) -->
-    <div class="chat-container">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
+    <!-- Chat container (centered) — switches between VN and bubble layout -->
+    <div class="chat-container">
+      <!-- VN mode: scene renderer overlay -->
+      <div
+        x-show="_vnEnabled"
+        x-cloak
+        id="vn-container"
+        class="vn-container"
+        data-testid="vn-container"
+      >
+      </div>
+      <!-- Bubble mode: standard message list -->
+      <div x-show="!_vnEnabled">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
+    </div>
 
     {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/memory-panel.html }} {{>
     chat/input-area.html }}
+
+    <!-- GM Panel (shadow notes + whitenotes sidebar) -->
+    {{> chat/gm-panel.html }}
   </main>
 
   {{> chat/chat-settings-modal.html }} {{> chat/rename-chat-modal.html }} {{> modals/settings.html }}

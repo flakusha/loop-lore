@@ -22,6 +22,11 @@ const COMMAND_BUTTONS: CommandButton[] = [
   { name: "improve", label: "Improve", icon: "✨", description: "Improve last message", },
   { name: "quest", label: "Quest", icon: "📜", description: "Manage quests", },
   { name: "roll", label: "Roll", icon: "🎲", description: "Roll dice", },
+  { name: "guide", label: "Guide", icon: "🎭", description: "GM: Give narrative direction", },
+  { name: "scene", label: "Scene", icon: "🎬", description: "GM: Set scene/location", },
+  { name: "summarize", label: "Summarize", icon: "📝", description: "Summarize conversation", },
+  { name: "rewrite", label: "Rewrite", icon: "🔄", description: "Rewrite last message", },
+  { name: "translate", label: "Translate", icon: "🌐", description: "Translate text", },
 ];
 
 (globalThis as unknown as Record<string, unknown>).commandButtons = function() {
