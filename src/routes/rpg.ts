@@ -35,6 +35,7 @@ import {
 import type { Config, } from "../config/schema.js";
 import type { DB, } from "../db/schema.js";
 import { getLogger, type Logger, } from "../logger";
+import { logDiceRoll, } from "../rpg/service.js";
 import { SuccessResponse, } from "../validation/schemas.js";
 import { jsonError, jsonResponse, } from "./http-utils.js";
 
@@ -48,7 +49,7 @@ interface HandlerOpts {
 }
 
 export function rpgRoutes(opts: HandlerOpts,) {
-  const { database: _database, } = opts;
+  const { database, } = opts;
 
   return (
     new Elysia({ name: "rpg", },)
@@ -56,7 +57,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
 
       .post(
         "/api/rpg/dice/roll",
-        (ctx: any,) => {
+        async (ctx: any,) => {
           try {
             const body = ctx.body as {
               sides: DiceSides;
@@ -71,6 +72,25 @@ export function rpgRoutes(opts: HandlerOpts,) {
               "normal",
               body.exploding ?? false,
             );
+
+            // Log to database
+            const userId = ctx.userId ?? "anonymous";
+            await logDiceRoll(
+              { database, },
+              {
+                userId,
+                sides: body.sides,
+                count: body.count ?? 1,
+                modifier: body.modifier ?? 0,
+                advantageMode: "normal",
+                exploding: body.exploding ?? false,
+                rawRolls: result.dice.map((d,) => d.value,),
+                rawTotal: result.rawTotal,
+                total: result.total,
+                purpose: "dice_roll",
+              },
+            );
+
             return jsonResponse(result,);
           } catch (error) {
             log().error("Failed to roll dice", error instanceof Error ? error : undefined,);
@@ -88,7 +108,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
       )
       .post(
         "/api/rpg/dice/notation",
-        (ctx: any,) => {
+        async (ctx: any,) => {
           try {
             const body = ctx.body as { notation: string };
             const result = rollFromNotation(body.notation,);
@@ -112,7 +132,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
       )
       .post(
         "/api/rpg/dice/advantage",
-        (ctx: any,) => {
+        async (ctx: any,) => {
           try {
             const body = ctx.body as {
               modifier?: number;
@@ -209,7 +229,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
                 const stats = defaultStatBlock();
                 const abilities = ["str", "dex", "con", "int", "wis", "cha"] as const;
                 for (let i = 0; i < 6; i++) {
-                  (stats as Record<string, number>)[abilities[i]!] = rolls[i]!;
+                  stats[abilities[i]!] = rolls[i]!;
                 }
                 return jsonResponse({ method: "4d6_drop_lowest", stats, rolls, },);
               }
