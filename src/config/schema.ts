@@ -513,6 +513,8 @@ interface GenerationConfig {
     captioning?: ModelRoleAssignment;
     /** Content moderation/censoring model */
     moderation?: ModelRoleAssignment;
+    /** Auxiliary model for fast classification tasks */
+    auxiliary?: ModelRoleAssignment;
   };
   /** Regex transforms applied to LLM output before display */
   regexTransforms?: RegexTransform[];
