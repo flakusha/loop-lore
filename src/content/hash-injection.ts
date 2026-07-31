@@ -15,7 +15,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, } from "node:path";
-import { HASH_INJECTION_SCRIPT, HASH_INJECTION_LINK, } from "../regex/html-sanitize";
+import { HASH_INJECTION_LINK, HASH_INJECTION_SCRIPT, } from "../regex/html-sanitize";
 
 const HASH_PATTERN = /^(.+)-([a-z0-9]{8})\.((?:js|css))$/;
 
