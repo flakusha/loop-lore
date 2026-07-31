@@ -330,6 +330,45 @@ globalThis.chatState = function() {
       }
     },
 
+    _searchDebounce: null as ReturnType<typeof setTimeout> | null,
+    _searchResults: null as {
+      chatId: string;
+      chatName: string;
+      chatType: string;
+      chatMode: string;
+      lastMessageAt: string;
+      characterName: string;
+      characterAvatar: string | null;
+      worldId: string | null;
+    }[] | null,
+
+    async searchChats(query: string,) {
+      // Clear previous debounce
+      if (this._searchDebounce) {
+        clearTimeout(this._searchDebounce,);
+      }
+
+      // If query is empty, clear results and show all chats
+      if (!query.trim()) {
+        this._searchResults = null;
+        return;
+      }
+
+      // Debounce 300ms
+      this._searchDebounce = setTimeout(async () => {
+        try {
+          const params = new URLSearchParams({ q: query, limit: "20", },);
+          const res = await apiFetch(`/api/chats/search?${params.toString()}`,);
+          if (res.ok) {
+            const data = await res.json();
+            this._searchResults = data.data || [];
+          }
+        } catch {
+          // Non-critical — fall back to client-side filter
+        }
+      }, 300,);
+    },
+
     async selectChat(chatId: string,) {
       if (this.isGenerating) {
         this.$dispatch("show-toast", {
