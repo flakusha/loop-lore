@@ -5,18 +5,23 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { ItemCategory, ItemRarity, ItemVisibility, LoreEntryStatus, LorePosition, MemoryType, QuestProgressStatus, QuestStatus, QuestType, StackableState, TurnStatus, TurnType, } from "./enums";
+import type { DifficultyReroll, DifficultyState, ItemCategory, ItemRarity, ItemVisibility, LoreEntryStatus, LorePosition, MemoryType, QuestProgressStatus, QuestStatus, QuestType, StackableState, TurnStatus, TurnType, } from "./schemas";
 
 // ── worlds ────────────────────────────────────────────
 export interface Worlds {
   id: Generated<string>;
-  creator_id: string;
+  owner_id: string;
   name: string;
   description: string | null;
-  visibility: Generated<ItemVisibility>;
-  config: Generated<string>;
+  lore: string | null;
+  scan_depth: Generated<number>;
+  token_budget: Generated<number>;
+  difficulty_modifier: Generated<number>;
+  difficulty_reroll: Generated<DifficultyReroll>;
+  difficulty_state: Generated<DifficultyState>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  nsfw_override: string | null;
 }
 
 // ── locations ────────────────────────────────────────────
@@ -25,8 +30,8 @@ export interface Locations {
   world_id: string;
   name: string;
   description: string | null;
-  type: Generated<string>;
-  config: Generated<string>;
+  connections: Generated<string>;
+  parent_location_id: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -35,16 +40,15 @@ export interface Locations {
 export interface Items {
   id: Generated<string>;
   world_id: string;
-  creator_id: string;
   name: string;
   description: string | null;
   category: ItemCategory;
   rarity: Generated<ItemRarity>;
-  visibility: Generated<ItemVisibility>;
-  stats: Generated<string>;
-  effects: Generated<string>;
   stackable: Generated<StackableState>;
   max_stack: Generated<number>;
+  properties: Generated<string>;
+  value: Generated<number>;
+  weight: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -53,18 +57,23 @@ export interface Items {
 export interface WorldLoreEntries {
   id: Generated<string>;
   world_id: string;
-  creator_id: string;
-  title: string;
+  name: string | null;
   content: string;
-  category: string | null;
-  tags: Generated<string>;
-  status: Generated<LoreEntryStatus>;
+  keys: Generated<string>;
+  secondary_keys: string | null;
+  selective: Generated<number>;
+  case_sensitive: Generated<number>;
+  enabled: Generated<LoreEntryStatus>;
+  constant: Generated<number>;
   position: Generated<LorePosition>;
-  related_actors: Generated<string>;
-  related_locations: Generated<string>;
-  related_items: Generated<string>;
+  insertion_order: Generated<number>;
+  priority: Generated<number>;
+  comment: string | null;
+  sort_order: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  cooldown_seconds: Generated<number>;
+  last_activated: string | null;
 }
 
 // ── world_items ────────────────────────────────────────────
@@ -73,42 +82,62 @@ export interface WorldItems {
   world_id: string;
   item_id: string;
   location_id: string | null;
+  owner_actor_id: string | null;
   quantity: Generated<number>;
   visibility: Generated<ItemVisibility>;
+  spawn_condition: string | null;
+  respawnable: Generated<number>;
   created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
 
 // ── actor_memories ────────────────────────────────────────────
 export interface ActorMemories {
   id: Generated<string>;
   actor_id: string;
-  chat_id: string | null;
-  type: MemoryType;
+  source_chat_id: string | null;
   content: string;
+  memory_type: Generated<MemoryType>;
+  confidence: Generated<number>;
   importance: Generated<number>;
-  decay_rate: Generated<number>;
-  last_accessed: Generated<string>;
-  access_count: Generated<number>;
-  source_message_id: string | null;
-  metadata: Generated<string>;
+  keywords: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  expires_at: string | null;
+  decay_rate: Generated<number>;
+  strength: Generated<number>;
+  last_accessed_at: string | null;
+  source_message_id: string | null;
+  context: string | null;
+  world_id: string | null;
+  user_id: string | null;
+  scope: Generated<string>;
+  pinned: Generated<number>;
+  privacy: Generated<string>;
+  shareability: string | null;
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────
 export interface ActorLoreEntries {
   id: Generated<string>;
   actor_id: string;
-  world_lore_entry_id: string | null;
-  title: string;
+  name: string | null;
   content: string;
-  category: string | null;
-  tags: Generated<string>;
-  status: Generated<LoreEntryStatus>;
+  keys: Generated<string>;
+  secondary_keys: string | null;
+  selective: Generated<number>;
+  case_sensitive: Generated<number>;
+  enabled: Generated<LoreEntryStatus>;
+  constant: Generated<number>;
   position: Generated<LorePosition>;
-  discovered_at: Generated<string>;
+  insertion_order: Generated<number>;
+  priority: Generated<number>;
+  comment: string | null;
+  sort_order: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  cooldown_seconds: Generated<number>;
+  last_activated: string | null;
 }
 
 // ── story_turns ────────────────────────────────────────────
@@ -174,9 +203,11 @@ export interface QuestProgress {
 export interface WorldStates {
   id: Generated<string>;
   world_id: string;
-  state_key: string;
-  state_value: string;
-  updated_at: Generated<string>;
+  snapshot: string;
+  trigger_message_id: string | null;
+  trigger_turn_id: string | null;
+  description: string | null;
+  created_at: Generated<string>;
 }
 
 // ── npc_states ────────────────────────────────────────────
@@ -184,8 +215,14 @@ export interface NpcStates {
   id: Generated<string>;
   actor_id: string;
   world_id: string;
-  state_key: string;
-  state_value: string;
+  location_id: string | null;
+  health: Generated<number>;
+  mental_state: Generated<string>;
+  knowledge: Generated<string>;
+  relationships: Generated<string>;
+  inventory: Generated<string>;
+  schedule: Generated<string>;
+  created_at: Generated<string>;
   updated_at: Generated<string>;
 }
 
@@ -193,23 +230,14 @@ export interface NpcStates {
 export interface LocationStates {
   id: Generated<string>;
   location_id: string;
-  state_key: string;
-  state_value: string;
-  updated_at: Generated<string>;
-}
-
-// ── vn_choices ────────────────────────────────────────────
-export interface VnChoices {
-  id: Generated<string>;
-  chat_id: string;
-  scene_index: number;
-  label: string;
-  description: string | null;
-  consequences: Generated<string>;
-  relationship_impact: Generated<string>;
-  mood_impact: Generated<string>;
-  unlock_conditions: Generated<string>;
-  selected: Generated<number>;
-  selected_at: string | null;
+  world_id: string;
+  description_override: string | null;
+  atmosphere: string | null;
+  npcs_present: Generated<string>;
+  items_available: Generated<string>;
+  time_of_day: string | null;
+  weather: string | null;
+  hazards: Generated<string>;
   created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
