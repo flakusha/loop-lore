@@ -24,16 +24,16 @@ Implement backward compatibility checks and graceful fallbacks for algorithm sel
 interface CryptoAlgorithm {
   id: string;
   type: "encryption" | "compression" | "key-derivation";
-  keyLength: number;    // Must be 16, 24, or 32 for AES variants
-  nonceLength: number;  // Must be 12 for AES-GCM
-  validate(): boolean;  // Self-validation
+  keyLength: number; // Must be 16, 24, or 32 for AES variants
+  nonceLength: number; // Must be 12 for AES-GCM
+  validate(): boolean; // Self-validation
 }
 
 // Payload versioning
 interface EncryptedPayloadV1 {
   enc: string;
   nonce: string;
-  algo: string;         // Algorithm ID
+  algo: string; // Algorithm ID
   version: 1;
   comp: boolean;
   compAlgo?: string;
@@ -44,14 +44,14 @@ interface EncryptedPayloadV1 {
 export async function decryptThenDecompress(
   storedContent: string,
   chatKey: CryptoKey,
-  fallbackAlgorithm: string = "aes-256-gcm"
+  fallbackAlgorithm: string = "aes-256-gcm",
 ): Promise<string> {
-  const payload = parsePayload(storedContent);
-  const algorithm = algorithmFactory.getAlgorithm(payload.algo) || 
-                   algorithmFactory.getAlgorithm(fallbackAlgorithm);
-  
+  const payload = parsePayload(storedContent,);
+  const algorithm = algorithmFactory.getAlgorithm(payload.algo,) ||
+    algorithmFactory.getAlgorithm(fallbackAlgorithm,);
+
   if (!algorithm) {
-    throw new Error(`No valid algorithm found for ${payload.algo}`);
+    throw new Error(`No valid algorithm found for ${payload.algo}`,);
   }
   // Proceed with decryption
 }

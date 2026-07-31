@@ -1,21 +1,91 @@
 # TASK: Emotions Avatar Feature — Edit Model Support
 
-**Status:** ⬜ Blocked (by edit model stability)
-**Priority:** Low
+**Status:** 🟡 Partially Unblocked (generation fallback available)
+**Priority:** Medium
 **Effort:** High
-**Blocked by:** Stable diffusion edit model ecosystem maturity
+**Blocked by:** Stable diffusion edit model ecosystem maturity (fallback mitigates)
 
 ## Summary
 
-Generate character avatars with different emotional expressions (happy, sad, angry, etc.) using image edit models. Currently blocked because edit models are not stable enough for reliable production use.
+Generate character avatars with different emotional expressions (happy, sad, angry, etc.) using image edit models. Primary path uses SD edit models (img2img); **fallback uses SD generation models (txt2img)** with original avatar metadata/captioning for prompt construction.
 
 ## Rationale
 
 - Characters in chat benefit from dynamic emotional avatars
 - Users expect visual feedback matching conversation tone
 - Standard diffusion models generate but don't edit — need edit-specific models
+- **Generation fallback ensures progress even while edit models mature**
 
-## Why Blocked
+## Generation Fallback Strategy
+
+### Primary Path: Edit Model (img2img)
+
+```
+Original avatar → SD edit model (FLUX.1 Kontext / Qwen Image Edit)
+  + emotion modifier prompt
+  → Emotion variant avatar
+```
+
+- Preserves original character appearance
+- Instruction-based: "make the character smile"
+- Requires: edit-capable model loaded in sd-server/ComfyUI
+
+### Fallback Path: Generation Model (txt2img)
+
+```
+Original avatar → Extract metadata + caption
+  + emotion modifier prompt
+  → SD generation model (txt2img)
+  → Emotion variant avatar
+```
+
+- Uses original image's metadata and captioning as prompt foundation
+- Combines with emotion-specific modifier (e.g., "happy expression, smiling")
+- Generates new image from text prompt only — no reference image needed
+- Works with any txt2img-capable model (SD 1.x/2.x, SDXL, SD3, FLUX, etc.)
+
+### Metadata/Captioning Source
+
+The original avatar image can contain:
+
+| Metadata Source                  | Use in Prompt               | Example                                     |
+| -------------------------------- | --------------------------- | ------------------------------------------- |
+| Image caption (auto-generated)   | Scene/character description | "portrait of a young woman with red hair"   |
+| User-provided alt text           | Character identity          | "Aria, the elven mage"                      |
+| Asset tags                       | Style/setting context       | `{"style": "anime", "setting": "fantasy"}`  |
+| Generation prompt (if generated) | Full original prompt        | "anime girl, red hair, blue eyes, detailed" |
+| EXIF/metadata                    | Technical details           | Resolution, model used                      |
+
+### Prompt Construction (Fallback)
+
+```
+[original_caption] + [emotion_modifier] + [quality_tags]
+
+Example:
+  "portrait of a young woman with red hair, blue eyes, detailed face"
+  + "happy expression, smiling, bright eyes, cheerful"
+  + "high quality, detailed, sharp focus"
+```
+
+### Fallback Trigger Conditions
+
+| Condition                                 | Action                        |
+| ----------------------------------------- | ----------------------------- |
+| Edit model not configured                 | Use generation fallback       |
+| Edit model endpoint unreachable           | Retry once, then fallback     |
+| Edit model returns error                  | Log, fallback to generation   |
+| Edit model timeout (>120s)                | Abort, fallback to generation |
+| User explicitly selects "generation" mode | Skip edit, use generation     |
+
+### Implementation Notes
+
+- `emotion-avatar-service.ts` already uses txt2img — extend to accept metadata params
+- Add `extractAvatarMetadata(assetId)` helper to pull caption/tags/prompt from asset
+- Fallback prompt builder: `buildEmotionPrompt(metadata, emotion, qualityTags)`
+- Log which path was used for monitoring edit model adoption
+- Both paths produce assets linked to character with `emotion:` label
+
+## Why Previously Blocked
 
 ### A. Backend Architecture: Flat Avatar Model
 
@@ -110,14 +180,24 @@ Image Gen Providers:
 
 ## Tasks
 
-### When Edit Models Stabilize
+### Phase 1: Generation Fallback (Unblocked Now)
+
+- [ ] Implement `extractAvatarMetadata(assetId)` — pull caption, tags, alt text, generation prompt from asset
+- [ ] Implement `buildEmotionPrompt(metadata, emotion, qualityTags)` — construct txt2img prompt from metadata
+- [ ] Extend `EmotionAvatarService` to accept metadata params for fallback path
+- [ ] Add fallback trigger logic (edit model unavailable → use generation)
+- [ ] Add configuration option: `emotionAvatar.fallbackMode: "generation" | "none"`
+- [ ] Log fallback usage for monitoring
+- [ ] Unit tests for metadata extraction and prompt construction
+
+### Phase 2: Edit Model Support (When Stable)
 
 - [ ] Audit sd.cpp / ComfyUI edit model support status
 - [ ] Test edit model reliability (100 generations, measure consistency)
 - [ ] Design emotion-to-prompt mapping system
 - [ ] Extend image gen provider registry for edit models
 - [ ] Add "Edit Model" settings entry
-- [ ] Implement emotion avatar generation pipeline
+- [ ] Implement emotion avatar generation pipeline with edit model primary path
 - [ ] Add per-character emotion avatar configuration
 - [ ] Add emotion detection from chat messages (LLM-based)
 - [ ] Auto-update avatar on emotion change (optional, configurable)
@@ -140,12 +220,13 @@ Image Gen Providers:
 
 ## Monitoring Criteria
 
-Revisit when:
+Revisit edit model priority when:
 
 - [ ] sd.cpp edit models pass 95%+ consistency test
-- [ ] ComfyUI edit workflows稳定 for production use
-- [ ] Alternative services (Replicate,fal.ai) offer stable edit APIs
+- [ ] ComfyUI edit workflows stable for production use
+- [ ] Alternative services (Replicate, fal.ai) offer stable edit APIs
+- [ ] **Generation fallback quality is insufficient** (prompt-from-metadata not producing recognizable variants)
 
 ## Risk
 
-High — requires mature edit model ecosystem, significant UI/UX work, resource management complexity. Block by design until ecosystem stabilizes.
+Medium — generation fallback reduces edit model dependency. Main risk is fallback quality: metadata-derived prompts may not preserve character identity as well as img2img editing.
