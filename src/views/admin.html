@@ -34,28 +34,17 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'templates' }" @click="showTab('templates')">
           Templates
         </button>
-        <button
-          class="world-edit-tab"
-          :class="{ active: activeTab === 'plugins' }"
-          @click="showTab('plugins')"
-        >
+        <button class="world-edit-tab" :class="{ active: activeTab === 'plugins' }" @click="showTab('plugins')">
           Plugins
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'system' }" @click="showTab('system')">
           System
         </button>
-        <button
-          class="world-edit-tab"
-          :class="{ active: activeTab === 'analytics' }"
-          @click="showTab('analytics')"
-        >
+        <button class="world-edit-tab" :class="{ active: activeTab === 'analytics' }" @click="showTab('analytics')">
           Analytics
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'health' }" @click="showTab('health')">
           Health
-        </button>
-        <button class="world-edit-tab" :class="{ active: activeTab === 'templates' }" @click="showTab('templates')">
-          Templates
         </button>
       </div>
 
@@ -820,113 +809,6 @@
         </template>
       </div>
 
-      <!-- Templates Tab -->
-      <div x-show="activeTab === 'templates'">
-        <div x-show="loadingTemplates" class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">⏳</div>
-          <div class="title">Loading templates...</div>
-        </div>
-        <template x-if="!loadingTemplates">
-          <div style="padding: var(--space-6)">
-            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-4)">
-              <h3 style="font-size: 16px; font-weight: 600">Image Model Prompt Templates</h3>
-              <button class="btn btn-primary btn-sm" @click="startCreate()">+ New Template</button>
-            </div>
-            <template x-if="creatingNew">
-              <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 8px; margin-bottom: var(--space-4)">
-                <div style="display: grid; gap: var(--space-3)">
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
-                    <input class="form-input" placeholder="ID (e.g. sdxl-v2)" x-model="newDraft.id" />
-                    <input class="form-input" placeholder="Name" x-model="newDraft.name" />
-                  </div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-3)">
-                    <input
-                      class="form-input"
-                      placeholder="Format (tags/natural/json)"
-                      x-model="newDraft.promptFormat"
-                    />
-                    <input
-                      class="form-input"
-                      type="number"
-                      placeholder="Max Tokens"
-                      x-model.number="newDraft.maxTokenHint"
-                    />
-                    <input class="form-input" placeholder="Families (comma-sep)" x-model="newDraft.families" />
-                  </div>
-                  <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
-                    <button class="btn btn-secondary btn-sm" @click="cancelEdit()">Cancel</button>
-                    <button class="btn btn-primary btn-sm" @click="saveTemplate(newDraft.id)">Create</button>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <div style="display: grid; gap: var(--space-3)">
-              <template x-for="t in templateList" :key="t.id">
-                <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
-                  <template x-if="editingTemplateId !== t.id">
-                    <div style="display: flex; justify-content: space-between; align-items: center">
-                      <div>
-                        <span style="font-weight: 500" x-text="t.name"></span>
-                        <span
-                          style="font-size: 12px; color: var(--text-secondary); margin-left: var(--space-2)"
-                          x-text="t.id"
-                        ></span>
-                        <span
-                          style="font-size: 12px; color: var(--text-secondary); margin-left: var(--space-2)"
-                          x-text="t.promptFormat + ' · ' + t.maxTokenHint + ' tokens'"
-                        ></span>
-                      </div>
-                      <div style="display: flex; gap: var(--space-2)">
-                        <button class="btn btn-secondary btn-xs" @click="startEdit(t.id)">Edit</button>
-                        <button class="btn btn-danger btn-xs" @click="deleteTemplate(t.id)">Delete</button>
-                      </div>
-                    </div>
-                  </template>
-                  <template x-if="editingTemplateId === t.id">
-                    <div style="display: grid; gap: var(--space-3)">
-                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
-                        <input class="form-input" x-model="editDraft.name" />
-                        <input class="form-input" x-model="editDraft.promptFormat" />
-                      </div>
-                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: var(--space-3)">
-                        <input
-                          class="form-input"
-                          type="number"
-                          placeholder="Max Tokens"
-                          x-model.number="editDraft.maxTokenHint"
-                        />
-                        <input
-                          class="form-input"
-                          type="number"
-                          placeholder="CFG Scale"
-                          x-model.number="editDraft.defaults.cfgScale"
-                        />
-                        <input
-                          class="form-input"
-                          type="number"
-                          placeholder="Steps"
-                          x-model.number="editDraft.defaults.steps"
-                        />
-                        <input class="form-input" placeholder="Sampler" x-model="editDraft.defaults.sampler" />
-                      </div>
-                      <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
-                        <button class="btn btn-secondary btn-sm" @click="cancelEdit()">Cancel</button>
-                        <button class="btn btn-primary btn-sm" @click="saveTemplate(t.id)">Save</button>
-                      </div>
-                    </div>
-                  </template>
-                </div>
-              </template>
-              <template x-if="templateList.length === 0">
-                <div class="empty-state" style="padding: var(--space-8)">
-                  <div class="title">No templates configured</div>
-                  <div class="subtitle">Create a template to customize image generation prompts per model family.</div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </template>
-      </div>
 
       <!-- Plugins Tab -->
       <div x-show="activeTab === 'plugins'">
