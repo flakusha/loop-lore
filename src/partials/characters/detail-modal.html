@@ -52,7 +52,15 @@
           <span style="font-size: 12px; color: var(--text-secondary)" data-field="mood-happiness">50%</span>
         </div>
       </div>
-      <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+      <div style="display: flex; gap: var(--space-3); justify-content: flex-end; flex-wrap: wrap">
+        <button
+          class="btn btn-secondary"
+          data-action="generate-emotion-avatars"
+          x-on:click="window.generateEmotionAvatars($el)"
+          data-testid="generate-emotion-avatars-btn"
+        >
+          🎭 Generate Emotions
+        </button>
         <button
           class="btn btn-secondary"
           data-action="start-chat"
@@ -77,6 +85,17 @@
         >
           🗑 Delete
         </button>
+      </div>
+      <!-- Emotion Avatar Generation Progress -->
+      <div
+        id="emotion-avatar-progress"
+        style="display: none; margin-top: var(--space-4); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-sm)"
+      >
+        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2)">
+          <span class="spinner"></span>
+          <span id="emotion-avatar-status">Generating emotion avatars...</span>
+        </div>
+        <div id="emotion-avatar-results" style="font-size: var(--fs-base-sm); color: var(--text-secondary)"></div>
       </div>
     </div>
   </div>

@@ -88,7 +88,7 @@ export function substituteTemplate(
   text: string,
   variables: Record<string, unknown>,
 ): string {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, name) => {
+  return text.replace(/\{\{(\w+)\}\}/g, (match, name,) => {
     const value = variables[name];
     if (value === undefined) { return match; }
     return String(value,);
@@ -117,7 +117,7 @@ export function resolveTemplate(
     },
     variables: [
       ...resolvedParent.variables.filter(
-        (v) => !template.variables.some((tv) => tv.name === v.name,),
+        (v,) => !template.variables.some((tv,) => tv.name === v.name),
       ),
       ...template.variables,
     ],
@@ -128,7 +128,7 @@ export function resolveTemplate(
 
 const STORAGE_PREFIX = "vn-templates-";
 
-export function getTemplatesForWorld(worldId: string): VnTemplate[] {
+export function getTemplatesForWorld(worldId: string,): VnTemplate[] {
   const key = `${STORAGE_PREFIX}${worldId}`;
   const data = localStorage.getItem(key,);
   if (!data) { return []; }
@@ -140,9 +140,9 @@ export function getTemplatesForWorld(worldId: string): VnTemplate[] {
   }
 }
 
-export function saveTemplate(template: VnTemplate): void {
+export function saveTemplate(template: VnTemplate,): void {
   const templates = getTemplatesForWorld(template.worldId,);
-  const existing = templates.findIndex((t) => t.id === template.id,);
+  const existing = templates.findIndex((t,) => t.id === template.id);
 
   const updated = {
     ...template,
@@ -160,25 +160,25 @@ export function saveTemplate(template: VnTemplate): void {
   localStorage.setItem(key, JSON.stringify(templates,),);
 }
 
-export function deleteTemplate(worldId: string, templateId: string): void {
+export function deleteTemplate(worldId: string, templateId: string,): void {
   const templates = getTemplatesForWorld(worldId,);
-  const filtered = templates.filter((t) => t.id !== templateId,);
+  const filtered = templates.filter((t,) => t.id !== templateId);
   const key = `${STORAGE_PREFIX}${worldId}`;
   localStorage.setItem(key, JSON.stringify(filtered,),);
 }
 
-export function getTemplate(worldId: string, templateId: string): VnTemplate | null {
+export function getTemplate(worldId: string, templateId: string,): VnTemplate | null {
   const templates = getTemplatesForWorld(worldId,);
-  return templates.find((t) => t.id === templateId, null) ?? null;
+  return templates.find((t,) => t.id === templateId, null,) ?? null;
 }
 
 // ── Template Export/Import ──────────────────────────────────
 
-export function exportTemplate(template: VnTemplate): string {
+export function exportTemplate(template: VnTemplate,): string {
   return JSON.stringify(template, null, 2,);
 }
 
-export function importTemplate(json: string): VnTemplate | null {
+export function importTemplate(json: string,): VnTemplate | null {
   try {
     const template = JSON.parse(json,) as VnTemplate;
     if (!template.id || !template.name || !template.worldId) {
