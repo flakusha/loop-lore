@@ -1264,3 +1264,84 @@ export const VnChoicesSchema = t.Object({
     selected: t.Optional(t.Number(),),
     selected_at: t.Optional(t.String(),),
 },);
+
+// ── dice_roll_history ────────────────────────────────────────────
+export const DiceRollHistorySchema = t.Object({
+    user_id: t.String(),
+    sides: t.Number(),
+    count: t.Number(),
+    raw_rolls: t.String(),
+    raw_total: t.Number(),
+    total: t.Number(),
+    chat_id: t.Optional(t.String(),),
+    actor_id: t.Optional(t.String(),),
+    modifier: t.Optional(t.Number(),),
+    advantage_mode: t.Optional(t.String(),),
+    exploding: t.Optional(t.Number(),),
+    purpose: t.Optional(t.String(),),
+    created_at: t.Optional(t.String(),),
+},);
+
+// ── character_stats ────────────────────────────────────────────
+export const CharacterStatsSchema = t.Object({
+    actor_id: t.String(),
+    hp: t.Number(),
+    max_hp: t.Number(),
+    ac: t.Number(),
+    level: t.Optional(t.Number(),),
+    temp_hp: t.Optional(t.Number(),),
+    mp: t.Optional(t.Number(),),
+    max_mp: t.Optional(t.Number(),),
+    speed: t.Optional(t.Number(),),
+    str: t.Optional(t.Number(),),
+    dex: t.Optional(t.Number(),),
+    con: t.Optional(t.Number(),),
+    int: t.Optional(t.Number(),),
+    wis: t.Optional(t.Number(),),
+    cha: t.Optional(t.Number(),),
+    hit_dice: t.Optional(t.String(),),
+    death_save_successes: t.Optional(t.Number(),),
+    death_save_failures: t.Optional(t.Number(),),
+    xp: t.Optional(t.Number(),),
+    xp_to_next: t.Optional(t.Number(),),
+    data_version: t.Optional(t.Number(),),
+    created_at: t.Optional(t.String(),),
+    updated_at: t.Optional(t.String(),),
+},);
+
+// ── xp_ledger ────────────────────────────────────────────
+export const XpLedgerSchema = t.Object({
+    actor_id: t.String(),
+    amount: t.Number(),
+    source: t.String(),
+    description: t.Optional(t.String(),),
+    reference_id: t.Optional(t.String(),),
+    chat_id: t.Optional(t.String(),),
+    created_at: t.Optional(t.String(),),
+},);
+
+// ── loot_tables ────────────────────────────────────────────
+export const LootTablesSchema = t.Object({
+    name: t.String(),
+    source_type: t.String(),
+    source_id: t.Optional(t.String(),),
+    total_weight: t.Optional(t.Number(),),
+    used: t.Optional(t.Number(),),
+    created_at: t.Optional(t.String(),),
+    updated_at: t.Optional(t.String(),),
+},);
+
+// ── loot_entries ────────────────────────────────────────────
+export const LootEntriesSchema = t.Object({
+    loot_table_id: t.String(),
+    item_name: t.String(),
+    item_type: t.String(),
+    description: t.Optional(t.String(),),
+    rarity: t.Optional(t.String(),),
+    weight: t.Optional(t.Number(),),
+    min_quantity: t.Optional(t.Number(),),
+    max_quantity: t.Optional(t.Number(),),
+    min_level: t.Optional(t.Number(),),
+    metadata: t.Optional(t.String(),),
+    created_at: t.Optional(t.String(),),
+},);
