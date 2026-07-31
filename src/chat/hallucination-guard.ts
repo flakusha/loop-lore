@@ -11,8 +11,8 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
 import {
-  LOCATION_INDICATORS,
   ITEM_INDICATORS,
+  LOCATION_INDICATORS,
   WORLD_INDICATORS,
 } from "../regex/hallucination";
 
