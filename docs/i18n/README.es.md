@@ -27,17 +27,17 @@ loop-lore reconstruye el núcleo — personajes, chats, lorebooks, LLM multi-bac
 
 ## Funcionalidades
 
-| Funcionalidad         | Estado  | Notas                                                |
-| --------------------- | ------- | ---------------------------------------------------- |
-| Gestión de personajes | Planificado | Import/export de tarjetas PNG (V2/V3), JSON       |
-| Motor de chat         | WIP     | LLM multi-backend, streaming, swipe                  |
-| Interfaz TUI chat     | WIP     | Basada en blessed, navegación por teclado            |
-| Capa de base de datos | WIP     | bun:sqlite + Kysely (tipo seguro, dialecto intercambiable) |
-| Recursos (media)      | Planificado | Imágenes/audio/video, vinculación polimórfica    |
-| Chat del asistente    | MVP     | Basado en reglas, sugerencias contextuales           |
-| Lorebooks / Info mundo| Planificado | Entradas sticky/cooldown/delay                    |
-| Web UI                | Planificado | htmx + Alpine.js                                 |
-| Sistema de plugins    | Planificado | Plugins servidor + extensiones cliente           |
+| Funcionalidad          | Estado      | Notas                                                      |
+| ---------------------- | ----------- | ---------------------------------------------------------- |
+| Gestión de personajes  | Planificado | Import/export de tarjetas PNG (V2/V3), JSON                |
+| Motor de chat          | WIP         | LLM multi-backend, streaming, swipe                        |
+| Interfaz TUI chat      | WIP         | Basada en blessed, navegación por teclado                  |
+| Capa de base de datos  | WIP         | bun:sqlite + Kysely (tipo seguro, dialecto intercambiable) |
+| Recursos (media)       | Planificado | Imágenes/audio/video, vinculación polimórfica              |
+| Chat del asistente     | MVP         | Basado en reglas, sugerencias contextuales                 |
+| Lorebooks / Info mundo | Planificado | Entradas sticky/cooldown/delay                             |
+| Web UI                 | Planificado | htmx + Alpine.js                                           |
+| Sistema de plugins     | Planificado | Plugins servidor + extensiones cliente                     |
 
 ---
 
@@ -70,14 +70,14 @@ src/
 
 ## Stack tecnológico
 
-| Capa          | Elección                                         |
-| ------------- | ------------------------------------------------ |
-| Runtime       | Bun (TS/JS rápido, sin paso de build)           |
-| Lenguaje      | TypeScript 5.4+ (modo estricto)                 |
+| Capa          | Elección                                                   |
+| ------------- | ---------------------------------------------------------- |
+| Runtime       | Bun (TS/JS rápido, sin paso de build)                      |
+| Lenguaje      | TypeScript 5.4+ (modo estricto)                            |
 | Base de datos | `bun:sqlite` → Postgres vía intercambio de dialecto Kysely |
-| Query Builder | Kysely (tipo seguro, sin sobrecarga de ORM)      |
-| TUI           | blessed + blessed-contrib                        |
-| Web UI        | htmx + Alpine.js                                 |
+| Query Builder | Kysely (tipo seguro, sin sobrecarga de ORM)                |
+| TUI           | blessed + blessed-contrib                                  |
+| Web UI        | htmx + Alpine.js                                           |
 
 ---
 
