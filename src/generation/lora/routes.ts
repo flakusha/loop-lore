@@ -2,17 +2,24 @@
  * LoRA API Routes
  *
  * REST API endpoints for LoRA discovery and management.
+ * TODO: Wire routes into elysia-app.ts when LoRA feature is ready for production.
  *
  * Routes:
  *   POST /api/lora/discover - Trigger LoRA discovery for a backend
  *   GET  /api/lora/list     - List cached LoRA models
  *   GET  /api/lora/status   - Get discovery cache status
+ *   POST /api/lora/clear    - Clear discovery cache
+ *   POST /api/lora/validate - Validate LoRA config
  *
  * @module generation/lora/routes
  */
 
+import { Elysia, t, } from "elysia";
 import type { Config, } from "../../config/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { pickSdProvider, } from "../../config/schema";
+import { jsonResponse, } from "../../routes/http-utils";
+import { unauthorized, } from "../../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import {
   clearDiscoveryCache,
   discoverAllLoras,
@@ -56,63 +63,6 @@ function validateDiscoverBody(body: unknown,): DiscoverBody | null {
   };
 }
 
-/**
- * POST /api/lora/discover
- *
- * Trigger LoRA discovery for a specific backend or all backends.
- *
- * Body:
- *   { backend?: "comfyui" | "sd-server", baseUrl?: string, forceRefresh?: boolean }
- *
- * If backend is omitted, discovers from all configured backends.
- * If baseUrl is omitted, uses config defaults.
- */
-export async function handleDiscoverLoras(
-  body: unknown,
-  config?: Config,
-): Promise<Response> {
-  const input = validateDiscoverBody(body,);
-
-  if (!input) {
-    return jsonError({ message: "Invalid request body", status: 400, },);
-  }
-
-  // Get backend URLs from config
-  const comfyUrl = config?.generation?.providers?.sd?.baseUrl ?? "http://localhost:8188";
-  const sdServerUrl = config?.generation?.providers?.sd?.baseUrl ?? "http://localhost:9010";
-
-  if (input.backend) {
-    // Discover from single backend
-    const baseUrl = input.baseUrl ?? (input.backend === "comfyui" ? comfyUrl : sdServerUrl);
-    const result = await discoverLoras(input.backend, baseUrl, {
-      forceRefresh: input.forceRefresh,
-    },);
-
-    return jsonResponse({
-      ok: !result.error,
-      ...result,
-    },);
-  }
-
-  // Discover from all backends
-  const results = await discoverAllLoras([
-    { backend: "comfyui", baseUrl: comfyUrl, },
-    { backend: "sd-server", baseUrl: sdServerUrl, },
-  ], {
-    forceRefresh: input.forceRefresh,
-  },);
-
-  const allModels = results.flatMap((r,) => r.models);
-  const errors = results.filter((r,) => r.error).map((r,) => r.error);
-
-  return jsonResponse({
-    ok: errors.length === 0,
-    models: allModels,
-    results,
-    errors: errors.length > 0 ? errors : undefined,
-  },);
-}
-
 // ── Route: List LoRAs ────────────────────────────────────
 
 interface ListQueryParams {
@@ -128,57 +78,6 @@ function parseListQuery(searchParams: URLSearchParams,): ListQueryParams {
     backend: backend === "comfyui" || backend === "sd-server" ? backend : undefined,
     search: search ?? undefined,
   };
-}
-
-/**
- * GET /api/lora/list
- *
- * List cached LoRA models.
- *
- * Query params:
- *   backend? - Filter by backend ("comfyui" | "sd-server")
- *   search?  - Filter by name (substring match)
- */
-export function handleListLoras(
-  searchParams: URLSearchParams,
-): Response {
-  const params = parseListQuery(searchParams,);
-  let models = getCachedLoras();
-
-  // Filter by backend
-  if (params.backend) {
-    models = models.filter((m,) => m.backend === params.backend);
-  }
-
-  // Filter by search term
-  if (params.search) {
-    const term = params.search.toLowerCase();
-    models = models.filter(
-      (m,) => m.name.toLowerCase().includes(term,) || m.filename.toLowerCase().includes(term,),
-    );
-  }
-
-  return jsonResponse({
-    ok: true,
-    count: models.length,
-    models,
-  },);
-}
-
-// ── Route: Cache Status ──────────────────────────────────
-
-/**
- * GET /api/lora/status
- *
- * Get LoRA discovery cache status.
- */
-export function handleLoRAStatus(): Response {
-  const status = getCacheStatus();
-
-  return jsonResponse({
-    ok: true,
-    ...status,
-  },);
 }
 
 // ── Route: Clear Cache ───────────────────────────────────
@@ -200,53 +99,225 @@ function validateClearCacheBody(body: unknown,): ClearCacheBody | null {
   };
 }
 
-/**
- * POST /api/lora/clear
- *
- * Clear the LoRA discovery cache.
- *
- * Body:
- *   { backend?: "comfyui" | "sd-server" }
- *
- * If backend is omitted, clears all caches.
- */
-export function handleClearCache(body: unknown,): Response {
-  const input = validateClearCacheBody(body,);
-
-  if (!input) {
-    return jsonError({ message: "Invalid request body", status: 400, },);
-  }
-
-  clearDiscoveryCache(input.backend,);
-
-  return jsonResponse({
-    ok: true,
-    cleared: input.backend ?? "all",
-  },);
-}
-
-// ── Route: Validate Config ───────────────────────────────
+// ── Elysia Plugin ────────────────────────────────────────
 
 /**
- * POST /api/lora/validate
+ * LoRA routes plugin.
  *
- * Validate a LoRA configuration object.
- *
- * Body:
- *   { name: string, strength: number, backend: "comfyui" | "sd-server" }
+ * TODO: Register in elysia-app.ts when LoRA feature is ready for production.
+ * All LoRA routes are gated behind auth check.
  */
-export function handleValidateConfig(body: unknown,): Response {
-  const error = validateLoRAConfig(body,);
+export function loraRoutes({ config, }: { config: Config },) {
+  return new Elysia({ name: "lora", },)
 
-  if (error) {
-    return jsonResponse({
-      ok: false,
-      error,
+    // POST /api/lora/discover
+    .post("/api/lora/discover", async (ctx,) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return unauthorized();
+      }
+
+      // TODO: Add admin role check when RBAC is implemented
+      // const userRole = (ctx as any).userRole as string | null;
+      // if (userRole !== "admin") {
+      //   return forbidden();
+      // }
+
+      const input = validateDiscoverBody(ctx.body,);
+      if (!input) {
+        return jsonResponse({ error: "Invalid request body", code: "BAD_REQUEST", },);
+      }
+
+      // Get backend URLs from config
+      const sdProvider = pickSdProvider(config?.generation?.providers?.sd, "generate",);
+      const comfyUrl = sdProvider?.baseUrl ?? "http://localhost:8188";
+      const sdServerUrl = sdProvider?.baseUrl ?? "http://localhost:9010";
+
+      if (input.backend) {
+        // Discover from single backend
+        const baseUrl = input.baseUrl ?? (input.backend === "comfyui" ? comfyUrl : sdServerUrl);
+        const result = await discoverLoras(input.backend, baseUrl, {
+          forceRefresh: input.forceRefresh,
+        },);
+
+        return jsonResponse({
+          ok: !result.error,
+          ...result,
+        },);
+      }
+
+      // Discover from all backends
+      const results = await discoverAllLoras([
+        { backend: "comfyui", baseUrl: comfyUrl, },
+        { backend: "sd-server", baseUrl: sdServerUrl, },
+      ], {
+        forceRefresh: input.forceRefresh,
+      },);
+
+      const allModels = results.flatMap((r,) => r.models);
+      const errors = results.filter((r,) => r.error).map((r,) => r.error);
+
+      return jsonResponse({
+        ok: errors.length === 0,
+        models: allModels,
+        results,
+        errors: errors.length > 0 ? errors : undefined,
+      },);
+    }, {
+      body: t.Object({
+        backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
+        baseUrl: t.Optional(t.String(),),
+        forceRefresh: t.Optional(t.Boolean(),),
+      },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
+      detail: {
+        summary: "Discover LoRA models from a backend",
+        description: "Triggers LoRA model discovery for a specific backend or all configured backends.",
+        tags: ["LoRA",],
+      },
+    },)
+
+    // GET /api/lora/list
+    .get("/api/lora/list", (ctx,) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return unauthorized();
+      }
+
+      const params = parseListQuery(new URL(ctx.request.url,).searchParams,);
+      let models = getCachedLoras();
+
+      // Filter by backend
+      if (params.backend) {
+        models = models.filter((m,) => m.backend === params.backend,);
+      }
+
+      // Filter by search term
+      if (params.search) {
+        const term = params.search.toLowerCase();
+        models = models.filter(
+          (m,) => m.name.toLowerCase().includes(term,) || m.filename.toLowerCase().includes(term,),
+        );
+      }
+
+      return jsonResponse({
+        ok: true,
+        count: models.length,
+        models,
+      },);
+    }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
+      detail: {
+        summary: "List cached LoRA models",
+        description: "Returns cached LoRA models with optional backend and search filters.",
+        tags: ["LoRA",],
+      },
+    },)
+
+    // GET /api/lora/status
+    .get("/api/lora/status", (ctx,) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return unauthorized();
+      }
+
+      const status = getCacheStatus();
+
+      return jsonResponse({
+        ok: true,
+        ...status,
+      },);
+    }, {
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
+      detail: {
+        summary: "Get LoRA discovery cache status",
+        description: "Returns cache entry count and expiration info.",
+        tags: ["LoRA",],
+      },
+    },)
+
+    // POST /api/lora/clear
+    .post("/api/lora/clear", (ctx,) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return unauthorized();
+      }
+
+      // TODO: Add admin role check when RBAC is implemented
+      // const userRole = (ctx as any).userRole as string | null;
+      // if (userRole !== "admin") {
+      //   return forbidden();
+      // }
+
+      const input = validateClearCacheBody(ctx.body,);
+      if (!input) {
+        return jsonResponse({ error: "Invalid request body", code: "BAD_REQUEST", },);
+      }
+
+      clearDiscoveryCache(input.backend,);
+
+      return jsonResponse({
+        ok: true,
+        cleared: input.backend ?? "all",
+      },);
+    }, {
+      body: t.Object({
+        backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
+      },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
+      detail: {
+        summary: "Clear LoRA discovery cache",
+        description: "Clears cached discovery results for a specific backend or all backends.",
+        tags: ["LoRA",],
+      },
+    },)
+
+    // POST /api/lora/validate
+    .post("/api/lora/validate", (ctx,) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return unauthorized();
+      }
+
+      const error = validateLoRAConfig(ctx.body,);
+
+      if (error) {
+        return jsonResponse({
+          ok: false,
+          error,
+        },);
+      }
+
+      return jsonResponse({
+        ok: true,
+        config: ctx.body,
+      },);
+    }, {
+      body: t.Object({
+        name: t.String({ minLength: 1, },),
+        strength: t.Number({ minimum: 0.1, maximum: 1.0, },),
+        backend: t.UnionEnum(["comfyui", "sd-server",],),
+      },),
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+      },
+      detail: {
+        summary: "Validate LoRA configuration",
+        description: "Validates a LoRA configuration object and returns any validation errors.",
+        tags: ["LoRA",],
+      },
     },);
-  }
-
-  return jsonResponse({
-    ok: true,
-    config: body,
-  },);
 }
