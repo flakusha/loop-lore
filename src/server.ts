@@ -17,7 +17,7 @@ import { seedDefaultActors, } from "./db/seed";
 import { createApp, } from "./elysia-app";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
 import { initDefaultHooks, } from "./generation/hooks";
-import { createLogger, getLogger, } from "./logger";
+import { createLogger, getLogger, setGlobalLogger, } from "./logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
 import { generateNonce, } from "./middleware/csp-nonce";
 import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
@@ -238,8 +238,10 @@ function handleDocsRequest(
 }
 
 async function start() {
+  // Bootstrap logger before config load (template expansion needs it)
+  createLogger();
   let config = loadConfig();
-  createLogger(config.logging,);
+  setGlobalLogger(createLogger(config.logging,));
   initAgeGate(config.ageGate,);
   await initSmk(config.encryption,);
   initAnonymousMode(config,);
@@ -357,15 +359,16 @@ async function start() {
   await seedDefaultActors(database, config,);
 
   // ── Start HTTP server ──────────────────────────────────────
-  serve({ port: config.server.port, fetch: handleRequest, },);
+  const httpServer = serve({ port: config.server.port, fetch: handleRequest, },);
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
+  let httpsServer: ReturnType<typeof serve> | undefined;
   if (config.server.tls) {
     const tlsFiles = ensureTlsCerts(config.server.tls,);
     if (tlsFiles) {
       const httpsPort = config.server.port + 443;
-      serve({
+      httpsServer = serve({
         port: httpsPort,
         tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
         fetch: handleRequest,
@@ -526,36 +529,47 @@ async function start() {
     return false;
   }
 
+  // ── Pre-compress static assets (parallel, graceful on failure) ──
+  const compressionJobs: { label: string; src: string; dest: string }[] = [];
   if (existsSync(sourcePublicDirectory,)) {
     copyDirectory(sourcePublicDirectory, destinationPublicDirectory,);
     if (needsCompression(sourcePublicDirectory, destinationPublicDirectory,)) {
-      const result = await compressAssets(sourcePublicDirectory, destinationPublicDirectory,);
-      if (result.total > 0) {
-        logger.info({
-          message: "Compressed assets",
-          total: result.total,
-          bytes: result.originalBytes,
-          gz: result.compressedBytes.gz,
-          zst: result.compressedBytes.zst,
-          br: result.compressedBytes.br,
-        },);
-      }
+      compressionJobs.push({ label: "public", src: sourcePublicDirectory, dest: destinationPublicDirectory, });
     }
   }
-
   if (existsSync(sourceViewsDirectory,)) {
     copyDirectory(sourceViewsDirectory, destinationPublicDirectory,);
     if (needsCompression(sourceViewsDirectory, destinationPublicDirectory,)) {
-      const result = await compressAssets(sourceViewsDirectory, destinationPublicDirectory,);
-      if (result.total > 0) {
-        logger.info({
-          message: "Compressed views",
-          total: result.total,
-          bytes: result.originalBytes,
-          gz: result.compressedBytes.gz,
-          zst: result.compressedBytes.zst,
-          br: result.compressedBytes.br,
-        },);
+      compressionJobs.push({ label: "views", src: sourceViewsDirectory, dest: destinationPublicDirectory, });
+    }
+  }
+  if (existsSync(DOCS_PATH,)) {
+    compressionJobs.push({ label: "docs", src: DOCS_PATH, dest: DOCS_PATH, });
+  }
+
+  if (compressionJobs.length > 0) {
+    const promises: Promise<void>[] = [];
+    for (const job of compressionJobs) {
+      promises.push(
+        (async () => {
+          const result = await compressAssets(job.src, job.dest,);
+          if (result.total > 0) {
+            logger.info({
+              message: `Compressed ${job.label}`,
+              total: result.total,
+              bytes: result.originalBytes,
+              gz: result.compressedBytes.gz,
+              zst: result.compressedBytes.zst,
+              br: result.compressedBytes.br,
+            },);
+          }
+        })(),
+      );
+    }
+    const results = await Promise.allSettled(promises,);
+    for (const r of results) {
+      if (r.status === "rejected") {
+        logger.warn({ message: "Asset compression failed", error: String(r.reason), },);
       }
     }
   }
@@ -571,21 +585,6 @@ async function start() {
     },);
   }
 
-  // Pre-compress VitePress docs dist (if built)
-  if (existsSync(DOCS_PATH,)) {
-    const docsResult = await compressAssets(DOCS_PATH, DOCS_PATH,);
-    if (docsResult.total > 0) {
-      logger.info({
-        message: "Docs compressed",
-        total: docsResult.total,
-        bytes: docsResult.originalBytes,
-        gz: docsResult.compressedBytes.gz,
-        zst: docsResult.compressedBytes.zst,
-        br: docsResult.compressedBytes.br,
-      },);
-    }
-  }
-
   // ── Start liveliness probes for managed servers ──────────
   serverManager.startLivenessProbes();
 
@@ -598,6 +597,8 @@ async function start() {
   const shutdown = async (_signal: string,) => {
     await serverManager.stopAll();
     await unloadAllPlugins();
+    httpServer.stop();
+    httpsServer?.stop();
     const SHUTDOWN_TIMEOUT = 5000;
     const flushed = logger.flush();
     const timer = setTimeout(() => {
