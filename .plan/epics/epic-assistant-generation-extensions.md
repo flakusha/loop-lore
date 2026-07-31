@@ -58,6 +58,8 @@ sdcpp API families. Good for fast txt2img and basic img2img.
 
 ### Emotion Avatar Generation (Fallback Strategy)
 
+**Status:** ✅ Phase 1 Complete — Generation fallback implemented
+
 Generate emotion-specific avatar variants for characters. Primary path uses SD
 edit models (img2img); fallback uses SD generation models (txt2img) with original
 avatar metadata/captioning for prompt construction.
@@ -96,6 +98,16 @@ Original avatar → Extract metadata + caption
 | Edit model endpoint unreachable | Retry once, then fallback     |
 | Edit model returns error        | Log, fallback to generation   |
 | Edit model timeout (>120s)      | Abort, fallback to generation |
+
+**Implementation Status:**
+
+- ✅ `extractAvatarMetadata()` — pulls caption, alt text, image dimensions
+- ✅ `buildEmotionPrompt()` — constructs txt2img prompt from metadata + emotion
+- ✅ `fallbackMode` config gate — `"generation"` (default) or `"none"`
+- ✅ Config gate respected in `generateEmotionAvatar()` and `runBatchJob()`
+- ✅ Unit tests (7/7 pass)
+- ✅ Frontend UI — "🎭 Generate Emotions" button + polling + progress display
+- ⏳ E2E testing — deferred (requires running server + SD backends)
 
 See `TASK-emotions-avatar-edit-model.md` for implementation details.
 
