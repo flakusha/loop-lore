@@ -17,6 +17,13 @@ import type { DB, } from "../db/schema";
 import { resolveModelRole, } from "../admin/model-roles";
 import { getProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
+import {
+  CONTEXT_CUT,
+  MOVEMENT_VERBS,
+  SCENE_CHANGE,
+  TEMPORAL_TRANSITION,
+  TRANSITION_PHRASES,
+} from "../regex/transitions";
 import type { TransitionClassification, TransitionType, } from "./types";
 
 // ─── Regex Patterns ───────────────────────────────────────────
@@ -28,17 +35,17 @@ import type { TransitionClassification, TransitionType, } from "./types";
  */
 const REGEX_PATTERNS: { pattern: RegExp; type: TransitionType }[] = [
   // Context cut: time skip (check before location change patterns)
-  { pattern: /\b(context\s*cut|skip\s*(ahead|forward|time))\b/i, type: "context_cut", },
+  { pattern: CONTEXT_CUT, type: "context_cut", },
   // Context cut: temporal transition
-  { pattern: /\b(after\s+(a\s+)?(while|moment|few\s+minutes|long\s+journey|hours|days))\b/i, type: "context_cut", },
+  { pattern: TEMPORAL_TRANSITION, type: "context_cut", },
   // Description: scene description without explicit movement
   { pattern: /\b(describe|describe\s+the|narrate|tell\s+me\s+about)\b/i, type: "description", },
   // Location change: explicit movement verbs
-  { pattern: /\b(i|we|you)\s+(walk|move|go|travel|head|enter|leave|exit|arrive|reach|venture)\b/i, type: "location_change", },
+  { pattern: MOVEMENT_VERBS, type: "location_change", },
   // Location change: scene/setting/location shift
-  { pattern: /\b(scene|setting|location)\s+(shifts?|changes?|moves?|transitions?)\b/i, type: "location_change", },
+  { pattern: SCENE_CHANGE, type: "location_change", },
   // Location change: movement phrases
-  { pattern: /\b(let'?s?\s+go\s+to|heading\s+to|arriving?\s+at|going\s+to)\b/i, type: "location_change", },
+  { pattern: TRANSITION_PHRASES, type: "location_change", },
   // Location change: prepositional movement (check last - too broad)
   { pattern: /\b(to|into|toward|inside|outside|through|across|over)\s+(the\s+)?[a-z]+\b/i, type: "location_change", },
 ];
