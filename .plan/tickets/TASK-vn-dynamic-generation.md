@@ -1,7 +1,7 @@
 # TASK: Visual Novel Mode — Dynamic Image & Story Generation
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial Complete
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, dynamic-image, story-generation, image-gen, llm
 
@@ -20,13 +20,13 @@ Builds on `TASK-visual-novel-mode.md` (base VN rendering, backend complete) and 
 - [ ] Mood-based image variation (character expressions change with mood state)
 - [ ] Event-triggered image generation (combat, weather, special moments)
 - [ ] Image caching — pre-generate and cache common scene images
-- [ ] Story description generation for unexplored locations
-- [ ] Narrative bridge generation between chat turns in VN mode
-- [ ] Atmosphere/ambient story text generation
-- [ ] `POST /api/chat/:id/vn/generate-image` route
-- [ ] `POST /api/chat/:id/vn/generate-story` route
+- [x] Story description generation for unexplored locations
+- [x] Narrative bridge generation between chat turns in VN mode
+- [x] Atmosphere/ambient story text generation
+- [ ] `POST /api/chat/:id/vn/generate-image` route (deferred — uses ComfyUI)
+- [x] `POST /api/chat/:id/vn/generate-story` route
 - [ ] Frontend VN scene renderer with dynamic image loading
-- [ ] Frontend story overlay with generated narrative text
+- [x] Frontend story overlay with generated narrative text
 - [ ] Config: enable/disable dynamic generation per world/chat
 - [ ] Config: image generation model selection per world
 
