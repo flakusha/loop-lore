@@ -22,7 +22,7 @@ Update asset encryption to use the new algorithm factory pattern. This will allo
 ```typescript
 // src/crypto/asset-encryption.ts
 interface AssetEncryptionOptions {
-  algorithm?: string;  // e.g., "aes-256-gcm", "chacha20-poly1305"
+  algorithm?: string; // e.g., "aes-256-gcm", "chacha20-poly1305"
   keyId: string;
   tier: string;
 }
@@ -32,9 +32,9 @@ export async function encryptAssetBlob(
   chatKey: ChatKey,
   options: AssetEncryptionOptions,
 ): Promise<AssetEncryptionResult> {
-  const algorithm = algorithmFactory.getAlgorithm(options.algorithm || "aes-256-gcm");
+  const algorithm = algorithmFactory.getAlgorithm(options.algorithm || "aes-256-gcm",);
   if (!algorithm) {
-    throw new Error(`Unknown encryption algorithm: ${options.algorithm}`);
+    throw new Error(`Unknown encryption algorithm: ${options.algorithm}`,);
   }
   // Use algorithm.encrypt() instead of hardcoded AES-GCM
 }
