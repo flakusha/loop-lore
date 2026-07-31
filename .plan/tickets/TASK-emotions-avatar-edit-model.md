@@ -1,6 +1,6 @@
 # TASK: Emotions Avatar Feature — Edit Model Support
 
-**Status:** 🟡 Partially Unblocked (generation fallback available)
+**Status:** ✅ Phase 1 Complete (generation fallback)
 **Priority:** Medium
 **Effort:** High
 **Blocked by:** Stable diffusion edit model ecosystem maturity (fallback mitigates)
@@ -180,15 +180,17 @@ Image Gen Providers:
 
 ## Tasks
 
-### Phase 1: Generation Fallback (Unblocked Now)
+### Phase 1: Generation Fallback (✅ Complete)
 
-- [ ] Implement `extractAvatarMetadata(assetId)` — pull caption, tags, alt text, generation prompt from asset
-- [ ] Implement `buildEmotionPrompt(metadata, emotion, qualityTags)` — construct txt2img prompt from metadata
-- [ ] Extend `EmotionAvatarService` to accept metadata params for fallback path
-- [ ] Add fallback trigger logic (edit model unavailable → use generation)
-- [ ] Add configuration option: `emotionAvatar.fallbackMode: "generation" | "none"`
-- [ ] Log fallback usage for monitoring
-- [ ] Unit tests for metadata extraction and prompt construction
+- [x] Implement `extractAvatarMetadata(assetId)` — pull caption, tags, alt text, generation prompt from asset
+- [x] Implement `buildEmotionPrompt(metadata, emotion, qualityTags)` — construct txt2img prompt from metadata
+- [x] Extend `EmotionAvatarService` to accept metadata params for fallback path
+- [x] Add fallback trigger logic (edit model unavailable → use generation)
+- [x] Add configuration option: `emotionAvatar.fallbackMode: "generation" | "none"`
+- [x] Log fallback usage for monitoring
+- [x] Unit tests for metadata extraction and prompt construction (7/7 pass)
+- [x] Frontend UI — "🎭 Generate Emotions" button + polling + progress display
+- ⏳ E2E testing — deferred (requires running server + SD backends)
 
 ### Phase 2: Edit Model Support (When Stable)
 
