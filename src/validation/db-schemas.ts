@@ -10,7 +10,7 @@
 import { t, } from "elysia";
 
 import { Id, Name, PaginationQuery, SuccessResponse, ErrorResponse, } from "./schemas";
-import { ActorItemTypeSchema, ActorTypeSchema, AdminOverrideActionSchema, AgentTypeSchema, AssetLinkEntitySchema, AssetTypeSchema, AssetVisibilitySchema, AvatarSelectionRuleSchema, CancelReasonSchema, CancelSourceSchema, ChatModeSchema, ChatParticipantRoleSchema, ChatTypeSchema, ContentEncodingSchema, ContentIntensitySchema, CraftingAttemptStatusSchema, CraftingDisciplineSchema, CraftingStationTypeSchema, DifficultyRerollSchema, DifficultyStateSchema, DiscoveryMethodSchema, EquipStateSchema, FantasyCategorySchema, GatheringNodeTypeSchema, GenerationStatusSchema, ItemCategorySchema, ItemRaritySchema, ItemVisibilitySchema, KeyStatusSchema, KeyTypeSchema, LicenseTypeSchema, LoreEntryStatusSchema, LorePositionSchema, MaterialSlotTypeSchema, MemoryTypeSchema, MessageContentFormatSchema, MessageContentTypeSchema, MessageRoleSchema, MessageStatusSchema, MessageVisibilitySchema, ModelRoleSchema, NarrativeStyleSchema, NoteCategorySchema, NsfwEncounterTypeSchema, NsfwLocationTypeSchema, PinnedStateSchema, ProfessionBonusTypeSchema, ProfessionTitleSchema, QualityLevelSchema, QuestProgressStatusSchema, QuestStatusSchema, QuestTypeSchema, RelationshipTypeSchema, SeductionSkillCategorySchema, ShadowNoteTypeSchema, StackableStateSchema, StorageBackendSchema, SyntheticDataStatusSchema, SyntheticDataTypeSchema, TraitCategorySchema, TurnStatusSchema, TurnStrategySchema, TurnTypeSchema, UserRoleSchema, UserStatusSchema, VisibilityOverrideSchema, WhiteneoteScopeSchema, WhiteneoteTypeSchema, WorldTraitCategorySchema, } from "./enums";
+import { ActorItemTypeSchema, ActorTypeSchema, AdminOverrideActionSchema, AgentTypeSchema, AssetLinkEntitySchema, AssetTypeSchema, AssetVisibilitySchema, AvatarSelectionRuleSchema, CancelReasonSchema, CancelSourceSchema, ChatModeSchema, ChatParticipantRoleSchema, ChatTypeSchema, ContentEncodingSchema, ContentIntensitySchema, CraftingAttemptStatusSchema, CraftingDisciplineSchema, CraftingStationTypeSchema, DifficultyRerollSchema, DifficultyStateSchema, DiscoveryMethodSchema, EquipStateSchema, FantasyCategorySchema, GatheringNodeTypeSchema, GenerationStatusSchema, ItemCategorySchema, ItemRaritySchema, ItemVisibilitySchema, KeyStatusSchema, KeyTypeSchema, LicenseTypeSchema, LoreEntryStatusSchema, LorePositionSchema, MaterialSlotTypeSchema, MemoryTypeSchema, MessageContentFormatSchema, MessageContentTypeSchema, MessageRoleSchema, MessageStatusSchema, MessageVisibilitySchema, ModelRoleSchema, NarrativeStyleSchema, NoteCategorySchema, NsfwEncounterTypeSchema, NsfwLocationTypeSchema, PinnedStateSchema, ProfessionBonusTypeSchema, ProfessionTitleSchema, QualityLevelSchema, QuestProgressStatusSchema, QuestStatusSchema, QuestTypeSchema, RelationshipTypeSchema, SeductionSkillCategorySchema, ShadowNoteTypeSchema, StackableStateSchema, StorageBackendSchema, SyntheticDataStatusSchema, SyntheticDataTypeSchema, TraitCategorySchema, TurnStatusSchema, TurnStrategySchema, TurnTypeSchema, UserRoleSchema, UserStatusSchema, VisibilityOverrideSchema, WhiteneoteScopeSchema, WhiteneoteTypeSchema, WorldTraitCategorySchema, } from "./schemas";
 
 // ── users ────────────────────────────────────────────
 export const UsersSchema = t.Object({
@@ -1248,4 +1248,19 @@ export const WhitenotesSchema = t.Object({
     priority: t.Optional(t.Number(),),
     scope: t.Optional(WhiteneoteScopeSchema,),
     expires_at: t.Optional(t.String(),),
+},);
+
+// ── vn_choices ────────────────────────────────────────────
+export const VnChoicesSchema = t.Object({
+    chat_id: t.String(),
+    scene_index: t.Number(),
+    label: t.String(),
+    created_at: t.String(),
+    description: t.Optional(t.String(),),
+    consequences: t.Optional(t.String(),),
+    relationship_impact: t.Optional(t.String(),),
+    mood_impact: t.Optional(t.String(),),
+    unlock_conditions: t.Optional(t.String(),),
+    selected: t.Optional(t.Number(),),
+    selected_at: t.Optional(t.String(),),
 },);
