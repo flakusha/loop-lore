@@ -1,6 +1,6 @@
 # TASK: Wire auto-rename into message pipeline
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-logic-reconciliation
