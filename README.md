@@ -1,5 +1,9 @@
 # loop-lore
 
+[![EN](https://img.shields.io/badge/EN-blue)](README.md)
+[![中文](https://img.shields.io/badge/中文-blue)](docs/i18n/README.zh.md)
+[![Español](https://img.shields.io/badge/Español-blue)](docs/i18n/README.es.md)
+
 **LLM RPG Chat And More.**
 
 Inspired by:
