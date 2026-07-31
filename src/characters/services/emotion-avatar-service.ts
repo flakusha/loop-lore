@@ -26,6 +26,10 @@ import { jsonStringifyOr, } from "../../utils";
 import { safeFromBase64, } from "../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import { AvatarService, } from "./avatar-service";
+import {
+  buildEmotionPrompt,
+  extractAvatarMetadata,
+} from "./emotion-avatar-fallback";
 
 /** Branded type for batch job IDs */
 export type BatchJobId = string & { readonly __brand: "BatchJobId" };
@@ -261,6 +265,20 @@ export class EmotionAvatarService {
     }
 
     const uploadDir = opts.uploadDir ?? config.assets.uploadDir;
+    const fallbackMode = config.generation.emotionAvatar?.fallbackMode ?? "generation";
+
+    // Log fallback mode for monitoring
+    getLogger().info(
+      "Emotion avatar batch generation started",
+      {
+        jobId: job.id,
+        actorId: opts.actorId,
+        emotions: job.results.length,
+        fallbackMode,
+        hasPromptPrefix: !!opts.promptPrefix,
+        hasBaseAvatar: !!opts.baseAvatarId,
+      },
+    );
 
     for (const result of job.results) {
       // Status can change to "cancelled" via cancelJob() at runtime
@@ -278,6 +296,8 @@ export class EmotionAvatarService {
           uploadDir,
           promptPrefix: opts.promptPrefix,
           negativePrompt: opts.negativePrompt,
+          baseAvatarId: opts.baseAvatarId,
+          fallbackMode,
         },);
 
         result.avatarId = generated.avatarId;
@@ -308,11 +328,37 @@ export class EmotionAvatarService {
     uploadDir: string;
     promptPrefix?: string;
     negativePrompt?: string;
+    baseAvatarId?: string;
+    fallbackMode?: "generation" | "none";
   },): Promise<{ avatarId: string; assetId: string }> {
     const emotionModifier = this.getEmotionPromptModifier(opts.emotion,);
-    const prompt = opts.promptPrefix
-      ? `${opts.promptPrefix}, ${emotionModifier}`
-      : `character portrait, ${emotionModifier}, detailed face, high quality`;
+
+    // Build prompt: use explicit prefix if provided, otherwise use metadata fallback
+    let prompt: string;
+    let usedFallback = false;
+
+    if (opts.promptPrefix) {
+      prompt = `${opts.promptPrefix}, ${emotionModifier}`;
+    } else if (opts.baseAvatarId && opts.fallbackMode !== "none") {
+      // Extract metadata from base avatar for fallback prompt construction
+      const metadata = await extractAvatarMetadata(this.db, opts.baseAvatarId,);
+      prompt = buildEmotionPrompt(metadata, opts.emotion, emotionModifier,);
+      usedFallback = true;
+    } else {
+      prompt = `character portrait, ${emotionModifier}, detailed face, high quality`;
+    }
+
+    // Log fallback usage for monitoring
+    if (usedFallback) {
+      getLogger().info(
+        "Using metadata fallback for emotion avatar prompt",
+        {
+          emotion: opts.emotion,
+          baseAvatarId: opts.baseAvatarId,
+          promptLength: prompt.length,
+        },
+      );
+    }
 
     const n = 1;
     const outputFormat = "png";

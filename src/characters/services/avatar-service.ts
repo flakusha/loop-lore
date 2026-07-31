@@ -6,7 +6,9 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { linkAsset, } from "../../assets/service";
 import type { AvatarSelectionRule, AvatarTagType, } from "../../db/enums";
+import { AssetLinkEntity, } from "../../db/enums-content";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
@@ -139,6 +141,17 @@ export class AvatarService {
         updated_at: now,
       },)
       .execute();
+
+    // Link avatar asset to character actor for gallery visibility
+    await linkAsset({
+      database: this.db,
+      assetId: opts.assetId,
+      link: {
+        entityType: AssetLinkEntity.Actor,
+        entityId: opts.actorId,
+        label: opts.isPrimary ? "avatar-primary" : "avatar",
+      },
+    },);
 
     return id;
   }
