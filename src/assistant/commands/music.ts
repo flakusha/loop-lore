@@ -7,15 +7,7 @@
  */
 
 import { type CommandResult, registerCommand, } from "./registry";
-
-/** URL patterns for external music services */
-const EXTERNAL_MUSIC_PATTERNS = [
-  /^https?:\/\/(www\.)?youtube\.com\/watch/,
-  /^https?:\/\/youtu\.be\//,
-  /^https?:\/\/(www\.)?spotify\.com\//,
-  /^https?:\/\/(www\.)?soundcloud\.com\//,
-  /^https?:\/\/(www\.)?bandcamp\.com\//,
-];
+import { EXTERNAL_MUSIC_PATTERNS, } from "../../regex/music-urls";
 
 registerCommand("music", async (args,): Promise<CommandResult> => {
   const prompt = args.join(" ",).trim();
