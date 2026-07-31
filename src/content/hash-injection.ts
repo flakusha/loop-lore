@@ -15,6 +15,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, } from "node:path";
+import { HASH_INJECTION_SCRIPT, HASH_INJECTION_LINK, } from "../regex/html-sanitize";
 
 const HASH_PATTERN = /^(.+)-([a-z0-9]{8})\.((?:js|css))$/;
 
@@ -58,7 +59,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
     // Replace <script src="/foo.js">  →  <script src="/foo-hash.js">
     // Replace <link rel="stylesheet" href="/foo.css">  →  <link href="/foo-hash.css">
     content = content.replaceAll(
-      /(<script[^>]*\bsrc\s*=\s*"\/)([^"]+\.(?:js|css))("[^>]*><\/script>)/g,
+      HASH_INJECTION_SCRIPT,
       (_match, prefix: string, filename: string, suffix: string,) => {
         const hashed = hashLookup.get(filename,);
         if (hashed) {
@@ -71,7 +72,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
     );
 
     content = content.replaceAll(
-      /(<link[^>]*\bhref\s*=\s*"\/)([^"]+\.(?:js|css))("[^>]*>)/g,
+      HASH_INJECTION_LINK,
       (_match, prefix: string, filename: string, suffix: string,) => {
         const hashed = hashLookup.get(filename,);
         if (hashed) {

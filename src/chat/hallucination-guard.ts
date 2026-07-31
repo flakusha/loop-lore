@@ -10,6 +10,11 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
+import {
+  LOCATION_INDICATORS,
+  ITEM_INDICATORS,
+  WORLD_INDICATORS,
+} from "../regex/hallucination";
 
 // ── Types ───────────────────────────────────────────────────
 
@@ -238,7 +243,7 @@ function classifyEntity(
 
   // Check surrounding context for location indicators
   if (
-    /\b(at|in|near|toward|from|arrived|entered|left|visited)\b/i.test(lower,) &&
+    LOCATION_INDICATORS.test(lower,) &&
     lower.includes(nameLower,)
   ) {
     return "location";
@@ -246,7 +251,7 @@ function classifyEntity(
 
   // Check for item indicators
   if (
-    /\b(picked up|found|equipped|used|wielded|wearing|carrying)\b/i.test(lower,) &&
+    ITEM_INDICATORS.test(lower,) &&
     lower.includes(nameLower,)
   ) {
     return "item";
@@ -254,7 +259,7 @@ function classifyEntity(
 
   // Check for world indicators
   if (
-    /\b(world|realm|kingdom|land|dimension)\b/i.test(lower,) &&
+    WORLD_INDICATORS.test(lower,) &&
     lower.includes(nameLower,)
   ) {
     return "world";

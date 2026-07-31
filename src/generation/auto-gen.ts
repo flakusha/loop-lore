@@ -16,6 +16,7 @@ import { resolveModelRole, } from "../admin/model-roles";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
+import { SCRIPT_TAG, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, } from "../regex/html-sanitize";
 import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled, } from "../crypto";
 import {
   CancelReason,
@@ -986,9 +987,9 @@ function escapeHtml(str: string,): string {
 
 function sanitizeHtml(html: string,): string {
   return html
-    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "",)
-    .replaceAll(/\bon\w+="[^"]*"/gi, "",)
-    .replaceAll(/\bon\w+='[^']*'/gi, "",);
+    .replaceAll(SCRIPT_TAG, "",)
+    .replaceAll(ON_EVENT_DOUBLE, "",)
+    .replaceAll(ON_EVENT_SINGLE, "",);
 }
 
 function renderStreamMessage(
