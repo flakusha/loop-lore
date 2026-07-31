@@ -404,16 +404,17 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      const { name, value, bonus, penalty, effects, } = ctx.body;
+      const { trait_category, trait_name, value, bonus, penalty, effects, } = ctx.body;
 
       const traitId = await traitsService.createLocationTrait({
         actorId,
         locationId,
-        name,
+        category: trait_category,
+        name: trait_name,
         value,
         bonus: bonus ?? 0,
         penalty: penalty ?? 0,
-        effects: effects ?? {},
+        effects: effects ?? "",
       },);
       return jsonCreated({ id: traitId, },);
     }, {
