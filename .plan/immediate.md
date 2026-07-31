@@ -78,7 +78,7 @@
 | Transition triggers| ✅ Done    | `src/frontend/vn/templates/transition-triggers.ts`   |
 | Story generation   | ✅ Done    | `src/routes/vn-generate.ts`                          |
 | Choice generation  | ✅ Done    | `src/routes/vn-generate.ts`                          |
-| Image preloading   | ❌ Pending | —                                                    |
+| Image preloading   | ✅ Done    | `src/frontend/vn/image-preloader.ts`                 |
 
 - [x] Wire `src/frontend/vn/` scene renderer with image overlay + CSS transitions
 - [x] Add typewriter animation component (`src/frontend/vn/typewriter.ts`)
@@ -92,6 +92,7 @@
 - [x] Create scene template system (`TASK-vn-scene-template-system.md`)
 - [x] Implement pre-configured templates (`TASK-vn-template-actions.md`)
 - [x] Implement story & choice generation (`TASK-vn-dynamic-generation.md`)
+- [x] Implement image preloading (`src/frontend/vn/image-preloader.ts`)
 - [ ] **Verification**: `bun run check && bun test src/story/`
 
 ---
