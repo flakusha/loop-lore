@@ -38,7 +38,7 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
     crossOriginResourcePolicy: "cross-origin",
     timingAllowOrigin: "",
     immutableHashedAssets: true,
-    linkPreload: ["/app.js",],
+    linkPreload: ["/alpine-init.js",],
     acceptClientHints: [],
     saveData: false,
     earlyHints: { enabled: false, },
