@@ -19,14 +19,22 @@ Extend Visual Novel Mode with dynamic image and story generation capabilities, p
 
 ## Current State (2026-07-31)
 
-### Base VN Rendering: 🟡 Foundation Complete
+### Base VN Rendering: ✅ Complete
 
 - ✅ Backend: DB schema, API, service, routes, validation
 - ✅ Frontend: scene-renderer, portrait-manager, transition-engine, typewriter, settings, CSS
-- ❌ Chat.html wiring (conditional VN vs bubble layout)
-- ❌ Image preloading
+- ✅ Chat.html wiring (conditional VN vs bubble layout)
+- ✅ Branching choices system (UI + API)
+- ✅ Pre-configured templates (scene + dialogue)
+- ✅ Scene template system (engine + variables)
+- ✅ Image preloading with graceful fallbacks
 
-### Extended VN (Dynamic Generation & Q&A): ❌ Not Started
+### Extended VN (Dynamic Generation): ✅ Complete
+
+- ✅ Story description generation (`POST /api/chats/:chatId/vn/generate-story`)
+- ✅ Choice generation (`POST /api/chats/:chatId/vn/generate-choices`)
+- ✅ QA mode validation
+- ❌ Image generation (deferred — uses ComfyUI)
 
 ## Core Features
 
