@@ -1043,3 +1043,61 @@ export function insertVnChoices(db: Db, chat_id: string, scene_index: number, la
     ...opts,
   },).execute();
 }
+
+/** Insert a dice_roll_history row. */
+export function insertDiceRollHistory(db: Db, user_id: string, sides: number, count: number, raw_rolls: string, raw_total: number, total: number, opts?: { id?: Generated<string>; chat_id?: string | null; actor_id?: string | null; modifier?: Generated<number>; advantage_mode?: Generated<string>; exploding?: Generated<number>; purpose?: string | null; created_at?: Generated<string> }): Promise<void> {
+  return db.insertInto("dice_roll_history",).values({
+    id: crypto.randomUUID(),
+    user_id,
+    sides,
+    count,
+    raw_rolls,
+    raw_total,
+    total,
+    ...opts,
+  },).execute();
+}
+
+/** Insert a character_stats row. */
+export function insertCharacterStats(db: Db, actor_id: string, hp: number, max_hp: number, ac: number, opts?: { id?: Generated<string>; level?: Generated<number>; temp_hp?: Generated<number>; mp?: Generated<number>; max_mp?: Generated<number>; speed?: Generated<number>; str?: Generated<number>; dex?: Generated<number>; con?: Generated<number>; int?: Generated<number>; wis?: Generated<number>; cha?: Generated<number>; hit_dice?: Generated<string>; death_save_successes?: Generated<number>; death_save_failures?: Generated<number>; xp?: Generated<number>; xp_to_next?: Generated<number>; data_version?: Generated<number>; created_at?: Generated<string>; updated_at?: Generated<string> }): Promise<void> {
+  return db.insertInto("character_stats",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    hp,
+    max_hp,
+    ac,
+    ...opts,
+  },).execute();
+}
+
+/** Insert a xp_ledger row. */
+export function insertXpLedger(db: Db, actor_id: string, amount: number, source: string, opts?: { id?: Generated<string>; description?: string | null; reference_id?: string | null; chat_id?: string | null; created_at?: Generated<string> }): Promise<void> {
+  return db.insertInto("xp_ledger",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    amount,
+    source,
+    ...opts,
+  },).execute();
+}
+
+/** Insert a loot_tables row. */
+export function insertLootTables(db: Db, name: string, source_type: string, opts?: { id?: Generated<string>; source_id?: string | null; total_weight?: Generated<number>; used?: Generated<number>; created_at?: Generated<string>; updated_at?: Generated<string> }): Promise<void> {
+  return db.insertInto("loot_tables",).values({
+    id: crypto.randomUUID(),
+    name,
+    source_type,
+    ...opts,
+  },).execute();
+}
+
+/** Insert a loot_entries row. */
+export function insertLootEntries(db: Db, loot_table_id: string, item_name: string, item_type: string, opts?: { id?: Generated<string>; description?: string | null; rarity?: Generated<string>; weight?: Generated<number>; min_quantity?: Generated<number>; max_quantity?: Generated<number>; min_level?: Generated<number>; metadata?: Generated<string>; created_at?: Generated<string> }): Promise<void> {
+  return db.insertInto("loot_entries",).values({
+    id: crypto.randomUUID(),
+    loot_table_id,
+    item_name,
+    item_type,
+    ...opts,
+  },).execute();
+}

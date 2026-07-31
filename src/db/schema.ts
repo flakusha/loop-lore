@@ -108,4 +108,9 @@ export interface DB {
   shadow_notes: import("./schema-gm").ShadowNotes;
   whitenotes: import("./schema-gm").Whitenotes;
   vn_choices: import("./schema-core").VnChoices;
+  dice_roll_history: import("./schema-core").DiceRollHistory;
+  character_stats: import("./schema-core").CharacterStats;
+  xp_ledger: import("./schema-core").XpLedger;
+  loot_tables: import("./schema-core").LootTables;
+  loot_entries: import("./schema-core").LootEntries;
 }
