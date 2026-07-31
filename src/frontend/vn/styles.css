@@ -247,3 +247,70 @@
     animation: none;
   }
 }
+
+/* ── Choice Cards ─────────────────────────────────────────── */
+
+.vn-choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem);
+}
+
+.vn-choice-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-3, 0.75rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.vn-choice-card:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.vn-choice-label {
+  font-weight: 500;
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.vn-choice-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: var(--space-1, 0.25rem);
+}
+
+.vn-choice-history {
+  padding: var(--space-2, 0.5rem);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.vn-choice-history summary {
+  cursor: pointer;
+  padding: var(--space-2, 0.5rem);
+}
+
+.vn-choice-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  padding-left: var(--space-4, 1rem);
+}
+
+.vn-choice-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-1, 0.25rem) 0;
+}
+
+.vn-choice-timestamp {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
