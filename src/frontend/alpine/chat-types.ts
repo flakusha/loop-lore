@@ -306,9 +306,24 @@ export interface ChatState extends AlpineMagicThis {
 
   _chatFilter: string;
 
+  _searchDebounce: ReturnType<typeof setTimeout> | null;
+
+  _searchResults: {
+    chatId: string;
+    chatName: string;
+    chatType: string;
+    chatMode: string;
+    lastMessageAt: string;
+    characterName: string;
+    characterAvatar: string | null;
+    worldId: string | null;
+  }[] | null;
+
   readonly filteredChats: { id: string; name?: string }[];
 
   selectedChats: string[];
+
+  searchChats(query: string,): Promise<void>;
 
   _mentionQuery: string;
 

@@ -44,6 +44,7 @@ import { charactersRoutes, } from "./routes/characters";
 import { chatContextRoutes, } from "./routes/chat-context";
 import { chatExportRoutes, } from "./routes/chat-export";
 import { chatPinRoutes, } from "./routes/chat-pins";
+import { chatSearchRoutes, } from "./routes/chat-search";
 import { chatsRoutes, } from "./routes/chats";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { gmNotesRoutes, } from "./routes/gm-notes";
@@ -156,6 +157,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(messagesRoutes(handleOpts,),);
   app.use(messageReactionsRoutes(handleOpts,),);
   app.use(chatsRoutes(handleOpts,),);
+  app.use(chatSearchRoutes(handleOpts,),);
   app.use(gmNotesRoutes(handleOpts,),);
   app.use(chatPinRoutes(handleOpts,),);
   app.use(chatExportRoutes(handleOpts,),);
