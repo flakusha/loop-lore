@@ -70,16 +70,18 @@ export async function logDiceRoll(
 export async function getDiceRollHistory(
   deps: RpgServiceDeps,
   params: { userId: string; chatId?: string; limit?: number },
-): Promise<Array<{
-  id: string;
-  sides: number;
-  count: number;
-  modifier: number;
-  advantageMode: string;
-  total: number;
-  purpose: string | null;
-  createdAt: string;
-}>> {
+): Promise<
+  Array<{
+    id: string;
+    sides: number;
+    count: number;
+    modifier: number;
+    advantageMode: string;
+    total: number;
+    purpose: string | null;
+    createdAt: string;
+  }>
+> {
   const { database, } = deps;
   const limit = params.limit ?? 50;
 
@@ -114,7 +116,7 @@ export async function getDiceRollHistory(
     total: r.total,
     purpose: r.purpose,
     createdAt: r.created_at,
-  }),);
+  }));
 }
 
 // ── Character Stats ──────────────────────────────────────────
@@ -177,25 +179,27 @@ export async function createCharacterStats(
 export async function getCharacterStats(
   deps: RpgServiceDeps,
   actorId: string,
-): Promise<{
-  id: string;
-  level: number;
-  hp: number;
-  maxHp: number;
-  tempHp: number;
-  mp: number;
-  maxMp: number;
-  ac: number;
-  speed: number;
-  str: number;
-  dex: number;
-  con: number;
-  int: number;
-  wis: number;
-  cha: number;
-  xp: number;
-  xpToNext: number;
-} | null> {
+): Promise<
+  {
+    id: string;
+    level: number;
+    hp: number;
+    maxHp: number;
+    tempHp: number;
+    mp: number;
+    maxMp: number;
+    ac: number;
+    speed: number;
+    str: number;
+    dex: number;
+    con: number;
+    int: number;
+    wis: number;
+    cha: number;
+    xp: number;
+    xpToNext: number;
+  } | null
+> {
   const { database, } = deps;
 
   const row = await database
@@ -256,22 +260,22 @@ export async function updateCharacterStats(
   const { database, } = deps;
 
   const updates: Record<string, unknown> = {};
-  if (params.hp !== undefined) updates.hp = params.hp;
-  if (params.maxHp !== undefined) updates.max_hp = params.maxHp;
-  if (params.tempHp !== undefined) updates.temp_hp = params.tempHp;
-  if (params.mp !== undefined) updates.mp = params.mp;
-  if (params.maxMp !== undefined) updates.max_mp = params.maxMp;
-  if (params.ac !== undefined) updates.ac = params.ac;
-  if (params.speed !== undefined) updates.speed = params.speed;
-  if (params.str !== undefined) updates.str = params.str;
-  if (params.dex !== undefined) updates.dex = params.dex;
-  if (params.con !== undefined) updates.con = params.con;
-  if (params.int !== undefined) updates.int = params.int;
-  if (params.wis !== undefined) updates.wis = params.wis;
-  if (params.cha !== undefined) updates.cha = params.cha;
-  if (params.level !== undefined) updates.level = params.level;
-  if (params.xp !== undefined) updates.xp = params.xp;
-  if (params.xpToNext !== undefined) updates.xp_to_next = params.xpToNext;
+  if (params.hp !== undefined) { updates.hp = params.hp; }
+  if (params.maxHp !== undefined) { updates.max_hp = params.maxHp; }
+  if (params.tempHp !== undefined) { updates.temp_hp = params.tempHp; }
+  if (params.mp !== undefined) { updates.mp = params.mp; }
+  if (params.maxMp !== undefined) { updates.max_mp = params.maxMp; }
+  if (params.ac !== undefined) { updates.ac = params.ac; }
+  if (params.speed !== undefined) { updates.speed = params.speed; }
+  if (params.str !== undefined) { updates.str = params.str; }
+  if (params.dex !== undefined) { updates.dex = params.dex; }
+  if (params.con !== undefined) { updates.con = params.con; }
+  if (params.int !== undefined) { updates.int = params.int; }
+  if (params.wis !== undefined) { updates.wis = params.wis; }
+  if (params.cha !== undefined) { updates.cha = params.cha; }
+  if (params.level !== undefined) { updates.level = params.level; }
+  if (params.xp !== undefined) { updates.xp = params.xp; }
+  if (params.xpToNext !== undefined) { updates.xp_to_next = params.xpToNext; }
 
   if (Object.keys(updates,).length === 0) {
     return false;
@@ -331,13 +335,15 @@ export async function getXpHistory(
   deps: RpgServiceDeps,
   actorId: string,
   limit?: number,
-): Promise<Array<{
-  id: string;
-  amount: number;
-  source: string;
-  description: string | null;
-  createdAt: string;
-}>> {
+): Promise<
+  Array<{
+    id: string;
+    amount: number;
+    source: string;
+    description: string | null;
+    createdAt: string;
+  }>
+> {
   const { database, } = deps;
   const max = limit ?? 50;
 
@@ -354,13 +360,15 @@ export async function getXpHistory(
     .orderBy("created_at", "desc",)
     .limit(max,)
     .execute()
-    .then((rows,) => rows.map((r,) => ({
-      id: r.id,
-      amount: r.amount,
-      source: r.source,
-      description: r.description,
-      createdAt: r.created_at,
-    }),),);
+    .then((rows,) =>
+      rows.map((r,) => ({
+        id: r.id,
+        amount: r.amount,
+        source: r.source,
+        description: r.description,
+        createdAt: r.created_at,
+      }))
+    );
 }
 
 // ── Loot Tables ──────────────────────────────────────────────
@@ -436,7 +444,7 @@ export async function addLootEntry(
     .set((eb,) => ({
       total_weight: eb("total_weight", "+", params.weight,),
       updated_at: new Date().toISOString(),
-    }),)
+    }))
     .where("id", "=", params.lootTableId,)
     .execute();
 
@@ -447,13 +455,15 @@ export async function addLootEntry(
 export async function rollLootTable(
   deps: RpgServiceDeps,
   lootTableId: string,
-): Promise<{
-  itemName: string;
-  description: string | null;
-  itemType: string;
-  rarity: string;
-  quantity: number;
-} | null> {
+): Promise<
+  {
+    itemName: string;
+    description: string | null;
+    itemType: string;
+    rarity: string;
+    quantity: number;
+  } | null
+> {
   const { database, } = deps;
 
   // Get all entries
@@ -475,7 +485,7 @@ export async function rollLootTable(
     .execute();
 
   // Weighted random selection
-  const totalWeight = entries.reduce((sum, e,) => sum + e.weight, 0);
+  const totalWeight = entries.reduce((sum, e,) => sum + e.weight, 0,);
   let random = Math.random() * totalWeight;
 
   for (const entry of entries) {

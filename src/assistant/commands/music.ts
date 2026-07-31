@@ -6,8 +6,8 @@
  * If a text prompt is provided, generates audio via the audio provider.
  */
 
-import { type CommandResult, registerCommand, } from "./registry";
 import { EXTERNAL_MUSIC_PATTERNS, } from "../../regex/music-urls";
+import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("music", async (args,): Promise<CommandResult> => {
   const prompt = args.join(" ",).trim();

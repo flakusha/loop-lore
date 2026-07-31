@@ -4,9 +4,9 @@
  * Serve HTML templates as htmx-friendly pages:
  *   GET  /partials/:page/:section — HTML fragment from src/partials/
  *   GET  /dynamic/characters/grid — server-rendered character grid
- *   GET  /dynamic/gallery/grid    — server-rendered gallery grid
+ *   GET  /dynamic/gallery/grid    — server-rendered gallery grid (optional: entityType, entityId)
  *   GET  /dynamic/worlds/list     — server-rendered world list
- *   GET  /dynamic/gallery/search  — HTMX gallery search
+ *   GET  /dynamic/gallery/search  — HTMX gallery search (optional: entityType, entityId)
  *   GET  /dynamic/characters/search — HTMX character search
  *   GET  /dynamic/worlds/search   — HTMX world search
  *   GET  /dynamic/worlds/:id/detail — world detail content
@@ -620,13 +620,25 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Pr
   return htmlResponse(items,);
 }
 
-async function serveGalleryGrid(database: Kysely<DB>,): Promise<Response> {
-  const assets = await database
+async function serveGalleryGrid(database: Kysely<DB>, params?: URLSearchParams,): Promise<Response> {
+  const entityType = params?.get("entityType",) ?? null;
+  const entityId = params?.get("entityId",) ?? null;
+
+  let qb = database
     .selectFrom("assets",)
-    .selectAll()
+    .selectAll("assets",)
     .orderBy("filename", "asc",)
-    .limit(200,)
-    .execute();
+    .limit(200,);
+
+  // Filter by linked entity when entityType/entityId provided
+  if (entityType && entityId) {
+    qb = qb
+      .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
+      .where("asset_links.entity_type", "=", entityType as any,)
+      .where("asset_links.entity_id", "=", entityId,);
+  }
+
+  const assets = await qb.execute();
 
   if (assets.length === 0) {
     return htmlResponse(`<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
@@ -676,8 +688,20 @@ async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams,
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const type = params.get("type",) ?? "all";
   const sort = params.get("sort",) ?? "name";
+  const entityType = params.get("entityType",) ?? null;
+  const entityId = params.get("entityId",) ?? null;
 
-  let qb = database.selectFrom("assets",).selectAll();
+  let qb = database
+    .selectFrom("assets",)
+    .selectAll("assets",);
+
+  // Filter by linked entity when entityType/entityId provided
+  if (entityType && entityId) {
+    qb = qb
+      .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
+      .where("asset_links.entity_type", "=", entityType as any,)
+      .where("asset_links.entity_id", "=", entityId,);
+  }
 
   if (query) {
     qb = qb.where("filename", "like", `%${query}%`,);
@@ -834,7 +858,6 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
         "chats.id",
         "chats.name",
         "chats.type",
-        "chats.purpose",
         "chats.is_pinned",
         "chats.updated_at",
         "chats.created_at",
@@ -891,7 +914,6 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
       "chats.id",
       "chats.name",
       "chats.type",
-      "chats.purpose",
       "chats.is_pinned",
       "chats.updated_at",
       "chats.created_at",
@@ -948,7 +970,6 @@ async function enrichChats(
     id: string;
     name: string;
     type: string;
-    purpose: string | null;
     is_pinned: string;
     updated_at: string;
     created_at: string;
@@ -960,7 +981,6 @@ async function enrichChats(
     id: string;
     name: string;
     type: string;
-    purpose: string | null;
     is_pinned: string;
     updated_at: string;
     created_at: string;
@@ -1001,7 +1021,6 @@ function renderChatListItems(rows: {
   id: string;
   name: string;
   type: string;
-  purpose: string | null;
   is_pinned: string;
   updated_at: string;
   created_at: string;
@@ -1097,7 +1116,8 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveGalleryGrid(database,);
+        const url = new URL(ctx.request.url,);
+        return await serveGalleryGrid(database, url.searchParams,);
       }, {
         response: { 200: SuccessResponse, },
       },)
