@@ -209,6 +209,7 @@ export const ModelRole = {
   Auxiliary: "auxiliary",
   Captioning: "captioning",
   Moderation: "moderation",
+  Auxiliary: "auxiliary",
   Embeddings: "embeddings",
   Summarization: "summarization",
 } as const;

@@ -37,9 +37,8 @@ export {
 export { estimateTokens, } from "./token-utils";
 
 export {
+  classifyTransitionMessage,
   createTransition,
-  detectTransitionType,
-  isTransitionMessage,
   selectMessagesForPromotion,
 } from "./transitions";
 
