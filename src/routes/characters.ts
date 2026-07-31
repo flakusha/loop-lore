@@ -112,7 +112,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
             import_spec: "raw",
             data_source_format: "json",
             data_raw: null,
-            data_version: 0,
+            format_version: 0,
           },)
           .execute();
 
@@ -276,7 +276,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         }
 
         // Optimistic concurrency check
-        if (dataVersion !== undefined && dataVersion !== actor.data_version) {
+        if (dataVersion !== undefined && dataVersion !== actor.format_version) {
           return jsonError({
             message: "Version conflict: record was modified by another process",
             status: HttpStatus.Conflict,
@@ -312,7 +312,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           database,
           "actors",
           ctx.params.actorId,
-          actor.data_version,
+          actor.format_version,
           updates,
         );
 
@@ -320,7 +320,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           return jsonError({ message: result.error ?? "Update failed", status: HttpStatus.Conflict, },);
         }
 
-        return jsonResponse({ ok: true, dataVersion: actor.data_version + 1, },);
+        return jsonResponse({ ok: true, dataVersion: actor.format_version + 1, },);
       },
       {
         params: ActorIdParams,
