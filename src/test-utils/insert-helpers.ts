@@ -9,6 +9,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { ActorItemType, ActorType, AdminOverrideAction, AgentType, AssetLinkEntity, AssetType, AssetVisibility, AvatarSelectionRule, CancelReason, CancelSource, ChatMode, ChatParticipantRole, ChatType, ContentEncoding, ContentIntensity, CraftingAttemptStatus, CraftingDiscipline, CraftingStationType, DifficultyReroll, DifficultyState, DiscoveryMethod, EquipState, FantasyCategory, GatheringNodeType, GenerationStatus, ItemCategory, ItemRarity, ItemVisibility, KeyStatus, KeyType, LicenseType, LoreEntryStatus, LorePosition, MaterialSlotType, MemoryType, MessageContentFormat, MessageContentType, MessageRole, MessageStatus, MessageVisibility, ModelRole, NarrativeStyle, NoteCategory, NsfwEncounterType, NsfwLocationType, PinnedState, ProfessionBonusType, ProfessionTitle, QualityLevel, QuestProgressStatus, QuestStatus, QuestType, RelationshipType, SeductionSkillCategory, ShadowNoteType, StackableState, StorageBackend, SyntheticDataStatus, SyntheticDataType, TraitCategory, TurnStatus, TurnStrategy, TurnType, UserRole, UserStatus, VisibilityOverride, WhiteneoteScope, WhiteneoteType, WorldTraitCategory, } from "../db/enums";
 
 type Db = Kysely<DB>;
 
@@ -1026,6 +1027,18 @@ export function insertWhitenotes(db: Db, chat_id: string, type: WhiteneoteType, 
     chat_id,
     type,
     content,
+    created_at,
+    ...opts,
+  },).execute();
+}
+
+/** Insert a vn_choices row. */
+export function insertVnChoices(db: Db, chat_id: string, scene_index: number, label: string, created_at: string, opts?: { id?: Generated<string>; description?: string | null; consequences?: Generated<string>; relationship_impact?: Generated<string>; mood_impact?: Generated<string>; unlock_conditions?: Generated<string>; selected?: Generated<number>; selected_at?: string | null }): Promise<void> {
+  return db.insertInto("vn_choices",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    scene_index,
+    label,
     created_at,
     ...opts,
   },).execute();
