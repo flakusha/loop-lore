@@ -145,3 +145,153 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
   globalThis.location.assign(`/api/actors/${characterId}/export?format=${format}`,);
   closeModal(btn,);
 };
+
+// ── Emotion Avatar Generation ────────────────────────────────────────
+
+/** Active polling interval for emotion avatar generation */
+let emotionAvatarPollInterval: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * Generate emotion avatars for a character.
+ * Triggers batch generation via API and polls for progress.
+ */
+(globalThis as any).generateEmotionAvatars = async function(btn: HTMLElement,) {
+  const id = btn.dataset.id;
+  if (!id) {
+    log.error("No character ID found for emotion avatar generation",);
+    return;
+  }
+
+  const progressEl = document.querySelector<HTMLElement>("#emotion-avatar-progress",);
+  const statusEl = document.querySelector<HTMLElement>("#emotion-avatar-status",);
+  const resultsEl = document.querySelector<HTMLElement>("#emotion-avatar-results",);
+
+  if (!progressEl || !statusEl || !resultsEl) {
+    log.error("Progress elements not found",);
+    return;
+  }
+
+  // Show progress, disable button
+  progressEl.style.display = "block";
+  btn.setAttribute("disabled", "true",);
+  statusEl.textContent = "Starting generation...";
+  resultsEl.replaceChildren();
+
+  try {
+    // Start batch generation
+    const res = await feFetch(`/api/actors/${id}/emotion-avatars`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({
+        // Use default emotions (all) — no baseAvatarId override means use character's primary avatar
+        // Template expansion config is applied server-side
+      },),
+    },);
+
+    if (!res.ok) {
+      let errorMessage = "Failed to start generation";
+      try {
+        const errBody = await res.json();
+        errorMessage = errBody.message || errorMessage;
+      } catch {
+        // Use default error message
+      }
+      statusEl.textContent = `Error: ${errorMessage}`;
+      btn.removeAttribute("disabled",);
+      return;
+    }
+
+    const { jobId, } = await res.json();
+    statusEl.textContent = "Generating...";
+
+    // Start polling for job status
+    startEmotionAvatarPolling(id, jobId, statusEl, resultsEl, btn,);
+  } catch (error) {
+    log.error("Failed to start emotion avatar generation", error instanceof Error ? error : undefined,);
+    statusEl.textContent = "Error: Failed to start generation";
+    btn.removeAttribute("disabled",);
+  }
+};
+
+/**
+ * Poll job status until completion.
+ */
+function startEmotionAvatarPolling(
+  actorId: string,
+  jobId: string,
+  statusEl: HTMLElement,
+  resultsEl: HTMLElement,
+  btn: HTMLElement,
+) {
+  // Clear any existing poll
+  if (emotionAvatarPollInterval) {
+    clearInterval(emotionAvatarPollInterval,);
+  }
+
+  emotionAvatarPollInterval = setInterval(async () => {
+    try {
+      const res = await feFetch(`/api/actors/${actorId}/emotion-avatars/jobs/${jobId}`,);
+      if (!res.ok) {
+        statusEl.textContent = "Error: Failed to check status";
+        clearInterval(emotionAvatarPollInterval!,);
+        btn.removeAttribute("disabled",);
+        return;
+      }
+
+      const job = await res.json();
+
+      // Update status display
+      let completed = 0;
+      let failed = 0;
+      const total = job.results.length;
+      const resultHtml: string[] = [];
+
+      for (const r of job.results) {
+        if (r.status === "completed") { completed++; }
+        if (r.status === "failed") { failed++; }
+
+        let icon: string;
+        if (r.status === "completed") {
+          icon = "✅";
+        } else if (r.status === "failed") {
+          icon = "❌";
+        } else {
+          icon = "⏳";
+        }
+        const label = r.emotion.charAt(0,).toUpperCase() + r.emotion.slice(1,);
+        const errorSuffix = r.error ? ` — ${r.error}` : "";
+        resultHtml.push(`<div>${icon} ${label}${errorSuffix}</div>`,);
+      }
+
+      statusEl.textContent = `Generating... ${completed}/${total} completed`;
+      if (failed > 0) {
+        statusEl.textContent += ` (${failed} failed)`;
+      }
+
+      // Update results list
+      resultsEl.replaceChildren();
+      resultsEl.innerHTML = resultHtml.join("",);
+
+      // Check if job is done
+      const doneStatuses = ["completed", "failed", "cancelled",];
+      if (doneStatuses.includes(job.status,)) {
+        clearInterval(emotionAvatarPollInterval!,);
+        emotionAvatarPollInterval = null;
+        if (job.status === "completed") {
+          statusEl.textContent = `Done! ${completed} avatars generated`;
+        } else if (job.status === "cancelled") {
+          statusEl.textContent = "Generation cancelled";
+        } else {
+          statusEl.textContent = `Failed: ${job.error || "Unknown error"}`;
+        }
+        btn.removeAttribute("disabled",);
+      }
+    } catch (error) {
+      log.error("Failed to poll emotion avatar job status", error instanceof Error ? error : undefined,);
+      statusEl.textContent = "Error: Lost connection to server";
+      clearInterval(emotionAvatarPollInterval!,);
+      emotionAvatarPollInterval = null;
+      btn.removeAttribute("disabled",);
+    }
+  }, 2000,); // Poll every 2 seconds
+}
