@@ -355,3 +355,89 @@ export interface VnChoices {
   selected_at: string | null;
   created_at: string;
 }
+
+// ── dice_roll_history ────────────────────────────────────────────
+export interface DiceRollHistory {
+  id: Generated<string>;
+  user_id: string;
+  chat_id: string | null;
+  actor_id: string | null;
+  sides: number;
+  count: number;
+  modifier: Generated<number>;
+  advantage_mode: Generated<string>;
+  exploding: Generated<number>;
+  raw_rolls: string;
+  raw_total: number;
+  total: number;
+  purpose: string | null;
+  created_at: Generated<string>;
+}
+
+// ── character_stats ────────────────────────────────────────────
+export interface CharacterStats {
+  id: Generated<string>;
+  actor_id: string;
+  level: Generated<number>;
+  hp: number;
+  max_hp: number;
+  temp_hp: Generated<number>;
+  mp: Generated<number>;
+  max_mp: Generated<number>;
+  ac: number;
+  speed: Generated<number>;
+  str: Generated<number>;
+  dex: Generated<number>;
+  con: Generated<number>;
+  int: Generated<number>;
+  wis: Generated<number>;
+  cha: Generated<number>;
+  hit_dice: Generated<string>;
+  death_save_successes: Generated<number>;
+  death_save_failures: Generated<number>;
+  xp: Generated<number>;
+  xp_to_next: Generated<number>;
+  data_version: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── xp_ledger ────────────────────────────────────────────
+export interface XpLedger {
+  id: Generated<string>;
+  actor_id: string;
+  amount: number;
+  source: string;
+  description: string | null;
+  reference_id: string | null;
+  chat_id: string | null;
+  created_at: Generated<string>;
+}
+
+// ── loot_tables ────────────────────────────────────────────
+export interface LootTables {
+  id: Generated<string>;
+  name: string;
+  source_type: string;
+  source_id: string | null;
+  total_weight: Generated<number>;
+  used: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── loot_entries ────────────────────────────────────────────
+export interface LootEntries {
+  id: Generated<string>;
+  loot_table_id: string;
+  item_name: string;
+  description: string | null;
+  item_type: string;
+  rarity: Generated<string>;
+  weight: Generated<number>;
+  min_quantity: Generated<number>;
+  max_quantity: Generated<number>;
+  min_level: Generated<number>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+}

@@ -418,6 +418,32 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
+  .table("character_stats", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    level: col("integer", { notNull: true, hasDefault: true, },),
+    hp: col("integer", { notNull: true, },),
+    max_hp: col("integer", { notNull: true, },),
+    temp_hp: col("integer", { notNull: true, hasDefault: true, },),
+    mp: col("integer", { notNull: true, hasDefault: true, },),
+    max_mp: col("integer", { notNull: true, hasDefault: true, },),
+    ac: col("integer", { notNull: true, },),
+    speed: col("integer", { notNull: true, hasDefault: true, },),
+    str: col("integer", { notNull: true, hasDefault: true, },),
+    dex: col("integer", { notNull: true, hasDefault: true, },),
+    con: col("integer", { notNull: true, hasDefault: true, },),
+    int: col("integer", { notNull: true, hasDefault: true, },),
+    wis: col("integer", { notNull: true, hasDefault: true, },),
+    cha: col("integer", { notNull: true, hasDefault: true, },),
+    hit_dice: col("text", { notNull: true, hasDefault: true, },),
+    death_save_successes: col("integer", { notNull: true, hasDefault: true, },),
+    death_save_failures: col("integer", { notNull: true, hasDefault: true, },),
+    xp: col("integer", { notNull: true, hasDefault: true, },),
+    xp_to_next: col("integer", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("character_world_traits", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -814,6 +840,22 @@ export const SCHEMA = new SchemaManifest()
     description: col("text", { notNull: true, },),
     applied_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("dice_roll_history", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    user_id: col("text", { notNull: true, },),
+    chat_id: col("text",),
+    actor_id: col("text",),
+    sides: col("integer", { notNull: true, },),
+    count: col("integer", { notNull: true, },),
+    modifier: col("integer", { notNull: true, hasDefault: true, },),
+    advantage_mode: col("text", { notNull: true, hasDefault: true, },),
+    exploding: col("integer", { notNull: true, hasDefault: true, },),
+    raw_rolls: col("text", { notNull: true, },),
+    raw_total: col("integer", { notNull: true, },),
+    total: col("integer", { notNull: true, },),
+    purpose: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("emotions", {
     id: col("text", { primaryKey: true, },),
     name: col("text", { notNull: true, },),
@@ -918,6 +960,30 @@ export const SCHEMA = new SchemaManifest()
     entity_id: col("text",),
     action: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("loot_entries", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    loot_table_id: col("text", { notNull: true, },),
+    item_name: col("text", { notNull: true, },),
+    description: col("text",),
+    item_type: col("text", { notNull: true, },),
+    rarity: col("text", { notNull: true, hasDefault: true, },),
+    weight: col("integer", { notNull: true, hasDefault: true, },),
+    min_quantity: col("integer", { notNull: true, hasDefault: true, },),
+    max_quantity: col("integer", { notNull: true, hasDefault: true, },),
+    min_level: col("integer", { notNull: true, hasDefault: true, },),
+    metadata: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("loot_tables", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    name: col("text", { notNull: true, },),
+    source_type: col("text", { notNull: true, },),
+    source_id: col("text",),
+    total_weight: col("integer", { notNull: true, hasDefault: true, },),
+    used: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("message_reactions", {
     id: col("text", { primaryKey: true, },),
@@ -1053,6 +1119,16 @@ export const SCHEMA = new SchemaManifest()
     scope: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
+  },)
+  .table("xp_ledger", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    amount: col("integer", { notNull: true, },),
+    source: col("text", { notNull: true, },),
+    description: col("text",),
+    reference_id: col("text",),
+    chat_id: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── World & RPG ──────────────────────────────────────────────
   .table("items", {

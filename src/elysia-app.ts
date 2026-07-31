@@ -61,6 +61,7 @@ import { notificationsRoutes, } from "./routes/notifications";
 import { nsfwRoutes, } from "./routes/nsfw";
 import { pluginRoutes, } from "./routes/plugins";
 import { questsRoutes, } from "./routes/quests";
+import { rpgRoutes, } from "./routes/rpg";
 import { sessionsRoutes, } from "./routes/sessions";
 import { settingsRoutes, } from "./routes/settings";
 import { storyItemsRoutes, } from "./routes/story-items";
@@ -172,6 +173,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(ageGateRoutes(handleOpts,),);
   app.use(nsfwRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
+  app.use(rpgRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 
   // ── Asset upload (standalone route) ──────────────────────────
