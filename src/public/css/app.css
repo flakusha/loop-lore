@@ -3210,13 +3210,6 @@ html {
   color: var(--accent-red);
 }
 
-.gm-toggle-btn {
-  position: fixed;
-  right: var(--space-2);
-  bottom: var(--space-8);
-  z-index: 49;
-}
-
 .gm-toggle-active {
   background: var(--bg-tertiary);
 }

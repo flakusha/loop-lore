@@ -97,6 +97,9 @@ export function flattenTranslations(
   return result;
 }
 
+/** Match {param} placeholders for interpolation. */
+export const INTERPOLATE_RE = /\{(\w+)\}/g;
+
 /**
  * Interpolate {param} placeholders in a translated string.
  *
@@ -107,7 +110,7 @@ export function interpolate(
   template: string,
   params: Record<string, string>,
 ): string {
-  return template.replaceAll(/\{(\w+)\}/g, (_, name,) => params[name] ?? `{${name}}`,);
+  return template.replaceAll(INTERPOLATE_RE, (_, name,) => params[name] ?? `{${name}}`,);
 }
 
 /**

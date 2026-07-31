@@ -15,6 +15,7 @@ import {
   resolveKey,
   saveLocale,
   type TranslationMap,
+  INTERPOLATE_RE,
 } from "./i18n";
 
 export function toggleSidebar(): void {
@@ -200,7 +201,7 @@ export function t(key: string, params?: Record<string, string>,): string {
   const value = resolveKey(map, key,);
   if (value === undefined) { return key; }
   if (params) {
-    return value.replaceAll(/\{(\w+)\}/g, (_, name,) => params[name] ?? `{${name}}`,);
+    return value.replaceAll(INTERPOLATE_RE, (_, name,) => params[name] ?? `{${name}}`,);
   }
   return value;
 }

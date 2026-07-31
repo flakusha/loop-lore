@@ -132,6 +132,9 @@ globalThis.chatState = function() {
     ...rpgStats,
     showRpgPanel: false as boolean,
 
+    // ── GM Panel State ──
+    showGmPanel: false as boolean,
+
     // ── Mood System ──
     ...moodState,
 

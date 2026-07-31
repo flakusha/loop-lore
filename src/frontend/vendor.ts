@@ -15,6 +15,13 @@ g.htmx = htmx;
 g.Alpine = Alpine;
 Alpine.plugin(morph,);
 
+// Configure htmx CSP nonce (passed from layout.html via globalThis.__cspNonce)
+const cspNonce = (g.__cspNonce as string) || "";
+if (cspNonce) {
+  htmx.config = htmx.config || {};
+  htmx.config.inlineScriptNonce = cspNonce;
+}
+
 // Register $t magic property for client-side i18n
 Alpine.magic("t", (el: HTMLElement,) => {
   // Resolve translation key using the app's locale strings
@@ -50,23 +57,11 @@ require("htmx.org/dist/ext/alpine-morph.js",);
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require("htmx-ext-sse/sse.js",);
 
-// Initialize Alpine stores immediately (before Alpine starts auto-initialization)
-Alpine.store("sidebar", { open: false, },);
-Alpine.store("chat", { currentChat: null, },);
-Alpine.store("ui", {
-  showChatList: false,
-  showGallery: false,
-  showCharacterInfo: false,
-  showMemoryPanel: false,
-  showUploadModal: false,
-  showImportForm: false,
-  showCreateForm: false,
-  showEditModal: false,
-  showPreviewModal: false,
-  showChatSettings: false,
-  showRenameModal: false,
-  hasActiveChat: false,
-},);
-
-// Auto-start after all deferred scripts have loaded
+// Auto-start after all deferred scripts have loaded.
+// MUST be registered before initAlpineStores so a store error never blocks it.
 document.addEventListener("DOMContentLoaded", () => Alpine.start(),);
+
+// Initialize Alpine stores from shared definition (single source of truth).
+// Wrapped in try-catch internally — a store failure never blocks Alpine.start().
+import { initAlpineStores, } from "./stores";
+initAlpineStores();
