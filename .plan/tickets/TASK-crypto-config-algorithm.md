@@ -36,9 +36,9 @@ const config = loadConfig();
 const encryptionAlgorithm = config.encryption.algorithm || config.encryption.default;
 
 // In crypto/algorithm-factory.ts
-function getAlgorithmFromConfig(algorithmName: string): CryptoAlgorithm | null {
+function getAlgorithmFromConfig(algorithmName: string,): CryptoAlgorithm | null {
   const factory = algorithmFactory;
-  return factory.getAlgorithm(algorithmName) || factory.getAlgorithm(config.encryption.default);
+  return factory.getAlgorithm(algorithmName,) || factory.getAlgorithm(config.encryption.default,);
 }
 ```
 

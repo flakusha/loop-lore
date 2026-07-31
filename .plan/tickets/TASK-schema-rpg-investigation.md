@@ -33,6 +33,7 @@ These tables were never created. The file is dead code (0 imports, not in barrel
 ## Resolution
 
 After investigation, either:
+
 - **Re-add** if these features are still planned and needed
 - **Delete ticket** if confirmed abandoned
 

@@ -29,20 +29,20 @@ The encryption system MUST support future additions of new algorithms without mo
 ```typescript
 // Algorithm registry - plugins register here
 interface CryptoAlgorithm {
-  id: string;                    // e.g., "aes-256-gcm", "chacha20-poly1305"
+  id: string; // e.g., "aes-256-gcm", "chacha20-poly1305"
   type: "encryption" | "compression" | "key-derivation";
-  encrypt: (data: Uint8Array, key: CryptoKey, opts?: Record<string, unknown>) => Promise<Uint8Array>;
-  decrypt: (data: Uint8Array, key: CryptoKey, opts?: Record<string, unknown>) => Promise<Uint8Array>;
+  encrypt: (data: Uint8Array, key: CryptoKey, opts?: Record<string, unknown>,) => Promise<Uint8Array>;
+  decrypt: (data: Uint8Array, key: CryptoKey, opts?: Record<string, unknown>,) => Promise<Uint8Array>;
   keyLength: number;
   nonceLength: number;
 }
 
 interface AlgorithmFactory {
-  register(algorithm: CryptoAlgorithm): void;
-  getAlgorithm(id: string): CryptoAlgorithm | undefined;
-  listAlgorithms(type?: "encryption" | "compression" | "key-derivation"): CryptoAlgorithm[];
-  createEncryptor(algorithmId: string, key: CryptoKey): Encryptor;
-  createDecryptor(algorithmId: string, key: CryptoKey): Decryptor;
+  register(algorithm: CryptoAlgorithm,): void;
+  getAlgorithm(id: string,): CryptoAlgorithm | undefined;
+  listAlgorithms(type?: "encryption" | "compression" | "key-derivation",): CryptoAlgorithm[];
+  createEncryptor(algorithmId: string, key: CryptoKey,): Encryptor;
+  createDecryptor(algorithmId: string, key: CryptoKey,): Decryptor;
 }
 ```
 
