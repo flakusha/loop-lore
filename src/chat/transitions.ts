@@ -9,58 +9,34 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import type { ExtractedMemory, } from "../memory/types";
-import {
-  CONTEXT_CUT,
-  MOVEMENT_VERBS,
-  SCENE_CHANGE,
-  TEMPORAL_TRANSITION,
-  TRANSITION_PHRASES,
-} from "../regex/transitions";
+import { classifyTransition, } from "./transition-classifier";
 import { estimateTokens, } from "./token-utils";
-import type { ChatTransition, MessageRef, TransitionType, } from "./types";
+import type { ChatTransition, MessageRef, TransitionClassification, } from "./types";
 
 // ─── Transition Detection ─────────────────────────────────────
 
 /**
- * Detect if a user message narrates a scene change.
+ * Classify a message as a transition with full details.
  *
- * Looks for common transition patterns: "I walk to...", "We move to...",
- * "The scene shifts to...", location keywords, etc.
+ * Uses regex-first, AUX-LLM-fallback detection for accurate classification.
+ * Returns structured classification with type, confidence, and location hint.
  *
  * @param content - User message content
- * @returns Whether this message likely narrates a transition
+ * @param recentMessages - Last 1-2 messages for context (optional)
+ * @param config - Application config
+ * @param db - Kysely instance
+ * @returns Transition classification with source and confidence
  */
-export function isTransitionMessage(content: string,): boolean {
-  const lower = content.toLowerCase();
-  const transitionPatterns = [
-    MOVEMENT_VERBS,
-    SCENE_CHANGE,
-    TRANSITION_PHRASES,
-    TEMPORAL_TRANSITION,
-  ];
-  for (const p of transitionPatterns) {
-    if (p.test(lower,)) { return true; }
-  }
-  return false;
-}
-
-/**
- * Determine the transition type from message content.
- *
- * @param content - Message content
- * @param hasLocationChange - Whether a new location is being set
- * @returns The detected transition type
- */
-export function detectTransitionType(
+export async function classifyTransitionMessage(
   content: string,
-  hasLocationChange: boolean,
-): TransitionType {
-  if (hasLocationChange) { return "location_change"; }
-  const lower = content.toLowerCase();
-  if (CONTEXT_CUT.test(lower,)) { return "context_cut"; }
-  return "description";
+  recentMessages: string[],
+  config: Config,
+  db: Kysely<DB>,
+): Promise<TransitionClassification> {
+  return classifyTransition(content, recentMessages, config, db,);
 }
 
 // ─── Transition Creation ───────────────────────────────────────
