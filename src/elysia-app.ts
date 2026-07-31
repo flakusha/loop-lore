@@ -16,6 +16,8 @@ import { assetRoutes, } from "./assets/controller";
 import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { generationRoutes, } from "./generation/controller";
+// TODO: Wire LoRA routes when feature is ready for production
+// import { loraRoutes, } from "./generation/lora/routes";
 import { authenticate, } from "./middleware/auth";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { personaRoutes, } from "./personas/controller";
@@ -170,6 +172,8 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(importRoutes(handleOpts,),);
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
+  // TODO: Enable when LoRA feature is ready for production
+  // app.use(loraRoutes({ config, }),);
   app.use(ageGateRoutes(handleOpts,),);
   app.use(nsfwRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
