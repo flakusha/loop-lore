@@ -1,0 +1,191 @@
+/**
+ * VN Template Engine
+ *
+ * Core engine for VN scene templates — variable substitution,
+ * template inheritance, and composition.
+ */
+
+// ── Types ──────────────────────────────────────────────────
+
+export interface VnTemplate {
+  id: string;
+  name: string;
+  description: string;
+  worldId: string;
+  category: "scene" | "dialogue" | "transition" | "composite";
+  version: number;
+  variables: VnTemplateVariable[];
+  body: VnTemplateBody;
+  tags: string[];
+  parentTemplateId?: string;
+  createdAt: string;
+  modifiedAt: string;
+}
+
+export interface VnTemplateVariable {
+  name: string;
+  type: "string" | "number" | "boolean" | "enum" | "asset";
+  default?: unknown;
+  required: boolean;
+  description?: string;
+  enum?: string[];
+}
+
+export interface VnTemplateBody {
+  layout: "overlay" | "below" | "split" | "inherit";
+  layoutConfig?: Record<string, unknown>;
+  transition: string;
+  dialogueStyle?: string;
+  portrait?: {
+    position: "left" | "right" | "center" | "inherit";
+    size?: number;
+    expression?: string;
+  };
+  background?: {
+    scaling: "contain" | "cover" | "fill";
+    filter?: string;
+    parallax?: boolean;
+  };
+  text?: {
+    typewriterSpeed: number;
+    pauseOnPunctuation: boolean;
+    fontStyle?: string;
+  };
+  content?: string;
+}
+
+export interface VnCompositeStep {
+  templateId: string;
+  variables?: Record<string, unknown>;
+  condition?: string;
+  delay?: number;
+}
+
+// ── Variable Resolver ──────────────────────────────────────
+
+export function resolveVariables(
+  template: VnTemplate,
+  context: Record<string, unknown>,
+): Record<string, unknown> {
+  const resolved: Record<string, unknown> = {};
+
+  for (const variable of template.variables) {
+    const value = context[variable.name] ?? variable.default;
+
+    if (variable.required && value === undefined) {
+      throw new Error(`Required variable "${variable.name}" is missing`,);
+    }
+
+    resolved[variable.name] = value;
+  }
+
+  return resolved;
+}
+
+// ── Template Substitution ──────────────────────────────────
+
+export function substituteTemplate(
+  text: string,
+  variables: Record<string, unknown>,
+): string {
+  return text.replace(/\{\{(\w+)\}\}/g, (match, name) => {
+    const value = variables[name];
+    if (value === undefined) { return match; }
+    return String(value,);
+  },);
+}
+
+// ── Template Inheritance ───────────────────────────────────
+
+export function resolveTemplate(
+  template: VnTemplate,
+  templates: Map<string, VnTemplate>,
+): VnTemplate {
+  if (!template.parentTemplateId) { return template; }
+
+  const parent = templates.get(template.parentTemplateId,);
+  if (!parent) { return template; }
+
+  const resolvedParent = resolveTemplate(parent, templates,);
+
+  return {
+    ...resolvedParent,
+    ...template,
+    body: {
+      ...resolvedParent.body,
+      ...template.body,
+    },
+    variables: [
+      ...resolvedParent.variables.filter(
+        (v) => !template.variables.some((tv) => tv.name === v.name,),
+      ),
+      ...template.variables,
+    ],
+  };
+}
+
+// ── Template Storage (localStorage) ────────────────────────
+
+const STORAGE_PREFIX = "vn-templates-";
+
+export function getTemplatesForWorld(worldId: string): VnTemplate[] {
+  const key = `${STORAGE_PREFIX}${worldId}`;
+  const data = localStorage.getItem(key,);
+  if (!data) { return []; }
+
+  try {
+    return JSON.parse(data,);
+  } catch {
+    return [];
+  }
+}
+
+export function saveTemplate(template: VnTemplate): void {
+  const templates = getTemplatesForWorld(template.worldId,);
+  const existing = templates.findIndex((t) => t.id === template.id,);
+
+  const updated = {
+    ...template,
+    modifiedAt: new Date().toISOString(),
+    version: template.version + 1,
+  };
+
+  if (existing >= 0) {
+    templates[existing] = updated;
+  } else {
+    templates.push(updated,);
+  }
+
+  const key = `${STORAGE_PREFIX}${template.worldId}`;
+  localStorage.setItem(key, JSON.stringify(templates,),);
+}
+
+export function deleteTemplate(worldId: string, templateId: string): void {
+  const templates = getTemplatesForWorld(worldId,);
+  const filtered = templates.filter((t) => t.id !== templateId,);
+  const key = `${STORAGE_PREFIX}${worldId}`;
+  localStorage.setItem(key, JSON.stringify(filtered,),);
+}
+
+export function getTemplate(worldId: string, templateId: string): VnTemplate | null {
+  const templates = getTemplatesForWorld(worldId,);
+  return templates.find((t) => t.id === templateId, null) ?? null;
+}
+
+// ── Template Export/Import ──────────────────────────────────
+
+export function exportTemplate(template: VnTemplate): string {
+  return JSON.stringify(template, null, 2,);
+}
+
+export function importTemplate(json: string): VnTemplate | null {
+  try {
+    const template = JSON.parse(json,) as VnTemplate;
+    if (!template.id || !template.name || !template.worldId) {
+      return null;
+    }
+    return template;
+  } catch {
+    return null;
+  }
+}

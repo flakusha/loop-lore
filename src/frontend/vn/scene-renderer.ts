@@ -10,6 +10,7 @@ import {
   getPortraitPosition,
   getPortraitUrl,
 } from "./portrait-manager";
+import { destroyChoiceCards, initChoiceCards, loadChoices, } from "./choice-cards";
 import type { VnSettings, } from "./settings";
 import { getVnSettings, } from "./settings";
 import { transitionScene, type TransitionType, } from "./transition-engine";
@@ -42,6 +43,7 @@ let scenes: VnScene[] = [];
 let currentIndex = 0;
 let container: HTMLElement | null = null;
 let settings: VnSettings | null = null;
+let currentChatId: string | null = null;
 
 /**
  * Initialize the VN scene renderer.
@@ -50,11 +52,13 @@ export function initVnRenderer(
   containerEl: HTMLElement,
   messages: VnMessage[],
   gmConfig?: Record<string, unknown>,
+  chatId?: string,
 ): void {
   container = containerEl;
   settings = getVnSettings(gmConfig,);
   scenes = messages.map(msgToScene,);
   currentIndex = Math.max(0, scenes.length - 1,);
+  currentChatId = chatId ?? null;
 
   renderCurrentScene();
 }
@@ -63,6 +67,7 @@ export function initVnRenderer(
  * Destroy the VN renderer, cleaning up DOM.
  */
 export function destroyVnRenderer(): void {
+  destroyChoiceCards();
   if (container) {
     container.innerHTML = "";
     container = null;
@@ -70,6 +75,7 @@ export function destroyVnRenderer(): void {
   scenes = [];
   currentIndex = 0;
   settings = null;
+  currentChatId = null;
 }
 
 /**
@@ -233,6 +239,15 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
   navEl.appendChild(counterEl,);
   navEl.appendChild(nextBtn,);
   sceneEl.appendChild(navEl,);
+
+  // Choice cards container
+  if (currentChatId) {
+    const choicesEl = document.createElement("div",);
+    choicesEl.className = "vn-choices-container";
+    sceneEl.appendChild(choicesEl,);
+    initChoiceCards(choicesEl, currentChatId, currentIndex,);
+    loadChoices();
+  }
 
   // Click/space to advance or skip typewriter
   sceneEl.addEventListener("click", () => {
