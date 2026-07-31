@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { CancelReason, CancelSource, GenerationStatus, } from "./enums";
+import type { CancelReason, CancelSource, GenerationStatus, } from "./schemas";
 
 // ── generation_attempts ────────────────────────────────────────────
 export interface GenerationAttempts {

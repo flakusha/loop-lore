@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { ActorItemType, ActorType, AgentType, ChatMode, ChatParticipantRole, ChatType, ContentEncoding, EquipState, KeyStatus, KeyType, MessageContentFormat, MessageContentType, MessageRole, MessageStatus, MessageVisibility, ModelRole, NoteCategory, PinnedState, TurnStrategy, UserRole, UserStatus, } from "./enums";
+import type { ActorItemType, ActorType, AgentType, ChatMode, ChatParticipantRole, ChatType, ContentEncoding, EquipState, KeyStatus, KeyType, MessageContentFormat, MessageContentType, MessageRole, MessageStatus, MessageVisibility, ModelRole, NoteCategory, PinnedState, TurnStrategy, UserRole, UserStatus, } from "./schemas";
 
 // ── users ────────────────────────────────────────────
 export interface Users {
@@ -338,4 +338,20 @@ export interface MessageTranslations {
   provider: string | null;
   created_at: string;
   updated_at: string | null;
+}
+
+// ── vn_choices ────────────────────────────────────────────
+export interface VnChoices {
+  id: Generated<string>;
+  chat_id: string;
+  scene_index: number;
+  label: string;
+  description: string | null;
+  consequences: Generated<string>;
+  relationship_impact: Generated<string>;
+  mood_impact: Generated<string>;
+  unlock_conditions: Generated<string>;
+  selected: Generated<number>;
+  selected_at: string | null;
+  created_at: string;
 }

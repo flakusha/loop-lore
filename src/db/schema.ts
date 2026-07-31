@@ -107,5 +107,5 @@ export interface DB {
   moderation_appeals: import("./schema-moderation").ModerationAppeals;
   shadow_notes: import("./schema-gm").ShadowNotes;
   whitenotes: import("./schema-gm").Whitenotes;
-  vn_choices: import("./schema-story").VnChoices;
+  vn_choices: import("./schema-core").VnChoices;
 }
