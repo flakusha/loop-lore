@@ -159,7 +159,6 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
         agent_type: AgentType.None,
         settings: "{}",
         import_spec: "raw",
-        data_version: 0,
       },
       {
         id: SEED.admin.id,
@@ -170,7 +169,6 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
         agent_type: AgentType.None,
         settings: "{}",
         import_spec: "raw",
-        data_version: 0,
       },
     ],)
     .onConflict((oc,) => oc.column("id",).doNothing())
@@ -191,7 +189,6 @@ export async function seedCharacter(db: Kysely<DB>,): Promise<void> {
       system_prompt: "You are a test character.",
       settings: "{}",
       import_spec: "raw",
-      data_version: 0,
     },)
     .execute();
 }
@@ -244,12 +241,9 @@ export async function seedWorld(db: Kysely<DB>,): Promise<void> {
     .insertInto("worlds",)
     .values({
       id: SEED.world.id,
-      owner_id: SEED.user.id,
+      creator_id: SEED.user.id,
       name: SEED.world.name,
       description: SEED.world.description,
-      difficulty_modifier: 1,
-      difficulty_reroll: "none",
-      difficulty_state: "normal",
     },)
     .execute();
 }
@@ -262,7 +256,8 @@ export async function seedLocation(db: Kysely<DB>,): Promise<void> {
       world_id: SEED.world.id,
       name: SEED.location.name,
       description: SEED.location.description,
-      connections: "[]",
+      type: "default",
+      config: "{}",
     },)
     .execute();
 }
@@ -273,15 +268,15 @@ export async function seedItem(db: Kysely<DB>,): Promise<void> {
     .values({
       id: SEED.item.id,
       world_id: SEED.world.id,
+      creator_id: SEED.user.id,
       name: SEED.item.name,
       description: SEED.item.description,
       category: ItemCategory.Weapon,
       rarity: ItemRarity.Common,
       stackable: StackableState.Unique,
       max_stack: 1,
-      properties: JSON.stringify({ damage: 5, type: "slashing", },),
-      value: 10,
-      weight: 3,
+      stats: JSON.stringify({ damage: 5, type: "slashing", },),
+      effects: "{}",
     },)
     .execute();
 }
@@ -296,7 +291,6 @@ export async function seedWorldItem(db: Kysely<DB>,): Promise<void> {
       location_id: SEED.location.id,
       quantity: 1,
       visibility: "visible",
-      respawnable: 0,
     },)
     .execute();
 }
@@ -368,7 +362,6 @@ export async function seedSolo(db: Kysely<DB>,): Promise<void> {
       agent_type: AgentType.None,
       settings: "{}",
       import_spec: "raw",
-      data_version: 0,
     },)
     .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
@@ -387,7 +380,6 @@ export async function seedSolo(db: Kysely<DB>,): Promise<void> {
       system_prompt: "You are a test character.",
       settings: "{}",
       import_spec: "raw",
-      data_version: 0,
     },)
     .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
