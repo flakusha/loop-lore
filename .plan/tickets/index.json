@@ -5163,5 +5163,24 @@
     "epic": "epic-communications-integrations.md",
     "tags": [],
     "source": ".plan/tickets/TASK-xmpp-integration.md"
+  },
+  "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH": {
+    "extid": "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH",
+    "type": "TASK",
+    "title": "Non-Standard Browser Crypto Research",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-non-standard-browser-crypto",
+    "tags": [
+      "encryption",
+      "wasm",
+      "js-crypto",
+      "chacha20",
+      "argon2",
+      "libsodium",
+      "browser-crypto"
+    ],
+    "source": ".plan/tickets/TASK-non-standard-browser-crypto-research.md",
+    "status": "open"
   }
 }
