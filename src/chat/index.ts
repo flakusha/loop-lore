@@ -10,11 +10,36 @@ export type { ContextStatus, CountableMessage, TokenCountResult, } from "./token
 export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
 export {
+  computeContextWindow,
+  getThresholdState,
+  injectEvents,
+  injectMemories,
+} from "./context-window";
+export { estimateTokens, } from "./token-utils";
+
+export {
+  classifyTransitionMessage,
+  createTransition,
+  selectMessagesForPromotion,
+} from "./transitions";
+
+export {
+  buildRenamePrompt,
+  generateRuleName,
+} from "./auto-rename";
+
+export {
   buildLengthConfig,
   computeMaxTokens,
   DEFAULT_RESPONSE_LENGTH,
   LENGTH_PRESETS,
   parseLengthConfig,
+} from "./response-length";
+
+export {
+  clampTokenCount,
+  isValidPreset,
+  resolveResponseLength,
 } from "./response-length";
 export type { LengthPreset, ResponseLengthConfig, } from "./response-length";
 
