@@ -31,7 +31,7 @@ LLM RPG Chat reimplementation inspired by SillyTavern, Odysseus, and Open WebUI.
 
 See **AGENTS.md** → "Directory Structure (Key Paths)" for the full listing.
 
-Key directories: `src/db/` (Kysely + schema), `src/routes/` (REST handlers), `src/generation/` (LLM), `src/turning/` (orchestration), `src/crypto/` (encryption), `src/frontend/` (htmx + Alpine), `src/tui/` (blessed widgets), `src/validation/schemas.ts` (TypeBox).
+Key directories: `src/db/` (Kysely + schema), `src/routes/` (REST handlers), `src/generation/` (LLM), `src/turning/` (orchestration), `src/crypto/` (encryption), `src/frontend/` (htmx + Alpine), `src/tui/` (blessed widgets), `src/validation/schemas.ts` (TypeBox), `src/regex/` (extraction pipeline), `src/rpg/` (combat, quests, skills, loot), `src/characters/` (avatar, mood, traits), `src/assets/` (metadata extraction), `src/memory/` (budget, provisioning), `src/story/` (multi-LLM story engine).
 
 ## ⚠️ Zod/TypeBox Trap
 
@@ -52,7 +52,7 @@ See **`.agents/references/recommendations.md`** for full patterns. Key rules:
 
 ```bash
 bun run check        # typecheck + lint + format + md lint
-bun test src/        # unit tests
+bun test src/        # unit tests (203 test files)
 bun run db:migrate   # DB migrations
 ./scripts/worktree.sh list   # active worktrees
 ```
@@ -65,6 +65,8 @@ bun run db:migrate   # DB migrations
 - **Rule-based assistant** — MVP in `src/assistant/service.ts`, designed for swap to LLM backend
 - **Session token auth** — JWT or server-side token lookup
 - **No commit of .env** — use `.env.example` only
+- **Regex extraction pipeline** — image edits, intents, memory classification, transitions, hallucination guard
+- **Multi-provider text2img** — openai, sdapi, sdcpp, comfyui for emotion avatars
 
 ## Common Pitfalls
 
