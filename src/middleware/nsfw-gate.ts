@@ -106,7 +106,7 @@ export async function getActorContentRating(
     .where("id", "=", actorId,)
     .executeTakeFirst();
 
-  return actor ? actor.content_rating : "sfw";
+  return actor ? (actor.content_rating as ContentRating) : "sfw";
 }
 
 /**

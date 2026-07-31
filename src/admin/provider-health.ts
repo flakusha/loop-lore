@@ -28,8 +28,9 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
   const providers = listProviders();
   getLogger().child({ module: "provider-health", },).info("Scanning providers", { count: providers.length, },);
 
-  const results = await Promise.allSettled(
-    providers.map(async (p,) => {
+  const promises: Promise<ProviderHealthStatus>[] = [];
+  for (const p of providers) {
+    promises.push((async () => {
       const provider = getProvider(p.name,);
       if (!provider) {
         return {
@@ -56,25 +57,31 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
         lastChecked: new Date().toISOString(),
         error: healthResult?.error ?? (health.status === "rejected" ? String(health.reason,) : undefined),
       };
-    },),
-  );
+    })(),);
+  }
 
-  const updated = results.map((r, i,) =>
-    r.status === "fulfilled"
-      ? r.value
-      : {
+  const results = await Promise.allSettled(promises,);
+
+  const updated: ProviderHealthStatus[] = [];
+  for (const [i, r,] of results.entries()) {
+    if (r.status === "fulfilled") {
+      updated.push(r.value,);
+    } else {
+      updated.push({
         name: providers[i]!.name,
         label: providers[i]!.capabilities.label,
-        status: "error" as const,
+        status: "error",
         models: [],
         lastChecked: new Date().toISOString(),
         error: r.reason instanceof Error ? r.reason.message : "Unknown error",
-      }
-  );
+      },);
+    }
+  }
 
   state.cache = updated;
 
-  const healthy = updated.filter((p,) => p.status === "healthy").length;
+  let healthy = 0;
+  for (const p of updated) { if (p.status === "healthy") { healthy++; } }
   const failed = updated.length - healthy;
   if (failed > 0) {
     getLogger().child({ module: "provider-health", },).warn("Some providers unreachable", { healthy, failed, },);
@@ -96,21 +103,31 @@ export function getHealthCache(): ProviderHealthStatus[] {
  * Get health for a single provider by name.
  */
 export function getProviderHealth(name: string,): ProviderHealthStatus | undefined {
-  return state.cache.find((p,) => p.name === name);
+  for (const p of state.cache) {
+    if (p.name === name) { return p; }
+  }
+  return undefined;
 }
 
 /**
  * Check if any providers are unhealthy.
  */
 export function hasUnhealthyProviders(): boolean {
-  return state.cache.some((p,) => p.status !== "healthy");
+  for (const p of state.cache) {
+    if (p.status !== "healthy") { return true; }
+  }
+  return false;
 }
 
 /**
  * Get list of unhealthy provider names.
  */
 export function getUnhealthyProviders(): string[] {
-  return state.cache.filter((p,) => p.status !== "healthy").map((p,) => p.name);
+  const result: string[] = [];
+  for (const p of state.cache) {
+    if (p.status !== "healthy") { result.push(p.name,); }
+  }
+  return result;
 }
 
 /**

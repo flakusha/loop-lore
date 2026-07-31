@@ -25,8 +25,8 @@ function stubApp(body: string, headers: Record<string, string>, status = 200,) {
 }
 
 describe("createRequestHandler policy wiring", () => {
-  const config = loadConfig();
   const logger = createLogger({ level: "error", },);
+  const config = loadConfig();
 
   test("API responses carry security headers", async () => {
     const app = stubApp('{"ok":true}', { "content-type": "application/json", },);
