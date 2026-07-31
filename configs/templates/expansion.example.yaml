@@ -1,0 +1,249 @@
+# Template Expansion Configuration
+#
+# Extend base template configs with additional keywords, actions, emotions.
+# Run at application startup to expand the base avatar config.
+#
+# Merge strategy: replace | extend (default) | override
+# - replace: wipe all base entries, use only these
+# - extend: add new entries (default, base wins on conflict)
+# - override: deep merge over base (field-level)
+
+merge: extend
+
+# Additional keywords for emotion detection
+keywords:
+  - smile
+  - grin
+  - laugh
+  - cry
+  - weep
+  - frown
+  - scowl
+  - gasp
+  - stare
+  - tremble
+  - shake
+  - recoil
+  - wince
+  - nod
+  - wait
+  - pause
+  - jump
+  - clap
+  - cheer
+  - celebrate
+  - fidget
+  - pace
+  - wring
+  - sweat
+  - breathe
+  - relax
+  - settle
+  - rest
+  - tilt
+  - squint
+  - ponder
+  - wonder
+  - stand
+  - raise
+  - beam
+  - glow
+  - hide
+  - lower
+  - shrink
+  - avoid
+  - embrace
+  - hold
+  - caress
+  - gaze
+  - glare
+  - clench
+  - bite
+  - seethe
+  - thank
+  - appreciate
+  - bow
+  - yawn
+  - slouch
+  - drift
+  - stare
+
+# Additional actions for each emotion
+actions:
+  happy:
+    - celebrate
+    - dance
+    - sing
+    - share
+  sad:
+    - withdraw
+    - isolate
+    - remember
+    - mourn
+  angry:
+    - confront
+    - challenge
+    - demand
+    - resist
+  surprised:
+    - exclaim
+    - question
+    - investigate
+    - verify
+  fearful:
+    - flee
+    - hide
+    - protect
+    - warn
+  disgusted:
+    - reject
+    - avoid
+    - criticize
+    - condemn
+  neutral:
+    - observe
+    - listen
+    - wait
+    - consider
+  excited:
+    - explore
+    - discover
+    - share
+    - plan
+  anxious:
+    - worry
+    - prepare
+    - check
+    - double-check
+  calm:
+    - breathe
+    - center
+    - focus
+    - ground
+  confused:
+    - ask
+    - research
+    - compare
+    - analyze
+  proud:
+    - demonstrate
+    - teach
+    - mentor
+    - showcase
+  shameful:
+    - apologize
+    - make amends
+    - reflect
+    - withdraw
+  loving:
+    - nurture
+    - protect
+    - comfort
+    - cherish
+  jealous:
+    - compete
+    - monitor
+    - question
+    - assert
+  grateful:
+    - reciprocate
+    - acknowledge
+    - honor
+    - remember
+  bored:
+    - seek stimulation
+    - distract
+    - create
+    - explore
+
+# Additional emotions to add
+emotions:
+  determined:
+    asset: determined.png
+    intent: "The character shows determination and resolve"
+    prompt: "determined expression, focused eyes, set jaw, resolute"
+  playful:
+    asset: playful.png
+    intent: "The character looks playful and mischievous"
+    prompt: "playful expression, mischievous grin, bright eyes, energetic"
+  tired:
+    asset: tired.png
+    intent: "The character looks tired and weary"
+    prompt: "tired expression, drooping eyelids, yawning, exhausted"
+  focused:
+    asset: focused.png
+    intent: "The character is deeply focused and concentrated"
+    prompt: "focused expression, intense gaze, concentration, alert"
+  skeptical:
+    asset: skeptical.png
+    intent: "The character looks skeptical and doubtful"
+    prompt: "skeptical expression, raised eyebrow, doubtful look, questioning"
+  amused:
+    asset: amused.png
+    intent: "The character is amused and entertained"
+    prompt: "amused expression, slight smile, entertained look, chuckling"
+  sympathetic:
+    asset: sympathetic.png
+    intent: "The character shows sympathy and compassion"
+    prompt: "sympathetic expression, warm eyes, compassionate look, understanding"
+  stern:
+    asset: stern.png
+    intent: "The character looks stern and serious"
+    prompt: "stern expression, serious face, authoritative look, firm"
+  curious:
+    asset: curious.png
+    intent: "The character is curious and interested"
+    prompt: "curious expression, interested eyes, leaning forward, attentive"
+  relieved:
+    asset: relieved.png
+    intent: "The character looks relieved and relaxed"
+    prompt: "relieved expression, sighing, relaxing, at ease"
+
+# Additional intent patterns for emotion detection
+intentPatterns:
+  - pattern: "determined"
+    emotion: determined
+  - pattern: "resolved"
+    emotion: determined
+  - pattern: "playful"
+    emotion: playful
+  - pattern: "mischievous"
+    emotion: playful
+  - pattern: "tired"
+    emotion: tired
+  - pattern: "weary"
+    emotion: tired
+  - pattern: "exhausted"
+    emotion: tired
+  - pattern: "focused"
+    emotion: focused
+  - pattern: "concentrated"
+    emotion: focused
+  - pattern: "skeptical"
+    emotion: skeptical
+  - pattern: "doubtful"
+    emotion: skeptical
+  - pattern: "amused"
+    emotion: amused
+  - pattern: "entertained"
+    emotion: amused
+  - pattern: "sympathetic"
+    emotion: sympathetic
+  - pattern: "compassionate"
+    emotion: sympathetic
+  - pattern: "stern"
+    emotion: stern
+  - pattern: "serious"
+    emotion: stern
+  - pattern: "curious"
+    emotion: curious
+  - pattern: "interested"
+    emotion: curious
+  - pattern: "relieved"
+    emotion: relieved
+  - pattern: "relaxed"
+    emotion: relieved
+
+# Whether to auto-generate missing emotion avatars via SD
+# When true, emotions without asset files will be generated at startup
+generateMissingAvatars: false
