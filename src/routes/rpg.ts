@@ -25,6 +25,7 @@ import {
   rollDice,
   rollFromNotation,
 } from "../rpg/dice.js";
+import { logDiceRoll, } from "../rpg/service.js";
 import {
   type AbilityName,
   computeModifiers,
@@ -35,7 +36,6 @@ import {
   type StatBlock,
   validateStatBlock,
 } from "../rpg/stats.js";
-import { logDiceRoll, } from "../rpg/service.js";
 import { SuccessResponse, } from "../validation/schemas.js";
 import { jsonError, jsonResponse, } from "./http-utils.js";
 
@@ -84,7 +84,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
                 modifier: body.modifier ?? 0,
                 advantageMode: "normal",
                 exploding: body.exploding ?? false,
-                rawRolls: result.dice.map((d,) => d.value,),
+                rawRolls: result.dice.map((d,) => d.value),
                 rawTotal: result.rawTotal,
                 total: result.total,
                 purpose: "dice_roll",
