@@ -63,6 +63,10 @@ Reimplement SillyTavern RPG chat:
 - DB: `bun:sqlite` → Kysely (PG via dialect swap)
 - Assets (images/audio/video) — polymorphic linking
 - Enhanced assistant, user mgmt, multi-session
+- VN scene generation with choice cards
+- Emotion avatars with multi-provider text2img fallback
+- Regex extraction pipeline (image edits, intents, memory, transitions, etc.)
+- 203 test files covering services, routes, middleware, crypto, RPG systems
 
 ## Technology Constraints
 
@@ -108,7 +112,26 @@ src/
 ├── crypto/              # Encryption
 ├── frontend/            # htmx + Alpine.js
 ├── plugins/             # Plugin system
-└── tui/                 # Blessed widgets
+├── tui/                 # Blessed widgets
+├── regex/               # Extraction pipeline (image edits, intents, memory, etc.)
+├── rpg/                 # RPG subsystems (combat, quests, skills, loot, etc.)
+├── characters/          # Character services (avatar, mood, traits, relationships)
+├── assets/              # Asset service + metadata extraction
+├── memory/              # Memory budget, provisioning, purge
+├── i18n/                # Internationalization
+├── group-chat/          # Group chat mention parsing
+├── assistant/           # Rule-based assistant + commands
+├── admin/               # Admin config, provider health
+├── middleware/           # Auth, NSFW gate, solo user, rate limit
+├── transport/           # WebSocket transport layer
+├── content/             # Hash injection, compression, encoding
+├── personas/            # Persona service
+├── notifications/       # Notification service
+├── profanity/           # Profanity filter
+├── age-gate/            # Age gate service
+├── telemetry/           # Telemetry
+├── test-utils/          # Test insert helpers
+└── utils/               # Shared utilities
 
 docs/spec/               # Core specs
 docs/frontend/           # UX specs
