@@ -9,99 +9,99 @@
 
 export {
   COMMAND_PATTERNS,
-  TAG_FACE,
-  TAG_BACKGROUND,
-  TAG_OBJECT,
   type CommandIntent,
+  TAG_BACKGROUND,
+  TAG_FACE,
+  TAG_OBJECT,
 } from "./image-edit";
 
 export {
-  INTENT_PATTERNS,
-  SLASH_COMMAND,
-  REGEX_SPECIAL_CHARS,
   type AssistantIntent,
+  INTENT_PATTERNS,
+  REGEX_SPECIAL_CHARS,
+  SLASH_COMMAND,
 } from "./intent";
 
 export {
-  EPISODIC_TEMPORAL,
+  ENTITY_PATTERN,
   EPISODIC_ACTION,
-  PROCEDURAL_PREFERENCE,
-  PROCEDURAL_LEARNING,
+  EPISODIC_TEMPORAL,
   IMPORTANCE_DECISION,
   IMPORTANCE_EMOTION,
-  ENTITY_PATTERN,
-  KEYWORD_PROPER_NOUN,
   KEYWORD_ACTION_VERBS,
+  KEYWORD_PROPER_NOUN,
+  PROCEDURAL_LEARNING,
+  PROCEDURAL_PREFERENCE,
 } from "./memory-classification";
 
 export {
+  CONTEXT_CUT,
   MOVEMENT_VERBS,
   SCENE_CHANGE,
-  TRANSITION_PHRASES,
   TEMPORAL_TRANSITION,
-  CONTEXT_CUT,
+  TRANSITION_PHRASES,
 } from "./transitions";
 
 export {
-  LOCATION_INDICATORS,
   ITEM_INDICATORS,
+  LOCATION_INDICATORS,
   WORLD_INDICATORS,
 } from "./hallucination";
 
-export { EXTERNAL_MUSIC_PATTERNS } from "./music-urls";
+export { EXTERNAL_MUSIC_PATTERNS, } from "./music-urls";
 
 export {
-  SCRIPT_TAG,
+  HASH_INJECTION_LINK,
+  HASH_INJECTION_SCRIPT,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
-  HASH_INJECTION_SCRIPT,
-  HASH_INJECTION_LINK,
+  SCRIPT_TAG,
 } from "./html-sanitize";
 
 // ── Story Events ─────────────────────────────────────────────
 
 export {
-  LOCATION_MOVEMENT,
-  LOCATION_TRAVEL,
-  LOCATION_PATTERNS,
-  TIME_HOURS,
-  TIME_CELESTIAL,
-  TIME_NEXT_PERIOD,
-  TIME_PATTERNS,
   COMBAT_ACTION,
   COMBAT_DAMAGE,
   COMBAT_PATTERNS,
-  NPC_STATE,
-  NPC_DISPOSITION,
-  NPC_REVELATION,
-  NPC_PATTERNS,
-  ITEM_GIVE,
-  ITEM_TAKE,
   ITEM_DROP,
+  ITEM_GIVE,
   ITEM_PATTERNS,
-  LORE_REVELATION,
+  ITEM_TAKE,
+  LOCATION_MOVEMENT,
+  LOCATION_PATTERNS,
+  LOCATION_TRAVEL,
   LORE_ANCIENT,
   LORE_PATTERNS,
+  LORE_REVELATION,
+  NPC_DISPOSITION,
+  NPC_PATTERNS,
+  NPC_REVELATION,
+  NPC_STATE,
+  TIME_CELESTIAL,
+  TIME_HOURS,
+  TIME_NEXT_PERIOD,
+  TIME_PATTERNS,
 } from "./story-events";
 
 // ── Template Rendering ───────────────────────────────────────
 
 export {
-  TITLE_TAG,
-  INCLUDE_DIRECTIVE,
-  ICON_DIRECTIVE,
-  I18N_DIRECTIVE,
   HTML_EXTENSION,
+  I18N_DIRECTIVE,
+  ICON_DIRECTIVE,
+  INCLUDE_DIRECTIVE,
+  TITLE_TAG,
 } from "./template";
 
 // ── Narrative Quality ────────────────────────────────────────
 
 export {
+  ACTION_MARKER,
   DIALOGUE_QUOTES,
+  FIRST_PERSON,
   PAST_VERBS,
   PRESENT_VERBS,
-  ACTION_MARKER,
-  FIRST_PERSON,
   PROPER_NOUN,
   PROPER_NOUN_ENTITY,
   SENTENCE_END,
@@ -109,48 +109,48 @@ export {
 
 // ── Cookie Parsing ───────────────────────────────────────────
 
-export { LL_TOKEN, LL_LOCALE, CSRF_TOKEN } from "./cookies";
+export { CSRF_TOKEN, LL_LOCALE, LL_TOKEN, } from "./cookies";
 
 // ── Slugification / Sanitization ─────────────────────────────
 
 export {
-  SLUG_SAFE,
-  FILENAME_SAFE,
-  STRIP_QUOTES,
-  STRIP_HTML_TAGS,
   DOUBLE_SPACES,
-  SPACE_BEFORE_PUNCT,
-  REMOVE_DATA_TESTID,
-  REMOVE_COLON_DATA_TESTID,
-  REMOVE_SVG_CLASS,
+  FILENAME_SAFE,
   GITDIR_LINE,
-  MODEL_SIZE,
-  HASHED_ASSET,
-  HASH_FILENAME,
-  KEYWORD_SPLIT,
   GREETING_FILLER,
+  HASH_FILENAME,
+  HASHED_ASSET,
+  KEYWORD_SPLIT,
+  MODEL_SIZE,
   PROPER_NOUN_EXTRACT,
+  REMOVE_COLON_DATA_TESTID,
+  REMOVE_DATA_TESTID,
+  REMOVE_SVG_CLASS,
+  SLUG_SAFE,
+  SPACE_BEFORE_PUNCT,
+  STRIP_HTML_TAGS,
+  STRIP_QUOTES,
 } from "./slugs";
 
 // ── Commit / Semver ──────────────────────────────────────────
 
-export { CONVENTIONAL_COMMIT, SEMVER, RELEASE_BRANCH } from "./commit";
+export { CONVENTIONAL_COMMIT, RELEASE_BRANCH, SEMVER, } from "./commit";
 
 // ── Dice Notation ────────────────────────────────────────────
 
-export { DICE_SIMPLE, DICE_EXTENDED, DICE_ROLL_EXTRACT } from "./dice";
+export { DICE_EXTENDED, DICE_ROLL_EXTRACT, DICE_SIMPLE, } from "./dice";
 
 // ── Code Fences / JSON ───────────────────────────────────────
 
-export { CODE_FENCE_JSON, JSON_ARRAY, FENCE_OPEN } from "./code-fence";
+export { CODE_FENCE_JSON, FENCE_OPEN, JSON_ARRAY, } from "./code-fence";
 
 // ── Placeholders / i18n ──────────────────────────────────────
 
 export {
   DOUBLE_BRACE,
-  SINGLE_BRACE,
-  WORKFLOW_TAG,
   MENTION,
   MENTION_AT_END,
   OBJECT_TYPE,
+  SINGLE_BRACE,
+  WORKFLOW_TAG,
 } from "./placeholders";

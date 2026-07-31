@@ -1,10 +1,10 @@
 import { describe, expect, test, } from "bun:test";
 import {
   COMMAND_PATTERNS,
+  type CommandIntent,
   TAG_BACKGROUND,
   TAG_FACE,
   TAG_OBJECT,
-  type CommandIntent,
 } from "./image-edit";
 
 // ── Helper ────────────────────────────────────────────────
@@ -20,7 +20,7 @@ function matchIntent(
 
   for (const { intent, patterns, confidence, } of COMMAND_PATTERNS) {
     for (const pattern of patterns) {
-      if (pattern.test(text)) {
+      if (pattern.test(text,)) {
         if (!best || confidence > best.confidence) {
           best = { intent, confidence, };
         }
@@ -50,8 +50,8 @@ describe("modify_background", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("modify_background");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("modify_background",);
     });
   }
 });
@@ -67,8 +67,8 @@ describe("add_object", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("add_object");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("add_object",);
     });
   }
 });
@@ -86,8 +86,8 @@ describe("remove_object", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("remove_object");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("remove_object",);
     });
   }
 });
@@ -107,8 +107,8 @@ describe("apply_style", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("apply_style");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("apply_style",);
     });
   }
 });
@@ -124,8 +124,8 @@ describe("adjust_mood", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("adjust_mood");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("adjust_mood",);
     });
   }
 });
@@ -142,8 +142,8 @@ describe("change_hair", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("change_hair");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("change_hair",);
     });
   }
 });
@@ -158,8 +158,8 @@ describe("change_outfit", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("change_outfit");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("change_outfit",);
     });
   }
 });
@@ -174,8 +174,8 @@ describe("change_lighting", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("change_lighting");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("change_lighting",);
     });
   }
 });
@@ -193,8 +193,8 @@ describe("change_pose", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("change_pose");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("change_pose",);
     });
   }
 });
@@ -212,8 +212,8 @@ describe("upscale", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("upscale");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("upscale",);
     });
   }
 });
@@ -230,8 +230,8 @@ describe("no match", () => {
 
   for (const input of cases) {
     test(`does not match "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result).toBeNull();
+      const result = matchIntent(input,);
+      expect(result,).toBeNull();
     });
   }
 });
@@ -241,55 +241,67 @@ describe("no match", () => {
 describe("confidence", () => {
   test("modify_background has confidence 0.9", () => {
     const bg = COMMAND_PATTERNS.find((p,) => p.intent === "modify_background");
-    expect(bg?.confidence).toBe(0.9);
+    expect(bg?.confidence,).toBe(0.9,);
   });
 
   test("upscale has confidence 0.9", () => {
     const up = COMMAND_PATTERNS.find((p,) => p.intent === "upscale");
-    expect(up?.confidence).toBe(0.9);
+    expect(up?.confidence,).toBe(0.9,);
   });
 
   test("add_accessory has confidence 0.7", () => {
     const acc = COMMAND_PATTERNS.find((p,) => p.intent === "add_accessory");
-    expect(acc?.confidence).toBe(0.7);
+    expect(acc?.confidence,).toBe(0.7,);
   });
 });
 
 // ── Tag Patterns ──────────────────────────────────────────
 
 describe("TAG_FACE", () => {
-  test.each(["face", "portrait", "person", "Portrait", "FACE"])(
+  test.each(["face", "portrait", "person", "Portrait", "FACE",],)(
     "matches %s",
-    (tag) => { expect(TAG_FACE.test(tag)).toBe(true); },
+    (tag,) => {
+      expect(TAG_FACE.test(tag,),).toBe(true,);
+    },
   );
 
-  test.each(["landscape", "sky", "tree"])(
+  test.each(["landscape", "sky", "tree",],)(
     "does not match %s",
-    (tag) => { expect(TAG_FACE.test(tag)).toBe(false); },
+    (tag,) => {
+      expect(TAG_FACE.test(tag,),).toBe(false,);
+    },
   );
 });
 
 describe("TAG_BACKGROUND", () => {
-  test.each(["background", "scene", "environment", "Scene"])(
+  test.each(["background", "scene", "environment", "Scene",],)(
     "matches %s",
-    (tag) => { expect(TAG_BACKGROUND.test(tag)).toBe(true); },
+    (tag,) => {
+      expect(TAG_BACKGROUND.test(tag,),).toBe(true,);
+    },
   );
 
-  test.each(["character", "face", "sword"])(
+  test.each(["character", "face", "sword",],)(
     "does not match %s",
-    (tag) => { expect(TAG_BACKGROUND.test(tag)).toBe(false); },
+    (tag,) => {
+      expect(TAG_BACKGROUND.test(tag,),).toBe(false,);
+    },
   );
 });
 
 describe("TAG_OBJECT", () => {
-  test.each(["object", "item", "prop", "Item"])(
+  test.each(["object", "item", "prop", "Item",],)(
     "matches %s",
-    (tag) => { expect(TAG_OBJECT.test(tag)).toBe(true); },
+    (tag,) => {
+      expect(TAG_OBJECT.test(tag,),).toBe(true,);
+    },
   );
 
-  test.each(["face", "background", "mood"])(
+  test.each(["face", "background", "mood",],)(
     "does not match %s",
-    (tag) => { expect(TAG_OBJECT.test(tag)).toBe(false); },
+    (tag,) => {
+      expect(TAG_OBJECT.test(tag,),).toBe(false,);
+    },
   );
 });
 
@@ -297,19 +309,19 @@ describe("TAG_OBJECT", () => {
 
 describe("COMMAND_PATTERNS structure", () => {
   test("has 12 intent groups", () => {
-    expect(COMMAND_PATTERNS.length).toBe(12);
+    expect(COMMAND_PATTERNS.length,).toBe(12,);
   });
 
   test("every intent has at least 1 pattern", () => {
     for (const { patterns, } of COMMAND_PATTERNS) {
-      expect(patterns.length).toBeGreaterThanOrEqual(1);
+      expect(patterns.length,).toBeGreaterThanOrEqual(1,);
     }
   });
 
   test("all patterns are RegExp instances", () => {
     for (const { patterns, } of COMMAND_PATTERNS) {
       for (const p of patterns) {
-        expect(p).toBeInstanceOf(RegExp);
+        expect(p,).toBeInstanceOf(RegExp,);
       }
     }
   });

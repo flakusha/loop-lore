@@ -40,4 +40,5 @@ export const ENTITY_PATTERN = /\b[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\b/g;
 export const KEYWORD_PROPER_NOUN = /^[A-Z][a-z]+$/;
 
 /** Action verb pattern for keyword extraction */
-export const KEYWORD_ACTION_VERBS = /\b(?:visited|found|defeated|created|built|learned|discovered|fought|helped|saved|killed)\b/gi;
+export const KEYWORD_ACTION_VERBS =
+  /\b(?:visited|found|defeated|created|built|learned|discovered|fought|helped|saved|killed)\b/gi;
