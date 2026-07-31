@@ -21,14 +21,12 @@ describe("schema sync — migrated DB vs manifest", () => {
 
     if (missingTables.length > 0) {
       console.log("[schema-sync] tables in manifest but NOT in migrated DB:", missingTables,);
-      console.log("[schema-sync] INFO: manifest tables without migrations (pre-existing)",);
     }
     if (extraTables.length > 0) {
       console.log("[schema-sync] tables in migrated DB but NOT in manifest:", extraTables,);
     }
 
-    // Warn about missing tables but don't fail (pre-existing: manifest has tables without migrations)
-    // expect(missingTables, "manifest tables missing from migrations",).toHaveLength(0,);
+    expect(missingTables, "manifest tables missing from migrations",).toHaveLength(0,);
 
     await db.destroy();
     sqlite.close();
@@ -82,6 +80,7 @@ describe("schema sync — migrated DB vs manifest", () => {
 
   test("manifest table count matches DB interface", () => {
     const manifestCount = SCHEMA.tableNames.length;
-    expect(manifestCount,).toBeGreaterThanOrEqual(87,);
+    // 39 tables in DB interface (schema.ts) + 1 system table (data_migrations) + 14 character_system tables + 13 crafting/story tables + 9 NSFW tables
+    expect(manifestCount, "manifest should have 78 tables",).toBe(78,);
   });
 });

@@ -148,7 +148,7 @@ export const SCHEMA = new SchemaManifest()
     settings: col("text", { notNull: true, },),
     birth_date: col("text",),
     age_gate_accepted_at: col("text",),
-    format_version: col("integer", { notNull: true, },),
+    data_version: col("integer", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     last_seen_at: col("text",),
   },)
@@ -161,7 +161,7 @@ export const SCHEMA = new SchemaManifest()
     description: col("text",),
     title: col("text",),
     is_default: col("text", { notNull: true, },),
-    format_version: col("integer", { notNull: true, },),
+    data_version: col("integer", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -182,6 +182,7 @@ export const SCHEMA = new SchemaManifest()
     name: col("text", { notNull: true, },),
     type: col("text", { notNull: true, },),
     mode: col("text", { notNull: true, },),
+    purpose: col("text", { notNull: true, },),
     created_by: col("text", { notNull: true, },),
     world_id: col("text",),
     current_location_id: col("text",),
@@ -197,9 +198,6 @@ export const SCHEMA = new SchemaManifest()
     response_length_preset: col("text",),
     response_length_custom: col("text",),
     context_max_tokens: col("integer",),
-    streaming: col("integer",),
-    nsfw_override: col("text",),
-    name_source: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -215,7 +213,7 @@ export const SCHEMA = new SchemaManifest()
     system_prompt: col("text",),
     agent_type: col("text", { notNull: true, },),
     settings: col("text", { notNull: true, },),
-    format_version: col("integer", { notNull: true, },),
+    data_version: col("integer", { notNull: true, },),
     visibility: col("text", { notNull: true, },),
     welcome_message: col("text",),
     personality: col("text",),
@@ -228,9 +226,6 @@ export const SCHEMA = new SchemaManifest()
     character_version: col("text",),
     import_spec: col("text", { notNull: true, },),
     content_rating: col("text", { notNull: true, },),
-    template_overrides: col("text", { notNull: true, },),
-    data_source_format: col("text", { notNull: true, },),
-    data_raw: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -302,7 +297,7 @@ export const SCHEMA = new SchemaManifest()
     idempotency_key: col("text",),
     continuation_index: col("integer",),
     swipe_index: col("integer",),
-    format_version: col("integer", { notNull: true, },),
+    data_version: col("integer", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     edited_at: col("text",),
     archived_at: col("text",),
@@ -416,8 +411,6 @@ export const SCHEMA = new SchemaManifest()
     height: col("integer",),
     duration_secs: col("real",),
     alt_text: col("text",),
-    encryption_tier: col("text", { notNull: true, },),
-    encrypted_key_id: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
   // ── Content: Asset Links ─────────────────────────────────────
@@ -484,7 +477,6 @@ export const SCHEMA = new SchemaManifest()
     difficulty_modifier: col("integer", { notNull: true, },),
     difficulty_reroll: col("text", { notNull: true, },),
     difficulty_state: col("text", { notNull: true, },),
-    nsfw_override: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -667,8 +659,6 @@ export const SCHEMA = new SchemaManifest()
     priority: col("integer", { notNull: true, },),
     comment: col("text",),
     sort_order: col("integer", { notNull: true, },),
-    cooldown_seconds: col("integer", { notNull: true, },),
-    last_activated: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -689,8 +679,6 @@ export const SCHEMA = new SchemaManifest()
     priority: col("integer", { notNull: true, },),
     comment: col("text",),
     sort_order: col("integer", { notNull: true, },),
-    cooldown_seconds: col("integer", { notNull: true, },),
-    last_activated: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -1220,215 +1208,23 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
-  // ── Q4: Model Comparisons ─────────────────────────────────
-  .table("model_comparisons", {
+  // ── GM: Shadow Notes ────────────────────────────────────────
+  .table("shadow_notes", {
     id: col("text", { primaryKey: true, },),
-    message_id: col("text", { notNull: true, },),
-    user_id: col("text", { notNull: true, },),
-    reference_model: col("text", { notNull: true, },),
-    preference: col("text", { notNull: true, },),
-    confidence: col("real", { notNull: true, },),
-    created_at: col("text", { notNull: true, },),
-  },)
-  // ── Message Translations ───────────────────────────────
-  .table("message_translations", {
-    id: col("text", { primaryKey: true, },),
-    message_id: col("text", { notNull: true, },),
-    locale: col("text", { notNull: true, },),
+    chat_id: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
     content: col("text", { notNull: true, },),
-    provider: col("text",),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text",),
-  },)
-  // ── Blog System ───────────────────────────────────────
-  .table("blog_posts", {
-    id: col("text", { primaryKey: true, },),
-    author_id: col("text", { notNull: true, },),
-    title: col("text", { notNull: true, },),
-    body: col("text", { notNull: true, },),
-    visibility: col("text", { notNull: true, },),
-    author_type: col("text", { notNull: true, },),
-    status: col("text", { notNull: true, },),
-    category: col("text",),
-    world_id: col("text",),
-    character_id: col("text",),
-    scheduled_at: col("text",),
-    published_at: col("text",),
-    view_count: col("integer", { notNull: true, },),
-    metadata: col("text", { notNull: true, },),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text", { notNull: true, },),
-  },)
-  .table("blog_comments", {
-    id: col("text", { primaryKey: true, },),
-    post_id: col("text", { notNull: true, },),
-    author_id: col("text", { notNull: true, },),
-    body: col("text", { notNull: true, },),
-    status: col("text", { notNull: true, },),
+    revealed: col("integer", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
   },)
-  .table("blog_tags", {
+  // ── GM: Whitenotes ──────────────────────────────────────────
+  .table("whitenotes", {
     id: col("text", { primaryKey: true, },),
-    post_id: col("text", { notNull: true, },),
-    tag: col("text", { notNull: true, },),
-  },)
-  .table("blog_follows", {
-    id: col("text", { primaryKey: true, },),
-    follower_id: col("text", { notNull: true, },),
-    author_id: col("text", { notNull: true, },),
-    created_at: col("text", { notNull: true, },),
-  },)
-  .table("blog_rag_sources", {
-    id: col("text", { primaryKey: true, },),
-    post_id: col("text", { notNull: true, },),
-    source_type: col("text", { notNull: true, },),
-    uri: col("text", { notNull: true, },),
-    title: col("text", { notNull: true, },),
-    relevance_score: col("real", { notNull: true, },),
-    snippet: col("text", { notNull: true, },),
-    created_at: col("text", { notNull: true, },),
-  },)
-  // ── NSFW Moderation ──────────────────────────────────────────
-  .table("nsfw_user_preferences", {
-    id: col("text", { primaryKey: true, },),
-    user_id: col("text", { notNull: true, },),
-    nsfw_enabled: col("integer", { notNull: true, },),
-    max_rating: col("text", { notNull: true, },),
-    blocked_from_nsfw: col("integer", { notNull: true, },),
-    banned_from_nsfw: col("integer", { notNull: true, },),
-    shadow_nsfw: col("integer", { notNull: true, },),
-    block_reason: col("text",),
-    banned_at: col("text",),
-    banned_by: col("text",),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text", { notNull: true, },),
-  },)
-  .table("content_flags", {
-    id: col("text", { primaryKey: true, },),
-    reporter_id: col("text", { notNull: true, },),
-    content_type: col("text", { notNull: true, },),
-    content_id: col("text", { notNull: true, },),
-    chat_id: col("text",),
-    world_id: col("text",),
-    flag_reason: col("text", { notNull: true, },),
-    description: col("text",),
-    status: col("text", { notNull: true, },),
-    resolution: col("text",),
-    resolved_by: col("text",),
-    resolved_at: col("text",),
-    created_at: col("text", { notNull: true, },),
-  },)
-  .table("moderation_actions", {
-    id: col("text", { primaryKey: true, },),
-    action_type: col("text", { notNull: true, },),
-    target_user_id: col("text", { notNull: true, },),
-    performed_by: col("text", { notNull: true, },),
-    reason: col("text", { notNull: true, },),
+    chat_id: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    content: col("text", { notNull: true, },),
+    priority: col("integer", { notNull: true, },),
     scope: col("text", { notNull: true, },),
-    scope_id: col("text",),
-    metadata: col("text", { notNull: true, },),
     expires_at: col("text",),
-    created_at: col("text", { notNull: true, },),
-  },)
-  .table("moderation_appeals", {
-    id: col("text", { primaryKey: true, },),
-    user_id: col("text", { notNull: true, },),
-    action_id: col("text", { notNull: true, },),
-    reason: col("text", { notNull: true, },),
-    status: col("text", { notNull: true, },),
-    reviewed_by: col("text",),
-    review_note: col("text",),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text",),
-  },)
-  // ── Message Translations ─────────────────────────────────────
-  .table("message_translations", {
-    id: col("text", { primaryKey: true, },),
-    message_id: col("text", { notNull: true, },),
-    locale: col("text", { notNull: true, },),
-    content: col("text", { notNull: true, },),
-    provider: col("text",),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text",),
-  },)
-  // ── RPG: Dice Roll History ──────────────────────────────────
-  .table("dice_roll_history", {
-    id: col("text", { primaryKey: true, },),
-    user_id: col("text", { notNull: true, },),
-    chat_id: col("text",),
-    actor_id: col("text",),
-    sides: col("integer", { notNull: true, },),
-    count: col("integer", { notNull: true, },),
-    modifier: col("integer", { notNull: true, },),
-    advantage_mode: col("text", { notNull: true, },),
-    exploding: col("integer", { notNull: true, },),
-    raw_rolls: col("text", { notNull: true, },),
-    raw_total: col("integer", { notNull: true, },),
-    total: col("integer", { notNull: true, },),
-    purpose: col("text",),
-    created_at: col("text", { notNull: true, },),
-  },)
-  // ── RPG: Character Stats ────────────────────────────────────
-  .table("character_stats", {
-    id: col("text", { primaryKey: true, },),
-    actor_id: col("text", { notNull: true, },),
-    level: col("integer", { notNull: true, },),
-    hp: col("integer", { notNull: true, },),
-    max_hp: col("integer", { notNull: true, },),
-    temp_hp: col("integer", { notNull: true, },),
-    mp: col("integer", { notNull: true, },),
-    max_mp: col("integer", { notNull: true, },),
-    ac: col("integer", { notNull: true, },),
-    speed: col("integer", { notNull: true, },),
-    str: col("integer", { notNull: true, },),
-    dex: col("integer", { notNull: true, },),
-    con: col("integer", { notNull: true, },),
-    int: col("integer", { notNull: true, },),
-    wis: col("integer", { notNull: true, },),
-    cha: col("integer", { notNull: true, },),
-    hit_dice: col("text", { notNull: true, },),
-    death_save_successes: col("integer", { notNull: true, },),
-    death_save_failures: col("integer", { notNull: true, },),
-    xp: col("integer", { notNull: true, },),
-    xp_to_next: col("integer", { notNull: true, },),
-    format_version: col("integer", { notNull: true, },),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text", { notNull: true, },),
-  },)
-  // ── RPG: XP Ledger ─────────────────────────────────────────
-  .table("xp_ledger", {
-    id: col("text", { primaryKey: true, },),
-    actor_id: col("text", { notNull: true, },),
-    amount: col("integer", { notNull: true, },),
-    source: col("text", { notNull: true, },),
-    description: col("text",),
-    reference_id: col("text",),
-    chat_id: col("text",),
-    created_at: col("text", { notNull: true, },),
-  },)
-  // ── RPG: Loot Tables ───────────────────────────────────────
-  .table("loot_tables", {
-    id: col("text", { primaryKey: true, },),
-    name: col("text", { notNull: true, },),
-    source_type: col("text", { notNull: true, },),
-    source_id: col("text",),
-    total_weight: col("real", { notNull: true, },),
-    used: col("integer", { notNull: true, },),
-    created_at: col("text", { notNull: true, },),
-    updated_at: col("text", { notNull: true, },),
-  },)
-  // ── RPG: Loot Entries ──────────────────────────────────────
-  .table("loot_entries", {
-    id: col("text", { primaryKey: true, },),
-    loot_table_id: col("text", { notNull: true, },),
-    item_name: col("text", { notNull: true, },),
-    description: col("text",),
-    item_type: col("text", { notNull: true, },),
-    rarity: col("text", { notNull: true, },),
-    weight: col("real", { notNull: true, },),
-    min_quantity: col("integer", { notNull: true, },),
-    max_quantity: col("integer", { notNull: true, },),
-    min_level: col("integer", { notNull: true, },),
-    metadata: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
   },);

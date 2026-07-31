@@ -9,8 +9,7 @@ export * from "./schema-content";
 export * from "./schema-core";
 export * from "./schema-crafting";
 export * from "./schema-generation";
-export * from "./schema-moderation";
-export * from "./schema-moderation";
+export * from "./schema-gm";
 export * from "./schema-story";
 export * from "./schema-synthetic";
 export * from "./schema-telemetry";
@@ -58,8 +57,6 @@ export interface DB {
   telemetry_events: import("./schema-telemetry").TelemetryEvents;
   message_reactions: import("./schema-core").MessageReactions;
   chat_pins: import("./schema-core").ChatPins;
-  // Model comparisons (Q4)
-  model_comparisons: import("./schema-core").ModelComparisons;
   // Character systems
   character_permanent_traits: import("./schema-character").CharacterPermanentTraits;
   character_world_traits: import("./schema-character").CharacterWorldTraits;
@@ -85,11 +82,6 @@ export interface DB {
   character_heat_cycle: import("./schema-character").CharacterHeatCycle;
   character_fantasies: import("./schema-character").CharacterFantasies;
   location_nsfw_config: import("./schema-character").LocationNsfwConfig;
-  // NSFW Moderation
-  nsfw_user_preferences: import("./schema-moderation").NsfwUserPreferences;
-  moderation_actions: import("./schema-moderation").ModerationActions;
-  content_flags: import("./schema-moderation").ContentFlags;
-  moderation_appeals: import("./schema-moderation").ModerationAppeals;
   // Crafting systems
   crafting_recipes: import("./schema-crafting").CraftingRecipes;
   crafting_recipe_materials: import("./schema-crafting").CraftingRecipeMaterials;
@@ -103,10 +95,7 @@ export interface DB {
   gathering_node_instances: import("./schema-crafting").GatheringNodeInstances;
   crafting_attempts: import("./schema-crafting").CraftingAttempts;
   crafting_orders: import("./schema-crafting").CraftingOrders;
-  // RPG systems
-  dice_roll_history: import("./schema-rpg").DiceRollHistory;
-  character_stats: import("./schema-rpg").CharacterStats;
-  xp_ledger: import("./schema-rpg").XpLedger;
-  loot_tables: import("./schema-rpg").LootTables;
-  loot_entries: import("./schema-rpg").LootEntries;
+  // GM systems
+  shadow_notes: import("./schema-gm").ShadowNotes;
+  whitenotes: import("./schema-gm").Whitenotes;
 }
