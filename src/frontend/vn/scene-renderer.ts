@@ -5,22 +5,22 @@
  * Maps messages to scenes, manages navigation, orchestrates transitions.
  */
 
+import { destroyChoiceCards, initChoiceCards, loadChoices, } from "./choice-cards";
+import {
+  createLoadingIndicator,
+  type LoadingIndicator,
+  preloadSceneImages,
+  type SceneImages,
+} from "./image-preloader";
 import {
   createPortraitElement,
   getPortraitPosition,
   getPortraitUrl,
 } from "./portrait-manager";
-import { destroyChoiceCards, initChoiceCards, loadChoices, } from "./choice-cards";
 import type { VnSettings, } from "./settings";
 import { getVnSettings, } from "./settings";
 import { transitionScene, type TransitionType, } from "./transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "./typewriter";
-import {
-  preloadSceneImages,
-  createLoadingIndicator,
-  type LoadingIndicator,
-  type SceneImages,
-} from "./image-preloader";
 
 /** A single VN scene derived from one or more messages. */
 export interface VnScene {
@@ -159,7 +159,7 @@ async function preloadCurrentAndUpcoming(): Promise<void> {
     portraitUrl: s.characterAvatar
       ? getPortraitUrl(s.characterAvatar,)
       : undefined,
-  }),);
+  }));
 
   const stats = await preloadSceneImages(sceneImages, currentIndex, 2,);
   loadingIndicator.updateProgress(stats.loaded + stats.cached, stats.total,);

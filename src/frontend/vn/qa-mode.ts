@@ -32,7 +32,7 @@ function validateScene(
       severity: "error",
       message: "Scene has empty text content",
       field: "text",
-    });
+    },);
   }
 
   if (scene.text && scene.text.length > 2000) {
@@ -41,7 +41,7 @@ function validateScene(
       severity: "warning",
       message: `Scene text is very long (${scene.text.length} chars)`,
       field: "text",
-    });
+    },);
   }
 
   if (scene.role !== "narration" && !scene.characterName) {
@@ -50,7 +50,7 @@ function validateScene(
       severity: "warning",
       message: "Non-narration scene missing character name",
       field: "characterName",
-    });
+    },);
   }
 
   if (!scene.backgroundUrl) {
@@ -59,7 +59,7 @@ function validateScene(
       severity: "info",
       message: "Scene has no background image",
       field: "backgroundUrl",
-    });
+    },);
   }
 
   return issues;
@@ -75,7 +75,7 @@ export function runQaCheck(
   for (let i = 0; i < scenes.length; i++) {
     const scene = scenes[i];
     if (scene) {
-      issues.push(...validateScene(scene, i),);
+      issues.push(...validateScene(scene, i,),);
     }
   }
 
@@ -90,7 +90,7 @@ export function runQaCheck(
           sceneIndex: i,
           severity: "warning",
           message: `${consecutiveNarration} consecutive narration scenes — consider adding dialogue`,
-        });
+        },);
         consecutiveNarration = 0;
       }
     } else {
@@ -101,7 +101,7 @@ export function runQaCheck(
   return {
     totalScenes: scenes.length,
     issues,
-    passed: !issues.some((i) => i.severity === "error",),
+    passed: !issues.some((i,) => i.severity === "error"),
   };
 }
 

@@ -6,7 +6,6 @@
 
 import { feFetch, } from "../fe-fetch";
 
-
 export interface VnChoice {
   id: string;
   chat_id: string;
@@ -71,7 +70,7 @@ export async function loadChoices(): Promise<void> {
 /**
  * Select a choice and apply its effects.
  */
-export async function selectChoice(choiceId: string): Promise<VnChoice | null> {
+export async function selectChoice(choiceId: string,): Promise<VnChoice | null> {
   if (!chatId) { return null; }
 
   try {
@@ -82,9 +81,7 @@ export async function selectChoice(choiceId: string): Promise<VnChoice | null> {
     if (res.ok) {
       const data = await res.json();
       const selected = data.data;
-      choices = choices.map((c,) =>
-        c.id === choiceId ? { ...c, selected: 1, selected_at: selected.selected_at, } : c,
-      );
+      choices = choices.map((c,) => c.id === choiceId ? { ...c, selected: 1, selected_at: selected.selected_at, } : c);
       renderChoices();
       return selected;
     }
@@ -108,11 +105,11 @@ export function getAccumulatedImpacts(): {
   for (const choice of choices) {
     if (!choice.selected) { continue; }
 
-    for (const [key, value] of Object.entries(choice.relationship_impact,)) {
+    for (const [key, value,] of Object.entries(choice.relationship_impact,)) {
       relationships[key] = (relationships[key] ?? 0) + value;
     }
 
-    for (const [key, value] of Object.entries(choice.mood_impact,)) {
+    for (const [key, value,] of Object.entries(choice.mood_impact,)) {
       moods[key] = (moods[key] ?? 0) + value;
     }
   }
@@ -125,8 +122,8 @@ export function getAccumulatedImpacts(): {
 function renderChoices(): void {
   if (!container) { return; }
 
-  const available = choices.filter((c,) => !c.selected,);
-  const selected = choices.filter((c,) => c.selected,);
+  const available = choices.filter((c,) => !c.selected);
+  const selected = choices.filter((c,) => c.selected);
 
   container.innerHTML = "";
 
@@ -142,8 +139,8 @@ function renderChoices(): void {
       card.dataset.choiceId = choice.id;
 
       card.innerHTML = `
-        <div class="vn-choice-label">${escapeHtml(choice.label)}</div>
-        ${choice.description ? `<div class="vn-choice-description">${escapeHtml(choice.description)}</div>` : ""}
+        <div class="vn-choice-label">${escapeHtml(choice.label,)}</div>
+        ${choice.description ? `<div class="vn-choice-description">${escapeHtml(choice.description,)}</div>` : ""}
       `;
 
       card.addEventListener("click", () => {
@@ -172,8 +169,8 @@ function renderChoices(): void {
       const item = document.createElement("div",);
       item.className = "vn-choice-selected";
       item.innerHTML = `
-        <span class="vn-choice-label">${escapeHtml(choice.label)}</span>
-        <span class="vn-choice-timestamp">${formatTime(choice.selected_at!)}</span>
+        <span class="vn-choice-label">${escapeHtml(choice.label,)}</span>
+        <span class="vn-choice-timestamp">${formatTime(choice.selected_at!,)}</span>
       `;
       historyList.appendChild(item,);
     }
@@ -183,13 +180,13 @@ function renderChoices(): void {
   }
 }
 
-function escapeHtml(text: string): string {
+function escapeHtml(text: string,): string {
   const div = document.createElement("div",);
   div.textContent = text;
   return div.innerHTML;
 }
 
-function formatTime(iso: string): string {
+function formatTime(iso: string,): string {
   const date = new Date(iso,);
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", },);
 }
