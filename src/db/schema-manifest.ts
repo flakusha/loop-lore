@@ -1385,5 +1385,4 @@ export const SCHEMA = new SchemaManifest()
     completed_at: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
-  },)
-;
+  },);

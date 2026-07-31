@@ -2,6 +2,28 @@
  * DB Schema — Story Domain Tables
  *
 "40: @theirs\n41: @theirs\n42: @theirs"
+import type { Generated, } from "kysely";
+import type {
+  DifficultyReroll,
+  DifficultyState,
+  ItemCategory,
+  ItemRarity,
+  ItemVisibility,
+  LoreEntryStatus,
+  LorePosition,
+  MemoryType,
+  QuestProgressStatus,
+  QuestStatus,
+  QuestType,
+  StackableState,
+  TurnStatus,
+  TurnType,
+} from "./enums";
+
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
 export interface Worlds {
   id: Generated<string>;
   owner_id: string;
