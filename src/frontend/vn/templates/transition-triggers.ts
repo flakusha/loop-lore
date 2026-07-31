@@ -5,8 +5,8 @@
  * suggest appropriate scene templates.
  */
 
-import type { VnTemplate, } from "./template-engine";
 import { getSceneTemplate, } from "./scene-templates";
+import type { VnTemplate, } from "./template-engine";
 
 // ── Trigger Definitions ────────────────────────────────────
 
@@ -14,7 +14,7 @@ export interface VnTransitionTrigger {
   id: string;
   name: string;
   description: string;
-  condition: (context: VnTriggerContext) => boolean;
+  condition: (context: VnTriggerContext,) => boolean;
   templateId: string;
   priority: number;
 }
@@ -37,7 +37,8 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
     id: "on_location_change",
     name: "Location Change",
     description: "Triggers when scene location changes",
-    condition: (ctx) => Boolean(ctx.currentLocationId && ctx.previousLocationId && ctx.currentLocationId !== ctx.previousLocationId),
+    condition: (ctx,) =>
+      Boolean(ctx.currentLocationId && ctx.previousLocationId && ctx.currentLocationId !== ctx.previousLocationId,),
     templateId: "introduction",
     priority: 10,
   },
@@ -45,7 +46,7 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
     id: "on_combat_start",
     name: "Combat Start",
     description: "Triggers when combat mode activates",
-    condition: (ctx) => ctx.combatActive,
+    condition: (ctx,) => ctx.combatActive,
     templateId: "combat_start",
     priority: 20,
   },
@@ -53,7 +54,7 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
     id: "on_character_enter",
     name: "Character Enter",
     description: "Triggers when a new character appears",
-    condition: (ctx) => ctx.charactersInScene.some((c) => !ctx.previousCharacters.includes(c)),
+    condition: (ctx,) => ctx.charactersInScene.some((c,) => !ctx.previousCharacters.includes(c,)),
     templateId: "introduction",
     priority: 15,
   },
@@ -61,7 +62,7 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
     id: "on_emotion_shift",
     name: "Emotion Shift",
     description: "Triggers on significant emotion change",
-    condition: (ctx) => Boolean(ctx.emotionChange && Math.abs(ctx.emotionChange) > 0.5),
+    condition: (ctx,) => Boolean(ctx.emotionChange && Math.abs(ctx.emotionChange,) > 0.5,),
     templateId: "confrontation",
     priority: 5,
   },
@@ -69,7 +70,7 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
     id: "on_choice_result",
     name: "Choice Result",
     description: "Triggers after branching choice selection",
-    condition: (ctx) => ctx.choiceSelected,
+    condition: (ctx,) => ctx.choiceSelected,
     templateId: "resolution",
     priority: 25,
   },
@@ -77,7 +78,7 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
     id: "on_scene_end",
     name: "Scene End",
     description: "Triggers when scene is ending",
-    condition: (ctx) => ctx.sceneEnding,
+    condition: (ctx,) => ctx.sceneEnding,
     templateId: "farewell",
     priority: 30,
   },
@@ -89,8 +90,8 @@ export function evaluateTriggers(
   context: VnTriggerContext,
 ): VnTemplate | null {
   const matchingTriggers = TRANSITION_TRIGGERS
-    .filter((trigger) => trigger.condition(context,))
-    .sort((a, b) => b.priority - a.priority,);
+    .filter((trigger,) => trigger.condition(context,))
+    .sort((a, b,) => b.priority - a.priority);
 
   if (matchingTriggers.length === 0) { return null; }
 
@@ -111,7 +112,7 @@ export interface VnTriggerEvent {
 const triggerHistory: VnTriggerEvent[] = [];
 const MAX_HISTORY = 50;
 
-export function recordTrigger(triggerId: string, templateId: string): void {
+export function recordTrigger(triggerId: string, templateId: string,): void {
   triggerHistory.push({
     triggerId,
     timestamp: new Date().toISOString(),
@@ -124,7 +125,7 @@ export function recordTrigger(triggerId: string, templateId: string): void {
 }
 
 export function getTriggerHistory(): VnTriggerEvent[] {
-  return [...triggerHistory];
+  return [...triggerHistory,];
 }
 
 export function clearTriggerHistory(): void {
