@@ -68,7 +68,7 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
   }
 
   switch (encryptionLevel) {
-    case "public": {
+    case "none": {
       return { storedContent: plaintext, keyId: null, wasEncrypted: false, };
     }
 
@@ -115,7 +115,7 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   const { database, chatId, storedContent, encryptionLevel, } = opts;
 
   switch (encryptionLevel) {
-    case "public": {
+    case "none": {
       return storedContent;
     }
 
@@ -153,7 +153,7 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
  * Check if content needs encryption for the given tier.
  */
 export function needsEncryption(encryptionLevel: EncryptionLevel, storedContent: string,): boolean {
-  if (encryptionLevel === "public") { return false; }
+  if (encryptionLevel === "none") { return false; }
   if (isEncryptedPayload(storedContent,)) { return false; // already encrypted
    }
   return encryptionLevel === "standard" || encryptionLevel === "private";
@@ -171,5 +171,5 @@ export async function getChatEncryptionLevel(
     .select("encryption_level",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
-  return (row?.encryption_level as EncryptionLevel) ?? "public";
+  return (row?.encryption_level as EncryptionLevel) ?? "none";
 }
