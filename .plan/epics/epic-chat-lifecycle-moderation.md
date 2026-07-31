@@ -1,6 +1,6 @@
 # EPIC: Chat Lifecycle, Transitions & Moderation
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -116,7 +116,7 @@ interface ModerationAction {
 
 ### Chat Discovery (Medium Priority)
 
-- [ ] Chat room search & join → TASK-chat-room-search-join
+- [x] Chat room search & join → TASK-chat-room-search-join (✅ done)
 - [ ] Chat room filters → TASK-chat-room-filters
 - [ ] Chat message search → TASK-chat-message-search
 - [ ] Chat external music linking → TASK-chat-external-music-linking

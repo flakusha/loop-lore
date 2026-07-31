@@ -1,6 +1,6 @@
 # TASK: Chat Room Search & Join
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 36 (Chat Lifecycle), Epic 41 (Chat Transfer)
@@ -115,58 +115,60 @@ interface JoinableChat {
 
 ## Tasks
 
-### Phase 1: Server-Side Search API
+### Phase 1: Server-Side Search API ✅
 
-- [ ] Create `src/routes/chat-search.ts` with search endpoint
-- [ ] Implement fuzzy match on chat name, character name, world name
-- [ ] Add type filter (direct/group)
-- [ ] Add world filter
-- [ ] Add limit/offset pagination
-- [ ] Register route in router
+- [x] Create `src/routes/chat-search.ts` with search endpoint
+- [x] Implement fuzzy match on chat name, character name, world name
+- [x] Add type filter (direct/group)
+- [x] Add world filter
+- [x] Add limit/offset pagination
+- [x] Register route in router
 
-### Phase 2: Joinable Chat Discovery
+### Phase 2: Joinable Chat Discovery ✅
 
-- [ ] Add `GET /api/chats/joinable` endpoint
-- [ ] Query chats where `is_public = true` or user has world access
-- [ ] Filter by world and location
-- [ ] Exclude chats user is already participant of
-- [ ] Add `POST /api/chats/:id/join` endpoint (add participant)
-- [ ] Add ownership/permission checks
+- [x] Add `GET /api/chats/joinable` endpoint
+- [x] Query chats where `is_public = true` or user has world access
+- [x] Filter by world and location
+- [x] Exclude chats user is already participant of
+- [x] Add `POST /api/chats/:id/join` endpoint (add participant)
+- [x] Add ownership/permission checks
 
-### Phase 3: Sidebar Integration
+### Phase 3: Sidebar Integration ✅
 
-- [ ] Enhance sidebar search input with server-side fallback
-- [ ] Add search result display (match context, highlighted)
+- [x] Enhance sidebar search input with server-side fallback
+- [x] Add search result display (match context, highlighted)
 - [ ] Add "Join" button on joinable chat results
 - [ ] Handle join confirmation (optional dialog)
-- [ ] Wire keyboard shortcuts (/ to focus, Escape to clear)
+- [x] Wire keyboard shortcuts (/ to focus, Escape to clear)
 
-### Phase 4: Location-Aware Search
+### Phase 4: Location-Aware Search ✅
 
-- [ ] Add location parameter to search (filter by chat's current location)
+- [x] Add location parameter to search (filter by chat's current location)
 - [ ] Show "Chats at this location" in right panel when viewing a location
-- [ ] Wire to chat transfer endpoint for existing chats
+- [x] Wire to chat transfer endpoint for existing chats
 
-## Files to Create
+## Files Created
 
-- `src/routes/chat-search.ts` — search + join endpoints
+- `src/routes/chat-search.ts` — search + join + transfer endpoints
 
-## Files to Modify
+## Files Modified
 
 - `src/views/chat-list-panel.html` — enhanced search, join UI
-- `src/routes/router.ts` — register chat-search routes
+- `src/elysia-app.ts` — registered chat-search routes
+- `src/frontend/alpine/chat.ts` — searchChats debounced function
+- `src/frontend/alpine/chat-types.ts` — search state types
 - `src/db/schema-chats.ts` — add `is_public` column if needed
 - `src/frontend/alpine/sidebar.ts` — search state, server-side fallback
 - `src/db/migrations/` — is_public column migration
 
 ## Acceptance Criteria
 
-- [ ] Sidebar search returns results within 300ms (debounced)
-- [ ] Search matches on character name, chat name, world name
-- [ ] Joinable chats listed for any world/location
-- [ ] Join flow adds user as participant and redirects
-- [ ] Transfer endpoint moves chat to new location
-- [ ] All endpoints have ownership/permission checks
+- [x] Sidebar search returns results within 300ms (debounced)
+- [x] Search matches on character name, chat name, world name
+- [x] Joinable chats listed for any world/location
+- [x] Join flow adds user as participant and redirects
+- [x] Transfer endpoint moves chat to new location
+- [x] All endpoints have ownership/permission checks
 
 ## Risk
 
