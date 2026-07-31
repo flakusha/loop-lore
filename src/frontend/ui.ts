@@ -2,8 +2,8 @@
  * Vanilla UI helpers — replaces Alpine for sidebar, toast, theme on non-chat pages.
  * Chat page still uses Alpine for its complex state.
  */
-import { eventCurrentTarget, eventTarget, } from "./dom";
 import { trapFocus, } from "./alpine/focus";
+import { eventCurrentTarget, eventTarget, } from "./dom";
 
 // ── Sidebar ──────────────────────────────────────────────────
 
@@ -119,10 +119,10 @@ export function openModal(id: string,): void {
   modal.classList.add("open",);
 
   // Set role=dialog if not already set
-  if (!modal.getAttribute("role")) {
+  if (!modal.getAttribute("role",)) {
     modal.setAttribute("role", "dialog",);
   }
-  if (!modal.getAttribute("aria-modal")) {
+  if (!modal.getAttribute("aria-modal",)) {
     modal.setAttribute("aria-modal", "true",);
   }
 
