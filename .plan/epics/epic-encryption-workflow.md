@@ -29,7 +29,7 @@ Full encryption lifecycle: compress→encrypt→decrypt→decompress pipeline, t
 The encryption workflow now supports future additions of new algorithms through:
 
 - **Algorithm Registry**: Central registry for algorithm implementations
-- **Factory Pattern**: `createEncryptor(algorithm)` and `createDecryptor(algorithm)` 
+- **Factory Pattern**: `createEncryptor(algorithm)` and `createDecryptor(algorithm)`
 - **Configuration-Driven**: Algorithm selection via config
 - **Plugin Hooks**: Runtime algorithm registration via plugins
 

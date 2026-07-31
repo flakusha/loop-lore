@@ -25,15 +25,15 @@ Create comprehensive tests for algorithm extensibility. This includes unit tests
 describe("AlgorithmFactory", () => {
   test("registers and retrieves AES-256-GCM", () => {
     const factory = new AlgorithmFactory();
-    factory.register(aes256gcmAlgorithm);
-    expect(factory.getAlgorithm("aes-256-gcm")).toBeDefined();
+    factory.register(aes256gcmAlgorithm,);
+    expect(factory.getAlgorithm("aes-256-gcm",),).toBeDefined();
   });
 
   test("falls back to default algorithm", () => {
     const factory = new AlgorithmFactory();
-    factory.register(aes256gcmAlgorithm);
-    expect(factory.getAlgorithm("unknown-algo")).toBeUndefined();
-    expect(factory.getAlgorithm("aes-256-gcm")).toBeDefined();
+    factory.register(aes256gcmAlgorithm,);
+    expect(factory.getAlgorithm("unknown-algo",),).toBeUndefined();
+    expect(factory.getAlgorithm("aes-256-gcm",),).toBeDefined();
   });
 });
 
@@ -41,17 +41,17 @@ describe("AlgorithmFactory", () => {
 describe("Pipeline with Algorithm Switching", () => {
   test("encrypts and decrypts with AES-256-GCM", async () => {
     const plaintext = "test message";
-    const key = await generateKey("aes-256-gcm");
-    const encrypted = await compressThenEncrypt(plaintext, key, "key-id", { algorithm: "aes-256-gcm" });
-    const decrypted = await decryptThenDecompress(encrypted, key);
-    expect(decrypted).toBe(plaintext);
+    const key = await generateKey("aes-256-gcm",);
+    const encrypted = await compressThenEncrypt(plaintext, key, "key-id", { algorithm: "aes-256-gcm", },);
+    const decrypted = await decryptThenDecompress(encrypted, key,);
+    expect(decrypted,).toBe(plaintext,);
   });
 
   test("handles algorithm not found gracefully", async () => {
     const plaintext = "test message";
-    const key = await generateKey("aes-256-gcm");
-    await expect(compressThenEncrypt(plaintext, key, "key-id", { algorithm: "unknown" }))
-      .rejects.toThrow("Unknown encryption algorithm");
+    const key = await generateKey("aes-256-gcm",);
+    await expect(compressThenEncrypt(plaintext, key, "key-id", { algorithm: "unknown", },),)
+      .rejects.toThrow("Unknown encryption algorithm",);
   });
 });
 
@@ -59,10 +59,10 @@ describe("Pipeline with Algorithm Switching", () => {
 describe("Plugin Algorithm Registration", () => {
   test("registers algorithm via plugin hook", async () => {
     const plugin = createMockPlugin({
-      hooks: { 'onCryptoAlgorithmRegister': (algo) => algorithmFactory.register(algo) }
-    });
-    await pluginManager.enablePlugin(plugin.id);
-    expect(algorithmFactory.getAlgorithm("chacha20-poly1305")).toBeDefined();
+      hooks: { "onCryptoAlgorithmRegister": (algo,) => algorithmFactory.register(algo,), },
+    },);
+    await pluginManager.enablePlugin(plugin.id,);
+    expect(algorithmFactory.getAlgorithm("chacha20-poly1305",),).toBeDefined();
   });
 });
 ```
