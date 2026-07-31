@@ -1,5 +1,10 @@
 // ── Chat page component (chat.html) — core state + init ────
-
+import {
+  addScene,
+  destroyVnRenderer,
+  initVnRenderer,
+  type VnMessage,
+} from "../vn";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -15,7 +20,7 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
-import { moodState, } from "./mood";
+import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, } from "./types";
 
@@ -47,6 +52,13 @@ globalThis.chatState = function() {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
+    // VN mode state
+    _vnEnabled: false,
+    _vnLayout: "overlay" as "overlay" | "below" | "split",
+    _vnTypewriter: true,
+    _vnTypewriterSpeed: 30,
+    _vnTransition: "fade" as "fade" | "cut" | "dissolve" | "slide" | "wipe",
+    _vnAutoAdvance: false,
     chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
     messages: [] as {
@@ -132,11 +144,18 @@ globalThis.chatState = function() {
     ...rpgStats,
     showRpgPanel: false as boolean,
 
-    // ── Mood System ──
-    ...moodState,
-
     // ── Memory Panel State ──
     ...memoryPanel,
+
+    // ── Mood Panel State ──
+    _moodPanel: createMoodPanelState(),
+    async loadMoodPanel(actorId: string,) {
+      await Promise.allSettled([
+        this._moodPanel.loadMood(actorId,),
+        this._moodPanel.loadEmotions(actorId,),
+        this._moodPanel.loadEmotionDefs(),
+      ],);
+    },
 
     // ── Sub-module state + methods ──
     ...chatKeys,
@@ -239,7 +258,50 @@ globalThis.chatState = function() {
           uiStore.hasActiveChat = false;
         }
       }
+
+      // Cleanup VN renderer
+      destroyVnRenderer();
     },
+
+    // ── VN Mode Lifecycle ──
+
+    /** Initialize or destroy VN renderer based on current state. */
+    updateVnMode() {
+      const container = document.querySelector<HTMLElement>("#vn-container",);
+      if (!container) { return; }
+
+      if (this._vnEnabled && this.activeChat) {
+        const vnMessages: VnMessage[] = this.messages.map((m,) => ({
+          id: m.id,
+          role: (m.role as VnMessage["role"]) ?? "assistant",
+          name: m.actor_name,
+          content: m.content,
+          thinking: m.thinking,
+          avatar_asset_id: undefined,
+          background_url: undefined,
+        }));
+        const chat = this.chats.find((c,) => c.id === this.activeChat);
+        const gmConfig = jsonParseOr<Record<string, unknown>>(chat?.gm_config ?? "{}", {},);
+        initVnRenderer(container, vnMessages, gmConfig,);
+      } else {
+        destroyVnRenderer();
+      }
+    },
+
+    /** Push a new message into the live VN renderer (for streaming). */
+    pushVnScene(msg: { id: string; role: string; name?: string; content: string; thinking?: string },) {
+      if (!this._vnEnabled) { return; }
+      addScene({
+        id: msg.id,
+        role: (msg.role as VnMessage["role"]) ?? "assistant",
+        name: msg.name,
+        content: msg.content,
+        thinking: msg.thinking,
+      },);
+    },
+
+    // ── GM Panel State ──
+    showGmPanel: false as boolean,
 
     async loadUserInfo() {
       try {
@@ -295,11 +357,17 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
       await this.loadChatParticipants();
+      // Load mood data for the current character
+      if (this.currentCharacter?.id) {
+        await this.loadMoodPanel(this.currentCharacter.id,);
+      }
+      // Initialize VN mode if enabled
+      this.updateVnMode();
     },
 
     getChatId() {
