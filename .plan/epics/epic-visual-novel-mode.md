@@ -31,8 +31,8 @@ Extend Visual Novel Mode with dynamic image and story generation capabilities, p
 
 ### Extended VN (Dynamic Generation): ✅ Complete
 
-- ✅ Story description generation (`POST /api/chats/:chatId/vn/generate-story`)
-- ✅ Choice generation (`POST /api/chats/:chatId/vn/generate-choices`)
+- ✅ Story description generation (`POST /api/chats/:id/vn/generate-story`)
+- ✅ Choice generation (`POST /api/chats/:id/vn/generate-choices`)
 - ✅ QA mode validation
 - ❌ Image generation (deferred — uses ComfyUI)
 
