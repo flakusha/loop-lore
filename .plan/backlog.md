@@ -1,7 +1,15 @@
 # Backlog
 
-> **Last updated:** 2026-07-31 — Post-reconciliation priorities; P0/P1/P1.5 status synced with validated code state
+> **Last updated:** 2026-07-31 — Regex extraction complete; P0/P1/P1.5 status synced with validated code state
 > Features not under active development. `immediate.md` tracks active work; `docs/meta/open-items.md` tracks bugs/debt.
+
+## Regex Extraction (Completed 2026-07-31)
+
+- [x] **Regex Extraction to Constants** — 33 modules, 525+ tests, all passing
+- [x] **Regex Output Transforms** — Client-side post-generation transforms
+- [x] **Regex Test Expansion** — Priority unit tests for regex patterns
+
+> All regex work complete. Tests pass: 2782 pass, 23 pre-existing failures (none from changes).
 
 ## P0 — Critical Path (Blocking)
 
