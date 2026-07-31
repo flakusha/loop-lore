@@ -1,6 +1,6 @@
 # EPIC: Frontend Gallery & Media Viewer
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -45,7 +45,7 @@ Frontend implementation of the Gallery & Media Viewer for the loop-lore web UI. 
 
 - [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md) — Minimal image asset viewer: EXIF/dimensions metadata extraction, captions; images only (prerequisite for full gallery)
 - [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — Gallery config files, file-attachment config, idempotent load, hot-reload, API endpoints for config and asset upload (prerequisite for full gallery)
-- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — Character avatar gallery binding: link avatar assets via `asset_links`, gallery entity filter, character detail gallery tab, visibility inheritance (issue `870cd46`)
+- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — Character avatar gallery binding: link avatar assets via `asset_links`, gallery entity filter, character detail gallery tab, visibility inheritance (issue `870cd46`) — **🟡 Backend complete, frontend tab done, visibility pending**
 
 ## File Structure
 
@@ -105,8 +105,10 @@ docs/
 
 ### Phase 3: Context Integration
 
-- Gallery tab in character detail view (see `TASK-character-avatar-gallery-binding.md`)
-- Gallery tab in story view (attachments context)
+- [x] Gallery entity filter — `serveGalleryGrid` and `serveGallerySearch` accept `entity_type`/`entity_id` query params
+- [x] Character avatar linking — `avatar-service.ts` calls `linkAsset()` on creation; `emotion-avatar-service.ts` already wired
+- [ ] Gallery tab in character detail view (see `TASK-character-avatar-gallery-binding.md`) — partial (grid exists, visibility pending)
+- [ ] Gallery tab in story view (attachments context)
 
 ### Phase 4: Polish
 

@@ -46,14 +46,14 @@ When a user uploads a character avatar, the asset appears in the global gallery 
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/characters/services/avatar-service.ts` | Add `linkAsset()` call in `createAvatar()` |
-| `src/characters/services/emotion-avatar-service.ts` | Add `linkAsset()` call after emotion avatar generation |
-| `src/routes/views.ts` | Add entity filter params to `serveGalleryGrid` and `serveGallerySearch` |
-| `src/partials/characters/detail-modal.html` | Add gallery tab |
-| `src/frontend/pages/characters.ts` | Add gallery tab logic |
-| `src/routes/character-avatars.ts` | Add unlink endpoint or integrate with existing delete |
+| File | Change | Status |
+|------|--------|--------|
+| `src/characters/services/avatar-service.ts` | Add `linkAsset()` call in `createAvatar()` | ✅ Done |
+| `src/characters/services/emotion-avatar-service.ts` | Add `linkAsset()` call after emotion avatar generation | ✅ Already wired (confirmed) |
+| `src/routes/views.ts` | Add entity filter params to `serveGalleryGrid` and `serveGallerySearch` | ✅ Done |
+| `src/partials/characters/detail-modal.html` | Add gallery tab | ✅ Done |
+| `src/frontend/pages/characters.ts` | Add gallery tab logic | ✅ Done |
+| `src/routes/character-avatars.ts` | Add unlink endpoint or integrate with existing delete | ⬜ Pending |
 
 ## Acceptance Criteria
 
