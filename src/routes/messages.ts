@@ -6,10 +6,9 @@ import { getCommand, } from "../assistant/commands/registry";
 import type { CommandContext, } from "../assistant/commands/registry";
 import { generateResponse, isAssistantEnabled, } from "../assistant/service";
 import {
+  classifyTransitionMessage,
   createTransition,
-  detectTransitionType,
   generateRuleName,
-  isTransitionMessage,
 } from "../chat";
 import { checkChatAccess, getMessageWithAccess, type ServiceError, } from "../chat/service";
 import type { Config, } from "../config/schema";
@@ -838,20 +837,37 @@ export function messagesRoutes(opts: HandlerOpts,) {
           }
 
           // ── Detect scene transitions ────────────────────────────────────────
-          if (isTransitionMessage(effectiveContent,)) {
-            const transitionType = detectTransitionType(effectiveContent, !!chatRecord?.current_location_id,);
+          // Fetch recent messages for AUX LLM context
+          const recentMsgs = await database
+            .selectFrom("messages",)
+            .select(["content",],)
+            .where("chat_id", "=", chatId,)
+            .orderBy("created_at", "desc",)
+            .limit(2,)
+            .execute();
 
-            if (transitionType === "location_change" && chatRecord?.world_id) {
-              // Location change detected — update chat location if mentioned
-              const locationMatch =
-                /\b(go to|travel to|head to|enter|arrive at|visit)\s+(?:the\s+)?([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/i
-                  .exec(effectiveContent,);
-              if (locationMatch?.[2]) {
+          const recentContent = recentMsgs.map((m,) => m.content,).reverse();
+
+          const classification = await classifyTransitionMessage(
+            effectiveContent,
+            recentContent,
+            config,
+            database,
+          );
+
+          if (classification.isTransition) {
+            if (classification.type === "location_change" && chatRecord?.world_id) {
+              // Location change detected — use location hint from classifier or fallback to regex
+              const locationName = classification.locationHint
+                ?? /\b(go to|travel to|head to|enter|arrive at|visit)\s+(?:the\s+)?([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/i
+                  .exec(effectiveContent,)?.[2];
+
+              if (locationName) {
                 const location = await database
                   .selectFrom("locations",)
                   .select("id",)
                   .where("world_id", "=", chatRecord.world_id,)
-                  .where("name", "like", `%${locationMatch[2]}%`,)
+                  .where("name", "like", `%${locationName}%`,)
                   .executeTakeFirst();
 
                 if (location) {
@@ -861,13 +877,18 @@ export function messagesRoutes(opts: HandlerOpts,) {
                     .where("id", "=", chatId,)
                     .execute();
 
-                  log().info("Location change detected", { chatId, locationId: location.id, },);
+                  log().info("Location change detected", {
+                    chatId,
+                    locationId: location.id,
+                    source: classification.source,
+                    confidence: classification.confidence,
+                  },);
                 }
               }
             }
 
             // Create transition event for context cuts
-            if (transitionType === "context_cut") {
+            if (classification.type === "context_cut") {
               const transition = createTransition({
                 actorId,
                 narration: `Context cut: ${effectiveContent.slice(0, 100,)}`,
@@ -877,7 +898,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
               log().info("Context cut transition detected", {
                 chatId,
                 actorId,
-                transitionType,
+                transitionType: classification.type,
+                source: classification.source,
                 transition,
               },);
             }

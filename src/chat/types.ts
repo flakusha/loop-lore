@@ -191,6 +191,23 @@ export interface ChatTransition {
   createdAt: string;
 }
 
+/** Classification source for transition detection */
+export type TransitionSource = "regex" | "aux-llm" | "none";
+
+/** Result of transition classification */
+export interface TransitionClassification {
+  /** Whether the message is a transition */
+  isTransition: boolean;
+  /** Type of transition (null if not a transition) */
+  type: TransitionType | null;
+  /** Confidence score (0-1) */
+  confidence: number;
+  /** Extracted location name hint (null if not available) */
+  locationHint: string | null;
+  /** Source of the classification */
+  source: TransitionSource;
+}
+
 // ─── Moderation ───────────────────────────────────────────────
 
 /** Type of moderation action */
