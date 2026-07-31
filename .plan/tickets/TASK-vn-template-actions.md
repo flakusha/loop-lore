@@ -1,7 +1,7 @@
 # TASK: VN Pre-Configured Scene & Dialogue Templates
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Epic:** Epic Visual Novel Mode (51)
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
