@@ -17,8 +17,7 @@
 import { Elysia, t, } from "elysia";
 import type { Config, } from "../../config/schema";
 import { pickSdProvider, } from "../../config/schema";
-import { jsonResponse, } from "../../routes/http-utils";
-import { unauthorized, } from "../../validation/middleware";
+import { extractAuth, jsonResponse, } from "../../routes/http-utils";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import {
   clearDiscoveryCache,
@@ -29,75 +28,28 @@ import {
 } from "./discovery";
 import { validateLoRAConfig, } from "./validation";
 
-// ── Route: Discover LoRAs ────────────────────────────────
+// ── Validation Schemas ───────────────────────────────────
 
-interface DiscoverBody {
-  backend?: "comfyui" | "sd-server";
-  baseUrl?: string;
-  forceRefresh?: boolean;
-}
+const DiscoverBody = t.Object({
+  backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
+  baseUrl: t.Optional(t.String(),),
+  forceRefresh: t.Optional(t.Boolean(),),
+},);
 
-function validateDiscoverBody(body: unknown,): DiscoverBody | null {
-  if (!body || typeof body !== "object") { return null; }
-  const b = body as Record<string, unknown>;
+const ListQuery = t.Object({
+  backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
+  search: t.Optional(t.String(),),
+},);
 
-  // Validate backend if provided
-  if (b.backend !== undefined && b.backend !== "comfyui" && b.backend !== "sd-server") {
-    return null;
-  }
+const ClearCacheBody = t.Object({
+  backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
+},);
 
-  // Validate baseUrl if provided
-  if (b.baseUrl !== undefined && typeof b.baseUrl !== "string") {
-    return null;
-  }
-
-  // Validate forceRefresh if provided
-  if (b.forceRefresh !== undefined && typeof b.forceRefresh !== "boolean") {
-    return null;
-  }
-
-  return {
-    backend: b.backend,
-    baseUrl: b.baseUrl,
-    forceRefresh: b.forceRefresh,
-  };
-}
-
-// ── Route: List LoRAs ────────────────────────────────────
-
-interface ListQueryParams {
-  backend?: "comfyui" | "sd-server";
-  search?: string;
-}
-
-function parseListQuery(searchParams: URLSearchParams,): ListQueryParams {
-  const backend = searchParams.get("backend",);
-  const search = searchParams.get("search",);
-
-  return {
-    backend: backend === "comfyui" || backend === "sd-server" ? backend : undefined,
-    search: search ?? undefined,
-  };
-}
-
-// ── Route: Clear Cache ───────────────────────────────────
-
-interface ClearCacheBody {
-  backend?: "comfyui" | "sd-server";
-}
-
-function validateClearCacheBody(body: unknown,): ClearCacheBody | null {
-  if (!body || typeof body !== "object") { return null; }
-  const b = body as Record<string, unknown>;
-
-  if (b.backend !== undefined && b.backend !== "comfyui" && b.backend !== "sd-server") {
-    return null;
-  }
-
-  return {
-    backend: b.backend,
-  };
-}
+const ValidateBody = t.Object({
+  name: t.String({ minLength: 1, },),
+  strength: t.Number({ minimum: 0.1, maximum: 1, },),
+  backend: t.UnionEnum(["comfyui", "sd-server",],),
+},);
 
 // ── Elysia Plugin ────────────────────────────────────────
 
@@ -112,21 +64,18 @@ export function loraRoutes({ config, }: { config: Config },) {
 
     // POST /api/lora/discover
     .post("/api/lora/discover", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
+      const { userId, } = extractAuth(ctx,);
       if (!userId) {
-        return unauthorized();
+        return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
       // TODO: Add admin role check when RBAC is implemented
-      // const userRole = (ctx as any).userRole as string | null;
+      // const { userRole, } = extractAuth(ctx,);
       // if (userRole !== "admin") {
-      //   return forbidden();
+      //   return jsonResponse({ error: "Forbidden", code: "FORBIDDEN", }, 403,);
       // }
 
-      const input = validateDiscoverBody(ctx.body,);
-      if (!input) {
-        return jsonResponse({ error: "Invalid request body", code: "BAD_REQUEST", },);
-      }
+      const input = ctx.body;
 
       // Get backend URLs from config
       const sdProvider = pickSdProvider(config?.generation?.providers?.sd, "generate",);
@@ -154,8 +103,16 @@ export function loraRoutes({ config, }: { config: Config },) {
         forceRefresh: input.forceRefresh,
       },);
 
-      const allModels = results.flatMap((r,) => r.models);
-      const errors = results.filter((r,) => r.error).map((r,) => r.error);
+      const allModels: import("./types").LoRAModel[] = [];
+      const errors: string[] = [];
+      for (const r of results) {
+        for (const m of r.models) {
+          allModels.push(m,);
+        }
+        if (r.error) {
+          errors.push(r.error,);
+        }
+      }
 
       return jsonResponse({
         ok: errors.length === 0,
@@ -164,11 +121,7 @@ export function loraRoutes({ config, }: { config: Config },) {
         errors: errors.length > 0 ? errors : undefined,
       },);
     }, {
-      body: t.Object({
-        backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
-        baseUrl: t.Optional(t.String(),),
-        forceRefresh: t.Optional(t.Boolean(),),
-      },),
+      body: DiscoverBody,
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -182,25 +135,32 @@ export function loraRoutes({ config, }: { config: Config },) {
 
     // GET /api/lora/list
     .get("/api/lora/list", (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
+      const { userId, } = extractAuth(ctx,);
       if (!userId) {
-        return unauthorized();
+        return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
-      const params = parseListQuery(new URL(ctx.request.url,).searchParams,);
-      let models = getCachedLoras();
+      const params = ctx.query;
+      const cached = getCachedLoras();
+      const models: import("./types").LoRAModel[] = [];
 
-      // Filter by backend
-      if (params.backend) {
-        models = models.filter((m,) => m.backend === params.backend,);
-      }
+      for (const m of cached) {
+        // Filter by backend
+        if (params.backend && m.backend !== params.backend) {
+          continue;
+        }
 
-      // Filter by search term
-      if (params.search) {
-        const term = params.search.toLowerCase();
-        models = models.filter(
-          (m,) => m.name.toLowerCase().includes(term,) || m.filename.toLowerCase().includes(term,),
-        );
+        // Filter by search term
+        if (params.search) {
+          const term = params.search.toLowerCase();
+          const nameMatch = m.name.toLowerCase().includes(term,);
+          const fileMatch = m.filename.toLowerCase().includes(term,);
+          if (!nameMatch && !fileMatch) {
+            continue;
+          }
+        }
+
+        models.push(m,);
       }
 
       return jsonResponse({
@@ -209,6 +169,7 @@ export function loraRoutes({ config, }: { config: Config },) {
         models,
       },);
     }, {
+      query: ListQuery,
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -222,9 +183,9 @@ export function loraRoutes({ config, }: { config: Config },) {
 
     // GET /api/lora/status
     .get("/api/lora/status", (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
+      const { userId, } = extractAuth(ctx,);
       if (!userId) {
-        return unauthorized();
+        return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
       const status = getCacheStatus();
@@ -247,22 +208,18 @@ export function loraRoutes({ config, }: { config: Config },) {
 
     // POST /api/lora/clear
     .post("/api/lora/clear", (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
+      const { userId, } = extractAuth(ctx,);
       if (!userId) {
-        return unauthorized();
+        return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
       // TODO: Add admin role check when RBAC is implemented
-      // const userRole = (ctx as any).userRole as string | null;
+      // const { userRole, } = extractAuth(ctx,);
       // if (userRole !== "admin") {
-      //   return forbidden();
+      //   return jsonResponse({ error: "Forbidden", code: "FORBIDDEN", }, 403,);
       // }
 
-      const input = validateClearCacheBody(ctx.body,);
-      if (!input) {
-        return jsonResponse({ error: "Invalid request body", code: "BAD_REQUEST", },);
-      }
-
+      const input = ctx.body;
       clearDiscoveryCache(input.backend,);
 
       return jsonResponse({
@@ -270,9 +227,7 @@ export function loraRoutes({ config, }: { config: Config },) {
         cleared: input.backend ?? "all",
       },);
     }, {
-      body: t.Object({
-        backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
-      },),
+      body: ClearCacheBody,
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -286,9 +241,9 @@ export function loraRoutes({ config, }: { config: Config },) {
 
     // POST /api/lora/validate
     .post("/api/lora/validate", (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
+      const { userId, } = extractAuth(ctx,);
       if (!userId) {
-        return unauthorized();
+        return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
       const error = validateLoRAConfig(ctx.body,);
@@ -305,11 +260,7 @@ export function loraRoutes({ config, }: { config: Config },) {
         config: ctx.body,
       },);
     }, {
-      body: t.Object({
-        name: t.String({ minLength: 1, },),
-        strength: t.Number({ minimum: 0.1, maximum: 1.0, },),
-        backend: t.UnionEnum(["comfyui", "sd-server",],),
-      },),
+      body: ValidateBody,
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
