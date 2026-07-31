@@ -52,6 +52,7 @@ globalThis.selectCharacterCard = async function(id: string,) {
     modal.querySelector("[data-field='avatar']",)!.innerHTML = char.avatar_asset_id
       ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
       : "<span>👤</span>";
+    modal.querySelector("[data-action='generate-emotion-avatars']",)?.setAttribute("data-id", id,);
     modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
     modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
     modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
@@ -74,6 +75,22 @@ globalThis.selectCharacterCard = async function(id: string,) {
           barEl.style.backgroundColor = happinessColor(mood.happiness,);
         }
         if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
+      }
+    }
+
+    // Load linked assets for gallery
+    const galleryGrid = modal.querySelector<HTMLElement>("#character-gallery-grid",);
+    if (galleryGrid) {
+      try {
+        const galleryResp = await fetch(`/dynamic/gallery/grid?entityType=actor&entityId=${encodeURIComponent(id,)}`, {
+          headers: { "HX-Request": "true", },
+        },);
+        if (galleryResp.ok) {
+          const galleryHtml = await galleryResp.text();
+          galleryGrid.innerHTML = galleryHtml;
+        }
+      } catch {
+        /* gallery load non-critical */
       }
     }
   } catch {
@@ -178,13 +195,27 @@ let emotionAvatarPollInterval: ReturnType<typeof setInterval> | null = null;
   resultsEl.replaceChildren();
 
   try {
+    // Fetch avatars to find the primary one as base
+    const avatarsRes = await feFetch(`/api/actors/${id}/avatars`,);
+    if (!avatarsRes.ok) {
+      statusEl.textContent = "Error: Failed to load character avatars";
+      btn.removeAttribute("disabled",);
+      return;
+    }
+    const avatars = await avatarsRes.json();
+    const primary = avatars.find((a: { is_primary: number },) => a.is_primary === 1) ?? avatars[0];
+    if (!primary) {
+      statusEl.textContent = "Error: No avatar found for this character";
+      btn.removeAttribute("disabled",);
+      return;
+    }
+
     // Start batch generation
     const res = await feFetch(`/api/actors/${id}/emotion-avatars`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({
-        // Use default emotions (all) — no baseAvatarId override means use character's primary avatar
-        // Template expansion config is applied server-side
+        baseAvatarId: primary.id,
       },),
     },);
 

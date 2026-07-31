@@ -47,29 +47,31 @@ describe("API Keys E2E", () => {
 
   test("POST /api/user-api-keys stores a key (response has provider not provider_name)", async () => {
     const res = await api.post<{ id: string; provider: string }>("/api/user-api-keys", {
-      providerName: "test-provider",
-      apiKey: "sk-test-key-12345",
+      name: "test-provider",
+      provider: "test-provider",
+      api_key: "sk-test-key-12345",
     },);
     expect(res.ok,).toBe(true,);
     expect(res.data!.provider,).toBe("test-provider",);
   });
 
-  test("POST /api/user-api-keys requires providerName", async () => {
-    const res = await api.post("/api/user-api-keys", { apiKey: "sk-test", },);
+  test("POST /api/user-api-keys requires name", async () => {
+    const res = await api.post("/api/user-api-keys", { api_key: "sk-test", provider: "test-provider", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
 
-  test("POST /api/user-api-keys requires apiKey", async () => {
-    const res = await api.post("/api/user-api-keys", { providerName: "test-provider", },);
+  test("POST /api/user-api-keys requires api_key", async () => {
+    const res = await api.post("/api/user-api-keys", { name: "test-provider", provider: "test-provider", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
 
   test("POST /api/user-api-keys rejects unknown provider", async () => {
     const res = await api.post("/api/user-api-keys", {
-      providerName: "nonexistent",
-      apiKey: "sk-test",
+      name: "nonexistent",
+      provider: "nonexistent",
+      api_key: "sk-test",
     },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
@@ -89,8 +91,9 @@ describe("API Keys E2E", () => {
 
   test("POST /api/user-api-keys updates existing key (upsert)", async () => {
     const res = await api.post("/api/user-api-keys", {
-      providerName: "test-provider",
-      apiKey: "sk-updated-key",
+      name: "test-provider",
+      provider: "test-provider",
+      api_key: "sk-updated-key",
     },);
     expect(res.ok,).toBe(true,);
   });
