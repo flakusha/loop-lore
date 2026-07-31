@@ -20,9 +20,9 @@ to move from one location to another, the party (including GM) can:
 
 | Component                                         | Status | Notes                                 |
 | ------------------------------------------------- | ------ | ------------------------------------- |
-| `POST /api/chats/:chatId/join`                    | ✅     | Add user as participant               |
-| `DELETE /api/chats/:chatId/participants/:actorId` | ✅     | Remove participant                    |
-| `POST /api/chats/:chatId/transfer`                | ✅     | Move chat to new location             |
+| `POST /api/chats/:id/join`                    | ✅     | Add user as participant               |
+| `DELETE /api/chats/:id/participants/:actorId` | ✅     | Remove participant                    |
+| `POST /api/chats/:id/transfer`                | ✅     | Move chat to new location             |
 | VN scene renderer                                 | ✅     | Has transition effects                |
 | VN choice cards                                   | ✅     | Can drive location decisions          |
 | Party concept                                     | ❌     | No DB table, implicit via shared chat |
@@ -50,7 +50,7 @@ No `parties` table needed. Party mechanics operate on `chat_participants`.
 
 When a new character joins the party:
 
-1. **API**: `POST /api/chats/:chatId/participants` with `actorId`
+1. **API**: `POST /api/chats/:id/participants` with `actorId`
 2. **VN Transition**: Entrance narration
    - System generates: "A figure approaches from the shadows..."
    - Or character's `welcome_message` if set
@@ -60,7 +60,7 @@ When a new character joins the party:
 
 ```typescript
 // New endpoint or extension:
-POST /api/chats/:chatId/participants
+POST /api/chats/:id/participants
   body: { actorId: string, role?: "member" | "guest" }
   response: {
     ok: true,
@@ -73,7 +73,7 @@ POST /api/chats/:chatId/participants
 
 When a character leaves the party:
 
-1. **API**: `DELETE /api/chats/:chatId/participants/:actorId`
+1. **API**: `DELETE /api/chats/:id/participants/:actorId`
 2. **VN Transition**: Departure narration
    - System generates: "X gathers their things and heads toward the exit..."
 3. **State Snapshot**: Character state saved for rejoin continuity
@@ -81,7 +81,7 @@ When a character leaves the party:
 5. **Event**: `chat.party_left` emitted
 
 ```typescript
-DELETE /api/chats/:chatId/participants/:actorId
+DELETE /api/chats/:id/participants/:actorId
   response: {
     ok: true,
     departureNarration?: string  // VN transition text
@@ -106,7 +106,7 @@ When the party decides to split at a location fork:
 5. **Events**: `chat.party_split` emitted with branch info
 
 ```typescript
-POST /api/chats/:chatId/split
+POST /api/chats/:id/split
   body: {
     branches: [
       { locationId: string, actorIds: string[], name?: string },
@@ -139,7 +139,7 @@ When split parties reunite:
 5. **Events**: `chat.party_reunited` emitted
 
 ```typescript
-POST /api/chats/:chatId/reunite
+POST /api/chats/:id/reunite
   body: { sourceChatId: string }
   response: {
     ok: true,
@@ -187,8 +187,8 @@ See `TASK-transition-aux-llm-fallback.md` for full design.
 
 ### Phase 1: Party Join/Leave with VN Narration
 
-- [ ] Extend `POST /api/chats/:chatId/participants` with entrance narration
-- [ ] Extend `DELETE /api/chats/:chatId/participants/:actorId` with departure narration
+- [ ] Extend `POST /api/chats/:id/participants` with entrance narration
+- [ ] Extend `DELETE /api/chats/:id/participants/:actorId` with departure narration
 - [ ] Wire VN scene renderer for entrance/exit animations
 - [ ] Add character state snapshot on leave
 - [ ] Add talkativity/initiative seeding for new members
@@ -203,8 +203,8 @@ See `TASK-transition-aux-llm-fallback.md` for full design.
 ### Phase 3: Party Split/Merge
 
 - [ ] Create split detection regex patterns
-- [ ] Implement `POST /api/chats/:chatId/split` endpoint
-- [ ] Implement `POST /api/chats/:chatId/reunite` endpoint
+- [ ] Implement `POST /api/chats/:id/split` endpoint
+- [ ] Implement `POST /api/chats/:id/reunite` endpoint
 - [ ] Add VN split/reunite visual effects
 - [ ] Wire parent-child chat linking
 
