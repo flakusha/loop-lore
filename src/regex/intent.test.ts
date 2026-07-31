@@ -1,5 +1,5 @@
 import { describe, expect, test, } from "bun:test";
-import { INTENT_PATTERNS, SLASH_COMMAND, REGEX_SPECIAL_CHARS, type AssistantIntent, } from "./intent";
+import { type AssistantIntent, INTENT_PATTERNS, REGEX_SPECIAL_CHARS, SLASH_COMMAND, } from "./intent";
 
 // ── Helper ────────────────────────────────────────────────
 
@@ -19,8 +19,8 @@ function matchIntent(
   const trimmed = text.trim().toLowerCase();
 
   // Check slash commands first (mirrors original detectIntent logic)
-  if (trimmed.startsWith("/")) {
-    const slashMatch = SLASH_COMMAND.exec(trimmed);
+  if (trimmed.startsWith("/",)) {
+    const slashMatch = SLASH_COMMAND.exec(trimmed,);
     if (slashMatch) {
       const cmd = slashMatch[1];
       if (cmd && APPROVED_TOOLS[cmd]) {
@@ -35,7 +35,7 @@ function matchIntent(
 
   for (const { intent, target, confidence, patterns, } of INTENT_PATTERNS) {
     for (const pattern of patterns) {
-      if (pattern.test(trimmed)) {
+      if (pattern.test(trimmed,)) {
         if (!best || confidence > best.confidence) {
           best = { intent, target, confidence, };
         }
@@ -59,9 +59,9 @@ describe("generate: character", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("generate");
-      expect(result?.target).toBe("character");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("character",);
     });
   }
 });
@@ -76,9 +76,9 @@ describe("generate: item", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("generate");
-      expect(result?.target).toBe("item");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("item",);
     });
   }
 });
@@ -93,9 +93,9 @@ describe("generate: location", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("generate");
-      expect(result?.target).toBe("location");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("location",);
     });
   }
 });
@@ -109,9 +109,9 @@ describe("generate: world", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("generate");
-      expect(result?.target).toBe("world");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("world",);
     });
   }
 });
@@ -126,9 +126,9 @@ describe("generate: image", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("generate");
-      expect(result?.target).toBe("image");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("image",);
     });
   }
 });
@@ -142,9 +142,9 @@ describe("generate: quest", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("generate");
-      expect(result?.target).toBe("quest");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("quest",);
     });
   }
 });
@@ -159,16 +159,16 @@ describe("tool_exec: roll", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("tool_exec");
-      expect(result?.target).toBe("roll");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("tool_exec",);
+      expect(result?.target,).toBe("roll",);
     });
   }
 
   test("/roll matches via slash command", () => {
-    const result = matchIntent("/roll");
-    expect(result?.intent).toBe("tool_exec");
-    expect(result?.target).toBe("roll");
+    const result = matchIntent("/roll",);
+    expect(result?.intent,).toBe("tool_exec",);
+    expect(result?.target,).toBe("roll",);
   });
 });
 
@@ -180,16 +180,16 @@ describe("tool_exec: summarize", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("tool_exec");
-      expect(result?.target).toBe("summarize");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("tool_exec",);
+      expect(result?.target,).toBe("summarize",);
     });
   }
 
   test("/summarize matches via slash command", () => {
-    const result = matchIntent("/summarize");
-    expect(result?.intent).toBe("tool_exec");
-    expect(result?.target).toBe("summarize");
+    const result = matchIntent("/summarize",);
+    expect(result?.intent,).toBe("tool_exec",);
+    expect(result?.target,).toBe("summarize",);
   });
 });
 
@@ -202,16 +202,16 @@ describe("tool_exec: improve", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("tool_exec");
-      expect(result?.target).toBe("improve");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("tool_exec",);
+      expect(result?.target,).toBe("improve",);
     });
   }
 
   test("/improve matches via slash command", () => {
-    const result = matchIntent("/improve");
-    expect(result?.intent).toBe("tool_exec");
-    expect(result?.target).toBe("improve");
+    const result = matchIntent("/improve",);
+    expect(result?.intent,).toBe("tool_exec",);
+    expect(result?.target,).toBe("improve",);
   });
 });
 
@@ -227,9 +227,9 @@ describe("api_call: search", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result?.intent).toBe("api_call");
-      expect(result?.target).toBe("search");
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("api_call",);
+      expect(result?.target,).toBe("search",);
     });
   }
 });
@@ -246,8 +246,8 @@ describe("no match (falls through to chat)", () => {
 
   for (const input of cases) {
     test(`does not match "${input}"`, () => {
-      const result = matchIntent(input);
-      expect(result).toBeNull();
+      const result = matchIntent(input,);
+      expect(result,).toBeNull();
     });
   }
 });
@@ -256,21 +256,21 @@ describe("no match (falls through to chat)", () => {
 
 describe("SLASH_COMMAND", () => {
   test("matches /roll", () => {
-    const m = SLASH_COMMAND.exec("/roll");
-    expect(m?.[1]).toBe("roll");
+    const m = SLASH_COMMAND.exec("/roll",);
+    expect(m?.[1],).toBe("roll",);
   });
 
   test("matches /summarize", () => {
-    const m = SLASH_COMMAND.exec("/summarize");
-    expect(m?.[1]).toBe("summarize");
+    const m = SLASH_COMMAND.exec("/summarize",);
+    expect(m?.[1],).toBe("summarize",);
   });
 
   test("does not match plain text", () => {
-    expect(SLASH_COMMAND.exec("hello")).toBeNull();
+    expect(SLASH_COMMAND.exec("hello",),).toBeNull();
   });
 
   test("does not match empty string", () => {
-    expect(SLASH_COMMAND.exec("")).toBeNull();
+    expect(SLASH_COMMAND.exec("",),).toBeNull();
   });
 });
 
@@ -280,20 +280,20 @@ describe("REGEX_SPECIAL_CHARS", () => {
   test("matches special regex characters individually", () => {
     // Reset lastIndex since regex has g flag
     REGEX_SPECIAL_CHARS.lastIndex = 0;
-    expect(REGEX_SPECIAL_CHARS.test(".")).toBe(true);
+    expect(REGEX_SPECIAL_CHARS.test(".",),).toBe(true,);
     REGEX_SPECIAL_CHARS.lastIndex = 0;
-    expect(REGEX_SPECIAL_CHARS.test("*")).toBe(true);
+    expect(REGEX_SPECIAL_CHARS.test("*",),).toBe(true,);
     REGEX_SPECIAL_CHARS.lastIndex = 0;
-    expect(REGEX_SPECIAL_CHARS.test("+")).toBe(true);
+    expect(REGEX_SPECIAL_CHARS.test("+",),).toBe(true,);
     REGEX_SPECIAL_CHARS.lastIndex = 0;
-    expect(REGEX_SPECIAL_CHARS.test("?")).toBe(true);
+    expect(REGEX_SPECIAL_CHARS.test("?",),).toBe(true,);
   });
 
   test("does not match normal characters", () => {
     REGEX_SPECIAL_CHARS.lastIndex = 0;
-    expect(REGEX_SPECIAL_CHARS.test("a")).toBe(false);
+    expect(REGEX_SPECIAL_CHARS.test("a",),).toBe(false,);
     REGEX_SPECIAL_CHARS.lastIndex = 0;
-    expect(REGEX_SPECIAL_CHARS.test("1")).toBe(false);
+    expect(REGEX_SPECIAL_CHARS.test("1",),).toBe(false,);
   });
 });
 
@@ -301,19 +301,19 @@ describe("REGEX_SPECIAL_CHARS", () => {
 
 describe("INTENT_PATTERNS structure", () => {
   test("has 10 pattern groups", () => {
-    expect(INTENT_PATTERNS.length).toBe(10);
+    expect(INTENT_PATTERNS.length,).toBe(10,);
   });
 
   test("every group has at least 1 pattern", () => {
     for (const { patterns, } of INTENT_PATTERNS) {
-      expect(patterns.length).toBeGreaterThanOrEqual(1);
+      expect(patterns.length,).toBeGreaterThanOrEqual(1,);
     }
   });
 
   test("all patterns are RegExp instances", () => {
     for (const { patterns, } of INTENT_PATTERNS) {
       for (const p of patterns) {
-        expect(p).toBeInstanceOf(RegExp);
+        expect(p,).toBeInstanceOf(RegExp,);
       }
     }
   });
@@ -321,14 +321,14 @@ describe("INTENT_PATTERNS structure", () => {
   test("generate intents require approval", () => {
     const generateIntents = INTENT_PATTERNS.filter((p,) => p.intent === "generate");
     for (const { requires_approval, } of generateIntents) {
-      expect(requires_approval).toBe(true);
+      expect(requires_approval,).toBe(true,);
     }
   });
 
   test("tool_exec intents do not require approval", () => {
     const toolIntents = INTENT_PATTERNS.filter((p,) => p.intent === "tool_exec");
     for (const { requires_approval, } of toolIntents) {
-      expect(requires_approval).toBe(false);
+      expect(requires_approval,).toBe(false,);
     }
   });
 });
