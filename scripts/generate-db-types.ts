@@ -336,7 +336,7 @@ function generateDomainFiles(tables: Map<string, Record<string, ColumnDef>>): vo
 
     if (enumImports.size > 0) {
       const sorted = [...enumImports].sort();
-      lines.push(`import type { ${sorted.join(", ")}, } from "./enums";`);
+      lines.push(`import type { ${sorted.join(", ")}, } from "./schemas";`);
     }
 
     lines.push(``);
@@ -415,6 +415,23 @@ function generateTestHelpers(tables: Map<string, Record<string, ColumnDef>>): vo
   lines.push(` */`);
   lines.push(`import type { Kysely, } from "kysely";`);
   lines.push(`import type { DB, } from "../db/schema";`);
+
+  // Collect enum imports used across all tables
+  const enumImports = new Set<string>();
+  for (const [name, cols] of tables) {
+    const tableName = pascalCase(name);
+    for (const [colName] of Object.entries(cols)) {
+      const overrides = COLUMN_TYPE_OVERRIDES[tableName] || COLUMN_TYPE_OVERRIDES[name] || {};
+      if (overrides[colName]) {
+        enumImports.add(overrides[colName]);
+      }
+    }
+  }
+  if (enumImports.size > 0) {
+    const sorted = [...enumImports].sort();
+    lines.push(`import type { ${sorted.join(", ")}, } from "../db/enums";`);
+  }
+
   lines.push(``);
   lines.push(`type Db = Kysely<DB>;`);
   lines.push(``);
@@ -508,7 +525,7 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
   lines.push(`import { Id, Name, PaginationQuery, SuccessResponse, ErrorResponse, } from "./schemas";`);
   if (enumSchemas.size > 0) {
     const sorted = [...enumSchemas].sort();
-    lines.push(`import { ${sorted.map((e) => `${e}Schema`).join(", ")}, } from "./enums";`);
+    lines.push(`import { ${sorted.map((e) => `${e}Schema`).join(", ")}, } from "./schemas";`);
   }
   lines.push(``);
 
