@@ -14,17 +14,18 @@
   data-testid="chat-list-panel"
 >
   <div class="chat-list-header">
-    <span class="nav-section-title">{{{t("chats.chats")}}}</span>
+    <span class="nav-section-title">Chats</span>
     <div class="nav-section-actions">
       <input
         class="form-input chat-list-search"
         type="search"
-        x-bind:placeholder="t('common.filter')"
-        x-bind:aria-label="t('chats.filterChats')"
+        placeholder="Filter…"
+        aria-label="Filter chats"
         x-model="_chatFilter"
+        @input="searchChats(_chatFilter)"
         style="width: 140px; font-size: 12px; height: 26px"
       />
-      <button class="btn-icon" @click="$store.ui.showChatList = false" x-bind:title="t('common.close')">&times;</button>
+      <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
     </div>
   </div>
   <!-- Batch action bar -->
@@ -38,70 +39,85 @@
       style="font-size: 12px; color: var(--text-secondary)"
       x-text="`${selectedChats.length} selected`"
     ></span>
-    <button class="btn-xs" @click="batchArchive()" x-bind:title="t('chats.archiveSelected')">
-      📦 {{{t("common.archive")}}}
+    <button class="btn-xs" @click="batchArchive()" title="Archive selected">📦 Archive</button>
+    <button class="btn-xs" @click="batchDelete()" title="Delete selected" style="color: var(--accent-red)">
+      🗑 Delete
     </button>
-    <button
-      class="btn-xs"
-      @click="batchDelete()"
-      x-bind:title="t('chats.deleteSelected')"
-      style="color: var(--accent-red)"
-    >
-      🗑 {{{t("common.delete")}}}
-    </button>
-    <button class="btn-xs" @click="batchExport()" x-bind:title="t('chats.exportSelected')">
-      📥 {{{t("common.export")}}}
-    </button>
-    <button class="btn-xs" @click="selectedChats = []" x-bind:title="t('chats.clearSelection')">
-      ✕ {{{t("common.clear")}}}
-    </button>
+    <button class="btn-xs" @click="batchExport()" title="Export selected">📥 Export</button>
+    <button class="btn-xs" @click="selectedChats = []" title="Clear selection">✕ Clear</button>
   </div>
   <div id="chat-list">
-    <template x-if="chats.length === 0">
-      <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">{{{t("chats.noChatsYet")}}}</div>
+    <template x-if="chats.length === 0 && !_searchResults">
+      <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
     </template>
-    <template x-for="chat in filteredChats" :key="chat.id">
-      <div class="nav-item-row" :class="{ selected: selectedChats.includes(chat.id) }">
-        <input
-          type="checkbox"
-          :checked="selectedChats.includes(chat.id)"
-          @change="toggleChatSelection(chat.id)"
-          style="margin: 0 0 0 var(--space-2); flex-shrink: 0"
-          aria-label="Select chat"
-        />
-        <a
+    <!-- Server-side search results -->
+    <template x-if="_searchResults">
+      <div>
+        <div
           class="nav-item"
-          :class="{ active: activeChat === chat.id }"
-          href="#"
-          @click.prevent="selectChat(chat.id)"
+          style="color: var(--text-secondary); font-size: 11px; padding: var(--space-2) var(--space-3)"
         >
-          <span class="name" x-text="chat.name"></span>
-          <span class="badge" x-show="_unseenCounts[chat.id] > 0" x-text="_unseenCounts[chat.id]"></span>
-        </a>
-        <span class="nav-item-actions">
-          <button
-            class="btn-icon btn-xs"
-            :title="chat.isPinned === 'pinned' ? t('common.unpin') : t('common.pin')"
-            @click.prevent="toggleChatPin(chat.id)"
-            :style="chat.isPinned === 'pinned' ? 'color:var(--accent-yellow)' : ''"
-            x-text="chat.isPinned === 'pinned' ? '★' : '☆'"
-          >
-          </button>
-          <button
-            class="btn-icon btn-xs"
-            x-bind:title="t('common.rename')"
-            @click.prevent="renameChat(chat.id)"
-          >
-            ✏️
-          </button>
-          <button
-            class="btn-icon btn-xs"
-            x-bind:title="t('common.delete')"
-            @click.prevent="deleteChat(chat.id, $event)"
-          >
-            🗑
-          </button>
-        </span>
+          Search results (<span x-text="_searchResults.length"></span>)
+        </div>
+        <template x-for="result in _searchResults" :key="result.chatId">
+          <div class="nav-item-row">
+            <a
+              class="nav-item"
+              :class="{ active: activeChat === result.chatId }"
+              href="#"
+              @click.prevent="selectChat(result.chatId)"
+            >
+              <span class="name" x-text="result.chatName"></span>
+              <span
+                class="badge"
+                style="font-size: 10px; color: var(--text-tertiary)"
+                x-text="result.characterName"
+              ></span>
+            </a>
+            <span class="nav-item-actions">
+              <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(result.chatId)">✏️</button>
+            </span>
+          </div>
+        </template>
+      </div>
+    </template>
+    <!-- Client-side filtered list -->
+    <template x-if="!_searchResults">
+      <div>
+        <template x-for="chat in filteredChats" :key="chat.id">
+          <div class="nav-item-row" :class="{ selected: selectedChats.includes(chat.id) }">
+            <input
+              type="checkbox"
+              :checked="selectedChats.includes(chat.id)"
+              @change="toggleChatSelection(chat.id)"
+              style="margin: 0 0 0 var(--space-2); flex-shrink: 0"
+              aria-label="Select chat"
+            />
+            <a
+              class="nav-item"
+              :class="{ active: activeChat === chat.id }"
+              href="#"
+              @click.prevent="selectChat(chat.id)"
+            >
+              <span class="name" x-text="chat.name"></span>
+              <span class="badge" x-show="_unseenCounts[chat.id] > 0" x-text="_unseenCounts[chat.id]"></span>
+            </a>
+            <span class="nav-item-actions">
+              <button
+                class="btn-icon btn-xs"
+                :title="chat.isPinned === 'pinned' ? 'Unpin' : 'Pin'"
+                @click.prevent="toggleChatPin(chat.id)"
+                :style="chat.isPinned === 'pinned' ? 'color:var(--accent-yellow)' : ''"
+                x-text="chat.isPinned === 'pinned' ? '★' : '☆'"
+              >
+              </button>
+              <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
+              <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
+                🗑
+              </button>
+            </span>
+          </div>
+        </template>
       </div>
     </template>
   </div>
@@ -115,7 +131,7 @@
       hx-swap="innerHTML"
       hx-push-url="true"
     >
-      + {{{t("chats.newChat")}}}
+      + New Chat
     </a>
   </div>
 </div>
