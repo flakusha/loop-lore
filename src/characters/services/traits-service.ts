@@ -86,7 +86,7 @@ export class TraitsService {
       .values({
         id,
         actor_id: opts.actorId,
-        trait_category: opts.category,
+        trait_category: opts.category as any,
         trait_name: opts.name,
         trait_value: opts.value,
         immutable: 1,
@@ -187,7 +187,7 @@ export class TraitsService {
         id,
         actor_id: opts.actorId,
         world_id: opts.worldId,
-        trait_category: opts.category,
+        trait_category: opts.category as any,
         trait_name: opts.name,
         trait_value: opts.value,
         created_at: now,
