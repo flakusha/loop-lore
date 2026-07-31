@@ -34,7 +34,7 @@ const mockDb = {
 };
 
 const app = new Elysia().use(
-  vnChoiceRoutes({ database: mockDb as any, }),
+  vnChoiceRoutes({ database: mockDb as any, },),
 );
 
 describe("vnChoiceRoutes", () => {
@@ -53,8 +53,8 @@ describe("vnChoiceRoutes", () => {
         body: JSON.stringify({
           sceneIndex: 0,
           label: "Fight the dragon",
-        }),
-      }),
+        },),
+      },),
     );
     expect(res.status,).toBe(401,);
   });

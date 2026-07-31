@@ -35,6 +35,7 @@ import {
   ChatParticipantParams,
   ChatParticipantUpdateBody,
   ChatPersonaUpdateBody,
+  ChatRenameBody,
   ChatUpdateBody,
   PaginationQuery,
 } from "../validation/schemas";
@@ -263,6 +264,53 @@ export function chatsRoutes(opts: HandlerOpts,) {
           return jsonResponse({ ok: true, },);
         },
         { body: ChatUpdateBody, params: ChatIdParams, },
+      )
+      .post(
+        "/api/chats/:id/rename",
+        async (ctx: any,) => {
+          const userId = ctx.userId as string | null;
+          const userRole = ctx.userRole as string | null;
+          const id = (ctx.params as { id: string }).id;
+          const body = ctx.body as typeof ChatRenameBody.static;
+          if (!userId) { return unauthorized(); }
+
+          const access = await checkChatAccess(database, id, userId, userRole,);
+          if (!access.ok) { return forbidden(); }
+
+          // Validate name length (1-60 characters)
+          if (!body.name || body.name.length < 1 || body.name.length > 60) {
+            return jsonError("Chat name must be 1-60 characters", HttpStatus.BadRequest, "validation_error" as never,);
+          }
+
+          // Check for duplicate name among user's chats
+          const existing = await database
+            .selectFrom("chats",)
+            .select("id",)
+            .where("created_by", "=", userId,)
+            .where("name", "=", body.name,)
+            .where("id", "!=", id,)
+            .executeTakeFirst();
+          if (existing) {
+            return jsonError(
+              "A chat with this name is already in use",
+              HttpStatus.BadRequest,
+              "duplicate_name" as never,
+            );
+          }
+
+          // Update name and name_source
+          await database
+            .updateTable("chats",)
+            .set({
+              name: body.name,
+              name_source: body.name_source ?? null,
+            },)
+            .where("id", "=", id,)
+            .execute();
+
+          return jsonResponse({ ok: true, },);
+        },
+        { body: ChatRenameBody, params: ChatIdParams, },
       )
       .delete(
         "/api/chats/:id",
