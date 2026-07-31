@@ -1,7 +1,7 @@
 import { describe, expect, test, } from "bun:test";
 import {
-  LOCATION_INDICATORS,
   ITEM_INDICATORS,
+  LOCATION_INDICATORS,
   WORLD_INDICATORS,
 } from "./hallucination";
 
@@ -22,16 +22,16 @@ describe("LOCATION_INDICATORS", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(LOCATION_INDICATORS.test(input)).toBe(true);
+      expect(LOCATION_INDICATORS.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(LOCATION_INDICATORS.test("AT the tavern")).toBe(true);
+    expect(LOCATION_INDICATORS.test("AT the tavern",),).toBe(true,);
   });
 
   test("does not match unrelated text", () => {
-    expect(LOCATION_INDICATORS.test("The dragon flew overhead")).toBe(false);
+    expect(LOCATION_INDICATORS.test("The dragon flew overhead",),).toBe(false,);
   });
 });
 
@@ -50,16 +50,16 @@ describe("ITEM_INDICATORS", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(ITEM_INDICATORS.test(input)).toBe(true);
+      expect(ITEM_INDICATORS.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(ITEM_INDICATORS.test("PICKED UP the sword")).toBe(true);
+    expect(ITEM_INDICATORS.test("PICKED UP the sword",),).toBe(true,);
   });
 
   test("does not match unrelated text", () => {
-    expect(ITEM_INDICATORS.test("The character walked forward")).toBe(false);
+    expect(ITEM_INDICATORS.test("The character walked forward",),).toBe(false,);
   });
 });
 
@@ -76,15 +76,15 @@ describe("WORLD_INDICATORS", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(WORLD_INDICATORS.test(input)).toBe(true);
+      expect(WORLD_INDICATORS.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(WORLD_INDICATORS.test("The WORLD is vast")).toBe(true);
+    expect(WORLD_INDICATORS.test("The WORLD is vast",),).toBe(true,);
   });
 
   test("does not match unrelated text", () => {
-    expect(WORLD_INDICATORS.test("The character fought bravely")).toBe(false);
+    expect(WORLD_INDICATORS.test("The character fought bravely",),).toBe(false,);
   });
 });
