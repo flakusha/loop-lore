@@ -17,7 +17,9 @@ globalThis.app = function() {
     currentTheme: "default",
     sidebarOpen: false,
     currentLocale: getSavedLocale(),
-    localeStrings: {} as TranslationMap,
+    // Seed from server-injected translations so Alpine bindings resolve
+    // immediately, without waiting for the async loadLocale() fetch.
+    localeStrings: ((globalThis as any).__localeStrings || {}) as TranslationMap,
     pageTitle: "loop-lore",
 
     __(key: string, fallback?: string,): string {
