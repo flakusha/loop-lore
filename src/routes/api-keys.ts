@@ -57,7 +57,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         return forbidden("BYO API key feature is disabled",);
       }
 
-      const { providerName, apiKey, } = ctx.body;
+      const { name: providerName, api_key: apiKey, } = ctx.body;
 
       const encryptionSecret = config.byoKey.encryptionKey;
       if (!encryptionSecret) {

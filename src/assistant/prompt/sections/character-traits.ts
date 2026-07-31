@@ -24,10 +24,10 @@ export const characterTraitsSection: SectionBuilder = {
       if (worldTraits.length > 0) {
         const grouped = Object.groupBy(worldTraits, (t,) => t.trait_category,);
         for (const [cat, traits,] of Object.entries(grouped,)) {
-          const lines = traits
-            .map((t,) => `${t.trait_name}: ${t.trait_value}`)
-            .join(", ",);
-          parts.push(`[${cat}] ${lines}`,);
+          if (!traits) { continue; }
+          const lines: string[] = [];
+          for (const t of traits) { lines.push(`${t.trait_name}: ${t.trait_value}`,); }
+          parts.push(`[${cat}] ${lines.join(", ",)}`,);
         }
       }
     }
@@ -41,16 +41,15 @@ export const characterTraitsSection: SectionBuilder = {
         .execute();
 
       if (locationTraits.length > 0) {
-        const lines = locationTraits
-          .map((t,) => {
-            const mods: string[] = [];
-            if (t.bonus > 0) { mods.push(`+${t.bonus}`,); }
-            if (t.penalty > 0) { mods.push(`-${t.penalty}`,); }
-            const mod = mods.length > 0 ? ` (${mods.join("/",)})` : "";
-            return `${t.trait_name}: ${t.trait_value}${mod}`;
-          },)
-          .join("; ",);
-        parts.push(`[location] ${lines}`,);
+        const lines: string[] = [];
+        for (const t of locationTraits) {
+          const mods: string[] = [];
+          if (t.bonus && t.bonus > 0) { mods.push(`+${t.bonus}`,); }
+          if (t.penalty && t.penalty > 0) { mods.push(`-${t.penalty}`,); }
+          const mod = mods.length > 0 ? ` (${mods.join("/",)})` : "";
+          lines.push(`${t.trait_name}: ${t.trait_value}${mod}`,);
+        }
+        parts.push(`[location] ${lines.join("; ",)}`,);
       }
     }
 
