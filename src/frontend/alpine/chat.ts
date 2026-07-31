@@ -282,7 +282,7 @@ globalThis.chatState = function() {
         }));
         const chat = this.chats.find((c,) => c.id === this.activeChat);
         const gmConfig = jsonParseOr<Record<string, unknown>>(chat?.gm_config ?? "{}", {},);
-        initVnRenderer(container, vnMessages, gmConfig,);
+        initVnRenderer(container, vnMessages, gmConfig, this.activeChat,);
       } else {
         destroyVnRenderer();
       }
