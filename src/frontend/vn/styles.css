@@ -1,0 +1,249 @@
+/* ── Visual Novel Mode Styles ─────────────────────────────── */
+
+.vn-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 60vh;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+}
+
+/* ── Scene ──────────────────────────────────────────────── */
+
+.vn-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.vn-scene.vn-layout-overlay {
+  justify-content: flex-end;
+}
+
+.vn-scene.vn-layout-below {
+  flex-direction: column;
+}
+
+.vn-scene.vn-layout-split {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  grid-template-rows: 1fr auto;
+}
+
+/* ── Background ─────────────────────────────────────────── */
+
+.vn-background {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.vn-layout-overlay .vn-background {
+  filter: brightness(0.6);
+}
+
+.vn-layout-below .vn-background {
+  position: relative;
+  height: 60%;
+  min-height: 200px;
+}
+
+/* ── Dialogue Box ───────────────────────────────────────── */
+
+.vn-dialogue-box {
+  position: relative;
+  z-index: 1;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  max-height: 40%;
+  overflow-y: auto;
+}
+
+.vn-layout-overlay .vn-dialogue-box {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  margin: var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.vn-layout-below .vn-dialogue-box {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.vn-layout-split .vn-dialogue-box {
+  grid-column: 2;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: var(--space-4);
+}
+
+/* ── Speaker Name ───────────────────────────────────────── */
+
+.vn-speaker {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent-primary);
+  margin-bottom: var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vn-layout-overlay .vn-speaker {
+  color: var(--accent-primary);
+}
+
+/* ── Thinking Block ─────────────────────────────────────── */
+
+.vn-thinking {
+  margin: var(--space-2) 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.vn-thinking summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.vn-thinking div {
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  font-style: italic;
+}
+
+/* ── Text Content ───────────────────────────────────────── */
+
+.vn-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.vn-layout-overlay .vn-text {
+  color: #eee;
+}
+
+/* ── Advance Indicator ──────────────────────────────────── */
+
+.vn-advance {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  animation: vn-pulse 1.5s ease-in-out infinite;
+  margin-top: var(--space-1);
+}
+
+@keyframes vn-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── Portrait ───────────────────────────────────────────── */
+
+.vn-portrait {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+}
+
+.vn-portrait-left {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.vn-portrait-right {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.vn-portrait-center {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-self: center;
+}
+
+.vn-portrait-img {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+.vn-portrait-name {
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+
+.vn-nav {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  z-index: 2;
+}
+
+.vn-nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background var(--transition-fast);
+}
+
+.vn-nav-btn:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+}
+
+.vn-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.vn-counter {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  min-width: 3em;
+  text-align: center;
+}
+
+/* ── Reduced Motion ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-advance {
+    animation: none;
+  }
+}
