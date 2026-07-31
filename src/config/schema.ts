@@ -516,6 +516,11 @@ interface GenerationConfig {
   };
   /** Regex transforms applied to LLM output before display */
   regexTransforms?: RegexTransform[];
+  /** Emotion avatar generation settings */
+  emotionAvatar?: {
+    /** Fallback mode when edit model is unavailable: "generation" uses txt2img, "none" disables fallback */
+    fallbackMode?: "generation" | "none";
+  };
 }
 
 // ── BYO API Key ────────────────────────────────────────────
