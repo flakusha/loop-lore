@@ -37,6 +37,14 @@ Wire existing `src/crypto/pipeline.ts` into message write/read routes. Messages 
 - `src/routes/messages.ts` — pipeline wired on write/read/edit
 - `src/routes/chats.ts` — tier enforcement on chat creation
 
+## Algorithm Extensibility
+
+- [ ] Add `algorithm` parameter to pipeline functions
+- [ ] Integrate with algorithm factory for dynamic algorithm selection
+- [ ] Support algorithm versioning in encrypted payloads
+- [ ] Add configuration support for default algorithm selection
+- [ ] Implement backward compatibility for legacy payloads
+
 ## Risk
 
 Low — pipeline exists, just needs wiring. Tests validate correctness.

@@ -10,7 +10,7 @@ Full encryption lifecycle: compress→encrypt→decrypt→decompress pipeline, t
 
 ## What's Built
 
-- `src/crypto/pipeline.ts` — `compressThenEncrypt` / `decryptThenDecompress`
+- `src/crypto/pipeline.ts` — `compressThenEncrypt` / `decryptThenDecompress` (now supports extensible algorithms)
 - `src/crypto/at-rest.ts` — tier-aware encrypt/decrypt wrapper
 - `src/crypto/smk.ts` — SMK initialization
 - `src/crypto/actor-keys.ts` — actor key CRUD
@@ -23,6 +23,15 @@ Full encryption lifecycle: compress→encrypt→decrypt→decompress pipeline, t
 - `src/routes/key-management.ts` — key CRUD endpoints
 - `src/routes/message-encryption.ts` — chat key endpoint
 - `src/routes/auth.ts` — actor key creation on login
+
+## Algorithm Extensibility
+
+The encryption workflow now supports future additions of new algorithms through:
+
+- **Algorithm Registry**: Central registry for algorithm implementations
+- **Factory Pattern**: `createEncryptor(algorithm)` and `createDecryptor(algorithm)` 
+- **Configuration-Driven**: Algorithm selection via config
+- **Plugin Hooks**: Runtime algorithm registration via plugins
 
 ## Remaining Tasks
 
@@ -47,6 +56,15 @@ Full encryption lifecycle: compress→encrypt→decrypt→decompress pipeline, t
 - [ ] `src/components/settings/key-management.html` — UI template
 - [ ] Wire into `/settings/keys` page
 - [ ] Re-auth gate for sensitive operations
+
+### Phase 2d: Algorithm Extensibility
+
+- [ ] `TASK-crypto-algorithm-factory.md` — implement algorithm factory
+- [ ] `TASK-crypto-plugin-hooks.md` — add crypto plugin hooks
+- [ ] `TASK-crypto-config-algorithm.md` — add algorithm configuration
+- [ ] `TASK-encryption-asset-encryption-update.md` — update asset encryption for extensible algorithms
+- [ ] `TASK-encryption-backward-compatibility.md` — implement backward compatibility
+- [ ] `TASK-crypto-algorithm-tests.md` — create comprehensive tests
 
 ### Phase 3: Time-Based Access
 
