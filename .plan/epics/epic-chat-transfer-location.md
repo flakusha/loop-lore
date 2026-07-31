@@ -22,8 +22,8 @@ Chat location change, party travel, and multi-location chat spanning. Covers:
 | `chats.current_location_id`        | ✅ DB column            | `schema-core.ts`                                       |
 | `chats.parent_chat_id`             | ✅ DB column            | `schema-core.ts`                                       |
 | `PUT /api/chats/:id/location`      | ✅ Simple update        | `routes/chats.ts`                                      |
-| `POST /api/chats/:chatId/transfer` | ✅ Transfer to location | `routes/chat-search.ts`                                |
-| `POST /api/chats/:chatId/join`     | ✅ Join existing chat   | `routes/chat-search.ts`                                |
+| `POST /api/chats/:id/transfer` | ✅ Transfer to location | `routes/chat-search.ts`                                |
+| `POST /api/chats/:id/join`     | ✅ Join existing chat   | `routes/chat-search.ts`                                |
 | `GET /api/chats/joinable`          | ✅ Discover chats       | `routes/chat-search.ts`                                |
 | `GET /api/chats/search`            | ✅ Search chats         | `routes/chat-search.ts`                                |
 | Transition detection               | ✅ Regex-based          | `chat/transitions.ts`                                  |
@@ -88,7 +88,7 @@ GET /api/chats/joinable?location=tavern-123
   ↓
 User picks a chat
   ↓
-POST /api/chats/:chatId/join
+POST /api/chats/:id/join
   ↓
 User added as participant
   ↓
@@ -104,7 +104,7 @@ implicit — defined by which characters share a chat in group/story mode.
 
 When a new character joins a party chat:
 
-1. `POST /api/chats/:chatId/participants` — add character actor
+1. `POST /api/chats/:id/participants` — add character actor
 2. VN transition: entrance narration ("A figure approaches...")
 3. Character state loaded (stats, inventory, conditions from DB)
 4. Welcome message generated (if character has one)
@@ -114,7 +114,7 @@ When a new character joins a party chat:
 
 When a character leaves a party:
 
-1. `DELETE /api/chats/:chatId/participants/:actorId` — remove character
+1. `DELETE /api/chats/:id/participants/:actorId` — remove character
 2. VN transition: departure narration ("X heads toward the exit...")
 3. Character state snapshot saved (for rejoin continuity)
 4. Chat continues with remaining participants
