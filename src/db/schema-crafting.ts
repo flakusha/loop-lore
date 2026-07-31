@@ -5,7 +5,17 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { CraftingAttemptStatus, CraftingDiscipline, CraftingStationType, DiscoveryMethod, GatheringNodeType, MaterialSlotType, ProfessionBonusType, ProfessionTitle, QualityLevel, } from "./schemas";
+import type {
+  CraftingAttemptStatus,
+  CraftingDiscipline,
+  CraftingStationType,
+  DiscoveryMethod,
+  GatheringNodeType,
+  MaterialSlotType,
+  ProfessionBonusType,
+  ProfessionTitle,
+  QualityLevel,
+} from "./enums";
 
 // ── crafting_recipes ────────────────────────────────────────────
 export interface CraftingRecipes {
