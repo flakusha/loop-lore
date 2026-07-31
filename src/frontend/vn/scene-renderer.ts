@@ -15,6 +15,12 @@ import type { VnSettings, } from "./settings";
 import { getVnSettings, } from "./settings";
 import { transitionScene, type TransitionType, } from "./transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "./typewriter";
+import {
+  preloadSceneImages,
+  createLoadingIndicator,
+  type LoadingIndicator,
+  type SceneImages,
+} from "./image-preloader";
 
 /** A single VN scene derived from one or more messages. */
 export interface VnScene {
@@ -44,6 +50,7 @@ let currentIndex = 0;
 let container: HTMLElement | null = null;
 let settings: VnSettings | null = null;
 let currentChatId: string | null = null;
+let loadingIndicator: LoadingIndicator | null = null;
 
 /**
  * Initialize the VN scene renderer.
@@ -59,6 +66,10 @@ export function initVnRenderer(
   scenes = messages.map(msgToScene,);
   currentIndex = Math.max(0, scenes.length - 1,);
   currentChatId = chatId ?? null;
+  loadingIndicator = createLoadingIndicator(containerEl,);
+
+  // Preload images for current and upcoming scenes
+  void preloadCurrentAndUpcoming();
 
   renderCurrentScene();
 }
@@ -68,6 +79,7 @@ export function initVnRenderer(
  */
 export function destroyVnRenderer(): void {
   destroyChoiceCards();
+  loadingIndicator = null;
   if (container) {
     container.innerHTML = "";
     container = null;
@@ -84,6 +96,7 @@ export function destroyVnRenderer(): void {
 export function nextScene(): void {
   if (currentIndex < scenes.length - 1) {
     currentIndex++;
+    void preloadCurrentAndUpcoming();
     renderCurrentScene(true,);
   }
 }
@@ -94,6 +107,7 @@ export function nextScene(): void {
 export function prevScene(): void {
   if (currentIndex > 0) {
     currentIndex--;
+    void preloadCurrentAndUpcoming();
     renderCurrentScene(true,);
   }
 }
@@ -104,6 +118,7 @@ export function prevScene(): void {
 export function jumpToScene(index: number,): void {
   if (index >= 0 && index < scenes.length) {
     currentIndex = index;
+    void preloadCurrentAndUpcoming();
     renderCurrentScene(true,);
   }
 }
@@ -128,10 +143,32 @@ export function getSceneCount(): number {
 export function addScene(message: VnMessage,): void {
   scenes.push(msgToScene(message,),);
   currentIndex = scenes.length - 1;
+  void preloadCurrentAndUpcoming();
   renderCurrentScene(true,);
 }
 
-// ── Internal ──────────────────────────────────────────────────
+// ── Image Preloading ─────────────────────────────────────────
+
+async function preloadCurrentAndUpcoming(): Promise<void> {
+  if (!loadingIndicator || scenes.length === 0) { return; }
+
+  loadingIndicator.show();
+
+  const sceneImages = scenes.map((s,): SceneImages => ({
+    backgroundUrl: s.backgroundUrl,
+    portraitUrl: s.characterAvatar
+      ? getPortraitUrl(s.characterAvatar,)
+      : undefined,
+  }),);
+
+  const stats = await preloadSceneImages(sceneImages, currentIndex, 2,);
+  loadingIndicator.updateProgress(stats.loaded + stats.cached, stats.total,);
+
+  // Hide after a short delay to show completion
+  setTimeout(() => {
+    loadingIndicator?.hide();
+  }, 500,);
+}
 
 function msgToScene(msg: VnMessage,): VnScene {
   return {
