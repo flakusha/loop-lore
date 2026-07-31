@@ -206,7 +206,10 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
     // ── Per-Chat/World NSFW Override ──────────────────────────
     .get("/api/nsfw/moderation/effective/:chatId", async (ctx: any,) => {
       try {
-        const result = await svc.getEffectiveNsfw(ctx.params.chatId, ctx.request?.headers?.get("x-user-id") ?? "anonymous",);
+        const result = await svc.getEffectiveNsfw(
+          ctx.params.chatId,
+          ctx.request?.headers?.get("x-user-id",) ?? "anonymous",
+        );
         return jsonResponse({ ...SuccessResponse, data: result, },);
       } catch (error: unknown) {
         return jsonError(error instanceof Error ? error.message : String(error,), 500,);
