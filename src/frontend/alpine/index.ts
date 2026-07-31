@@ -1,5 +1,6 @@
 /**
- * Alpine.js Components — Modular Entry (chat page only)
+ * Alpine.js Components — all component registrations.
+ * Imported by alpine-init.ts (single bundle entry).
  */
 
 // loaders.d.ts provides ambient global types via tsconfig include — no runtime import needed

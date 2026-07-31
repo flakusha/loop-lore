@@ -24,14 +24,21 @@ async function buildBundles() {
 
   const frontend = path.join(REPO_ROOT, "src/frontend",);
 
-  // Main app bundle
-  await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/app.ts ${frontend}/pages.ts ${frontend}/chat-vendor.ts ${frontend}/chat-list.ts`;
+  // Single Alpine init bundle (replaces vendor.js + app.js to avoid multi-bundle
+  // Alpine module-copy problem — stores, components, plugins all in one scope).
+  await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/alpine-init.ts`;
 
-  // Locale init
+  // Page-specific behaviors (accesses globalThis only, no Alpine imports)
+  await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/pages.ts`;
+
+  // Chat vendor libs (marked + DOMPurify on globalThis)
+  await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/chat-vendor.ts`;
+
+  // Chat list page
+  await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/chat-list.ts`;
+
+  // Locale init (separate — loads before Alpine for SSR translations)
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/locale-init.ts`;
-
-  // Vendor bundle
-  await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/vendor.ts`;
 
   console.log("✓ JS bundles built",);
 }
