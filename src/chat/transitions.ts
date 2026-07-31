@@ -10,6 +10,14 @@
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
+import {
+  MOVEMENT_VERBS,
+  SCENE_CHANGE,
+  TRANSITION_PHRASES,
+  TEMPORAL_TRANSITION,
+  CONTEXT_CUT,
+} from "../regex/transitions";
 import type { ExtractedMemory, } from "../memory/types";
 import { estimateTokens, } from "./token-utils";
 import type { ChatTransition, MessageRef, TransitionType, } from "./types";
@@ -28,10 +36,10 @@ import type { ChatTransition, MessageRef, TransitionType, } from "./types";
 export function isTransitionMessage(content: string,): boolean {
   const lower = content.toLowerCase();
   const transitionPatterns = [
-    /\b(i|we|you)\s+(walk|move|go|travel|head|enter|leave|exit)\b/i,
-    /\b(scene|setting|location)\s+(shifts?|changes?|moves?|transitions?)\b/i,
-    /\b(let'?s?\s+go\s+to|heading\s+to|arriving?\s+at)\b/i,
-    /\b(after\s+(a\s+)?(while|moment|few\s+minutes|long\s+journey))\b/i,
+    MOVEMENT_VERBS,
+    SCENE_CHANGE,
+    TRANSITION_PHRASES,
+    TEMPORAL_TRANSITION,
   ];
   for (const p of transitionPatterns) {
     if (p.test(lower,)) { return true; }
@@ -52,7 +60,7 @@ export function detectTransitionType(
 ): TransitionType {
   if (hasLocationChange) { return "location_change"; }
   const lower = content.toLowerCase();
-  if (/\b(context\s*cut|skip\s*(ahead|forward|time))\b/i.test(lower,)) { return "context_cut"; }
+  if (CONTEXT_CUT.test(lower,)) { return "context_cut"; }
   return "description";
 }
 
