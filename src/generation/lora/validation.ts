@@ -10,6 +10,8 @@ import {
   LORA_EXTENSIONS,
   LORA_STRENGTH_MAX,
   LORA_STRENGTH_MIN,
+  LORA_STRENGTH_TYPICAL_MAX,
+  LORA_STRENGTH_TYPICAL_MIN,
 } from "./types";
 
 // ── Config Validation ────────────────────────────────────
@@ -46,7 +48,12 @@ export function validateLoRAConfig(config: unknown,): string | null {
     return "LoRA strength must be a number";
   }
 
-  if (c.strength < LORA_STRENGTH_MIN || c.strength > LORA_STRENGTH_MAX) {
+  // Guard against NaN/Infinity
+  if (!Number.isFinite(c.strength as number)) {
+    return "LoRA strength must be a finite number";
+  }
+
+  if ((c.strength as number) < LORA_STRENGTH_MIN || (c.strength as number) > LORA_STRENGTH_MAX) {
     return `LoRA strength must be between ${LORA_STRENGTH_MIN} and ${LORA_STRENGTH_MAX}`;
   }
 
@@ -159,5 +166,5 @@ export function clampStrength(strength: number,): number {
  * @returns True if strength is in typical range
  */
 export function isTypicalStrength(strength: number,): boolean {
-  return strength >= 0.3 && strength <= 0.7;
+  return strength >= LORA_STRENGTH_TYPICAL_MIN && strength <= LORA_STRENGTH_TYPICAL_MAX;
 }

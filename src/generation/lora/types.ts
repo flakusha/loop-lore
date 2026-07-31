@@ -81,9 +81,11 @@ export const LORA_STRENGTH_MIN = 0.1;
 export const LORA_STRENGTH_MAX = 1;
 
 /** Default LoRA strength */
+// TODO: Use when LoRA is integrated into image generation pipeline
 export const LORA_STRENGTH_DEFAULT = 0.5;
 
 /** Typical LoRA strength range (recommended) */
+// TODO: Use in UI to show recommended strength range
 export const LORA_STRENGTH_TYPICAL_MIN = 0.3;
 export const LORA_STRENGTH_TYPICAL_MAX = 0.7;
 
@@ -91,4 +93,5 @@ export const LORA_STRENGTH_TYPICAL_MAX = 0.7;
 export const LORA_EXTENSIONS = [".safetensors", ".pt", ".ckpt", ".bin",];
 
 /** LoRA file size limit (1GB) */
+// TODO: Use in upload validation when LoRA upload is implemented
 export const LORA_MAX_SIZE_BYTES = 1024 * 1024 * 1024;
