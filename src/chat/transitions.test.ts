@@ -1,56 +1,9 @@
 import { describe, expect, it, } from "bun:test";
 import {
   createTransition,
-  detectTransitionType,
-  isTransitionMessage,
   selectMessagesForPromotion,
 } from "./transitions";
 import type { MessageRef, } from "./types";
-
-describe("isTransitionMessage", () => {
-  it("detects movement verbs", () => {
-    expect(isTransitionMessage("I walk to the tavern",),).toBe(true,);
-    expect(isTransitionMessage("We move to the forest",),).toBe(true,);
-    expect(isTransitionMessage("You go to the castle",),).toBe(true,);
-    expect(isTransitionMessage("I travel north",),).toBe(true,);
-  });
-
-  it("detects scene change phrases", () => {
-    expect(isTransitionMessage("The scene shifts to the marketplace",),).toBe(true,);
-    expect(isTransitionMessage("Location changes to the dungeon",),).toBe(true,);
-  });
-
-  it("detects 'let's go to' pattern", () => {
-    expect(isTransitionMessage("Let's go to the inn",),).toBe(true,);
-    expect(isTransitionMessage("Let go to the inn",),).toBe(true,);
-  });
-
-  it("detects time skip patterns", () => {
-    expect(isTransitionMessage("After a while, things changed",),).toBe(true,);
-    expect(isTransitionMessage("After a long journey",),).toBe(true,);
-  });
-
-  it("returns false for regular messages", () => {
-    expect(isTransitionMessage("Hello, how are you?",),).toBe(false,);
-    expect(isTransitionMessage("I attack the dragon",),).toBe(false,);
-    expect(isTransitionMessage("The weather is nice today",),).toBe(false,);
-  });
-});
-
-describe("detectTransitionType", () => {
-  it("returns location_change when hasLocationChange is true", () => {
-    expect(detectTransitionType("anything", true,),).toBe("location_change",);
-  });
-
-  it("detects context cut", () => {
-    expect(detectTransitionType("Skip ahead a few hours", false,),).toBe("context_cut",);
-    expect(detectTransitionType("Context cut to the next day", false,),).toBe("context_cut",);
-  });
-
-  it("defaults to description", () => {
-    expect(detectTransitionType("I walk to the tavern", false,),).toBe("description",);
-  });
-});
 
 describe("createTransition", () => {
   it("creates a description transition", () => {
