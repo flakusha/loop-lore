@@ -1,6 +1,6 @@
 # TASK: Chat Autorenaming
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Low
 **Effort:** Low
 **Epic:** Epic 36 (Chat Lifecycle)
