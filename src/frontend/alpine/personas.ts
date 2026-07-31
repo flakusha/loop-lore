@@ -24,11 +24,6 @@ globalThis.personasPage = function() {
     formIsDefault: false,
 
     async init() {
-      if (!globalThis.Alpine) { return; }
-      Alpine.store("ui", Alpine.store("ui",) || {},);
-      const ui = Alpine.store("ui",);
-      if (!("showPersonaForm" in ui)) { ui.showPersonaForm = false; }
-      if (!("activePersona" in ui)) { ui.activePersona = null; }
       await this.loadPersonas();
     },
 

@@ -97,36 +97,9 @@ document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpR
   }
 },);
 
-// ── Init Alpine stores (idempotent) ────────────────────────
-const initAlpineStores = (): void => {
-  if (!globalThis.Alpine) { return; }
-  try {
-    if (Alpine.store("sidebar",)) { return; }
-  } catch {
-    /* store not defined yet */
-  }
-  Alpine.store("sidebar", { open: false, },);
-  Alpine.store("chat", { currentChat: null, },);
-  Alpine.store("ui", {
-    showChatList: false,
-    showGallery: false,
-    showCharacterInfo: false,
-    showUploadModal: false,
-    showImportForm: false,
-    showCreateForm: false,
-    showEditModal: false,
-    showPreviewModal: false,
-    showChatSettings: false,
-    showRenameModal: false,
-    hasActiveChat: false,
-  },);
-};
-
-// Init stores via alpine:init (fires when Alpine is ready) — this is the
-// proper lifecycle hook. DOMContentLoaded and immediate calls are fallbacks.
-document.addEventListener("alpine:init", initAlpineStores,);
-initAlpineStores();
-document.addEventListener("DOMContentLoaded", initAlpineStores,);
+// ── Alpine stores ────────────────────────────────────────
+// Primary init is in vendor.ts via stores/index.ts (before Alpine.start()).
+// No safety net needed — vendor.ts runs synchronously before app.js.
 
 // Also trigger page loaders on initial page load (for direct navigation, not htmx)
 document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
