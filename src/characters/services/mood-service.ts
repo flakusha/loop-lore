@@ -63,7 +63,7 @@ export class MoodService {
       baseMood: row.base_mood,
       currentMood: row.current_mood,
       moodStability: row.mood_stability,
-      expressionModifiers: jsonParseOr(row.expression_modifiers, {},),
+      expressionModifiers: jsonParseOr(row.expression_modifiers ?? "{}", {},),
       lastMoodChange: row.last_mood_change,
     };
   }
@@ -188,16 +188,18 @@ export class MoodService {
         actor_id: opts.actorId,
         world_id: opts.worldId ?? null,
         event_type: opts.eventType,
-        happiness_delta: opts.happinessDelta,
+        happiness_delta: opts.happinessDelta ?? 0,
         mood_override: opts.moodOverride ?? null,
-        source: opts.source,
+        source: opts.source ?? "unknown",
         source_id: opts.sourceId ?? null,
         created_at: now,
       },)
       .execute();
 
     // Apply the happiness delta
-    await this.applyHappinessDelta(opts.actorId, opts.worldId, opts.happinessDelta,);
+    if (opts.happinessDelta !== undefined) {
+      await this.applyHappinessDelta(opts.actorId, opts.worldId, opts.happinessDelta,);
+    }
 
     return id;
   }
