@@ -19,18 +19,18 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Character name" },
-      { name: "location_name", type: "string", required: false, description: "Location name" },
+      { name: "character_name", type: "string", required: true, description: "Character name", },
+      { name: "location_name", type: "string", required: false, description: "Location name", },
     ],
     body: {
       layout: "split",
       transition: "fade-in",
       dialogueStyle: "standard",
-      portrait: { position: "center", size: 1.2 },
-      background: { scaling: "cover" },
-      text: { typewriterSpeed: 30, pauseOnPunctuation: true },
+      portrait: { position: "center", size: 1.2, },
+      background: { scaling: "cover", },
+      text: { typewriterSpeed: 30, pauseOnPunctuation: true, },
     },
-    tags: ["character", "location", "reveal"],
+    tags: ["character", "location", "reveal",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -42,18 +42,25 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Opposing character" },
-      { name: "tension_level", type: "enum", required: false, default: "high", enum: ["medium", "high", "extreme"], description: "Tension intensity" },
+      { name: "character_name", type: "string", required: true, description: "Opposing character", },
+      {
+        name: "tension_level",
+        type: "enum",
+        required: false,
+        default: "high",
+        enum: ["medium", "high", "extreme",],
+        description: "Tension intensity",
+      },
     ],
     body: {
       layout: "overlay",
       transition: "cut",
       dialogueStyle: "whisper",
-      portrait: { position: "right" },
-      background: { scaling: "cover", filter: "brightness(0.8) contrast(1.1)" },
-      text: { typewriterSpeed: 20, pauseOnPunctuation: false },
+      portrait: { position: "right", },
+      background: { scaling: "cover", filter: "brightness(0.8) contrast(1.1)", },
+      text: { typewriterSpeed: 20, pauseOnPunctuation: false, },
     },
-    tags: ["dialogue", "tense", "conflict"],
+    tags: ["dialogue", "tense", "conflict",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -65,17 +72,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: false, description: "Character being resolved with" },
+      { name: "character_name", type: "string", required: false, description: "Character being resolved with", },
     ],
     body: {
       layout: "below",
       transition: "dissolve",
       dialogueStyle: "standard",
-      portrait: { position: "left" },
-      background: { scaling: "cover" },
-      text: { typewriterSpeed: 35, pauseOnPunctuation: true },
+      portrait: { position: "left", },
+      background: { scaling: "cover", },
+      text: { typewriterSpeed: 35, pauseOnPunctuation: true, },
     },
-    tags: ["dialogue", "calm", "resolution"],
+    tags: ["dialogue", "calm", "resolution",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -87,16 +94,16 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "memory_text", type: "string", required: false, description: "Memory context" },
+      { name: "memory_text", type: "string", required: false, description: "Memory context", },
     ],
     body: {
       layout: "overlay",
       transition: "slide",
       dialogueStyle: "thought",
-      background: { scaling: "cover", filter: "sepia(0.5) brightness(0.9)" },
-      text: { typewriterSpeed: 40, pauseOnPunctuation: true, fontStyle: "italic" },
+      background: { scaling: "cover", filter: "sepia(0.5) brightness(0.9)", },
+      text: { typewriterSpeed: 40, pauseOnPunctuation: true, fontStyle: "italic", },
     },
-    tags: ["memory", "dream", "past"],
+    tags: ["memory", "dream", "past",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -108,17 +115,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "item_name", type: "string", required: false, description: "Discovered item" },
+      { name: "item_name", type: "string", required: false, description: "Discovered item", },
     ],
     body: {
       layout: "below",
       transition: "fade",
       dialogueStyle: "standard",
-      portrait: { position: "center" },
-      background: { scaling: "contain" },
-      text: { typewriterSpeed: 25, pauseOnPunctuation: true },
+      portrait: { position: "center", },
+      background: { scaling: "contain", },
+      text: { typewriterSpeed: 25, pauseOnPunctuation: true, },
     },
-    tags: ["item", "revelation", "plot"],
+    tags: ["item", "revelation", "plot",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -130,17 +137,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Character departing" },
+      { name: "character_name", type: "string", required: true, description: "Character departing", },
     ],
     body: {
       layout: "split",
       transition: "wipe",
       dialogueStyle: "standard",
-      portrait: { position: "left" },
-      background: { scaling: "cover" },
-      text: { typewriterSpeed: 35, pauseOnPunctuation: true },
+      portrait: { position: "left", },
+      background: { scaling: "cover", },
+      text: { typewriterSpeed: 35, pauseOnPunctuation: true, },
     },
-    tags: ["departure", "emotional", "goodbye"],
+    tags: ["departure", "emotional", "goodbye",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -152,17 +159,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "enemy_name", type: "string", required: true, description: "Enemy name" },
+      { name: "enemy_name", type: "string", required: true, description: "Enemy name", },
     ],
     body: {
       layout: "overlay",
       transition: "cut",
       dialogueStyle: "shout",
-      portrait: { position: "right" },
-      background: { scaling: "cover", filter: "contrast(1.2) saturate(1.1)" },
-      text: { typewriterSpeed: 15, pauseOnPunctuation: false },
+      portrait: { position: "right", },
+      background: { scaling: "cover", filter: "contrast(1.2) saturate(1.1)", },
+      text: { typewriterSpeed: 15, pauseOnPunctuation: false, },
     },
-    tags: ["combat", "action", "battle"],
+    tags: ["combat", "action", "battle",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -174,17 +181,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: false, description: "Companion" },
+      { name: "character_name", type: "string", required: false, description: "Companion", },
     ],
     body: {
       layout: "below",
       transition: "dissolve",
       dialogueStyle: "whisper",
-      portrait: { position: "left" },
-      background: { scaling: "cover", filter: "brightness(1.05)" },
-      text: { typewriterSpeed: 45, pauseOnPunctuation: true },
+      portrait: { position: "left", },
+      background: { scaling: "cover", filter: "brightness(1.05)", },
+      text: { typewriterSpeed: 45, pauseOnPunctuation: true, },
     },
-    tags: ["calm", "bonding", "romance"],
+    tags: ["calm", "bonding", "romance",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -196,17 +203,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "clue_name", type: "string", required: false, description: "Investigation focus" },
+      { name: "clue_name", type: "string", required: false, description: "Investigation focus", },
     ],
     body: {
       layout: "split",
       transition: "fade",
       dialogueStyle: "thought",
-      portrait: { position: "right" },
-      background: { scaling: "cover", filter: "brightness(0.85) hue-rotate(10deg)" },
-      text: { typewriterSpeed: 30, pauseOnPunctuation: true },
+      portrait: { position: "right", },
+      background: { scaling: "cover", filter: "brightness(0.85) hue-rotate(10deg)", },
+      text: { typewriterSpeed: 30, pauseOnPunctuation: true, },
     },
-    tags: ["mystery", "investigation", "suspense"],
+    tags: ["mystery", "investigation", "suspense",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -218,17 +225,17 @@ export const SCENE_TEMPLATES: VnTemplate[] = [
     category: "scene",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: false, description: "Celebration companion" },
+      { name: "character_name", type: "string", required: false, description: "Celebration companion", },
     ],
     body: {
       layout: "below",
       transition: "slide",
       dialogueStyle: "standard",
-      portrait: { position: "center" },
-      background: { scaling: "cover", filter: "brightness(1.1) saturate(1.2)" },
-      text: { typewriterSpeed: 25, pauseOnPunctuation: false },
+      portrait: { position: "center", },
+      background: { scaling: "cover", filter: "brightness(1.1) saturate(1.2)", },
+      text: { typewriterSpeed: 25, pauseOnPunctuation: false, },
     },
-    tags: ["victory", "festival", "happy"],
+    tags: ["victory", "festival", "happy",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -249,10 +256,10 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
       layout: "overlay",
       transition: "none",
       dialogueStyle: "narration",
-      background: { scaling: "cover" },
-      text: { typewriterSpeed: 40, pauseOnPunctuation: true },
+      background: { scaling: "cover", },
+      text: { typewriterSpeed: 40, pauseOnPunctuation: true, },
     },
-    tags: ["narration", "slow"],
+    tags: ["narration", "slow",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -264,15 +271,15 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
     category: "dialogue",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Speaking character" },
+      { name: "character_name", type: "string", required: true, description: "Speaking character", },
     ],
     body: {
       layout: "overlay",
       transition: "none",
       dialogueStyle: "standard",
-      text: { typewriterSpeed: 30, pauseOnPunctuation: true },
+      text: { typewriterSpeed: 30, pauseOnPunctuation: true, },
     },
-    tags: ["dialogue", "normal"],
+    tags: ["dialogue", "normal",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -284,15 +291,15 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
     category: "dialogue",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Speaking character" },
+      { name: "character_name", type: "string", required: true, description: "Speaking character", },
     ],
     body: {
       layout: "overlay",
       transition: "none",
       dialogueStyle: "whisper",
-      text: { typewriterSpeed: 20, pauseOnPunctuation: false },
+      text: { typewriterSpeed: 20, pauseOnPunctuation: false, },
     },
-    tags: ["dialogue", "tense", "fast"],
+    tags: ["dialogue", "tense", "fast",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -304,15 +311,15 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
     category: "dialogue",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Speaking character" },
+      { name: "character_name", type: "string", required: true, description: "Speaking character", },
     ],
     body: {
       layout: "overlay",
       transition: "none",
       dialogueStyle: "whisper",
-      text: { typewriterSpeed: 45, pauseOnPunctuation: true },
+      text: { typewriterSpeed: 45, pauseOnPunctuation: true, },
     },
-    tags: ["dialogue", "whisper", "intimate"],
+    tags: ["dialogue", "whisper", "intimate",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -324,15 +331,15 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
     category: "dialogue",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Speaking character" },
+      { name: "character_name", type: "string", required: true, description: "Speaking character", },
     ],
     body: {
       layout: "overlay",
       transition: "none",
       dialogueStyle: "shout",
-      text: { typewriterSpeed: 15, pauseOnPunctuation: false },
+      text: { typewriterSpeed: 15, pauseOnPunctuation: false, },
     },
-    tags: ["dialogue", "shout", "urgent"],
+    tags: ["dialogue", "shout", "urgent",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -344,15 +351,15 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
     category: "dialogue",
     version: 1,
     variables: [
-      { name: "character_name", type: "string", required: true, description: "Thinking character" },
+      { name: "character_name", type: "string", required: true, description: "Thinking character", },
     ],
     body: {
       layout: "overlay",
       transition: "none",
       dialogueStyle: "thought",
-      text: { typewriterSpeed: 40, pauseOnPunctuation: true, fontStyle: "italic" },
+      text: { typewriterSpeed: 40, pauseOnPunctuation: true, fontStyle: "italic", },
     },
-    tags: ["dialogue", "thought", "internal"],
+    tags: ["dialogue", "thought", "internal",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -368,9 +375,9 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
       layout: "overlay",
       transition: "none",
       dialogueStyle: "system",
-      text: { typewriterSpeed: 30, pauseOnPunctuation: false },
+      text: { typewriterSpeed: 30, pauseOnPunctuation: false, },
     },
-    tags: ["system", "info", "meta"],
+    tags: ["system", "info", "meta",],
     createdAt: "2024-01-01T00:00:00Z",
     modifiedAt: "2024-01-01T00:00:00Z",
   },
@@ -378,30 +385,34 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
 
 // ── Template Registry ──────────────────────────────────────
 
-export function getSceneTemplate(id: string): VnTemplate | undefined {
-  return SCENE_TEMPLATES.find((t) => t.id === id,);
+export function getSceneTemplate(id: string,): VnTemplate | undefined {
+  return SCENE_TEMPLATES.find((t,) => t.id === id);
 }
 
-export function getDialogueTemplate(id: string): VnTemplate | undefined {
-  return DIALOGUE_TEMPLATES.find((t) => t.id === id,);
+export function getDialogueTemplate(id: string,): VnTemplate | undefined {
+  return DIALOGUE_TEMPLATES.find((t,) => t.id === id);
 }
 
 export function listSceneTemplates(): VnTemplate[] {
-  return [...SCENE_TEMPLATES];
+  return [...SCENE_TEMPLATES,];
 }
 
 export function listDialogueTemplates(): VnTemplate[] {
-  return [...DIALOGUE_TEMPLATES];
+  return [...DIALOGUE_TEMPLATES,];
 }
 
-export function searchTemplates(query: string): VnTemplate[] {
+export function searchTemplates(query: string,): VnTemplate[] {
   const lower = query.toLowerCase();
   return [
     ...SCENE_TEMPLATES.filter(
-      (t) => t.name.toLowerCase().includes(lower) || t.description.toLowerCase().includes(lower) || t.tags.some((tag) => tag.includes(lower)),
+      (t,) =>
+        t.name.toLowerCase().includes(lower,) || t.description.toLowerCase().includes(lower,) ||
+        t.tags.some((tag,) => tag.includes(lower,)),
     ),
     ...DIALOGUE_TEMPLATES.filter(
-      (t) => t.name.toLowerCase().includes(lower) || t.description.toLowerCase().includes(lower) || t.tags.some((tag) => tag.includes(lower)),
+      (t,) =>
+        t.name.toLowerCase().includes(lower,) || t.description.toLowerCase().includes(lower,) ||
+        t.tags.some((tag,) => tag.includes(lower,)),
     ),
   ];
 }
