@@ -390,3 +390,364 @@ export const LoginBody = t.Object({
 export const SettingsUpdateBody = t.Object({
   body: t.Any(),
 },);
+
+// ── Response schemas ──────────────────────────────────────
+
+export const ErrorResponse = t.Object({
+  error: t.String(),
+  code: t.Optional(t.String(),),
+  details: t.Optional(t.Any(),),
+},);
+
+export const SuccessResponse = t.Object({
+  data: t.Any(),
+},);
+
+export const ListResponse = t.Object({
+  data: t.Array(t.Any(),),
+  total: t.Number(),
+  page: t.Number(),
+  pageSize: t.Number(),
+},);
+
+// ── Blog schemas ──────────────────────────────────────────
+
+export const BlogPostCreateBody = t.Object({
+  title: t.String({ minLength: 1, },),
+  body: t.String({ minLength: 1, },),
+  visibility: t.Optional(t.String(),),
+  category: t.Optional(t.String(),),
+  world_id: t.Optional(t.String({ format: "uuid", },),),
+  character_id: t.Optional(t.String({ format: "uuid", },),),
+},);
+
+export const BlogPostUpdateBody = t.Object({
+  title: t.Optional(t.String(),),
+  body: t.Optional(t.String(),),
+  visibility: t.Optional(t.String(),),
+  category: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+},);
+
+export const BlogPostStatusBody = t.Object({
+  status: t.String(), 
+},);
+
+export const BlogCommentCreateBody = t.Object({
+  body: t.String({ minLength: 1, },),
+},);
+
+export const BlogPostResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  title: t.String(),
+  body: t.String(),
+  author_id: t.String(),
+  status: t.String(),
+  visibility: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+},);
+
+export const BlogCommentResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  post_id: t.String(),
+  author_id: t.String(),
+  body: t.String(),
+  status: t.String(),
+  created_at: t.String(),
+},);
+
+// ── Character systems schemas ─────────────────────────────
+
+export const AdminOverrideCreateBody = t.Object({
+  actor_id: t.String({ format: "uuid", },),
+  action: t.String(),
+  visibility_override: t.Optional(t.String(),),
+  license_override: t.Optional(t.String(),),
+  notes: t.Optional(t.String(),),
+},);
+
+export const MoodCreateBody = t.Object({
+  happiness: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
+  expression: t.Optional(t.String(),),
+},);
+
+export const MoodUpdateBody = t.Object({
+  happiness: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
+  expression: t.Optional(t.String(),),
+},);
+
+export const MoodDeltaBody = t.Object({
+  delta: t.Number(),
+  reason: t.Optional(t.String(),),
+},);
+
+export const MoodEventBody = t.Object({
+  event_type: t.String(),
+  intensity: t.Optional(t.Number(),),
+  details: t.Optional(t.String(),),
+},);
+
+export const MoodStateResponse = t.Object({
+  actor_id: t.String(),
+  happiness: t.Number(),
+  expression: t.Optional(t.String(),),
+  updated_at: t.String(),
+},);
+
+// Type aliases for backward compatibility
+export type MoodCreateInput = typeof MoodCreateBody.static;
+export type MoodUpdateInput = typeof MoodUpdateBody.static;
+export type MoodEventInput = typeof MoodEventBody.static;
+
+export const TraitCreateBody = t.Object({
+  trait_category: t.String(),
+  trait_name: t.String({ minLength: 1, },),
+  value: t.Any(),
+},);
+
+export const TraitUpdateBody = t.Object({
+  value: t.Any(),
+},);
+
+export const WorldTraitCreateBody = t.Object({
+  trait_category: t.String(),
+  trait_name: t.String({ minLength: 1, },),
+  value: t.Any(),
+  world_id: t.String({ format: "uuid", },),
+},);
+
+export const LocationTraitCreateBody = t.Object({
+  trait_category: t.String(),
+  trait_name: t.String({ minLength: 1, },),
+  value: t.Any(),
+  location_id: t.String({ format: "uuid", },),
+},);
+
+export const LocationTraitUpdateBody = t.Object({
+  value: t.Any(),
+},);
+
+export const TraitResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  actor_id: t.String(),
+  trait_category: t.String(),
+  trait_name: t.String(),
+  value: t.Any(),
+  created_at: t.String(),
+},);
+
+export const RelationshipCreateBody = t.Object({
+  target_actor_id: t.String({ format: "uuid", },),
+  relationship_type: t.String(),
+  strength: t.Optional(t.Number(),),
+},);
+
+export const RelationshipUpdateBody = t.Object({
+  relationship_type: t.Optional(t.String(),),
+  strength: t.Optional(t.Number(),),
+},);
+
+export const RelationshipEventBody = t.Object({
+  event_type: t.String(),
+  delta: t.Optional(t.Number(),),
+  details: t.Optional(t.String(),),
+},);
+
+export const RelationshipResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  actor_id: t.String(),
+  target_actor_id: t.String(),
+  relationship_type: t.String(),
+  strength: t.Number(),
+  created_at: t.String(),
+  updated_at: t.String(),
+},);
+
+export const ActorTargetParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  targetActorId: t.String({ format: "uuid", },),
+},);
+
+export const AvailabilityBody = t.Object({
+  available: t.Boolean(),
+  reason: t.Optional(t.String(),),
+},);
+
+export const LicensingBody = t.Object({
+  license_type: t.String(),
+  expires_at: t.Optional(t.String(),),
+  notes: t.Optional(t.String(),),
+},);
+
+export const AvatarCreateBody = t.Object({
+  emotion: t.Optional(t.String(),),
+  mood: t.Optional(t.String(),),
+  image_url: t.Optional(t.String(),),
+},);
+
+export const AvatarUpdateBody = t.Object({
+  emotion: t.Optional(t.String(),),
+  mood: t.Optional(t.String(),),
+  image_url: t.Optional(t.String(),),
+},);
+
+export const AvatarSelectBody = t.Object({
+  avatar_id: t.String({ format: "uuid", },),
+},);
+
+export const AvatarConfigBody = t.Object({
+  selection_rule_override: t.Optional(t.String(),),
+  fallback_avatar_id: t.Optional(t.String({ format: "uuid", },),),
+},);
+
+export const WorldAvatarConfigBody = t.Object({
+  selection_rule_override: t.Optional(t.String(),),
+  fallback_avatar_id: t.Optional(t.String({ format: "uuid", },),),
+},);
+
+export const AvatarResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  actor_id: t.String(),
+  emotion: t.Optional(t.String(),),
+  mood: t.Optional(t.String(),),
+  image_url: t.Optional(t.String(),),
+  created_at: t.String(),
+},);
+
+export const ActorIdAvatarIdParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  avatarId: t.String({ format: "uuid", },),
+},);
+
+export const ActorIdAvatarParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+},);
+
+export const WorldActorParams = t.Object({
+  worldId: t.String({ format: "uuid", },),
+  actorId: t.String({ format: "uuid", },),
+},);
+
+export const CharacterEmotionBody = t.Object({
+  emotion_name: t.String({ minLength: 1, },),
+  intensity: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
+},);
+
+export const EmotionDefinitionCreateBody = t.Object({
+  name: t.String({ minLength: 1, },),
+  description: t.Optional(t.String(),),
+  base_expression: t.Optional(t.String(),),
+},);
+
+export const ActorEmotionParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  emotionName: t.String(),
+},);
+
+export const CharacterSystemsExportBody = t.Object({
+  actor_ids: t.Optional(t.Array(t.String({ format: "uuid", },),),),
+  include_worlds: t.Optional(t.Boolean(),),
+},);
+
+export const CharacterSystemsImportUrlBody = t.Object({
+  url: t.String({ format: "uri", },),
+  actor_id: t.Optional(t.String({ format: "uuid", },),),
+},);
+
+// ── Quest schemas ─────────────────────────────────────────
+
+export const QuestUpdateBody = t.Object({
+  name: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+},);
+
+export const QuestProgressBody = t.Object({
+  progress: t.Number({ minimum: 0, },),
+  status: t.Optional(t.String(),),
+},);
+
+export const QuestResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  name: t.String(),
+  type: t.String(),
+  status: t.String(),
+  progress: t.Number(),
+  created_at: t.String(),
+  updated_at: t.String(),
+},);
+
+// ── Story items schemas ───────────────────────────────────
+
+export const StoryItemInstanceBody = t.Object({
+  item_id: t.String({ format: "uuid", },),
+  location_id: t.Optional(t.String({ format: "uuid", },),),
+  owner_actor_id: t.Optional(t.String({ format: "uuid", },),),
+  quantity: t.Optional(t.Number({ minimum: 1, },),),
+},);
+
+export const StoryItemResponse = t.Object({
+  id: t.String({ format: "uuid", },),
+  world_id: t.String(),
+  item_id: t.String(),
+  quantity: t.Number(),
+  visibility: t.String(),
+  created_at: t.String(),
+},);
+
+// ── Story states schemas ──────────────────────────────────
+
+export const WorldStateCreateBody = t.Object({
+  state_key: t.String({ minLength: 1, },),
+  state_value: t.Any(),
+},);
+
+export const NpcStateBody = t.Object({
+  npc_id: t.String({ format: "uuid", },),
+  state_key: t.String({ minLength: 1, },),
+  state_value: t.Any(),
+},);
+
+export const LocationStateBody = t.Object({
+  location_id: t.String({ format: "uuid", },),
+  state_key: t.String({ minLength: 1, },),
+  state_value: t.Any(),
+},);
+
+// ── API keys schemas ──────────────────────────────────────
+
+export const ApiKeyCreateBody = t.Object({
+  name: t.String({ minLength: 1, },),
+  provider: t.String({ minLength: 1, },),
+  api_key: t.String({ minLength: 1, },),
+},);
+
+// ── Notifications schemas ─────────────────────────────────
+
+export const NotificationPreferencesBody = t.Object({
+  mentions: t.Optional(t.Boolean(),),
+  updates: t.Optional(t.Boolean(),),
+  alerts: t.Optional(t.Boolean(),),
+},);
+
+// ── Telemetry schemas ─────────────────────────────────────
+
+export const TelemetryEventBody = t.Object({
+  event_type: t.String({ minLength: 1, },),
+  payload: t.Optional(t.Any(),),
+},);
+
+// ── Admin template schemas ────────────────────────────────
+
+export const AdminTemplateCreateBody = t.Object({
+  name: t.String({ minLength: 1, },),
+  content: t.String({ minLength: 1, },),
+  description: t.Optional(t.String(),),
+},);
+
+export const AdminTemplateUpdateBody = t.Object({
+  name: t.Optional(t.String(),),
+  content: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+},);

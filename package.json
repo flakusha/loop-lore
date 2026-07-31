@@ -13,6 +13,8 @@
     "build": "bun run build:frontend && bun run build:server",
     "db:migrate": "bun run src/db/migrate.ts",
     "db:reinit": "bun run src/db/reinit.ts",
+    "db:sync-manifest": "bun run scripts/generate-schema-manifest.ts",
+    "db:sync-types": "bun run scripts/generate-db-types.ts",
     "config:generate-schema": "bun run src/config/generate-schema.ts",
     "config:generate-character-schema": "bun run src/config/generate-character-schema.ts",
     "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
