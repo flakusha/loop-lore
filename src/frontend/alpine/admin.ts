@@ -8,6 +8,12 @@ import { adminTemplates, } from "./admin-templates";
 import { adminUsers, } from "./admin-users";
 import { adminWorlds, } from "./admin-worlds";
 
+// Fallback: expose showTab on globalThis so Alpine expressions don't
+// throw ReferenceError when initTree fails silently on HTMX swaps.
+(globalThis as any).showTab = function(tab: string,) {
+  console.warn("[admin] showTab called outside Alpine scope — initTree may have failed", { tab, },);
+};
+
 (globalThis as any).adminPage = function() {
   return {
     // ── Shared state ────────────────────────────────────
@@ -93,10 +99,6 @@ import { adminWorlds, } from "./admin-worlds";
         }
         case "health": {
           this.loadHealth();
-          break;
-        }
-        case "templates": {
-          this.loadTemplates();
           break;
         }
       }
