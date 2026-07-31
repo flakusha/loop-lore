@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "./schemas";
+import type { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "./enums";
 
 // ── assets ────────────────────────────────────────────
 export interface Assets {

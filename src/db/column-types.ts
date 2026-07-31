@@ -1,9 +1,9 @@
 /**
  * Column Type Overrides
- * 
+ *
  * Maps table.column → TypeScript enum type.
  * Used by generate-db-types.ts to produce schema-*.ts interfaces.
- * 
+ *
  * Only add entries for columns that use enum types from enums.ts.
  * Columns not listed here default to their SQLite type (text→string, integer→number, real→number).
  */

@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { SyntheticDataStatus, SyntheticDataType, } from "./schemas";
+import type { SyntheticDataStatus, SyntheticDataType, } from "./enums";
 
 // ── synthetic_data ────────────────────────────────────────────
 export interface SyntheticData {
