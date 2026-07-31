@@ -29,10 +29,13 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { existsSync, readFileSync, } from "node:fs";
+import { existsSync, readFileSync, readdirSync, } from "node:fs";
 import { join, } from "node:path";
 import { ActorType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import type { Locale, } from "../i18n/types";
+import { getRawTranslations, } from "../i18n/locale-loader";
+import { detectLocale, } from "../middleware/i18n";
 import { adminViewGuard, } from "../middleware/admin-gate";
 import { getNonce, } from "../middleware/csp-nonce";
 import { isFrontendTelemetryEnabled, } from "../telemetry/service";
@@ -43,35 +46,49 @@ const PARTIALS_DIR = join(import.meta.dir, "..", "partials",);
 const COMPONENTS_DIR = join(import.meta.dir, "..", "components",);
 const ICONS_DIR = join(import.meta.dir, "..", "..", "dist", "public", "icons", "tabler",);
 
-const ALLOWED_VIEWS = new Set([
-  "chat",
-  "gallery",
-  "settings",
-  "login",
-  "characters",
-  "new-chat",
-  "assets",
-  "worlds",
-  "world-detail",
-  "world-edit",
-  "character-edit",
-  "personas",
-  "admin",
-  "quests",
-  "register",
-  "chat-list",
-],);
+/** Match {{{ t("key") }}} or {{{t("key")}}} with optional whitespace. */
+const I18N_TEMPLATE_RE = /\{\{\{\s*t\("([^"]+)"\)\s*\}\}\}/g;
 
-const ALLOWED_PARTIALS = new Set([
-  "characters/create-modal",
-  "characters/import-modal",
-  "characters/detail-modal",
-  "gallery/upload-modal",
-  "gallery/preview-modal",
-  "worlds/create-modal",
-  "worlds/edit-modal",
-  "modals/settings",
-],);
+/**
+ * Auto-discover allowed views from src/views/ directory.
+ * Any .html file (except layout.html) becomes a valid view name.
+ */
+function discoverViews(dir: string,): Set<string> {
+  const views = new Set<string>();
+  if (!existsSync(dir,)) { return views; }
+  for (const entry of readdirSync(dir, { withFileTypes: true, },)) {
+    if (entry.isFile() && entry.name.endsWith(".html",) && entry.name !== "layout.html") {
+      views.add(entry.name.replace(/\.html$/, "",),);
+    }
+  }
+  // Alias: "assets" serves the "gallery" view
+  views.add("assets",);
+  return views;
+}
+
+/**
+ * Auto-discover allowed partials from src/partials/ directory.
+ * Supports nested directories (e.g. characters/create-modal).
+ */
+function discoverPartials(dir: string,): Set<string> {
+  const partials = new Set<string>();
+  if (!existsSync(dir,)) { return partials; }
+  function walk(current: string, prefix: string,): void {
+    for (const entry of readdirSync(current, { withFileTypes: true, },)) {
+      const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) {
+        walk(join(current, entry.name,), rel,);
+      } else if (entry.name.endsWith(".html",)) {
+        partials.add(rel.replace(/\.html$/, "",),);
+      }
+    }
+  }
+  walk(dir, "",);
+  return partials;
+}
+
+const ALLOWED_VIEWS = discoverViews(VIEWS_DIR,);
+const ALLOWED_PARTIALS = discoverPartials(PARTIALS_DIR,);
 
 const viewCache = new Map<string, string>();
 
@@ -82,6 +99,7 @@ function wrapWithLayout(
   sessionId?: string | null,
   cspNonce?: string | null,
   t?: (key: string,) => string,
+  locale?: string,
 ): string {
   const layoutPath = join(VIEWS_DIR, "layout.html",);
   if (!existsSync(layoutPath,)) { return content; }
@@ -95,6 +113,16 @@ function wrapWithLayout(
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
   // i18n: replace {{{t("key")}}} with translated string
   layout = applyI18n(layout, t,);
+  // Inject locale strings synchronously so Alpine t() calls resolve before fetch completes
+  if (locale) {
+    const rawTranslations = getRawTranslations(locale as Locale,);
+    if (rawTranslations) {
+      const nonceAttr = cspNonce ? ` nonce="${cspNonce}"` : "";
+      const jsonData = JSON.stringify(rawTranslations,);
+      const injectScript = `<script type="application/json" id="locale-data"${nonceAttr}>${jsonData}</script><script${nonceAttr}>try{globalThis.__localeStrings = JSON.parse(document.getElementById("locale-data").textContent);}catch{}</script>`;
+      layout = layout.replace("<!-- Initialize locale from cookie/localStorage before page renders -->", () => injectScript + "\n    <!-- Initialize locale from cookie/localStorage before page renders -->",);
+    }
+  }
   return layout;
 }
 
@@ -143,9 +171,9 @@ function loadView(viewName: string,): string {
   return resolved;
 }
 
-function applyI18n(content: string, t?: (key: string,) => string,): string {
+export function applyI18n(content: string, t?: (key: string,) => string,): string {
   if (!t) { return content; }
-  return content.replaceAll(/\{\{\{t\("([^"]+)"\)\}\}\}/g, (_match, key,) => t(key,),);
+  return content.replaceAll(I18N_TEMPLATE_RE, (_match, key,) => t(key,),);
 }
 
 function respond(
@@ -158,7 +186,8 @@ function respond(
   t?: (key: string,) => string,
 ): Response {
   const nonce = request ? getNonce(request,) : null;
-  const body = isHtmx ? applyI18n(content, t,) : wrapWithLayout(content, title, userId, sessionId, nonce, t,);
+  const locale = request ? detectLocale(request,) : undefined;
+  const body = isHtmx ? applyI18n(content, t,) : wrapWithLayout(content, title, userId, sessionId, nonce, t, locale,);
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
@@ -1088,7 +1117,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
   return (
     new Elysia({ name: "views", },)
       // ── Static partials (lazy-loaded modals, skeletons) ──────
-      .get("/partials/:page/:section", (ctx,) => {
+      .get("/partials/:page/:section", (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
@@ -1097,7 +1126,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         const url = new URL(ctx.request.url,);
         const content = serveStaticPartial(name, url.searchParams,);
         if (!content) { return new Response("Not found", { status: 404, },); }
-        return htmlResponse(content,);
+        return htmlResponse(applyI18n(content, ctx.t,),);
       }, {
         response: { 200: SuccessResponse, },
       },)
