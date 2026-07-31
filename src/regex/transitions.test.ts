@@ -1,10 +1,10 @@
 import { describe, expect, test, } from "bun:test";
 import {
+  CONTEXT_CUT,
   MOVEMENT_VERBS,
   SCENE_CHANGE,
-  TRANSITION_PHRASES,
   TEMPORAL_TRANSITION,
-  CONTEXT_CUT,
+  TRANSITION_PHRASES,
 } from "./transitions";
 
 // ── Movement ──────────────────────────────────────────────
@@ -23,16 +23,16 @@ describe("MOVEMENT_VERBS", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(MOVEMENT_VERBS.test(input)).toBe(true);
+      expect(MOVEMENT_VERBS.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(MOVEMENT_VERBS.test("I WALK to the tavern")).toBe(true);
+    expect(MOVEMENT_VERBS.test("I WALK to the tavern",),).toBe(true,);
   });
 
   test("does not match unrelated text", () => {
-    expect(MOVEMENT_VERBS.test("The dragon flies overhead")).toBe(false);
+    expect(MOVEMENT_VERBS.test("The dragon flies overhead",),).toBe(false,);
   });
 });
 
@@ -48,12 +48,12 @@ describe("SCENE_CHANGE", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(SCENE_CHANGE.test(input)).toBe(true);
+      expect(SCENE_CHANGE.test(input,),).toBe(true,);
     });
   }
 
   test("does not match unrelated text", () => {
-    expect(SCENE_CHANGE.test("The character moves quietly")).toBe(false);
+    expect(SCENE_CHANGE.test("The character moves quietly",),).toBe(false,);
   });
 });
 
@@ -69,12 +69,12 @@ describe("TRANSITION_PHRASES", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(TRANSITION_PHRASES.test(input)).toBe(true);
+      expect(TRANSITION_PHRASES.test(input,),).toBe(true,);
     });
   }
 
   test("does not match unrelated text", () => {
-    expect(TRANSITION_PHRASES.test("I found a sword")).toBe(false);
+    expect(TRANSITION_PHRASES.test("I found a sword",),).toBe(false,);
   });
 });
 
@@ -90,12 +90,12 @@ describe("TEMPORAL_TRANSITION", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(TEMPORAL_TRANSITION.test(input)).toBe(true);
+      expect(TEMPORAL_TRANSITION.test(input,),).toBe(true,);
     });
   }
 
   test("does not match unrelated text", () => {
-    expect(TEMPORAL_TRANSITION.test("After the battle, we rested")).toBe(false);
+    expect(TEMPORAL_TRANSITION.test("After the battle, we rested",),).toBe(false,);
   });
 });
 
@@ -111,15 +111,15 @@ describe("CONTEXT_CUT", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(CONTEXT_CUT.test(input)).toBe(true);
+      expect(CONTEXT_CUT.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(CONTEXT_CUT.test("CONTEXT CUT to the next scene")).toBe(true);
+    expect(CONTEXT_CUT.test("CONTEXT CUT to the next scene",),).toBe(true,);
   });
 
   test("does not match unrelated text", () => {
-    expect(CONTEXT_CUT.test("I skip rope in the yard")).toBe(false);
+    expect(CONTEXT_CUT.test("I skip rope in the yard",),).toBe(false,);
   });
 });
