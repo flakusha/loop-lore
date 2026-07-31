@@ -10,15 +10,14 @@
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
+import type { ExtractedMemory, } from "../memory/types";
 import {
+  CONTEXT_CUT,
   MOVEMENT_VERBS,
   SCENE_CHANGE,
-  TRANSITION_PHRASES,
   TEMPORAL_TRANSITION,
-  CONTEXT_CUT,
+  TRANSITION_PHRASES,
 } from "../regex/transitions";
-import type { ExtractedMemory, } from "../memory/types";
 import { estimateTokens, } from "./token-utils";
 import type { ChatTransition, MessageRef, TransitionType, } from "./types";
 

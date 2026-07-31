@@ -16,7 +16,6 @@ import { resolveModelRole, } from "../admin/model-roles";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
-import { SCRIPT_TAG, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, } from "../regex/html-sanitize";
 import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled, } from "../crypto";
 import {
   CancelReason,
@@ -33,6 +32,7 @@ import type { DB, } from "../db/schema";
 import { extractMentionedActorIds, } from "../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../group-chat/turn-selector";
 import { getLogger, } from "../logger";
+import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../regex/html-sanitize";
 import { type GameMasterConfig, GameMasterService, } from "../story";
 import type { GenerateTextFn, } from "../story/game-master";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
@@ -309,7 +309,6 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       chatId,
       modelId: resolved.resolvedModel,
       groupParticipantIds,
-      avatarConfig: config.templates?.avatar ?? {},
     },);
     log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
