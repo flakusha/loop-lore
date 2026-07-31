@@ -59,7 +59,9 @@ Commands:
   sign <branch>             Configure GPG signing for existing worktree
   merge <branch> <source>   Merge source branch into worktree's branch
   rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
-  finalize <branch>         Validate worktree ready, run checks, merge to master, remove
+  finalize <branch> [opts]  Validate worktree ready, run checks, merge to master, remove
+                             --merge-strategy rebase|squash|direct (default: rebase)
+                             --force / -f (skip checks, allow direct merge)
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
@@ -87,6 +89,9 @@ Aliases:
 
 Examples:
   $(basename "$0") new feature-xyz
+  $(basename "$0") finalize feature-xyz
+  $(basename "$0") finalize feature-xyz --merge-strategy squash
+  $(basename "$0") finalize feature-xyz --merge-strategy direct --force
   $(basename "$0") ticket TASK "Fix login" -l backend -l bug -p high
   $(basename "$0") ticket FEAT "Add dark mode" -e epic-ui --effort Large
   $(basename "$0") issues --all
@@ -176,6 +181,58 @@ gpg_merge_flags() {
 branch_to_path() {
     # Convert branch name to directory path (handle slashes)
     echo "$1" | sed 's|/|-|g'
+}
+
+branch_to_squash_message() {
+  # Convert branch name to Conventional Commits squash message
+  # feature/chat-auto-rename → "feat: Chat auto rename"
+  # fix/migration-008-duplicate-index → "fix: Migration 008 duplicate index"
+  local branch="$1"
+  local type="chore"
+  local subject="$branch"
+
+  case "$branch" in
+    feature/*)
+      type="feat"
+      subject="${branch#feature/}"
+      ;;
+    fix/*)
+      type="fix"
+      subject="${branch#fix/}"
+      ;;
+    refactor/*)
+      type="refactor"
+      subject="${branch#refactor/}"
+      ;;
+    perf/*)
+      type="perf"
+      subject="${branch#perf/}"
+      ;;
+    docs/*)
+      type="docs"
+      subject="${branch#docs/}"
+      ;;
+    test/*)
+      type="test"
+      subject="${branch#test/}"
+      ;;
+    chore/*)
+      type="chore"
+      subject="${branch#chore/}"
+      ;;
+    *)
+      # No recognized prefix — use branch name as-is
+      subject="$branch"
+      ;;
+  esac
+
+  # Convert kebab-case to sentence case
+  subject=$(echo "$subject" | tr '-' ' ')
+
+  # Capitalize first letter
+  subject="$(echo "${subject:0:1}" | tr '[:lower:]' '[:upper:]')${subject:1}"
+
+  echo "$type: $subject"
 }
 
 resolve_branch() {
@@ -893,28 +950,92 @@ cmd_rebase() {
 }
 
 cmd_finalize() {
-    local branch="$1"
-    local force=false
-    
-    # Parse flags
-    shift
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --force|-f)
-                force=true
-                shift
-                ;;
-            *)
-                shift
-                ;;
-        esac
-    done
-    
-    if [[ -z "$branch" ]]; then
-        echo -e "${RED}Error: branch name required${NC}"
-        echo "Usage: $(basename "$0") finalize <branch>"
-        echo "  Validates worktree is clean, runs checks, merges to master, removes worktree"
-        exit 1
+  local branch="${1:-}"
+  local merge_strategy="rebase"  # default: rebase for linear history
+  local force=false
+
+  # Parse flags
+  shift 2>/dev/null || true
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --merge-strategy)
+        merge_strategy="$2"
+        shift 2
+        ;;
+      --force | -f)
+        force=true
+        shift
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
+  # Validate merge strategy
+  case "$merge_strategy" in
+    rebase | squash | direct) ;;
+    *)
+      echo -e "${RED}Error: unknown merge strategy '$merge_strategy'${NC}"
+      echo "Valid strategies: rebase, squash, direct"
+      exit 1
+      ;;
+  esac
+
+  if [[ -z "$branch" ]]; then
+    echo -e "${RED}Error: branch name required${NC}"
+    echo "Usage: $(basename "$0") finalize <branch> [--merge-strategy rebase|squash|direct]"
+    echo "  Validates worktree is clean, runs checks, merges to master, removes worktree"
+    exit 1
+  fi
+
+  # Resolve directory names (feature-foo) to branch names (feature/foo)
+  local resolved
+  resolved="$(resolve_branch "$branch")"
+  if [[ -n "$resolved" ]] && [[ "$resolved" != "$branch" ]]; then
+    echo -e "${YELLOW}  ℹ Resolved '$branch' → branch '$resolved'${NC}"
+    branch="$resolved"
+  fi
+
+  # Block finalizing protected branches
+  if is_protected "$branch"; then
+    echo -e "${RED}Error: cannot finalize protected branch '$branch'${NC}"
+    exit 1
+  fi
+
+  local worktree_path
+  worktree_path="$(require_worktree "$branch")"
+
+  echo -e "${CYAN}═══ Finalizing '$branch' ═══${NC}"
+  echo ""
+
+  # Step 1: Check for uncommitted changes
+  echo -e "${CYAN}Step 1: Checking worktree state...${NC}"
+  local has_changes=false
+  if ! git -C "$worktree_path" diff --quiet 2>/dev/null \
+    || ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    has_changes=true
+    echo -e "${YELLOW}  ⚠ Uncommitted changes detected${NC}"
+    git -C "$worktree_path" diff --stat 2>/dev/null || true
+    echo ""
+    echo -e "  ${YELLOW}Commit or stash before finalizing:${NC}"
+    echo -e "    cd $worktree_path && git add -A && git commit -m 'feat: ...'"
+    echo -e "    cd $worktree_path && git stash"
+    exit 1
+  fi
+  echo -e "${GREEN}  ✓ Worktree clean${NC}"
+  echo ""
+
+  # Step 2: Run typecheck + lint + format
+  echo -e "${CYAN}Step 2: Running checks (bun run check)...${NC}"
+  if [[ "$force" == "true" ]]; then
+    echo -e "${YELLOW}  Skipped: --force flag set${NC}"
+  elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
+    if (cd "$worktree_path" && unset REPO_ROOT && bun run check); then
+      echo -e "${GREEN}  ✓ Checks passed${NC}"
+    else
+      echo -e "${RED}  ✗ Checks failed — fix before finalizing (or use --force)${NC}"
+      exit 1
     fi
 
     # Resolve directory names (feature-foo) to branch names (feature/foo)
@@ -985,23 +1106,88 @@ cmd_finalize() {
   echo -e "${GREEN}  ✓ Branch has $ahead commit(s) beyond $base${NC}"
   echo ""
 
-  # Step 5: Merge into base branch (worktree stays until merge succeeds)
+  # Step 5: Merge strategy
   local target_branch
   target_branch=$(git -C "$REPO_ROOT" branch --show-current)
-  echo -e "${CYAN}Step 5: Merging '$branch' into $target_branch...${NC}"
-  local GIT_MERGE_FLAGS=()
-  gpg_merge_flags
-  if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
-    echo -e "${GREEN}  ✓ Merged into $target_branch${NC}"
-    # Verify merge commit is signed
-    local merge_sha
-    merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
-    if git -C "$REPO_ROOT" verify-commit "$merge_sha" &>/dev/null; then
-      echo -e "${GREEN}  ✓ Merge commit GPG-signed ($merge_sha)${NC}"
-    else
-        echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
-    fi
-    echo ""
+
+  case "$merge_strategy" in
+    rebase | squash)
+      # 5a: Rebase A onto B (resolves conflicts on feature worktree)
+      echo -e "${CYAN}Step 5a: Rebasing '$branch' onto $target_branch...${NC}"
+      if git -C "$worktree_path" rebase "$target_branch"; then
+        echo -e "${GREEN}  ✓ Rebased successfully${NC}"
+      else
+        echo -e "${RED}  ✗ Rebase conflicts — resolve in $worktree_path${NC}"
+        echo -e "  Then: cd $worktree_path && git rebase --continue"
+        echo -e "  Then: $(basename "$0") finalize $branch"
+        echo -e ""
+        echo -e "  Or abort: cd $worktree_path && git rebase --abort"
+        exit 1
+      fi
+
+      # 5b: Integrate into B
+      if [[ "$merge_strategy" == "squash" ]]; then
+        # Auto-generate commit message from branch name
+        local squash_msg
+        squash_msg=$(branch_to_squash_message "$branch")
+        echo -e "${CYAN}Step 5b: Squash merging into $target_branch...${NC}"
+        if git -C "$REPO_ROOT" merge "$branch" --squash -m "$squash_msg"; then
+          echo -e "${GREEN}  ✓ Squash merged: $squash_msg${NC}"
+        else
+          echo -e "${RED}  ✗ Squash merge failed${NC}"
+          exit 1
+        fi
+      else
+        # Fast-forward only
+        echo -e "${CYAN}Step 5b: Fast-forward merging into $target_branch...${NC}"
+        if git -C "$REPO_ROOT" merge "$branch" --ff-only; then
+          echo -e "${GREEN}  ✓ Fast-forward merged${NC}"
+        else
+          echo -e "${RED}  ✗ Fast-forward failed — this shouldn't happen after rebase${NC}"
+          exit 1
+        fi
+      fi
+      ;;
+
+    direct)
+      # WARNING: conflicts resolve on master
+      echo ""
+      echo -e "${YELLOW}╔════════════════════════════════════════════════════════════╗${NC}"
+      echo -e "${YELLOW}║  ⚠ WARNING: Direct merge strategy                        ║${NC}"
+      echo -e "${YELLOW}║                                                          ║${NC}"
+      echo -e "${YELLOW}║  Conflicts will be resolved on master ($target_branch).    ║${NC}"
+      echo -e "${YELLOW}║  This can leave master in a broken state.                ║${NC}"
+      echo -e "${YELLOW}║                                                          ║${NC}"
+      echo -e "${YELLOW}║  Consider: $(basename "$0") finalize $branch --merge-strategy rebase${NC}"
+      echo -e "${YELLOW}╚════════════════════════════════════════════════════════════╝${NC}"
+      echo ""
+
+      if [[ "$force" != "true" ]]; then
+        echo -e "${RED}Aborted. Use --force to proceed with direct merge.${NC}"
+        exit 1
+      fi
+
+      echo -e "${CYAN}Step 5: Merging '$branch' into $target_branch (direct)...${NC}"
+      local GIT_MERGE_FLAGS=()
+      gpg_merge_flags
+      if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
+        echo -e "${GREEN}  ✓ Merged into $target_branch${NC}"
+        # Verify merge commit is signed
+        local merge_sha
+        merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
+        if git -C "$REPO_ROOT" verify-commit "$merge_sha" &>/dev/null; then
+          echo -e "${GREEN}  ✓ Merge commit GPG-signed ($merge_sha)${NC}"
+        else
+          echo -e "${YELLOW}  ⚠ Merge commit not signed — GPG key may be locked${NC}"
+        fi
+      else
+        echo -e "${RED}  ✗ Merge conflicts — resolve on master${NC}"
+        echo -e "  Then: $(basename "$0") finalize $branch"
+        exit 1
+      fi
+      ;;
+  esac
+  echo ""
 
     # Step 4: Check branch has commits beyond base
     local base="master"
