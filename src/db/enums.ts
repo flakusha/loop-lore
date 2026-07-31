@@ -35,5 +35,6 @@ export * from "./enums-content";
 export * from "./enums-core";
 export * from "./enums-crafting";
 export * from "./enums-generation";
+export * from "./enums-gm";
 export * from "./enums-story";
 export * from "./state";
