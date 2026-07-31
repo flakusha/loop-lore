@@ -1,11 +1,11 @@
 <header id="header-slot" class="main-header" data-testid="chat-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title" id="page-title">{{{t("gallery.viewChats")}}}</span>
+  <span class="title" id="page-title">{{{t("tooltips.viewChats")}}}</span>
   <div class="actions">
     <button
       class="btn-icon"
-      x-bind:title="t('gallery.viewChats')"
-      x-bind:aria-label="t('gallery.viewChats')"
+      x-bind:title="t('tooltips.viewChats')"
+      x-bind:aria-label="t('tooltips.viewChats')"
       @click="$store.ui.showChatList = !$store.ui.showChatList"
       data-testid="toggle-chat-list"
     >
@@ -62,7 +62,17 @@
       <span x-show="!window.isChatPaused($store.chat?.currentChat)">{{icon:player-pause}}</span>
       <span x-show="window.isChatPaused($store.chat?.currentChat)">{{icon:player-play}}</span>
     </button>
-    <div class="notif-bell" x-data="notificationsBell()" x-init="init()">
+    <button
+      class="btn-icon"
+      :class="showGmPanel ? 'gm-toggle-active' : ''"
+      @click="showGmPanel = !showGmPanel"
+      title="GM Panel"
+      aria-label="Toggle GM Panel"
+      data-testid="gm-toggle"
+    >
+      🎭
+    </button>
+    <div class="notif-bell" x-data="notificationsBell()" x-init="init()" x-show="unreadCount > 0">
       <button
         class="btn-icon"
         x-bind:title="t('chats.notifications')"
