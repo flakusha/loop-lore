@@ -23,7 +23,7 @@ import { uid, } from "../../utils";
 const MAX_SKILL_LEVEL = 100;
 
 /** XP required per skill level (scales quadratically). */
-function xpForLevel(level: number): number {
+function xpForLevel(level: number,): number {
   return Math.floor(50 * level * (1 + level * 0.1),);
 }
 
@@ -176,7 +176,9 @@ export class SeductionService {
    */
   async updateDesireProfile(
     actorId: string,
-    updates: Partial<Pick<DesireProfile, "turnOns" | "turnOffs" | "fetishes" | "hardLimits" | "desireDecayRate" | "desireBuildupRate">>,
+    updates: Partial<
+      Pick<DesireProfile, "turnOns" | "turnOffs" | "fetishes" | "hardLimits" | "desireDecayRate" | "desireBuildupRate">
+    >,
   ): Promise<boolean> {
     // Ensure profile exists
     await this.getDesireProfile(actorId,);
@@ -312,7 +314,7 @@ export class SeductionService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.rowToSkill(r,),);
+    return rows.map((r,) => this.rowToSkill(r,));
   }
 
   // ── Arousal State ─────────────────────────────────────
@@ -470,7 +472,7 @@ export class SeductionService {
    * Skill check: roll 1d100 vs DC.
    * DC is influenced by target's arousal, turn-ons, and hard limits.
    */
-  async attemptSeduction(opts: SeductionAttemptOpts): Promise<SeductionResult> {
+  async attemptSeduction(opts: SeductionAttemptOpts,): Promise<SeductionResult> {
     const { actorId, targetId, skillCategory, approach, worldId, } = opts;
     const log = getLogger().child({ module: "seduction", },);
 
@@ -497,7 +499,7 @@ export class SeductionService {
 
     // Get actor's skill (category-based, use first matching)
     const skills = await this.getActorSkills(actorId,);
-    const relevantSkill = skills.find((s,) => s.category === skillCategory,);
+    const relevantSkill = skills.find((s,) => s.category === skillCategory);
     const skillLevel = relevantSkill?.level ?? 1;
 
     // Calculate DC based on target's state
@@ -577,7 +579,7 @@ export class SeductionService {
     desire_buildup_rate: number;
     created_at: string;
     updated_at: string;
-  }): DesireProfile {
+  },): DesireProfile {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -603,7 +605,7 @@ export class SeductionService {
     xp_to_next: number;
     created_at: string;
     updated_at: string;
-  }): SeductionSkill {
+  },): SeductionSkill {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -628,7 +630,7 @@ export class SeductionService {
     last_update: string;
     created_at: string;
     updated_at: string;
-  }): ArousalState {
+  },): ArousalState {
     return {
       id: row.id,
       actorId: row.actor_id,

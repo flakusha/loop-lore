@@ -13,8 +13,7 @@ import type { Kysely, } from "kysely";
 import type { IntimacyActionType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { safeJsonStringify, } from "../../utils";
-import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
+import { uid, } from "../../utils";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -140,7 +139,8 @@ export class IntimacyService {
     }
 
     // Create new pair with score 0
-    const { id, now, } = nowAndId();
+    const now = new Date().toISOString();
+    const id = uid();
 
     await this.db
       .insertInto("character_intimacy",)
@@ -237,10 +237,10 @@ export class IntimacyService {
     const thresholdsReached = this.checkThresholds(pair.score, newScore, pair.unlockedThresholds,);
 
     // Update unlocked thresholds
-    const newUnlocked = [...pair.unlockedThresholds,];
-    for (const t of thresholdsReached) {
-      newUnlocked.push(t.level,);
-    }
+    const newUnlocked = [
+      ...pair.unlockedThresholds,
+      ...thresholdsReached.map((t,) => t.level),
+    ];
 
     // Determine suggested relationship upgrade
     const suggestedRelationshipUpgrade = this.suggestRelationshipUpgrade(newScore,);
@@ -251,14 +251,8 @@ export class IntimacyService {
       .updateTable("character_intimacy",)
       .set({
         score: newScore,
-        action_history: (() => {
-          const _r = safeJsonStringify(history,);
-          return _r.ok ? _r.value : "[]";
-        })(),
-        unlocked_thresholds: (() => {
-          const _r = safeJsonStringify(newUnlocked,);
-          return _r.ok ? _r.value : "[]";
-        })(),
+        action_history: JSON.stringify(history,),
+        unlocked_thresholds: JSON.stringify(newUnlocked,),
         updated_at: now,
       },)
       .where("id", "=", pair.id,)
@@ -294,7 +288,7 @@ export class IntimacyService {
     }
 
     const rows = await query.selectAll().execute();
-    return Array.from(rows, (r,) => this.rowToPair(r,),);
+    return rows.map((r,) => this.rowToPair(r,));
   }
 
   /**
@@ -316,7 +310,7 @@ export class IntimacyService {
    *
    * @param decayAmount - How much to decay per call (default 1).
    */
-  async decayAll(actorId: string, decayAmount = 1,): Promise<number> {
+  async decayAll(actorId: string, decayAmount: number = 1,): Promise<number> {
     const pairs = await this.db
       .selectFrom("character_intimacy",)
       .where("actor_id", "=", actorId,)
@@ -364,8 +358,8 @@ export class IntimacyService {
       targetActorId: row.target_actor_id,
       worldId: row.world_id,
       score: row.score,
-      actionHistory: parseJsonField<IntimacyHistoryEntry[]>(row.action_history, [],),
-      unlockedThresholds: parseJsonField<number[]>(row.unlocked_thresholds, [],),
+      actionHistory: JSON.parse(row.action_history,) as IntimacyHistoryEntry[],
+      unlockedThresholds: JSON.parse(row.unlocked_thresholds,) as number[],
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

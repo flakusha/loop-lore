@@ -1,0 +1,127 @@
+<!-- GM Panel — Shadow Notes & Whitenotes sidebar -->
+<div
+  x-show="showGmPanel"
+  x-cloak
+  class="gm-panel"
+  @keydown.escape.window="showGmPanel = false"
+  data-testid="gm-panel"
+>
+  <div class="gm-panel-header">
+    <h3>GM Panel</h3>
+    <button class="btn-icon" @click="showGmPanel = false" aria-label="Close GM Panel">&times;</button>
+  </div>
+
+  <!-- GM Panel Content (loaded via htmx or Alpine sub-component) -->
+  <div class="gm-panel-body" x-data="gmPanel()" x-init="init()">
+    <!-- Tab switcher -->
+    <div class="gm-tabs">
+      <button
+        class="btn btn-sm"
+        :class="activeTab === 'shadow' ? 'btn-primary' : 'btn-ghost'"
+        @click="activeTab = 'shadow'"
+      >
+        Shadow Notes
+      </button>
+      <button
+        class="btn btn-sm"
+        :class="activeTab === 'white' ? 'btn-primary' : 'btn-ghost'"
+        @click="activeTab = 'white'"
+      >
+        Whitenotes
+      </button>
+    </div>
+
+    <!-- Shadow Notes Tab -->
+    <div x-show="activeTab === 'shadow'">
+      <div class="gm-form-group">
+        <label class="form-label">Type</label>
+        <select class="form-input" x-model="newShadowType">
+          <option value="foreshadowing">Foreshadowing</option>
+          <option value="consequence">Consequence</option>
+          <option value="hidden_fact">Hidden Fact</option>
+          <option value="player_motivation">Player Motivation</option>
+          <option value="world_secret">World Secret</option>
+          <option value="narrative_hook">Narrative Hook</option>
+        </select>
+      </div>
+      <div class="gm-form-group">
+        <textarea
+          class="form-input"
+          x-model="newShadowContent"
+          placeholder="Hidden narrative influence..."
+          rows="3"
+        ></textarea>
+      </div>
+      <button class="btn btn-primary btn-sm gm-full-width" @click="addShadowNote()">Add Shadow Note</button>
+
+      <div class="gm-count"><span x-text="shadowNotes.length"></span> shadow note(s)</div>
+      <template x-for="note in shadowNotes" :key="note.id">
+        <div class="gm-note-card">
+          <div class="gm-note-header">
+            <span class="gm-note-type" x-text="note.type"></span>
+            <span x-show="note.revealed" class="gm-badge-revealed">Revealed</span>
+          </div>
+          <p class="gm-note-content" x-text="note.content"></p>
+          <div class="gm-note-actions">
+            <button class="btn btn-ghost btn-sm" @click="revealShadowNote(note.id)" x-show="!note.revealed">
+              Reveal to Players
+            </button>
+            <button class="btn btn-ghost btn-sm gm-danger" @click="deleteShadowNote(note.id)">Delete</button>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Whitenotes Tab -->
+    <div x-show="activeTab === 'white'">
+      <div class="gm-form-group">
+        <label class="form-label">Type</label>
+        <select class="form-input" x-model="newWhiteneoteType">
+          <option value="narrative_direction">Narrative Direction</option>
+          <option value="character_context">Character Context</option>
+          <option value="world_state">World State</option>
+          <option value="tone">Tone</option>
+          <option value="pacing">Pacing</option>
+          <option value="theme">Theme</option>
+        </select>
+      </div>
+      <div class="gm-form-group">
+        <textarea
+          class="form-input"
+          x-model="newWhiteneoteContent"
+          placeholder="Visible GM annotation..."
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="gm-form-group">
+        <label class="form-label">Priority (<span x-text="newWhiteneotePriority"></span>)</label>
+        <input type="range" min="1" max="10" x-model.number="newWhiteneotePriority" />
+      </div>
+      <button class="btn btn-primary btn-sm gm-full-width" @click="addWhiteneote()">Add Whiteneote</button>
+
+      <div class="gm-count"><span x-text="whitenotes.length"></span> whiteneote(s)</div>
+      <template x-for="note in whitenotes" :key="note.id">
+        <div class="gm-note-card">
+          <div class="gm-note-header">
+            <span class="gm-note-type" x-text="note.type"></span>
+            <span class="gm-note-priority">P<span x-text="note.priority"></span></span>
+          </div>
+          <p class="gm-note-content" x-text="note.content"></p>
+          <button class="btn btn-ghost btn-sm gm-danger" @click="deleteWhiteneote(note.id)">Delete</button>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<!-- GM Panel Toggle Button -->
+<button
+  class="btn-icon gm-toggle-btn"
+  :class="showGmPanel ? 'gm-toggle-active' : ''"
+  @click="showGmPanel = !showGmPanel"
+  title="GM Panel"
+  aria-label="Toggle GM Panel"
+  data-testid="gm-toggle"
+>
+  🎭
+</button>
