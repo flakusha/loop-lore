@@ -2,7 +2,7 @@
  * Tests for view serving routes - redirect and layout wrapping behavior.
  */
 import { describe, expect, test, } from "bun:test";
-import { viewRoutes, } from "./views";
+import { applyI18n, viewRoutes, } from "./views";
 
 const mockDb = {} as never;
 
@@ -176,5 +176,37 @@ describe("id verification (URL injection guard)", () => {
     expect(res.status,).toBe(200,);
     const body = await res.text();
     expect(body,).toContain("Character not found",);
+  });
+});
+
+describe("applyI18n", () => {
+  test("replaces i18n template expression with translated value", () => {
+    const t = (key: string,) => `translated:${key}`;
+    expect(applyI18n('{{{ t("common.save") }}}', t,),).toBe("translated:common.save",);
+  });
+
+  test("replaces i18n template expression with spaces", () => {
+    const t = (key: string,) => `translated:${key}`;
+    expect(applyI18n('{{{ t("common.save") }}}', t,),).toBe("translated:common.save",);
+  });
+
+  test("replaces multiple i18n placeholders", () => {
+    const t = (key: string,) => key;
+    const input = '<button title="{{{ t("common.save") }}}">{{{ t("common.cancel") }}}</button>';
+    expect(applyI18n(input, t,),).toBe('<button title="common.save">common.cancel</button>',);
+  });
+
+  test("passes through content without template expressions unchanged", () => {
+    const t = (_key: string,) => "should-not-be-called";
+    expect(applyI18n("<p>Hello world</p>", t,),).toBe("<p>Hello world</p>",);
+  });
+
+  test("returns content unchanged when t is undefined", () => {
+    expect(applyI18n('{{{ t("common.save") }}}',),).toBe('{{{ t("common.save") }}}',);
+  });
+
+  test("returns content unchanged when content is empty", () => {
+    const t = (_key: string,) => "translated";
+    expect(applyI18n("", t,),).toBe("",);
   });
 });
