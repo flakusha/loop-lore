@@ -79,10 +79,10 @@ GET /api/chats/joinable
   &offset=0
 
 // Join a chat
-POST /api/chats/:chatId/join
+POST /api/chats/:id/join
 
 // Transfer to new location (within chat)
-POST /api/chats/:chatId/transfer
+POST /api/chats/:id/transfer
   ?location=<locationId>
 ```
 
