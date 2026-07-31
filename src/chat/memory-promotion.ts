@@ -10,15 +10,15 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import {
-  EPISODIC_TEMPORAL,
+  ENTITY_PATTERN,
   EPISODIC_ACTION,
-  PROCEDURAL_PREFERENCE,
-  PROCEDURAL_LEARNING,
+  EPISODIC_TEMPORAL,
   IMPORTANCE_DECISION,
   IMPORTANCE_EMOTION,
-  ENTITY_PATTERN,
-  KEYWORD_PROPER_NOUN,
   KEYWORD_ACTION_VERBS,
+  KEYWORD_PROPER_NOUN,
+  PROCEDURAL_LEARNING,
+  PROCEDURAL_PREFERENCE,
 } from "../regex/memory-classification";
 import type { MessageRef, } from "./types";
 
