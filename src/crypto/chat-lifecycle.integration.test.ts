@@ -257,7 +257,7 @@ describe("Step 4: Derive chat key, encrypt and decrypt messages", () => {
       database: db,
       chatId: CHAT_ID,
       plaintext: message,
-      encryptionLevel: "public",
+      encryptionLevel: "none",
     },);
 
     expect(encResult.wasEncrypted,).toBe(false,);
@@ -266,7 +266,7 @@ describe("Step 4: Derive chat key, encrypt and decrypt messages", () => {
 
   test("needsEncryption detects plaintext vs encrypted", () => {
     expect(needsEncryption("standard", "plaintext",),).toBe(true,);
-    expect(needsEncryption("public", "plaintext",),).toBe(false,);
+    expect(needsEncryption("none", "plaintext",),).toBe(false,);
     // isEncryptedPayload checks for { enc, nonce, algo, key_id }
     const encrypted = '{"enc":"x","nonce":"y","algo":"aes-256-gcm","key_id":"k1"}';
     expect(needsEncryption("standard", encrypted,),).toBe(false,);

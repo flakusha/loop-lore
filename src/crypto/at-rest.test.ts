@@ -19,7 +19,7 @@ const mockDb = {
   selectFrom: mock(() => ({
     select: mock(() => ({
       where: mock(() => ({
-        executeTakeFirst: mock(() => Promise.resolve({ encryption_level: "public", },)),
+        executeTakeFirst: mock(() => Promise.resolve({ encryption_level: "none", },)),
       })),
     })),
   })),
@@ -44,7 +44,7 @@ describe("encryptAtRest", () => {
       database: mockDb,
       chatId: "chat-1",
       plaintext: "Hello, World!",
-      encryptionLevel: "public",
+      encryptionLevel: "none",
     },);
 
     expect(result.storedContent,).toBe("Hello, World!",);
@@ -64,7 +64,7 @@ describe("encryptAtRest", () => {
       database: mockDb,
       chatId: "chat-1",
       plaintext: encrypted,
-      encryptionLevel: "public",
+      encryptionLevel: "none",
     },);
 
     expect(result.storedContent,).toBe(encrypted,);
@@ -102,7 +102,7 @@ describe("decryptAtRest", () => {
       database: mockDb,
       chatId: "chat-1",
       storedContent: "Plaintext message",
-      encryptionLevel: "public",
+      encryptionLevel: "none",
     },);
 
     expect(result,).toBe("Plaintext message",);
@@ -146,7 +146,7 @@ describe("decryptAtRest", () => {
 
 describe("needsEncryption", () => {
   test("public tier never needs encryption", () => {
-    expect(needsEncryption("public", "plaintext",),).toBeFalse();
+    expect(needsEncryption("none", "plaintext",),).toBeFalse();
   });
 
   test("standard tier needs encryption for plaintext", () => {
@@ -186,7 +186,7 @@ describe("getChatEncryptionLevel", () => {
     expect(result,).toBe("standard",);
   });
 
-  test("returns 'public' when no row found", async () => {
+  test("returns 'none' when no row found", async () => {
     const mockDbEmpty = {
       selectFrom: mock(() => ({
         select: mock(() => ({
@@ -198,6 +198,6 @@ describe("getChatEncryptionLevel", () => {
     } as unknown as Kysely<DB>;
 
     const result = await getChatEncryptionLevel(mockDbEmpty, "chat-1",);
-    expect(result,).toBe("public",);
+    expect(result,).toBe("none",);
   });
 });

@@ -82,7 +82,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       name: "Test Chat",
       type: "direct",
       mode: "direct",
-      purpose: "main",
+      turn_strategy: null,
       created_by: userId,
       visual_novel: 0,
       is_pinned: "unpinned",
