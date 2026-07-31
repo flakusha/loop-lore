@@ -27,13 +27,10 @@
     <link rel="stylesheet" href="/css/app.css" media="all" />
     <link rel="stylesheet" href="/css/gallery.css" media="all" />
 
-    <!-- Vendor bundle: htmx, Alpine.js, morph plugin, htmx extensions (built via bun bundler) -->
-    <!-- Configure HTMX CSP nonce before vendor.js loads so swapped <script> tags get the nonce -->
-    <script nonce="{{cspNonce}}">htmx.config = htmx.config || {}; htmx.config.inlineScriptNonce = "{{cspNonce}}";</script>
-    <script src="/vendor.js" defer></script>
-
-    <!-- App bundle: defines app(), chatState(), Alpine stores -->
-    <script src="/app.js" defer></script>
+    <!-- Alpine.js single init bundle (replaces vendor.js + app.js) -->
+    <!-- Pass CSP nonce — htmx.config is set in alpine-init.ts after htmx imports -->
+    <script nonce="{{cspNonce}}">globalThis.__cspNonce="{{cspNonce}}";</script>
+    <script src="/alpine-init.js" defer></script>
 
     <!-- Chat vendor libs (marked + dompurify) — lazy-loaded by chat-utils -->
     <script src="/chat-vendor.js" defer></script>

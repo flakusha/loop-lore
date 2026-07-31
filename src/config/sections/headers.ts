@@ -31,7 +31,7 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
   crossOriginResourcePolicy: "cross-origin" as const,
   timingAllowOrigin: "",
   immutableHashedAssets: true,
-  linkPreload: ["/vendor.js", "/app.js", "/css/app.css",],
+  linkPreload: ["/alpine-init.js", "/css/app.css",],
   acceptClientHints: [],
   saveData: false,
   earlyHints: { enabled: false, },

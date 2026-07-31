@@ -17,6 +17,8 @@
 
 export {};
 
+import type { TranslationMap, } from "./i18n";
+
 declare global {
   /* ── Vendor / framework globals ─────────────────────────────── */
 
@@ -97,7 +99,7 @@ declare global {
   var __USER_ID: string | undefined;
   var __SESSION_ID: string | undefined;
   var __: (key: string, fallback?: string,) => string;
-  var __localeStrings: Record<string, string>;
+  var __localeStrings: TranslationMap;
   var __THEMES: { id: string; name: string; file: string }[];
   var __chatKey: CryptoKey | null;
   var __chatKeyId: string | null;
