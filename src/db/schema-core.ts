@@ -5,7 +5,29 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { ActorItemType, ActorType, AgentType, ChatMode, ChatParticipantRole, ChatType, ContentEncoding, EquipState, KeyStatus, KeyType, MessageContentFormat, MessageContentType, MessageRole, MessageStatus, MessageVisibility, ModelRole, NoteCategory, PinnedState, TurnStrategy, UserRole, UserStatus, } from "./schemas";
+import type {
+  ActorItemType,
+  ActorType,
+  AgentType,
+  ChatMode,
+  ChatParticipantRole,
+  ChatType,
+  ContentEncoding,
+  EquipState,
+  KeyStatus,
+  KeyType,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
+  MessageStatus,
+  MessageVisibility,
+  ModelRole,
+  NoteCategory,
+  PinnedState,
+  TurnStrategy,
+  UserRole,
+  UserStatus,
+} from "./enums";
 
 // ── users ────────────────────────────────────────────
 export interface Users {
