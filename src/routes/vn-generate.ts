@@ -5,14 +5,14 @@
  * POST /api/chats/:chatId/vn/generate-choices — generate branching choices
  */
 
-import type { Kysely, } from "kysely";
 import { Elysia, t, } from "elysia";
+import type { Kysely, } from "kysely";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
-import type { DB, } from "../db/schema";
 import type { Config, } from "../config/schema";
-import { jsonError, jsonResponse, } from "./http-utils";
+import type { DB, } from "../db/schema";
 import { resolveProvider, } from "../generation/providers/registry";
 import { jsonParseOr, } from "../utils";
+import { jsonError, jsonResponse, } from "./http-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -61,7 +61,8 @@ interface ChoiceGenerationResult {
 
 // ── Prompt Templates ───────────────────────────────────────
 
-const STORY_SYSTEM_PROMPT = `You are a Visual Novel story narrator. Generate immersive, atmospheric prose for visual novel scenes.
+const STORY_SYSTEM_PROMPT =
+  `You are a Visual Novel story narrator. Generate immersive, atmospheric prose for visual novel scenes.
 
 Style guidelines:
 - Use vivid sensory details (sight, sound, touch, smell)
@@ -71,7 +72,8 @@ Style guidelines:
 - Maintain consistency with established characters and locations
 - End with a natural transition point for the next scene`;
 
-const CHOICES_SYSTEM_PROMPT = `You are a Visual Novel branching narrative designer. Generate meaningful player choices that affect the story.
+const CHOICES_SYSTEM_PROMPT =
+  `You are a Visual Novel branching narrative designer. Generate meaningful player choices that affect the story.
 
 Choice guidelines:
 - Each choice should lead to meaningfully different outcomes
@@ -124,7 +126,8 @@ async function generateStoryDescription(
     ...assembled.messages,
     {
       role: "user" as const,
-      content: `Generate a scene description for scene index ${body.sceneIndex}.${styleInstruction}${contextInstruction}\n\nWrite 2-4 paragraphs of atmospheric VN prose.`, 
+      content:
+        `Generate a scene description for scene index ${body.sceneIndex}.${styleInstruction}${contextInstruction}\n\nWrite 2-4 paragraphs of atmospheric VN prose.`,
     },
   ];
 
@@ -200,7 +203,8 @@ async function generateBranchingChoices(
     ...assembled.messages,
     {
       role: "user" as const,
-      content: `Generate ${choiceCount} branching choices for scene index ${body.sceneIndex}.${styleInstruction}${contextInstruction}\n\nRespond in JSON format:\n{\n  "choices": [\n    {\n      "label": "Choice label (3-8 words)",\n      "description": "Brief outcome description",\n      "consequences": {},\n      "relationship_impact": {},\n      "mood_impact": {}\n    }\n  ]\n}`,
+      content:
+        `Generate ${choiceCount} branching choices for scene index ${body.sceneIndex}.${styleInstruction}${contextInstruction}\n\nRespond in JSON format:\n{\n  "choices": [\n    {\n      "label": "Choice label (3-8 words)",\n      "description": "Brief outcome description",\n      "consequences": {},\n      "relationship_impact": {},\n      "mood_impact": {}\n    }\n  ]\n}`,
     },
   ];
 
@@ -244,18 +248,18 @@ export interface VnGenerateRouteOpts {
 }
 
 export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
-  const { database, config, } = opts;
+  const { database, } = opts;
 
   return new Elysia({ prefix: "/api/chats", },)
     .post(
-      "/:chatId/vn/generate-story",
+      "/:id/vn/generate-story",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
           return jsonError("Unauthorized", 401,);
         }
 
-        const { chatId, } = ctx.params as { chatId: string };
+        const { id: chatId, } = ctx.params as { id: string };
         const body = ctx.body as GenerateStoryBody;
 
         try {
@@ -286,18 +290,18 @@ export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
           ],),),
           maxTokens: t.Optional(t.Number(),),
         },),
-        params: t.Object({ chatId: t.String(), },),
+        params: t.Object({ id: t.String(), },),
       },
     )
     .post(
-      "/:chatId/vn/generate-choices",
+      "/:id/vn/generate-choices",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
           return jsonError("Unauthorized", 401,);
         }
 
-        const { chatId, } = ctx.params as { chatId: string };
+        const { id: chatId, } = ctx.params as { id: string };
         const body = ctx.body as GenerateChoicesBody;
 
         try {
@@ -326,7 +330,7 @@ export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
           ],),),
           maxTokens: t.Optional(t.Number(),),
         },),
-        params: t.Object({ chatId: t.String(), },),
+        params: t.Object({ id: t.String(), },),
       },
     );
 }
