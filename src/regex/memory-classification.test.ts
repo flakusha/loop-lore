@@ -1,37 +1,41 @@
 import { describe, expect, test, } from "bun:test";
 import {
-  EPISODIC_TEMPORAL,
+  ENTITY_PATTERN,
   EPISODIC_ACTION,
-  PROCEDURAL_PREFERENCE,
-  PROCEDURAL_LEARNING,
+  EPISODIC_TEMPORAL,
   IMPORTANCE_DECISION,
   IMPORTANCE_EMOTION,
-  ENTITY_PATTERN,
-  KEYWORD_PROPER_NOUN,
   KEYWORD_ACTION_VERBS,
+  KEYWORD_PROPER_NOUN,
+  PROCEDURAL_LEARNING,
+  PROCEDURAL_PREFERENCE,
 } from "./memory-classification";
 
 // ── Episodic Patterns ─────────────────────────────────────
 
 describe("EPISODIC_TEMPORAL", () => {
-  test.each(["then", "after", "before", "during", "while", "suddenly", "finally"])(
+  test.each(["then", "after", "before", "during", "while", "suddenly", "finally",],)(
     "matches '%s'",
-    (word) => { expect(EPISODIC_TEMPORAL.test(`I went ${word} the battle`)).toBe(true); },
+    (word,) => {
+      expect(EPISODIC_TEMPORAL.test(`I went ${word} the battle`,),).toBe(true,);
+    },
   );
 
   test("does not match 'theater'", () => {
-    expect(EPISODIC_TEMPORAL.test("theater")).toBe(false);
+    expect(EPISODIC_TEMPORAL.test("theater",),).toBe(false,);
   });
 });
 
 describe("EPISODIC_ACTION", () => {
-  test.each(["visited", "arrived", "left", "entered", "found", "discovered", "defeated"])(
+  test.each(["visited", "arrived", "left", "entered", "found", "discovered", "defeated",],)(
     "matches '%s'",
-    (word) => { expect(EPISODIC_ACTION.test(`I ${word} the dragon`)).toBe(true); },
+    (word,) => {
+      expect(EPISODIC_ACTION.test(`I ${word} the dragon`,),).toBe(true,);
+    },
   );
 
   test("does not match 'defeatedly'", () => {
-    expect(EPISODIC_ACTION.test("defeatedly")).toBe(false);
+    expect(EPISODIC_ACTION.test("defeatedly",),).toBe(false,);
   });
 });
 
@@ -50,12 +54,12 @@ describe("PROCEDURAL_PREFERENCE", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(PROCEDURAL_PREFERENCE.test(input)).toBe(true);
+      expect(PROCEDURAL_PREFERENCE.test(input,),).toBe(true,);
     });
   }
 
   test("does not match 'presence'", () => {
-    expect(PROCEDURAL_PREFERENCE.test("presence")).toBe(false);
+    expect(PROCEDURAL_PREFERENCE.test("presence",),).toBe(false,);
   });
 });
 
@@ -68,12 +72,12 @@ describe("PROCEDURAL_LEARNING", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(PROCEDURAL_LEARNING.test(input)).toBe(true);
+      expect(PROCEDURAL_LEARNING.test(input,),).toBe(true,);
     });
   }
 
   test("does not match 'learning'", () => {
-    expect(PROCEDURAL_LEARNING.test("learning")).toBe(false);
+    expect(PROCEDURAL_LEARNING.test("learning",),).toBe(false,);
   });
 });
 
@@ -91,16 +95,16 @@ describe("IMPORTANCE_DECISION", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(IMPORTANCE_DECISION.test(input)).toBe(true);
+      expect(IMPORTANCE_DECISION.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(IMPORTANCE_DECISION.test("I DECIDED to attack")).toBe(true);
+    expect(IMPORTANCE_DECISION.test("I DECIDED to attack",),).toBe(true,);
   });
 
   test("does not match 'decidedly'", () => {
-    expect(IMPORTANCE_DECISION.test("decidedly")).toBe(false);
+    expect(IMPORTANCE_DECISION.test("decidedly",),).toBe(false,);
   });
 });
 
@@ -117,52 +121,56 @@ describe("IMPORTANCE_EMOTION", () => {
 
   for (const input of cases) {
     test(`matches "${input}"`, () => {
-      expect(IMPORTANCE_EMOTION.test(input)).toBe(true);
+      expect(IMPORTANCE_EMOTION.test(input,),).toBe(true,);
     });
   }
 
   test("case insensitive", () => {
-    expect(IMPORTANCE_EMOTION.test("She was ANGRY")).toBe(true);
+    expect(IMPORTANCE_EMOTION.test("She was ANGRY",),).toBe(true,);
   });
 
   test("does not match 'angered'", () => {
-    expect(IMPORTANCE_EMOTION.test("angered")).toBe(false);
+    expect(IMPORTANCE_EMOTION.test("angered",),).toBe(false,);
   });
 });
 
 describe("ENTITY_PATTERN", () => {
   test("matches proper nouns", () => {
     const text = "Aldric met Elara at the castle";
-    const matches = text.match(ENTITY_PATTERN);
-    expect(matches).toContain("Aldric");
-    expect(matches).toContain("Elara");
+    const matches = text.match(ENTITY_PATTERN,);
+    expect(matches,).toContain("Aldric",);
+    expect(matches,).toContain("Elara",);
   });
 
   test("does not match common nouns", () => {
     const text = "the dragon flew over the mountain";
-    const matches = text.match(ENTITY_PATTERN);
-    expect(matches).toBeNull();
+    const matches = text.match(ENTITY_PATTERN,);
+    expect(matches,).toBeNull();
   });
 
   test("matches multi-word names", () => {
     const text = "Lord Aldric met Elara";
-    const matches = text.match(ENTITY_PATTERN);
-    expect(matches).toContain("Lord Aldric");
-    expect(matches).toContain("Elara");
+    const matches = text.match(ENTITY_PATTERN,);
+    expect(matches,).toContain("Lord Aldric",);
+    expect(matches,).toContain("Elara",);
   });
 });
 
 // ── Keyword Extraction ────────────────────────────────────
 
 describe("KEYWORD_PROPER_NOUN", () => {
-  test.each(["Aldric", "Elara", "Dragon"])(
+  test.each(["Aldric", "Elara", "Dragon",],)(
     "matches '%s'",
-    (word) => { expect(KEYWORD_PROPER_NOUN.test(word)).toBe(true); },
+    (word,) => {
+      expect(KEYWORD_PROPER_NOUN.test(word,),).toBe(true,);
+    },
   );
 
-  test.each(["the", "a", "is", "dragon"])(
+  test.each(["the", "a", "is", "dragon",],)(
     "does not match '%s'",
-    (word) => { expect(KEYWORD_PROPER_NOUN.test(word)).toBe(false); },
+    (word,) => {
+      expect(KEYWORD_PROPER_NOUN.test(word,),).toBe(false,);
+    },
   );
 });
 
@@ -183,14 +191,14 @@ describe("KEYWORD_ACTION_VERBS", () => {
 
   for (const input of cases) {
     test(`matches in "${input}"`, () => {
-      const matches = input.match(KEYWORD_ACTION_VERBS);
-      expect(matches).not.toBeNull();
-      expect(matches!.length).toBeGreaterThanOrEqual(1);
+      const matches = input.match(KEYWORD_ACTION_VERBS,);
+      expect(matches,).not.toBeNull();
+      expect(matches!.length,).toBeGreaterThanOrEqual(1,);
     });
   }
 
   test("case insensitive", () => {
-    const matches = "VISITED the tavern".match(KEYWORD_ACTION_VERBS);
-    expect(matches).toContain("VISITED");
+    const matches = "VISITED the tavern".match(KEYWORD_ACTION_VERBS,);
+    expect(matches,).toContain("VISITED",);
   });
 });
