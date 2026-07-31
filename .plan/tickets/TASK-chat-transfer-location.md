@@ -16,8 +16,8 @@ and wire VN transitions to location changes. Builds on existing endpoints.
 | Component                          | Status | Notes                                      |
 | ---------------------------------- | ------ | ------------------------------------------ |
 | `PUT /api/chats/:id/location`      | ✅     | Simple `current_location_id` update        |
-| `POST /api/chats/:chatId/transfer` | ✅     | Transfer to location (same world)          |
-| `POST /api/chats/:chatId/join`     | ✅     | Add user as participant                    |
+| `POST /api/chats/:id/transfer` | ✅     | Transfer to location (same world)          |
+| `POST /api/chats/:id/join`     | ✅     | Add user as participant                    |
 | `GET /api/chats/joinable`          | ✅     | Discover chats at location                 |
 | Transition detection               | ✅     | Regex-based in `chat/transitions.ts`       |
 | `ChatTransition` type              | ✅     | Has `location_change` variant              |
@@ -74,7 +74,7 @@ Modify `PUT /api/chats/:id/location`:
 2. Create new section at target location
 3. Return section metadata in response
 
-Modify `POST /api/chats/:chatId/transfer`:
+Modify `POST /api/chats/:id/transfer`:
 
 1. Same section lifecycle as above
 2. Also trigger VN transition event
@@ -102,7 +102,7 @@ Wire via existing `src/chat/transitions.ts`:
 New endpoint or extension to existing chat creation:
 
 ```typescript
-POST /api/chats/:chatId/create-at-location
+POST /api/chats/:id/create-at-location
   body: { locationId: string, name?: string }
 ```
 
@@ -117,7 +117,7 @@ Logic:
 
 ### Step 6: "Join Existing Chat" Flow
 
-Already exists via `POST /api/chats/:chatId/join`. Enhance:
+Already exists via `POST /api/chats/:id/join`. Enhance:
 
 1. Return section history when joining (so UI knows location context)
 2. Post "character joined" narration
