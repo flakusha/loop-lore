@@ -8,6 +8,10 @@ import { safeFromBase64, } from "../utils/safe-buffer";
 import { validateProviderUrl, } from "../utils/url-validation";
 import { ComfyUIClient, } from "./providers/comfyui";
 import { loadComfyUIWorkflow, } from "./workflow-loader";
+// TODO: LoRA integration — enable imports when ready for production
+// import { injectSdCppLora } from "./lora/discovery-sdserver";
+// import { injectComfyUILora } from "./lora/discovery-comfyui";
+// import { validateLoRAConfig } from "./lora/validation";
 
 interface ImageGenBody {
   prompt: string;
@@ -26,6 +30,8 @@ interface ImageGenBody {
   denoising_strength?: number;
   /** ComfyUI workflow name (filename without .json in configs/workflows/) */
   workflow?: string;
+  // TODO: LoRA integration — enable when ready for production
+  // lora?: { name: string; strength: number; backend?: "comfyui" | "sd-server" };
 }
 
 export async function handleImageGeneration(body: unknown,): Promise<Response> {
@@ -63,6 +69,8 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
 
   switch (sdConfig.apiFamily) {
     case "openai": {
+      // TODO: LoRA integration — OpenAI API doesn't support LoRA directly
+      // For OpenAI-compatible backends, LoRA would need to be applied server-side
       const size = req.size ?? `${sdConfig.defaults.width}x${sdConfig.defaults.height}`;
       const url = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/v1/images/generations`;
       const headers: Record<string, string> = {
@@ -103,6 +111,8 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
       break;
     }
     case "sdapi": {
+      // TODO: LoRA integration — sdapi (A1111/Forge) supports LoRA via prompt injection
+      // When enabled, inject LoRA into prompt similar to sdcpp path
       const url = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdapi/v1/txt2img`;
       const sdPayload = safeJsonStringify({
         prompt: req.prompt,
@@ -145,8 +155,21 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
     }
     case "sdcpp": {
       const sdcppUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/img_gen`;
+
+      // TODO: LoRA integration — enable when ready for production
+      // When enabled, inject LoRA into prompt:
+      // let finalPrompt = req.prompt;
+      // if (req.lora) {
+      //   const loraError = validateLoRAConfig(req.lora);
+      //   if (loraError) {
+      //     return Response.json({ error: `Invalid LoRA config: ${loraError}`, status: 400 }, { status: 400 });
+      //   }
+      //   finalPrompt = injectSdCppLora(req.prompt, req.lora.name, req.lora.strength);
+      // }
+      const finalPrompt = req.prompt;
+
       const sdcppPayload = safeJsonStringify({
-        prompt: req.prompt,
+        prompt: finalPrompt,
         negative_prompt: req.negative_prompt ?? sdConfig.defaults.negativePrompt,
         width: sdConfig.defaults.width,
         height: sdConfig.defaults.height,
