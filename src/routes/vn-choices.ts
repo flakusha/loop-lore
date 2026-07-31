@@ -38,12 +38,12 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
     new Elysia({ name: "vn-choices", },)
       // List available choices for a scene
       .get(
-        "/api/chats/:chatId/vn-choices",
+        "/api/chats/:id/vn-choices",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const { chatId, } = ctx.params;
+          const { id: chatId, } = ctx.params;
           const sceneIndex = parseInt(ctx.query.sceneIndex ?? "0", 10,);
 
           const chat = await database
@@ -66,18 +66,18 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
           return jsonResponse({ data: choices, },);
         },
         {
-          params: t.Object({ chatId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
           query: t.Object({ sceneIndex: t.Optional(t.String(),), },),
         },
       )
       // Create a new choice
       .post(
-        "/api/chats/:chatId/vn-choices",
+        "/api/chats/:id/vn-choices",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const { chatId, } = ctx.params;
+          const { id: chatId, } = ctx.params;
           const body = ctx.body;
 
           const chat = await database
@@ -108,12 +108,12 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
             },)
             .execute();
 
-          log().info({ chatId, sceneIndex: body.sceneIndex, }, "Created VN choice",);
+          log().info("Created VN choice", { chatId, sceneIndex: body.sceneIndex, },);
 
           return jsonCreated({ data: { id, }, },);
         },
         {
-          params: t.Object({ chatId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
           body: t.Object({
             sceneIndex: t.Number(),
             label: t.String({ minLength: 1, },),
@@ -127,12 +127,12 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
       )
       // Select a choice
       .post(
-        "/api/chats/:chatId/vn-choices/:choiceId/select",
+        "/api/chats/:id/vn-choices/:choiceId/select",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const { chatId, choiceId, } = ctx.params;
+          const { id: chatId, choiceId, } = ctx.params;
 
           const chat = await database
             .selectFrom("chats",)
@@ -166,7 +166,7 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
             .where("id", "=", choiceId,)
             .execute();
 
-          log().info({ chatId, choiceId, }, "Selected VN choice",);
+          log().info("Selected VN choice", { chatId, choiceId, },);
 
           return jsonResponse({
             data: {
@@ -182,19 +182,19 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
         },
         {
           params: t.Object({
-            chatId: t.String(),
+            id: t.String(),
             choiceId: t.String(),
           },),
         },
       )
       // Get choice history (all selected choices)
       .get(
-        "/api/chats/:chatId/vn-choices/history",
+        "/api/chats/:id/vn-choices/history",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const { chatId, } = ctx.params;
+          const { id: chatId, } = ctx.params;
 
           const chat = await database
             .selectFrom("chats",)
@@ -224,7 +224,7 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
           },);
         },
         {
-          params: t.Object({ chatId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
         },
       )
   );

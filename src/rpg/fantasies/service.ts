@@ -184,7 +184,7 @@ export class FantasyService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r,));
+    return rows.map((r,) => this.getRow(r as any,));
   }
 
   /**
@@ -202,7 +202,7 @@ export class FantasyService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r,));
+    return rows.map((r,) => this.getRow(r as any,));
   }
 
   /**
