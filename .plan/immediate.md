@@ -76,7 +76,15 @@
 | CSS                | ✅ Done    | `src/frontend/vn/styles.css` + appended to `app.css` |
 | GmConfig extension | ✅ Done    | `chat-types.ts` (12 VN fields)                       |
 | Chat settings UI   | ✅ Done    | `chat-settings-modal.html`                           |
-| Chat.html wiring   | ❌ Pending | Conditional VN vs bubble layout                      |
+| Chat.html wiring   | ✅ Done    | Conditional VN vs bubble layout                      |
+| Choice cards       | ✅ Done    | `src/frontend/vn/choice-cards.ts`                    |
+| QA mode            | ✅ Done    | `src/frontend/vn/qa-mode.ts`                         |
+| Template engine    | ✅ Done    | `src/frontend/vn/templates/template-engine.ts`       |
+| Scene templates    | ✅ Done    | `src/frontend/vn/templates/scene-templates.ts`       |
+| Dialogue templates | ✅ Done    | `src/frontend/vn/templates/scene-templates.ts`       |
+| Transition triggers| ✅ Done    | `src/frontend/vn/templates/transition-triggers.ts`   |
+| Story generation   | ✅ Done    | `src/routes/vn-generate.ts`                          |
+| Choice generation  | ✅ Done    | `src/routes/vn-generate.ts`                          |
 | Image preloading   | ❌ Pending | —                                                    |
 
 - [x] Wire `src/frontend/vn/` scene renderer with image overlay + CSS transitions
@@ -85,12 +93,12 @@
 - [x] Implement portrait manager (left/right/center positioning)
 - [x] Add VN settings UI to chat-settings-modal.html
 - [x] Wire VN settings load/save in chat-settings.ts
-- [ ] Wire VN mode into `chat.html` (conditional VN vs bubble layout)
-- [ ] Implement branching choices system (`TASK-vn-branching-choices.md`)
-- [ ] Implement dynamic generation for VN scenes (`TASK-vn-dynamic-generation.md`)
-- [ ] Build QA mode for VN content validation (`TASK-vn-qa-mode.md`)
-- [ ] Create scene template system (`TASK-vn-scene-template-system.md`)
-- [ ] Implement template actions (auto-fill, variables, conditions) (`TASK-vn-template-actions.md`)
+- [x] Wire VN mode into `chat.html` (conditional VN vs bubble layout)
+- [x] Implement branching choices system (`TASK-vn-branching-choices.md`)
+- [x] Build QA mode for VN content validation (`TASK-vn-qa-mode.md`)
+- [x] Create scene template system (`TASK-vn-scene-template-system.md`)
+- [x] Implement pre-configured templates (`TASK-vn-template-actions.md`)
+- [x] Implement story & choice generation (`TASK-vn-dynamic-generation.md`)
 - [ ] **Verification**: `bun run check && bun test src/story/`
 
 ---
