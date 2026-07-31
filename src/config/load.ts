@@ -7,6 +7,7 @@ import { parse as parseToml, } from "smol-toml";
 import { type Config, } from "./schema";
 import type { ProviderInstanceConfig, } from "./schema";
 import { ConfigSchema, } from "./schema-class";
+import { runTemplateExpansion, } from "./template-expansion";
 import { loadTemplateConfig, } from "./templates-loader";
 
 // ── Database Safety Guards ────────────────────────────────────
@@ -514,6 +515,10 @@ function loadConfig(cwd?: string,): Config {
 
   // 6. Load template configs from configs/templates/ directory
   config.templates = loadTemplateConfig(directory,);
+
+  // 6.5. Run template expansion to extend base configs
+  const expansionResult = runTemplateExpansion(directory, config.templates.avatar,);
+  config.templates.avatar = expansionResult.config;
 
   // 7. Backward compat: wrap single sd provider object in array
   const sd = config.generation.providers.sd;

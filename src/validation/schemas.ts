@@ -182,6 +182,11 @@ export const ChatIdParams = t.Object({
   id: Id,
 },);
 
+export const ChatRenameBody = t.Object({
+  name: Name,
+  name_source: t.Optional(t.String(),),
+},);
+
 export const ChatParticipantParams = t.Object({
   id: Id,
   actorId: Id,
@@ -285,7 +290,7 @@ export const ActorUpdateBody = t.Object({
 },);
 
 export const ActorIdParams = t.Object({
-  id: Id,
+  actorId: Id,
 },);
 
 export const ActorsQuery = t.Object({
@@ -403,12 +408,14 @@ export const SuccessResponse = t.Object({
   data: t.Any(),
 },);
 
-export const ListResponse = t.Object({
-  data: t.Array(t.Any(),),
-  total: t.Number(),
-  page: t.Number(),
-  pageSize: t.Number(),
-},);
+export function ListResponse(itemSchema: Parameters<typeof t.Array>[0],) {
+  return t.Object({
+    data: t.Array(itemSchema,),
+    total: t.Number(),
+    page: t.Number(),
+    pageSize: t.Number(),
+  },);
+}
 
 // ── Blog schemas ──────────────────────────────────────────
 
@@ -430,7 +437,7 @@ export const BlogPostUpdateBody = t.Object({
 },);
 
 export const BlogPostStatusBody = t.Object({
-  status: t.String(), 
+  status: t.String(),
 },);
 
 export const BlogCommentCreateBody = t.Object({
@@ -470,29 +477,47 @@ export const AdminOverrideCreateBody = t.Object({
 export const MoodCreateBody = t.Object({
   happiness: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
   expression: t.Optional(t.String(),),
+  baseMood: t.Optional(t.String(),),
+  worldId: t.Optional(t.String(),),
+  moodStability: t.Optional(t.Number(),),
 },);
 
 export const MoodUpdateBody = t.Object({
   happiness: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
   expression: t.Optional(t.String(),),
+  currentMood: t.Optional(t.String(),),
+  moodStability: t.Optional(t.Number(),),
+  worldId: t.Optional(t.String(),),
+  expressionModifiers: t.Optional(t.Record(t.String(), t.Number(),),),
 },);
 
 export const MoodDeltaBody = t.Object({
   delta: t.Number(),
   reason: t.Optional(t.String(),),
+  worldId: t.Optional(t.String(),),
 },);
 
 export const MoodEventBody = t.Object({
-  event_type: t.String(),
+  eventType: t.String(),
   intensity: t.Optional(t.Number(),),
   details: t.Optional(t.String(),),
+  source: t.Optional(t.String(),),
+  sourceId: t.Optional(t.String(),),
+  worldId: t.Optional(t.String(),),
+  happinessDelta: t.Optional(t.Number(),),
+  moodOverride: t.Optional(t.String(),),
 },);
 
 export const MoodStateResponse = t.Object({
-  actor_id: t.String(),
+  id: t.String(),
+  actorId: t.String(),
+  worldId: t.Nullable(t.String(),),
   happiness: t.Number(),
-  expression: t.Optional(t.String(),),
-  updated_at: t.String(),
+  baseMood: t.String(),
+  currentMood: t.String(),
+  moodStability: t.Number(),
+  expressionModifiers: t.Record(t.String(), t.Number(),),
+  lastMoodChange: t.String(),
 },);
 
 // Type aliases for backward compatibility
@@ -505,10 +530,12 @@ export const TraitCreateBody = t.Object({
   trait_name: t.String({ minLength: 1, },),
   value: t.Any(),
 },);
+export type TraitCreateInput = { category: string; name: string; value: string };
 
 export const TraitUpdateBody = t.Object({
   value: t.Any(),
 },);
+export type TraitUpdateInput = { name: string; value: string };
 
 export const WorldTraitCreateBody = t.Object({
   trait_category: t.String(),
@@ -516,6 +543,7 @@ export const WorldTraitCreateBody = t.Object({
   value: t.Any(),
   world_id: t.String({ format: "uuid", },),
 },);
+export type WorldTraitCreateInput = { category: string; name: string; value: string; worldId: string };
 
 export const LocationTraitCreateBody = t.Object({
   trait_category: t.String(),
@@ -523,10 +551,26 @@ export const LocationTraitCreateBody = t.Object({
   value: t.Any(),
   location_id: t.String({ format: "uuid", },),
 },);
+export type LocationTraitCreateInput = {
+  category: string;
+  name: string;
+  value: string;
+  locationId: string;
+  bonus?: number;
+  penalty?: number;
+  effects?: string;
+};
 
 export const LocationTraitUpdateBody = t.Object({
   value: t.Any(),
 },);
+export type LocationTraitUpdateInput = {
+  name: string;
+  value: string;
+  bonus?: number;
+  penalty?: number;
+  effects?: string;
+};
 
 export const TraitResponse = t.Object({
   id: t.String({ format: "uuid", },),
@@ -681,9 +725,9 @@ export const QuestResponse = t.Object({
 // ── Story items schemas ───────────────────────────────────
 
 export const StoryItemInstanceBody = t.Object({
-  item_id: t.String({ format: "uuid", },),
-  location_id: t.Optional(t.String({ format: "uuid", },),),
-  owner_actor_id: t.Optional(t.String({ format: "uuid", },),),
+  itemId: t.String({ format: "uuid", },),
+  locationId: t.Optional(t.String({ format: "uuid", },),),
+  ownerActorId: t.Optional(t.String({ format: "uuid", },),),
   quantity: t.Optional(t.Number({ minimum: 1, },),),
 },);
 
@@ -699,8 +743,9 @@ export const StoryItemResponse = t.Object({
 // ── Story states schemas ──────────────────────────────────
 
 export const WorldStateCreateBody = t.Object({
-  state_key: t.String({ minLength: 1, },),
-  state_value: t.Any(),
+  turnId: t.Optional(t.String(),),
+  messageId: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
 },);
 
 export const NpcStateBody = t.Object({
@@ -726,9 +771,8 @@ export const ApiKeyCreateBody = t.Object({
 // ── Notifications schemas ─────────────────────────────────
 
 export const NotificationPreferencesBody = t.Object({
-  mentions: t.Optional(t.Boolean(),),
-  updates: t.Optional(t.Boolean(),),
-  alerts: t.Optional(t.Boolean(),),
+  enabled: t.Optional(t.Record(t.String(), t.Boolean(),),),
+  mutedWorlds: t.Optional(t.Array(t.String(),),),
 },);
 
 // ── Telemetry schemas ─────────────────────────────────────
