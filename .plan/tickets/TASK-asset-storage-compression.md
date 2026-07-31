@@ -46,6 +46,14 @@ Implement compression pipeline for compressible assets (JSON, text, documents) a
 - Tiered storage (hot/warm/cold)
 - Cleanup policies for orphaned assets
 
+## Algorithm Extensibility
+
+- Implement algorithm extensibility for both compression and encryption pipelines
+- Support configurable algorithms via factory pattern
+- Use plugin hooks for runtime algorithm registration
+- Maintain backward compatibility with existing algorithms
+- Add algorithm versioning for future upgrades
+
 ## Acceptance Criteria
 
 - [ ] Compression pipeline for text-based assets
@@ -56,6 +64,8 @@ Implement compression pipeline for compressible assets (JSON, text, documents) a
 - [ ] Encrypted metadata storage
 - [ ] Asset deduplication
 - [ ] Tiered storage policies
+- [ ] **Algorithm extensibility**: Support for configurable algorithms via factory pattern
+- [ ] **Backward compatibility**: Existing assets remain decryptable
 - [ ] Unit tests for compression/encryption
 - [ ] Integration tests for storage workflow
 
@@ -64,3 +74,5 @@ Implement compression pipeline for compressible assets (JSON, text, documents) a
 - Reference `epic-items.md` for asset system design
 - Consider compression speed vs. ratio tradeoff
 - Balance security vs. performance for encryption
+
+**Update**: Added algorithm extensibility requirements to support future additions without modifying core code.
