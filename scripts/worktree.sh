@@ -57,7 +57,9 @@ Commands:
   sign <branch>             Configure GPG signing for existing worktree
   merge <branch> <source>   Merge source branch into worktree's branch
   rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
-  finalize <branch>         Validate worktree ready, run checks, merge to master, remove
+  finalize <branch> [opts]  Validate worktree ready, run checks, merge to master, remove
+                             --merge-strategy rebase|squash|direct (default: rebase)
+                             --force / -f (skip checks, allow direct merge)
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
@@ -90,6 +92,9 @@ Aliases:
 
 Examples:
   $(basename "$0") new feature-xyz
+  $(basename "$0") finalize feature-xyz
+  $(basename "$0") finalize feature-xyz --merge-strategy squash
+  $(basename "$0") finalize feature-xyz --merge-strategy direct --force
   $(basename "$0") ticket TASK "Fix login" -l backend -l bug -p high
   $(basename "$0") ticket FEAT "Add dark mode" -e epic-ui --effort Large
   $(basename "$0") issues --all
@@ -197,6 +202,58 @@ gpg_merge_flags() {
 branch_to_path() {
     # Convert branch name to directory path (handle slashes)
     echo "$1" | sed 's|/|-|g'
+}
+
+branch_to_squash_message() {
+  # Convert branch name to Conventional Commits squash message
+  # feature/chat-auto-rename → "feat: Chat auto rename"
+  # fix/migration-008-duplicate-index → "fix: Migration 008 duplicate index"
+  local branch="$1"
+  local type="chore"
+  local subject="$branch"
+
+  case "$branch" in
+    feature/*)
+      type="feat"
+      subject="${branch#feature/}"
+      ;;
+    fix/*)
+      type="fix"
+      subject="${branch#fix/}"
+      ;;
+    refactor/*)
+      type="refactor"
+      subject="${branch#refactor/}"
+      ;;
+    perf/*)
+      type="perf"
+      subject="${branch#perf/}"
+      ;;
+    docs/*)
+      type="docs"
+      subject="${branch#docs/}"
+      ;;
+    test/*)
+      type="test"
+      subject="${branch#test/}"
+      ;;
+    chore/*)
+      type="chore"
+      subject="${branch#chore/}"
+      ;;
+    *)
+      # No recognized prefix — use branch name as-is
+      subject="$branch"
+      ;;
+  esac
+
+  # Convert kebab-case to sentence case
+  subject=$(echo "$subject" | tr '-' ' ')
+
+  # Capitalize first letter
+  subject="$(echo "${subject:0:1}" | tr '[:lower:]' '[:upper:]')${subject:1}"
+
+  echo "$type: $subject"
 }
 
 resolve_branch() {
@@ -800,28 +857,7 @@ cmd_rebase() {
 }
 // hint: Structural and logic conflict. Both design and behavior differ.
 cmd_finalize() {
-    local branch="${1:-}"
-    local force=false
-
-    # Parse flags
-    shift 2>/dev/null || true
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-        --force | -f)
-            force=true
-            shift
-            ;;
-        *)
-            shift
-            ;;
-        esac
-    done
-
-    if [[ -z "$branch" ]]; then
-        echo -e "${RED}Error: branch name required${NC}"
-        echo "Usage: $(basename "$0") finalize <branch>"
-        echo "  Validates worktree is clean, runs checks, merges to master, removes worktree"
-        exit 1
+"33: @theirs\n34: @theirs"
     fi
 
     # Resolve directory names (feature-foo) to branch names (feature/foo)
@@ -877,21 +913,7 @@ cmd_finalize() {
     fi
     echo ""
 
-    # Step 3: Run tests
-    echo -e "${CYAN}Step 3: Running tests (bun run test:unit)...${NC}"
-    if [[ "$force" == "true" ]]; then
-        echo -e "${YELLOW}  Skipped: --force flag set${NC}"
-    elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
-        if (cd "$worktree_path" && unset REPO_ROOT && bun run test:unit); then
-            echo -e "${GREEN}  ✓ Tests passed${NC}"
-        else
-            echo -e "${RED}  ✗ Tests failed — fix before finalizing (or use --force)${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
-    fi
-    echo ""
+"33: @theirs\n34: @theirs"
 
     # Step 4: Check branch has commits beyond base
     local base="master"
