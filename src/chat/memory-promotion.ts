@@ -9,6 +9,17 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
+import {
+  EPISODIC_TEMPORAL,
+  EPISODIC_ACTION,
+  PROCEDURAL_PREFERENCE,
+  PROCEDURAL_LEARNING,
+  IMPORTANCE_DECISION,
+  IMPORTANCE_EMOTION,
+  ENTITY_PATTERN,
+  KEYWORD_PROPER_NOUN,
+  KEYWORD_ACTION_VERBS,
+} from "../regex/memory-classification";
 import type { MessageRef, } from "./types";
 
 function getLog() {
@@ -152,16 +163,16 @@ function classifyMessage(
 
   // Episodic: specific events, actions, sequences
   if (
-    /\b(then|after|before|during|while|suddenly|finally)\b/.test(content,) ||
-    /\b(visited|arrived|left|entered|found|discovered|defeated)\b/.test(content,)
+    EPISODIC_TEMPORAL.test(content,) ||
+    EPISODIC_ACTION.test(content,)
   ) {
     return { memoryType: "episodic", };
   }
 
   // Procedural: patterns, preferences, learned behaviors
   if (
-    /\b(prefer|always|never|usually|tends to|likes to|hates)\b/.test(content,) ||
-    /\b(learned|discovered that|realized)\b/.test(content,)
+    PROCEDURAL_PREFERENCE.test(content,) ||
+    PROCEDURAL_LEARNING.test(content,)
   ) {
     return { memoryType: "procedural", };
   }
@@ -183,17 +194,16 @@ function classifyImportance(msg: MessageRef,): number {
   if (content.length > 500) { score += 0.1; }
 
   // Entity density: messages with names/places are more important
-  const entityPattern = /\b[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\b/g;
-  const entityMatches = content.match(entityPattern,);
+  const entityMatches = content.match(ENTITY_PATTERN,);
   if (entityMatches && entityMatches.length >= 3) { score += 0.1; }
 
   // Decision/action language
-  if (/\b(decided|chose|promised|swore|vowed|committed)\b/i.test(content,)) {
+  if (IMPORTANCE_DECISION.test(content,)) {
     score += 0.15;
   }
 
   // Emotional content
-  if (/\b(angry|happy|sad|afraid|excited|love|hate)\b/i.test(content,)) {
+  if (IMPORTANCE_EMOTION.test(content,)) {
     score += 0.05;
   }
 
@@ -207,15 +217,13 @@ function extractKeywords(content: string,): string[] {
 
   // Proper nouns (potential entities)
   for (const word of words) {
-    if (/^[A-Z][a-z]+$/.test(word,) && word.length > 2) {
+    if (KEYWORD_PROPER_NOUN.test(word,) && word.length > 2) {
       keywords.push(word.toLowerCase(),);
     }
   }
 
   // Action verbs
-  const actionVerbs = content.match(
-    /\b(?:visited|found|defeated|created|built|learned|discovered|fought|helped|saved|killed)\b/gi,
-  );
+  const actionVerbs = content.match(KEYWORD_ACTION_VERBS,);
   if (actionVerbs) {
     keywords.push(...actionVerbs.map((v,) => v.toLowerCase()),);
   }
