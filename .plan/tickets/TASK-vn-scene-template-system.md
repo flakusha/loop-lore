@@ -1,7 +1,7 @@
 # TASK: VN Scene Template System
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Epic:** Epic Visual Novel Mode (51)
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med
