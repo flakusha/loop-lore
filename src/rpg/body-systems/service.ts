@@ -105,7 +105,7 @@ export class BodySystemService {
       .executeTakeFirst();
 
     if (row) {
-      return this.rowToProfile(row,);
+      return this.rowToProfile(row as any,);
     }
 
     // Create default profile
@@ -244,7 +244,7 @@ export class BodySystemService {
       .executeTakeFirst();
 
     if (row) {
-      return this.rowToHeatCycle(row,);
+      return this.rowToHeatCycle(row as any,);
     }
 
     // Create default cycle (no heat for humans)

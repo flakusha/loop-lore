@@ -209,12 +209,12 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
       )
       // ── Join a chat ──────────────────────────────────────────
       .post(
-        "/api/chats/:chatId/join",
+        "/api/chats/:id/join",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const chatId = (ctx.params as { chatId: string }).chatId;
+          const chatId = (ctx.params as { id: string }).id;
 
           // Check chat exists and is world-linked (joinable)
           const chatData = await getChat(database, chatId,);
@@ -254,18 +254,18 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
           return jsonCreated({ chatId, joined: true, },);
         },
         {
-          params: t.Object({ chatId: t.String({ format: "uuid", },), },),
+          params: t.Object({ id: t.String({ format: "uuid", },), },),
         },
       )
       // ── Transfer chat to new location ────────────────────────
       .post(
-        "/api/chats/:chatId/transfer",
+        "/api/chats/:id/transfer",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
           if (!userId) { return unauthorized(); }
 
-          const chatId = (ctx.params as { chatId: string }).chatId;
+          const chatId = (ctx.params as { id: string }).id;
           const body = ctx.body as { locationId: string };
           if (!body?.locationId) {
             return jsonError({ message: "locationId required", status: 400, },);

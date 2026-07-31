@@ -17,25 +17,25 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import {
+  type AdvantageMode,
+  type DiceSides,
+  rollDice,
+  rollFromNotation,
+} from "../rpg/dice.js";
+import { logDiceRoll, } from "../rpg/service.js";
+import type { Config, } from "../config/schema.js";
+import type { DB, } from "../db/schema.js";
+import { getLogger, type Logger, } from "../logger";
+import {
+  type AbilityName,
   computeModifiers,
   defaultStatBlock,
   pointBuy,
   rollStats4d6,
   standardArray,
   validateStatBlock,
-  type AbilityName,
   type StatBlock,
 } from "../rpg/stats.js";
-import {
-  rollDice,
-  rollFromNotation,
-  type DiceSides,
-  type AdvantageMode,
-} from "../rpg/dice.js";
-import type { Config, } from "../config/schema.js";
-import type { DB, } from "../db/schema.js";
-import { getLogger, type Logger, } from "../logger";
-import { logDiceRoll, } from "../rpg/service.js";
 import { SuccessResponse, } from "../validation/schemas.js";
 import { jsonError, jsonResponse, } from "./http-utils.js";
 
@@ -84,7 +84,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
                 modifier: body.modifier ?? 0,
                 advantageMode: "normal",
                 exploding: body.exploding ?? false,
-                rawRolls: result.dice.map((d,) => d.value,),
+                rawRolls: result.dice.map((d,) => d.value),
                 rawTotal: result.rawTotal,
                 total: result.total,
                 purpose: "dice_roll",
