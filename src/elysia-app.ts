@@ -48,6 +48,8 @@ import { chatSearchRoutes, } from "./routes/chat-search";
 import { chatsRoutes, } from "./routes/chats";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { gmNotesRoutes, } from "./routes/gm-notes";
+import { vnChoiceRoutes, } from "./routes/vn-choices";
+import { vnGenerateRoutes, } from "./routes/vn-generate";
 import { healthRoutes, } from "./routes/health";
 import { i18nRoutes, } from "./routes/i18n";
 import { importRoutes, } from "./routes/import";
@@ -159,6 +161,8 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(chatsRoutes(handleOpts,),);
   app.use(chatSearchRoutes(handleOpts,),);
   app.use(gmNotesRoutes(handleOpts,),);
+  app.use(vnChoiceRoutes({ database: handleOpts.database, },),);
+  app.use(vnGenerateRoutes({ database: handleOpts.database, config, },),);
   app.use(chatPinRoutes(handleOpts,),);
   app.use(chatExportRoutes(handleOpts,),);
   app.use(chatContextRoutes(handleOpts,),);
