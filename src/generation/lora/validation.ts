@@ -14,6 +14,68 @@ import {
   LORA_STRENGTH_TYPICAL_MIN,
 } from "./types";
 
+// ── Helpers ──────────────────────────────────────────────
+
+/**
+ * Validate a required string field in a record.
+ *
+ * @param record - Record to validate
+ * @param key - Field name
+ * @param label - Human-readable label for error messages
+ * @returns Error message or null if valid
+ */
+function validateRequiredString(
+  record: Record<string, unknown>,
+  key: string,
+  label: string,
+): string | null {
+  const value = record[key];
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return `Invalid LoRA model ${label}`;
+  }
+  return null;
+}
+
+/**
+ * Validate optional trigger words array.
+ *
+ * @param words - Value to validate
+ * @returns Error message or null if valid
+ */
+function validateTriggerWords(words: unknown): string | null {
+  if (words === undefined) {
+    return null;
+  }
+  if (!Array.isArray(words)) {
+    return "LoRA triggerWords must be an array";
+  }
+  for (const word of words) {
+    if (typeof word !== "string") {
+      return "LoRA triggerWords must contain only strings";
+    }
+  }
+  return null;
+}
+
+/**
+ * Validate optional recommended strength.
+ *
+ * @param value - Value to validate
+ * @returns Error message or null if valid
+ */
+function validateRecommendedStrength(value: unknown): string | null {
+  if (value === undefined) {
+    return null;
+  }
+  if (typeof value !== "number") {
+    return "LoRA recommendedStrength must be a number";
+  }
+  if (value < LORA_STRENGTH_MIN || value > LORA_STRENGTH_MAX) {
+    return `LoRA recommendedStrength must be between ${LORA_STRENGTH_MIN} and ${LORA_STRENGTH_MAX}`;
+  }
+  return null;
+}
+
 // ── Config Validation ────────────────────────────────────
 
 /**
@@ -48,12 +110,14 @@ export function validateLoRAConfig(config: unknown,): string | null {
     return "LoRA strength must be a number";
   }
 
+  const strength = c.strength;
+
   // Guard against NaN/Infinity
-  if (!Number.isFinite(c.strength as number)) {
+  if (!Number.isFinite(strength)) {
     return "LoRA strength must be a finite number";
   }
 
-  if ((c.strength as number) < LORA_STRENGTH_MIN || (c.strength as number) > LORA_STRENGTH_MAX) {
+  if (strength < LORA_STRENGTH_MIN || strength > LORA_STRENGTH_MAX) {
     return `LoRA strength must be between ${LORA_STRENGTH_MIN} and ${LORA_STRENGTH_MAX}`;
   }
 
@@ -79,16 +143,19 @@ export function validateLoRAModel(model: unknown,): string | null {
   const m = model as Record<string, unknown>;
 
   // Validate required fields
-  if (typeof m.name !== "string" || m.name.trim().length === 0) {
-    return "Invalid LoRA model name";
+  const nameErr = validateRequiredString(m, "name", "name");
+  if (nameErr !== null) {
+    return nameErr;
   }
 
-  if (typeof m.filename !== "string" || m.filename.trim().length === 0) {
-    return "Invalid LoRA model filename";
+  const filenameErr = validateRequiredString(m, "filename", "filename");
+  if (filenameErr !== null) {
+    return filenameErr;
   }
 
-  if (typeof m.path !== "string" || m.path.trim().length === 0) {
-    return "Invalid LoRA model path";
+  const pathErr = validateRequiredString(m, "path", "path");
+  if (pathErr !== null) {
+    return pathErr;
   }
 
   if (m.backend !== "comfyui" && m.backend !== "sd-server") {
@@ -100,24 +167,14 @@ export function validateLoRAModel(model: unknown,): string | null {
     return "LoRA model size must be a number";
   }
 
-  if (m.triggerWords !== undefined) {
-    if (!Array.isArray(m.triggerWords,)) {
-      return "LoRA triggerWords must be an array";
-    }
-    for (const word of m.triggerWords) {
-      if (typeof word !== "string") {
-        return "LoRA triggerWords must contain only strings";
-      }
-    }
+  const triggerWordsErr = validateTriggerWords(m.triggerWords);
+  if (triggerWordsErr !== null) {
+    return triggerWordsErr;
   }
 
-  if (m.recommendedStrength !== undefined) {
-    if (typeof m.recommendedStrength !== "number") {
-      return "LoRA recommendedStrength must be a number";
-    }
-    if (m.recommendedStrength < LORA_STRENGTH_MIN || m.recommendedStrength > LORA_STRENGTH_MAX) {
-      return `LoRA recommendedStrength must be between ${LORA_STRENGTH_MIN} and ${LORA_STRENGTH_MAX}`;
-    }
+  const strengthErr = validateRecommendedStrength(m.recommendedStrength);
+  if (strengthErr !== null) {
+    return strengthErr;
   }
 
   return null;
@@ -133,7 +190,12 @@ export function validateLoRAModel(model: unknown,): string | null {
  */
 export function isLoRAFilename(filename: string,): boolean {
   const lower = filename.toLowerCase();
-  return LORA_EXTENSIONS.some((ext,) => lower.endsWith(ext,));
+  for (const ext of LORA_EXTENSIONS) {
+    if (lower.endsWith(ext)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
