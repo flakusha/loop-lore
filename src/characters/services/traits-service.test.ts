@@ -129,11 +129,12 @@ describe("TraitsService", () => {
       const traitId = await traitsService.createLocationTrait({
         actorId: testActorId,
         locationId: "test-location-001",
+        category: "comfort",
         name: "comfort_level",
         value: "80",
         bonus: 10,
         penalty: 0,
-        effects: { warmth: true, },
+        effects: JSON.stringify({ warmth: true, },),
       },);
       expect(traitId,).toBeDefined();
     });
@@ -155,7 +156,7 @@ describe("TraitsService", () => {
         value: "90",
         bonus: 15,
         penalty: 0,
-        effects: { warmth: true, luxury: true, },
+        effects: JSON.stringify({ warmth: true, luxury: true, },),
       },);
       const trait = await traitsService.getLocationTrait(testActorId, "test-location-001", "comfort_level",);
       expect(trait?.trait_value,).toBe("90",);
