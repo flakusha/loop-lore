@@ -3,17 +3,17 @@
  */
 
 export {
-  type VnTemplate,
-  type VnTemplateVariable,
-  type VnTemplateBody,
-  type VnCompositeStep,
-  resolveVariables,
-  substituteTemplate,
-  resolveTemplate,
-  getTemplatesForWorld,
-  saveTemplate,
   deleteTemplate,
-  getTemplate,
   exportTemplate,
+  getTemplate,
+  getTemplatesForWorld,
   importTemplate,
+  resolveTemplate,
+  resolveVariables,
+  saveTemplate,
+  substituteTemplate,
+  type VnCompositeStep,
+  type VnTemplate,
+  type VnTemplateBody,
+  type VnTemplateVariable,
 } from "./template-engine";

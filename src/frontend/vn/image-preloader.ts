@@ -28,20 +28,20 @@ const MAX_CACHE_SIZE = 50;
 
 // ── Core Preload Function ──────────────────────────────────
 
-export function preloadImage(url: string): Promise<PreloadResult> {
+export function preloadImage(url: string,): Promise<PreloadResult> {
   // Check cache first
-  if (imageCache.has(url)) {
-    return Promise.resolve({ url, loaded: true },);
+  if (imageCache.has(url,)) {
+    return Promise.resolve({ url, loaded: true, },);
   }
 
   // Check if already queued
-  if (preloadQueue.has(url)) {
-    return new Promise((resolve) => {
+  if (preloadQueue.has(url,)) {
+    return new Promise((resolve,) => {
       const check = setInterval(() => {
-        if (!preloadQueue.has(url)) {
+        if (!preloadQueue.has(url,)) {
           clearInterval(check,);
-          const cached = imageCache.has(url);
-          resolve({ url, loaded: cached },);
+          const cached = imageCache.has(url,);
+          resolve({ url, loaded: cached, },);
         }
       }, 100,);
     },);
@@ -49,14 +49,14 @@ export function preloadImage(url: string): Promise<PreloadResult> {
 
   preloadQueue.add(url,);
 
-  return new Promise((resolve) => {
+  return new Promise((resolve,) => {
     const img = new Image();
-    
+
     img.onload = () => {
       imageCache.set(url, img,);
       preloadQueue.delete(url,);
       manageCacheSize();
-      resolve({ url, loaded: true },);
+      resolve({ url, loaded: true, },);
     };
 
     img.onerror = () => {
@@ -74,9 +74,9 @@ export function preloadImage(url: string): Promise<PreloadResult> {
 
 // ── Batch Preloading ───────────────────────────────────────
 
-export async function preloadImages(urls: string[]): Promise<PreloadResult[]> {
+export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
   const results = await Promise.all(
-    urls.map((url) => preloadImage(url),),
+    urls.map((url,) => preloadImage(url,)),
   );
   return results;
 }
@@ -94,7 +94,7 @@ export async function preloadSceneImages(
   preloadCount: number = 2,
 ): Promise<PreloadStats> {
   const urlsToPreload: string[] = [];
-  
+
   // Current scene
   const current = scenes[currentIndex];
   if (current) {
@@ -115,10 +115,10 @@ export async function preloadSceneImages(
   }
 
   // Deduplicate
-  const uniqueUrls = [...new Set(urlsToPreload,)];
-  
+  const uniqueUrls = [...new Set(urlsToPreload,),];
+
   // Filter out already cached
-  const urlsToFetch = uniqueUrls.filter((url) => !imageCache.has(url,));
+  const urlsToFetch = uniqueUrls.filter((url,) => !imageCache.has(url,));
 
   if (urlsToFetch.length === 0) {
     return {
@@ -133,8 +133,8 @@ export async function preloadSceneImages(
 
   return {
     total: uniqueUrls.length,
-    loaded: results.filter((r) => r.loaded,).length,
-    failed: results.filter((r) => !r.loaded,).length,
+    loaded: results.filter((r,) => r.loaded).length,
+    failed: results.filter((r,) => !r.loaded).length,
     cached: uniqueUrls.length - urlsToFetch.length,
   };
 }
@@ -145,7 +145,7 @@ function manageCacheSize(): void {
   if (imageCache.size > MAX_CACHE_SIZE) {
     // Remove oldest entries (first N entries)
     const entriesToRemove = imageCache.size - MAX_CACHE_SIZE;
-    const keys = [...imageCache.keys()];
+    const keys = [...imageCache.keys(),];
     for (let i = 0; i < entriesToRemove; i++) {
       const key = keys[i];
       if (key) { imageCache.delete(key,); }
@@ -163,11 +163,11 @@ export function getCacheSize(): number {
 
 // ── Utility Functions ──────────────────────────────────────
 
-export function isImageCached(url: string): boolean {
+export function isImageCached(url: string,): boolean {
   return imageCache.has(url,);
 }
 
-export function getCachedImage(url: string): HTMLImageElement | undefined {
+export function getCachedImage(url: string,): HTMLImageElement | undefined {
   return imageCache.get(url,);
 }
 
@@ -186,7 +186,7 @@ export function getImageWithFallback(
 export interface LoadingIndicator {
   show: () => void;
   hide: () => void;
-  updateProgress: (loaded: number, total: number) => void;
+  updateProgress: (loaded: number, total: number,) => void;
 }
 
 export function createLoadingIndicator(
@@ -195,7 +195,7 @@ export function createLoadingIndicator(
   const indicator = document.createElement("div",);
   indicator.className = "vn-loading-indicator";
   indicator.style.display = "none";
-  
+
   const text = document.createElement("span",);
   text.className = "vn-loading-text";
   text.textContent = "Loading images...";
@@ -208,12 +208,16 @@ export function createLoadingIndicator(
   container.appendChild(indicator,);
 
   return {
-    show: () => { indicator.style.display = "flex"; },
-    hide: () => { indicator.style.display = "none"; },
-    updateProgress: (loaded: number, total: number) => {
-      const percent = total > 0 ? Math.round((loaded / total) * 100) : 0;
+    show: () => {
+      indicator.style.display = "flex";
+    },
+    hide: () => {
+      indicator.style.display = "none";
+    },
+    updateProgress: (loaded: number, total: number,) => {
+      const percent = total > 0 ? Math.round((loaded / total) * 100,) : 0;
       text.textContent = `Loading images... ${loaded}/${total}`;
-      progress.style.setProperty("--progress", String(percent / 100),);
+      progress.style.setProperty("--progress", String(percent / 100,),);
     },
   };
 }
