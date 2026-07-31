@@ -38,12 +38,13 @@ sdcpp API families. Good for fast txt2img and basic img2img.
 
 ### Generation Targets
 
-| Entity    | Asset kind     | Model (Primary) | Model (Fallback) |
-| --------- | -------------- | --------------- | ---------------- |
-| Character | Portrait       | FLUX.1 Kontext  | Qwen Image Edit  |
-| Item      | Icon / render  | FLUX.1 Kontext  | Qwen Image Edit  |
-| Location  | Scene art      | FLUX.1 Kontext  | Qwen Image Edit  |
-| World     | Map / mood art | FLUX.1 Kontext  | Qwen Image Edit  |
+| Entity    | Asset kind     | Model (Primary) | Model (Fallback)                          |
+| --------- | -------------- | --------------- | ----------------------------------------- |
+| Character | Portrait       | FLUX.1 Kontext  | Qwen Image Edit                           |
+| Character | Emotion avatar | FLUX.1 Kontext  | Qwen Image Edit → **txt2img w/ metadata** |
+| Item      | Icon / render  | FLUX.1 Kontext  | Qwen Image Edit                           |
+| Location  | Scene art      | FLUX.1 Kontext  | Qwen Image Edit                           |
+| World     | Map / mood art | FLUX.1 Kontext  | Qwen Image Edit                           |
 
 ### Editing Models (Tested 2026-07-28)
 
@@ -54,6 +55,49 @@ sdcpp API families. Good for fast txt2img and basic img2img.
 | Krea 2 Edit     | Not working     | ~12GB                 | Needs retest                  |
 | Klein 4B/9B     | Strange results | 4-16GB                | Needs investigation           |
 | LoRA            | Works           | Varies                | Coeff 0.3-0.7 typical         |
+
+### Emotion Avatar Generation (Fallback Strategy)
+
+Generate emotion-specific avatar variants for characters. Primary path uses SD
+edit models (img2img); fallback uses SD generation models (txt2img) with original
+avatar metadata/captioning for prompt construction.
+
+**Primary Path: Edit Model (img2img)**
+
+```
+Original avatar → SD edit model (FLUX.1 Kontext / Qwen Image Edit)
+  + emotion modifier prompt
+  → Emotion variant avatar
+```
+
+**Fallback Path: Generation Model (txt2img)**
+
+```
+Original avatar → Extract metadata + caption
+  + emotion modifier prompt
+  → SD generation model (txt2img)
+  → Emotion variant avatar
+```
+
+**Metadata/Captioning Sources:**
+
+| Source                           | Use in Prompt               | Example                                     |
+| -------------------------------- | --------------------------- | ------------------------------------------- |
+| Image caption (auto-generated)   | Scene/character description | "portrait of a young woman with red hair"   |
+| User-provided alt text           | Character identity          | "Aria, the elven mage"                      |
+| Asset tags                       | Style/setting context       | `{"style": "anime", "setting": "fantasy"}`  |
+| Generation prompt (if generated) | Full original prompt        | "anime girl, red hair, blue eyes, detailed" |
+
+**Fallback Trigger Conditions:**
+
+| Condition                       | Action                        |
+| ------------------------------- | ----------------------------- |
+| Edit model not configured       | Use generation fallback       |
+| Edit model endpoint unreachable | Retry once, then fallback     |
+| Edit model returns error        | Log, fallback to generation   |
+| Edit model timeout (>120s)      | Abort, fallback to generation |
+
+See `TASK-emotions-avatar-edit-model.md` for implementation details.
 
 ### Request Interface
 

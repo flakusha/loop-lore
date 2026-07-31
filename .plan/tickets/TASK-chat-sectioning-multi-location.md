@@ -3,7 +3,7 @@
 **Status:** ⬜ Research Needed
 **Priority:** Medium
 **Effort:** High
-**Related:** TASK-chat-backgrounds-location-sync
+**Related:** TASK-chat-backgrounds-location-sync, TASK-chat-transfer-location, TASK-travel-party-migration, TASK-transition-aux-llm-fallback
 
 ## Summary
 

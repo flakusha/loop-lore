@@ -20,11 +20,11 @@ Implement algorithm factory pattern to enable extensible crypto operations. This
 
 ```typescript
 interface AlgorithmFactory {
-  register(algorithm: CryptoAlgorithm): void;
-  getAlgorithm(id: string): CryptoAlgorithm | undefined;
-  listAlgorithms(type?: "encryption" | "compression" | "key-derivation"): CryptoAlgorithm[];
-  createEncryptor(algorithmId: string, key: CryptoKey): Encryptor;
-  createDecryptor(algorithmId: string, key: CryptoKey): Decryptor;
+  register(algorithm: CryptoAlgorithm,): void;
+  getAlgorithm(id: string,): CryptoAlgorithm | undefined;
+  listAlgorithms(type?: "encryption" | "compression" | "key-derivation",): CryptoAlgorithm[];
+  createEncryptor(algorithmId: string, key: CryptoKey,): Encryptor;
+  createDecryptor(algorithmId: string, key: CryptoKey,): Decryptor;
 }
 
 // Example implementation
@@ -35,11 +35,11 @@ class AES256GCM implements CryptoAlgorithm {
   type: "encryption";
   keyLength: 32;
   nonceLength: 12;
-  encrypt: (data: Uint8Array, key: CryptoKey) => Promise<Uint8Array>;
-  decrypt: (data: Uint8Array, key: CryptoKey) => Promise<Uint8Array>;
+  encrypt: (data: Uint8Array, key: CryptoKey,) => Promise<Uint8Array>;
+  decrypt: (data: Uint8Array, key: CryptoKey,) => Promise<Uint8Array>;
 }
 
-algorithmFactory.register(new AES256GCM());
+algorithmFactory.register(new AES256GCM(),);
 ```
 
 ## Dependencies

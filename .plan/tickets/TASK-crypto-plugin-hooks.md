@@ -22,17 +22,17 @@ Add crypto plugin hooks to enable runtime algorithm registration. This allows pl
 // Plugin system extension
 interface CryptoPlugin extends Plugin {
   hooks: {
-    'onCryptoAlgorithmRegister'?: (algorithm: CryptoAlgorithm) => void;
+    "onCryptoAlgorithmRegister"?: (algorithm: CryptoAlgorithm,) => void;
   };
 }
 
-function registerCryptoAlgorithm(algorithm: CryptoAlgorithm): void {
+function registerCryptoAlgorithm(algorithm: CryptoAlgorithm,): void {
   // Trigger hook for registered plugins
   plugins.forEach(plugin => {
-    if (plugin.hooks['onCryptoAlgorithmRegister']) {
-      plugin.hooks['onCryptoAlgorithmRegister'](algorithm);
+    if (plugin.hooks["onCryptoAlgorithmRegister"]) {
+      plugin.hooks["onCryptoAlgorithmRegister"](algorithm,);
     }
-  });
+  },);
 }
 ```
 
