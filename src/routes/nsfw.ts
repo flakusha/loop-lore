@@ -48,7 +48,6 @@ import { FantasyService, } from "../rpg/fantasies/service";
 import { IntimacyService, } from "../rpg/intimacy/service";
 import { LocationNsfwService, } from "../rpg/location-nsfw/service";
 import { SeductionService, } from "../rpg/seduction/service";
-import { SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 
 function log(): Logger {
@@ -90,16 +89,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: {
-            200: SuccessResponse,
-          },
-          detail: {
-            summary: "Get intimacy pair",
-            description: "Get the intimacy relationship between two actors.",
-            tags: ["NSFW",],
-          },
-        },
       )
       .get(
         "/api/nsfw/intimacy/:actorId",
@@ -115,16 +104,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to get actor pairs", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: {
-            200: SuccessResponse,
-          },
-          detail: {
-            summary: "Get actor intimacy pairs",
-            description: "Get all intimacy relationships for an actor.",
-            tags: ["NSFW",],
-          },
         },
       )
       .post(
@@ -153,16 +132,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: {
-            200: SuccessResponse,
-          },
-          detail: {
-            summary: "Apply intimacy action",
-            description: "Apply an intimacy action between two actors (e.g., touch, kiss).",
-            tags: ["NSFW",],
-          },
-        },
       )
       // ── Seduction ───────────────────────────────────────
 
@@ -177,16 +146,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: {
-            200: SuccessResponse,
-          },
-          detail: {
-            summary: "Get desire profile",
-            description: "Get an actor's desire and seduction preferences.",
-            tags: ["NSFW",],
-          },
-        },
       )
       .put(
         "/api/nsfw/desire/:actorId",
@@ -195,23 +154,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             const body = ctx.body as Record<string, unknown>;
             const success = await seductionService.updateDesireProfile(
               ctx.params.actorId,
-              body,
+              body as any,
             );
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to update desire profile", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: {
-            200: SuccessResponse,
-          },
-          detail: {
-            summary: "Update desire profile",
-            description: "Update an actor's desire and seduction preferences.",
-            tags: ["NSFW",],
-          },
         },
       )
       .get(
@@ -224,9 +173,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to get seduction skills", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
       .post(
@@ -248,9 +194,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       // ── Body ────────────────────────────────────────────
 
@@ -265,9 +208,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .put(
         "/api/nsfw/body/:actorId",
@@ -276,16 +216,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             const body = ctx.body as Record<string, unknown>;
             const success = await bodyService.updateProfile(
               ctx.params.actorId,
-              body,
+              body as any,
             );
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to update body profile", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
       .get(
@@ -299,9 +236,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to get arousal state", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
       .post(
@@ -320,9 +254,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to modify arousal", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
       // ── Encounters ──────────────────────────────────────
@@ -347,9 +278,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .get(
         "/api/nsfw/encounters/:id",
@@ -365,9 +293,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .post(
         "/api/nsfw/encounters/:id/advance",
@@ -380,9 +305,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .get(
         "/api/nsfw/encounters/world/:worldId",
@@ -394,9 +316,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to list encounters", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
       // ── Fantasies ───────────────────────────────────────
@@ -411,9 +330,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             log().error("Failed to get fantasies", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
       .post(
@@ -435,9 +351,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .post(
         "/api/nsfw/fantasies/discover",
@@ -455,9 +368,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .post(
         "/api/nsfw/fantasies/:id/explore",
@@ -474,9 +384,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       // ── Location ────────────────────────────────────────
 
@@ -491,9 +398,6 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             return jsonError("Internal server error", 500,);
           }
         },
-        {
-          response: { 200: SuccessResponse, },
-        },
       )
       .put(
         "/api/nsfw/location/:locationId",
@@ -502,16 +406,13 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             const body = ctx.body as Record<string, unknown>;
             const success = await locationService.updateConfig(
               ctx.params.locationId,
-              body,
+              body as any,
             );
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to update location config", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
           }
-        },
-        {
-          response: { 200: SuccessResponse, },
         },
       )
   );
