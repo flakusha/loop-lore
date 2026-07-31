@@ -5,7 +5,21 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { AdminOverrideAction, AvatarSelectionRule, ContentIntensity, FantasyCategory, LicenseType, NarrativeStyle, NsfwEncounterType, NsfwLocationType, RelationshipType, SeductionSkillCategory, TraitCategory, VisibilityOverride, WorldTraitCategory, } from "./schemas";
+import type {
+  AdminOverrideAction,
+  AvatarSelectionRule,
+  ContentIntensity,
+  FantasyCategory,
+  LicenseType,
+  NarrativeStyle,
+  NsfwEncounterType,
+  NsfwLocationType,
+  RelationshipType,
+  SeductionSkillCategory,
+  TraitCategory,
+  VisibilityOverride,
+  WorldTraitCategory,
+} from "./enums";
 
 // ── character_permanent_traits ────────────────────────────────────────────
 export interface CharacterPermanentTraits {
