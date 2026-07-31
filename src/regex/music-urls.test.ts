@@ -1,7 +1,7 @@
 import { describe, expect, test, } from "bun:test";
-import { EXTERNAL_MUSIC_PATTERNS } from "./music-urls";
+import { EXTERNAL_MUSIC_PATTERNS, } from "./music-urls";
 
-function isExternalMusicUrl(url: string): boolean {
+function isExternalMusicUrl(url: string,): boolean {
   return EXTERNAL_MUSIC_PATTERNS.some((p,) => p.test(url,));
 }
 
@@ -11,10 +11,12 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "https://youtube.com/watch?v=abc123",
       "http://www.youtube.com/watch?v=test",
-    ])("matches %s", (url) => { expect(isExternalMusicUrl(url)).toBe(true); });
+    ],)("matches %s", (url,) => {
+      expect(isExternalMusicUrl(url,),).toBe(true,);
+    },);
 
     test("does not match youtube.com/channel", () => {
-      expect(isExternalMusicUrl("https://www.youtube.com/channel/UC123")).toBe(false);
+      expect(isExternalMusicUrl("https://www.youtube.com/channel/UC123",),).toBe(false,);
     });
   });
 
@@ -22,7 +24,9 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
     test.each([
       "https://youtu.be/dQw4w9WgXcQ",
       "http://youtu.be/abc123",
-    ])("matches %s", (url) => { expect(isExternalMusicUrl(url)).toBe(true); });
+    ],)("matches %s", (url,) => {
+      expect(isExternalMusicUrl(url,),).toBe(true,);
+    },);
   });
 
   describe("Spotify", () => {
@@ -30,10 +34,12 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
       "https://spotify.com/track/abc123",
       "https://www.spotify.com/playlist/xyz",
       "http://spotify.com/track/test",
-    ])("matches %s", (url) => { expect(isExternalMusicUrl(url)).toBe(true); });
+    ],)("matches %s", (url,) => {
+      expect(isExternalMusicUrl(url,),).toBe(true,);
+    },);
 
     test("does not match open.spotify.com (subdomain not in pattern)", () => {
-      expect(isExternalMusicUrl("https://open.spotify.com/track/abc123")).toBe(false);
+      expect(isExternalMusicUrl("https://open.spotify.com/track/abc123",),).toBe(false,);
     });
   });
 
@@ -42,7 +48,9 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
       "https://soundcloud.com/artist/track",
       "https://www.soundcloud.com/user/sets/playlist",
       "http://soundcloud.com/test",
-    ])("matches %s", (url) => { expect(isExternalMusicUrl(url)).toBe(true); });
+    ],)("matches %s", (url,) => {
+      expect(isExternalMusicUrl(url,),).toBe(true,);
+    },);
   });
 
   describe("Bandcamp", () => {
@@ -50,7 +58,9 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
       "https://bandcamp.com/artist/album",
       "https://www.bandcamp.com/track/test",
       "http://bandcamp.com/artist/album",
-    ])("matches %s", (url) => { expect(isExternalMusicUrl(url)).toBe(true); });
+    ],)("matches %s", (url,) => {
+      expect(isExternalMusicUrl(url,),).toBe(true,);
+    },);
   });
 
   describe("non-music URLs", () => {
@@ -60,6 +70,8 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
       "not a url",
       "",
       "https://music.apple.com/us/album/test",
-    ])("does not match %s", (url) => { expect(isExternalMusicUrl(url)).toBe(false); });
+    ],)("does not match %s", (url,) => {
+      expect(isExternalMusicUrl(url,),).toBe(false,);
+    },);
   });
 });
