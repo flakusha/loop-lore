@@ -77,8 +77,8 @@ export { credentials, };
 // When run directly (not imported), output shell-compatible KEY=value lines
 if (process.argv[1] && process.argv[1].endsWith("credentials.mjs",)) {
   if (credentials.found) {
-    console.log(`AGENT_GPG_KEY_ID=${credentials.keyId}`,);
-    console.log(`AGENT_GPG_NAME=${credentials.name}`,);
-    console.log(`AGENT_GPG_EMAIL=${credentials.email}`,);
+    console.log(`AGENT_GPG_KEY_ID='${credentials.keyId}'`,);
+    console.log(`AGENT_GPG_NAME='${credentials.name}'`,);
+    console.log(`AGENT_GPG_EMAIL='${credentials.email}'`,);
   }
 }
