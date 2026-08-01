@@ -104,7 +104,7 @@ describe("extractAvatarMetadata", () => {
   it("extracts alt text from asset record", async () => {
     // Create a test asset with alt text
     const buffer = makeMinimalPng(512, 512,);
-    const asset = await createAsset({
+    const { asset: asset } = await createAsset({
       database: db,
       input: {
         ownerId: testUserId,
