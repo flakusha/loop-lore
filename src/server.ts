@@ -409,7 +409,7 @@ async function start() {
         );
 
         const mergedConfig = { ...config.characters, templates: mergedTemplates, };
-        const result = await seedCharacterTemplates(database, mergedConfig,);
+        const result = await seedCharacterTemplates(database, mergedConfig, null, config.assets.uploadDir,);
         if (result.created > 0) {
           logger.info("character templates seeded", {
             module: "server",

@@ -6,6 +6,7 @@
 **Epic:** Epic 51 (Output Control & Transforms)
 **Tags:** chat, regen, ux, llm
 **Source:** FEAT-070 (git issue)
+**Related:** FEAT-message-swipe-replay-branch, docs/spec/messages.md
 
 ## Summary
 
