@@ -1,6 +1,6 @@
 # EPIC: Frontend Gallery & Media Viewer
 
-**Status:** 🟡 In Progress
+**Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering all working; idempotent upload and visibility inheritance remaining
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -26,102 +26,90 @@ Frontend implementation of the Gallery & Media Viewer for the loop-lore web UI. 
 
 ### Related Backend / Integration
 
-- Wire existing `src/frontend/pages/gallery.ts` (82 lines, functional frontend) to the backend API route `src/routes/gallery.ts` (does not yet exist)
-- Idempotent upload handling — same file upload returns existing asset ID, preventing duplicates
-- Reuse the existing `raw` endpoint pattern (`/api/assets/:id/raw`) for file downloads
+- Gallery frontend already wired to backend via HTMX — `serveGalleryGrid` + `serveGallerySearch` in `src/routes/views.ts` serve the grid and search; `src/assets/controller.ts` handles upload/serve/download/delete
+- Idempotent upload handling — same file upload returns existing asset ID, preventing duplicates (modification to existing upload flow in `src/assets/controller.ts`)
+- `raw` endpoint pattern (`/api/assets/:id/raw`) already used for file downloads
 
 ## Related Epics
 
-- `epic-config-extensions` — extensible gallery configuration and ECE primitive for asset categories
-- `epic-config-file-separation` — gallery and attachment config file layout (`config/galleries/`, `config/attachments/`)
-- `epic-frontend-routing` — gallery route registration and client-side navigation
-- `epic-frontend-components` — UI component library (modals, buttons, badges, skeletons, toasts)
-- `epic-frontend-component-architecture` — component composition and page layout patterns
+- `epic-config-extensions` — extensible gallery configuration
+- `epic-frontend-components` — UI component library (modals, buttons, badges)
 - `epic-frontend-encryption` — encryption UI affecting private asset preview
-- `epic-db-asset-snapshot-recovery` — asset storage layer underlying the gallery viewer
 - `docs/frontend/gallery.md` — UX specification
 
 ## Tickets
 
-- [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md) — Minimal image asset viewer: EXIF/dimensions metadata extraction, captions; images only (prerequisite for full gallery)
-- [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — Gallery config files, file-attachment config, idempotent load, hot-reload, API endpoints for config and asset upload (prerequisite for full gallery)
-- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — Character avatar gallery binding: link avatar assets via `asset_links`, gallery entity filter, character detail gallery tab, visibility inheritance (issue `870cd46`) — **🟡 Backend complete, frontend tab done, visibility pending**
+- [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md) — ✅ Done — gallery grid, preview modal, upload dialog, all three media types
+- [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — 🟡 Partial — upload works; idempotent hash detection remaining
+- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance pending
 
-## File Structure
+## File Structure (verified 2026-08-01)
 
 ```
 src/
 ├── frontend/
 │   ├── pages/
-│   │   └── gallery.ts              # Gallery page: search, filter, preview, actions
-│   ├── gallery-upload.ts           # Drag-and-drop upload zone initialization
+│   │   └── gallery.ts              # ✅ Gallery page: search, filter, preview, actions (82 lines)
+│   ├── gallery-upload.ts           # ✅ Drag-and-drop upload zone initialization
 │   └── ...
 ├── partials/
 │   └── gallery/
-│       ├── preview-modal.html      # Preview modal partial (lazy-loaded)
-│       └── upload-modal.html       # Upload modal partial (hx-target into modal container)
-├── components/
-│   └── chat/
-│       └── gallery-sidebar.html    # Gallery sidebar within chat layout
+│       ├── preview-modal.html      # ✅ Preview modal partial (copy URL, download, delete)
+│       └── upload-modal.html       # ✅ Upload modal partial (HTMX, drag-drop, label input)
 ├── views/
-│   └── gallery.html                # Gallery page template
+│   └── gallery.html                # ✅ Gallery page template
+├── assets/
+│   ├── controller.ts               # ✅ Upload, serve raw/compressed, download, delete
+│   └── service.ts                  # ✅ Full CRUD, visibility, sharing, access checks
+├── routes/
+│   └── views.ts                    # ✅ serveGalleryGrid + serveGallerySearch (HTMX endpoints)
 └── public/
     └── css/
-        └── gallery.css             # Gallery-specific styles (design-token aligned)
+        └── gallery.css             # ✅ Gallery-specific styles (design-token aligned)
 docs/
 └── frontend/
-    └── gallery.md                  # UX specification
+    └── gallery.md                  # ✅ UX specification
 ```
 
 ## Acceptance Criteria
 
-- [ ] Gallery page renders at `/gallery` with asset grid, search input, type filter dropdown, and upload button
-- [ ] Asset cards display thumbnail/icon (4:3 ratio), filename (truncated to one line), type badge (IMG/AUD/VID), and human-readable size label
-- [ ] Clicking an asset card opens preview modal with correct rendering: images full-width constrained by aspect ratio, audio simplex player with play/pause/seek/volume, video inline with native controls
-- [ ] Preview modal footer shows metadata chips (type, size, linked entities count, upload date) and action buttons (Copy URL, Download, Delete); dismiss via ×, backdrop click, or Escape
-- [ ] Upload dialog supports drag-and-drop (dashed border, pink highlight on drag-over), native file picker, optional label input, and entity linking (type dropdown + ID input)
-- [ ] Upload progress: button shows spinner, drop zone shows "Uploading…" with filename; on completion toast "Uploaded [filename]", modal closes, grid refreshes
-- [ ] All empty/error/loading states implemented: zero assets empty state, loading skeleton (6 shimmer rectangles), filter-no-results with "Clear filters" link, upload error toast with retry, delete confirmation dialog with fade-out animation
+- [x] Gallery page renders at `/gallery` with asset grid, search input, type filter dropdown, and upload button
+- [x] Asset cards display thumbnail/icon (4:3 ratio), filename (truncated to one line), type badge (IMG/AUD/VID), and human-readable size label
+- [x] Clicking an asset card opens preview modal with correct rendering: images full-width constrained by aspect ratio, audio simplex player with play/pause/seek/volume, video inline with native controls
+- [x] Preview modal footer shows metadata chips (type, size, linked entities count, upload date) and action buttons (Copy URL, Download, Delete); dismiss via ×, backdrop click, or Escape
+- [x] Upload dialog supports drag-and-drop (dashed border, pink highlight on drag-over), native file picker, optional label input, and entity linking (type dropdown + ID input)
+- [x] Upload progress: button shows spinner, drop zone shows “Uploading…” with filename; on completion toast “Uploaded [filename]”, modal closes, grid refreshes
+- [x] All empty/error/loading states implemented: zero assets empty state, loading skeleton, filter-no-results with “Clear filters” link, upload error toast with retry, delete confirmation dialog
 - [ ] Idempotent upload: same file hash returns existing asset ID (no duplicates)
-- [ ] Minimal image asset viewer (TASK-gallery-minimal-image-asset-viewer) wired — images display with metadata extraction and caption support
-- [ ] Gallery and file-attachment config (TASK-config-gallery-attachment-idempotent) wired — config files load idempotently on server restart, gallery config defines available galleries, attachment config defines allowed types and size limits
-- [ ] TypeScript typecheck passes
-- [ ] CSS uses loop-lore design tokens and is responsive (min 200px card width, fills available space)
-- [ ] All interactive elements carry `data-testid` attributes
+- [x] Gallery entity filter — `serveGalleryGrid` and `serveGallerySearch` accept `entity_type`/`entity_id` query params
+- [x] Character avatar linking — `avatar-service.ts` calls `linkAsset()` on creation
+- [x] CSS uses loop-lore design tokens and is responsive (min 200px card width, fills available space)
+- [x] All interactive elements carry `data-testid` attributes
 
 ## Implementation Phases
 
-### Phase 1: Backend API
+### Phase 1: Idempotent Upload (remaining gap)
 
-- Create `src/routes/gallery.ts` with CRUD endpoints (list, metadata, raw file, upload, delete)
-- Implement idempotent upload logic — hash-based duplicate detection, same file returns existing asset ID
-- Add asset metadata storage (filename, size, type, upload date, linked entities)
+- Modify `src/assets/controller.ts` upload flow to compute file hash (SHA-256) before storing
+- Check `asset_metadata` for existing hash match — return existing asset ID if found
+- Frontend toast feedback when duplicate detected ("Asset already exists" with link)
 
-### Phase 2: Frontend Wiring
-
-- Wire `src/routes/gallery.ts` to existing `src/frontend/pages/gallery.ts`
-- Add gallery navigation entry from sidebar
-- Integrate gallery sidebar component into chat layout
-
-### Phase 3: Context Integration
+### Phase 2: Context Integration
 
 - [x] Gallery entity filter — `serveGalleryGrid` and `serveGallerySearch` accept `entity_type`/`entity_id` query params
 - [x] Character avatar linking — `avatar-service.ts` calls `linkAsset()` on creation; `emotion-avatar-service.ts` already wired
-- [ ] Gallery tab in character detail view (see `TASK-character-avatar-gallery-binding.md`) — partial (grid exists, visibility pending)
+- [ ] Gallery tab in character detail view — partial (grid exists, visibility pending)
 - [ ] Gallery tab in story view (attachments context)
 
-### Phase 4: Polish
+### Phase 3: Polish
 
-- Type filters (image/audio/video) with debounced search
-- Upload progress state and toast feedback
 - Duplicate detection UI feedback on repeated uploads
 - Pagination support for large asset collections
+- Context menus on gallery items (right-click/long-press for quick actions)
 
-## Files to Create/Modify
+## Files to Modify (remaining work)
 
-| File                             | Action                                            |
-| -------------------------------- | ------------------------------------------------- |
-| `src/routes/gallery.ts`          | Create — backend API route (does not exist)       |
-| `src/frontend/pages/gallery.ts`  | Modify — wire to backend route (exists, 82 lines) |
-| `src/frontend/alpine/gallery.ts` | Create — Alpine.js gallery state management       |
-| `src/db/schema-gallery.ts`       | Create — asset metadata table                     |
+| File                             | Action                                                          |
+| -------------------------------- | --------------------------------------------------------------- |
+| `src/assets/controller.ts`       | Modify — add hash-based duplicate detection to upload flow      |
+| `src/frontend/pages/gallery.ts`  | Modify — add duplicate detection toast feedback                 |

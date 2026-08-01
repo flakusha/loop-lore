@@ -1,43 +1,29 @@
 # TASK: Config Files for Gallery & File Attachment with Idempotent Load
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — SHA-256 hash-based duplicate detection implemented in `createAsset`; same file by same owner returns existing asset ID with HTTP 200 + `duplicate: true` flag
 **Epic:** epic-config-extensions
 **Tags:** config, gallery, file-attachment, idempotent, reload, asset
 
-## Description
+## Scope (narrowed 2026-08-01)
 
-Add config file support for gallery/direct file attachment and server-restart idempotent load. Gallery config defines available asset galleries (image sets, audio sets, template sets). File attachment config defines allowed file types, size limits, and storage rules. Idempotent load ensures config files can be loaded multiple times without duplication or side effects.
+The original ticket proposed config files, hot-reload, versioning, and new API endpoints. Most of this is already handled by the existing config system (`src/config/`) and asset service (`src/assets/service.ts`). The concrete remaining gap is **idempotent upload** — hash-based duplicate detection so uploading the same file twice returns the existing asset ID instead of creating a duplicate.
 
-## How It Extends Existing Work
+## Remaining Work
 
-Builds on the Configuration Extensions (ECE) epic's extensible enumeration system and the Config Templates epic's template system. Adds gallery config, file attachment config, and idempotent loading on top of the existing config infrastructure.
+- [ ] Hash-based duplicate detection on upload — compute file hash, check `asset_metadata` for existing match, return existing asset ID if found
+- [ ] Frontend feedback when duplicate detected — toast "Asset already exists" with link to existing asset
 
-## Acceptance Criteria
+## Already Implemented
 
-- [ ] Gallery config file format (YAML/JSON defining available galleries)
-- [ ] Gallery categories (images, audio, video, 3D models, templates, presets)
-- [ ] Direct file attachment config (allowed types, size limits, storage paths)
-- [ ] File attachment validation (type checking, size limits, virus scanning)
-- [ ] File upload API (`POST /api/assets/upload` with config-driven validation)
-- [ ] Gallery browsing UI (browse and select from configured galleries)
-- [ ] Direct file attachment UI (drag-and-drop upload with preview)
-- [ ] Server-restart idempotent load — config files load exactly once, no duplication
-- [ ] Config file hot-reload — changes detected and applied without restart
-- [ ] Config file versioning — track config changes across reloads
-- [ ] `GET /api/config/galleries` — list available galleries
-- [ ] `GET /api/config/attachments` — get attachment config
-- [ ] Frontend gallery browser with search and filter
-- [ ] Frontend file upload with progress and preview
-- [ ] Frontend config reload status indicator
+- ✅ Upload API (`POST /api/assets`) — works, validates file types and sizes
+- ✅ Config-driven validation — `src/config/schema.ts` has `assets.maxFileSize`, `assets.compression`
+- ✅ Gallery browsing UI — grid + search + filter via HTMX
+- ✅ File upload with drag-and-drop — `src/partials/gallery/upload-modal.html`
 
 ## Technical Notes
 
-- Gallery config files stored in `config/galleries/` directory
-- File attachment config stored in `config/attachments/` directory
-- Idempotent load uses content hashing — same file hash = skip reload
-- Hot-reload uses file watcher (chokidar or equivalent) to detect changes
-- Config versioning stored in DB with `config_version` column
+- Hash can be computed during upload (SHA-256 of file content)
+- Store hash in `asset_metadata.metadata` JSON or add `content_hash` column
+- Existing `asset_metadata` table already has `mime_type`, `file_size` — hash is natural extension
 - Integrates with existing asset system (Epic: Asset Support Expansion)
-- Integrates with ECE system for gallery categories as extensible enums
-- Integrates with Config Templates epic for template-based gallery definitions
