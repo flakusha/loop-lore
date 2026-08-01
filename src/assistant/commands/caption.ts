@@ -7,13 +7,15 @@
  *   /caption <msgId>  — Caption a specific message's image
  */
 
-import { getDatabase, } from "../../db/index";
 import { handleImageCaption, } from "../../generation/caption-route";
 import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
   const target = args[0] || "last";
-  const db = getDatabase();
+  const db = ctx.db;
+  if (!db) {
+    return { systemMessage: "**Caption unavailable:** command context missing database.", handled: true, };
+  }
 
   let messageId: string | undefined;
 

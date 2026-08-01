@@ -12,7 +12,6 @@
  *   /review location      — Review the current location
  */
 
-import { getDatabase, } from "../../db/index";
 import { type CommandResult, registerCommand, } from "./registry";
 
 interface ReviewIssue {
@@ -60,9 +59,12 @@ function formatReviewReport(entityLabel: string, entityName: string, issues: Rev
 
 registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
   const target = (args[0] || "character").toLowerCase();
-  const db = getDatabase();
+  const db = ctx.db;
+  if (!db) {
+    return { systemMessage: "**Review unavailable:** command context missing database.", handled: true, };
+  }
 
-  const worldId = ctx.activeChat?.type ?? "default";
+  const worldId = ctx.activeChat?.worldId ?? "default";
 
   switch (target) {
     case "character":

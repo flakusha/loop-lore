@@ -69,6 +69,7 @@ export interface AssembleActor {
   scenario: string | null;
   post_history_instructions: string | null;
   mes_example: string | null;
+  agent_role: string | null;
 }
 
 /** Minimal chat projection the section builders need. */
@@ -106,8 +107,10 @@ export const PRIORITY = {
   groupParticipants: 0,
   userPersona: 0,
   emotionAvatar: 0,
+  pluginAgentRole: 0,
   chatHistory: 0,
   storyContext: 1,
+  gmNotes: 0,
   lore: 2,
   memories: 3,
   dynamicContext: 0,

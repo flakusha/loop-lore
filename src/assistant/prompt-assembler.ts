@@ -33,6 +33,7 @@ export class PromptAssembler {
           "scenario",
           "post_history_instructions",
           "mes_example",
+          "agent_role",
         ],)
         .where("id", "=", params.actorId,)
         .executeTakeFirstOrThrow(),
