@@ -1,7 +1,24 @@
 # Immediate Plan
 
-> **Last updated:** 2026-08-01 — Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial; AUX LLM wiring review added (M1-M6 queue under P2-C)
+> **Last updated:** 2026-08-01 — Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial; AUX LLM wiring review added (M1-M6 queue under P2-C); lore audience scoping + per-viewer memory injection done
 > **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete
+
+---
+
+## Recent Wiring — Knowledge Systems (2026-08-01)
+
+Shipped this session; reconciled into relevant P3/backlog rows below. Pickup surfaces for
+next sessions:
+
+| Area | State | Where | Next / open |
+| ---- | ----- | ----- | ----------- |
+| **Per-viewer memory injection** — `memorySection` provisions each chat participant against the speaker as viewer (`ownerId` vs `viewerId`), so `evaluateShareability` runs cross-actor (blocked/trusted/shared); combined 1024-token budget | ✅ Implemented + verified | `src/assistant/prompt/sections/memories.ts` | Dedicated memorySection cross-actor integration test (hardening) |
+| **Lore audience scoping** — `audience_scope` JSON column; race/profession/location subject taxonomy; `loreSection` gates both actor+world lore through `isLoreVisibleTo` **before** cooldown/constant/selective | ✅ Implemented + verified | migration `028_lore_audience_scope.ts`, `src/assistant/lore/audience.ts`, `src/assistant/prompt/sections/lore.ts` | — (closed the dark-elves-vs-humans leak) |
+| **World timeline** — backstory seeding, forward-event steering, cross-story convergence | 🟡 Partial (backstory seeding done) | `world_timeline_events` table (migration `030_world_timeline_events.ts`); service `src/story/timeline/world-timeline.ts` (`appendTimelineEvents`/`seedBackstory`/`listTimelineEntries`/`getEstablishedHistory`); `applyEvents` hook persists applied events; `seedBackstory` promotes to audience-scoped lore (§5.2) | §5.2 backstory seeding + ledger done; **§5.3 forward-event steering** + **§5.4 cross-story convergence propagation** still greenfield (= cluster B, `IDEA-memory-knowledge-isolation-and-world-timeline.md`) |
+| **Event → lore promotion** | ✅ Implemented + verified | `src/story/events/promote-lore.ts`, wired into `applyWorldLoreUpdate` (additive; opt-out `data.promoteToLore===false`), tests `src/story/events/promote-lore.test.ts`, spec `docs/spec/lore.md` §4.1/§6 | "World timeline" above is the next cluster |
+
+> Spec: `docs/spec/lore.md` (Draft; audience scoping + per-viewer memory now match implementation).
+> Tickets: `IDEA-memory-knowledge-isolation-and-world-timeline.md` (option (b) chosen + implemented, cluster A done).
 
 ---
 
@@ -38,6 +55,7 @@
 
 > **Emphasis**: VN mode, chat, assistant, tool calling, GM flows, authorization, access control, gallery. RPG mechanics deferred to P2-later.
 > **New**: GM-guided story creation — user as Game Master, guiding LLM characters in chat/group-chat to build a story together.
+> **Knowledge systems (2026-08-01)**: per-viewer memory injection + lore audience scoping shipped — see "Recent Wiring — Knowledge Systems" above; world timeline + event→lore promotion are the greenfield next cluster.
 
 ### P2 — Priority Tiers
 
@@ -175,6 +193,13 @@
 - [x] Integrate GM service into assistant flow (`TASK-wire-gm-service-story-mode.md`) — 2026-08-01
 - [ ] Reconcile assistant ↔ GM flow interfaces (`TASK-assistant-gm-flows-reconciliation.md`)
 - [ ] **Verification**: `bun run check && bun test src/assistant/`
+
+#### Knowledge Systems (this session)
+
+- [x] Lore audience scoping — migration `028_lore_audience_scope`, resolver `src/assistant/lore/audience.ts`, `loreSection` identity + pre-filter; spec `docs/spec/lore.md` reconciled
+- [x] Per-viewer memory injection — `memorySection` provisions each participant against speaker as viewer; combined 1024-token budget, per-actor cap
+- [ ] Chat-setup-templates (`IDEA-chat-setup-templates.md`) — open idea; template table/API + `new-chat.html` selector to build
+- [ ] Hardening: dedicated `memorySection` cross-actor integration test
 
 #### AUX LLM Wiring Fixes (2026-08-01 review → epic-aux-enrichment-pipeline M1-M6)
 
@@ -326,7 +351,7 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 | Priority | Epic                    | Key Deliverables                               | Status         | Ticket(s)                                                                                                                                                                    |
 | -------- | ----------------------- | ---------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **P3**   | **Plugin Ecosystem**    | Plugin management API, marketplace, sandboxing | ⬜ Not Started | [`TASK-plugin-system.md`](TASK-plugin-system.md), [`TASK-plugin-management-api.md`](TASK-plugin-management-api.md), [`TASK-plugin-api-system.md`](TASK-plugin-api-system.md) |
-| **P3**   | **Three-Tier Memory**   | Episodic/semantic/procedural memory tiers      | ⬜ Not Started | [`FEAT-memory-systems-three-tier.md`](FEAT-memory-systems-three-tier.md)                                                                                                     |
+| **P3**   | **Three-Tier Memory**   | Episodic/semantic/procedural memory tiers      | 🟡 Partial — typing + wiring + per-viewer injection built; cross-tier promotion/decay open | [`FEAT-memory-systems-three-tier.md`](FEAT-memory-systems-three-tier.md)                                                                                                     |
 | **P3**   | **Artifact System**     | Code/docs/datasets as assets                   | ⬜ Not Started | [`TASK-artifact-system.md`](TASK-artifact-system.md)                                                                                                                         |
 | **P3**   | **ComfyUI Integration** | Node discovery, workflow templates             | ⬜ Not Started | [`TASK-comfyui-node-discovery.md`](TASK-comfyui-node-discovery.md), [`FEAT-comfyui-plugin-workflow-templates.md`](FEAT-comfyui-plugin-workflow-templates.md)                 |
 | **P3**   | **Provider Ecosystem**  | Anthropic/Ollama/Bedrock support               | ⬜ Not Started | [`FEAT-provider-plugin-ecosystem.md`](FEAT-provider-plugin-ecosystem.md)                                                                                                     |
@@ -334,7 +359,7 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 ### P3 — Next Actions (After P2 complete)
 
 1. **Plugin Ecosystem**: Implement plugin management API (`install/list/enable/disable`). Build marketplace UI. Add sandboxing layer for plugin execution.
-2. **Three-Tier Memory** (`FEAT-memory-systems-three-tier.md`): Design episodic/semantic/procedural table schema. Implement retrieval pipeline with tier-aware weighting. Add memory type enum.
+2. **Three-Tier Memory** (`FEAT-memory-systems-three-tier.md`): `MemoryType`/`MemoryScope`/`MemoryPrivacy` typing + provisioning/extraction/budget/purge + **per-viewer injection** built (`src/memory/`, `memorySection`). Remaining: **semantic + procedural tier** systems, formation/consolidation, decay/forgetting, cross-tier promotion. Per-viewer isolation verified (see Recent Wiring table).
 3. **Artifact System** (`TASK-artifact-system.md`): Create `src/assets/artifact-handler.ts` — code/doc/dataset asset linking. Build `src/routes/artifacts.ts` with TypeBox response schemas. Add artifact gallery UI component.
 4. **ComfyUI Integration**: Integrate ComfyUI node discovery and workflow template management.
 5. **Provider Ecosystem**: Add Anthropic, Ollama, and Bedrock provider support alongside existing OpenAI-compatible provider.
@@ -374,3 +399,5 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
   | `src/frontend/pages/gallery.ts`          | Gallery page with search, preview, download, delete, type filtering                                        | F           |
 
 - **Reconciliation complete** — backlog/roadmap now reflect actual implementation state (see `backlog.md`)
+- **Knowledge systems pair** — lore audience scoping + per-viewer memory injection shipped 2026-08-01 (see "Recent Wiring" table at top). Greenfield next: world timeline (`docs/spec/lore.md` §5) + event→lore promotion (§4) under `IDEA-memory-knowledge-isolation-and-world-timeline.md` (cluster B). Hardening: per-viewer `memorySection` cross-actor test.
+- **Chat-setup-templates** (`IDEA-chat-setup-templates.md`) — **open** idea, not built: validated `ChatCreateBody` presets + `chat_setup_templates` table/API + `new-chat.html` selector. Depends on the mode-enum fix (done, `BUG-chat-settings-modal-invalid-mode.md`) + the 3-axis `ChatMode`/`ResponseStyle` split (`.plan/design/chat-mode-reconciliation.md`).
