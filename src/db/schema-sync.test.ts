@@ -81,7 +81,7 @@ describe("schema sync — migrated DB vs manifest", () => {
   test("manifest table count matches DB interface", () => {
     const manifestCount = SCHEMA.tableNames.length;
     // Auto-counted from migrations by generate-schema-manifest.ts
-    // Current: 90 tables
-    expect(manifestCount, "manifest should have 95 tables",).toBe(95,);
+    // Current: 97 tables
+    expect(manifestCount, "manifest should have 97 tables",).toBe(97,);
   });
 });
