@@ -1,6 +1,6 @@
 # BUG-2026-001: GM Notes GET endpoints return 500 `near "from": syntax error`
 
-**Status**: open
+**Status**: closed
 **Priority**: high
 **Labels**: bug, gm-notes, sqlite, kysely
 **Assignee**: (next session)
@@ -47,3 +47,13 @@ Also confirmed via `/tmp` debug tests (gm-debug4, gm-debug5).
 - Test file already written and green except these 2 GET failures (5/7 pass). Fixes applied in this session: uuid chat ids in tests, 400→422 validation expectations, sequential awaits in both GET handlers (kept — harmless, good practice).
 - Keep the sequential-await pattern regardless of root cause — single-connection sqlite cannot interleave in-flight statements.
 - Full `bun run check` times out (~300s); use `bun run typecheck` + targeted `bun test` for verification.
+
+### Resolution (2026-08-01)
+
+**Root cause**: Both GET handlers omitted `.select()`/`.selectAll()` on the items query. Kysely 0.29.4 emits an **empty select list** (`select from "whitenotes" ...`) when no `.select()` is given — it does NOT default to `select *`. SQLite rejects that with `near "from": syntax error`. Every working query in the file (count, checkChatAccess, post/delete) had an explicit `.select()`/`.selectAll()`; the two items queries were the only ones relying on implicit select-all.
+
+**The Promise.all hypothesis was a red herring** — debug10 proved `Promise.all` + `selectAll()` runs fine on the same connection. The sequential-await change was kept (harmless, single-connection safety) but the comment was corrected.
+
+**Fix**: added `.selectAll()` to both items queries. `bun test src/routes/gm-notes.test.ts` → 7/7 pass; `bun test src/assistant/` → 74/74 pass.
+
+**Repo-wide implication**: every Kysely query in loop-lore must have an explicit `.select()`/`.selectAll()` — implicit select-all is silently broken on 0.29. Search for `selectFrom(...)` chains missing `.select` when auditing other routes.
