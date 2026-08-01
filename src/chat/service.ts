@@ -25,6 +25,18 @@ export interface ServiceError {
   message: string;
 }
 
+/** Structured error for key-mechanic mutation on an online chat (maps to 409). */
+export interface KeyMechanicConflictError {
+  code: "key_mechanic_conflict";
+  message: string;
+  details: {
+    fields: string[];
+    migrateEndpoint: string;
+  };
+}
+
+export type UpdateChatResult = ServiceError | KeyMechanicConflictError | { ok: true };
+
 // ─── Chat Access ──────────────────────────────────────────────
 
 /**
@@ -66,6 +78,43 @@ export async function checkChatAccess(
   return { ok: true, };
 }
 
+// ─── Key Mechanics vs Session State ───────────────────────────
+
+/**
+ * Names of the key-mechanic update params that are immutable once a chat is
+ * online. Changing these requires migrating to a new chat bound to a different
+ * template (see `migrateChat`).
+ *
+ * Mirrors .plan/design/chat-template-config-lifecycle.md §3.1.
+ */
+export const KEY_MECHANIC_PARAMS = [
+  "mode",
+  "turnStrategy",
+  "worldId",
+  "gmConfig",
+  "visualNovel",
+] as const;
+
+export type KeyMechanicParam = (typeof KEY_MECHANIC_PARAMS)[number];
+
+/**
+ * Determine whether a chat is "online" — i.e. has at least one confirmed
+ * message. Before that it is a draft and key mechanics remain editable.
+ */
+export async function isChatOnline(
+  database: Kysely<DB>,
+  chatId: string,
+): Promise<boolean> {
+  const row = await database
+    .selectFrom("messages",)
+    .select("id",)
+    .where("chat_id", "=", chatId,)
+    .where("status", "=", "confirmed",)
+    .limit(1,)
+    .executeTakeFirst();
+  return row !== undefined;
+}
+
 // ─── Chat CRUD ────────────────────────────────────────────────
 
 export interface CreateChatParams {
@@ -79,6 +128,7 @@ export interface CreateChatParams {
   participantIds?: string[];
   gmConfig?: Record<string, unknown> | null;
   visualNovel?: boolean;
+  templateId?: string;
 }
 
 /**
@@ -105,6 +155,7 @@ export async function createChat(
       turn_strategy: (params.turnStrategy as never) ?? null,
       gm_config: params.gmConfig ? JSON.stringify(params.gmConfig,) : null,
       visual_novel: params.visualNovel ? 1 : 0,
+      template_id: params.templateId ?? null,
     },)
     .execute();
 
@@ -129,6 +180,431 @@ export async function createChat(
   }
 
   return newChatId;
+}
+
+// ─── Chat Setup Templates ────────────────────────────────────
+
+export interface ChatSetupTemplate {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  mode: string | null;
+  turn_strategy: string | null;
+  world_id: string | null;
+  gm_config: string | null;
+  visual_novel: number;
+}
+
+/**
+ * List all chat setup templates.
+ */
+export async function listChatSetupTemplates(
+  database: Kysely<DB>,
+): Promise<ChatSetupTemplate[]> {
+  const rows = await database
+    .selectFrom("chat_setup_templates",)
+    .selectAll()
+    .orderBy("name", "asc",)
+    .execute();
+  return rows as unknown as ChatSetupTemplate[];
+}
+
+/**
+ * Resolve a chat setup template by id or slug.
+ */
+export async function getChatSetupTemplate(
+  database: Kysely<DB>,
+  templateId: string,
+): Promise<ChatSetupTemplate | null> {
+  const row = await database
+    .selectFrom("chat_setup_templates",)
+    .selectAll()
+    .where((eb,) => eb.or([eb("id", "=", templateId,), eb("slug", "=", templateId,),]),)
+    .executeTakeFirst();
+  return (row as unknown as ChatSetupTemplate | undefined) ?? null;
+}
+
+export interface MigrateChatParams {
+  templateId: string;
+  createdBy: string;
+  name?: string;
+  carry?: {
+    participants?: boolean;
+    memory?: boolean;
+    history?: "none" | "summary" | "full";
+    /** Carry party/game state: story_turns, quest_progress, group_initiatives. */
+    state?: boolean;
+    /** Carry chat pins + VN choice history. */
+    pins?: boolean;
+    /** Carry world/npc/location state snapshots for the party's world. */
+    worldState?: boolean;
+  };
+}
+
+export type MigrateChatResult =
+  | ServiceError
+  | { ok: true; newChatId: string; sourceChatId: string };
+
+/**
+ * Migrate a chat to a new chat bound to a different template, carrying over
+ * continuity. This is the sanctioned path for changing key mechanics once a
+ * chat is online (the source's mechanics are immutable in place).
+ *
+ * Creates a new chat with `parent_chat_id = sourceChatId`, seeded from the new
+ * template's key mechanics, optionally copying participants, memory, and
+ * history. The source chat is left intact as a read-only branch.
+ *
+ * Idempotency: a source chat may only be migrated once — a second call returns
+ * `bad_request` with a pointer to the existing migrated chat.
+ *
+ * @returns { ok: true, newChatId, sourceChatId } on success, or ServiceError
+ */
+export async function migrateChat(
+  database: Kysely<DB>,
+  chatId: string,
+  params: MigrateChatParams,
+): Promise<MigrateChatResult> {
+  const source = await database
+    .selectFrom("chats",)
+    .selectAll()
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  if (!source) {
+    return { code: "not_found", message: "Chat not found", };
+  }
+
+  // Ownership guard
+  if (source.created_by !== params.createdBy) {
+    return { code: "forbidden", message: "You do not own this chat", };
+  }
+
+  // Idempotency: reject if this source already migrated
+  const existing = await database
+    .selectFrom("chats",)
+    .select("id",)
+    .where("parent_chat_id", "=", chatId,)
+    .executeTakeFirst();
+  if (existing) {
+    return { code: "bad_request", message: "This chat has already been migrated", };
+  }
+
+  const template = await getChatSetupTemplate(database, params.templateId,);
+  if (!template) {
+    return { code: "bad_request", message: "Template not found", };
+  }
+
+  const newChatId = crypto.randomUUID();
+  const gmConfig = template.gm_config
+    ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
+    : { ok: false as const, value: null };
+
+  await database
+    .insertInto("chats",)
+    .values({
+      id: newChatId,
+      name: params.name ?? `${source.name} (migrated)`,
+      type: source.type,
+      mode: (template.mode as never) ?? source.mode,
+      created_by: params.createdBy,
+      world_id: template.world_id ?? source.world_id,
+      current_location_id: source.current_location_id,
+      turn_strategy: (template.turn_strategy as never) ?? source.turn_strategy,
+      gm_config: gmConfig.ok && gmConfig.value ? JSON.stringify(gmConfig.value,) : null,
+      visual_novel: template.visual_novel,
+      parent_chat_id: chatId,
+      template_id: template.id,
+    },)
+    .execute();
+
+  // Carry participants
+  if (params.carry?.participants !== false) {
+    const participants = await database
+      .selectFrom("chat_participants",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+    for (const p of participants) {
+      await database
+        .insertInto("chat_participants",)
+        .values({
+          chat_id: newChatId,
+          actor_id: p.actor_id,
+          role_in_chat: p.role_in_chat,
+          persona_id: p.persona_id,
+          impersonate_actor_id: p.impersonate_actor_id,
+        },)
+        .execute();
+    }
+  }
+
+  // Carry memory (actor_memories whose source_chat_id points at this chat)
+  if (params.carry?.memory === true) {
+    const memories = await database
+      .selectFrom("actor_memories",)
+      .selectAll()
+      .where("source_chat_id", "=", chatId,)
+      .execute();
+    for (const m of memories) {
+      await database
+        .insertInto("actor_memories",)
+        .values({
+          id: crypto.randomUUID(),
+          actor_id: m.actor_id,
+          source_chat_id: newChatId,
+          memory_type: m.memory_type,
+          content: m.content,
+          importance: m.importance,
+          last_accessed_at: m.last_accessed_at,
+          created_at: m.created_at,
+          source_message_id: m.source_message_id,
+          context: m.context,
+          world_id: m.world_id,
+          user_id: m.user_id,
+        },)
+        .execute();
+    }
+  }
+
+  // Carry full history (message tree, preserving swipes)
+  if (params.carry?.history === "full") {
+    const messages = await database
+      .selectFrom("messages",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .orderBy("created_at", "asc",)
+      .execute();
+    for (const m of messages) {
+      await database
+        .insertInto("messages",)
+        .values({
+          id: crypto.randomUUID(),
+          chat_id: newChatId,
+          actor_id: m.actor_id,
+          parent_id: m.parent_id,
+          role: m.role,
+          content: m.content,
+          key_id: m.key_id,
+          content_type: m.content_type,
+          content_format: m.content_format,
+          content_encoding: m.content_encoding,
+          status: m.status,
+          visibility: m.visibility,
+          swipe_index: m.swipe_index,
+          created_at: m.created_at,
+          edited_at: m.edited_at,
+          attachments: m.attachments,
+          archived_at: m.archived_at,
+        },)
+        .execute();
+    }
+    // Note: parent_id remapping for the tree is not performed here — the
+    // active-leaf flatten (see swipe/replay design) treats migrated history as
+    // a flat branch. Full tree remap is a follow-up.
+  }
+
+  // Carry party/game state: story_turns, quest_progress, group_initiatives.
+  // These are chat-scoped so they re-point cleanly to the migrated chat.
+  if (params.carry?.state === true) {
+    const turns = await database
+      .selectFrom("story_turns",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+    for (const t of turns) {
+      await database
+        .insertInto("story_turns",)
+        .values({
+          id: crypto.randomUUID(),
+          chat_id: newChatId,
+          turn_number: t.turn_number,
+          actor_id: t.actor_id,
+          turn_type: t.turn_type,
+          prompt_sent: t.prompt_sent,
+          response_received: t.response_received,
+          quality_score: t.quality_score,
+          quality_details: t.quality_details,
+          regeneration_count: t.regeneration_count,
+          status: t.status,
+          gm_decision: t.gm_decision,
+          world_events: t.world_events,
+          quest_progress: t.quest_progress,
+          started_at: t.started_at,
+          completed_at: t.completed_at,
+          created_at: t.created_at,
+          updated_at: t.updated_at,
+        },)
+        .execute();
+    }
+
+    const quests = await database
+      .selectFrom("quest_progress",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+    for (const q of quests) {
+      await database
+        .insertInto("quest_progress",)
+        .values({
+          id: crypto.randomUUID(),
+          quest_id: q.quest_id,
+          chat_id: newChatId,
+          progress: q.progress,
+          status: q.status,
+          contributed_events: q.contributed_events,
+          started_at: q.started_at,
+          created_at: q.created_at,
+          updated_at: q.updated_at,
+          completed_at: q.completed_at,
+        },)
+        .execute();
+    }
+
+    const initiatives = await database
+      .selectFrom("group_initiatives",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+    for (const i of initiatives) {
+      await database
+        .insertInto("group_initiatives",)
+        .values({
+          chat_id: newChatId,
+          scene_id: i.scene_id,
+          actor_id: i.actor_id,
+          score: i.score,
+          created_at: i.created_at,
+          updated_at: i.updated_at,
+        },)
+        .execute();
+    }
+  }
+
+  // Carry chat pins + VN choice history.
+  if (params.carry?.pins === true) {
+    const pins = await database
+      .selectFrom("chat_pins",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+    for (const p of pins) {
+      await database
+        .insertInto("chat_pins",)
+        .values({
+          id: crypto.randomUUID(),
+          chat_id: newChatId,
+          message_id: p.message_id,
+          pinned_by: p.pinned_by,
+          pinned_at: p.pinned_at,
+        },)
+        .execute();
+    }
+
+    const choices = await database
+      .selectFrom("vn_choices",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+    for (const c of choices) {
+      await database
+        .insertInto("vn_choices",)
+        .values({
+          id: crypto.randomUUID(),
+          chat_id: newChatId,
+          scene_index: c.scene_index,
+          label: c.label,
+          description: c.description,
+          consequences: c.consequences,
+          relationship_impact: c.relationship_impact,
+          mood_impact: c.mood_impact,
+          unlock_conditions: c.unlock_conditions,
+          selected: c.selected,
+          selected_at: c.selected_at,
+          created_at: c.created_at,
+        },)
+        .execute();
+    }
+  }
+
+  // Carry world/npc/location state snapshots for the party's world.
+  // These are world-scoped (not chat-scoped); when migrating to a template in
+  // the same world they are already shared, so this only copies them when the
+  // new chat's world differs from the source's.
+  if (params.carry?.worldState === true && template.world_id && template.world_id !== source.world_id) {
+    const worldId = template.world_id;
+    const states = await database
+      .selectFrom("world_states",)
+      .selectAll()
+      .where("world_id", "=", source.world_id ?? "",)
+      .execute();
+    for (const s of states) {
+      await database
+        .insertInto("world_states",)
+        .values({
+          id: crypto.randomUUID(),
+          world_id: worldId,
+          snapshot: s.snapshot,
+          trigger_message_id: s.trigger_message_id,
+          trigger_turn_id: s.trigger_turn_id,
+          description: s.description,
+          created_at: s.created_at,
+        },)
+        .execute();
+    }
+
+    const npcStates = await database
+      .selectFrom("npc_states",)
+      .selectAll()
+      .where("world_id", "=", source.world_id ?? "",)
+      .execute();
+    for (const n of npcStates) {
+      await database
+        .insertInto("npc_states",)
+        .values({
+          id: crypto.randomUUID(),
+          actor_id: n.actor_id,
+          world_id: worldId,
+          location_id: n.location_id,
+          health: n.health,
+          mental_state: n.mental_state,
+          knowledge: n.knowledge,
+          relationships: n.relationships,
+          inventory: n.inventory,
+          schedule: n.schedule,
+          created_at: n.created_at,
+          updated_at: n.updated_at,
+        },)
+        .execute();
+    }
+
+    const locationStates = await database
+      .selectFrom("location_states",)
+      .selectAll()
+      .where("world_id", "=", source.world_id ?? "",)
+      .execute();
+    for (const l of locationStates) {
+      await database
+        .insertInto("location_states",)
+        .values({
+          id: crypto.randomUUID(),
+          location_id: l.location_id,
+          world_id: worldId,
+          description_override: l.description_override,
+          atmosphere: l.atmosphere,
+          npcs_present: l.npcs_present,
+          items_available: l.items_available,
+          time_of_day: l.time_of_day,
+          weather: l.weather,
+          hazards: l.hazards,
+          created_at: l.created_at,
+          updated_at: l.updated_at,
+        },)
+        .execute();
+    }
+  }
+
+  return { ok: true, newChatId, sourceChatId: chatId, };
 }
 
 /**
@@ -174,13 +650,19 @@ export interface UpdateChatParams {
 /**
  * Update chat settings.
  *
- * @returns ServiceError if validation fails, or { ok: true } on success
+ * Enforces the online-chat configuration policy: key mechanics (`mode`,
+ * `turnStrategy`, `worldId`, `gmConfig`, `visualNovel`) are immutable once the
+ * chat is online. Attempting to mutate them returns a `key_mechanic_conflict`
+ * error pointing to the migration endpoint. Session-state fields (`name`,
+ * `isPinned`, `isPaused`, `freezePanel`) pass through.
+ *
+ * @returns ServiceError | KeyMechanicConflictError on failure, or { ok: true } on success
  */
 export async function updateChat(
   database: Kysely<DB>,
   chatId: string,
   params: UpdateChatParams,
-): Promise<ServiceError | { ok: true }> {
+): Promise<UpdateChatResult> {
   const fullChat = await database
     .selectFrom("chats",)
     .selectAll()
@@ -197,6 +679,20 @@ export async function updateChat(
     if (storyState.ok && storyState.value.isPanelFrozen && params.userRole !== "admin") {
       return { code: "forbidden", message: "Chat settings are frozen by admin", };
     }
+  }
+
+  // Enforce key-mechanic immutability once online
+  const attemptedMechanics = KEY_MECHANIC_PARAMS.filter((field,) => params[field] !== undefined,);
+  if (attemptedMechanics.length > 0 && (await isChatOnline(database, chatId,))) {
+    return {
+      code: "key_mechanic_conflict",
+      message:
+        "This chat is online and its key mechanics are locked. To change mode, turn strategy, world, GM config, or visual novel, migrate to a new chat.",
+      details: {
+        fields: [...attemptedMechanics,],
+        migrateEndpoint: `/api/chats/${chatId}/migrate`,
+      },
+    };
   }
 
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
