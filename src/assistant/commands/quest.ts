@@ -9,16 +9,18 @@
  */
 
 import { QuestStatus, QuestType, } from "../../db/enums-story";
-import { getDatabase, } from "../../db/index";
 import { uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
   const action = (args[0] || "list").toLowerCase();
-  const db = getDatabase();
+  const db = ctx.db;
+  if (!db) {
+    return { systemMessage: "**Quest unavailable:** command context missing database.", handled: true, };
+  }
 
-  // Get world from chat context
-  const worldId = ctx.activeChat?.type ?? "default";
+  // Resolve world from the active chat (chat.world_id), not the chat type
+  const worldId = ctx.activeChat?.worldId ?? "default";
 
   switch (action) {
     case "list": {
