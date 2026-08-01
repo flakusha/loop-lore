@@ -7,8 +7,9 @@ const log = rootLog.child({ module: "chat-settings", },);
 
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
-  _chatSettingsMode: "chat",
+  _chatSettingsMode: "story",
   _chatSettingsTurnStrategy: "round_robin",
+  _chatOnline: false,
   _selectedPersonaId: null as string | null,
   _impersonatingActorId: null as string | null,
   _assistantRole: "off",
@@ -30,8 +31,9 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     const chats = this.chats;
     const chat = chats.find((c,) => c.id === this.activeChat);
     this._chatSettingsName = chat?.name ?? "";
-    this._chatSettingsMode = chat?.mode ?? "chat";
+    this._chatSettingsMode = chat?.mode ?? "story";
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
+    this._chatOnline = Array.isArray(this.messages) && this.messages.some((m,) => m.status === "confirmed",);
     this._groupPaused = this.isChatPaused(chat,);
     if (chat?.gm_config) {
       const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
@@ -53,16 +55,21 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         vnTransition: this._vnTransition,
         vnAutoAdvance: this._vnAutoAdvance,
       };
+      const body: Record<string, unknown> = {
+        name: this._chatSettingsName.trim(),
+        isPaused: this._groupPaused,
+      };
+      // Key mechanics are immutable once the chat is online — the backend rejects
+      // them with 409, so only send them for draft (offline) chats.
+      if (!this._chatOnline) {
+        body.mode = this._chatSettingsMode;
+        body.turnStrategy = this._chatSettingsTurnStrategy;
+        body.gmConfig = jsonBody(gmConfig,);
+      }
       const res = await apiFetch(`/api/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({
-          name: this._chatSettingsName.trim(),
-          mode: this._chatSettingsMode,
-          turnStrategy: this._chatSettingsTurnStrategy,
-          isPaused: this._groupPaused,
-          gmConfig: jsonBody(gmConfig,),
-        },),
+        body: jsonBody(body,),
       },);
       if (res.ok) {
         const chats = this.chats;

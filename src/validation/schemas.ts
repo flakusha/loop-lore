@@ -164,6 +164,7 @@ export const ChatCreateBody = t.Object({
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  templateId: t.Optional(t.String({ minLength: 1, },)),
 },);
 
 export const ChatUpdateBody = t.Object({
@@ -176,6 +177,43 @@ export const ChatUpdateBody = t.Object({
   freezePanel: t.Optional(t.Boolean(),),
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+},);
+
+/**
+ * A chat setup template — a validated preset that seeds a chat's key mechanics
+ * at creation. `mode`, `turnStrategy`, `worldId`, `gmConfig`, `visualNovel` are
+ * the immutable key mechanics once the bound chat goes online.
+ */
+export const ChatSetupTemplateSchema = t.Object({
+  id: t.String({ minLength: 1, },),
+  slug: t.String({ minLength: 1, },),
+  name: t.String({ minLength: 1, },),
+  description: t.Optional(t.String(),),
+  mode: t.Optional(ChatModeSchema,),
+  turnStrategy: t.Optional(TurnStrategySchema,),
+  worldId: OptionalId,
+  gmConfig: t.Optional(GmConfigSchema,),
+  visualNovel: t.Optional(t.Boolean(),),
+},);
+
+/** Carry options for chat migration. */
+export const ChatMigrateCarrySchema = t.Object({
+  participants: t.Optional(t.Boolean(),),
+  memory: t.Optional(t.Boolean(),),
+  history: t.Optional(t.UnionEnum(["none", "summary", "full",],),),
+  /** Carry party/game state: story_turns, quest_progress, group_initiatives. */
+  state: t.Optional(t.Boolean(),),
+  /** Carry chat pins + VN choice history. */
+  pins: t.Optional(t.Boolean(),),
+  /** Carry world/npc/location state snapshots for the party's world. */
+  worldState: t.Optional(t.Boolean(),),
+},);
+
+/** Body for `POST /api/chats/:id/migrate` — fork to a new chat bound to a new template. */
+export const ChatMigrateBody = t.Object({
+  templateId: t.String({ minLength: 1, },),
+  carry: t.Optional(ChatMigrateCarrySchema,),
+  name: t.Optional(Name,),
 },);
 
 export const ChatIdParams = t.Object({
