@@ -436,7 +436,7 @@ export class ImageEditService {
       const id = randomUUID();
       const filename = `edit-${id.slice(0, 8,)}.png`;
 
-      const asset = await createAsset({
+      const { asset: asset } = await createAsset({
         database: db,
         input: {
           ownerId: opts.actorId,

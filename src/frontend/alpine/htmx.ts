@@ -107,6 +107,7 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:afterRequest", (e: Event,) => {
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   if (!detail.successful) { return; }
   const successEvent = detail.elt.dataset.hxSuccessEvent;
   if (successEvent) {
@@ -120,6 +121,14 @@ document.addEventListener("asset:uploaded", () => {
   const grid = document.querySelector("#asset-grid",);
   if (grid) { htmx.trigger(grid, "load",); }
 },);
+
+document.addEventListener("asset:duplicate", ((e: CustomEvent) => {
+  document.querySelector("#upload-modal",)?.classList.remove("open",);
+  const filename = e.detail?.filename ?? "Asset";
+  showToast("warning", `${filename} already exists`,);
+  const grid = document.querySelector("#asset-grid",);
+  if (grid) { htmx.trigger(grid, "load",); }
+}) as EventListener,);
 
 document.addEventListener("character:created", () => {
   showToast("success", "Character created",);

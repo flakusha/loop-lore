@@ -214,7 +214,49 @@ export interface UnshareAssetOpts {
  * Create an asset record and store the file.
  * Optionally encrypts the blob if encryption tier is set and chatKey is provided.
  */
-export async function createAsset({ database, input, uploadDir, }: CreateAssetOpts,): Promise<AssetRecord> {
+export interface CreateAssetResult {
+  asset: AssetRecord;
+  duplicate: boolean;
+}
+
+export async function createAsset({ database, input, uploadDir, }: CreateAssetOpts,): Promise<CreateAssetResult> {
+  // Compute content hash for idempotent upload detection
+  const hasher = new Bun.CryptoHasher("sha256",);
+  hasher.update(input.buffer,);
+  const contentHash = hasher.digest("hex",);
+
+  // Check for existing asset with same content and owner
+  const existing = await database
+    .selectFrom("assets",)
+    .select(["id", "filename", "mime_type", "asset_type", "size_bytes", "storage_backend", "alt_text", "visibility", "created_at", "encryption_tier", "encrypted_key_id", "storage_path", "width", "height", "duration_secs", "owner_id",])
+    .where("content_hash", "=", contentHash,)
+    .where("owner_id", "=", input.ownerId,)
+    .executeTakeFirst();
+
+  if (existing) {
+    return {
+      asset: {
+        id: existing.id,
+        owner_id: existing.owner_id,
+        filename: existing.filename,
+        mime_type: existing.mime_type,
+        asset_type: existing.asset_type,
+        size_bytes: existing.size_bytes,
+        storage_path: existing.storage_path,
+        storage_backend: existing.storage_backend,
+        visibility: existing.visibility,
+        width: existing.width,
+        height: existing.height,
+        duration_secs: existing.duration_secs,
+        alt_text: existing.alt_text,
+        created_at: existing.created_at,
+        encryption_tier: existing.encryption_tier,
+        encrypted_key_id: existing.encrypted_key_id,
+      },
+      duplicate: true,
+    };
+  }
+
   const id = uid();
 
   // Determine encryption tier (default: public)
@@ -293,10 +335,11 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       alt_text: asset.alt_text,
       encryption_tier: asset.encryption_tier,
       encrypted_key_id: asset.encrypted_key_id,
+      content_hash: contentHash,
     },)
     .execute();
 
-  return asset;
+  return { asset, duplicate: false, };
 }
 
 /**
