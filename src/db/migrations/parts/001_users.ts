@@ -13,8 +13,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("settings", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("birth_date", "text",)
     .addColumn("age_gate_accepted_at", "text",)
+    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("last_seen_at", "text",)
+    .addCheckConstraint(
+      "ck_users_role",
+      sql`role IN ('admin', 'user', 'viewer', 'solo')`,
+    )
     .execute();
 
   await database.schema.createIndex("idx_users_role",).on("users",).column("role",).execute();

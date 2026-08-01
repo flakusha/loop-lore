@@ -5,7 +5,11 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
-import type { ShadowNoteType, WhiteneoteScope, WhiteneoteType, } from "./enums";
+import type {
+  ShadowNoteType,
+  WhiteneoteScope,
+  WhiteneoteType,
+} from "./enums";
 
 // ── shadow_notes ────────────────────────────────────────────
 export interface ShadowNotes {

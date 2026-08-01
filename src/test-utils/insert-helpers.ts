@@ -96,9 +96,9 @@ export async function insertUsers(
     settings?: Generated<string>;
     birth_date?: string | null;
     age_gate_accepted_at?: string | null;
+    format_version?: Generated<number>;
     created_at?: Generated<string>;
     last_seen_at?: string | null;
-    format_version?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("users",).values({
@@ -152,6 +152,7 @@ export async function insertAssets(
     created_at?: Generated<string>;
     encryption_tier?: Generated<string>;
     encrypted_key_id?: string | null;
+    content_hash?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("assets",).values({
@@ -380,14 +381,14 @@ export async function insertChats(
     turn_strategy?: TurnStrategy | null;
     max_turns?: number | null;
     auto_advance?: number | null;
+    parent_chat_id?: string | null;
+    is_pinned?: Generated<string>;
     encryption_level?: Generated<string>;
     response_length_preset?: Generated<string>;
     response_length_custom?: number | null;
     context_max_tokens?: number | null;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
-    is_pinned?: Generated<string>;
-    parent_chat_id?: string | null;
     visual_novel?: Generated<number>;
     streaming?: number | null;
     nsfw_override?: string | null;
@@ -434,6 +435,7 @@ export async function insertActors(
     template_overrides?: Generated<string>;
     data_source_format?: string | null;
     data_raw?: string | null;
+    agent_role?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("actors",).values({
@@ -479,6 +481,7 @@ export async function insertCharacters(
     settings?: Generated<string>;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    agent_role?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("characters",).values({
