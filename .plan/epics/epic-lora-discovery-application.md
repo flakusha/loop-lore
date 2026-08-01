@@ -166,7 +166,7 @@ async function discoverSdCppLoras(baseUrl: string): Promise<LoRAModel[]> {
 3. **LoRA installation**: Should we support downloading LoRAs from CivitAI? — *Phase 4*
 4. **Character binding**: Auto-apply character LoRA when character is selected? — *Phase 3*
 5. **Performance**: Should LoRA discovery be cached? — *Yes: Map-based cache, 5min TTL, forceRefresh option*
-6. **URL resolution**: FIXED — was `pickSdProvider()` returning one provider for both; now finds by `apiFamily` from `sd[]` array (`"comfyui"` + `"sdcpp"` separately)
+6. **URL resolution**: FIXED — was `pickSdProvider()` returning one provider for both; now finds by `apiFamily` from `sd[]` array (`"comfyui"` + `"sdcpp"` separately) via `resolveBackendUrls()` helper + `routes.test.ts`
 
 ## Linked Tasks
 
