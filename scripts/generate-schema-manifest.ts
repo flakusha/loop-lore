@@ -10,7 +10,11 @@ import { readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 
 const MIGRATIONS_DIR = resolve(import.meta.dir, "../src/db/migrations",);
-const MANIFEST_PATH = resolve(import.meta.dir, "../src/db/schema-manifest.ts",);
+// Output override for check-db-schemas.ts: generates into a temp dir instead of src/.
+const DB_OUTPUT_DIR = process.env.DB_GEN_OUTPUT_DIR ?? null;
+const MANIFEST_PATH = DB_OUTPUT_DIR
+  ? resolve(DB_OUTPUT_DIR, "schema-manifest.ts",)
+  : resolve(import.meta.dir, "../src/db/schema-manifest.ts",);
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -485,6 +489,20 @@ function main() {
   const manifest = generateManifest(allTables, allAlters, allDrops,);
   writeFileSync(MANIFEST_PATH, manifest, "utf-8",);
   console.log(`\nWrote ${MANIFEST_PATH}`,);
+
+  // Generated artifacts must be dprint-compliant (lineWidth 120) or `format - dprint`
+  // fails on every regeneration. Format in place; pass repo config explicitly so temp-dir
+  // generation (check-db-schemas.ts) still applies the project's formatting rules.
+  const dprintConfig = resolve(import.meta.dir, "..", "dprint.json",);
+  const fmt = Bun.spawnSync(["bunx", "dprint", "fmt", "--config", dprintConfig, MANIFEST_PATH,], {
+    stdout: "ignore",
+    stderr: "ignore",
+    cwd: resolve(import.meta.dir, "..",),
+  },);
+  if (fmt.exitCode !== 0) {
+    console.warn("  [warn] dprint fmt on generated manifest failed; run `bun run format:dprint` manually",);
+  }
+
   console.log(`Run \`bun test src/db/schema-sync.test.ts\` to verify`,);
 }
 

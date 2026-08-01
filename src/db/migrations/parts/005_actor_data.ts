@@ -70,7 +70,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("secondary_keys", "text", (col,) => col.defaultTo("[]",),)
     .addColumn("selective", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("case_sensitive", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("enabled", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("enabled", "text", (col,) => col.notNull().defaultTo("enabled",),)
     .addColumn("constant", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("position", "text", (col,) => col.notNull().defaultTo("before_char",),)
     .addColumn("insertion_order", "integer", (col,) => col.notNull().defaultTo(100,),)
@@ -79,6 +79,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("sort_order", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint(
+      "ck_ale_enabled",
+      sql`enabled IN ('enabled', 'disabled', 'archived')`,
+    )
     .execute();
 
   await database.schema.createIndex("idx_actor_lore_actor",).on("actor_lore_entries",).column("actor_id",).execute();

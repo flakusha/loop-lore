@@ -20,6 +20,7 @@
     "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
     "schemas:check": "bun run scripts/check-schemas.ts",
     "schemas:check:fix": "bun run scripts/fix-schemas.ts",
+    "db:schemas:check": "bun run scripts/check-db-schemas.ts",
     "docs:dev": "bunx vitepress dev docs",
     "docs:build": "bunx vitepress build docs",
     "docs:preview": "bunx vitepress preview docs",
