@@ -1,6 +1,6 @@
 # TASK: AUX LLM — Emotion Avatar Selection
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — avatar selection infra + EmotionHook exist; no LLM wiring, hook events unconsumed (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline
@@ -138,6 +138,42 @@ context — these feed directly into avatar selection as additional context.
 | **Total input**    | **~700** |
 | Response           | ~80      |
 | **Total**          | **~780** |
+
+## Current State (2026-08-01 review)
+
+| Component                                  | Status                                            | Location                                  |
+| ------------------------------------------ | ------------------------------------------------- | ----------------------------------------- |
+| `POST /api/actors/:actorId/avatars/select` | ✅                                                 | `routes/character-avatars.ts:239`         |
+| `AvatarService.selectAvatar()`             | ✅ weighted scoring, `emotion_first` rule         | `characters/services/avatar-service.ts`   |
+| Emotion avatar generation (ComfyUI)        | ✅ image-gen only, no LLM                         | `characters/services/emotion-avatar-service.ts` |
+| `detectAvatarChangeIntent()`               | ❌ **dead code** — zero consumers                 | `assistant/intent.ts:139`                 |
+| `EmotionHook` (`emotion_change`)           | ⚠️ keyword-based; doc header claims "Uses the LLM" (stale) | `generation/hooks/emotion-hook.ts` |
+| Hook event consumption                     | ❌ `data.dominantEmotion` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431` |
+| Auto-trigger on response                   | ❌ manual API call only                          | —                                          |
+
+Key finding: the emotion → avatar pipeline is a **dead end**. The
+`emotion_change` event fires (keyword match) but nothing reads its `data`;
+the only avatar selection path is the explicit HTTP route with
+user-supplied `emotion`/`mood` context.
+
+## Next Actionable Items
+
+1. **Consume or kill the hook** (epic M4): in `auto-gen.ts` post-hook, read
+   `events` for `emotion_change`, gate on `confidence >= 0.5` + change-from-previous,
+   then call `AvatarService.selectAvatar(actorId, { emotion })` and persist
+   current emotion (new `character_emotions` row or in-memory last-emotion).
+   Emit frontend event so `components/chat/message-list.html` swaps `_currentEmotionAvatar`.
+2. **Delete or fold `detectAvatarChangeIntent`**: no consumers. Fold into the
+   AUX runner as regex fast-path (like transition-classifier) or remove.
+3. **LLM classification task** (`src/aux-pipeline/tasks/emotion-avatar.ts`,
+   prompt already drafted above): classify on the auxiliary role via shared
+   runner (M1), replace keyword `EmotionHook`.
+4. **Match scoring gap**: `calculateAvatarScore` needs exact lowercase
+   tag==context equality; LLM emotions ("flirtatious", "determined",
+   "exhausted") must align with `EmotionType` enum values used as avatar tags
+   (`src/db/enums-character.ts:126`). Verify enum covers prompt's 12 emotions.
+5. **Tests**: extend `avatar-service.test.ts` with AUX-triggered selection;
+   hook-consumption unit test in `auto-gen` flow.
 
 ## Files to Create
 

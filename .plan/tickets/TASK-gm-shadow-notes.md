@@ -13,7 +13,7 @@ Implement the GM/Assistant shadow notes system for hidden narrative influence. S
 
 Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic and the whitenotes system (TASK-gm-whitenotes.md). Adds hidden narrative influence on top of visible whitenotes.
 
-## Current State (2026-07-31)
+## Current State (2026-08-01 review)
 
 ### Frontend: ✅ Complete
 
@@ -23,11 +23,14 @@ Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic and the whitenot
 - Type selector (foreshadowing, consequence, hidden_fact, player_motivation, world_secret, narrative_hook)
 - Revealed/unrevealed status display
 
-### Backend: ❌ Not Started
+### Backend: 🟡 Partial — DB + CRUD routes done, prompt injection missing
 
-- No `shadow_notes` DB table
-- No API routes for shadow notes
-- No prompt injection pipeline
+- ✅ `shadow_notes` table (`src/db/schema-gm.ts`) — id, chat_id, type, content, revealed, created_at
+- ✅ API routes (`src/routes/gm-notes.ts`, mounted `elysia-app.ts:166`): `GET/POST /api/chats/:id/shadow-notes`, `POST .../reveal`, `DELETE .../:noteId`
+- ❌ Prompt injection — nothing in `src/assistant/prompt/` or `src/story/` reads shadow_notes (zero consumers)
+- ❌ Trigger conditions — no `trigger_condition`/`visibility` columns (table has `revealed` only)
+- ❌ No route tests (`gm-notes` endpoints untested)
+- ❌ Reveal does not emit a player-visible chat message
 
 ## Acceptance Criteria
 
