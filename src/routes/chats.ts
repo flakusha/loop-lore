@@ -11,6 +11,7 @@ import {
   deleteChat,
   getChat,
   updateChat,
+  updateImpersonation,
 } from "../chat/service";
 import type { Config, } from "../config/schema";
 import {
@@ -434,8 +435,21 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           const participants = await database
             .selectFrom("chat_participants",)
-            .selectAll()
-            .where("chat_id", "=", id,)
+            .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+            .select([
+              "chat_participants.chat_id",
+              "chat_participants.actor_id",
+              "chat_participants.role_in_chat",
+              "chat_participants.talkativity",
+              "chat_participants.initiative",
+              "chat_participants.joined_at",
+              "chat_participants.last_read_message_id",
+              "chat_participants.impersonate_actor_id",
+              "chat_participants.persona_id",
+              "actors.display_name",
+              "actors.actor_type",
+            ],)
+            .where("chat_participants.chat_id", "=", id,)
             .execute();
           return jsonResponse(participants,);
         },
@@ -697,12 +711,13 @@ export function chatsRoutes(opts: HandlerOpts,) {
             return notFound("Chat not found",);
           }
 
-          await database
-            .updateTable("chat_participants",)
-            .set({ impersonate_actor_id: body.impersonateActorId ?? null, },)
-            .where("chat_id", "=", id,)
-            .where("actor_id", "=", userId,)
-            .execute();
+          const result = await updateImpersonation(database, id, userId, body.impersonateActorId ?? null,);
+          if (result && "code" in result) {
+            const status = result.code === "not_found"
+              ? HttpStatus.NotFound
+              : (result.code === "forbidden" ? HttpStatus.Forbidden : HttpStatus.BadRequest);
+            return jsonError(result.message, status, result.code as never,);
+          }
           return jsonResponse({ ok: true, },);
         },
         { body: ChatImpersonateBody, params: ChatIdParams, },
