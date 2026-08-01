@@ -2,13 +2,19 @@
 //
 // Command registry — maps command names to handler functions.
 
+import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
+import type { DB, } from "../../db/schema";
+
 /** Context provided to command handlers */
 export interface CommandContext {
   chatId: string;
-  activeChat?: { id: string; mode?: string; type?: string };
+  /** Active chat summary — `worldId` is the chat's resolved world (not the chat type) */
+  activeChat?: { id: string; mode?: string; type?: string; worldId?: string };
   currentCharacter?: { id: string; name: string; display_name?: string };
   messages?: { id: string; role: string; content: string; created_at: string }[];
-  db?: unknown;
+  db?: Kysely<DB>;
+  config?: Config;
   userId?: string;
 }
 
