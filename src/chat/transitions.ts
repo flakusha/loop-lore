@@ -28,6 +28,7 @@ import type { ChatTransition, MessageRef, TransitionClassification, } from "./ty
  * @param recentMessages - Last 1-2 messages for context (optional)
  * @param config - Application config
  * @param db - Kysely instance
+ * @param userId - User ID for BYO apiKey resolution (optional)
  * @returns Transition classification with source and confidence
  */
 export async function classifyTransitionMessage(
@@ -35,8 +36,9 @@ export async function classifyTransitionMessage(
   recentMessages: string[],
   config: Config,
   db: Kysely<DB>,
+  userId?: string,
 ): Promise<TransitionClassification> {
-  return classifyTransition(content, recentMessages, config, db,);
+  return classifyTransition(content, recentMessages, config, db, userId,);
 }
 
 // ─── Transition Creation ───────────────────────────────────────
