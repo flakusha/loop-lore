@@ -1,6 +1,6 @@
 # TASK: EPIC: Assistant Generation Extensions (Image Gen, Intent, Scenario Source)
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — `/image` command dispatch done, generation adapter pending (2026-08-01)
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-assistant-generation-extensions
@@ -21,6 +21,13 @@ ComfyUI is the primary backend. Finalized workflow files are the API contract.
 
 - `epic-assistant-generation-extensions.md`
 - `epic-comfyui-plugin.md` (workflow templates)
+
+## Current State (2026-08-01 review)
+
+- ✅ `/image` command handler (`src/assistant/commands/image.ts`) — returns `action: "generate-image"` + prompt for frontend dispatch to `POST /api/generation/image`; avoids double-exec
+- ✅ `/improve` basic impl; `/quest`, `/video`, `/sfx`, `/music`, `/caption` handlers registered (stub-level actions)
+- ❌ Backend generation adapter (ComfyUI/sd.cpp routing), entity-to-asset mapping, `/image edit/style/upscale` subcommands — pending
+- Epic status table is stale (marks `/image` "❌ Not started" — file exists since earlier commit)
 
 ## Acceptance Criteria
 

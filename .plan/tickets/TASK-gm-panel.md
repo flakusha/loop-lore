@@ -1,6 +1,6 @@
 # TASK: GM Panel
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — notes panel done, world/NPC/event/scene controls pending (2026-08-01)
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Task
@@ -9,14 +9,16 @@
 
 ## Summary
 
-GM control panel for story mode.
+GM control panel for story mode. Panel shell exists as GM sidebar with whitenotes + shadow notes tabs; world-state/NPC/event/scene controls not yet built.
 
 ## Core Features
 
-- World state controls
-- NPC management
-- Event triggers
-- Scene management
+- ✅ GM panel sidebar + Alpine component with whitenotes/shadow notes CRUD (`src/components/chat/gm-panel.html`, `src/frontend/alpine/gm-panel.ts` — included in `src/views/chat.html:28`)
+- ❌ World state controls
+- ❌ NPC management
+- ❌ Event triggers
+- ❌ Scene management
+- ❌ Mobile responsive
 
 ## Acceptance Criteria
 
