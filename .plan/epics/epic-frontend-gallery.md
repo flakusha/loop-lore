@@ -1,6 +1,6 @@
 # EPIC: Frontend Gallery & Media Viewer
 
-**Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering all working; idempotent upload and visibility inheritance remaining
+**Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance remaining
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -40,7 +40,7 @@ Frontend implementation of the Gallery & Media Viewer for the loop-lore web UI. 
 ## Tickets
 
 - [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md) — ✅ Done — gallery grid, preview modal, upload dialog, all three media types
-- [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — 🟡 Partial — upload works; idempotent hash detection remaining
+- [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — ✅ Done — hash-based duplicate detection + frontend toast
 - [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance pending
 
 ## File Structure (verified 2026-08-01)
@@ -80,7 +80,7 @@ docs/
 - [x] Upload dialog supports drag-and-drop (dashed border, pink highlight on drag-over), native file picker, optional label input, and entity linking (type dropdown + ID input)
 - [x] Upload progress: button shows spinner, drop zone shows “Uploading…” with filename; on completion toast “Uploaded [filename]”, modal closes, grid refreshes
 - [x] All empty/error/loading states implemented: zero assets empty state, loading skeleton, filter-no-results with “Clear filters” link, upload error toast with retry, delete confirmation dialog
-- [ ] Idempotent upload: same file hash returns existing asset ID (no duplicates)
+- [x] Idempotent upload: same file hash returns existing asset ID (no duplicates)
 - [x] Gallery entity filter — `serveGalleryGrid` and `serveGallerySearch` accept `entity_type`/`entity_id` query params
 - [x] Character avatar linking — `avatar-service.ts` calls `linkAsset()` on creation
 - [x] CSS uses loop-lore design tokens and is responsive (min 200px card width, fills available space)
@@ -88,18 +88,18 @@ docs/
 
 ## Implementation Phases
 
-### Phase 1: Idempotent Upload (remaining gap)
+### Phase 1: Idempotent Upload
 
-- Modify `src/assets/controller.ts` upload flow to compute file hash (SHA-256) before storing
-- Check `asset_metadata` for existing hash match — return existing asset ID if found
-- Frontend toast feedback when duplicate detected ("Asset already exists" with link)
+- [x] Modify `src/assets/controller.ts` upload flow to compute file hash (SHA-256) before storing
+- [x] Check `assets.content_hash` for existing hash match — return existing asset ID if found
+- [x] Frontend toast feedback when duplicate detected ("Asset already exists" with link)
 
 ### Phase 2: Context Integration
 
 - [x] Gallery entity filter — `serveGalleryGrid` and `serveGallerySearch` accept `entity_type`/`entity_id` query params
 - [x] Character avatar linking — `avatar-service.ts` calls `linkAsset()` on creation; `emotion-avatar-service.ts` already wired
 - [ ] Gallery tab in character detail view — partial (grid exists, visibility pending)
-- [ ] Gallery tab in story view (attachments context)
+- [x] Gallery tab in story view (attachments context) — VN scene renderer displays message-linked assets
 
 ### Phase 3: Polish
 
@@ -109,7 +109,9 @@ docs/
 
 ## Files to Modify (remaining work)
 
-| File                             | Action                                                          |
-| -------------------------------- | --------------------------------------------------------------- |
-| `src/assets/controller.ts`       | Modify — add hash-based duplicate detection to upload flow      |
-| `src/frontend/pages/gallery.ts`  | Modify — add duplicate detection toast feedback                 |
+Remaining polish (Phase 3) only:
+
+| File                        | Action                                                    |
+| ---------------------------- | ---------------------------------------------------------- |
+| `src/frontend/pages/gallery.ts` | Modify — add pagination support for large collections   |
+| Gallery sidebar               | Add right-click/long-press context menus on gallery items |

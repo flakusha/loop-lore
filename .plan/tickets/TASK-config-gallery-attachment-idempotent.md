@@ -11,8 +11,8 @@ The original ticket proposed config files, hot-reload, versioning, and new API e
 
 ## Remaining Work
 
-- [ ] Hash-based duplicate detection on upload — compute file hash, check `asset_metadata` for existing match, return existing asset ID if found
-- [ ] Frontend feedback when duplicate detected — toast "Asset already exists" with link to existing asset
+- [x] Hash-based duplicate detection on upload — compute file hash, check `asset_metadata` for existing match, return existing asset ID if found
+- [x] Frontend feedback when duplicate detected — toast "Asset already exists" with link to existing asset
 
 ## Already Implemented
 
