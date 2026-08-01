@@ -77,6 +77,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           tags,
           actorType,
           agentType,
+          agentRole,
           description,
           personality,
           scenario,
@@ -103,6 +104,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
             user_id: userId,
             owner_id: userId,
             agent_type: agentType ?? AgentType.Ai,
+            agent_role: agentRole ?? null,
             description: description ?? null,
             personality: personality ?? null,
             scenario: scenario ?? null,
@@ -239,6 +241,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           displayName,
           description,
           systemPrompt,
+          agentRole,
           avatarAssetId,
           personality,
           welcomeMessage,
@@ -287,6 +290,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
         if (displayName) { updates.display_name = displayName; }
         if (description) { updates.description = description; }
         if (systemPrompt) { updates.system_prompt = systemPrompt; }
+        if (agentRole !== undefined) { updates.agent_role = agentRole; }
         if (avatarAssetId !== undefined) { updates.avatar_asset_id = avatarAssetId; }
         if (personality) { updates.personality = personality; }
         if (welcomeMessage) { updates.welcome_message = welcomeMessage; }
