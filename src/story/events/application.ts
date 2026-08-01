@@ -9,7 +9,9 @@ import { WorldEventType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { assertNever, safeJsonStringify, } from "../../utils";
 import { ItemsService, } from "../items";
+import { appendTimelineEvents, } from "../timeline";
 import type { WorldEvent, } from "../types";
+import { promoteEventToLore, } from "./promote-lore";
 
 // ── Result Type ──────────────────────────────────────────────
 
@@ -26,6 +28,8 @@ export interface ApplyEventsOpts {
   worldId: string;
   events: WorldEvent[];
   trx?: Transaction<DB>;
+  /** Provenance tag for the world timeline; null or absent → unattributed. */
+  storyId?: string | null;
 }
 
 // ── Apply Events ─────────────────────────────────────────────
@@ -76,7 +80,7 @@ async function applySingleEvent(
 }
 
 /** Apply validated events to the DB */
-export async function applyEvents({ db, worldId, events, trx, }: ApplyEventsOpts,): Promise<AppliedEvent[]> {
+export async function applyEvents({ db, worldId, events, trx, storyId, }: ApplyEventsOpts,): Promise<AppliedEvent[]> {
   const database = trx ?? db;
   const results: AppliedEvent[] = [];
   const items = new ItemsService(database,);
@@ -91,6 +95,20 @@ export async function applyEvents({ db, worldId, events, trx, }: ApplyEventsOpts
         error: error instanceof Error ? error.message : "Unknown error",
       },);
     }
+  }
+
+  // Persist successfully applied events to the world timeline (docs/spec/lore.md §5).
+  const successfulEvents: WorldEvent[] = [];
+  for (const r of results) {
+    if (r.applied) { successfulEvents.push(r.event,); }
+  }
+  if (successfulEvents.length > 0) {
+    await appendTimelineEvents({
+      db: database,
+      worldId,
+      storyId: storyId ?? null,
+      events: successfulEvents,
+    },);
   }
 
   return results;
@@ -194,6 +212,13 @@ async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, event: Worl
       : `### ${new Date().toLocaleDateString()}\n${entry}`;
 
     await db.updateTable("worlds",).set({ lore: newLore, },).where("id", "=", worldId,).execute();
+
+    // Also promote to a structured, audience-scoped world_lore_entries row so the new
+    // fact is injectable by loreSection (docs/spec/lore.md §4.1). Additive — the
+    // `worlds.lore` text blob above is kept for display/backward-compat.
+    if (event.data.promoteToLore !== false) {
+      await promoteEventToLore(db, worldId, event,);
+    }
   }
 }
 
