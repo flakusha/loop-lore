@@ -1,6 +1,6 @@
 # Immediate Plan
 
-> **Last updated:** 2026-07-31 — Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial
+> **Last updated:** 2026-08-01 — Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial; AUX LLM wiring review added (M1-M6 queue under P2-C)
 > **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete
 
 ---
@@ -175,6 +175,19 @@
 - [ ] Reconcile assistant ↔ GM flow interfaces (`TASK-assistant-gm-flows-reconciliation.md`)
 - [ ] **Verification**: `bun run check && bun test src/assistant/`
 
+#### AUX LLM Wiring Fixes (2026-08-01 review → epic-aux-enrichment-pipeline M1-M6)
+
+Review of AUX LLM wirings (intent detection, moderation, emotion avatar) found
+latency + BYO-key + dead-role gaps. Actionable queue:
+
+- [ ] **M1 — Shared AUX runner** `src/aux-pipeline/runner.ts`: one policy (2s timeout, temp 0.0, maxTokens 100, apiKey via `resolveProvider`); migrate transition-classifier + `classifyIntent` + memory extraction
+- [ ] **M2 — Fix memory extraction**: real model instead of literal `"default"` (`as never` cast), drop dead `modelId`/dup `db` params (`src/memory/extraction.ts:60`)
+- [ ] **M3 — Dead model roles**: wire or remove `ModelRole.Moderation` + `ModelRole.Captioning` (no consumers today; caption-route uses main role)
+- [ ] **M4 — Consume emotion/mood hook events**: `emotion_change`/`mood_shift` `data` currently dropped (`auto-gen.ts:412-431`); wire avatar selection + `character_mood` writes, or remove hooks
+- [ ] **M5 — ModerationHook safety**: word-boundary matching, severity, `recordAudit`, non-destructive suppression
+- [ ] **M6 — AUX telemetry**: record tokens/latency per AUX call
+- [ ] **Verification**: `bun run check && bun test src/chat/ src/memory/ src/generation/hooks/`
+
 ---
 
 ### P2-D — GM Flows
@@ -289,12 +302,12 @@ The existing infrastructure already supports this pattern:
 | Asset service          | ✅ Done | `src/assets/service.ts` — CRUD, visibility, sharing, access checks             |
 | Avatar gallery binding | ✅ Done | Backend + entity filter + tab done; visibility inheritance pending              |
 | Idempotent upload      | ✅ Done | SHA-256 hash-based duplicate detection in `createAsset`               |
-| Gallery in story view  | ❌ Pending | Attachments tab in story view                                                |
+| Gallery in story view  | ✅ Done | Attachments panel in VN scene renderer (`src/frontend/vn/scene-renderer.ts` + `styles.css`) |
 
 #### Remaining Work
 
 - [x] Make gallery upload idempotent — hash-based duplicate detection (`TASK-config-gallery-attachment-idempotent.md`)
-- [ ] Wire gallery into story view (add attachments tab)
+- [x] Wire gallery into story view — attachments panel renders message-linked assets in each VN scene
 - [ ] **Verification**: `bun run check`
 
 ---
