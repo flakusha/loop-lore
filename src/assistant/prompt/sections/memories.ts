@@ -13,6 +13,7 @@ import {
   selectMemoriesForInjection,
 } from "../../../memory/injection";
 import { type ProvisionContext, provisionMemories, } from "../../../memory/provision";
+import { selectWithinBudget, } from "../../../memory/budget";
 import type { MemoryEntry, } from "../../../memory/types";
 import { safeJsonParse, } from "../../../utils";
 import { wrapSection, } from "../../xml-utils";
@@ -72,6 +73,7 @@ async function buildProvisionContext(
   actorId: string,
   chatId: string,
   worldId: string | null,
+  ownerId: string = actorId,
 ): Promise<ProvisionContext> {
   const participants = await db
     .selectFrom("chat_participants",)
@@ -84,7 +86,7 @@ async function buildProvisionContext(
 
   return {
     viewerId: actorId,
-    ownerId: actorId,
+    ownerId,
     chatId,
     worldId,
     participantIds,
@@ -93,18 +95,23 @@ async function buildProvisionContext(
 }
 
 /**
- * Fetch all memories for the actor from the database.
+ * Fetch memories for the actor from the database.
+ *
+ * @param limit Max rows (ordered by importance desc). Speaker fetches keep the default
+ *              50; cross-actor (other-participant) fetches are capped at
+ *              MAX_OTHER_MEMORIES to avoid unbounded queries in large groups.
  */
 async function fetchActorMemories(
   db: Kysely<DB>,
   actorId: string,
+  limit = 50,
 ): Promise<MemoryEntry[]> {
   const rows = await db
     .selectFrom("actor_memories",)
     .selectAll()
     .where("actor_id", "=", actorId,)
     .orderBy("importance", "desc",)
-    .limit(50,)
+    .limit(limit,)
     .execute();
 
   return rows.map((r,) => ({
@@ -136,27 +143,65 @@ export const memorySection: SectionBuilder = {
   name: "memories",
   enabled: () => true,
   build: async (ctx,) => {
-    const memories = await fetchActorMemories(ctx.db, ctx.actor.id,);
-    if (memories.length === 0) { return []; }
-
-    const provisionCtx = await buildProvisionContext(
+    // Resolve participant ids once; they're needed for per-viewer cross-actor provisioning.
+    const baseCtx = await buildProvisionContext(
       ctx.db,
       ctx.actor.id,
       ctx.chat.id,
       ctx.chat.world_id,
     );
+    const participantIds = baseCtx.participantIds;
 
-    // Step 1: Provision filter (scope, privacy, shareability, token budget)
-    const provisionResult = provisionMemories(memories, provisionCtx, 1024,);
-    if (provisionResult.accepted.length === 0) { return []; }
+    // Cap how many of each OTHER participant's most-important memories we fetch, to avoid
+    // unbounded queries in large groups. The speaker's own memories keep the full limit.
+    const OTHER_MEMORY_CAP = 5;
+
+    // Collect memories from the speaker AND each other participant, provisioning each
+    // owner's memories against the speaker as viewer. This makes evaluateShareability
+    // run with owner != viewer for other participants, so shared/public memories of others
+    // can be revealed to this actor while private/secret/blocked memories are withheld
+    // per-viewer.
+    const ownerSources = [ctx.actor.id, ...participantIds.filter((p,) => p !== ctx.actor.id,),];
+    const provisionTasks = ownerSources.map((ownerId,) => {
+      const isSpeaker = ownerId === ctx.actor.id;
+      const memories = fetchActorMemories(
+        ctx.db,
+        ownerId,
+        isSpeaker ? 50 : OTHER_MEMORY_CAP,
+      ).then(async (rows,) => {
+        if (rows.length === 0) { return []; }
+        const provisionCtx = await buildProvisionContext(
+          ctx.db,
+          ctx.actor.id,
+          ctx.chat.id,
+          ctx.chat.world_id,
+          ownerId, // owner may differ from viewer for cross-actor sharing
+        );
+        // No per-source budget trim — acceptance is by scope/privacy/shareability;
+        // the single combined budget is enforced once below.
+        const result = provisionMemories(rows, provisionCtx, Number.MAX_SAFE_INTEGER,);
+        return result.accepted;
+      },);
+      return memories;
+    },);
+
+    const provisioned = await Promise.all(provisionTasks,);
+    const allAccepted = provisioned.flat();
+    if (allAccepted.length === 0) { return []; }
+
+    // Enforce a single combined token budget across all owners (pinned first, then by
+    // importance). Speaker memories and cross-actor memories compete in one pool, so a
+    // large group cannot blow the budget.
+    const budgeted = selectWithinBudget(allAccepted, { maxTokens: 1024, respectPins: true, },);
+    if (budgeted.length === 0) { return []; }
 
     // Step 2: Injection filter (probability, comfort, context relevance)
     const injectionCtx: InjectionContext = {
       chatId: ctx.chat.id,
       worldId: ctx.chat.world_id,
       locationId: ctx.chat.current_location_id,
-      isPrivateChat: provisionCtx.participantIds.length <= 2,
-      participantCount: provisionCtx.participantIds.length,
+      isPrivateChat: participantIds.length <= 2,
+      participantCount: participantIds.length,
       turnNumber: 0, // TODO: pass actual turn number from context
       currentKeywords: [], // TODO: extract from current message
       averageIntimacy: 50, // TODO: compute from relationships
@@ -164,7 +209,7 @@ export const memorySection: SectionBuilder = {
     };
 
     const injectionResult = selectMemoriesForInjection(
-      provisionResult.accepted,
+      budgeted,
       DEFAULT_INJECTION_CONFIG,
       injectionCtx,
       DEFAULT_COMFORT,
