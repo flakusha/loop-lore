@@ -374,7 +374,7 @@ export async function handleUpload({
     }
   }
 
-  const asset = await createAsset({
+  const { asset, duplicate, } = await createAsset({
     database,
     input: {
       ownerId: userId,
@@ -392,7 +392,7 @@ export async function handleUpload({
     uploadDir,
   },);
 
-  return jsonCreated({
+  const body = {
     id: asset.id,
     filename: asset.filename,
     mime_type: asset.mime_type,
@@ -400,6 +400,24 @@ export async function handleUpload({
     size_bytes: asset.size_bytes,
     storage_backend: asset.storage_backend,
     alt_text: asset.alt_text,
+    ...(duplicate ? { duplicate: true, } : {}),
+  };
+
+  if (duplicate) {
+    return new Response(JSON.stringify(body,), {
+      status: HttpStatus.OK,
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": JSON.stringify({ "asset:duplicate": { id: asset.id, filename: asset.filename, }, },),
+      },
+    },);
+  }
+  return new Response(JSON.stringify(body,), {
+    status: HttpStatus.Created,
+    headers: {
+      "Content-Type": "application/json",
+      "HX-Trigger": JSON.stringify({ "asset:uploaded": null, },),
+    },
   },);
 }
 
