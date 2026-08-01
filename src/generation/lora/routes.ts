@@ -16,7 +16,6 @@
 
 import { Elysia, t, } from "elysia";
 import type { Config, } from "../../config/schema";
-import { pickSdProvider, } from "../../config/schema";
 import { extractAuth, jsonResponse, } from "../../routes/http-utils";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import {
@@ -77,10 +76,12 @@ export function loraRoutes({ config, }: { config: Config },) {
 
       const input = ctx.body;
 
-      // Get backend URLs from config
-      const sdProvider = pickSdProvider(config?.generation?.providers?.sd, "generate",);
-      const comfyUrl = sdProvider?.baseUrl ?? "http://localhost:8188";
-      const sdServerUrl = sdProvider?.baseUrl ?? "http://localhost:9010";
+      // Resolve backend URLs from config — find by apiFamily, not by purpose
+      const sdProviders = config?.generation?.providers?.sd ?? [];
+      const comfyProvider = sdProviders.find((p,) => p.apiFamily === "comfyui",);
+      const sdServerProvider = sdProviders.find((p,) => p.apiFamily === "sdcpp",);
+      const comfyUrl = comfyProvider?.baseUrl ?? "http://localhost:8188";
+      const sdServerUrl = sdServerProvider?.baseUrl ?? "http://localhost:9010";
 
       if (input.backend) {
         // Discover from single backend
