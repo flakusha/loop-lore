@@ -12,8 +12,8 @@
 
 import type { Kysely, } from "kysely";
 import { marked, } from "marked";
-import { resolveModelRole, } from "../admin/model-roles";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
+import { callAux, INTENT_CLASSIFIER_PROMPT, } from "../aux-pipeline";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
 import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled, } from "../crypto";
@@ -51,7 +51,6 @@ import {
 import {
   buildFailoverList,
   callWithFailover,
-  getProvider,
   listProviders,
   resolveProvider,
 } from "./providers/registry";
@@ -75,28 +74,21 @@ export async function classifyIntent(
   userMessage: string,
   config: Config,
   db: Kysely<DB>,
+  userId?: string,
 ): Promise<IntentClassification | null> {
   try {
-    const auxRole = await resolveModelRole("auxiliary", config, db,);
-    if (!auxRole.provider || !auxRole.model) { return null; }
-
-    const auxProvider = getProvider(auxRole.provider,);
-    if (!auxProvider) { return null; }
-
-    const classificationPrompt = [
-      {
-        role: "system" as const,
-        content:
-          'Classify the user message intent. Reply with ONLY a JSON object: {"intent": "greeting|question|command|roleplay|narrative", "confidence": 0.0-1.0, "shortReply": true/false}. shortReply=true for greetings, simple questions, short commands. shortReply=false for roleplay, narrative, complex requests.',
-      },
+    const messages = [
+      { role: "system" as const, content: INTENT_CLASSIFIER_PROMPT, },
       { role: "user" as const, content: userMessage.slice(0, 500,), },
     ];
 
-    const response = await auxProvider.complete({
-      model: auxRole.model,
-      messages: classificationPrompt,
-      params: { temperature: 0.1, maxTokens: 100, },
+    // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
+    const response = await callAux("intent", config, db, messages, {
+      userId,
+      temperature: 0.0,
+      maxTokens: 100,
     },);
+    if (!response) { return null; }
 
     const parsed = jsonParseOr<Partial<IntentClassification>>(response.content, {},);
     if (!parsed.intent) { return null; }
