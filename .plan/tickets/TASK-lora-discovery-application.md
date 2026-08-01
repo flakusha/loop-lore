@@ -22,7 +22,7 @@ LoRA discovery (auto-detect available models from sd.cpp/ComfyUI) and applicatio
 - Elysia plugin routes gated behind TODO comments
 - 39+ unit tests covering discovery, cache, validation, injection
 
-**Known issue — URL resolution in routes.ts:** FIXED 2026-08-01. `pickSdProvider()` returned ONE provider; both comfyUrl and sdServerUrl resolved to same URL. Changed to find providers by `apiFamily` from the `sd[]` array (`"comfyui"` and `"sdcpp"` separately). Removed unused `pickSdProvider` import. 39/39 tests pass, zero tsc errors.
+**Known issue — URL resolution in routes.ts:** FIXED 2026-08-01. `pickSdProvider()` returned ONE provider; both comfyUrl and sdServerUrl resolved to same URL. Changed to find providers by `apiFamily` from the `sd[]` array (`"comfyui"` and `"sdcpp"` separately). Removed unused `pickSdProvider` import. Extracted pure helper `resolveBackendUrls()` (uses `.find()`) + added `routes.test.ts` (5 cases: defaults, distinct URLs, single-backend fallback, undefined config). 43/43 tests pass, zero tsc/eslint errors. Also removed `find`/`findIndex`/`some`/`every` from `no-restricted-syntax` in `eslint.config.mjs` — non-allocating early-return predicates don't fit the shadow-allocation rationale.
 
 **TSC status:** Zero lora-specific typecheck errors on current `dev`. Pre-existing errors are from other subsystems (schema-core, enums-core, frontend mood).
 
