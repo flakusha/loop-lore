@@ -208,24 +208,26 @@ interface ScenarioSource {
 
 ## Current Implementation Status
 
-The command system is partially built:
+The command system is partially built (2026-08-01 review — table refreshed):
 
-| Command        | Status         | File                                             |
-| -------------- | -------------- | ------------------------------------------------ |
-| `/improve`     | ✅ Basic impl  | `src/assistant/commands/improve.ts`              |
-| `/image`       | ❌ Not started | `src/assistant/commands/image.ts` (to create)    |
-| `/quest`       | ❌ Not started | `src/assistant/commands/quest.ts` (to create)    |
-| `/video`       | ❌ Not started | `src/assistant/commands/video.ts` (to create)    |
-| `/sfx`         | ❌ Not started | `src/assistant/commands/sfx.ts` (to create)      |
-| `/sound`       | ❌ Not started | `src/assistant/commands/sfx.ts` (alias for /sfx) |
-| `/music`       | ❌ Not started | `src/assistant/commands/music.ts` (to create)    |
-| `/caption`     | ❌ Not started | `src/assistant/commands/caption.ts` (to create)  |
-| `/roll`        | ✅ Complete    | `src/assistant/commands/dice.ts`                 |
-| `/summarize`   | ✅ Complete    | `src/assistant/commands/summarize.ts`            |
-| `/impersonate` | ✅ Complete    | `src/assistant/commands/impersonate.ts`          |
-| `/narrate`     | ✅ Complete    | `src/assistant/commands/narrate.ts`              |
-| `/ooc`         | ✅ Complete    | `src/assistant/commands/ooc.ts`                  |
-| `/help`        | ✅ Complete    | `src/assistant/commands/help.ts`                 |
+| Command        | Status                                              | File                                                      |
+| -------------- | --------------------------------------------------- | --------------------------------------------------------- |
+| `/improve`     | ✅ Basic impl                                       | `src/assistant/commands/improve.ts`                       |
+| `/image`       | 🟡 Command stub + action dispatch; backend adapter pending | `src/assistant/commands/image.ts`                   |
+| `/quest`       | ✅ Registered (stub-level)                          | `src/assistant/commands/quest.ts`                         |
+| `/video`       | ✅ Registered (stub-level)                          | `src/assistant/commands/video.ts`                         |
+| `/sfx`         | ✅ Registered (stub-level)                          | `src/assistant/commands/sfx.ts`                           |
+| `/sound`       | ✅ Registered (alias for /sfx)                      | `src/assistant/commands/sfx.ts`                           |
+| `/music`       | ✅ Registered (stub-level)                          | `src/assistant/commands/music.ts`                         |
+| `/caption`     | ✅ Registered (stub-level)                          | `src/assistant/commands/caption.ts`                       |
+| `/roll`        | ✅ Complete                                         | `src/assistant/commands/dice.ts`                          |
+| `/summarize`   | ✅ Complete                                         | `src/assistant/commands/summarize.ts`                     |
+| `/impersonate` | ✅ Complete                                         | `src/assistant/commands/impersonate.ts`                   |
+| `/narrate`     | ✅ Complete                                         | `src/assistant/commands/narrate.ts`                       |
+| `/ooc`         | ✅ Complete                                         | `src/assistant/commands/ooc.ts`                           |
+| `/help`        | ✅ Complete                                         | `src/assistant/commands/help.ts`                          |
+
+Gap: most commands return system-message/action stubs — only `/roll`, `/summarize`, `/impersonate`, `/narrate`, `/create` do real work. Image/audio/video generation adapters (ComfyUI/sd.cpp) pending.
 
 ### `/improve` Command (Existing)
 

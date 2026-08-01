@@ -10,24 +10,25 @@
 
 Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations, etc. with API call integrations AND confirmation/quality gating. Also encompasses GM-guided story creation where the user acts as Game Master, guiding LLM characters in chat/group-chat to create a story together.
 
-## Current State (2026-07-31)
+## Current State (2026-08-01)
 
 ### Frontend: 🟡 Partial
 
-- ✅ GM panel sidebar (shadow notes + whitenotes)
+- ✅ GM panel sidebar (shadow notes + whitenotes) — `src/components/chat/gm-panel.html` + `src/frontend/alpine/gm-panel.ts`
 - ✅ Command buttons expanded (guide, scene, summarize, rewrite, translate)
-- ✅ GmConfig extended with GM fields
-- ❌ GM role switching UI wiring
-- ❌ Assistant command execution + intent detection
-- ❌ Slash command parser
-- ❌ Tool call display
+- ✅ GmConfig extended (assistantRole, visualNovel); role dropdown in chat settings
+- ✅ Slash command parser + dispatch wired (`src/routes/messages.ts:543`, 21 handlers)
+- ❌ GM role switching has no runtime effect (assistantRole stored, never branched)
+- ❌ Tool call display in chat bubbles
 
-### Backend: ❌ Not Started
+### Backend: 🟡 Partial
 
-- No generation prompt templates
-- No quality validation pipeline
-- No confirmation gating
-- No shadow notes/whitenotes API routes
+- ✅ GameMasterService wired into story-mode generation (`auto-gen.ts:184,792` — see `TASK-wire-gm-service-story-mode.md`)
+- ✅ `/create` LLM entity generation command (char/loc/world/item)
+- ❌ No generation prompt templates (inline strings only; `src/assistant/prompt/templates/` absent)
+- ❌ No quality validation pipeline
+- ❌ No confirmation gating
+- ❌ GmConfig shape gap: UI writes `{assistantRole, visualNovel}`; story expects `GameMasterConfig.type` → human/hybrid GM unreachable from UI
 
 ## Reference
 

@@ -1,6 +1,6 @@
 # EPIC: LoRA Discovery & Application
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Phase 1 Complete, Phase 2 Partial
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -57,21 +57,25 @@ interface ImageGenRequest {
 
 ## Tasks
 
-### Phase 1: Core LoRA System (MVP)
+### Phase 1: Core LoRA System (MVP) ✅ COMPLETE (2026-08-01)
 
-- [ ] `LoRAConfig` interface + validation
-- [ ] LoRA discovery for sd.cpp backend (`GET /sd-api/v1/models` → filter)
-- [ ] LoRA discovery for ComfyUI backend (`GET /object_info` → LoraLoader models)
-- [ ] `POST /api/lora/discover` route (unified discovery)
-- [ ] `GET /api/lora/list` route (cached model list)
-- [ ] Unit tests for LoRA discovery + validation
+- [x] `LoRAConfig` interface + validation (`types.ts`, `validation.ts`)
+- [x] LoRA discovery for sd.cpp backend (`discovery-sdserver.ts`)
+- [x] LoRA discovery for ComfyUI backend (`discovery-comfyui.ts`)
+- [x] Unified discovery with caching (`discovery.ts` — Map-based, 5min TTL, force-refresh)
+- [x] `POST /api/lora/discover` route (single + all backends)
+- [x] `GET /api/lora/list` route (cached, backend/search filter)
+- [x] `GET /api/lora/status` + `POST /api/lora/clear` cache management
+- [x] `POST /api/lora/validate` config validation endpoint
+- [x] Unit tests: 39+ tests covering discovery, cache, validation, injection helpers
 
-### Phase 2: LoRA Application
+### Phase 2: LoRA Application ⚠️ PARTIAL
 
-- [ ] sd.cpp LoRA injection (prompt prefix: `[lora:name:strength]`)
-- [ ] ComfyUI LoraLoader node injection into workflow templates
+- [x] sd.cpp LoRA injection helpers (`buildSdCppLoraPrefix`/`injectSdCppLora`)
+- [x] ComfyUI LoraLoader node injection (`buildComfyUILoraNode`/`injectComfyUILora`)
+- [ ] Wire LoRA into image gen pipeline — TODO-gated hooks in `image-gen-route.ts` (imports/body/injection all commented out)
 - [ ] LoRA strength parameter in template UI (slider 0.1-1.0)
-- [ ] Integration with emotion avatar fallback (Phase 1 already done)
+- [ ] Integration with emotion avatar fallback
 - [ ] Integration with `/image` command (when implemented)
 
 ### Phase 3: LoRA Management UI
@@ -88,23 +92,28 @@ interface ImageGenRequest {
 - [ ] LoRA download/install from CivitAI/HuggingFace
 - [ ] LoRA caching (avoid re-downloading)
 
-## Files (proposed)
+## Files (actual, on dev)
 
 ### New Files
 
-- `src/generation/lora/types.ts` — LoRAConfig interface
-- `src/generation/lora/discovery.ts` — backend-specific discovery
-- `src/generation/lora/injector.ts` — LoRA injection into prompts/workflows
-- `src/generation/lora/routes.ts` — API routes
-- `src/generation/lora/registry.ts` — cached model list
-- `src/generation/lora/lora.test.ts` — unit tests
+| File | Lines | Purpose |
+|------|-------|---------|
+| `src/generation/lora/types.ts` | 94 | Interfaces (`LoRAConfig`, `LoRAModel`, `LoRADiscoveryResult`, `LoRAApplicationContext`) + constants |
+| `src/generation/lora/discovery.ts` | 175 | Unified discovery dispatch + Map-based cache (5min TTL) + `getCachedLoras`/`getCacheStatus`/`clearDiscoveryCache` |
+| `src/generation/lora/discovery-sdserver.ts` | 181 | sd.cpp: `discoverSdCppLoras` (GET /sd-api/v1/models → filter) + `buildSdCppLoraPrefix`/`injectSdCppLora` |
+| `src/generation/lora/discovery-comfyui.ts` | 260 | ComfyUI: `discoverComfyUILoras` (GET /object_info → LoraLoader) + `buildComfyUILoraNode`/`injectComfyUILora` |
+| `src/generation/lora/validation.ts` | 163 | `validateLoRAConfig`, `validateLoRAModel`, `isLoRAFilename`, `extractLoRAName`, `clampStrength`, `isTypicalStrength` |
+| `src/generation/lora/index.ts` | 49 | Public API re-exports from all sub-modules |
+| `src/generation/lora/routes.ts` | 377 | Elysia plugin: discover, list, status, clear, validate — TODO-gated, not wired |
+| `src/generation/lora/discovery.test.ts` | 336 | Mock-fetch tests for both backends, cache, force-refresh |
+| `src/generation/lora/lora.test.ts` | 221 | Validation tests: config, model, strength boundary, edge cases |
 
 ### Modified Files
 
-- `src/generation/providers/comfyui.ts` — LoraLoader node injection
-- `src/generation/providers/registry.ts` — LoRA-aware provider selection
-- `src/generation/image-gen-route.ts` — accept lora param
-- `src/generation/types.ts` — extend ImageGenRequest
+| File | Change |
+|------|--------|
+| `src/generation/image-gen-route.ts` | LoRA hooks added as TODO-gated comments (imports, body field, sdcpp injection, comfyui injection) |
+| `src/elysia-app.ts` | `loraRoutes` import + registration commented out with TODO |
 
 ## Technical Notes
 
@@ -152,11 +161,12 @@ async function discoverSdCppLoras(baseUrl: string): Promise<LoRAModel[]> {
 
 ## Open Questions
 
-1. **LoRA metadata**: Can we extract trigger words from LoRA files? (Some include metadata)
-2. **Multi-LoRA stacking**: How to handle multiple LoRAs? (ComfyUI supports chain, sd.cpp limited)
-3. **LoRA installation**: Should we support downloading LoRAs from CivitAI?
-4. **Character binding**: Auto-apply character LoRA when character is selected?
-5. **Performance**: Should LoRA discovery be cached? How often to refresh?
+1. **LoRA metadata**: Can we extract trigger words from LoRA files? — *Partially: `triggerWords` and `recommendedStrength` fields in `LoRAModel` interface, but discovery doesn't extract them yet from file metadata*
+2. **Multi-LoRA stacking**: How to handle multiple LoRAs? — *Phase 4*
+3. **LoRA installation**: Should we support downloading LoRAs from CivitAI? — *Phase 4*
+4. **Character binding**: Auto-apply character LoRA when character is selected? — *Phase 3*
+5. **Performance**: Should LoRA discovery be cached? — *Yes: Map-based cache, 5min TTL, forceRefresh option*
+6. **URL resolution**: FIXED — was `pickSdProvider()` returning one provider for both; now finds by `apiFamily` from `sd[]` array (`"comfyui"` + `"sdcpp"` separately)
 
 ## Linked Tasks
 
