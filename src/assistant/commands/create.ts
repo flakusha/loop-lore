@@ -11,9 +11,7 @@
  * Results are stored in the appropriate tables (actors, locations, worlds, items).
  */
 
-import { loadConfig, } from "../../config/load";
 import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
-import { getDatabase, } from "../../db/index";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { uid, } from "../../utils";
@@ -81,11 +79,16 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
     };
   }
 
-  const config = loadConfig();
-  const db = getDatabase();
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return {
+      systemMessage: "**Entity creation unavailable:** command context missing database/config.",
+      handled: true,
+    };
+  }
 
   try {
-    const resolved = await resolveProvider({ config, },);
+    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
 
     const genReq: GenerateRequest = {
       model: resolved.resolvedModel,
@@ -137,8 +140,6 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
             personality: entityData.personality ?? null,
             scenario: entityData.scenario ?? null,
             import_spec: "llm-generated",
-            data_source_format: "json",
-            data_raw: null,
           },)
           .execute();
 
@@ -147,9 +148,8 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
 
       case "loc":
       case "location": {
-        // Get current world from chat context or default
-        const chat = ctx.activeChat;
-        const worldId = chat?.type ?? "default";
+        // Resolve world from the active chat (chat.world_id), not the chat type
+        const worldId = ctx.activeChat?.worldId ?? "default";
 
         await db
           .insertInto("locations",)
@@ -184,9 +184,8 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
       }
 
       case "item": {
-        // Items need a world context
-        const chat = ctx.activeChat;
-        const worldId = chat?.type ?? "default";
+        // Items need a world context — resolve from active chat
+        const worldId = ctx.activeChat?.worldId ?? "default";
 
         await db
           .insertInto("items",)
