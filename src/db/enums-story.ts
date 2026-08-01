@@ -197,6 +197,31 @@ export const ItemVisibility = {
 } as const;
 export type ItemVisibility = (typeof ItemVisibility)[keyof typeof ItemVisibility];
 
+/** Publication lifecycle for generated/created entities (worlds, locations, items). */
+export const PublicationStatus = {
+  Draft: "draft",
+  Review: "review",
+  Published: "published",
+  Rejected: "rejected",
+  Archived: "archived",
+} as const;
+export type PublicationStatus = (typeof PublicationStatus)[keyof typeof PublicationStatus];
+
+const publicationStatusDef: StateDef<PublicationStatus> = {
+  values: ["draft", "review", "published", "rejected", "archived",] as const,
+  initial: "draft",
+  transitions: {
+    draft: ["review", "published", "rejected",],
+    review: ["published", "rejected",],
+    published: ["archived", "rejected",],
+    rejected: ["draft",],
+    archived: [],
+  },
+  terminal: ["archived",],
+};
+
+export const publicationStatusMachine = createMachine(publicationStatusDef,);
+
 const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
   values: ["generated", "validated", "approved", "rejected", "archived",] as const,
   initial: "generated",
