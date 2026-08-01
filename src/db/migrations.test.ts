@@ -72,6 +72,23 @@ describe("full migration chain", () => {
     expect(names.size,).toBeGreaterThan(10,);
   });
 
+  test("worlds and locations have publication_status defaulting to draft", async () => {
+    // Ensure the column exists with a 'draft' default (commit gating).
+    const worldCols = db
+      .query("PRAGMA table_info(worlds)",)
+      .all() as { name: string; dflt_value: string | null }[];
+    const worldPub = worldCols.find((c,) => c.name === "publication_status");
+    expect(worldPub,).toBeDefined();
+    expect(worldPub!.dflt_value,).toContain("draft",);
+
+    const locCols = db
+      .query("PRAGMA table_info(locations)",)
+      .all() as { name: string; dflt_value: string | null }[];
+    const locPub = locCols.find((c,) => c.name === "publication_status");
+    expect(locPub,).toBeDefined();
+    expect(locPub!.dflt_value,).toContain("draft",);
+  });
+
   test("all migrations revert in reverse order without error", async () => {
     for (const name of [...MIGRATION_NAMES,].reverse()) {
       if (migrations[name]!.down) {
