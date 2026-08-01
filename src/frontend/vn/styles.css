@@ -356,3 +356,59 @@
   transform: scaleX(var(--progress, 0));
   transition: transform 0.3s ease;
 }
+
+/* -- Attachments Panel ----------------------------------- */
+
+.vn-attachments {
+  margin-top: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem);
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.5));
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.1));
+}
+
+.vn-attachments-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #aaa);
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.vn-attachments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--space-2, 0.5rem);
+}
+
+.vn-attachment-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.vn-attachment-item:hover {
+  transform: scale(1.05);
+}
+
+.vn-attachment-thumb {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: var(--radius-sm, 0.25rem);
+  border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.1));
+}
+
+.vn-attachment-caption {
+  font-size: 0.625rem;
+  color: var(--text-tertiary, #888);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80px;
+}
