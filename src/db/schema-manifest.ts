@@ -188,6 +188,7 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     cooldown_seconds: col("integer", { notNull: true, hasDefault: true, },),
     last_activated: col("text",),
+    audience_scope: col("text",),
   },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
@@ -619,6 +620,19 @@ export const SCHEMA = new SchemaManifest()
     pinned_by: col("text", { notNull: true, },),
     pinned_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("chat_setup_templates", {
+    id: col("text", { primaryKey: true, },),
+    slug: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    mode: col("text",),
+    turn_strategy: col("text",),
+    world_id: col("text",),
+    gm_config: col("text",),
+    visual_novel: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("chats", {
     id: col("text", { primaryKey: true, },),
     name: col("text", { notNull: true, },),
@@ -644,6 +658,7 @@ export const SCHEMA = new SchemaManifest()
     streaming: col("integer",),
     nsfw_override: col("text",),
     name_source: col("text",),
+    template_id: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -1181,6 +1196,7 @@ export const SCHEMA = new SchemaManifest()
     name: col("text", { notNull: true, },),
     description: col("text",),
     connections: col("text", { notNull: true, hasDefault: true, },),
+    publication_status: col("text", { notNull: true, hasDefault: true, },),
     parent_location_id: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
@@ -1260,6 +1276,7 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     cooldown_seconds: col("integer", { notNull: true, hasDefault: true, },),
     last_activated: col("text",),
+    audience_scope: col("text",),
   },)
   .table("world_states", {
     id: col("text", { primaryKey: true, },),
@@ -1270,12 +1287,24 @@ export const SCHEMA = new SchemaManifest()
     description: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("world_timeline_events", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    story_id: col("text",),
+    event_type: col("text", { notNull: true, },),
+    actor_id: col("text",),
+    description: col("text", { notNull: true, },),
+    data: col("text",),
+    occurred_at: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("worlds", {
     id: col("text", { primaryKey: true, },),
     owner_id: col("text", { notNull: true, },),
     name: col("text", { notNull: true, },),
     description: col("text",),
     lore: col("text",),
+    publication_status: col("text", { notNull: true, hasDefault: true, },),
     scan_depth: col("integer", { notNull: true, hasDefault: true, },),
     token_budget: col("integer", { notNull: true, hasDefault: true, },),
     difficulty_modifier: col("real", { notNull: true, hasDefault: true, },),
