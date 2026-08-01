@@ -27,8 +27,9 @@ const customRestrictedSyntax = [
     selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
     message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
   },
-  // Array iteration: prefer for-of over .map/.filter/.reduce
+  // Array iteration: prefer for-of over array-allocating methods (.map/.filter/.reduce)
   // Enforces in-place modifications to avoid shadow allocations.
+  // Non-allocating early-return predicates (.find/.findIndex/.some/.every) are allowed.
   // https://eslint.org/docs/latest/rules/no-restricted-syntax
   {
     selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='map']",
@@ -49,22 +50,6 @@ const customRestrictedSyntax = [
   {
     selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flat']",
     message: "Avoid .flat() — use for-of with push() to flatten in-place. Shadow allocation not needed here.",
-  },
-  {
-    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='every']",
-    message: "Avoid .every() — use a for-of loop with early return. Clearer intent.",
-  },
-  {
-    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='some']",
-    message: "Avoid .some() — use a for-of loop with early return. Clearer intent.",
-  },
-  {
-    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='find']",
-    message: "Avoid .find() — use a for-of loop with early return. Clearer intent.",
-  },
-  {
-    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
-    message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
   },
   // Promise.all — prefer Promise.allSettled for partial-failure resilience
   {
