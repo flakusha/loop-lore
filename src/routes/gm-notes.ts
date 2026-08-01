@@ -89,20 +89,21 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
           const pageSize = (ctx.query.pageSize as number) ?? 50;
           const offset = (page - 1) * pageSize;
 
-          const [items, countResult,] = await Promise.all([
-            database
-              .selectFrom("shadow_notes",)
-              .where("chat_id", "=", id,)
-              .orderBy("created_at", "desc",)
-              .limit(pageSize,)
-              .offset(offset,)
-              .execute(),
-            database
-              .selectFrom("shadow_notes",)
-              .select(database.fn.countAll<number>().as("total",),)
-              .where("chat_id", "=", id,)
-              .executeTakeFirst(),
-          ],);
+          // NOTE: queries run sequentially — bun:sqlite is single-connection,
+          // and interleaving two in-flight statements (Promise.all) corrupts
+          // SQL compilation ("near 'from': syntax error").
+          const items = await database
+            .selectFrom("shadow_notes",)
+            .where("chat_id", "=", id,)
+            .orderBy("created_at", "desc",)
+            .limit(pageSize,)
+            .offset(offset,)
+            .execute();
+          const countResult = await database
+            .selectFrom("shadow_notes",)
+            .select(database.fn.countAll<number>().as("total",),)
+            .where("chat_id", "=", id,)
+            .executeTakeFirst();
 
           const total = Number(countResult?.total ?? 0,);
           return jsonResponse({ items, total, page, pageSize, },);
@@ -208,21 +209,20 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
           const pageSize = (ctx.query.pageSize as number) ?? 50;
           const offset = (page - 1) * pageSize;
 
-          const [items, countResult,] = await Promise.all([
-            database
-              .selectFrom("whitenotes",)
-              .where("chat_id", "=", id,)
-              .orderBy("priority", "desc",)
-              .orderBy("created_at", "desc",)
-              .limit(pageSize,)
-              .offset(offset,)
-              .execute(),
-            database
-              .selectFrom("whitenotes",)
-              .select(database.fn.countAll<number>().as("total",),)
-              .where("chat_id", "=", id,)
-              .executeTakeFirst(),
-          ],);
+          // Sequential, not Promise.all — see shadow-notes GET note above.
+          const items = await database
+            .selectFrom("whitenotes",)
+            .where("chat_id", "=", id,)
+            .orderBy("priority", "desc",)
+            .orderBy("created_at", "desc",)
+            .limit(pageSize,)
+            .offset(offset,)
+            .execute();
+          const countResult = await database
+            .selectFrom("whitenotes",)
+            .select(database.fn.countAll<number>().as("total",),)
+            .where("chat_id", "=", id,)
+            .executeTakeFirst();
 
           const total = Number(countResult?.total ?? 0,);
           return jsonResponse({ items, total, page, pageSize, },);
