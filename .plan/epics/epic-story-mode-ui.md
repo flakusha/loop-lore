@@ -1,6 +1,6 @@
 # EPIC: Story Mode UI
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress (2026-08-01 — GM notes panel done; world/NPC/event controls + quest log + turn order pending)
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Epic
