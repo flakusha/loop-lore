@@ -16,7 +16,9 @@ import { createSqliteDialect, setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { MockLLMProvider, } from "../test-utils/mock-provider";
-import { handleGenerate, } from "./generate-route";
+import { gatePluginToolsByRole, handleGenerate, } from "./generate-route";
+import { registry, } from "../plugins/registry";
+import type { ToolDefinition, } from "../plugins/types";
 import { getProvider, registerProvider, } from "./providers/registry";
 
 // ── Test DB factory ───────────────────────────────────────────
@@ -49,7 +51,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       id TEXT PRIMARY KEY, actor_type TEXT NOT NULL DEFAULT 'user', display_name TEXT NOT NULL,
       system_prompt TEXT, personality TEXT, description TEXT, scenario TEXT,
       mes_example TEXT, post_history_instructions TEXT,
-      agent_type TEXT NOT NULL DEFAULT 'none', settings TEXT NOT NULL DEFAULT '{}',
+      agent_type TEXT NOT NULL DEFAULT 'none', agent_role TEXT, settings TEXT NOT NULL DEFAULT '{}',
       format_version INTEGER NOT NULL DEFAULT 0, import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
@@ -260,6 +262,63 @@ describe("handleGenerate — input validation", () => {
     const body = makeRequest({ idempotencyKey: undefined, },);
     const res = await handleGenerate({ body, database: testDb, },);
     expect(res.status,).toBe(400,);
+  });
+});
+
+describe("gatePluginToolsByRole", () => {
+  const toolA: ToolDefinition = {
+    name: "play_card_battle",
+    description: "Card battle",
+    parameters: {},
+    handler: async () => ({ content: "ok" }),
+  };
+  const toolB: ToolDefinition = {
+    name: "play_rps",
+    description: "RPS",
+    parameters: {},
+    handler: async () => ({ content: "ok" }),
+  };
+
+  beforeEach(() => {
+    registry.unregisterAll();
+    registry.register({
+      manifest: { name: "card-battle", version: "1.0.0", description: "", author: "t" },
+      origin: "core",
+      directory: "/tmp/card-battle",
+    });
+    registry.register({
+      manifest: { name: "rps", version: "1.0.0", description: "", author: "t" },
+      origin: "core",
+      directory: "/tmp/rps",
+    });
+    registry.addTools("card-battle", [toolA]);
+    registry.addTools("rps", [toolB]);
+  });
+
+  test("returns all tools when no role assigned", () => {
+    const tools = gatePluginToolsByRole(null,);
+    expect(tools.map((t,) => t.name,),).toEqual(["play_card_battle", "play_rps",]);
+  });
+
+  test("returns all tools when role not registered", () => {
+    const tools = gatePluginToolsByRole("missing-role",);
+    expect(tools.map((t,) => t.name,),).toEqual(["play_card_battle", "play_rps",]);
+  });
+
+  test("gates tools to the role's declared list", () => {
+    registry.addAgentRoles("card-battle", [
+      { id: "card-battler", name: "Card Battler", description: "", systemPrompt: "", tools: ["play_card_battle"], },
+    ]);
+    const tools = gatePluginToolsByRole("card-battler",);
+    expect(tools.map((t,) => t.name,),).toEqual(["play_card_battle",]);
+  });
+
+  test("returns all tools when role declares empty tool list", () => {
+    registry.addAgentRoles("card-battle", [
+      { id: "card-battler", name: "Card Battler", description: "", systemPrompt: "", tools: [], },
+    ]);
+    const tools = gatePluginToolsByRole("card-battler",);
+    expect(tools.map((t,) => t.name,),).toEqual(["play_card_battle", "play_rps",]);
   });
 });
 

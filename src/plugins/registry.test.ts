@@ -94,6 +94,30 @@ describe("Plugin Registry", () => {
     });
   });
 
+  describe("agentRoles", () => {
+    test("getAllAgentRoles and getAgentRole", () => {
+      const role = {
+        id: "card-battler",
+        name: "Card Battler",
+        description: "Card combat NPC",
+        systemPrompt: "You are a card battler.",
+        tools: ["play_card_battle"],
+      };
+      registry.register(makePlugin("p1"));
+      registry.addAgentRoles("p1", [role]);
+
+      expect(registry.getAllAgentRoles()).toEqual([role]);
+      expect(registry.getAgentRole("card-battler")).toEqual(role);
+    });
+
+    test("getAgentRole returns undefined for unknown id", () => {
+      registry.register(makePlugin("p1"));
+      registry.addAgentRoles("p1", [{ id: "x", name: "X", description: "", systemPrompt: "", tools: [] }]);
+
+      expect(registry.getAgentRole("missing")).toBeUndefined();
+    });
+  });
+
   describe("lifecycle", () => {
     test("unregisterAll clears everything", () => {
       registry.register(makePlugin("p1"));
