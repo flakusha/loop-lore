@@ -3,9 +3,10 @@
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low
-**Epic:** Epic 51 (Response Controls)
-**Tags:** chat, regen, ux
-**Git Issue:** FEAT-070
+**Epic:** Epic 51 (Output Control & Transforms)
+**Tags:** chat, regen, ux, llm
+**Source:** FEAT-070 (git issue)
+**Related:** FEAT-message-swipe-replay-branch, docs/spec/messages.md
 
 ## Summary
 

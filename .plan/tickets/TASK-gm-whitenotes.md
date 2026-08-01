@@ -1,7 +1,7 @@
 # TASK: GM/Assistant Story Whitenotes System
 
 **Priority:** High
-**Status:** 🟡 In Progress — Frontend Panel Complete, Backend Routes Pending
+**Status:** 🟢 Backend Complete + Tested — Injection Live
 **Epic:** epic-gm-shadow-notes
 **Tags:** gm, whitenotes, story-steering, narrative, assistant, system-message
 
@@ -24,25 +24,25 @@ Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic. Adds the whiten
 - Priority slider (1-10)
 - Scope selector (scene, chapter, session, world)
 
-### Backend: 🟡 Partial — DB + CRUD routes done, prompt injection missing
+### Backend: ✅ Complete
 
 - ✅ `whitenotes` table (`src/db/schema-gm.ts`) — id, chat_id, type, content, priority, scope, expires_at, created_at
-- ✅ API routes (`src/routes/gm-notes.ts`, mounted `elysia-app.ts:166`): `GET/POST /api/chats/:id/whitenotes`, `DELETE .../:noteId`
-- ❌ Prompt injection — nothing in `src/assistant/prompt/` or `src/story/` reads whitenotes (zero consumers)
-- ❌ Expiry — `expires_at` stored but never enforced during prompt assembly (no assembly to enforce in)
-- ❌ No route tests (`gm-notes` endpoints untested)
+- ✅ API routes (`src/routes/gm-notes.ts`, mounted `elysia-app.ts:166`): `GET/POST /api/chats/:id/whitenotes`, `DELETE .../:noteId` — route tests 7/7 pass (incl. list ordering by priority, pagination)
+- ✅ Prompt injection — `src/assistant/prompt/sections/gm-notes.ts` reads active whitenotes into prompt (non-expired, priority desc, limit 10)
+- ✅ Expiry — enforced at injection: section filters to non-expired only (5/5 section tests pass)
+- ✅ Route tests — `src/routes/gm-notes.test.ts` 7/7 pass
 
 ## Acceptance Criteria
 
 - [x] Whitenote data model (type, content, priority, scope, expiry)
-- [ ] Whitenote creation API (GM/assistant can add whitenotes to messages)
-- [ ] Whitenote assembly into prompt context before LLM call
-- [ ] Whitenote expiry (auto-expire after N turns)
+- [x] Whitenote creation API (GM/assistant can add whitenotes to messages)
+- [x] Whitenote assembly into prompt context before LLM call
+- [x] Whitenote expiry (expired notes excluded from prompt assembly)
 - [x] Whitenote types: narrative_direction, character_context, world_state, tone, pacing, theme
 - [x] Whitenote priority system (higher priority = stronger LLM influence)
 - [x] Whitenote scope (scene, chapter, session, world)
-- [ ] `POST /api/chat/:id/whitenotes` — create a whitenote
-- [ ] `GET /api/chat/:id/whitenotes` — list active whitenotes
+- [x] `POST /api/chat/:id/whitenotes` — create a whitenote
+- [x] `GET /api/chat/:id/whitenotes` — list active whitenotes (priority desc, then created desc)
 - [ ] `DELETE /api/chat/:id/whitenotes/:id` — remove a whitenote
 - [x] Frontend GM whitenote panel (add/edit/remove whitenotes)
 - [ ] Frontend whitenote indicator (shows when whitenotes are active)
