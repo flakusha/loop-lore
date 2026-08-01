@@ -108,6 +108,7 @@ export interface Chats {
   story_state: string | null;
   gm_config: string | null;
   visual_novel: Generated<number>;
+  streaming: number | null;
   turn_strategy: TurnStrategy | null;
   max_turns: number | null;
   auto_advance: number | null;
@@ -146,6 +147,7 @@ export interface Actors {
   creator: string | null;
   character_version: string | null;
   import_spec: string;
+  agent_role: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -203,6 +205,7 @@ export interface Characters {
   description: string | null;
   system_prompt: string | null;
   agent_type: AgentType;
+  agent_role: string | null;
   settings: string;
   created_at: Generated<string>;
   updated_at: Generated<string>;
