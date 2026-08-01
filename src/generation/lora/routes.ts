@@ -50,6 +50,34 @@ const ValidateBody = t.Object({
   backend: t.UnionEnum(["comfyui", "sd-server",],),
 },);
 
+// ── URL Resolution ───────────────────────────────────────
+
+/**
+ * Resolve backend base URLs from config by apiFamily.
+ *
+ * A single `sd[]` provider array can hold multiple image backends (ComfyUI,
+ * sd.cpp/SD WebUI). `pickSdProvider()` selects a single provider by purpose,
+ * so it cannot resolve per-backend URLs. Here each backend is looked up by its
+ * `apiFamily` field and falls back to a sensible localhost default.
+ *
+ * @param config - App config (may be undefined)
+ * @returns Resolved backend URLs
+ *
+ * @example
+ * ```ts
+ * const { comfyUrl, sdServerUrl } = resolveBackendUrls(config);
+ * ```
+ */
+export function resolveBackendUrls(config?: Config,): { comfyUrl: string; sdServerUrl: string } {
+  const sdProviders = config?.generation?.providers?.sd ?? [];
+  const comfyProvider = sdProviders.find((p,) => p.apiFamily === "comfyui");
+  const sdServerProvider = sdProviders.find((p,) => p.apiFamily === "sdcpp");
+  return {
+    comfyUrl: comfyProvider?.baseUrl ?? "http://localhost:8188",
+    sdServerUrl: sdServerProvider?.baseUrl ?? "http://localhost:9010",
+  };
+}
+
 // ── Elysia Plugin ────────────────────────────────────────
 
 /**
@@ -60,7 +88,6 @@ const ValidateBody = t.Object({
  */
 export function loraRoutes({ config, }: { config: Config },) {
   return new Elysia({ name: "lora", },)
-
     // POST /api/lora/discover
     .post("/api/lora/discover", async (ctx,) => {
       const { userId, } = extractAuth(ctx,);
@@ -77,11 +104,7 @@ export function loraRoutes({ config, }: { config: Config },) {
       const input = ctx.body;
 
       // Resolve backend URLs from config — find by apiFamily, not by purpose
-      const sdProviders = config?.generation?.providers?.sd ?? [];
-      const comfyProvider = sdProviders.find((p,) => p.apiFamily === "comfyui",);
-      const sdServerProvider = sdProviders.find((p,) => p.apiFamily === "sdcpp",);
-      const comfyUrl = comfyProvider?.baseUrl ?? "http://localhost:8188";
-      const sdServerUrl = sdServerProvider?.baseUrl ?? "http://localhost:9010";
+      const { comfyUrl, sdServerUrl, } = resolveBackendUrls(config,);
 
       if (input.backend) {
         // Discover from single backend
@@ -133,7 +156,6 @@ export function loraRoutes({ config, }: { config: Config },) {
         tags: ["LoRA",],
       },
     },)
-
     // GET /api/lora/list
     .get("/api/lora/list", (ctx,) => {
       const { userId, } = extractAuth(ctx,);
@@ -181,7 +203,6 @@ export function loraRoutes({ config, }: { config: Config },) {
         tags: ["LoRA",],
       },
     },)
-
     // GET /api/lora/status
     .get("/api/lora/status", (ctx,) => {
       const { userId, } = extractAuth(ctx,);
@@ -206,7 +227,6 @@ export function loraRoutes({ config, }: { config: Config },) {
         tags: ["LoRA",],
       },
     },)
-
     // POST /api/lora/clear
     .post("/api/lora/clear", (ctx,) => {
       const { userId, } = extractAuth(ctx,);
@@ -239,7 +259,6 @@ export function loraRoutes({ config, }: { config: Config },) {
         tags: ["LoRA",],
       },
     },)
-
     // POST /api/lora/validate
     .post("/api/lora/validate", (ctx,) => {
       const { userId, } = extractAuth(ctx,);
