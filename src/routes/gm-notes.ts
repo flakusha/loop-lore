@@ -89,11 +89,14 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
           const pageSize = (ctx.query.pageSize as number) ?? 50;
           const offset = (page - 1) * pageSize;
 
-          // NOTE: queries run sequentially — bun:sqlite is single-connection,
-          // and interleaving two in-flight statements (Promise.all) corrupts
-          // SQL compilation ("near 'from': syntax error").
+          // NOTE: selectAll() is REQUIRED — Kysely 0.29 emits an empty
+          // select list (`select from ...`) when `.select()` is omitted,
+          // which SQLite rejects with "near 'from': syntax error".
+          // Queries also run sequentially (not Promise.all) — bun:sqlite
+          // is single-connection and interleaving is safer to avoid.
           const items = await database
             .selectFrom("shadow_notes",)
+            .selectAll()
             .where("chat_id", "=", id,)
             .orderBy("created_at", "desc",)
             .limit(pageSize,)
@@ -209,9 +212,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
           const pageSize = (ctx.query.pageSize as number) ?? 50;
           const offset = (page - 1) * pageSize;
 
-          // Sequential, not Promise.all — see shadow-notes GET note above.
+          // selectAll() required — see shadow-notes GET note above.
           const items = await database
             .selectFrom("whitenotes",)
+            .selectAll()
             .where("chat_id", "=", id,)
             .orderBy("priority", "desc",)
             .orderBy("created_at", "desc",)
