@@ -1,6 +1,6 @@
 # EPIC: GM/Assistant Story Whitenotes & Shadow Notes
 
-**Status:** 📝 Draft
+**Status:** 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -9,6 +9,17 @@
 ## Summary
 
 Add GM/Assistant story whitenotes and shadow notes for system/user message LLM story steering. Whitenotes are visible context cues that guide the LLM's narrative direction. Shadow notes are hidden metadata that influence story generation without being exposed to players.
+
+## Current State (2026-08-01)
+
+- ✅ DB tables: `whitenotes` (id, chat_id, type, content, priority, scope, expires_at, created_at) + `shadow_notes` (id, chat_id, type, content, revealed, created_at) — `src/db/schema-gm.ts`
+- ✅ CRUD routes: `GET/POST /api/chats/:id/{whitenotes,shadow-notes}`, `DELETE .../:noteId`, `POST .../shadow-notes/:noteId/reveal` — `src/routes/gm-notes.ts` (mounted `elysia-app.ts:166`)
+- ✅ Frontend GM panel (whitenotes + shadow notes tabs, full CRUD) — `src/components/chat/gm-panel.html` + `src/frontend/alpine/gm-panel.ts`
+- ❌ **Prompt injection** — zero consumers: nothing reads whitenotes/shadow_notes into prompt assembly (`src/assistant/prompt/`, `src/story/`) → notes have no narrative effect yet
+- ❌ Shadow note trigger conditions / visibility columns absent (table has `revealed` only)
+- ❌ Reveal does not emit player-visible chat message
+- ❌ No route tests for gm-notes
+- ❌ Epic design says `message_id`-attached whitenotes; implementation is chat-scoped (no message_id column)
 
 ## Design
 
