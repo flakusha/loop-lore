@@ -324,9 +324,9 @@ export const UsersSchema = t.Object({
   settings: t.Optional(t.String(),),
   birth_date: t.Optional(t.String(),),
   age_gate_accepted_at: t.Optional(t.String(),),
+  format_version: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   last_seen_at: t.Optional(t.String(),),
-  format_version: t.Optional(t.Number(),),
 },);
 
 // ── sessions ────────────────────────────────────────────
@@ -357,6 +357,7 @@ export const AssetsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   encryption_tier: t.Optional(t.String(),),
   encrypted_key_id: t.Optional(t.String(),),
+  content_hash: t.Optional(t.String(),),
 },);
 
 // ── asset_links ────────────────────────────────────────────
@@ -485,14 +486,14 @@ export const ChatsSchema = t.Object({
   turn_strategy: t.Optional(TurnStrategySchema,),
   max_turns: t.Optional(t.Number(),),
   auto_advance: t.Optional(t.Number(),),
+  parent_chat_id: t.Optional(t.String(),),
+  is_pinned: t.Optional(t.String(),),
   encryption_level: t.Optional(t.String(),),
   response_length_preset: t.Optional(t.String(),),
   response_length_custom: t.Optional(t.Number(),),
   context_max_tokens: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  is_pinned: t.Optional(t.String(),),
-  parent_chat_id: t.Optional(t.String(),),
   visual_novel: t.Optional(t.Number(),),
   streaming: t.Optional(t.Number(),),
   nsfw_override: t.Optional(t.String(),),
@@ -528,6 +529,7 @@ export const ActorsSchema = t.Object({
   template_overrides: t.Optional(t.String(),),
   data_source_format: t.Optional(t.String(),),
   data_raw: t.Optional(t.String(),),
+  agent_role: t.Optional(t.String(),),
 },);
 
 // ── chat_participants ────────────────────────────────────────────
@@ -554,6 +556,7 @@ export const CharactersSchema = t.Object({
   settings: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  agent_role: t.Optional(t.String(),),
 },);
 
 // ── world_items ────────────────────────────────────────────

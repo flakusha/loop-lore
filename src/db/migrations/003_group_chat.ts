@@ -31,18 +31,6 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("initiative", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
-  // ── chats: side-chat support ───────────────────────────────
-  await database.schema
-    .alterTable("chats",)
-    .addColumn("parent_chat_id", "text", (col,) => col.references("chats.id",).onUpdate("cascade",),)
-    .execute();
-
-  await database.schema
-    .createIndex("idx_chats_parent",)
-    .on("chats",)
-    .column("parent_chat_id",)
-    .execute();
-
   // ── group_initiatives: scene-level initiative state ─────────
   await database.schema
     .createTable("group_initiatives",)
@@ -90,9 +78,6 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema.dropIndex("idx_group_initiatives_chat",).execute();
   await database.schema.dropTable("group_initiatives",).execute();
-
-  await database.schema.dropIndex("idx_chats_parent",).execute();
-  await database.schema.alterTable("chats",).dropColumn("parent_chat_id",).execute();
 
   await database.schema.alterTable("chat_participants",).dropColumn("initiative",).execute();
   await database.schema.alterTable("chat_participants",).dropColumn("talkativity",).execute();
