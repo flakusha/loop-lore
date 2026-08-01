@@ -18,8 +18,18 @@ import type {
   StackableState,
   TurnStatus,
   TurnType,
+  PublicationStatus,
 } from "./enums";
 
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
 /**
  * DB Schema — Story Domain Tables
  *
@@ -30,6 +40,7 @@ export interface Worlds {
   name: string;
   description: string | null;
   lore: string | null;
+  publication_status: Generated<PublicationStatus>;
   scan_depth: Generated<number>;
   token_budget: Generated<number>;
   difficulty_modifier: Generated<number>;
@@ -47,6 +58,7 @@ export interface Locations {
   name: string;
   description: string | null;
   connections: Generated<string>;
+  publication_status: Generated<PublicationStatus>;
   parent_location_id: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
@@ -228,6 +240,7 @@ export interface ActorLoreEntries {
   updated_at: Generated<string>;
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
+  audience_scope: string | null;
 }
 export interface WorldLoreEntries {
   id: Generated<string>;
@@ -249,4 +262,5 @@ export interface WorldLoreEntries {
   updated_at: Generated<string>;
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
+  audience_scope: string | null;
 }
