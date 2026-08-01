@@ -90,6 +90,11 @@ class PluginRegistry {
     return [...this.agentRoles.values()].flat();
   }
 
+  /** Look up a single agent role by its id across all plugins. */
+  getAgentRole(id: string): AgentRoleDefinition | undefined {
+    return this.getAllAgentRoles().find((r,) => r.id === id,);
+  }
+
   getAllUIComponents(): UIComponentDefinition[] {
     return [...this.uiComponents.values()].flat();
   }

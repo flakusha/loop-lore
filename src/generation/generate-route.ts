@@ -43,6 +43,27 @@ import type { GenerationMessage, GenerationOptions, GenerationResult, } from "./
 
 // ── Helpers ─────────────────────────────────────────────────
 
+/**
+ * Gate plugin tools by the actor's assigned agent role.
+ *
+ * When `agentRole` is set and a matching plugin role is registered, only the
+ * tools the role declares are exposed to the model. When no role is assigned
+ * (or the role declares no tools), all registered plugin tools are exposed.
+ *
+ * @param agentRole - The actor's assigned plugin agent role id (or null)
+ * @returns The filtered list of plugin tool definitions
+ */
+export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition[] {
+  const pluginTools = registry.getAllTools();
+  if (!agentRole) { return pluginTools; }
+
+  const role = registry.getAgentRole(agentRole,);
+  if (!role?.tools?.length) { return pluginTools; }
+
+  const allowed = new Set(role.tools,);
+  return pluginTools.filter((t,) => allowed.has(t.name,),);
+}
+
 function sseData(obj: unknown,): string {
   const r = safeJsonStringify(obj,);
   return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
@@ -411,7 +432,21 @@ export async function handleGenerate({
 
   // ── Build provider request ────────────────────────────
 
-  const pluginTools = registry.getAllTools();
+  // If the generating actor has a plugin agent role assigned, gate the
+  // exposed plugin tools to only those the role declares. Otherwise expose
+  // all registered plugin tools.
+  let roleRow: { agent_role: string | null } | undefined;
+  try {
+    roleRow = await database
+      .selectFrom("actors",)
+      .select(["agent_role",],)
+      .where("id", "=", input.actorId,)
+      .executeTakeFirst();
+  } catch {
+    // Role lookup is best-effort — default to exposing all plugin tools.
+  }
+  const pluginTools = gatePluginToolsByRole(roleRow?.agent_role ?? null,);
+
   const tools = pluginTools.length > 0
     ? pluginTools.map((t: ToolDefinition,) => ({
       type: "function" as const,
@@ -522,12 +557,13 @@ export async function handleGenerate({
       }
       // Background: extract memories from the generated response
       void extractAndStoreMemories(database, {
-        db: database,
         actorId: input.actorId,
         chatId: input.chatId,
         messageId,
         aiContent: result.content,
-      }, resolved.provider,);
+        config: cfg,
+        userId,
+      },);
 
       return jsonResponse({
         ok: true,
@@ -673,12 +709,13 @@ export async function handleGenerate({
         }
         // Background: extract memories from the generated response
         void extractAndStoreMemories(database, {
-          db: database,
           actorId: input.actorId,
           chatId: input.chatId,
           messageId,
           aiContent: result.content,
-        }, resolved.provider,);
+          config: cfg,
+          userId,
+        },);
 
         // Append final content to buffer for SSE reconnect replay
         buffer.append("stream-update", accumulatedContent,);
