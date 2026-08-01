@@ -5,6 +5,7 @@
  * Each memory has content, type, confidence, importance, and optional metadata.
  */
 
+import type { Config, } from "../config/schema";
 import type { MemoryType, } from "../db/enums-story";
 
 /** Memory scope determines ownership and injection target. */
@@ -75,7 +76,6 @@ export interface ExtractedMemory {
 
 /** Options for memory extraction after a generation. */
 export interface ExtractionOpts {
-  db: import("kysely").Kysely<import("../db/schema").DB>;
   actorId: string;
   chatId: string;
   messageId: string;
@@ -83,8 +83,10 @@ export interface ExtractionOpts {
   aiContent: string;
   /** The user message that triggered the generation. */
   userContent?: string;
-  /** Model to use for extraction (optional, uses default). */
-  modelId?: string;
+  /** App config — used to resolve the auxiliary model role for extraction. */
+  config: Config;
+  /** User ID for BYO apiKey resolution on the auxiliary call. */
+  userId?: string;
 }
 
 /** Token budget configuration for memories in a prompt. */
