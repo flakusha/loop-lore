@@ -5,6 +5,10 @@ set -euo pipefail
 # Usage: ./scripts/worktree.sh <command> [args]
 
 REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+# Fallback: if REPO_ROOT doesn't contain .git, use git to find the real root
+if [[ ! -d "$REPO_ROOT/.git" ]]; then
+  REPO_ROOT="$(git -C "$REPO_ROOT" rev-parse --show-toplevel 2>/dev/null || echo "$REPO_ROOT")"
+fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TREE_DIR="${TREE_DIR:-$REPO_ROOT/tree}"
 
@@ -27,6 +31,17 @@ if [[ -n "$MAIN_REPO_ROOT" && -f "$MAIN_REPO_ROOT/.credentials.env" ]]; then
   # shellcheck source=/dev/null
   source "$MAIN_REPO_ROOT/.credentials.env"
 fi
+
+# Detect default branch: current branch of main repo, fallback to master
+get_default_branch() {
+  local branch
+  branch="$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")"
+  if [[ -n "$branch" ]]; then
+    echo "$branch"
+  else
+    echo "master"
+  fi
+}
 
 # Colors
 RED='\033[0;31m'
@@ -55,14 +70,14 @@ Usage: $(basename "$0") <command> [args]
 
 Commands:
   create <branch>           Create worktree for existing branch
-  new <branch> [base]       Create new branch + worktree (base defaults to master)
+  new <branch> [base]       Create new branch + worktree (base defaults to current branch)
   sign <branch>             Configure GPG signing for existing worktree
   merge <branch> <source>   Merge source branch into worktree's branch
-  rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
-  finalize <branch> [opts]  Validate worktree ready, run checks, merge to master, remove
+  rebase <branch> [onto]    Rebase worktree's branch onto target (default: current branch)
+  finalize <branch> [opts]  Validate worktree ready, run checks, merge to current branch, remove
                              --merge-strategy rebase|squash|direct (default: rebase)
                              --force / -f (skip checks, allow direct merge)
-  agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
+  agent-merge <branch>      Alias for finalize — merge worktree into current branch and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
   list                      Show all worktrees with status
@@ -355,7 +370,7 @@ cmd_create() {
 
 cmd_new() {
   local branch="$1"
-  local base="${2:-master}"
+  local base="${2:-$(get_default_branch)}"
 
   if [[ -z "$branch" ]]; then
     echo -e "${RED}Error: branch name required${NC}"
@@ -982,12 +997,12 @@ cmd_merge() {
 
 cmd_rebase() {
   local branch="$1"
-  local onto="${2:-master}"
+  local onto="${2:-$(get_default_branch)}"
 
   if [[ -z "$branch" ]]; then
     echo -e "${RED}Error: branch name required${NC}"
     echo "Usage: $(basename "$0") rebase <branch> [onto]"
-    echo "  Rebases <branch>'s worktree onto <onto> (default: master)"
+    echo "  Rebases <branch>'s worktree onto <onto> (default: current branch)"
     exit 1
   fi
 
@@ -1055,7 +1070,7 @@ cmd_finalize() {
   if [[ -z "$branch" ]]; then
     echo -e "${RED}Error: branch name required${NC}"
     echo "Usage: $(basename "$0") finalize <branch> [--merge-strategy rebase|squash|direct]"
-    echo "  Validates worktree is clean, runs checks, merges to master, removes worktree"
+    echo "  Validates worktree is clean, runs checks, merges to current branch, removes worktree"
     exit 1
   fi
 
@@ -1129,7 +1144,8 @@ cmd_finalize() {
   echo ""
 
   # Step 4: Check branch has commits beyond base
-  local base="master"
+  local base
+  base="$(get_default_branch)"
   local ahead
   ahead=$(git -C "$worktree_path" rev-list --count "$base..HEAD" 2>/dev/null || echo "0")
   if [[ "$ahead" -eq 0 ]]; then
@@ -1189,8 +1205,8 @@ cmd_finalize() {
       echo -e "${YELLOW}╔════════════════════════════════════════════════════════════╗${NC}"
       echo -e "${YELLOW}║  ⚠ WARNING: Direct merge strategy                        ║${NC}"
       echo -e "${YELLOW}║                                                          ║${NC}"
-      echo -e "${YELLOW}║  Conflicts will be resolved on master ($target_branch).    ║${NC}"
-      echo -e "${YELLOW}║  This can leave master in a broken state.                ║${NC}"
+      echo -e "${YELLOW}║  Conflicts will be resolved on $target_branch.              ║${NC}"
+      echo -e "${YELLOW}║  This can leave $target_branch in a broken state.              ║${NC}"
       echo -e "${YELLOW}║                                                          ║${NC}"
       echo -e "${YELLOW}║  Consider: $(basename "$0") finalize $branch --merge-strategy rebase${NC}"
       echo -e "${YELLOW}╚════════════════════════════════════════════════════════════╝${NC}"
@@ -1240,7 +1256,7 @@ cmd_finalize() {
   echo -e "${GREEN}  ✓ Branch deleted${NC}"
   echo ""
 
-  echo -e "${GREEN}═══ Finalized '$branch' — merged to master ═══${NC}"
+  echo -e "${GREEN}═══ Finalized '$branch' — merged to $target_branch ═══${NC}"
 }
 
 cmd_agent_merge() {
