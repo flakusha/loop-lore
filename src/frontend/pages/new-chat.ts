@@ -26,6 +26,46 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     /* ignore */
   }
 
+  // ── Chat setup templates: load + pre-fill key mechanics ─────
+  let templates: Array<{
+    id: string;
+    slug: string;
+    name: string;
+    description: string | null;
+    mode: string | null;
+    turnStrategy: string | null;
+    worldId: string | null;
+    gmConfig: Record<string, unknown> | null;
+    visualNovel: boolean;
+  }> = [];
+
+  try {
+    const res = await feFetch("/api/chat-setup-templates",);
+    if (res.ok) {
+      templates = (await res.json()) as typeof templates;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  const templateSelect = $<HTMLSelectElement>("#chat-template",);
+  if (templateSelect && templates.length > 0) {
+    for (const t of templates) {
+      const opt = document.createElement("option",);
+      opt.value = t.id;
+      opt.textContent = t.name;
+      if (t.description) { opt.title = t.description; }
+      templateSelect.append(opt,);
+    }
+    templateSelect.addEventListener("change", function() {
+      const t = templates.find((x,) => x.id === this.value);
+      const modeSelect = $<HTMLSelectElement>("#chat-mode",);
+      if (modeSelect && t?.mode) {
+        modeSelect.value = t.mode;
+      }
+    },);
+  }
+
   try {
     const res = await feFetch("/api/personas",);
     const personas = await res.json();
@@ -282,6 +322,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       const memoryCarryIds = memoryCarryMode === "selective"
         ? Array.from(selectedMemoryIds,)
         : undefined;
+      const templateId = $<HTMLSelectElement>("#chat-template",)?.value || undefined;
       const res = await feFetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
@@ -294,6 +335,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           impersonateActorId: impersonateId,
           memoryCarry: memoryCarryMode,
           memoryCarryIds,
+          templateId,
         },),
       },);
       if (res.ok) {

@@ -25,7 +25,7 @@
           data-testid="settings-chat-name"
         />
       </div>
-      <div class="form-group">
+      <div class="form-group" x-show="!_chatOnline">
         <label class="form-label" for="settings-chat-mode">Mode</label>
         <select
           class="form-input"
@@ -33,11 +33,12 @@
           x-model="_chatSettingsMode"
           data-testid="settings-chat-mode"
         >
-          <option value="chat">Chat</option>
-          <option value="roleplay">Roleplay</option>
+          <option value="direct">Direct</option>
+          <option value="group">Group</option>
+          <option value="story">Story (roleplay)</option>
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group" x-show="!_chatOnline">
         <label class="form-label" for="settings-turn-strategy">Turn Strategy</label>
         <select
           class="form-input"
@@ -51,6 +52,10 @@
           <option value="quest_driven">Quest Driven</option>
           <option value="hybrid">Hybrid</option>
         </select>
+      </div>
+      <div class="form-group" x-show="_chatOnline" style="color: var(--text-secondary); font-size: 13px">
+        <span>Key mechanics (mode, turn strategy, GM config) are locked once a chat is online.
+          To change them, migrate to a new chat.</span>
       </div>
       <div class="form-group" x-show="currentChat?.type === 'group'">
         <label style="display: flex; align-items: center; gap: var(--space-2)">
@@ -80,7 +85,7 @@
           <span x-text="currentCharacter?.display_name || currentCharacter?.name || 'character'"></span>
         </label>
       </div>
-      <div class="form-group" x-show="currentChat?.mode === 'story'">
+      <div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
         <label class="form-label" for="settings-assistant-role">Assistant Role</label>
         <select
           class="form-input"
