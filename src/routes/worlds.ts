@@ -18,7 +18,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
-import { DifficultyReroll, DifficultyState, } from "../db/enums-story";
+import { DifficultyReroll, DifficultyState, PublicationStatus, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, uid, } from "../utils";
@@ -93,6 +93,7 @@ async function handleCreateWorld(database: Kysely<DB>, body: Record<string, unkn
       name,
       description: (body.description as string | undefined) ?? null,
       lore: (body.lore as string | undefined) ?? null,
+      publication_status: PublicationStatus.Draft,
       scan_depth: 100,
       token_budget: 2000,
       difficulty_modifier: 1,
@@ -295,6 +296,7 @@ async function handleCreateLocation(
       world_id: worldId,
       name,
       description: (body.description as string | undefined) ?? null,
+      publication_status: PublicationStatus.Draft,
       parent_location_id: (body.parentLocationId as string | undefined) ?? null,
       connections: body.connections
         ? (() => {

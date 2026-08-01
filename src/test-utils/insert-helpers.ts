@@ -57,6 +57,7 @@ import type {
   PinnedState,
   ProfessionBonusType,
   ProfessionTitle,
+  PublicationStatus,
   QualityLevel,
   QuestProgressStatus,
   QuestStatus,
@@ -264,6 +265,7 @@ export async function insertWorlds(
     id?: Generated<string>;
     description?: string | null;
     lore?: string | null;
+    publication_status?: Generated<PublicationStatus>;
     scan_depth?: Generated<number>;
     token_budget?: Generated<number>;
     difficulty_modifier?: Generated<number>;
@@ -291,6 +293,7 @@ export async function insertLocations(
     id?: Generated<string>;
     description?: string | null;
     connections?: Generated<string>;
+    publication_status?: Generated<PublicationStatus>;
     parent_location_id?: string | null;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
@@ -355,6 +358,7 @@ export async function insertWorldLoreEntries(
     updated_at?: Generated<string>;
     cooldown_seconds?: Generated<number>;
     last_activated?: string | null;
+    audience_scope?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("world_lore_entries",).values({
@@ -393,6 +397,7 @@ export async function insertChats(
     streaming?: number | null;
     nsfw_override?: string | null;
     name_source?: string | null;
+    template_id?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({
@@ -629,6 +634,7 @@ export async function insertActorLoreEntries(
     updated_at?: Generated<string>;
     cooldown_seconds?: Generated<number>;
     last_activated?: string | null;
+    audience_scope?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("actor_lore_entries",).values({
@@ -2519,6 +2525,56 @@ export async function insertLootEntries(
     loot_table_id,
     item_name,
     item_type,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a chat_setup_templates row. */
+export async function insertChatSetupTemplates(
+  db: Db,
+  slug: string,
+  name: string,
+  opts?: {
+    id?: Generated<string>;
+    description?: string | null;
+    mode?: string | null;
+    turn_strategy?: string | null;
+    world_id?: string | null;
+    gm_config?: string | null;
+    visual_novel?: Generated<number>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("chat_setup_templates",).values({
+    id: crypto.randomUUID(),
+    slug,
+    name,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a world_timeline_events row. */
+export async function insertWorldTimelineEvents(
+  db: Db,
+  world_id: string,
+  event_type: string,
+  description: string,
+  occurred_at: string,
+  opts?: {
+    id?: Generated<string>;
+    story_id?: string | null;
+    actor_id?: string | null;
+    data?: string | null;
+    created_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("world_timeline_events",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    event_type,
+    description,
+    occurred_at,
     ...opts,
   } as any,).execute();
 }
