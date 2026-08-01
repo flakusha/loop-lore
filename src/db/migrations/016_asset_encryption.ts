@@ -18,9 +18,16 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .alterTable("assets",)
     .addColumn("encrypted_key_id", "text",)
     .execute();
+
+  // Add content hash column for idempotent upload detection (SHA-256 of raw buffer)
+  await db.schema
+    .alterTable("assets",)
+    .addColumn("content_hash", "text",)
+    .execute();
 }
 
 export async function down(db: Kysely<unknown>,): Promise<void> {
+  await db.schema.alterTable("assets",).dropColumn("content_hash",).execute();
   await db.schema.alterTable("assets",).dropColumn("encrypted_key_id",).execute();
   await db.schema.alterTable("assets",).dropColumn("encryption_tier",).execute();
 }
