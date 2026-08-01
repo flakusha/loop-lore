@@ -13,13 +13,6 @@ import { sql, } from "kysely";
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
-    .alterTable("chats",)
-    .addColumn("is_pinned", "text", (col,) => col.notNull().defaultTo("unpinned",),)
-    .execute();
-
-  await database.schema.createIndex("idx_chats_pinned",).on("chats",).column("is_pinned",).execute();
-
-  await database.schema
     .createTable("personas",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("user_id", "text", (col,) => col.notNull().references("users.id",),)

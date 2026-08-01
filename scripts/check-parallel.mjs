@@ -33,6 +33,9 @@ const checks = {
   "format - dprint": "bun run format:dprint",
   "md - lint": "bun run md:lint",
 
+  // DB schema staleness (regenerates into temp dir, diffs vs committed)
+  "db - schema gate": "bun run scripts/check-db-schemas.ts",
+
   // Size check
   "size - check": "bun run scripts/check-file-size.ts",
   "size - strict": "bun run scripts/check-file-size.ts --strict",

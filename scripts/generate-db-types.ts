@@ -14,9 +14,17 @@ import { join, resolve, } from "node:path";
 import { COLUMN_TYPE_OVERRIDES, } from "../src/db/column-types";
 
 const MIGRATIONS_DIR = resolve(import.meta.dir, "../src/db/migrations",);
-const DB_DIR = resolve(import.meta.dir, "../src/db",);
-const TEST_UTILS_DIR = resolve(import.meta.dir, "../src/test-utils",);
-const VALIDATION_DIR = resolve(import.meta.dir, "../src/validation",);
+// Output override for check-db-schemas.ts: generates into a temp dir instead of src/.
+const DB_OUTPUT_DIR = process.env.DB_GEN_OUTPUT_DIR ?? null;
+// Enum sources always come from src/db (input); only generated artifacts redirect.
+const ENUM_DIR = resolve(import.meta.dir, "../src/db",);
+const DB_DIR = DB_OUTPUT_DIR ? resolve(DB_OUTPUT_DIR,) : ENUM_DIR;
+const TEST_UTILS_DIR = DB_OUTPUT_DIR
+  ? resolve(DB_OUTPUT_DIR, "test-utils",)
+  : resolve(import.meta.dir, "../src/test-utils",);
+const VALIDATION_DIR = DB_OUTPUT_DIR
+  ? resolve(DB_OUTPUT_DIR, "validation",)
+  : resolve(import.meta.dir, "../src/validation",);
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -395,7 +403,10 @@ function generateDomainFiles(tables: Map<string, Record<string, ColumnDef>>,): v
 
     if (enumImports.size > 0) {
       const sorted = [...enumImports,].sort();
-      lines.push(`import type { ${sorted.join(", ",)}, } from "./enums";`,);
+      // Emit wrapped import (dprint-compliant, lineWidth 120).
+      lines.push(`import type {`,);
+      for (const name of sorted) { lines.push(`  ${name},`,); }
+      lines.push(`} from "./enums";`,);
     }
 
     lines.push(``,);
@@ -479,7 +490,6 @@ function generateTestHelpers(tables: Map<string, Record<string, ColumnDef>>,): v
   lines.push(` * DO NOT EDIT MANUALLY — run \`bun run db:sync-types\` to regenerate.`,);
   lines.push(` */`,);
   lines.push(`import type { Generated, Kysely, } from "kysely";`,);
-  lines.push(`import type { DB, } from "../db/schema";`,);
 
   // Collect enum imports used across all tables
   const enumImports = new Set<string>();
@@ -494,8 +504,14 @@ function generateTestHelpers(tables: Map<string, Record<string, ColumnDef>>,): v
   }
   if (enumImports.size > 0) {
     const sorted = [...enumImports,].sort();
-    lines.push(`import type { ${sorted.join(", ",)}, } from "../db/enums";`,);
+    // Emit wrapped import (dprint-compliant, lineWidth 120).
+    lines.push(`import type {`,);
+    for (const name of sorted) { lines.push(`  ${name},`,); }
+    lines.push(`} from "../db/enums";`,);
   }
+  // dprint sorts imports by module path; "../db/enums" < "../db/schema", so the DB
+  // import must follow the enums import.
+  lines.push(`import type { DB, } from "../db/schema";`,);
 
   lines.push(``,);
   lines.push(`type Db = Kysely<DB>;`,);
@@ -587,7 +603,7 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
   }
 
   // We need the actual enum values to generate schemas. Read them from enums-*.ts files
-  const enumDir = DB_DIR;
+  const enumDir = ENUM_DIR;
   const enumFiles = readdirSync(enumDir,).filter((f,) => f.startsWith("enums-",) && f.endsWith(".ts",));
   let allEnumsContent = "";
   for (const f of enumFiles) {
@@ -601,7 +617,15 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
     if (match) {
       const values = match[1]?.match(/"([^"]+)"/g,)?.map((v,) => v.replace(/"/g, "",));
       if (values && values.length > 0) {
-        lines.push(`export const ${enumName}Schema = t.UnionEnum([${values.map((v,) => `"${v}"`).join(", ",)},],);`,);
+        const quoted = values.map((v,) => `"${v}"`);
+        // Wrap long union arrays (dprint-compliant, lineWidth 120).
+        if (quoted.join(", ",).length + enumName.length + 40 > 120) {
+          lines.push(`export const ${enumName}Schema = t.UnionEnum([`,);
+          for (const q of quoted) { lines.push(`  ${q},`,); }
+          lines.push(`],);`,);
+        } else {
+          lines.push(`export const ${enumName}Schema = t.UnionEnum([${quoted.join(", ",)},],);`,);
+        }
       }
     }
   }
@@ -674,6 +698,28 @@ function main() {
   generateBarrel(tables,);
   generateTestHelpers(tables,);
   generateValidationSchemas(tables,);
+
+  // Generated artifacts must be dprint-compliant (lineWidth 120) or `format - dprint`
+  // fails on every regeneration. Format the output dir in place. When generating into
+  // a temp dir (check-db-schemas.ts), pass the repo config explicitly so dprint still
+  // applies the project's formatting rules outside the repo root.
+  const targets = [
+    join(DB_DIR, "schema.ts",),
+    join(TEST_UTILS_DIR, "insert-helpers.ts",),
+    join(VALIDATION_DIR, "db-schemas.ts",),
+    ...readdirSync(DB_DIR,).filter((f,) => f.startsWith("schema-",) && f.endsWith(".ts",)).map((f,) =>
+      join(DB_DIR, f,)
+    ),
+  ];
+  const dprintConfig = resolve(import.meta.dir, "..", "dprint.json",);
+  const fmt = Bun.spawnSync(["bunx", "dprint", "fmt", "--config", dprintConfig, ...targets,], {
+    stdout: "ignore",
+    stderr: "ignore",
+    cwd: resolve(import.meta.dir, "..",),
+  },);
+  if (fmt.exitCode !== 0) {
+    console.warn("  [warn] dprint fmt on generated files failed; run `bun run format:dprint` manually",);
+  }
 
   console.log(`\nDone. Run \`bun run check\` to verify.`,);
 }
