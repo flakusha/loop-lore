@@ -21,6 +21,7 @@ import type { VnSettings, } from "./settings";
 import { getVnSettings, } from "./settings";
 import { transitionScene, type TransitionType, } from "./transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "./typewriter";
+import type { MessageAttachment, } from "../alpine/chat-types";
 
 /** A single VN scene derived from one or more messages. */
 export interface VnScene {
@@ -32,6 +33,7 @@ export interface VnScene {
   thinking?: string;
   role: "assistant" | "user" | "system" | "narration";
   transition?: TransitionType;
+  attachments?: MessageAttachment[];
 }
 
 /** Message shape expected by the renderer. */
@@ -43,6 +45,7 @@ export interface VnMessage {
   thinking?: string;
   avatar_asset_id?: string;
   background_url?: string;
+  attachments?: MessageAttachment[];
 }
 
 let scenes: VnScene[] = [];
@@ -179,6 +182,7 @@ function msgToScene(msg: VnMessage,): VnScene {
     text: msg.content,
     thinking: msg.thinking,
     role: msg.role,
+    attachments: msg.attachments,
   };
 }
 
@@ -284,6 +288,38 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
     sceneEl.appendChild(choicesEl,);
     initChoiceCards(choicesEl, currentChatId, currentIndex,);
     loadChoices();
+  }
+
+  // Attachments panel
+  if (scene.attachments && scene.attachments.length > 0) {
+    const attachmentsEl = document.createElement("div",);
+    attachmentsEl.className = "vn-attachments";
+    const attachmentsTitle = document.createElement("div",);
+    attachmentsTitle.className = "vn-attachments-title";
+    attachmentsTitle.textContent = "Attachments";
+    attachmentsEl.appendChild(attachmentsTitle,);
+    const attachmentsGrid = document.createElement("div",);
+    attachmentsGrid.className = "vn-attachments-grid";
+    for (const attachment of scene.attachments) {
+      const itemEl = document.createElement("div",);
+      itemEl.className = "vn-attachment-item";
+      const thumbEl = document.createElement("img",);
+      thumbEl.src = attachment.thumbUrl ?? `/api/assets/${attachment.assetId}/thumb`;
+      thumbEl.alt = attachment.caption || attachment.filename || "Attachment";
+      thumbEl.loading = "lazy";
+      thumbEl.className = "vn-attachment-thumb";
+      itemEl.appendChild(thumbEl,);
+      const label = attachment.caption || attachment.filename;
+      if (label) {
+        const captionEl = document.createElement("div",);
+        captionEl.className = "vn-attachment-caption";
+        captionEl.textContent = label;
+        itemEl.appendChild(captionEl,);
+      }
+      attachmentsGrid.appendChild(itemEl,);
+    }
+    attachmentsEl.appendChild(attachmentsGrid,);
+    sceneEl.appendChild(attachmentsEl,);
   }
 
   // Click/space to advance or skip typewriter
