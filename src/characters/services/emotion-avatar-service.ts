@@ -551,7 +551,7 @@ export class EmotionAvatarService {
       const id = randomUUID();
       const filename = `emotion-${opts.emotion}-${id.slice(0, 8,)}.${outputFormat}`;
 
-      const asset = await createAsset({
+      const { asset: asset } = await createAsset({
         database: this.db,
         input: {
           ownerId: opts.actorId,
