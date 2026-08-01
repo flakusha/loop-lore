@@ -236,7 +236,11 @@ export class NsfwModerationService {
       description?: string;
     },
   ): Promise<ContentFlag> {
-    const existing = await this.db.selectFrom("content_flags",).where("content_type", "=", params.contentType,).where(
+    const existing = await this.db.selectFrom("content_flags",).selectAll().where(
+      "content_type",
+      "=",
+      params.contentType,
+    ).where(
       "content_id",
       "=",
       params.contentId,
@@ -484,7 +488,7 @@ export class NsfwModerationService {
       }
     >
   > {
-    const rows = await this.db.selectFrom("moderation_appeals" as any,)
+    const rows = await this.db.selectFrom("moderation_appeals" as any,).selectAll()
       .where("user_id", "=", userId,)
       .orderBy("created_at", "desc",)
       .execute() as Array<
@@ -514,7 +518,7 @@ export class NsfwModerationService {
   async getPendingAppeals(
     limit = 50,
   ): Promise<Array<{ id: string; userId: string; actionId: string; reason: string; createdAt: string }>> {
-    const rows = await this.db.selectFrom("moderation_appeals" as any,)
+    const rows = await this.db.selectFrom("moderation_appeals" as any,).selectAll()
       .where("status", "=", "pending",)
       .orderBy("created_at", "asc",)
       .limit(limit,)
