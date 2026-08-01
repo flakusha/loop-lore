@@ -113,4 +113,6 @@ export interface DB {
   xp_ledger: import("./schema-core").XpLedger;
   loot_tables: import("./schema-core").LootTables;
   loot_entries: import("./schema-core").LootEntries;
+  chat_setup_templates: import("./schema-core").ChatSetupTemplates;
+  world_timeline_events: import("./schema-core").WorldTimelineEvents;
 }
