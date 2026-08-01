@@ -3,12 +3,44 @@
 **Epic:** Character Core System
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** 🟡 Partial — `emotions`/`character_emotions` tables + EmotionHook exist; detection keyword-only, no avatar/mood integration (2026-08-01)
 **Related:** TASK-character-multi-avatar, TASK-character-mood-happiness
 
 ## Summary
 
 Extensible emotion system: admin/user-defined emotion list, LLM-based or rule-based intent detection from chat messages, and integration with avatar selection. Characters react emotionally to conversation.
+
+## Current State (2026-08-01 review)
+
+| Component                         | Status                                                     | Location                              |
+| --------------------------------- | ---------------------------------------------------------- | ------------------------------------- |
+| `emotions` + `character_emotions` tables | ✅ schema exists                                     | `src/db/schema-character.ts:142,154` |
+| `EmotionType` enum                | ✅ fixed set (no custom emotions)                          | `src/db/enums-character.ts:126`       |
+| Emotion CRUD routes               | ✅ `character-emotions.ts` (per-character)                 | `src/routes/character-emotions.ts`    |
+| Rule-based detection              | ⚠️ keyword matching in `EmotionHook` — no priority resolution, no sentiment/punctuation/emoji signals | `src/generation/hooks/emotion-hook.ts` |
+| LLM-based detection               | ❌ not implemented (hook doc header claims LLM — stale)     | —                                     |
+| Emotion → avatar selection        | ❌ events unconsumed (`data.dominantEmotion` never read); only manual `POST /avatars/select` | `generation/auto-gen.ts:412-431` |
+| Emotion → mood integration        | ❌ not wired                                                | —                                     |
+| Extensible/admin-defined emotions | ❌ enum is fixed, no `Emotion` table rows CRUD             | —                                     |
+
+## Next Actionable Items
+
+1. **Consume `emotion_change` hook events** (epic M4): post-hook in
+   `auto-gen.ts` → avatar selection (`AvatarService.selectAvatar`) + persist
+   emotion; coordinates with `TASK-aux-emotion-avatar`.
+2. **Hybrid detection** (Phase 2): keep keyword fast-path, add AUX LLM
+   fallback when rule confidence < threshold, via shared AUX runner (epic M1).
+   Align LLM emotion labels with `EmotionType` enum.
+3. **Extensibility**: decide enum-fixed vs `emotions` table rows (schema
+   exists but likely unused); if table-backed, wire CRUD + admin UI + priority
+   resolution, then remove enum-only assumption from scoring.
+4. **Group chat**: per-character emotion resolution (each participant gets
+   own emotion) — `turning/` integration.
+5. **Prompt injection**: emotion context into next generation
+   (`assistant/prompt/sections/emotion-avatar.ts` exists — verify it reads
+   live emotion state, not just static avatar asset).
+6. **Tests**: unit tests for detection + resolution; integration tests with
+   avatar selection and mood system (per Phase 4).
 
 ## Design
 
