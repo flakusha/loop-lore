@@ -12,6 +12,7 @@ import {
   ChatType,
   ItemCategory,
   ItemRarity,
+  PublicationStatus,
   QuestStatus,
   QuestType,
   StackableState,
@@ -244,6 +245,7 @@ export async function seedWorld(db: Kysely<DB>,): Promise<void> {
       owner_id: SEED.user.id,
       name: SEED.world.name,
       description: SEED.world.description,
+      publication_status: PublicationStatus.Published,
     },)
     .execute();
 }
@@ -256,6 +258,7 @@ export async function seedLocation(db: Kysely<DB>,): Promise<void> {
       world_id: SEED.world.id,
       name: SEED.location.name,
       description: SEED.location.description,
+      publication_status: PublicationStatus.Published,
     },)
     .execute();
 }
