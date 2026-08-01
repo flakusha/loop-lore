@@ -1,6 +1,6 @@
 # TASK: Wire GameMasterService into story mode generation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-01 — code-verified)
 **Priority:** High
 **Effort:** Large
 **Epic:** epic-logic-reconciliation
@@ -9,12 +9,15 @@
 
 `GameMasterService` (`src/story/game-master.ts`) is fully implemented and tested (13 tests) but never imported outside its test file. Story mode chats fall through to the same `triggerAutoGeneration()` path as direct/group chat, bypassing GM orchestration entirely.
 
-## Current State
+## Current State (2026-08-01 review — COMPLETED)
 
-- `GameMasterService` handles: turn selection, prompt assembly, LLM decision-making, quality evaluation, world events, quest tracking, escalation
-- `triggerAutoGeneration()` in `src/generation/auto-gen.ts` handles all chat types uniformly
-- For `chat.type === "story"`, no GM logic is invoked
-- `TurnManager` IS used by `group-chat/turn-selector.ts` for group chats, but `GameMasterService` (which wraps `TurnManager` + adds GM orchestration) is never called
+- `triggerAutoGeneration()` dispatches to `triggerStoryModeGeneration()` when `chat.mode === "story"` (`src/generation/auto-gen.ts:184`)
+- `triggerStoryModeGeneration` (auto-gen.ts:792) instantiates `GameMasterService`, `initialize()` → `executeTurn()` → hallucination guard → message insert → `acceptResponse()`
+- LLM decision strategy via `GM_DECISIONS` registry with fallback to `Llm` when config `type` missing
+- GM config parsed as `GameMasterConfig`; invalid/absent config → graceful skip with warn log
+- Tested: `src/story/game-master.test.ts` (13 tests) + story mode integration path
+
+Remaining gap (separate tickets): UI cannot author `GameMasterConfig.type` (frontend `GmConfig` writes only `assistantRole`/`visualNovel` → story mode always falls back to LLM strategy; human/hybrid GM unreachable from UI).
 
 ## Root Cause
 

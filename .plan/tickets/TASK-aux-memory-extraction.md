@@ -1,6 +1,6 @@
 # TASK: AUX LLM — Memory Extraction
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — extraction implemented but wired to MAIN provider with `model: "default"` bug; not on auxiliary role (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline
@@ -79,6 +79,35 @@ interface MemoryExtraction {
 | **Total input**    | **~900**  |
 | Response           | ~200      |
 | **Total**          | **~1100** |
+
+## Current State (2026-08-01 review)
+
+| Component                          | Status                                                       | Location                          |
+| ---------------------------------- | ------------------------------------------------------------ | --------------------------------- |
+| Extraction + store                 | ✅ implemented, fire-and-forget after generation              | `src/memory/extraction.ts`        |
+| Wiring                            | ⚠️ called with **MAIN resolved provider**, not auxiliary role | `generate-route.ts:524,675`       |
+| `model: "default"` literal         | 🔴 `provider.complete({ model: "default", ... } as never)` — `as never` hides type error; most OpenAI-compatible servers reject unknown model → extraction silently no-ops | `src/memory/extraction.ts:60` |
+| `ExtractionOpts.modelId`           | ❌ dead field, never read                                     | `src/memory/types.ts`             |
+| Duplicate `db` param               | 🟢 `database` + `{ db: database }` passed twice               | `generate-route.ts:524`           |
+| Provider keys                     | ❌ no apiKey (relies on provider instance key)                | —                                 |
+| Telemetry                         | ❌ not recorded                                               | —                                 |
+
+## Next Actionable Items
+
+1. **Fix `model: "default"` bug** (epic M2 — quick win): pass
+   `resolved.resolvedModel` from the call site; drop the `as never` cast;
+   delete dead `ExtractionOpts.modelId`; drop duplicate `db` param.
+2. **Move to auxiliary role**: extract on the auxiliary model via the shared
+   runner (M1) so main-generation tokens/latency aren't consumed by memory
+   work; keep fire-and-forget semantics.
+3. **BYO-key parity**: resolve apiKey via `resolveProvider` when calling AUX.
+4. **Scope/importance alignment**: current prompt returns flat array
+   (no `scope`); ticket design wants `scope: character|world|assistant` +
+   importance-aware promotion. Extend schema + `storeMemories` when
+   `character_mood`/world memory integration lands.
+5. **Tests**: add unit test that a non-JSON/prose-wrapped response yields `[]`
+   (parser already handles fences); integration test that extraction writes
+   `actor_memories` with dedup.
 
 ## Files to Create
 
