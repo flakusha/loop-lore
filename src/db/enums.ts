@@ -22,7 +22,7 @@
  *   enums-story: TurnType, TurnStatus, QuestType, QuestStatus, QuestProgressStatus,
  *                SyntheticDataType, SyntheticDataStatus, SyntheticTestMode, WorldEventType,
  *                MemoryType, LorePosition, LoreEntryStatus, DifficultyReroll, DifficultyState,
- *                QualityDimension, ItemCategory, ItemRarity, ItemVisibility
+ *                QualityDimension, ItemCategory, ItemRarity, ItemVisibility, PublicationStatus
  *   enums-config: DbType, LogLevel, AgeGateMode, GameMasterType, PolicyType, PolicyIndicatorType,
  *                 PolicySeverity, TransportProtocol, CompressionAlgorithm, TransportErrorCode,
  *                 ResponseCompression, EncryptionCompression, ImageApiFamily, SdModelType,

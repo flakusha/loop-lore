@@ -14,6 +14,7 @@ import type {
   LoreEntryStatus,
   LorePosition,
   MemoryType,
+  PublicationStatus,
   QuestProgressStatus,
   QuestStatus,
   QuestType,
@@ -29,6 +30,7 @@ export interface Worlds {
   name: string;
   description: string | null;
   lore: string | null;
+  publication_status: Generated<PublicationStatus>;
   scan_depth: Generated<number>;
   token_budget: Generated<number>;
   difficulty_modifier: Generated<number>;
@@ -46,6 +48,7 @@ export interface Locations {
   name: string;
   description: string | null;
   connections: Generated<string>;
+  publication_status: Generated<PublicationStatus>;
   parent_location_id: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
@@ -89,6 +92,7 @@ export interface WorldLoreEntries {
   updated_at: Generated<string>;
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
+  audience_scope: string | null;
 }
 
 // ── world_items ────────────────────────────────────────────
@@ -153,6 +157,7 @@ export interface ActorLoreEntries {
   updated_at: Generated<string>;
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
+  audience_scope: string | null;
 }
 
 // ── story_turns ────────────────────────────────────────────
