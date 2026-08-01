@@ -553,6 +553,7 @@ interface BackgroundTransition {
 | Disease & Poison       | Poison application in combat   | Poisoned weapons, venomous creature attacks      |
 | NPC/Actor System       | Enemy AI behavior              | NPC-driven combat decisions, morale, personality |
 | NSFW Game Mechanics    | Combat injuries, battle damage | Injury system, wound narratives                  |
+| **Mini-Games Plugins** | Card-based combat mechanics    | `card-battle` plugin replaces attack/defend actions with card plays; `nsfw-cards` plugin provides seduction encounters that modify battle outcomes (e.g., charm/confuse enemy, reduce resistance, intimate victory) |
 
 ### Shared Data Contracts
 
