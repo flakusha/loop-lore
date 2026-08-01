@@ -115,6 +115,7 @@ export interface Chats {
   streaming: number | null;
   nsfw_override: string | null;
   name_source: string | null;
+  template_id: string | null;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -463,5 +464,33 @@ export interface LootEntries {
   max_quantity: Generated<number>;
   min_level: Generated<number>;
   metadata: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── chat_setup_templates ────────────────────────────────────────────
+export interface ChatSetupTemplates {
+  id: Generated<string>;
+  slug: string;
+  name: string;
+  description: string | null;
+  mode: string | null;
+  turn_strategy: string | null;
+  world_id: string | null;
+  gm_config: string | null;
+  visual_novel: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_timeline_events ────────────────────────────────────────────
+export interface WorldTimelineEvents {
+  id: Generated<string>;
+  world_id: string;
+  story_id: string | null;
+  event_type: string;
+  actor_id: string | null;
+  description: string;
+  data: string | null;
+  occurred_at: string;
   created_at: Generated<string>;
 }
