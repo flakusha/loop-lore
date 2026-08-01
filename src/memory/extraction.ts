@@ -6,8 +6,9 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { callAux, MEMORY_EXTRACTION_PROMPT, } from "../aux-pipeline";
 import type { DB, } from "../db";
-import type { LLMProvider, } from "../generation/providers/types";
+import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { jsonParseOr, } from "../utils";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
@@ -16,51 +17,37 @@ function getLog() {
   return getLogger().child({ module: "memory-extraction", },);
 }
 
-/** Extraction prompt — instructs the LLM to extract facts from conversation. */
-const EXTRACTION_PROMPT = `Extract key facts from this conversation. Return a JSON array of facts.
-Each fact should be:
-- A specific, memorable piece of information (not vague)
-- Something worth remembering for future conversations
-- A fact about the character, user, world, or relationship
-
-Return ONLY a JSON array, no explanation. Each item:
-{
-  "content": "the fact (concise, 1-2 sentences)",
-  "memoryType": "episodic" | "semantic" | "procedural",
-  "confidence": 0.0-1.0,
-  "importance": 1-10,
-  "keywords": ["word1", "word2"]
-}
-
-memoryType rules:
-- "episodic": specific events that happened ("The player visited the dark forest")
-- "semantic": general facts about characters/world ("The tavern keeper is named Bob")
-- "procedural": learned patterns ("The player prefers stealth over combat")
-
-If no facts are worth remembering, return an empty array: []`;
-
 /**
  * Extract memories from an AI response.
+ * Uses the shared AUX runner (auxiliary role, 2s timeout, BYO-aware).
  * Returns extracted memories without storing them (caller decides when to store).
  */
 export async function extractMemories(
+  db: Kysely<DB>,
   opts: ExtractionOpts,
-  provider: LLMProvider,
 ): Promise<ExtractedMemory[]> {
-  const { actorId, chatId, aiContent, userContent, } = opts;
+  const { actorId, chatId, aiContent, userContent, config, userId, } = opts;
 
   const conversationContext = [
     userContent ? `User: ${userContent}` : "",
     `Assistant: ${aiContent}`,
   ].filter(Boolean,).join("\n",);
 
-  const prompt = `${EXTRACTION_PROMPT}\n\nConversation:\n${conversationContext}`;
+  const prompt = `${MEMORY_EXTRACTION_PROMPT}\n\nConversation:\n${conversationContext}`;
+  const messages: GenerationMessage[] = [{ role: "user", content: prompt, },];
 
   try {
-    const response = await provider.complete({
-      model: "default",
-      messages: [{ role: "user", content: prompt, },],
-    } as never,);
+    // Shared AUX policy: 2s timeout, 0.0 temperature, BYO key. 200 max tokens —
+    // extraction returns a JSON array, larger than single-field classifiers.
+    const response = await callAux("memory", config, db, messages, {
+      userId,
+      chatId,
+      maxTokens: 200,
+    },);
+    if (!response) {
+      getLog().debug("Extraction AUX call failed",);
+      return [];
+    }
 
     const parsed = parseExtractionResponse(response.content,);
     if (!parsed) {
@@ -160,10 +147,9 @@ export async function storeMemories(
 export async function extractAndStoreMemories(
   db: Kysely<DB>,
   opts: ExtractionOpts,
-  provider: LLMProvider,
 ): Promise<void> {
   try {
-    const memories = await extractMemories(opts, provider,);
+    const memories = await extractMemories(db, opts,);
     if (memories.length > 0) {
       await storeMemories(db, opts.actorId, opts.chatId, memories,);
     }
