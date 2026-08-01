@@ -5,6 +5,10 @@ set -euo pipefail
 # Usage: ./scripts/worktree.sh <command> [args]
 
 REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+# Fallback: if REPO_ROOT doesn't contain .git, use git to find the real root
+if [[ ! -d "$REPO_ROOT/.git" ]]; then
+  REPO_ROOT="$(git -C "$REPO_ROOT" rev-parse --show-toplevel 2>/dev/null || echo "$REPO_ROOT")"
+fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TREE_DIR="${TREE_DIR:-$REPO_ROOT/tree}"
 
@@ -28,10 +32,7 @@ if [[ -n "$MAIN_REPO_ROOT" && -f "$MAIN_REPO_ROOT/.credentials.env" ]]; then
     source "$MAIN_REPO_ROOT/.credentials.env"
 fi
 
-# Colors — sourced from shared lib
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/colors.sh"
+"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
 
 PROTECTED_BRANCHES="master main stg dev"
 
@@ -53,14 +54,14 @@ Usage: $(basename "$0") <command> [args]
 
 Commands:
   create <branch>           Create worktree for existing branch
-  new <branch> [base]       Create new branch + worktree (base defaults to master)
+  new <branch> [base]       Create new branch + worktree (base defaults to current branch)
   sign <branch>             Configure GPG signing for existing worktree
   merge <branch> <source>   Merge source branch into worktree's branch
-  rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
-  finalize <branch> [opts]  Validate worktree ready, run checks, merge to master, remove
+  rebase <branch> [onto]    Rebase worktree's branch onto target (default: current branch)
+  finalize <branch> [opts]  Validate worktree ready, run checks, merge to current branch, remove
                              --merge-strategy rebase|squash|direct (default: rebase)
                              --force / -f (skip checks, allow direct merge)
-  agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
+  agent-merge <branch>      Alias for finalize — merge worktree into current branch and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
   list                      Show all worktrees with detailed status
@@ -857,8 +858,7 @@ cmd_rebase() {
 }
 // hint: Structural and logic conflict. Both design and behavior differ.
 cmd_finalize() {
-"33: @theirs\n34: @theirs"
-    fi
+"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
 
     # Resolve directory names (feature-foo) to branch names (feature/foo)
     local resolved
@@ -911,9 +911,9 @@ cmd_finalize() {
     else
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
-    echo ""
+"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
 
-"33: @theirs\n34: @theirs"
+"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
 
     # Step 4: Check branch has commits beyond base
     local base="master"

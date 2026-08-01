@@ -57,7 +57,17 @@ function parseCredentialsEnv(content,) {
 }
 
 // Load synchronously at import time
-const repoRoot = resolve(__dirname, "..", "..", "..",);
+// Primary: resolve from __dirname (scripts/worktree/utils/ → repo root)
+// Fallback: git rev-parse --show-toplevel (handles worktree CWD, symlinks)
+import { execSync, } from "child_process";
+
+let repoRoot = resolve(__dirname, "..", "..", "..",);
+try {
+  const gitRoot = execSync("git rev-parse --show-toplevel", { encoding: "utf-8", cwd: repoRoot, timeout: 5000, },).trim();
+  if (gitRoot) { repoRoot = gitRoot; }
+} catch {
+  // git not available or not a git repo — use resolved path
+}
 const envPath = findCredentialsEnv(repoRoot,);
 
 let credentials = { keyId: "", name: "", email: "", found: false, };
