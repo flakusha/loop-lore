@@ -19,6 +19,37 @@ This epic does NOT cover group-chat turn orchestration (see social-interaction /
 group-chat specs) or location generation mechanics (see world-locations epic) — it
 focuses on lifecycle, safety, and context continuity.
 
+## Moderation Wiring — Current State (2026-08-01 review)
+
+Moderation infrastructure (DB services, flags, actions, NSFW gates) is solid;
+**LLM moderation wiring is absent**:
+
+| Component                              | Status                                                        | Location                              |
+| -------------------------------------- | ------------------------------------------------------------- | ------------------------------------- |
+| Moderation data model                  | ✅ prefs, `moderation_actions`, `content_flags`, audit trail   | `src/nsfw/moderation-service.ts`      |
+| NSFW gate hook                         | ✅ keyword-level detection + `recordAudit` + policy gating     | `src/generation/hooks/nsfw-hook.ts`   |
+| Moderation hook                        | ⚠️ keyword-only (9 words), **no LLM**                         | `src/generation/hooks/moderation-hook.ts` |
+| `ModelRole.Moderation`                 | 🔴 **dead role** — admin-configurable, never resolved          | `src/admin/model-roles.ts:21`         |
+| `ModelRole.Captioning`                 | 🔴 **dead role** — `caption-route.ts` resolves MAIN role       | `src/generation/caption-route.ts:49`  |
+| Suppression semantics                  | 🔴 substring match (`"hate"` ⊂ `"hateful"`) → **entire response dropped**, no severity, no audit, no retention | `moderation-hook.ts:44`, `auto-gen.ts:431` |
+
+### Moderation Action Items
+
+1. **Wire or kill `ModelRole.Moderation`** (epic M1/M3): point the
+   ModerationHook's content scan at the moderation role when configured
+   (LLM hate/harassment classification with severity), else keep keyword
+   fast-path. If no consumer lands, remove from `VALID_ROLES` + admin UI to
+   stop surfacing a role that does nothing.
+2. **Non-destructive suppression**: on flag, store the message with a
+   `moderation_flag` status instead of discarding; write `recordAction` audit
+   (parity with `nsfw-hook.ts`); suppress only presentation.
+3. **Tokenized matching**: replace `includes()` substring checks with
+   word-boundary matching; add severity scoring (severe/moderate → numeric).
+4. **Captioning role**: `caption-route.ts` should resolve `captioning` role
+   when configured, fall back to main.
+5. **Telemetry**: record gate decisions (event type, level, allow/block,
+   source) — current `recordAction` covers NSFW but not moderation flags.
+
 ## Chat Management
 
 ### Context Sliding Window

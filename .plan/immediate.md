@@ -105,7 +105,7 @@
 | Gap                               | Evidence File                                                                                                                                                         | What to Build                                                     |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Chat types exist                  | `src/frontend/alpine/chat-types.ts` — `ChatState`, `GmConfig`, `Message`, `MessageAttachment`, `GroupedMessage`, `RpgStats`, `MemoryPanelState` (571 lines)           | Extend `ChatState` with chat UI state for new features            |
-| Command buttons (tool calling UI) | `src/frontend/alpine/command-buttons.ts` — exists (27 buttons: image, video, sfx, music, caption, improve, quest, roll) — **only tool calling UI, no command parser** | Wire `/` slash command parser; expand command palette             |
+| Command buttons (tool calling UI) | `src/frontend/alpine/command-buttons.ts` — exists (27 buttons: image, video, sfx, music, caption, improve, quest, roll) — inserts slash text into input; **parser + dispatch wired server-side** (`src/routes/messages.ts:543`) | Wire remaining commands; add tool-call result display |
 | GM role switching exists          | `src/frontend/alpine/chat-settings.ts` — `_assistantRole: "off"`, `chat?.gm_config` parsed with `GmConfig` type (line 33-36)                                          | Build GM role switching UI (dropdown: off/helper/gm/moderator)    |
 | Auth basics exist                 | `src/frontend/fe-fetch.ts` — CSRF + session token injection, 401 redirect to login                                                                                    | Build login/register pages that use `feFetch`                     |
 | Admin user mgmt exists            | `src/frontend/alpine/admin-users.ts` — role editing, user list, pagination, search, filter                                                                            | Extend with access control panels                                 |
@@ -123,8 +123,8 @@
 | Assistant panel                   | `docs/frontend/chat/assistant.md` (147 lines, designed but not implemented)                                                                                           | Assistant context panel in chat sidebar                           |
 | Message actions                   | `docs/frontend/chat/message-actions.md`                                                                                                                               | Edit, delete, pin, react to messages in UI                        |
 
-- [ ] Wire command buttons (`src/frontend/alpine/command-buttons.ts`) into slash command parser (`TASK-assistant-commands-extension.md`)
-- [ ] Build GM role switching UI from existing `_assistantRole` field in `chat-settings.ts`
+- [x] Wire command buttons (`src/frontend/alpine/command-buttons.ts`) into slash command parser (`TASK-assistant-commands-extension.md`) — parser + dispatch in `messages.ts:543`, 21 handlers (2026-08-01)
+- [x] Build GM role switching UI from existing `_assistantRole` field in `chat-settings.ts` — dropdown state loads/saves; **runtime effect pending** (role stored, never branched)
 - [ ] Build registration form frontend page (`docs/frontend/login.md`, 41 lines) using `feFetch` (`src/frontend/fe-fetch.ts`)
 - [ ] Build login page with htmx submission using `feFetch` auth flow
 - [x] Implement chat autorenaming (`TASK-chat-autorenaming.md`) — `src/chat/auto-rename.ts` (rule + LLM), wired in `src/routes/messages.ts`, `name_source` migration, test file
@@ -162,16 +162,17 @@
 | Command buttons exist         | `src/frontend/alpine/command-buttons.ts` — 8 functional buttons (image, video, sfx, music, caption, improve, quest, roll) | Expand command palette; add text generation commands (summarize, rewrite, translate) |
 | Chat settings page exists     | `src/frontend/alpine/chat-settings.ts` — chat settings modal with mode, turn strategy, streaming, persona, impersonation  | Add assistant role + GM config to settings modal                                     |
 | Tool calling display          | —                                                                                                                         | Show function calls, parameters, and LLM tool results in chat bubbles                |
-| GM service wiring             | `TASK-wire-gm-service-story-mode.md`                                                                                      | Connect GM service to assistant for story-mode responses                             |
-| Assistant ↔ GM reconciliation | `TASK-assistant-gm-flows-reconciliation.md`                                                                               | Unified assistant/GM interface in chat UI                                            |
+| GM service wiring             | `TASK-wire-gm-service-story-mode.md`                                                                                      | ✅ Wired — story-mode chats use `GameMasterService` (`auto-gen.ts:184,792`); remaining: UI authoring of `GameMasterConfig.type` (human/hybrid) |
+| Assistant ↔ GM reconciliation | `TASK-assistant-gm-flows-reconciliation.md`                                                                               | Unified assistant/GM interface in chat UI                                                                                                            |
 
-- [ ] Expose GM role switching (`"off" | "helper" | "gm" | "moderator"`) in chat settings UI (uses existing `_assistantRole` + `GmConfig` from `chat-types.ts`)
+- [x] Expose GM role switching (`"off" | "helper" | "gm" | "moderator"`) in chat settings UI (uses existing `_assistantRole` + `GmConfig` from `chat-types.ts`) — 2026-08-01
+- [ ] **Give GM role switching runtime effect** (branch generation/prompt on `assistantRole` — currently stored only)
 - [ ] Expand command buttons (`src/frontend/alpine/command-buttons.ts`) with text generation commands for assistant
 - [ ] Add assistant role selector to chat settings modal (`chat-settings.ts`)
-- [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`)
-- [ ] Wire slash commands (`/`) into assistant pipeline (`TASK-assistant-commands-extension.md`)
+- [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`) — parser ✅; AUX `classifyIntent` un-migrated (no timeout/apiKey), `detectIntent` dead code
+- [x] Wire slash commands (`/`) into assistant pipeline (`TASK-assistant-commands-extension.md`) — 2026-08-01
 - [ ] Implement assistant tool calling display (function-call UI in chat — show tool call + params + result in message bubbles)
-- [ ] Integrate GM service into assistant flow (`TASK-wire-gm-service-story-mode.md`)
+- [x] Integrate GM service into assistant flow (`TASK-wire-gm-service-story-mode.md`) — 2026-08-01
 - [ ] Reconcile assistant ↔ GM flow interfaces (`TASK-assistant-gm-flows-reconciliation.md`)
 - [ ] **Verification**: `bun run check && bun test src/assistant/`
 
