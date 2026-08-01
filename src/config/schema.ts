@@ -595,6 +595,15 @@ interface CharactersConfig {
     mes_example?: string;
     tags?: string[];
     creator?: string;
+    /** Identity — persisted as character_permanent_traits at seed time */
+    species?: string;
+    subrace?: string;
+    gender?: string;
+    age?: string | number;
+    homeland?: string;
+    culture?: string;
+    /** Optional avatar for the seeded character (resolved at seed time) */
+    avatar?: { type: "file"; path: string } | { type: "default" };
     /** Visibility level. Default "public" */
     visibility?: "private" | "public";
     /** Content rating. Default "sfw" */

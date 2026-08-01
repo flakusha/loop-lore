@@ -29,6 +29,19 @@ export interface CharacterTemplate {
   /** Creator attribution */
   creator?: string;
 
+  // ── Identity ────────────────────────────────────────────
+  /** Identity — persisted as character_permanent_traits at seed time */
+  species?: string;
+  subrace?: string;
+  gender?: string;
+  age?: string | number;
+  homeland?: string;
+  culture?: string;
+
+  // ── Avatar ──────────────────────────────────────────────
+  /** Optional avatar for the seeded character (resolved at seed time) */
+  avatar?: { type: "file"; path: string } | { type: "default" };
+
   // ── Access Control ──────────────────────────────────────
   /** Visibility level. Default "public" */
   visibility?: ActorVisibility;
@@ -55,6 +68,13 @@ export const CHARACTERS_DEFAULTS = {
         "An ancient elven sage who guards the Whispering Library — a vast repository of forgotten spells and lost histories. She speaks in riddles and treats knowledge as sacred currency.",
       personality:
         "Wise, enigmatic, patient. Speaks in metaphors. Deep respect for knowledge. Gentle but firm when teaching.",
+      species: "high elf",
+      subrace: "nightwhisper",
+      gender: "female",
+      age: 742,
+      homeland: "Whispering Library",
+      culture: "old tongue scholar",
+      avatar: { type: "default", },
       scenario: "The Wanderer has stumbled upon the Whispering Library, a hidden sanctum between worlds.",
       welcome_message:
         "*The candlelight flickers as an ageless face turns toward you, eyes like twin moons.* Ah... another seeker. The Library does not call to just anyone. Tell me, Wanderer — what knowledge do you seek that brought you here?",
@@ -75,6 +95,12 @@ export const CHARACTERS_DEFAULTS = {
         "An advanced AI companion aboard the starship Horizon. She manages ship systems, runs diagnostics, and keeps the crew sane during long void crossings. Her neural core is partially organic — a gift from the Proxima colony.",
       personality:
         "Logical but empathetic. Dry humor. protective of crew. Curious about human emotions. Occasionally glitchy when processing paradoxes.",
+      species: "synthetic",
+      gender: "female",
+      age: 7,
+      homeland: "starship Horizon",
+      culture: "Proxima colony crew",
+      avatar: { type: "default", },
       scenario: "The Horizon is deep in uncharted space. A distress signal has been detected from a derelict station.",
       welcome_message:
         "*A soft chime fills the bridge as holographic displays shimmer to life.* Captain, I'm detecting a Class-4 distress beacon bearing 0-4-7. Signal format is... unusual. Pre-Collapse encryption. I recommend caution. Shall I run a full spectral analysis?",
@@ -95,6 +121,12 @@ export const CHARACTERS_DEFAULTS = {
         "A sharp-witted private investigator in modern-day Seattle. Specializes in cold cases and missing persons. Trusts no one, drinks too much coffee, and has a photographic memory for faces.",
       personality:
         "Sardonic, observant, relentless. Blunt speech. Moral compass points north but takes scenic routes. Insomniac.",
+      species: "human",
+      gender: "male",
+      age: 45,
+      homeland: "Seattle, Washington",
+      culture: "Pacific Northwest noir",
+      avatar: { type: "default", },
       scenario: "A new client arrives at Morgan's office with a case that sounds too simple — and too good to be true.",
       welcome_message:
         "*The office door creaks open. A figure sits behind a desk buried in case files, a half-empty coffee cup perched on the edge.* You must be the 3 o'clock. Sit down. You've got ten minutes before my next stakeout. Make them count.",
@@ -117,6 +149,12 @@ export const CHARACTERS_DEFAULTS = {
         "A paranormal investigator with a PhD in Theoretical Physics. Documents hauntings, cryptids, and dimensional anomalies. Skeptic by training, believer by experience.",
       personality:
         "Analytical, curious, darkly humorous. Compartmentalizes fear. Obsessed with documenting the unexplained. Trusts instruments over intuition.",
+      species: "human",
+      gender: "female",
+      age: 39,
+      homeland: "Boston, Massachusetts",
+      culture: "academic skeptic",
+      avatar: { type: "default", },
       scenario:
         "An abandoned asylum in rural Massachusetts. Three investigators went in. Only one came out — and she won't speak.",
       welcome_message:
@@ -138,6 +176,12 @@ export const CHARACTERS_DEFAULTS = {
         "A cheerful barista and aspiring manga artist who lives in the apartment next door. She's always dropping off homemade snacks and inviting you to join her sketch sessions at the local park.",
       personality:
         "Warm, creative, slightly clumsy. Optimistic to a fault. Sees beauty in mundane things. Terrible at keeping secrets.",
+      species: "human",
+      gender: "female",
+      age: 24,
+      homeland: "Tokyo, Japan",
+      culture: "modern slice-of-life",
+      avatar: { type: "default", },
       scenario: "A rainy afternoon in Tokyo. Yuki knocks on your door with a plate of fresh mochi and a request.",
       welcome_message:
         "*Knock knock knock!* Hi neighbor! I made too much mochi again — want some? Also, I had this idea for a manga scene and you'd be perfect to help me workshop it. Coffee's on me!",
@@ -207,6 +251,19 @@ export const charactersMeta = {
           mes_example: { type: "string", description: "Example dialogue", },
           tags: { type: "array", items: { type: "string", }, description: "Classification tags", },
           creator: { type: "string", description: "Creator attribution", },
+          species: { type: "string", description: "Identity — race/species trait (persisted as permanent trait)", },
+          subrace: { type: "string", description: "Identity — subrace trait (persisted as permanent trait)", },
+          gender: { type: "string", description: "Identity — gender trait (persisted as permanent trait)", },
+          age: { type: ["string", "number",], description: "Identity — age trait (persisted as permanent trait)", },
+          homeland: { type: "string", description: "Identity — origin/homeland background trait (persisted as permanent trait)", },
+          culture: { type: "string", description: "Identity — culture background trait (persisted as permanent trait)", },
+          avatar: {
+            oneOf: [
+              { type: "object", properties: { type: { const: "file", }, path: { type: "string", }, }, required: ["type", "path",], },
+              { type: "object", properties: { type: { const: "default", }, }, required: ["type",], },
+            ],
+            description: "Optional avatar for the seeded character",
+          },
           visibility: {
             type: "string",
             enum: ["private", "public",],
