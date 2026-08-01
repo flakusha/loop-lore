@@ -58,7 +58,8 @@ const commands = {
       process.exit(1,);
     }
     const repoRoot = import.meta.dirname + "/../..";
-    const output = gitSync(repoRoot, "diff", `master..${branch}`,);
+    const defaultBranch = gitSync(repoRoot, "branch", "--show-current",) || "master";
+    const output = gitSync(repoRoot, "diff", `${defaultBranch}..${branch}`,);
     console.log(output || "No differences",);
   },
 
@@ -71,7 +72,7 @@ Commands:
   list                               Show all worktrees
   status <branch>                    Show branch sync status
   branches                           List branches
-  diff <branch>                      Diff branch against master
+  diff <branch>                      Diff branch against current branch
   help                               Show this help
 
 Other commands delegated to worktree.sh.
