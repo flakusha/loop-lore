@@ -127,7 +127,7 @@
 - [ ] Build GM role switching UI from existing `_assistantRole` field in `chat-settings.ts`
 - [ ] Build registration form frontend page (`docs/frontend/login.md`, 41 lines) using `feFetch` (`src/frontend/fe-fetch.ts`)
 - [ ] Build login page with htmx submission using `feFetch` auth flow
-- [ ] Implement chat autorenaming (`TASK-chat-autorenaming.md`)
+- [x] Implement chat autorenaming (`TASK-chat-autorenaming.md`) — `src/chat/auto-rename.ts` (rule + LLM), wired in `src/routes/messages.ts`, `name_source` migration, test file
 - [ ] Implement chat backgrounds + location sync (`TASK-chat-backgrounds-location-sync.md`)
 - [ ] Implement external music linking (`TASK-chat-external-music-linking.md`)
 - [ ] Wire chat room search & join (`TASK-chat-room-search-join.md`)
@@ -187,15 +187,15 @@
 | Shadow notes UI             | ✅ Done    | `src/frontend/alpine/gm-panel.ts`           |
 | Whitenotes UI               | ✅ Done    | `src/frontend/alpine/gm-panel.ts`           |
 | GmConfig GM fields          | ✅ Done    | `chat-types.ts` (gmTurnOrder, questEnabled) |
-| Shadow notes API routes     | ❌ Pending | DB table + routes                           |
-| Whitenotes API routes       | ❌ Pending | DB table + routes                           |
+| Shadow notes API routes     | ✅ Done    | `src/routes/gm-notes.ts` — CRUD, wired in `elysia-app.ts` |
+| Whitenotes API routes       | ✅ Done    | `src/routes/gm-notes.ts` — CRUD, wired in `elysia-app.ts` |
 | GM role switching UI wiring | ❌ Pending | —                                           |
 
 - [x] Extend `GmConfig` type in `chat-types.ts` with story-mode fields (gm_role, turn_order, quest_enabled)
 - [x] Implement GM shadow notes frontend panel (`TASK-gm-shadow-notes.md`)
 - [x] Implement GM whitenotes frontend panel (`TASK-gm-whitenotes.md`)
-- [ ] Implement GM shadow notes API routes + DB table
-- [ ] Implement GM whitenotes API routes + DB table
+- [x] Implement GM shadow notes API routes + DB table (`src/routes/gm-notes.ts`)
+- [x] Implement GM whitenotes API routes + DB table (`src/routes/gm-notes.ts`)
 - [ ] Wire GM panels into chat UI (story mode frontend) — `docs/frontend/chat/multi-llm-story.md` (521 lines, spec complete)
 - [ ] Wire GM ↔ assistant unified view in chat (`TASK-assistant-gm-flows-reconciliation.md`)
 - [ ] Build quest log UI component (links to `src/story/` quest engine)
@@ -247,45 +247,54 @@ The existing infrastructure already supports this pattern:
 
 ### P2-E — Authorization & Access
 
-#### Frontend Gap Tasks (file-level evidence)
+#### Verified State (2026-08-01)
 
-| Gap                      | Evidence File                                                                  | What to Build                                                |
-| ------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| Auth route exists        | `src/routes/auth.ts` has `POST /api/auth/register` and login endpoints         | Frontend pages for these endpoints                           |
-| feFetch handles 401      | `src/frontend/fe-fetch.ts` — redirects to `/views/login` on 401                | Build the `/views/login` page (referenced but may not exist) |
-| Admin user mgmt exists   | `src/frontend/alpine/admin-users.ts` — role editing, user list, search/filter  | Extend with MFA management, access control panels            |
-| `GmConfig` assistantRole | `chat-types.ts` — `assistantRole?: "off"                                       | "helper"                                                     |
-| Encryption exists        | `src/frontend/browser-crypto.ts` — browser-side AES                            | Show encryption status in access control UI                  |
-| Access check gaps        | `TASK-dedupe-message-access-checks.md`, `TASK-fix-message-reactions-access.md` | UI-level access check feedback                               |
+| Component               | Status  | Evidence                                                                       |
+| ----------------------- | ------- | ------------------------------------------------------------------------------ |
+| Auth routes (backend)   | ✅ Done | `src/routes/auth.ts` — login, register, demo-login, logout, /me endpoints      |
+| Auth views (frontend)   | ✅ Done | `src/views/login.html`, `src/views/register.html` — wired in `elysia-app.ts`  |
+| feFetch (CSRF + 401)    | ✅ Done | `src/frontend/fe-fetch.ts` — redirects to `/views/login` on 401                |
+| Admin user mgmt         | ✅ Done | `src/frontend/alpine/admin-users.ts` — role editing, user list, search/filter  |
+| Admin routes            | ✅ Done | `src/routes/admin.ts` — users, stats, providers, model-roles                  |
+| Encryption (browser)    | ✅ Done | `src/frontend/browser-crypto.ts` — AES-256-GCM                                |
+| MFA / Two-Factor        | ❌ Pending | No TOTP/MFA code found                                                      |
+| Message access checks   | ❌ Pending | `TASK-dedupe-message-access-checks.md`                                      |
+| Encryption status UI    | ❌ Pending | `TASK-encryption-access-management.md`                                       |
+| Reaction access gating  | ❌ Pending | `TASK-fix-message-reactions-access.md`                                       |
+| Authoring ownership     | ❌ Pending | `TASK-authoring-creation.md`                                                 |
 
-- [ ] Build registration form frontend page using `feFetch` (`src/frontend/fe-fetch.ts`) — `POST /api/auth/register`
-- [ ] Build login page with htmx submission using `feFetch` auth flow
+#### Remaining Work
+
 - [ ] Implement two-factor/MFA auth with setup UI (`TASK-two-factor-multi-factor-auth.md`)
 - [ ] Implement message-level access check UI (`TASK-dedupe-message-access-checks.md`)
 - [ ] Implement encryption + access management display (`TASK-encryption-access-management.md`)
 - [ ] Fix message reactions access check in UI (`TASK-fix-message-reactions-access.md`)
 - [ ] Implement authoring/creation ownership indicators (`TASK-authoring-creation.md`)
-- [ ] **Verification**: `bun run check && bun test src/routes/auth.ts src/auth/`
+- [ ] **Verification**: `bun run check && bun test src/routes/auth.test.ts`
 
 ---
 
 ### P2-F — Gallery
 
-#### Frontend Gap Tasks (file-level evidence)
+#### Verified State (2026-08-01)
 
-| Gap                   | Evidence File                                                                                                                                                  | What to Build                                                    |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Gallery page exists   | `src/frontend/pages/gallery.ts` — search, preview (lightbox), download, delete, type filter (image/audio/video), card filtering via `filterCards()` (82 lines) | Backend route + wire into navigation                             |
-| Gallery route MISSING | `src/routes/gallery.ts` does NOT exist — no API route to serve gallery data                                                                                    | Create `src/routes/gallery.ts` backend route                     |
-| Attachment ID issue   | `TASK-config-gallery-attachment-idempotent.md` — duplicate upload handling                                                                                     | Fix duplicate attachment ID handling in `gallery.ts` upload flow |
-| Gallery wiring        | —                                                                                                                                                              | Gallery tab in character detail, story view navigation           |
+| Component              | Status  | Evidence                                                                       |
+| ---------------------- | ------- | ------------------------------------------------------------------------------ |
+| Gallery page           | ✅ Done | `src/frontend/pages/gallery.ts` — search, filter, preview, actions (82 lines)  |
+| Gallery grid (HTMX)    | ✅ Done | `src/routes/views.ts` — `serveGalleryGrid` + `serveGallerySearch`              |
+| Preview modal          | ✅ Done | `src/partials/gallery/preview-modal.html` — copy URL, download, delete         |
+| Upload dialog          | ✅ Done | `src/partials/gallery/upload-modal.html` — HTMX, drag-drop, label input        |
+| Gallery CSS            | ✅ Done | `src/public/css/gallery.css` — design tokens, responsive grid                  |
+| Asset controller       | ✅ Done | `src/assets/controller.ts` — upload, serve, download, delete                   |
+| Asset service          | ✅ Done | `src/assets/service.ts` — CRUD, visibility, sharing, access checks             |
+| Avatar gallery binding | ✅ Done | Backend + entity filter + tab done; visibility inheritance pending              |
+| Idempotent upload      | ✅ Done | SHA-256 hash-based duplicate detection in `createAsset`               |
+| Gallery in story view  | ❌ Pending | Attachments tab in story view                                                |
 
-- [ ] Create `src/routes/gallery.ts` — gallery API route (does not exist)
-- [ ] Wire gallery route into navigation so `src/frontend/pages/gallery.ts` is reachable
-- [ ] Implement minimal image asset viewer improvements (`TASK-gallery-minimal-image-asset-viewer.md`)
-- [ ] Make gallery attachment ID handling idempotent (`TASK-config-gallery-attachment-idempotent.md`)
-- [ ] Wire gallery into character and story views (add attachments tab)
-- [x] **Character avatar gallery binding** — link avatar assets via `asset_links` on creation, add gallery entity filter, character detail gallery tab, visibility inheritance (issue `870cd46`, ticket `TASK-character-avatar-gallery-binding.md`) — **backend + entity filter + tab done, visibility pending**
+#### Remaining Work
+
+- [x] Make gallery upload idempotent — hash-based duplicate detection (`TASK-config-gallery-attachment-idempotent.md`)
+- [ ] Wire gallery into story view (add attachments tab)
 - [ ] **Verification**: `bun run check`
 
 ---
