@@ -73,8 +73,9 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config },):
         priority: "priority",
         comment: "comment",
         sortOrder: "sort_order",
+        audienceScope: "audience_scope",
       },
-      jsonFields: ["keys", "secondary_keys",],
+      jsonFields: ["keys", "secondary_keys", "audience_scope",],
       defaults: {
         selective: 0,
         caseSensitive: 0,
