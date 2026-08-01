@@ -1,7 +1,7 @@
 # TASK: GM/Assistant Shadow Notes System
 
 **Priority:** High
-**Status:** 🟡 In Progress — Frontend Panel Complete, Backend Routes Pending
+**Status:** 🟢 Backend Complete + Tested — Injection Live
 **Epic:** epic-gm-shadow-notes
 **Tags:** gm, shadow-notes, hidden-narrative, story-steering, assistant, metadata
 
@@ -23,20 +23,20 @@ Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic and the whitenot
 - Type selector (foreshadowing, consequence, hidden_fact, player_motivation, world_secret, narrative_hook)
 - Revealed/unrevealed status display
 
-### Backend: 🟡 Partial — DB + CRUD routes done, prompt injection missing
+### Backend: ✅ Complete
 
 - ✅ `shadow_notes` table (`src/db/schema-gm.ts`) — id, chat_id, type, content, revealed, created_at
-- ✅ API routes (`src/routes/gm-notes.ts`, mounted `elysia-app.ts:166`): `GET/POST /api/chats/:id/shadow-notes`, `POST .../reveal`, `DELETE .../:noteId`
-- ❌ Prompt injection — nothing in `src/assistant/prompt/` or `src/story/` reads shadow_notes (zero consumers)
-- ❌ Trigger conditions — no `trigger_condition`/`visibility` columns (table has `revealed` only)
-- ❌ No route tests (`gm-notes` endpoints untested)
+- ✅ API routes (`src/routes/gm-notes.ts`, mounted `elysia-app.ts:166`): `GET/POST /api/chats/:id/shadow-notes`, `POST .../reveal`, `DELETE .../:noteId` — route tests 7/7 pass (incl. reveal + delete lifecycle)
+- ✅ Prompt injection — `src/assistant/prompt/sections/gm-notes.ts` reads unrevealed shadow notes into prompt (limit 10, created desc)
+- 🟡 Trigger conditions — no `trigger_condition`/`visibility` columns (table has `revealed` only); manual reveal only, no auto-reveal on trigger
+- ✅ Route tests — `src/routes/gm-notes.test.ts` 7/7 pass
 - ❌ Reveal does not emit a player-visible chat message
 
 ## Acceptance Criteria
 
 - [x] Shadow note data model (type, content, visibility, trigger condition, revealed state)
-- [ ] Shadow note creation API (GM/assistant can add shadow notes)
-- [ ] Shadow note injection into prompt assembly (hidden from player view)
+- [x] Shadow note creation API (GM/assistant can add shadow notes)
+- [x] Shadow note injection into prompt assembly (hidden from player view)
 - [ ] Shadow note reveal mechanic (conditional or GM-triggered reveals)
 - [x] Shadow note types: foreshadowing, consequence, hidden_fact, player_motivation, world_secret, narrative_hook
 - [ ] Shadow note trigger conditions (when to activate influence)
