@@ -9,24 +9,26 @@
 
 Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations with API call integrations AND confirmation/quality gating. From `epic-assistant-gm-flows.md`.
 
-## Current State (2026-07-31)
+## Current State (2026-08-01 review)
 
 ### Frontend: 🟡 Partial
 
 - ✅ GM panel sidebar (`src/components/chat/gm-panel.html`) with shadow notes + whitenotes tabs
 - ✅ GM panel Alpine component (`src/frontend/alpine/gm-panel.ts`) — full CRUD
-- ✅ Command buttons expanded: guide, scene, summarize, rewrite, translate added
-- ✅ GmConfig extended with GM fields (gmTurnOrder, questEnabled)
-- ❌ GM role switching UI in chat settings (dropdown exists but not wired)
-- ❌ Assistant command execution with intent detection
-- ❌ Slash command parser wiring
+- ✅ Command buttons expanded: guide, scene, summarize, rewrite, translate
+- ✅ GmConfig extended with GM fields (assistantRole, visualNovel)
+- ✅ GM role dropdown in chat settings (state flows load→save via `chat-settings.ts`)
+- ❌ Slash command parser → ✅ **wired** (messages.ts:543 dispatch + 21 handlers)
 - ❌ Tool call display in chat bubbles
+- ❌ GM role switching has no runtime effect (`assistantRole` stored, never branched on)
 
-### Backend: ❌ Not Started
+### Backend: 🟡 Partial
 
-- No generation prompt templates
-- No quality validation pipeline
-- No confirmation gating
+- ✅ `/create` command — LLM entity generation (char/loc/world/item) with inline prompt templates, inserts to actors/locations/worlds/items
+- ❌ No quality validation pipeline (schema/consistency/duplicate checks)
+- ❌ No confirmation gating (direct insert, no user approval)
+- ✅ GameMasterService wired into story-mode generation (see `TASK-wire-gm-service-story-mode.md`)
+- ❌ No shared prompt templates (`src/assistant/prompt/templates/` doesn't exist; prompts inline in create.ts)
 
 ## Scope
 

@@ -4,6 +4,9 @@
 **Priority:** Low
 **Effort:** High (estimated)
 
+> **Update (2026-08):** Browser-test + Alpine directives split out into dedicated tickets linked from `epic-testing-qa.md`:
+> `TASK-alpine-state-testing`, `TASK-browser-console-assert`, `TASK-browser-test-isolation`, `TASK-resolve-playwright-cfg`, `TASK-chat-state-contract`, and `BUG-alpine-init-hydration`. This ticket's API/asset/import failure investigation (below) remains valid but is de-prioritized vs. the Alpine state-testing work.
+
 ## Summary
 
 Improve frontend E2E test coverage and reliability. Currently 12/158 e2e failures remain, mostly in browser-based tests.

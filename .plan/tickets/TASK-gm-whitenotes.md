@@ -13,7 +13,7 @@ Implement the GM/Assistant whitenote system for story steering. Whitenotes are s
 
 Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic. Adds the whitenote system on top of the existing prompt assembly pipeline and hook system.
 
-## Current State (2026-07-31)
+## Current State (2026-08-01 review)
 
 ### Frontend: ✅ Complete
 
@@ -24,11 +24,13 @@ Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic. Adds the whiten
 - Priority slider (1-10)
 - Scope selector (scene, chapter, session, world)
 
-### Backend: ❌ Not Started
+### Backend: 🟡 Partial — DB + CRUD routes done, prompt injection missing
 
-- No `whitenotes` DB table
-- No API routes for whitenotes
-- No prompt injection pipeline
+- ✅ `whitenotes` table (`src/db/schema-gm.ts`) — id, chat_id, type, content, priority, scope, expires_at, created_at
+- ✅ API routes (`src/routes/gm-notes.ts`, mounted `elysia-app.ts:166`): `GET/POST /api/chats/:id/whitenotes`, `DELETE .../:noteId`
+- ❌ Prompt injection — nothing in `src/assistant/prompt/` or `src/story/` reads whitenotes (zero consumers)
+- ❌ Expiry — `expires_at` stored but never enforced during prompt assembly (no assembly to enforce in)
+- ❌ No route tests (`gm-notes` endpoints untested)
 
 ## Acceptance Criteria
 

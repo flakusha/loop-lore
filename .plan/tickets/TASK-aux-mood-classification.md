@@ -1,6 +1,6 @@
 # TASK: AUX LLM — Mood Classification
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — MoodHook exists but keyword-based, no LLM, results unconsumed (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline
@@ -69,6 +69,32 @@ interface MoodClassification {
 | Temperature | 0.0               |
 | Timeout     | 2s                |
 | Fallback    | No mood update    |
+
+## Current State (2026-08-01 review)
+
+| Component                              | Status                                                        | Location                              |
+| -------------------------------------- | ------------------------------------------------------------- | ------------------------------------- |
+| `MoodHook` (`mood_shift`)              | ⚠️ keyword-based positive/negative word counting, **no LLM**; doc header claims "Uses the LLM" (stale) | `generation/hooks/mood-hook.ts` |
+| `character_mood` table                 | ✅ schema exists                                               | `src/db/schema-character.ts:63`       |
+| Mood → expression modifier injection   | ❌ not wired from hook `data`                                  | —                                     |
+| Hook event consumption                 | ❌ `data.dominantMood`/`delta` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431` |
+
+Key finding: `mood_shift` events fire but nothing applies them —
+no `character_mood` write, no expression modifier, no avatar context.
+
+## Next Actionable Items
+
+1. **Apply hook results** (epic M4): in `auto-gen.ts` post-hook, consume
+   `mood_shift` events → write `character_mood` delta (table exists), feed
+   `mood` into `AvatarSelectionContext` for avatar scoring.
+2. **LLM classification task** (`src/aux-pipeline/tasks/mood.ts`, prompt
+   drafted above): auxiliary role via shared runner (M1); replace keyword
+   `MoodHook`. Constraints: temp 0.0, maxTokens 80, 2s timeout, confidence >= 0.5 gate.
+3. **Align with `TASK-character-mood-happiness`**: happiness meter +
+   expression modifiers already in progress (services + routes done) — reuse
+   its update path instead of writing a parallel one.
+4. **Tests**: unit tests for classification parsing + confidence gate;
+   integration test that a `mood_shift` event updates `character_mood`.
 
 ## Files to Create
 
