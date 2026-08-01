@@ -5,11 +5,13 @@
  */
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
+import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { chatHistorySection, } from "./sections/chat-history";
 import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
 import { eventSection, } from "./sections/events";
 import { examplesSection, } from "./sections/examples";
+import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
@@ -24,6 +26,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
   authorNoteSection,
   actorHeaderSection,
+  pluginAgentRoleSection,
   groupParticipantsSection,
   userPersonaSection,
   emotionAvatarSection,
@@ -32,6 +35,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   eventSection,
   postHistorySection,
   storyContextSection,
+  gmNotesSection,
   dynamicContextSection,
   recentEventsSection,
   examplesSection,
