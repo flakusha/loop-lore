@@ -16,17 +16,25 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("turn_strategy", "text",)
     .addColumn("max_turns", "integer",)
     .addColumn("auto_advance", "integer",)
+    .addColumn("parent_chat_id", "text", (col,) => col.references("chats.id",).onUpdate("cascade",),)
+    .addColumn("is_pinned", "text", (col,) => col.notNull().defaultTo("unpinned",),)
     .addColumn("encryption_level", "text", (col,) => col.notNull().defaultTo("public",),)
     .addColumn("response_length_preset", "text", (col,) => col.notNull().defaultTo("medium",),)
     .addColumn("response_length_custom", "integer",)
     .addColumn("context_max_tokens", "integer",)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint(
+      "ck_chats_type",
+      sql`type IN ('direct', 'group')`,
+    )
     .execute();
 
   await database.schema.createIndex("idx_chats_created_by",).on("chats",).column("created_by",).execute();
   await database.schema.createIndex("idx_chats_world",).on("chats",).column("world_id",).execute();
   await database.schema.createIndex("idx_chats_location",).on("chats",).column("current_location_id",).execute();
+  await database.schema.createIndex("idx_chats_pinned",).on("chats",).column("is_pinned",).execute();
+  await database.schema.createIndex("idx_chats_parent",).on("chats",).column("parent_chat_id",).execute();
 
   // ── Actors (unified participant table) ─────────────────────
   await database.schema
