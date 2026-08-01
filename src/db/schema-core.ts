@@ -34,7 +34,7 @@ import type {
   DefaultState,
 } from "./enums";
 
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface Users {
   id: Generated<string>;
   username: string;
@@ -49,7 +49,7 @@ export interface Users {
   created_at: Generated<string>;
   last_seen_at: string | null;
 }
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface Personas {
   id: Generated<string>;
   user_id: string;
@@ -71,18 +71,18 @@ export interface GroupInitiatives {
   updated_at: Generated<string>;
 }
 
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   id: Generated<string>;
   message_id: string;
   actor_id: string;
   created_at: Generated<string>;
 }
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface Chats {
   id: Generated<string>;
 
   name: string;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   created_by: string;
 
   world_id: string | null;
@@ -92,19 +92,19 @@ export interface Chats {
   story_state: string | null;
 
   gm_config: string | null;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   turn_strategy: TurnStrategy | null;
 
   max_turns: number | null;
 
   auto_advance: number | null;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   response_length_preset: Generated<string>;
 
   response_length_custom: number | null;
 
   context_max_tokens: number | null;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 }
 
 // ── actors ────────────────────────────────────────────
@@ -130,7 +130,7 @@ export interface Actors {
   creator_notes: string | null;
   creator: string | null;
   character_version: string | null;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   created_at: Generated<string>;
   updated_at: Generated<string>;
   content_rating: Generated<string>;
@@ -152,22 +152,22 @@ export interface ChatParticipants {
   talkativity: Generated<number>;
   initiative: Generated<number>;
 }
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   actor_id: string;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
 
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   id: Generated<string>;
   actor_id: string;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
 
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface Notifications {
   id: Generated<string>;
   user_id: string;
@@ -179,7 +179,7 @@ export interface Notifications {
   data: string | null;
   created_at: Generated<string>;
 }
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface Messages {
   id: Generated<string>;
   chat_id: string;
@@ -222,7 +222,7 @@ export interface ActorKeys {
   encrypted_key: string;
   created_at: Generated<string>;
   expires_at: string | null;
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface UserApiKeys {
   id: Generated<string>;
   user_id: string;
@@ -240,7 +240,7 @@ export interface ModelRoleOverrides {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
 export interface MessageReactions {
   id: Generated<string>;
   message_id: string;
@@ -268,4 +268,4 @@ export interface MessageTranslations {
   created_at: string;
   updated_at: string | null;
 }
-"50: @theirs\n51: @theirs\n52: @theirs\n53: @theirs\n54: @theirs\n55: @theirs\n56: @theirs\n57: @theirs\n58: @theirs\n59: @theirs\n60: @theirs\n61: @theirs\n62: @theirs\n63: @theirs\n64: @theirs\n65: @theirs\n66: @theirs\n67: @theirs"
+
