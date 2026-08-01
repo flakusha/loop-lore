@@ -179,6 +179,7 @@ export interface ChatState extends AlpineMagicThis {
   _chatSettingsName: string;
   _chatSettingsMode: string;
   _chatSettingsTurnStrategy: string;
+  _chatOnline: boolean;
   _groupPaused: boolean;
   _renameChatId: string;
   _renameChatName: string;

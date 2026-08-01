@@ -220,6 +220,7 @@ export const ProfessionBonusTypeSchema = t.UnionEnum([
   "experience_gain",
 ],);
 export const ProfessionTitleSchema = t.UnionEnum(["apprentice", "journeyman", "expert", "master", "grandmaster",],);
+export const PublicationStatusSchema = t.UnionEnum(["draft", "review", "published", "rejected", "archived",],);
 export const QualityLevelSchema = t.UnionEnum(["poor", "common", "uncommon", "rare", "epic", "legendary",],);
 export const QuestProgressStatusSchema = t.UnionEnum(["active", "completed", "failed", "ignored",],);
 export const QuestStatusSchema = t.UnionEnum(["active", "completed", "failed", "abandoned",],);
@@ -414,6 +415,7 @@ export const WorldsSchema = t.Object({
   name: t.String(),
   description: t.Optional(t.String(),),
   lore: t.Optional(t.String(),),
+  publication_status: t.Optional(PublicationStatusSchema,),
   scan_depth: t.Optional(t.Number(),),
   token_budget: t.Optional(t.Number(),),
   difficulty_modifier: t.Optional(t.Number(),),
@@ -430,6 +432,7 @@ export const LocationsSchema = t.Object({
   name: t.String(),
   description: t.Optional(t.String(),),
   connections: t.Optional(t.String(),),
+  publication_status: t.Optional(PublicationStatusSchema,),
   parent_location_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
@@ -471,6 +474,7 @@ export const WorldLoreEntriesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   cooldown_seconds: t.Optional(t.Number(),),
   last_activated: t.Optional(t.String(),),
+  audience_scope: t.Optional(t.String(),),
 },);
 
 // ── chats ────────────────────────────────────────────
@@ -498,6 +502,7 @@ export const ChatsSchema = t.Object({
   streaming: t.Optional(t.Number(),),
   nsfw_override: t.Optional(t.String(),),
   name_source: t.Optional(t.String(),),
+  template_id: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────
@@ -647,6 +652,7 @@ export const ActorLoreEntriesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   cooldown_seconds: t.Optional(t.Number(),),
   last_activated: t.Optional(t.String(),),
+  audience_scope: t.Optional(t.String(),),
 },);
 
 // ── system_config ────────────────────────────────────────────
@@ -1648,5 +1654,31 @@ export const LootEntriesSchema = t.Object({
   max_quantity: t.Optional(t.Number(),),
   min_level: t.Optional(t.Number(),),
   metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── chat_setup_templates ────────────────────────────────────────────
+export const ChatSetupTemplatesSchema = t.Object({
+  slug: t.String(),
+  name: t.String(),
+  description: t.Optional(t.String(),),
+  mode: t.Optional(t.String(),),
+  turn_strategy: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  gm_config: t.Optional(t.String(),),
+  visual_novel: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_timeline_events ────────────────────────────────────────────
+export const WorldTimelineEventsSchema = t.Object({
+  world_id: t.String(),
+  event_type: t.String(),
+  description: t.String(),
+  occurred_at: t.String(),
+  story_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  data: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
