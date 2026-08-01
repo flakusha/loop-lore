@@ -17,11 +17,6 @@ import { type Kysely, sql, } from "kysely";
 
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
-    .alterTable("users",)
-    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .execute();
-
-  await database.schema
     .alterTable("personas",)
     .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
@@ -46,5 +41,4 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("data_migrations",).execute();
   await database.schema.alterTable("messages",).dropColumn("format_version",).execute();
   await database.schema.alterTable("personas",).dropColumn("format_version",).execute();
-  await database.schema.alterTable("users",).dropColumn("format_version",).execute();
 }
