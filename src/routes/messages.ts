@@ -546,7 +546,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             if (handler) {
               const chatRecord = await database
                 .selectFrom("chats",)
-                .select(["id", "mode", "type", "gm_config",],)
+                .select(["id", "mode", "type", "gm_config", "world_id",],)
                 .where("id", "=", chatId,)
                 .executeTakeFirst();
 
@@ -565,10 +565,12 @@ export function messagesRoutes(opts: HandlerOpts,) {
                     id: chatRecord.id,
                     mode: chatRecord.mode ?? undefined,
                     type: chatRecord.type ?? undefined,
+                    worldId: chatRecord.world_id ?? undefined,
                   }
                   : undefined,
                 messages: recentMessages.reverse(),
                 db: database,
+                config,
                 userId: actorId,
               };
 
@@ -853,6 +855,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
             recentContent,
             config,
             database,
+            actorId ?? undefined,
           );
 
           if (classification.isTransition) {
