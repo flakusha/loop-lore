@@ -5,17 +5,17 @@
  * Regex covers explicit movement ("I walk to..."), AUX-LLM catches implicit
  * transitions ("The rain forces us to seek shelter").
  *
- * AUX LLM constraints:
+ * AUX LLM constraints (enforced by the shared aux-pipeline runner):
  * - 50-100 max tokens (JSON response only)
  * - 0.0 temperature (deterministic)
  * - 2s timeout (fail fast, don't block chat)
  * - Graceful degradation on error (no transition detected)
+ * - BYO apiKey parity via resolveProvider (user → chat/actor → server)
  */
 import type { Kysely, } from "kysely";
+import { callAux, TRANSITION_CLASSIFIER_PROMPT, } from "../aux-pipeline";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { resolveModelRole, } from "../admin/model-roles";
-import { getProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
 import {
   CONTEXT_CUT,
@@ -24,6 +24,7 @@ import {
   TEMPORAL_TRANSITION,
   TRANSITION_PHRASES,
 } from "../regex/transitions";
+import { jsonParseOr, } from "../utils";
 import type { TransitionClassification, TransitionType, } from "./types";
 
 // ─── Regex Patterns ───────────────────────────────────────────
@@ -49,32 +50,6 @@ const REGEX_PATTERNS: { pattern: RegExp; type: TransitionType }[] = [
   // Location change: prepositional movement (check last - too broad)
   { pattern: /\b(to|into|toward|inside|outside|through|across|over)\s+(the\s+)?[a-z]+\b/i, type: "location_change", },
 ];
-
-// ─── System Prompt ────────────────────────────────────────────
-
-const TRANSITION_CLASSIFIER_PROMPT = `You are a transition detector. Analyze whether the user message
-narrates a scene/location change in a roleplay chat.
-
-Reply with ONLY a JSON object:
-{
-  "isTransition": true/false,
-  "type": "location_change" | "context_cut" | "description" | null,
-  "confidence": 0.0-1.0,
-  "locationHint": "extracted location name or null"
-}
-
-Rules:
-- "location_change" = character moves to a new place
-- "context_cut" = time skip or scene break
-- "description" = narrative transition without explicit movement
-- null = not a transition
-
-Examples:
-- "I walk to the tavern" → isTransition: true, type: "location_change"
-- "The rain forces us inside" → isTransition: true, type: "location_change"
-- "Skip to morning" → isTransition: true, type: "context_cut"
-- "I draw my sword" → isTransition: false
-- "Tell me about the quest" → isTransition: false`;
 
 // ─── Regex-First Classification ───────────────────────────────
 
@@ -110,6 +85,7 @@ function classifyWithRegex(content: string): Omit<TransitionClassification, "sou
  * @param recentMessages - Last 1-2 messages for context
  * @param config - Application config
  * @param db - Kysely instance
+ * @param userId - User ID for BYO apiKey resolution
  * @returns Classification result or null on failure
  */
 async function classifyWithAuxLlm(
@@ -117,18 +93,8 @@ async function classifyWithAuxLlm(
   recentMessages: string[],
   config: Config,
   db: Kysely<DB>,
+  userId?: string,
 ): Promise<Omit<TransitionClassification, "source"> | null> {
-  // Resolve auxiliary model role
-  const auxRole = await resolveModelRole("auxiliary", config, db,);
-  if (!auxRole.provider || !auxRole.model) {
-    return null;
-  }
-
-  const provider = getProvider(auxRole.provider,);
-  if (!provider) {
-    return null;
-  }
-
   // Build minimal context: system + recent messages + current message
   const messages = [
     { role: "system" as const, content: TRANSITION_CLASSIFIER_PROMPT, },
@@ -139,19 +105,12 @@ async function classifyWithAuxLlm(
     { role: "user" as const, content, },
   ];
 
-  // Call with timeout
-  const response = await withTimeout(
-    provider.complete({
-      model: auxRole.model,
-      messages,
-      params: {
-        temperature: 0.0,
-        maxTokens: 100,
-      },
-    },),
-    2000,
-  );
-
+  // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
+  const response = await callAux("transition", config, db, messages, {
+    userId,
+    temperature: 0.0,
+    maxTokens: 100,
+  },);
   if (!response) {
     return null;
   }
@@ -186,6 +145,7 @@ async function classifyWithAuxLlm(
  * @param recentMessages - Last 1-2 messages for context (optional)
  * @param config - Application config
  * @param db - Kysely instance
+ * @param userId - User ID for BYO apiKey resolution (optional)
  * @returns Transition classification
  */
 export async function classifyTransition(
@@ -193,6 +153,7 @@ export async function classifyTransition(
   recentMessages: string[],
   config: Config,
   db: Kysely<DB>,
+  userId?: string,
 ): Promise<TransitionClassification> {
   // Step 1: Regex check (instant, zero cost)
   const regexResult = classifyWithRegex(content,);
@@ -202,7 +163,7 @@ export async function classifyTransition(
 
   // Step 2: AUX LLM fallback (fast, low cost)
   try {
-    const auxResult = await classifyWithAuxLlm(content, recentMessages, config, db,);
+    const auxResult = await classifyWithAuxLlm(content, recentMessages, config, db, userId,);
     if (auxResult) {
       return { ...auxResult, source: "aux-llm", };
     }
@@ -239,30 +200,4 @@ function isValidTransitionType(t: unknown,): t is TransitionType {
 function extractLocationHint(content: string,): string | null {
   const match = content.match(/(?:to|into|toward|inside|outside)\s+(.+?)(?:\.|,|$)/i,);
   return match?.[1]?.trim() ?? null;
-}
-
-/**
- * Parse JSON with fallback.
- */
-function jsonParseOr<T,>(text: string, fallback: T,): T {
-  try {
-    return JSON.parse(text,) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-/**
- * Execute a promise with a timeout.
- * Returns null if the timeout is exceeded.
- */
-async function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | null> {
-  const timeout = new Promise<null>((_, reject,) =>
-    setTimeout(() => reject(new Error("timeout",),), ms,),
-  );
-  try {
-    return await Promise.race([promise, timeout,],);
-  } catch {
-    return null;
-  }
 }
