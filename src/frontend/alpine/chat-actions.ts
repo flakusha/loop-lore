@@ -199,6 +199,69 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
+    if (action === "impersonate-toggle") {
+      const mode = (payload?.mode as string) ?? "toggle";
+      if (mode === "off") {
+        await apiFetch(`/api/chats/${chatId}/impersonate`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({ impersonateActorId: null }),
+        });
+        this.impersonationActive = false;
+        this.impersonatingActorId = null;
+        this.$dispatch?.("show-toast", { type: "info", message: "Impersonation ended" });
+      } else {
+        await this.toggleImpersonate();
+      }
+      return;
+    }
+
+    if (action === "impersonate-select") {
+      const characterName = (payload?.characterName as string) ?? "";
+      if (!characterName) { return; }
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}/participants`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) { return; }
+        const participants = await res.json();
+        const target = participants.find(
+          (p: { display_name?: string; actor_type?: string }) =>
+            p.actor_type === "character" &&
+            p.display_name?.toLowerCase() === characterName.toLowerCase(),
+        );
+        if (!target) {
+          this.$dispatch?.("show-toast", {
+            type: "warning",
+            message: `Character "${characterName}" not found in this chat`,
+          });
+          return;
+        }
+        const putRes = await apiFetch(`/api/chats/${chatId}/impersonate`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({ impersonateActorId: target.actor_id }),
+        });
+        if (putRes.ok) {
+          this.impersonationActive = true;
+          this.impersonatingActorId = target.actor_id;
+          this.$dispatch?.("show-toast", {
+            type: "info",
+            message: `Playing as ${target.display_name || characterName}`,
+          });
+        } else {
+          const err = await putRes.json();
+          this.$dispatch?.("show-toast", {
+            type: "error",
+            message: err.error || "Failed to start impersonation",
+          });
+        }
+      } catch {
+        this.$dispatch?.("show-toast", { type: "error", message: "Network error resolving character" });
+      }
+      return;
+    }
+
     if (action === "create-quest") {
       await dispatchQuestAction(this, (payload?.description as string) ?? "", chatId,);
       return;

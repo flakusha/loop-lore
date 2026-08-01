@@ -1,52 +1,33 @@
 # TASK: Impersonation System
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partially Implemented
 **Priority:** Medium
-**Effort:** Medium
+**Effort:** Low (remaining)
 **Epic:** epic-impersonation
 
 ## Summary
 
-Character impersonation — 1 character can be impersonated once per world (except disconnected/private chats). Memories and isolation implications. From `epic-impersonation.md`.
+Impersonation system: `impersonate_actor_id` on `chat_participants`, 1-per-world constraint, name→actor resolution from `/impersonate` command.
 
-## Scope
+## Done
 
-### Impersonation Model
+- [x] `impersonate_actor_id` + `persona_id` columns on `chat_participants`
+- [x] `PUT /api/chats/:id/impersonate` with world constraint
+- [x] `updateImpersonation()` service function
+- [x] `/impersonate` + `/char` commands wired to dispatch actions
+- [x] `impersonate-select` action resolves character name from participants
+- [x] `<user_persona>` prompt section reads impersonated actor
+- [x] Frontend toggle + state loading
 
-- `chat.impersonate_id` column
-- Impersonation rules (once per world, not in private chats)
-- Memory implications
+## Remaining
 
-### Impersonation API
-
-- Start/stop impersonation endpoints
-- Impersonation state management
-- Context isolation
-
-### Impersonation UI
-
-- Impersonation controls in chat
-- Visual indicator of impersonation
-- Impersonation history
-
-## Linked Epics
-
-- `epic-impersonation.md`
+- [ ] E2E tests
+- [ ] Memory shareability filter for impersonated characters
 
 ## Acceptance Criteria
 
-- [ ] Impersonation model with `chat.impersonate_id`
-- [ ] Impersonation rules (once per world, not in private chats)
-- [ ] Memory implications for impersonated character
-- [ ] Start/stop impersonation API endpoints
-- [ ] Context isolation for impersonated character
-- [ ] UI controls for impersonation
-- [ ] Visual indicator of impersonation state
-- [ ] Unit tests for impersonation logic
-- [ ] Integration tests for impersonation workflow
-
-## Notes
-
-- Reference `epic-impersonation.md` for full system design
-- Consider memory sharing/isolation between characters
-- Balance impersonation power vs. game balance
+- [x] API returns 400 on 1-per-world conflict
+- [x] `/impersonate <name>` resolves to actor ID and sets impersonation
+- [x] `/impersonate off` clears impersonation
+- [ ] Tests passing (e2e)
+- [x] Documentation updated
