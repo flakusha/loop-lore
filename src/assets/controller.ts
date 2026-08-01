@@ -26,6 +26,7 @@ import { AssetLinkEntity, AssetVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import {
   badRequestResponse,
+  HttpStatus,
   jsonCreated,
   jsonNoContent,
   jsonPaginated,
