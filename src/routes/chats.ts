@@ -48,6 +48,7 @@ import {
 import {
   forbiddenResponse as forbidden,
   HttpStatus,
+  type HttpStatusCode,
   jsonCreated,
   jsonError,
   jsonNoContent,
@@ -74,14 +75,14 @@ export function chatsRoutes(opts: HandlerOpts,) {
       // Capture raw request body text so handlers can distinguish fields the
       // client explicitly sent from Elysia's auto-applied enum defaults
       // (e.g. mode → "direct", turnStrategy → "round_robin").
-      .onParse(async (ctx: any, contentType: string) => {
+      .onParse(async (ctx: any, contentType: string,) => {
         if (!contentType.includes("application/json",)) {
-          return undefined;
+          return;
         }
         const text = await ctx.request.text();
         (ctx as { rawBodyText?: string }).rawBodyText = text;
-        return JSON.parse(text);
-      })
+        return JSON.parse(text,);
+      },)
       .get(
         "/api/chats",
         async (ctx: any,) => {
@@ -161,8 +162,12 @@ export function chatsRoutes(opts: HandlerOpts,) {
             currentLocationId: body.currentLocationId,
             turnStrategy: hasExplicit("turnStrategy",) ? body.turnStrategy : template?.turn_strategy ?? undefined,
             participantIds: body.participantIds,
-            gmConfig: hasExplicit("gmConfig",) ? body.gmConfig : (template?.gm_config ? JSON.parse(template.gm_config,) : undefined),
-            visualNovel: hasExplicit("visualNovel",) ? body.visualNovel : (template ? template.visual_novel === 1 : undefined),
+            gmConfig: hasExplicit("gmConfig",)
+              ? body.gmConfig
+              : (template?.gm_config ? JSON.parse(template.gm_config,) : undefined),
+            visualNovel: hasExplicit("visualNovel",)
+              ? body.visualNovel
+              : (template ? template.visual_novel === 1 : undefined),
             templateId: template?.id,
           },);
 
@@ -361,13 +366,12 @@ export function chatsRoutes(opts: HandlerOpts,) {
             userRole,
           },);
           if ("code" in result) {
-            const status = result.code === "not_found"
-              ? HttpStatus.NotFound
-              : (result.code === "forbidden"
-                ? HttpStatus.Forbidden
-                : (result.code === "key_mechanic_conflict"
-                  ? HttpStatus.Conflict
-                  : HttpStatus.BadRequest));
+            const statusMap: Record<string, HttpStatusCode> = {
+              not_found: HttpStatus.NotFound,
+              forbidden: HttpStatus.Forbidden,
+              key_mechanic_conflict: HttpStatus.Conflict,
+            };
+            const status = statusMap[result.code] ?? HttpStatus.BadRequest;
             return jsonError(result.message, status, result.code as never,);
           }
           return jsonResponse({ ok: true, },);
@@ -387,7 +391,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           if (!access.ok) { return forbidden(); }
 
           // Validate name length (1-60 characters)
-          if (!body.name || body.name.length < 1 || body.name.length > 60) {
+          if (!body.name || body.name.length === 0 || body.name.length > 60) {
             return jsonError("Chat name must be 1-60 characters", HttpStatus.BadRequest, "validation_error" as never,);
           }
 
