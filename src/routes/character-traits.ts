@@ -21,7 +21,7 @@ import {
   WorldTraitCreateBody,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 export function characterTraitsRoutes(opts: HandlerOpts,) {
@@ -33,9 +33,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .get(
       "/api/actors/:actorId/traits/permanent",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, } = ctx.params;
 
@@ -62,9 +62,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .get(
       "/api/actors/:actorId/traits/permanent/:traitName",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, traitName, } = ctx.params;
 
@@ -92,9 +92,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .post(
       "/api/actors/:actorId/traits/permanent",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, } = ctx.params;
 
@@ -129,9 +129,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .put(
       "/api/actors/:actorId/traits/permanent/:traitName",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, traitName, } = ctx.params;
 
@@ -164,9 +164,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .delete(
       "/api/actors/:actorId/traits/permanent/:traitName",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, traitName, } = ctx.params;
 
@@ -194,9 +194,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .get(
       "/api/actors/:actorId/traits/world/:worldId",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, worldId, } = ctx.params;
 
@@ -223,9 +223,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .get(
       "/api/actors/:actorId/traits/world/:worldId/:traitName",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, worldId, traitName, } = ctx.params;
 
@@ -253,9 +253,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .post(
       "/api/actors/:actorId/traits/world/:worldId",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, worldId, } = ctx.params;
 
@@ -291,9 +291,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .put(
       "/api/actors/:actorId/traits/world/:worldId/:traitName",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, worldId, traitName, } = ctx.params;
 
@@ -326,9 +326,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     .delete(
       "/api/actors/:actorId/traits/world/:worldId/:traitName",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
         const { actorId, worldId, traitName, } = ctx.params;
 
@@ -354,9 +354,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     )
     // ── Location Traits (Layer 3) ───────────────────────────
     .get("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
       const { actorId, locationId, } = ctx.params;
 
@@ -374,9 +374,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
       const { actorId, locationId, traitName, } = ctx.params;
 
@@ -395,9 +395,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
       const { actorId, locationId, } = ctx.params;
 
@@ -427,9 +427,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
       const { actorId, locationId, traitName, } = ctx.params;
 
@@ -456,9 +456,9 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       },
     },)
     .delete("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
+const t = ctx.t as TranslatorFn | undefined;
 
       const { actorId, locationId, traitName, } = ctx.params;
 

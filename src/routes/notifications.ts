@@ -8,9 +8,8 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { NotificationService, } from "../notifications/service";
 import { safeJsonStringify, } from "../utils";
-import { unauthorized, } from "../validation/middleware";
 import { ErrorResponse, Id, NotificationPreferencesBody, SuccessResponse, } from "../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { jsonResponse, requireUserId, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 15_000;
@@ -102,8 +101,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
   const markReadBody = t.Object({ read: t.Optional(t.Boolean(),), },);
   return new Elysia({ name: "notifications", },)
     .get("/api/notifications", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
       const unreadOnly = ctx.query?.unread === "true";
       const items = await new NotificationService(database,).list(userId, unreadOnly,);
       return jsonResponse({ items, },);
@@ -119,8 +118,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     },)
     .get("/api/notifications/unread-count", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
       const count = await new NotificationService(database,).getUnreadCount(userId,);
       return jsonResponse({ count, },);
     }, {
@@ -137,8 +136,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
     .patch(
       "/api/notifications/:id",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
         if (ctx.body.read === true) {
           await new NotificationService(database,).markRead(ctx.params.id, userId,);
         }
@@ -159,8 +158,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     .patch("/api/notifications/read-all", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
       await new NotificationService(database,).markAllRead(userId,);
       return jsonResponse({ ok: true, },);
     }, {
@@ -175,8 +174,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     },)
     .delete("/api/notifications/:id", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
       await new NotificationService(database,).delete(ctx.params.id, userId,);
       return jsonResponse({ ok: true, },);
     }, {
@@ -192,8 +191,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     },)
     .get("/api/notifications/preferences", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
       const prefs = await new NotificationService(database,).getPrefs(userId,);
       return jsonResponse(prefs,);
     }, {
@@ -210,8 +209,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
     .patch(
       "/api/notifications/preferences",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
         const prefs = await new NotificationService(database,).setPrefs(userId, {
           enabled: ctx.body.enabled,
           mutedWorlds: ctx.body.mutedWorlds,
@@ -232,14 +231,8 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     .get("/api/notifications/stream", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
       return new NotificationStreamer(database, userId,).open();
     }, {
       response: {

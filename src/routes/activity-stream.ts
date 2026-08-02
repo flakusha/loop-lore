@@ -14,7 +14,7 @@ import type { DB, } from "../db/schema";
 import { safeJsonStringify, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { computeActivity, } from "./activity";
-import { ErrorCode, HttpStatus, jsonError, } from "./http-utils";
+import { requireUserId, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 8000;
@@ -109,14 +109,8 @@ export class ActivityStreamer {
 
 export function activityStreamRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "activity-stream", },).get("/api/activity/stream", async (ctx,) => {
-    const userId = (ctx as any).userId as string | null;
-    if (!userId) {
-      return jsonError({
-        message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",
-        status: HttpStatus.Unauthorized,
-        code: ErrorCode.Unauthorized,
-      },);
-    }
+    const userId = requireUserId(ctx,);
+    if (typeof userId !== "string") return userId;
     const streamer = new ActivityStreamer(database, userId,);
     return streamer.open();
   }, {
