@@ -23,7 +23,11 @@ describe("createAsset idempotent upload", () => {
     const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-asset-test-",),);
     await insertUsers(db, "idempotent-test", "Idempotent Test",);
     await insertUsers(db, "other-user", "Other User",);
-    const ownerId = (await db.selectFrom("users",).select("id",).executeTakeFirstOrThrow()).id;
+    const ownerId = (await db
+      .selectFrom("users",)
+      .select("id",)
+      .where("username", "=", "idempotent-test",)
+      .executeTakeFirstOrThrow()).id;
     const otherOwnerId = (await db
       .selectFrom("users",)
       .select("id",)
@@ -69,7 +73,11 @@ describe("createAsset idempotent upload", () => {
     const { db, sqlite, } = await createTestDb();
     const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-asset-test-",),);
     await insertUsers(db, "diff-content", "Diff Content",);
-    const ownerId = (await db.selectFrom("users",).select("id",).executeTakeFirstOrThrow()).id;
+    const ownerId = (await db
+      .selectFrom("users",)
+      .select("id",)
+      .where("username", "=", "diff-content",)
+      .executeTakeFirstOrThrow()).id;
 
     const firstBuffer = makeMinimalPng(4, 3,);
     const secondBuffer = makeMinimalPng(8, 6,);
