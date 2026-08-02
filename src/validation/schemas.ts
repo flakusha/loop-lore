@@ -164,7 +164,15 @@ export const ChatCreateBody = t.Object({
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
-  templateId: t.Optional(t.String({ minLength: 1, },)),
+  templateId: t.Optional(t.String({ minLength: 1, },),),
+  // Memory carry: seed the new chat with the participant character's
+  // memories (full = all, selective = only memoryCarryIds, fresh = none).
+  memoryCarry: t.Optional(t.Union([
+    t.Literal("full",),
+    t.Literal("selective",),
+    t.Literal("fresh",),
+  ],),),
+  memoryCarryIds: t.Optional(t.Array(t.String(),),), // eslint-disable-line unicorn/max-nested-calls
 },);
 
 export const ChatUpdateBody = t.Object({
