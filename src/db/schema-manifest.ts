@@ -612,6 +612,17 @@ export const SCHEMA = new SchemaManifest()
     priority: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("chat_invites", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    code: col("text", { notNull: true, },),
+    created_by: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+    max_uses: col("integer",),
+    uses: col("integer", { notNull: true, hasDefault: true, },),
+    revoked: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("chat_mentions", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),
