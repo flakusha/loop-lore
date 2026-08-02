@@ -90,7 +90,11 @@ export function generationRoutes({ database, config, }: { database: Kysely<DB>; 
   app.post("/api/generation/regenerate", async (ctx,) => {
     const body = await parseJsonBody(ctx.request,);
     if (body instanceof Response) { return body; }
-    return handleRegenerate(body, database,);
+    const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
+    return handleRegenerate(body, database, {
+      userId: auth.userId ?? null,
+      userRole: auth.userRole ?? null,
+    },);
   },);
 
   app.post("/api/generation/image", async (ctx,) => {
