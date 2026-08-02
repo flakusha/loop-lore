@@ -8,7 +8,9 @@
 
 ## Summary
 
-Create the complete NSFW interaction interface for intimacy system, body state display, and housing management. Backend routes exist at `/api/nsfw/*` but no frontend UI exists.
+Create the NSFW interaction interface for the intimacy system and body state display. Backend routes exist at `/api/nsfw/*` but no frontend UI exists.
+
+> **Housing is NOT part of this task** — it is tracked independently under `epic-housing.md`. Housing is a standalone domain, not an NSFW sub-feature.
 
 ## Current State
 
@@ -32,22 +34,13 @@ Create the complete NSFW interaction interface for intimacy system, body state d
 - Status indicators (healthy, well-rested, happy)
 - Stats display (affection, trust, comfort)
 
-### Phase 3: Housing Management
-
-- Housing overview with rooms
-- Room customization
-- Furniture placement
-- Storage management
-
 ## Files to Create
 
 - `src/frontend/nsfw/intimacy-interface.ts` — Intimacy UI
 - `src/frontend/nsfw/body-state.ts` — Body state widget
-- `src/frontend/nsfw/housing-management.ts` — Housing UI
 - `src/frontend/alpine/nsfw.ts` — Alpine.js NSFW logic
 - `src/components/nsfw/intimacy-panel.html` — Intimacy panel template
 - `src/components/nsfw/body-state.html` — Body state template
-- `src/components/nsfw/housing-panel.html` — Housing panel template
 
 ## Acceptance Criteria
 
@@ -58,10 +51,6 @@ Create the complete NSFW interaction interface for intimacy system, body state d
 - [ ] Privacy controls
 - [ ] Body state display (health, mood, energy)
 - [ ] Status indicators
-- [ ] Housing overview
-- [ ] Room customization
-- [ ] Furniture placement
-- [ ] Storage management
 - [ ] Mobile responsive
 - [ ] Keyboard accessible
 
@@ -73,4 +62,7 @@ Create the complete NSFW interaction interface for intimacy system, body state d
 - `TASK-nsfw-alpine.md` — Existing task (needs updating)
 - `TASK-nsfw-intimacy-interface.md` — Existing task
 - `TASK-nsfw-body-state.md` — Existing task
-- `TASK-nsfw-housing-management.md` — Existing task
+
+## Housing (moved out)
+
+Housing management UI, room layout, and furniture placement now live under **`epic-housing.md`** — see `TASK-housing-general.md`. Do not re-add housing here.
