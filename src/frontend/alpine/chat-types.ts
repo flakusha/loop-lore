@@ -240,6 +240,9 @@ export interface ChatState extends AlpineMagicThis {
   readonly filteredChats: { id: string; name?: string }[];
   _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
   searchChats(q: string,): Promise<void>;
+  _joinableChats: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
+  loadJoinableChats(): Promise<void>;
+  joinChat(chatId: string,): Promise<void>;
   selectedChats: string[];
   _mentionQuery: string;
   _mentionResults: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
