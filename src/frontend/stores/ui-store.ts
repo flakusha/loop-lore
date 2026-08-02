@@ -16,6 +16,8 @@ export const uiStoreDefinition: Record<string, unknown> = {
   showGallery: false,
   showCharacterInfo: false,
   showMemoryPanel: false,
+  showSectionsPanel: false,
+  showBackgroundPanel: false,
 
   // ── Modals ───────────────────────────────────────────
   showUploadModal: false,
