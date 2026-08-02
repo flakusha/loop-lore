@@ -3,7 +3,9 @@
 import { destroyVnRenderer, } from "../vn";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
+import { chatBackgrounds, } from "./chat-backgrounds";
 import { chatEditing, } from "./chat-editing";
+import { chatFilters, } from "./chat-filters";
 import { chatGenerations, } from "./chat-generations";
 import { chatGroup, } from "./chat-group";
 import { chatKeys, } from "./chat-keys";
@@ -11,6 +13,7 @@ import { chatManagement, } from "./chat-management";
 import { chatMessages, } from "./chat-messages";
 import { chatPanels, } from "./chat-panels";
 import { chatSettings, } from "./chat-settings";
+import { chatSections, } from "./chat-sections";
 import { chatUtils, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
@@ -348,7 +351,7 @@ globalThis.chatState = function() {
 
     async loadChats() {
       try {
-        const res = await apiFetch("/api/chats?pageSize=200",);
+        const res = await apiFetch(`/api/chats?${this._filterParams?.() ?? "pageSize=200"}`,);
         if (!res.ok) {
           this.$dispatch("show-toast", { type: "error", message: "Failed to load chats", },);
           return;
@@ -397,6 +400,11 @@ globalThis.chatState = function() {
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
       await this.loadChatParticipants();
+      // Location-scoped features: reset per-chat state then load fresh.
+      this._sections = [];
+      this._activeSectionId = null;
+      this._background = null;
+      await Promise.all([this.loadSections(), this.loadBackground(),],);
     },
 
     getChatId() {
@@ -405,8 +413,11 @@ globalThis.chatState = function() {
 
     // ── Sub-module methods ──
     ...chatKeys,
+    ...chatFilters,
     ...chatGroup,
     ...chatSettings,
+    ...chatSections,
+    ...chatBackgrounds,
     ...chatMessages,
     ...chatGenerations,
     ...chatVariants,
