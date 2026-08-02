@@ -10,11 +10,13 @@
  */
 
 import type { Kysely, } from "kysely";
+import crypto from "node:crypto";
 import { verifyJwt, } from "../auth/jwt";
 import type { AuthConfig, } from "../config/schema";
 import { UserRole, UserStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger/index";
+import { LL_TOKEN, } from "../regex/cookies";
 import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import type { RequestContext, } from "./types";
@@ -61,7 +63,7 @@ export async function authenticate({
   if (!rawToken) {
     const cookieHeader = request.headers.get("Cookie",);
     if (cookieHeader) {
-      const match = /(?:^|;\s*)ll_token=([^;]+)/.exec(cookieHeader,);
+      const match = LL_TOKEN.exec(cookieHeader,);
       if (match) { rawToken = match[1]!; }
     }
   }
@@ -264,4 +266,36 @@ export function extractBearerToken(request: Request,): string | null {
   if (!header?.startsWith("Bearer ",)) { return null; }
   const token = header.slice("Bearer ".length,).trim();
   return token || null;
+}
+
+/**
+ * Resolve the acting user id from a request, falling back to the solo user.
+ *
+ * Looks up the `ll_token` cookie, hashes it to a session `token_hash`, and
+ * returns the session's `user_id`. If no token is present or no session
+ * matches, returns the solo/demo user's id.
+ *
+ * @param request - Incoming request (reads the Cookie header)
+ * @param database - Kysely database handle
+ * @param demoUsername - Demo username used for the solo fallback
+ * @returns The resolved user id, or null if not determinable
+ */
+export async function resolveUserIdFromRequest(
+  request: Request,
+  database: Kysely<DB>,
+  demoUsername: string,
+): Promise<string | null> {
+  const cookieHeader = request.headers.get("Cookie",);
+  const match = cookieHeader ? LL_TOKEN.exec(cookieHeader,) : null;
+  if (match) {
+    const tokenHash = crypto.createHash("sha256",).update(match[1]!,).digest("hex",);
+    const session = await database
+      .selectFrom("sessions",)
+      .select(["user_id",],)
+      .where("token_hash", "=", tokenHash,)
+      .executeTakeFirst();
+    if (session) { return session.user_id; }
+  }
+  const solo = await getOrCreateSoloUserForAuth(database, demoUsername,);
+  return solo?.id ?? null;
 }
