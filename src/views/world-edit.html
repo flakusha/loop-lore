@@ -39,6 +39,13 @@
               >
                 {{{t("worlds.tabLocations")}}}
               </button>
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeTab === 'explore' }"
+                @click="activeTab = 'explore'"
+              >
+                Explore
+              </button>
             </div>
 
             <!-- General Tab -->
@@ -226,6 +233,83 @@
                 <div class="icon">🗺️</div>
                 <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
                 <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
+              </div>
+            </div>
+
+            <!-- Explore Tab (location explorer + details) -->
+            <div x-show="activeTab === 'explore'" x-data="locationExplorerState('{{worldId}}')" data-testid="location-explorer">
+              <div style="display: flex; gap: var(--space-4)">
+                <!-- Tree / browse column -->
+                <div style="flex: 1 1 40%; min-width: 0">
+                  <input
+                    class="form-input"
+                    type="text"
+                    placeholder="Search locations…"
+                    x-model="search"
+                    style="margin-bottom: var(--space-3)"
+                  />
+                  <div x-show="loading" class="empty-state" style="padding: var(--space-6)">
+                    <div class="icon">⏳</div>
+                    <div class="title">Loading…</div>
+                  </div>
+                  <div x-show="!loading && error" class="empty-state" style="padding: var(--space-6)">
+                    <div class="title">Failed to load locations.</div>
+                  </div>
+                  <div style="display: grid; gap: var(--space-1)">
+                    <template x-for="loc in filteredLocations" :key="loc.id">
+                      <div
+                        class="panel-item"
+                        style="cursor: pointer; display: flex; gap: var(--space-2); align-items: center"
+                        @click="selectLoc(loc.id)"
+                        :class="{ 'active-section': selectedLocId === loc.id }"
+                      >
+                        <span x-show="hasChildren(loc.id)" style="cursor: pointer">
+                          <span @click.stop="toggleExpand(loc.id)" x-text="isExpanded(loc.id) ? '▾' : '▸'"></span>
+                        </span>
+                        <span x-show="!hasChildren(loc.id)">&nbsp;</span>
+                        <span style="font-weight: 600" x-text="loc.name"></span>
+                        <span style="font-size: 11px; color: var(--text-secondary)" x-text="connectionNames(loc)"></span>
+                      </div>
+                    </template>
+                    <div x-show="!loading && loaded && filteredLocations.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+                      No matching locations.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Detail pane -->
+                <div style="flex: 1 1 60%; min-width: 0; border-left: 1px solid var(--border-default); padding-left: var(--space-4)">
+                  <div x-show="!detail" class="empty-state" style="padding: var(--space-8)">
+                    <div class="title">Select a location</div>
+                  </div>
+                  <template x-if="detail">
+                    <div>
+                      <h3 style="margin: 0 0 var(--space-2)" x-text="detail.name"></h3>
+                      <p x-show="detail.description" x-text="detail.description" style="color: var(--text-secondary)"></p>
+                      <p x-show="!detail.description" style="color: var(--text-secondary)">(no description)</p>
+                      <div style="display: grid; gap: var(--space-1); margin-top: var(--space-3); font-size: 14px">
+                        <template x-if="detail.parent">
+                          <div><strong>Parent:</strong> <span x-text="detail.parent.name"></span></div>
+                        </template>
+                        <template x-if="detail.connections && detail.connections.length > 0">
+                          <div>
+                            <strong>Connections:</strong>
+                            <span x-text="detail.connections.map(c => c.name).join(', ')"></span>
+                          </div>
+                        </template>
+                        <template x-if="detail.state">
+                          <div style="margin-top: var(--space-2); border-top: 1px solid var(--border-default); padding-top: var(--space-2)">
+                            <div class="nav-section-title">State</div>
+                            <div x-show="detail.state.atmosphere"><strong>Atmosphere:</strong> <span x-text="detail.state.atmosphere"></span></div>
+                            <div x-show="detail.state.description_override"><strong>Override:</strong> <span x-text="detail.state.description_override"></span></div>
+                            <div x-show="detail.state.weather"><strong>Weather:</strong> <span x-text="detail.state.weather"></span></div>
+                            <div x-show="detail.state.time_of_day"><strong>Time:</strong> <span x-text="detail.state.time_of_day"></span></div>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
