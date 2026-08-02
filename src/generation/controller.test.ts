@@ -100,13 +100,13 @@ describe("handleRetryGeneration", () => {
 });
 
 describe("handleRegenerate", () => {
-  test("returns 400 when chatId missing", () => {
-    const res = handleRegenerate({}, testDb,);
+  test("returns 400 when chatId missing", async () => {
+    const res = await handleRegenerate({}, testDb,);
     expect(res.status,).toBe(400,);
   });
 
   test("returns success with ready flag", async () => {
-    const res = handleRegenerate({ chatId: "chat-1", }, testDb,);
+    const res = await handleRegenerate({ chatId: "chat-1", }, testDb,);
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as { ok: boolean; chatId: string; ready: boolean };
     expect(data.ok,).toBe(true,);
