@@ -303,6 +303,7 @@ export interface Messages {
   attachments: string | null;
   archived_at: string | null;
   format_version: Generated<number>;
+  section_id: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
@@ -493,5 +494,38 @@ export interface WorldTimelineEvents {
   description: string;
   data: string | null;
   occurred_at: string;
+  created_at: Generated<string>;
+}
+
+// ── chat_sections ────────────────────────────────────────────
+export interface ChatSections {
+  id: Generated<string>;
+  chat_id: string;
+  label: string;
+  description: string | null;
+  location_id: string | null;
+  sort_index: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  background_id: string | null;
+}
+
+// ── chat_backgrounds ────────────────────────────────────────────
+export interface ChatBackgrounds {
+  id: Generated<string>;
+  name: string;
+  type: Generated<string>;
+  location_id: string | null;
+  asset_id: string | null;
+  config: string | null;
+  priority: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── chat_background_assignments ────────────────────────────────────────────
+export interface ChatBackgroundAssignments {
+  id: Generated<string>;
+  chat_id: string;
+  background_id: string;
   created_at: Generated<string>;
 }
