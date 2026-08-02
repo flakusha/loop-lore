@@ -51,9 +51,11 @@ See **`.agents/references/recommendations.md`** for full patterns. Key rules:
 ## Quick-Reference Commands
 
 ```bash
-bun run check        # typecheck + lint + format + md lint
+bun run check        # typecheck + lint + format + md lint + db schema gate
 bun test src/        # unit tests (203 test files)
 bun run db:migrate   # DB migrations
+# After a migration change, regenerate schema artifacts (fails `check` otherwise):
+bun run db:sync-types && bun run db:sync-manifest
 ./scripts/worktree.sh list   # active worktrees
 ```
 
