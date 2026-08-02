@@ -159,10 +159,29 @@ See `.agents/references/recommendations.md` — use these:
 ## Verification Gates (Required Before "Done")
 
 ```bash
-bun run check        # typecheck + lint + format + md lint
+bun run check        # typecheck + lint + format + md lint + db schema gate
 bun test src/        # unit tests
 E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 ```
+
+### DB schema regeneration (required after any migration change)
+
+Migrations (`src/db/migrations/*.ts`) are the single source of truth for the
+DB schema. All downstream schema artifacts are **auto-generated** from them
+and must be regenerated whenever a migration is added or edited. The `check`
+gate (`db:schemas:check`) fails red until they are:
+
+```bash
+# Regenerate after a migration change:
+bun run db:sync-types && bun run db:sync-manifest
+# Verify the gate is green:
+bun run db:schemas:check
+```
+
+Generated (never hand-edit): `src/db/schema-*.ts`, `src/db/schema.ts`,
+`src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`,
+`src/validation/db-schemas.ts`. e2e provisioning and unit tests build the
+schema directly from migrations, so they pick changes up automatically.
 
 ## Worktree Workflow
 
