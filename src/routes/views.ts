@@ -1183,7 +1183,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
       }, {
         response: { 200: SuccessResponse, },
       },)
-      .get("/dynamic/worlds/list", async (ctx,) => {
+      .get("/dynamic/worlds/list", async (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
@@ -1213,7 +1213,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
       }, {
         response: { 200: SuccessResponse, },
       },)
-      .get("/dynamic/worlds/search", async (ctx,) => {
+      .get("/dynamic/worlds/search", async (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
@@ -1248,7 +1248,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
       }, {
         response: { 200: SuccessResponse, },
       },)
-      .get("/dynamic/worlds/:id/detail", async (ctx,) => {
+      .get("/dynamic/worlds/:id/detail", async (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
