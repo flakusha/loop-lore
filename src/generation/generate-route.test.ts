@@ -105,6 +105,45 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
   sqlite.run(
     `CREATE TABLE location_states (location_id TEXT NOT NULL, world_id TEXT NOT NULL, atmosphere TEXT, npcs_present TEXT NOT NULL DEFAULT '[]', items_available TEXT NOT NULL DEFAULT '[]', time_of_day TEXT, weather TEXT, hazards TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
+  sqlite.run(
+    `CREATE TABLE chat_participants (chat_id TEXT NOT NULL, actor_id TEXT NOT NULL, role_in_chat TEXT NOT NULL DEFAULT 'member', impersonate_actor_id TEXT, persona_id TEXT, last_read_message_id TEXT, talkativity INTEGER NOT NULL DEFAULT 5, initiative INTEGER NOT NULL DEFAULT 0, joined_at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (chat_id, actor_id))`,
+  );
+
+  // Additional tables needed by PromptAssembler sections (lore identity,
+  // gm-notes, character traits, user persona, nsfw context).
+  sqlite.run(
+    `CREATE TABLE character_permanent_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, trait_category TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, immutable INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, trait_name))`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_world_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL, trait_category TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id, trait_name))`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_location_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, location_id TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, bonus INTEGER DEFAULT 0, penalty INTEGER DEFAULT 0, effects TEXT DEFAULT '{}', equipment_override TEXT DEFAULT '{}', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, location_id, trait_name))`,
+  );
+  sqlite.run(
+    `CREATE TABLE professions (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL, discipline TEXT NOT NULL, level INTEGER NOT NULL DEFAULT 1, experience INTEGER NOT NULL DEFAULT 0, title TEXT NOT NULL DEFAULT 'apprentice', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id, discipline))`,
+  );
+  sqlite.run(
+    `CREATE TABLE whitenotes (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, type TEXT NOT NULL, content TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 5, scope TEXT NOT NULL DEFAULT 'scene', expires_at TEXT, created_at TEXT NOT NULL)`,
+  );
+  sqlite.run(
+    `CREATE TABLE shadow_notes (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, type TEXT NOT NULL, content TEXT NOT NULL, revealed INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)`,
+  );
+  sqlite.run(
+    `CREATE TABLE personas (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, name TEXT NOT NULL, avatar_asset_id TEXT, description TEXT, title TEXT, is_default TEXT NOT NULL DEFAULT 'false', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, format_version INTEGER NOT NULL DEFAULT 0)`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_intimacy (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, target_actor_id TEXT NOT NULL, world_id TEXT, score INTEGER NOT NULL DEFAULT 0, action_history TEXT NOT NULL DEFAULT '[]', unlocked_thresholds TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, target_actor_id, world_id))`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_arousal (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT, level INTEGER NOT NULL DEFAULT 0, buildup_rate REAL NOT NULL DEFAULT 0, decay_rate REAL NOT NULL DEFAULT 0, modifiers TEXT NOT NULL DEFAULT '[]', last_update TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id))`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_desire_profile (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, turn_ons TEXT NOT NULL DEFAULT '[]', turn_offs TEXT NOT NULL DEFAULT '[]', fetishes TEXT NOT NULL DEFAULT '[]', hard_limits TEXT NOT NULL DEFAULT '[]', current_desire INTEGER NOT NULL DEFAULT 0, desire_decay_rate REAL NOT NULL DEFAULT 0, desire_buildup_rate REAL NOT NULL DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id))`,
+  );
+  sqlite.run(
+    `CREATE TABLE world_states (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, snapshot TEXT NOT NULL DEFAULT '', trigger_message_id TEXT, trigger_turn_id TEXT, description TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
 
   return { sqlite, db, };
 }

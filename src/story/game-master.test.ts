@@ -177,10 +177,27 @@ function createTestDb(): TestDbResult {
   );
   // Tables needed by PromptAssembler character-traits section
   sqlite.run(
+    `CREATE TABLE character_permanent_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, trait_category TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, immutable INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, trait_name))`,
+  );
+  sqlite.run(
     `CREATE TABLE character_world_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL, trait_category TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id, trait_name))`,
   );
   sqlite.run(
     `CREATE TABLE character_location_traits (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, location_id TEXT NOT NULL, trait_name TEXT NOT NULL, trait_value TEXT NOT NULL, bonus INTEGER DEFAULT 0, penalty INTEGER DEFAULT 0, effects TEXT DEFAULT '{}', equipment_override TEXT DEFAULT '{}', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, location_id, trait_name))`,
+  );
+  sqlite.run(
+    `CREATE TABLE professions (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL, discipline TEXT NOT NULL, level INTEGER NOT NULL DEFAULT 1, experience INTEGER NOT NULL DEFAULT 0, title TEXT NOT NULL DEFAULT 'apprentice', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id, discipline))`,
+  );
+
+  // Tables needed by PromptAssembler gm-notes, shadow-notes and user-persona sections
+  sqlite.run(
+    `CREATE TABLE whitenotes (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, type TEXT NOT NULL, content TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 5, scope TEXT NOT NULL DEFAULT 'scene', expires_at TEXT, created_at TEXT NOT NULL)`,
+  );
+  sqlite.run(
+    `CREATE TABLE shadow_notes (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, type TEXT NOT NULL, content TEXT NOT NULL, revealed INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)`,
+  );
+  sqlite.run(
+    `CREATE TABLE personas (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, name TEXT NOT NULL, avatar_asset_id TEXT, description TEXT, title TEXT, is_default TEXT NOT NULL DEFAULT 'false', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, format_version INTEGER NOT NULL DEFAULT 0)`,
   );
 
   return { sqlite, db, };
