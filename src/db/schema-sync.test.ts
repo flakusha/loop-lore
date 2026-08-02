@@ -6,12 +6,13 @@ import { SCHEMA, } from "./schema-manifest";
  * Schema Sync Test
  *
  * Verifies that the migrated database matches the schema manifest.
- * The manifest (schema-manifest.ts) is the single source of truth for
- * expected table/column structure. When adding a table or column:
- *   1. Update schema-*.ts interface
- *   2. Update schema-manifest.ts
- *   3. Add migration
- *   4. This test validates everything lines up
+ * The manifest (schema-manifest.ts) is AUTO-GENERATED from the migration
+ * files — the migrations are the single source of truth. When adding or
+ * changing a table/column:
+ *   1. Add/edit the migration file
+ *   2. Regenerate the schema artifacts: bun run db:sync-types && bun run db:sync-manifest
+ *   3. Run `bun run db:schemas:check` (the `check` gate) to confirm nothing is stale
+ *   4. This test validates the migrated DB matches the manifest
  */
 
 describe("schema sync — migrated DB vs manifest", () => {
@@ -76,12 +77,5 @@ describe("schema sync — migrated DB vs manifest", () => {
 
     await db.destroy();
     sqlite.close();
-  });
-
-  test("manifest table count matches DB interface", () => {
-    const manifestCount = SCHEMA.tableNames.length;
-    // Auto-counted from migrations by generate-schema-manifest.ts
-    // Current: 97 tables
-    expect(manifestCount, "manifest should have 97 tables",).toBe(97,);
   });
 });
