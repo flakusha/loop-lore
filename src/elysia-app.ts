@@ -50,6 +50,7 @@ import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatSearchRoutes, } from "./routes/chat-search";
 import { chatSectionsRoutes, } from "./routes/chat-sections";
 import { chatsRoutes, } from "./routes/chats";
+import { invitesRoutes, } from "./routes/invites";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { gmNotesRoutes, } from "./routes/gm-notes";
 import { healthRoutes, } from "./routes/health";
@@ -170,6 +171,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(messageReactionsRoutes(handleOpts,),);
   app.use(chatsRoutes(handleOpts,),);
   app.use(chatSearchRoutes(handleOpts,),);
+  app.use(invitesRoutes(handleOpts,),);
   app.use(gmNotesRoutes(handleOpts,),);
   app.use(vnChoiceRoutes({ database: handleOpts.database, },),);
   app.use(vnGenerateRoutes({ database: handleOpts.database, config, },),);
