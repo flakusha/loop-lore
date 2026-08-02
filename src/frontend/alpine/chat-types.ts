@@ -51,6 +51,28 @@ export interface GenerationDetail {
   attemptId?: string;
 }
 
+/**
+ * GM configuration persisted on a chat's `gm_config` JSON blob.
+ * Mirrors the backend `src/chat/types.ts` `GmConfig` plus the VN display
+ * keys the chat settings modal persists (`chat-settings.ts`).
+ */
+export interface GmConfig {
+  /** Assistant's role in this chat: off, helper, gm, or moderator */
+  assistantRole?: "off" | "helper" | "gm" | "moderator";
+  /** Visual novel mode (image-heavy, sequential panel display) */
+  visualNovel?: boolean;
+  /** VN panel layout */
+  vnLayout?: "overlay" | "below" | "split";
+  /** VN typewriter effect enabled */
+  vnTypewriter?: boolean;
+  /** VN typewriter speed (chars per frame) */
+  vnTypewriterSpeed?: number;
+  /** VN scene transition style */
+  vnTransition?: "fade" | "cut" | "dissolve" | "slide" | "wipe";
+  /** VN auto-advance between scenes */
+  vnAutoAdvance?: boolean;
+}
+
 // ── RPG Stats Types (Phase 1 Foundation) ─────────────────────
 export interface RpgStatBlock {
   str: number;
@@ -188,6 +210,14 @@ export interface ChatState extends AlpineMagicThis {
   _impersonatingActorId: string | null;
   _assistantRole: "off" | "helper" | "gm" | "moderator";
 
+  // VN (visual novel) mode settings — persisted to gm_config.
+  _vnEnabled: boolean;
+  _vnLayout: "overlay" | "below" | "split";
+  _vnTypewriter: boolean;
+  _vnTypewriterSpeed: number;
+  _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
+  _vnAutoAdvance: boolean;
+
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
@@ -281,6 +311,7 @@ export interface ChatState extends AlpineMagicThis {
   removePendingAsset(assetId: string,): void;
   openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string },): void;
   openChatSettings(): void;
+  updateVnMode(): void;
   openContextMenu(event: MouseEvent, msgId: string,): void;
   closeContextMenu(): void;
   saveChatSettings(): Promise<void>;
