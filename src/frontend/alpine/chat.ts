@@ -1,5 +1,6 @@
 // ── Chat page component (chat.html) — core state + init ────
 
+import { destroyVnRenderer, } from "../vn";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -14,7 +15,6 @@ import { chatUtils, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
-import { destroyVnRenderer, } from "../vn";
 import { memoryPanel, } from "./memory-panel";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
@@ -133,20 +133,75 @@ globalThis.chatState = function() {
       }
       try {
         const res = await apiFetch(`/api/chats/search?q=${encodeURIComponent(query,)}`,);
-        if (!res.ok) { this._searchResults = []; return; }
+        if (!res.ok) {
+          this._searchResults = [];
+          return;
+        }
         const body = await res.json();
         const data = Array.isArray(body,)
           ? body
-          : (body as { data?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[] }).data ?? [];
+          : (body as {
+            data?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
+          }).data ?? [];
         this._searchResults = data.map((r,) => ({
           chatId: r.chatId as string,
           chatName: r.chatName as string,
           characterName: r.characterName as string,
           characterAvatar: r.characterAvatar ?? null,
-        }),);
+        }));
       } catch (error) {
-        getLogger().error("Failed to search chats", error instanceof Error ? error : new Error(String(error),), {},);
+        getLogger().error("Failed to search chats", error instanceof Error ? error : new Error(String(error,),), {},);
         this._searchResults = [];
+      }
+    },
+
+    // ── Joinable chat discovery / join ──────────────────────────
+    _joinableChats: [] as {
+      chatId: string;
+      chatName: string;
+      participantCount: number;
+      lastActiveAt: string | null;
+    }[],
+
+    async loadJoinableChats() {
+      try {
+        const res = await apiFetch("/api/chats/joinable",);
+        if (!res.ok) { return; }
+        const body = await res.json();
+        const data = Array.isArray(body,)
+          ? body
+          : (body as {
+            data?: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
+          }).data ?? [];
+        this._joinableChats = data.map((r,) => ({
+          chatId: r.chatId as string,
+          chatName: r.chatName as string,
+          participantCount: (r.participantCount as number) ?? 0,
+          lastActiveAt: (r.lastActiveAt as string | null) ?? null,
+        }));
+      } catch (error) {
+        getLogger().error(
+          "Failed to load joinable chats",
+          error instanceof Error ? error : new Error(String(error,),),
+          {},
+        );
+        this._joinableChats = [];
+      }
+    },
+
+    async joinChat(chatId: string,) {
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}/join`, { method: "POST", },);
+        if (!res.ok) {
+          this.$dispatch?.("show-toast", { type: "error", message: "Could not join chat", },);
+          return;
+        }
+        // Refresh the joinable list + local chat list after joining.
+        await Promise.all([this.loadJoinableChats(), this.loadChats?.(),],);
+        this.$dispatch?.("show-toast", { type: "info", message: "Joined chat", },);
+      } catch (error) {
+        getLogger().error("Failed to join chat", error instanceof Error ? error : new Error(String(error,),), {},);
+        this.$dispatch?.("show-toast", { type: "error", message: "Failed to join chat", },);
       }
     },
 
@@ -225,6 +280,7 @@ globalThis.chatState = function() {
       };
       addEventListener("storage", this._storageHandler,);
       await this.loadChats();
+      this.loadJoinableChats();
       this.loadUserInfo();
       this.connectActivitySSE();
 
