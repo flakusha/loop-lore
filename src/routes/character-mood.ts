@@ -16,9 +16,8 @@ import {
   MoodUpdateBody,
   SuccessResponse,
 } from "../validation/schemas";
-import { checkActorOwnership, type HandlerOpts, requireCtxUser, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
-import { HttpStatus, } from "./http-utils";
+import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 export function characterMoodRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
@@ -26,7 +25,7 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
 
   return new Elysia({ name: "character-mood", },)
     .get("/api/actors/:actorId/mood", async (ctx: any,) => {
-      const userId = requireCtxUser(ctx,);
+      const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
@@ -61,7 +60,7 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/mood", async (ctx: any,) => {
-      const userId = requireCtxUser(ctx,);
+      const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
@@ -97,7 +96,7 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/actors/:actorId/mood", async (ctx: any,) => {
-      const userId = requireCtxUser(ctx,);
+      const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
@@ -138,7 +137,7 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/mood/delta", async (ctx: any,) => {
-      const userId = requireCtxUser(ctx,);
+      const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
@@ -168,7 +167,7 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/mood/events", async (ctx: any,) => {
-      const userId = requireCtxUser(ctx,);
+      const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
@@ -221,7 +220,7 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/actors/:actorId/mood/events", async (ctx: any,) => {
-      const userId = requireCtxUser(ctx,);
+      const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
