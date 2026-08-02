@@ -11,9 +11,10 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { getConfig, setConfig, } from "../admin/config";
+import { setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
+import { getRuntimeNsfwConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-config";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -40,12 +41,13 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
       try {
-        const allowRaw = await getConfig(database, NSFW_ALLOW_KEY,);
-        const minAgeRaw = await getConfig(database, NSFW_MIN_AGE_KEY,);
+        const runtime = getRuntimeNsfwConfig();
 
         const config: NsfwAdminConfig = {
-          allowNsfw: allowRaw ? allowRaw.value === "true" : true,
-          nsfwMinAge: minAgeRaw ? parseInt(minAgeRaw.value, 10,) || 18 : 18,
+          // Runtime store is the source of truth for enforcement, so the
+          // panel always reflects the live (file/DB/admin-updated) values.
+          allowNsfw: runtime.allowNsfw,
+          nsfwMinAge: runtime.nsfwMinAge,
         };
 
         return jsonResponse(config,);
@@ -79,6 +81,14 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
             const age = Math.max(13, Math.min(25, body.nsfwMinAge,),);
             await setConfig(database, NSFW_MIN_AGE_KEY, String(age,), "Minimum age for NSFW content",);
           }
+
+          // Apply to the live runtime store so the toggle takes effect immediately.
+          const patch: Parameters<typeof updateRuntimeNsfwConfig>[0] = {};
+          if (body.allowNsfw !== undefined) { patch.allowNsfw = body.allowNsfw; }
+          if (body.nsfwMinAge !== undefined) {
+            patch.nsfwMinAge = Math.max(13, Math.min(25, body.nsfwMinAge,),);
+          }
+          updateRuntimeNsfwConfig(patch,);
 
           log().info(`NSFW config updated by ${userId}`,);
           return jsonResponse({ ok: true, },);
