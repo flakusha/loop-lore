@@ -30,7 +30,7 @@ Tooling support and improvement — repo worktree management, agent support, IO,
 ## Files
 
 - `scripts/worktree.sh` — worktree management
-- `scripts/gpg-unlock.sh` — GPG signing
+- `scripts/gpg-unlock.mjs` — GPG signing
 - `.agents/` — agent configuration
 - `.githooks/` — git hooks
 - `docs/spec/build-deploy.md` — build documentation

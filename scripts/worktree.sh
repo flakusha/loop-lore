@@ -1331,12 +1331,12 @@ cmd_commit() {
         exit 1
     fi
 
-    # Verify GPG key is available
-    if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
-        echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
-        echo "  Run: ./scripts/gpg-unlock.sh"
-        exit 1
-    fi
+  # Verify GPG key is available
+  if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
+    echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
+    echo "  Run: ./scripts/gpg-unlock.mjs"
+    exit 1
+  fi
 
     local current_branch
     current_branch=$(git branch --show-current 2>/dev/null || echo "(detached)")
