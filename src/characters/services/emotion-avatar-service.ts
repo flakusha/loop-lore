@@ -19,11 +19,8 @@ import { pickSdProvider, } from "../../config/schema";
 import { EmotionType, } from "../../db/enums";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
-import { ComfyUIClient, } from "../../generation/providers/comfyui";
-import { loadComfyUIWorkflow, } from "../../generation/workflow-loader";
+import { generateImages, } from "../../generation/image-engine";
 import { getLogger, } from "../../logger";
-import { jsonStringifyOr, } from "../../utils";
-import { safeFromBase64, } from "../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import { AvatarService, } from "./avatar-service";
 import {
@@ -363,185 +360,17 @@ export class EmotionAvatarService {
     const n = 1;
     const outputFormat = "png";
 
-    let images: Buffer[];
-    let mimeType: string;
+    const outcome = await generateImages(opts.sdConfig, {
+      prompt,
+      n,
+      outputFormat,
+    },);
 
-    switch (opts.sdConfig.apiFamily) {
-      case "openai": {
-        const size = `${opts.sdConfig.defaults.width}x${opts.sdConfig.defaults.height}`;
-        const url = `${opts.sdConfig.baseUrl.replace(/\/+$/, "",)}/v1/images/generations`;
-        const headers: Record<string, string> = {
-          "Content-Type": "application/json",
-          ...(opts.sdConfig.apiKey && { Authorization: `Bearer ${opts.sdConfig.apiKey}`, }),
-        };
-        const payload = jsonStringifyOr({
-          prompt,
-          n,
-          size,
-          output_format: outputFormat,
-          ...(opts.negativePrompt && { negative_prompt: opts.negativePrompt, }),
-        },);
-        const resp = await fetch(url, {
-          method: "POST",
-          headers,
-          body: payload,
-          signal: AbortSignal.timeout(opts.sdConfig.generationTimeout ?? 60_000,),
-        },);
-
-        if (!resp.ok) {
-          const errText = await resp.text().catch(() => "unknown");
-          throw new Error(`Image generation failed: ${errText}`,);
-        }
-
-        const data = (await resp.json()) as { data: { b64_json: string }[] };
-        images = data.data.map((d,) => Buffer.from(d.b64_json, "base64",));
-        mimeType = "image/png";
-        break;
-      }
-      case "sdapi": {
-        const url = `${opts.sdConfig.baseUrl.replace(/\/+$/, "",)}/sdapi/v1/txt2img`;
-        const payload = jsonStringifyOr({
-          prompt,
-          negative_prompt: opts.negativePrompt ?? opts.sdConfig.defaults.negativePrompt ?? "",
-          width: opts.sdConfig.defaults.width,
-          height: opts.sdConfig.defaults.height,
-          steps: opts.sdConfig.defaults.steps,
-          cfg_scale: opts.sdConfig.defaults.cfgScale,
-          sampler_name: opts.sdConfig.defaults.sampler,
-          batch_size: n,
-        },);
-        const resp = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: payload,
-          signal: AbortSignal.timeout(opts.sdConfig.generationTimeout ?? 120_000,),
-        },);
-
-        if (!resp.ok) {
-          const errText = await resp.text().catch(() => "unknown");
-          throw new Error(`Image generation failed: ${errText}`,);
-        }
-
-        const sdData = (await resp.json()) as { images: string[] };
-        images = sdData.images.map((b64,) => Buffer.from(b64, "base64",));
-        mimeType = "image/png";
-        break;
-      }
-      case "sdcpp": {
-        const sdcppUrl = `${opts.sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/img_gen`;
-        const sdcppPayload = jsonStringifyOr({
-          prompt,
-          negative_prompt: opts.negativePrompt ?? opts.sdConfig.defaults.negativePrompt,
-          width: opts.sdConfig.defaults.width,
-          height: opts.sdConfig.defaults.height,
-          steps: opts.sdConfig.defaults.steps,
-          cfg_scale: opts.sdConfig.defaults.cfgScale,
-          sampler: opts.sdConfig.defaults.sampler,
-          seed: -1,
-          batch_size: n,
-          output_format: outputFormat,
-        },);
-
-        const submitResp = await fetch(sdcppUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: sdcppPayload,
-          signal: AbortSignal.timeout(30_000,),
-        },);
-
-        if (!submitResp.ok) {
-          const errText = await submitResp.text().catch(() => "unknown");
-          throw new Error(`sd.cpp job submission failed: ${errText}`,);
-        }
-
-        const { id: jobId, } = (await submitResp.json()) as { id: string };
-        if (!jobId) {
-          throw new Error("sd.cpp job submission returned no job id",);
-        }
-
-        const genTimeout = opts.sdConfig.generationTimeout ?? 300_000;
-        const pollInterval = 500;
-        const deadline = Date.now() + genTimeout;
-
-        let jobDone = false;
-        let jobImages: string[] = [];
-
-        while (Date.now() < deadline && !jobDone) {
-          const jobUrl = `${opts.sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/jobs/${jobId}`;
-          const statusResp = await fetch(jobUrl, {
-            signal: AbortSignal.timeout(10_000,),
-          },);
-
-          if (!statusResp.ok) {
-            throw new Error(`sd.cpp job polling failed: HTTP ${statusResp.status}`,);
-          }
-
-          const statusData = (await statusResp.json()) as {
-            status: string;
-            progress?: number;
-            images?: string[];
-            error?: string;
-          };
-
-          if (statusData.status === "done") {
-            if (!statusData.images || statusData.images.length === 0) {
-              throw new Error("sd.cpp job completed but returned no images",);
-            }
-            jobImages = statusData.images;
-            jobDone = true;
-          } else if (statusData.status === "failed" || statusData.status === "cancelled") {
-            throw new Error(`sd.cpp job ${statusData.status}: ${statusData.error ?? "no detail"}`,);
-          }
-
-          if (!jobDone) {
-            await new Promise((r,) => setTimeout(r, pollInterval,));
-          }
-        }
-
-        if (!jobDone) {
-          throw new Error("sd.cpp job timed out",);
-        }
-
-        images = jobImages.map((b64,) => {
-          const r = safeFromBase64(b64,);
-          return r.ok ? r.buffer : Buffer.alloc(0,);
-        },);
-        mimeType = "image/png";
-        break;
-      }
-      case "comfyui": {
-        const validatedComfy = validateProviderUrl(opts.sdConfig.baseUrl,);
-        if (!validatedComfy.ok) {
-          throw new Error(`Invalid ComfyUI URL: ${validatedComfy.error}`,);
-        }
-
-        const workflow = await loadComfyUIWorkflow("txt2img", {
-          prompt,
-          negativePrompt: opts.negativePrompt,
-          width: opts.sdConfig.defaults.width,
-          height: opts.sdConfig.defaults.height,
-          steps: opts.sdConfig.defaults.steps,
-          cfgScale: opts.sdConfig.defaults.cfgScale,
-          sampler: opts.sdConfig.defaults.sampler,
-        },);
-
-        const comfyClient = new ComfyUIClient({
-          baseUrl: opts.sdConfig.baseUrl,
-          timeout: opts.sdConfig.generationTimeout ?? 120_000,
-        },);
-
-        images = await comfyClient.runWorkflow(workflow,);
-        mimeType = "image/png";
-        break;
-      }
-      default: {
-        throw new Error(
-          `Image gen API family "${
-            String(opts.sdConfig.apiFamily,)
-          }" not supported for emotion batch generation. Use "openai", "sdapi", "sdcpp", or "comfyui".`,
-        );
-      }
+    if (!outcome.ok) {
+      throw new Error(outcome.error,);
     }
+
+    const { images, mimeType, } = outcome;
 
     // Store generated images as assets and create avatars
     let avatarId = "";
@@ -551,7 +380,7 @@ export class EmotionAvatarService {
       const id = randomUUID();
       const filename = `emotion-${opts.emotion}-${id.slice(0, 8,)}.${outputFormat}`;
 
-      const { asset: asset } = await createAsset({
+      const { asset: asset, } = await createAsset({
         database: this.db,
         input: {
           ownerId: opts.actorId,
