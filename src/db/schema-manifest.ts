@@ -596,6 +596,22 @@ export const SCHEMA = new SchemaManifest()
     tag: col("text", { notNull: true, },),
   },)
   // ── Core: Chats & Messages ──────────────────────────────────────────────
+  .table("chat_background_assignments", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    background_id: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("chat_backgrounds", {
+    id: col("text", { primaryKey: true, },),
+    name: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, hasDefault: true, },),
+    location_id: col("text",),
+    asset_id: col("text",),
+    config: col("text",),
+    priority: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("chat_mentions", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),
@@ -619,6 +635,17 @@ export const SCHEMA = new SchemaManifest()
     message_id: col("text", { notNull: true, },),
     pinned_by: col("text", { notNull: true, },),
     pinned_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("chat_sections", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    label: col("text", { notNull: true, },),
+    description: col("text",),
+    location_id: col("text",),
+    sort_index: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+    background_id: col("text",),
   },)
   .table("chat_setup_templates", {
     id: col("text", { primaryKey: true, },),
@@ -692,6 +719,7 @@ export const SCHEMA = new SchemaManifest()
     attachments: col("text", { hasDefault: true, },),
     archived_at: col("text",),
     format_version: col("integer", { notNull: true, hasDefault: true, },),
+    section_id: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {

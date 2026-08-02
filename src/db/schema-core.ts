@@ -212,6 +212,7 @@ export interface Messages {
   attachments: string | null;
   archived_at: string | null;
   format_version: Generated<number>;
+  section_id: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
@@ -268,4 +269,167 @@ export interface MessageTranslations {
   provider: string | null;
   created_at: string;
   updated_at: string | null;
+}
+
+// ── vn_choices ────────────────────────────────────────────
+export interface VnChoices {
+  id: Generated<string>;
+  chat_id: string;
+  scene_index: number;
+  label: string;
+  description: string | null;
+  consequences: Generated<string>;
+  relationship_impact: Generated<string>;
+  mood_impact: Generated<string>;
+  unlock_conditions: Generated<string>;
+  selected: Generated<number>;
+  selected_at: string | null;
+  created_at: string;
+}
+
+// ── dice_roll_history ────────────────────────────────────────────
+export interface DiceRollHistory {
+  id: Generated<string>;
+  user_id: string;
+  chat_id: string | null;
+  actor_id: string | null;
+  sides: number;
+  count: number;
+  modifier: Generated<number>;
+  advantage_mode: Generated<string>;
+  exploding: Generated<number>;
+  raw_rolls: string;
+  raw_total: number;
+  total: number;
+  purpose: string | null;
+  created_at: Generated<string>;
+}
+
+// ── character_stats ────────────────────────────────────────────
+export interface CharacterStats {
+  id: Generated<string>;
+  actor_id: string;
+  level: Generated<number>;
+  hp: number;
+  max_hp: number;
+  temp_hp: Generated<number>;
+  mp: Generated<number>;
+  max_mp: Generated<number>;
+  ac: number;
+  speed: Generated<number>;
+  str: Generated<number>;
+  dex: Generated<number>;
+  con: Generated<number>;
+  int: Generated<number>;
+  wis: Generated<number>;
+  cha: Generated<number>;
+  hit_dice: Generated<string>;
+  death_save_successes: Generated<number>;
+  death_save_failures: Generated<number>;
+  xp: Generated<number>;
+  xp_to_next: Generated<number>;
+  data_version: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── xp_ledger ────────────────────────────────────────────
+export interface XpLedger {
+  id: Generated<string>;
+  actor_id: string;
+  amount: number;
+  source: string;
+  description: string | null;
+  reference_id: string | null;
+  chat_id: string | null;
+  created_at: Generated<string>;
+}
+
+// ── loot_tables ────────────────────────────────────────────
+export interface LootTables {
+  id: Generated<string>;
+  name: string;
+  source_type: string;
+  source_id: string | null;
+  total_weight: Generated<number>;
+  used: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── loot_entries ────────────────────────────────────────────
+export interface LootEntries {
+  id: Generated<string>;
+  loot_table_id: string;
+  item_name: string;
+  description: string | null;
+  item_type: string;
+  rarity: Generated<string>;
+  weight: Generated<number>;
+  min_quantity: Generated<number>;
+  max_quantity: Generated<number>;
+  min_level: Generated<number>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── chat_setup_templates ────────────────────────────────────────────
+export interface ChatSetupTemplates {
+  id: Generated<string>;
+  slug: string;
+  name: string;
+  description: string | null;
+  mode: string | null;
+  turn_strategy: string | null;
+  world_id: string | null;
+  gm_config: string | null;
+  visual_novel: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_timeline_events ────────────────────────────────────────────
+export interface WorldTimelineEvents {
+  id: Generated<string>;
+  world_id: string;
+  story_id: string | null;
+  event_type: string;
+  actor_id: string | null;
+  description: string;
+  data: string | null;
+  occurred_at: string;
+  created_at: Generated<string>;
+}
+
+// ── chat_sections ────────────────────────────────────────────
+export interface ChatSections {
+  id: Generated<string>;
+  chat_id: string;
+  label: string;
+  description: string | null;
+  location_id: string | null;
+  sort_index: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  background_id: string | null;
+}
+
+// ── chat_backgrounds ────────────────────────────────────────────
+export interface ChatBackgrounds {
+  id: Generated<string>;
+  name: string;
+  type: Generated<string>;
+  location_id: string | null;
+  asset_id: string | null;
+  config: string | null;
+  priority: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── chat_background_assignments ────────────────────────────────────────────
+export interface ChatBackgroundAssignments {
+  id: Generated<string>;
+  chat_id: string;
+  background_id: string;
+  created_at: Generated<string>;
 }

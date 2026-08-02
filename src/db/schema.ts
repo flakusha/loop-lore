@@ -115,4 +115,7 @@ export interface DB {
   loot_entries: import("./schema-core").LootEntries;
   chat_setup_templates: import("./schema-core").ChatSetupTemplates;
   world_timeline_events: import("./schema-core").WorldTimelineEvents;
+  chat_sections: import("./schema-core").ChatSections;
+  chat_backgrounds: import("./schema-core").ChatBackgrounds;
+  chat_background_assignments: import("./schema-core").ChatBackgroundAssignments;
 }
