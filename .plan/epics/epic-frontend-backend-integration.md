@@ -14,26 +14,27 @@ Backend subsystems exist with full API routes but no frontend UI. This epic trac
 
 Frontend review found **~150 frontend call sites** all resolve to real backend routes (zero broken wiring). However, a sizable set of backend routes have no frontend UI at all:
 
-| Subsystem                     | Backend Routes                                                                                                                                          | Frontend Status                                                 |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| **RPG Stats**                 | `/api/rpg/*` (dice, stats, combat, xp, loot)                                                                                                            | Mock data in `rpg-stats.ts` — no API call                       |
-| **NSFW**                      | `/api/nsfw/*` (intimacy, desire, arousal, encounters, fantasies, moderation)                                                                            | No frontend at all                                              |
-| **Battle**                    | `/api/battle/*` (equipment, social, NPC, weather, resolution, morale)                                                                                   | No frontend at all                                              |
-| **Analytics**                 | `/api/analytics/*` (chat analytics, overview, comparisons, leaderboard)                                                                                 | No frontend — admin has its own stats                           |
-| **Blog**                      | `/api/blog/*` (posts, comments, follow, sources)                                                                                                        | No frontend at all                                              |
-| **Export Job**                | `/api/export`, `/api/export/download/:jobId`, `/api/export/status/:jobId`                                                                               | No frontend progress UI                                         |
-| **Actor Sub-resources**       | `/api/actors/:actorId/traits`, `/relationships`, `/licensing`, `/availability`, `/emotion-avatars/*`, `/systems/*`, `/notes`, `/items`, `/lore-entries` | No frontend at all                                              |
-| **World Lore**                | `/api/worlds/:worldId/lore-entries`                                                                                                                     | No frontend at all                                              |
-| **Chat Pins**                 | `/api/chats/:id/pins*`                                                                                                                                  | No frontend at all                                              |
-| **Chat Transfers**            | `/api/chats/:id/transfer`                                                                                                                               | No frontend at all                                              |
-| **Chat Location**             | `/api/chats/:id/location`                                                                                                                               | No frontend at all                                              |
-| **Chat Story Turns**          | `/api/chats/:id/story-turns*`                                                                                                                           | No frontend at all                                              |
-| **Message Archive/Restore**   | `/api/messages/:id/archive`, `/restore`                                                                                                                 | No frontend at all                                              |
-| **Message Variants**          | `/api/messages/:id/variants`                                                                                                                            | `chat-variants.ts` uses `/variant` (singular) — partially wired |
-| **Message Quick Emojis**      | `/api/messages/quick-emojis`                                                                                                                            | No frontend at all                                              |
-| **Admin Character Overrides** | `/api/admin/character-overrides`                                                                                                                        | No frontend at all                                              |
-| **LoRA Discovery**            | `/api/lora/*` (discover, list, status, clear, validate)                                                                                                 | No frontend at all                                              |
-| **Sessions**                  | `/api/sessions`                                                                                                                                         | Server-internal only                                            |
+| Subsystem                     | Backend Routes                                                                                                                                          | Frontend Status                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **RPG Stats**                 | `/api/rpg/*` (dice, stats, combat, xp, loot)                                                                                                            | Mock data in `rpg-stats.ts` — no API call                              |
+| **NSFW**                      | `/api/nsfw/*` (intimacy, desire, arousal, encounters, fantasies, moderation)                                                                            | No frontend at all — see `TASK-nsfw-frontend-integration.md`           |
+| **Housing**                   | `/api/housing/*` (backend not yet implemented)                                                                                                          | Standalone domain — see `epic-housing.md` + `TASK-housing-frontend.md` |
+| **Battle**                    | `/api/battle/*` (equipment, social, NPC, weather, resolution, morale)                                                                                   | No frontend at all                                                     |
+| **Analytics**                 | `/api/analytics/*` (chat analytics, overview, comparisons, leaderboard)                                                                                 | No frontend — admin has its own stats                                  |
+| **Blog**                      | `/api/blog/*` (posts, comments, follow, sources)                                                                                                        | No frontend at all                                                     |
+| **Export Job**                | `/api/export`, `/api/export/download/:jobId`, `/api/export/status/:jobId`                                                                               | No frontend progress UI                                                |
+| **Actor Sub-resources**       | `/api/actors/:actorId/traits`, `/relationships`, `/licensing`, `/availability`, `/emotion-avatars/*`, `/systems/*`, `/notes`, `/items`, `/lore-entries` | No frontend at all                                                     |
+| **World Lore**                | `/api/worlds/:worldId/lore-entries`                                                                                                                     | No frontend at all                                                     |
+| **Chat Pins**                 | `/api/chats/:id/pins*`                                                                                                                                  | No frontend at all                                                     |
+| **Chat Transfers**            | `/api/chats/:id/transfer`                                                                                                                               | No frontend at all                                                     |
+| **Chat Location**             | `/api/chats/:id/location`                                                                                                                               | No frontend at all                                                     |
+| **Chat Story Turns**          | `/api/chats/:id/story-turns*`                                                                                                                           | No frontend at all                                                     |
+| **Message Archive/Restore**   | `/api/messages/:id/archive`, `/restore`                                                                                                                 | No frontend at all                                                     |
+| **Message Variants**          | `/api/messages/:id/variants`                                                                                                                            | `chat-variants.ts` uses `/variant` (singular) — partially wired        |
+| **Message Quick Emojis**      | `/api/messages/quick-emojis`                                                                                                                            | No frontend at all                                                     |
+| **Admin Character Overrides** | `/api/admin/character-overrides`                                                                                                                        | No frontend at all                                                     |
+| **LoRA Discovery**            | `/api/lora/*` (discover, list, status, clear, validate)                                                                                                 | No frontend at all                                                     |
+| **Sessions**                  | `/api/sessions`                                                                                                                                         | Server-internal only                                                   |
 
 ## Scope
 
@@ -44,6 +45,8 @@ Frontend review found **~150 frontend call sites** all resolve to real backend r
 | `TASK-rpg-stats-frontend-wiring.md`   | P0       | ⬜     | RPG — wire `rpg-stats.ts` to `/api/rpg/stats/*` |
 | `TASK-battle-frontend-integration.md` | P0       | ⬜     | Battle — create battle screen + action selector |
 | `TASK-nsfw-frontend-integration.md`   | P0       | ⬜     | NSFW — create intimacy + body state UI          |
+
+> **Housing** is NOT part of Phase 1 NSFW — it is a standalone domain tracked under `epic-housing.md` with its own task `TASK-housing-frontend.md`.
 
 ### Phase 2 — Content & Analytics (P1)
 
@@ -121,6 +124,7 @@ Each phase follows the pattern:
 - `epic-rpg-mechanics.md` — Backend RPG systems
 - `epic-battle-ui.md` — Battle UI
 - `epic-nsfw-ui.md` — NSFW UI
+- `epic-housing.md` — Housing system (standalone domain, own UI)
 - `epic-analytics-observability.md` — Analytics
 - `epic-blog-system.md` — Blog
 - `epic-battle-integration-gaps.md` — Battle integration

@@ -1,15 +1,17 @@
 # TASK: NSFW-Housing Integration
 
-**Epic:** NSFW Game Mechanics, Housing & Base Building
+**Epic:** epic-housing
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** ⬜ Not Started
 **Created:** 2026-07-28
-**Cross-Mechanics Gap:** G6 (NSFW ↔ Housing)
+**Cross-Mechanics Gap:** G6 (Housing ↔ NSFW)
 
 ## Summary
 
 Housing provides private spaces with comfort bonuses for NSFW encounters. NSFW location types (bedroom, bath) integrate with housing.
+
+> **Housing is owned by `epic-housing.md`.** This task is a cross-domain integration between housing and NSFW — it does NOT make housing an NSFW sub-feature.
 
 ## Background
 
@@ -39,3 +41,8 @@ Housing locations can have comfort bonuses for NSFW encounters:
 - [ ] Housing provides comfort bonuses for NSFW encounters
 - [ ] NSFW location types link to housing units
 - [ ] Private vs shared spaces affect NSFW DC
+
+## Related
+
+- `epic-housing.md` — Housing epic (owner)
+- `epic-nsfw-game-mechanics.md` — NSFW systems
