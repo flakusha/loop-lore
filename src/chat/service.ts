@@ -129,6 +129,10 @@ export interface CreateChatParams {
   gmConfig?: Record<string, unknown> | null;
   visualNovel?: boolean;
   templateId?: string;
+  /** Seed the new chat with participant memories: "full" | "selective" | "fresh". */
+  memoryCarry?: "full" | "selective" | "fresh";
+  /** Actor memory ids to carry when memoryCarry === "selective". */
+  memoryCarryIds?: string[];
 }
 
 /**
@@ -176,6 +180,54 @@ export async function createChat(
       } catch {
         /* skip duplicate */
       }
+    }
+  }
+
+  // Carry participant memories into the new chat. Mirrors the migrateChat
+  // semantic: duplicate the selected source memories with source_chat_id set
+  // to the new chat so the injected context is scoped to this chat.
+  if (params.memoryCarry && params.memoryCarry !== "fresh" && params.participantIds?.[0]) {
+    const sourceActorId = params.participantIds[0];
+    const selectiveIds = params.memoryCarry === "selective" && params.memoryCarryIds?.length
+      ? params.memoryCarryIds
+      : undefined;
+    const selections = await database
+      .selectFrom("actor_memories",)
+      .select([
+        "id",
+        "actor_id",
+        "source_chat_id",
+        "memory_type",
+        "content",
+        "importance",
+        "last_accessed_at",
+        "created_at",
+        "source_message_id",
+        "context",
+        "world_id",
+        "user_id",
+      ],)
+      .where("actor_id", "=", sourceActorId,)
+      .$if(!!selectiveIds?.length, (qb,) => qb.where("id", "in", selectiveIds as string[],),)
+      .execute();
+    for (const m of selections) {
+      await database
+        .insertInto("actor_memories",)
+        .values({
+          id: crypto.randomUUID(),
+          actor_id: m.actor_id,
+          source_chat_id: newChatId,
+          memory_type: m.memory_type,
+          content: m.content,
+          importance: m.importance,
+          last_accessed_at: m.last_accessed_at,
+          created_at: m.created_at,
+          source_message_id: m.source_message_id,
+          context: m.context,
+          world_id: m.world_id,
+          user_id: m.user_id,
+        },)
+        .execute();
     }
   }
 
