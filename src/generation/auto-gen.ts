@@ -425,6 +425,12 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       return;
     }
 
+    // Extract the dominant emotion detected by the EmotionHook (emotion_change
+    // event) so it can be bound to this message for per-message avatar rendering.
+    const dominantEmotion = hookResult.events.find(
+      (e,) => e.eventType === "emotion_change" && typeof e.data?.dominantEmotion === "string",
+    )?.data?.dominantEmotion as string | undefined;
+
     // ── Regex Output Transforms ──────────────────────────────────
     // Apply user-configured regex transforms to LLM output before storage
     const regexTransforms = config.generation.regexTransforms;
@@ -488,6 +494,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         status: MessageStatus.Confirmed,
         visibility: MessageVisibility.Visible,
         swipe_index: swipeIndex,
+        emotion: dominantEmotion ?? null,
       },)
       .execute();
     log.debug("message stored", { messageId, contentLength: accumulatedContent.length, requestId, },);

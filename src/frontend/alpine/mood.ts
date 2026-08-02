@@ -114,7 +114,7 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
     this._activeEmotionsLoading = true;
     try {
-      const [activeRes, defsRes] = await Promise.all([
+      const [activeRes, defsRes,] = await Promise.all([
         apiFetch(`/api/actors/${actorId}/emotions`,),
         apiFetch(`/api/emotions`,),
       ],);
@@ -147,6 +147,28 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
   /** Get the active emotions list (joined with definitions). */
   getActiveEmotions() {
     return this._activeEmotions;
+  },
+
+  /**
+   * Resolve the avatar asset for a single assistant message based on its
+   * detected emotion. Emotion avatars are bound per message (and per chat's
+   * current character), not globally. Falls back to the character's base
+   * avatar when the message has no emotion or no matching variant exists.
+   * @param msg - The message being rendered
+   * @returns Asset id to display, or null to hide the avatar
+   */
+  avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null {
+    if (msg.role === "user") { return null; }
+    if (msg.emotion) {
+      // Pure per-message lookup (does NOT mutate the mood-driven global
+      // _currentEmotionAvatar, which stays for non-message avatar areas).
+      const exact = this._emotionAvatars.find((a,) => a.emotion === msg.emotion);
+      if (exact) { return exact.assetId; }
+      const neutral = this._emotionAvatars.find((a,) => a.emotion === "neutral");
+      if (neutral) { return neutral.assetId; }
+      if (this._emotionAvatars[0]) { return this._emotionAvatars[0].assetId; }
+    }
+    return this.currentCharacter?.avatar_asset_id ?? null;
   },
 
   /**
