@@ -220,7 +220,48 @@ export class TurnManager {
   async recordTurn(): Promise<void> {
     if (!this.state) { throw new Error("TurnManager not initialized",); }
     this.state.lastTurnCompletedAt = new Date().toISOString();
+    // Initiative strategy: spending a turn consumes one initiative point, so an
+    // actor can't dominate every turn (docs/frontend/chat/group-chat.md Step 2).
+    if (this.state.strategy === TurnStrategy.Initiative && this.state.currentActorId) {
+      await this.decrementInitiative(this.state.currentActorId,);
+    }
     await this.persistState();
+  }
+
+  /** Decrement the active actor's initiative score for the current scene (min 0). */
+  private async decrementInitiative(actorId: string,): Promise<void> {
+    const currentScene = "main"; // TODO: detect actual current scene from story_state
+    const current = await this.db
+      .selectFrom("group_initiatives",)
+      .select("score",)
+      .where("chat_id", "=", this.chatId,)
+      .where("scene_id", "=", currentScene,)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst();
+
+    const nextScore = Math.max(0, (current?.score ?? 1) - 1,);
+    if (current) {
+      await this.db
+        .updateTable("group_initiatives",)
+        .set({ score: nextScore, updated_at: new Date().toISOString(), },)
+        .where("chat_id", "=", this.chatId,)
+        .where("scene_id", "=", currentScene,)
+        .where("actor_id", "=", actorId,)
+        .execute();
+    } else {
+      // No row yet (default 1) — create with the decremented value so future
+      // selections see a floor of 0 instead of the default.
+      await this.db
+        .insertInto("group_initiatives",)
+        .values({
+          chat_id: this.chatId,
+          scene_id: currentScene,
+          actor_id: actorId,
+          score: 0,
+        },)
+        .onConflict((oc,) => oc.columns(["chat_id", "scene_id", "actor_id",],).doNothing())
+        .execute();
+    }
   }
 
   /** Request regeneration of a failed turn */
