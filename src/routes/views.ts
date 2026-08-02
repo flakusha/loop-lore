@@ -88,7 +88,12 @@ function discoverPartials(dir: string,): Set<string> {
 }
 
 const ALLOWED_VIEWS = discoverViews(VIEWS_DIR,);
-const ALLOWED_PARTIALS = discoverPartials(PARTIALS_DIR,);
+// Partials may live in src/partials/ or src/components/ (serveStaticPartial
+// falls back to the components dir), so discovery spans both roots.
+const ALLOWED_PARTIALS = new Set<string>([
+  ...discoverPartials(PARTIALS_DIR,),
+  ...discoverPartials(COMPONENTS_DIR,),
+]);
 
 const viewCache = new Map<string, string>();
 

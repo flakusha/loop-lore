@@ -1,9 +1,17 @@
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
+import { createLogger, } from "../logger";
 import { coerceValue, deepMerge, loadConfig, setByPath, validateConfig, validateDatabaseSafety, } from "./load";
 import type { Config, } from "./schema";
 import { ConfigSchema, } from "./schema-class";
+
+beforeAll(() => {
+  // loadConfig → template expansion calls getLogger(), which throws unless a
+  // root logger exists. Other tests initialize it as a module side effect;
+  // --isolate processes skip that, so init here explicitly.
+  createLogger({ level: "error", },);
+});
 
 describe("DEFAULTS", () => {
   function defaults() {
