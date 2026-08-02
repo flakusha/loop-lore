@@ -1,5 +1,5 @@
 import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
+import { sql, type Kysely, } from "kysely";
 import { getRuntimeConfig, } from "../age-gate/controller";
 import { getStatus, } from "../age-gate/service";
 import {
@@ -8,12 +8,15 @@ import {
   batchExportChats,
   checkChatAccess,
   createChat,
+  createChatSetupTemplate,
   deleteChat,
+  deleteChatSetupTemplate,
   getChat,
   getChatSetupTemplate,
   listChatSetupTemplates,
   migrateChat,
   updateChat,
+  updateChatSetupTemplate,
   updateImpersonation,
 } from "../chat/service";
 import type { Config, } from "../config/schema";
@@ -41,9 +44,11 @@ import {
   ChatParticipantUpdateBody,
   ChatPersonaUpdateBody,
   ChatRenameBody,
+  ChatSetupTemplateCreateBody,
   ChatSetupTemplateSchema,
+  ChatSetupTemplateUpdateBody,
   ChatUpdateBody,
-  PaginationQuery,
+  ErrorResponse,
 } from "../validation/schemas";
 import {
   forbiddenResponse as forbidden,
@@ -55,7 +60,7 @@ import {
   jsonPaginated,
   jsonResponse,
   notFoundResponse as notFound,
-  unauthorizedResponse as unauthorized,
+  requireUserId,
 } from "./http-utils";
 
 function log(): Logger {
@@ -66,6 +71,24 @@ interface HandlerOpts {
   database: Kysely<DB>;
   config: Config;
 }
+
+/**
+ * Query params for GET /api/chats. Filters are optional and compose with AND;
+ * when absent the list behaves exactly as before (all chats, recent-first).
+ *
+ * - `type`: "direct" | "group" (omit = all types)
+ * - `archived`: "true" / "1" -> only archived; "false" / "0" -> only active.
+ *   Archive state lives on `chats.is_pinned` (PinnedState: unpinned|pinned|archived),
+ *   so "active" = is_pinned != 'archived'. Omit = both.
+ * - `sort`: "recent" (default) | "name" | "unread" | "pinned-first"
+ */
+const ChatListQuery = t.Object({
+  page: t.Optional(t.Numeric({ minimum: 1, default: 1, },),),
+  pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 50, },),),
+  type: t.Optional(t.UnionEnum(["direct", "group",],),),
+  archived: t.Optional(t.Union([t.Literal("true",), t.Literal("false",), t.Literal("1",), t.Literal("0",),],),),
+  sort: t.Optional(t.UnionEnum(["recent", "name", "unread", "pinned-first",],),),
+});
 
 export function chatsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
@@ -86,36 +109,82 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const page = (ctx.query.page as number) ?? 1;
           const pageSize = (ctx.query.pageSize as number) ?? 20;
           const offset = (page - 1) * pageSize;
+          const type = ctx.query.type as "direct" | "group" | undefined;
+          const archived = ctx.query.archived as string | undefined;
+          const sort = (ctx.query.sort as string | undefined) ?? "recent";
 
-          const countResult = await database
+          // Shared filters. Archive state lives on chats.is_pinned
+          // (PinnedState enum: unpinned | pinned | archived).
+          let countQuery = database
             .selectFrom("chats",)
             .select(database.fn.countAll<number>().as("total",),)
-            .where("created_by", "=", userId,)
-            .executeTakeFirst();
-          const total = countResult?.total ?? 0;
-
-          const chats = await database
+            .where("created_by", "=", userId,);
+          let listQuery = database
             .selectFrom("chats",)
             .selectAll()
-            .where("created_by", "=", userId,)
-            .orderBy("updated_at", "desc",)
-            .limit(pageSize,)
-            .offset(offset,)
-            .execute();
+            .where("created_by", "=", userId,);
+
+          if (type) {
+            countQuery = countQuery.where("type", "=", type,);
+            listQuery = listQuery.where("type", "=", type,);
+          }
+          if (archived !== undefined) {
+            const isArchived = archived === "true" || archived === "1";
+            countQuery = countQuery.where("is_pinned", isArchived ? "=" : "!=", "archived",);
+            listQuery = listQuery.where("is_pinned", isArchived ? "=" : "!=", "archived",);
+          }
+
+          const countResult = await countQuery.executeTakeFirst();
+          const total = countResult?.total ?? 0;
+
+          switch (sort) {
+            case "name":
+              listQuery = listQuery.orderBy("name", "asc",).orderBy("updated_at", "desc",);
+              break;
+            case "pinned-first":
+              listQuery = listQuery
+                .orderBy((eb,) => eb.case().when("is_pinned", "=", "pinned",).then(0).else(1).end(), "asc",)
+                .orderBy("updated_at", "desc",);
+              break;
+            case "unread": {
+              // Newer-than-last-read visible messages per chat (same semantics as
+              // routes/activity.ts). Unread-first, then by recency.
+              const unreadSub = sql<number>`(
+                SELECT COUNT(*)
+                FROM messages m
+                WHERE m.chat_id = chats.id
+                  AND m.visibility = 'visible'
+                  AND m.created_at > COALESCE((
+                    SELECT lastm.created_at FROM messages lastm
+                    WHERE lastm.id = (
+                      SELECT cp.last_read_message_id FROM chat_participants cp
+                      WHERE cp.chat_id = chats.id AND cp.actor_id = ${userId}
+                    )
+                  ), '')
+              )`;
+              listQuery = listQuery.orderBy(unreadSub, "desc",).orderBy("updated_at", "desc",);
+              break;
+            }
+            default: // recent
+              listQuery = listQuery.orderBy("updated_at", "desc",);
+              break;
+          }
+
+          const chats = await listQuery.limit(pageSize,).offset(offset,).execute();
           return jsonPaginated({ data: chats, total, page, pageSize, },);
         },
-        { query: PaginationQuery, },
+        { query: ChatListQuery, },
       )
       .post(
         "/api/chats",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const ageGateConfig = getRuntimeConfig();
           if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
@@ -223,8 +292,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chat-setup-templates",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const templates = await listChatSetupTemplates(database,);
           const payload = templates.map((tmpl,) => ({
             id: tmpl.id,
@@ -242,13 +311,95 @@ export function chatsRoutes(opts: HandlerOpts,) {
         { response: { 200: t.Array(ChatSetupTemplateSchema,), }, },
       )
       .post(
+        "/api/chat-setup-templates",
+        async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
+          if (ctx.userRole !== "admin") {
+            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          }
+          const body = ctx.body as typeof ChatSetupTemplateCreateBody.static;
+          const result = await createChatSetupTemplate(database, {
+            slug: body.slug,
+            name: body.name,
+            description: body.description ?? null,
+            mode: body.mode ?? null,
+            turnStrategy: body.turnStrategy ?? null,
+            worldId: body.worldId ?? null,
+            gmConfig: body.gmConfig ?? null,
+            visualNovel: body.visualNovel ?? false,
+          },);
+          if (!result.ok) {
+            if (result.code === "conflict") {
+              return jsonError({ message: result.message, status: HttpStatus.Conflict, },);
+            }
+            return jsonError({ message: result.message, status: HttpStatus.BadRequest, },);
+          }
+          return jsonCreated(result.template,);
+        },
+        {
+          body: ChatSetupTemplateCreateBody,
+          response: { 201: ChatSetupTemplateSchema, 401: ErrorResponse, 403: ErrorResponse, 409: ErrorResponse, },
+        },
+      )
+      .put(
+        "/api/chat-setup-templates/:templateId",
+        async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
+          if (ctx.userRole !== "admin") {
+            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          }
+          const body = ctx.body as typeof ChatSetupTemplateUpdateBody.static | undefined;
+          const result = await updateChatSetupTemplate(database, ctx.params.templateId, {
+            name: body?.name,
+            description: body?.description,
+            mode: body?.mode,
+            turnStrategy: body?.turnStrategy,
+            worldId: body?.worldId,
+            gmConfig: body?.gmConfig,
+            visualNovel: body?.visualNovel,
+          },);
+          if (!result.ok) {
+            if (result.code === "not_found") { return notFound("Template not found",); }
+            return jsonError({ message: result.message, status: HttpStatus.BadRequest, },);
+          }
+          return jsonResponse(result.template,);
+        },
+        {
+          params: t.Object({ templateId: t.String(), },),
+          body: ChatSetupTemplateUpdateBody,
+          response: { 200: ChatSetupTemplateSchema, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        },
+      )
+      .delete(
+        "/api/chat-setup-templates/:templateId",
+        async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
+          if (ctx.userRole !== "admin") {
+            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          }
+          const result = await deleteChatSetupTemplate(database, ctx.params.templateId,);
+          if (!result.ok) {
+            if (result.code === "not_found") { return notFound("Template not found",); }
+            return jsonError({ message: result.message, status: HttpStatus.BadRequest, },);
+          }
+          return jsonNoContent();
+        },
+        {
+          params: t.Object({ templateId: t.String(), },),
+          response: { 204: t.Void(), 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        },
+      )
+      .post(
         "/api/chats/:id/migrate",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatMigrateBody.static;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -273,8 +424,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/batch/archive",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const ids = (ctx.body as { ids: string[] }).ids;
           const archived = await batchArchiveChats(database, ids, userId,);
           if (archived.length === 0) { return notFound("No chats found",); }
@@ -285,8 +436,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/batch/delete",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const ids = (ctx.body as { ids: string[] }).ids;
           const deleted = await batchDeleteChats(database, ids, userId,);
           if (deleted === 0) { return notFound("No chats found",); }
@@ -297,8 +448,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/batch/export",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const ids = (ctx.body as { ids: string[] }).ids;
           const exportData = await batchExportChats(database, ids, userId,);
           if (!exportData) { return notFound("No chats found",); }
@@ -315,10 +466,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return notFound(access.error.message,); }
@@ -332,11 +483,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .put(
         "/api/chats/:id",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatUpdateBody.static;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -383,11 +534,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/rename",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatRenameBody.static;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -430,10 +581,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/chats/:id",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -446,10 +597,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/export",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -533,10 +684,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/participants",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -572,11 +723,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/participants",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as { actorId: string; role?: string };
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -637,11 +788,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .put(
         "/api/chats/:id/participants/:actorId",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const { id, actorId, } = ctx.params as { id: string; actorId: string };
           const body = ctx.body as typeof ChatParticipantUpdateBody.static;
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -675,10 +826,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/chats/:id/participants/:actorId",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const { id, actorId, } = ctx.params as { id: string; actorId: string };
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -726,11 +877,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .put(
         "/api/chats/:id/location",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatLocationUpdateBody.static;
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -782,11 +933,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .put(
         "/api/chats/:id/persona",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatPersonaUpdateBody.static;
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -810,11 +961,11 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .put(
         "/api/chats/:id/impersonate",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatImpersonateBody.static;
-          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -839,10 +990,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
       .put(
         "/api/chats/:id/mark-read",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatMarkReadBody.static;
-          if (!userId) { return unauthorized(); }
 
           const participant = await database
             .selectFrom("chat_participants",)
