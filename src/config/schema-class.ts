@@ -46,6 +46,10 @@ import {
   CHARACTERS_DEFAULTS,
 } from "./sections/characters";
 import {
+  CSP_DEFAULTS,
+  HEADERS_DEFAULTS,
+} from "./sections/headers";
+import {
   TEMPLATES_DEFAULTS,
 } from "./sections/templates";
 
@@ -182,38 +186,11 @@ export class ConfigSchema {
   } satisfies EncryptionConfig;
 
   readonly headers = {
-    enabled: true,
-    referrerPolicy: "strict-origin-when-cross-origin",
-    xContentTypeOptions: true,
-    xFrameOptions: "DENY",
-    permissionsPolicy:
-      "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
-    csp: {
-      enabled: true,
-      defaultSrc: ["'self'",],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
-      styleSrc: ["'self'", "'unsafe-inline'",],
-      imgSrc: ["'self'", "data:", "blob:",],
-      fontSrc: ["'self'",],
-      connectSrc: ["'self'", "wss:", "https:",],
-      objectSrc: ["'none'",],
-      baseUri: ["'self'",],
-      frameAncestors: ["'none'",],
-      formAction: ["'self'",],
-      upgradeInsecureRequests: true,
-      reportOnly: false,
-    },
-    crossOriginOpenerPolicy: null,
-    crossOriginEmbedderPolicy: null,
-    crossOriginResourcePolicy: "cross-origin",
-    timingAllowOrigin: "",
-    immutableHashedAssets: true,
-    linkPreload: ["/alpine-init.js", "/css/app.css",],
-    acceptClientHints: [],
-    saveData: false,
-    earlyHints: { enabled: false, },
-    reportingEndpoints: {},
-    nel: null,
+    ...HEADERS_DEFAULTS,
+    // Copy nested mutable structures so each instance stays isolated.
+    csp: { ...CSP_DEFAULTS, },
+    linkPreload: [...HEADERS_DEFAULTS.linkPreload,],
+    earlyHints: { ...HEADERS_DEFAULTS.earlyHints, },
   } satisfies HeadersConfig;
 
   readonly dynamicResponse = {
