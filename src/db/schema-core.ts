@@ -529,3 +529,16 @@ export interface ChatBackgroundAssignments {
   background_id: string;
   created_at: Generated<string>;
 }
+
+// ── chat_invites ────────────────────────────────────────────
+export interface ChatInvites {
+  id: Generated<string>;
+  chat_id: string;
+  code: string;
+  created_by: string | null;
+  created_at: Generated<string>;
+  expires_at: string | null;
+  max_uses: number | null;
+  uses: Generated<number>;
+  revoked: Generated<number>;
+}
