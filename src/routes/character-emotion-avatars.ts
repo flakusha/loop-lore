@@ -9,8 +9,9 @@ import type { Kysely, } from "kysely";
 import { EmotionAvatarService, } from "../characters/services/emotion-avatar-service";
 import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
+import { checkActorOwnership, } from "./actor-auth";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -27,6 +28,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
       const jobs = emotionAvatarService.listJobs(actorId,);
       return jsonResponse(jobs,);
     },)
@@ -35,6 +39,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
+      const { actorId, } = ctx.params as { actorId: string };
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
       if (!job) { return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },); }
@@ -45,6 +53,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
+      const { actorId, } = ctx.params as { actorId: string };
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
       const { jobId, } = ctx.params as { jobId: string };
       const cancelled = emotionAvatarService.cancelJob(jobId as any,);
       if (!cancelled) {
@@ -58,6 +70,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const baseAvatarId = body.baseAvatarId as string | undefined;
