@@ -1,13 +1,20 @@
 // src/config/domain-configs.test.ts — Tests for domain-specific config file loading
 
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
+import { createLogger, } from "../logger";
 import { loadConfig, } from "./load";
 
 const TEST_DIR = path.join(import.meta.dir, "__test_domain_configs__",);
 
 describe("Domain Config Loading", () => {
+  beforeAll(() => {
+    // loadConfig → template expansion calls getLogger(), which throws unless a
+    // root logger exists. Other tests initialize it as a module side effect;
+    // --isolate processes skip that, so init here explicitly.
+    createLogger({ level: "error", },);
+  });
   test("loads domain-specific config files from configs/", () => {
     // Create test configs directory
     mkdirSync(path.join(TEST_DIR, "configs",), { recursive: true, },);
