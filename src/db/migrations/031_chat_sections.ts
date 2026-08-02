@@ -22,7 +22,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("label", "text", (col,) => col.notNull(),)
     .addColumn("description", "text",)
     .addColumn("location_id", "text", (col,) => col.references("locations.id",).onDelete("set null",),)
-    .addColumn("sort_index", "integer", (col,) => col.notNull().defaultTo(0),)
+    .addColumn("sort_index", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .execute();
