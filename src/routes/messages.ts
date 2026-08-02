@@ -9,6 +9,8 @@ import {
   classifyTransitionMessage,
   createTransition,
   generateRuleName,
+  type MessageRef,
+  promoteMessagesToMemories,
 } from "../chat";
 import { checkChatAccess, getMessageWithAccess, listMessages, type ServiceError, } from "../chat/service";
 import type { Config, } from "../config/schema";
@@ -840,12 +842,59 @@ export function messagesRoutes(opts: HandlerOpts,) {
               }
             }
 
-            // Create transition event for context cuts
+            // Create transition event for context cuts + promote trimmed messages.
             if (classification.type === "context_cut") {
+              let promotedMemoryIds: string[] = [];
+              try {
+                // Candidate messages at risk of trimming: everything visible in the chat.
+                const [promotionCandidates, chatCtx, participants,] = await Promise.all([
+                  database
+                    .selectFrom("messages",)
+                    .select(["id", "role", "content", "created_at",],)
+                    .where("chat_id", "=", chatId,)
+                    .where("visibility", "=", "visible",)
+                    .orderBy("created_at", "asc",)
+                    .execute(),
+                  database
+                    .selectFrom("chats",)
+                    .select(["context_max_tokens", "world_id",],)
+                    .where("id", "=", chatId,)
+                    .executeTakeFirst(),
+                  database
+                    .selectFrom("chat_participants",)
+                    .select(["actor_id",],)
+                    .where("chat_id", "=", chatId,)
+                    .execute(),
+                ],);
+
+                const messageRefs: MessageRef[] = promotionCandidates.map((m,) => ({
+                  messageId: m.id,
+                  role: m.role,
+                  content: m.content ?? "",
+                  tokenCount: Math.ceil((m.content ?? "").length * 0.3,),
+                  createdAt: m.created_at,
+                }));
+
+                promotedMemoryIds = await promoteMessagesToMemories(database, {
+                  messages: messageRefs,
+                  maxTokens: chatCtx?.context_max_tokens ?? 4000,
+                  actorId: actorId ?? "",
+                  chatId,
+                  worldId: chatCtx?.world_id ?? null,
+                  participantIds: participants.map((p,) => p.actor_id),
+                },);
+              } catch (error) {
+                log().warn("Context cut memory promotion failed", {
+                  chatId,
+                  actorId,
+                  error: error instanceof Error ? error.message : String(error),
+                },);
+              }
+
               const transition = createTransition({
                 actorId,
                 narration: `Context cut: ${effectiveContent.slice(0, 100,)}`,
-                promotedMemoryIds: [],
+                promotedMemoryIds,
               },);
 
               log().info("Context cut transition detected", {
@@ -853,6 +902,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
                 actorId,
                 transitionType: classification.type,
                 source: classification.source,
+                promotedMemoryCount: promotedMemoryIds.length,
                 transition,
               },);
             }
