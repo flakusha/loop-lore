@@ -9,12 +9,13 @@ Frontend implementation for Frontend Overview. See `docs/frontend/overview.md` f
 
 ## Scope
 
-_TBD — expand with frontend implementation tasks._
+Comprehensive frontend integration tracked in **`epic-frontend-backend-integration.md`** — covers RPG, NSFW, Battle, Analytics, Blog, Export, Actor sub-resources, and Chat enhancements.
 
 ## Related Epics
 
 - `docs/frontend/overview.md`
+- `epic-frontend-backend-integration.md` — Main integration epic
 
 ## Tickets
 
-_TBD — create implementation tickets._
+See `epic-frontend-backend-integration.md` for all implementation tasks.
