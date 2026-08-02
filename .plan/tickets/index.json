@@ -305,7 +305,7 @@
     "hash": "pending",
     "extid": "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION",
     "type": "FEAT",
-    "title": "Config File Separation \u2014 Domain Extraction",
+    "title": "Config File Separation — Domain Extraction",
     "label": "feat",
     "priority": "High",
     "epic": "EPIC-2026-39 (Config File Separation)",
@@ -316,7 +316,7 @@
     "hash": "pending",
     "extid": "FEAT-CONFIG-FILE-SEPARATION-SCHEMAS",
     "type": "FEAT",
-    "title": "Config File Separation \u2014 Per-Domain JSON Schemas",
+    "title": "Config File Separation — Per-Domain JSON Schemas",
     "label": "feat",
     "priority": "High",
     "epic": "EPIC-2026-39 (Config File Separation)",
@@ -746,7 +746,7 @@
   "TASK-AGENCY-STORY-POINTS": {
     "extid": "TASK-AGENCY-STORY-POINTS",
     "type": "TASK",
-    "title": "EPIC: Player Agency \u2014 Story Points",
+    "title": "EPIC: Player Agency — Story Points",
     "label": "task",
     "priority": "medium",
     "epic": "epic-agency-story-points",
@@ -1034,7 +1034,7 @@
     "hash": "pending",
     "extid": "TASK-ASYMMETRIC-KEY-PAIRS",
     "type": "TASK",
-    "title": "Encryption \u2014 Asymmetric Key Pairs (True E2E)",
+    "title": "Encryption — Asymmetric Key Pairs (True E2E)",
     "label": "task",
     "priority": "Low",
     "epic": "epic-crypto",
@@ -1081,7 +1081,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-EMOTION-AVATAR",
     "type": "TASK",
-    "title": "AUX LLM \u2014 Emotion Avatar Selection",
+    "title": "AUX LLM — Emotion Avatar Selection",
     "label": "task",
     "priority": "P2-B",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1092,7 +1092,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-ENVIRONMENT-INTERACTION",
     "type": "TASK",
-    "title": "AUX LLM \u2014 Environment Interaction Detection",
+    "title": "AUX LLM — Environment Interaction Detection",
     "label": "task",
     "priority": "P2-B",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1103,7 +1103,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-GM-TOOL-DETECTION",
     "type": "TASK",
-    "title": "AUX LLM \u2014 GM Tool Detection",
+    "title": "AUX LLM — GM Tool Detection",
     "label": "task",
     "priority": "P2-C (deferred)",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1114,7 +1114,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-MEMORY-EXTRACTION",
     "type": "TASK",
-    "title": "AUX LLM \u2014 Memory Extraction",
+    "title": "AUX LLM — Memory Extraction",
     "label": "task",
     "priority": "P2-B",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1125,7 +1125,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-MOOD-CLASSIFICATION",
     "type": "TASK",
-    "title": "AUX LLM \u2014 Mood Classification",
+    "title": "AUX LLM — Mood Classification",
     "label": "task",
     "priority": "P2-B",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1136,7 +1136,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-PERSONALITY-DRIFT",
     "type": "TASK",
-    "title": "AUX LLM \u2014 Personality Drift Check",
+    "title": "AUX LLM — Personality Drift Check",
     "label": "task",
     "priority": "P2-C (deferred)",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1147,7 +1147,7 @@
     "hash": "pending",
     "extid": "TASK-AUX-SCENE-CONTEXT",
     "type": "TASK",
-    "title": "AUX LLM \u2014 Scene Context Extraction",
+    "title": "AUX LLM — Scene Context Extraction",
     "label": "task",
     "priority": "P2-C (deferred)",
     "epic": "epic-aux-enrichment-pipeline",
@@ -1160,7 +1160,7 @@
     "type": "TASK",
     "title": "Battle Action Selector",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-action-selector.md"
@@ -1182,7 +1182,7 @@
     "type": "TASK",
     "title": "Battle Alpine.js Logic",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-alpine.md"
@@ -1223,7 +1223,7 @@
     "hash": "pending",
     "extid": "TASK-BATTLE-INTEGRATION-GAPS",
     "type": "TASK",
-    "title": "Battle Integration Gaps \u2014 Items, Social, NPC, Weather, Resolution",
+    "title": "Battle Integration Gaps — Items, Social, NPC, Weather, Resolution",
     "label": "task",
     "priority": "High",
     "epic": "epic-battle-action-systems",
@@ -1247,7 +1247,7 @@
     "type": "TASK",
     "title": "Battle Log",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-log.md"
@@ -1269,7 +1269,7 @@
     "type": "TASK",
     "title": "Battle Screen",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-screen.md"
@@ -1291,7 +1291,7 @@
     "type": "TASK",
     "title": "Battle State Display",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-state-display.md"
@@ -1325,7 +1325,7 @@
   "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER": {
     "extid": "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER",
     "type": "TASK",
-    "title": "Branch Workflow \u2014 dev \u2192 stg \u2192 master",
+    "title": "Branch Workflow — dev → stg → master",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1591,7 +1591,7 @@
     "hash": "pending",
     "extid": "TASK-CHARACTER-SYSTEM-P2",
     "type": "TASK",
-    "title": "Character System \u2014 P2 Core Gameplay",
+    "title": "Character System — P2 Core Gameplay",
     "label": "task",
     "priority": "High",
     "epic": "epic-character-core-system",
@@ -1639,7 +1639,7 @@
   "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC": {
     "extid": "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC",
     "type": "TASK",
-    "title": "Chat Backgrounds \u2014 Static/Dynamic with Location Sync",
+    "title": "Chat Backgrounds — Static/Dynamic with Location Sync",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -1695,7 +1695,7 @@
   "TASK-CHAT-FLOW-SECTION-NAVIGATION": {
     "extid": "TASK-CHAT-FLOW-SECTION-NAVIGATION",
     "type": "TASK",
-    "title": "Chat Flow \u2014 Section Navigation & Story Spanning",
+    "title": "Chat Flow — Section Navigation & Story Spanning",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1729,7 +1729,7 @@
     "hash": "pending",
     "extid": "TASK-smart-context-pruning",
     "type": "TASK",
-    "title": "Conversation Branching \u2014 Tree-Based Chat History",
+    "title": "Conversation Branching — Tree-Based Chat History",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -1914,7 +1914,7 @@
   "TASK-DATA-INTEGRITY-ACID": {
     "extid": "TASK-DATA-INTEGRITY-ACID",
     "type": "TASK",
-    "title": "Epic 27: Data Integrity & ACID Guarantees \u2014 Implementation Plan",
+    "title": "Epic 27: Data Integrity & ACID Guarantees — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-data-integrity-acid",
@@ -1926,7 +1926,7 @@
     "hash": "pending",
     "extid": "TASK-DATA-INTEGRITY-PHASE1",
     "type": "TASK",
-    "title": "Data Integrity Phase 1 \u2014 Config Guards & Backend Selection",
+    "title": "Data Integrity Phase 1 — Config Guards & Backend Selection",
     "label": "task",
     "priority": "High",
     "epic": "epic-data-integrity-acid",
@@ -1992,7 +1992,7 @@
     "hash": "pending",
     "extid": "TASK-response-length-control",
     "type": "TASK",
-    "title": "Epic 25: Deployment Topologies & Packaging \u2014 Implementation Plan",
+    "title": "Epic 25: Deployment Topologies & Packaging — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -2005,7 +2005,7 @@
   "TASK-DEV-TOOLING-UPDATES": {
     "extid": "TASK-DEV-TOOLING-UPDATES",
     "type": "TASK",
-    "title": "Dev Tooling Updates \u2014 Biome, dprint, stylelint",
+    "title": "Dev Tooling Updates — Biome, dprint, stylelint",
     "label": "task",
     "priority": "medium (chore)",
     "epic": "",
@@ -2052,7 +2052,7 @@
   "TASK-DYNAMIC-AVATARS-DOTA-STYLE": {
     "extid": "TASK-DYNAMIC-AVATARS-DOTA-STYLE",
     "type": "TASK",
-    "title": "Dynamic Avatars \u2014 Dota 2 Style Animated Mugshots",
+    "title": "Dynamic Avatars — Dota 2 Style Animated Mugshots",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -2194,7 +2194,7 @@
   "TASK-EMOTIONS-AVATAR-EDIT-MODEL": {
     "extid": "TASK-EMOTIONS-AVATAR-EDIT-MODEL",
     "type": "TASK",
-    "title": "Emotions Avatar Feature \u2014 Edit Model Support",
+    "title": "Emotions Avatar Feature — Edit Model Support",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -2207,7 +2207,7 @@
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
     "extid": "TASK-ENCRYPTION-ACCESS-MANAGEMENT",
     "type": "TASK",
-    "title": "Encryption \u2014 Access Management & Time-Based Expiry",
+    "title": "Encryption — Access Management & Time-Based Expiry",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -2217,7 +2217,7 @@
   "TASK-ENCRYPTION-ARCHITECTURE-CLARIFICATION": {
     "extid": "TASK-ENCRYPTION-ARCHITECTURE-CLARIFICATION",
     "type": "TASK",
-    "title": "Encryption Architecture Clarification \u2014 Symmetric vs Asymmetric",
+    "title": "Encryption Architecture Clarification — Symmetric vs Asymmetric",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2227,7 +2227,7 @@
   "TASK-ENCRYPTION-ASSET-ENCRYPTION": {
     "extid": "TASK-ENCRYPTION-ASSET-ENCRYPTION",
     "type": "TASK",
-    "title": "Encryption \u2014 Asset Encryption",
+    "title": "Encryption — Asset Encryption",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -2252,7 +2252,7 @@
     "hash": "pending",
     "extid": "TASK-ENCRYPTION-AUTO-KEY-ROTATION",
     "type": "TASK",
-    "title": "Encryption \u2014 Auto-Key Rotation",
+    "title": "Encryption — Auto-Key Rotation",
     "label": "task",
     "priority": "Medium",
     "epic": "epic-crypto",
@@ -2273,7 +2273,7 @@
   "TASK-ENCRYPTION-BROWSER-PRE-ENCRYPT": {
     "extid": "TASK-ENCRYPTION-BROWSER-PRE-ENCRYPT",
     "type": "TASK",
-    "title": "Encryption \u2014 Browser Pre-Encrypt Integration",
+    "title": "Encryption — Browser Pre-Encrypt Integration",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -2286,7 +2286,7 @@
   "TASK-ENCRYPTION-GROUP-KEY-DISTRIBUTION": {
     "extid": "TASK-ENCRYPTION-GROUP-KEY-DISTRIBUTION",
     "type": "TASK",
-    "title": "Encryption \u2014 Group Key Distribution",
+    "title": "Encryption — Group Key Distribution",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2296,7 +2296,7 @@
   "TASK-ENCRYPTION-KEY-MANAGEMENT-UI": {
     "extid": "TASK-ENCRYPTION-KEY-MANAGEMENT-UI",
     "type": "TASK",
-    "title": "Encryption \u2014 Key Management UI",
+    "title": "Encryption — Key Management UI",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2309,7 +2309,7 @@
   "TASK-ENCRYPTION-KEY-ROTATION": {
     "extid": "TASK-ENCRYPTION-KEY-ROTATION",
     "type": "TASK",
-    "title": "Encryption \u2014 Key Rotation (Auto + Manual)",
+    "title": "Encryption — Key Rotation (Auto + Manual)",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -2319,7 +2319,7 @@
   "TASK-ENCRYPTION-WIRE-MESSAGE-PIPELINE": {
     "extid": "TASK-ENCRYPTION-WIRE-MESSAGE-PIPELINE",
     "type": "TASK",
-    "title": "Encryption \u2014 Wire Message Pipeline",
+    "title": "Encryption — Wire Message Pipeline",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2370,9 +2370,9 @@
   "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION": {
     "extid": "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 11 Reconciliation \u2014 Admin & Settings Already Implemented",
+    "title": "Epic 11 Reconciliation — Admin & Settings Already Implemented",
     "label": "task",
-    "priority": "\u2014",
+    "priority": "—",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md",
@@ -2383,9 +2383,9 @@
   "TASK-EPIC14-IMPORT-EXPORT-RECONCILIATION": {
     "extid": "TASK-EPIC14-IMPORT-EXPORT-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 14 Reconciliation \u2014 Import/Export Already Implemented",
+    "title": "Epic 14 Reconciliation — Import/Export Already Implemented",
     "label": "task",
-    "priority": "\u2014",
+    "priority": "—",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md",
@@ -2394,7 +2394,7 @@
   "TASK-EPIC17-ENCRYPTION-E2E-EXPANSION": {
     "extid": "TASK-EPIC17-ENCRYPTION-E2E-EXPANSION",
     "type": "TASK",
-    "title": "Epic 17 Expansion \u2014 E2E Encryption, Asset Encryption, Access Management",
+    "title": "Epic 17 Expansion — E2E Encryption, Asset Encryption, Access Management",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -2407,7 +2407,7 @@
     "type": "TASK",
     "title": "Equipment Slots",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-inventory-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-equipment-slots.md"
@@ -2476,7 +2476,7 @@
     "type": "TASK",
     "title": "Faction Relations",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-npc-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-faction-relations.md"
@@ -2534,7 +2534,7 @@
     "hash": "pending",
     "extid": "TASK-FIX-ESLINT-ERRORS",
     "type": "TASK",
-    "title": "Fix ESLint Errors \u2014 73 errors across 16 files",
+    "title": "Fix ESLint Errors — 73 errors across 16 files",
     "label": "task",
     "priority": "High",
     "epic": "epic-continuous-improvement",
@@ -2644,7 +2644,7 @@
     "type": "TASK",
     "title": "Format Version Migration Logic",
     "label": "task",
-    "priority": "Medium (deferred \u2014 not required until schema evolution)",
+    "priority": "Medium (deferred — not required until schema evolution)",
     "epic": "Data Integrity (Phase 3)",
     "tags": [],
     "source": ".plan/tickets/TASK-format-version-migration.md"
@@ -2721,7 +2721,7 @@
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "extid": "TASK-GITHUB-PAGES-VITEPRESS",
     "type": "TASK",
-    "title": "GitHub Pages \u2014 VitePress Static Site Hosting",
+    "title": "GitHub Pages — VitePress Static Site Hosting",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -2748,7 +2748,7 @@
     "type": "TASK",
     "title": "GM Panel",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-story-mode-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-gm-panel.md"
@@ -2809,7 +2809,7 @@
     "type": "TASK",
     "title": "Health Bar Component",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-health-bar.md"
@@ -3015,7 +3015,7 @@
   "TASK-IMPORT-EXPORT-IO": {
     "extid": "TASK-IMPORT-EXPORT-IO",
     "type": "TASK",
-    "title": "Epic 14: Import/Export & Data Portability \u2014 Implementation Plan",
+    "title": "Epic 14: Import/Export & Data Portability — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-import-export-io",
@@ -3061,7 +3061,7 @@
     "type": "TASK",
     "title": "Installed Plugins",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-plugin-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-installed-plugins.md"
@@ -3082,7 +3082,7 @@
     "type": "TASK",
     "title": "Internal & External Flagging",
     "label": "task",
-    "priority": "low (moderation \u2014 postpone)",
+    "priority": "low (moderation — postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-internal-external-flagging.md",
@@ -3107,7 +3107,7 @@
     "type": "TASK",
     "title": "Inventory Alpine.js Logic",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-inventory-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-inventory-alpine.md"
@@ -3118,7 +3118,7 @@
     "type": "TASK",
     "title": "Inventory Grid",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-inventory-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-inventory-grid.md"
@@ -3140,7 +3140,7 @@
     "type": "TASK",
     "title": "Item Details Panel",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-inventory-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-item-details.md"
@@ -3175,7 +3175,7 @@
     "type": "TASK",
     "title": "Karma Display",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-npc-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-karma-display.md"
@@ -3186,7 +3186,7 @@
     "type": "TASK",
     "title": "Keyboard Navigation System",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-accessibility-input",
     "tags": [],
     "source": ".plan/tickets/TASK-keyboard-navigation.md"
@@ -3258,7 +3258,7 @@
     "type": "TASK",
     "title": "Location Details Panel",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-world-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-location-details.md"
@@ -3269,7 +3269,7 @@
     "type": "TASK",
     "title": "Location Explorer",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-world-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-location-explorer.md"
@@ -3300,7 +3300,7 @@
     "hash": "pending",
     "extid": "TASK-LOREBOOK-EXPORT",
     "type": "TASK",
-    "title": "Lorebook Export \u2014 Round-Trip Fidelity",
+    "title": "Lorebook Export — Round-Trip Fidelity",
     "label": "task",
     "priority": "Medium",
     "epic": "epic-import-export-io",
@@ -3463,7 +3463,7 @@
     "type": "TASK",
     "title": "Mobile Touch Gestures",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-accessibility-input",
     "tags": [],
     "source": ".plan/tickets/TASK-mobile-touch-gestures.md"
@@ -3497,7 +3497,7 @@
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "extid": "TASK-MULTI-INSTANCE-RECONCILIATION",
     "type": "TASK",
-    "title": "Epic 26: Multi-Instance Reconciliation \u2014 Implementation Plan",
+    "title": "Epic 26: Multi-Instance Reconciliation — Implementation Plan",
     "label": "task",
     "priority": "medium",
     "epic": "epic-multi-instance-reconciliation",
@@ -3560,7 +3560,7 @@
   "TASK-NARRATION-PIPELINE": {
     "extid": "TASK-NARRATION-PIPELINE",
     "type": "TASK",
-    "title": "Narration Pipeline \u2014 TTS + Ambient + SFX Mix",
+    "title": "Narration Pipeline — TTS + Ambient + SFX Mix",
     "label": "task",
     "priority": "high",
     "epic": "",
@@ -3608,7 +3608,7 @@
     "type": "TASK",
     "title": "NPC Alpine.js Logic",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-npc-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-npc-alpine.md"
@@ -3663,7 +3663,7 @@
     "type": "TASK",
     "title": "NPC Viewer",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-npc-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-npc-viewer.md"
@@ -3685,7 +3685,7 @@
     "type": "TASK",
     "title": "NSFW Alpine.js Logic",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-nsfw-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-alpine.md"
@@ -3709,7 +3709,7 @@
     "type": "TASK",
     "title": "NSFW Body State Widget",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-nsfw-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-body-state.md"
@@ -3765,7 +3765,7 @@
     "type": "TASK",
     "title": "NSFW Gate & Moderation Events",
     "label": "task",
-    "priority": "low (moderation \u2014 postpone)",
+    "priority": "low (moderation — postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-gate-moderation-events.md",
@@ -3790,7 +3790,7 @@
     "type": "TASK",
     "title": "NSFW Housing Management",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-nsfw-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-housing-management.md"
@@ -3799,7 +3799,7 @@
     "hash": "pending",
     "extid": "TASK-NSFW-INTEGRATION-GAPS",
     "type": "TASK",
-    "title": "NSFW Integration Gaps \u2014 Housing, Weather, Social, Disease",
+    "title": "NSFW Integration Gaps — Housing, Weather, Social, Disease",
     "label": "task",
     "priority": "High",
     "epic": "epic-nsfw-game-mechanics",
@@ -3812,7 +3812,7 @@
     "type": "TASK",
     "title": "NSFW Intimacy Interface",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-nsfw-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-intimacy-interface.md"
@@ -3845,7 +3845,7 @@
     "hash": "pending",
     "extid": "TASK-NSFW-MODERATION-PRIORITY",
     "type": "TASK",
-    "title": "NSFW Moderation Safety Infrastructure \u2014 Priority Elevation",
+    "title": "NSFW Moderation Safety Infrastructure — Priority Elevation",
     "label": "task",
     "priority": "High",
     "epic": "epic-chat-lifecycle-moderation",
@@ -4061,7 +4061,7 @@
   "TASK-PLATFORM-INTEGRATIONS": {
     "extid": "TASK-PLATFORM-INTEGRATIONS",
     "type": "TASK",
-    "title": "EPIC: Platform Integrations (Draft \u2014 TBD)",
+    "title": "EPIC: Platform Integrations (Draft — TBD)",
     "label": "task",
     "priority": "low",
     "epic": "epic-platform-integrations",
@@ -4074,7 +4074,7 @@
     "type": "TASK",
     "title": "Plugin Alpine.js Logic",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-plugin-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-alpine.md"
@@ -4096,7 +4096,7 @@
     "type": "TASK",
     "title": "Plugin Browser",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-plugin-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-browser.md"
@@ -4107,7 +4107,7 @@
     "type": "TASK",
     "title": "Plugin Configuration",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-plugin-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-config.md"
@@ -4118,7 +4118,7 @@
     "type": "TASK",
     "title": "Plugin Details",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-plugin-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-details.md"
@@ -4228,7 +4228,7 @@
   "TASK-PROMPT-LIBRARY": {
     "extid": "TASK-PROMPT-LIBRARY",
     "type": "TASK",
-    "title": "Prompt Library \u2014 Reusable Prompt Templates",
+    "title": "Prompt Library — Reusable Prompt Templates",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -4244,7 +4244,7 @@
     "type": "TASK",
     "title": "Quest Log",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-story-mode-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-quest-log.md"
@@ -4307,7 +4307,7 @@
     "type": "TASK",
     "title": "RAG Alpine.js Logic",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-rag-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-alpine.md"
@@ -4329,7 +4329,7 @@
     "type": "TASK",
     "title": "RAG Citation Display",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-rag-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-citation-display.md"
@@ -4351,7 +4351,7 @@
     "type": "TASK",
     "title": "RAG Document List",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-rag-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-document-list.md"
@@ -4362,7 +4362,7 @@
     "type": "TASK",
     "title": "RAG Document Upload",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-rag-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-document-upload.md"
@@ -4395,7 +4395,7 @@
     "type": "TASK",
     "title": "RAG Search Interface",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-rag-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-search-interface.md"
@@ -4488,7 +4488,7 @@
     "type": "TASK",
     "title": "Relationship Map",
     "label": "task",
-    "priority": "P2 \u2014 Medium",
+    "priority": "P2 — Medium",
     "epic": "epic-npc-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-relationship-map.md"
@@ -4619,7 +4619,7 @@
     "type": "TASK",
     "title": "Responsive Design System",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-accessibility-input",
     "tags": [],
     "source": ".plan/tickets/TASK-responsive-design.md"
@@ -4627,7 +4627,7 @@
   "TASK-RIGGED-MODEL-BUFFER-RENDER": {
     "extid": "TASK-RIGGED-MODEL-BUFFER-RENDER",
     "type": "TASK",
-    "title": "Rigged Model Buffer Render \u2014 Pre-rendered Expressions",
+    "title": "Rigged Model Buffer Render — Pre-rendered Expressions",
     "label": "task",
     "priority": "low",
     "epic": "",
@@ -4806,7 +4806,7 @@
     "hash": "pending",
     "extid": "TASK-RPG-MECHANICS-COMBAT",
     "type": "TASK",
-    "title": "RPG Mechanics \u2014 Combat Engine",
+    "title": "RPG Mechanics — Combat Engine",
     "label": "task",
     "priority": "High",
     "epic": "epic-rpg-mechanics",
@@ -4817,7 +4817,7 @@
     "hash": "pending",
     "extid": "TASK-RPG-MECHANICS-DICE-STATS",
     "type": "TASK",
-    "title": "RPG Mechanics \u2014 Dice Engine & Stat System",
+    "title": "RPG Mechanics — Dice Engine & Stat System",
     "label": "task",
     "priority": "High",
     "epic": "epic-rpg-mechanics",
@@ -4828,7 +4828,7 @@
     "hash": "pending",
     "extid": "TASK-RPG-MECHANICS-XP-LOOT",
     "type": "TASK",
-    "title": "RPG Mechanics \u2014 XP Progression & Loot",
+    "title": "RPG Mechanics — XP Progression & Loot",
     "label": "task",
     "priority": "Medium",
     "epic": "epic-rpg-mechanics",
@@ -4963,7 +4963,7 @@
     "type": "TASK",
     "title": "Screen Reader Support",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-accessibility-input",
     "tags": [],
     "source": ".plan/tickets/TASK-screen-reader-support.md"
@@ -4998,7 +4998,7 @@
     "hash": "pending",
     "extid": "TASK-SHARED-SCHEMAS",
     "type": "TASK",
-    "title": "Shared Schemas \u2014 Reputation, Consent, NSFW Content Rating",
+    "title": "Shared Schemas — Reputation, Consent, NSFW Content Rating",
     "label": "task",
     "priority": "High",
     "epic": "epic-character-core-system",
@@ -5024,7 +5024,7 @@
     "type": "TASK",
     "title": "Skill Check Dice Animation",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-skill-check.md"
@@ -5201,7 +5201,7 @@
     "type": "TASK",
     "title": "Status Effects Display",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-battle-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-status-effects.md"
@@ -5225,7 +5225,7 @@
     "type": "TASK",
     "title": "Story Alpine.js Logic",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-story-mode-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-story-alpine.md"
@@ -5246,7 +5246,7 @@
     "type": "TASK",
     "title": "Story Turn Order",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-story-mode-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-story-turn-order.md"
@@ -5257,7 +5257,7 @@
     "type": "TASK",
     "title": "Story World State Display",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-story-mode-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-story-world-state.md"
@@ -5291,7 +5291,7 @@
   "TASK-TEST-PERFORMANCE-SHARED-STATE": {
     "extid": "TASK-TEST-PERFORMANCE-SHARED-STATE",
     "type": "TASK",
-    "title": "Test Performance \u2014 Shared State Ironing",
+    "title": "Test Performance — Shared State Ironing",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -5379,7 +5379,7 @@
     "type": "TASK",
     "title": "Time/Weather Widget",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-world-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-time-weather.md"
@@ -5422,7 +5422,7 @@
     "type": "TASK",
     "title": "Trading Interface",
     "label": "task",
-    "priority": "P1 \u2014 High",
+    "priority": "P1 — High",
     "epic": "epic-inventory-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-trading-interface.md"
@@ -5468,7 +5468,7 @@
     "type": "TASK",
     "title": "Travel Interface",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-world-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-travel-interface.md"
@@ -5476,7 +5476,7 @@
   "TASK-TRAVEL-PARTY-MIGRATION": {
     "extid": "TASK-TRAVEL-PARTY-MIGRATION",
     "type": "TASK",
-    "title": "Travel Mode \u2014 Party Migration Between Chats",
+    "title": "Travel Mode — Party Migration Between Chats",
     "label": "task",
     "priority": "medium",
     "epic": "epic-chat-transfer-location",
@@ -5530,7 +5530,7 @@
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "extid": "TASK-UNIT-TESTS-UNTESTED-BATCH",
     "type": "TASK",
-    "title": "Add Unit Tests \u2014 Untested Modules (Batch 2)",
+    "title": "Add Unit Tests — Untested Modules (Batch 2)",
     "label": "task",
     "priority": "medium",
     "epic": "epic-testing-qa",
@@ -5565,7 +5565,7 @@
     "type": "TASK",
     "title": "User Block, Ban & Shadow",
     "label": "task",
-    "priority": "low (moderation \u2014 postpone)",
+    "priority": "low (moderation — postpone)",
     "epic": "EPIC-2026-36",
     "tags": [],
     "source": ".plan/tickets/TASK-user-block-ban-shadow.md",
@@ -5617,7 +5617,7 @@
   "TASK-VN-BRANCHING-CHOICES": {
     "extid": "TASK-VN-BRANCHING-CHOICES",
     "type": "TASK",
-    "title": "Visual Novel Mode \u2014 Branching Choices & Relationship Impact",
+    "title": "Visual Novel Mode — Branching Choices & Relationship Impact",
     "label": "task",
     "priority": "medium",
     "epic": "epic-immersion-presentation",
@@ -5627,7 +5627,7 @@
   "TASK-VN-DYNAMIC-GENERATION": {
     "extid": "TASK-VN-DYNAMIC-GENERATION",
     "type": "TASK",
-    "title": "Visual Novel Mode \u2014 Dynamic Image & Story Generation",
+    "title": "Visual Novel Mode — Dynamic Image & Story Generation",
     "label": "task",
     "priority": "medium",
     "epic": "epic-visual-novel-mode",
@@ -5637,7 +5637,7 @@
   "TASK-VN-QA-MODE": {
     "extid": "TASK-VN-QA-MODE",
     "type": "TASK",
-    "title": "Visual Novel Mode \u2014 Q&A (Question <-> Answer) Mode",
+    "title": "Visual Novel Mode — Q&A (Question <-> Answer) Mode",
     "label": "task",
     "priority": "medium",
     "epic": "epic-visual-novel-mode",
@@ -5805,7 +5805,7 @@
     "type": "TASK",
     "title": "World Alpine.js Logic",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-world-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-world-alpine.md"
@@ -5816,7 +5816,7 @@
     "type": "TASK",
     "title": "World Dashboard",
     "label": "task",
-    "priority": "P0 \u2014 Critical",
+    "priority": "P0 — Critical",
     "epic": "epic-world-management-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-world-dashboard.md"
@@ -5836,7 +5836,7 @@
     "hash": "pending",
     "extid": "TASK-WORLD-LOCATION-ENCRYPTION",
     "type": "TASK",
-    "title": "Encryption \u2014 World/Location Encryption",
+    "title": "Encryption — World/Location Encryption",
     "label": "task",
     "priority": "Low",
     "epic": "epic-crypto",
@@ -5911,8 +5911,7 @@
     "epic": "epic-emotion-avatar-message-binding",
     "tags": [],
     "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
-  }
-  ,
+  },
   "TASK-UNIFY-401-GUARD-HELPERS": {
     "hash": "pending",
     "extid": "TASK-UNIFY-401-GUARD-HELPERS",
@@ -5923,5 +5922,274 @@
     "epic": "epic-code-quality",
     "tags": [],
     "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
+  },
+  "EPIC-FRONTEND-BACKEND-INTEGRATION": {
+    "extid": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "type": "EPIC",
+    "title": "EPIC Frontend Backend Integration",
+    "label": "epic",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "frontend",
+      "integration",
+      "wiring"
+    ],
+    "source": ".plan/epics/epic-frontend-backend-integration.md"
+  },
+  "TASK-RPG-STATS-FRONTEND-WIRING": {
+    "extid": "TASK-RPG-STATS-FRONTEND-WIRING",
+    "type": "TASK",
+    "title": "RPG Stats Frontend Wiring",
+    "label": "task",
+    "priority": "P0",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "rpg",
+      "frontend",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-rpg-stats-frontend-wiring.md"
+  },
+  "TASK-BATTLE-FRONTEND-INTEGRATION": {
+    "extid": "TASK-BATTLE-FRONTEND-INTEGRATION",
+    "type": "TASK",
+    "title": "Battle Frontend Integration",
+    "label": "task",
+    "priority": "P0",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "battle",
+      "frontend",
+      "combat"
+    ],
+    "source": ".plan/tickets/TASK-battle-frontend-integration.md"
+  },
+  "TASK-NSFW-FRONTEND-INTEGRATION": {
+    "extid": "TASK-NSFW-FRONTEND-INTEGRATION",
+    "type": "TASK",
+    "title": "NSFW Frontend Integration",
+    "label": "task",
+    "priority": "P0",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "nsfw",
+      "frontend",
+      "intimacy"
+    ],
+    "source": ".plan/tickets/TASK-nsfw-frontend-integration.md"
+  },
+  "TASK-ANALYTICS-FRONTEND-DASHBOARD": {
+    "extid": "TASK-ANALYTICS-FRONTEND-DASHBOARD",
+    "type": "TASK",
+    "title": "Analytics Frontend Dashboard",
+    "label": "task",
+    "priority": "P1",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "analytics",
+      "frontend",
+      "dashboard"
+    ],
+    "source": ".plan/tickets/TASK-analytics-frontend-dashboard.md"
+  },
+  "TASK-BLOG-FRONTEND-AUTHORING": {
+    "extid": "TASK-BLOG-FRONTEND-AUTHORING",
+    "type": "TASK",
+    "title": "Blog Frontend Authoring",
+    "label": "task",
+    "priority": "P1",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "blog",
+      "frontend",
+      "authoring"
+    ],
+    "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
+  },
+  "TASK-EXPORT-FRONTEND-PROGRESS": {
+    "extid": "TASK-EXPORT-FRONTEND-PROGRESS",
+    "type": "TASK",
+    "title": "Export Frontend Progress UI",
+    "label": "task",
+    "priority": "P1",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "export",
+      "frontend",
+      "progress"
+    ],
+    "source": ".plan/tickets/TASK-export-frontend-progress.md"
+  },
+  "TASK-ACTOR-TRAITS-FRONTEND": {
+    "extid": "TASK-ACTOR-TRAITS-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Traits Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "traits",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-traits-frontend.md"
+  },
+  "TASK-ACTOR-RELATIONSHIPS-FRONTEND": {
+    "extid": "TASK-ACTOR-RELATIONSHIPS-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Relationships Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "relationships",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-relationships-frontend.md"
+  },
+  "TASK-ACTOR-AVAILABILITY-FRONTEND": {
+    "extid": "TASK-ACTOR-AVAILABILITY-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Availability Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "availability",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-availability-frontend.md"
+  },
+  "TASK-ACTOR-EMOTION-AVATARS-FRONTEND": {
+    "extid": "TASK-ACTOR-EMOTION-AVATARS-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Emotion Avatars Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "emotion-avatars",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
+  },
+  "TASK-ACTOR-LICENSING-FRONTEND": {
+    "extid": "TASK-ACTOR-LICENSING-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Licensing Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "licensing",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
+  },
+  "TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND": {
+    "extid": "TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Systems Export/Import Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "systems",
+      "export",
+      "import",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-actor-systems-export-frontend.md"
+  },
+  "TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND": {
+    "extid": "TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Notes, Items, and Lore Entries Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "notes",
+      "items",
+      "lore",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md"
+  },
+  "TASK-WORLD-LORE-ENTRIES-FRONTEND": {
+    "extid": "TASK-WORLD-LORE-ENTRIES-FRONTEND",
+    "type": "TASK",
+    "title": "World Lore Entries Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "lore",
+      "frontend",
+      "world"
+    ],
+    "source": ".plan/tickets/TASK-world-lore-entries-frontend.md"
+  },
+  "TASK-CHAT-PINS-FRONTEND": {
+    "extid": "TASK-CHAT-PINS-FRONTEND",
+    "type": "TASK",
+    "title": "Chat Pins Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "pins",
+      "frontend",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-chat-pins-frontend.md"
+  },
+  "TASK-CHAT-TRANSFER-FRONTEND": {
+    "extid": "TASK-CHAT-TRANSFER-FRONTEND",
+    "type": "TASK",
+    "title": "Chat Transfer Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "transfer",
+      "frontend",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-chat-transfer-frontend.md"
+  },
+  "TASK-CHAT-LOCATION-FRONTEND": {
+    "extid": "TASK-CHAT-LOCATION-FRONTEND",
+    "type": "TASK",
+    "title": "Chat Location Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "location",
+      "frontend",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-chat-location-frontend.md"
+  },
+  "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
+    "extid": "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND",
+    "type": "TASK",
+    "title": "Message Archive/Restore Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "archive",
+      "restore",
+      "frontend",
+      "messages"
+    ],
+    "source": ".plan/tickets/TASK-message-archive-restore-frontend.md"
   }
 }
