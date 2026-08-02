@@ -401,11 +401,11 @@ export async function handleUpload({
     size_bytes: asset.size_bytes,
     storage_backend: asset.storage_backend,
     alt_text: asset.alt_text,
-    ...(duplicate ? { duplicate: true, } : {}),
+    ...(duplicate && { duplicate: true, }),
   };
 
   if (duplicate) {
-    return new Response(JSON.stringify(body,), {
+    return Response.json(body, {
       status: HttpStatus.OK,
       headers: {
         "Content-Type": "application/json",
@@ -413,7 +413,7 @@ export async function handleUpload({
       },
     },);
   }
-  return new Response(JSON.stringify(body,), {
+  return Response.json(body, {
     status: HttpStatus.Created,
     headers: {
       "Content-Type": "application/json",
