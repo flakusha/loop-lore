@@ -14,6 +14,7 @@ import { chatUtils, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
+import { destroyVnRenderer, } from "../vn";
 import { memoryPanel, } from "./memory-panel";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
@@ -213,6 +214,7 @@ globalThis.chatState = function() {
 
     destroy() {
       this.unregisterPanelHandlers();
+      destroyVnRenderer();
 
       this._cleanupSSE?.();
       this.disconnectActivitySSE();
