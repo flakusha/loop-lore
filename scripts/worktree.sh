@@ -1335,7 +1335,7 @@ cmd_commit() {
   # Verify GPG key is available
   if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
     echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
-    echo "  Run: ./scripts/gpg-unlock.sh"
+    echo "  Run: ./scripts/gpg-unlock.mjs"
     exit 1
   fi
 
