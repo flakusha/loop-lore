@@ -21,6 +21,7 @@ import type { DB, } from "../db/schema";
 import type { TranslatorFn, } from "../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { createRateLimiter, } from "../middleware/rate-limit";
+import { LL_TOKEN, } from "../regex/cookies";
 import { jsonParseOr, uid, } from "../utils";
 import { notFound, unauthorized, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
@@ -108,11 +109,9 @@ function extractUserIdFromJwt(token: string,): string | null {
 }
 
 function getTokenFromCookie(request: Request,): string | null {
-  return request.headers
-    .get("Cookie",)
-    ?.split(";",)
-    .find((c,) => c.startsWith("ll_token=",))
-    ?.slice(9,) ?? null;
+  const cookieHeader = request.headers.get("Cookie",);
+  if (!cookieHeader) { return null; }
+  return LL_TOKEN.exec(cookieHeader,)?.[1] ?? null;
 }
 
 // ── Handlers ──────────────────────────────────────────────────
