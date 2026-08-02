@@ -32,7 +32,7 @@ async function buildBundles() {
   // IIFE wrapper isolates Bun's __toESM WeakMap `var o` interop cache from
   // module-level declarations (e.g. safe-buffer's `function o`), which hoist
   // above `var` and made `o??=new WeakMap` skip init → `o.get is not a function`.
-  await $`bun build --target browser --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/pages.ts`;
+  await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/pages.ts`;
 
   // Chat vendor libs (marked + DOMPurify on globalThis)
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/chat-vendor.ts`;

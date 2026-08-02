@@ -20,6 +20,13 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
   _emotionAvatarsLoading: false,
   _currentEmotionAvatar: null as string | null,
 
+  /** Active emotions for the current character (joined with definitions). */
+  _activeEmotions: [] as {
+    def: { id: string; icon: string | null; display_name: string };
+    intensity: number;
+  }[],
+  _activeEmotionsLoading: false,
+
   async loadMood() {
     if (!this.activeChat) { return; }
     this._moodLoading = true;
@@ -52,6 +59,9 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
 
       // Load emotion avatars for this character
       await this.loadEmotionAvatars();
+
+      // Load active emotions for this character
+      await this.loadEmotions();
     } catch (error) {
       log.error("Failed to load mood", error instanceof Error ? error : undefined, {},);
     } finally {
@@ -92,6 +102,51 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
     } finally {
       this._emotionAvatarsLoading = false;
     }
+  },
+
+  /**
+   * Load active emotions for the current character and join them with global
+   * emotion definitions so the template can render each emotion chip.
+   * Populates _activeEmotions with { def: { id, icon, display_name }, intensity }.
+   */
+  async loadEmotions() {
+    const actorId = this._getCharacterActorId();
+    if (!actorId) { return; }
+    this._activeEmotionsLoading = true;
+    try {
+      const [activeRes, defsRes] = await Promise.all([
+        apiFetch(`/api/actors/${actorId}/emotions`,),
+        apiFetch(`/api/emotions`,),
+      ],);
+      if (!activeRes.ok || !defsRes.ok) { return; }
+
+      const active = await activeRes.json();
+      const defs = await defsRes.json();
+
+      const defMap = new Map<string, { id: string; icon: string | null; display_name: string }>();
+      const defList = Array.isArray(defs,) ? defs : defs?.data ?? [];
+      for (const d of defList) {
+        defMap.set(d.id, { id: d.id, icon: d.icon ?? null, display_name: d.display_name, },);
+      }
+
+      const activeList = Array.isArray(active,) ? active : active?.data ?? [];
+      this._activeEmotions = activeList
+        .map((e: { emotion_id: string; intensity: number },) => {
+          const def = defMap.get(e.emotion_id,);
+          if (!def) { return null; }
+          return { def, intensity: e.intensity ?? 0.5, };
+        },)
+        .filter(Boolean,) as { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
+    } catch (error) {
+      log.error("Failed to load active emotions", error instanceof Error ? error : undefined, {},);
+    } finally {
+      this._activeEmotionsLoading = false;
+    }
+  },
+
+  /** Get the active emotions list (joined with definitions). */
+  getActiveEmotions() {
+    return this._activeEmotions;
   },
 
   /**
