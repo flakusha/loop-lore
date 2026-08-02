@@ -284,6 +284,41 @@ export default tseslint.config(
       ],
     },
   },
+  // ── God-module pragmatic overrides (structural rules; pending split per docs/meta/code-practices-improvements/04) ──
+  {
+    files: [
+      "src/routes/admin.ts",
+      "src/routes/messages.ts",
+      "src/routes/worlds.ts",
+      "src/routes/characters.ts",
+      "src/validation/schemas.ts",
+    ],
+    rules: { "unicorn/max-nested-calls": "off", },
+  },
+  {
+    files: ["src/validation/schemas.ts",],
+    rules: { "@typescript-eslint/consistent-type-definitions": "off", },
+  },
+  {
+    files: ["src/routes/views.ts", "src/routes/characters.ts",],
+    rules: { "@typescript-eslint/restrict-template-expressions": "off", },
+  },
+  {
+    files: ["src/routes/views.ts",],
+    rules: { "unicorn/no-unreadable-for-of-expression": "off", },
+  },
+  {
+    files: ["src/config/schema.ts",],
+    rules: { "unicorn/prefer-export-from": "off", },
+  },
+  {
+    files: ["src/nsfw/moderation-service.ts",],
+    rules: {
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "unicorn/catch-error-name": "off",
+    },
+  },
   // ── Frontend TypeScript: Browser env, DOM-lib tsconfig ─────────
   {
     files: ["src/frontend/**/*.ts",],
