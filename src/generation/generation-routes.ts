@@ -14,6 +14,7 @@ import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations, } fr
 import { getPartialContent, } from "./continuation";
 import type { ContinueResponse, RetryFromPointResponse, } from "./types";
 
+import { regenerateMessageVariant, } from "../chat/service";
 import type { Config, } from "../config/schema";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
 import { safeJsonStringify, } from "../utils";
@@ -294,16 +295,23 @@ function validateCancel(
 
 // ── Route: Regenerate (validator) ─────────────────────────
 
-function validateRegenerate(body: unknown,): { chatId: string; style?: RegenStyle } | null {
+function validateRegenerate(
+  body: unknown,
+): { chatId: string; messageId?: string; style?: RegenStyle } | null {
   if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
   if (typeof b.chatId !== "string" || !b.chatId) { return null; }
+  let messageId: string | undefined;
+  if (b.messageId !== undefined && b.messageId !== null) {
+    if (typeof b.messageId !== "string" || !b.messageId) { return null; }
+    messageId = b.messageId;
+  }
   let style: RegenStyle = null;
   if (b.style !== undefined && b.style !== null) {
     if (!isValidRegenStyle(b.style,)) { return null; }
     style = b.style;
   }
-  return { chatId: b.chatId, style, };
+  return { chatId: b.chatId, messageId, style, };
 }
 
 // ── Route: Test connection (validator) ────────────────────
@@ -338,7 +346,11 @@ export function handleListActiveGenerations(_database?: Kysely<DB>,): Response {
  * Cancel current generation and signal frontend to trigger
  * fresh generation for the same parent message.
  */
-export function handleRegenerate(body: unknown, database: Kysely<DB>,): Response {
+export async function handleRegenerate(
+  body: unknown,
+  database: Kysely<DB>,
+  auth?: { userId?: string | null; userRole?: string | null },
+): Promise<Response> {
   const db = database;
   const input = validateRegenerate(body,);
 
@@ -347,6 +359,8 @@ export function handleRegenerate(body: unknown, database: Kysely<DB>,): Response
   }
 
   const { chatId, style, } = input;
+  const userId = auth?.userId ?? null;
+  const userRole = auth?.userRole ?? null;
 
   const wasActive = cancelGenerationByChat({
     db,
@@ -356,6 +370,33 @@ export function handleRegenerate(body: unknown, database: Kysely<DB>,): Response
     detail: "User requested regeneration (replacing existing response)",
   },);
 
+  // messageId present → create a new sibling variant (swipe/replay branch).
+  if (input.messageId) {
+    const result = await regenerateMessageVariant(db, {
+      chatId,
+      messageId: input.messageId,
+      userId,
+      userRole,
+    },);
+
+    if (!("ok" in result)) {
+      const status = result.code === "forbidden" ? 403 : 404;
+      return jsonError({ message: result.message, status, },);
+    }
+
+    return jsonResponse({
+      ok: true,
+      chatId,
+      cancelled: wasActive,
+      ready: true,
+      variantMessageId: result.variantMessageId,
+      swipeIndex: result.swipeIndex,
+      replayed: result.replayed,
+      style: style ?? null,
+    },);
+  }
+
+  // No messageId → cancel-only path (regenerateResponse).
   const stylePrompt = style ? buildStylePrompt(style,) : null;
 
   return jsonResponse({
