@@ -14,6 +14,7 @@ import type { Kysely, } from "kysely";
 import { marked, } from "marked";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
 import { callAux, INTENT_CLASSIFIER_PROMPT, } from "../aux-pipeline";
+import { MoodService, } from "../characters/services/mood-service";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
 import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled, } from "../crypto";
@@ -32,6 +33,7 @@ import type { DB, } from "../db/schema";
 import { extractMentionedActorIds, } from "../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../group-chat/turn-selector";
 import { getLogger, } from "../logger";
+import { getRuntimeNsfwConfig, } from "../nsfw/runtime-config";
 import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../regex/html-sanitize";
 import { type GameMasterConfig, GameMasterService, } from "../story";
 import type { GenerateTextFn, } from "../story/game-master";
@@ -548,6 +550,26 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       .execute();
     log.debug("message stored", { messageId, contentLength: accumulatedContent.length, requestId, },);
 
+    // ── Mood shift persistence ──────────────────────────────────
+    // If the MoodHook detected a mood shift, apply its delta to the character's
+    // world-scoped mood record so mood auto-tracks the conversation's tone.
+    // Best-effort: a missing mood row (no-op) or a DB failure is logged, never
+    // allowed to fail generation.
+    const moodShift = hookResult.events.find(
+      (e,) => e.eventType === "mood_shift" && typeof e.data?.delta === "number",
+    );
+    if (moodShift && typeof moodShift.data?.delta === "number") {
+      try {
+        await new MoodService(database,).applyHappinessDelta(
+          characterId,
+          chat?.world_id ?? undefined,
+          moodShift.data.delta,
+        );
+      } catch (error) {
+        log.warn("mood-hook: failed to persist mood shift", { err: error, },);
+      }
+    }
+
     // ── Hallucination guard ────────────────────────────────────────
     // Check generated content against known world entities
     const hallucinationAnalysis = await detectHallucinations({
@@ -951,8 +973,7 @@ async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
           privacyLevel: "standard",
           eventTypes: ["emotion_change",],
           config,
-          nsfwConfig: config.nsfw ??
-            { allowNsfw: false, nsfwMinAge: 0, defaultNsfwScope: "chat", consentRequired: true, auditLogging: true, },
+          nsfwConfig: getRuntimeNsfwConfig(),
           db: database,
         },
       },);
