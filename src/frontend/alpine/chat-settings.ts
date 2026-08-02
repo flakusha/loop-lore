@@ -1,9 +1,24 @@
 import { apiFetch, } from "./htmx";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import { log as rootLog, } from "./logger";
-import type { ChatState, GmConfig, } from "./types";
+import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../vn";
+import type { ChatState, GmConfig, Message, } from "./types";
 
 const log = rootLog.child({ module: "chat-settings", },);
+
+/** Map a chat-page message to the VN renderer's message shape. */
+function toVnMessage(m: Message): VnMessage {
+  const role = m.role as VnMessage["role"];
+  const isVnRole = ["assistant", "user", "system",].includes(role,);
+  return {
+    id: m.id,
+    role: isVnRole ? role : "narration",
+    name: m.actor_name,
+    content: m.content,
+    thinking: m.thinking,
+    attachments: m.attachments as VnMessage["attachments"],
+  };
+}
 
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
@@ -38,8 +53,41 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     if (chat?.gm_config) {
       const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
       this._assistantRole = config.assistantRole ?? "off";
+      this._vnEnabled = config.visualNovel ?? false;
+      this._vnLayout = config.vnLayout ?? "overlay";
+      this._vnTypewriter = config.vnTypewriter ?? true;
+      this._vnTypewriterSpeed = config.vnTypewriterSpeed ?? 30;
+      this._vnTransition = config.vnTransition ?? "fade";
+      this._vnAutoAdvance = config.vnAutoAdvance ?? false;
     }
     Alpine.store("ui",).showChatSettings = true;
+  },
+
+  /**
+   * (Re)render the active chat as a VN scene when VN mode is enabled, or tear
+   * the renderer down when it is disabled. Reads the chat's persisted gm_config
+   * so the renderer and the settings modal stay in sync.
+   */
+  updateVnMode() {
+    const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat,);
+    const config = chat?.gm_config
+      ? jsonParseOr<GmConfig>(chat.gm_config, {},)
+      : {};
+    const enabled = config.visualNovel ?? this._vnEnabled;
+    const container = document.querySelector<HTMLElement>("#vn-container",);
+
+    if (!enabled || !container) {
+      destroyVnRenderer();
+      container?.replaceChildren();
+      return;
+    }
+
+    const vnMessages = this.messages.map((m,) => toVnMessage(m,),);
+    if (vnMessages.length === 0) {
+      destroyVnRenderer();
+      return;
+    }
+    initVnRenderer(container, vnMessages, config as Record<string, unknown>, this.activeChat ?? undefined,);
   },
 
   async saveChatSettings() {
