@@ -79,7 +79,7 @@ export async function agentCommit(args: string[],): Promise<void> {
     { stdout: "pipe", stderr: "pipe", },
   );
   if (gpgCheck.exitCode !== 0) {
-    log("error", `GPG secret key ${credentials.keyId} not found — run: ./scripts/gpg-unlock.sh`,);
+    log("error", `GPG secret key ${credentials.keyId} not found — run: ./scripts/gpg-unlock.mjs`,);
     process.exit(1,);
   }
 

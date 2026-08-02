@@ -39,8 +39,9 @@ Shared loader: `scripts/worktree/utils/credentials.mjs` — single source
 of truth for both bash and mjs scripts. Usage:
 
 ```bash
-# Bash — eval into shell
+# Bash — eval into shell (direct, or via the bash wrapper):
 eval "$(bun run scripts/worktree/utils/credentials.mjs)"
+eval "$(./scripts/worktree/load-credentials.sh)"   # idiomatic bash wrapper
 
 # mjs — import
 import { credentials } from "./utils/credentials.mjs";
@@ -79,8 +80,16 @@ Run this in a **real terminal** (not inside opencode). Use the helper
 script which reads `.credentials.env` automatically:
 
 ```bash
-./scripts/gpg-unlock.sh
+./scripts/gpg-unlock.mjs
 ```
+
+Or, if the script is not executable, invoke via bun:
+
+```bash
+bun run scripts/gpg-unlock.mjs
+```
+
+Either way it reads `AGENT_GPG_KEY_ID` from `.credentials.env` automatically.
 
 Or manually — use the key ID from `.credentials.env`:
 
