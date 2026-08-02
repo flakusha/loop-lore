@@ -61,6 +61,76 @@ export function addChecksum(
   checksums[path] = `sha256:${crypto.createHash("sha256",).update(content,).digest("hex",)}`;
 }
 
+export interface FinalizeExportInput {
+  zip: JSZip;
+  checksums: Record<string, string>;
+  counts: Record<string, number>;
+  userId: string;
+  now: Date;
+  format: string;
+  include: string[];
+  /** SSE-only: collected per-item manifest entries. */
+  assetManifest?: ExportItem[];
+}
+
+/**
+ * Write the export metadata (export-info, schema-version, optional
+ * asset-manifest), the manifest (with checksums), regenerate the manifest
+ * with final checksums, and produce the ZIP buffer.
+ *
+ * Shared by both export handlers; the SSE handler passes `assetManifest`,
+ * the plain handler omits it.
+ */
+export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Buffer> {
+  const { zip, checksums, counts, userId, now, format, include, assetManifest, } = input;
+
+  const exportInfo = {
+    exported_at: now.toISOString(),
+    exported_by: userId,
+    format,
+    includes: include,
+    item_count: Object.values(counts,).reduce((a, b,) => a + b, 0,),
+  };
+  const schemaVersion = {
+    schema_version: "1.0",
+    export_format_version: "1.0",
+  };
+
+  const metadataFolder = zip.folder("metadata",);
+  const exportInfoStr = JSON.stringify(exportInfo, null, 2,);
+  metadataFolder?.file("export-info.json", exportInfoStr,);
+  addChecksum(checksums, "metadata/export-info.json", exportInfoStr,);
+
+  const schemaVersionStr = JSON.stringify(schemaVersion, null, 2,);
+  metadataFolder?.file("schema-version.json", schemaVersionStr,);
+  addChecksum(checksums, "metadata/schema-version.json", schemaVersionStr,);
+
+  if (assetManifest) {
+    const assetManifestStr = JSON.stringify(assetManifest, null, 2,);
+    metadataFolder?.file("asset-manifest.json", assetManifestStr,);
+    addChecksum(checksums, "metadata/asset-manifest.json", assetManifestStr,);
+  }
+
+  const manifestBase = {
+    version: "1.0",
+    exported_at: now.toISOString(),
+    exported_by: userId,
+    format_version: "1.0",
+    contents: counts,
+    checksums,
+  };
+  const manifest = assetManifest ? { ...manifestBase, asset_manifest: assetManifest, } : manifestBase;
+  const manifestStr = JSON.stringify(manifest, null, 2,);
+  zip.file("manifest.json", manifestStr,);
+  addChecksum(checksums, "manifest.json", manifestStr,);
+
+  // Regenerate ZIP with the final manifest (checksums updated)
+  const finalManifest = assetManifest ? { ...manifestBase, asset_manifest: assetManifest, } : manifestBase;
+  zip.file("manifest.json", JSON.stringify(finalManifest, null, 2,),);
+
+  return zip.generateAsync({ type: "nodebuffer", },);
+}
+
 /**
  * Export the user's characters into `zip/characters/` in the requested format.
  * Populates `ctx.counts.characters`.
