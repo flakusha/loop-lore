@@ -87,6 +87,28 @@
   </div>
 </template>
 
+<!-- Emotion Avatar Generation -->
+<div class="mood-emotions-section">
+  <div class="mood-emotions-title">Emotion Avatars</div>
+  <p style="color: var(--text-secondary); font-size: 12px; margin: 4px 0 8px">
+    Generate emotion-specific avatars from the character's base avatar.
+  </p>
+  <button
+    class="btn btn-secondary btn-xs"
+    @click="generateEmotionAvatars()"
+    :disabled="_emotionGenRunning"
+  >
+    <span x-show="_emotionGenRunning">Generating...</span>
+    <span x-show="!_emotionGenRunning">Generate emotion avatars</span>
+  </button>
+  <div
+    x-show="_emotionGenStatus"
+    style="margin-top: 8px; font-size: 12px; color: var(--text-secondary)"
+    x-text="_emotionGenStatus"
+  >
+  </div>
+</div>
+
 <!-- No Mood State -->
 <template x-if="!_mood && !_moodLoading">
   <div class="mood-section mood-empty">

@@ -16,9 +16,13 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
   _moodLoading: false,
   _moodCanEdit: false,
   _moodSliderValue: 50,
+  _activeChatWorldId: null as string | null,
   _emotionAvatars: [] as { emotion: string; avatarId: string; assetId: string }[],
   _emotionAvatarsLoading: false,
   _currentEmotionAvatar: null as string | null,
+  _emotionGenRunning: false,
+  _emotionGenStatus: null as string | null,
+  _emotionGenJobId: null as string | null,
 
   /** Active emotions for the current character (joined with definitions). */
   _activeEmotions: [] as {
@@ -40,7 +44,19 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
         : null;
       if (!npc?.actor_id) { return; }
 
-      const moodRes = await apiFetch(`/api/actors/${npc.actor_id}/mood`,);
+      // Resolve the chat's world so mood is read from the world-scoped record
+      // (falls back to the global mood when the chat has no world).
+      this._activeChatWorldId = null;
+      try {
+        const chatRes = await apiFetch(`/api/chats/${this.activeChat}`,);
+        if (chatRes.ok) {
+          const activeChat = await chatRes.json();
+          this._activeChatWorldId = activeChat.world_id ?? null;
+        }
+      } catch { /* keep null */ }
+
+      const worldQuery = this._activeChatWorldId ? `?worldId=${this._activeChatWorldId}` : "";
+      const moodRes = await apiFetch(`/api/actors/${npc.actor_id}/mood${worldQuery}`,);
       if (moodRes.ok) {
         const mood = await moodRes.json();
         this._mood = {
@@ -102,6 +118,76 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
     } finally {
       this._emotionAvatarsLoading = false;
     }
+  },
+
+  async generateEmotionAvatars() {
+    if (!this.activeChat || this._emotionGenRunning) { return; }
+    try {
+      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      if (!res.ok) { return; }
+      const participants = await res.json();
+      const npc = Array.isArray(participants,)
+        ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
+        : null;
+      if (!npc?.actor_id) { return; }
+
+      const baseAvatarId = this.currentCharacter?.avatar_asset_id ?? null;
+      if (!baseAvatarId) {
+        this._emotionGenStatus = "No base avatar set for this character.";
+        return;
+      }
+
+      this._emotionGenRunning = true;
+      this._emotionGenStatus = "Starting generation...";
+      try {
+        const genRes = await apiFetch(`/api/actors/${npc.actor_id}/emotion-avatars`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ baseAvatarId, },),
+        },);
+        const genBody = await genRes.json().catch(() => ({}));
+        if (!genRes.ok) {
+          this._emotionGenStatus = genBody.message ?? "Generation failed to start.";
+          return;
+        }
+        this._emotionGenJobId = genBody.jobId ?? null;
+        this._emotionGenStatus = "Generating emotion avatars...";
+        await this._pollEmotionJob(npc.actor_id, this._emotionGenJobId,);
+      } finally {
+        this._emotionGenRunning = false;
+      }
+    } catch (error) {
+      log.error("Failed to start emotion avatar generation", error instanceof Error ? error : undefined, {},);
+      this._emotionGenStatus = "Failed to start generation.";
+      this._emotionGenRunning = false;
+    }
+  },
+
+  async _pollEmotionJob(actorId: string, jobId: string | null,) {
+    if (!jobId) {
+      this._emotionGenStatus = "Generation started but no job id returned.";
+      return;
+    }
+    const deadline = Date.now() + 5 * 60 * 1000;
+    while (Date.now() < deadline) {
+      await new Promise((resolve,) => setTimeout(resolve, 2000,));
+      try {
+        const res = await apiFetch(`/api/actors/${actorId}/emotion-avatars/jobs/${jobId}`,);
+        if (!res.ok) { continue; }
+        const job = await res.json();
+        const status = job.status as string;
+        if (status === "completed") {
+          this._emotionGenStatus = "Emotion avatars generated.";
+          await this.loadEmotionAvatars();
+          return;
+        }
+        if (status === "failed" || status === "cancelled") {
+          this._emotionGenStatus = `Generation ${status}.`;
+          return;
+        }
+      } catch { /* keep polling */ }
+    }
+    this._emotionGenStatus = "Generation timed out.";
   },
 
   /**
@@ -219,7 +305,7 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
           happiness,
-          worldId: undefined,
+          worldId: this._activeChatWorldId ?? undefined,
         },),
       },);
 
@@ -248,7 +334,7 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
           delta,
-          worldId: undefined,
+          worldId: this._activeChatWorldId ?? undefined,
         },),
       },);
 
