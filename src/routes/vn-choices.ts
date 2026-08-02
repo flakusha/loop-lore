@@ -20,7 +20,7 @@ import {
   jsonError,
   jsonResponse,
   notFoundResponse as notFound,
-  unauthorizedResponse as unauthorized,
+  requireUserId,
 } from "./http-utils";
 
 function log(): Logger {
@@ -40,8 +40,8 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/vn-choices",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const { id: chatId, } = ctx.params;
           const sceneIndex = parseInt(ctx.query.sceneIndex ?? "0", 10,);
@@ -74,8 +74,8 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/vn-choices",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const { id: chatId, } = ctx.params;
           const body = ctx.body;
@@ -129,8 +129,8 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/vn-choices/:choiceId/select",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const { id: chatId, choiceId, } = ctx.params;
 
@@ -191,8 +191,8 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/vn-choices/history",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const { id: chatId, } = ctx.params;
 

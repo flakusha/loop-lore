@@ -34,7 +34,7 @@ import { getLogger, type Logger, } from "../logger";
 import { notifyMention, } from "../notifications/service";
 import { filter as filterProfanity, } from "../profanity/service";
 import { safeJsonParse, safeJsonStringify, uid, } from "../utils";
-import { forbidden, notFound, unauthorized, } from "../validation/middleware";
+import { forbidden, notFound, } from "../validation/middleware";
 import {
   ChatIdParams,
   ErrorResponse,
@@ -54,6 +54,7 @@ import {
   jsonNoContent,
   jsonPaginated,
   jsonResponse,
+  requireUserId,
 } from "./http-utils";
 
 function log(): Logger {
@@ -211,8 +212,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .get(
         "/api/messages/:id",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
 
           const msgResult = await getMessageWithAccess(
@@ -238,8 +239,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .get(
         "/api/messages/:id/variants",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
 
           const msgResult = await getMessageWithAccess(
@@ -278,8 +279,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .put(
         "/api/messages/:id/variant",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVariantBody.static;
 
@@ -319,8 +320,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/messages/:id",
         async (ctx: any,) => {
-          const actorId = ctx.userId as string | null;
-          if (!actorId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const actorId = requireUserId(ctx,);
+          if (typeof actorId !== "string") return actorId;
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
@@ -343,8 +344,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .patch(
         "/api/messages/:id",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as { content?: string };
           const newContent = body?.content;
@@ -435,8 +436,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .put(
         "/api/messages/:id/visibility",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVisibilityUpdateBody.static;
 
@@ -479,8 +480,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/messages",
         async (ctx: any,) => {
-          const actorId = ctx.userId as string | null;
-          if (!actorId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const actorId = requireUserId(ctx,);
+          if (typeof actorId !== "string") return actorId;
           const { id: chatId, } = ctx.params as { id: string };
           const body = ctx.body as typeof MessageCreateBody.static;
 
@@ -996,8 +997,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/messages/:id/archive",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
@@ -1026,8 +1027,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/messages/:id/restore",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
@@ -1056,8 +1057,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/messages/purge",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const { id: chatId, } = ctx.params as { id: string };
 
           const chat = await database
