@@ -118,6 +118,37 @@ globalThis.chatState = function() {
     _unseenCounts: {},
     _activityEventSource: null as EventSource | null,
     _chatFilter: "",
+    _searchResults: [] as {
+      chatId: string;
+      chatName: string;
+      characterName: string;
+      characterAvatar: string | null;
+    }[],
+
+    async searchChats(q: string,) {
+      const query = (q || "").trim();
+      if (!query) {
+        this._searchResults = [];
+        return;
+      }
+      try {
+        const res = await apiFetch(`/api/chats/search?q=${encodeURIComponent(query,)}`,);
+        if (!res.ok) { this._searchResults = []; return; }
+        const body = await res.json();
+        const data = Array.isArray(body,)
+          ? body
+          : (body as { data?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[] }).data ?? [];
+        this._searchResults = data.map((r,) => ({
+          chatId: r.chatId as string,
+          chatName: r.chatName as string,
+          characterName: r.characterName as string,
+          characterAvatar: r.characterAvatar ?? null,
+        }),);
+      } catch (error) {
+        getLogger().error("Failed to search chats", error instanceof Error ? error : new Error(String(error),), {},);
+        this._searchResults = [];
+      }
+    },
 
     get filteredChats() {
       const filter = (this._chatFilter || "").toLowerCase();
