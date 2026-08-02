@@ -33,6 +33,26 @@
     </button>
     <button
       class="btn-icon"
+      title="Sections"
+      aria-label="Sections"
+      @click="$store.ui.showSectionsPanel = !$store.ui.showSectionsPanel"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-sections-panel"
+    >
+      &sect;
+    </button>
+    <button
+      class="btn-icon"
+      title="Background"
+      aria-label="Background"
+      @click="$store.ui.showBackgroundPanel = !$store.ui.showBackgroundPanel"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-background-panel"
+    >
+      &#9636;
+    </button>
+    <button
+      class="btn-icon"
       x-bind:title="t('gallery.chatSettings')"
       x-bind:aria-label="t('gallery.chatSettings')"
       @click="$store.ui.showChatSettings = true"
