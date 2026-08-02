@@ -2639,3 +2639,26 @@ export async function insertChatBackgroundAssignments(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a chat_invites row. */
+export async function insertChatInvites(
+  db: Db,
+  chat_id: string,
+  code: string,
+  opts?: {
+    id?: Generated<string>;
+    created_by?: string | null;
+    created_at?: Generated<string>;
+    expires_at?: string | null;
+    max_uses?: number | null;
+    uses?: Generated<number>;
+    revoked?: Generated<number>;
+  },
+): Promise<void> {
+  await db.insertInto("chat_invites",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    code,
+    ...opts,
+  } as any,).execute();
+}

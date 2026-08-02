@@ -118,4 +118,5 @@ export interface DB {
   chat_sections: import("./schema-core").ChatSections;
   chat_backgrounds: import("./schema-core").ChatBackgrounds;
   chat_background_assignments: import("./schema-core").ChatBackgroundAssignments;
+  chat_invites: import("./schema-core").ChatInvites;
 }
