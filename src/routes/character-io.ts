@@ -16,8 +16,9 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "../validation/schemas";
-import { jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
+import { checkActorOwnership, } from "./actor-auth";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -33,6 +34,9 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
       const worldId = ctx.query.worldId as string | undefined;
       const format = ctx.query.format as string | undefined;
 
@@ -67,6 +71,9 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
       const {
         worldId,
         includeTraits = true,
@@ -111,6 +118,9 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
 
       if (!ctx.body?.version) {
         return jsonError({
@@ -154,6 +164,9 @@ export function characterIoRoutes(opts: HandlerOpts,) {
       if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+      }
 
       const url = ctx.body.url;
       if (!url) {
