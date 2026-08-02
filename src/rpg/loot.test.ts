@@ -104,7 +104,7 @@ describe("generateLoot", () => {
         name: "Common Stick",
         description: "",
         type: "misc",
-        rarity: "common",
+        rarity: "rare",
         weight: 10,
         minQuantity: 1,
         maxQuantity: 1,
@@ -113,8 +113,9 @@ describe("generateLoot", () => {
         metadata: {},
       },
     ];
+    // Both eligible entries are rare, so every non-empty roll yields a rare+ drop.
+    // (Using a mixed rare/common table would make this assertion probabilistic and flaky.)
     const result = generateLoot(rareTable, 20, 5,);
-    // With 5 drops from a 50/50 rare/common table, at least one should be rare
     expect(result.hasRareDrop,).toBe(true,);
   });
 });
