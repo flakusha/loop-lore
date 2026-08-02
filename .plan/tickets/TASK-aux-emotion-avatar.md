@@ -1,9 +1,9 @@
 # TASK: AUX LLM — Emotion Avatar Selection
 
-**Status:** 🟡 Partial — avatar selection infra + EmotionHook exist; no LLM wiring, hook events unconsumed (2026-08-01)
+**Status:** 🟡 Partial — avatar selection infra + EmotionHook exist; no LLM wiring (2026-08-01). Binding model updated 2026-08-02: emotion avatars are now **per message/chat** (see `epic-emotion-avatar-message-binding`); the old global `_currentEmotionAvatar` mood-swap is replaced by per-message resolution.
 **Priority:** P2-B
 **Effort:** Small
-**Epic:** epic-aux-enrichment-pipeline
+**Epic:** epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding
 **Tags:** aux-llm, avatar, emotion, character, expression
 
 ## Summary
@@ -158,22 +158,20 @@ user-supplied `emotion`/`mood` context.
 
 ## Next Actionable Items
 
-1. **Consume or kill the hook** (epic M4): in `auto-gen.ts` post-hook, read
-   `events` for `emotion_change`, gate on `confidence >= 0.5` + change-from-previous,
-   then call `AvatarService.selectAvatar(actorId, { emotion })` and persist
-   current emotion (new `character_emotions` row or in-memory last-emotion).
-   Emit frontend event so `components/chat/message-list.html` swaps `_currentEmotionAvatar`.
-2. **Delete or fold `detectAvatarChangeIntent`**: no consumers. Fold into the
-   AUX runner as regex fast-path (like transition-classifier) or remove.
-3. **LLM classification task** (`src/aux-pipeline/tasks/emotion-avatar.ts`,
-   prompt already drafted above): classify on the auxiliary role via shared
-   runner (M1), replace keyword `EmotionHook`.
+1. **Consume the emotion hook per message** (done 2026-08-02): in `auto-gen.ts`
+   post-hook, read `events` for `emotion_change`, extract `data.dominantEmotion`,
+   and persist it to `messages.emotion` (new column). The frontend now resolves the
+   per-message avatar in `mood.ts:avatarForMessage(msg)` from the message's
+   emotion + the actor's emotion-tagged avatars — no global mood-drive `_currentEmotionAvatar` swap.
+2. **AUX LLM classification upgrade** (optional): classify on the auxiliary role
+   via shared runner (M1), replace keyword `EmotionHook` — richer emotions than regex.
+3. **LLM emotions vs EmotionType enum alignment**: LLM emotions ("flirtatious",
+   "determined", "exhausted") must align with `EmotionType` values used as avatar
+   tags (`src/db/enums-character.ts:126`). Verify enum covers the prompt's 12 emotions.
 4. **Match scoring gap**: `calculateAvatarScore` needs exact lowercase
-   tag==context equality; LLM emotions ("flirtatious", "determined",
-   "exhausted") must align with `EmotionType` enum values used as avatar tags
-   (`src/db/enums-character.ts:126`). Verify enum covers prompt's 12 emotions.
+   tag==context equality (see epic-emotion-avatar-message-binding).
 5. **Tests**: extend `avatar-service.test.ts` with AUX-triggered selection;
-   hook-consumption unit test in `auto-gen` flow.
+   message-persist unit test in auto-gen flow.
 
 ## Files to Create
 

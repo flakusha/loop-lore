@@ -204,13 +204,16 @@ function resolveCharacterState(
 
 ### With Avatar Selection
 
-Mood affects which avatar is selected:
+Mood provides coarse avatar context, but the **per-message emotion** drives
+message-level avatar swaps (see `epic-emotion-avatar-message-binding` and
+`src/frontend/alpine/mood.ts:avatarForMessage`). Mood is a fallback/context
+to `selectAvatar`, not the sole per-message driver:
 
 ```typescript
-// Avatar selection considers mood
+// Avatar selection considers mood + detected per-message emotion
 const avatar = selectAvatar(characterId, {
   mood: moodState.mood_label,
-  emotion: detectedEmotion,
+  emotion: message.emotion, // per-message emotion, bound to the message
   context: currentContext,
 },);
 ```
@@ -297,4 +300,6 @@ Medium — mood affects narrative output. If mood is too easy to max/min, charac
 - TASK-character-relationships.md — Relationships affect mood
 - TASK-character-world-data-separation.md — World/location context
 - TASK-emotions-avatar-edit-model.md — Avatar selection by mood
+- epic-emotion-avatar-message-binding.md — per-message emotion-avatar binding
+- TASK-emotion-avatar-message-binding.md — persist + render per message
 - epic-character-core-system.md — Parent epic

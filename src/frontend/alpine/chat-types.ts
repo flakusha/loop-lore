@@ -33,6 +33,7 @@ export interface Message {
   generation_time_ms?: number;
   tokens_per_second?: number;
   status?: string;
+  emotion?: string;
   reactions?: { emoji: string; count: number; userReacted: boolean }[];
   pinned?: boolean;
 }
@@ -382,6 +383,7 @@ export interface ChatState extends AlpineMagicThis {
   loadEmotionAvatars(): Promise<void>;
   loadEmotions(): Promise<void>;
   getActiveEmotions(): { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
+  avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null;
   selectEmotionAvatar(emotion: string,): string | null;
   updateMoodHappiness(happiness: number,): Promise<void>;
   applyMoodDelta(delta: number,): Promise<void>;

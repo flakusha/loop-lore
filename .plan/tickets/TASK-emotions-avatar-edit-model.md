@@ -201,8 +201,9 @@ Image Gen Providers:
 - [ ] Add "Edit Model" settings entry
 - [ ] Implement emotion avatar generation pipeline with edit model primary path
 - [ ] Add per-character emotion avatar configuration
-- [ ] Add emotion detection from chat messages (LLM-based)
-- [ ] Auto-update avatar on emotion change (optional, configurable)
+- [ ] Add emotion detection from chat messages (LLM-based) — see `epic-emotion-avatar-message-binding`
+- [ ] Render emotion avatar per message/chat (not global) — see
+      `TASK-emotion-avatar-message-binding` / `epic-emotion-avatar-message-binding`
 - [ ] Unit tests for emotion mapping + edit pipeline
 - [ ] E2E tests for avatar generation flow
 

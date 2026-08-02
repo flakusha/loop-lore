@@ -14,6 +14,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("content_format", "text", (col,) => col.notNull().defaultTo("markdown",),)
     .addColumn("content_type", "text", (col,) => col.notNull().defaultTo("text",),)
     .addColumn("content_encoding", "text", (col,) => col.notNull().defaultTo("identity",),)
+    .addColumn("emotion", "text",)
     .addColumn("model_id", "text",)
     .addColumn("provider", "text",)
     .addColumn("token_count_prompt", "integer",)
