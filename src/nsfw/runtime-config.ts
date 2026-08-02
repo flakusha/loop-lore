@@ -69,7 +69,9 @@ export async function applyStoredNsfwConfig(db: Kysely<DB>,): Promise<void> {
   const patch: Partial<NsfwRuntimeConfig> = {};
 
   if (allowRaw !== undefined) {
-    const parsed = allowRaw === "true" ? true : (allowRaw === "false" ? false : undefined);
+    let parsed: boolean | undefined;
+    if (allowRaw === "true") { parsed = true; }
+    else if (allowRaw === "false") { parsed = false; }
     if (parsed !== undefined) { patch.allowNsfw = parsed; }
   }
   if (minAgeRaw !== undefined) {
