@@ -29,15 +29,15 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { existsSync, readFileSync, readdirSync, } from "node:fs";
+import { existsSync, readdirSync, readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { ActorType, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import type { Locale, } from "../i18n/types";
 import { getRawTranslations, } from "../i18n/locale-loader";
-import { detectLocale, } from "../middleware/i18n";
+import type { Locale, } from "../i18n/types";
 import { adminViewGuard, } from "../middleware/admin-gate";
 import { getNonce, } from "../middleware/csp-nonce";
+import { detectLocale, } from "../middleware/i18n";
 import { isFrontendTelemetryEnabled, } from "../telemetry/service";
 import { SuccessResponse, } from "../validation/schemas";
 
@@ -93,7 +93,7 @@ const ALLOWED_VIEWS = discoverViews(VIEWS_DIR,);
 const ALLOWED_PARTIALS = new Set<string>([
   ...discoverPartials(PARTIALS_DIR,),
   ...discoverPartials(COMPONENTS_DIR,),
-]);
+],);
 
 const viewCache = new Map<string, string>();
 
@@ -124,8 +124,12 @@ function wrapWithLayout(
     if (rawTranslations) {
       const nonceAttr = cspNonce ? ` nonce="${cspNonce}"` : "";
       const jsonData = JSON.stringify(rawTranslations,);
-      const injectScript = `<script type="application/json" id="locale-data"${nonceAttr}>${jsonData}</script><script${nonceAttr}>try{globalThis.__localeStrings = JSON.parse(document.getElementById("locale-data").textContent);}catch{}</script>`;
-      layout = layout.replace("<!-- Initialize locale from cookie/localStorage before page renders -->", () => injectScript + "\n    <!-- Initialize locale from cookie/localStorage before page renders -->",);
+      const injectScript =
+        `<script type="application/json" id="locale-data"${nonceAttr}>${jsonData}</script><script${nonceAttr}>try{globalThis.__localeStrings = JSON.parse(document.getElementById("locale-data").textContent);}catch{}</script>`;
+      layout = layout.replace(
+        "<!-- Initialize locale from cookie/localStorage before page renders -->",
+        () => injectScript + "\n    <!-- Initialize locale from cookie/localStorage before page renders -->",
+      );
     }
   }
   return layout;
@@ -425,8 +429,17 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
   return htmlResponse(cards,);
 }
 
-async function serveWorldsListDb(database: Kysely<DB>,): Promise<Response> {
-  const worlds = await database.selectFrom("worlds",).selectAll().orderBy("name", "asc",).limit(100,).execute();
+async function serveWorldsListDb(
+  database: Kysely<DB>,
+  userId: string | null,
+  userRole: string | null,
+): Promise<Response> {
+  let qb = database.selectFrom("worlds",).selectAll().orderBy("name", "asc",).limit(100,);
+  // Non-admin users only see their own worlds (mirrors GET /api/worlds).
+  if (userId && userRole !== "admin") {
+    qb = qb.where("owner_id", "=", userId,);
+  }
+  const worlds = await qb.execute();
 
   if (worlds.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
@@ -451,10 +464,16 @@ async function serveWorldsListDb(database: Kysely<DB>,): Promise<Response> {
   return htmlResponse(items,);
 }
 
-async function serveWorldDetailContent(worldId: string, database: Kysely<DB>,): Promise<Response> {
+async function serveWorldDetailContent(
+  worldId: string,
+  database: Kysely<DB>,
+  userId: string | null,
+  userRole: string | null,
+): Promise<Response> {
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
 
-  if (!world) {
+  // Mirror the API: only the owner (or admin) may view world details.
+  if (!world || (world.owner_id !== userId && userRole !== "admin")) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">World not found</div>
@@ -836,11 +855,20 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
   return htmlResponse(cards,);
 }
 
-async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+async function serveWorldsSearch(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+  userId: string | null,
+  userRole: string | null,
+): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const sort = params.get("sort",) ?? "name";
 
   let qb = database.selectFrom("worlds",).selectAll();
+  // Non-admin users only see their own worlds (mirrors GET /api/worlds).
+  if (userId && userRole !== "admin") {
+    qb = qb.where("owner_id", "=", userId,);
+  }
 
   if (query) {
     qb = qb.where("name", "like", `%${query}%`,);
@@ -1160,7 +1188,7 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveWorldsListDb(database,);
+        return await serveWorldsListDb(database, ctx.userId as string | null, (ctx.userRole as string | null) ?? null,);
       }, {
         response: { 200: SuccessResponse, },
       },)
@@ -1191,7 +1219,12 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
         const url = new URL(ctx.request.url,);
-        return await serveWorldsSearch(database, url.searchParams,);
+        return await serveWorldsSearch(
+          database,
+          url.searchParams,
+          ctx.userId as string | null,
+          (ctx.userRole as string | null) ?? null,
+        );
       }, {
         response: { 200: SuccessResponse, },
       },)
@@ -1220,7 +1253,12 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         if (!isHtmx) {
           return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveWorldDetailContent(ctx.params.id, database,);
+        return await serveWorldDetailContent(
+          ctx.params.id,
+          database,
+          ctx.userId as string | null,
+          (ctx.userRole as string | null) ?? null,
+        );
       }, {
         response: { 200: SuccessResponse, },
       },)
