@@ -8,9 +8,8 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLocaleInfo, getSupportedLocales, isLocale, } from "../i18n/locale-registry";
-import { unauthorized, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 export interface I18nRoutesOpts {
@@ -55,10 +54,8 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
     .patch(
       "/api/i18n/locale",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
 
         const body = ctx.body;
         const newLocale = body.locale;

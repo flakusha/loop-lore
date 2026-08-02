@@ -32,9 +32,8 @@ export function blogRoutes(opts: HandlerOpts,) {
     // ── Posts ────────────────────────────────────────────
     .post("/api/blog/posts", async (ctx: any,) => {
       const { userId, } = extractAuth(ctx,);
-      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const post = await svc.createPost({
@@ -109,7 +108,7 @@ export function blogRoutes(opts: HandlerOpts,) {
       const { userId, userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const post = await svc.getPost(ctx.params.id,);
@@ -149,7 +148,7 @@ export function blogRoutes(opts: HandlerOpts,) {
       const { userId, userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const post = await svc.getPost(ctx.params.id,);
@@ -179,7 +178,7 @@ export function blogRoutes(opts: HandlerOpts,) {
       const { userId, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const post = await svc.getPost(ctx.params.id,);
@@ -303,9 +302,8 @@ export function blogRoutes(opts: HandlerOpts,) {
     // ── Follows ──────────────────────────────────────────
     .post("/api/blog/follow/:authorId", async (ctx: any,) => {
       const { userId, } = extractAuth(ctx,);
-      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       await svc.follow(userId, ctx.params.authorId,);
@@ -323,9 +321,8 @@ export function blogRoutes(opts: HandlerOpts,) {
     },)
     .delete("/api/blog/follow/:authorId", async (ctx: any,) => {
       const { userId, } = extractAuth(ctx,);
-      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       await svc.unfollow(userId, ctx.params.authorId,);
@@ -343,9 +340,8 @@ export function blogRoutes(opts: HandlerOpts,) {
     },)
     .get("/api/blog/follow/:authorId/status", async (ctx: any,) => {
       const { userId, } = extractAuth(ctx,);
-      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const following = await svc.isFollowing(userId, ctx.params.authorId,);
