@@ -20,7 +20,7 @@ import {
   WorldAvatarConfigBody,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 export function characterAvatarsRoutes(opts: HandlerOpts,) {
@@ -29,13 +29,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
 
   return new Elysia({ name: "character-avatars", },)
     .get("/api/actors/:actorId/avatars", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -61,13 +56,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, avatarId, } = ctx.params;
 
@@ -100,13 +90,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/avatars", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -143,13 +128,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, avatarId, } = ctx.params;
 
@@ -184,13 +164,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .delete("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, avatarId, } = ctx.params;
 
@@ -217,13 +192,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/avatars/select", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -262,13 +232,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -294,13 +259,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -334,13 +294,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { worldId, actorId, } = ctx.params;
 
@@ -367,13 +322,8 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { worldId, actorId, } = ctx.params;
 

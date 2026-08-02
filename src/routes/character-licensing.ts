@@ -7,7 +7,7 @@
 import { Elysia, } from "elysia";
 import { ActorIdParams, ErrorResponse, LicensingBody, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 /** Convert boolean to 0/1 integer, with fallback for undefined. */
@@ -21,13 +21,8 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-licensing", },)
     // ── Get licensing for an actor ─────────────────────────────
     .get("/api/actors/:actorId/licensing", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -66,13 +61,8 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
     },)
     // ── Create or update licensing ─────────────────────────────
     .post("/api/actors/:actorId/licensing", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
       const { licenseType, customLicenseText, attribution, allowDerivatives, allowCommercial, shareAlike, } = ctx.body;
@@ -143,13 +133,8 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
     },)
     // ── Delete licensing ───────────────────────────────────────
     .delete("/api/actors/:actorId/licensing", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
