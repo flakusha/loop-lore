@@ -5912,4 +5912,16 @@
     "tags": [],
     "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
   }
+  ,
+  "TASK-UNIFY-401-GUARD-HELPERS": {
+    "hash": "pending",
+    "extid": "TASK-UNIFY-401-GUARD-HELPERS",
+    "type": "TASK",
+    "title": "# TASK: Unify backend 401/Unauthorized guard helpers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
+  }
 }
