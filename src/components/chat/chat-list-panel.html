@@ -133,5 +133,39 @@
     >
       + New Chat
     </a>
+    <template x-if="_joinableChats.length > 0">
+      <div style="margin-top: var(--space-3)">
+        <div
+          class="nav-item"
+          style="color: var(--text-secondary); font-size: 11px; padding: var(--space-1) var(--space-2)"
+        >
+          Discover
+        </div>
+        <template x-for="room in _joinableChats" :key="room.chatId">
+          <div class="nav-item-row" style="padding: var(--space-1) 0">
+            <a
+              class="nav-item"
+              href="#"
+              @click.prevent="selectChat(room.chatId); loadJoinableChats()"
+              style="flex: 1; overflow: hidden"
+            >
+              <span class="name" x-text="room.chatName" style="font-size: 12px"></span>
+              <span
+                class="badge"
+                style="font-size: 10px; color: var(--text-tertiary)"
+                x-text="room.participantCount + ' participants'"
+              ></span>
+            </a>
+            <button
+              class="btn btn-xs btn-primary"
+              @click.prevent="joinChat(room.chatId)"
+              style="margin-left: var(--space-2); flex-shrink: 0"
+            >
+              Join
+            </button>
+          </div>
+        </template>
+      </div>
+    </template>
   </div>
 </div>
