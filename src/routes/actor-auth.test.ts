@@ -1,0 +1,75 @@
+import { describe, expect, test, } from "bun:test";
+
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
+import {
+  checkActorOwnership,
+  type CtxUserGuard,
+  requireCtxUser,
+} from "./actor-auth";
+
+describe("requireCtxUser", () => {
+  test("returns the userId when the context is authenticated", () => {
+    const ctx: CtxUserGuard = { userId: "user-1", };
+    expect(requireCtxUser(ctx,),).toBe("user-1",);
+  });
+
+  test("returns a 401 Response when userId is missing", async () => {
+    const res = requireCtxUser({ userId: null, },);
+    expect(res,).toBeInstanceOf(Response,);
+    expect((res as Response).status,).toBe(401,);
+    const body = (await (res as Response).json()) as { error: string };
+    expect(body.error,).toBe("Unauthorized",);
+  });
+
+  test("returns a 401 for an empty-string userId (falsy)", () => {
+    const res = requireCtxUser({ userId: "", },);
+    expect(res,).toBeInstanceOf(Response,);
+  });
+
+  test("uses the translator result for the unauthorized message when present", async () => {
+    const ctx: CtxUserGuard = {
+      userId: null,
+      t: (key,) => (key === "errors.unauthorized" ? "Not signed in" : undefined),
+    };
+    const res = requireCtxUser(ctx,) as Response;
+    const body = (await res.json()) as { error: string };
+    expect(body.error,).toBe("Not signed in",);
+  });
+});
+
+describe("checkActorOwnership", () => {
+  async function seedActor(db: Awaited<ReturnType<typeof createTestDb>>["db"],) {
+    await insertUsers(db, "user1", "User 1", { id: "user-1", } as never,);
+    await insertActors(db, "Alice", { id: "actor-1", owner_id: "user-1", } as never,);
+  }
+
+  test("grant when user owns the actor", async () => {
+    const { db, } = await createTestDb();
+    await seedActor(db,);
+    expect(await checkActorOwnership(db, "actor-1", "user-1", null,),).toBe(true,);
+  });
+
+  test("grant for admin role", async () => {
+    const { db, } = await createTestDb();
+    await seedActor(db,);
+    expect(await checkActorOwnership(db, "actor-1", "user-2", "admin",),).toBe(true,);
+  });
+
+  test("grant for solo role", async () => {
+    const { db, } = await createTestDb();
+    await seedActor(db,);
+    expect(await checkActorOwnership(db, "actor-1", "user-2", "solo",),).toBe(true,);
+  });
+
+  test("deny a non-owner without privileges", async () => {
+    const { db, } = await createTestDb();
+    await seedActor(db,);
+    expect(await checkActorOwnership(db, "actor-1", "user-2", null,),).toBe(false,);
+  });
+
+  test("deny when the actor does not exist", async () => {
+    const { db, } = await createTestDb();
+    expect(await checkActorOwnership(db, "missing", "user-1", "admin",),).toBe(false,);
+  });
+});
