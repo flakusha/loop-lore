@@ -204,6 +204,86 @@ describe("TurnManager", () => {
       await tm.recordTurn();
       expect(tm.stateSnapshot!.lastTurnCompletedAt,).toBeTruthy();
     });
+
+    test("decrements the active actor's initiative score by 1", async () => {
+      const chatId = `chat-init-${++chatSeq}`;
+      await db
+        .insertInto("chats",)
+        .values({
+          id: chatId,
+          name: "Initiative Test",
+          type: "direct",
+          mode: "direct",
+          turn_strategy: "initiative",
+          created_by: userId,
+        } as never,)
+        .execute();
+      await db
+        .insertInto("chat_participants",)
+        .values({ chat_id: chatId, actor_id: "actor-ai-1", role_in_chat: "member", talkativity: 5, } as never,)
+        .execute();
+      await db
+        .insertInto("group_initiatives",)
+        .values(
+          { chat_id: chatId, scene_id: "main", actor_id: "actor-ai-1", score: 3, } as never,
+        )
+        .execute();
+
+      const tm = new TurnManager({ db, chatId, },);
+      await tm.initialize();
+      const selected = await tm.selectNextActor();
+      expect(selected,).toBe("actor-ai-1",);
+
+      await tm.recordTurn();
+
+      const row = await db
+        .selectFrom("group_initiatives",)
+        .select("score",)
+        .where("chat_id", "=", chatId,)
+        .where("scene_id", "=", "main",)
+        .where("actor_id", "=", "actor-ai-1",)
+        .executeTakeFirst();
+      expect(row?.score,).toBe(2,);
+    });
+
+    test("initiative score never drops below zero", async () => {
+      const chatId = `chat-init0-${++chatSeq}`;
+      await db
+        .insertInto("chats",)
+        .values({
+          id: chatId,
+          name: "Initiative Floor",
+          type: "direct",
+          mode: "direct",
+          turn_strategy: "initiative",
+          created_by: userId,
+        } as never,)
+        .execute();
+      await db
+        .insertInto("chat_participants",)
+        .values({ chat_id: chatId, actor_id: "actor-ai-1", role_in_chat: "member", talkativity: 5, } as never,)
+        .execute();
+      await db
+        .insertInto("group_initiatives",)
+        .values(
+          { chat_id: chatId, scene_id: "main", actor_id: "actor-ai-1", score: 0, } as never,
+        )
+        .execute();
+
+      const tm = new TurnManager({ db, chatId, },);
+      await tm.initialize();
+      await tm.selectNextActor();
+      await tm.recordTurn();
+
+      const row = await db
+        .selectFrom("group_initiatives",)
+        .select("score",)
+        .where("chat_id", "=", chatId,)
+        .where("scene_id", "=", "main",)
+        .where("actor_id", "=", "actor-ai-1",)
+        .executeTakeFirst();
+      expect(row?.score,).toBe(0,);
+    });
   });
 
   describe("requestRegeneration()", () => {
