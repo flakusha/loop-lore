@@ -29,6 +29,8 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.setupScrollDetection();
     },);
     await this.loadAllReactions();
+    // Keep the VN scene in sync with the freshly loaded messages.
+    this.updateVnMode?.();
   },
 
   async loadOlderMessages() {
