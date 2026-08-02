@@ -316,6 +316,11 @@ globalThis.chatState = function() {
       this.activeChat = chatId;
       getLogger().setBindings({ chatId, },);
       Alpine.store("ui",).hasActiveChat = true;
+      // Selecting a chat dismisses the transient side panels so the header
+      // actions stay clickable (an open drawer overlaps the header buttons).
+      Alpine.store("ui",).showChatList = false;
+      Alpine.store("ui",).showGallery = false;
+      Alpine.store("ui",).showCharacterInfo = false;
       const chat = this.chats.find((c: { id: string; name?: string },) => c.id === chatId);
       this.activeChatName = chat?.name || "Chat";
       if (g.Alpine) {
