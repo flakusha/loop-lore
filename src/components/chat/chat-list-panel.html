@@ -47,11 +47,11 @@
     <button class="btn-xs" @click="selectedChats = []" title="Clear selection">✕ Clear</button>
   </div>
   <div id="chat-list">
-    <template x-if="chats.length === 0 && !_searchResults">
+    <template x-if="chats.length === 0 && _searchResults.length === 0">
       <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
     </template>
     <!-- Server-side search results -->
-    <template x-if="_searchResults">
+    <template x-if="_searchResults.length > 0">
       <div>
         <div
           class="nav-item"
@@ -82,7 +82,7 @@
       </div>
     </template>
     <!-- Client-side filtered list -->
-    <template x-if="!_searchResults">
+    <template x-if="_searchResults.length === 0">
       <div>
         <template x-for="chat in filteredChats" :key="chat.id">
           <div class="nav-item-row" :class="{ selected: selectedChats.includes(chat.id) }">
