@@ -72,6 +72,34 @@ import {
 //   - load.ts validateConfig (validation rules)
 // ── Base types ──────────────────────────────────────────────
 
+import {
+  CSP_DEFAULTS,
+  HEADERS_DEFAULTS,
+} from "./sections/headers";
+
+// src/config/schema-class.ts — ConfigSchema orchestrator
+//
+// Delegates to section classes in ./sections/ for defaults + schema metadata.
+// Auto-generates envMap by walking section instances.
+// Auto-generates jsonSchema from section metadata + defaults.
+//
+// Replaces hand-duplicated:
+//   - generate-schema.ts (JSON schema defaults)
+//   - load.ts ENV_MAP (env var → dot.path mapping)
+//   - load.ts validateConfig (validation rules)
+// ── Base types ──────────────────────────────────────────────
+// src/config/schema-class.ts — ConfigSchema orchestrator
+//
+// Delegates to section classes in ./sections/ for defaults + schema metadata.
+// Auto-generates envMap by walking section instances.
+// Auto-generates jsonSchema from section metadata + defaults.
+//
+// Replaces hand-duplicated:
+//   - generate-schema.ts (JSON schema defaults)
+//   - load.ts ENV_MAP (env var → dot.path mapping)
+//   - load.ts validateConfig (validation rules)
+// ── Base types ──────────────────────────────────────────────
+
 type EnvMap = Record<string, string>;
 type JSONSchema = Record<string, unknown>;
 
@@ -195,38 +223,11 @@ export class ConfigSchema {
     return map;
 
   readonly headers = {
-    enabled: true,
-    referrerPolicy: "strict-origin-when-cross-origin",
-    xContentTypeOptions: true,
-    xFrameOptions: "DENY",
-    permissionsPolicy:
-      "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
-    csp: {
-      enabled: true,
-      defaultSrc: ["'self'",],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
-      styleSrc: ["'self'", "'unsafe-inline'",],
-      imgSrc: ["'self'", "data:", "blob:",],
-      fontSrc: ["'self'",],
-      connectSrc: ["'self'", "wss:", "https:",],
-      objectSrc: ["'none'",],
-      baseUri: ["'self'",],
-      frameAncestors: ["'none'",],
-      formAction: ["'self'",],
-      upgradeInsecureRequests: true,
-      reportOnly: false,
-    },
-    crossOriginOpenerPolicy: null,
-    crossOriginEmbedderPolicy: null,
-    crossOriginResourcePolicy: "cross-origin",
-    timingAllowOrigin: "",
-    immutableHashedAssets: true,
-    linkPreload: ["/alpine-init.js", "/css/app.css",],
-    acceptClientHints: [],
-    saveData: false,
-    earlyHints: { enabled: false, },
-    reportingEndpoints: {},
-    nel: null,
+    ...HEADERS_DEFAULTS,
+    // Copy nested mutable structures so each instance stays isolated.
+    csp: { ...CSP_DEFAULTS, },
+    linkPreload: [...HEADERS_DEFAULTS.linkPreload,],
+    earlyHints: { ...HEADERS_DEFAULTS.earlyHints, },
   } satisfies HeadersConfig;
 
   static jsonSchema(): JSONSchema {
