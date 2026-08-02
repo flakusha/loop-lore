@@ -1714,3 +1714,15 @@ export const ChatBackgroundAssignmentsSchema = t.Object({
   background_id: t.String(),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── chat_invites ────────────────────────────────────────────
+export const ChatInvitesSchema = t.Object({
+  chat_id: t.String(),
+  code: t.String(),
+  created_by: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  max_uses: t.Optional(t.Number(),),
+  uses: t.Optional(t.Number(),),
+  revoked: t.Optional(t.Number(),),
+},);
