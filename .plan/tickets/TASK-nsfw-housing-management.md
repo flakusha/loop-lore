@@ -11,6 +11,8 @@
 
 Housing management interface for base building.
 
+> **Moved to `epic-housing.md`** — housing is a standalone domain, not an NSFW sub-feature. See `TASK-housing-frontend.md` for the housing UI.
+
 ## Core Features
 
 - Room layout display
@@ -28,5 +30,10 @@ Housing management interface for base building.
 
 ## Files to Create
 
-- `src/frontend/nsfw/housing-management.ts`
-- `src/frontend/nsfw/room-layout.ts`
+- `src/frontend/alpine/housing.ts`
+- `src/components/housing/room-layout.html`
+
+## Related
+
+- `epic-housing.md` — Housing epic (owner)
+- `TASK-housing-frontend.md` — Housing UI task

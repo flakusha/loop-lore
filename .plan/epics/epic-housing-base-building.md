@@ -7,6 +7,8 @@
 **Type:** Feature Epic
 **Tags:** housing, base-building, decoration, storage, crafting-stations
 
+> **Sub-domain of `epic-housing.md`** — the umbrella Housing System epic. Base building is the core gameplay facet; the umbrella also owns neighborhood, companion, and frontend facets.
+
 ## Overview
 
 Player housing and base building system — personal homes, guild halls, crafting stations, storage, decoration, and social spaces. Supports multiple housing types from apartments to castles.
