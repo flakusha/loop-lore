@@ -71,7 +71,7 @@ export async function getDiceRollHistory(
   deps: RpgServiceDeps,
   params: { userId: string; chatId?: string; limit?: number },
 ): Promise<
-  Array<{
+  {
     id: string;
     sides: number;
     count: number;
@@ -80,7 +80,7 @@ export async function getDiceRollHistory(
     total: number;
     purpose: string | null;
     createdAt: string;
-  }>
+  }[]
 > {
   const { database, } = deps;
   const limit = params.limit ?? 50;
@@ -334,18 +334,17 @@ export async function logXp(
 export async function getXpHistory(
   deps: RpgServiceDeps,
   actorId: string,
-  limit?: number,
+  limit = 50,
 ): Promise<
-  Array<{
+  {
     id: string;
     amount: number;
     source: string;
     description: string | null;
     createdAt: string;
-  }>
+  }[]
 > {
   const { database, } = deps;
-  const max = limit ?? 50;
 
   return database
     .selectFrom("xp_ledger",)
@@ -358,7 +357,7 @@ export async function getXpHistory(
       "created_at",
     ],)
     .orderBy("created_at", "desc",)
-    .limit(max,)
+    .limit(limit,)
     .execute()
     .then((rows,) =>
       rows.map((r,) => ({
