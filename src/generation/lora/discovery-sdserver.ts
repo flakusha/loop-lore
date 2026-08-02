@@ -8,6 +8,7 @@
  * @module generation/lora/discovery-sdserver
  */
 
+import { discoveryErrorResult, fetchWithTimeout, } from "./discovery-http";
 import type { LoRADiscoveryResult, LoRAModel, } from "./types";
 import { extractLoRAName, isLoRAFilename, } from "./validation";
 
@@ -56,18 +57,18 @@ export async function discoverSdCppLoras(
   timeoutMs = 10_000,
 ): Promise<LoRADiscoveryResult> {
   const timestamp = Date.now();
+  const ctx = {
+    backend: "sd-server" as const,
+    label: "sd.cpp",
+    baseUrl,
+    timeoutMs,
+    timestamp,
+  };
 
   try {
     const url = `${baseUrl.replace(/\/+$/, "",)}/sd-api/v1/models`;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs,);
 
-    const response = await fetch(url, {
-      headers: { "Content-Type": "application/json", },
-      signal: controller.signal,
-    },);
-
-    clearTimeout(timeout,);
+    const response = await fetchWithTimeout(url, timeoutMs,);
 
     if (!response.ok) {
       return {
@@ -108,34 +109,7 @@ export async function discoverSdCppLoras(
       timestamp,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error,);
-
-    // Handle abort (timeout)
-    if (message.includes("abort",) || message.includes("AbortError",)) {
-      return {
-        models: [],
-        backend: "sd-server",
-        timestamp,
-        error: `sd.cpp discovery timed out after ${timeoutMs}ms`,
-      };
-    }
-
-    // Handle connection errors
-    if (message.includes("ECONNREFUSED",) || message.includes("fetch failed",)) {
-      return {
-        models: [],
-        backend: "sd-server",
-        timestamp,
-        error: `sd.cpp server not reachable at ${baseUrl}`,
-      };
-    }
-
-    return {
-      models: [],
-      backend: "sd-server",
-      timestamp,
-      error: `sd.cpp discovery error: ${message}`,
-    };
+    return discoveryErrorResult(error, ctx,);
   }
 }
 
