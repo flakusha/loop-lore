@@ -671,6 +671,7 @@ export const SCHEMA = new SchemaManifest()
     content_format: col("text", { notNull: true, hasDefault: true, },),
     content_type: col("text", { notNull: true, hasDefault: true, },),
     content_encoding: col("text", { notNull: true, hasDefault: true, },),
+    emotion: col("text",),
     model_id: col("text",),
     provider: col("text",),
     token_count_prompt: col("integer",),
