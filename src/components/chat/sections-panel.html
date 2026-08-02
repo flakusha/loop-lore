@@ -1,0 +1,79 @@
+<!-- Chat Sections Panel (multi-location sectioning) -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showSectionsPanel"
+  @click="$store.ui.showSectionsPanel = false"
+  x-cloak
+>
+</div>
+<aside
+  class="right-panel"
+  :style="{ display: $store?.ui?.showSectionsPanel ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="sections-panel"
+>
+  <button class="btn-icon" @click="$store.ui.showSectionsPanel = false" x-bind:title="t('common.close')">&times;</button>
+  <div class="panel-content">
+    <div class="nav-section-title">Sections</div>
+
+    <!-- Active section selector -->
+    <div style="margin-bottom: var(--space-3)">
+      <div class="form-label">Active section</div>
+      <template x-if="_sections.length > 0">
+        <select class="form-input" x-model="_activeSectionId" @change="() => {}">
+          <template x-for="s in _sections" :key="s.id">
+            <option :value="s.id" x-text="s.label"></option>
+          </template>
+        </select>
+      </template>
+      <div x-show="_sections.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+        No sections yet — create one below.
+      </div>
+    </div>
+
+    <!-- Create section -->
+    <div style="display: grid; gap: var(--space-2); margin-bottom: var(--space-3)">
+      <input class="form-input" type="text" x-model="_newSectionLabel" placeholder="Section label (e.g. The Dark Forest)" />
+      <input class="form-input" type="text" x-model="_newSectionDesc" placeholder="Description (optional)" />
+      <button class="btn btn-primary btn-xs" @click="createSection()" :disabled="!_newSectionLabel.trim()">Add section</button>
+    </div>
+
+    <!-- Section list -->
+    <div x-show="_sectionsLoading" style="font-size: 12px; color: var(--text-secondary)">Loading…</div>
+    <div style="display: grid; gap: var(--space-2)">
+      <template x-for="(s, i) in _sections" :key="s.id">
+        <div
+          class="panel-item"
+          style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between"
+          :class="{ 'active-section': s.id === _activeSectionId }"
+        >
+          <div style="display: grid; gap: 1px">
+            <span style="font-weight: 600" x-text="s.label"></span>
+            <span x-show="s.description" style="font-size: 11px; color: var(--text-secondary)" x-text="s.description"></span>
+          </div>
+          <div style="display: flex; gap: var(--space-1)">
+            <button class="btn-icon btn-xs" @click="moveSection(s.id, -1)" :disabled="i === 0" title="Move up">&uarr;</button>
+            <button class="btn-icon btn-xs" @click="moveSection(s.id, 1)" :disabled="i === _sections.length - 1" title="Move down">&darr;</button>
+            <button class="btn-icon btn-xs" @click="deleteSection(s.id)" title="Delete">&times;</button>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Message assignment -->
+    <div class="nav-section-title" style="margin-top: var(--space-4)">Assign messages</div>
+    <div style="display: grid; gap: var(--space-2); max-height: 240px; overflow: auto">
+      <template x-for="m in messages" :key="m.id">
+        <div class="panel-item" style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between">
+          <span style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px" x-text="(m.content || '').slice(0, 40)"></span>
+          <span style="font-size: 10px; color: var(--text-secondary)" x-text="sectionLabel(m.section_id)"></span>
+          <div style="display: flex; gap: var(--space-1)">
+            <button class="btn btn-primary btn-xs" @click="assignMessageToSection(m.id, _activeSectionId)" :disabled="!_activeSectionId">Assign</button>
+            <button class="btn btn-danger btn-xs" @click="assignMessageToSection(m.id, null)" x-show="m.section_id">Clear</button>
+          </div>
+        </div>
+      </template>
+      <div x-show="messages.length === 0" style="font-size: 12px; color: var(--text-secondary)">No messages.</div>
+    </div>
+  </div>
+</aside>
