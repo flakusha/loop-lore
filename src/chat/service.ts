@@ -207,7 +207,7 @@ export async function listChatSetupTemplates(
     .selectAll()
     .orderBy("name", "asc",)
     .execute();
-  return rows as unknown as ChatSetupTemplate[];
+  return rows;
 }
 
 /**
@@ -220,7 +220,7 @@ export async function getChatSetupTemplate(
   const row = await database
     .selectFrom("chat_setup_templates",)
     .selectAll()
-    .where((eb,) => eb.or([eb("id", "=", templateId,), eb("slug", "=", templateId,),]),)
+    .where((eb,) => eb.or([eb("id", "=", templateId,), eb("slug", "=", templateId,),],))
     .executeTakeFirst();
   return (row as unknown as ChatSetupTemplate | undefined) ?? null;
 }
@@ -298,7 +298,7 @@ export async function migrateChat(
   const newChatId = crypto.randomUUID();
   const gmConfig = template.gm_config
     ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
-    : { ok: false as const, value: null };
+    : { ok: false as const, value: null, };
 
   await database
     .insertInto("chats",)
@@ -682,7 +682,7 @@ export async function updateChat(
   }
 
   // Enforce key-mechanic immutability once online
-  const attemptedMechanics = KEY_MECHANIC_PARAMS.filter((field,) => params[field] !== undefined,);
+  const attemptedMechanics = KEY_MECHANIC_PARAMS.filter((field,) => params[field] !== undefined);
   if (attemptedMechanics.length > 0 && (await isChatOnline(database, chatId,))) {
     return {
       code: "key_mechanic_conflict",
@@ -1012,7 +1012,7 @@ export async function updateImpersonation(
   chatId: string,
   userId: string,
   impersonateActorId: string | null,
-): Promise<ServiceError | void> {
+): Promise<ServiceError | undefined> {
   if (impersonateActorId) {
     // Look up this chat's world_id
     const chat = await database
