@@ -735,6 +735,7 @@ export const MessagesSchema = t.Object({
   content_format: t.Optional(MessageContentFormatSchema,),
   content_type: t.Optional(MessageContentTypeSchema,),
   content_encoding: t.Optional(ContentEncodingSchema,),
+  emotion: t.Optional(t.String(),),
   model_id: t.Optional(t.String(),),
   provider: t.Optional(t.String(),),
   token_count_prompt: t.Optional(t.Number(),),
@@ -755,6 +756,7 @@ export const MessagesSchema = t.Object({
   attachments: t.Optional(t.String(),),
   archived_at: t.Optional(t.String(),),
   format_version: t.Optional(t.Number(),),
+  section_id: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
@@ -1680,5 +1682,35 @@ export const WorldTimelineEventsSchema = t.Object({
   story_id: t.Optional(t.String(),),
   actor_id: t.Optional(t.String(),),
   data: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── chat_sections ────────────────────────────────────────────
+export const ChatSectionsSchema = t.Object({
+  chat_id: t.String(),
+  label: t.String(),
+  description: t.Optional(t.String(),),
+  location_id: t.Optional(t.String(),),
+  sort_index: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  background_id: t.Optional(t.String(),),
+},);
+
+// ── chat_backgrounds ────────────────────────────────────────────
+export const ChatBackgroundsSchema = t.Object({
+  name: t.String(),
+  type: t.Optional(t.String(),),
+  location_id: t.Optional(t.String(),),
+  asset_id: t.Optional(t.String(),),
+  config: t.Optional(t.String(),),
+  priority: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── chat_background_assignments ────────────────────────────────────────────
+export const ChatBackgroundAssignmentsSchema = t.Object({
+  chat_id: t.String(),
+  background_id: t.String(),
   created_at: t.Optional(t.String(),),
 },);

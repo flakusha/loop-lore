@@ -787,6 +787,7 @@ export async function insertMessages(
     content_format?: Generated<MessageContentFormat>;
     content_type?: Generated<MessageContentType>;
     content_encoding?: Generated<ContentEncoding>;
+    emotion?: string | null;
     model_id?: string | null;
     provider?: string | null;
     token_count_prompt?: number | null;
@@ -807,6 +808,7 @@ export async function insertMessages(
     attachments?: string | null;
     archived_at?: string | null;
     format_version?: Generated<number>;
+    section_id?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
@@ -2575,6 +2577,65 @@ export async function insertWorldTimelineEvents(
     event_type,
     description,
     occurred_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a chat_sections row. */
+export async function insertChatSections(
+  db: Db,
+  chat_id: string,
+  label: string,
+  opts?: {
+    id?: Generated<string>;
+    description?: string | null;
+    location_id?: string | null;
+    sort_index?: Generated<number>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+    background_id?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("chat_sections",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    label,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a chat_backgrounds row. */
+export async function insertChatBackgrounds(
+  db: Db,
+  name: string,
+  opts?: {
+    id?: Generated<string>;
+    type?: Generated<string>;
+    location_id?: string | null;
+    asset_id?: string | null;
+    config?: string | null;
+    priority?: Generated<number>;
+    created_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("chat_backgrounds",).values({
+    id: crypto.randomUUID(),
+    name,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a chat_background_assignments row. */
+export async function insertChatBackgroundAssignments(
+  db: Db,
+  chat_id: string,
+  background_id: string,
+  opts?: { id?: Generated<string>; created_at?: Generated<string> },
+): Promise<void> {
+  await db.insertInto("chat_background_assignments",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    background_id,
     ...opts,
   } as any,).execute();
 }
