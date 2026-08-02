@@ -20,7 +20,15 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "../validation/schemas";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
+import {
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonNoContent,
+  jsonPaginated,
+  jsonResponse,
+  requireUserId,
+} from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -84,13 +92,8 @@ export function charactersRoutes(opts: HandlerOpts,) {
           welcomeMessage,
           systemPrompt,
         } = ctx.body;
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const id = uid();
         const parsedTags = tags ? tags.split(",",).map((t: string,) => t.trim()).filter(Boolean,) : [];
@@ -254,13 +257,8 @@ export function charactersRoutes(opts: HandlerOpts,) {
           settings,
           dataVersion,
         } = ctx.body;
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const actor = await database
           .selectFrom("actors",)
@@ -346,13 +344,8 @@ export function charactersRoutes(opts: HandlerOpts,) {
     .delete(
       "/api/actors/:actorId",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const actor = await database
           .selectFrom("actors",)
