@@ -169,6 +169,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
               ? body.visualNovel
               : (template ? template.visual_novel === 1 : undefined),
             templateId: template?.id,
+            memoryCarry: body.memoryCarry,
+            memoryCarryIds: body.memoryCarryIds,
           },);
 
           const characterActors = await database
