@@ -13,9 +13,9 @@ import { Elysia, t, } from "elysia";
 import type { Db, } from "../db";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
-import { notFound, unauthorized, } from "../validation/middleware";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "./http-utils";
+import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, requireUserId, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "sessions", },);
@@ -63,11 +63,11 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
        * Query params: ?page=1&pageSize=50
        */
       .get("/api/sessions", async (ctx,) => {
-        const userId = (ctx as any).userId as string | null;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
         const userRole = (ctx as any).userRole as string | null;
         const sessionId = (ctx as any).sessionId as string | null;
 
-        if (!userId) { return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
         const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
         const isAdmin = userRole === "admin";
@@ -130,12 +130,12 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
       .get(
         "/api/sessions/:id",
         async (ctx,) => {
-          const userId = (ctx as any).userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = (ctx as any).userRole as string | null;
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (!userId) { return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
           const session = await database
             .selectFrom("sessions",)
@@ -177,12 +177,12 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
       .delete(
         "/api/sessions/:id",
         async (ctx,) => {
-          const userId = (ctx as any).userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = (ctx as any).userRole as string | null;
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (!userId) { return unauthorized((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",); }
 
           const session = await database
             .selectFrom("sessions",)

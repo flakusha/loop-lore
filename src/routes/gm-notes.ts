@@ -23,7 +23,7 @@ import {
   jsonNoContent,
   jsonResponse,
   notFoundResponse as notFound,
-  unauthorizedResponse as unauthorized,
+  requireUserId,
 } from "./http-utils";
 
 interface HandlerOpts {
@@ -77,10 +77,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/shadow-notes",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -116,10 +116,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/shadow-notes",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -147,10 +147,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/shadow-notes/:noteId/reveal",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -173,10 +173,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/chats/:id/shadow-notes/:noteId",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -200,10 +200,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/whitenotes",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -236,10 +236,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/whitenotes",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
@@ -269,10 +269,10 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/chats/:id/whitenotes/:noteId",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
-          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }

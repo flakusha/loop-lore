@@ -9,8 +9,10 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { notFound, unauthorized, } from "../validation/middleware";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
+
+import { requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -227,8 +229,8 @@ export function chatExportRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "chat-export", },).get(
     "/api/chats/:id/export",
     async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
 
       const chatId = ctx.params.id as string;
       const format = (ctx.query.format as string) ?? "markdown";

@@ -6,8 +6,10 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
-import { notFound, unauthorized, } from "../validation/middleware";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
+
+import { requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -22,8 +24,8 @@ export function chatPinRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/pins",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const chatId = ctx.params.id as string;
 
@@ -64,8 +66,8 @@ export function chatPinRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/pins",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const chatId = ctx.params.id as string;
 
@@ -136,8 +138,8 @@ export function chatPinRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/chats/:id/pins/:pinId",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const chatId = ctx.params.id as string;
           const pinId = ctx.params.pinId as string;
