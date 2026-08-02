@@ -1,0 +1,63 @@
+<!-- Chat Background Panel (location sync) -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showBackgroundPanel"
+  @click="$store.ui.showBackgroundPanel = false"
+  x-cloak
+>
+</div>
+<aside
+  class="right-panel"
+  :style="{ display: $store?.ui?.showBackgroundPanel ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="background-panel"
+>
+  <button class="btn-icon" @click="$store.ui.showBackgroundPanel = false" x-bind:title="t('common.close')">&times;</button>
+  <div class="panel-content">
+    <div class="nav-section-title">Background</div>
+
+    <!-- Current background -->
+    <div style="margin-bottom: var(--space-3)">
+      <div class="form-label">Current</div>
+      <div x-show="_background" style="display: flex; align-items: center; gap: var(--space-2)">
+        <span style="font-weight: 600" x-text="_background.name"></span>
+        <span
+          style="font-size: 11px; color: var(--text-secondary)"
+          x-show="_background.location_id"
+          x-text="'(location-scoped)'"
+        >
+        </span>
+      </div>
+      <div x-show="!_background" style="font-size: 12px; color: var(--text-secondary)">
+        No background assigned (auto-syncs to the chat's location).
+      </div>
+      <button x-show="_background" class="btn btn-danger btn-xs" style="margin-top: var(--space-2)" @click="removeBackground()">
+        Remove background
+      </button>
+    </div>
+
+    <!-- Choose from catalog -->
+    <div class="form-label">Available backgrounds</div>
+    <div style="display: grid; gap: var(--space-2); max-height: 320px; overflow: auto; margin-bottom: var(--space-3)">
+      <template x-for="b in _backgrounds" :key="b.id">
+        <div class="panel-item" style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between">
+          <div style="display: grid; gap: 1px">
+            <span style="font-weight: 600" x-text="b.name"></span>
+            <span style="font-size: 11px; color: var(--text-secondary)" x-text="b.type"></span>
+          </div>
+          <button
+            class="btn btn-primary btn-xs"
+            @click="setBackground(b.id)"
+            :disabled="_background && _background.id === b.id"
+          >
+            Use
+          </button>
+        </div>
+      </template>
+      <div x-show="_backgrounds.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+        No backgrounds in the catalog yet.
+      </div>
+    </div>
+    <button type="button" class="btn btn-secondary btn-xs" @click="loadBackgrounds()">Refresh</button>
+  </div>
+</aside>
