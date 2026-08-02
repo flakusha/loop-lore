@@ -1,0 +1,34 @@
+// ── Chat list filters (sidebar panel) ─────────────────────
+//
+// Holds the chat-list filter controls (type / status / sort) and turns them
+// into server-side query params for GET /api/chats. It deliberately does NOT
+// own the fetch — it exposes applyChatFilters() which reuses the existing
+// loadChats() on ChatState (merged query params via _filterParams()).
+//
+// Archive state is encoded in `chats.is_pinned` (PinnedState enum) on the
+// backend, so "active" maps to archived=false there.
+import type { ChatState, } from "./types";
+
+export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
+  _chatType: "all",
+  _chatStatus: "all",
+  _chatSort: "recent",
+
+  /** Serialize the active filters (plus pagination) into /api/chats query params. */
+  _filterParams(): string {
+    const params = new URLSearchParams();
+    params.set("pageSize", "200",);
+    if (this._chatType && this._chatType !== "all") { params.set("type", this._chatType,); }
+    if (this._chatStatus === "active") { params.set("archived", "false",); }
+    if (this._chatStatus === "archived") { params.set("archived", "true",); }
+    if (this._chatSort && this._chatSort !== "recent") { params.set("sort", this._chatSort,); }
+    return params.toString();
+  },
+
+  /** Called from the filter controls: re-fetches the chat list with active filters. */
+  async applyChatFilters() {
+    // Switching server-side filters supersedes any in-progress text search.
+    this._searchResults = [];
+    await this.loadChats();
+  },
+};
