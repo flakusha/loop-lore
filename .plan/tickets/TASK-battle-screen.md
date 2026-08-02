@@ -6,6 +6,8 @@
 **Type:** Feature Task
 **Tags:** battle, frontend, ui
 **Epic:** epic-battle-ui.md
+**Also Linked:** epic-frontend-backend-integration.md
+**Superseded By:** TASK-battle-frontend-integration.md (comprehensive integration task)
 
 ## Summary
 
