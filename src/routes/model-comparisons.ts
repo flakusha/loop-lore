@@ -13,7 +13,7 @@ import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -34,7 +34,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .post("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
+        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const request = ctx.request as Request;
@@ -112,7 +112,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/comparisons/leaderboard", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
+        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const rows = await database
@@ -155,7 +155,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
+        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       const query = ctx.query as Record<string, string> | undefined;

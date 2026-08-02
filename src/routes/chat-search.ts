@@ -17,7 +17,7 @@ import {
   jsonPaginated,
   jsonResponse,
   notFoundResponse as notFound,
-  unauthorizedResponse as unauthorized,
+  requireUserId,
 } from "./http-utils";
 
 function log(): Logger {
@@ -57,8 +57,8 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/search",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const query = ctx.query as typeof ChatSearchQuery.static;
           const q = query.q?.trim().toLowerCase() ?? "";
@@ -147,8 +147,8 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/joinable",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const query = ctx.query as typeof JoinableQuery.static;
           const limit = query.limit ?? 20;
@@ -211,8 +211,8 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/join",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
 
           const chatId = (ctx.params as { id: string }).id;
 
@@ -261,9 +261,9 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
       .post(
         "/api/chats/:id/transfer",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const userRole = ctx.userRole as string | null;
-          if (!userId) { return unauthorized(); }
 
           const chatId = (ctx.params as { id: string }).id;
           const body = ctx.body as { locationId: string };

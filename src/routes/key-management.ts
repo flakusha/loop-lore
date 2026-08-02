@@ -21,9 +21,9 @@ import {
 } from "../crypto";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
-import { notFound, unauthorized, } from "../validation/middleware";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "key-management", },);
@@ -33,8 +33,8 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "key-management", },)
     // ── List actor keys ────────────────────────────────────────
     .get("/api/keys", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
 
       try {
         const keys = await listActorKeys(database, userId,);
@@ -61,8 +61,8 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     .post(
       "/api/keys",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
 
         const body = ctx.body as { name: string };
         if (!body.name || typeof body.name !== "string" || body.name.trim().length === 0) {
@@ -118,8 +118,8 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     )
     // ── Rotate primary key ─────────────────────────────────────
     .post("/api/keys/rotate", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
 
       try {
         const smk = getSmk();
@@ -166,8 +166,8 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     .delete(
       "/api/keys/:id",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") return userId;
 
         const keyId = (ctx.params as { id: string }).id;
 

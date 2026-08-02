@@ -10,7 +10,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
-import { jsonError, jsonResponse, } from "../routes/http-utils";
+import { jsonResponse, requireUserId, } from "../routes/http-utils";
 import { isTelemetryEnabled, } from "../telemetry/service";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
@@ -24,10 +24,8 @@ const COST_PER_1K_TOKENS = 0.002;
 export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
   return new Elysia({ name: "analytics", },)
     .get("/api/analytics/chat/:chatId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
 
       if (!isTelemetryEnabled()) {
         return jsonResponse({
@@ -73,10 +71,8 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
       },
     },)
     .get("/api/analytics/overview", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({ message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized", status: 401, },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") return userId;
 
       if (!isTelemetryEnabled()) {
         return jsonResponse({
