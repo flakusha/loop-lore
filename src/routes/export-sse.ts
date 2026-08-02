@@ -12,11 +12,11 @@ import type { DB, } from "../db/schema";
 import { resolveUserIdFromRequest, } from "../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import {
-  addChecksum,
   exportAssetsToZip,
   exportCharactersToZip,
   exportChatsToZip,
   exportWorldsToZip,
+  finalizeExportZip,
 } from "./export-shared";
 import type { ExportItem, } from "./export-shared";
 import { HttpStatus, jsonError, } from "./http-utils";
@@ -166,63 +166,18 @@ async function processExport(
       await exportAssetsToZip(exportCtx,);
     }
 
-    // Build metadata
+    // Build metadata + manifest, then generate the ZIP
     const now = new Date();
-    const exportInfo = {
-      exported_at: now.toISOString(),
-      exported_by: userId,
+    const zipBuffer = await finalizeExportZip({
+      zip,
+      checksums,
+      counts,
+      userId,
+      now,
       format,
-      includes: include,
-      item_count: Object.values(counts,).reduce((a, b,) => a + b, 0,),
-    };
-    const schemaVersion = {
-      schema_version: "1.0",
-      export_format_version: "1.0",
-    };
-
-    // Add metadata to zip + checksums
-    const metadataFolder = zip.folder("metadata",);
-    const exportInfoStr = JSON.stringify(exportInfo, null, 2,);
-    metadataFolder?.file("export-info.json", exportInfoStr,);
-    addChecksum(checksums, "metadata/export-info.json", exportInfoStr,);
-
-    const schemaVersionStr = JSON.stringify(schemaVersion, null, 2,);
-    metadataFolder?.file("schema-version.json", schemaVersionStr,);
-    addChecksum(checksums, "metadata/schema-version.json", schemaVersionStr,);
-
-    // Add asset manifest to metadata
-    const assetManifestStr = JSON.stringify(assetManifest, null, 2,);
-    metadataFolder?.file("asset-manifest.json", assetManifestStr,);
-    addChecksum(checksums, "metadata/asset-manifest.json", assetManifestStr,);
-
-    // Build manifest (includes checksums from all folders + metadata)
-    const manifest = {
-      version: "1.0",
-      exported_at: now.toISOString(),
-      exported_by: userId,
-      format_version: "1.0",
-      contents: counts,
-      checksums,
-      asset_manifest: assetManifest,
-    };
-    const manifestStr = JSON.stringify(manifest, null, 2,);
-    zip.file("manifest.json", manifestStr,);
-    addChecksum(checksums, "manifest.json", manifestStr,);
-
-    // Regenerate ZIP with final manifest (checksums updated)
-    const finalManifest = {
-      version: "1.0",
-      exported_at: now.toISOString(),
-      exported_by: userId,
-      format_version: "1.0",
-      contents: counts,
-      checksums,
-      asset_manifest: assetManifest,
-    };
-    zip.file("manifest.json", JSON.stringify(finalManifest, null, 2,),);
-
-    // Generate ZIP
-    const zipBuffer = await zip.generateAsync({ type: "nodebuffer", },);
+      include,
+      assetManifest,
+    },);
 
     // Store the ZIP buffer in the job
     job.zipBuffer = zipBuffer;
