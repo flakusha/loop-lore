@@ -928,6 +928,43 @@ async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
     storedKeyId = chatKey.keyId;
   }
 
+  // Detect the dominant emotion on the generated story content via the same
+  // EmotionHook used by the regular path (gated on config.hooks.enableEmotionHooks),
+  // so GM/story messages also get a per-message emotion for avatar rendering.
+  let dominantEmotion: string | null = null;
+  const storyHooksConfig = config.hooks ?? {
+    enableMoodHooks: true,
+    enableEmotionHooks: true,
+    enableNsfwHooks: true,
+    enableModerationHooks: true,
+  };
+  if (storyHooksConfig.enableEmotionHooks) {
+    try {
+      const emotionResult = await runHookChain({
+        hooks: [...getRegisteredHooks(),],
+        context: {
+          chatId,
+          actorId: turnResult.actorId,
+          userId,
+          content: turnResult.prompt,
+          nsfwPolicy: undefined,
+          privacyLevel: "standard",
+          eventTypes: ["emotion_change",],
+          config,
+          nsfwConfig: config.nsfw ??
+            { allowNsfw: false, nsfwMinAge: 0, defaultNsfwScope: "chat", consentRequired: true, auditLogging: true, },
+          db: database,
+        },
+      },);
+      const emotionEvent = emotionResult.events.find(
+        (e,) => e.eventType === "emotion_change" && typeof e.data?.dominantEmotion === "string",
+      );
+      dominantEmotion = (emotionEvent?.data?.dominantEmotion as string | undefined) ?? null;
+    } catch (error) {
+      log.warn("emotion-hook: story emotion detection failed", { err: error, },);
+    }
+  }
+
   // Compute swipe index for variant support
   let swipeIndex: number | null = null;
   if (parentMessageId) {
@@ -958,6 +995,7 @@ async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
       status: MessageStatus.Confirmed,
       visibility: MessageVisibility.Visible,
       swipe_index: swipeIndex,
+      emotion: dominantEmotion,
     },)
     .execute();
 
