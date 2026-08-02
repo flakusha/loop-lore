@@ -14,6 +14,7 @@ import { serve, } from "bun";
 import { spawnSync, } from "node:child_process";
 
 import { ServerExternalManager, } from "./services/server-external-manager";
+import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "./nsfw/runtime-config";
 import { backendToConfig, discoverBackends, } from "./services/sd-discovery";
 import { createLogger, getLogger, setGlobalLogger, } from "./logger";
 import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
@@ -243,6 +244,7 @@ async function start() {
   let config = loadConfig();
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
+  initNsfwRuntimeConfig(config.nsfw,);
   await initSmk(config.encryption,);
   initAnonymousMode(config,);
 
@@ -386,6 +388,8 @@ async function start() {
   // Admin — seed system config defaults + wire DB log transport
   const { seedDefaults, } = await import("./admin/config");
   await seedDefaults(database, config,);
+  // Apply persisted admin NSFW overrides (if any) so the toggle survives restart.
+  await applyStoredNsfwConfig(database,);
 
   if (config.logging.dbEnabled) {
     const { DBTransport, } = await import("./logger/transports/db");
