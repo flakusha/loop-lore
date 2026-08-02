@@ -43,13 +43,16 @@
       </template>
       <template x-if="msg.role !== 'system'">
         <div class="message-content">
-          <!-- Avatar for character/assistant messages (first in group only) -->
+          <!--
+            Avatar for character/assistant messages (first in group only);
+            resolved per message from its detected emotion via `avatarForMessage`
+          -->
           <template
-            x-if="msg.role !== 'user' && !msg.group && (_currentEmotionAvatar || currentCharacter?.avatar_asset_id)"
+            x-if="!msg.group && (msg.role !== 'user') && (msg.emotion ? avatarForMessage(msg) !== null : !!currentCharacter?.avatar_asset_id)"
           >
             <img
               class="avatar"
-              :src="`/api/assets/${_currentEmotionAvatar || currentCharacter?.avatar_asset_id}/thumb`"
+              :src="`/api/assets/${avatarForMessage(msg) || currentCharacter?.avatar_asset_id}/thumb`"
               :alt="displayName(msg)"
               data-testid="message-avatar"
             />

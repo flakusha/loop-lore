@@ -191,6 +191,7 @@ export interface Messages {
   content_format: Generated<MessageContentFormat>;
   content_type: Generated<MessageContentType>;
   content_encoding: Generated<ContentEncoding>;
+  emotion: string | null;
   model_id: string | null;
   provider: string | null;
   token_count_prompt: number | null;
@@ -268,4 +269,3 @@ export interface MessageTranslations {
   created_at: string;
   updated_at: string | null;
 }
-
