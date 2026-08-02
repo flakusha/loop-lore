@@ -325,11 +325,11 @@ export function badRequestResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
 }
 
-/** Extract userId from Elysia context or return Unauthorized error response. */
+/** Extract userId from Elysia context or return a localized Unauthorized error response. */
 export function requireUserId(ctx: unknown,): string | Response {
   const userId = (ctx as any).userId as string | null;
   if (!userId) {
-    return unauthorizedResponse();
+    return unauthorizedResponse((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",);
   }
   return userId;
 }
