@@ -39,6 +39,7 @@ export { estimateTokens, } from "./token-utils";
 export {
   classifyTransitionMessage,
   createTransition,
+  promoteMessagesToMemories,
   selectMessagesForPromotion,
 } from "./transitions";
 
