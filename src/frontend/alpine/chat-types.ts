@@ -238,6 +238,12 @@ export interface ChatState extends AlpineMagicThis {
   _filteredCommands: { name: string; description: string }[];
   _chatFilter: string;
   readonly filteredChats: { id: string; name?: string }[];
+  // Chat-list filters (chat-filters.ts) — server-side query params for /api/chats.
+  _chatType: "all" | "direct" | "group";
+  _chatStatus: "all" | "active" | "archived";
+  _chatSort: "recent" | "name" | "unread" | "pinned-first";
+  _filterParams(): string;
+  applyChatFilters(): Promise<void>;
   _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
   searchChats(q: string,): Promise<void>;
   _joinableChats: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
@@ -407,4 +413,30 @@ export interface ChatState extends AlpineMagicThis {
   updateMemoryTokenCount(): void;
   _getCharacterActorId(): string | null;
   _updateTokenCount(): void;
+
+  // ── Chat Sections (multi-location sectioning) ──────────────
+  _sections: { id: string; label: string; description: string | null; location_id: string | null; sort_index: number }[];
+  _sectionsLoading: boolean;
+  _sectionsOpen: boolean;
+  _activeSectionId: string | null;
+  _newSectionLabel: string;
+  _newSectionDesc: string;
+  toggleSectionsPanel(): void;
+  loadSections(): Promise<void>;
+  createSection(): Promise<void>;
+  deleteSection(sectionId: string,): Promise<void>;
+  moveSection(sectionId: string, dir: -1 | 1,): Promise<void>;
+  sectionLabel(sectionId: string | null,): string;
+  assignMessageToSection(messageId: string, sectionId: string | null,): Promise<void>;
+
+  // ── Chat Backgrounds (location sync) ────────────────────
+  _background: { id: string; name: string; type: string; location_id: string | null; asset_id: string | null; config: string | null; priority: number } | null;
+  _backgrounds: { id: string; name: string; type: string; location_id: string | null; asset_id: string | null; config: string | null; priority: number }[];
+  _backgroundsLoading: boolean;
+  _backgroundsOpen: boolean;
+  toggleBackgroundPanel(): void;
+  loadBackground(): Promise<void>;
+  loadBackgrounds(): Promise<void>;
+  setBackground(backgroundId: string,): Promise<void>;
+  removeBackground(): Promise<void>;
 }
