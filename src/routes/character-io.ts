@@ -16,7 +16,7 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "../validation/schemas";
-import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 interface HandlerOpts {
@@ -29,13 +29,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-io", },)
     // ── Export Systems Data ─────────────────────────────────
     .get("/api/actors/:actorId/systems/export", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
       const worldId = ctx.query.worldId as string | undefined;
@@ -68,13 +63,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     },)
     // ── Export Systems Data (POST for complex queries) ──────
     .post("/api/actors/:actorId/systems/export", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
       const {
@@ -117,13 +107,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     },)
     // ── Import Systems Data ─────────────────────────────────
     .post("/api/actors/:actorId/systems/import", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -165,13 +150,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
     },)
     // ── Import Systems Data from URL ────────────────────────
     .post("/api/actors/:actorId/systems/import/url", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 

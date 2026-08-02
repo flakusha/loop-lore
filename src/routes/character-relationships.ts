@@ -17,7 +17,7 @@ import {
   SuccessResponse,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 export function characterRelationshipsRoutes(opts: HandlerOpts,) {
@@ -26,13 +26,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
 
   return new Elysia({ name: "character-relationships", },)
     .get("/api/actors/:actorId/relationships", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -60,13 +55,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, targetActorId, } = ctx.params;
 
@@ -100,13 +90,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/relationships", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -153,13 +138,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, targetActorId, } = ctx.params;
 
@@ -194,13 +174,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },
     },)
     .delete("/api/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, targetActorId, } = ctx.params;
 
@@ -228,13 +203,8 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/relationships/events", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
