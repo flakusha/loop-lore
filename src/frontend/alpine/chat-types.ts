@@ -237,6 +237,8 @@ export interface ChatState extends AlpineMagicThis {
   _filteredCommands: { name: string; description: string }[];
   _chatFilter: string;
   readonly filteredChats: { id: string; name?: string }[];
+  _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
+  searchChats(q: string,): Promise<void>;
   selectedChats: string[];
   _mentionQuery: string;
   _mentionResults: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
@@ -374,8 +376,12 @@ export interface ChatState extends AlpineMagicThis {
   _emotionAvatars: { emotion: string; avatarId: string; assetId: string }[];
   _emotionAvatarsLoading: boolean;
   _currentEmotionAvatar: string | null;
+  _activeEmotions: { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
+  _activeEmotionsLoading: boolean;
   loadMood(): Promise<void>;
   loadEmotionAvatars(): Promise<void>;
+  loadEmotions(): Promise<void>;
+  getActiveEmotions(): { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
   selectEmotionAvatar(emotion: string,): string | null;
   updateMoodHappiness(happiness: number,): Promise<void>;
   applyMoodDelta(delta: number,): Promise<void>;
