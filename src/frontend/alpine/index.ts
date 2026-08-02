@@ -9,6 +9,7 @@ import "./theme";
 import "./i18n";
 import "./app";
 import "./chat";
+import "./gm-panel";
 import "./htmx";
 import "./notifications";
 import "./user-notifications";
