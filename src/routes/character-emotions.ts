@@ -15,7 +15,7 @@ import {
   SuccessResponse,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 export function characterEmotionsRoutes(opts: HandlerOpts,) {
@@ -24,13 +24,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-emotions", },)
     // ── List emotions for an actor ─────────────────────────────
     .get("/api/actors/:actorId/emotions", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -70,13 +65,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     },)
     // ── Get a specific emotion ─────────────────────────────────
     .get("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, emotionId, } = ctx.params;
 
@@ -122,13 +112,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     },)
     // ── Set/update an emotion for an actor ─────────────────────
     .post("/api/actors/:actorId/emotions", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -195,13 +180,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     },)
     // ── Delete an emotion ──────────────────────────────────────
     .delete("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, emotionId, } = ctx.params;
 
@@ -233,13 +213,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     },)
     // ── List all emotion definitions ───────────────────────────
     .get("/api/emotions", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const emotions = await database
         .selectFrom("emotions",)
@@ -268,13 +243,8 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
     },)
     // ── Create a new emotion definition ────────────────────────
     .post("/api/emotions", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { name, displayName, category, valence, arousal, icon, } = ctx.body;
 

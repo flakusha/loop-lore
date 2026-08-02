@@ -9,7 +9,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
 import { AdminOverrideCreateBody, ErrorResponse, Id, SuccessResponse, } from "../validation/schemas";
-import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 interface HandlerOpts {
@@ -22,14 +22,9 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "admin-character-overrides", },)
     // ── List all overrides (admin only) ──────────────────────
     .get("/api/admin/character-overrides", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
       if (userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -56,14 +51,9 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     },)
     // ── List overrides for a specific actor ────────────────────
     .get("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
       if (userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -93,14 +83,9 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     },)
     // ── Create a new override ──────────────────────────────────
     .post("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
       if (userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -144,14 +129,9 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
     },)
     // ── Delete an override ─────────────────────────────────────
     .delete("/api/admin/character-overrides/:overrideId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
       if (userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
