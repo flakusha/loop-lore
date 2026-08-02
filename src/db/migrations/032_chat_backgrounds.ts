@@ -28,7 +28,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("location_id", "text", (col,) => col.references("locations.id",).onDelete("set null",),)
     .addColumn("asset_id", "text", (col,) => col.references("assets.id",).onDelete("set null",),)
     .addColumn("config", "text",)
-    .addColumn("priority", "integer", (col,) => col.notNull().defaultTo(0),)
+    .addColumn("priority", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .execute();
 
@@ -37,7 +37,11 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .createTable("chat_background_assignments",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("chat_id", "text", (col,) => col.references("chats.id",).onDelete("cascade",).notNull(),)
-    .addColumn("background_id", "text", (col,) => col.references("chat_backgrounds.id",).onDelete("cascade",).notNull(),)
+    .addColumn(
+      "background_id",
+      "text",
+      (col,) => col.references("chat_backgrounds.id",).onDelete("cascade",).notNull(),
+    )
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .execute();
 
