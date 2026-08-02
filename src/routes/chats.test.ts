@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { MessageStatus, } from "../db/enums";
+import { MessageRole, MessageStatus, } from "../db/enums";
 import { QuestType, } from "../db/enums-story";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -145,7 +145,99 @@ describe("chatsRoutes", () => {
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: unknown[]; pagination: { total: number } };
     expect(body.pagination.total,).toBeGreaterThanOrEqual(2,);
-    expect(body.data.every((c: any,) => c.created_by === userId),).toBe(true,);
+    expect(body.data.every((c: any,) => c.created_by === userId,),).toBe(true,);
+  });
+
+  // ── GET /api/chats filters ───────────────────────────────────
+
+  test("GET /api/chats filters by type", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(new Request("http://localhost/api/chats?type=group",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { type: string }[]; pagination: { total: number } };
+    expect(body.data.length,).toBeGreaterThan(0,);
+    expect(body.data.every((c,) => c.type === "group",),).toBe(true,);
+
+    const direct = await app.handle(new Request("http://localhost/api/chats?type=direct",),);
+    const directBody = (await direct.json()) as { data: { type: string }[] };
+    expect(directBody.data.every((c,) => c.type === "direct",),).toBe(true,);
+  });
+
+  test("GET /api/chats filters by archived status", async () => {
+    const app = createApp(db, userId,);
+    // Create a chat and archive it directly in the DB.
+    const create = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Filter Archive Me", },),
+      },),
+    );
+    const { id, } = (await create.json()) as { id: string };
+    await db.updateTable("chats",).set({ is_pinned: "archived", },).where("id", "=", id,).execute();
+
+    const archived = await app.handle(new Request("http://localhost/api/chats?archived=true",),);
+    const archivedBody = (await archived.json()) as { data: { id: string; is_pinned: string }[] };
+    expect(archivedBody.data.some((c,) => c.id === id,),).toBe(true,);
+    expect(archivedBody.data.every((c,) => c.is_pinned === "archived",),).toBe(true,);
+
+    const active = await app.handle(new Request("http://localhost/api/chats?archived=false",),);
+    const activeBody = (await active.json()) as { data: { id: string; is_pinned: string }[] };
+    expect(activeBody.data.some((c,) => c.id === id,),).toBe(false,);
+    expect(activeBody.data.every((c,) => c.is_pinned !== "archived",),).toBe(true,);
+  });
+
+  test("GET /api/chats sort=name returns alphabetical order", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(new Request("http://localhost/api/chats?sort=name",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { name: string }[] };
+    const names = body.data.map((c,) => c.name,);
+    const sorted = [...names,].sort((a, b,) => a.localeCompare(b,),);
+    expect(names,).toEqual(sorted,);
+  });
+
+  test("GET /api/chats sort=pinned-first lists pinned before others", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(new Request("http://localhost/api/chats?sort=pinned-first",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { is_pinned: string }[] };
+    const states = body.data.map((c,) => c.is_pinned,);
+    const firstNonPinned = states.findIndex((s,) => s !== "pinned",);
+    if (firstNonPinned === -1) { return; } // all pinned — trivially sorted
+    for (let i = 0; i < firstNonPinned; i += 1) { expect(states[i],).toBe("pinned",); }
+    for (let i = firstNonPinned; i < states.length; i += 1) { expect(states[i],).not.toBe("pinned",); }
+  });
+
+  test("GET /api/chats sort=unread orders by unseen count desc", async () => {
+    const app = createApp(db, userId,);
+    const c1 = (await (await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Unread Target", },),
+      },),
+    )).json()) as { id: string };
+    const c2 = (await (await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Read Target", },),
+      },),
+    )).json()) as { id: string };
+
+    // Only c1 has a (never-read) message → 1 unseen vs 0 for c2.
+    await insertMessages(db, c1.id, userId, MessageRole.Character, "hi", {
+      created_at: "2026-07-01T00:00:00.000Z",
+    },);
+
+    const res = await app.handle(new Request("http://localhost/api/chats?sort=unread",),);
+    const body = (await res.json()) as { data: { id: string }[] };
+    const idx1 = body.data.findIndex((c,) => c.id === c1.id,);
+    const idx2 = body.data.findIndex((c,) => c.id === c2.id,);
+    expect(idx1,).toBeGreaterThanOrEqual(0,);
+    expect(idx2,).toBeGreaterThanOrEqual(0,);
+    expect(idx1,).toBeLessThan(idx2,);
   });
 
   // ── GET /api/chats/:id ───────────────────────────────────────

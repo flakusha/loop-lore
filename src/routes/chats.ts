@@ -1,5 +1,5 @@
 import { Elysia, t, } from "elysia";
-import { sql, type Kysely, } from "kysely";
+import { type Kysely, type SelectQueryBuilder, sql, } from "kysely";
 import { getRuntimeConfig, } from "../age-gate/controller";
 import { getStatus, } from "../age-gate/service";
 import {
@@ -27,8 +27,9 @@ import {
   MessageContentType,
   MessageRole,
 } from "../db/enums";
-import type { DB, } from "../db/schema";
+import type { Chats, DB, } from "../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
+import { autoSyncChatBackground, } from "./chat-backgrounds";
 import { getLogger, type Logger, } from "../logger";
 import { notifyChatInvite, } from "../notifications/service";
 import { safeJsonStringify, uid, } from "../utils";
@@ -82,13 +83,64 @@ interface HandlerOpts {
  *   so "active" = is_pinned != 'archived'. Omit = both.
  * - `sort`: "recent" (default) | "name" | "unread" | "pinned-first"
  */
+const archivedTrue = t.Literal("true",);
+const archivedFalse = t.Literal("false",);
+const archivedOne = t.Literal("1",);
+const archivedZero = t.Literal("0",);
+
 const ChatListQuery = t.Object({
   page: t.Optional(t.Numeric({ minimum: 1, default: 1, },),),
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 50, },),),
   type: t.Optional(t.UnionEnum(["direct", "group",],),),
-  archived: t.Optional(t.Union([t.Literal("true",), t.Literal("false",), t.Literal("1",), t.Literal("0",),],),),
+  archived: t.Optional(t.Union([archivedTrue, archivedFalse, archivedOne, archivedZero,],),),
   sort: t.Optional(t.UnionEnum(["recent", "name", "unread", "pinned-first",],),),
-});
+},);
+
+/**
+ * Apply the requested `sort` to a chat list query. Defaults to recent-first
+ * ("updated_at" desc). "unread" orders by newer-than-last-read visible message
+ * count (same semantics as routes/activity.ts), then by recency.
+ */
+function orderChatList(
+  query: SelectQueryBuilder<DB, "chats", Chats>,
+  sort: string,
+  userId: string,
+): SelectQueryBuilder<DB, "chats", Chats> {
+  switch (sort) {
+    case "name": {
+      return query.orderBy("name", "asc",).orderBy("updated_at", "desc",);
+    }
+    case "pinned-first": {
+      return query
+        .orderBy((eb,) => eb.case().when("is_pinned", "=", "pinned",).then(0,).else(1,).end(), "asc",)
+        .orderBy("updated_at", "desc",);
+    }
+    case "unread": {
+      // Correlated scalar subquery: count of visible messages newer than the
+      // participant's last read message (COALESCE('') => never-read counts all).
+      // This rule dislikes the wrapped template indentation; keep the SQL
+      // stable by disabling it for this one expression.
+      // eslint-disable-next-line unicorn/template-indent
+      const unreadSub = sql<number>`(
+        SELECT COUNT(*)
+        FROM messages m
+        WHERE m.chat_id = chats.id
+          AND m.visibility = 'visible'
+          AND m.created_at > COALESCE((
+            SELECT lastm.created_at FROM messages lastm
+            WHERE lastm.id = (
+              SELECT cp.last_read_message_id FROM chat_participants cp
+              WHERE cp.chat_id = chats.id AND cp.actor_id = ${userId}
+            )
+          ), '')
+      )`;
+      return query.orderBy(unreadSub, "desc",).orderBy("updated_at", "desc",);
+    }
+    default: {
+      return query.orderBy("updated_at", "desc",);
+    }
+  }
+}
 
 export function chatsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
@@ -142,38 +194,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const countResult = await countQuery.executeTakeFirst();
           const total = countResult?.total ?? 0;
 
-          switch (sort) {
-            case "name":
-              listQuery = listQuery.orderBy("name", "asc",).orderBy("updated_at", "desc",);
-              break;
-            case "pinned-first":
-              listQuery = listQuery
-                .orderBy((eb,) => eb.case().when("is_pinned", "=", "pinned",).then(0).else(1).end(), "asc",)
-                .orderBy("updated_at", "desc",);
-              break;
-            case "unread": {
-              // Newer-than-last-read visible messages per chat (same semantics as
-              // routes/activity.ts). Unread-first, then by recency.
-              const unreadSub = sql<number>`(
-                SELECT COUNT(*)
-                FROM messages m
-                WHERE m.chat_id = chats.id
-                  AND m.visibility = 'visible'
-                  AND m.created_at > COALESCE((
-                    SELECT lastm.created_at FROM messages lastm
-                    WHERE lastm.id = (
-                      SELECT cp.last_read_message_id FROM chat_participants cp
-                      WHERE cp.chat_id = chats.id AND cp.actor_id = ${userId}
-                    )
-                  ), '')
-              )`;
-              listQuery = listQuery.orderBy(unreadSub, "desc",).orderBy("updated_at", "desc",);
-              break;
-            }
-            default: // recent
-              listQuery = listQuery.orderBy("updated_at", "desc",);
-              break;
-          }
+          listQuery = orderChatList(listQuery, sort, userId,);
 
           const chats = await listQuery.limit(pageSize,).offset(offset,).execute();
           return jsonPaginated({ data: chats, total, page, pageSize, },);
@@ -926,6 +947,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .set({ current_location_id: locationId, updated_at: new Date().toISOString(), },)
             .where("id", "=", id,)
             .execute();
+
+          // Location-scoped background auto-sync (additive; doesn't move the
+          // single current_location_id link or any 401-guard logic).
+          await autoSyncChatBackground(database, id, locationId,);
           return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name, },);
         },
         { body: ChatLocationUpdateBody, params: ChatIdParams, },
