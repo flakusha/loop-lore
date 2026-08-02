@@ -241,7 +241,7 @@ async function start() {
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
   let config = loadConfig();
-  setGlobalLogger(createLogger(config.logging,));
+  setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   await initSmk(config.encryption,);
   initAnonymousMode(config,);
@@ -357,6 +357,8 @@ async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
   await seedDefaultActors(database, config,);
+  const { seedChatSetupTemplates, } = await import("./chat/service");
+  await seedChatSetupTemplates(database,);
 
   // ── Start HTTP server ──────────────────────────────────────
   const httpServer = serve({ port: config.server.port, fetch: handleRequest, },);
@@ -534,17 +536,17 @@ async function start() {
   if (existsSync(sourcePublicDirectory,)) {
     copyDirectory(sourcePublicDirectory, destinationPublicDirectory,);
     if (needsCompression(sourcePublicDirectory, destinationPublicDirectory,)) {
-      compressionJobs.push({ label: "public", src: sourcePublicDirectory, dest: destinationPublicDirectory, });
+      compressionJobs.push({ label: "public", src: sourcePublicDirectory, dest: destinationPublicDirectory, },);
     }
   }
   if (existsSync(sourceViewsDirectory,)) {
     copyDirectory(sourceViewsDirectory, destinationPublicDirectory,);
     if (needsCompression(sourceViewsDirectory, destinationPublicDirectory,)) {
-      compressionJobs.push({ label: "views", src: sourceViewsDirectory, dest: destinationPublicDirectory, });
+      compressionJobs.push({ label: "views", src: sourceViewsDirectory, dest: destinationPublicDirectory, },);
     }
   }
   if (existsSync(DOCS_PATH,)) {
-    compressionJobs.push({ label: "docs", src: DOCS_PATH, dest: DOCS_PATH, });
+    compressionJobs.push({ label: "docs", src: DOCS_PATH, dest: DOCS_PATH, },);
   }
 
   if (compressionJobs.length > 0) {
@@ -569,7 +571,7 @@ async function start() {
     const results = await Promise.allSettled(promises,);
     for (const r of results) {
       if (r.status === "rejected") {
-        logger.warn({ message: "Asset compression failed", error: String(r.reason), },);
+        logger.warn({ message: "Asset compression failed", error: String(r.reason,), },);
       }
     }
   }
