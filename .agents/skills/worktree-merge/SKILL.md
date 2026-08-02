@@ -140,7 +140,7 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 
 ```bash
 # 0. Unlock GPG (once per session, in real terminal)
-./scripts/gpg-unlock.sh
+./scripts/gpg-unlock.mjs
 
 # 1. Create feature worktree
 ./scripts/worktree.sh new feature-xyz master
