@@ -1,10 +1,9 @@
 <!-- User Settings Modal — overlay accessible from chat -->
-<div x-data="settingsModal()">
+<div x-data="settingsModal()" x-on:settings-modal.window="open = true; load()">
   <template x-if="open">
     <div
       class="modal-overlay open"
       x-on:keydown.escape.window="open = false"
-      x-on:settings-modal.window="open = true; load()"
       @click.self="open = false"
     >
       <div
