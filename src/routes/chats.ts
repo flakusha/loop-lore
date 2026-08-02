@@ -27,9 +27,8 @@ import {
   MessageContentType,
   MessageRole,
 } from "../db/enums";
-import type { Chats, DB, } from "../db/schema";
+import type { DB, } from "../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
-import { autoSyncChatBackground, } from "./chat-backgrounds";
 import { getLogger, type Logger, } from "../logger";
 import { notifyChatInvite, } from "../notifications/service";
 import { safeJsonStringify, uid, } from "../utils";
@@ -51,6 +50,7 @@ import {
   ChatUpdateBody,
   ErrorResponse,
 } from "../validation/schemas";
+import { autoSyncChatBackground, } from "./chat-backgrounds";
 import {
   forbiddenResponse as forbidden,
   HttpStatus,
@@ -91,7 +91,7 @@ const archivedZero = t.Literal("0",);
 const ChatListQuery = t.Object({
   page: t.Optional(t.Numeric({ minimum: 1, default: 1, },),),
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 50, },),),
-  type: t.Optional(t.UnionEnum(["direct", "group",],),),
+  type: t.Optional(t.Enum({ direct: "direct", group: "group", },),),
   archived: t.Optional(t.Union([archivedTrue, archivedFalse, archivedOne, archivedZero,],),),
   sort: t.Optional(t.UnionEnum(["recent", "name", "unread", "pinned-first",],),),
 },);
@@ -101,11 +101,11 @@ const ChatListQuery = t.Object({
  * ("updated_at" desc). "unread" orders by newer-than-last-read visible message
  * count (same semantics as routes/activity.ts), then by recency.
  */
-function orderChatList(
-  query: SelectQueryBuilder<DB, "chats", Chats>,
+function orderChatList<T,>(
+  query: SelectQueryBuilder<DB, "chats", T>,
   sort: string,
   userId: string,
-): SelectQueryBuilder<DB, "chats", Chats> {
+): SelectQueryBuilder<DB, "chats", T> {
   switch (sort) {
     case "name": {
       return query.orderBy("name", "asc",).orderBy("updated_at", "desc",);
@@ -162,7 +162,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const page = (ctx.query.page as number) ?? 1;
           const pageSize = (ctx.query.pageSize as number) ?? 20;
           const offset = (page - 1) * pageSize;
@@ -205,7 +205,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const ageGateConfig = getRuntimeConfig();
           if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
@@ -314,7 +314,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chat-setup-templates",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const templates = await listChatSetupTemplates(database,);
           const payload = templates.map((tmpl,) => ({
             id: tmpl.id,
@@ -335,7 +335,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chat-setup-templates",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           if (ctx.userRole !== "admin") {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
@@ -367,7 +367,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chat-setup-templates/:templateId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           if (ctx.userRole !== "admin") {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
@@ -397,7 +397,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chat-setup-templates/:templateId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           if (ctx.userRole !== "admin") {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
@@ -417,7 +417,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/migrate",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatMigrateBody.static;
@@ -446,7 +446,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/batch/archive",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const ids = (ctx.body as { ids: string[] }).ids;
           const archived = await batchArchiveChats(database, ids, userId,);
           if (archived.length === 0) { return notFound("No chats found",); }
@@ -458,7 +458,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/batch/delete",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const ids = (ctx.body as { ids: string[] }).ids;
           const deleted = await batchDeleteChats(database, ids, userId,);
           if (deleted === 0) { return notFound("No chats found",); }
@@ -470,7 +470,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/batch/export",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const ids = (ctx.body as { ids: string[] }).ids;
           const exportData = await batchExportChats(database, ids, userId,);
           if (!exportData) { return notFound("No chats found",); }
@@ -488,7 +488,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -505,7 +505,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatUpdateBody.static;
@@ -556,7 +556,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/rename",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatRenameBody.static;
@@ -603,7 +603,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -619,7 +619,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/export",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -706,7 +706,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/participants",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -745,7 +745,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/participants",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as { actorId: string; role?: string };
@@ -810,7 +810,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/participants/:actorId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const { id, actorId, } = ctx.params as { id: string; actorId: string };
           const body = ctx.body as typeof ChatParticipantUpdateBody.static;
@@ -848,7 +848,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/participants/:actorId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const { id, actorId, } = ctx.params as { id: string; actorId: string };
 
@@ -899,7 +899,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/location",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatLocationUpdateBody.static;
@@ -959,7 +959,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/persona",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatPersonaUpdateBody.static;
@@ -987,7 +987,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/impersonate",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatImpersonateBody.static;
@@ -1016,7 +1016,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/mark-read",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatMarkReadBody.static;
 

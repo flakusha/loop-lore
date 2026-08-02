@@ -4,9 +4,9 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
 import { MessageRole, MessageStatus, } from "../db/enums";
 import { QuestType, } from "../db/enums-story";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
@@ -145,7 +145,7 @@ describe("chatsRoutes", () => {
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: unknown[]; pagination: { total: number } };
     expect(body.pagination.total,).toBeGreaterThanOrEqual(2,);
-    expect(body.data.every((c: any,) => c.created_by === userId,),).toBe(true,);
+    expect(body.data.every((c: any,) => c.created_by === userId),).toBe(true,);
   });
 
   // ── GET /api/chats filters ───────────────────────────────────
@@ -156,11 +156,11 @@ describe("chatsRoutes", () => {
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: { type: string }[]; pagination: { total: number } };
     expect(body.data.length,).toBeGreaterThan(0,);
-    expect(body.data.every((c,) => c.type === "group",),).toBe(true,);
+    expect(body.data.every((c,) => c.type === "group"),).toBe(true,);
 
     const direct = await app.handle(new Request("http://localhost/api/chats?type=direct",),);
     const directBody = (await direct.json()) as { data: { type: string }[] };
-    expect(directBody.data.every((c,) => c.type === "direct",),).toBe(true,);
+    expect(directBody.data.every((c,) => c.type === "direct"),).toBe(true,);
   });
 
   test("GET /api/chats filters by archived status", async () => {
@@ -178,13 +178,13 @@ describe("chatsRoutes", () => {
 
     const archived = await app.handle(new Request("http://localhost/api/chats?archived=true",),);
     const archivedBody = (await archived.json()) as { data: { id: string; is_pinned: string }[] };
-    expect(archivedBody.data.some((c,) => c.id === id,),).toBe(true,);
-    expect(archivedBody.data.every((c,) => c.is_pinned === "archived",),).toBe(true,);
+    expect(archivedBody.data.some((c,) => c.id === id),).toBe(true,);
+    expect(archivedBody.data.every((c,) => c.is_pinned === "archived"),).toBe(true,);
 
     const active = await app.handle(new Request("http://localhost/api/chats?archived=false",),);
     const activeBody = (await active.json()) as { data: { id: string; is_pinned: string }[] };
-    expect(activeBody.data.some((c,) => c.id === id,),).toBe(false,);
-    expect(activeBody.data.every((c,) => c.is_pinned !== "archived",),).toBe(true,);
+    expect(activeBody.data.some((c,) => c.id === id),).toBe(false,);
+    expect(activeBody.data.every((c,) => c.is_pinned !== "archived"),).toBe(true,);
   });
 
   test("GET /api/chats sort=name returns alphabetical order", async () => {
@@ -192,8 +192,8 @@ describe("chatsRoutes", () => {
     const res = await app.handle(new Request("http://localhost/api/chats?sort=name",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: { name: string }[] };
-    const names = body.data.map((c,) => c.name,);
-    const sorted = [...names,].sort((a, b,) => a.localeCompare(b,),);
+    const names = body.data.map((c,) => c.name);
+    const sorted = [...names,].sort((a, b,) => a.localeCompare(b,));
     expect(names,).toEqual(sorted,);
   });
 
@@ -202,8 +202,8 @@ describe("chatsRoutes", () => {
     const res = await app.handle(new Request("http://localhost/api/chats?sort=pinned-first",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: { is_pinned: string }[] };
-    const states = body.data.map((c,) => c.is_pinned,);
-    const firstNonPinned = states.findIndex((s,) => s !== "pinned",);
+    const states = body.data.map((c,) => c.is_pinned);
+    const firstNonPinned = states.findIndex((s,) => s !== "pinned");
     if (firstNonPinned === -1) { return; } // all pinned — trivially sorted
     for (let i = 0; i < firstNonPinned; i += 1) { expect(states[i],).toBe("pinned",); }
     for (let i = firstNonPinned; i < states.length; i += 1) { expect(states[i],).not.toBe("pinned",); }
@@ -227,14 +227,12 @@ describe("chatsRoutes", () => {
     )).json()) as { id: string };
 
     // Only c1 has a (never-read) message → 1 unseen vs 0 for c2.
-    await insertMessages(db, c1.id, userId, MessageRole.Character, "hi", {
-      created_at: "2026-07-01T00:00:00.000Z",
-    },);
+    await insertMessages(db, c1.id, userId, MessageRole.Character, "hi", {},);
 
     const res = await app.handle(new Request("http://localhost/api/chats?sort=unread",),);
     const body = (await res.json()) as { data: { id: string }[] };
-    const idx1 = body.data.findIndex((c,) => c.id === c1.id,);
-    const idx2 = body.data.findIndex((c,) => c.id === c2.id,);
+    const idx1 = body.data.findIndex((c,) => c.id === c1.id);
+    const idx2 = body.data.findIndex((c,) => c.id === c2.id);
     expect(idx1,).toBeGreaterThanOrEqual(0,);
     expect(idx2,).toBeGreaterThanOrEqual(0,);
     expect(idx1,).toBeLessThan(idx2,);
@@ -443,8 +441,8 @@ describe("chatsRoutes", () => {
     const app = createApp(db, userId,);
     const res = await app.handle(new Request("http://localhost/api/chat-setup-templates",),);
     expect(res.status,).toBe(200,);
-    const body = (await res.json()) as Array<{ slug: string; mode: string | null }>;
-    expect(body.some((t,) => t.slug === "advanced-roleplay",),).toBe(true,);
+    const body = (await res.json()) as { slug: string; mode: string | null }[];
+    expect(body.some((t,) => t.slug === "advanced-roleplay"),).toBe(true,);
   });
 
   test("POST /api/chats seeds key mechanics from templateId", async () => {
@@ -468,7 +466,8 @@ describe("chatsRoutes", () => {
     expect(chat?.mode,).toBe("story",);
     expect(chat?.turn_strategy,).toBe("scene_based",);
     expect(chat?.visual_novel,).toBe(1,);
-    const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "vn-story",).executeTakeFirst();
+    const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "vn-story",)
+      .executeTakeFirst();
     expect(chat?.template_id,).toBe(tmpl?.id,);
   });
 
@@ -616,7 +615,8 @@ describe("chatsRoutes", () => {
     const newChat = await db.selectFrom("chats",).selectAll().where("id", "=", body.newChatId,).executeTakeFirst();
     expect(newChat?.parent_chat_id,).toBe(sourceId,);
     expect(newChat?.mode,).toBe("story",);
-    const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "migrate-target",).executeTakeFirst();
+    const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "migrate-target",)
+      .executeTakeFirst();
     expect(newChat?.template_id,).toBe(tmpl?.id,);
   });
 
@@ -688,7 +688,14 @@ describe("chatsRoutes", () => {
     // Seed chat-bound party state
     await insertGroupInitiatives(db, sourceId, "scene-1", userId,);
     const msgId = uid();
-    await insertMessages(db, sourceId, userId, "user", "hello", { id: msgId, status: MessageStatus.Confirmed, } as any,);
+    await insertMessages(
+      db,
+      sourceId,
+      userId,
+      "user",
+      "hello",
+      { id: msgId, status: MessageStatus.Confirmed, } as any,
+    );
     const worldId = uid();
     await insertWorlds(db, userId, "Quest World", { id: worldId, } as any,);
     const questId = uid();
@@ -741,15 +748,35 @@ describe("chatsRoutes", () => {
     expect(res.status,).toBe(201,);
     const { newChatId, } = (await res.json()) as { newChatId: string };
 
-    const turnCount = await db.selectFrom("story_turns",).select(db.fn.countAll<number>().as("n",),).where("chat_id", "=", newChatId,).executeTakeFirst();
+    const turnCount = await db.selectFrom("story_turns",).select(db.fn.countAll<number>().as("n",),).where(
+      "chat_id",
+      "=",
+      newChatId,
+    ).executeTakeFirst();
     expect(turnCount?.n,).toBe(1,);
-    const questCount = await db.selectFrom("quest_progress",).select(db.fn.countAll<number>().as("n",),).where("chat_id", "=", newChatId,).executeTakeFirst();
+    const questCount = await db.selectFrom("quest_progress",).select(db.fn.countAll<number>().as("n",),).where(
+      "chat_id",
+      "=",
+      newChatId,
+    ).executeTakeFirst();
     expect(questCount?.n,).toBe(1,);
-    const initCount = await db.selectFrom("group_initiatives",).select(db.fn.countAll<number>().as("n",),).where("chat_id", "=", newChatId,).executeTakeFirst();
+    const initCount = await db.selectFrom("group_initiatives",).select(db.fn.countAll<number>().as("n",),).where(
+      "chat_id",
+      "=",
+      newChatId,
+    ).executeTakeFirst();
     expect(initCount?.n,).toBe(1,);
-    const pinCount = await db.selectFrom("chat_pins",).select(db.fn.countAll<number>().as("n",),).where("chat_id", "=", newChatId,).executeTakeFirst();
+    const pinCount = await db.selectFrom("chat_pins",).select(db.fn.countAll<number>().as("n",),).where(
+      "chat_id",
+      "=",
+      newChatId,
+    ).executeTakeFirst();
     expect(pinCount?.n,).toBe(1,);
-    const choiceCount = await db.selectFrom("vn_choices",).select(db.fn.countAll<number>().as("n",),).where("chat_id", "=", newChatId,).executeTakeFirst();
+    const choiceCount = await db.selectFrom("vn_choices",).select(db.fn.countAll<number>().as("n",),).where(
+      "chat_id",
+      "=",
+      newChatId,
+    ).executeTakeFirst();
     expect(choiceCount?.n,).toBe(1,);
   });
 
@@ -790,7 +817,11 @@ describe("chatsRoutes", () => {
     );
     expect(res.status,).toBe(201,);
     const { newChatId, } = (await res.json()) as { newChatId: string };
-    const turnCount = await db.selectFrom("story_turns",).select(db.fn.countAll<number>().as("n",),).where("chat_id", "=", newChatId,).executeTakeFirst();
+    const turnCount = await db.selectFrom("story_turns",).select(db.fn.countAll<number>().as("n",),).where(
+      "chat_id",
+      "=",
+      newChatId,
+    ).executeTakeFirst();
     expect(turnCount?.n,).toBe(0,);
   });
 });
