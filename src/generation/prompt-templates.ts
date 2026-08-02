@@ -5,9 +5,14 @@
  * their prompt format preferences and generation templates.
  *
  * Templates are used by the LLM to produce the final image prompt.
- * The "ignore previous instructions" pattern is intentional — the
- * LLM must switch from RPG chat mode to image description mode.
+ * The "ignore previous instructions" pattern is intentional — the LLM must
+ * switch from RPG chat mode to image description mode.
  */
+
+import type {
+  SdProfileOverride,
+  SdTemplateConfig,
+} from "../config/sections/templates";
 
 // ── Model family classification ─────────────────────────────
 
@@ -678,11 +683,6 @@ export function buildImagePrompt(
 }
 
 // ── Config-driven Profile Registry ──────────────────────────
-
-import type {
-  SdProfileOverride,
-  SdTemplateConfig,
-} from "../config/sections/templates";
 
 /**
  * Convert a config SD profile override into a full ImageModelProfile.
