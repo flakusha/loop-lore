@@ -2820,8 +2820,10 @@
     "title": "EPIC: Housing & Base Building",
     "label": "task",
     "priority": "medium",
-    "epic": "epic-housing-base-building",
-    "tags": [],
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing"
+    ],
     "source": ".plan/tickets/TASK-housing-base-building.md",
     "status": "open",
     "git_issue": "fd70c95",
@@ -2834,8 +2836,10 @@
     "title": "Housing-Companion Integration",
     "label": "task",
     "priority": "Medium",
-    "epic": "Housing & Base Building, Companion Pet & Mount",
-    "tags": [],
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing"
+    ],
     "source": ".plan/tickets/TASK-housing-companion.md"
   },
   "TASK-HOUSING-NEIGHBORHOOD": {
@@ -2844,8 +2848,10 @@
     "title": "Neighborhood & Housing Customization System",
     "label": "task",
     "priority": "medium",
-    "epic": "epic-housing-base-building",
-    "tags": [],
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing"
+    ],
     "source": ".plan/tickets/TASK-housing-neighborhood.md"
   },
   "TASK-I18N-ALPINE-CLIENT": {
@@ -3780,8 +3786,10 @@
     "title": "NSFW-Housing Integration",
     "label": "task",
     "priority": "Medium",
-    "epic": "NSFW Game Mechanics, Housing & Base Building",
-    "tags": [],
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing"
+    ],
     "source": ".plan/tickets/TASK-nsfw-housing.md"
   },
   "TASK-NSFW-HOUSING-MANAGEMENT": {
@@ -3791,8 +3799,10 @@
     "title": "NSFW Housing Management",
     "label": "task",
     "priority": "P0 — Critical",
-    "epic": "epic-nsfw-ui.md",
-    "tags": [],
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing"
+    ],
     "source": ".plan/tickets/TASK-nsfw-housing-management.md"
   },
   "TASK-NSFW-INTEGRATION-GAPS": {
@@ -6191,5 +6201,34 @@
       "messages"
     ],
     "source": ".plan/tickets/TASK-message-archive-restore-frontend.md"
+  },
+  "EPIC-HOUSING": {
+    "extid": "EPIC-HOUSING",
+    "type": "EPIC",
+    "title": "EPIC Housing System",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "housing",
+      "base-building",
+      "neighborhood",
+      "frontend"
+    ],
+    "source": ".plan/epics/epic-housing.md"
+  },
+  "TASK-HOUSING-FRONTEND": {
+    "extid": "TASK-HOUSING-FRONTEND",
+    "type": "TASK",
+    "title": "Housing Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing",
+      "frontend",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-housing-frontend.md"
   }
 }

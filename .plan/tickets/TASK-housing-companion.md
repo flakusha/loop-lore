@@ -1,15 +1,17 @@
 # TASK: Housing-Companion Integration
 
-**Epic:** Housing & Base Building, Companion Pet & Mount
+**Epic:** epic-housing
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** ⬜ Not Started
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G10 (Housing ↔ Companion)
 
 ## Summary
 
 Housing provides companion housing, pet rooms, and mount stables. Companion benefits from housing features.
+
+> Owned by the standalone `epic-housing.md` umbrella epic (sub-domain: Companion Housing).
 
 ## Background
 
