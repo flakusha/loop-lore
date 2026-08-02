@@ -2,20 +2,16 @@ import { describe, expect, test, } from "bun:test";
 
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
-import {
-  checkActorOwnership,
-  type CtxUserGuard,
-  requireCtxUser,
-} from "./actor-auth";
+import { checkActorOwnership, } from "./actor-auth";
+import { requireUserId, } from "./http-utils";
 
-describe("requireCtxUser", () => {
+describe("requireUserId", () => {
   test("returns the userId when the context is authenticated", () => {
-    const ctx: CtxUserGuard = { userId: "user-1", };
-    expect(requireCtxUser(ctx,),).toBe("user-1",);
+    expect(requireUserId({ userId: "user-1", },),).toBe("user-1",);
   });
 
   test("returns a 401 Response when userId is missing", async () => {
-    const res = requireCtxUser({ userId: null, },);
+    const res = requireUserId({ userId: null, },);
     expect(res,).toBeInstanceOf(Response,);
     expect((res as Response).status,).toBe(401,);
     const body = (await (res as Response).json()) as { error: string };
@@ -23,16 +19,15 @@ describe("requireCtxUser", () => {
   });
 
   test("returns a 401 for an empty-string userId (falsy)", () => {
-    const res = requireCtxUser({ userId: "", },);
+    const res = requireUserId({ userId: "", },);
     expect(res,).toBeInstanceOf(Response,);
   });
 
   test("uses the translator result for the unauthorized message when present", async () => {
-    const ctx: CtxUserGuard = {
+    const res = requireUserId({
       userId: null,
-      t: (key,) => (key === "errors.unauthorized" ? "Not signed in" : undefined),
-    };
-    const res = requireCtxUser(ctx,) as Response;
+      t: (key: string,) => (key === "errors.unauthorized" ? "Not signed in" : undefined),
+    },) as Response;
     const body = (await res.json()) as { error: string };
     expect(body.error,).toBe("Not signed in",);
   });
