@@ -204,6 +204,29 @@ export const ChatSetupTemplateSchema = t.Object({
   visualNovel: t.Optional(t.Boolean(),),
 },);
 
+/** Body for creating a chat setup template (admin). */
+export const ChatSetupTemplateCreateBody = t.Object({
+  slug: t.String({ minLength: 1, },),
+  name: t.String({ minLength: 1, },),
+  description: t.Optional(t.String(),),
+  mode: t.Optional(ChatModeSchema,),
+  turnStrategy: t.Optional(TurnStrategySchema,),
+  worldId: OptionalId,
+  gmConfig: t.Optional(GmConfigSchema,),
+  visualNovel: t.Optional(t.Boolean(),),
+},);
+
+/** Body for updating a chat setup template (admin). */
+export const ChatSetupTemplateUpdateBody = t.Object({
+  name: t.Optional(t.String({ minLength: 1, },),),
+  description: t.Optional(t.String(),),
+  mode: t.Optional(ChatModeSchema,),
+  turnStrategy: t.Optional(TurnStrategySchema,),
+  worldId: OptionalId,
+  gmConfig: t.Optional(GmConfigSchema,),
+  visualNovel: t.Optional(t.Boolean(),),
+},);
+
 /** Carry options for chat migration. */
 export const ChatMigrateCarrySchema = t.Object({
   participants: t.Optional(t.Boolean(),),
