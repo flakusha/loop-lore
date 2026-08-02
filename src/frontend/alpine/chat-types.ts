@@ -383,13 +383,19 @@ export interface ChatState extends AlpineMagicThis {
   _moodLoading: boolean;
   _moodCanEdit: boolean;
   _moodSliderValue: number;
+  _activeChatWorldId: string | null;
   _emotionAvatars: { emotion: string; avatarId: string; assetId: string }[];
   _emotionAvatarsLoading: boolean;
   _currentEmotionAvatar: string | null;
+  _emotionGenRunning: boolean;
+  _emotionGenStatus: string | null;
+  _emotionGenJobId: string | null;
   _activeEmotions: { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
   _activeEmotionsLoading: boolean;
   loadMood(): Promise<void>;
   loadEmotionAvatars(): Promise<void>;
+  generateEmotionAvatars(): Promise<void>;
+  _pollEmotionJob(actorId: string, jobId: string | null,): Promise<void>;
   loadEmotions(): Promise<void>;
   getActiveEmotions(): { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
   avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null;
@@ -415,7 +421,13 @@ export interface ChatState extends AlpineMagicThis {
   _updateTokenCount(): void;
 
   // ── Chat Sections (multi-location sectioning) ──────────────
-  _sections: { id: string; label: string; description: string | null; location_id: string | null; sort_index: number }[];
+  _sections: {
+    id: string;
+    label: string;
+    description: string | null;
+    location_id: string | null;
+    sort_index: number;
+  }[];
   _sectionsLoading: boolean;
   _sectionsOpen: boolean;
   _activeSectionId: string | null;
@@ -430,8 +442,24 @@ export interface ChatState extends AlpineMagicThis {
   assignMessageToSection(messageId: string, sectionId: string | null,): Promise<void>;
 
   // ── Chat Backgrounds (location sync) ────────────────────
-  _background: { id: string; name: string; type: string; location_id: string | null; asset_id: string | null; config: string | null; priority: number } | null;
-  _backgrounds: { id: string; name: string; type: string; location_id: string | null; asset_id: string | null; config: string | null; priority: number }[];
+  _background: {
+    id: string;
+    name: string;
+    type: string;
+    location_id: string | null;
+    asset_id: string | null;
+    config: string | null;
+    priority: number;
+  } | null;
+  _backgrounds: {
+    id: string;
+    name: string;
+    type: string;
+    location_id: string | null;
+    asset_id: string | null;
+    config: string | null;
+    priority: number;
+  }[];
   _backgroundsLoading: boolean;
   _backgroundsOpen: boolean;
   toggleBackgroundPanel(): void;
