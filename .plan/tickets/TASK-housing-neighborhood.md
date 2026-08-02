@@ -2,12 +2,14 @@
 
 **Priority:** Medium
 **Status:** ⬜ Not Started
-**Epic:** epic-housing-base-building
+**Epic:** epic-housing
 **Tags:** housing, neighborhood, customization, social, decoration
 
 ## Description
 
-Add neighborhood and advanced housing customization mechanics to the Housing & Base Building epic — players can form neighborhoods, visit each other's homes, and participate in housing decoration contests. Extends the housing system from isolated player homes to a social, community-driven experience.
+Add neighborhood and advanced housing customization mechanics to the Housing System epic — players can form neighborhoods, visit each other's homes, and participate in housing decoration contests. Extends the housing system from isolated player homes to a social, community-driven experience.
+
+> Owned by the standalone `epic-housing.md` umbrella epic (sub-domain: Neighborhood & Customization).
 
 ## How It Extends Existing Work
 

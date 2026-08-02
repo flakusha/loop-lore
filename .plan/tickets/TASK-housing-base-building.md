@@ -3,11 +3,11 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
-**Epic:** epic-housing-base-building
+**Epic:** epic-housing (umbrella) / epic-housing-base-building (design)
 
 ## Summary
 
-Player housing and base building system — personal homes, guild halls, crafting stations, storage, decoration, and social spaces. From `epic-housing-base-building.md`.
+Player housing and base building system — personal homes, guild halls, crafting stations, storage, decoration, and social spaces. From `epic-housing-base-building.md`. Owned by the standalone `epic-housing.md` umbrella epic.
 
 ## Scope
 
