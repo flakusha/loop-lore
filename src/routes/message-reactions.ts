@@ -6,9 +6,9 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
-import { notFound, unauthorized, } from "../validation/middleware";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonResponse, } from "./http-utils";
+import { jsonResponse, requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -42,8 +42,8 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
       .get(
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const messageId = ctx.params.id;
 
           // Verify message exists and user has access
@@ -118,8 +118,8 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
       .post(
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const messageId = ctx.params.id;
           const { emoji, } = ctx.body as { emoji: string };
 
@@ -183,8 +183,8 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
       .delete(
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(ctx.t?.("errors.unauthorized",) ?? "Unauthorized",); }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") return userId;
           const messageId = ctx.params.id;
 
           // Verify message exists and user has access
