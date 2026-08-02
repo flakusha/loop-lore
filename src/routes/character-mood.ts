@@ -16,7 +16,7 @@ import {
   MoodUpdateBody,
   SuccessResponse,
 } from "../validation/schemas";
-import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
+import { checkActorOwnership, type HandlerOpts, requireCtxUser, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -26,13 +26,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
 
   return new Elysia({ name: "character-mood", },)
     .get("/api/actors/:actorId/mood", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const worldId = ctx.query.worldId;
@@ -66,13 +61,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/mood", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const { worldId, happiness, baseMood, moodStability, } = ctx.body;
@@ -107,13 +97,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .put("/api/actors/:actorId/mood", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const {
@@ -153,13 +138,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/mood/delta", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const { worldId, delta, } = ctx.body;
@@ -188,13 +168,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .post("/api/actors/:actorId/mood/events", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const {
@@ -246,13 +221,8 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/actors/:actorId/mood/events", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const worldId = ctx.query.worldId;
