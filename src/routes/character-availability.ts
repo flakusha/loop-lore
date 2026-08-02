@@ -6,7 +6,7 @@
  */
 import { Elysia, } from "elysia";
 import { ActorIdParams, AvailabilityBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
+import { checkActorOwnership, type HandlerOpts, requireCtxUser, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -16,13 +16,8 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-availability", },)
     // ── Get availability for an actor ──────────────────────────
     .get("/api/actors/:actorId/availability", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
 
@@ -62,13 +57,8 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
     },)
     // ── Create or update availability ──────────────────────────
     .post("/api/actors/:actorId/availability", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
       const { status, usagePolicy, activityRestrictions, contentPolicy, nsfwPolicy, } = ctx.body;
@@ -139,13 +129,8 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
     },)
     // ── Delete availability ────────────────────────────────────
     .delete("/api/actors/:actorId/availability", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireCtxUser(ctx,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
 
