@@ -8,6 +8,7 @@
  * @module generation/lora/discovery-comfyui
  */
 
+import { discoveryErrorResult, fetchWithTimeout, } from "./discovery-http";
 import type { LoRADiscoveryResult, LoRAModel, } from "./types";
 import { extractLoRAName, } from "./validation";
 
@@ -61,18 +62,18 @@ export async function discoverComfyUILoras(
   timeoutMs = 10_000,
 ): Promise<LoRADiscoveryResult> {
   const timestamp = Date.now();
+  const ctx = {
+    backend: "comfyui" as const,
+    label: "ComfyUI",
+    baseUrl,
+    timeoutMs,
+    timestamp,
+  };
 
   try {
     const url = `${baseUrl.replace(/\/+$/, "",)}/object_info`;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs,);
 
-    const response = await fetch(url, {
-      headers: { "Content-Type": "application/json", },
-      signal: controller.signal,
-    },);
-
-    clearTimeout(timeout,);
+    const response = await fetchWithTimeout(url, timeoutMs,);
 
     if (!response.ok) {
       return {
@@ -125,34 +126,7 @@ export async function discoverComfyUILoras(
       timestamp,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error,);
-
-    // Handle abort (timeout)
-    if (message.includes("abort",) || message.includes("AbortError",)) {
-      return {
-        models: [],
-        backend: "comfyui",
-        timestamp,
-        error: `ComfyUI discovery timed out after ${timeoutMs}ms`,
-      };
-    }
-
-    // Handle connection errors
-    if (message.includes("ECONNREFUSED",) || message.includes("fetch failed",)) {
-      return {
-        models: [],
-        backend: "comfyui",
-        timestamp,
-        error: `ComfyUI server not reachable at ${baseUrl}`,
-      };
-    }
-
-    return {
-      models: [],
-      backend: "comfyui",
-      timestamp,
-      error: `ComfyUI discovery error: ${message}`,
-    };
+    return discoveryErrorResult(error, ctx,);
   }
 }
 
