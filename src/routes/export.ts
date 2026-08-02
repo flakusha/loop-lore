@@ -12,11 +12,11 @@ import type { DB, } from "../db/schema";
 import { resolveUserIdFromRequest, } from "../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import {
-  addChecksum,
   exportAssetsToZip,
   exportCharactersToZip,
   exportChatsToZip,
   exportWorldsToZip,
+  finalizeExportZip,
 } from "./export-shared";
 import { HttpStatus, jsonError, } from "./http-utils";
 
@@ -81,54 +81,15 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
 
     // Build metadata
     const now = new Date();
-    const exportInfo = {
-      exported_at: now.toISOString(),
-      exported_by: userId,
+    const zipBuffer = await finalizeExportZip({
+      zip,
+      checksums,
+      counts,
+      userId,
+      now,
       format,
-      includes: include,
-      item_count: Object.values(counts,).reduce((a, b,) => a + b, 0,),
-    };
-    const schemaVersion = {
-      schema_version: "1.0",
-      export_format_version: "1.0",
-    };
-
-    // Add metadata to zip + checksums
-    const metadataFolder = zip.folder("metadata",);
-    const exportInfoStr = JSON.stringify(exportInfo, null, 2,);
-    metadataFolder?.file("export-info.json", exportInfoStr,);
-    addChecksum(checksums, "metadata/export-info.json", exportInfoStr,);
-
-    const schemaVersionStr = JSON.stringify(schemaVersion, null, 2,);
-    metadataFolder?.file("schema-version.json", schemaVersionStr,);
-    addChecksum(checksums, "metadata/schema-version.json", schemaVersionStr,);
-
-    // Build manifest (includes checksums from all folders + metadata)
-    const manifest = {
-      version: "1.0",
-      exported_at: now.toISOString(),
-      exported_by: userId,
-      format_version: "1.0",
-      contents: counts,
-      checksums,
-    };
-    const manifestStr = JSON.stringify(manifest, null, 2,);
-    zip.file("manifest.json", manifestStr,);
-    addChecksum(checksums, "manifest.json", manifestStr,);
-
-    // Regenerate ZIP with final manifest (checksums updated)
-    const finalManifest = {
-      version: "1.0",
-      exported_at: now.toISOString(),
-      exported_by: userId,
-      format_version: "1.0",
-      contents: counts,
-      checksums,
-    };
-    zip.file("manifest.json", JSON.stringify(finalManifest, null, 2,),);
-
-    // Generate ZIP
-    const zipBuffer = await zip.generateAsync({ type: "nodebuffer", },);
+      include,
+    },);
     const timestamp = now.toISOString().slice(0, 10,);
 
     return new Response(new Uint8Array(zipBuffer,), {
