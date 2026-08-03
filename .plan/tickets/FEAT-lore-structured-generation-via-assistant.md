@@ -1,4 +1,5 @@
 # FEAT: Lore Structured Generation via Assistant
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium
@@ -14,6 +15,7 @@ Generated entities (`/create world/loc/char/item`) should emit **structured lore
 ## Background
 
 Lore audience scoping was recently implemented (uncommitted on `dev`):
+
 - `src/assistant/lore/audience.ts` — pure `isLoreVisibleTo()` / `parseLoreScope()`, `ActorIdentity`, `LoreSubject` taxonomy (world/location/profession/race/faction/item)
 - Migration `028_lore_audience_scope.ts` — `audience_scope` JSON column on **both** `world_lore_entries` + `actor_lore_entries`
 - `loreSection` filters both lore fetches through `isLoreVisibleTo` (race from `species` trait, professions from traits + `professions.discipline`) **before** cooldown/constant/selective gates
@@ -45,12 +47,12 @@ Extend the `/create` LLM prompt to emit a `lore[]` array alongside entity data. 
 
 ### 2. Entity → lore target mapping
 
-| `/create` | Lore target | Subject |
-|---|---|---|
-| `world` | `world_lore_entries` | `world` (global) + `race`/`profession`/`location` for culture |
-| `loc` | `world_lore_entries` | `location` bound to generated `locationId`, `requires_presence: true` |
-| `char` | `actor_lore_entries` (private book) + race/profession subjects | `race`/`profession` |
-| `item` | `world_lore_entries` | `item` |
+| `/create` | Lore target                                                    | Subject                                                               |
+| --------- | -------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `world`   | `world_lore_entries`                                           | `world` (global) + `race`/`profession`/`location` for culture         |
+| `loc`     | `world_lore_entries`                                           | `location` bound to generated `locationId`, `requires_presence: true` |
+| `char`    | `actor_lore_entries` (private book) + race/profession subjects | `race`/`profession`                                                   |
+| `item`    | `world_lore_entries`                                           | `item`                                                                |
 
 ### 3. Persistence + validation
 

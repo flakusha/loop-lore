@@ -72,12 +72,12 @@ interface MoodClassification {
 
 ## Current State (2026-08-01 review)
 
-| Component                              | Status                                                        | Location                              |
-| -------------------------------------- | ------------------------------------------------------------- | ------------------------------------- |
-| `MoodHook` (`mood_shift`)              | ⚠️ keyword-based positive/negative word counting, **no LLM**; doc header claims "Uses the LLM" (stale) | `generation/hooks/mood-hook.ts` |
-| `character_mood` table                 | ✅ schema exists                                               | `src/db/schema-character.ts:63`       |
-| Mood → expression modifier injection   | ❌ not wired from hook `data`                                  | —                                     |
-| Hook event consumption                 | ❌ `data.dominantMood`/`delta` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431` |
+| Component                            | Status                                                                                                | Location                         |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------- | -------------------------------- |
+| `MoodHook` (`mood_shift`)            | ⚠️ keyword-based positive/negative word counting, **no LLM**; doc header claims "Uses the LLM" (stale) | `generation/hooks/mood-hook.ts`  |
+| `character_mood` table               | ✅ schema exists                                                                                      | `src/db/schema-character.ts:63`  |
+| Mood → expression modifier injection | ❌ not wired from hook `data`                                                                         | —                                |
+| Hook event consumption               | ❌ `data.dominantMood`/`delta` never read — `auto-gen.ts` consumes only `hookResult.allowed`          | `generation/auto-gen.ts:412-431` |
 
 Key finding: `mood_shift` events fire but nothing applies them —
 no `character_mood` write, no expression modifier, no avatar context.
