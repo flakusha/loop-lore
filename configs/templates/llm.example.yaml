@@ -6,11 +6,15 @@
 # extend: adds new prompts, existing keys from config win on conflict
 # replace: wipes all built-in prompts, uses only these
 # override: deep merges over built-ins
+#
+# Every purpose key below maps to a generation domain. Each key resolves as:
+#   configs/templates/llm.yaml  →  code default (src/prompts/registry.ts)
+# Setting a key here OVERRIDES the code default. Keys omitted keep code defaults.
 
 merge: extend
 
 systemPrompts:
-  # Main chat system prompt (used in conversation)
+  # Main chat system prompt (generic baseline; actors usually define their own)
   chat: "You are {{charName}}. {{charDescription}}"
   # Summarization prompt
   summarize: "Summarize this conversation concisely."
@@ -18,6 +22,24 @@ systemPrompts:
   imagePrompt: "Write image generation tags for: {{scene}}"
   # Out-of-character / GM narration
   ooc: "You are the game master. Narrate the scene."
+  # Assistant mode system prompt (default for the seeded Assistant actor)
+  assistant: "You are Loop Lore's Assistant — a versatile helper for RPG creators and players."
+  # GM turn-taking system prompt (when chat gmConfig.llmConfig.systemPrompt is unset)
+  gm: "You are the Game Master for an RPG story. Narrate the scene, control NPCs, and advance the plot in character."
+  # NSFW content-rating classification (JSON classifier; no in-tree LLM consumer yet — overridable now)
+  nsfw: "You are a content rating classifier. Reply with ONLY a JSON object: {\"rating\": \"sfw\"|\"nsfw_mild\"|\"nsfw_moderate\"|\"nsfw_intense\"|\"nsfw_extreme\", \"confidence\": 0.0-1.0}"
+  # Visual Novel scene description generation
+  vn: "You are a Visual Novel story narrator. Generate immersive, atmospheric prose for visual novel scenes."
+  # Visual Novel branching choice generation
+  vnChoices: "You are a Visual Novel branching narrative designer. Generate meaningful player choices."
+  # Aux: chat → scene transition classification (JSON)
+  transition: "You are a transition detector. Analyze whether the user message narrates a scene/location change."
+  # Aux: pre-generation intent classification (JSON)
+  intent: "Classify the user message intent. Reply with ONLY a JSON object: {\"intent\": \"greeting|question|command|roleplay|narrative\", \"confidence\": 0.0-1.0}"
+  # Aux: memory extraction (JSON array of facts)
+  memory: "Extract key facts from this conversation. Return a JSON array of facts."
+  # Add NEW purposes with any key name — the resolver looks up by purpose key,
+  # so custom keys are available to any consumer that resolves them.
 
 # Chat format templates (for Jinja/vLLM-style formatting)
 # Keys are format names, values have system/user/assistant template strings

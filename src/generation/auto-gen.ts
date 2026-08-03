@@ -13,7 +13,7 @@
 import type { Kysely, } from "kysely";
 import { marked, } from "marked";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
-import { callAux, INTENT_CLASSIFIER_PROMPT, } from "../aux-pipeline";
+import { callAux, } from "../aux-pipeline";
 import { MoodService, } from "../characters/services/mood-service";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
@@ -34,6 +34,7 @@ import { extractMentionedActorIds, } from "../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../group-chat/turn-selector";
 import { getLogger, } from "../logger";
 import { getRuntimeNsfwConfig, } from "../nsfw/runtime-config";
+import { resolveSystemPrompt, } from "../prompts";
 import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../regex/html-sanitize";
 import { type GameMasterConfig, GameMasterService, } from "../story";
 import type { GenerateTextFn, } from "../story/game-master";
@@ -130,7 +131,7 @@ export async function classifyIntent(
 ): Promise<IntentClassification | null> {
   try {
     const messages = [
-      { role: "system" as const, content: INTENT_CLASSIFIER_PROMPT, },
+      { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "intent",), },
       { role: "user" as const, content: userMessage.slice(0, 500,), },
     ];
 
@@ -901,6 +902,7 @@ async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
     chatId,
     gmConfig: gmConfigParsed,
     generateText,
+    systemPromptDefault: resolveSystemPrompt(config.templates.llm, "gm",),
   },);
 
   await gm.initialize();

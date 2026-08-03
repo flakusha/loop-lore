@@ -6,14 +6,14 @@ import type { SectionBuilder, } from "../types";
 
 export const systemSection: SectionBuilder = {
   name: "system",
-  enabled: (ctx,) => !!(
-    ctx.params.systemPromptOverride ??
-    ctx.params.systemPromptFallback ??
-    ctx.actor.system_prompt
-  ),
-  build: (ctx,) => {
-    const content =
+  enabled: (ctx,) =>
+    !!(
       ctx.params.systemPromptOverride ??
+        ctx.params.systemPromptFallback ??
+        ctx.actor.system_prompt
+    ),
+  build: (ctx,) => {
+    const content = ctx.params.systemPromptOverride ??
       ctx.params.systemPromptFallback ??
       ctx.actor.system_prompt ??
       "";

@@ -6,10 +6,11 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { callAux, MEMORY_EXTRACTION_PROMPT, } from "../aux-pipeline";
+import { callAux, } from "../aux-pipeline";
 import type { DB, } from "../db";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
+import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, } from "../utils";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
@@ -33,7 +34,7 @@ export async function extractMemories(
     `Assistant: ${aiContent}`,
   ].filter(Boolean,).join("\n",);
 
-  const prompt = `${MEMORY_EXTRACTION_PROMPT}\n\nConversation:\n${conversationContext}`;
+  const prompt = `${resolveSystemPrompt(config.templates.llm, "memory",)}\n\nConversation:\n${conversationContext}`;
   const messages: GenerationMessage[] = [{ role: "user", content: prompt, },];
 
   try {
