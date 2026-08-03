@@ -4,12 +4,13 @@
  * failure.
  */
 import { PromptAssembler, } from "../../../assistant/prompt-assembler";
+import { GM_SYSTEM_PROMPT, } from "../../../prompts";
 import { hardcodedDecision, } from "./hardcoded";
 import type { GmDecisionStrategy, } from "./types";
 
 export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) => {
   const llmConfig = deps.config.llmConfig;
-  const systemPrompt = llmConfig?.systemPrompt ?? "You are the Game Master for an RPG story.";
+  const systemPrompt = llmConfig?.systemPrompt ?? deps.systemPromptDefault ?? GM_SYSTEM_PROMPT;
 
   const assembler = new PromptAssembler(deps.db,);
   const assembled = await assembler.assemble({

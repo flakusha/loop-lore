@@ -13,10 +13,11 @@
  * - BYO apiKey parity via resolveProvider (user → chat/actor → server)
  */
 import type { Kysely, } from "kysely";
-import { callAux, TRANSITION_CLASSIFIER_PROMPT, } from "../aux-pipeline";
+import { callAux, } from "../aux-pipeline";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { resolveSystemPrompt, } from "../prompts";
 import {
   CONTEXT_CUT,
   MOVEMENT_VERBS,
@@ -97,7 +98,7 @@ async function classifyWithAuxLlm(
 ): Promise<Omit<TransitionClassification, "source"> | null> {
   // Build minimal context: system + recent messages + current message
   const messages = [
-    { role: "system" as const, content: TRANSITION_CLASSIFIER_PROMPT, },
+    { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "transition",), },
     ...recentMessages.map((m,) => ({
       role: "user" as const,
       content: m.slice(0, 200,),

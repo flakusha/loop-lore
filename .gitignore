@@ -45,11 +45,19 @@ configs/*.yml
 configs/characters/*.toml
 configs/characters/*.yaml
 configs/characters/*.yml
+# Template overrides (configs/templates/llm.yaml etc.) are user-specific
+configs/templates/*.toml
+configs/templates/*.yaml
+configs/templates/*.yml
 # Whitelist: only example files + workflows are committed
 !configs/*.example.toml
 !configs/*.example.yaml
 !configs/*.example.yml
 !configs/env.example.yaml
+# Whitelist: only example template files are committed
+!configs/templates/*.example.toml
+!configs/templates/*.example.yaml
+!configs/templates/*.example.yml
 
 # TODO Remove once confirmed AND agent-related paths
 .opencode
