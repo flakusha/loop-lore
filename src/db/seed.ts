@@ -41,7 +41,7 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
         display_name: "Assistant",
         description:
           "Helps with character, location, and world generation; prompt refinement; text review; and general creative assistance.",
-        system_prompt: resolveSystemPrompt(config?.templates.llm, "assistant") || ASSISTANT_SYSTEM_PROMPT,
+        system_prompt: resolveSystemPrompt(config?.templates?.llm, "assistant",) || ASSISTANT_SYSTEM_PROMPT,
         user_id: null,
         owner_id: null,
         visibility: "public",
