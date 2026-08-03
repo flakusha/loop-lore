@@ -43,10 +43,10 @@ export interface ActorIdentity {
 }
 
 /** Optional callback to test whether a location is inside another's scope tree. */
-export type LocationInScope = (locId: string, scopeLocId: string) => boolean;
+export type LocationInScope = (locId: string, scopeLocId: string,) => boolean;
 
 /** Parse a stored audience_scope JSON string. Returns null for empty/invalid. */
-export function parseLoreScope(json: string | null | undefined): LoreScope | null {
+export function parseLoreScope(json: string | null | undefined,): LoreScope | null {
   if (!json) { return null; }
   const result = safeJsonParse<Record<string, unknown>>(json,);
   if (!result.ok) { return null; }
@@ -66,7 +66,7 @@ export function parseLoreScope(json: string | null | undefined): LoreScope | nul
  * @returns `true` if the actor may know this lore.
  */
 export function isLoreVisibleTo(
-  entry: { audienceScope?: LoreScope | null; },
+  entry: { audienceScope?: LoreScope | null },
   identity: ActorIdentity,
   locationInScope?: LocationInScope,
 ): boolean {
@@ -86,7 +86,7 @@ export function isLoreVisibleTo(
     case "profession": {
       if (!subject.profession) { return false; }
       const target = subject.profession.toLowerCase();
-      return identity.professions.some((p,) => p.toLowerCase() === target,);
+      return identity.professions.some((p,) => p.toLowerCase() === target);
     }
     case "location": {
       const scopeLoc = subject.locationId;
@@ -97,7 +97,7 @@ export function isLoreVisibleTo(
       if (scope.requires_presence === false) { return true; }
       if (!identity.locationId) { return false; }
       return locationInScope
-        ? locationInScope(identity.locationId, scopeLoc)
+        ? locationInScope(identity.locationId, scopeLoc,)
         : identity.locationId === scopeLoc;
     }
     default: {

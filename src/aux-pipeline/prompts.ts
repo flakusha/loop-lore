@@ -31,8 +31,7 @@ Examples:
 - "Tell me about the quest" → isTransition: false`;
 
 /** System prompt for pre-generation intent classification. */
-export const INTENT_CLASSIFIER_PROMPT =
-  'Classify the user message intent. Reply with ONLY a JSON object: ' +
+export const INTENT_CLASSIFIER_PROMPT = "Classify the user message intent. Reply with ONLY a JSON object: " +
   '{"intent": "greeting|question|command|roleplay|narrative", "confidence": 0.0-1.0, "shortReply": true/false}. ' +
   "shortReply=true for greetings, simple questions, short commands. " +
   "shortReply=false for roleplay, narrative, complex requests.";

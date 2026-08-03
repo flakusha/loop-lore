@@ -12,7 +12,9 @@
   x-cloak
   data-testid="sections-panel"
 >
-  <button class="btn-icon" @click="$store.ui.showSectionsPanel = false" x-bind:title="t('common.close')">&times;</button>
+  <button class="btn-icon" @click="$store.ui.showSectionsPanel = false" x-bind:title="t('common.close')">
+    &times;
+  </button>
   <div class="panel-content">
     <div class="nav-section-title">Sections</div>
 
@@ -33,9 +35,16 @@
 
     <!-- Create section -->
     <div style="display: grid; gap: var(--space-2); margin-bottom: var(--space-3)">
-      <input class="form-input" type="text" x-model="_newSectionLabel" placeholder="Section label (e.g. The Dark Forest)" />
+      <input
+        class="form-input"
+        type="text"
+        x-model="_newSectionLabel"
+        placeholder="Section label (e.g. The Dark Forest)"
+      />
       <input class="form-input" type="text" x-model="_newSectionDesc" placeholder="Description (optional)" />
-      <button class="btn btn-primary btn-xs" @click="createSection()" :disabled="!_newSectionLabel.trim()">Add section</button>
+      <button class="btn btn-primary btn-xs" @click="createSection()" :disabled="!_newSectionLabel.trim()">
+        Add section
+      </button>
     </div>
 
     <!-- Section list -->
@@ -49,11 +58,24 @@
         >
           <div style="display: grid; gap: 1px">
             <span style="font-weight: 600" x-text="s.label"></span>
-            <span x-show="s.description" style="font-size: 11px; color: var(--text-secondary)" x-text="s.description"></span>
+            <span
+              x-show="s.description"
+              style="font-size: 11px; color: var(--text-secondary)"
+              x-text="s.description"
+            ></span>
           </div>
           <div style="display: flex; gap: var(--space-1)">
-            <button class="btn-icon btn-xs" @click="moveSection(s.id, -1)" :disabled="i === 0" title="Move up">&uarr;</button>
-            <button class="btn-icon btn-xs" @click="moveSection(s.id, 1)" :disabled="i === _sections.length - 1" title="Move down">&darr;</button>
+            <button class="btn-icon btn-xs" @click="moveSection(s.id, -1)" :disabled="i === 0" title="Move up">
+              &uarr;
+            </button>
+            <button
+              class="btn-icon btn-xs"
+              @click="moveSection(s.id, 1)"
+              :disabled="i === _sections.length - 1"
+              title="Move down"
+            >
+              &darr;
+            </button>
             <button class="btn-icon btn-xs" @click="deleteSection(s.id)" title="Delete">&times;</button>
           </div>
         </div>
@@ -64,12 +86,26 @@
     <div class="nav-section-title" style="margin-top: var(--space-4)">Assign messages</div>
     <div style="display: grid; gap: var(--space-2); max-height: 240px; overflow: auto">
       <template x-for="m in messages" :key="m.id">
-        <div class="panel-item" style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between">
-          <span style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px" x-text="(m.content || '').slice(0, 40)"></span>
+        <div
+          class="panel-item"
+          style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between"
+        >
+          <span
+            style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px"
+            x-text="(m.content || '').slice(0, 40)"
+          ></span>
           <span style="font-size: 10px; color: var(--text-secondary)" x-text="sectionLabel(m.section_id)"></span>
           <div style="display: flex; gap: var(--space-1)">
-            <button class="btn btn-primary btn-xs" @click="assignMessageToSection(m.id, _activeSectionId)" :disabled="!_activeSectionId">Assign</button>
-            <button class="btn btn-danger btn-xs" @click="assignMessageToSection(m.id, null)" x-show="m.section_id">Clear</button>
+            <button
+              class="btn btn-primary btn-xs"
+              @click="assignMessageToSection(m.id, _activeSectionId)"
+              :disabled="!_activeSectionId"
+            >
+              Assign
+            </button>
+            <button class="btn btn-danger btn-xs" @click="assignMessageToSection(m.id, null)" x-show="m.section_id">
+              Clear
+            </button>
           </div>
         </div>
       </template>

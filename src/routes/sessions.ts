@@ -64,10 +64,9 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
        */
       .get("/api/sessions", async (ctx,) => {
         const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") return userId;
+        if (typeof userId !== "string") { return userId; }
         const userRole = (ctx as any).userRole as string | null;
         const sessionId = (ctx as any).sessionId as string | null;
-
 
         const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
         const isAdmin = userRole === "admin";
@@ -131,11 +130,10 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
         "/api/sessions/:id",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = (ctx as any).userRole as string | null;
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
-
 
           const session = await database
             .selectFrom("sessions",)
@@ -178,11 +176,10 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
         "/api/sessions/:id",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = (ctx as any).userRole as string | null;
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
-
 
           const session = await database
             .selectFrom("sessions",)

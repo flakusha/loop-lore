@@ -11,7 +11,7 @@ beforeAll(() => {
   // root logger exists. Other tests initialize it as a module side effect;
   // --isolate processes skip that, so init here explicitly.
   createLogger({ level: "error", },);
-});
+},);
 
 describe("DEFAULTS", () => {
   function defaults() {

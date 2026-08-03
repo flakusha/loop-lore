@@ -6,6 +6,7 @@
 import type { Kysely, } from "kysely";
 import { RelationshipsService, } from "../../../characters/services/relationships-service";
 import type { DB, } from "../../../db/schema";
+import { selectWithinBudget, } from "../../../memory/budget";
 import {
   DEFAULT_COMFORT,
   DEFAULT_INJECTION_CONFIG,
@@ -13,7 +14,6 @@ import {
   selectMemoriesForInjection,
 } from "../../../memory/injection";
 import { type ProvisionContext, provisionMemories, } from "../../../memory/provision";
-import { selectWithinBudget, } from "../../../memory/budget";
 import type { MemoryEntry, } from "../../../memory/types";
 import { safeJsonParse, } from "../../../utils";
 import { wrapSection, } from "../../xml-utils";
@@ -161,7 +161,7 @@ export const memorySection: SectionBuilder = {
     // run with owner != viewer for other participants, so shared/public memories of others
     // can be revealed to this actor while private/secret/blocked memories are withheld
     // per-viewer.
-    const ownerSources = [ctx.actor.id, ...participantIds.filter((p,) => p !== ctx.actor.id,),];
+    const ownerSources = [ctx.actor.id, ...participantIds.filter((p,) => p !== ctx.actor.id),];
     const provisionTasks = ownerSources.map((ownerId,) => {
       const isSpeaker = ownerId === ctx.actor.id;
       const memories = fetchActorMemories(

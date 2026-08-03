@@ -63,7 +63,9 @@ import { execSync, } from "child_process";
 
 let repoRoot = resolve(__dirname, "..", "..", "..",);
 try {
-  const gitRoot = execSync("git rev-parse --show-toplevel", { encoding: "utf-8", cwd: repoRoot, timeout: 5000, },).trim();
+  // eslint-disable-next-line sonarjs/no-os-command-from-path -- trusted dev script; git via user PATH is standard, fallback only (symlink/worktree CWD)
+  const gitRoot = execSync("git rev-parse --show-toplevel", { encoding: "utf-8", cwd: repoRoot, timeout: 5000, },)
+    .trim();
   if (gitRoot) { repoRoot = gitRoot; }
 } catch {
   // git not available or not a git repo — use resolved path

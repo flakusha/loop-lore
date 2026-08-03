@@ -58,7 +58,7 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
         "/api/chats/search",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const query = ctx.query as typeof ChatSearchQuery.static;
           const q = query.q?.trim().toLowerCase() ?? "";
@@ -148,7 +148,7 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
         "/api/chats/joinable",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const query = ctx.query as typeof JoinableQuery.static;
           const limit = query.limit ?? 20;
@@ -212,7 +212,7 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/join",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const chatId = (ctx.params as { id: string }).id;
 
@@ -262,7 +262,7 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/transfer",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
 
           const chatId = (ctx.params as { id: string }).id;

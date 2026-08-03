@@ -228,7 +228,24 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   // Check for existing asset with same content and owner
   const existing = await database
     .selectFrom("assets",)
-    .select(["id", "filename", "mime_type", "asset_type", "size_bytes", "storage_backend", "alt_text", "visibility", "created_at", "encryption_tier", "encrypted_key_id", "storage_path", "width", "height", "duration_secs", "owner_id",])
+    .select([
+      "id",
+      "filename",
+      "mime_type",
+      "asset_type",
+      "size_bytes",
+      "storage_backend",
+      "alt_text",
+      "visibility",
+      "created_at",
+      "encryption_tier",
+      "encrypted_key_id",
+      "storage_path",
+      "width",
+      "height",
+      "duration_secs",
+      "owner_id",
+    ],)
     .where("content_hash", "=", contentHash,)
     .where("owner_id", "=", input.ownerId,)
     .executeTakeFirst();

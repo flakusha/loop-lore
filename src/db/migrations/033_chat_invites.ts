@@ -27,8 +27,8 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .addColumn("expires_at", "text",)
     .addColumn("max_uses", "integer",)
-    .addColumn("uses", "integer", (col,) => col.notNull().defaultTo(0),)
-    .addColumn("revoked", "integer", (col,) => col.notNull().defaultTo(0),)
+    .addColumn("uses", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("revoked", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   await db.schema

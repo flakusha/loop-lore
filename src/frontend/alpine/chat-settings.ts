@@ -1,13 +1,13 @@
+import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../vn";
 import { apiFetch, } from "./htmx";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import { log as rootLog, } from "./logger";
-import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../vn";
 import type { ChatState, GmConfig, Message, } from "./types";
 
 const log = rootLog.child({ module: "chat-settings", },);
 
 /** Map a chat-page message to the VN renderer's message shape. */
-function toVnMessage(m: Message): VnMessage {
+function toVnMessage(m: Message,): VnMessage {
   const role = m.role as VnMessage["role"];
   const isVnRole = ["assistant", "user", "system",].includes(role,);
   return {
@@ -48,7 +48,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatSettingsName = chat?.name ?? "";
     this._chatSettingsMode = chat?.mode ?? "story";
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
-    this._chatOnline = Array.isArray(this.messages) && this.messages.some((m,) => m.status === "confirmed",);
+    this._chatOnline = Array.isArray(this.messages,) && this.messages.some((m,) => m.status === "confirmed");
     this._groupPaused = this.isChatPaused(chat,);
     if (chat?.gm_config) {
       const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
@@ -69,7 +69,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
    * so the renderer and the settings modal stay in sync.
    */
   updateVnMode() {
-    const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat,);
+    const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat);
     const config = chat?.gm_config
       ? jsonParseOr<GmConfig>(chat.gm_config, {},)
       : {};
@@ -82,7 +82,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
-    const vnMessages = this.messages.map((m,) => toVnMessage(m,),);
+    const vnMessages = this.messages.map((m,) => toVnMessage(m,));
     if (vnMessages.length === 0) {
       destroyVnRenderer();
       return;

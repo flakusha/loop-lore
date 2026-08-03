@@ -55,7 +55,7 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
       "/api/i18n/locale",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") return userId;
+        if (typeof userId !== "string") { return userId; }
 
         const body = ctx.body;
         const newLocale = body.locale;
