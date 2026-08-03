@@ -11,11 +11,11 @@
  *     (and can be opted out via data.promoteToLore === false)
  */
 import { describe, expect, test, } from "bun:test";
+import { isLoreVisibleTo, parseLoreScope, } from "../../assistant/lore/audience";
 import { WorldEventType, } from "../../db/enums-story";
+import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
-import { createLogger, } from "../../logger";
-import { isLoreVisibleTo, parseLoreScope, } from "../../assistant/lore/audience";
 import { applyEvents, } from "./application";
 import { promoteEventToLore, } from "./promote-lore";
 
@@ -42,23 +42,23 @@ describe("promoteEventToLore — event → world lore", () => {
         data: { newLoreEntry: "The western gate fell to the Dark Elf warband.", },
       },);
 
-      expect(id).toBeString();
+      expect(id,).toBeString();
       const rows = await db
         .selectFrom("world_lore_entries",)
-        .select([ "id", "world_id", "content", "audience_scope", "enabled", ])
+        .select(["id", "world_id", "content", "audience_scope", "enabled",],)
         .where("id", "=", id!,)
         .execute();
 
-      expect(rows).toHaveLength(1);
-      expect(rows[0]!.world_id).toBe(worldId);
-      expect(rows[0]!.content).toBe("The western gate fell to the Dark Elf warband.");
-      expect(rows[0]!.enabled).toBe("enabled");
+      expect(rows,).toHaveLength(1,);
+      expect(rows[0]!.world_id,).toBe(worldId,);
+      expect(rows[0]!.content,).toBe("The western gate fell to the Dark Elf warband.",);
+      expect(rows[0]!.enabled,).toBe("enabled",);
       // No audience scope supplied → null (visible to everyone).
-      expect(rows[0]!.audience_scope).toBeNull();
+      expect(rows[0]!.audience_scope,).toBeNull();
     } finally {
       sqlite.close();
     }
-  },);
+  });
 
   test("stores a normalized audience_scope and gates visibility by race", async () => {
     const { db, sqlite, worldId, } = await setupWorld();
@@ -71,11 +71,11 @@ describe("promoteEventToLore — event → world lore", () => {
         },
       },);
 
-      const rows = await db.selectFrom("world_lore_entries",).select([ "audience_scope", ]).execute();
-      expect(rows).toHaveLength(1);
+      const rows = await db.selectFrom("world_lore_entries",).select(["audience_scope",],).execute();
+      expect(rows,).toHaveLength(1,);
 
       const scope = parseLoreScope(rows[0]!.audience_scope,);
-      expect(scope).not.toBeNull();
+      expect(scope,).not.toBeNull();
 
       const visibleToElf = isLoreVisibleTo({ audienceScope: scope, }, {
         race: "dark elf",
@@ -88,12 +88,12 @@ describe("promoteEventToLore — event → world lore", () => {
         locationId: null,
       },);
 
-      expect(visibleToElf).toBeTrue();
-      expect(visibleToHuman).toBeFalse();
+      expect(visibleToElf,).toBeTrue();
+      expect(visibleToHuman,).toBeFalse();
     } finally {
       sqlite.close();
     }
-  },);
+  });
 
   test("rejects malformed audience_scope, storing null", async () => {
     const { db, sqlite, worldId, } = await setupWorld();
@@ -107,12 +107,12 @@ describe("promoteEventToLore — event → world lore", () => {
       },);
 
       const rows = await db.selectFrom("world_lore_entries",).select("audience_scope",).execute();
-      expect(rows).toHaveLength(1);
-      expect(rows[0]!.audience_scope).toBeNull();
+      expect(rows,).toHaveLength(1,);
+      expect(rows[0]!.audience_scope,).toBeNull();
     } finally {
       sqlite.close();
     }
-  },);
+  });
 
   test("returns null and writes nothing when there is no content", async () => {
     const { db, sqlite, worldId, } = await setupWorld();
@@ -122,13 +122,13 @@ describe("promoteEventToLore — event → world lore", () => {
         data: {},
       },);
 
-      expect(id).toBeNull();
+      expect(id,).toBeNull();
       const rows = await db.selectFrom("world_lore_entries",).select("id",).execute();
-      expect(rows).toHaveLength(0);
+      expect(rows,).toHaveLength(0,);
     } finally {
       sqlite.close();
     }
-  },);
+  });
 });
 
 describe("applyEvents — WorldLoreUpdate promotes to structured lore", () => {
@@ -138,24 +138,32 @@ describe("applyEvents — WorldLoreUpdate promotes to structured lore", () => {
       const countRows = () => db.selectFrom("world_lore_entries",).select("id",).execute();
 
       // Default: promoted.
-      await applyEvents({ db, worldId, events: [ {
-        type: WorldEventType.WorldLoreUpdate,
-        timestamp: new Date().toISOString(),
-        description: "Lore update",
-        data: { newLoreEntry: "The old king died and his heir was crowned.", },
-      }, ], },);
-      expect(await countRows(),).toHaveLength(1);
+      await applyEvents({
+        db,
+        worldId,
+        events: [{
+          type: WorldEventType.WorldLoreUpdate,
+          timestamp: new Date().toISOString(),
+          description: "Lore update",
+          data: { newLoreEntry: "The old king died and his heir was crowned.", },
+        },],
+      },);
+      expect(await countRows(),).toHaveLength(1,);
 
       // Opt-out: data.promoteToLore === false suppresses promotion.
-      await applyEvents({ db, worldId, events: [ {
-        type: WorldEventType.WorldLoreUpdate,
-        timestamp: new Date().toISOString(),
-        description: "Lore update",
-        data: { newLoreEntry: "A private court secret.", promoteToLore: false, },
-      }, ], },);
-      expect(await countRows(),).toHaveLength(1);
+      await applyEvents({
+        db,
+        worldId,
+        events: [{
+          type: WorldEventType.WorldLoreUpdate,
+          timestamp: new Date().toISOString(),
+          description: "Lore update",
+          data: { newLoreEntry: "A private court secret.", promoteToLore: false, },
+        },],
+      },);
+      expect(await countRows(),).toHaveLength(1,);
     } finally {
       sqlite.close();
     }
-  },);
+  });
 });

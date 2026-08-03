@@ -25,7 +25,7 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
   return new Elysia({ name: "analytics", },)
     .get("/api/analytics/chat/:chatId", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") return userId;
+      if (typeof userId !== "string") { return userId; }
 
       if (!isTelemetryEnabled()) {
         return jsonResponse({
@@ -72,7 +72,7 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
     },)
     .get("/api/analytics/overview", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") return userId;
+      if (typeof userId !== "string") { return userId; }
 
       if (!isTelemetryEnabled()) {
         return jsonResponse({

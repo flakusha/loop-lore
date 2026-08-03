@@ -5,18 +5,18 @@
 // Never overrides existing DB records.
 // Supports hard IDs for deterministic test reseeding.
 
+import type { Kysely, } from "kysely";
 import { readFileSync, } from "node:fs";
 import { basename, } from "node:path";
-import type { Kysely, } from "kysely";
+import { createAsset, mimeFromExtension, } from "../assets/service";
 import type { CharactersConfig, } from "../config/schema";
-import type { DB, } from "../db/schema";
+import { UserRole, UserStatus, } from "../db/enums";
 import { TraitCategory, } from "../db/enums-character";
-import { UserRole, UserStatus } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { safeJsonStringify, uid } from "../utils";
-import { TraitsService, } from "./services/traits-service";
+import { safeJsonStringify, uid, } from "../utils";
 import { AvatarService, } from "./services/avatar-service";
-import { createAsset, mimeFromExtension } from "../assets/service";
+import { TraitsService, } from "./services/traits-service";
 
 interface SeedResult {
   created: number;
@@ -29,11 +29,11 @@ interface SeedResult {
  * Trims whitespace and title-cases each word (e.g. "high elf" -> "High Elf").
  * Matching in `isLoreVisibleTo` is case-insensitive, so this is for display/consistency.
  */
-function normalizeSpecies(value: string): string {
+function normalizeSpecies(value: string,): string {
   return value
     .trim()
     .replace(/\s+/g, " ",)
-    .replace(/\S+/g, (w,) => w[0]!.toUpperCase() + w.slice(1).toLowerCase(),);
+    .replace(/\S+/g, (w,) => w[0]!.toUpperCase() + w.slice(1,).toLowerCase(),);
 }
 
 /** Resolved avatar image for seeding. */
@@ -49,10 +49,12 @@ interface ResolvedAvatar {
  * `default` produces a minimal deterministic SVG placeholder so the wiring is always exercised.
  * Returns null when a `file` source cannot be read.
  */
-function resolveTemplateAvatar(source: NonNullable<CharactersConfig["templates"][number]["avatar"]>,): ResolvedAvatar | null {
+function resolveTemplateAvatar(
+  source: NonNullable<CharactersConfig["templates"][number]["avatar"]>,
+): ResolvedAvatar | null {
   if (source.type === "file") {
     try {
-      const buffer = readFileSync(source.path);
+      const buffer = readFileSync(source.path,);
       const mimeType = mimeFromExtension(source.path,);
       return { buffer, mimeType, filename: basename(source.path,), };
     } catch {
@@ -76,7 +78,8 @@ const SYSTEM_USER_ID = "system-user";
  * Returns the id to use as the asset owner.
  */
 async function ensureSystemUser(database: Kysely<DB>,): Promise<string> {
-  const existing = await database.selectFrom("users",).select("id",).where("id", "=", SYSTEM_USER_ID,).executeTakeFirst();
+  const existing = await database.selectFrom("users",).select("id",).where("id", "=", SYSTEM_USER_ID,)
+    .executeTakeFirst();
   if (existing) { return existing.id; }
   await database
     .insertInto("users",)
@@ -118,8 +121,8 @@ export async function seedCharacterTemplates(
     return result;
   }
 
-  const traits = new TraitsService(database);
-  const avatars = new AvatarService(database);
+  const traits = new TraitsService(database,);
+  const avatars = new AvatarService(database,);
 
   for (const template of config.templates) {
     try {
@@ -172,28 +175,44 @@ export async function seedCharacterTemplates(
           data_source_format: "json",
           data_raw: null,
           format_version: 0,
-        })
+        },)
         .execute();
 
       // Persist identity traits (species/subrace/gender/age -> identity, homeland/culture -> background)
       const identityTraits: { name: string; value: string; category: string }[] = [];
       if (template.species) {
-        identityTraits.push({ name: "species", value: normalizeSpecies(template.species,), category: TraitCategory.Identity, });
+        identityTraits.push({
+          name: "species",
+          value: normalizeSpecies(template.species,),
+          category: TraitCategory.Identity,
+        },);
       }
       if (template.subrace) {
-        identityTraits.push({ name: "subrace", value: normalizeSpecies(template.subrace,), category: TraitCategory.Identity, });
+        identityTraits.push({
+          name: "subrace",
+          value: normalizeSpecies(template.subrace,),
+          category: TraitCategory.Identity,
+        },);
       }
       if (template.gender) {
-        identityTraits.push({ name: "gender", value: template.gender, category: TraitCategory.Identity, });
+        identityTraits.push({ name: "gender", value: template.gender, category: TraitCategory.Identity, },);
       }
       if (template.age !== undefined && template.age !== null) {
-        identityTraits.push({ name: "age", value: String(template.age,), category: TraitCategory.Identity, });
+        identityTraits.push({ name: "age", value: String(template.age,), category: TraitCategory.Identity, },);
       }
       if (template.homeland) {
-        identityTraits.push({ name: "homeland", value: normalizeSpecies(template.homeland,), category: TraitCategory.Background, });
+        identityTraits.push({
+          name: "homeland",
+          value: normalizeSpecies(template.homeland,),
+          category: TraitCategory.Background,
+        },);
       }
       if (template.culture) {
-        identityTraits.push({ name: "culture", value: normalizeSpecies(template.culture,), category: TraitCategory.Background, });
+        identityTraits.push({
+          name: "culture",
+          value: normalizeSpecies(template.culture,),
+          category: TraitCategory.Background,
+        },);
       }
       for (const t of identityTraits) {
         await traits.createPermanentTrait({ actorId: id, category: t.category, name: t.name, value: t.value, },);

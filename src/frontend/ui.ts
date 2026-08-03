@@ -11,11 +11,11 @@ import { eventCurrentTarget, eventTarget, } from "./dom";
 
 import {
   applyDirection,
+  INTERPOLATE_RE,
   loadTranslations,
   resolveKey,
   saveLocale,
   type TranslationMap,
-  INTERPOLATE_RE,
 } from "./i18n";
 
 export function toggleSidebar(): void {

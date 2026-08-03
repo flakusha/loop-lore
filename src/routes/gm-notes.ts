@@ -78,7 +78,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/shadow-notes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -117,7 +117,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/shadow-notes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -148,7 +148,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/shadow-notes/:noteId/reveal",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
 
@@ -174,7 +174,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/shadow-notes/:noteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
 
@@ -201,7 +201,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/whitenotes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -237,7 +237,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/whitenotes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
@@ -270,7 +270,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/whitenotes/:noteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
 

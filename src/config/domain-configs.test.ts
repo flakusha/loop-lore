@@ -14,7 +14,7 @@ describe("Domain Config Loading", () => {
     // root logger exists. Other tests initialize it as a module side effect;
     // --isolate processes skip that, so init here explicitly.
     createLogger({ level: "error", },);
-  });
+  },);
   test("loads domain-specific config files from configs/", () => {
     // Create test configs directory
     mkdirSync(path.join(TEST_DIR, "configs",), { recursive: true, },);

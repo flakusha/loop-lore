@@ -140,7 +140,7 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
         const mime = mimeFromExtension(asset.name,);
         const assetType = detectAssetType(mime,);
 
-        const { asset: assetRecord } = await createAsset({
+        const { asset: assetRecord, } = await createAsset({
           database,
           input: {
             ownerId: userId,

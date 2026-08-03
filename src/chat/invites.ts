@@ -18,8 +18,8 @@
  *
  * See .plan/tickets/invite-code-generation.md and .plan/tickets/join-flow-mechanics.md.
  */
-import { randomBytes, } from "node:crypto";
 import type { Kysely, } from "kysely";
+import { randomBytes, } from "node:crypto";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 
@@ -86,7 +86,7 @@ function toRow(row: {
   max_uses: number | null;
   uses: number;
   revoked: number;
-}): ChatInviteRow {
+},): ChatInviteRow {
   return {
     id: row.id,
     chatId: row.chat_id,
@@ -178,7 +178,7 @@ export async function listInvites(
     .where("chat_id", "=", chatId,)
     .orderBy("created_at", "desc",)
     .execute();
-  return rows.map((row,) => toRow(row,),);
+  return rows.map((row,) => toRow(row,));
 }
 
 // ── Revoke ──────────────────────────────────────────────────
@@ -269,7 +269,7 @@ export async function redeemInvite(
     return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
   }
 
-  await database.transaction().execute(async (trx) => {
+  await database.transaction().execute(async (trx,) => {
     await trx
       .insertInto("chat_participants",)
       .values({

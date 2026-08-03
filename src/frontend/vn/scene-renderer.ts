@@ -5,6 +5,7 @@
  * Maps messages to scenes, manages navigation, orchestrates transitions.
  */
 
+import type { MessageAttachment, } from "../alpine/chat-types";
 import { destroyChoiceCards, initChoiceCards, loadChoices, } from "./choice-cards";
 import {
   createLoadingIndicator,
@@ -21,7 +22,6 @@ import type { VnSettings, } from "./settings";
 import { getVnSettings, } from "./settings";
 import { transitionScene, type TransitionType, } from "./transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "./typewriter";
-import type { MessageAttachment, } from "../alpine/chat-types";
 
 /** A single VN scene derived from one or more messages. */
 export interface VnScene {
