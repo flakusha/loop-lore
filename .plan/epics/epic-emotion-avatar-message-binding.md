@@ -61,7 +61,7 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 
 ## Tasks
 
-- [ ] Migration: add `messages.emotion` column (in place) + regen schema  ✅
+- [ ] Migration: add `messages.emotion` column (in place) + regen schema ✅
 - [ ] Backend: persist `dominantEmotion` to `messages.emotion` on assistant
       message create (consume `EmotionHook` output in the generation/chat path)
 - [ ] Backend: expose `emotion` in the messages read API

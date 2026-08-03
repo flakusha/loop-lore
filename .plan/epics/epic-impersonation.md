@@ -13,32 +13,32 @@ Character impersonation — 1 character can be impersonated once per world (exce
 
 ### ✅ Done
 
-| Layer | Component | File | Notes |
-|-------|-----------|------|-------|
-| DB | `impersonate_actor_id` column | `schema-core.ts:163` | Nullable text on `chat_participants` |
-| DB | `persona_id` column | `schema-core.ts:164` | Nullable text on `chat_participants` |
-| DB | Migration | `db/migrations/008_chat_features.ts` | Columns + indexes exist |
-| API | `PUT /api/chats/:id/impersonate` | `routes/chats.ts:634` | Sets `impersonate_actor_id` |
-| API | `PUT /api/chats/:id/persona` | `routes/chats.ts:606` | Sets `persona_id` |
-| API | `GET/POST/PATCH/DELETE /api/personas` | `personas/controller.ts` | Full CRUD + convert-to-character |
-| Prompt | `<user_persona>` section | `assistant/prompt/sections/user-persona.ts` | Reads impersonated actor OR persona, injects into system prompt |
-| Service | `updateImpersonation()` | `chat/service.ts:508` | Helper exists (unused by route — see duplication gap) |
-| Frontend | `toggleImpersonate()` | `frontend/alpine/chat-actions.ts:214` | Calls impersonate API for current character |
-| Frontend | `loadImpersonationState()` | `frontend/alpine/chat-actions.ts:268` | Reads participants on chat load |
-| Frontend | Chat settings persona/impersonation | `frontend/alpine/chat-settings.ts:113-155` | `toggleImpersonation()`, `loadPersonas()`, `setPersona()` |
-| Frontend | Personas page | `frontend/alpine/personas.ts` | Full CRUD via Alpine |
-| Commands | `/impersonate` and `/char` | `assistant/commands/impersonate.ts` | Returns `impersonate-toggle` / `impersonate-select` actions |
-| Intent | `impersonate` intent | `assistant/intent.ts:30` | Registered, no approval required |
+| Layer    | Component                             | File                                        | Notes                                                           |
+| -------- | ------------------------------------- | ------------------------------------------- | --------------------------------------------------------------- |
+| DB       | `impersonate_actor_id` column         | `schema-core.ts:163`                        | Nullable text on `chat_participants`                            |
+| DB       | `persona_id` column                   | `schema-core.ts:164`                        | Nullable text on `chat_participants`                            |
+| DB       | Migration                             | `db/migrations/008_chat_features.ts`        | Columns + indexes exist                                         |
+| API      | `PUT /api/chats/:id/impersonate`      | `routes/chats.ts:634`                       | Sets `impersonate_actor_id`                                     |
+| API      | `PUT /api/chats/:id/persona`          | `routes/chats.ts:606`                       | Sets `persona_id`                                               |
+| API      | `GET/POST/PATCH/DELETE /api/personas` | `personas/controller.ts`                    | Full CRUD + convert-to-character                                |
+| Prompt   | `<user_persona>` section              | `assistant/prompt/sections/user-persona.ts` | Reads impersonated actor OR persona, injects into system prompt |
+| Service  | `updateImpersonation()`               | `chat/service.ts:508`                       | Helper exists (unused by route — see duplication gap)           |
+| Frontend | `toggleImpersonate()`                 | `frontend/alpine/chat-actions.ts:214`       | Calls impersonate API for current character                     |
+| Frontend | `loadImpersonationState()`            | `frontend/alpine/chat-actions.ts:268`       | Reads participants on chat load                                 |
+| Frontend | Chat settings persona/impersonation   | `frontend/alpine/chat-settings.ts:113-155`  | `toggleImpersonation()`, `loadPersonas()`, `setPersona()`       |
+| Frontend | Personas page                         | `frontend/alpine/personas.ts`               | Full CRUD via Alpine                                            |
+| Commands | `/impersonate` and `/char`            | `assistant/commands/impersonate.ts`         | Returns `impersonate-toggle` / `impersonate-select` actions     |
+| Intent   | `impersonate` intent                  | `assistant/intent.ts:30`                    | Registered, no approval required                                |
 
 ### ❌ Gaps (Items below)
 
-| Gap | Severity | Description |
-|-----|----------|-------------|
-| Command dispatch | High | `/impersonate <name>` returns `impersonate-select` action but `dispatchCommandAction()` doesn't handle it — command is a no-op from chat input |
-| Name→Actor resolution | High | `impersonate-select` passes `{ characterName }` but no resolver maps name → actor ID |
-| De-duplication | Medium | `routes/chats.ts` does inline DB update for impersonation instead of calling `chat/service.ts#updateImpersonation()` |
-| 1-per-world constraint | Medium | Spec says 1 impersonated character per world/group, no validation exists |
-| Memory isolation | Low | No special handling for impersonated character's memories |
+| Gap                    | Severity | Description                                                                                                                                    |
+| ---------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command dispatch       | High     | `/impersonate <name>` returns `impersonate-select` action but `dispatchCommandAction()` doesn't handle it — command is a no-op from chat input |
+| Name→Actor resolution  | High     | `impersonate-select` passes `{ characterName }` but no resolver maps name → actor ID                                                           |
+| De-duplication         | Medium   | `routes/chats.ts` does inline DB update for impersonation instead of calling `chat/service.ts#updateImpersonation()`                           |
+| 1-per-world constraint | Medium   | Spec says 1 impersonated character per world/group, no validation exists                                                                       |
+| Memory isolation       | Low      | No special handling for impersonated character's memories                                                                                      |
 
 ## Refactored Task List
 
