@@ -38,24 +38,24 @@ draft → review → published → archived
  rejected (reworkable back to draft)
 ```
 
-| State | Meaning | Injected/visible? |
-|---|---|---|
-| `draft` | Generated, stored | No |
-| `review` | Flagged for human review | No |
-| `published` | Committed after review | Yes |
-| `rejected` | Discarded (reworkable) | No |
-| `archived` | Retired | No |
+| State       | Meaning                  | Injected/visible? |
+| ----------- | ------------------------ | ----------------- |
+| `draft`     | Generated, stored        | No                |
+| `review`    | Flagged for human review | No                |
+| `published` | Committed after review   | Yes               |
+| `rejected`  | Discarded (reworkable)   | No                |
+| `archived`  | Retired                  | No                |
 
 ### 2. Persistence
 
 Add `publication_status` column (or reuse existing fields):
 
-| Table | Field |
-|---|---|
-| `worlds` | new `publication_status` (none today) |
-| `locations` | new `publication_status` (none today) |
-| `actors` | reuse `visibility` or new field |
-| `items` | reuse `visibility` |
+| Table          | Field                                     |
+| -------------- | ----------------------------------------- |
+| `worlds`       | new `publication_status` (none today)     |
+| `locations`    | new `publication_status` (none today)     |
+| `actors`       | reuse `visibility` or new field           |
+| `items`        | reuse `visibility`                        |
 | `lore_entries` | reuse `enabled` (only `enabled` injected) |
 
 ### 3. `/create` writes DRAFT

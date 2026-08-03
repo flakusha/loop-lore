@@ -27,17 +27,17 @@ immutable once the chat is online; changing key mechanics requires migrating to 
 
 ## 2. Current State (verified)
 
-| Concern                        | Location                                             | Behavior                                                     |
-| ------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------ |
-| Create body                    | `src/validation/schemas.ts:157` `ChatCreateBody`     | Rich: type, mode, turnStrategy, worldId, currentLocationId, gmConfig, visualNovel |
-| Create handler                 | `src/routes/chats.ts` `.post("/api/chats")`          | Passes subset through to `createChat`                        |
-| Update body                    | `src/validation/schemas.ts:171` `ChatUpdateBody`     | name, mode, turnStrategy, worldId, isPinned, isPaused, freezePanel, gmConfig, visualNovel |
-| Update service                 | `src/chat/service.ts:179` `updateChat`               | Writes mode/turnStrategy/worldId/gmConfig/visualNovel unconditionally |
-| Only online guard              | `src/chat/service.ts:191` panel-freeze (admin)       | Blocks all settings when `isPanelFrozen`, non-admin          |
-| ChatType/ChatMode/ResponseStyle| `.plan/design/chat-mode-reconciliation.md`           | 3-axis split; `mode` currently overloaded (`direct`/`group`/`story`) |
-| Creation presets idea          | `.plan/tickets/IDEA-chat-setup-templates.md`         | `ChatSetupTemplate` = validated `ChatCreateBody` preset      |
-| Existing migration/fork hook   | `chats.parent_chat_id` (`src/db/migrations/parts/004_chats_actors.ts:19`) | Side-chat / fork linkage; SET NULL on delete |
-| Location change (sanctioned)   | `PUT /api/chats/:id/location`                       | Dedicated runtime op; also `transfer` endpoint exists        |
+| Concern                         | Location                                                                  | Behavior                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Create body                     | `src/validation/schemas.ts:157` `ChatCreateBody`                          | Rich: type, mode, turnStrategy, worldId, currentLocationId, gmConfig, visualNovel         |
+| Create handler                  | `src/routes/chats.ts` `.post("/api/chats")`                               | Passes subset through to `createChat`                                                     |
+| Update body                     | `src/validation/schemas.ts:171` `ChatUpdateBody`                          | name, mode, turnStrategy, worldId, isPinned, isPaused, freezePanel, gmConfig, visualNovel |
+| Update service                  | `src/chat/service.ts:179` `updateChat`                                    | Writes mode/turnStrategy/worldId/gmConfig/visualNovel unconditionally                     |
+| Only online guard               | `src/chat/service.ts:191` panel-freeze (admin)                            | Blocks all settings when `isPanelFrozen`, non-admin                                       |
+| ChatType/ChatMode/ResponseStyle | `.plan/design/chat-mode-reconciliation.md`                                | 3-axis split; `mode` currently overloaded (`direct`/`group`/`story`)                      |
+| Creation presets idea           | `.plan/tickets/IDEA-chat-setup-templates.md`                              | `ChatSetupTemplate` = validated `ChatCreateBody` preset                                   |
+| Existing migration/fork hook    | `chats.parent_chat_id` (`src/db/migrations/parts/004_chats_actors.ts:19`) | Side-chat / fork linkage; SET NULL on delete                                              |
+| Location change (sanctioned)    | `PUT /api/chats/:id/location`                                             | Dedicated runtime op; also `transfer` endpoint exists                                     |
 
 ---
 
@@ -49,6 +49,7 @@ Split every chat-config field into **key mechanics** (foundational, immutable on
 **session state** (runtime, mutable online).
 
 **Key mechanics (immutable once online):**
+
 - `mode` (behavioral: story / battle / question / inventory — post-reconciliation)
 - `turnStrategy` (round_robin / scene_based / initiative / quest_driven / hybrid)
 - `gmConfig.assistantRole` (off / helper / gm / moderator) + `visualNovel`
@@ -57,11 +58,12 @@ Split every chat-config field into **key mechanics** (foundational, immutable on
 - `type` (direct/group) — already set at creation
 
 **Session state (mutable online):**
+
 - `name`, `isPinned`, `isPaused`, `freezePanel` (admin)
 - `currentLocationId` — runtime travel, already dedicated endpoint
 - participant add/remove (separate concern)
 
-Rationale: key mechanics change *how the story/mechanics are generated and orchestrated*.
+Rationale: key mechanics change _how the story/mechanics are generated and orchestrated_.
 Changing them mid-conversation breaks continuity, invalidates in-flight turns, and desyncs
 memory/world state. Session state affects only presentation/UX and is safe to flip live.
 
@@ -74,6 +76,7 @@ check: `EXISTS(SELECT 1 FROM messages WHERE chat_id = ? AND status = 'confirmed'
 ### 3.3 Templates bound at creation
 
 Per `IDEA-chat-setup-templates.md`:
+
 - `chat_setup_templates` table (or config-declared presets) keyed by slug; each row a validated
   `ChatCreateBody`-shaped preset with sane limits.
 - `GET /api/chat-setup-templates` to list; `POST /api/chats` accepts optional `templateId` that
@@ -103,18 +106,19 @@ New endpoint: `POST /api/chats/:id/migrate`
 {
   "templateId": "advanced-roleplay",
   "carry": {
-    "participants": true,   // copy chat_participants
-    "memory": true,         // copy actor_memories / memory carry
-    "history": "summary",   // "none" | "summary" | "full"
-    "state": true,          // copy story_turns, quest_progress, group_initiatives (party/game state)
-    "pins": true,           // copy chat_pins, vn_choices
-    "worldState": true      // copy world/npc/location state (only when migrating to a different world)
+    "participants": true, // copy chat_participants
+    "memory": true, // copy actor_memories / memory carry
+    "history": "summary", // "none" | "summary" | "full"
+    "state": true, // copy story_turns, quest_progress, group_initiatives (party/game state)
+    "pins": true, // copy chat_pins, vn_choices
+    "worldState": true // copy world/npc/location state (only when migrating to a different world)
   },
   "name": "optional new name"
 }
 ```
 
 Behavior:
+
 1. Validate target template + ownership.
 2. Create new chat with `parent_chat_id = sourceChatId`, seeded from the template's
    `ChatCreateBody` (key mechanics come from the **new** template).
@@ -138,7 +142,7 @@ satisfies the preference: **you cannot change key mechanics in place — you for
 - Battle (`TASK-chat-battle-mode-switch.md`) and VN-start are **mode overlays**. Per the
   reconciliation doc, toggling a transient overlay (enter/exit battle) is generation-only and
   safe to switch online **if** it does not change key mechanics. Recommendation: treat battle
-  enter/exit as a **session-state overlay toggle** (mutable online), but the *chat's* bound
+  enter/exit as a **session-state overlay toggle** (mutable online), but the _chat's_ bound
   `mode`/`turnStrategy` remain immutable. Define each overlay's mutability explicitly to avoid
   ambiguity.
 - `gmConfig` human/hybrid GM is unreachable from UI today (shape gap in
