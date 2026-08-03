@@ -25,7 +25,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("turn_strategy", "text",)
     .addColumn("world_id", "text",)
     .addColumn("gm_config", "text",)
-    .addColumn("visual_novel", "integer", (col,) => col.notNull().defaultTo(0),)
+    .addColumn("visual_novel", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(new Date().toISOString(),),)
     .execute();

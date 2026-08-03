@@ -6,10 +6,10 @@
  * (race/profession/location) are filtered by the speaking actor's identity.
  */
 import type { Kysely, } from "kysely";
-import { wrapSection, } from "../../xml-utils";
+import type { DB, } from "../../../db/schema";
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
 import type { ActorIdentity, } from "../../lore/audience";
-import type { DB, } from "../../../db/schema";
+import { wrapSection, } from "../../xml-utils";
 import { parseKeywords, recentUserWords, } from "../keywords";
 import type { SectionBuilder, } from "../types";
 
@@ -54,10 +54,10 @@ async function resolveActorIdentity(
   actorId: string,
   worldId: string | null,
 ): Promise<ActorIdentity> {
-  const [traitRows, professionRows] = await Promise.all([
+  const [traitRows, professionRows,] = await Promise.all([
     db
       .selectFrom("character_permanent_traits",)
-      .select(["trait_name", "trait_value",])
+      .select(["trait_name", "trait_value",],)
       .where("actor_id", "=", actorId,)
       .execute(),
     worldId
@@ -67,11 +67,11 @@ async function resolveActorIdentity(
         .where("actor_id", "=", actorId,)
         .where("world_id", "=", worldId,)
         .execute()
-      : Promise.resolve([] as { discipline: string }[]),
-  ]);
+      : Promise.resolve([] as { discipline: string }[],),
+  ],);
 
   const traits = traitRows as LoreIdentityRow[];
-  const species = traits.find((t,) => t.trait_name === "species",)?.trait_value ?? "human";
+  const species = traits.find((t,) => t.trait_name === "species")?.trait_value ?? "human";
   const professions = new Set<string>();
   for (const t of traits) {
     if (t.trait_name === "profession" || t.trait_name === "class") {
@@ -95,7 +95,17 @@ export const loreSection: SectionBuilder = {
     const [actorLore, worldLore, identity,] = await Promise.all([
       ctx.db
         .selectFrom("actor_lore_entries",)
-        .select(["content", "keys", "position", "constant", "selective", "cooldown_seconds", "last_activated", "id", "audience_scope",],)
+        .select([
+          "content",
+          "keys",
+          "position",
+          "constant",
+          "selective",
+          "cooldown_seconds",
+          "last_activated",
+          "id",
+          "audience_scope",
+        ],)
         .where("actor_id", "=", actor.id,)
         .where("enabled", "=", "enabled",)
         .orderBy("position", "asc",)
@@ -118,7 +128,7 @@ export const loreSection: SectionBuilder = {
           .where("enabled", "=", "enabled",)
           .orderBy("position", "asc",)
           .execute()
-        : Promise.resolve([] as LoreRow[]),
+        : Promise.resolve([] as LoreRow[],),
       resolveActorIdentity(ctx.db, actor.id, chat.world_id,),
     ],);
 

@@ -27,8 +27,8 @@ describe("chat setup templates", () => {
 
     const templates = await listChatSetupTemplates(db,);
     expect(templates.length,).toBeGreaterThan(0,);
-    expect(templates.some((t,) => t.slug === "simple-direct",),).toBe(true,);
-  },);
+    expect(templates.some((t,) => t.slug === "simple-direct"),).toBe(true,);
+  });
 
   it("is idempotent — does not re-seed when templates exist", async () => {
     const seeded = await seedChatSetupTemplates(db,);
@@ -38,7 +38,7 @@ describe("chat setup templates", () => {
     expect(again,).toBe(0,);
     const second = await listChatSetupTemplates(db,);
     expect(second.length,).toBe(first.length,);
-  },);
+  });
 
   it("createChatSetupTemplate persists a template and rejects a duplicate slug", async () => {
     const r1 = await createChatSetupTemplate(db, {
@@ -60,7 +60,7 @@ describe("chat setup templates", () => {
     expect(dup.ok,).toBe(false,);
     if (dup.ok) { return; }
     expect(dup.code,).toBe("conflict",);
-  },);
+  });
 
   it("updateChatSetupTemplate edits fields and applies to future chats", async () => {
     await createChatSetupTemplate(db, {
@@ -77,7 +77,7 @@ describe("chat setup templates", () => {
     if (!r.ok) { return; }
     expect(r.template.name,).toBe("After",);
     expect(r.template.visual_novel,).toBe(1,);
-  },);
+  });
 
   it("deleteChatSetupTemplate removes the row", async () => {
     await createChatSetupTemplate(db, { slug: "delete-me", name: "Delete Me", },);
@@ -88,5 +88,5 @@ describe("chat setup templates", () => {
     expect(again.ok,).toBe(false,);
     if (again.ok) { return; }
     expect(again.code,).toBe("not_found",);
-  },);
+  });
 });

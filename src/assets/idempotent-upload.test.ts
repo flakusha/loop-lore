@@ -10,12 +10,12 @@ import { describe, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { AssetType, } from "../db/enums";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
-import { makeMinimalPng, } from "./test-helpers";
 import { createAsset, } from "./service";
-import { AssetType, } from "../db/enums";
 import type { CreateAssetInput, } from "./service";
+import { makeMinimalPng, } from "./test-helpers";
 
 describe("createAsset idempotent upload", () => {
   test("uploading the same file content returns duplicate:true with the existing asset", async () => {
@@ -47,13 +47,13 @@ describe("createAsset idempotent upload", () => {
     try {
       // First upload creates the asset, no duplicate.
       const first = await createAsset({ database: db, input: base, uploadDir, },);
-      expect(first.duplicate).toBe(false,);
-      expect(first.asset.id).toBeTruthy();
+      expect(first.duplicate,).toBe(false,);
+      expect(first.asset.id,).toBeTruthy();
 
       // Second upload with identical content + owner must return the same asset.
       const second = await createAsset({ database: db, input: base, uploadDir, },);
-      expect(second.duplicate).toBe(true,);
-      expect(second.asset.id).toBe(first.asset.id,);
+      expect(second.duplicate,).toBe(true,);
+      expect(second.asset.id,).toBe(first.asset.id,);
 
       // Same file but a different owner is NOT a duplicate (owner-scoped).
       const otherOwner = await createAsset({
@@ -61,13 +61,13 @@ describe("createAsset idempotent upload", () => {
         input: { ...base, ownerId: otherOwnerId, },
         uploadDir,
       },);
-      expect(otherOwner.duplicate).toBe(false,);
-      expect(otherOwner.asset.id).not.toBe(first.asset.id,);
+      expect(otherOwner.duplicate,).toBe(false,);
+      expect(otherOwner.asset.id,).not.toBe(first.asset.id,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
     }
-  },);
+  });
 
   test("different file content creates a new asset (no false duplicate)", async () => {
     const { db, sqlite, } = await createTestDb();
@@ -108,12 +108,12 @@ describe("createAsset idempotent upload", () => {
         uploadDir,
       },);
 
-      expect(first.duplicate).toBe(false,);
-      expect(second.duplicate).toBe(false,);
-      expect(second.asset.id).not.toBe(first.asset.id,);
+      expect(first.duplicate,).toBe(false,);
+      expect(second.duplicate,).toBe(false,);
+      expect(second.asset.id,).not.toBe(first.asset.id,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
     }
-  },);
+  });
 });

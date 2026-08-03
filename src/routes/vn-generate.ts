@@ -11,6 +11,7 @@ import { PromptAssembler, } from "../assistant/prompt-assembler";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { resolveProvider, } from "../generation/providers/registry";
+import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, } from "../utils";
 import { jsonError, jsonResponse, } from "./http-utils";
 
@@ -60,28 +61,8 @@ interface ChoiceGenerationResult {
 }
 
 // ── Prompt Templates ───────────────────────────────────────
-
-const STORY_SYSTEM_PROMPT =
-  `You are a Visual Novel story narrator. Generate immersive, atmospheric prose for visual novel scenes.
-
-Style guidelines:
-- Use vivid sensory details (sight, sound, touch, smell)
-- Write in present tense for immediacy
-- Keep paragraphs short (2-4 sentences) for VN readability
-- Include character actions and reactions in *asterisk notation*
-- Maintain consistency with established characters and locations
-- End with a natural transition point for the next scene`;
-
-const CHOICES_SYSTEM_PROMPT =
-  `You are a Visual Novel branching narrative designer. Generate meaningful player choices that affect the story.
-
-Choice guidelines:
-- Each choice should lead to meaningfully different outcomes
-- Include both safe and risky options
-- Consider character relationships and story consequences
-- Keep labels concise (3-8 words) but descriptive
-- Provide brief descriptions of potential outcomes
-- Balance player agency with narrative coherence`;
+// VN system prompts live in src/prompts/vn.ts (registry defaults); the
+// resolver overlays user overrides from configs/templates/llm.yaml.
 
 // ── Story Generation ───────────────────────────────────────
 
@@ -109,7 +90,7 @@ async function generateStoryDescription(
     chatId,
     actorId,
     modelId: "default",
-    systemPromptOverride: STORY_SYSTEM_PROMPT,
+    systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vn"),
     includeStoryContext: true,
     includeExamples: false,
   },);
@@ -185,7 +166,7 @@ async function generateBranchingChoices(
     chatId,
     actorId,
     modelId: "default",
-    systemPromptOverride: CHOICES_SYSTEM_PROMPT,
+    systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vnChoices"),
     includeStoryContext: true,
     includeExamples: false,
   },);

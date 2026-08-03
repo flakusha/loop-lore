@@ -1,7 +1,7 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { getLogger, type Logger, } from "../logger";
-import { ASSISTANT_SYSTEM_PROMPT, } from "../prompts";
+import { ASSISTANT_SYSTEM_PROMPT, resolveSystemPrompt, } from "../prompts";
 import { uid, } from "../utils";
 import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
 import type { DB, } from "./schema";
@@ -41,7 +41,7 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
         display_name: "Assistant",
         description:
           "Helps with character, location, and world generation; prompt refinement; text review; and general creative assistance.",
-        system_prompt: ASSISTANT_SYSTEM_PROMPT,
+        system_prompt: resolveSystemPrompt(config?.templates.llm, "assistant") || ASSISTANT_SYSTEM_PROMPT,
         user_id: null,
         owner_id: null,
         visibility: "public",
