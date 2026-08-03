@@ -140,6 +140,7 @@ export class GameMasterService {
   private readonly config: GameMasterConfig;
   private readonly chatId: string;
   private readonly generateText: GenerateTextFn;
+  private readonly systemPromptDefault: string | undefined;
 
   // ── Private Methods ────────────────────────────────────────────
 
@@ -160,7 +161,13 @@ export class GameMasterService {
 
     const strategy = GM_DECISIONS[this.config.type] ?? GM_DECISIONS[GameMasterType.Llm];
     return strategy(
-      { config: this.config, generateText: this.generateText, db: this.db, chatId: this.chatId, },
+      {
+        config: this.config,
+        generateText: this.generateText,
+        db: this.db,
+        chatId: this.chatId,
+        systemPromptDefault: this.systemPromptDefault,
+      },
       context,
       actorId,
     );
@@ -216,12 +223,15 @@ export class GameMasterService {
       generateText: GenerateTextFn;
       gmConfig: GameMasterConfig;
       qualityThresholds?: Partial<QualityThresholds>;
+      /** Config-driven default GM system prompt (resolved from templates) */
+      systemPromptDefault?: string;
     },
   ) {
     this.db = options.db;
     this.chatId = options.chatId;
     this.config = options.gmConfig;
     this.generateText = options.generateText;
+    this.systemPromptDefault = options.systemPromptDefault;
     this.turnManager = new TurnManager({ db: options.db, chatId: options.chatId, },);
     this.worldState = new WorldStateService(options.db,);
     this.evaluator = createQualityEvaluator({
