@@ -3,7 +3,7 @@
 **Status:** 🟡 In Progress — parser + 21 handlers wired; tiered access pending (2026-08-01)
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-assistant-commands
+**Epic:** epic-assistant-gm-flows
 
 ## Summary
 

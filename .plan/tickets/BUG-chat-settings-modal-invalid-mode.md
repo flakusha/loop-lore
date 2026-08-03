@@ -7,7 +7,7 @@
 **Epic**: epic-story-mode-ui
 **Related**: IDEA-chat-setup-templates
 
-### Description
+## Description
 
 `src/components/chat/chat-settings-modal.html` emitted invalid Mode `<option>` values
 (`value="chat"`, `value="roleplay"`) and `src/frontend/alpine/chat-settings.ts` defaulted
@@ -17,13 +17,13 @@ validation reject / silent data corruption.
 
 Originally flagged as a live bug in `.plan/design/chat-mode-reconciliation.md:32`.
 
-### Root Cause
+## Root Cause
 
 UI mode options were literal English labels (`Chat` / `Roleplay`) mismatched from the
 backend enum. The state default (`"chat"`) and load fallback (`?? "chat"`) were never valid
 DB values.
 
-### Fix (2026-08-01)
+## Fix (2026-08-01)
 
 - `src/components/chat/chat-settings-modal.html`: options → `value="direct"` / `value="group"`
   / `value="story"`.
@@ -35,13 +35,13 @@ Verified: `bun run typecheck` exit 0. Grep confirmed no other invalid-mode emit 
 (`admin.html` `value="chat"` are unrelated admin user-role options; `new-chat.html` already
 emits valid values).
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - [x] Settings modal emits only backend-valid `mode` values
 - [x] Default + load fallback are valid (`story`)
 - [x] Typecheck passes
 
-### Notes
+## Notes
 
 - Deliberately left as the minimal fix (backend-valid `direct|group|story` set).
 - The 3-axis split (`ChatType` / `ChatMode` including `battle|question|inventory` /

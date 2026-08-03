@@ -111,7 +111,7 @@ docs/
 
 Remaining polish (Phase 3) only:
 
-| File                        | Action                                                    |
-| ---------------------------- | ---------------------------------------------------------- |
-| `src/frontend/pages/gallery.ts` | Modify — add pagination support for large collections   |
-| Gallery sidebar               | Add right-click/long-press context menus on gallery items |
+| File                            | Action                                                    |
+| ------------------------------- | --------------------------------------------------------- |
+| `src/frontend/pages/gallery.ts` | Modify — add pagination support for large collections     |
+| Gallery sidebar                 | Add right-click/long-press context menus on gallery items |

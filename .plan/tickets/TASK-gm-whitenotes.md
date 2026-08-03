@@ -1,7 +1,7 @@
 # TASK: GM/Assistant Story Whitenotes System
 
 **Priority:** High
-**Status:** 🟢 Backend Complete + Tested — Injection Live
+**Status:** ✅ Done — Backend Complete + Tested — Injection Live. Closed 2026-08-03.
 **Epic:** epic-gm-shadow-notes
 **Tags:** gm, whitenotes, story-steering, narrative, assistant, system-message
 

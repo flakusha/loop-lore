@@ -1,4 +1,5 @@
 # FEAT: Race & Origin (Homeland/Culture) as First-Class Lore Identity Dimensions
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium
@@ -8,9 +9,9 @@
 
 ## Summary
 
-Promote **origin** (homeland) and **culture** to first-class `LoreSubject` dimensions alongside **race**, so lore/identity knowledge can be scoped by *where* and *under which culture* an actor was raised — not just what race they are. Today `race` is the only identity-derived audience gate; a character's homeland and culture are already captured as immutable personality traits but ignored by the lore model.
+Promote **origin** (homeland) and **culture** to first-class `LoreSubject` dimensions alongside **race**, so lore/identity knowledge can be scoped by _where_ and _under which culture_ an actor was raised — not just what race they are. Today `race` is the only identity-derived audience gate; a character's homeland and culture are already captured as immutable personality traits but ignored by the lore model.
 
-This is the **identity-model** half of the race-aware lore work. It plugs origin/culture into the existing audience resolver; per-identity *config* (lore prioritization, identity framing, memory weights) is tracked separately.
+This is the **identity-model** half of the race-aware lore work. It plugs origin/culture into the existing audience resolver; per-identity _config_ (lore prioritization, identity framing, memory weights) is tracked separately.
 
 ## Background
 
@@ -18,8 +19,8 @@ This is the **identity-model** half of the race-aware lore work. It plugs origin
 
 ```typescript
 interface ActorIdentity {
-  race: string;           // from character_permanent_traits, trait_name='species', default 'human'
-  professions: string[];  // profession/class traits + professions.discipline
+  race: string; // from character_permanent_traits, trait_name='species', default 'human'
+  professions: string[]; // profession/class traits + professions.discipline
   locationId: string | null;
 }
 ```
@@ -32,8 +33,8 @@ type LoreSubject =
   | { kind: "location"; locationId?: string }
   | { kind: "profession"; profession: string }
   | { kind: "race"; race: string }
-  | { kind: "faction" }   // extensible
-  | { kind: "item" }      // extensible
+  | { kind: "faction" } // extensible
+  | { kind: "item" }; // extensible
 ```
 
 **Gap:** `origin` / `culture` are not identity dimensions. A GM cannot author lore as "only known to those raised in the Northern Realm" (`origin`) or "elven diaspora court culture" (`culture`) — only by race. Yet the data already exists: `src/characters/services/personality-service.ts` treats `homeland` and `culture` as **immutable background traits** (`IMMUTABLE_TRAITS`, lines 36–37), resolved via the same `character_permanent_traits` layer that already supplies `species` (race).
@@ -50,8 +51,8 @@ type LoreSubject =
   | { kind: "location"; locationId?: string }
   | { kind: "profession"; profession: string }
   | { kind: "race"; race: string }
-  | { kind: "origin"; origin: string }      // NEW — homeland / nation / region of birth
-  | { kind: "culture"; culture: string }     // NEW — cultural identity / diaspora
+  | { kind: "origin"; origin: string } // NEW — homeland / nation / region of birth
+  | { kind: "culture"; culture: string } // NEW — cultural identity / diaspora
   | { kind: "faction" }
   | { kind: "item" };
 ```
@@ -65,8 +66,8 @@ Add `origin` and `culture` (both optional → absent means "unconstrained" for t
 ```typescript
 interface ActorIdentity {
   race: string;
-  origin: string | null;      // NEW — resolved 'homeland' trait, default null
-  culture: string | null;     // NEW — resolved 'culture' trait, default null
+  origin: string | null; // NEW — resolved 'homeland' trait, default null
+  culture: string | null; // NEW — resolved 'culture' trait, default null
   professions: string[];
   locationId: string | null;
 }
@@ -76,7 +77,7 @@ Resolution mirrors the existing race pattern: read `character_permanent_traits` 
 
 ### 3. Audience rules in `isLoreVisibleTo`
 
-- `subject.kind === "origin"`  → visible iff `identity.origin` matches `subject.origin` (case-insensitive, same as `race`).
+- `subject.kind === "origin"` → visible iff `identity.origin` matches `subject.origin` (case-insensitive, same as `race`).
 - `subject.kind === "culture"` → visible iff `identity.culture` matches `subject.culture` (case-insensitive).
 - Unknown / unset origin on the actor → not visible for `origin`-scoped entries (closed default).
 
@@ -112,5 +113,5 @@ Extend the `LoreSubject` TypeBox schema in `src/validation/schemas.ts` with the 
 
 ## Notes
 
-- This ticket only makes origin/culture *scoping* possible. The per-identity *configuration* (lore prioritization, identity framing, memory weights keyed on race/origin/culture) is `FEAT-race-origin-lore-identity-memory-config.md`; the data-population side (capturing origin/culture during `/create` + seeding) is `FEAT-origin-capture-generation-seeding.md`.
+- This ticket only makes origin/culture _scoping_ possible. The per-identity _configuration_ (lore prioritization, identity framing, memory weights keyed on race/origin/culture) is `FEAT-race-origin-lore-identity-memory-config.md`; the data-population side (capturing origin/culture during `/create` + seeding) is `FEAT-origin-capture-generation-seeding.md`.
 - Filing under `epic-memory-knowledge-systems` (lore/knowledge system epic); the generation half of the same theme lives under `epic-assistant-gm-flows`.

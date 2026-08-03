@@ -6,10 +6,10 @@
 **Assignee**:
 **Epic**: epic-messages
 **Related**: TASK-quick-regen-button, docs/spec/messages.md,
-  docs/frontend/chat/message-actions.md, docs/frontend/chat/message-bubbles.md,
-  .plan/design/chat-template-config-lifecycle.md, FEAT-chat-template-config-lifecycle
+docs/frontend/chat/message-actions.md, docs/frontend/chat/message-bubbles.md,
+.plan/design/chat-template-config-lifecycle.md, FEAT-chat-template-config-lifecycle
 
-### Description
+## Description
 
 The **swipe / regenerate / replay-branch** mechanic: regenerate a generated message and keep
 the old one as an alternative **variant** (a sibling sharing the same `parent_id`), letting the
@@ -26,30 +26,32 @@ Two related capabilities, both in scope:
    (client-side flatten) then walks the new branch forward; the old branch remains as an
    alternative swipe.
 
-### Current State (verified)
+## Current State (verified)
 
 The infrastructure already exists in code and docs; only the plan + some wiring is missing:
 
-| Piece                                   | Status | Location                                                      |
-| --------------------------------------- | ------ | ------------------------------------------------------------- |
-| Message tree model (`parent_id` siblings) | ✅    | `docs/spec/messages.md` §Message Tree Traversal               |
-| `swipe_index` column                    | ✅     | `src/db/` messages schema                                     |
-| Variant listing                        | ✅     | `getMessageVariants` `src/chat/service.ts:720`                |
-| Variant selection by index             | ✅     | `selectVariant` `src/chat/service.ts:738`                     |
-| Variant info on list                   | ✅     | `variantIndex`/`totalVariants` `src/chat/service.ts:712`      |
-| `GET /api/messages/:id/variants`       | ✅     | `docs/spec/messages.md` §API                                  |
-| Swipe UI spec (swipe left/right, counter `2/4`) | ✅   | `docs/frontend/chat/message-bubbles.md`                       |
-| Regenerate action (variant-aware)      | ✅     | `docs/frontend/chat/message-actions.md` (P1 table, row 11)    |
-| Regen last-message ticket              | ✅     | `TASK-quick-regen-button.md`                                  |
-| **Plan ticket for swipe/replay-branch**| ❌     | **This ticket**                                               |
+| Piece                                           | Status | Location                                                   |
+| ----------------------------------------------- | ------ | ---------------------------------------------------------- |
+| Message tree model (`parent_id` siblings)       | ✅     | `docs/spec/messages.md` §Message Tree Traversal            |
+| `swipe_index` column                            | ✅     | `src/db/` messages schema                                  |
+| Variant listing                                 | ✅     | `getMessageVariants` `src/chat/service.ts:720`             |
+| Variant selection by index                      | ✅     | `selectVariant` `src/chat/service.ts:738`                  |
+| Variant info on list                            | ✅     | `variantIndex`/`totalVariants` `src/chat/service.ts:712`   |
+| `GET /api/messages/:id/variants`                | ✅     | `docs/spec/messages.md` §API                               |
+| Swipe UI spec (swipe left/right, counter `2/4`) | ✅     | `docs/frontend/chat/message-bubbles.md`                    |
+| Regenerate action (variant-aware)               | ✅     | `docs/frontend/chat/message-actions.md` (P1 table, row 11) |
+| Regen last-message ticket                       | ✅     | `TASK-quick-regen-button.md`                               |
+| **Plan ticket for swipe/replay-branch**         | ❌     | **This ticket**                                            |
 
-### Proposed Mechanics
+## Proposed Mechanics
 
 **Regenerate latest message** (already scoped in `TASK-quick-regen-button.md`):
+
 - `POST /api/chats/:id/regenerate` → archives original, generates replacement.
 - Only last AI message; author/owner only; idempotent; optional overrides.
 
 **Regenerate previous message → new replay branch** (the gap this ticket closes):
+
 - `POST /api/messages/:id/regenerate` → creates a **new sibling variant** (same `parent_id`,
   `swipe_index = max+1`) rather than mutating/archiving the original.
 - The active-timeline flatten algorithm (`docs/spec/messages.md` §Active Timeline) picks the
@@ -64,7 +66,7 @@ The infrastructure already exists in code and docs; only the plan + some wiring 
 **session-state** operation — it does not mutate key mechanics, so it is always allowed on an
 online chat. Regenerate overrides (temperature/model) are per-request, not bound mechanics.
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - [ ] `POST /api/messages/:id/regenerate` creates a new sibling variant (not a mutation)
 - [ ] `swipe_index` increments; old variant preserved as alternative
@@ -76,7 +78,7 @@ online chat. Regenerate overrides (temperature/model) are per-request, not bound
 - [ ] Online chat allows swipe/replay (session-state op); no key-mechanic mutation
 - [ ] Tests: variant creation, flatten with new branch, counter, idempotency
 
-### Files
+## Files
 
 - `src/routes/chat-regenerate.ts` (new) or extend `src/routes/messages.ts` — regenerate endpoint
 - `src/chat/service.ts` — `regenerateMessageVariant` (reuse `getMessageVariants`/`selectVariant`)
@@ -84,7 +86,7 @@ online chat. Regenerate overrides (temperature/model) are per-request, not bound
 - `src/components/chat/message-bubbles.html` — variant counter + swipe handlers
 - `docs/frontend/chat/message-bubbles.md` — confirm swipe/replay behavior (already spec'd)
 
-### Notes
+## Notes
 
 - `epic-messages.md` is currently an empty TBD — this ticket is its first concrete task.
 - Distinct from `TASK-quick-regen-button.md` (regenerate last message, archive-original flow);

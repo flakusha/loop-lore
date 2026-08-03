@@ -141,15 +141,15 @@ context — these feed directly into avatar selection as additional context.
 
 ## Current State (2026-08-01 review)
 
-| Component                                  | Status                                            | Location                                  |
-| ------------------------------------------ | ------------------------------------------------- | ----------------------------------------- |
-| `POST /api/actors/:actorId/avatars/select` | ✅                                                 | `routes/character-avatars.ts:239`         |
-| `AvatarService.selectAvatar()`             | ✅ weighted scoring, `emotion_first` rule         | `characters/services/avatar-service.ts`   |
-| Emotion avatar generation (ComfyUI)        | ✅ image-gen only, no LLM                         | `characters/services/emotion-avatar-service.ts` |
-| `detectAvatarChangeIntent()`               | ❌ **dead code** — zero consumers                 | `assistant/intent.ts:139`                 |
-| `EmotionHook` (`emotion_change`)           | ⚠️ keyword-based; doc header claims "Uses the LLM" (stale) | `generation/hooks/emotion-hook.ts` |
-| Hook event consumption                     | ❌ `data.dominantEmotion` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431` |
-| Auto-trigger on response                   | ❌ manual API call only                          | —                                          |
+| Component                                  | Status                                                                                  | Location                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `POST /api/actors/:actorId/avatars/select` | ✅                                                                                      | `routes/character-avatars.ts:239`               |
+| `AvatarService.selectAvatar()`             | ✅ weighted scoring, `emotion_first` rule                                               | `characters/services/avatar-service.ts`         |
+| Emotion avatar generation (ComfyUI)        | ✅ image-gen only, no LLM                                                               | `characters/services/emotion-avatar-service.ts` |
+| `detectAvatarChangeIntent()`               | ❌ **dead code** — zero consumers                                                       | `assistant/intent.ts:139`                       |
+| `EmotionHook` (`emotion_change`)           | ⚠️ keyword-based; doc header claims "Uses the LLM" (stale)                               | `generation/hooks/emotion-hook.ts`              |
+| Hook event consumption                     | ❌ `data.dominantEmotion` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431`                |
+| Auto-trigger on response                   | ❌ manual API call only                                                                 | —                                               |
 
 Key finding: the emotion → avatar pipeline is a **dead end**. The
 `emotion_change` event fires (keyword match) but nothing reads its `data`;

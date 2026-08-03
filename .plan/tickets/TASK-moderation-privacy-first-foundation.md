@@ -11,13 +11,13 @@ Privacy-first moderation: local-only, no server logging, no AI content scanning 
 
 ## Current State (2026-08-01 review)
 
-| Component                        | Status                                                    | Location                            |
-| -------------------------------- | --------------------------------------------------------- | ----------------------------------- |
-| Prefs / actions / flags / audit  | ✅ `NsfwModerationService`                                 | `src/nsfw/moderation-service.ts`    |
-| NSFW gate + audit writes         | ✅ keyword-level, per-chat/world/user overrides            | `generation/hooks/nsfw-hook.ts`     |
-| Moderation content scanning      | ⚠️ keyword-only (9 words), no LLM, **no audit trail**      | `generation/hooks/moderation-hook.ts` |
-| `ModelRole.Moderation`           | 🔴 dead role — configurable, never resolved                | `src/admin/model-roles.ts`          |
-| Flagged content handling         | 🔴 entire response discarded on `suppressContent`          | `generation/auto-gen.ts:431`        |
+| Component                       | Status                                               | Location                              |
+| ------------------------------- | ---------------------------------------------------- | ------------------------------------- |
+| Prefs / actions / flags / audit | ✅ `NsfwModerationService`                           | `src/nsfw/moderation-service.ts`      |
+| NSFW gate + audit writes        | ✅ keyword-level, per-chat/world/user overrides      | `generation/hooks/nsfw-hook.ts`       |
+| Moderation content scanning     | ⚠️ keyword-only (9 words), no LLM, **no audit trail** | `generation/hooks/moderation-hook.ts` |
+| `ModelRole.Moderation`          | 🔴 dead role — configurable, never resolved          | `src/admin/model-roles.ts`            |
+| Flagged content handling        | 🔴 entire response discarded on `suppressContent`    | `generation/auto-gen.ts:431`          |
 
 Privacy posture preserved: no external scanning by default — all current
 detection is local keyword matching. The dead `Moderation` role is the only

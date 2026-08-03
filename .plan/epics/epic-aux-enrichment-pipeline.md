@@ -16,15 +16,15 @@ pre-processor that enriches context before the main generation call.
 
 ## Implementation State (2026-08-01 review)
 
-| Enrichment task | Design | Code state | Location | Notes |
-| --------------- | ------ | ---------- | -------- | ----- |
-| Transition detection | ✅ | ✅ Implemented | `src/chat/transition-classifier.ts` | Regex-first + AUX fallback; 2s timeout, temp 0.0, maxTokens 100. Wired `routes/messages.ts:851` (awaited → +2s worst-case on message POST) |
-| Intent classification | ⚠️ partial | ⚠️ Ad-hoc | `src/generation/auto-gen.ts:74` `classifyIntent` | AUX wired, but **no timeout** (blocks every message pre-generation), no apiKey, temp 0.1; result only adjusts maxTokens |
-| Memory extraction | ⚠️ | ⚠️ Wrong role | `src/memory/extraction.ts` | Works, but called with MAIN provider + literal `model: "default"` via `as never` cast — fails on most OpenAI-compatible servers; not on auxiliary role |
-| Mood classification | ⚠️ | ❌ No LLM | `src/generation/hooks/mood-hook.ts` | Keyword-based only; doc header claims LLM (stale); results unconsumed |
-| Emotion avatar selection | ⚠️ | ❌ No LLM | `src/generation/hooks/emotion-hook.ts`, `src/assistant/intent.ts` | Keyword-based; `detectAvatarChangeIntent` dead code; avatar selection manual-only via `POST /api/actors/:actorId/avatars/select` |
-| Environment / Personality / GM tool / Scene context | ✅ | ❌ Not started | — | Design only |
-| Shared runner `src/aux-pipeline/` | — | ❌ Does not exist | — | 3 hand-rolled AUX call variants with divergent constraints |
+| Enrichment task                                     | Design    | Code state        | Location                                                          | Notes                                                                                                                                                  |
+| --------------------------------------------------- | --------- | ----------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Transition detection                                | ✅        | ✅ Implemented    | `src/chat/transition-classifier.ts`                               | Regex-first + AUX fallback; 2s timeout, temp 0.0, maxTokens 100. Wired `routes/messages.ts:851` (awaited → +2s worst-case on message POST)             |
+| Intent classification                               | ⚠️ partial | ⚠️ Ad-hoc          | `src/generation/auto-gen.ts:74` `classifyIntent`                  | AUX wired, but **no timeout** (blocks every message pre-generation), no apiKey, temp 0.1; result only adjusts maxTokens                                |
+| Memory extraction                                   | ⚠️         | ⚠️ Wrong role      | `src/memory/extraction.ts`                                        | Works, but called with MAIN provider + literal `model: "default"` via `as never` cast — fails on most OpenAI-compatible servers; not on auxiliary role |
+| Mood classification                                 | ⚠️         | ❌ No LLM         | `src/generation/hooks/mood-hook.ts`                               | Keyword-based only; doc header claims LLM (stale); results unconsumed                                                                                  |
+| Emotion avatar selection                            | ⚠️         | ❌ No LLM         | `src/generation/hooks/emotion-hook.ts`, `src/assistant/intent.ts` | Keyword-based; `detectAvatarChangeIntent` dead code; avatar selection manual-only via `POST /api/actors/:actorId/avatars/select`                       |
+| Environment / Personality / GM tool / Scene context | ✅        | ❌ Not started    | —                                                                 | Design only                                                                                                                                            |
+| Shared runner `src/aux-pipeline/`                   | —         | ❌ Does not exist | —                                                                 | 3 hand-rolled AUX call variants with divergent constraints                                                                                             |
 
 ## Review Findings → Gaps (2026-08-01)
 
@@ -43,6 +43,7 @@ Audit of `src/` produced these actionable gaps. Severity: 🔴 high / 🟡 mediu
 ## Next Milestones (prioritized)
 
 ### M1 — Shared AUX runner (blocks everything else)
+
 - Create `src/aux-pipeline/` with `types.ts`, `prompts.ts`, `runner.ts`.
 - `callAux(role, prompt, { timeoutMs = 2000, temperature = 0.0, maxTokens = 100 })` — one policy for all AUX tasks.
 - Resolve apiKey through `resolveProvider` (user BYO key → chat → actor → server default); pass `apiKey` on every AUX `provider.complete()`.
@@ -51,18 +52,23 @@ Audit of `src/` produced these actionable gaps. Severity: 🔴 high / 🟡 mediu
 - **Exit:** all AUX calls ≤2s, BYO-key parity with main path, telemetry visible.
 
 ### M2 — Fix memory extraction
+
 - Pass real model (`resolved.resolvedModel`), drop `as never` cast, remove dead `modelId`/duplicate `db` param, move call off the main provider.
 
 ### M3 — Resolve dead model roles
+
 - Either wire `ModelRole.Moderation` into ModerationHook/NSFW moderation pipeline (LLM moderation), and `ModelRole.Captioning` into `caption-route.ts`, or remove both from `VALID_ROLES` and the admin UI. Dead admin surface misleads users.
 
 ### M4 — Consume emotion/mood hook events
+
 - Emit `avatar.emotion_changed` + `character_mood` writes from hook `data`, or remove the hooks. Wire `TASK-aux-emotion-avatar` / `TASK-aux-mood-classification`; kill `detectAvatarChangeIntent` (or fold into runner as fast path).
 
 ### M5 — ModerationHook safety
+
 - Tokenized matching (not substring), severity scoring, `recordAudit` trail, non-destructive suppression (store flagged message, don't drop it).
 
 ### M6 — Telemetry
+
 - Record AUX calls in telemetry (event type, model, provider, tokens, latency, success/failure).
 
 ## Design Principles

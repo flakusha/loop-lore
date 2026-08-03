@@ -82,15 +82,15 @@ interface MemoryExtraction {
 
 ## Current State (2026-08-01 review)
 
-| Component                          | Status                                                       | Location                          |
-| ---------------------------------- | ------------------------------------------------------------ | --------------------------------- |
-| Extraction + store                 | ✅ implemented, fire-and-forget after generation              | `src/memory/extraction.ts`        |
-| Wiring                            | ⚠️ called with **MAIN resolved provider**, not auxiliary role | `generate-route.ts:524,675`       |
-| `model: "default"` literal         | 🔴 `provider.complete({ model: "default", ... } as never)` — `as never` hides type error; most OpenAI-compatible servers reject unknown model → extraction silently no-ops | `src/memory/extraction.ts:60` |
-| `ExtractionOpts.modelId`           | ❌ dead field, never read                                     | `src/memory/types.ts`             |
-| Duplicate `db` param               | 🟢 `database` + `{ db: database }` passed twice               | `generate-route.ts:524`           |
-| Provider keys                     | ❌ no apiKey (relies on provider instance key)                | —                                 |
-| Telemetry                         | ❌ not recorded                                               | —                                 |
+| Component                  | Status                                                                                                                                                                     | Location                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Extraction + store         | ✅ implemented, fire-and-forget after generation                                                                                                                           | `src/memory/extraction.ts`    |
+| Wiring                     | ⚠️ called with **MAIN resolved provider**, not auxiliary role                                                                                                               | `generate-route.ts:524,675`   |
+| `model: "default"` literal | 🔴 `provider.complete({ model: "default", ... } as never)` — `as never` hides type error; most OpenAI-compatible servers reject unknown model → extraction silently no-ops | `src/memory/extraction.ts:60` |
+| `ExtractionOpts.modelId`   | ❌ dead field, never read                                                                                                                                                  | `src/memory/types.ts`         |
+| Duplicate `db` param       | 🟢 `database` + `{ db: database }` passed twice                                                                                                                            | `generate-route.ts:524`       |
+| Provider keys              | ❌ no apiKey (relies on provider instance key)                                                                                                                             | —                             |
+| Telemetry                  | ❌ not recorded                                                                                                                                                            | —                             |
 
 ## Next Actionable Items
 

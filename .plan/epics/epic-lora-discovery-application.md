@@ -11,6 +11,7 @@
 LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual consistency across generations. This epic implements LoRA discovery (auto-detect available models) and application (inject into workflows) for both ComfyUI and sd.cpp backends.
 
 **Key insight from testing (2026-07-28):** LoRA works on both backends:
+
 - **sd.cpp**: Prompt injection (simpler, works now)
 - **ComfyUI**: LoraLoader node (more control, coefficient 0.3-0.7 typical)
 
@@ -26,8 +27,8 @@ LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual 
 
 ```typescript
 interface LoRAConfig {
-  name: string;           // model filename without extension
-  strength: number;       // 0.1-1.0, typical 0.3-0.7
+  name: string; // model filename without extension
+  strength: number; // 0.1-1.0, typical 0.3-0.7
   backend: "comfyui" | "sd-server";
 }
 
@@ -40,10 +41,10 @@ interface ImageGenRequest {
 
 ### Backend-Specific Application
 
-| Backend | LoRA Application | Notes |
-|---------|-----------------|-------|
-| sd.cpp | Prompt injection `[lora:name:strength]` | Simpler, works now |
-| ComfyUI | LoraLoader node in workflow | More control, requires node |
+| Backend | LoRA Application                        | Notes                       |
+| ------- | --------------------------------------- | --------------------------- |
+| sd.cpp  | Prompt injection `[lora:name:strength]` | Simpler, works now          |
+| ComfyUI | LoraLoader node in workflow             | More control, requires node |
 
 ### Discovery Flow
 
@@ -96,24 +97,24 @@ interface ImageGenRequest {
 
 ### New Files
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `src/generation/lora/types.ts` | 94 | Interfaces (`LoRAConfig`, `LoRAModel`, `LoRADiscoveryResult`, `LoRAApplicationContext`) + constants |
-| `src/generation/lora/discovery.ts` | 175 | Unified discovery dispatch + Map-based cache (5min TTL) + `getCachedLoras`/`getCacheStatus`/`clearDiscoveryCache` |
-| `src/generation/lora/discovery-sdserver.ts` | 181 | sd.cpp: `discoverSdCppLoras` (GET /sd-api/v1/models → filter) + `buildSdCppLoraPrefix`/`injectSdCppLora` |
-| `src/generation/lora/discovery-comfyui.ts` | 260 | ComfyUI: `discoverComfyUILoras` (GET /object_info → LoraLoader) + `buildComfyUILoraNode`/`injectComfyUILora` |
-| `src/generation/lora/validation.ts` | 163 | `validateLoRAConfig`, `validateLoRAModel`, `isLoRAFilename`, `extractLoRAName`, `clampStrength`, `isTypicalStrength` |
-| `src/generation/lora/index.ts` | 49 | Public API re-exports from all sub-modules |
-| `src/generation/lora/routes.ts` | 377 | Elysia plugin: discover, list, status, clear, validate — TODO-gated, not wired |
-| `src/generation/lora/discovery.test.ts` | 336 | Mock-fetch tests for both backends, cache, force-refresh |
-| `src/generation/lora/lora.test.ts` | 221 | Validation tests: config, model, strength boundary, edge cases |
+| File                                        | Lines | Purpose                                                                                                              |
+| ------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------- |
+| `src/generation/lora/types.ts`              | 94    | Interfaces (`LoRAConfig`, `LoRAModel`, `LoRADiscoveryResult`, `LoRAApplicationContext`) + constants                  |
+| `src/generation/lora/discovery.ts`          | 175   | Unified discovery dispatch + Map-based cache (5min TTL) + `getCachedLoras`/`getCacheStatus`/`clearDiscoveryCache`    |
+| `src/generation/lora/discovery-sdserver.ts` | 181   | sd.cpp: `discoverSdCppLoras` (GET /sd-api/v1/models → filter) + `buildSdCppLoraPrefix`/`injectSdCppLora`             |
+| `src/generation/lora/discovery-comfyui.ts`  | 260   | ComfyUI: `discoverComfyUILoras` (GET /object_info → LoraLoader) + `buildComfyUILoraNode`/`injectComfyUILora`         |
+| `src/generation/lora/validation.ts`         | 163   | `validateLoRAConfig`, `validateLoRAModel`, `isLoRAFilename`, `extractLoRAName`, `clampStrength`, `isTypicalStrength` |
+| `src/generation/lora/index.ts`              | 49    | Public API re-exports from all sub-modules                                                                           |
+| `src/generation/lora/routes.ts`             | 377   | Elysia plugin: discover, list, status, clear, validate — TODO-gated, not wired                                       |
+| `src/generation/lora/discovery.test.ts`     | 336   | Mock-fetch tests for both backends, cache, force-refresh                                                             |
+| `src/generation/lora/lora.test.ts`          | 221   | Validation tests: config, model, strength boundary, edge cases                                                       |
 
 ### Modified Files
 
-| File | Change |
-|------|--------|
+| File                                | Change                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `src/generation/image-gen-route.ts` | LoRA hooks added as TODO-gated comments (imports, body field, sdcpp injection, comfyui injection) |
-| `src/elysia-app.ts` | `loraRoutes` import + registration commented out with TODO |
+| `src/elysia-app.ts`                 | `loraRoutes` import + registration commented out with TODO                                        |
 
 ## Technical Notes
 
@@ -143,29 +144,29 @@ const fullPrompt = `${loraPrefix} ${userPrompt}`;
 
 ```typescript
 // ComfyUI: extract from /object_info
-async function discoverComfyUILoras(baseUrl: string): Promise<LoRAModel[]> {
-  const info = await fetch(`${baseUrl}/object_info`);
+async function discoverComfyUILoras(baseUrl: string,): Promise<LoRAModel[]> {
+  const info = await fetch(`${baseUrl}/object_info`,);
   const loraLoader = info.LoraLoader;
   // Extract available models from input config
   return loraLoader.input.required.lora_name[0];
 }
 
 // sd.cpp: filter model list
-async function discoverSdCppLoras(baseUrl: string): Promise<LoRAModel[]> {
-  const models = await fetch(`${baseUrl}/sd-api/v1/models`);
+async function discoverSdCppLoras(baseUrl: string,): Promise<LoRAModel[]> {
+  const models = await fetch(`${baseUrl}/sd-api/v1/models`,);
   return models.data
-    .filter(m => m.name.endsWith('.safetensors') || m.name.endsWith('.pt'))
-    .map(m => ({ name: m.name, path: m.path }));
+    .filter(m => m.name.endsWith(".safetensors",) || m.name.endsWith(".pt",))
+    .map(m => ({ name: m.name, path: m.path, }));
 }
 ```
 
 ## Open Questions
 
-1. **LoRA metadata**: Can we extract trigger words from LoRA files? — *Partially: `triggerWords` and `recommendedStrength` fields in `LoRAModel` interface, but discovery doesn't extract them yet from file metadata*
-2. **Multi-LoRA stacking**: How to handle multiple LoRAs? — *Phase 4*
-3. **LoRA installation**: Should we support downloading LoRAs from CivitAI? — *Phase 4*
-4. **Character binding**: Auto-apply character LoRA when character is selected? — *Phase 3*
-5. **Performance**: Should LoRA discovery be cached? — *Yes: Map-based cache, 5min TTL, forceRefresh option*
+1. **LoRA metadata**: Can we extract trigger words from LoRA files? — _Partially: `triggerWords` and `recommendedStrength` fields in `LoRAModel` interface, but discovery doesn't extract them yet from file metadata_
+2. **Multi-LoRA stacking**: How to handle multiple LoRAs? — _Phase 4_
+3. **LoRA installation**: Should we support downloading LoRAs from CivitAI? — _Phase 4_
+4. **Character binding**: Auto-apply character LoRA when character is selected? — _Phase 3_
+5. **Performance**: Should LoRA discovery be cached? — _Yes: Map-based cache, 5min TTL, forceRefresh option_
 6. **URL resolution**: FIXED — was `pickSdProvider()` returning one provider for both; now finds by `apiFamily` from `sd[]` array (`"comfyui"` + `"sdcpp"` separately) via `resolveBackendUrls()` helper + `routes.test.ts`
 
 ## Linked Tasks
@@ -175,10 +176,10 @@ async function discoverSdCppLoras(baseUrl: string): Promise<LoRAModel[]> {
 
 ## Testing Strategy
 
-| Test | Coverage | Files |
-|------|----------|-------|
-| Unit | LoRA discovery parsing | `src/generation/lora/discovery.test.ts` |
-| Unit | Prompt injection format | `src/generation/lora/injector.test.ts` |
-| Unit | ComfyUI workflow modification | `src/generation/lora/comfyui.test.ts` |
+| Test        | Coverage                            | Files                                     |
+| ----------- | ----------------------------------- | ----------------------------------------- |
+| Unit        | LoRA discovery parsing              | `src/generation/lora/discovery.test.ts`   |
+| Unit        | Prompt injection format             | `src/generation/lora/injector.test.ts`    |
+| Unit        | ComfyUI workflow modification       | `src/generation/lora/comfyui.test.ts`     |
 | Integration | Discover LoRAs from running backend | `tests/integration/lora-discover.test.ts` |
-| E2E | Generate image with LoRA applied | `tests/e2e/flows/lora-gen.test.ts` |
+| E2E         | Generate image with LoRA applied    | `tests/e2e/flows/lora-gen.test.ts`        |

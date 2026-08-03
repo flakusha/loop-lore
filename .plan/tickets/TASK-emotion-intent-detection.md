@@ -12,16 +12,16 @@ Extensible emotion system: admin/user-defined emotion list, LLM-based or rule-ba
 
 ## Current State (2026-08-01 review)
 
-| Component                         | Status                                                     | Location                              |
-| --------------------------------- | ---------------------------------------------------------- | ------------------------------------- |
-| `emotions` + `character_emotions` tables | ✅ schema exists                                     | `src/db/schema-character.ts:142,154` |
-| `EmotionType` enum                | ✅ fixed set (no custom emotions)                          | `src/db/enums-character.ts:126`       |
-| Emotion CRUD routes               | ✅ `character-emotions.ts` (per-character)                 | `src/routes/character-emotions.ts`    |
-| Rule-based detection              | ⚠️ keyword matching in `EmotionHook` — no priority resolution, no sentiment/punctuation/emoji signals | `src/generation/hooks/emotion-hook.ts` |
-| LLM-based detection               | ❌ not implemented (hook doc header claims LLM — stale)     | —                                     |
-| Emotion → avatar selection        | ❌ events unconsumed (`data.dominantEmotion` never read); only manual `POST /avatars/select` | `generation/auto-gen.ts:412-431` |
-| Emotion → mood integration        | ❌ not wired                                                | —                                     |
-| Extensible/admin-defined emotions | ❌ enum is fixed, no `Emotion` table rows CRUD             | —                                     |
+| Component                                | Status                                                                                               | Location                               |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `emotions` + `character_emotions` tables | ✅ schema exists                                                                                     | `src/db/schema-character.ts:142,154`   |
+| `EmotionType` enum                       | ✅ fixed set (no custom emotions)                                                                    | `src/db/enums-character.ts:126`        |
+| Emotion CRUD routes                      | ✅ `character-emotions.ts` (per-character)                                                           | `src/routes/character-emotions.ts`     |
+| Rule-based detection                     | ⚠️ keyword matching in `EmotionHook` — no priority resolution, no sentiment/punctuation/emoji signals | `src/generation/hooks/emotion-hook.ts` |
+| LLM-based detection                      | ❌ not implemented (hook doc header claims LLM — stale)                                              | —                                      |
+| Emotion → avatar selection               | ❌ events unconsumed (`data.dominantEmotion` never read); only manual `POST /avatars/select`         | `generation/auto-gen.ts:412-431`       |
+| Emotion → mood integration               | ❌ not wired                                                                                         | —                                      |
+| Extensible/admin-defined emotions        | ❌ enum is fixed, no `Emotion` table rows CRUD                                                       | —                                      |
 
 ## Next Actionable Items
 

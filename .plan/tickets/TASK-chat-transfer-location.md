@@ -13,17 +13,17 @@ and wire VN transitions to location changes. Builds on existing endpoints.
 
 ## What Exists
 
-| Component                          | Status | Notes                                      |
-| ---------------------------------- | ------ | ------------------------------------------ |
-| `PUT /api/chats/:id/location`      | ✅     | Simple `current_location_id` update        |
+| Component                      | Status | Notes                                      |
+| ------------------------------ | ------ | ------------------------------------------ |
+| `PUT /api/chats/:id/location`  | ✅     | Simple `current_location_id` update        |
 | `POST /api/chats/:id/transfer` | ✅     | Transfer to location (same world)          |
 | `POST /api/chats/:id/join`     | ✅     | Add user as participant                    |
-| `GET /api/chats/joinable`          | ✅     | Discover chats at location                 |
-| Transition detection               | ✅     | Regex-based in `chat/transitions.ts`       |
-| `ChatTransition` type              | ✅     | Has `location_change` variant              |
-| VN scene renderer                  | ✅     | Has transition effects (fade/cut/dissolve) |
-| Chat sections                      | ❌     | No DB table, no section logic              |
-| VN location transition             | ❌     | No wiring between location change and VN   |
+| `GET /api/chats/joinable`      | ✅     | Discover chats at location                 |
+| Transition detection           | ✅     | Regex-based in `chat/transitions.ts`       |
+| `ChatTransition` type          | ✅     | Has `location_change` variant              |
+| VN scene renderer              | ✅     | Has transition effects (fade/cut/dissolve) |
+| Chat sections                  | ❌     | No DB table, no section logic              |
+| VN location transition         | ❌     | No wiring between location change and VN   |
 
 ## Implementation Plan
 
