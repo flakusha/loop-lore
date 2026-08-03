@@ -90,7 +90,7 @@ async function generateStoryDescription(
     chatId,
     actorId,
     modelId: "default",
-    systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vn"),
+    systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vn",),
     includeStoryContext: true,
     includeExamples: false,
   },);
@@ -166,7 +166,7 @@ async function generateBranchingChoices(
     chatId,
     actorId,
     modelId: "default",
-    systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vnChoices"),
+    systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vnChoices",),
     includeStoryContext: true,
     includeExamples: false,
   },);

@@ -12,12 +12,12 @@
  * config without code changes.
  */
 
-import type { LlmTemplateConfig, } from "../config/sections/templates";
 import {
   INTENT_CLASSIFIER_PROMPT,
   MEMORY_EXTRACTION_PROMPT,
   TRANSITION_CLASSIFIER_PROMPT,
 } from "../aux-pipeline/prompts";
+import type { LlmTemplateConfig, } from "../config/sections/templates";
 import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
 import { VN_CHOICES_PROMPT, VN_STORY_PROMPT, } from "./vn";
 
@@ -32,7 +32,8 @@ export const GM_SYSTEM_PROMPT =
  * consumer calls the LLM for NSFW classification (moderation is external /
  * keyword-based), but users can already override or extend it via config.
  */
-export const NSFW_POLICY_PROMPT = `You are a content rating classifier. Analyze the user message and reply with ONLY a JSON object:
+export const NSFW_POLICY_PROMPT =
+  `You are a content rating classifier. Analyze the user message and reply with ONLY a JSON object:
 {
   "rating": "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme",
   "categories": ["violence" | "sexual" | "drugs" | "profanity" | null],

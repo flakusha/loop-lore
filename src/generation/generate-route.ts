@@ -26,6 +26,7 @@ import type { DB, } from "../db/schema";
 import { extractAndStoreMemories, } from "../memory";
 import { registry, } from "../plugins/registry";
 import type { ToolDefinition, } from "../plugins/types";
+import { resolveSystemPrompt, } from "../prompts";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
 import { jsonParseOr, jsonStringifyOr, safeJsonStringify, } from "../utils";
@@ -361,7 +362,7 @@ export async function handleGenerate({
         chatId: input.chatId,
         modelId: resolved.resolvedModel,
         systemPromptOverride: input.systemPrompt,
-        systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant"),
+        systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant",),
       },);
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;
