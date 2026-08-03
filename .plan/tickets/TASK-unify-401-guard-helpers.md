@@ -45,12 +45,12 @@ of `err.error` — **zero consumers of the `code` field**. So unifying body shap
 
 **Inventive inventory (Aug 2026)**:
 
-| Variant | Shape | Localizes | Files (sites) |
-| --- | --- | --- | --- |
-| A | `jsonError({ message: ctx.t?... ?? "Unauthorized", status: HttpStatus.Unauthorized })` multiline, no code | yes | avatars(10), emotions(6), io(4), licensing(3), relationships(6), characters(3), admin-overrides(4), export(1), export-sse(1) = **38** |
-| B | `unauthorized(ctx.t?... ?? "Unauthorized")` pre-localized | yes | activity, chat-export, chat-pins(3), i18n, key-management(4), message-reactions(3), messages(~11), notifications(8), sessions(3) |
-| C | `jsonError({ message: "errors.unauthorized", status, t })` raw key + `t` param | yes | blog(7), traits(17) |
-| D | `jsonError({ message: ctx.t?... ?? "Unauthorized", status: 401 })` numeric single-line | yes | analytics(2) |
-| E | `(ctx as any).t?...` or explicit `code: ErrorCode.Unauthorized` | yes | activity-stream, activity, sessions |
-| — | `unauthorizedResponse()` / `unauthorized()` no-arg | **no** | requireUserId callers: assets(2), api-keys(3), settings(3), users(6); chats(~15), gm-notes, vn-choices, chat-search |
-| — | `validation/middleware.unauthorized()` → `Response.json({ error, code: "UNAUTHORIZED" })` | no | middleware family (separate module) |
+| Variant | Shape                                                                                                     | Localizes | Files (sites)                                                                                                                         |
+| ------- | --------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| A       | `jsonError({ message: ctx.t?... ?? "Unauthorized", status: HttpStatus.Unauthorized })` multiline, no code | yes       | avatars(10), emotions(6), io(4), licensing(3), relationships(6), characters(3), admin-overrides(4), export(1), export-sse(1) = **38** |
+| B       | `unauthorized(ctx.t?... ?? "Unauthorized")` pre-localized                                                 | yes       | activity, chat-export, chat-pins(3), i18n, key-management(4), message-reactions(3), messages(~11), notifications(8), sessions(3)      |
+| C       | `jsonError({ message: "errors.unauthorized", status, t })` raw key + `t` param                            | yes       | blog(7), traits(17)                                                                                                                   |
+| D       | `jsonError({ message: ctx.t?... ?? "Unauthorized", status: 401 })` numeric single-line                    | yes       | analytics(2)                                                                                                                          |
+| E       | `(ctx as any).t?...` or explicit `code: ErrorCode.Unauthorized`                                           | yes       | activity-stream, activity, sessions                                                                                                   |
+| —       | `unauthorizedResponse()` / `unauthorized()` no-arg                                                        | **no**    | requireUserId callers: assets(2), api-keys(3), settings(3), users(6); chats(~15), gm-notes, vn-choices, chat-search                   |
+| —       | `validation/middleware.unauthorized()` → `Response.json({ error, code: "UNAUTHORIZED" })`                 | no        | middleware family (separate module)                                                                                                   |

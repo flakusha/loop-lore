@@ -1,4 +1,5 @@
 # IDEA: Memory Knowledge Isolation and World Timeline
+
 **Status:** Open
 **Priority:** Low
 **Effort:** Large
@@ -19,6 +20,7 @@ Current memory system (`src/memory/`) provisions context based on budget and tru
 ### 1. Isolation Boundaries
 
 Define explicit memory isolation domains:
+
 - **Character-private**: Memories only visible to that character's sessions
 - **Party-shared**: Memories shared within a party/group
 - **World-public**: Lore/events visible to all in the world

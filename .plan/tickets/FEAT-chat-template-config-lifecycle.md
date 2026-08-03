@@ -6,10 +6,10 @@
 **Assignee**:
 **Epic**: epic-story-mode-ui
 **Related**: IDEA-chat-setup-templates, .plan/design/chat-template-config-lifecycle.md,
-  .plan/design/chat-mode-reconciliation.md, BUG-chat-settings-modal-invalid-mode,
-  FEAT-message-swipe-replay-branch
+.plan/design/chat-mode-reconciliation.md, BUG-chat-settings-modal-invalid-mode,
+FEAT-message-swipe-replay-branch
 
-### Description
+## Description
 
 Enforce the online-chat configuration policy: templates are **bound at creation** and key
 mechanics are **immutable once the chat is online**. Changing key mechanics requires
@@ -19,7 +19,7 @@ Today `PATCH /api/chats/:id` → `updateChat` (`src/chat/service.ts:179`) mutate
 `turnStrategy`, `worldId`, `gmConfig`, `visualNovel` live with no guard except the admin
 panel-freeze. This lets foundational mechanics be swapped under a live conversation.
 
-### Design
+## Design
 
 See `.plan/design/chat-template-config-lifecycle.md` for the full design. Summary:
 
@@ -32,7 +32,7 @@ See `.plan/design/chat-template-config-lifecycle.md` for the full design. Summar
 - **Migration** = new chat from a template, reusing `chats.parent_chat_id`, carrying
   participants/memory/history, archiving the source.
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - [ ] `chat_setup_templates` table (or config presets) + `chats.template_id` FK (snapshot binding)
 - [ ] `GET /api/chat-setup-templates` lists templates; `POST /api/chats` accepts `templateId`
@@ -50,7 +50,7 @@ See `.plan/design/chat-template-config-lifecycle.md` for the full design. Summar
 - [ ] Template edits do not retroactively change bound chats (snapshot semantics)
 - [ ] Tests: online guard, migration carry, snapshot binding, idempotency
 
-### Files
+## Files
 
 - `src/db/migrations/0XX_chat_setup_templates.ts` — table + `chats.template_id`
 - `src/validation/schemas.ts` — `ChatSetupTemplateSchema`, `ChatMigrateBody`; strip key
@@ -61,7 +61,7 @@ See `.plan/design/chat-template-config-lifecycle.md` for the full design. Summar
 - `src/components/chat/chat-settings-modal.html` — hide key-mechanic fields when online
 - `docs/frontend/chat/templates.md` — user-facing doc (created)
 
-### Notes
+## Notes
 
 - Depends on the 3-axis mode split (`chat-mode-reconciliation.md`) and a valid mode enum
   (`BUG-chat-settings-modal-invalid-mode.md`) so templates select a real behavioral mode.

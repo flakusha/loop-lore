@@ -16,28 +16,28 @@ Fixed all 122 e2e test failures (now 174 pass, 0 fail). Root causes: Elysia rout
 
 Elysia's router (memoirist) rejects routes with different param names at the same position. Three route files used `:chatId` while the rest of the codebase used `:id`:
 
-| File | Old Route | Fixed Route |
-|------|-----------|-------------|
-| `src/routes/chat-search.ts` | `/api/chats/:chatId/join`, `/api/chats/:chatId/transfer` | `/api/chats/:id/join`, `/api/chats/:id/transfer` |
-| `src/routes/vn-choices.ts` | `/api/chats/:chatId/vn-choices/*` | `/api/chats/:id/vn-choices/*` |
+| File                        | Old Route                                                    | Fixed Route                                          |
+| --------------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| `src/routes/chat-search.ts` | `/api/chats/:chatId/join`, `/api/chats/:chatId/transfer`     | `/api/chats/:id/join`, `/api/chats/:id/transfer`     |
+| `src/routes/vn-choices.ts`  | `/api/chats/:chatId/vn-choices/*`                            | `/api/chats/:id/vn-choices/*`                        |
 | `src/routes/vn-generate.ts` | `/:chatId/vn/generate-story`, `/:chatId/vn/generate-choices` | `/:id/vn/generate-story`, `/:id/vn/generate-choices` |
 
 ### 2. Validation Schema Mismatches
 
-| Schema | Issue | Fix |
-|--------|-------|-----|
-| `StoryItemInstanceBody` | Used `item_id`/`location_id` (snake_case) but handler destructured `itemId`/`locationId` | Changed to camelCase: `itemId`, `locationId`, `ownerActorId` |
-| `WorldStateCreateBody` | Required `state_key`/`state_value` but handler uses `turnId`/`messageId`/`description` | Replaced with `turnId`, `messageId`, `description` (all optional) |
-| `ApiKeyCreateBody` | Test sent `providerName`/`apiKey` but schema expects `name`/`api_key` | Updated test to use correct field names |
+| Schema                  | Issue                                                                                    | Fix                                                               |
+| ----------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `StoryItemInstanceBody` | Used `item_id`/`location_id` (snake_case) but handler destructured `itemId`/`locationId` | Changed to camelCase: `itemId`, `locationId`, `ownerActorId`      |
+| `WorldStateCreateBody`  | Required `state_key`/`state_value` but handler uses `turnId`/`messageId`/`description`   | Replaced with `turnId`, `messageId`, `description` (all optional) |
+| `ApiKeyCreateBody`      | Test sent `providerName`/`apiKey` but schema expects `name`/`api_key`                    | Updated test to use correct field names                           |
 
 ### 3. Stale Seed Data Columns
 
-| Table | Removed Column | Replacement |
-|-------|---------------|-------------|
-| `worlds` | `creator_id` | `owner_id` |
-| `locations` | `type`, `config` | (removed — not in schema) |
-| `items` | `creator_id`, `stats`, `effects` | `properties` |
-| `actors` | `data_version` | (removed — not in schema) |
+| Table       | Removed Column                   | Replacement               |
+| ----------- | -------------------------------- | ------------------------- |
+| `worlds`    | `creator_id`                     | `owner_id`                |
+| `locations` | `type`, `config`                 | (removed — not in schema) |
+| `items`     | `creator_id`, `stats`, `effects` | `properties`              |
+| `actors`    | `data_version`                   | (removed — not in schema) |
 
 ### 4. Logger Initialization Order
 
@@ -45,16 +45,16 @@ Elysia's router (memoirist) rejects routes with different param names at the sam
 
 ## Files Modified
 
-| File | Change |
-|------|--------|
-| `src/routes/chat-search.ts` | `:chatId` → `:id` in join/transfer routes |
-| `src/routes/vn-choices.ts` | `:chatId` → `:id` in all VN choice routes |
-| `src/routes/vn-generate.ts` | `:chatId` → `:id` in VN generation routes |
-| `src/validation/schemas.ts` | Fixed `StoryItemInstanceBody`, `WorldStateCreateBody` field names |
-| `tests/e2e/helpers/seed.ts` | Fixed stale column references |
-| `tests/e2e/helpers/server.ts` | Removed `data_version` from actor insert |
-| `tests/e2e/flows/api-keys.test.ts` | Aligned test field names with schema |
-| `tests/e2e/response-headers.test.ts` | Fixed logger init order |
+| File                                 | Change                                                            |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| `src/routes/chat-search.ts`          | `:chatId` → `:id` in join/transfer routes                         |
+| `src/routes/vn-choices.ts`           | `:chatId` → `:id` in all VN choice routes                         |
+| `src/routes/vn-generate.ts`          | `:chatId` → `:id` in VN generation routes                         |
+| `src/validation/schemas.ts`          | Fixed `StoryItemInstanceBody`, `WorldStateCreateBody` field names |
+| `tests/e2e/helpers/seed.ts`          | Fixed stale column references                                     |
+| `tests/e2e/helpers/server.ts`        | Removed `data_version` from actor insert                          |
+| `tests/e2e/flows/api-keys.test.ts`   | Aligned test field names with schema                              |
+| `tests/e2e/response-headers.test.ts` | Fixed logger init order                                           |
 
 ## Verification
 
