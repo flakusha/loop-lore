@@ -110,7 +110,7 @@ export class ActivityStreamer {
 export function activityStreamRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "activity-stream", },).get("/api/activity/stream", async (ctx,) => {
     const userId = requireUserId(ctx,);
-    if (typeof userId !== "string") return userId;
+    if (typeof userId !== "string") { return userId; }
     const streamer = new ActivityStreamer(database, userId,);
     return streamer.open();
   }, {

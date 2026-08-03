@@ -18,6 +18,7 @@ import {
   LorePosition,
 } from "../../../db/enums-story";
 import type { DB, } from "../../../db/schema";
+import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
   insertActors,
@@ -26,7 +27,6 @@ import {
   insertWorldLoreEntries,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
-import { createLogger, } from "../../../logger";
 import type { AssembleContext, } from "../types";
 import { loreSection, } from "./lore";
 
@@ -47,8 +47,8 @@ describe("loreSection — audience-constrained world-lore injection", () => {
     await insertActors(db, "Human",);
     await insertActors(db, "Dark Elf",);
     const actors = await db.selectFrom("actors",).select(["id", "display_name",],).execute();
-    const humanId = actors.find((a,) => a.display_name === "Human",)!.id;
-    const elfId = actors.find((a,) => a.display_name === "Dark Elf",)!.id;
+    const humanId = actors.find((a,) => a.display_name === "Human")!.id;
+    const elfId = actors.find((a,) => a.display_name === "Dark Elf")!.id;
 
     await insertWorlds(db, user.id, "Castle World",);
     const world = await db.selectFrom("worlds",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
@@ -114,16 +114,16 @@ describe("loreSection — audience-constrained world-lore injection", () => {
 
       // A human (no species trait => race "human") must NOT receive the elf-scoped lore.
       const humanMessages = await loreSection.build(ctxFor(db, worldId, humanId, "Human",),);
-      const humanText = humanMessages.map((m,) => m.content,).join("\n",);
-      expect(humanText).not.toContain("abandoned centuries ago");
+      const humanText = humanMessages.map((m,) => m.content).join("\n",);
+      expect(humanText,).not.toContain("abandoned centuries ago",);
 
       // A dark elf (species trait "dark elf") MUST receive the same entry.
       const elfMessages = await loreSection.build(ctxFor(db, worldId, elfId, "Dark Elf",),);
-      const elfText = elfMessages.map((m,) => m.content,).join("\n",);
-      expect(elfText).toContain("abandoned centuries ago");
-      expect(elfMessages.some((m,) => m.content.includes("lore",),),).toBe(true);
+      const elfText = elfMessages.map((m,) => m.content).join("\n",);
+      expect(elfText,).toContain("abandoned centuries ago",);
+      expect(elfMessages.some((m,) => m.content.includes("lore",)),).toBe(true,);
     } finally {
       sqlite.close();
     }
-  },);
+  });
 });

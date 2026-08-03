@@ -34,7 +34,10 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .post("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
+        return jsonError({
+          message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
       }
 
       const request = ctx.request as Request;
@@ -112,7 +115,10 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/comparisons/leaderboard", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
+        return jsonError({
+          message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
       }
 
       const rows = await database
@@ -155,7 +161,10 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
     .get("/api/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({ message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized", status: HttpStatus.Unauthorized, },);
+        return jsonError({
+          message: (ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",
+          status: HttpStatus.Unauthorized,
+        },);
       }
 
       const query = ctx.query as Record<string, string> | undefined;

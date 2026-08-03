@@ -38,12 +38,14 @@ async function fetchActiveWhitenotes(
   const now = new Date().toISOString();
   const rows = await db
     .selectFrom("whitenotes",)
-    .select(["type", "content", "priority", "scope",])
+    .select(["type", "content", "priority", "scope",],)
     .where("chat_id", "=", chatId,)
-    .where((eb,) => eb.or([
-      eb("expires_at", "is", null,),
-      eb("expires_at", ">", now,),
-    ],),)
+    .where((eb,) =>
+      eb.or([
+        eb("expires_at", "is", null,),
+        eb("expires_at", ">", now,),
+      ],)
+    )
     .orderBy("priority", "desc",)
     .orderBy("created_at", "asc",)
     .limit(MAX_WHITENOTES,)
@@ -64,7 +66,7 @@ async function fetchUnrevealedShadowNotes(
 ): Promise<ShadowNoteRow[]> {
   const rows = await db
     .selectFrom("shadow_notes",)
-    .select(["type", "content",])
+    .select(["type", "content",],)
     .where("chat_id", "=", chatId,)
     .where("revealed", "=", 0,)
     .orderBy("created_at", "asc",)
@@ -88,13 +90,13 @@ export const gmNotesSection: SectionBuilder = {
     const parts: string[] = [];
     if (whitenotes.length > 0) {
       const text = whitenotes
-        .map((n,) => `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,)
+        .map((n,) => `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`)
         .join("\n",);
       parts.push(wrapSection("whitenotes", text,),);
     }
     if (shadowNotes.length > 0) {
       const text = shadowNotes
-        .map((n,) => `- [${n.type}] ${n.content}`,)
+        .map((n,) => `- [${n.type}] ${n.content}`)
         .join("\n",);
       parts.push(wrapSection("shadow_notes", text,),);
     }

@@ -15,15 +15,23 @@
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { getLogger, type Logger, } from "../logger";
 import {
   createInvite,
   listInvites,
   redeemInvite,
   revokeInvite,
 } from "../chat/invites";
-import { ErrorResponse, InviteChatParams, InviteCreateBody, InviteJoinParams, InviteParams, InviteSchema, SuccessResponse, } from "../validation/schemas";
+import type { DB, } from "../db/schema";
+import { getLogger, type Logger, } from "../logger";
+import {
+  ErrorResponse,
+  InviteChatParams,
+  InviteCreateBody,
+  InviteJoinParams,
+  InviteParams,
+  InviteSchema,
+  SuccessResponse,
+} from "../validation/schemas";
 import {
   HttpStatus,
   jsonCreated,
@@ -67,7 +75,7 @@ export function invitesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/invites",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const chatId = (ctx.params as { id: string }).id;
 
@@ -99,7 +107,7 @@ export function invitesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/invites",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const chatId = (ctx.params as { id: string }).id;
 
@@ -117,7 +125,7 @@ export function invitesRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/invites/:inviteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const { id: chatId, inviteId, } = ctx.params as { id: string; inviteId: string };
 
@@ -139,17 +147,16 @@ export function invitesRoutes(opts: HandlerOpts,) {
         "/api/invites/:code/join",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const code = (ctx.params as { code: string }).code;
 
           const outcome = await redeemInvite(database, { code, actorId: userId, },);
           if (!outcome.ok) {
-            const status =
-              outcome.error.code === "not_found" || outcome.error.code === "revoked"
-                ? HttpStatus.NotFound
-                : (outcome.error.code === "expired" || outcome.error.code === "used_up"
-                  ? HttpStatus.Gone
-                  : HttpStatus.BadRequest);
+            const status = outcome.error.code === "not_found" || outcome.error.code === "revoked"
+              ? HttpStatus.NotFound
+              : (outcome.error.code === "expired" || outcome.error.code === "used_up"
+                ? HttpStatus.Gone
+                : HttpStatus.BadRequest);
             return jsonError({ message: outcome.error.message, status, },);
           }
 
@@ -186,4 +193,3 @@ export function invitesRoutes(opts: HandlerOpts,) {
       )
   );
 }
-

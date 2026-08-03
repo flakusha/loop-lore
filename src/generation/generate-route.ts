@@ -61,7 +61,7 @@ export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition
   if (!role?.tools?.length) { return pluginTools; }
 
   const allowed = new Set(role.tools,);
-  return pluginTools.filter((t,) => allowed.has(t.name,),);
+  return pluginTools.filter((t,) => allowed.has(t.name,));
 }
 
 function sseData(obj: unknown,): string {
@@ -361,6 +361,7 @@ export async function handleGenerate({
         chatId: input.chatId,
         modelId: resolved.resolvedModel,
         systemPromptOverride: input.systemPrompt,
+        systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant"),
       },);
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;

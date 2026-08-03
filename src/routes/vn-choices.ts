@@ -41,7 +41,7 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/vn-choices",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const { id: chatId, } = ctx.params;
           const sceneIndex = parseInt(ctx.query.sceneIndex ?? "0", 10,);
@@ -75,7 +75,7 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/vn-choices",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const { id: chatId, } = ctx.params;
           const body = ctx.body;
@@ -130,7 +130,7 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/vn-choices/:choiceId/select",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const { id: chatId, choiceId, } = ctx.params;
 
@@ -192,7 +192,7 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/vn-choices/history",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const { id: chatId, } = ctx.params;
 

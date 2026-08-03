@@ -5,7 +5,6 @@
  */
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
-import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { chatHistorySection, } from "./sections/chat-history";
 import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
@@ -15,6 +14,7 @@ import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
+import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
