@@ -15,10 +15,10 @@ Both are scoped per `chat_participants` row: one persona, one impersonation targ
 
 ### `chat_participants` columns
 
-| Column                | Type   | Description                                |
-| --------------------- | ------ | ------------------------------------------ |
-| `persona_id`          | text?  | FK → `personas.id`; null = no persona      |
-| `impersonate_actor_id`| text?  | FK → `actors.id`; null = not impersonating |
+| Column                 | Type  | Description                                |
+| ---------------------- | ----- | ------------------------------------------ |
+| `persona_id`           | text? | FK → `personas.id`; null = no persona      |
+| `impersonate_actor_id` | text? | FK → `actors.id`; null = not impersonating |
 
 Both are nullable and independent: a user can have a persona set AND be impersonating (impersonation takes precedence in prompt assembly).
 

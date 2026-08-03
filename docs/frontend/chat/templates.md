@@ -18,10 +18,10 @@ changed in place. To change them, you **migrate to a new chat** bound to a diffe
 
 ## Two Kinds of Chat Configuration
 
-| Kind                | Fields                                                        | Changeable online?                        |
-| ------------------- | ------------------------------------------------------------- | ----------------------------------------- |
-| **Key mechanics**   | mode, turnStrategy, gmConfig.assistantRole, visualNovel, worldId, responseStyle | **No** — migrate to a new chat |
-| **Session state**   | name, isPinned, isPaused, freezePanel (admin), currentLocationId, participants | **Yes** — safe to flip live |
+| Kind              | Fields                                                                          | Changeable online?             |
+| ----------------- | ------------------------------------------------------------------------------- | ------------------------------ |
+| **Key mechanics** | mode, turnStrategy, gmConfig.assistantRole, visualNovel, worldId, responseStyle | **No** — migrate to a new chat |
+| **Session state** | name, isPinned, isPaused, freezePanel (admin), currentLocationId, participants  | **Yes** — safe to flip live    |
 
 Changing key mechanics mid-conversation would break narrative/generation continuity and
 desync world/memory state. Session state only affects presentation and is safe to toggle.
@@ -29,7 +29,7 @@ desync world/memory state. Session state only affects presentation and is safe t
 ## Creating a Chat From a Template
 
 1. Open **New Chat**. A template `<select>` appears above the form fields.
-2. Pick a template (e.g. *Advanced 1:1 Roleplay*, *Group + GM*, *Brainstorm Assistant*).
+2. Pick a template (e.g. _Advanced 1:1 Roleplay_, _Group + GM_, _Brainstorm Assistant_).
    It pre-fills the hidden create fields (`turnStrategy`, `worldId`, `gmConfig`,
    `visualNovel`) and the visible ones (type/mode, impersonation, memory-carry).
 3. Override any field — your explicit choices win over the template defaults.
@@ -68,6 +68,7 @@ POST /api/chats/:id/migrate
 ```
 
 What carries:
+
 - **Participants** — the chat's members are copied to the new chat.
 - **Memory** — actor memories / memory carry are preserved.
 - **History** — either a summary of the conversation, the full message tree, or nothing.

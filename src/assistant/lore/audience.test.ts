@@ -16,7 +16,7 @@ const human: ActorIdentity = {
   locationId: "castle-underground",
 };
 
-function entry(scope: LoreScope | null): { audienceScope: LoreScope | null } {
+function entry(scope: LoreScope | null,): { audienceScope: LoreScope | null } {
   return { audienceScope: scope, };
 }
 
@@ -29,7 +29,7 @@ describe("parseLoreScope", () => {
   });
 
   test("parses a valid subject scope", () => {
-    const scope = parseLoreScope(JSON.stringify({ subject: { kind: "race", race: "dark elf", }, }),);
+    const scope = parseLoreScope(JSON.stringify({ subject: { kind: "race", race: "dark elf", }, },),);
     expect(scope?.subject?.kind,).toBe("race",);
   });
 });

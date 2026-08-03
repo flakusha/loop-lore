@@ -43,7 +43,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const messageId = ctx.params.id;
 
           // Verify message exists and user has access
@@ -119,7 +119,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const messageId = ctx.params.id;
           const { emoji, } = ctx.body as { emoji: string };
 
@@ -184,7 +184,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
           const messageId = ctx.params.id;
 
           // Verify message exists and user has access

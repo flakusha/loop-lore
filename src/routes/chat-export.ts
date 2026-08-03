@@ -230,7 +230,7 @@ export function chatExportRoutes(opts: HandlerOpts,) {
     "/api/chats/:id/export",
     async (ctx: any,) => {
       const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") return userId;
+      if (typeof userId !== "string") { return userId; }
 
       const chatId = ctx.params.id as string;
       const format = (ctx.query.format as string) ?? "markdown";

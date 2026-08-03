@@ -42,11 +42,11 @@ function validateRequiredString(
  * @param words - Value to validate
  * @returns Error message or null if valid
  */
-function validateTriggerWords(words: unknown): string | null {
+function validateTriggerWords(words: unknown,): string | null {
   if (words === undefined) {
     return null;
   }
-  if (!Array.isArray(words)) {
+  if (!Array.isArray(words,)) {
     return "LoRA triggerWords must be an array";
   }
   for (const word of words) {
@@ -63,7 +63,7 @@ function validateTriggerWords(words: unknown): string | null {
  * @param value - Value to validate
  * @returns Error message or null if valid
  */
-function validateRecommendedStrength(value: unknown): string | null {
+function validateRecommendedStrength(value: unknown,): string | null {
   if (value === undefined) {
     return null;
   }
@@ -113,7 +113,7 @@ export function validateLoRAConfig(config: unknown,): string | null {
   const strength = c.strength;
 
   // Guard against NaN/Infinity
-  if (!Number.isFinite(strength)) {
+  if (!Number.isFinite(strength,)) {
     return "LoRA strength must be a finite number";
   }
 
@@ -143,17 +143,17 @@ export function validateLoRAModel(model: unknown,): string | null {
   const m = model as Record<string, unknown>;
 
   // Validate required fields
-  const nameErr = validateRequiredString(m, "name", "name");
+  const nameErr = validateRequiredString(m, "name", "name",);
   if (nameErr !== null) {
     return nameErr;
   }
 
-  const filenameErr = validateRequiredString(m, "filename", "filename");
+  const filenameErr = validateRequiredString(m, "filename", "filename",);
   if (filenameErr !== null) {
     return filenameErr;
   }
 
-  const pathErr = validateRequiredString(m, "path", "path");
+  const pathErr = validateRequiredString(m, "path", "path",);
   if (pathErr !== null) {
     return pathErr;
   }
@@ -167,12 +167,12 @@ export function validateLoRAModel(model: unknown,): string | null {
     return "LoRA model size must be a number";
   }
 
-  const triggerWordsErr = validateTriggerWords(m.triggerWords);
+  const triggerWordsErr = validateTriggerWords(m.triggerWords,);
   if (triggerWordsErr !== null) {
     return triggerWordsErr;
   }
 
-  const strengthErr = validateRecommendedStrength(m.recommendedStrength);
+  const strengthErr = validateRecommendedStrength(m.recommendedStrength,);
   if (strengthErr !== null) {
     return strengthErr;
   }
@@ -191,7 +191,7 @@ export function validateLoRAModel(model: unknown,): string | null {
 export function isLoRAFilename(filename: string,): boolean {
   const lower = filename.toLowerCase();
   for (const ext of LORA_EXTENSIONS) {
-    if (lower.endsWith(ext)) {
+    if (lower.endsWith(ext,)) {
       return true;
     }
   }

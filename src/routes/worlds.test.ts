@@ -54,7 +54,7 @@ describe("worlds creation publication_status (commit gating)", () => {
   /** Mount worlds routes behind a stub auth middleware that sets ctx.userId. */
   function authedApp(): Elysia {
     // Elysia derive type chaining is noisy in tests
-    return new Elysia({ name: "test-worlds-auth", })
+    return new Elysia({ name: "test-worlds-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId, userRole: "user", }),)
       .use(worldsRoutes({ database: db, config: mockConfig, },),) as any;
   }
