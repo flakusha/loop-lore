@@ -7,7 +7,7 @@
 **Epic**: epic-gm-shadow-notes
 **Related**: TASK-gm-shadow-notes.md, TASK-gm-whitenotes.md
 
-### Description
+## Description
 
 Every `GET` on the GM notes routes returns HTTP 500 with body `near "from": syntax error` when the requester is authenticated as the chat owner (or any authed user):
 
@@ -22,7 +22,7 @@ Repro (see `src/routes/gm-notes.test.ts` — tests `shadow note create → list 
 
 Also confirmed via `/tmp` debug tests (gm-debug4, gm-debug5).
 
-### What has been eliminated (do NOT re-trace these)
+## What has been eliminated (do NOT re-trace these)
 
 - **Params validation**: uuid chat id required (`ChatIdParams` → 422 otherwise); repro uses valid uuid — passes.
 - **Authz**: unauthed GET → 401 (correct); non-member → 403 (correct). 500 only occurs after authz passes.
@@ -30,25 +30,25 @@ Also confirmed via `/tmp` debug tests (gm-debug4, gm-debug5).
 - **The queries themselves**: standalone `selectFrom("whitenotes").where(...).orderBy("priority","desc").orderBy("created_at","desc")` and `countAll().as("total")` both execute fine in isolation (debug2). No SQL syntax error in the generated SQL.
 - **Note the route's `page`/`pageSize` cast**: `(ctx.query.page as number) ?? 1` with `PaginationQuery` schema — inspect whether `t.Numeric`/absent query params produce a weird value (e.g. NaN → invalid LIMIT/OFFSET, but that yields a different error, not "near from").
 
-### Likely next probes (unverified)
+## Likely next probes (unverified)
 
 - Diff the SQL executed in the failing route vs the standalone queries — log `sql` via Kysely `.compile()` on the exact route query chain, including `checkChatAccess` preceding it. The "near from" points at a malformed `FROM` clause — suspect a table reference or alias only present in the route path (e.g. `checkChatAccess` query shape, or `countAll` + `.as("total")` combined with `.where` on a fresh connection state).
 - Try reproducing with the exact route file's imports/order — possibly an issue with how `opts.database` (the Kysely instance) is passed vs the dialect's connection pooling (`createTestDb` uses what dialect?).
 - Check whether ANY other route in `src/routes/` does the same GET pattern and works (e.g. `messages.ts` list) — if so, diff the difference.
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - [ ] `bun test src/routes/gm-notes.test.ts` → 7 pass / 0 fail
 - [ ] Both GET endpoints return `{ items, total, page, pageSize }` 200 with data
 - [ ] Root cause documented in this ticket or commit message
 
-### Notes
+## Notes
 
 - Test file already written and green except these 2 GET failures (5/7 pass). Fixes applied in this session: uuid chat ids in tests, 400→422 validation expectations, sequential awaits in both GET handlers (kept — harmless, good practice).
 - Keep the sequential-await pattern regardless of root cause — single-connection sqlite cannot interleave in-flight statements.
 - Full `bun run check` times out (~300s); use `bun run typecheck` + targeted `bun test` for verification.
 
-### Resolution (2026-08-01)
+## Resolution (2026-08-01)
 
 **Root cause**: Both GET handlers omitted `.select()`/`.selectAll()` on the items query. Kysely 0.29.4 emits an **empty select list** (`select from "whitenotes" ...`) when no `.select()` is given — it does NOT default to `select *`. SQLite rejects that with `near "from": syntax error`. Every working query in the file (count, checkChatAccess, post/delete) had an explicit `.select()`/`.selectAll()`; the two items queries were the only ones relying on implicit select-all.
 

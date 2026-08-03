@@ -318,25 +318,28 @@ Per-component memory tracking with heap, RSS, and GC pressure targets.
 **Spec**: `docs/spec/fuzzing-input-generation.md`
 
 ### Overview
+
 Systematic approach to generating diverse, malicious, and edge-case inputs for fuzzing all external interfaces.
 
 ### Input Categories
 
-| Category | Targets | Strategy | Priority |
-|----------|---------|----------|----------|
-| Structured Data (JSON/MessagePack/Protobuf) | REST endpoints, WebSocket messages, IPC | Type-aware mutation, schema violation, encoding attacks | P0 |
-| Text/Protocol | Chat messages, LLM prompts, command parsers, regex extractors | Grammar-based fuzzing, injection payloads, unicode edge cases | P0 |
-| Binary/Asset | Image upload, audio/video, file metadata extraction | Format corruption, polyglot files, ZIP bombs, decompression bombs | P0 |
-| Network/Transport | HTTP/1.1, HTTP/2, WebSocket, raw TCP | Protocol violations, state machine attacks, slowloris patterns | P1 |
-| Cryptographic Input | Key exchange, encryption/decryption, signature verification | Invalid curve points, weak keys, ciphertext manipulation | P1 |
+| Category                                    | Targets                                                       | Strategy                                                          | Priority |
+| ------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------- | -------- |
+| Structured Data (JSON/MessagePack/Protobuf) | REST endpoints, WebSocket messages, IPC                       | Type-aware mutation, schema violation, encoding attacks           | P0       |
+| Text/Protocol                               | Chat messages, LLM prompts, command parsers, regex extractors | Grammar-based fuzzing, injection payloads, unicode edge cases     | P0       |
+| Binary/Asset                                | Image upload, audio/video, file metadata extraction           | Format corruption, polyglot files, ZIP bombs, decompression bombs | P0       |
+| Network/Transport                           | HTTP/1.1, HTTP/2, WebSocket, raw TCP                          | Protocol violations, state machine attacks, slowloris patterns    | P1       |
+| Cryptographic Input                         | Key exchange, encryption/decryption, signature verification   | Invalid curve points, weak keys, ciphertext manipulation          | P1       |
 
 ### Generation Pipeline
+
 ```
 Schema/Grammar ──▶ Base Corpus ──▶ Mutation Engine ──▶ Validation & Filter
      (from OpenAPI specs, valid traffic, unit test seeds)
 ```
 
 ### Mutation Strategies
+
 1. **Bitflip** (deterministic): Flip 1-4 bits at byte offsets targeting headers, length fields, magic bytes
 2. **Arithmetic** (deterministic): Add/subtract to 8/16/32-bit integers targeting length fields, counts, IDs
 3. **Dictionary** (seeded): Known-bad strings from CVE databases, bug reports, project-specific config keys
@@ -345,6 +348,7 @@ Schema/Grammar ──▶ Base Corpus ──▶ Mutation Engine ──▶ Validat
 6. **Generative** (grammar/schema): Random valid generation from schema with targeted constraint violations
 
 ### Coverage-Driven Prioritization
+
 - **P0**: Auth endpoints (40% budget) — structure + dictionary + crypto fuzzing
 - **P0**: Asset upload (25% budget) — binary + structure + polyglot fuzzing
 - **P1**: Chat/message (15% budget) — grammar + injection + unicode fuzzing
@@ -353,6 +357,7 @@ Schema/Grammar ──▶ Base Corpus ──▶ Mutation Engine ──▶ Validat
 - **P2**: Internal IPC (5% budget) — structure + bitflip + arithmetic
 
 ### Fuzzing Harness Requirements
+
 - Deterministic initialization (fixed seeds, mock time)
 - No external dependencies (mock DB, cache, LLM)
 - Fast reset (< 10ms per iteration)
@@ -363,11 +368,13 @@ Schema/Grammar ──▶ Base Corpus ──▶ Mutation Engine ──▶ Validat
 - OOM handling (memory limit: 512MB)
 
 ### Execution Infrastructure
+
 - **Local**: `bun run fuzz:target --target=<name> --iterations=10000`
 - **CI**: GitHub Actions matrix per target, 30m timeout, artifact upload on crash
 - **Continuous**: Scheduler distributes targets across workers, centralized corpus sync, auto crash triage
 
 ### Deliverables
+
 - [ ] Fuzzing infrastructure (harness runner, corpus manager, crash deduplicator)
 - [ ] Per-target harnesses (auth, asset, chat, llm, admin, IPC)
 - [ ] Seed corpora (10k+ seeds per target)
@@ -385,20 +392,22 @@ Schema/Grammar ──▶ Base Corpus ──▶ Mutation Engine ──▶ Validat
 **Spec**: `docs/spec/performance-dashboard.md`
 
 ### Overview
+
 Real-time observability dashboard combining benchmarking results, live telemetry, and historical trends.
 
 ### Dashboard Panels
 
-| Panel | Metric | Target | Refresh |
-|-------|--------|--------|---------|
-| **1. API Latency Heatmap** | `http_request_duration_seconds` (p50/p95/p99) | p99 < 5ms (non-LLM) | 10s |
-| **2. Throughput Chart** | `http_requests_total`, `message_throughput_msgs_per_sec` | > 500 msg/s baseline | 10s |
-| **3. Resource Utilization** | CPU, Memory (RSS/heap), GC pauses, Worker pool | RSS < 200MB peak | 10s |
-| **4. LLM Generation Stats** | `llm_round_trip_seconds`, `llm_token_generation_rate` | p95 < 5s, > 20 tokens/s | 10s |
-| **5. Concurrency Matrix** | Active connections, sessions, worker count | 10k concurrent target | 10s |
-| **6. Error Budget Burn-down** | SLO violations, error budget remaining | Budget > 0% | 10s |
+| Panel                         | Metric                                                   | Target                  | Refresh |
+| ----------------------------- | -------------------------------------------------------- | ----------------------- | ------- |
+| **1. API Latency Heatmap**    | `http_request_duration_seconds` (p50/p95/p99)            | p99 < 5ms (non-LLM)     | 10s     |
+| **2. Throughput Chart**       | `http_requests_total`, `message_throughput_msgs_per_sec` | > 500 msg/s baseline    | 10s     |
+| **3. Resource Utilization**   | CPU, Memory (RSS/heap), GC pauses, Worker pool           | RSS < 200MB peak        | 10s     |
+| **4. LLM Generation Stats**   | `llm_round_trip_seconds`, `llm_token_generation_rate`    | p95 < 5s, > 20 tokens/s | 10s     |
+| **5. Concurrency Matrix**     | Active connections, sessions, worker count               | 10k concurrent target   | 10s     |
+| **6. Error Budget Burn-down** | SLO violations, error budget remaining                   | Budget > 0%             | 10s     |
 
 ### SLO Tracking
+
 - **Baseline SLOs**: API p50 < 20ms, p95 < 50ms, p99 < 200ms; Hot-path p99 < 5ms
 - **LLM SLOs**: Round-trip p95 < 5s, p99 < 15s, Token rate > 20/s
 - **Throughput SLOs**: Message throughput > 500 msg/s, Asset upload > 50 MB/s
@@ -406,18 +415,21 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Worker Thread SLOs**: Spawn overhead < 5ms, IPC throughput > 10k msg/s
 
 ### Alerting Categories
+
 1. **Performance Degradation**: Latency exceeds threshold → Slack #alerts-warning
 2. **Capacity Exhaustion**: Approaching resource limits → Slack #alerts-warning
 3. **SLO Violation**: Error budget burning too fast → Slack #alerts-critical + page
 4. **System Failure**: Process crash, OOM, unresponsive → Slack #alerts-critical + page
 
 ### API Endpoints
+
 - `GET /perf/metrics/live` — Real-time metrics (latency, throughput, resources, concurrency, SLO status)
 - `GET /perf/metrics/benchmark` — Benchmark results with regression detection
 - `GET /perf/slo/status` — SLO compliance and error budget status
 - `GET /perf/dashboard/config` — Dashboard panel configuration
 
 ### Deliverables
+
 - [ ] Live metrics collection (Prometheus-compatible endpoints)
 - [ ] SLO compliance tracking system
 - [ ] Error budget burn-down calculation

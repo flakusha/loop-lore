@@ -18,16 +18,16 @@ to move from one location to another, the party (including GM) can:
 
 ## What Exists
 
-| Component                                         | Status | Notes                                 |
-| ------------------------------------------------- | ------ | ------------------------------------- |
+| Component                                     | Status | Notes                                 |
+| --------------------------------------------- | ------ | ------------------------------------- |
 | `POST /api/chats/:id/join`                    | ✅     | Add user as participant               |
 | `DELETE /api/chats/:id/participants/:actorId` | ✅     | Remove participant                    |
 | `POST /api/chats/:id/transfer`                | ✅     | Move chat to new location             |
-| VN scene renderer                                 | ✅     | Has transition effects                |
-| VN choice cards                                   | ✅     | Can drive location decisions          |
-| Party concept                                     | ❌     | No DB table, implicit via shared chat |
-| VN join/leave narration                           | ❌     | No wiring                             |
-| Party split/merge                                 | ❌     | No logic                              |
+| VN scene renderer                             | ✅     | Has transition effects                |
+| VN choice cards                               | ✅     | Can drive location decisions          |
+| Party concept                                 | ❌     | No DB table, implicit via shared chat |
+| VN join/leave narration                       | ❌     | No wiring                             |
+| Party split/merge                             | ❌     | No logic                              |
 
 ## Design
 

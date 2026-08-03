@@ -1268,17 +1268,20 @@ interface ChatGameMessage {
 The NSFW cards plugin (`plugins/community/nsfw-cards/`) provides card-based seduction mechanics for NSFW social encounters.
 
 **Key Features:**
+
 - Seduction card types: flirt, charm, tease, compliment, touch, kiss (power 1-5)
 - Intimacy/resistance mechanics — play cards to build intimacy, reduce target resistance
 - Difficulty tiers (easy/medium/hard) with different target thresholds
 - Integrates with `src/nsfw/social-integration.ts` reputation system
 
 **Cross-System Integration Points:**
+
 - **Reputation:** Seduction outcomes affect NSFW reputation scores (intimacy thresholds map to reputation tiers)
 - **Battle System:** Seduction cards can be used as "social combat" — charm/confuse enemy in battle, reduce their resistance, or achieve intimate victory
 - **NPC Relationships:** Seduction encounters build NPC intimacy which feeds into the relationship system
 
 **Implemented Plugin:**
+
 - `plugins/community/nsfw-cards/types.ts` — card types, seduction state
 - `plugins/community/nsfw-cards/engine.ts` — seduction engine with card generation, outcome resolution, intimacy tracking
 - `plugins/community/nsfw-cards/routes.ts` — POST `/api/nsfw-cards/start`, POST `/api/nsfw-cards/play`
