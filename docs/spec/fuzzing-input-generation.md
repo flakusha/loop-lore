@@ -1,6 +1,7 @@
 # Fuzzing Input Generation Strategy
 
 ## Overview
+
 Systematic approach to generating diverse, malicious, and edge-case inputs for fuzzing all external interfaces.
 
 ---
@@ -12,11 +13,12 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 **Targets**: All REST endpoints, WebSocket messages, IPC
 
 **Generators**:
+
 - **Type-aware mutation**: Start from valid schema, mutate fields
   - Field deletion, addition, type change
   - Nested object/array corruption
   - Unicode injection in strings
-- **Schema violation**: 
+- **Schema violation**:
   - Required field removal
   - Enum value out of range
   - Array length: 0, 1, max+1, 10000+
@@ -32,7 +34,8 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 **Targets**: Chat messages, LLM prompts, command parsers, regex extractors
 
 **Generators**:
-- **Grammar-based**: 
+
+- **Grammar-based**:
   - Valid grammar + systematic rule violations
   - Recursive descent with depth limits
   - Left-recursion stress
@@ -59,6 +62,7 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 **Targets**: Image upload, audio/video, file metadata extraction
 
 **Generators**:
+
 - **Format corruption**:
   - Header magic bytes mutation
   - Chunk length overflow
@@ -81,6 +85,7 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 **Targets**: HTTP/1.1, HTTP/2, WebSocket, raw TCP
 
 **Generators**:
+
 - **Protocol violations**:
   - Malformed headers (missing colon, oversized)
   - Chunked encoding errors
@@ -102,6 +107,7 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 **Targets**: Key exchange, encryption/decryption, signature verification
 
 **Generators**:
+
 - **Key material**:
   - Invalid curve points
   - Weak keys (all zeros, small order)
@@ -140,28 +146,34 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 ## Mutation Strategies
 
 ### 1. Bitflip (Deterministic)
+
 - Flip 1-4 bits at byte offsets 0, 1, 2, 4, 8, 16, 32, 64, 128
 - Target: headers, length fields, magic bytes
 
 ### 2. Arithmetic (Deterministic)
+
 - Add/subtract 1, 2, 4, 8, 16, 32, 64, 128 to 8/16/32-bit integers
 - Target: length fields, counts, IDs, timestamps
 
 ### 3. Dictionary (Seeded)
+
 - Known-bad strings: format strings, SQL, commands, paths
 - Extracted from: CVE databases, bug reports, sanitizer outputs
 - Project-specific: config keys, internal API names
 
 ### 4. Structure-Aware (Smart)
+
 - **JSON**: Insert/delete keys, change types, duplicate keys
 - **Protobuf**: Field tag corruption, wire type mismatch
 - **Images**: Chunk reorder, dimension overflow, palette corruption
 
 ### 5. Cross-Over (Recombination)
+
 - Combine fragments from 2+ valid inputs
 - Splice at structure boundaries (objects, arrays, chunks)
 
 ### 6. Generative (Grammar/Schema)
+
 - Random valid generation from schema
 - Targeted invalid generation (constraint violation)
 
@@ -169,20 +181,21 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 
 ## Coverage-Driven Prioritization
 
-| Priority | Target | Strategy | Budget |
-|----------|--------|----------|--------|
-| P0 | Auth endpoints | Structure + dict + crypto | 40% |
-| P0 | Asset upload | Binary + structure + polyglot | 25% |
-| P1 | Chat/message | Grammar + injection + unicode | 15% |
-| P1 | LLM prompt | Injection + unicode + length | 10% |
-| P2 | Admin/config | Structure + dict + auth bypass | 5% |
-| P2 | Internal IPC | Structure + bitflip + arithmetic | 5% |
+| Priority | Target         | Strategy                         | Budget |
+| -------- | -------------- | -------------------------------- | ------ |
+| P0       | Auth endpoints | Structure + dict + crypto        | 40%    |
+| P0       | Asset upload   | Binary + structure + polyglot    | 25%    |
+| P1       | Chat/message   | Grammar + injection + unicode    | 15%    |
+| P1       | LLM prompt     | Injection + unicode + length     | 10%    |
+| P2       | Admin/config   | Structure + dict + auth bypass   | 5%     |
+| P2       | Internal IPC   | Structure + bitflip + arithmetic | 5%     |
 
 ---
 
 ## Input Corpus Management
 
 ### Seed Collection
+
 ```bash
 # From production traffic (anonymized)
 mitmproxy -w traffic.har --set block_global=false
@@ -193,11 +206,13 @@ find tests -name "*.json" -o -name "*.yaml" | head -1000
 ```
 
 ### Corpus Minimization
+
 - `afl-cmin` for coverage-based reduction
 - Deduplicate by structural hash (AST for JSON, perceptual hash for images)
 - Maintain < 10,000 seeds per target
 
 ### Corpus Evolution
+
 - Add crashing inputs to regression corpus
 - Periodically refresh from production (monthly)
 - Tag seeds with metadata: source, coverage, crash-type
@@ -207,23 +222,25 @@ find tests -name "*.json" -o -name "*.yaml" | head -1000
 ## Fuzzing Harness Requirements
 
 ### Per-Target Harness
+
 ```typescript
 // Example: REST endpoint fuzzer
 interface FuzzHarness {
-  setup(): Promise<void>;        // Initialize DB, mock services
-  fuzz(input: Uint8Array): Promise<FuzzResult>;
-  teardown(): Promise<void>;     // Cleanup
+  setup(): Promise<void>; // Initialize DB, mock services
+  fuzz(input: Uint8Array,): Promise<FuzzResult>;
+  teardown(): Promise<void>; // Cleanup
 }
 
 interface FuzzResult {
-  status: 'crash' | 'timeout' | 'oom' | 'assertion' | 'ok' | 'invalid';
+  status: "crash" | "timeout" | "oom" | "assertion" | "ok" | "invalid";
   coverage: CoverageMap;
   logs: string[];
-  reproduction: Uint8Array;  // Minimal input reproducing result
+  reproduction: Uint8Array; // Minimal input reproducing result
 }
 ```
 
 ### Harness Checklist
+
 - [ ] Deterministic initialization (fixed seeds, mock time)
 - [ ] No external dependencies (mock DB, cache, LLM)
 - [ ] Fast reset (< 10ms per iteration)
@@ -238,6 +255,7 @@ interface FuzzResult {
 ## Execution Infrastructure
 
 ### Local Development
+
 ```bash
 # Single target, fast feedback
 bun run fuzz:target --target=chat-message --iterations=10000
@@ -247,6 +265,7 @@ bun run fuzz:all --report=html --corpus=./corpus
 ```
 
 ### CI Integration
+
 ```yaml
 # .github/workflows/fuzzing.yml
 jobs:
@@ -269,6 +288,7 @@ jobs:
 ```
 
 ### Continuous Fuzzing (Cluster)
+
 - **Scheduler**: Distribute targets across workers
 - **Corpus sync**: Centralized MinIO/S3 bucket
 - **Crash triage**: Auto-group by stack trace, assign severity
@@ -279,15 +299,17 @@ jobs:
 ## Metrics & Reporting
 
 ### Per-Run Metrics
-| Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
-| Executions/sec | > 1000 | < 100 |
-| Edge coverage | > 80% | < 50% |
-| Unique crashes | 0 | > 0 |
-| Corpus growth | > 5%/hr | < 1%/hr |
-| Memory stability | Flat | > 10MB/hr growth |
+
+| Metric           | Target  | Alert Threshold  |
+| ---------------- | ------- | ---------------- |
+| Executions/sec   | > 1000  | < 100            |
+| Edge coverage    | > 80%   | < 50%            |
+| Unique crashes   | 0       | > 0              |
+| Corpus growth    | > 5%/hr | < 1%/hr          |
+| Memory stability | Flat    | > 10MB/hr growth |
 
 ### Dashboard Panels
+
 1. **Coverage heatmap**: File × line coverage over time
 2. **Crash timeline**: Count by type (assertion, OOM, timeout, segfault)
 3. **Corpus evolution**: Size, diversity, new edges found
@@ -299,12 +321,14 @@ jobs:
 ## Integration with Sanitizers
 
 ### Compile-Time
+
 ```bash
 # Build with sanitizers
 bun build --sanitize=address,undefined,memory,thread
 ```
 
 ### Runtime
+
 ```bash
 # ASan options
 ASAN_OPTIONS=detect_leaks=1:halt_on_error=0:allocator_may_return_null=1
@@ -315,6 +339,7 @@ UBSAN_OPTIONS=halt_on_error=0:print_stacktrace=1
 ```
 
 ### Fuzzer-Sanitizer Combo
+
 - Run with ASan+UBSan for memory/UB bugs
 - Run with MSan for uninitialized memory
 - Run with TSan for data races (threaded targets only)
@@ -324,6 +349,7 @@ UBSAN_OPTIONS=halt_on_error=0:print_stacktrace=1
 ## Regression & Triage Process
 
 ### Crash Classification
+
 ```
 CRASH
 ├── EXPLOITABLE (CVSS ≥ 7.0)
@@ -342,6 +368,7 @@ CRASH
 ```
 
 ### Triage Workflow
+
 1. **Auto-dedupe**: Group by (stack trace hash, sanitizer type)
 2. **Minimize**: `afl-tmin` or custom delta-debug
 3. **Classify**: Apply CVSS, assign owner

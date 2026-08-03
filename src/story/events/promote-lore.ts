@@ -9,11 +9,11 @@
  * Unlike the legacy `worlds.lore` text blob, a promoted row carries `audience_scope`
  * JSON and is picked up by `loreSection` exactly like any authored world lore entry.
  */
-import { randomUUID, } from "node:crypto";
 import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import type { LoreScope, } from "../../assistant/lore/audience";
 import { LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
-import type { LoreScope, } from "../../assistant/lore/audience";
 import { safeJsonStringify, } from "../../utils";
 
 /** Known subject kinds accepted at promotion time (docs/spec/lore.md §3.2). */
@@ -31,7 +31,7 @@ const KNOWN_SUBJECT_KINDS = new Set([
  * or null when absent/invalid. Structure mirrors `parseLoreScope` but accepts an
  * already-parsed object (events carry objects, not JSON strings).
  */
-function normalizeAudienceScope(value: unknown): LoreScope | null {
+function normalizeAudienceScope(value: unknown,): LoreScope | null {
   if (!value || typeof value !== "object") { return null; }
   const scope = value as Record<string, unknown>;
 
@@ -41,13 +41,17 @@ function normalizeAudienceScope(value: unknown): LoreScope | null {
 
   const subject = rawSubject as Record<string, unknown>;
   const kind = subject.kind;
-  if (typeof kind !== "string" || !KNOWN_SUBJECT_KINDS.has(kind)) { return null; }
+  if (typeof kind !== "string" || !KNOWN_SUBJECT_KINDS.has(kind,)) { return null; }
 
   const normalized: LoreScope = { subject: { kind, } as LoreScope["subject"], };
 
   // Accept the optional selector field for subjects that define one.
-  if (typeof subject.locationId === "string") { (normalized.subject as { locationId?: string }).locationId = subject.locationId; }
-  if (typeof subject.profession === "string") { (normalized.subject as { profession?: string }).profession = subject.profession; }
+  if (typeof subject.locationId === "string") {
+    (normalized.subject as { locationId?: string }).locationId = subject.locationId;
+  }
+  if (typeof subject.profession === "string") {
+    (normalized.subject as { profession?: string }).profession = subject.profession;
+  }
   if (typeof subject.race === "string") { (normalized.subject as { race?: string }).race = subject.race; }
 
   if (typeof scope.requires_presence === "boolean") {

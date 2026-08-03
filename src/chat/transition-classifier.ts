@@ -59,7 +59,7 @@ const REGEX_PATTERNS: { pattern: RegExp; type: TransitionType }[] = [
  * @param content - User message content
  * @returns Classification result or null if no pattern matches
  */
-function classifyWithRegex(content: string): Omit<TransitionClassification, "source"> | null {
+function classifyWithRegex(content: string,): Omit<TransitionClassification, "source"> | null {
   const lower = content.toLowerCase();
 
   for (const { pattern, type, } of REGEX_PATTERNS) {

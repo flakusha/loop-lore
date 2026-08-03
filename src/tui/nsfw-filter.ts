@@ -21,10 +21,18 @@ export interface NsfwFilterConfig {
 /** Default filter configuration. */
 const DEFAULT_CONFIG: NsfwFilterConfig = {
   mode: "show",
-  triggerRatings: ["nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme"],
+  triggerRatings: ["nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme",],
   keywords: [
-    "nude", "naked", "sex", "sexual", "intimate", "arousal",
-    "orgasm", "penetration", "foreplay", "seduction",
+    "nude",
+    "naked",
+    "sex",
+    "sexual",
+    "intimate",
+    "arousal",
+    "orgasm",
+    "penetration",
+    "foreplay",
+    "seduction",
   ],
 };
 
@@ -47,7 +55,7 @@ export class NsfwFilter {
 
     // Check for NSFW keywords
     const lower = content.toLowerCase();
-    return this.config.keywords.some((kw,) => lower.includes(kw,),);
+    return this.config.keywords.some((kw,) => lower.includes(kw,));
   }
 
   /**
@@ -105,6 +113,6 @@ export class NsfwFilter {
    * Remove a keyword from the filter list.
    */
   removeKeyword(keyword: string,): void {
-    this.config.keywords = this.config.keywords.filter((kw,) => kw !== keyword,);
+    this.config.keywords = this.config.keywords.filter((kw,) => kw !== keyword);
   }
 }

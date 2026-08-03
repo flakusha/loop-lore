@@ -14,6 +14,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { Generated, } from "kysely";
 import type { ChatMode, } from "../../../db/enums-core";
+import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
   insertActorMemories,
@@ -22,7 +23,6 @@ import {
   insertChats,
   insertUsers,
 } from "../../../test-utils/insert-helpers";
-import { createLogger, } from "../../../logger";
 import type { AssembleContext, } from "../types";
 import { memorySection, } from "./memories";
 
@@ -53,14 +53,14 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
       await insertUsers(db, "human", "Human",);
       await insertActors(db, "Dark Elf",);
       await insertActors(db, "Human",);
-      const users = await db.selectFrom("users").select(["id", "username",],).execute();
-      const actors = await db.selectFrom("actors").select(["id", "display_name",],).execute();
-      const userId = users.find((u,) => u.username === "human",)!.id;
-      const elfId = actors.find((a,) => a.display_name === "Dark Elf",)!.id;
-      const humanId = actors.find((a,) => a.display_name === "Human",)!.id;
+      const users = await db.selectFrom("users",).select(["id", "username",],).execute();
+      const actors = await db.selectFrom("actors",).select(["id", "display_name",],).execute();
+      const userId = users.find((u,) => u.username === "human")!.id;
+      const elfId = actors.find((a,) => a.display_name === "Dark Elf")!.id;
+      const humanId = actors.find((a,) => a.display_name === "Human")!.id;
 
       await insertChats(db, "Castle chat", userId, { mode: storyMode, },);
-      const chat = await db.selectFrom("chats").select(["id",],).limit(1,).executeTakeFirstOrThrow();
+      const chat = await db.selectFrom("chats",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
       const chatId = chat.id;
 
       await insertChatParticipants(db, chatId, elfId,);
@@ -104,12 +104,12 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
       };
 
       const messages = await memorySection.build(ctx,);
-      const output = messages.map((m,) => m.content,).join("\n",);
+      const output = messages.map((m,) => m.content).join("\n",);
 
       // The elf's private and blocked memories must never reach the human's prompt
       // (withheld at provision, before the probabilistic injection step — deterministic).
-      expect(output).not.toContain("underground castle was abandoned");
-      expect(output).not.toContain("vault opens with the iron key");
+      expect(output,).not.toContain("underground castle was abandoned",);
+      expect(output,).not.toContain("vault opens with the iron key",);
       // NOTE: presence of the human's own memories is intentionally NOT asserted — the
       // injection filter rolls probability (memorySection has no randomFn lever), so which
       // memories appear is non-deterministic. The withdraw guarantee above is the
@@ -117,5 +117,5 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
     } finally {
       sqlite.close();
     }
-  },);
+  });
 });

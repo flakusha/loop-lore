@@ -3,9 +3,9 @@
  *
  * Tests for regex-first, AUX-LLM-fallback transition detection.
  */
-import { describe, expect, it, beforeAll, } from "bun:test";
-import { classifyTransition, } from "./transition-classifier";
+import { beforeAll, describe, expect, it, } from "bun:test";
 import { createLogger, } from "../logger";
+import { classifyTransition, } from "./transition-classifier";
 
 // ─── Setup ────────────────────────────────────────────────────
 
@@ -41,11 +41,11 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("location_change",);
-    expect(result.source).toBe("regex",);
-    expect(result.confidence).toBe(1.0,);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+    expect(result.source,).toBe("regex",);
+    expect(result.confidence,).toBe(1.0,);
+  });
 
   it("detects scene shift", async () => {
     const result = await classifyTransition(
@@ -55,10 +55,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("location_change",);
-    expect(result.source).toBe("regex",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+    expect(result.source,).toBe("regex",);
+  });
 
   it("detects movement phrases", async () => {
     const result = await classifyTransition(
@@ -68,10 +68,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("location_change",);
-    expect(result.source).toBe("regex",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+    expect(result.source,).toBe("regex",);
+  });
 
   it("detects context cut", async () => {
     const result = await classifyTransition(
@@ -81,10 +81,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("context_cut",);
-    expect(result.source).toBe("regex",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("context_cut",);
+    expect(result.source,).toBe("regex",);
+  });
 
   it("detects temporal transition", async () => {
     const result = await classifyTransition(
@@ -94,10 +94,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("context_cut",);
-    expect(result.source).toBe("regex",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("context_cut",);
+    expect(result.source,).toBe("regex",);
+  });
 
   it("detects description transition", async () => {
     const result = await classifyTransition(
@@ -107,10 +107,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("description",);
-    expect(result.source).toBe("regex",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("description",);
+    expect(result.source,).toBe("regex",);
+  });
 
   it("does not detect non-transition", async () => {
     const result = await classifyTransition(
@@ -120,10 +120,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(false,);
-    expect(result.type).toBe(null,);
-    expect(result.source).toBe("none",);
-  },);
+    expect(result.isTransition,).toBe(false,);
+    expect(result.type,).toBe(null,);
+    expect(result.source,).toBe("none",);
+  });
 
   it("extracts location hint", async () => {
     const result = await classifyTransition(
@@ -133,8 +133,8 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.locationHint).toBe("the tavern",);
-  },);
+    expect(result.locationHint,).toBe("the tavern",);
+  });
 
   it("handles case insensitivity", async () => {
     const result = await classifyTransition(
@@ -144,10 +144,10 @@ describe("classifyTransition (regex patterns)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("location_change",);
-  },);
-},);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+  });
+});
 
 // ─── AUX LLM Fallback Tests ───────────────────────────────────
 
@@ -169,9 +169,9 @@ describe("classifyTransition (AUX LLM fallback)", () => {
     );
 
     // Without AUX configured, regex misses → no transition
-    expect(result.isTransition).toBe(false,);
-    expect(result.source).toBe("none",);
-  },);
+    expect(result.isTransition,).toBe(false,);
+    expect(result.source,).toBe("none",);
+  });
 
   it("handles AUX LLM timeout gracefully", async () => {
     // This test verifies that when AUX LLM times out, we get no transition
@@ -184,10 +184,10 @@ describe("classifyTransition (AUX LLM fallback)", () => {
     );
 
     // Should not throw, should return some result
-    expect(result).toBeDefined();
-    expect(typeof result.isTransition).toBe("boolean",);
-  },);
-},);
+    expect(result,).toBeDefined();
+    expect(typeof result.isTransition,).toBe("boolean",);
+  });
+});
 
 // ─── Edge Cases ────────────────────────────────────────────────
 
@@ -200,9 +200,9 @@ describe("classifyTransition (edge cases)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(false,);
-    expect(result.source).toBe("none",);
-  },);
+    expect(result.isTransition,).toBe(false,);
+    expect(result.source,).toBe("none",);
+  });
 
   it("handles very long content", async () => {
     const longContent = "I walk to ".repeat(1000,) + "the tavern";
@@ -213,9 +213,9 @@ describe("classifyTransition (edge cases)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("location_change",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+  });
 
   it("handles special characters", async () => {
     const result = await classifyTransition(
@@ -225,9 +225,9 @@ describe("classifyTransition (edge cases)", () => {
       mockDb,
     );
 
-    expect(result.isTransition).toBe(true,);
-    expect(result.type).toBe("location_change",);
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+  });
 
   it("handles unicode content", async () => {
     const result = await classifyTransition(
@@ -238,6 +238,6 @@ describe("classifyTransition (edge cases)", () => {
     );
 
     // Unicode shouldn't break regex
-    expect(result).toBeDefined();
-  },);
-},);
+    expect(result,).toBeDefined();
+  });
+});

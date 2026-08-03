@@ -13,7 +13,13 @@ import type { Kysely, } from "kysely";
 import { ShadowNoteType, WhiteneoteType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
-import { insertChats, insertShadowNotes, insertUsers, insertWhitenotes, insertWorlds, } from "../../../test-utils/insert-helpers";
+import {
+  insertChats,
+  insertShadowNotes,
+  insertUsers,
+  insertWhitenotes,
+  insertWorlds,
+} from "../../../test-utils/insert-helpers";
 import { gmNotesSection, } from "./gm-notes";
 
 function makeCtx(db: Kysely<DB>, chatId: string,) {
@@ -43,7 +49,14 @@ describe("gmNotesSection", () => {
     await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
     await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
     await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
-    await insertWhitenotes(db, "chat-1", WhiteneoteType.NarrativeDirection, "Focus on the mysterious door.", "2026-08-01T00:00:00Z", { priority: 8, scope: "scene", } as any,);
+    await insertWhitenotes(
+      db,
+      "chat-1",
+      WhiteneoteType.NarrativeDirection,
+      "Focus on the mysterious door.",
+      "2026-08-01T00:00:00Z",
+      { priority: 8, scope: "scene", } as any,
+    );
     await insertShadowNotes(db, "chat-1", ShadowNoteType.WorldSecret, "The king is a lich.", "2026-08-01T00:00:00Z",);
 
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
@@ -62,8 +75,22 @@ describe("gmNotesSection", () => {
     await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
     await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
     await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
-    await insertWhitenotes(db, "chat-1", WhiteneoteType.Tone, "Keep it eerie.", "2026-07-01T00:00:00Z", { expires_at: "2026-07-02T00:00:00Z", } as any,);
-    await insertWhitenotes(db, "chat-1", WhiteneoteType.Tone, "Keep it hopeful.", "2026-08-01T00:00:00Z", { expires_at: "2099-01-01T00:00:00Z", } as any,);
+    await insertWhitenotes(
+      db,
+      "chat-1",
+      WhiteneoteType.Tone,
+      "Keep it eerie.",
+      "2026-07-01T00:00:00Z",
+      { expires_at: "2026-07-02T00:00:00Z", } as any,
+    );
+    await insertWhitenotes(
+      db,
+      "chat-1",
+      WhiteneoteType.Tone,
+      "Keep it hopeful.",
+      "2026-08-01T00:00:00Z",
+      { expires_at: "2099-01-01T00:00:00Z", } as any,
+    );
 
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
     const content = messages[0]?.content ?? "";
@@ -76,8 +103,22 @@ describe("gmNotesSection", () => {
     await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
     await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
     await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
-    await insertShadowNotes(db, "chat-1", ShadowNoteType.Foreshadowing, "Hidden one.", "2026-08-01T00:00:00Z", { revealed: 1, } as any,);
-    await insertShadowNotes(db, "chat-1", ShadowNoteType.Foreshadowing, "Hidden two.", "2026-08-01T00:00:00Z", { revealed: 0, } as any,);
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.Foreshadowing,
+      "Hidden one.",
+      "2026-08-01T00:00:00Z",
+      { revealed: 1, } as any,
+    );
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.Foreshadowing,
+      "Hidden two.",
+      "2026-08-01T00:00:00Z",
+      { revealed: 0, } as any,
+    );
 
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
     const content = messages[0]?.content ?? "";
@@ -101,10 +142,17 @@ describe("gmNotesSection", () => {
     await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
     await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
     for (let i = 0; i < 15; i++) {
-      await insertWhitenotes(db, "chat-1", WhiteneoteType.Pacing, `Whitenote ${i}`, "2026-08-01T00:00:00Z", { priority: i, } as any,);
+      await insertWhitenotes(
+        db,
+        "chat-1",
+        WhiteneoteType.Pacing,
+        `Whitenote ${i}`,
+        "2026-08-01T00:00:00Z",
+        { priority: i, } as any,
+      );
     }
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
     const content = messages[0]!.content;
     expect(content.match(/Whitenote \d+/g,),).toHaveLength(10,);
-  },);
+  });
 });
