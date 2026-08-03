@@ -27,6 +27,8 @@ export interface GmDecisionDeps {
   generateText: GenerateTextFn;
   db: Kysely<DB>;
   chatId: string;
+  /** Config-driven default GM system prompt (used when config.llmConfig.systemPrompt is absent) */
+  systemPromptDefault?: string;
 }
 
 /** Produces the next turn decision for a selected actor. */
