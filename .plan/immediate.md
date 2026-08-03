@@ -1,7 +1,25 @@
 # Immediate Plan
 
-> **Last updated:** 2026-08-03 — Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial; AUX LLM wiring review added (M1-M6 queue under P2-C); lore audience scoping + per-viewer memory injection done; validation started (check 13/17, unit+e2e green); chat invites/sections/backgrounds/filters + NSFW runtime shipped
+> **Last updated:** 2026-08-03 — Config-driven LLM text templates shipped (prompts registry + GM/aux wiring); Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial; AUX LLM wiring review added (M1-M6 queue under P2-C); lore audience scoping + per-viewer memory injection done; chat invites/sections/backgrounds/filters + NSFW runtime shipped
 > **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete
+
+---
+
+## Recent Wiring — LLM Text Templates (2026-08-03)
+
+**Feature**: config-driven system prompts for assistant/gm/vn/nsfw/aux (transition, intent, memory) domains, overridable via user `configs/templates/llm.yaml` (gitignored, only `.example.yaml` committed). Resolution: user config `systemPrompts[<purpose>]` → code default `LLM_PROMPT_DEFAULTS` (`src/prompts/registry.ts`).
+
+**Validation**: `bun run check` → **15/17 ✅** (was 15/17 baseline; unit+e2e green, format-dprint green, db-schema gate green). Lint gate re-audit: earlier "201 files" debt was an undercount — true pre-existing debt is **291 files**; all my new/modified files lint-clean (src/prompts/*, gm/decisions/*, game-master). Zero new failures introduced. seedBootstrapAdmin bug fixed (3121→3125 pass).
+
+| Area                                                       | State              | Where                                                                                                                     | Next / open                                  |
+| ---------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **Prompts registry** — `LLM_PROMPT_DEFAULTS` (12 keys) + `resolveSystemPrompt()` | ✅ Shipped + tests | `src/prompts/{registry,vn,index}.ts` + `src/prompts/registry.test.ts` (10 tests) | — |
+| **Assistant wiring** — fallback chain override → systemPromptFallback → actor.system_prompt | ✅ Shipped (HEAD) | `src/assistant/prompt/sections/system.ts`, `src/db/seed.ts` (+ `templates?.` bugfix), `src/generation/generate-route.ts` | — |
+| **VN wiring** — vn/vnChoices via `resolveSystemPrompt` | ✅ Shipped (HEAD) | `src/routes/vn-generate.ts` | — |
+| **GM wiring** — systemPromptDefault ctor option → decision LLM | ✅ Shipped | `src/story/game-master.ts`, `src/story/gm/decisions/{types,llm}.ts`, `src/generation/auto-gen.ts` (gm+intent) | — |
+| **AUX wiring** — transition/intent/memory | ✅ Shipped | `src/chat/transition-classifier.ts`, `src/generation/auto-gen.ts`, `src/memory/extraction.ts` | — |
+| **User config** — `configs/templates/llm.example.yaml` documents 12 keys + merge strategies; `.gitignore` `configs/templates/*` (user files ignored, examples tracked) | ✅ Shipped | `configs/templates/llm.example.yaml`, `.gitignore` | — |
+| **Open debt** — lint-ts (291 pre-existing files) + size-strict (10 pre-existing files) | ⚠️ pre-existing | whole repo | refactor tickets |
 
 ---
 
