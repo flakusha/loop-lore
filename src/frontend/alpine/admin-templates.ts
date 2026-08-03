@@ -226,7 +226,7 @@ export const adminTemplates = {
     try {
       const families = np.families
         .split(",",)
-        .map((s,) => s.trim(),)
+        .map((s,) => s.trim())
         .filter(Boolean,);
       const res = await (globalThis as any).apiFetch("/api/admin/templates", {
         method: "POST",

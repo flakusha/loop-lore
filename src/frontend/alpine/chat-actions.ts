@@ -204,12 +204,12 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
       if (mode === "off") {
         await apiFetch(`/api/chats/${chatId}/impersonate`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: jsonBody({ impersonateActorId: null }),
-        });
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ impersonateActorId: null, },),
+        },);
         this.impersonationActive = false;
         this.impersonatingActorId = null;
-        this.$dispatch?.("show-toast", { type: "info", message: "Impersonation ended" });
+        this.$dispatch?.("show-toast", { type: "info", message: "Impersonation ended", },);
       } else {
         await this.toggleImpersonate();
       }
@@ -221,12 +221,12 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
       if (!characterName) { return; }
       try {
         const res = await apiFetch(`/api/chats/${chatId}/participants`, {
-          headers: { Accept: "application/json" },
-        });
+          headers: { Accept: "application/json", },
+        },);
         if (!res.ok) { return; }
         const participants = await res.json();
         const target = participants.find(
-          (p: { display_name?: string; actor_type?: string }) =>
+          (p: { display_name?: string; actor_type?: string },) =>
             p.actor_type === "character" &&
             p.display_name?.toLowerCase() === characterName.toLowerCase(),
         );
@@ -234,30 +234,30 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
           this.$dispatch?.("show-toast", {
             type: "warning",
             message: `Character "${characterName}" not found in this chat`,
-          });
+          },);
           return;
         }
         const putRes = await apiFetch(`/api/chats/${chatId}/impersonate`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: jsonBody({ impersonateActorId: target.actor_id }),
-        });
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ impersonateActorId: target.actor_id, },),
+        },);
         if (putRes.ok) {
           this.impersonationActive = true;
           this.impersonatingActorId = target.actor_id;
           this.$dispatch?.("show-toast", {
             type: "info",
             message: `Playing as ${target.display_name || characterName}`,
-          });
+          },);
         } else {
           const err = await putRes.json();
           this.$dispatch?.("show-toast", {
             type: "error",
             message: err.error || "Failed to start impersonation",
-          });
+          },);
         }
       } catch {
-        this.$dispatch?.("show-toast", { type: "error", message: "Network error resolving character" });
+        this.$dispatch?.("show-toast", { type: "error", message: "Network error resolving character", },);
       }
       return;
     }

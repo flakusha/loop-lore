@@ -7,20 +7,20 @@
 
 ## Overview
 
-Lore is the persistent *knowledge* of a world: facts, histories, and beliefs that
+Lore is the persistent _knowledge_ of a world: facts, histories, and beliefs that
 characters, races, and professions may or may not know. This spec defines:
 
 1. **The lorebook data model** (what is implemented today).
 2. **Audience scoping** — how lore is restricted to races/professions/locations so that
-   *different actors have different knowledge*. (e.g. *dark elves know the underground
-   castle was abandoned, but humans never heard of it*).
+   _different actors have different knowledge_. (e.g. _dark elves know the underground
+   castle was abandoned, but humans never heard of it_).
 3. **Injection** — how audience-appropriate lore reaches a character's prompt, as a pair
    with memory injection so no knowledge leaks through either path.
 4. **World timeline** — backstory seeding, forward event steering, and cross-story
    convergence (aspirational / greenfield).
 
-> Lore is distinct from **memory** (`docs/spec/memory-system.md`): memory is *experience* a
-> character personally accumulates; lore is *shared/structural knowledge* about the world,
+> Lore is distinct from **memory** (`docs/spec/memory-system.md`): memory is _experience_ a
+> character personally accumulates; lore is _shared/structural knowledge_ about the world,
 > often authored by the GM or seeded into `world_lore_entries`.
 
 ---
@@ -31,23 +31,23 @@ Two lore tables exist, both a "lorebook" of entries with selective activation:
 
 ### 1.1 `world_lore_entries` (per-world lore)
 
-| Column            | Type            | Purpose                                             |
-| ----------------- | --------------- | --------------------------------------------------- |
-| `id`              | text (PK)       |                                                     |
-| `world_id`        | text (FK)       | Owning world                                        |
-| `name`            | text?           | Display name                                        |
-| `content`         | text            | The lore text injected into prompts                 |
-| `keys`            | json            | Activation/`secondary_keys` keywords (selective)    |
-| `selective`       | int             | If 1, only inject when a key matches current context|
-| `constant`        | int             | If 1, always inject (subject to audience scope)     |
-| `case_sensitive`  | int             | Keyword match casing                                |
-| `enabled`         | `enabled`/other | Soft-disable                                        |
-| `position`        | lore position   | `before_char` / `after_char` ordering hint          |
-| `insertion_order` | int             | Ordering fallback                                   |
-| `priority`        | int             | Sorting priority                                    |
-| `sort_order`      | int             | Ordering scaffold                                   |
-| `cooldown_seconds`| int             | Time before the same entry can fire again           |
-| `last_activated`  | text?           | When it last fired (cooldown bookkeeping)           |
+| Column             | Type            | Purpose                                              |
+| ------------------ | --------------- | ---------------------------------------------------- |
+| `id`               | text (PK)       |                                                      |
+| `world_id`         | text (FK)       | Owning world                                         |
+| `name`             | text?           | Display name                                         |
+| `content`          | text            | The lore text injected into prompts                  |
+| `keys`             | json            | Activation/`secondary_keys` keywords (selective)     |
+| `selective`        | int             | If 1, only inject when a key matches current context |
+| `constant`         | int             | If 1, always inject (subject to audience scope)      |
+| `case_sensitive`   | int             | Keyword match casing                                 |
+| `enabled`          | `enabled`/other | Soft-disable                                         |
+| `position`         | lore position   | `before_char` / `after_char` ordering hint           |
+| `insertion_order`  | int             | Ordering fallback                                    |
+| `priority`         | int             | Sorting priority                                     |
+| `sort_order`       | int             | Ordering scaffold                                    |
+| `cooldown_seconds` | int             | Time before the same entry can fire again            |
+| `last_activated`   | text?           | When it last fired (cooldown bookkeeping)            |
 
 Schema mirrors: `src/db/schema-story.ts` (`WorldLoreEntries`), migration `017_lorebook_cooldowns`.
 
@@ -92,7 +92,7 @@ closing one is not enough, knowledge must not leak through either:
 - **Memory path (implemented).** `memorySection` (`src/assistant/prompt/sections/memories.ts`)
   now provisions each chat participant's memories against the **speaker as viewer** (`ownerId`
   vs `viewerId`), so `evaluateShareability` genuinely evaluates owner≠viewer: a memory can be
-  *revealed to one party and withheld from another* (trusted/blocked/shared). (Previously only
+  _revealed to one party and withheld from another_ (trusted/blocked/shared). (Previously only
   the speaker's own memories were provisioned with `viewerId == ownerId`, making cross-actor
   shareability unreachable; `src/chat/memory-injection.ts` remains dead code with no callers.)
   A single combined token budget (`selectWithinBudget`, 1024) bounds all sources, and
@@ -107,6 +107,7 @@ closing one is not enough, knowledge must not leak through either:
 ### 3.1 The Scenario
 
 > The underground castle was **abandoned** centuries ago.
+>
 > - **Dark elves** know this — it's part of their **racial** culture/internal history.
 > - **Humans** have never heard of it.
 >
@@ -134,22 +135,22 @@ type LoreSubject =
 ```
 
 Rationale: a **subject-based** model (vs flat `races`/`professions`/`locations` arrays) matches
-how a GM authors lore — "this is *location* lore about the castle", "this is *race* lore
-about dark elves", "this is *profession* lore for mages" — and keeps the audience rule
+how a GM authors lore — "this is _location_ lore about the castle", "this is _race_ lore
+about dark elves", "this is _profession_ lore for mages" — and keeps the audience rule
 implicit in the subject kind rather than a redundant tag matrix.
 
 ### 3.3 Audience Resolution per Subject
 
 For a speaking actor with identity `{ race, professions: string[], locationId }`:
 
-| Subject | Audience rule (visible iff …) |
-| ------- | ----------------------------- |
-| `world` | everyone (applies to all) — subject to normal constant/selective/cooldown gates |
-| `location` | actor's `locationId` resolves to the entry's location bound (or a location in its child tree), **and** `requires_presence` is respected |
-| `profession` | actor's **race/profession traits** include the entry's profession (e.g. actor has a `profession` trait / `professions.discipline`) |
-| `race` | actor's resolved **race** trait matches the entry's race |
-| `faction` (ext.) | actor holds a membership/faction trait matching |
-| `item` (ext.) | actor has the item, or a trait/knowledge permitting it |
+| Subject          | Audience rule (visible iff …)                                                                                                           |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `world`          | everyone (applies to all) — subject to normal constant/selective/cooldown gates                                                         |
+| `location`       | actor's `locationId` resolves to the entry's location bound (or a location in its child tree), **and** `requires_presence` is respected |
+| `profession`     | actor's **race/profession traits** include the entry's profession (e.g. actor has a `profession` trait / `professions.discipline`)      |
+| `race`           | actor's resolved **race** trait matches the entry's race                                                                                |
+| `faction` (ext.) | actor holds a membership/faction trait matching                                                                                         |
+| `item` (ext.)    | actor has the item, or a trait/knowledge permitting it                                                                                  |
 
 ### 3.4 Fields on Lore Entries
 
@@ -186,7 +187,7 @@ Identity sources (all resolvable now):
   `schema-character.ts`). Default `human` when absent.
 - **Profession:** `character_permanent_traits` `profession`/`class` trait AND/OR
   `professions.discipline` (per-actor, per-world) + `profession_specializations.name`.
-  The user's model allows *any* trait-holder to carry profession knowledge, so prefer a
+  The user's model allows _any_ trait-holder to carry profession knowledge, so prefer a
   trait-based resolver with `professions` as a structured source.
 - **Location:** `chats.current_location_id` (already on `AssembleChat`).
 - **Faction/membership (ext.):** trait `faction`/`membership` value.
@@ -206,7 +207,7 @@ Identity sources (all resolvable now):
 
 > Semantic nuance: "known vs not known" is declared at **authoring time** by choosing the
 > subject + scope (who it applies to), not inferred from keywords. A smart default for
-> **race** and **profession** subjects is that the *subject* implies the audience — a
+> **race** and **profession** subjects is that the _subject_ implies the audience — a
 > `profession: "mage"` entry is known by actors with a mage identity, a `race: "dark elf"`
 > entry is known by dark elves and unknown to humans.
 
@@ -218,18 +219,18 @@ A pure resolver (mirroring `src/memory/shareability.ts` style — pure function,
 ```typescript
 // src/assistant/lore/audience.ts
 interface ActorIdentity {
-  race: string;                 // resolved species trait, default 'human'
-  professions: string[];        // profession/class trait values + professions.discipline
-  locationId: string | null;    // current chat location
+  race: string; // resolved species trait, default 'human'
+  professions: string[]; // profession/class trait values + professions.discipline
+  locationId: string | null; // current chat location
 }
 
-type LocationInScope = (locId: string, scopeLocId: string) => boolean;
+type LocationInScope = (locId: string, scopeLocId: string,) => boolean;
 
 function isLoreVisibleTo(
   entry: { audienceScope?: LoreScope | null },
   identity: ActorIdentity,
   locationInScope?: LocationInScope,
-): boolean
+): boolean;
 ```
 
 `loreSection` (`src/assistant/prompt/sections/lore.ts`) resolves the actor identity
@@ -240,7 +241,7 @@ fetches through `isLoreVisibleTo` **before** the existing cooldown/constant/sele
 
 ## 4. Knowledge via Actions, Battles, Items, Location & World Interactions
 
-Lore is not only dialogue — characters *learn* by doing. The user's intent: knowledge also
+Lore is not only dialogue — characters _learn_ by doing. The user's intent: knowledge also
 flows through **actions / battles / items / location & world interactions**, and it remains
 scoped by the audience model.
 
@@ -253,7 +254,7 @@ scoped by the audience model.
 
 Proposed: **event → lore promotion**. When an event occurs (e.g. a battle is won, a location
 is discovered, an item changes hands), the world may create or update a `world_lore_entry`
-recording the *new fact*, and optionally tag it with audience scope. This gives a
+recording the _new fact_, and optionally tag it with audience scope. This gives a
 **propagation loop**: actions mutate the world → become lore → become audience-scoped
 knowledge → injected back into appropriate characters' prompts.
 
@@ -303,7 +304,7 @@ as contextual knowledge.
 
 Proposal: events with an explicit `occurred_at` (timestamp or in-world date) stored in the
 world timeline; becomes lore with an audience scope. Seeded pre-RP events render to
-characters with matching audience as *established history*, not fresh discoveries.
+characters with matching audience as _established history_, not fresh discoveries.
 
 ### 5.3 Forward Event Steering
 
@@ -313,14 +314,14 @@ A GM creates a **steering/teaser** to a future event that **MAY** manifest — n
 interface FutureEventSteering {
   id: string;
   world_id: string;
-  description: string;      // teaser text
+  description: string; // teaser text
   manifest_probability: number; // 0-1
-  conditions?: string[];    // narrative/state conditions that increase probability
-  may_manifest: boolean;    // if false, pure atmosphere/red herring
+  conditions?: string[]; // narrative/state conditions that increase probability
+  may_manifest: boolean; // if false, pure atmosphere/red herring
 }
 ```
 
-Steerings are injected (audience-scoped) as *foreshadowing*; they do **not** mutate state
+Steerings are injected (audience-scoped) as _foreshadowing_; they do **not** mutate state
 until a resolution decides they materialized (e.g. GM confirmation, triggered condition, or
 probability roll).
 
@@ -332,8 +333,9 @@ probability roll).
 Multiple chats can share a world. Their `WorldEvent`s should be persisted to a shared
 **world event timeline** (keyed by `world_id` + optional in-world timestamp), and recent
 events propagated into the shared world context consistently. This enables:
+
 - a party in chat A burns a bridge → party in chat B (nearby in time/location) encounters
-  the *consequence*;
+  the _consequence_;
 - shared world lore updates visible to all characters whose audience matches.
 
 Cross-chat propagation must respect the audience model: an event that only dark elves know
@@ -343,15 +345,15 @@ should not leak to humans in a sibling chat.
 
 ## 6. Implementation Status Summary
 
-| Feature | Status |
-| ------- | ------ |
-| `world_lore_entries` / `actor_lore_entries` CRUD | ✅ Implemented |
-| `loreSection` keyword/constant/cooldown injection | ✅ Implemented |
-| World events extract/validate/apply (`src/story/events/`) | ✅ Implemented |
-| **Audience scoping (race/profession/location)** — `audience_scope` column (migration `028`), resolver `src/assistant/lore/audience.ts`, injected pre-filter in `loreSection` | ✅ Implemented |
-| **Per-viewer memory injection** — `memorySection` provisions each participant against the speaker as viewer (`ownerId` vs `viewerId`), combined 1024-token budget | ✅ Implemented |
-| **Event → lore promotion** | ✅ Implemented — `promoteEventToLore` (`src/story/events/promote-lore.ts`), wired into `applyWorldLoreUpdate` (additive; opt-out `data.promoteToLore === false`) |
-| **World timeline — backstory seeding (ledger)** | 🟡 Partial — §5.2 done: `world_timeline_events` table (migration `030`), service `src/story/timeline/world-timeline.ts` (`appendTimelineEvents`/`seedBackstory`/`listTimelineEntries`/`getEstablishedHistory`), `applyEvents` hook persists applied events, `seedBackstory` promotes to audience-scoped lore. §5.3 forward-event steering and §5.4 cross-story convergence propagation remain greenfield |
+| Feature                                                                                                                                                                      | Status                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `world_lore_entries` / `actor_lore_entries` CRUD                                                                                                                             | ✅ Implemented                                                                                                                                                                                                                                                                                                                                                                                           |
+| `loreSection` keyword/constant/cooldown injection                                                                                                                            | ✅ Implemented                                                                                                                                                                                                                                                                                                                                                                                           |
+| World events extract/validate/apply (`src/story/events/`)                                                                                                                    | ✅ Implemented                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Audience scoping (race/profession/location)** — `audience_scope` column (migration `028`), resolver `src/assistant/lore/audience.ts`, injected pre-filter in `loreSection` | ✅ Implemented                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Per-viewer memory injection** — `memorySection` provisions each participant against the speaker as viewer (`ownerId` vs `viewerId`), combined 1024-token budget            | ✅ Implemented                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Event → lore promotion**                                                                                                                                                   | ✅ Implemented — `promoteEventToLore` (`src/story/events/promote-lore.ts`), wired into `applyWorldLoreUpdate` (additive; opt-out `data.promoteToLore === false`)                                                                                                                                                                                                                                         |
+| **World timeline — backstory seeding (ledger)**                                                                                                                              | 🟡 Partial — §5.2 done: `world_timeline_events` table (migration `030`), service `src/story/timeline/world-timeline.ts` (`appendTimelineEvents`/`seedBackstory`/`listTimelineEntries`/`getEstablishedHistory`), `applyEvents` hook persists applied events, `seedBackstory` promotes to audience-scoped lore. §5.3 forward-event steering and §5.4 cross-story convergence propagation remain greenfield |
 
 ## 7. Related
 

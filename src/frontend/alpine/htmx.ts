@@ -121,13 +121,16 @@ document.addEventListener("asset:uploaded", () => {
   if (grid) { htmx.trigger(grid, "load",); }
 },);
 
-document.addEventListener("asset:duplicate", ((e: CustomEvent) => {
-  document.querySelector("#upload-modal",)?.classList.remove("open",);
-  const filename = e.detail?.filename ?? "Asset";
-  showToast("warning", `${filename} already exists`,);
-  const grid = document.querySelector("#asset-grid",);
-  if (grid) { htmx.trigger(grid, "load",); }
-}) as EventListener,);
+document.addEventListener(
+  "asset:duplicate",
+  ((e: CustomEvent,) => {
+    document.querySelector("#upload-modal",)?.classList.remove("open",);
+    const filename = e.detail?.filename ?? "Asset";
+    showToast("warning", `${filename} already exists`,);
+    const grid = document.querySelector("#asset-grid",);
+    if (grid) { htmx.trigger(grid, "load",); }
+  }) as EventListener,
+);
 
 document.addEventListener("character:created", () => {
   showToast("success", "Character created",);
