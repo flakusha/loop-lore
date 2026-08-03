@@ -21,7 +21,12 @@ async function setup(): Promise<Kysely<DB>> {
   await insertUsers(db, "owner", "Owner", { id: "owner-1", } as any,);
   await insertUsers(db, "other", "Other", { id: "other-1", } as any,);
   await insertWorlds(db, "owner-1", "Test World", { id: "world-1", } as any,);
-  await insertChats(db, "GM Chat", "owner-1", { id: "11111111-1111-4111-8111-111111111111", world_id: "world-1", } as any,);
+  await insertChats(
+    db,
+    "GM Chat",
+    "owner-1",
+    { id: "11111111-1111-4111-8111-111111111111", world_id: "world-1", } as any,
+  );
   return db;
 }
 
@@ -29,12 +34,12 @@ async function setup(): Promise<Kysely<DB>> {
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia();
   if (userId) {
-    app.derive(() => ({ userId, userRole, }),);
+    app.derive(() => ({ userId, userRole, }));
   }
   return app.use(gmNotesRoutes({ database: db, config: {} as any, },),);
 }
 
-function getJson<T>(res: Response,): Promise<T> {
+function getJson<T,>(res: Response,): Promise<T> {
   return res.json() as Promise<T>;
 }
 
@@ -47,9 +52,20 @@ describe("gmNotesRoutes", () => {
       ["GET", "/api/chats/11111111-1111-4111-8111-111111111111/whitenotes", undefined,],
       ["POST", "/api/chats/11111111-1111-4111-8111-111111111111/whitenotes", { type: "tone", content: "Eerie", },],
       ["GET", "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes", undefined,],
-      ["POST", "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes", { type: "foreshadowing", content: "Secret", },],
-      ["POST", "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/00000000-0000-4000-8000-000000000000/reveal", undefined,],
-      ["DELETE", "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/00000000-0000-4000-8000-000000000000", undefined,],
+      ["POST", "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes", {
+        type: "foreshadowing",
+        content: "Secret",
+      },],
+      [
+        "POST",
+        "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/00000000-0000-4000-8000-000000000000/reveal",
+        undefined,
+      ],
+      [
+        "DELETE",
+        "/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/00000000-0000-4000-8000-000000000000",
+        undefined,
+      ],
     ] as const;
 
     for (const [method, path, body,] of paths) {
@@ -102,12 +118,16 @@ describe("gmNotesRoutes", () => {
 
     // Reveal
     const revealed = await app.handle(
-      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/${id}/reveal`, { method: "POST", },),
+      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/${id}/reveal`, {
+        method: "POST",
+      },),
     );
     expect(revealed.status,).toBe(204,);
 
     const after = await getJson<{ items: { revealed: number }[] }>(
-      await app.handle(new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`, { method: "GET", },),),
+      await app.handle(
+        new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`, { method: "GET", },),
+      ),
     );
     expect(after.items[0]!.revealed,).toBe(1,);
 
@@ -128,10 +148,12 @@ describe("gmNotesRoutes", () => {
     const db = await setup();
     const app = makeApp(db, "owner-1",);
 
-    for (const [priority, content,] of [
-      [3, "Low priority.",],
-      [8, "High priority.",],
-    ] as const) {
+    for (
+      const [priority, content,] of [
+        [3, "Low priority.",],
+        [8, "High priority.",],
+      ] as const
+    ) {
       const res = await app.handle(
         new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`, {
           method: "POST",
@@ -183,7 +205,10 @@ describe("gmNotesRoutes", () => {
     expect(unknownChat.status,).toBe(403,); // checkChatAccess maps missing chat → forbidden
 
     const missing = await app.handle(
-      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes/00000000-0000-4000-8000-000000000000`, { method: "DELETE", },),
+      new Request(
+        `${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes/00000000-0000-4000-8000-000000000000`,
+        { method: "DELETE", },
+      ),
     );
     expect(missing.status,).toBe(404,);
   });

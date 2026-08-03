@@ -1,8 +1,8 @@
 // src/characters/seed.test.ts — Unit tests for character template seeder
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { tmpdir, } from "node:os";
 import type { Kysely, } from "kysely";
+import { tmpdir, } from "node:os";
 import type { CharactersConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
@@ -192,7 +192,7 @@ describe("seedCharacterTemplates", () => {
       .where("actor_id", "=", actor!.id,)
       .execute();
 
-    const byName = Object.fromEntries(traits.map((t,) => [t.trait_name, t,],));
+    const byName = Object.fromEntries(traits.map((t,) => [t.trait_name, t,]),);
     expect(byName["species"]?.trait_value,).toBe("High Elf",); // title-cased
     expect(byName["species"]?.trait_category,).toBe("identity",);
     expect(byName["homeland"]?.trait_value,).toBe("Whispering Library",); // title-cased

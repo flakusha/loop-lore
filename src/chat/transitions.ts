@@ -12,8 +12,8 @@ import { randomUUID, } from "node:crypto";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import type { ExtractedMemory, } from "../memory/types";
-import { classifyTransition, } from "./transition-classifier";
 import { estimateTokens, } from "./token-utils";
+import { classifyTransition, } from "./transition-classifier";
 import type { ChatTransition, MessageRef, TransitionClassification, } from "./types";
 
 // ─── Transition Detection ─────────────────────────────────────

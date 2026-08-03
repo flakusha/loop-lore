@@ -9,9 +9,9 @@ import type { Kysely, } from "kysely";
 import { EmotionAvatarService, } from "../characters/services/emotion-avatar-service";
 import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { checkActorOwnership, } from "./actor-auth";
 import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
-import { checkActorOwnership, } from "./actor-auth";
 
 interface HandlerOpts {
   database: Kysely<DB>;

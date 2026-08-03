@@ -14,8 +14,8 @@ import type { Kysely, } from "kysely";
 import { resolveModelRole, } from "../admin/model-roles";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { getProvider, resolveProvider, } from "../generation/providers/registry";
 import type { GenerationMessage, } from "../generation/gen-types-options";
+import { getProvider, resolveProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
@@ -26,7 +26,7 @@ const DEFAULT_MAX_TOKENS = 100;
 const AUX_TELEMETRY_EVENT = "aux.call";
 
 function getLog() {
-  return getLogger().child({ module: "aux-pipeline", });
+  return getLogger().child({ module: "aux-pipeline", },);
 }
 
 /**
@@ -114,7 +114,7 @@ export async function callAux(
     );
 
     if (!response) {
-      recordCall(false, { error: "timeout", });
+      recordCall(false, { error: "timeout", },);
       return null;
     }
 
@@ -133,7 +133,7 @@ export async function callAux(
     },);
     return result;
   } catch (error) {
-    recordCall(false, { error: (error as Error).message, });
+    recordCall(false, { error: (error as Error).message, },);
     getLog().debug("AUX call failed", { task, error: (error as Error).message, },);
     return null;
   }
@@ -147,7 +147,7 @@ export async function callAux(
 function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | null> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<null>((resolve,) => {
-    timer = setTimeout(() => resolve(null), ms,);
+    timer = setTimeout(() => resolve(null,), ms,);
     timer.unref?.();
   },);
   return Promise.race([promise, timeout,],).finally(() => {

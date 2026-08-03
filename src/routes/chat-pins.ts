@@ -25,7 +25,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/pins",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const chatId = ctx.params.id as string;
 
@@ -67,7 +67,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/pins",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const chatId = ctx.params.id as string;
 
@@ -139,7 +139,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
         "/api/chats/:id/pins/:pinId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") return userId;
+          if (typeof userId !== "string") { return userId; }
 
           const chatId = ctx.params.id as string;
           const pinId = ctx.params.pinId as string;

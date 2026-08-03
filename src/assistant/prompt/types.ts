@@ -21,6 +21,8 @@ export interface PromptParams {
   tokenBudget?: number;
   /** Override system prompt (uses actor.system_prompt if absent) */
   systemPromptOverride?: string;
+  /** Config-driven default system prompt (used when override and actor prompt are both absent) */
+  systemPromptFallback?: string;
   /** Include story context (auto-detected from chat.mode) */
   includeStoryContext?: boolean;
   /** Include lore entries (default: true) */

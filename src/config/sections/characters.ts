@@ -255,11 +255,21 @@ export const charactersMeta = {
           subrace: { type: "string", description: "Identity — subrace trait (persisted as permanent trait)", },
           gender: { type: "string", description: "Identity — gender trait (persisted as permanent trait)", },
           age: { type: ["string", "number",], description: "Identity — age trait (persisted as permanent trait)", },
-          homeland: { type: "string", description: "Identity — origin/homeland background trait (persisted as permanent trait)", },
-          culture: { type: "string", description: "Identity — culture background trait (persisted as permanent trait)", },
+          homeland: {
+            type: "string",
+            description: "Identity — origin/homeland background trait (persisted as permanent trait)",
+          },
+          culture: {
+            type: "string",
+            description: "Identity — culture background trait (persisted as permanent trait)",
+          },
           avatar: {
             oneOf: [
-              { type: "object", properties: { type: { const: "file", }, path: { type: "string", }, }, required: ["type", "path",], },
+              {
+                type: "object",
+                properties: { type: { const: "file", }, path: { type: "string", }, },
+                required: ["type", "path",],
+              },
               { type: "object", properties: { type: { const: "default", }, }, required: ["type",], },
             ],
             description: "Optional avatar for the seeded character",

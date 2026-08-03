@@ -34,7 +34,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     // ── List actor keys ────────────────────────────────────────
     .get("/api/keys", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") return userId;
+      if (typeof userId !== "string") { return userId; }
 
       try {
         const keys = await listActorKeys(database, userId,);
@@ -62,7 +62,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       "/api/keys",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") return userId;
+        if (typeof userId !== "string") { return userId; }
 
         const body = ctx.body as { name: string };
         if (!body.name || typeof body.name !== "string" || body.name.trim().length === 0) {
@@ -119,7 +119,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     // ── Rotate primary key ─────────────────────────────────────
     .post("/api/keys/rotate", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") return userId;
+      if (typeof userId !== "string") { return userId; }
 
       try {
         const smk = getSmk();
@@ -167,7 +167,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       "/api/keys/:id",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") return userId;
+        if (typeof userId !== "string") { return userId; }
 
         const keyId = (ctx.params as { id: string }).id;
 
