@@ -24,14 +24,14 @@ focuses on lifecycle, safety, and context continuity.
 Moderation infrastructure (DB services, flags, actions, NSFW gates) is solid;
 **LLM moderation wiring is absent**:
 
-| Component                              | Status                                                        | Location                              |
-| -------------------------------------- | ------------------------------------------------------------- | ------------------------------------- |
-| Moderation data model                  | ✅ prefs, `moderation_actions`, `content_flags`, audit trail   | `src/nsfw/moderation-service.ts`      |
-| NSFW gate hook                         | ✅ keyword-level detection + `recordAudit` + policy gating     | `src/generation/hooks/nsfw-hook.ts`   |
-| Moderation hook                        | ⚠️ keyword-only (9 words), **no LLM**                         | `src/generation/hooks/moderation-hook.ts` |
-| `ModelRole.Moderation`                 | 🔴 **dead role** — admin-configurable, never resolved          | `src/admin/model-roles.ts:21`         |
-| `ModelRole.Captioning`                 | 🔴 **dead role** — `caption-route.ts` resolves MAIN role       | `src/generation/caption-route.ts:49`  |
-| Suppression semantics                  | 🔴 substring match (`"hate"` ⊂ `"hateful"`) → **entire response dropped**, no severity, no audit, no retention | `moderation-hook.ts:44`, `auto-gen.ts:431` |
+| Component              | Status                                                                                                         | Location                                   |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Moderation data model  | ✅ prefs, `moderation_actions`, `content_flags`, audit trail                                                   | `src/nsfw/moderation-service.ts`           |
+| NSFW gate hook         | ✅ keyword-level detection + `recordAudit` + policy gating                                                     | `src/generation/hooks/nsfw-hook.ts`        |
+| Moderation hook        | ⚠️ keyword-only (9 words), **no LLM**                                                                           | `src/generation/hooks/moderation-hook.ts`  |
+| `ModelRole.Moderation` | 🔴 **dead role** — admin-configurable, never resolved                                                          | `src/admin/model-roles.ts:21`              |
+| `ModelRole.Captioning` | 🔴 **dead role** — `caption-route.ts` resolves MAIN role                                                       | `src/generation/caption-route.ts:49`       |
+| Suppression semantics  | 🔴 substring match (`"hate"` ⊂ `"hateful"`) → **entire response dropped**, no severity, no audit, no retention | `moderation-hook.ts:44`, `auto-gen.ts:431` |
 
 ### Moderation Action Items
 

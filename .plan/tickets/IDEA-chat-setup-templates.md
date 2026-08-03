@@ -6,9 +6,9 @@
 **Assignee**:
 **Epic**: epic-story-mode-ui
 **Related**: BUG-chat-settings-modal-invalid-mode, .plan/design/chat-mode-reconciliation.md,
-  .plan/design/chat-template-config-lifecycle.md, FEAT-chat-template-config-lifecycle
+.plan/design/chat-template-config-lifecycle.md, FEAT-chat-template-config-lifecycle
 
-### Description
+## Description
 
 Turn chat creation presets into data, not code. The backend already accepts a rich set of
 fields on `POST /api/chats` (`ChatCreateBody` in `src/validation/schemas.ts:157`):
@@ -23,7 +23,7 @@ fields on `POST /api/chats` (`ChatCreateBody` in `src/validation/schemas.ts:157`
 `turnStrategy`, `worldId`, `currentLocationId`, `gmConfig`, and `visualNovel` are API-only
 today — not reachable from the creation form.
 
-### Proposal
+## Proposal
 
 Add a **ChatSetupTemplate** = a validated `ChatCreateBody` preset, selectable on
 `new-chat.html`:
@@ -37,7 +37,7 @@ Add a **ChatSetupTemplate** = a validated `ChatCreateBody` preset, selectable on
    impersonation, memory-carry).
 4. UI + i18n for template names/descriptions; expose API-only fields in the form.
 
-### Motivation (sane starter set)
+## Motivation (sane starter set)
 
 Cover the matrix discussed in review: simple 1×1 (+LLM), advanced 1×1, roleplay 1×1
 (world-bound vs detached, memory exposed vs not), assistant chat (creative/support/expansion/
@@ -46,7 +46,7 @@ group+GM (LLM/human/hybrid), group multi-LLM (@-mentions/talkativity), RP group 
 custom config with sane limits (max participants, max concurrent LLMs, max messages-per-turn
 cascade, max memory-carry tokens).
 
-### Relationship to existing work
+## Relationship to existing work
 
 - The 3-axis split (`ChatType` / `ChatMode` incl. `battle|question|inventory` /
   `ResponseStyle`) in `.plan/design/chat-mode-reconciliation.md` should be applied first or
@@ -62,7 +62,7 @@ cascade, max memory-carry tokens).
   (`POST /api/chats/:id/migrate`, reusing `chats.parent_chat_id`), not live mutation.
   See `FEAT-chat-template-config-lifecycle` for the implementation ticket.
 
-### Acceptance Criteria
+## Acceptance Criteria
 
 - [ ] Backend `chat_setup_templates` presets (or config presets) with validation
 - [ ] `GET /api/chat-setup-templates` + `POST /api/chats` accepts `templateId`
@@ -73,7 +73,7 @@ cascade, max memory-carry tokens).
 - [ ] `updateChat` rejects key-mechanic mutation once the chat is online (409 + migration pointer)
 - [ ] `POST /api/chats/:id/migrate` creates a new chat from a template, carrying participants/memory/history, archiving the source
 
-### Notes
+## Notes
 
 - BUG ticket `BUG-chat-settings-modal-invalid-mode.md` fixes the mode enum first; templates
   depend on a valid mode model.

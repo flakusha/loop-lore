@@ -1,4 +1,5 @@
 # FEAT: LoRA Admin Annotation & Archival
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium
@@ -13,7 +14,7 @@ Frontend: discovered LoRAs annotated in admin interface with purpose + recommend
 
 ## Background
 
-LoRA discovery (`GET /api/lora/list`, `POST /api/lora/discover`) returns raw `LoRAModel[]` — filename, path, backend. No way for an admin to record *what a LoRA is for* (character, style, concept) or the *recommended strength* at which it should be applied. Also, a LoRA may exist in DB but later be deleted/moved on the server/application side — the UI must handle stale entries gracefully (gray-out / archive) with explicit removal.
+LoRA discovery (`GET /api/lora/list`, `POST /api/lora/discover`) returns raw `LoRAModel[]` — filename, path, backend. No way for an admin to record _what a LoRA is for_ (character, style, concept) or the _recommended strength_ at which it should be applied. Also, a LoRA may exist in DB but later be deleted/moved on the server/application side — the UI must handle stale entries gracefully (gray-out / archive) with explicit removal.
 
 ## Scope
 

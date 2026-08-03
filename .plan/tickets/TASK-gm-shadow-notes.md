@@ -1,7 +1,7 @@
 # TASK: GM/Assistant Shadow Notes System
 
 **Priority:** High
-**Status:** 🟢 Backend Complete + Tested — Injection Live
+**Status:** ✅ Done — Backend Complete + Tested — Injection Live. Closed 2026-08-03.
 **Epic:** epic-gm-shadow-notes
 **Tags:** gm, shadow-notes, hidden-narrative, story-steering, assistant, metadata
 

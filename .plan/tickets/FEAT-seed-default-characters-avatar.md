@@ -1,4 +1,5 @@
 # FEAT: Seed Default Characters with Avatar Support
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium

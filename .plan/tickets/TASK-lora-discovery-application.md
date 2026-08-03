@@ -15,6 +15,7 @@ LoRA discovery (auto-detect available models from sd.cpp/ComfyUI) and applicatio
 ### Verdict: PASS — Phase 1 solid, Phase 2 needs unblocking
 
 **What shipped (9 new files + 2 modified):**
+
 - Complete dual-backend discovery (sd.cpp + ComfyUI)
 - In-memory cache with TTL and force-refresh
 - Validation with NaN/Infinity guards, boundary checks
@@ -79,19 +80,19 @@ const loraPrefix = `[lora:${config.name}:${config.strength}]`;
 
 ## Files (actual)
 
-| File | Purpose |
-|------|---------|
-| `src/generation/lora/types.ts` | Interfaces + constants |
-| `src/generation/lora/discovery.ts` | Unified discovery + cache |
+| File                                        | Purpose                           |
+| ------------------------------------------- | --------------------------------- |
+| `src/generation/lora/types.ts`              | Interfaces + constants            |
+| `src/generation/lora/discovery.ts`          | Unified discovery + cache         |
 | `src/generation/lora/discovery-sdserver.ts` | sd.cpp backend + prompt injection |
-| `src/generation/lora/discovery-comfyui.ts` | ComfyUI backend + node builder |
-| `src/generation/lora/validation.ts` | Config/model validation |
-| `src/generation/lora/index.ts` | Public API re-exports |
-| `src/generation/lora/routes.ts` | Elysia plugin (TODO-gated) |
-| `src/generation/lora/discovery.test.ts` | Discovery + cache tests |
-| `src/generation/lora/lora.test.ts` | Validation tests |
-| `src/generation/image-gen-route.ts` | LoRA hooks (commented out) |
-| `src/elysia-app.ts` | LoRA routes (commented out) |
+| `src/generation/lora/discovery-comfyui.ts`  | ComfyUI backend + node builder    |
+| `src/generation/lora/validation.ts`         | Config/model validation           |
+| `src/generation/lora/index.ts`              | Public API re-exports             |
+| `src/generation/lora/routes.ts`             | Elysia plugin (TODO-gated)        |
+| `src/generation/lora/discovery.test.ts`     | Discovery + cache tests           |
+| `src/generation/lora/lora.test.ts`          | Validation tests                  |
+| `src/generation/image-gen-route.ts`         | LoRA hooks (commented out)        |
+| `src/elysia-app.ts`                         | LoRA routes (commented out)       |
 
 ## Related
 

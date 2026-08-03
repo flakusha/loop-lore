@@ -1,4 +1,5 @@
 # FEAT: Seed Default Characters with Race/Origin/Culture Identity
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium
@@ -8,7 +9,7 @@
 
 ## Summary
 
-Wire the **character seeder to persist identity traits**, then add race/origin/culture example extensions to the built-in default characters. The template *examples are only useful if the backing logic is wired* — today `seedCharacterTemplates` inserts into `actors` only and never writes `character_permanent_traits`, so every seeded character resolves `ActorIdentity.race === "human"` and carries no homeland/culture at all. This ticket's primary deliverable is that missing wiring; populating the built-in templates is the consequence.
+Wire the **character seeder to persist identity traits**, then add race/origin/culture example extensions to the built-in default characters. The template _examples are only useful if the backing logic is wired_ — today `seedCharacterTemplates` inserts into `actors` only and never writes `character_permanent_traits`, so every seeded character resolves `ActorIdentity.race === "human"` and carries no homeland/culture at all. This ticket's primary deliverable is that missing wiring; populating the built-in templates is the consequence.
 
 ## Background
 
@@ -28,11 +29,11 @@ So: even if we added `species:`/`homeland:`/`culture:` to a YAML template today,
 export interface CharacterTemplate {
   // ...existing...
   /* Identity — persisted as character_permanent_traits at seed time */
-  species?: string;      // trait: identity/species
-  gender?: string;       // trait: identity/gender
+  species?: string; // trait: identity/species
+  gender?: string; // trait: identity/gender
   age?: string | number; // trait: identity/age
-  homeland?: string;     // trait: background/homeland  (origin)
-  culture?: string;      // trait: background/culture
+  homeland?: string; // trait: background/homeland  (origin)
+  culture?: string; // trait: background/culture
 }
 ```
 
@@ -54,16 +55,16 @@ Guarantee: seeded actors now resolve correct `ActorIdentity.race`/homeland/cultu
 
 Populate `CHARACTERS_DEFAULTS.templates` so each built-in character demonstrates the dimensions consistently with its fiction and with `FEAT-origin-capture-generation-seeding.md` `/create` conventions (`origin` → homeland, `culture` → culture, `species` → race):
 
-| Template | species | homeland | culture |
-|---|---|---|---|
-| `tpl-elara-nightwhisper` | `high elf` | `Whispering Library (Celestia)` | `Scholar of the old tongue` |
-| `tpl-aria-7` | `synthetic` | `starship Horizon` | `Proxima colony crew` |
-| `tpl-detective-morgan` | `human` | `Seattle, Washington` | `Pacific Northwest noir` |
-| `tpl-dr-thorne` | `human` | `Boston, Massachusetts` | `Academic-skeptic` |
-| `tpl-yuki-tanaka` | `human` | `Tokyo, Japan` | `Modern slice-of-life` |
-| `tpl-assistant` | `—` (omitted) | `—` | `—` |
+| Template                 | species       | homeland                        | culture                     |
+| ------------------------ | ------------- | ------------------------------- | --------------------------- |
+| `tpl-elara-nightwhisper` | `high elf`    | `Whispering Library (Celestia)` | `Scholar of the old tongue` |
+| `tpl-aria-7`             | `synthetic`   | `starship Horizon`              | `Proxima colony crew`       |
+| `tpl-detective-morgan`   | `human`       | `Seattle, Washington`           | `Pacific Northwest noir`    |
+| `tpl-dr-thorne`          | `human`       | `Boston, Massachusetts`         | `Academic-skeptic`          |
+| `tpl-yuki-tanaka`        | `human`       | `Tokyo, Japan`                  | `Modern slice-of-life`      |
+| `tpl-assistant`          | `—` (omitted) | `—`                             | `—`                         |
 
-`tpl-assistant` intentionally omits identity — it is the "neutral" case proving the optional/backward-compatible path (no traits written, existing behavior preserved). Keep every identity field **optional and correct for the fiction**: these are *examples* to exercise the wiring, not mandatory data.
+`tpl-assistant` intentionally omits identity — it is the "neutral" case proving the optional/backward-compatible path (no traits written, existing behavior preserved). Keep every identity field **optional and correct for the fiction**: these are _examples_ to exercise the wiring, not mandatory data.
 
 ### 4. Update `feature-character-template-seeding.md`
 
@@ -92,5 +93,5 @@ Document: template identity fields, how they map to `character_permanent_traits`
 ## Notes
 
 - **This ticket does the wiring; it is not just "add example extensions."** The seeder change is the deliverable; the built-in template values are the exercise of it. Do not merge this as "templates updated" while the seeder stays trait-less — that would leave the exactly-broken state the user flagged.
-- Depends on `FEAT-character-spec-inclusion-race-origin-culture.md` for the canonical field model + `feature_flags.identity_lore` opt-in (a seeded character with identity traits still injects identically unless the lore-config epic activates; identity *traits* are data, the flag governs lore behavior).
+- Depends on `FEAT-character-spec-inclusion-race-origin-culture.md` for the canonical field model + `feature_flags.identity_lore` opt-in (a seeded character with identity traits still injects identically unless the lore-config epic activates; identity _traits_ are data, the flag governs lore behavior).
 - Complements `FEAT-origin-capture-generation-seeding.md` (runtime `/create` identity) — this is the static seed/config path.

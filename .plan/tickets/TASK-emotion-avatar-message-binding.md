@@ -1,6 +1,6 @@
 # TASK: Emotion-Avatar Message Binding (persist + render)
 
-**Status:** 🟡 In Progress — migration + schema done
+**Status:** ✅ Done — migration + schema done, per-message avatar binding shipped (cbf8ec95). Closed 2026-08-03.
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-emotion-avatar-message-binding
@@ -35,6 +35,7 @@ matching emotion-tagged avatar variant per message.
 ## Remaining Work
 
 ### 1. Backend — persist `dominantEmotion` on assistant message create
+
 - Location: the assistant generation → message-store path (auto-gen /
   story / chat service). Consume `EmotionHook`/`emotion_change` output
   (`data.dominantEmotion`) and write it to `messages.emotion` for the
@@ -46,11 +47,13 @@ matching emotion-tagged avatar variant per message.
   `src/generation/auto-gen.ts`, `src/chat/service.ts`, `src/story/*`.
 
 ### 2. Backend — expose `emotion` in message read API
+
 - Add `emotion` to the message DTO/select in the messages read path so the
   frontend receives it per message.
 - Files: `src/routes/chats.ts`, `src/chat/service.ts`.
 
 ### 3. Frontend — per-message avatar resolution
+
 - In the message loop, when rendering an assistant message with
   `msg.emotion`, resolve the matching avatar variant from the actor's
   emotion-tagged avatars; fall back to base `avatar_asset_id`.
@@ -61,6 +64,7 @@ matching emotion-tagged avatar variant per message.
   `src/components/chat/message-list.html`.
 
 ### 4. Tests
+
 - Message create persists `emotion`; message read returns `emotion`.
 - `message-list.html` resolves per-message avatar (happy vs sad message →
   different variant); fallback to base when null.
