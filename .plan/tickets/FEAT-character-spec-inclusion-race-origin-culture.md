@@ -1,4 +1,5 @@
 # FEAT: Character Spec Inclusion of Race, Origin & Culture Identity
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium
@@ -8,7 +9,7 @@
 
 ## Summary
 
-Make **race, origin (homeland), and culture** *named, first-class* identity fields on the canonical character card, and reconcile them with the runtime identity layer that the Lore extensions consume. This is the **character-spec side** of the race/origin lore work: today the setup API carries these values only as opaque `extensions` data, while the lore/identity model reads them from the separate permanent-trait layer — two representations of the same identity that must be bridged without breaking existing cards.
+Make **race, origin (homeland), and culture** _named, first-class_ identity fields on the canonical character card, and reconcile them with the runtime identity layer that the Lore extensions consume. This is the **character-spec side** of the race/origin lore work: today the setup API carries these values only as opaque `extensions` data, while the lore/identity model reads them from the separate permanent-trait layer — two representations of the same identity that must be bridged without breaking existing cards.
 
 ## Background
 
@@ -19,7 +20,7 @@ Two representations of character identity currently coexist, unconnected:
 
 `FEAT-origin-capture-generation-seeding.md` already requires `/create` to persist `origin` → `homeland` and `culture` onto permanent traits. That populates the **runtime** layer but leaves the **card** layer unpopulated: a card exported or edited through the setup API would not round-trip origin/culture, and `extensions` values are not validated against or promoted to the trait layer.
 
-This ticket makes the card (a) *include* these as recognized fields and (b) *stay compatible* with the runtime layer and with legacy cards.
+This ticket makes the card (a) _include_ these as recognized fields and (b) _stay compatible_ with the runtime layer and with legacy cards.
 
 ## Scope
 
@@ -31,10 +32,10 @@ Add optional, identity-scoped fields to `CanonicalCharacter` (mirroring the perm
 export interface CanonicalCharacter {
   // ...existing fields...
   /* Identity — mapped 1:1 to character_permanent_traits identity/background */
-  species?: string;    // → species trait  (race)
-  homeland?: string;   // → homeland trait (origin)
-  culture?: string;    // → culture trait
-  gender?: string;     // → gender trait
+  species?: string; // → species trait  (race)
+  homeland?: string; // → homeland trait (origin)
+  culture?: string; // → culture trait
+  gender?: string; // → gender trait
   age?: string | number; // → age trait
   // ...existing fields...
 }
@@ -61,7 +62,7 @@ export interface CanonicalCharacter {
 ### 4. Migration & schema
 
 - Bump the card/migration version to include the new optional fields; mark them **auto-fillable** from either permanent traits or legacy `extensions.race|homeland|culture`.
-- Migration status semantics preserved (`migration-ready`/`partial`/`blocked`): cards missing identity fields remain `migration-ready` because the fields are optional; only worlds/features that *require* them would report `partial`.
+- Migration status semantics preserved (`migration-ready`/`partial`/`blocked`): cards missing identity fields remain `migration-ready` because the fields are optional; only worlds/features that _require_ them would report `partial`.
 - Publish the fields in `schemas/character-card.json` for LSP/IDE support.
 - No DB column change required (traits already exist); this is card-model + validation + mapping only. `data_source_format`/YAML/TOML round-trip carries the new fields naturally.
 

@@ -17,20 +17,20 @@ Chat location change, party travel, and multi-location chat spanning. Covers:
 
 ## What Exists Now
 
-| Component                          | Status                  | Location                                               |
-| ---------------------------------- | ----------------------- | ------------------------------------------------------ |
-| `chats.current_location_id`        | ✅ DB column            | `schema-core.ts`                                       |
-| `chats.parent_chat_id`             | ✅ DB column            | `schema-core.ts`                                       |
-| `PUT /api/chats/:id/location`      | ✅ Simple update        | `routes/chats.ts`                                      |
-| `POST /api/chats/:id/transfer` | ✅ Transfer to location | `routes/chat-search.ts`                                |
-| `POST /api/chats/:id/join`     | ✅ Join existing chat   | `routes/chat-search.ts`                                |
-| `GET /api/chats/joinable`          | ✅ Discover chats       | `routes/chat-search.ts`                                |
-| `GET /api/chats/search`            | ✅ Search chats         | `routes/chat-search.ts`                                |
-| Transition detection               | ✅ Regex-based          | `chat/transitions.ts`                                  |
-| `ChatTransition.location_change`   | ✅ Type exists          | `chat/types.ts`                                        |
-| Chat sections (multi-location)     | ❌ No DB table          | Design only (`TASK-chat-sectioning-multi-location.md`) |
-| Party join/leave                   | ❌ No logic             | —                                                      |
-| VN-driven location transitions     | ❌ No integration       | —                                                      |
+| Component                        | Status                  | Location                                               |
+| -------------------------------- | ----------------------- | ------------------------------------------------------ |
+| `chats.current_location_id`      | ✅ DB column            | `schema-core.ts`                                       |
+| `chats.parent_chat_id`           | ✅ DB column            | `schema-core.ts`                                       |
+| `PUT /api/chats/:id/location`    | ✅ Simple update        | `routes/chats.ts`                                      |
+| `POST /api/chats/:id/transfer`   | ✅ Transfer to location | `routes/chat-search.ts`                                |
+| `POST /api/chats/:id/join`       | ✅ Join existing chat   | `routes/chat-search.ts`                                |
+| `GET /api/chats/joinable`        | ✅ Discover chats       | `routes/chat-search.ts`                                |
+| `GET /api/chats/search`          | ✅ Search chats         | `routes/chat-search.ts`                                |
+| Transition detection             | ✅ Regex-based          | `chat/transitions.ts`                                  |
+| `ChatTransition.location_change` | ✅ Type exists          | `chat/types.ts`                                        |
+| Chat sections (multi-location)   | ❌ No DB table          | Design only (`TASK-chat-sectioning-multi-location.md`) |
+| Party join/leave                 | ❌ No logic             | —                                                      |
+| VN-driven location transitions   | ❌ No integration       | —                                                      |
 
 ## Design
 

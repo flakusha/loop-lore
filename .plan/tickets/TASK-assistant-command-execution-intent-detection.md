@@ -3,7 +3,7 @@
 **Status:** 🟡 Partial — slash command parser + AUX `classifyIntent` exist; no timeout/apiKey on AUX path, `detectIntent` dead (2026-08-01)
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-assistant-commands
+**Epic:** epic-assistant-gm-flows
 
 ## Summary
 
@@ -11,15 +11,15 @@ Assistant command parsing: /improve, /dice, /stats, /attack, /image with intent 
 
 ## Current State (2026-08-01 review)
 
-| Component                                   | Status                                               | Location                              |
-| ------------------------------------------- | ---------------------------------------------------- | ------------------------------------- |
-| Slash command parsing + execution           | ✅ implemented (create/help/etc.)                     | `src/assistant/command-parser.ts`, `src/assistant/commands/create.ts` |
-| AUX intent classification                   | ⚠️ exists but **no timeout** (awaited pre-generation), **no apiKey**, temp 0.1 | `src/generation/auto-gen.ts:74` `classifyIntent` |
-| Intent vocabulary                           | ⚠️ disjoint from assistant: `greeting/question/command/roleplay/narrative` vs `assistant/intent.ts` `generate/tool_exec/chat` | — |
-| `detectIntent()` + `APPROVED_TOOLS`         | ❌ **dead code** — zero consumers                      | `src/assistant/intent.ts:53`          |
-| `detectAvatarChangeIntent()`                | ❌ **dead code** — zero consumers                      | `src/assistant/intent.ts:139`         |
-| Tiered access (all/member/GM)               | ❌ not implemented                                    | —                                     |
-| `/improve`, `/dice`, `/stats`, `/attack`, `/image` commands | ⚠️ `dice`/`improve`/`impersonate`/`narrate`/`help` in `APPROVED_TOOLS` (unused); `/image` not wired | `src/assistant/intent.ts:25` |
+| Component                                                   | Status                                                                                                                       | Location                                                              |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Slash command parsing + execution                           | ✅ implemented (create/help/etc.)                                                                                            | `src/assistant/command-parser.ts`, `src/assistant/commands/create.ts` |
+| AUX intent classification                                   | ⚠️ exists but **no timeout** (awaited pre-generation), **no apiKey**, temp 0.1                                                | `src/generation/auto-gen.ts:74` `classifyIntent`                      |
+| Intent vocabulary                                           | ⚠️ disjoint from assistant: `greeting/question/command/roleplay/narrative` vs `assistant/intent.ts` `generate/tool_exec/chat` | —                                                                     |
+| `detectIntent()` + `APPROVED_TOOLS`                         | ❌ **dead code** — zero consumers                                                                                            | `src/assistant/intent.ts:53`                                          |
+| `detectAvatarChangeIntent()`                                | ❌ **dead code** — zero consumers                                                                                            | `src/assistant/intent.ts:139`                                         |
+| Tiered access (all/member/GM)                               | ❌ not implemented                                                                                                           | —                                                                     |
+| `/improve`, `/dice`, `/stats`, `/attack`, `/image` commands | ⚠️ `dice`/`improve`/`impersonate`/`narrate`/`help` in `APPROVED_TOOLS` (unused); `/image` not wired                           | `src/assistant/intent.ts:25`                                          |
 
 ## Next Actionable Items
 

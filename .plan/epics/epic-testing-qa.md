@@ -90,20 +90,21 @@ ReferenceError: _moodPanel is not defined
 These are **app bugs**, not test bugs: template expressions reference variables never declared in component state, which throws during Alpine tree-processing and halts hydration of that branch. No browser test catches them (characters-flow logs console messages but never fails).
 
 **Other structural gaps:**
+
 - `playwright.config.ts` is **dead config** — `bun test` (the actual runner) never reads it; only `chromium.launch()` in `browser-server.ts` runs. `testDir`/`projects`/`retries`/`trace`/`reporter` document behavior the tests don't use.
 - Hundreds of fixed `page.waitForTimeout(...)` sleeps instead of web-first polling; flaky (esp. Alpine timing — `attached` vs `visible` tension documented in `chat-flow.browser.ts`).
 - A timed-out test leaves its page open, then `newPage()` fails with `Target page, context or browser has been closed` — no per-test `try/finally` isolation → failure cascade.
 
 ### Alpine State Testing — Candidate Tasks
 
-| Task                        | Title                                                              | Priority | Status      |
-| --------------------------- | ------------------------------------------------------------------ | -------- | ----------- |
-| TASK-alpine-state-testing   | Alpine component-state harness: `getAlpineData` + `waitForAlpineState` helpers, migrate htmx-alpine/chat-flow off presence+sleeps | High     | Not Started |
+| Task                        | Title                                                                                                                                          | Priority | Status      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| TASK-alpine-state-testing   | Alpine component-state harness: `getAlpineData` + `waitForAlpineState` helpers, migrate htmx-alpine/chat-flow off presence+sleeps              | High     | Not Started |
 | BUG-alpine-init-hydration   | Fix Alpine init hydration errors (undeclared template vars `showGmPanel`/`_moodPanel`/`_searchResults`; `Object.defineProperty on non-object`) | High     | Not Started |
-| TASK-browser-console-assert | Add `assertNoPageErrors` helper; fail browser tests on pageerror/console.error | High     | Not Started |
-| TASK-browser-test-isolation | Per-test `try/finally` page close; eliminate failure cascade / shared browser state | Med      | Not Started |
-| TASK-resolve-playwright-cfg | Adopt `@playwright/test` runner (web-first expect, fixtures, trace) or delete dead `playwright.config.ts` | Med      | Not Started |
-| TASK-chat-state-contract    | Pin `chatState()` shape + defaults + `ui-store` contract as a browser test | Low      | Not Started |
+| TASK-browser-console-assert | Add `assertNoPageErrors` helper; fail browser tests on pageerror/console.error                                                                 | High     | Not Started |
+| TASK-browser-test-isolation | Per-test `try/finally` page close; eliminate failure cascade / shared browser state                                                            | Med      | Not Started |
+| TASK-resolve-playwright-cfg | Adopt `@playwright/test` runner (web-first expect, fixtures, trace) or delete dead `playwright.config.ts`                                      | Med      | Not Started |
+| TASK-chat-state-contract    | Pin `chatState()` shape + defaults + `ui-store` contract as a browser test                                                                     | Low      | Not Started |
 
 ## Extended Scope / Candidate Tasks
 
