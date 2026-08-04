@@ -7,7 +7,8 @@
 **Epic**: epic-story-mode-ui
 **Related**: IDEA-chat-setup-templates, .plan/design/chat-template-config-lifecycle.md,
 .plan/design/chat-mode-reconciliation.md, BUG-chat-settings-modal-invalid-mode,
-FEAT-message-swipe-replay-branch
+FEAT-message-swipe-replay-branch, .plan/design/prompt-template-registry.md
+(distinct domain: chat *setup* template binding vs LLM *prompt text* registry — do not conflate)
 
 ## Description
 
