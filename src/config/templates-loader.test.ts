@@ -3,7 +3,6 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
-import { TEMPLATES_DEFAULTS, } from "./sections/templates";
 import type {
   AvatarTemplateConfig,
   ImageEditTemplateConfig,
@@ -302,9 +301,9 @@ describe("loadTemplateConfig", () => {
 
   test("returns defaults when no template files exist", () => {
     const config = loadTemplateConfig(TEST_DIR,);
-    expect(config.llm.systemPrompts.chat,).toBe(
-      TEMPLATES_DEFAULTS.llm.systemPrompts.chat,
-    );
+    // LLM system prompt defaults live in src/prompts/registry.ts; the config
+    // layer starts empty (user overrides only).
+    expect(config.llm.systemPrompts,).toEqual({},);
     expect(config.sd.profiles,).toEqual({},);
     expect(config.avatar.emotions,).toEqual({},);
     expect(config.imageEdit.workflows,).toEqual({},);
@@ -369,6 +368,45 @@ emotions:
 
     expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
       "Failed to load template config",
+    );
+  });
+
+  test("rejects llm.yaml with a non-string systemPrompt value", () => {
+    writeTemplateFile(
+      "llm.yaml",
+      `merge: extend
+systemPrompts:
+  gm: 42
+`,
+    );
+
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      "systemPrompts.gm must be a string",
+    );
+  });
+
+  test("rejects llm.yaml with an illegal merge strategy", () => {
+    writeTemplateFile("llm.yaml", "merge: banana",);
+
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      "merge must be one of replace|extend|override",
+    );
+  });
+
+  test("rejects llm.yaml with a malformed chatFormat", () => {
+    writeTemplateFile(
+      "llm.yaml",
+      `merge: extend
+chatFormats:
+  chatml:
+    system: ok
+    user: 42
+    assistant: "a"
+`,
+    );
+
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      "chatFormats.chatml.user must be a string",
     );
   });
 });

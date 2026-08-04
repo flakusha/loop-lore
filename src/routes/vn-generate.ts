@@ -93,6 +93,7 @@ async function generateStoryDescription(
     systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vn",),
     includeStoryContext: true,
     includeExamples: false,
+    config,
   },);
 
   const styleInstruction = body.style
@@ -169,6 +170,7 @@ async function generateBranchingChoices(
     systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vnChoices",),
     includeStoryContext: true,
     includeExamples: false,
+    config,
   },);
 
   const choiceCount = body.count ?? 3;

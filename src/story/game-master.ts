@@ -8,8 +8,7 @@
  * llmDecision() calls the generation module via injected generateText
  * callback — keeps story module decoupled from provider resolution.
  */
-import type { Kysely, } from "kysely";
-import { randomUUID, } from "node:crypto";
+import type { Config, } from "../config/schema";
 import {
   ContentEncoding,
   GameMasterType,
@@ -19,13 +18,9 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { applyEvents, extractEvents, validateEvents, } from "./events";
-import { GM_DECISIONS, } from "./gm/decisions/registry";
-import type { GenerateTextFn, } from "./gm/decisions/types";
 import { createQualityEvaluator, QualityEvaluator, } from "./quality-evaluator";
-import { TurnManager, type TurnManagerOptions, } from "./turn-manager";
 import type {
   GameMasterConfig,
   GameMasterDecision,
@@ -34,70 +29,28 @@ import type {
   StoryContext,
   WorldEvent,
 } from "./types";
+
+// ── LLM call abstraction ─────────────────────────────────
+
+/**
+ * Game Master Service
+ *
+ * Orchestrates story progression by selecting actors, constructing
+ * prompts, evaluating responses, and managing escalation.
+ * Supports LLM, Human, and Hybrid Game Master modes.
+ *
+ * llmDecision() calls the generation module via injected generateText
+ * callback — keeps story module decoupled from provider resolution.
+ */
+// ── LLM call abstraction ─────────────────────────────────
+
+import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import type { DB, } from "../db/schema";
+import { GM_DECISIONS, } from "./gm/decisions/registry";
+import type { GenerateTextFn, } from "./gm/decisions/types";
+import { TurnManager, type TurnManagerOptions, } from "./turn-manager";
 import { WorldStateService, } from "./world-state";
-
-// ── LLM call abstraction ─────────────────────────────────
-
-
-/**
- * Game Master Service
- *
- * Orchestrates story progression by selecting actors, constructing
- * prompts, evaluating responses, and managing escalation.
- * Supports LLM, Human, and Hybrid Game Master modes.
- *
- * llmDecision() calls the generation module via injected generateText
- * callback — keeps story module decoupled from provider resolution.
- */
-// ── LLM call abstraction ─────────────────────────────────
-
-
-/**
- * Game Master Service
- *
- * Orchestrates story progression by selecting actors, constructing
- * prompts, evaluating responses, and managing escalation.
- * Supports LLM, Human, and Hybrid Game Master modes.
- *
- * llmDecision() calls the generation module via injected generateText
- * callback — keeps story module decoupled from provider resolution.
- */
-// ── LLM call abstraction ─────────────────────────────────
-/**
- * Game Master Service
- *
- * Orchestrates story progression by selecting actors, constructing
- * prompts, evaluating responses, and managing escalation.
- * Supports LLM, Human, and Hybrid Game Master modes.
- *
- * llmDecision() calls the generation module via injected generateText
- * callback — keeps story module decoupled from provider resolution.
- */
-// ── LLM call abstraction ─────────────────────────────────
-
-
-/**
- * Game Master Service
- *
- * Orchestrates story progression by selecting actors, constructing
- * prompts, evaluating responses, and managing escalation.
- * Supports LLM, Human, and Hybrid Game Master modes.
- *
- * llmDecision() calls the generation module via injected generateText
- * callback — keeps story module decoupled from provider resolution.
- */
-// ── LLM call abstraction ─────────────────────────────────
-/**
- * Game Master Service
- *
- * Orchestrates story progression by selecting actors, constructing
- * prompts, evaluating responses, and managing escalation.
- * Supports LLM, Human, and Hybrid Game Master modes.
- *
- * llmDecision() calls the generation module via injected generateText
- * callback — keeps story module decoupled from provider resolution.
- */
-// ── LLM call abstraction ─────────────────────────────────
 /**
  * Game Master Service
  *
@@ -185,6 +138,7 @@ export class GameMasterService {
   private readonly worldState: WorldStateService;
   private readonly evaluator: QualityEvaluator;
   private readonly config: GameMasterConfig;
+  private readonly appConfig: Config | undefined;
   private readonly chatId: string;
   private readonly generateText: GenerateTextFn;
   private readonly systemPromptDefault: string | undefined;
@@ -210,6 +164,7 @@ export class GameMasterService {
     return strategy(
       {
         config: this.config,
+        appConfig: this.appConfig,
         generateText: this.generateText,
         db: this.db,
         chatId: this.chatId,
@@ -272,11 +227,14 @@ export class GameMasterService {
       qualityThresholds?: Partial<QualityThresholds>;
       /** Config-driven default GM system prompt (resolved from templates) */
       systemPromptDefault?: string;
+      /** App-level config — enables config-driven prompt sections (e.g. NSFW policy). */
+      appConfig?: Config;
     },
   ) {
     this.db = options.db;
     this.chatId = options.chatId;
     this.config = options.gmConfig;
+    this.appConfig = options.appConfig;
     this.generateText = options.generateText;
     this.systemPromptDefault = options.systemPromptDefault;
     this.turnManager = new TurnManager({ db: options.db, chatId: options.chatId, },);
