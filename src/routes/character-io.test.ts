@@ -16,6 +16,7 @@ import type { CharacterSystemsExport, } from "../characters/exporters/character-
 import { TraitsService, } from "../characters/services/traits-service";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertWorlds, } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { characterIoRoutes, } from "./character-io";
 
@@ -266,6 +267,58 @@ describe("characterIoRoutes", () => {
       expect(body.imported.relationships,).toBe(1,);
       expect(body.errors,).toHaveLength(0,);
     });
+
+    test("imports world-scoped traits only when a worldId is provided", async () => {
+      const worldId = uid();
+      const targetActorId = uid();
+      await insertWorlds(db, ownerId, "Test World", { id: worldId, } as never,);
+      await seedUser(db, targetActorId,);
+      await seedActor(db, targetActorId, ownerId,);
+
+      const payload = {
+        version: "1.0",
+        exportedAt: new Date().toISOString(),
+        characterId: targetActorId,
+        traits: {
+          permanent: [],
+          world: [{ name: "realm", value: "Ashen", category: "world", },],
+          location: [],
+        },
+      };
+
+      // Without a worldId, world traits are skipped (0 imported).
+      const app = createIoApp(db, ownerId,);
+      const noWorld = await app.handle(
+        new Request(`http://localhost/api/actors/${targetActorId}/systems/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify(payload,),
+        },),
+      );
+      expect(noWorld.status,).toBe(201,);
+      const noWorldBody = (await noWorld.json()) as { imported: Record<string, number | boolean> };
+      expect(noWorldBody.imported.traits,).toBe(0,);
+
+      // With a worldId in the body, the world trait is imported.
+      const withWorld = await app.handle(
+        new Request(`http://localhost/api/actors/${targetActorId}/systems/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ ...payload, worldId, },),
+        },),
+      );
+      expect(withWorld.status,).toBe(201,);
+      const withWorldBody = (await withWorld.json()) as { imported: Record<string, number | boolean> };
+      expect(withWorldBody.imported.traits,).toBe(1,);
+
+      const worldTrait = await db
+        .selectFrom("character_world_traits",)
+        .where("actor_id", "=", targetActorId,)
+        .where("world_id", "=", worldId,)
+        .selectAll()
+        .executeTakeFirst();
+      expect(worldTrait?.trait_name,).toBe("realm",);
+    });
   });
 
   describe("POST /systems/import/url", () => {
@@ -299,7 +352,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/import/url`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ url: "http://example.com/data.json", }),
+          body: JSON.stringify({ url: "https://example.com/data.json", }),
         },),
       );
       expect(res.status,).toBe(401,);
@@ -313,10 +366,7 @@ describe("characterIoRoutes", () => {
       };
       mockFetch((url,) => {
         expect(url,).toContain("data.example.com",);
-        return new Response(JSON.stringify(payload,), {
-          status: 200,
-          headers: { "Content-Type": "application/json", },
-        },);
+        return Response.json(payload, { status: 200, },);
       },);
 
       try {
