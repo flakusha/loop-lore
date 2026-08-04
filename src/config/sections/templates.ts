@@ -17,16 +17,34 @@ export type MergeStrategy = "replace" | "extend" | "override";
 
 /** System prompt templates keyed by purpose */
 export interface LlmSystemPrompts {
-  /** Main chat system prompt */
-  chat: string;
+  /** Main chat system prompt (generic baseline; actors usually define their own) */
+  chat?: string;
   /** Summarization prompt */
-  summarize: string;
+  summarize?: string;
   /** Image prompt generation instruction */
-  imagePrompt: string;
+  imagePrompt?: string;
   /** Out-of-character / GM narration */
-  ooc: string;
+  ooc?: string;
+  /** Assistant mode system prompt */
+  assistant?: string;
+  /** GM turn-taking system prompt */
+  gm?: string;
+  /** NSFW content-rating classification */
+  nsfw?: string;
+  /** NSFW policy system message describing the SFW/NSFW level taxonomy */
+  nsfwPolicy?: string;
+  /** VN scene description generation */
+  vn?: string;
+  /** VN branching choice generation */
+  vnChoices?: string;
+  /** Aux: chat → scene transition classification */
+  transition?: string;
+  /** Aux: pre-generation intent classification */
+  intent?: string;
+  /** Aux: memory extraction */
+  memory?: string;
   /** Custom prompts keyed by name */
-  [key: string]: string;
+  [key: string]: string | undefined;
 }
 
 /** Chat format template (for Jinja/vLLM-style formatting) */
@@ -166,12 +184,10 @@ const DEFAULT_MERGE: MergeStrategy = "extend";
 export const TEMPLATES_DEFAULTS: TemplatesConfig = {
   llm: {
     merge: DEFAULT_MERGE,
-    systemPrompts: {
-      chat: "You are {{charName}}. {{charDescription}}",
-      summarize: "Summarize this conversation concisely.",
-      imagePrompt: "Write image generation tags for: {{scene}}",
-      ooc: "You are the game master. Narrate the scene.",
-    },
+    // Defaults live in src/prompts/registry.ts (LLM_PROMPT_DEFAULTS) — the
+    // config layer is user overrides only, so this starts empty. Keeps a single
+    // source of truth for default prompts without inverting import layering.
+    systemPrompts: {},
     chatFormats: {},
   },
   sd: {

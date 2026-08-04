@@ -25,6 +25,7 @@ describe("nsfw runtime config store", () => {
       defaultNsfwScope: "user",
       consentRequired: false,
       auditLogging: true,
+      useLlmClassifier: false,
     },);
     const cfg = getRuntimeNsfwConfig();
     expect(cfg.allowNsfw,).toBe(false,);
@@ -41,6 +42,7 @@ describe("nsfw runtime config store", () => {
       defaultNsfwScope: "chat",
       consentRequired: true,
       auditLogging: true,
+      useLlmClassifier: false,
     },);
     updateRuntimeNsfwConfig({ allowNsfw: false, nsfwMinAge: 21, },);
     const cfg = getRuntimeNsfwConfig();
@@ -58,6 +60,7 @@ describe("nsfw runtime config store", () => {
       defaultNsfwScope: "chat",
       consentRequired: true,
       auditLogging: true,
+      useLlmClassifier: false,
     },);
     getRuntimeNsfwConfig().allowNsfw = false;
     expect(getRuntimeNsfwConfig().allowNsfw,).toBe(true,);
@@ -71,6 +74,7 @@ describe("nsfw runtime config store", () => {
       defaultNsfwScope: "chat",
       consentRequired: true,
       auditLogging: true,
+      useLlmClassifier: false,
     },);
     await insertConfig(db, "nsfw_allow", "false",);
     await insertConfig(db, "nsfw_min_age", "21",);
@@ -89,6 +93,7 @@ describe("nsfw runtime config store", () => {
       defaultNsfwScope: "chat",
       consentRequired: true,
       auditLogging: true,
+      useLlmClassifier: false,
     },);
     await insertConfig(db, "nsfw_allow", "not-a-bool",);
     await insertConfig(db, "nsfw_min_age", "99999",);

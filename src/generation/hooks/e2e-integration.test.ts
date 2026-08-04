@@ -162,6 +162,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
       db,
     };
@@ -189,6 +190,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
       db,
     };
@@ -214,6 +216,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
       db,
     };
@@ -249,6 +252,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
       db,
     };
@@ -281,6 +285,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
       db,
     };
@@ -309,6 +314,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
       db,
     };
