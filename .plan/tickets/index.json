@@ -65,6 +65,35 @@
     "tags": [],
     "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md"
   },
+  "EPIC-FRONTEND-BACKEND-INTEGRATION": {
+    "extid": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "type": "EPIC",
+    "title": "EPIC Frontend Backend Integration",
+    "label": "epic",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "frontend",
+      "integration",
+      "wiring"
+    ],
+    "source": ".plan/epics/epic-frontend-backend-integration.md"
+  },
+  "EPIC-HOUSING": {
+    "extid": "EPIC-HOUSING",
+    "type": "EPIC",
+    "title": "EPIC Housing System",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "housing",
+      "base-building",
+      "neighborhood",
+      "frontend"
+    ],
+    "source": ".plan/epics/epic-housing.md"
+  },
   "FEAT-065-PROMPT-LIBRARY-EXPANDED": {
     "extid": "FEAT-065-PROMPT-LIBRARY-EXPANDED",
     "type": "FEAT",
@@ -275,6 +304,17 @@
     "git_issue": "d33a823",
     "hash": "d33a823"
   },
+  "FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE": {
+    "hash": "pending",
+    "extid": "FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE",
+    "type": "FEAT",
+    "title": "Chat Template Config Lifecycle — Bound Migration Over Live Mutation",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+  },
   "FEAT-CHAT-TRANSFER-LOCATION-CHANGE": {
     "extid": "FEAT-CHAT-TRANSFER-LOCATION-CHANGE",
     "type": "FEAT",
@@ -459,6 +499,17 @@
     "status": "open",
     "git_issue": "17d9889",
     "hash": "17d9889"
+  },
+  "FEAT-MESSAGE-SWIPE-REPLAY-BRANCH": {
+    "hash": "pending",
+    "extid": "FEAT-MESSAGE-SWIPE-REPLAY-BRANCH",
+    "type": "FEAT",
+    "title": "Message Swipe & Replay Branch (Regenerate / Retry Generation)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-message-swipe-replay-branch.md"
   },
   "FEAT-MULTI-INSTANCE-RECONCILIATION": {
     "extid": "FEAT-MULTI-INSTANCE-RECONCILIATION",
@@ -704,6 +755,106 @@
     "tags": [],
     "source": ".plan/tickets/TASK-achievements.md"
   },
+  "TASK-ACTOR-AVAILABILITY-FRONTEND": {
+    "extid": "TASK-ACTOR-AVAILABILITY-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Availability Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "availability",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-availability-frontend.md"
+  },
+  "TASK-ACTOR-EMOTION-AVATARS-FRONTEND": {
+    "extid": "TASK-ACTOR-EMOTION-AVATARS-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Emotion Avatars Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "emotion-avatars",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
+  },
+  "TASK-ACTOR-LICENSING-FRONTEND": {
+    "extid": "TASK-ACTOR-LICENSING-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Licensing Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "licensing",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
+  },
+  "TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND": {
+    "extid": "TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Notes, Items, and Lore Entries Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "notes",
+      "items",
+      "lore",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md"
+  },
+  "TASK-ACTOR-RELATIONSHIPS-FRONTEND": {
+    "extid": "TASK-ACTOR-RELATIONSHIPS-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Relationships Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "relationships",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-relationships-frontend.md"
+  },
+  "TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND": {
+    "extid": "TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Systems Export/Import Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "systems",
+      "export",
+      "import",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-actor-systems-export-frontend.md"
+  },
+  "TASK-ACTOR-TRAITS-FRONTEND": {
+    "extid": "TASK-ACTOR-TRAITS-FRONTEND",
+    "type": "TASK",
+    "title": "Actor Traits Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "traits",
+      "frontend",
+      "actor"
+    ],
+    "source": ".plan/tickets/TASK-actor-traits-frontend.md"
+  },
   "TASK-ACTORS": {
     "hash": "pending",
     "extid": "TASK-ACTORS",
@@ -811,6 +962,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-ambient-sound-system.md",
     "status": "open"
+  },
+  "TASK-ANALYTICS-FRONTEND-DASHBOARD": {
+    "extid": "TASK-ANALYTICS-FRONTEND-DASHBOARD",
+    "type": "TASK",
+    "title": "Analytics Frontend Dashboard",
+    "label": "task",
+    "priority": "P1",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "analytics",
+      "frontend",
+      "dashboard"
+    ],
+    "source": ".plan/tickets/TASK-analytics-frontend-dashboard.md"
   },
   "TASK-ANALYTICS-OBSERVABILITY": {
     "extid": "TASK-ANALYTICS-OBSERVABILITY",
@@ -1219,6 +1384,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-battle-environment.md"
   },
+  "TASK-BATTLE-FRONTEND-INTEGRATION": {
+    "extid": "TASK-BATTLE-FRONTEND-INTEGRATION",
+    "type": "TASK",
+    "title": "Battle Frontend Integration",
+    "label": "task",
+    "priority": "P0",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "battle",
+      "frontend",
+      "combat"
+    ],
+    "source": ".plan/tickets/TASK-battle-frontend-integration.md"
+  },
   "TASK-BATTLE-INTEGRATION-GAPS": {
     "hash": "pending",
     "extid": "TASK-BATTLE-INTEGRATION-GAPS",
@@ -1308,6 +1487,20 @@
     "status": "open",
     "git_issue": "baa672b",
     "hash": "baa672b"
+  },
+  "TASK-BLOG-FRONTEND-AUTHORING": {
+    "extid": "TASK-BLOG-FRONTEND-AUTHORING",
+    "type": "TASK",
+    "title": "Blog Frontend Authoring",
+    "label": "task",
+    "priority": "P1",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "blog",
+      "frontend",
+      "authoring"
+    ],
+    "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
   },
   "TASK-BLOG-SYSTEM": {
     "extid": "TASK-BLOG-SYSTEM",
@@ -1716,6 +1909,20 @@
     "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md",
     "status": "open"
   },
+  "TASK-CHAT-LOCATION-FRONTEND": {
+    "extid": "TASK-CHAT-LOCATION-FRONTEND",
+    "type": "TASK",
+    "title": "Chat Location Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "location",
+      "frontend",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-chat-location-frontend.md"
+  },
   "TASK-CHAT-LOCATIONS-WORLDS-FINALIZE-CURRENT-IMPLEMENTATION": {
     "extid": "TASK-CHAT-LOCATIONS-WORLDS-FINALIZE-CURRENT-IMPLEMENTATION",
     "type": "TASK",
@@ -1743,6 +1950,20 @@
     ],
     "source": ".plan/tickets/TASK-chat-message-search.md",
     "status": "open"
+  },
+  "TASK-CHAT-PINS-FRONTEND": {
+    "extid": "TASK-CHAT-PINS-FRONTEND",
+    "type": "TASK",
+    "title": "Chat Pins Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "pins",
+      "frontend",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-chat-pins-frontend.md"
   },
   "TASK-CHAT-ROOM-FILTERS": {
     "extid": "TASK-chat-room-filters",
@@ -1828,6 +2049,20 @@
     "status": "open",
     "git_issue": "6215af1",
     "hash": "6215af1"
+  },
+  "TASK-CHAT-TRANSFER-FRONTEND": {
+    "extid": "TASK-CHAT-TRANSFER-FRONTEND",
+    "type": "TASK",
+    "title": "Chat Transfer Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "transfer",
+      "frontend",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-chat-transfer-frontend.md"
   },
   "TASK-CHAT-TRANSFER-LOCATION": {
     "extid": "TASK-CHAT-TRANSFER-LOCATION",
@@ -2538,6 +2773,18 @@
     "git_issue": "cff55b1",
     "hash": "cff55b1"
   },
+  "TASK-EMOTION-AVATAR-MESSAGE-BINDING": {
+    "hash": "8925a2d",
+    "extid": "TASK-EMOTION-AVATAR-MESSAGE-BINDING",
+    "type": "TASK",
+    "title": "Bind emotion avatar per message/chat (migration + persist + render)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md",
+    "status": "done"
+  },
   "TASK-EMOTION-INTENT-DETECTION": {
     "extid": "TASK-EMOTION-INTENT-DETECTION",
     "type": "TASK",
@@ -2816,6 +3063,20 @@
     "status": "open",
     "git_issue": "f49b643",
     "hash": "f49b643"
+  },
+  "TASK-EXPORT-FRONTEND-PROGRESS": {
+    "extid": "TASK-EXPORT-FRONTEND-PROGRESS",
+    "type": "TASK",
+    "title": "Export Frontend Progress UI",
+    "label": "task",
+    "priority": "P1",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "export",
+      "frontend",
+      "progress"
+    ],
+    "source": ".plan/tickets/TASK-export-frontend-progress.md"
   },
   "TASK-EXTRACT-CHAT-ROUTE-BUSINESS-LOGIC": {
     "extid": "TASK-EXTRACT-CHAT-ROUTE-BUSINESS-LOGIC",
@@ -3201,6 +3462,20 @@
       "housing"
     ],
     "source": ".plan/tickets/TASK-housing-companion.md"
+  },
+  "TASK-HOUSING-FRONTEND": {
+    "extid": "TASK-HOUSING-FRONTEND",
+    "type": "TASK",
+    "title": "Housing Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-HOUSING",
+    "tags": [
+      "housing",
+      "frontend",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-housing-frontend.md"
   },
   "TASK-HOUSING-NEIGHBORHOOD": {
     "extid": "TASK-HOUSING-NEIGHBORHOOD",
@@ -3799,6 +4074,21 @@
     "git_issue": "e128690",
     "hash": "e128690"
   },
+  "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
+    "extid": "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND",
+    "type": "TASK",
+    "title": "Message Archive/Restore Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "archive",
+      "restore",
+      "frontend",
+      "messages"
+    ],
+    "source": ".plan/tickets/TASK-message-archive-restore-frontend.md"
+  },
   "TASK-MESSAGE-ARCHIVING": {
     "extid": "TASK-MESSAGE-ARCHIVING",
     "type": "TASK",
@@ -4114,6 +4404,20 @@
     "status": "open",
     "git_issue": "650079b",
     "hash": "650079b"
+  },
+  "TASK-NSFW-FRONTEND-INTEGRATION": {
+    "extid": "TASK-NSFW-FRONTEND-INTEGRATION",
+    "type": "TASK",
+    "title": "NSFW Frontend Integration",
+    "label": "task",
+    "priority": "P0",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "nsfw",
+      "frontend",
+      "intimacy"
+    ],
+    "source": ".plan/tickets/TASK-nsfw-frontend-integration.md"
   },
   "TASK-NSFW-GAME-MECHANICS": {
     "extid": "TASK-NSFW-GAME-MECHANICS",
@@ -4607,6 +4911,17 @@
     "status": "open",
     "git_issue": "3b6041a",
     "hash": "3b6041a"
+  },
+  "TASK-PROMPT-TEMPLATE-REGISTRY": {
+    "hash": "9aefe593",
+    "extid": "TASK-PROMPT-TEMPLATE-REGISTRY",
+    "type": "TASK",
+    "title": "Prompt Template Registry — Typed Purposes, Single Defaults Source",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-config-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-template-registry.md"
   },
   "TASK-QUEST-LOG": {
     "hash": "pending",
@@ -5268,6 +5583,20 @@
     "git_issue": "f21d739",
     "hash": "f21d739"
   },
+  "TASK-RPG-STATS-FRONTEND-WIRING": {
+    "extid": "TASK-RPG-STATS-FRONTEND-WIRING",
+    "type": "TASK",
+    "title": "RPG Stats Frontend Wiring",
+    "label": "task",
+    "priority": "P0",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "rpg",
+      "frontend",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-rpg-stats-frontend-wiring.md"
+  },
   "TASK-RPG-STEALTH-CRIME": {
     "extid": "TASK-RPG-STEALTH-CRIME",
     "type": "TASK",
@@ -5897,6 +6226,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-typescript-mjs-reconciliation.md"
   },
+  "TASK-UNIFY-401-GUARD-HELPERS": {
+    "hash": "pending",
+    "extid": "TASK-UNIFY-401-GUARD-HELPERS",
+    "type": "TASK",
+    "title": "# TASK: Unify backend 401/Unauthorized guard helpers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
+  },
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "extid": "TASK-UNIT-TESTS-UNTESTED-BATCH",
     "type": "TASK",
@@ -6226,6 +6566,20 @@
     "git_issue": "136d857",
     "hash": "136d857"
   },
+  "TASK-WORLD-LORE-ENTRIES-FRONTEND": {
+    "extid": "TASK-WORLD-LORE-ENTRIES-FRONTEND",
+    "type": "TASK",
+    "title": "World Lore Entries Frontend",
+    "label": "task",
+    "priority": "P2",
+    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "tags": [
+      "lore",
+      "frontend",
+      "world"
+    ],
+    "source": ".plan/tickets/TASK-world-lore-entries-frontend.md"
+  },
   "TASK-WORLD-SHAPING-DIVINE": {
     "extid": "TASK-WORLD-SHAPING-DIVINE",
     "type": "TASK",
@@ -6270,326 +6624,5 @@
     "epic": "epic-communications-integrations.md",
     "tags": [],
     "source": ".plan/tickets/TASK-xmpp-integration.md"
-  },
-  "TASK-EMOTION-AVATAR-MESSAGE-BINDING": {
-    "hash": "8925a2d",
-    "extid": "TASK-EMOTION-AVATAR-MESSAGE-BINDING",
-    "type": "TASK",
-    "title": "Bind emotion avatar per message/chat (migration + persist + render)",
-    "label": "task",
-    "priority": "High",
-    "epic": "epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md",
-    "status": "done"
-  },
-  "TASK-UNIFY-401-GUARD-HELPERS": {
-    "hash": "pending",
-    "extid": "TASK-UNIFY-401-GUARD-HELPERS",
-    "type": "TASK",
-    "title": "# TASK: Unify backend 401/Unauthorized guard helpers",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-code-quality",
-    "tags": [],
-    "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
-  },
-  "EPIC-FRONTEND-BACKEND-INTEGRATION": {
-    "extid": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "type": "EPIC",
-    "title": "EPIC Frontend Backend Integration",
-    "label": "epic",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "frontend",
-      "integration",
-      "wiring"
-    ],
-    "source": ".plan/epics/epic-frontend-backend-integration.md"
-  },
-  "TASK-RPG-STATS-FRONTEND-WIRING": {
-    "extid": "TASK-RPG-STATS-FRONTEND-WIRING",
-    "type": "TASK",
-    "title": "RPG Stats Frontend Wiring",
-    "label": "task",
-    "priority": "P0",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "rpg",
-      "frontend",
-      "wiring"
-    ],
-    "source": ".plan/tickets/TASK-rpg-stats-frontend-wiring.md"
-  },
-  "TASK-BATTLE-FRONTEND-INTEGRATION": {
-    "extid": "TASK-BATTLE-FRONTEND-INTEGRATION",
-    "type": "TASK",
-    "title": "Battle Frontend Integration",
-    "label": "task",
-    "priority": "P0",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "battle",
-      "frontend",
-      "combat"
-    ],
-    "source": ".plan/tickets/TASK-battle-frontend-integration.md"
-  },
-  "TASK-NSFW-FRONTEND-INTEGRATION": {
-    "extid": "TASK-NSFW-FRONTEND-INTEGRATION",
-    "type": "TASK",
-    "title": "NSFW Frontend Integration",
-    "label": "task",
-    "priority": "P0",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "nsfw",
-      "frontend",
-      "intimacy"
-    ],
-    "source": ".plan/tickets/TASK-nsfw-frontend-integration.md"
-  },
-  "TASK-ANALYTICS-FRONTEND-DASHBOARD": {
-    "extid": "TASK-ANALYTICS-FRONTEND-DASHBOARD",
-    "type": "TASK",
-    "title": "Analytics Frontend Dashboard",
-    "label": "task",
-    "priority": "P1",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "analytics",
-      "frontend",
-      "dashboard"
-    ],
-    "source": ".plan/tickets/TASK-analytics-frontend-dashboard.md"
-  },
-  "TASK-BLOG-FRONTEND-AUTHORING": {
-    "extid": "TASK-BLOG-FRONTEND-AUTHORING",
-    "type": "TASK",
-    "title": "Blog Frontend Authoring",
-    "label": "task",
-    "priority": "P1",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "blog",
-      "frontend",
-      "authoring"
-    ],
-    "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
-  },
-  "TASK-EXPORT-FRONTEND-PROGRESS": {
-    "extid": "TASK-EXPORT-FRONTEND-PROGRESS",
-    "type": "TASK",
-    "title": "Export Frontend Progress UI",
-    "label": "task",
-    "priority": "P1",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "export",
-      "frontend",
-      "progress"
-    ],
-    "source": ".plan/tickets/TASK-export-frontend-progress.md"
-  },
-  "TASK-ACTOR-TRAITS-FRONTEND": {
-    "extid": "TASK-ACTOR-TRAITS-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Traits Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "traits",
-      "frontend",
-      "actor"
-    ],
-    "source": ".plan/tickets/TASK-actor-traits-frontend.md"
-  },
-  "TASK-ACTOR-RELATIONSHIPS-FRONTEND": {
-    "extid": "TASK-ACTOR-RELATIONSHIPS-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Relationships Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "relationships",
-      "frontend",
-      "actor"
-    ],
-    "source": ".plan/tickets/TASK-actor-relationships-frontend.md"
-  },
-  "TASK-ACTOR-AVAILABILITY-FRONTEND": {
-    "extid": "TASK-ACTOR-AVAILABILITY-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Availability Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "availability",
-      "frontend",
-      "actor"
-    ],
-    "source": ".plan/tickets/TASK-actor-availability-frontend.md"
-  },
-  "TASK-ACTOR-EMOTION-AVATARS-FRONTEND": {
-    "extid": "TASK-ACTOR-EMOTION-AVATARS-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Emotion Avatars Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "emotion-avatars",
-      "frontend",
-      "actor"
-    ],
-    "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
-  },
-  "TASK-ACTOR-LICENSING-FRONTEND": {
-    "extid": "TASK-ACTOR-LICENSING-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Licensing Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "licensing",
-      "frontend",
-      "actor"
-    ],
-    "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
-  },
-  "TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND": {
-    "extid": "TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Systems Export/Import Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "systems",
-      "export",
-      "import",
-      "frontend"
-    ],
-    "source": ".plan/tickets/TASK-actor-systems-export-frontend.md"
-  },
-  "TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND": {
-    "extid": "TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND",
-    "type": "TASK",
-    "title": "Actor Notes, Items, and Lore Entries Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "notes",
-      "items",
-      "lore",
-      "frontend"
-    ],
-    "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md"
-  },
-  "TASK-WORLD-LORE-ENTRIES-FRONTEND": {
-    "extid": "TASK-WORLD-LORE-ENTRIES-FRONTEND",
-    "type": "TASK",
-    "title": "World Lore Entries Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "lore",
-      "frontend",
-      "world"
-    ],
-    "source": ".plan/tickets/TASK-world-lore-entries-frontend.md"
-  },
-  "TASK-CHAT-PINS-FRONTEND": {
-    "extid": "TASK-CHAT-PINS-FRONTEND",
-    "type": "TASK",
-    "title": "Chat Pins Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "pins",
-      "frontend",
-      "chat"
-    ],
-    "source": ".plan/tickets/TASK-chat-pins-frontend.md"
-  },
-  "TASK-CHAT-TRANSFER-FRONTEND": {
-    "extid": "TASK-CHAT-TRANSFER-FRONTEND",
-    "type": "TASK",
-    "title": "Chat Transfer Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "transfer",
-      "frontend",
-      "chat"
-    ],
-    "source": ".plan/tickets/TASK-chat-transfer-frontend.md"
-  },
-  "TASK-CHAT-LOCATION-FRONTEND": {
-    "extid": "TASK-CHAT-LOCATION-FRONTEND",
-    "type": "TASK",
-    "title": "Chat Location Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "location",
-      "frontend",
-      "chat"
-    ],
-    "source": ".plan/tickets/TASK-chat-location-frontend.md"
-  },
-  "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
-    "extid": "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND",
-    "type": "TASK",
-    "title": "Message Archive/Restore Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
-    "tags": [
-      "archive",
-      "restore",
-      "frontend",
-      "messages"
-    ],
-    "source": ".plan/tickets/TASK-message-archive-restore-frontend.md"
-  },
-  "EPIC-HOUSING": {
-    "extid": "EPIC-HOUSING",
-    "type": "EPIC",
-    "title": "EPIC Housing System",
-    "label": "epic",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "housing",
-      "base-building",
-      "neighborhood",
-      "frontend"
-    ],
-    "source": ".plan/epics/epic-housing.md"
-  },
-  "TASK-HOUSING-FRONTEND": {
-    "extid": "TASK-HOUSING-FRONTEND",
-    "type": "TASK",
-    "title": "Housing Frontend",
-    "label": "task",
-    "priority": "P2",
-    "epic": "EPIC-HOUSING",
-    "tags": [
-      "housing",
-      "frontend",
-      "ui"
-    ],
-    "source": ".plan/tickets/TASK-housing-frontend.md"
   }
 }

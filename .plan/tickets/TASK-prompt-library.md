@@ -6,6 +6,12 @@
 **Epic:** epic-assistant-generation-extensions
 **Source:** Roadmap migration, 2026-07-19
 
+> **Backend foundation shipped (2026-08-03):** config-file builtins registry
+> (`src/prompts/registry.ts`, 12 purposes, `resolveSystemPrompt`, `configs/templates/llm.yaml`)
+> is the foundation this library builds on — `prompt_templates` DB table = `userTemplates`,
+> registry `builtins` + `resolve` already exist. See `FEAT-065-template-system.md` +
+> `.plan/design/prompt-template-registry.md` (registry hardening: `TASK-prompt-template-registry.md`).
+
 ## Summary
 
 User-facing prompt library — save, share, and reuse prompt templates. Users can create system prompts, character descriptions, and scenario templates.
