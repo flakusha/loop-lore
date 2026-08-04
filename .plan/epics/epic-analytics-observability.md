@@ -32,3 +32,13 @@ Conversation analytics and observability dashboard. Covers per-chat cost trackin
 
 - `model_comparisons` table (existing)
 - `asset_links` table (existing)
+
+## Wiring status (verified 2026-08-04)
+
+Routes are **mounted and tested** — the "unwired" assessment is stale:
+
+- `analyticsRoutes` mounted at `src/elysia-app.ts:200` (`app.use(analyticsRoutes({ database }))`)
+- `modelComparisonsRoutes` mounted at `src/elysia-app.ts:201`
+- Route test: `src/routes/analytics.test.ts`
+
+Open work is feature-level (dashboard UI, memory visualizer), not route wiring.
