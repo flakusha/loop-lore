@@ -11,6 +11,8 @@
 
 The NSFW epic (`epic-nsfw-game-mechanics.md`, 848 lines) defines 8 gameplay systems but has zero cross-references to Housing, Weather, Social, or Disease systems. This epic tracks the integration work to close these gaps.
 
+> **Wiring status (verified 2026-08-04):** the "no corresponding code found" assessment is stale **for backend routing** — the base NSFW stack is mounted: `nsfwRoutes` (`elysia-app.ts:193`), `nsfwModerationRoutes` (`:194`), `adminNsfwRoutes` (`:174`). What is genuinely not started is the **cross-system integration matrix** below (Housing/Weather/Social/Disease links into the 8 NSFW gameplay systems) — this epic's actual scope.
+
 ## Overview
 
 ### Current State Assessment
