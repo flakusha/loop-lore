@@ -11,6 +11,8 @@
 Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for battle mechanics, similar mechanics for trading/inventory/items/spells/actions, skill rolls/checks, and dynamic backgrounds.
 
 > **⚠️ This epic is too large to ship in one pass.** It has been split into 5 sub-epics below. Each sub-epic delivers independently shippable value.
+>
+> **Wiring status (verified 2026-08-04):** `battleRoutes` is **mounted and alive** at `src/elysia-app.ts:204` (`app.use(battleRoutes(handleOpts))`). The "battle system non-functional / code not wired" assessment is stale. Open work is the full gameplay sub-epics below (turn-based UI, trading, spells) — there is no backend-wiring gap.
 
 ## Sub-Epics
 

@@ -7,6 +7,8 @@
 **Type:** Feature Epic
 **Tags:** blog, llm-authored, human-authored, comments, followings, privacy, assets, moderation, rag, creative-generation
 
+> **Wiring status (verified 2026-08-04):** `blogRoutes` is **mounted and alive** at `src/elysia-app.ts:207` (`app.use(blogRoutes({ database }))`) — the "code exists but not integrated / blog inactive" assessment is stale. The blog system is active on the backend; open work is LLM-authored authoring modes + frontend.
+
 ## Overview
 
 A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
