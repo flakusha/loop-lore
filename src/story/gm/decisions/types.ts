@@ -7,6 +7,7 @@
  * registry line — no switch to edit.
  */
 import type { Kysely, } from "kysely";
+import type { Config, } from "../../../config/schema";
 import type { DB, } from "../../../db/schema";
 import type { GenerationMessage, } from "../../../generation/types";
 import type { GameMasterConfig, GameMasterDecision, StoryContext, } from "../../types";
@@ -24,6 +25,8 @@ export type GenerateTextFn = (params: {
 /** Shared dependencies every decision strategy needs from the GM service. */
 export interface GmDecisionDeps {
   config: GameMasterConfig;
+  /** App-level config — enables config-driven prompt sections (e.g. NSFW policy) during assembly. */
+  appConfig?: Config;
   generateText: GenerateTextFn;
   db: Kysely<DB>;
   chatId: string;

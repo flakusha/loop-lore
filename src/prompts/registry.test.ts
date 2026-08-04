@@ -2,6 +2,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
+import { PROMPT_PURPOSES, } from "./purposes";
 import {
   GM_SYSTEM_PROMPT,
   LLM_PROMPT_DEFAULTS,
@@ -24,25 +25,14 @@ function llmTemplates(systemPrompts: Record<string, string>,): LlmTemplateConfig
 }
 
 describe("LLM_PROMPT_DEFAULTS", () => {
-  test("covers every generation domain", () => {
-    for (
-      const purpose of [
-        "chat",
-        "summarize",
-        "imagePrompt",
-        "ooc",
-        "assistant",
-        "gm",
-        "nsfw",
-        "vn",
-        "vnChoices",
-        "transition",
-        "intent",
-        "memory",
-      ]
-    ) {
+  test("purpose union exactly matches the defaults keys", () => {
+    for (const purpose of PROMPT_PURPOSES) {
       expect(LLM_PROMPT_DEFAULTS[purpose], `${purpose} default missing`,).toBeTruthy();
     }
+    // Every default key must be a typed purpose — no orphaned keys.
+    expect(Object.keys(LLM_PROMPT_DEFAULTS,).sort(),).toEqual(
+      [...PROMPT_PURPOSES,].sort(),
+    );
   });
 
   test("assistant default equals the seeded assistant prompt", () => {

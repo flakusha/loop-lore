@@ -89,6 +89,7 @@ idempotencyExpiryHours = 24
 [nsfw]
 allowNsfw = true
 nsfwMinAge = 18
+# useLlmClassifier = false  # Augment NSFW keyword detection with an LLM content rating classifier
 
 [generation]
 defaultProvider = ""

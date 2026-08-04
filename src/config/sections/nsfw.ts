@@ -8,6 +8,7 @@ export const NSFW_DEFAULTS = {
   defaultNsfwScope: "chat",
   consentRequired: true,
   auditLogging: true,
+  useLlmClassifier: false,
 } satisfies NsfwConfig;
 
 export class NsfwSection implements NsfwConfig {
@@ -16,6 +17,7 @@ export class NsfwSection implements NsfwConfig {
   defaultNsfwScope = NSFW_DEFAULTS.defaultNsfwScope;
   consentRequired = NSFW_DEFAULTS.consentRequired;
   auditLogging = NSFW_DEFAULTS.auditLogging;
+  useLlmClassifier = NSFW_DEFAULTS.useLlmClassifier;
 
   constructor(overrides?: Partial<NsfwConfig>,) {
     Object.assign(this, overrides,);
@@ -47,6 +49,11 @@ export const nsfwMeta = {
       type: "boolean",
       default: NSFW_DEFAULTS.auditLogging,
       description: "Log NSFW gate decisions to audit trail",
+    },
+    useLlmClassifier: {
+      type: "boolean",
+      default: NSFW_DEFAULTS.useLlmClassifier,
+      description: "Augment NSFW keyword detection with an LLM content rating classifier",
     },
   },
   required: ["allowNsfw", "nsfwMinAge",] as const,
