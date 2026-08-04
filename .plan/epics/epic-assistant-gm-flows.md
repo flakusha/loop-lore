@@ -25,7 +25,7 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 
 - ✅ GameMasterService wired into story-mode generation (`auto-gen.ts:184,792` — see `TASK-wire-gm-service-story-mode.md`)
 - ✅ `/create` LLM entity generation command (char/loc/world/item)
-- ❌ No generation prompt templates (inline strings only; `src/assistant/prompt/templates/` absent)
+- 🟡 **System prompts config-driven** — assistant + gm prompts resolved via `resolveSystemPrompt()` (`src/prompts/registry.ts`, 12 purposes, `configs/templates/llm.yaml` override) shipped `9aefe593`; `.plan/design/prompt-template-registry.md` + `TASK-prompt-template-registry.md` harden typing/defaults/validation. **Inline strings in `/create` generation commands remain** (`src/assistant/prompt/templates/` still absent) — those are entity-gen prompt bodies, not system prompts; separate gap.
 - ❌ No quality validation pipeline
 - ❌ No confirmation gating
 - ❌ GmConfig shape gap: UI writes `{assistantRole, visualNovel}`; story expects `GameMasterConfig.type` → human/hybrid GM unreachable from UI
