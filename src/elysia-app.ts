@@ -31,8 +31,11 @@ import { adminRoutes, } from "./routes/admin";
 import { adminCharacterOverridesRoutes, } from "./routes/admin-character-overrides";
 import { adminNsfwRoutes, } from "./routes/admin-nsfw";
 import { adminTemplateRoutes, } from "./routes/admin-templates";
+import { analyticsRoutes, } from "./routes/analytics";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
+import { battleRoutes, } from "./routes/battle";
+import { blogRoutes, } from "./routes/blog";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
 import { characterAvatarsRoutes, } from "./routes/character-avatars";
 import { characterEmotionAvatarsRoutes, } from "./routes/character-emotion-avatars";
@@ -50,6 +53,8 @@ import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatSearchRoutes, } from "./routes/chat-search";
 import { chatSectionsRoutes, } from "./routes/chat-sections";
 import { chatsRoutes, } from "./routes/chats";
+import { exportRoutes, } from "./routes/export";
+import { exportSseRoutes, } from "./routes/export-sse";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { gmNotesRoutes, } from "./routes/gm-notes";
 import { healthRoutes, } from "./routes/health";
@@ -61,6 +66,7 @@ import { locationExplorerRoutes, } from "./routes/location-explorer";
 import { messageEncryptionRoutes, } from "./routes/message-encryption";
 import { messageReactionsRoutes, } from "./routes/message-reactions";
 import { messagesRoutes, } from "./routes/messages";
+import { modelComparisonsRoutes, } from "./routes/model-comparisons";
 import { notificationsRoutes, } from "./routes/notifications";
 import { nsfwRoutes, } from "./routes/nsfw";
 import { nsfwModerationRoutes, } from "./routes/nsfw-moderation";
@@ -189,6 +195,20 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(assetRoutes(handleOpts,),);
   app.use(rpgRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
+
+  // ── Analytics ────────────────────────────────────────────────────────────
+  app.use(analyticsRoutes({ database: handleOpts.database, },),);
+  app.use(modelComparisonsRoutes({ database: handleOpts.database, },),);
+
+  // ── Battle integration ───────────────────────────────────────────────────
+  app.use(battleRoutes(handleOpts,),);
+
+  // ── Blog system ──────────────────────────────────────────────────────────
+  app.use(blogRoutes({ database: handleOpts.database, },),);
+
+  // ── Bulk import/export (ZIP) ─────────────────────────────────────────────
+  app.use(exportRoutes({ database: handleOpts.database, },),);
+  app.use(exportSseRoutes({ database: handleOpts.database, },),);
 
   // ── Asset upload (standalone route) ──────────────────────────
   // WORKAROUND: Elysia 1.4.x body consumption bug. When a child plugin
