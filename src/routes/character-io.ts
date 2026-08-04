@@ -129,7 +129,9 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         },);
       }
 
-      const worldId = ctx.body.characterId === actorId ? undefined : undefined; // Use export's worldId if different
+      // Resolve an optional target world so world-scoped traits/mood/
+      // relationships can be imported (matches GET/POST export ?worldId=).
+      const worldId = ctx.body?.worldId as string | undefined;
 
       const result = await importCharacterSystems(database, actorId, ctx.body, worldId,);
 
@@ -210,7 +212,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         }
 
         const data = await response.json() as CharacterSystemsExport;
-        const result = await importCharacterSystems(database, actorId, data,);
+        const worldId = ctx.body?.worldId as string | undefined;
+        const result = await importCharacterSystems(database, actorId, data, worldId,);
 
         return jsonCreated({
           success: result.errors.length === 0,
