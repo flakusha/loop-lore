@@ -1,6 +1,6 @@
 # EPIC: Character Core System
 
-**Status:** 📝 Draft
+**Status:** 🟡 Partial — character API + validation + personality/traits implemented; RPG stat system + template system in progress
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
@@ -25,28 +25,39 @@ Core character data model and services — mandatory/optional fields, RPG stats,
 - Character validation (field lengths, constraints)
 - Unified character API
 
+## Current State (verified 2026-08-04)
+
+The unified character API is **implemented and wired** — no `TBD` remains in `src/routes/characters.ts`:
+
+- `charactersRoutes` mounted at `src/elysia-app.ts:163`
+- Full CRUD: `GET/POST /api/actors`, `GET /api/actors/:actorId`, `GET /api/actors/:actorId/card`, `PUT/DELETE /api/actors/:actorId`, `GET /api/actors/:actorId/export`, `POST /api/actors/import`
+- Companion character sub-routes all wired: `character-traits`, `character-mood`, `character-relationships`, `character-avatars`, `character-emotions`, `character-emotion-avatars`, `character-availability`, `character-licensing`, `character-io` (each mounted in `elysia-app.ts`)
+- Personality + traits services: `src/characters/services/personality-service.ts`, `traits-service.ts`
+- RPG subsystem (dice, combat, achievements, crafting, encounters, spells) under `src/rpg/`
+- Import/export per `epic-import-export-io.md`
+
 ## Tasks
 
-- [ ] Character validation schemas (field lengths, required fields)
-- [ ] RPG stat system (base stats, modifiers, derived stats)
-- [ ] Personality trait system
-- [ ] Character CRUD API routes
-- [ ] Character search/filter
-- [ ] Character template system
+- [x] Character validation schemas (field lengths, required fields) — TypeBox `src/validation/schemas.ts`
+- [x] Personality trait system — `traits-service.ts` + `personality-service.ts`
+- [x] Character CRUD API routes — `src/routes/characters.ts` (wired, tested)
+- [x] Character search/filter — `GET /api/actors` with `page`/`pageSize`/`type` query
+- [ ] RPG stat system (base stats, modifiers, derived stats) — `src/rpg/` partial (dice/combat exist)
+- [ ] Character template system — pending prompt-template-registry work
 
 ## Files
 
 - `src/db/schema-core.ts` — Actors table (shared with actor system)
-- `src/routes/characters.ts` — character API (TBD)
-- `src/rpg/` — RPG stat calculations (TBD)
+- `src/routes/characters.ts` — character API (implemented, wired)
+- `src/rpg/` — RPG stat calculations (partial: dice, combat, achievements, etc.)
 
 ## Acceptance Criteria
 
-- [ ] Character creation with mandatory fields validated
-- [ ] Optional fields with correct defaults
+- [x] Character creation with mandatory fields validated
+- [x] Optional fields with correct defaults
 - [ ] RPG stats calculate correctly
-- [ ] Character API serves full character data
-- [ ] Tests passing
+- [x] Character API serves full character data
+- [x] Tests passing
 
 ## Related Epics
 
