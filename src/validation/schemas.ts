@@ -798,8 +798,12 @@ export const ActorEmotionParams = t.Object({
 },);
 
 export const CharacterSystemsExportBody = t.Object({
-  actor_ids: t.Optional(t.Array(t.String({ format: "uuid", },),),),
-  include_worlds: t.Optional(t.Boolean(),),
+  includeTraits: t.Optional(t.Boolean(),),
+  includeMood: t.Optional(t.Boolean(),),
+  includeRelationships: t.Optional(t.Boolean(),),
+  includeAvatars: t.Optional(t.Boolean(),),
+  includeLicensing: t.Optional(t.Boolean(),),
+  includeAvailability: t.Optional(t.Boolean(),),
 },);
 
 export const CharacterSystemsImportUrlBody = t.Object({
