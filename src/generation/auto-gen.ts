@@ -255,6 +255,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       chatId,
       modelId: resolved.resolvedModel,
       groupParticipantIds,
+      config,
     },);
     log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
@@ -854,6 +855,7 @@ async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
     gmConfig: gmConfigParsed,
     generateText,
     systemPromptDefault: resolveSystemPrompt(config.templates.llm, "gm",),
+    appConfig: config,
   },);
 
   await gm.initialize();

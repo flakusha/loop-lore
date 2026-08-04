@@ -54,6 +54,7 @@ export class PromptAssembler {
       params,
       isStory,
       tokenBudget,
+      config: params.config,
     };
 
     const sections: PromptSectionReport[] = [];

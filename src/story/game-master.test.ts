@@ -10,10 +10,12 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import type { Config, } from "../config/schema";
 import { GameMasterType, } from "../db/enums";
 import { createSqliteDialect, setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { NSFW_POLICY_LEVELS_PROMPT, } from "../prompts";
 import { GameMasterService, type GenerateTextFn, } from "./game-master";
 import type { GameMasterConfig, QualityThresholds, } from "./types";
 
@@ -533,6 +535,70 @@ describe("GameMasterService — executeTurn", () => {
     expect(turns[0]!.id,).toBe(result.turnId,);
     expect(turns[0]!.status,).toBe("pending",);
     expect(turns[0]!.gm_decision,).toBeDefined();
+  });
+
+  test("LLM mode: injects NSFW policy section when appConfig allows NSFW", async () => {
+    const { chatId, actorId, } = await seedStoryWorld();
+    let capturedMessages: { role: string; content: string }[] | undefined;
+
+    const generateText: GenerateTextFn = (params,) => {
+      capturedMessages = params.messages;
+      return Promise.resolve("*He nods.* I understand the boundaries.",);
+    };
+
+    // Minimal app-config: NSFW allowed, no template override → code default policy.
+    const appConfig = {
+      nsfw: { allowNsfw: true, },
+      templates: { llm: { systemPrompts: {}, }, },
+    } as unknown as Config;
+
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+      appConfig,
+    },);
+    await gm.initialize();
+
+    await gm.executeTurn(actorId,);
+
+    expect(capturedMessages,).toBeDefined();
+    const systemMessages = capturedMessages!.filter((m,) => m.role === "system");
+    expect(systemMessages.some((m,) => m.content.includes("nsfw_policy",)),).toBe(true,);
+    expect(
+      systemMessages.some((m,) => m.content.includes(NSFW_POLICY_LEVELS_PROMPT,)),
+    ).toBe(true,);
+  });
+
+  test("LLM mode: omits NSFW policy section when appConfig blocks NSFW", async () => {
+    const { chatId, actorId, } = await seedStoryWorld();
+    let capturedMessages: { role: string; content: string }[] | undefined;
+
+    const generateText: GenerateTextFn = (params,) => {
+      capturedMessages = params.messages;
+      return Promise.resolve("*He nods.* I understand the boundaries.",);
+    };
+
+    const appConfig = {
+      nsfw: { allowNsfw: false, },
+      templates: { llm: { systemPrompts: {}, }, },
+    } as unknown as Config;
+
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+      appConfig,
+    },);
+    await gm.initialize();
+
+    await gm.executeTurn(actorId,);
+
+    expect(capturedMessages,).toBeDefined();
+    const systemMessages = capturedMessages!.filter((m,) => m.role === "system");
+    expect(systemMessages.some((m,) => m.content.includes("nsfw_policy",)),).toBe(false,);
   });
 
   test("Human mode: returns minimal prompt, no LLM call", async () => {
