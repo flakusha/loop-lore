@@ -7,6 +7,7 @@
  * is one file + one line in the registry — no edits to the orchestrator.
  */
 import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
 
@@ -39,6 +40,8 @@ export interface PromptParams {
   emotion?: string;
   /** Emotion avatar asset ID to use for this generation (if pre-selected) */
   emotionAvatar?: string;
+  /** Application config — enables config-driven prompt sections (e.g. NSFW policy). */
+  config?: Config;
 }
 
 export interface PromptSectionReport {
@@ -90,6 +93,8 @@ export interface AssembleContext {
   params: PromptParams;
   isStory: boolean;
   tokenBudget: number;
+  /** Application config (optional) — available to config-driven sections. */
+  config?: Config;
 }
 
 /** Builds one prompt section's messages. */
@@ -119,4 +124,5 @@ export const PRIORITY = {
   recentEvents: 0,
   postHistory: 4,
   examples: 5,
+  nsfwPolicy: 0,
 } as const;

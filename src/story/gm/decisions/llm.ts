@@ -20,6 +20,7 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
     systemPromptOverride: systemPrompt,
     includeStoryContext: true,
     includeExamples: false,
+    config: deps.appConfig,
   },);
 
   const location = context.world.currentLocation;

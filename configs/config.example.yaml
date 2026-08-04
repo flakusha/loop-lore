@@ -95,6 +95,9 @@ messages:
 nsfw:
   allowNsfw: true
   nsfwMinAge: 18
+  # useLlmClassifier: false  # Augment NSFW keyword detection with an LLM content rating classifier
+  # (uses configs/templates/llm.yaml systemPrompts.nsfw). Adds an AUX LLM
+  # call to the generation path. Default false.
 
 # ── Generation (LLM Providers) ──
 generation:

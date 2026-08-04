@@ -156,6 +156,7 @@ export class ConfigSchema {
     defaultNsfwScope: "chat",
     consentRequired: true,
     auditLogging: true,
+    useLlmClassifier: false,
   } satisfies NsfwConfig;
 
   readonly hooks = {
@@ -295,6 +296,7 @@ export class ConfigSchema {
     map.NSFW_DEFAULT_SCOPE = "nsfw.defaultNsfwScope";
     map.NSFW_CONSENT_REQUIRED = "nsfw.consentRequired";
     map.NSFW_AUDIT_LOGGING = "nsfw.auditLogging";
+    map.NSFW_USE_LLM_CLASSIFIER = "nsfw.useLlmClassifier";
     map.ENABLE_MOOD_HOOKS = "hooks.enableMoodHooks";
     map.ENABLE_EMOTION_HOOKS = "hooks.enableEmotionHooks";
     map.ENABLE_NSFW_HOOKS = "hooks.enableNsfwHooks";
@@ -651,6 +653,14 @@ export class ConfigSchema {
           properties: {
             allowNsfw: { type: "boolean", default: true, description: "Allow NSFW content", },
             nsfwMinAge: { type: "integer", default: 18, description: "Minimum age for NSFW content", },
+            defaultNsfwScope: { type: "string", enum: ["chat", "user", "world",], default: "chat", },
+            consentRequired: { type: "boolean", default: true, },
+            auditLogging: { type: "boolean", default: true, },
+            useLlmClassifier: {
+              type: "boolean",
+              default: false,
+              description: "Augment NSFW keyword detection with an LLM content rating classifier",
+            },
           },
           required: ["allowNsfw", "nsfwMinAge",],
         },

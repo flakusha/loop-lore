@@ -363,6 +363,7 @@ export async function handleGenerate({
         modelId: resolved.resolvedModel,
         systemPromptOverride: input.systemPrompt,
         systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant",),
+        config: cfg,
       },);
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;
