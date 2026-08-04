@@ -3,9 +3,12 @@
  */
 
 export { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
+export type { PromptPurpose, } from "./purposes";
+export { PROMPT_PURPOSES, } from "./purposes";
 export {
   GM_SYSTEM_PROMPT,
   LLM_PROMPT_DEFAULTS,
+  NSFW_POLICY_LEVELS_PROMPT,
   NSFW_POLICY_PROMPT,
   resolveSystemPrompt,
 } from "./registry";

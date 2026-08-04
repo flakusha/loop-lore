@@ -6,15 +6,28 @@
  * Writes moderation audit logs for blocked content.
  */
 
+import { callAux, } from "../../aux-pipeline";
 import { getLogger, } from "../../logger";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
+import { resolveSystemPrompt, } from "../../prompts";
+import { jsonParseOr, } from "../../utils/safe-json";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
+
+export interface NsfwHookDeps {
+  /** LLM rating runner; injectable for tests. Defaults to the AUX pipeline. */
+  callAux: typeof callAux;
+}
 
 export class NsfwHook implements HookHandler {
   readonly name = "nsfw";
   readonly eventTypes: HookEventType[] = ["nsfw_gate", "privacy_check",];
 
   private modService: NsfwModerationService | null = null;
+  private readonly callAuxFn: typeof callAux;
+
+  constructor(deps?: Partial<NsfwHookDeps>,) {
+    this.callAuxFn = deps?.callAux ?? callAux;
+  }
 
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     if (!_context.nsfwConfig.allowNsfw) { return false; }
@@ -44,7 +57,17 @@ export class NsfwHook implements HookHandler {
       // DB not available or query failed — fall through to policy check
     }
 
-    const nsfwLevel = this.detectNsfwLevel(_content,);
+    // Keyword detection is deterministic and fast; run it first.
+    let nsfwLevel = this.detectNsfwLevel(_content,);
+
+    // When configured, augment with an LLM rating classifier for content the
+    // keyword pass missed. The nsfw prompt is config-driven (llm.yaml
+    // `systemPrompts.nsfw`, default NSFW_POLICY_PROMPT).
+    if (nsfwLevel === "none" && _context.nsfwConfig.useLlmClassifier) {
+      const llmLevel = await this.detectWithLlm(_content, _context,);
+      if (llmLevel !== "none") { nsfwLevel = llmLevel; }
+    }
+
     if (nsfwLevel === "none") {
       return { handled: false, eventType: "nsfw_gate", };
     }
@@ -113,6 +136,58 @@ export class NsfwHook implements HookHandler {
       if (lower.includes(kw,)) { return "mild"; }
     }
     return "none";
+  }
+
+  /**
+   * LLM content-rating fallback. Calls the shared AUX runner with the
+   * config-driven nsfw purpose prompt. Any failure degrades to "none" —
+   * the hook must never block generation on an LLM error (graceful, like
+   * every other aux classifier).
+   *
+   * @param content - User message content to classify
+   * @param context - Hook context (carries config + db)
+   * @returns The mapped NSFW level, or "none" on failure/sfw
+   */
+  private async detectWithLlm(
+    content: string,
+    context: HookContext,
+  ): Promise<"none" | "mild" | "moderate" | "intense" | "extreme"> {
+    try {
+      const messages = [
+        {
+          role: "system" as const,
+          content: resolveSystemPrompt(context.config.templates.llm, "nsfw",),
+        },
+        { role: "user" as const, content: content.slice(0, 500,), },
+      ];
+      const response = await this.callAuxFn("nsfw", context.config, context.db, messages, {
+        userId: context.userId,
+        chatId: context.chatId,
+        temperature: 0.0,
+        maxTokens: 50,
+      },);
+      if (!response) { return "none"; }
+
+      const parsed = jsonParseOr<{ rating?: string }>(response.content, {},);
+      const rating = parsed?.rating;
+      switch (rating) {
+        case "nsfw_mild":
+          return "mild";
+        case "nsfw_moderate":
+          return "moderate";
+        case "nsfw_intense":
+          return "intense";
+        case "nsfw_extreme":
+          return "extreme";
+        default:
+          return "none"; // sfw or unparseable
+      }
+    } catch {
+      getLogger()
+        .child({ module: "nsfw-hook", },)
+        .debug("nsfw-hook: LLM classifier failed, falling back to none",);
+      return "none";
+    }
   }
 
   private isAllowed(level: string, context: HookContext,): boolean {

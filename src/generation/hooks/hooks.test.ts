@@ -4,12 +4,12 @@
  * Tests the hook registry, chain runner, and individual hooks
  * (mood, emotion, nsfw, moderation) in isolation and in chain.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../../logger";
 import { EmotionHook, } from "./emotion-hook";
 import { ModerationHook, } from "./moderation-hook";
 import { MoodHook, } from "./mood-hook";
-import { NsfwHook, } from "./nsfw-hook";
+import { NsfwHook, type NsfwHookDeps, } from "./nsfw-hook";
 import { clearHooks, getRegisteredHooks, initDefaultHooks, registerHook, runHookChain, } from "./registry";
 import type { HookContext, } from "./types";
 
@@ -28,6 +28,7 @@ function makeContext(overrides?: Partial<HookContext>,): HookContext {
       defaultNsfwScope: "chat",
       consentRequired: true,
       auditLogging: true,
+      useLlmClassifier: false,
     },
     db: {} as any,
     ...overrides,
@@ -194,6 +195,7 @@ describe("NsfwHook", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(false,);
@@ -208,6 +210,7 @@ describe("NsfwHook", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     expect(await hook.canHandle("Short", ctx,),).toBe(false,);
@@ -222,6 +225,7 @@ describe("NsfwHook", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(true,);
@@ -237,6 +241,7 @@ describe("NsfwHook", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await hook.execute("The graphic and explicit scene was brutal and violent.", ctx,);
@@ -256,6 +261,7 @@ describe("NsfwHook", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
@@ -275,10 +281,99 @@ describe("NsfwHook", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await hook.execute("They walked through the garden and admired the flowers.", ctx,);
     expect(result.handled,).toBe(false,);
+  });
+
+  describe("LLM classifier", () => {
+    // The LLM tap is only reached for keyword-"none" content when
+    // useLlmClassifier is true. Inject a mock runner so no real LLM call fires.
+    function llmLlContext(content: string, extraNsfw?: Record<string, unknown>,) {
+      return makeContext({
+        content,
+        nsfwPolicy: "mild",
+        // Test double: partial NsfwConfig + useLlmClassifier flag.
+        nsfwConfig: {
+          allowNsfw: true,
+          nsfwMinAge: 18,
+          defaultNsfwScope: "chat",
+          consentRequired: true,
+          auditLogging: true,
+          useLlmClassifier: true,
+          ...extraNsfw,
+        } as unknown as HookContext["nsfwConfig"],
+        // Test double: only templates.llm is read by the hook.
+        config: {
+          templates: {
+            llm: {
+              systemPrompts: { nsfw: "custom nsfw classifier", },
+            },
+          },
+        } as unknown as HookContext["config"],
+        db: {} as unknown as HookContext["db"],
+      },);
+    }
+
+    test("classifies content the keyword pass missed via the nsfw prompt", async () => {
+      const aux = mock(async () => ({
+        content: JSON.stringify({ rating: "nsfw_intense", confidence: 0.9, },),
+      }));
+      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const ctx = llmLlContext("The two embraced in a long, lingering way.",);
+
+      const result = await llmHook.execute("The two embraced in a long, lingering way.", ctx,);
+      expect(aux,).toHaveBeenCalled();
+      expect(result.handled,).toBe(true,);
+      expect(result.data?.nsfwLevel,).toBe("intense",);
+      // intense > mild policy → blocked
+      expect(result.suppressContent,).toBe(true,);
+    });
+
+    test("sfw LLM rating leaves content unhandled (no block)", async () => {
+      const aux = mock(async () => ({
+        content: JSON.stringify({ rating: "sfw", confidence: 0.9, },),
+      }));
+      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const ctx = llmLlContext("They discussed the weather at length today.",);
+
+      const result = await llmHook.execute("They discussed the weather at length today.", ctx,);
+      expect(result.handled,).toBe(false,);
+    });
+
+    test("LLM failure degrades gracefully without blocking", async () => {
+      const aux = mock(async () => null);
+      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const ctx = llmLlContext("The two embraced in a long, lingering way.",);
+
+      const result = await llmHook.execute("The two embraced in a long, lingering way.", ctx,);
+      expect(result.handled,).toBe(false,);
+    });
+
+    test("LLM classifier is skipped when useLlmClassifier is false", async () => {
+      const aux = mock(async () => ({
+        content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
+      }));
+      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const ctx = makeContext({
+        content: "They discussed neutral things for a while.",
+        nsfwPolicy: "mild",
+        nsfwConfig: {
+          allowNsfw: true,
+          nsfwMinAge: 18,
+          defaultNsfwScope: "chat",
+          consentRequired: true,
+          auditLogging: true,
+          useLlmClassifier: false,
+        },
+      },);
+
+      const result = await llmHook.execute("They discussed neutral things for a while.", ctx,);
+      expect(result.handled,).toBe(false,);
+      expect(aux,).not.toHaveBeenCalled();
+    });
   });
 });
 
@@ -345,6 +440,7 @@ describe("runHookChain", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
@@ -362,6 +458,7 @@ describe("runHookChain", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
@@ -380,6 +477,7 @@ describe("runHookChain", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
@@ -398,6 +496,7 @@ describe("runHookChain", () => {
         defaultNsfwScope: "chat",
         consentRequired: true,
         auditLogging: true,
+        useLlmClassifier: false,
       },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);

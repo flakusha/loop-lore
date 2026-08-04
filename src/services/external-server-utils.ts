@@ -4,7 +4,6 @@
  * Used by both the production ServerExternalManager and the e2e test helper.
  */
 
-import type { Subprocess, } from "bun";
 import { platform, } from "node:process";
 
 // ── Binary discovery ──────────────────────────────────────
@@ -61,12 +60,6 @@ export interface WaitForHealthOptions {
   intervalMs?: number;
 }
 
-export interface WaitForStdoutOptions {
-  signal: string;
-  timeoutMs: number;
-  encoding?: string;
-}
-
 export interface WaitForPortOptions {
   timeoutMs: number;
 }
@@ -84,27 +77,6 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
       // Still starting
     }
     await new Promise((r,) => setTimeout(r, intervalMs,));
-  }
-  return false;
-}
-
-export async function waitForStdout(proc: Subprocess, opts: WaitForStdoutOptions,): Promise<boolean> {
-  const deadline = Date.now() + opts.timeoutMs;
-  const stdout = proc.stdout;
-  if (!stdout || typeof stdout === "number") { return false; }
-  const reader = stdout.getReader();
-
-  let buffer = "";
-  try {
-    while (Date.now() < deadline) {
-      const { value, done, } = await reader.read();
-      if (done) { break; }
-      buffer += new TextDecoder().decode(value,);
-      if (buffer.includes(opts.signal,)) { return true; }
-      await new Promise((r,) => setTimeout(r, 200,));
-    }
-  } catch {
-    // stream closed
   }
   return false;
 }

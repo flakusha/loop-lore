@@ -533,5 +533,3 @@ export function resetLoginRateLimiter(): void {
 export function resetRegisterRateLimiter(): void {
   registerLimiter.clear();
 }
-
-export { resetSoloUserCache as resetSoloUserCacheForAuth, } from "../middleware/auth";

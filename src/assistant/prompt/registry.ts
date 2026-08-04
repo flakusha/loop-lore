@@ -15,6 +15,7 @@ import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
+import { nsfwPolicySection, } from "./sections/nsfw-policy";
 import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
@@ -24,6 +25,7 @@ import { userPersonaSection, } from "./sections/user-persona";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
+  nsfwPolicySection,
   authorNoteSection,
   actorHeaderSection,
   pluginAgentRoleSection,
