@@ -21,6 +21,7 @@ const DEFAULTS: NsfwRuntimeConfig = {
   defaultNsfwScope: "chat",
   consentRequired: true,
   auditLogging: true,
+  useLlmClassifier: false,
 };
 
 /** Singleton store — prevents module-level mutable state issues. */

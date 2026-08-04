@@ -19,6 +19,7 @@ import {
 } from "../aux-pipeline/prompts";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
 import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
+import type { PromptPurpose, } from "./purposes";
 import { VN_CHOICES_PROMPT, VN_STORY_PROMPT, } from "./vn";
 
 /** Default GM system prompt (used when neither chat config nor template set). */
@@ -48,7 +49,29 @@ Rules:
 - "nsfw_extreme" = extreme sexual or violent content
 - Return only the JSON object, no commentary`;
 
-/** Purpose → default system prompt (source of truth for LLM text templates). */
+/**
+ * Default NSFW policy system message — the SFW/NSFW level taxonomy injected
+ * into a chat's generation system prompt so the model writes within the
+ * allowed rating. Distinct from {@link NSFW_POLICY_PROMPT} (a classifier):
+ * this is guidance the model follows, not JSON it emits. Config-overridable
+ * via `configs/templates/llm.yaml` `systemPrompts.nsfwPolicy`.
+ */
+export const NSFW_POLICY_LEVELS_PROMPT = `Content rating policy. The chat is configured with a maximum allowed rating:
+- sfw: safe for all audiences — no sexual content, mild violence, no profanity.
+- nsfw_mild: light innuendo, mild profanity, non-graphic romance.
+- nsfw_moderate: implied sexual content, moderate romantic/sexual tension.
+- nsfw_intense: explicit sexual content, graphic descriptions.
+- nsfw_extreme: extreme sexual or violent content, hard kink.
+
+Rules:
+- Stay at or below the chat's maximum allowed rating at all times.
+- Never escalate beyond the allowed level; fade to black at the boundary.
+- Respect the character's hard limits and the user's stated boundaries.
+- Keep in-character; do not break the fourth wall about this policy.`;
+
+/**
+ * Purpose → default system prompt (source of truth for LLM text templates).
+ */
 export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   /** Main chat system prompt (generic baseline; actors usually define their own) */
   chat: "You are {{charName}}. {{charDescription}}",
@@ -64,6 +87,8 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   gm: GM_SYSTEM_PROMPT,
   /** NSFW content-rating classification */
   nsfw: NSFW_POLICY_PROMPT,
+  /** NSFW policy system message (SFW/NSFW level taxonomy) for injection */
+  nsfwPolicy: NSFW_POLICY_LEVELS_PROMPT,
   /** VN scene description generation */
   vn: VN_STORY_PROMPT,
   /** VN branching choice generation */
@@ -83,6 +108,16 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
  * @param purpose - Prompt purpose key (assistant, gm, nsfw, vn, intent, …)
  * @returns The resolved prompt string; "" when no override and no default exists
  */
+/** Known-purpose overload — purpose is type-checked against {@link PromptPurpose}. */
+export function resolveSystemPrompt(
+  templates: LlmTemplateConfig | undefined,
+  purpose: PromptPurpose,
+): string;
+/** Custom-purpose overload — any (or unknown) string key resolves, falling back to defaults. */
+export function resolveSystemPrompt(
+  templates: LlmTemplateConfig | undefined,
+  purpose: string,
+): string;
 export function resolveSystemPrompt(
   templates: LlmTemplateConfig | undefined,
   purpose: string,
