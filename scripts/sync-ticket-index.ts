@@ -25,66 +25,14 @@
 import { execSync, } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { basename, join, } from "node:path";
-
-// ── Types ──────────────────────────────────────────────────────
-
-interface TicketFile {
-  path: string;
-  filename: string;
-  title: string;
-  status: string;
-  type: string;
-  priority: string;
-  epic: string;
-  hash: string | null;
-  gitIssue: string | null;
-}
-
-interface GitIssue {
-  hash: string;
-  status: "open" | "closed" | "done";
-  title: string;
-  extid: string | null; // e.g. "TASK-006" from "TASK-006: Some title"
-}
-
-interface IndexEntry {
-  hash: string;
-  extid: string;
-  type: string;
-  title: string;
-  label: string;
-  priority: string;
-  epic: string;
-  tags: string[];
-  source: string;
-  git_issue?: string;
-  status?: string;
-  closed_issue?: boolean;
-}
-
-interface SyncReport {
-  orphanFiles: string[];
-  phantomEntries: string[];
-  hashMismatches: Array<{
-    extid: string;
-    indexHash: string;
-    gitTitle: string | null;
-    gitStatus: string | null;
-    ticketTitle: string;
-  }>;
-  statusMismatches: Array<{
-    extid: string;
-    indexStatus: string;
-    gitStatus: string;
-  }>;
-  missingHashes: Array<{
-    extid: string;
-    ticketTitle: string;
-    suggestedHash: string | null;
-    suggestedTitle: string | null;
-  }>;
-  fixesApplied: string[];
-}
+import {
+  type GitIssue,
+  type IndexEntry,
+  normalizeStatus,
+  reconcile,
+  type SyncReport,
+  type TicketFile,
+} from "./lib/sync-ticket";
 
 // ── Config ─────────────────────────────────────────────────────
 
@@ -149,16 +97,6 @@ function guessType(filename: string,): string {
   return "TASK";
 }
 
-function normalizeStatus(raw: string,): string {
-  const lower = raw.toLowerCase();
-  if (lower.includes("done",) || lower.includes("complete",) || lower.includes("closed",)) { return "done"; }
-  if (lower.includes("progress",) || lower.includes("wip",)) { return "in_progress"; }
-  if (lower.includes("not started",) || lower.includes("pending",) || lower === "open") { return "open"; }
-  if (lower.includes("draft",)) { return "draft"; }
-  if (lower.includes("cancelled",)) { return "cancelled"; }
-  return raw; // keep as-is if unknown
-}
-
 // ── Read git issues ────────────────────────────────────────────
 
 function readGitIssues(): Map<string, GitIssue> {
@@ -202,175 +140,6 @@ function readIndex(): Record<string, IndexEntry> {
   }
 }
 
-// ── Reconcile ──────────────────────────────────────────────────
-
-function reconcile(
-  ticketFiles: TicketFile[],
-  gitIssues: Map<string, GitIssue>,
-  index: Record<string, IndexEntry>,
-  verbose: boolean,
-): SyncReport {
-  const report: SyncReport = {
-    orphanFiles: [],
-    phantomEntries: [],
-    hashMismatches: [],
-    statusMismatches: [],
-    missingHashes: [],
-    fixesApplied: [],
-  };
-
-  // Build lookup: filename → ticket file
-  const fileByExtid = new Map<string, TicketFile>();
-  for (const tf of ticketFiles) {
-    const extid = tf.filename.replace(/\.md$/, "",).toUpperCase();
-    fileByExtid.set(extid, tf,);
-  }
-
-  // Build lookup: index hash → git issue
-  const indexHashes = new Set(
-    Object.values(index,)
-      .map((e,) => e.hash)
-      .filter((h,) => h && h !== "pending"),
-  );
-
-  // 1. Check orphan files (file exists, not in index)
-  for (const tf of ticketFiles) {
-    const extid = tf.filename.replace(/\.md$/, "",).toUpperCase();
-    if (!index[extid]) {
-      report.orphanFiles.push(tf.filename,);
-    }
-  }
-
-  // 2. Check phantom entries (index has entry, file missing)
-  for (const [extid, entry,] of Object.entries(index,)) {
-    // Try multiple naming conventions to find the file
-    const candidates = [
-      entry.source,
-      `.plan/tickets/${extid}.md`,
-      `.plan/tickets/${extid.toLowerCase()}.md`,
-      `.plan/tickets/TASK-${extid.toLowerCase()}.md`,
-      `.plan/tickets/FEAT-${extid.toLowerCase()}.md`,
-      `.plan/tickets/BUG-${extid.toLowerCase()}.md`,
-    ].filter(Boolean,);
-
-    const found = candidates.some((src,) => {
-      const filePath = join(TICKETS_DIR, src!.replace(/^\.plan\/tickets\//, "",),);
-      return existsSync(filePath,);
-    },);
-
-    if (!found) {
-      report.phantomEntries.push(extid,);
-    }
-  }
-
-  // 3. Check hash mismatches
-  for (const [extid, entry,] of Object.entries(index,)) {
-    if (!entry.hash || entry.hash === "pending") { continue; }
-
-    const issue = gitIssues.get(entry.hash,);
-    if (!issue) {
-      // Hash doesn't match any git issue
-      const tf = fileByExtid.get(extid,);
-      report.hashMismatches.push({
-        extid,
-        indexHash: entry.hash,
-        gitTitle: null,
-        gitStatus: null,
-        ticketTitle: tf?.title ?? entry.title,
-      },);
-      continue;
-    }
-
-    // Check if title matches (lenient: check if core words overlap)
-    const indexTitleNorm = entry.title.toLowerCase().replace(/[^a-z0-9]/g, "",);
-    const issueTitleNorm = issue.title.toLowerCase().replace(/[^a-z0-9]/g, "",);
-
-    // Remove common prefixes from issue title (e.g. "TASK-006: " or "FEAT-070: ")
-    const issueTitleClean = issueTitleNorm.replace(/^(task|feat|bug|fix|epic|sol|infra)[\-_]\d+[:\-_\s]*/i, "",);
-
-    // Also try matching extid directly
-    const extidNorm = extid.toLowerCase().replace(/[^a-z0-9]/g, "",);
-
-    // Extract meaningful words from extid (skip common prefixes like "task", "feat", "epic")
-    const extidWords = extid.toLowerCase()
-      .replace(/^(task|feat|bug|fix|epic|sol|infra)[\-_]/i, "",)
-      .split(/[^a-z0-9]+/,)
-      .filter(w => w.length > 2);
-    const issueWords = issueTitleClean.split(/[^a-z0-9]+/,).filter(w => w.length > 2);
-
-    // Count word overlap
-    const overlap = extidWords.filter(w => issueWords.some(iw => w === iw || w.includes(iw,) || iw.includes(w,)));
-    const overlapRatio = overlap.length / Math.max(extidWords.length, 1,);
-
-    // Check if titles share significant overlap (at least 10 chars)
-    // Also accept if 2+ words overlap, or if the first significant word matches
-    const titleMatch = indexTitleNorm.includes(issueTitleClean.slice(0, 15,),) ||
-      issueTitleClean.includes(indexTitleNorm.slice(0, 15,),) ||
-      indexTitleNorm.includes(issueTitleNorm.slice(0, 15,),) ||
-      issueTitleNorm.includes(indexTitleNorm.slice(0, 15,),) ||
-      issueTitleNorm.startsWith(extidNorm,) ||
-      issueTitleClean.startsWith(extidNorm,) ||
-      overlap.length >= 2 ||
-      (overlap.length >= 1 && extidWords.length <= 3);
-
-    if (!titleMatch) {
-      report.hashMismatches.push({
-        extid,
-        indexHash: entry.hash,
-        gitTitle: issue.title,
-        gitStatus: issue.status,
-        ticketTitle: entry.title,
-      },);
-    }
-  }
-
-  // 4. Check status mismatches
-  for (const [extid, entry,] of Object.entries(index,)) {
-    if (!entry.hash || entry.hash === "pending") { continue; }
-
-    const issue = gitIssues.get(entry.hash,);
-    if (!issue) { continue; }
-
-    const indexStatus = normalizeStatus(entry.status ?? "undefined",);
-    const gitStatus = issue.status === "done" ? "done" : issue.status === "closed" ? "done" : issue.status;
-
-    if (indexStatus !== gitStatus && gitStatus !== "open") {
-      // Only flag if git issue is closed/done but index says otherwise
-      report.statusMismatches.push({
-        extid,
-        indexStatus,
-        gitStatus,
-      },);
-    }
-  }
-
-  // 5. Find missing hashes (file has content, no hash, but matching git issue exists)
-  for (const tf of ticketFiles) {
-    const extid = tf.filename.replace(/\.md$/, "",).toUpperCase();
-    const entry = index[extid];
-
-    if (entry?.hash && entry.hash !== "pending") { continue; // already has hash
-     }
-    if (tf.hash) { continue; // file has hash, but index doesn't — handled by orphan check
-     }
-
-    // Try to find matching git issue by title
-    for (const [, issue,] of gitIssues) {
-      if (issue.extid === extid) {
-        report.missingHashes.push({
-          extid,
-          ticketTitle: tf.title,
-          suggestedHash: issue.hash,
-          suggestedTitle: issue.title,
-        },);
-        break;
-      }
-    }
-  }
-
-  return report;
-}
-
 // ── Apply fixes ────────────────────────────────────────────────
 
 function applyFixes(
@@ -408,9 +177,15 @@ function applyFixes(
     }
   }
 
-  // Fix phantom entries by trying to find matching files with different names
+  // Fix phantom entries by trying to find matching files with different names.
+  // Only relocate entries whose source is empty or already under
+  // .plan/tickets/ — never rewrite a distinct source (e.g. .plan/epics/*.md)
+  // to a guessed path.
   for (const extid of report.phantomEntries) {
     if (!fixed[extid]) { continue; }
+
+    const src = fixed[extid].source ?? "";
+    if (src && !src.startsWith(".plan/tickets/",)) { continue; }
 
     // Try different file name patterns
     const patterns = [
@@ -530,7 +305,7 @@ Options:
   console.log(`   Index entries:     ${Object.keys(index,).length}`,);
 
   // Reconcile
-  const report = reconcile(ticketFiles, gitIssues, index, verbose,);
+  const report = reconcile(ticketFiles, gitIssues, index, verbose, ROOT,);
 
   // Report
   console.log(`\n📋 Reconciliation Report`,);
@@ -573,6 +348,15 @@ Options:
     console.log(`\n🟢 No hash mismatches`,);
   }
 
+  if (report.placeholderHashes.length > 0) {
+    console.log(`\n🟡 Placeholder hashes (no git issue, not a commit): ${report.placeholderHashes.length}`,);
+    for (const m of report.placeholderHashes) {
+      console.log(`   ${m.extid}: index=${m.indexHash}`,);
+    }
+  } else {
+    console.log(`\n🟢 No placeholder hashes`,);
+  }
+
   if (report.statusMismatches.length > 0) {
     console.log(`\n🟡 Status mismatches: ${report.statusMismatches.length}`,);
     for (const m of report.statusMismatches) {
@@ -600,17 +384,22 @@ Options:
     console.log(`\n🟢 No missing hashes`,);
   }
 
-  // Summary
+  // Summary — only *actionable* issues gate the result. Placeholder hashes
+  // and missing-hash suggestions are advisory (yellow), not failures.
   const totalIssues = report.orphanFiles.length +
     report.phantomEntries.length +
     report.hashMismatches.length +
     report.statusMismatches.length;
+  const advisoryCount = report.placeholderHashes.length +
+    report.missingHashes.length;
 
   console.log(`\n${"═".repeat(60,)}`,);
   if (totalIssues === 0) {
-    console.log(`✅ Index is in sync`,);
+    console.log(`✅ Index is in sync${advisoryCount > 0 ? ` (${advisoryCount} advisory)` : ""}`,);
   } else {
-    console.log(`⚠️  ${totalIssues} issue(s) found`,);
+    console.log(
+      `⚠️  ${totalIssues} actionable issue(s) found${advisoryCount > 0 ? `, ${advisoryCount} advisory` : ""}`,
+    );
   }
 
   // Apply fixes
