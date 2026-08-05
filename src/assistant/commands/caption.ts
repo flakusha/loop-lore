@@ -74,7 +74,7 @@ registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
       assetIds,
       chatId: ctx.chatId,
       messageId,
-    },);
+    }, ctx.userId,);
 
     const data = await response.json() as {
       data?: { assetId: string; caption: string }[];
