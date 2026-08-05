@@ -30,8 +30,17 @@ export async function handleImageCaption(body: unknown, userId?: string,): Promi
   const config = loadConfig();
   const db = getDatabase();
 
-  // Resolve the captioning model role → provider/model (DB override → config → default).
-  const role = await resolveModelRole(ModelRole.Captioning, config, db,);
+  // Captioning model precedence: explicit captioning role → explicit main role → default.
+  // Captioning takes precedence when configured (multimodal-capable intent). When no
+  // explicit captioning assignment exists, fall back to an explicitly configured main
+  // model (the typical multimodal-capable choice) before the generic default provider.
+  let role = await resolveModelRole(ModelRole.Captioning, config, db,);
+  if (role.provider && role.model && role.source === "default") {
+    const main = await resolveModelRole(ModelRole.Main, config, db,);
+    if (main.provider && main.model && main.source !== "default") {
+      role = main;
+    }
+  }
   if (!role.provider || !role.model) {
     return Response.json({ error: "No captioning model configured", status: 503, }, { status: 503, },);
   }
