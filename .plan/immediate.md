@@ -1,7 +1,7 @@
 # Immediate Plan
 
-> **Last updated:** 2026-08-05 — 2026-08-05 audit: route wiring verified (all src/routes wired except gated LoRA); chat filters UI + setup-template selector UI shipped post-doc; GM role runtime effect in working tree (uncommitted); added **Post-P3 — Road to Happy 0.1.0** gate below.
-> **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete; **Post-P3 → Road to 0.1.0 🗺️ (see section below)**
+> **Last updated:** 2026-08-05 — 2026-08-05 audit: route wiring verified (all src/routes wired except gated LoRA); chat filters UI + setup-template selector UI shipped post-doc; GM role runtime effect in working tree (uncommitted); **P3–P5 restructured to the 0.1.0 highest-value features** (Core Foundation → Core Experience → Wiring/Search/Polish; non-value → P6+); added **Post-P3 — Road to Happy 0.1.0** gate below.
+> **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete; **P3–P5 → 0.1.0 value tiers 🗺️ (see P3 section + Post-P3 below)**
 
 ---
 
@@ -35,7 +35,7 @@
 | **Chat sections + backgrounds + location explorer**        | ✅ Shipped + tests | migrations `031/032`, `src/routes/chat-sections.ts` + `chat-backgrounds.ts` + `location-explorer.ts`, sections/background-panel.html, world-edit.html | —                                            |
 | **Chat-list filters** — type/status/sort                   | ✅ Backend + UI    | `orderChatList` generic + `t.Enum` (bba7d3e8), GET /api/chats filters (327ff22b), `chat-filters.ts` + `chat-list-panel.html` dropdowns                | —                                            |
 | **NSFW runtime config store + live enforcement**           | ✅ Shipped         | `src/nsfw/runtime-config.ts`, `admin-nsfw.ts`, mood-shift persistence in `auto-gen.ts` (63c765ce)                                                     | P0 audit-log UI + consent display still open |
-| **Emotion avatar generation from mood panel**              | ✅ Shipped         | `mood-panel.html`, `mood.ts`, `user-info.ts` (2794e3d5)                                                                                               | AUX M4 hook-event consumption open           |
+| **Emotion avatar generation from mood panel**              | ✅ Shipped         | `mood-panel.html`, `mood.ts`, `user-info.ts` (2794e3d5)                                                                                               | —                                            |
 | **Regenerate sibling variant** — swipe_index + idempotency | ✅ Shipped + tests | `src/chat/service.ts`, `src/generation/regenerate-variant.test.ts` (a777b590)                                                                         | —                                            |
 | **401-guard normalization** — 18 route files               | ✅ Shipped         | 3283d41e (activity, chats, gm-notes, messages, reactions, sessions, vn-choices, …)                                                                    | P2-E† canonical helper collapse open         |
 | **Chat setup templates** — seed + admin CRUD + selector UI | ✅ Shipped         | 9619f259 + `new-chat.ts:29-67` (`#chat-template` select, pre-fills mode)                                                                              | —                                            |
@@ -227,7 +227,7 @@ next sessions:
 - [x] **Give GM role switching runtime effect** (branch generation/prompt on `assistantRole`) — `auto-gen.ts:201-213` (`"gm"` → `resolveSystemPrompt(llm,"gm")`) + `auto-gen-gm-role.test.ts`; **working tree, uncommitted** (2026-08-05)
 - [ ] Expand command buttons (`src/frontend/alpine/command-buttons.ts`) with text generation commands for assistant
 - [ ] Add assistant role selector to chat settings modal (`chat-settings.ts`)
-- [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`) — parser ✅; LLM `classifyIntent` wired (`auto-gen.ts:311` short-reply, 2026-08-05); rule `detectIntent` still dead code (AUX M1/M2)
+- [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`) — parser ✅; LLM `classifyIntent` wired (`auto-gen.ts:311` short-reply, 2026-08-05); rule `detectIntent` still dead code, remove in unwired-code close-out
 - [x] Wire slash commands (`/`) into assistant pipeline (`TASK-assistant-commands-extension.md`) — 2026-08-01
 - [ ] Implement assistant tool calling display (function-call UI in chat — show tool call + params + result in message bubbles)
 - [x] Integrate GM service into assistant flow (`TASK-wire-gm-service-story-mode.md`) — 2026-08-01
@@ -386,32 +386,79 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 
 ---
 
-## P3 — Advanced Features (Post-P2)
+## P3 — Core Foundation (0.1.0 value-aligned)
 
-| Priority | Epic                    | Key Deliverables                               | Status                                                                                     | Ticket(s)                                                                                                                                                                    |
-| -------- | ----------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P3**   | **Plugin Ecosystem**    | Plugin management API, marketplace, sandboxing | ⬜ Not Started                                                                             | [`TASK-plugin-system.md`](TASK-plugin-system.md), [`TASK-plugin-management-api.md`](TASK-plugin-management-api.md), [`TASK-plugin-api-system.md`](TASK-plugin-api-system.md) |
-| **P3**   | **Three-Tier Memory**   | Episodic/semantic/procedural memory tiers      | 🟡 Partial — typing + wiring + per-viewer injection built; cross-tier promotion/decay open | [`FEAT-memory-systems-three-tier.md`](FEAT-memory-systems-three-tier.md)                                                                                                     |
-| **P3**   | **Artifact System**     | Code/docs/datasets as assets                   | ⬜ Not Started                                                                             | [`TASK-artifact-system.md`](TASK-artifact-system.md)                                                                                                                         |
-| **P3**   | **ComfyUI Integration** | Node discovery, workflow templates             | ⬜ Not Started                                                                             | [`TASK-comfyui-node-discovery.md`](TASK-comfyui-node-discovery.md), [`FEAT-comfyui-plugin-workflow-templates.md`](FEAT-comfyui-plugin-workflow-templates.md)                 |
-| **P3**   | **Provider Ecosystem**  | Anthropic/Ollama/Bedrock support               | ⬜ Not Started                                                                             | [`FEAT-provider-plugin-ecosystem.md`](FEAT-provider-plugin-ecosystem.md)                                                                                                     |
+> **Alignment (2026-08-05)**: P3→P5 follow the **0.1.0 highest-value features** — user-centric core (identity, access, encryption, all chat types, NSFW, image captioning, i18n, VN, gallery, panels/settings, LLM support, assistant tooling, IO, notifications, filtering/search, memory+template injection). Everything else → **P6+** unless it blocks P3–P5. Full per-item map lives in `backlog.md` `## P3`.
 
-### P3 — Next Actions (After P2 complete)
+| #  | Value feature                                                                                      | Status                     | Where / next                                                                                      |
+| -- | -------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1  | **User registration**                                                                              | 🟡 partial                 | `POST /api/auth/register` route ✅ (`src/routes/auth.ts`); register frontend page pending         |
+| 2  | **User authentication**                                                                            | 🟡 partial                 | login/logout/demo-login/`/me` ✅; MFA (TOTP) + `/api/sessions` pending (P2-E)                     |
+| 3  | **Correct access** (chats, assets, worlds, locations)                                              | 🟢 core / 🟡 gaps          | actor ownership (f0c39927); unify 401 guards (P2-E†); message/reaction access checks open         |
+| 4  | **Encryption + compression flow**                                                                  | 🟡 partial                 | browser AES-256-GCM ✅; wire into message pipeline + asset storage compression                    |
+| 5  | **Chats — all 9 types**                                                                            | 🟡 P2-B in progress        | autorenaming ✅, sections ✅, invites ✅, filters ✅; message search/transfer pending             |
+| 6  | **NSFW features, prompting, opt-in, sfw/nsfw caps**                                                | 🟢 core / 🟡 UI            | runtime config + live enforcement ✅; audit-log UI + consent display + character rating open      |
+| 7  | **Metadata extraction + captioning**                                                               | 🟢 done                    | regex pipeline ✅; caption-route wired `8f8c0abb`                                                 |
+| 8  | **i18n**                                                                                           | 🟢 server ✅ / 🟡 UI       | `ctx.t` + 11 locales ✅; frontend strings + locale switcher pending                               |
+| 9  | **Visual novel mode**                                                                              | ✅ Complete (2026-07-31)   | `src/frontend/vn/` + `src/story/`; gallery-in-scene inheritance open                              |
+| 10 | **Gallery + (image) asset preview**                                                                | 🟢 backend+frontend ✅     | `src/frontend/pages/gallery.ts`, `assetRoutes`; preview across asset types open                   |
+| 11 | **User + admin panels, settings, fine-tuning**                                                     | 🟡 partial                 | admin user mgmt ✅; fine-tuning UI / provider health panel pending                                |
+| 12 | **(Side panels) without leaving chat**                                                             | 🟡 partial                 | chat-settings modal ✅; in-chat asset preview + linkage panel pending                             |
+| 13 | **Chat settings menus** — templates, overall tuning, detailed tuning                               | 🟡 partial                 | setup-template selector ✅ (2026-08-05); detailed tuning frontend open                            |
+| 14 | **Character/world/location flows** — creation, export/import, settings, fine-tuning                | 🟡 partial                 | character-io ✅; world/location creation + export/import menus pending                            |
+| 15 | **LLM support** — chat, captioning, intent detection, (future) embeddings                          | 🟢 chat/caption/intent     | providers ✅; `classifyIntent` wired (2026-08-05); embeddings greenfield                          |
+| 16 | **Assistant tooling for creative support** (character/world/location/items/images/assets creation) | 🟡 partial                 | command buttons + parser ✅; tool-call UI + creation wizards pending                              |
+| 17 | **Implemented → must be wired**                                                                    | 🟡 ongoing                 | LoRA routes, dead `detectIntent`, swipe-variant placeholder (see backlog "Unwired Code")          |
+| 18 | **Frontend fully wired** — menus, modals, side menus, documentation linkage                        | 🟡 ongoing                 | frontend gap tables in P2-B/C/D/E below                                                           |
+| —  | **IO: import/export** — characters, worlds, locations, stories                                     | 🟡 partial                 | JSON character import ✅; PNG/YAML/TOML/CHARX + world/location/story export pending               |
+| —  | **Stop generation** for chat/VN                                                                    | 🟡 pending                 | abort/cancel LLM stream UI in chat + VN renderer                                                  |
+| —  | **Notifications + notification center**                                                            | 🟡 basic toasts ✅         | cross-chat SSE + unread badge ✅; center UI + noise filtering pending                             |
+| —  | **Filtering & search tools** — chats, gallery, worlds, locations                                   | 🟡 partial                 | chat room filters ✅ (2026-08-05); chat message search + world/location search pending            |
+| —  | **Memory injection** (high priority, key for chats)                                                | 🟢 per-viewer injection ✅ | `memorySection` per-viewer 1024-token budget (2026-08-01); cross-actor hardening test open        |
+| —  | **Template injection** (high priority, key for chats)                                              | 🟢 shipped                 | `LLM_PROMPT_DEFAULTS` + `resolveSystemPrompt` (2026-08-03); prompt-template registry impl pending |
 
-1. **Plugin Ecosystem**: Implement plugin management API (`install/list/enable/disable`). Build marketplace UI. Add sandboxing layer for plugin execution.
-2. **Three-Tier Memory** (`FEAT-memory-systems-three-tier.md`): `MemoryType`/`MemoryScope`/`MemoryPrivacy` typing + provisioning/extraction/budget/purge + **per-viewer injection** built (`src/memory/`, `memorySection`). Remaining: **semantic + procedural tier** systems, formation/consolidation, decay/forgetting, cross-tier promotion. Per-viewer isolation verified (see Recent Wiring table).
-3. **Artifact System** (`TASK-artifact-system.md`): Create `src/assets/artifact-handler.ts` — code/doc/dataset asset linking. Build `src/routes/artifacts.ts` with TypeBox response schemas. Add artifact gallery UI component.
-4. **ComfyUI Integration**: Integrate ComfyUI node discovery and workflow template management.
-5. **Provider Ecosystem**: Add Anthropic, Ollama, and Bedrock provider support alongside existing OpenAI-compatible provider.
+### P4 — Core Experience (0.1.0 value-aligned)
+
+> Not-yet-done value workstreams. See `backlog.md` `## P4` for the full table.
+
+- [ ] Chats: group chat UI, GM panels + quest log, story-mode frontend, chat message search, chat transfer/location change
+- [ ] NSFW: audit-log UI + consent display; character NSFW content rating (5-tier) runtime enforcement
+- [ ] Memory + template injection UX: memory selection UI (mid-chat, pinning), cross-actor hardening; prompt-template registry impl
+- [ ] Character/world/location flows: multi-format import (PNG/YAML/TOML/CHARX), creation + settings menus, mood & happiness meter
+- [ ] Assistant tooling: tool-call display, creation wizards, `/commands` tiered access
+- [ ] LLM providers: Anthropic/Ollama/Bedrock (embeddings foundation)
+- [ ] Assets: signed URLs; asset storage compression flow
+- [ ] Fine-tuning experience: provider health panel; fine-tuning UI for chat/persona/character
+- [ ] **Verification**: `bun run check && bun test src/routes/ src/assistant/`
+
+### P5 — Wiring, Search & Polish (0.1.0 value-aligned)
+
+> Implemented-but-unwired must ship UI before 0.1.0. See `backlog.md` `## P5`.
+
+- [ ] IO: story + world/location export; import flow for characters/worlds/locations/stories
+- [ ] Stop generation: abort/cancel LLM stream UI in chat + VN renderer; idempotent partial-message handling
+- [ ] Notification center UI + noise filtering
+- [ ] Filtering & search: chat message search w/ highlight, world/location search + filters, gallery search polish, combined filters
+- [ ] Frontend wiring: all menus, modals, side menus, documentation linkage; register page; in-chat asset preview + linkage side panel; assistant panel; message actions UI
+- [ ] Implemented → wired: LoRA routes, dead `detectIntent`, swipe-variant placeholder, GM role runtime effect
+- [ ] **Verification**: `bun run check`
+
+### P6+ — Deferred (not 0.1.0-critical; revisit post-release unless blocking P3–P5)
+
+> Plugin ecosystem, three-tier memory, artifact, ComfyUI, provider ecosystem, RAG, communications, social hub, decentralization, sandboxing, API governance/library, impersonation, 3D view modes, text effects, character-system extensions, model comparison reactions. Full table in `backlog.md` `## P6+`.
 
 ## Post-P3 — Road to Happy 0.1.0 (2026-08-05)
 
 `package.json` already declares `version: 0.1.0`; `.plan/implementation-plan.md` release row "Tag v0.1.0" is ❌. "Happy 0.1.0" = Gate C **and** the release-hardening below all green, then a signed tag + release notes. This is the completion queue after P2/P3 feature work.
 
+### 0.1.0 scope = highest-value features
+
+P3→P5 are aligned to the **0.1.0 highest-value feature list** (see `backlog.md` `## P3` and `immediate.md` `## P3`): user registration/auth, correct access (chats/assets/worlds/locations), encryption+compression flow, all 9 chat types, NSFW features/prompting/opt-in/sfw-nsfw caps, metadata extraction+captioning, i18n, VN mode, gallery+asset preview, user/admin panels+settings+fine-tuning, in-chat side panels, chat settings menus, character/world/location flows, LLM support (chat/captioning/intent/embeddings), assistant creative tooling, IO (import/export), stop-generation, notifications center, filtering/search, and **memory + template injection (high priority — key for chats)**. Non-value work sits in **P6+** unless it blocks P3–P5.
+
 ### Definition of "happy"
 
 - **Gate C passed** — VN mode, chat, assistant+tool calling, GM flows, GM-guided story, auth/access, gallery usable (P2 priority tiers above)
-- **Gate D passed** — P3 advanced features operational (plugin ecosystem, three-tier memory, artifact, ComfyUI, provider ecosystem)
+- **Gate D passed** — P3–P5 0.1.0 value tiers operational (Core Foundation → Core Experience → Wiring/Search/Polish); P6+ deferred items (plugin ecosystem, three-tier memory, artifact, ComfyUI, provider ecosystem) non-blocking
 - **`bun run check` 17/17 green** — today 15/17; the 2 red gates are **pre-existing debt**, not feature work (see below)
 - **e2e browser suite stable** — today 51/85; 34 failures = auth redirect-loop + page-load timeouts (peer auth WIP in flight); must be green without the loop
 - **No committed-state-only gates** — GM role runtime effect must be committed (currently working tree), not "it works locally"
@@ -427,9 +474,9 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 ### Hardening (do before tagging, not blockers)
 
 - [ ] `memorySection` cross-actor integration test (P2-C hardening row)
-- [ ] AUX queue M1–M6 (shared runner, memory-extraction real model, dead model roles, mood/emotion hook consumption, ModerationHook safety, AUX telemetry)
+- [ ] AUX queue M5–M6 (ModerationHook safety, AUX telemetry) — M1–M4 done (shared runner, memory-extraction real model, dead model roles, mood/emotion hook consumption)
 - [ ] World timeline §5.3 forward-event steering + §5.4 cross-story convergence (cluster B greenfield)
-- [ ] Frontend gaps still open in P2-B/C/D/E/F tables (music linking, message search, chat transfer, party join/leave, quest-log UI, assistant↔GM reconciliation, tool-call display, MFA, encryption-access UI, avatar-gallery visibility inheritance)
+- [ ] Frontend gaps still open in P2-B/C/D/E tables (music linking, message search, chat transfer, party join/leave, quest-log UI, assistant↔GM reconciliation, tool-call display, MFA, encryption-access UI, avatar-gallery visibility inheritance) — **align remaining work to the back-linked P4/P5 value rows in `backlog.md`**
 - [ ] `.plan/open-items.md` — referenced by backlog but missing; create or drop references
 
 ### Ordering (proposed)
@@ -437,8 +484,8 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 1. Land the in-flight GM role runtime effect + its test (uncommitted)
 2. Close the 2 red `check` gates (lint-ts + size-strict) — biggest lever, 15/17 → 17/17
 3. Stabilize browser e2e (auth loop is the dominant 34/85 failure)
-4. Finish P2 feature tiers + AUX M1–M6 + world-timeline cluster
-5. P3 advanced features (Gate D)
+4. Finish P2 feature tiers + AUX M5–M6 (M1–M4 done) + world-timeline cluster
+5. P3–P5 value tiers (Core Foundation → Core Experience → Wiring/Search/Polish per 0.1.0 value list) + P6+ deferred
 6. Post-P3 hardening → release-process + tag `v0.1.0`
 
 ---
@@ -450,12 +497,13 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 | **Gate A** | Post-P0 | All observability + testing infrastructure stable; Data Integrity Phase 1 complete; NSFW moderation live; Shared schemas enforced                                                                |
 | **Gate B** | Post-P1 | Import/Export + Admin functional with encryption; NSFW integrations complete; Battle integrations complete; Data Integrity Phase 2 complete; Memory tiers wired with UI + cross-chat persistence |
 | **Gate C** | Post-P2 | VN mode wired; chat system functional; assistant + tool calling integrated; GM flows operational; GM-guided story creation implemented; auth/access controls live; gallery usable                |
-| **Gate D** | Post-P3 | Advanced features + plugin ecosystem operational                                                                                                                                                 |
+| **Gate D** | Post-P3 | P3–P5 0.1.0 value tiers operational (Core Foundation → Core Experience → Wiring/Search/Polish); P6+ deferred items non-blocking                                                                  |
 
 ---
 
 ## Notes
 
+- **0.1.0 priority alignment (2026-08-05)**: P3→P5 follow the **0.1.0 highest-value features** (see `backlog.md` `## P3` for the full 22-item map + status). P3 Core Foundation (identity/access/encryption/chat/NSFW/i18n/VN/gallery/panels/LLM/assistant/IO/notifications/search/memory+template injection) → P4 Core Experience (not-yet-done value workstreams) → P5 Wiring, Search & Polish. Non-value work → **P6+** unless it blocks P3–P5. Cross-integration review: RPG mechanics matrix gaps (G1–G17) are P6+; NSFW (a P3 value) gaps G6–G9 are cross-enhancements blocked on deferred siblings — see `cross-mechanics-integration-matrix.md` §0.1.0 Alignment.
 - **P0 items are blocking** — no safe multi-instance deployment without Data Integrity Phase 1; no NSFW content without moderation infrastructure; no cross-system data integrity without Shared Schemas
 - **P2 emphasis**: VN mode → chat → assistant/tool calling → GM flows → GM-guided story creation → authorization/access → gallery. RPG mechanics deferred to P2-later.
 - **VN mode is complete (backend + frontend, 2026-07-31)** — `src/story/` (6 route files) + `src/frontend/vn/` scene renderer/portrait/transitions/templates; remaining VN work is `bun test src/story/` verification + gallery-in-scene inheritance.
