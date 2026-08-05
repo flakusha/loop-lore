@@ -1,10 +1,5 @@
 # Battle Integration Gaps — Items, Social, NPC, Weather, Resolution
 
-**Status:** ⬜ Not Started
-**Priority:** High
-**Effort:** High
-**Tags:** battle, integration, items, social, npc, weather, resolution
-
 ## Overview
 
 The Battle epic is the most impactful gap in cross-system integration. It touches most RPG sub-systems but references only RPG Mechanics and World & Locations. This spec tracks adding integration sections for Items/Inventory, Social, NPC/Actor, Weather/Terrain, and Resolution System.
@@ -146,85 +141,6 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 - Difficulty class consistency across all systems
 - Skill check integration with resolution system
 
-## Tasks
-
-### Core Integration (High Priority)
-
-- [ ] **Equipment System Integration**
-  - How equipment affects battle stats
-  - Item durability degradation in combat
-  - Set bonuses and equipment effects
-  - Equipment-specific combat actions
-
-- [ ] **Social Skill Integration**
-  - Intimidation mechanics (morale checks)
-  - Taunt and negotiation in combat
-  - Surrender mechanics
-  - Social reputation effects in battle
-
-- [ ] **NPC/Actor Integration**
-  - Personality-driven enemy AI
-  - Memory of past battles
-  - Relationship-based combat behavior
-  - Morale system from Social
-
-- [ ] **Weather/Terrain Integration**
-  - Environmental combat modifiers
-  - Terrain cover and elevation
-  - Environmental hazards
-  - NSFW-specific environmental modifiers
-
-- [ ] **Resolution System Integration**
-  - Unified dice resolution for combat
-  - Critical hit/fumble mechanics
-  - Difficulty class consistency
-  - Skill check integration
-
-### Content System Integration (Medium Priority)
-
-- [ ] **Items/Inventory Loot Integration**
-  - Loot drop mechanics
-  - Inventory capacity management
-  - Item quality and rarity tiers
-  - Loot table integration
-
-- [ ] **Economy Integration**
-  - Loot valuation and pricing
-  - Market impact of battle outcomes
-  - Item trading and economy effects
-  - Battle-related economic events
-
-## Implementation Notes
-
-### Integration Strategy
-
-1. **Start with Core Mechanics**
-   - Equipment stats and combat modifiers
-   - Weather/environmental effects
-   - Basic morale system
-
-2. **Add Social Integration**
-   - Intimidation and negotiation
-   - Surrender mechanics
-   - Social reputation
-
-3. **Complete NPC/Actor Integration**
-   - Personality-driven AI
-   - Memory and relationships
-   - Advanced morale system
-
-4. **Final Polish**
-   - Resolution system unification
-   - Economy integration
-   - Content system completion
-
-### Technical Considerations
-
-- **Performance**: Battle integration must be efficient for real-time combat
-- **Scalability**: Support for large-scale battles (many NPCs, many players)
-- **Modularity**: Plugin system for custom battle mechanics
-- **Extensibility**: Hook system for third-party battle content
-
 ## Files
 
 - `src/battle/equipment.ts` — equipment system
@@ -237,27 +153,12 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 - `src/routes/battle.ts` — battle API endpoints
 - `docs/spec/battle-integration.md` — integration documentation
 
-## Related Epics
+## Technical Considerations
 
-- **Epic RPG Mechanics** — Stats, skills
-- **Epic Item System** — Equipment, inventory
-- **Epic Social Interaction** — Morale, reputation
-- **Epic Actor System** — NPC personality
-- **Epic Weather** — Environmental modifiers
-- **Epic Resolution System** — Dice resolution
-- **Epic Character Core** — Traits, mood
-- **Epic NSFW** — Rough play, power exchange
-- **Epic Economy** — Loot valuation
-
-## Linked Tasks
-
-- `TASK-battle-integration-gaps.md`
-- `TASK-battle-equipment-integration.md`
-- `TASK-battle-social-integration.md`
-- `TASK-battle-npc-integration.md`
-- `TASK-battle-environment-integration.md`
-- `TASK-battle-resolution-integration.md`
-- `TASK-battle-loot-integration.md`
+- **Performance**: Battle integration must be efficient for real-time combat
+- **Scalability**: Support for large-scale battles (many NPCs, many players)
+- **Modularity**: Plugin system for custom battle mechanics
+- **Extensibility**: Hook system for third-party battle content
 
 ## Open Questions
 
@@ -281,45 +182,6 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 - Should battles be editable by content creators?
 - How to balance combat content with story content?
 - Should there be battle templates?
-
-## Implementation Phases
-
-### Phase 1: Core Integration
-
-- Equipment system integration
-- Weather/terrain integration
-- Basic morale system
-
-### Phase 2: Social Integration
-
-- Intimidation and negotiation
-- Surrender mechanics
-- Social reputation
-
-### Phase 3: NPC/Actor Integration
-
-- Personality-driven AI
-- Memory and relationships
-- Advanced morale
-
-### Phase 4: Resolution System
-
-- Unified dice resolution
-- Critical hit/fumble
-- Difficulty classes
-
-### Phase 5: Content Integration
-
-- Loot and inventory
-- Economy integration
-- NSFW rough play support
-
-### Phase 6: Polish
-
-- Performance optimization
-- Plugin system support
-- Content management tools
-- Documentation and examples
 
 ## Success Metrics
 

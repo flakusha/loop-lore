@@ -71,6 +71,6 @@ no current idea fully covers.
 
 ### Cross-references
 
-- **Quick wins** (#6, #8, #18, #27, #28): promoted to `.plan/backlog.md` § Quick Wins and `docs/meta/roadmap.md` § v0.1 MVP.
+- **Quick wins** (#6, #8, #18, #27, #28): promoted to `.plan/backlog.md` § Quick Wins and `.plan/roadmaps/roadmap.md` § v0.1 MVP.
 - **Coverage gaps** (sandbox, RAG, audit, RBAC, cost, DAG, approval gates): tracked as enterprise blockers in `.plan/backlog.md` — not yet in any epic. Add to P3 when epics are scoped.
 - **Ideas hub**: appendix to `docs/ideas/index.md` should add a "Business relevance" column per-theme.
