@@ -30,7 +30,7 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 ## 🏗 v0.1 MVP — Active Development
 
-> **Detailed task breakdown:** `docs/meta/plan.md` (completed epics) and `.plan/backlog.md` (active queue).
+> **Detailed task breakdown:** `.plan/implementation-plan.md` (completed epics) and `.plan/backlog.md` (active queue).
 
 | Epic | Feature                                                       | Status             |
 | ---- | ------------------------------------------------------------- | ------------------ |
@@ -110,12 +110,12 @@ Federated Identity (Web3/DID), P2P modes (offline-first), Marketplace, Analytics
 
 Research-driven feature proposals, separated by theme and linked from a hub. Derived from analysis of community projects (SillyTavern, RisuAI, Agnai) plus community requests. Proposals only — not yet scheduled.
 
-- Hub: [docs/ideas/index.md](../ideas/index.md)
+- Hub: [docs/ideas/index.md](/docs/ideas/index.md)
 - Themes: Immersion & Presentation, Prompt & Output Control, Memory/Continuity, Authoring, Social/Multiplayer, Platform & Reach, Analytics & Meta, 3D Worlds & Navigation — each linked from the hub.
 
 ## Timeline
 
-See `docs/meta/plan.md` for completed epics, `.plan/backlog.md` for active queue, `.plan/epics/` for detailed plans.
+See `.plan/implementation-plan.md` for completed epics, `.plan/backlog.md` for active queue, `.plan/epics/` for detailed plans.
 
 <!-- ISSUE-MAP-START -->
 

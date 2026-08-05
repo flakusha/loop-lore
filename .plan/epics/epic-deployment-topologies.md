@@ -106,7 +106,7 @@
 - `docs/spec/architecture.md` — multi-process note, session-in-DB
 - Epic 26 (Multi-Instance Reconciliation) — migration leadership, drift
 - Epic 27 (Data Integrity & ACID) — backend guards, ACID matrix
-- `docs/meta/plan.md` — epic registry
+- `.plan/implementation-plan.md` — epic registry
 
 ## Related Epics
 

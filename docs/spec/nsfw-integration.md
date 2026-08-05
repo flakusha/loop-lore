@@ -1,9 +1,5 @@
 # NSFW Integration Gaps — Housing, Weather, Social, Disease
 
-**Status:** ⬜ Not Started
-**Priority:** High
-**Tags:** nsfw, integration, housing, weather, social, disease, cross-system
-
 ## Overview
 
 The NSFW epic (`epic-nsfw-game-mechanics.md`, 848 lines) defines 8 gameplay systems but has zero cross-references to Housing, Weather, Social, or Disease systems. This spec tracks the integration work to close these gaps.
@@ -213,86 +209,6 @@ interface DiseaseRisk {
 - Pregnancy system references Disease for complications
 - Contraception methods integrate with Disease prevention mechanics
 
-## Tasks
-
-### Core Integration (High Priority)
-
-- [ ] **G6: NSFW ↔ Housing Integration**
-  - Map Housing location types to NSFWLocationType enum
-  - Apply comfort/safety bonuses to NSFW encounter outcomes
-  - Calculate discovery risk based on housing privacy
-  - Support housing equipment as encounter modifiers
-
-- [ ] **G7: NSFW ↔ Weather Integration**
-  - Weather mood modifiers feed into NSFW mood system
-  - Weather affects pheromone dispersion
-  - Weather affects location availability for NSFW encounters
-  - Seasonal effects on fertility cycles
-
-- [ ] **G8: NSFW ↔ Social Integration**
-  - Unified `ReputationScore` schema
-  - Social skills as seduction prerequisites
-  - NSFW reputation changes feed into Social
-  - Social relationship tiers map to NSFW intimacy levels
-
-- [ ] **G9: NSFW ↔ Disease Integration**
-  - Disease system covers reproductive health
-  - NSFW encounters can transmit diseases
-  - Pregnancy system references Disease for complications
-  - Contraception methods integrate with Disease prevention mechanisms
-
-### Safety & Moderation (High Priority)
-
-- [ ] **Consent State Integration**
-  - Unified `ConsentState` schema
-  - Integration with Chat Lifecycle NSFW toggle
-  - Audit trail for consent decisions
-  - Revocation mechanism
-
-- [ ] **NSFW Content Rating Enforcement**
-  - 5-tier rating enum enforcement
-  - Runtime enforcement at generation boundary
-  - Content filtering based on rating
-  - User preference override with warnings
-
-## Implementation Notes
-
-### Integration Strategy
-
-1. **Start with Shared Schemas**
-   - Define unified ReputationScore
-   - Define ConsentState
-   - Define NSFWContentRating enforcement
-
-2. **Add Housing Integration**
-   - Map location types
-   - Apply comfort/safety modifiers
-   - Calculate discovery risk
-
-3. **Add Weather Integration**
-   - Mood modifiers
-   - Pheromone dispersion
-   - Location availability
-
-4. **Add Social Integration**
-   - Reputation model
-   - Skill prerequisites
-   - Relationship mapping
-
-5. **Add Disease Integration**
-   - Reproductive health
-   - Disease transmission
-
-- Pregnancy complications
-
-### Technical Considerations
-
-- **Privacy**: All NSFW data must respect user privacy settings
-- **Compliance**: Content rating enforcement must be runtime-enforced
-- **Performance**: Integration must not slow down encounter generation
-- **Modularity**: Plugin system for custom NSFW content
-- **Audit Trail**: All consent and moderation actions must be logged
-
 ## Files
 
 - `src/nsfw/housing-integration.ts` — Housing privacy and comfort
@@ -305,27 +221,13 @@ interface DiseaseRisk {
 - `src/routes/nsfw.ts` — NSFW API endpoints
 - `docs/spec/nsfw-integration.md` — Integration documentation
 
-## Related Epics
+## Technical Considerations
 
-- **Epic Character Core** — Traits, mood, relationships, NSFW rating
-- **Epic Chat Lifecycle** — NSFW toggle, moderation
-- **Epic Social Interaction** — Reputation, persuasion
-- **Epic Disease & Poison** — Reproductive health, STDs
-- **Epic Housing** — Private spaces, comfort
-- **Epic Weather** — Environmental mood
-- **Epic Economy** — NSFW item trading
-- **Epic Plugin System** — Custom NSFW content
-- **Epic Analytics** — NSFW metrics
-
-## Linked Tasks
-
-- `TASK-nsfw-integration-gaps.md`
-- `TASK-nsfw-housing-integration.md`
-- `TASK-nsfw-weather-integration.md`
-- `TASK-nsfw-social-integration.md`
-- `TASK-nsfw-disease-integration.md`
-- `TASK-nsfw-consent-integration.md`
-- `TASK-nsfw-rating-enforcement.md`
+- **Privacy**: All NSFW data must respect user privacy settings
+- **Compliance**: Content rating enforcement must be runtime-enforced
+- **Performance**: Integration must not slow down encounter generation
+- **Modularity**: Plugin system for custom NSFW content
+- **Audit Trail**: All consent and moderation actions must be logged
 
 ## Open Questions
 
@@ -349,44 +251,6 @@ interface DiseaseRisk {
 - What's the content rating enforcement strategy?
 - How to handle illegal content?
 - What's the reporting mechanism?
-
-## Implementation Phases
-
-### Phase 1: Shared Schemas (High Priority)
-
-- Unified ReputationScore schema
-- ConsentState schema
-- NSFWContentRating enforcement
-
-### Phase 2: Housing Integration (Medium Priority)
-
-- Location type mapping
-- Comfort/safety modifiers
-- Discovery risk calculation
-
-### Phase 3: Weather Integration (Medium Priority)
-
-- Mood modifiers
-- Pheromone dispersion
-- Location availability
-
-### Phase 4: Social Integration (Medium Priority)
-
-- Reputation model
-- Skill prerequisites
-- Relationship mapping
-
-### Phase 5: Disease Integration (Medium Priority)
-
-- Reproductive health
-- Disease transmission
-- Pregnancy complications
-
-### Phase 6: Safety & Moderation (High Priority)
-
-- Consent tracking
-- Content rating enforcement
-- Audit trails
 
 ## Success Metrics
 

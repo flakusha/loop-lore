@@ -1,9 +1,5 @@
 # Shared Schemas — Reputation, Consent, NSFW Content Rating
 
-**Status:** ⬜ Not Started
-**Priority:** High
-**Tags:** schemas, reputation, consent, nsfw, shared, cross-system
-
 ## Overview
 
 Three shared schemas are needed across multiple epics but lack a unified definition:
@@ -184,33 +180,6 @@ const NSFW_RATING_HIERARCHY = [
 - Add moderation audit trail
 - Update all moderation workflows
 
-## Implementation Phases
-
-### Phase 1: Schema Definition (High Priority)
-
-- Define ReputationScore schema
-- Define ConsentState schema
-- Define NSFWContentRating enforcement
-
-### Phase 2: Integration (Medium Priority)
-
-- Social schema migration
-- Faction schema migration
-- NSFW schema migration
-- Chat Lifecycle integration
-
-### Phase 3: Runtime Enforcement (High Priority)
-
-- Generation boundary checks
-- Content filtering
-- Audit logging
-
-### Phase 4: Testing & Validation (Medium Priority)
-
-- Schema validation tests
-- Integration tests
-- Migration tests
-
 ## Testing Strategy
 
 ### Schema Validation Tests
@@ -248,27 +217,6 @@ const NSFW_RATING_HIERARCHY = [
 - `src/db/schema-shared.ts` — Shared database tables
 - `src/routes/schemas.ts` — Schema API endpoints
 - `docs/spec/shared-schemas.md` — Schema documentation
-
-## Related Epics
-
-- **Epic Character Core** — NSFW content rating, relationships
-- **Epic Chat Lifecycle** — NSFW toggle, moderation
-- **Epic Social Interaction** — Reputation model
-- **Epic Faction Reputation** — Faction standing
-- **Epic NSFW** — Consent, reputation, content rating
-- **Epic Economy** — Reputation for pricing
-- **Epic Battle** — Reputation for NPC behavior
-- **Epic Analytics** — Consent and rating events
-- **Epic Plugin System** — Schema contracts
-
-## Linked Tasks
-
-- `TASK-shared-schemas.md`
-- `TASK-reputation-schema.md`
-- `TASK-consent-schema.md`
-- `TASK-nsfw-rating-schema.md`
-- `TASK-schema-migration.md`
-- `TASK-schema-validation.md`
 
 ## Open Questions
 

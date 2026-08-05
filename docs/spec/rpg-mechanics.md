@@ -5,7 +5,7 @@
 > ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no
 > XP. No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on
 > `worlds` table but no code reads or enforces them. This spec is entirely
-> aspirational. See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During
+> aspirational. See [`.plan/implementation-plan.md`](/plan/implementation-plan.md) "Skipped During
 > Implementation" section.
 
 ## Philosophy: Mechanics Serve Narrative
@@ -1947,74 +1947,6 @@ mechanically, and feeds the result back:
 ```
 
 The LLM then narrates the mechanical truth.
-
----
-
-## Implementation Roadmap
-
-### Phase 1: Foundation (Current → MVP)
-
-| Task                                  | Files                                           | Status      |
-| ------------------------------------- | ----------------------------------------------- | ----------- |
-| `actor_items` table + migration       | `src/db/schema-actors.ts`, `src/db/migrations/` | Not started |
-| Equipment slots on `actor_items`      | Schema + `src/characters/equipment.ts`          | Not started |
-| Basic stat block on `actors.settings` | Schema update                                   | Not started |
-| Stat computation (base + equipment)   | `src/rpg/stat-computer.ts`                      | Not started |
-| Equip/unequip service                 | `src/rpg/equipment.ts`                          | Not started |
-
-### Phase 2: Dice & Combat (Future)
-
-| Task                          | Files                            | Status      |
-| ----------------------------- | -------------------------------- | ----------- |
-| Dice engine (parser + roller) | `src/rpg/dice.ts`                | Not started |
-| Pre-seeded dice queue         | `src/rpg/dice-queue.ts`          | Not started |
-| Combat intent extraction      | `src/rpg/combat-intent.ts`       | Not started |
-| Combat resolution pipeline    | `src/rpg/combat-resolver.ts`     | Not started |
-| Status effect system          | `src/rpg/status-effects.ts`      | Not started |
-| Event extraction upgrade      | `src/story/events/extraction.ts` | Not started |
-
-### Phase 3: Skills & XP (Future)
-
-| Task                             | Files                     | Status      |
-| -------------------------------- | ------------------------- | ----------- |
-| Skill definitions                | `src/rpg/skills.ts`       | Not started |
-| Skill check resolution           | `src/rpg/skill-checks.ts` | Not started |
-| XP tracking on world actor state | Schema + `src/rpg/xp.ts`  | Not started |
-| Level-up logic                   | `src/rpg/leveling.ts`     | Not started |
-| Loot table system                | `src/rpg/loot.ts`         | Not started |
-
-### Phase 4: Persona-World (Future)
-
-| Task                           | Files                          | Status      |
-| ------------------------------ | ------------------------------ | ----------- |
-| Persona world traits           | `src/personas/world-traits.ts` | Not started |
-| Persona ↔ character conversion | `src/personas/conversion.ts`   | Not started |
-| RPG-enhanced prompt assembly   | `src/rpg/prompt-assembly.ts`   | Not started |
-| Currency system                | `src/rpg/currency.ts`          | Not started |
-
-### Phase 5: Chat Rules & Scoped Mechanics (Future)
-
-| Task                                     | Files                                          | Status      |
-| ---------------------------------------- | ---------------------------------------------- | ----------- |
-| `chat_rules` table + migration           | `src/db/schema-rules.ts`, `src/db/migrations/` | Not started |
-| Chat rule CRUD service                   | `src/rpg/rules-service.ts`                     | Not started |
-| Rule resolution pipeline (scope cascade) | `src/rpg/rules-resolver.ts`                    | Not started |
-| Rule intent extraction from LLM          | `src/rpg/rules-intent.ts`                      | Not started |
-| Rule prompt injection                    | `src/rpg/rules-prompt.ts`                      | Not started |
-| Location-scoped rule activation          | `src/rpg/rules-location.ts`                    | Not started |
-
-### Phase 6: Plugin Engine & Bundles (Future)
-
-| Task                                                  | Files                         | Status      |
-| ----------------------------------------------------- | ----------------------------- | ----------- |
-| `RpgMechanicPlugin` interface + registry              | `src/rpg/plugin-engine.ts`    | Not started |
-| Built-in core resolvers (dice, skill, combat, damage) | `src/rpg/resolvers/`          | Not started |
-| Resolver chain execution                              | `src/rpg/resolver-chain.ts`   | Not started |
-| Plugin bundle system (`PluginBundle` manifest)        | `src/rpg/bundle-loader.ts`    | Not started |
-| Fine-tune overlay service                             | `src/rpg/fine-tune.ts`        | Not started |
-| Bundle activation per scope (world/chat/location)     | `src/rpg/bundle-activator.ts` | Not started |
-| `.rpgbundle` import/export                            | `src/rpg/bundle-io.ts`        | Not started |
-| LLM GM fine-tune intent extraction                    | `src/rpg/fine-tune-intent.ts` | Not started |
 
 ---
 

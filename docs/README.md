@@ -248,10 +248,9 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 
 Project planning, reviews, analysis, and research.
 
-| Document                               | Topics                       |
-| -------------------------------------- | ---------------------------- |
-| [`meta/plan.md`](./meta/plan.md)       | MVP implementation checklist |
-| [`meta/roadmap.md`](./meta/roadmap.md) | Long-term feature roadmap    |
+> In-repo planning now lives under `.plan/` — see `.plan/backlog.md`,
+> `.plan/immediate.md`, `.plan/roadmaps/roadmap.md`, and
+> `.plan/implementation-plan.md`.
 
 ### Reviews (`meta/reviews/`)
 
