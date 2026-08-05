@@ -59,34 +59,6 @@ WebUI layout: LEFT agents list, CENTER workspace/chat, RIGHT artifacts gallery, 
 
 TUI: agent list replaces character list, task graph via `blessed-contrib`, tool output as structured logs.
 
-## Implementation Checklist
-
-### Schema & Types
-
-- Add `mode` column to `chats` (`'rpg' | 'agentic'`)
-- Extend `actors.agent_type` enum
-- Extend `messages.content_type` enum
-- Add `locations` table for tasks
-- Add `task_dependencies` table
-
-### Agent Runtime
-
-- Refactor `src/assistant/service.ts` → `src/agent/runtime.ts`
-- Tool registry and execution sandbox
-- Built-in tools: search, code, file ops, HTTP
-
-### Plugin System
-
-- Plugin loader (core/community/local)
-- Registry API (install/enable/disable)
-- Example plugins
-
-### UI Adaptation
-
-- Workspace mode detection
-- Agentic layout (agents, task graph, artifact gallery)
-- TUI agent/task views
-
 ## Config
 
 ```yaml

@@ -239,17 +239,6 @@ interface FuzzResult {
 }
 ```
 
-### Harness Checklist
-
-- [ ] Deterministic initialization (fixed seeds, mock time)
-- [ ] No external dependencies (mock DB, cache, LLM)
-- [ ] Fast reset (< 10ms per iteration)
-- [ ] Memory leak detection (heap snapshot diff)
-- [ ] Coverage instrumentation (source-map aware)
-- [ ] Crash deduplication (stack trace + input hash)
-- [ ] Timeout handling (per-iteration budget: 1s)
-- [ ] OOM handling (memory limit: 512MB)
-
 ---
 
 ## Execution Infrastructure
@@ -375,18 +364,3 @@ CRASH
 4. **Fix**: Patch + add regression test to corpus
 5. **Verify**: Re-run fuzzer, confirm crash eliminated
 6. **Document**: Add to security changelog
-
----
-
-## Deliverables Checklist
-
-- [ ] Fuzzing infrastructure (harness runner, corpus manager, crash deduplicator)
-- [ ] Per-target harnesses (auth, asset, chat, llm, admin, IPC)
-- [ ] Seed corpora (10k+ seeds per target)
-- [ ] Mutation engine (bitflip, arithmetic, dictionary, structure, crossover, generative)
-- [ ] CI integration (GitHub Actions + artifact upload)
-- [ ] Continuous fuzzing cluster (scheduler, corpus sync, crash triage)
-- [ ] Dashboard (coverage, crashes, corpus, performance, ROI)
-- [ ] Sanitizer integration (ASan, MSan, UBSan, TSan)
-- [ ] Regression process (classification, minimization, fix verification)
-- [ ] Documentation (runbooks, target guides, triage playbook)

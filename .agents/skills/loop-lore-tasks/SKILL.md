@@ -34,7 +34,7 @@ Before touching any feature, read the relevant spec in `docs/`:
 | Plugin system      | `docs/spec/plugin-system.md`    |
 | Memory system      | `docs/spec/memory-system.md`    |
 | Artifacts system   | `docs/spec/artifacts-system.md` |
-| Plan / tasks       | `docs/meta/plan.md`             |
+| Plan / tasks       | `.plan/implementation-plan.md`  |
 | Frontend UX        | `docs/frontend/overview.md`     |
 
 ## 2. Explore Existing Code

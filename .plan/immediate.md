@@ -1,7 +1,7 @@
 # Immediate Plan
 
-> **Last updated:** 2026-08-03 — Config-driven LLM text templates shipped (prompts registry + GM/aux wiring); Regex extraction complete; P0/P1/P1.5 complete; P2-A foundation done; P2-B/C/D partial; AUX LLM wiring review added (M1-M6 queue under P2-C); lore audience scoping + per-viewer memory injection done; chat invites/sections/backgrounds/filters + NSFW runtime shipped
-> **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete
+> **Last updated:** 2026-08-05 — 2026-08-05 audit: route wiring verified (all src/routes wired except gated LoRA); chat filters UI + setup-template selector UI shipped post-doc; GM role runtime effect in working tree (uncommitted); added **Post-P3 — Road to Happy 0.1.0** gate below.
+> **Status:** P0 ✅ complete; P1 ✅ complete; P1.5 ✅ complete; P2 🟡 in progress; Regex ✅ complete; **Post-P3 → Road to 0.1.0 🗺️ (see section below)**
 
 ---
 
@@ -9,18 +9,18 @@
 
 **Feature**: config-driven system prompts for assistant/gm/vn/nsfw/aux (transition, intent, memory) domains, overridable via user `configs/templates/llm.yaml` (gitignored, only `.example.yaml` committed). Resolution: user config `systemPrompts[<purpose>]` → code default `LLM_PROMPT_DEFAULTS` (`src/prompts/registry.ts`).
 
-**Validation**: `bun run check` → **15/17 ✅** (was 15/17 baseline; unit+e2e green, format-dprint green, db-schema gate green). Lint gate re-audit: earlier "201 files" debt was an undercount — true pre-existing debt is **291 files**; all my new/modified files lint-clean (src/prompts/*, gm/decisions/*, game-master). Zero new failures introduced. seedBootstrapAdmin bug fixed (3121→3125 pass).
+**Validation**: `bun run check` → **15/17 ✅** (was 15/17 baseline; unit+e2e green, format-dprint green, db-schema gate green). Lint gate re-audit: earlier "201 files" debt was an undercount — true pre-existing debt is **291 files**; all my new/modified files lint-clean (src/prompts/_, gm/decisions/_, game-master). Zero new failures introduced. seedBootstrapAdmin bug fixed (3121→3125 pass).
 
-| Area                                                       | State              | Where                                                                                                                     | Next / open                                  |
-| ---------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| **Prompts registry** — `LLM_PROMPT_DEFAULTS` (12 keys) + `resolveSystemPrompt()` | ✅ Shipped + tests | `src/prompts/{registry,vn,index}.ts` + `src/prompts/registry.test.ts` (10 tests) | — |
-| **Assistant wiring** — fallback chain override → systemPromptFallback → actor.system_prompt | ✅ Shipped (HEAD) | `src/assistant/prompt/sections/system.ts`, `src/db/seed.ts` (+ `templates?.` bugfix), `src/generation/generate-route.ts` | — |
-| **VN wiring** — vn/vnChoices via `resolveSystemPrompt` | ✅ Shipped (HEAD) | `src/routes/vn-generate.ts` | — |
-| **GM wiring** — systemPromptDefault ctor option → decision LLM | ✅ Shipped | `src/story/game-master.ts`, `src/story/gm/decisions/{types,llm}.ts`, `src/generation/auto-gen.ts` (gm+intent) | — |
-| **AUX wiring** — transition/intent/memory | ✅ Shipped | `src/chat/transition-classifier.ts`, `src/generation/auto-gen.ts`, `src/memory/extraction.ts` | — |
-| **User config** — `configs/templates/llm.example.yaml` documents 12 keys + merge strategies; `.gitignore` `configs/templates/*` (user files ignored, examples tracked) | ✅ Shipped | `configs/templates/llm.example.yaml`, `.gitignore` | — |
-| **Registry hardening (design)** — typed `PromptPurpose`, single defaults source (registry sole source; `TEMPLATES_DEFAULTS.llm.systemPrompts`→`{}`), dead accessor removal (`sections/llm-templates.ts`), llm.yaml load validation | 📐 Design | `.plan/design/prompt-template-registry.md` | `TASK-prompt-template-registry.md` (impl pending approval) |
-| **Open debt** — lint-ts (291 pre-existing files) + size-strict (10 pre-existing files) | ⚠️ pre-existing | whole repo | refactor tickets |
+| Area                                                                                                                                                                                                                               | State              | Where                                                                                                                    | Next / open                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| **Prompts registry** — `LLM_PROMPT_DEFAULTS` (12 keys) + `resolveSystemPrompt()`                                                                                                                                                   | ✅ Shipped + tests | `src/prompts/{registry,vn,index}.ts` + `src/prompts/registry.test.ts` (10 tests)                                         | —                                                          |
+| **Assistant wiring** — fallback chain override → systemPromptFallback → actor.system_prompt                                                                                                                                        | ✅ Shipped (HEAD)  | `src/assistant/prompt/sections/system.ts`, `src/db/seed.ts` (+ `templates?.` bugfix), `src/generation/generate-route.ts` | —                                                          |
+| **VN wiring** — vn/vnChoices via `resolveSystemPrompt`                                                                                                                                                                             | ✅ Shipped (HEAD)  | `src/routes/vn-generate.ts`                                                                                              | —                                                          |
+| **GM wiring** — systemPromptDefault ctor option → decision LLM                                                                                                                                                                     | ✅ Shipped         | `src/story/game-master.ts`, `src/story/gm/decisions/{types,llm}.ts`, `src/generation/auto-gen.ts` (gm+intent)            | —                                                          |
+| **AUX wiring** — transition/intent/memory                                                                                                                                                                                          | ✅ Shipped         | `src/chat/transition-classifier.ts`, `src/generation/auto-gen.ts`, `src/memory/extraction.ts`                            | —                                                          |
+| **User config** — `configs/templates/llm.example.yaml` documents 12 keys + merge strategies; `.gitignore` `configs/templates/*` (user files ignored, examples tracked)                                                             | ✅ Shipped         | `configs/templates/llm.example.yaml`, `.gitignore`                                                                       | —                                                          |
+| **Registry hardening (design)** — typed `PromptPurpose`, single defaults source (registry sole source; `TEMPLATES_DEFAULTS.llm.systemPrompts`→`{}`), dead accessor removal (`sections/llm-templates.ts`), llm.yaml load validation | 📐 Design          | `.plan/design/prompt-template-registry.md`                                                                               | `TASK-prompt-template-registry.md` (impl pending approval) |
+| **Open debt** — lint-ts (291 pre-existing files) + size-strict (10 pre-existing files)                                                                                                                                             | ⚠️ pre-existing     | whole repo                                                                                                               | refactor tickets                                           |
 
 ---
 
@@ -33,12 +33,12 @@
 | ---------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | **Chat invite & join** — invite codes, join flow, e2e      | ✅ Shipped + tests | migration `033_chat_invites`, `src/chat/invites.ts`, `src/routes/invites.ts`, `tests/e2e/flows/invite-join.test.ts`; epic `invitation-system.md`      | —                                            |
 | **Chat sections + backgrounds + location explorer**        | ✅ Shipped + tests | migrations `031/032`, `src/routes/chat-sections.ts` + `chat-backgrounds.ts` + `location-explorer.ts`, sections/background-panel.html, world-edit.html | —                                            |
-| **Chat-list filters** — type/status/sort                   | ✅ Backend         | `orderChatList` generic + `t.Enum` (bba7d3e8), GET /api/chats filters (327ff22b)                                                                      | Frontend filter UI                           |
+| **Chat-list filters** — type/status/sort                   | ✅ Backend + UI    | `orderChatList` generic + `t.Enum` (bba7d3e8), GET /api/chats filters (327ff22b), `chat-filters.ts` + `chat-list-panel.html` dropdowns                | —                                            |
 | **NSFW runtime config store + live enforcement**           | ✅ Shipped         | `src/nsfw/runtime-config.ts`, `admin-nsfw.ts`, mood-shift persistence in `auto-gen.ts` (63c765ce)                                                     | P0 audit-log UI + consent display still open |
 | **Emotion avatar generation from mood panel**              | ✅ Shipped         | `mood-panel.html`, `mood.ts`, `user-info.ts` (2794e3d5)                                                                                               | AUX M4 hook-event consumption open           |
 | **Regenerate sibling variant** — swipe_index + idempotency | ✅ Shipped + tests | `src/chat/service.ts`, `src/generation/regenerate-variant.test.ts` (a777b590)                                                                         | —                                            |
 | **401-guard normalization** — 18 route files               | ✅ Shipped         | 3283d41e (activity, chats, gm-notes, messages, reactions, sessions, vn-choices, …)                                                                    | P2-E† canonical helper collapse open         |
-| **Chat setup templates** — seed + admin CRUD               | ✅ Shipped         | 9619f259                                                                                                                                              | `new-chat.html` selector UI                  |
+| **Chat setup templates** — seed + admin CRUD + selector UI | ✅ Shipped         | 9619f259 + `new-chat.ts:29-67` (`#chat-template` select, pre-fills mode)                                                                              | —                                            |
 | **Group-chat initiative decrement**                        | ✅ Shipped + tests | `src/turning/turn-manager.ts` (30f20b7a)                                                                                                              | —                                            |
 | **Context-cut → memory promotion**                         | ✅ Shipped         | 09a451f2 (+ dead modules removed 7de41ec2)                                                                                                            | —                                            |
 | **Actor ownership enforcement**                            | ✅ Shipped         | character-io + emotion-avatars routes (f0c39927)                                                                                                      | P2-E authoring indicators                    |
@@ -185,7 +185,7 @@ next sessions:
 | GM role switching exists          | `src/frontend/alpine/chat-settings.ts` — `_assistantRole: "off"`, `chat?.gm_config` parsed with `GmConfig` type (line 33-36)                                                                                                    | Build GM role switching UI (dropdown: off/helper/gm/moderator)                               |
 | Auth basics exist                 | `src/frontend/fe-fetch.ts` — CSRF + session token injection, 401 redirect to login                                                                                                                                              | Build login/register pages that use `feFetch`                                                |
 | Admin user mgmt exists            | `src/frontend/alpine/admin-users.ts` — role editing, user list, pagination, search, filter                                                                                                                                      | Extend with access control panels                                                            |
-| Gallery page exists               | `src/frontend/pages/gallery.ts` — search, preview, download, delete, type filtering (image/audio/video)                                                                                                                         | ✅ Backend wired via `assetRoutes` + `viewRoutes` in `elysia-app.ts`                            |
+| Gallery page exists               | `src/frontend/pages/gallery.ts` — search, preview, download, delete, type filtering (image/audio/video)                                                                                                                         | ✅ Backend wired via `assetRoutes` + `viewRoutes` in `elysia-app.ts`                         |
 | Chat room management              | `docs/frontend/chat/overview.md`                                                                                                                                                                                                | Room list, create/rename/delete room components                                              |
 | Chat autorenaming                 | `TASK-chat-autorenaming.md`                                                                                                                                                                                                     | Auto-label chat sessions based on first exchange                                             |
 | Chat backgrounds + location sync  | `TASK-chat-backgrounds-location-sync.md`                                                                                                                                                                                        | Background image picker; location indicator in chat header — ✅ done (2026-08-03)            |
@@ -207,7 +207,7 @@ next sessions:
 - [x] Implement chat backgrounds + location sync (`TASK-chat-backgrounds-location-sync.md`) — `src/routes/chat-backgrounds.ts` + `src/frontend/alpine/chat-backgrounds.ts` + background-panel.html (2026-08-03)
 - [ ] Implement external music linking (`TASK-chat-external-music-linking.md`)
 - [x] Wire chat room search & join (`TASK-chat-room-search-join.md`) — joinable-chat discovery + join UI (d04ed2cf) + full invite & join system (6dda6485: migration 033, `src/chat/invites.ts`, `src/routes/invites.ts`, e2e)
-- [x] Implement chat room filters backend (`TASK-chat-room-filters.md`) — GET /api/chats type/status/sort via generic `orderChatList` + `t.Enum` (2026-08-03); frontend filter UI pending
+- [x] Implement chat room filters backend + UI (`TASK-chat-room-filters.md`) — GET /api/chats type/status/sort via generic `orderChatList` + `t.Enum` (2026-08-03); frontend dropdowns `chat-filters.ts` + `chat-list-panel.html` (2026-08-05)
 - [ ] Implement chat message search & filter (`TASK-chat-message-search.md`)
 - [x] Implement multi-location chat sectioning (`TASK-chat-sectioning-multi-location.md`) — migrations 031/032, `src/routes/chat-sections.ts`, sections-panel.html, location-explorer (2026-08-03)
 - [ ] Implement chat transfer + location change (`TASK-chat-transfer-location.md`)
@@ -242,10 +242,10 @@ next sessions:
 | Assistant ↔ GM reconciliation | `TASK-assistant-gm-flows-reconciliation.md`                                                                               | Unified assistant/GM interface in chat UI                                                                                                      |
 
 - [x] Expose GM role switching (`"off" | "helper" | "gm" | "moderator"`) in chat settings UI (uses existing `_assistantRole` + `GmConfig` from `chat-types.ts`) — 2026-08-01
-- [ ] **Give GM role switching runtime effect** (branch generation/prompt on `assistantRole` — currently stored only)
+- [x] **Give GM role switching runtime effect** (branch generation/prompt on `assistantRole`) — `auto-gen.ts:201-213` (`"gm"` → `resolveSystemPrompt(llm,"gm")`) + `auto-gen-gm-role.test.ts`; **working tree, uncommitted** (2026-08-05)
 - [ ] Expand command buttons (`src/frontend/alpine/command-buttons.ts`) with text generation commands for assistant
 - [ ] Add assistant role selector to chat settings modal (`chat-settings.ts`)
-- [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`) — parser ✅; AUX `classifyIntent` un-migrated (no timeout/apiKey), `detectIntent` dead code
+- [ ] Implement assistant command execution with intent detection (`TASK-assistant-command-execution-intent-detection.md`) — parser ✅; LLM `classifyIntent` wired (`auto-gen.ts:311` short-reply, 2026-08-05); rule `detectIntent` still dead code (AUX M1/M2)
 - [x] Wire slash commands (`/`) into assistant pipeline (`TASK-assistant-commands-extension.md`) — 2026-08-01
 - [ ] Implement assistant tool calling display (function-call UI in chat — show tool call + params + result in message bubbles)
 - [x] Integrate GM service into assistant flow (`TASK-wire-gm-service-story-mode.md`) — 2026-08-01
@@ -256,7 +256,7 @@ next sessions:
 
 - [x] Lore audience scoping — migration `028_lore_audience_scope`, resolver `src/assistant/lore/audience.ts`, `loreSection` identity + pre-filter; spec `docs/spec/lore.md` reconciled
 - [x] Per-viewer memory injection — `memorySection` provisions each participant against speaker as viewer; combined 1024-token budget, per-actor cap
-- [x] Chat-setup-templates (`IDEA-chat-setup-templates.md`) — seed + admin CRUD shipped (9619f259); `new-chat.html` selector UI still open (2026-08-03)
+- [x] Chat-setup-templates (`IDEA-chat-setup-templates.md`) — seed + admin CRUD shipped (9619f259) + `new-chat.html` selector (`new-chat.ts` fetches `/api/chat-setup-templates`) — 2026-08-05
 - [ ] Hardening: dedicated `memorySection` cross-actor integration test
 
 #### AUX LLM Wiring Fixes (2026-08-01 review → epic-aux-enrichment-pipeline M1-M6)
@@ -264,10 +264,10 @@ next sessions:
 Review of AUX LLM wirings (intent detection, moderation, emotion avatar) found
 latency + BYO-key + dead-role gaps. Actionable queue:
 
-- [ ] **M1 — Shared AUX runner** `src/aux-pipeline/runner.ts`: one policy (2s timeout, temp 0.0, maxTokens 100, apiKey via `resolveProvider`); migrate transition-classifier + `classifyIntent` + memory extraction
+- [ ] **M1 — Shared AUX runner** `src/aux-pipeline/runner.ts`: one policy (2s timeout, temp 0.0, maxTokens 100, apiKey via `resolveProvider`); migrate transition-classifier + memory extraction (LLM `classifyIntent` already wired in `auto-gen.ts:311`; fold it into the runner for the shared policy)
 - [ ] **M2 — Fix memory extraction**: real model instead of literal `"default"` (`as never` cast), drop dead `modelId`/dup `db` params (`src/memory/extraction.ts:60`)
 - [ ] **M3 — Dead model roles**: wire or remove `ModelRole.Moderation` + `ModelRole.Captioning` (no consumers today; caption-route uses main role)
-- [ ] **M4 — Consume emotion/mood hook events**: `emotion_change`/`mood_shift` `data` currently dropped (`auto-gen.ts:412-431`); wire avatar selection + `character_mood` writes, or remove hooks — UI side shipped (mood-panel emotion avatar generation, 2794e3d5); hook-event consumption still open
+- [x] **M4 — Consume emotion/mood hook events**: `emotion_change` → `dominantEmotion` stored on `messages.emotion` (`auto-gen.ts:449-451,516`) → frontend `avatarForMessage` binds it to an emotion avatar (`mood.ts:250-258`); `mood_shift` → `delta` applied via `MoodService.applyHappinessDelta` → `character_mood` write (`auto-gen.ts:526-539`). Story/GM path mirrors emotion extraction (`auto-gen.ts:926-953`). Hooks emit both events (hooks.test.ts, e2e-integration.test.ts). Verified 2026-08-05.
 - [ ] **M5 — ModerationHook safety**: word-boundary matching, severity, `recordAudit`, non-destructive suppression
 - [ ] **M6 — AUX telemetry**: record tokens/latency per AUX call
 - [ ] **Verification**: `bun run check && bun test src/chat/ src/memory/ src/generation/hooks/`
@@ -432,6 +432,43 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 4. **ComfyUI Integration**: Integrate ComfyUI node discovery and workflow template management.
 5. **Provider Ecosystem**: Add Anthropic, Ollama, and Bedrock provider support alongside existing OpenAI-compatible provider.
 
+## Post-P3 — Road to Happy 0.1.0 (2026-08-05)
+
+`package.json` already declares `version: 0.1.0`; `.plan/implementation-plan.md` release row "Tag v0.1.0" is ❌. "Happy 0.1.0" = Gate C **and** the release-hardening below all green, then a signed tag + release notes. This is the completion queue after P2/P3 feature work.
+
+### Definition of "happy"
+
+- **Gate C passed** — VN mode, chat, assistant+tool calling, GM flows, GM-guided story, auth/access, gallery usable (P2 priority tiers above)
+- **Gate D passed** — P3 advanced features operational (plugin ecosystem, three-tier memory, artifact, ComfyUI, provider ecosystem)
+- **`bun run check` 17/17 green** — today 15/17; the 2 red gates are **pre-existing debt**, not feature work (see below)
+- **e2e browser suite stable** — today 51/85; 34 failures = auth redirect-loop + page-load timeouts (peer auth WIP in flight); must be green without the loop
+- **No committed-state-only gates** — GM role runtime effect must be committed (currently working tree), not "it works locally"
+
+### Open → close (blocking release)
+
+- [ ] **Lint-ts debt** — ~261 errors / **291 pre-existing files** (unicorn/max-nested-calls 89, sonarjs/cognitive-complexity 68, require-await 45, prefer-dom-node-append 36). Refactor tickets; `lint-ts` gate → green (15/17 → 16/17)
+- [ ] **Size-strict debt** — 10 pre-existing files >250L (nsfw/battle/rpg) split or gate-exempt; → 17/17
+- [ ] **e2e browser stabilization** — kill the auth redirect-loop (`/views/login?redirect=<nested login>`), fix page-load timeouts; chat-create/chat-flow flakes while auth WIP in flight
+- [ ] **Unwired/leftover code close-out** — wire LoRA routes (`src/generation/lora/routes.ts`) or drop the module; remove dead `detectIntent`; fill swipe-variant placeholder via LLM pipeline (see backlog.md "Unwired Code" table)
+- [ ] **Release artifacts** — `docs/meta/release-process.md`, signed tag `v0.1.0`, changelog/release notes; branch workflow (`TASK-branch-workflow-dev-stg-master.md:3` marked Post-0.1.0 — dev→stg→master stays post-hoc, but the tag + release-process land now)
+
+### Hardening (do before tagging, not blockers)
+
+- [ ] `memorySection` cross-actor integration test (P2-C hardening row)
+- [ ] AUX queue M1–M6 (shared runner, memory-extraction real model, dead model roles, mood/emotion hook consumption, ModerationHook safety, AUX telemetry)
+- [ ] World timeline §5.3 forward-event steering + §5.4 cross-story convergence (cluster B greenfield)
+- [ ] Frontend gaps still open in P2-B/C/D/E/F tables (music linking, message search, chat transfer, party join/leave, quest-log UI, assistant↔GM reconciliation, tool-call display, MFA, encryption-access UI, avatar-gallery visibility inheritance)
+- [ ] `.plan/open-items.md` — referenced by backlog but missing; create or drop references
+
+### Ordering (proposed)
+
+1. Land the in-flight GM role runtime effect + its test (uncommitted)
+2. Close the 2 red `check` gates (lint-ts + size-strict) — biggest lever, 15/17 → 17/17
+3. Stabilize browser e2e (auth loop is the dominant 34/85 failure)
+4. Finish P2 feature tiers + AUX M1–M6 + world-timeline cluster
+5. P3 advanced features (Gate D)
+6. Post-P3 hardening → release-process + tag `v0.1.0`
+
 ---
 
 ## Milestone Gates
@@ -449,7 +486,7 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 
 - **P0 items are blocking** — no safe multi-instance deployment without Data Integrity Phase 1; no NSFW content without moderation infrastructure; no cross-system data integrity without Shared Schemas
 - **P2 emphasis**: VN mode → chat → assistant/tool calling → GM flows → GM-guided story creation → authorization/access → gallery. RPG mechanics deferred to P2-later.
-- **VN mode is the highest P2 priority** — backend (`src/story/`, 6 route files) exists; frontend page does not. Start with `src/frontend/pages/visual-novel.ts`.
+- **VN mode is complete (backend + frontend, 2026-07-31)** — `src/story/` (6 route files) + `src/frontend/vn/` scene renderer/portrait/transitions/templates; remaining VN work is `bun test src/story/` verification + gallery-in-scene inheritance.
 - **Chat system ties directly to assistant and GM flows** — implement in order: chat → assistant → GM → GM-guided story. Chat frontend has the most existing infrastructure (htmx + Alpine.js).
 - **Authorization + access are blocking** — no safe multi-user deployment without register route, MFA, and access checks. Backend `src/routes/auth.ts` and frontend login/register pages (`src/views/login.html`, `src/views/register.html`) are built; MFA and remaining access checks pending.
 - **Gallery** — frontend (`src/frontend/pages/gallery.ts`) **and** backend are both implemented: list/upload served by `assetRoutes` (`GET/POST /api/assets`), gallery page + HTMX grid/search served by `viewRoutes` (`/views/gallery`, `/dynamic/gallery/*`) in `elysia-app.ts`. No `src/routes/gallery.ts` needed — asset routes already cover it.
@@ -467,4 +504,4 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
   | `src/frontend/pages/gallery.ts`          | Gallery page with search, preview, download, delete, type filtering                                        | F           |
 - **Reconciliation complete** — backlog/roadmap now reflect actual implementation state (see `backlog.md`)
 - **Knowledge systems pair** — lore audience scoping + per-viewer memory injection shipped 2026-08-01 (see "Recent Wiring" table at top). Greenfield next: world timeline (`docs/spec/lore.md` §5) + event→lore promotion (§4) under `IDEA-memory-knowledge-isolation-and-world-timeline.md` (cluster B). Hardening: per-viewer `memorySection` cross-actor test.
-- **Chat-setup-templates** (`IDEA-chat-setup-templates.md`) — **open** idea, not built: validated `ChatCreateBody` presets + `chat_setup_templates` table/API + `new-chat.html` selector. Depends on the mode-enum fix (done, `BUG-chat-settings-modal-invalid-mode.md`) + the 3-axis `ChatMode`/`ResponseStyle` split (`.plan/design/chat-mode-reconciliation.md`).
+- **Chat-setup-templates** (`IDEA-chat-setup-templates.md`) — ✅ shipped 2026-08-05: validated `ChatCreateBody` presets + `chat_setup_templates` table/API + `new-chat.html` selector (`new-chat.ts:29-67`).

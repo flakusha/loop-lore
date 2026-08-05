@@ -776,7 +776,7 @@ Expand the provider system to cover all major local and remote inference platfor
 | Auto-start expansion (Ollama, vLLM, SGLang)     | `FEAT-096` | High   |
 | Provider usage cost tracking                    | `FEAT-097` | Medium |
 
-Detail: `docs/meta/external-integrations-plan.md`
+Detail: `.plan/external-integrations-plan.md`
 
 Issue: `EPIC-046`.
 

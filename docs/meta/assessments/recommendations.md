@@ -77,5 +77,5 @@ cost)**.
 - Grounding accuracy (% claims supported by retrieved context, via #10)
 - Time-to-first-agent: from install to a working research/KB agent
 
-_Reintegrate as: input to `docs/meta/roadmap.md` (new "Agentic / Business" track)
+_Reintegrate as: input to `.plan/roadmaps/roadmap.md` (new "Agentic / Business" track)
 and `.plan/backlog.md`._
