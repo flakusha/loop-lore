@@ -154,7 +154,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/export`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ includeTraits: false, }),
+          body: JSON.stringify({ includeTraits: false, },),
         },),
       );
       expect(res.status,).toBe(200,);
@@ -197,7 +197,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ characterId: actorId, }),
+          body: JSON.stringify({ characterId: actorId, },),
         },),
       );
       expect(res.status,).toBe(400,);
@@ -209,7 +209,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ version: "1.0", }),
+          body: JSON.stringify({ version: "1.0", },),
         },),
       );
       expect(res.status,).toBe(401,);
@@ -328,7 +328,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/import/url`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ url: "ftp://example.com/data.json", }),
+          body: JSON.stringify({ url: "ftp://example.com/data.json", },),
         },),
       );
       expect(res.status,).toBe(400,);
@@ -340,7 +340,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/import/url`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ url: "http://169.254.169.254/meta", }),
+          body: JSON.stringify({ url: "http://169.254.169.254/meta", },),
         },),
       );
       expect(res.status,).toBe(400,);
@@ -352,7 +352,7 @@ describe("characterIoRoutes", () => {
         new Request(`http://localhost/api/actors/${actorId}/systems/import/url`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ url: "https://example.com/data.json", }),
+          body: JSON.stringify({ url: "https://example.com/data.json", },),
         },),
       );
       expect(res.status,).toBe(401,);
@@ -375,7 +375,7 @@ describe("characterIoRoutes", () => {
           new Request(`http://localhost/api/actors/${actorId}/systems/import/url`, {
             method: "POST",
             headers: { "Content-Type": "application/json", },
-            body: JSON.stringify({ url: "https://data.example.com/char.json", }),
+            body: JSON.stringify({ url: "https://data.example.com/char.json", },),
           },),
         );
         expect(res.status,).toBe(201,);
@@ -388,14 +388,14 @@ describe("characterIoRoutes", () => {
     });
 
     test("returns 400 when the remote fetch fails", async () => {
-      mockFetch(() => new Response("not found", { status: 404, },),);
+      mockFetch(() => new Response("not found", { status: 404, },));
       try {
         const app = createIoApp(db, ownerId,);
         const res = await app.handle(
           new Request(`http://localhost/api/actors/${actorId}/systems/import/url`, {
             method: "POST",
             headers: { "Content-Type": "application/json", },
-            body: JSON.stringify({ url: "https://data.example.com/missing.json", }),
+            body: JSON.stringify({ url: "https://data.example.com/missing.json", },),
           },),
         );
         expect(res.status,).toBe(400,);
