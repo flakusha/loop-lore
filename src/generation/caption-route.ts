@@ -3,7 +3,9 @@
  *
  * Resolves the configured `captioning` model role (DB override → config →
  * default provider) and calls it with BYO apiKey parity, mirroring the shared
- * AUX resolution path. Absent a captioning role, falls back to the default
+ * AUX resolution path. The explicit `captioning` role takes precedence; absent
+ * an explicit captioning assignment it falls back to an explicitly configured
+ * `main` model (the typical multimodal-capable choice), then the default
  * provider so captioning remains available in minimal setups.
  */
 import { resolveModelRole, } from "../admin/model-roles";
