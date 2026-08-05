@@ -3,6 +3,24 @@
 **Created:** 2026-07-27
 **Purpose:** Audit and document cross-system integration points across all RPG sub-system epics. Identifies gaps where two systems should interact but neither epic references the other.
 
+## 0.1.0 Alignment (2026-08-05)
+
+> **Priority mapping**: the 17 RPG sub-systems below (and their integration gaps G1–G17) are **P6+ deferred** under the 0.1.0 value alignment (see `backlog.md` `## P6+`) — none block P3–P5. The **NSFW** system is the sole exception: NSFW is a **P3/P4 0.1.0 value feature** (features/prompting/opt-in/sfw-nsfw caps). Its matrix gaps are **cross-enhancements with deferred siblings**:
+>
+> - **G6 NSFW↔Housing**, **G7 NSFW↔Weather**, **G8 NSFW↔Social** (seduction/reputation prerequisite) — blocked on their P6+ peers; do NOT gate 0.1.0. NSFW's standalone runtime config + live enforcement is already shipped (P0/P1).
+> - **G9 NSFW↔Disease** (reproductive health) — P6+, not 0.1.0.
+>
+> **What does block P3–P5 (0.1.0 cross-integrations, outside this RPG matrix)** — these are tracked in `backlog.md` P4/P5 and `immediate.md` P4/P5:
+>
+> - NSFW × chat (opt-in + sfw/nsfw capability toggles at chat/generation boundary)
+> - gallery/assets × chat (in-chat asset preview + linkage side panel, P4/P5)
+> - IO × character/world/location/story (export/import wiring, P4/P5)
+> - LLM support × chat/captioning/intent/embeddings (P3 #15)
+> - assistant tooling × character/world/location/item/image creation wizards (P4)
+> - memory + template injection × chat (P4 — high priority)
+>
+> Revisit G1–G17 when P6+ RPG work starts; the resolution-system gap (G5) is the highest-impact one for a future unified dice layer.
+
 ## Integration Matrix
 
 Legend:

@@ -4,16 +4,16 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 
 ## Directory Structure
 
-| Folder                            | Purpose                                   | Count |
-| --------------------------------- | ----------------------------------------- | ----- |
-| `tickets/`                        | Task specs (authoring, review, iteration) | 112   |
-| `epics/`                          | Epic definitions (major initiatives)      | 57    |
-| `roadmaps/`                       | Implementation roadmaps                   | 5     |
-| `research/`                       | Research artifacts, landscape analysis    | 2     |
-| `implementation-plan.md`          | Active implementation checklist (v0.1)    | 1     |
-| `future-features-plan.md`         | Full planned feature list                 | 1     |
-| `external-integrations-plan.md`   | External integrations roadmap             | 1     |
-| `epics-index.md`                  | Epic registry index                       | 1     |
+| Folder                          | Purpose                                   | Count |
+| ------------------------------- | ----------------------------------------- | ----- |
+| `tickets/`                      | Task specs (authoring, review, iteration) | 112   |
+| `epics/`                        | Epic definitions (major initiatives)      | 57    |
+| `roadmaps/`                     | Implementation roadmaps                   | 5     |
+| `research/`                     | Research artifacts, landscape analysis    | 2     |
+| `implementation-plan.md`        | Active implementation checklist (v0.1)    | 1     |
+| `future-features-plan.md`       | Full planned feature list                 | 1     |
+| `external-integrations-plan.md` | External integrations roadmap             | 1     |
+| `epics-index.md`                | Epic registry index                       | 1     |
 
 > Note: `roadmaps/roadmap.md` is the master roadmap; the root-level planning docs above were relocated into `.plan/` alongside the existing folders.
 
