@@ -249,10 +249,7 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 
 Project planning, reviews, analysis, and research.
 
-| Document                                     | Topics                       |
-| -------------------------------------------- | ---------------------------- |
-| [`meta/plan.md`](./meta/plan.md)             | MVP implementation checklist |
-| [`meta/roadmap.md`](./meta/roadmap.md)       | Long-term feature roadmap    |
+"72: @theirs\n73: @theirs"
 
 ### Reviews (`meta/reviews/`)
 

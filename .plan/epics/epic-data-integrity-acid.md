@@ -128,7 +128,7 @@ The integrity contract is implicit and partly unenforced:
 - Epic 25 (Deployment Topologies) — consumes guards
 - Epic 26 (Multi-Instance Reconciliation) — leadership/drift
 - `docs/spec/architecture.md` — stale MySQL claim
-- `docs/meta/plan.md` — epic registry
+- `.plan/implementation-plan.md` — epic registry
 
 ## Related Epics
 

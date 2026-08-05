@@ -131,4 +131,4 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 - `docs/frontend/encryption.md` — frontend UX, pipeline spec, key management
 - `src/crypto/index.ts` — barrel exports
 - `src/db/schema-core.ts` — `actor_keys`, `messages.key_id`
-- `docs/meta/plan.md` §17 — encryption foundation tasks
+- `.plan/implementation-plan.md` §17 — encryption foundation tasks

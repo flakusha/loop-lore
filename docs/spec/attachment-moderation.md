@@ -153,13 +153,6 @@ Beyond the existing `metadata.ts` (PNG/JPEG/WebP/GIF header parsing), extend wit
 
 `docs/spec/assets.md` line 86 defines "256px thumbnail WebP" as a processing step, but no code generates thumbnails. The `AssetRecord` has `width`/`height` but no `thumbnail_path` field.
 
-### Implementation Plan
-
-1. Add `thumbnail_path` column to `assets` table via migration
-2. Generate 256px WebP thumbnails during background processing (step 4a in assets.md)
-3. Serve thumbnails via `/api/assets/:id/thumb` endpoint
-4. Use thumbnails in moderation review queue and gallery UI
-
 ## 7. Spec ↔ Code Alignment
 
 | Concern              | Spec         | Code                               | Gap                            |

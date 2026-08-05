@@ -12,7 +12,7 @@ Enable draft/alternative flows via tree-structured message history. Allows users
 
 ## Reference
 
-- Future features plan: `docs/meta/future-features-plan.md` (Tier 2)
+- Future features plan: `.plan/future-features-plan.md` (Tier 2)
 
 ## Features
 

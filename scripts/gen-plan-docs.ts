@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 /**
- * Generate docs/meta/epics.md — consolidated epic index from .plan/epics/.
+ * Generate .plan/epics-index.md — consolidated epic index from .plan/epics/.
  *
  * Reads all .plan/epics/epic-*.md files, extracts status/priority/title from
- * frontmatter-like headers, and generates a VitePress-compatible markdown page
- * with per-epic sections and a summary table.
+ * frontmatter-like headers, and generates a markdown index with per-epic
+ * sections and a summary table.
  *
  * Usage: bun run scripts/gen-plan-docs.ts
  */
@@ -14,7 +14,7 @@ import { join, } from "node:path";
 const ROOT = process.cwd();
 const EPICS_DIR = join(ROOT, ".plan/epics",);
 const BACKLOG = join(ROOT, ".plan/backlog.md",);
-const OUT_EPICS = join(ROOT, "docs/meta/epics.md",);
+const OUT_EPICS = join(ROOT, ".plan/epics-index.md",);
 
 interface Epic {
   file: string;
@@ -98,7 +98,7 @@ epics.sort((a, b,) => {
 // Build markdown
 let md = "# Epics Index\n\n";
 md += "> Auto-generated from `.plan/epics/`. Do not edit manually.\n";
-md += "> Regenerate with `bun run docs:gen`.\n\n";
+md += "> Regenerate with `bun run scripts/gen-plan-docs.ts`.\n\n";
 md += `**Total:** ${epics.length} epics\n\n`;
 
 // Summary table

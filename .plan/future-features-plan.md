@@ -161,10 +161,10 @@ Not in any feature — enterprise blockers for agentic workspace:
 
 ## Cross-References
 
-- `docs/meta/plan.md` — active v0.1 checklist
-- `docs/meta/roadmap.md` — full roadmap with all planned features
+- `.plan/implementation-plan.md` — active v0.1 checklist
+- `.plan/roadmaps/roadmap.md` — full roadmap with all planned features
 - `.plan/backlog.md` — deferred queue
-- `docs/ideas/` — 34 ideas across 8 themes
-- `docs/meta/assessments/feature-analysis.md` — business relevance analysis
+- `/docs/ideas/` — 34 ideas across 8 themes
+- `/docs/meta/assessments/feature-analysis.md` — business relevance analysis
 - `docs/spec/api-versioning.md` — API versioning spec
 - `docs/spec/db-versioning.md` — DB versioning spec
