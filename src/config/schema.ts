@@ -511,8 +511,6 @@ interface GenerationConfig {
     auxiliary?: ModelRoleAssignment;
     /** Vision/LM model for captioning */
     captioning?: ModelRoleAssignment;
-    /** Content moderation/censoring model */
-    moderation?: ModelRoleAssignment;
   };
   /** Regex transforms applied to LLM output before display */
   regexTransforms?: RegexTransform[];
