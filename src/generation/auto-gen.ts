@@ -247,6 +247,20 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       return;
     }
 
+    // ── GM role runtime effect ─────────────────────────────────────
+    // The chat's `assistantRole` (from `chats.gm_config`, set via the role
+    // dropdown in chat settings) is stored but until now had no backend
+    // effect outside story mode. For `"gm"` role we branch the assembled
+    // prompt's system message onto the config-driven GM prompt so the
+    // character responds in a GM/narrator voice. Other roles fall through
+    // to the normal assistant/character prompt.
+    const assistantRole = chat?.gm_config
+      ? jsonParseOr<{ assistantRole?: "off" | "helper" | "gm" | "moderator" }>(chat.gm_config, {},).assistantRole
+      : undefined;
+    const systemPromptOverride = assistantRole === "gm"
+      ? resolveSystemPrompt(config.templates.llm, "gm",)
+      : undefined;
+
     let characterId: string;
     let characterName: string;
 
@@ -305,6 +319,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       modelId: resolved.resolvedModel,
       groupParticipantIds,
       config,
+      systemPromptOverride,
     },);
     log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
