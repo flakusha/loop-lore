@@ -106,7 +106,7 @@ export function generationRoutes({ database, config, }: { database: Kysely<DB>; 
   app.post("/api/generation/caption", async (ctx,) => {
     const body = await parseJsonBody(ctx.request,);
     if (body instanceof Response) { return body; }
-    return handleImageCaption(body,);
+    return handleImageCaption(body, (ctx as any).userId,);
   },);
 
   app.post("/api/generation/test-connection", async (ctx,) => {
