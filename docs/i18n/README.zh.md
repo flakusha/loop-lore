@@ -106,7 +106,7 @@ bun run tui
 - `docs/users-sessions.md` — 用户角色和会话管理
 - `docs/messages.md` — 消息系统和详情级别
 - `docs/build-deploy.md` — 构建和部署
-- `docs/meta/plan.md` — 未来功能和改进
+- `.plan/implementation-plan.md` — 未来功能和改进
 
 ---
 

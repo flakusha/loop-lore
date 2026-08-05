@@ -12,7 +12,7 @@ Conversation analytics and observability dashboard. Covers per-chat cost trackin
 
 ## Reference
 
-- Future features plan: `docs/meta/future-features-plan.md` (Tier 2)
+- Future features plan: `.plan/future-features-plan.md` (Tier 2)
 
 ## Features
 

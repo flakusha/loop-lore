@@ -203,7 +203,7 @@ process.on("SIGTERM", async () => {
 - `src/routes/health.ts` — health endpoints (Phase 4)
 - Epic 25 (Deployment Topologies) — consumes these guards
 - Epic 27 (Data Integrity & ACID) — backend selection guards
-- `docs/meta/plan.md` — epic registry
+- `.plan/implementation-plan.md` — epic registry
 
 ## Related Epics
 
