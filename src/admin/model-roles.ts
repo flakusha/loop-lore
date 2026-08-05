@@ -18,7 +18,6 @@ export const VALID_ROLES = [
   ModelRole.Main,
   ModelRole.Auxiliary,
   ModelRole.Captioning,
-  ModelRole.Moderation,
 ] as const;
 
 export interface ResolvedModelRole {

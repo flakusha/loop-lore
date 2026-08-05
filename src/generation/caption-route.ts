@@ -1,7 +1,17 @@
+/**
+ * Image caption generation route handler.
+ *
+ * Resolves the configured `captioning` model role (DB override → config →
+ * default provider) and calls it with BYO apiKey parity, mirroring the shared
+ * AUX resolution path. Absent a captioning role, falls back to the default
+ * provider so captioning remains available in minimal setups.
+ */
+import { resolveModelRole, } from "../admin/model-roles";
 import { getAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";
+import { ModelRole, } from "../db/enums-core";
 import { getDatabase, } from "../db/index";
-import { resolveProvider, } from "./providers/registry";
+import { getProvider, resolveProvider, } from "./providers/registry";
 import type { GenerateRequest, } from "./providers/types";
 
 interface CaptionBody {
@@ -10,7 +20,7 @@ interface CaptionBody {
   assetIds: string[];
 }
 
-export async function handleImageCaption(body: unknown,): Promise<Response> {
+export async function handleImageCaption(body: unknown, userId?: string,): Promise<Response> {
   const req = body as CaptionBody;
 
   if (!req.assetIds || req.assetIds.length === 0) {
@@ -19,6 +29,32 @@ export async function handleImageCaption(body: unknown,): Promise<Response> {
 
   const config = loadConfig();
   const db = getDatabase();
+
+  // Resolve the captioning model role → provider/model (DB override → config → default).
+  const role = await resolveModelRole(ModelRole.Captioning, config, db,);
+  if (!role.provider || !role.model) {
+    return Response.json({ error: "No captioning model configured", status: 503, }, { status: 503, },);
+  }
+
+  // BYO apiKey parity: user key → server default.
+  let apiKey: string | undefined;
+  try {
+    const resolved = await resolveProvider({
+      provider: role.provider,
+      model: role.model,
+      userId,
+      config,
+      db,
+    },);
+    apiKey = resolved.resolvedApiKey;
+  } catch {
+    // Non-fatal — fall back to the provider instance's configured key.
+  }
+
+  const provider = getProvider(role.provider,);
+  if (!provider) {
+    return Response.json({ error: "Captioning provider unavailable", status: 503, }, { status: 503, },);
+  }
 
   const captions: { assetId: string; caption: string }[] = [];
 
@@ -35,10 +71,8 @@ export async function handleImageCaption(body: unknown,): Promise<Response> {
       `Describe this image briefly for accessibility purposes. The image filename is "${asset.filename}".`;
 
     try {
-      const resolved = await resolveProvider({ config, },);
-
       const genReq: GenerateRequest = {
-        model: resolved.resolvedModel,
+        model: role.model,
         messages: [
           { role: "system", content: systemPrompt, },
           { role: "user", content: userPrompt, },
@@ -46,7 +80,7 @@ export async function handleImageCaption(body: unknown,): Promise<Response> {
         params: { maxTokens: 128, temperature: 0.3, },
       };
 
-      const result = await resolved.provider.complete(genReq,);
+      const result = await provider.complete({ ...genReq, apiKey, },);
       const caption = result.content.replaceAll(/^["']|["']$/g, "",).trim().replaceAll(/<[^>]*>/g, "",).slice(0, 500,);
 
       await db.updateTable("assets",).set({ alt_text: caption, },).where("id", "=", assetId,).execute();
