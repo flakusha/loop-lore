@@ -8,7 +8,7 @@
 **Related**: IDEA-chat-setup-templates, .plan/design/chat-template-config-lifecycle.md,
 .plan/design/chat-mode-reconciliation.md, BUG-chat-settings-modal-invalid-mode,
 FEAT-message-swipe-replay-branch, .plan/design/prompt-template-registry.md
-(distinct domain: chat *setup* template binding vs LLM *prompt text* registry — do not conflate)
+(distinct domain: chat _setup_ template binding vs LLM _prompt text_ registry — do not conflate)
 
 ## Description
 
