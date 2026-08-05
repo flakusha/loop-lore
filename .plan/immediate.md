@@ -246,10 +246,10 @@ next sessions:
 Review of AUX LLM wirings (intent detection, moderation, emotion avatar) found
 latency + BYO-key + dead-role gaps. Actionable queue:
 
-- [ ] **M1 — Shared AUX runner** `src/aux-pipeline/runner.ts`: one policy (2s timeout, temp 0.0, maxTokens 100, apiKey via `resolveProvider`); migrate transition-classifier + memory extraction (LLM `classifyIntent` already wired in `auto-gen.ts:311`; fold it into the runner for the shared policy)
-- [ ] **M2 — Fix memory extraction**: real model instead of literal `"default"` (`as never` cast), drop dead `modelId`/dup `db` params (`src/memory/extraction.ts:60`)
-- [ ] **M3 — Dead model roles**: wire or remove `ModelRole.Moderation` + `ModelRole.Captioning` (no consumers today; caption-route uses main role)
-- [x] **M4 — Consume emotion/mood hook events**: `emotion_change` → `dominantEmotion` stored on `messages.emotion` (`auto-gen.ts:449-451,516`) → frontend `avatarForMessage` binds it to an emotion avatar (`mood.ts:250-258`); `mood_shift` → `delta` applied via `MoodService.applyHappinessDelta` → `character_mood` write (`auto-gen.ts:526-539`). Story/GM path mirrors emotion extraction (`auto-gen.ts:926-953`). Hooks emit both events (hooks.test.ts, e2e-integration.test.ts). Verified 2026-08-05.
+- [x] **M1 — Shared AUX runner** `src/aux-pipeline/runner.ts`: one policy (2s timeout, temp 0.0, maxTokens 100, apiKey via `resolveProvider`); transition-classifier + memory extraction + LLM `classifyIntent` (`auto-gen.ts:311`) all route through `callAux` — already shipped; no action needed (verified 2026-08-05)
+- [x] **M2 — Fix memory extraction**: real model instead of literal `"default"` (`as never` cast), drop dead `modelId`/dup `db` params (`src/memory/extraction.ts`) — already shipped; no action needed (verified 2026-08-05)
+- [x] **M3 — Dead model roles**: `ModelRole.Captioning` wired into `/caption` via `resolveModelRole` + `resolveProvider` BYO (caption-route, commit `8f8c0abb`, precedence `150ce79b`); `ModelRole.Moderation` removed from `VALID_ROLES` + config + dead `ModelRoleSchema` (kept in DB enum)
+- [x] **M4 — Consume emotion/mood hook events**: `emotion_change` → `dominantEmotion` stored on `messages.emotion` (`auto-gen.ts:449-451,516`) → frontend `avatarForMessage` binds it to an emotion avatar (`mood.ts:250-258`); `mood_shift` → `delta` applied via `MoodService.applyHappinessDelta` → `character_mood` write (`auto-gen.ts:526-539`). Story/GM path mirrors emotion extraction (`auto-gen.ts:926-953`). Happy-path test added `auto-gen-emotion-avatar.test.ts` (emotion binding + mood persistence + no-hook null). Verified 2026-08-05.
 - [ ] **M5 — ModerationHook safety**: word-boundary matching, severity, `recordAudit`, non-destructive suppression
 - [ ] **M6 — AUX telemetry**: record tokens/latency per AUX call
 - [ ] **Verification**: `bun run check && bun test src/chat/ src/memory/ src/generation/hooks/`
