@@ -144,13 +144,6 @@ export const ItemCategorySchema = t.UnionEnum([
   "other",
 ],);
 export const ItemRaritySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary", "unique",],);
-export const ModelRoleSchema = t.UnionEnum([
-  "main",
-  "captioning",
-  "moderation",
-  "embeddings",
-  "summarization",
-],);
 
 // ── Chat routes ────────────────────────────────────────────
 
