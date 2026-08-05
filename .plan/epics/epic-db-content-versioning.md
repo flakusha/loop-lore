@@ -13,7 +13,7 @@ Track DB schema version, content format versions, fix migration gaps. Ensures th
 ## Reference
 
 - Spec: `docs/spec/db-versioning.md`
-- Future features plan: `docs/meta/future-features-plan.md` (Tier 2)
+- Future features plan: `.plan/future-features-plan.md` (Tier 2)
 
 ## Features
 

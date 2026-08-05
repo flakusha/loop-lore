@@ -109,7 +109,7 @@ bun run tui
 - `docs/users-sessions.md` — Roles de usuario y gestión de sesiones
 - `docs/messages.md` — Sistema de mensajes y niveles de detalle
 - `docs/build-deploy.md` — Build y despliegue
-- `docs/meta/plan.md` — Funcionalidades futuras y mejoras
+- `.plan/implementation-plan.md` — Funcionalidades futuras y mejoras
 
 ---
 

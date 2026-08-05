@@ -13,7 +13,7 @@ Wire up registered-but-unwired plugin extension points. The plugin system has ty
 ## Reference
 
 - Spec: `docs/spec/plugin-system.md`
-- Future features plan: `docs/meta/future-features-plan.md` (Tier 2)
+- Future features plan: `.plan/future-features-plan.md` (Tier 2)
 
 ## Features
 
