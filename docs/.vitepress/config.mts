@@ -27,7 +27,6 @@ export default defineConfig({
       { text: 'Specs', link: '/spec/architecture', activeMatch: '/spec/' },
       { text: 'Frontend', link: '/frontend/overview', activeMatch: '/frontend/' },
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
-      { text: 'Roadmap', link: '/meta/roadmap' },
       { text: 'Ideas', link: '/ideas/', activeMatch: '/ideas/' },
       { text: 'GitHub', link: 'https://github.com/flakusha/loop-lore' },
     ],
@@ -180,8 +179,6 @@ export default defineConfig({
           text: 'Planning',
           collapsed: false,
           items: [
-            { text: 'MVP Plan', link: '/meta/plan' },
-            { text: 'Roadmap', link: '/meta/roadmap' },
             { text: 'Workflow', link: '/meta/workflow' },
           ],
         },

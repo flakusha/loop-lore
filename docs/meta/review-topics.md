@@ -450,7 +450,7 @@
 ### 4. Stale References
 
 - `docs/spec/character-spec.md` is superseded by `docs/spec/character-spec.md` — should be archived or deleted
-- `docs/meta/plan.md` references epics that have been renamed or restructured
+- `.plan/implementation-plan.md` references epics that have been renamed or restructured
 - Several `.plan/tickets/` files reference epics that don't exist or have been split
 
 ---
@@ -484,4 +484,4 @@
 1. Archive `docs/spec/character-spec.md`
 2. Reconcile all cross-references between specs and epics
 3. Update `.plan/tickets/index.json` to reflect current state
-4. Update `docs/meta/plan.md` to reflect current epic numbering
+4. Update `.plan/implementation-plan.md` to reflect current epic numbering
