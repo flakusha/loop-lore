@@ -43,8 +43,8 @@ const ccv2Card = JSON.stringify({
     mes_example: "Example dialogue",
     creator: "test-suite",
     character_version: "1.5",
-    alternate_greetings: ["Alternative greeting"],
-    tags: ["ranger", "demo"],
+    alternate_greetings: ["Alternative greeting",],
+    tags: ["ranger", "demo",],
   },
 },);
 
