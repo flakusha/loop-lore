@@ -1,5 +1,6 @@
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
+import { worldItems, } from "./world-items";
 import { worldLocations, } from "./world-locations";
 
 const log = rootLog.child({ module: "world-edit", },);
@@ -14,6 +15,7 @@ const log = rootLog.child({ module: "world-edit", },);
     error: false,
     saving: false,
     ...worldLocations,
+    ...worldItems,
 
     init() {
       const match = /\/worlds\/([\w-]+)\/edit/.exec(location.pathname,);
