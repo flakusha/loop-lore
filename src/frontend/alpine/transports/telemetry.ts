@@ -27,10 +27,10 @@ export const MIN_TELEMETRY_LEVEL = 30;
  * Low-level (info/debug) event names that are deliberate, curated telemetry.
  * Anything else below MIN_TELEMETRY_LEVEL is dropped as control-flow chatter.
  */
-export const CURATED_EVENTS: Set<string> = new Set(["frontend.page_view",]);
+export const CURATED_EVENTS: Set<string> = new Set<string>(["frontend.page_view",],);
 
 /** Per-instance (per-session) cap, guarding against a future enqueue bug. */
-export const MAX_EVENTS_PER_SESSION = 1_000;
+export const MAX_EVENTS_PER_SESSION = 1000;
 
 export class TelemetryTransport implements Transport {
   readonly name = "telemetry";
@@ -46,7 +46,7 @@ export class TelemetryTransport implements Transport {
     const eventType = typeof entry.message === "string" ? entry.message : "log";
 
     // Curated gate: drop control-flow logs that aren't intentional telemetry.
-    if (entry.level < MIN_TELEMETRY_LEVEL && !CURATED_EVENTS.has(eventType)) {
+    if (entry.level < MIN_TELEMETRY_LEVEL && !CURATED_EVENTS.has(eventType,)) {
       return Promise.resolve();
     }
     if (this.sent >= MAX_EVENTS_PER_SESSION) {
@@ -85,7 +85,9 @@ export class TelemetryTransport implements Transport {
         keepalive: true,
         handle401: false,
         timeout: 10_000,
-      },).catch(() => {},);
+      },).catch(() => {
+        /* fire-and-forget — beacon fallback failure is non-critical */
+      },);
     }
 
     return Promise.resolve();
