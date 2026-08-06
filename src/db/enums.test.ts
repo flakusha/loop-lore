@@ -73,12 +73,14 @@ describe("enum barrel", () => {
       const enumObj = (enums as any)[name];
       expect(enumObj,).toBeDefined();
       const actualValues = Object.values(enumObj as Record<string, string>,);
-      expect(actualValues.sort(),).toEqual([...expectedValues,].sort(),);
+      expect(actualValues.sort((a, b,) => a.localeCompare(b,)),).toEqual(
+        [...expectedValues,].sort((a, b,) => a.localeCompare(b,)),
+      );
     });
   }
 
   test("all expected enums are present in barrel", () => {
-    const expectedNames = Object.keys(EXPECTED_ENUMS,).sort();
+    const expectedNames = Object.keys(EXPECTED_ENUMS,).sort((a, b,) => a.localeCompare(b,));
     const actualNames = Object.keys(enums,).filter(
       (k,) =>
         !k.endsWith("Machine",) &&

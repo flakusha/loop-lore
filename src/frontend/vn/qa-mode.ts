@@ -72,8 +72,7 @@ export function runQaCheck(
 ): VnQaReport {
   const issues: VnQaIssue[] = [];
 
-  for (let i = 0; i < scenes.length; i++) {
-    const scene = scenes[i];
+  for (const [i, scene,] of scenes.entries()) {
     if (scene) {
       issues.push(...validateScene(scene, i,),);
     }
@@ -81,9 +80,8 @@ export function runQaCheck(
 
   // Check for long consecutive narration (potential pacing issue)
   let consecutiveNarration = 0;
-  for (let i = 0; i < scenes.length; i++) {
-    const scene = scenes[i];
-    if (scene && scene.role === "narration") {
+  for (const [i, scene,] of scenes.entries()) {
+    if (scene?.role === "narration") {
       consecutiveNarration++;
       if (consecutiveNarration >= 3) {
         issues.push({
@@ -101,7 +99,7 @@ export function runQaCheck(
   return {
     totalScenes: scenes.length,
     issues,
-    passed: !issues.some((i,) => i.severity === "error"),
+    passed: issues.every((i,) => i.severity !== "error"),
   };
 }
 
@@ -111,17 +109,17 @@ export function renderQaReport(
   report: VnQaReport,
   container: HTMLElement,
 ): void {
-  container.innerHTML = "";
+  container.replaceChildren();
 
   const header = document.createElement("h3",);
   header.textContent = `QA Report: ${report.totalScenes} scenes`;
-  container.appendChild(header,);
+  container.append(header,);
 
   if (report.passed) {
     const passEl = document.createElement("div",);
     passEl.className = "vn-qa-pass";
     passEl.textContent = "All checks passed";
-    container.appendChild(passEl,);
+    container.append(passEl,);
   }
 
   const issueList = document.createElement("ul",);
@@ -131,8 +129,8 @@ export function renderQaReport(
     const item = document.createElement("li",);
     item.className = `vn-qa-issue vn-qa-${issue.severity}`;
     item.textContent = `[Scene ${issue.sceneIndex + 1}] ${issue.message}`;
-    issueList.appendChild(item,);
+    issueList.append(item,);
   }
 
-  container.appendChild(issueList,);
+  container.append(issueList,);
 }

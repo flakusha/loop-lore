@@ -28,7 +28,7 @@ let activeResolve: (() => void) | null = null;
  * Check if user prefers reduced motion.
  */
 function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)",).matches;
+  return globalThis.matchMedia("(prefers-reduced-motion: reduce)",).matches;
 }
 
 /**

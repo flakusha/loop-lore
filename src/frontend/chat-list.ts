@@ -5,9 +5,11 @@
  * Chat list page — loads world names for the filter dropdown.
  * Extracted from src/views/chat-list.html inline script.
  */
+import { feFetch, } from "./fe-fetch";
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("/api/worlds?pageSize=200",);
+    const res = await feFetch("/api/worlds?pageSize=200",);
     if (!res.ok) { return; }
     const body = await res.json();
     const worlds = body.data ?? [];

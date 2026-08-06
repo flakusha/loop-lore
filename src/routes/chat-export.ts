@@ -274,10 +274,9 @@ export function chatExportRoutes(opts: HandlerOpts,) {
       const smk = getSmk();
       const messages: MessageData[] = [];
       for (const row of rows) {
-        let content = row.content;
-        if (row.key_id && smk) {
-          content = await decryptMessageContent(database, row, smk,);
-        }
+        const content = row.key_id && smk
+          ? await decryptMessageContent(database, row, smk,)
+          : row.content;
         messages.push({
           id: row.id,
           content,

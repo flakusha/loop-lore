@@ -6,7 +6,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { AvatarService, } from "../services/avatar-service";
 import { MoodService, } from "../services/mood-service";
 import { RelationshipsService, } from "../services/relationships-service";
@@ -158,5 +158,6 @@ export async function exportCharacterSystemsJson(
   worldId?: string,
 ): Promise<string> {
   const exportData = await exportCharacterSystems(db, actorId, worldId,);
-  return JSON.stringify(exportData, null, 2,);
+  const json = safeJsonStringify(exportData, 2,);
+  return json.ok ? json.value : "{}";
 }

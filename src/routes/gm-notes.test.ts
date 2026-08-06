@@ -85,7 +85,7 @@ describe("gmNotesRoutes", () => {
     const app = makeApp(db, "other-1",);
 
     const res = await app.handle(
-      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`, { method: "GET", },),
+      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`,),
     );
     expect(res.status,).toBe(403,);
   });
@@ -108,7 +108,7 @@ describe("gmNotesRoutes", () => {
 
     // List
     const listed = await app.handle(
-      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`, { method: "GET", },),
+      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`,),
     );
     expect(listed.status,).toBe(200,);
     const list = await getJson<{ items: { id: string; revealed: number; content: string }[]; total: number }>(listed,);
@@ -126,7 +126,7 @@ describe("gmNotesRoutes", () => {
 
     const after = await getJson<{ items: { revealed: number }[] }>(
       await app.handle(
-        new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`, { method: "GET", },),
+        new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`,),
       ),
     );
     expect(after.items[0]!.revealed,).toBe(1,);
@@ -165,7 +165,7 @@ describe("gmNotesRoutes", () => {
     }
 
     const listed = await app.handle(
-      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`, { method: "GET", },),
+      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`,),
     );
     const list = await getJson<{ items: { priority: number; content: string }[] }>(listed,);
     expect(list.items[0]!.content,).toBe("High priority.",);
@@ -200,7 +200,7 @@ describe("gmNotesRoutes", () => {
     const app = makeApp(db, "owner-1",);
 
     const unknownChat = await app.handle(
-      new Request(`${BASE}/api/chats/00000000-0000-4000-8000-000000000000/whitenotes`, { method: "GET", },),
+      new Request(`${BASE}/api/chats/00000000-0000-4000-8000-000000000000/whitenotes`,),
     );
     expect(unknownChat.status,).toBe(403,); // checkChatAccess maps missing chat → forbidden
 

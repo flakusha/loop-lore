@@ -11,7 +11,7 @@ import { getMinimalPng, insertCharacterDataIntoPng, } from "../characters/stegan
 import { ActorType, AgentType, } from "../db/enums";
 import { updateWithVersionCheck, } from "../db/optimistic-locking";
 import type { DB, } from "../db/schema";
-import { jsonParseOr, safeJsonStringify, uid, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, safeJsonStringify, uid, } from "../utils";
 import {
   ActorCreateBody,
   ActorIdParams,
@@ -97,7 +97,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
 
         const id = uid();
         const parsedTags = tags ? tags.split(",",).map((t: string,) => t.trim()).filter(Boolean,) : [];
-        const settings = parsedTags.length > 0 ? JSON.stringify({ tags: parsedTags, },) : "{}";
+        const settings = parsedTags.length > 0 ? jsonStringifyOr({ tags: parsedTags, },) : "{}";
         await database
           .insertInto("actors",)
           .values({

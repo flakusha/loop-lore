@@ -17,6 +17,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { jsonStringifyOr, } from "../../utils";
 import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
@@ -176,11 +177,11 @@ export class EncounterService {
         encounter_type: encounterType,
         intensity: intensity ?? "vanilla",
         narrative_style: narrativeStyle ?? "fade_to_black",
-        participants: JSON.stringify(participants,),
-        phases: JSON.stringify(phases ?? defaultPhases,),
+        participants: jsonStringifyOr(participants,),
+        phases: jsonStringifyOr(phases ?? defaultPhases,),
         current_phase: 0,
-        outcomes: JSON.stringify(outcomes ?? defaultOutcomes,),
-        content_tags: JSON.stringify(contentTags ?? [],),
+        outcomes: jsonStringifyOr(outcomes ?? defaultOutcomes,),
+        content_tags: jsonStringifyOr(contentTags ?? [],),
         completed: 0,
         created_at: now,
         updated_at: now,
@@ -196,11 +197,11 @@ export class EncounterService {
       encounter_type: encounterType,
       intensity: intensity ?? "vanilla",
       narrative_style: narrativeStyle ?? "fade_to_black",
-      participants: JSON.stringify(participants,),
-      phases: JSON.stringify(phases ?? defaultPhases,),
+      participants: jsonStringifyOr(participants,),
+      phases: jsonStringifyOr(phases ?? defaultPhases,),
       current_phase: 0,
-      outcomes: JSON.stringify(outcomes ?? defaultOutcomes,),
-      content_tags: JSON.stringify(contentTags ?? [],),
+      outcomes: jsonStringifyOr(outcomes ?? defaultOutcomes,),
+      content_tags: jsonStringifyOr(contentTags ?? [],),
       completed: 0,
       created_at: now,
       updated_at: now,

@@ -19,7 +19,6 @@ import {
 } from "../aux-pipeline/prompts";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
 import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
-import type { PromptPurpose, } from "./purposes";
 import { VN_CHOICES_PROMPT, VN_STORY_PROMPT, } from "./vn";
 
 /** Default GM system prompt (used when neither chat config nor template set). */
@@ -107,17 +106,10 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
  * @param templates - LLM template config (`config.templates.llm`), may be undefined
  * @param purpose - Prompt purpose key (assistant, gm, nsfw, vn, intent, …)
  * @returns The resolved prompt string; "" when no override and no default exists
+ *
+ * Known purposes are type-checked against {@link PromptPurpose}; custom keys
+ * fall back to defaults.
  */
-/** Known-purpose overload — purpose is type-checked against {@link PromptPurpose}. */
-export function resolveSystemPrompt(
-  templates: LlmTemplateConfig | undefined,
-  purpose: PromptPurpose,
-): string;
-/** Custom-purpose overload — any (or unknown) string key resolves, falling back to defaults. */
-export function resolveSystemPrompt(
-  templates: LlmTemplateConfig | undefined,
-  purpose: string,
-): string;
 export function resolveSystemPrompt(
   templates: LlmTemplateConfig | undefined,
   purpose: string,

@@ -2187,6 +2187,17 @@
     "title": "Code Quality & Best Practices",
     "type": "TASK"
   },
+  "TASK-CODEMOD-FETCH-JSON-SAFE-UTILS": {
+    "hash": "pending",
+    "extid": "TASK-CODEMOD-FETCH-JSON-SAFE-UTILS",
+    "type": "TASK",
+    "title": "Codemod `fetch`→`apiFetch` + `JSON.*`→`safeJson*` (no eslint/biome autofix exists)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
+  },
   "TASK-COMBINED-FILTER-SUPPORT": {
     "epic": "epic-filtering-pagination",
     "extid": "TASK-COMBINED-FILTER-SUPPORT",
@@ -2564,6 +2575,17 @@
     "tags": [],
     "title": "Crypto Plugin Hooks",
     "type": "TASK"
+  },
+  "TASK-CSS-DEDUPLICATION-JSCPD-FULL": {
+    "hash": "fbfedfc",
+    "extid": "TASK-CSS-DEDUPLICATION-JSCPD-FULL",
+    "type": "TASK",
+    "title": "CSS deduplication (jscpd:full)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-css-deduplication-jscpd-full.md"
   },
   "TASK-DATA-INTEGRITY-ACID": {
     "epic": "epic-data-integrity-acid",

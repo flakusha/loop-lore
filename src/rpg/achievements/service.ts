@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { getLogger, } from "../../logger";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
 function getLog() {
   return getLogger().child({ module: "achievements", },);
@@ -141,9 +142,9 @@ export class AchievementsService {
       icon: input.icon ?? null,
       is_secret: input.isSecret ?? false,
       is_hidden: input.isHidden ?? false,
-      unlock_condition: JSON.stringify(input.unlockCondition,),
-      rewards: JSON.stringify(input.rewards ?? [],),
-      metadata: JSON.stringify(input.metadata ?? {},),
+      unlock_condition: jsonStringifyOr(input.unlockCondition,),
+      rewards: jsonStringifyOr(input.rewards ?? [],),
+      metadata: jsonStringifyOr(input.metadata ?? {},),
       created_at: now,
       updated_at: now,
     };
@@ -208,9 +209,9 @@ export class AchievementsService {
     if (input.icon !== undefined) { updates.icon = input.icon; }
     if (input.isSecret !== undefined) { updates.is_secret = input.isSecret; }
     if (input.isHidden !== undefined) { updates.is_hidden = input.isHidden; }
-    if (input.unlockCondition !== undefined) { updates.unlock_condition = JSON.stringify(input.unlockCondition,); }
-    if (input.rewards !== undefined) { updates.rewards = JSON.stringify(input.rewards,); }
-    if (input.metadata !== undefined) { updates.metadata = JSON.stringify(input.metadata,); }
+    if (input.unlockCondition !== undefined) { updates.unlock_condition = jsonStringifyOr(input.unlockCondition,); }
+    if (input.rewards !== undefined) { updates.rewards = jsonStringifyOr(input.rewards,); }
+    if (input.metadata !== undefined) { updates.metadata = jsonStringifyOr(input.metadata,); }
 
     await (this.db as any)
       .updateTable("achievements",)
@@ -425,11 +426,7 @@ export class AchievementsService {
    */
   private parseJsonField<T,>(raw: unknown, fallback: T,): T {
     if (typeof raw !== "string") { return fallback; }
-    try {
-      return JSON.parse(raw,) as T;
-    } catch {
-      return fallback;
-    }
+    return jsonParseOr(raw, fallback,);
   }
 
   /**

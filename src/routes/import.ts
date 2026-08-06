@@ -20,7 +20,7 @@ import type { AuthConfig, } from "../config/schema";
 import { AssetLinkEntity, LoreEntryStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { authenticate, } from "../middleware/auth";
-import { safeJsonStringify, uid, } from "../utils";
+import { jsonStringifyOr, safeJsonStringify, uid, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, unauthorizedResponse, } from "./http-utils";
@@ -250,7 +250,7 @@ async function handleImport(
         // Parse the card from CHARX
         const cardJsonResult = safeJsonStringify(charxResult.card,);
         const result = await parseCharacterCard(
-          Buffer.from(cardJsonResult.ok ? cardJsonResult.value : JSON.stringify(charxResult.card,), "utf8",),
+          Buffer.from(cardJsonResult.ok ? cardJsonResult.value : jsonStringifyOr(charxResult.card, "{}",), "utf8",),
           filename,
         );
 

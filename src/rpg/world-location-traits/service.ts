@@ -6,7 +6,7 @@
  * more granular per-location effects with equipment overrides.
  */
 import type { Kysely, } from "kysely";
-import { uid, } from "../../utils.js";
+import { jsonStringifyOr, uid, } from "../../utils.js";
 
 // ── Types ────────────────────────────────────────────────
 export type WorldTraitCategory =
@@ -169,8 +169,8 @@ export class WorldLocationTraitsService {
       trait_value: input.trait_value,
       bonus: input.bonus ?? 0,
       penalty: input.penalty ?? 0,
-      effects: JSON.stringify(input.effects ?? {},),
-      equipment_override: JSON.stringify(input.equipment_override ?? {},),
+      effects: jsonStringifyOr(input.effects ?? {},),
+      equipment_override: jsonStringifyOr(input.equipment_override ?? {},),
       created_at: now,
       updated_at: now,
     };
@@ -208,10 +208,10 @@ export class WorldLocationTraitsService {
     if (input.bonus !== undefined) { updates.bonus = input.bonus; }
     if (input.penalty !== undefined) { updates.penalty = input.penalty; }
     if (input.effects !== undefined) {
-      updates.effects = JSON.stringify(input.effects,);
+      updates.effects = jsonStringifyOr(input.effects,);
     }
     if (input.equipment_override !== undefined) {
-      updates.equipment_override = JSON.stringify(input.equipment_override,);
+      updates.equipment_override = jsonStringifyOr(input.equipment_override,);
     }
 
     const result = await this.db

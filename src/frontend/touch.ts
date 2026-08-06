@@ -129,6 +129,9 @@ export function onLongPress(element: Element, options: LongPressOptions): () => 
       clearTimeout(timer);
       timer = null;
     }
+
+    clearTimeout(timer,);
+    timer = null;
   };
 
   element.addEventListener("touchstart", onStart as EventListener, { passive: true });

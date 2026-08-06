@@ -14,6 +14,10 @@ import type {
   WorkflowTemplate,
 } from "./types";
 
+// ── Config Integration ──────────────────────────────────────
+
+import type { ImageEditTemplateConfig, } from "../config/sections/templates";
+
 class TemplateRegistry {
   private templates = new Map<string, WorkflowTemplate>();
 
@@ -67,10 +71,6 @@ class TemplateRegistry {
 
 /** Singleton registry instance */
 export const templateRegistry = new TemplateRegistry();
-
-// ── Config Integration ──────────────────────────────────────
-
-import type { ImageEditTemplateConfig, } from "../config/sections/templates";
 
 /**
  * Register workflow templates from config.

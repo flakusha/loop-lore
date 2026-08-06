@@ -31,14 +31,14 @@ async function discoverMigrations(): Promise<DataMigration[]> {
   const path = await import("node:path");
   const baseDir = __dirname;
 
-  const entries = readdirSync(baseDir,);
-  for (const entry of entries.toSorted()) {
+  const entries = readdirSync(baseDir,).toSorted((a, b,) => a.localeCompare(b,));
+  for (const entry of entries) {
     const dirPath = path.join(baseDir, entry,);
     if (!statSync(dirPath,).isDirectory()) { continue; }
 
     const files = readdirSync(dirPath,)
       .filter((f,) => f.startsWith("v",) && f.endsWith(".ts",))
-      .toSorted();
+      .toSorted((a, b,) => a.localeCompare(b,));
 
     for (const file of files) {
       const mod = await import(path.join(dirPath, file,));

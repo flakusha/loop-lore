@@ -8,6 +8,7 @@ import { load as parseYaml, } from "js-yaml";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import { parse as parseToml, } from "smol-toml";
+import { jsonStringifyOr, } from "../utils";
 import { loadCharacterFiles, } from "./character-loader";
 import type {
   AvatarTemplateConfig,
@@ -129,7 +130,7 @@ function mergeLlmConfig(
   strategy: MergeStrategy,
 ): LlmTemplateConfig {
   if (strategy === "replace") {
-    return { ...base, ...override, merge: "extend", } as LlmTemplateConfig;
+    return { ...base, ...override, merge: "extend", };
   }
 
   if (strategy === "override") {
@@ -340,15 +341,15 @@ function validateLlmConfig(
     return null;
   }
 
-  if (llm.merge !== undefined) {
-    if (
+  if (
+    llm.merge !== undefined && (
       typeof llm.merge !== "string" ||
       !LEGAL_MERGE_STRATEGIES.includes(llm.merge as MergeStrategy,)
-    ) {
-      throw new Error(
-        `merge must be one of ${LEGAL_MERGE_STRATEGIES.join("|",)}, got ${JSON.stringify(llm.merge,)}`,
-      );
-    }
+    )
+  ) {
+    throw new Error(
+      `merge must be one of ${LEGAL_MERGE_STRATEGIES.join("|",)}, got ${jsonStringifyOr(llm.merge, "undefined",)}`,
+    );
   }
 
   if (llm.systemPrompts !== undefined) {
@@ -361,7 +362,7 @@ function validateLlmConfig(
       )
     ) {
       if (typeof value !== "string") {
-        throw new Error(
+        throw new TypeError(
           `systemPrompts.${purpose} must be a string, got ${typeof value}`,
         );
       }
@@ -383,7 +384,7 @@ function validateLlmConfig(
       const fmt = value as Partial<ChatFormatTemplate>;
       for (const role of ["system", "user", "assistant",] as const) {
         if (typeof fmt[role] !== "string") {
-          throw new Error(`chatFormats.${name}.${role} must be a string`,);
+          throw new TypeError(`chatFormats.${name}.${role} must be a string`,);
         }
       }
     }
@@ -427,7 +428,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
           validateLlmConfig(raw,);
           config.llm = mergeLlmConfig(
             config.llm,
-            raw as Partial<LlmTemplateConfig>,
+            raw,
             strategy,
           );
           break;
@@ -435,7 +436,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
         case "sd": {
           config.sd = mergeSdConfig(
             config.sd,
-            raw as Partial<SdTemplateConfig>,
+            raw,
             strategy,
           );
           break;
@@ -443,7 +444,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
         case "avatar": {
           config.avatar = mergeAvatarConfig(
             config.avatar,
-            raw as Partial<AvatarTemplateConfig>,
+            raw,
             strategy,
           );
           break;
@@ -451,7 +452,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
         case "imageEdit": {
           config.imageEdit = mergeImageEditConfig(
             config.imageEdit,
-            raw as Partial<ImageEditTemplateConfig>,
+            raw,
             strategy,
           );
           break;
@@ -459,7 +460,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
         case "character": {
           config.character = mergeCharacterConfig(
             config.character,
-            raw as Partial<CharacterTemplateConfig>,
+            raw,
             strategy,
           );
           break;

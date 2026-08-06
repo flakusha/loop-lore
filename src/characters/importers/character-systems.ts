@@ -6,6 +6,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { jsonStringifyOr, } from "../../utils";
 import type { CharacterSystemsExport, } from "../exporters/character-systems";
 import { AvatarService, } from "../services/avatar-service";
 import { MoodService, } from "../services/mood-service";
@@ -237,10 +238,10 @@ export async function importCharacterSystems(
       if (existing) {
         await db.updateTable("character_availability",).set({
           status: data.availability.status as any,
-          usage_policy: JSON.stringify(data.availability.usagePolicy ?? {},),
-          activity_restrictions: JSON.stringify(data.availability.activityRestrictions ?? {},),
-          content_policy: JSON.stringify(data.availability.contentPolicy ?? {},),
-          nsfw_policy: JSON.stringify(data.availability.nsfwPolicy ?? {},),
+          usage_policy: jsonStringifyOr(data.availability.usagePolicy ?? {},),
+          activity_restrictions: jsonStringifyOr(data.availability.activityRestrictions ?? {},),
+          content_policy: jsonStringifyOr(data.availability.contentPolicy ?? {},),
+          nsfw_policy: jsonStringifyOr(data.availability.nsfwPolicy ?? {},),
           updated_at: now,
         },).where("actor_id", "=", actorId,).execute();
       } else {
@@ -248,10 +249,10 @@ export async function importCharacterSystems(
           id: crypto.randomUUID(),
           actor_id: actorId,
           status: data.availability.status as any,
-          usage_policy: JSON.stringify(data.availability.usagePolicy ?? {},),
-          activity_restrictions: JSON.stringify(data.availability.activityRestrictions ?? {},),
-          content_policy: JSON.stringify(data.availability.contentPolicy ?? {},),
-          nsfw_policy: JSON.stringify(data.availability.nsfwPolicy ?? {},),
+          usage_policy: jsonStringifyOr(data.availability.usagePolicy ?? {},),
+          activity_restrictions: jsonStringifyOr(data.availability.activityRestrictions ?? {},),
+          content_policy: jsonStringifyOr(data.availability.contentPolicy ?? {},),
+          nsfw_policy: jsonStringifyOr(data.availability.nsfwPolicy ?? {},),
           created_at: now,
           updated_at: now,
         },).execute();
