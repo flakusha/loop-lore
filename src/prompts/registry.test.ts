@@ -30,8 +30,8 @@ describe("LLM_PROMPT_DEFAULTS", () => {
       expect(LLM_PROMPT_DEFAULTS[purpose], `${purpose} default missing`,).toBeTruthy();
     }
     // Every default key must be a typed purpose — no orphaned keys.
-    expect(Object.keys(LLM_PROMPT_DEFAULTS,).sort(),).toEqual(
-      [...PROMPT_PURPOSES,].sort(),
+    expect(Object.keys(LLM_PROMPT_DEFAULTS,).sort((a, b,) => a.localeCompare(b,)),).toEqual(
+      [...PROMPT_PURPOSES,].sort((a, b,) => a.localeCompare(b,)),
     );
   });
 

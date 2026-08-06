@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { getLogger, } from "../../logger";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
 function getLog() {
   return getLogger().child({ module: "skills", },);
@@ -131,8 +132,8 @@ export class SkillsService {
       proficiency: ProficiencyLevel.Novice,
       specialization: null,
       is_locked: false,
-      prerequisites: JSON.stringify(input.prerequisites ?? [],),
-      metadata: JSON.stringify(input.metadata ?? {},),
+      prerequisites: jsonStringifyOr(input.prerequisites ?? [],),
+      metadata: jsonStringifyOr(input.metadata ?? {},),
       created_at: now,
       updated_at: now,
     };
@@ -210,7 +211,7 @@ export class SkillsService {
     if (input.description !== undefined) { updates.description = input.description; }
     if (input.category !== undefined) { updates.category = input.category; }
     if (input.specialization !== undefined) { updates.specialization = input.specialization; }
-    if (input.metadata !== undefined) { updates.metadata = JSON.stringify(input.metadata,); }
+    if (input.metadata !== undefined) { updates.metadata = jsonStringifyOr(input.metadata,); }
 
     await (this.db as any)
       .updateTable("character_skills",)
@@ -423,11 +424,7 @@ export class SkillsService {
    */
   private parseJsonField<T,>(raw: unknown, fallback: T,): T {
     if (typeof raw !== "string") { return fallback; }
-    try {
-      return JSON.parse(raw,) as T;
-    } catch {
-      return fallback;
-    }
+    return jsonParseOr(raw, fallback,);
   }
 
   /**

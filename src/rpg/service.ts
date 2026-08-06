@@ -11,6 +11,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema.js";
 import { getLogger, type Logger, } from "../logger/index.js";
+import { jsonStringifyOr, } from "../utils.js";
 
 function log(): Logger {
   return getLogger().child({ module: "rpg-service", },);
@@ -56,7 +57,7 @@ export async function logDiceRoll(
       modifier: params.modifier,
       advantage_mode: params.advantageMode,
       exploding: params.exploding ? 1 : 0,
-      raw_rolls: JSON.stringify(params.rawRolls,),
+      raw_rolls: jsonStringifyOr(params.rawRolls,),
       raw_total: params.rawTotal,
       total: params.total,
       purpose: params.purpose ?? null,
@@ -346,7 +347,7 @@ export async function getXpHistory(
 > {
   const { database, } = deps;
 
-  return database
+  const rows = await database
     .selectFrom("xp_ledger",)
     .where("actor_id", "=", actorId,)
     .select([
@@ -358,16 +359,14 @@ export async function getXpHistory(
     ],)
     .orderBy("created_at", "desc",)
     .limit(limit,)
-    .execute()
-    .then((rows,) =>
-      rows.map((r,) => ({
-        id: r.id,
-        amount: r.amount,
-        source: r.source,
-        description: r.description,
-        createdAt: r.created_at,
-      }))
-    );
+    .execute();
+  return rows.map((r,) => ({
+    id: r.id,
+    amount: r.amount,
+    source: r.source,
+    description: r.description,
+    createdAt: r.created_at,
+  }));
 }
 
 // ── Loot Tables ──────────────────────────────────────────────
@@ -433,7 +432,7 @@ export async function addLootEntry(
       min_quantity: params.minQuantity ?? 1,
       max_quantity: params.maxQuantity ?? 1,
       min_level: params.minLevel ?? 0,
-      metadata: JSON.stringify(params.metadata ?? {},),
+      metadata: jsonStringifyOr(params.metadata ?? {},),
     },)
     .execute();
 

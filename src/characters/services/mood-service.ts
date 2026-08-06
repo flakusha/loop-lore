@@ -6,7 +6,7 @@
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { MoodCreateInput, MoodEventInput, MoodUpdateInput, } from "../../validation/schemas";
 import { guardNotExists, withWorldId, } from "./shared-service-utils";
 
@@ -90,7 +90,7 @@ export class MoodService {
         base_mood: opts.baseMood ?? "neutral",
         current_mood: opts.baseMood ?? "neutral",
         mood_stability: opts.moodStability ?? 0.5,
-        expression_modifiers: JSON.stringify({
+        expression_modifiers: jsonStringifyOr({
           tone: 0,
           verbosity: 0,
           cooperation: 0,
@@ -136,7 +136,7 @@ export class MoodService {
       updateData.mood_stability = opts.moodStability;
     }
     if (opts.expressionModifiers !== undefined) {
-      updateData.expression_modifiers = JSON.stringify(opts.expressionModifiers,);
+      updateData.expression_modifiers = jsonStringifyOr(opts.expressionModifiers,);
     }
 
     await withWorldId(

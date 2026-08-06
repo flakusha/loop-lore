@@ -14,8 +14,10 @@
  * @module generation/image-edit-commands
  */
 
-export type { CommandIntent, } from "../regex/image-edit";
 import type { CommandIntent, } from "../regex/image-edit";
+
+import { COMMAND_PATTERNS, TAG_BACKGROUND, TAG_FACE, TAG_OBJECT, } from "../regex/image-edit";
+export type { CommandIntent, } from "../regex/image-edit";
 
 /** Parsed command result */
 export interface ParsedCommand {
@@ -77,8 +79,6 @@ export interface EditHistory {
   entries: EditChainEntry[];
   currentEntryIndex: number;
 }
-
-import { COMMAND_PATTERNS, TAG_BACKGROUND, TAG_FACE, TAG_OBJECT, } from "../regex/image-edit";
 
 // ── Edit Templates ────────────────────────────────────────
 

@@ -32,7 +32,7 @@ describe("Plugin Registry", () => {
       registry.register(makePlugin("p2"));
       const list = registry.listPlugins();
       expect(list).toHaveLength(2);
-      expect(list.map((p) => p.manifest.name).sort()).toEqual(["p1", "p2"]);
+      expect(list.map((p) => p.manifest.name).sort((a, b) => a.localeCompare(b))).toEqual(["p1", "p2"]);
     });
 
     test("returns undefined for unknown plugin", () => {

@@ -8,7 +8,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { RelationshipEventType, RelationshipType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import { guardNotExists, withWorldId, } from "./shared-service-utils";
 
 /** Options for creating a relationship */
@@ -138,7 +138,7 @@ export class RelationshipsService {
         trust: opts.trust ?? 0,
         familiarity: opts.familiarity ?? 0,
         is_bidirectional: opts.isBidirectional ? 1 : 0,
-        metadata: JSON.stringify(opts.metadata ?? {},),
+        metadata: jsonStringifyOr(opts.metadata ?? {},),
         created_at: now,
         updated_at: now,
       },)
@@ -159,7 +159,7 @@ export class RelationshipsService {
           trust: opts.trust ?? 0,
           familiarity: opts.familiarity ?? 0,
           is_bidirectional: 1,
-          metadata: JSON.stringify(opts.metadata ?? {},),
+          metadata: jsonStringifyOr(opts.metadata ?? {},),
           created_at: now,
           updated_at: now,
         },)
@@ -207,7 +207,7 @@ export class RelationshipsService {
       updateData.familiarity = Math.max(0, Math.min(100, opts.familiarity,),);
     }
     if (opts.metadata !== undefined) {
-      updateData.metadata = JSON.stringify(opts.metadata,);
+      updateData.metadata = jsonStringifyOr(opts.metadata,);
     }
 
     await withWorldId(

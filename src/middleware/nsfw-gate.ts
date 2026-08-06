@@ -26,6 +26,7 @@ import {
   type NSFWRatingEnforcement,
   recordConsentAction,
 } from "../schemas";
+import { jsonStringifyOr, } from "../utils";
 
 /** NSFW content rating levels that require age verification. */
 const NSFW_RATINGS: readonly ContentRating[] = [
@@ -203,7 +204,7 @@ export async function logNsfwEvent(
     const entityType = event.actorId ? "actor" : (event.chatId ? "chat" : null);
     const entityId = event.actorId || event.chatId || null;
 
-    const meta = event.metadata ? JSON.stringify(event.metadata,) : "{}";
+    const meta = event.metadata ? jsonStringifyOr(event.metadata,) : "{}";
 
     await database
       .insertInto("log_entries",)

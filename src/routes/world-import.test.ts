@@ -207,7 +207,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       .where("world_id", "=", worldId,)
       .execute();
     expect(lore[0]?.content,).toBe("The relic lies beneath the Keep.",);
-  },);
+  });
 
   test("route imports a bundle and returns 201 with counts", async () => {
     const app = createApp(db,);
@@ -228,7 +228,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
     const parsed = (await res.json()) as { id: string; imported: Record<string, number> };
     expect(parsed.id,).toBeDefined();
     expect(parsed.imported.locations,).toBe(0,);
-  },);
+  });
 
   test("route returns 400 when world is missing", async () => {
     const app = createApp(db,);
@@ -236,9 +236,9 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       new Request("http://localhost/api/import/world", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ locations: [], }),
+        body: JSON.stringify({ locations: [], },),
       },),
     );
     expect(res.status,).toBe(400,);
-  },);
+  });
 });

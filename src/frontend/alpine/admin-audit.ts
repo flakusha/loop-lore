@@ -29,7 +29,7 @@ export const adminAudit = {
       if (this.auditEventType) { url += `&event_type=${this.auditEventType}`; }
       if (this.auditEntityType) { url += `&entity_type=${this.auditEntityType}`; }
       if (this.auditSearch) { url += `&q=${encodeURIComponent(this.auditSearch,)}`; }
-      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.auditEntries = data.data || [];

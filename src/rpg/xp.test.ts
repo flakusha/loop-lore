@@ -28,11 +28,11 @@ describe("xpForLevel", () => {
   });
 
   it("level 20 requires 355000 XP", () => {
-    expect(xpForLevel(20,),).toBe(355000,);
+    expect(xpForLevel(20,),).toBe(355_000,);
   });
 
   it("caps at level 20", () => {
-    expect(xpForLevel(25,),).toBe(355000,);
+    expect(xpForLevel(25,),).toBe(355_000,);
   });
 
   it("floors at level 1", () => {
@@ -50,7 +50,7 @@ describe("xpToNextLevel", () => {
   });
 
   it("max level returns Infinity", () => {
-    expect(xpToNextLevel(20, 355000,),).toBe(Infinity,);
+    expect(xpToNextLevel(20, 355_000,),).toBe(Infinity,);
   });
 });
 
@@ -64,7 +64,7 @@ describe("canLevelUp", () => {
   });
 
   it("max level cannot level up", () => {
-    expect(canLevelUp(20, 999999,),).toBe(false,);
+    expect(canLevelUp(20, 999_999,),).toBe(false,);
   });
 });
 
@@ -78,7 +78,7 @@ describe("levelFromXp", () => {
   });
 
   it("355000 XP is level 20", () => {
-    expect(levelFromXp(355000,),).toBe(20,);
+    expect(levelFromXp(355_000,),).toBe(20,);
   });
 
   it("intermediate XP gives correct level", () => {
