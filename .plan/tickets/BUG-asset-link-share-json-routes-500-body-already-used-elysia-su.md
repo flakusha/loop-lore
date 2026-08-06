@@ -1,6 +1,6 @@
 # BUG: Asset link/share JSON routes 500 "Body already used" — Elysia sucrose body inference
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (2026-08-06)
 **Priority:** high
 **Effort:** Small
 **Labels:** backend, assets, elysia, e2e
@@ -110,3 +110,20 @@ after `requireUserId`).
 - Scratch artifacts used for verification: worktree `/tmp/ll-regress` (at c78e5466 / 7dc68be7,
   removed after), `/tmp/repro-*.ts`, `/tmp/sucrose-test.ts`. Elysia dist in `node_modules` was
   temporarily instrumented for `bodyUsed`/`inference` logging and fully restored from backup.
+
+## Resolution (2026-08-06)
+
+**Fix**: replaced `await ctx.request.json()` with `ctx.body` (already Elysia-parsed) in all 5
+affected asset routes — `PATCH /:id`, `POST /:id/links`, `DELETE /:id/links/:linkId`,
+`POST /:id/share`, `DELETE /:id/share`. Commit `5a647564` (GPG-signed, on `dev`).
+
+**Verification**:
+- `E2E_SAFEGUARD=1 bun test tests/e2e/` → **184 pass / 0 fail** (25 files; both previously
+  failing suites green: `assets.test.ts` 5/5, `chat-full.test.ts` 3/3).
+- `bun test src/assets/` → 19 pass / 0 fail; `bun run typecheck` clean; eslint + dprint clean.
+- Direct smoke test (fresh process): owner POST /links 201 (+link row persisted), PATCH 200,
+  POST /share 201, DELETE /links/:linkId 204, DELETE /share 204; non-owner POST /links → 404
+  NOT_FOUND (no 500).
+- Note: the e2e `ApiClient.del()` helper cannot send a body, so DELETE routes are only
+  exercisable via raw fetch — the earlier "500 undefined is not an object" readings were a
+  bodiless-request artifact identical to pre-fix behavior, not a regression.
