@@ -3,6 +3,7 @@
 **Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-world-chat-channels-invites
 
 ## Summary
 
