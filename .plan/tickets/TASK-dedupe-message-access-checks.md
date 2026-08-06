@@ -1,6 +1,6 @@
 # TASK: Consolidate duplicate message access checks
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-08-05) — no duplicate access-check helpers remain; cases use `chat/service.checkChatAccess`/`getMessageWithAccess`
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logic-reconciliation
