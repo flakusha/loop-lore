@@ -22,7 +22,7 @@ import {
   SuccessResponse,
 } from "../validation/schemas";
 import { type HandlerOpts, } from "./actor-auth.js";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "./http-utils.js";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils.js";
 
 export function blogRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
@@ -31,13 +31,8 @@ export function blogRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "blog", },)
     // ── Posts ────────────────────────────────────────────
     .post("/api/blog/posts", async (ctx: any,) => {
-      const { userId, } = extractAuth(ctx,);
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const post = await svc.createPost({
         author_id: userId,
@@ -108,14 +103,10 @@ export function blogRoutes(opts: HandlerOpts,) {
       },
     },)
     .patch("/api/blog/posts/:id", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
 
       const post = await svc.getPost(ctx.params.id,);
       if (!post) {
@@ -151,14 +142,10 @@ export function blogRoutes(opts: HandlerOpts,) {
       },
     },)
     .delete("/api/blog/posts/:id", async (ctx: any,) => {
-      const { userId, userRole, } = extractAuth(ctx,);
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
 
       const post = await svc.getPost(ctx.params.id,);
       if (!post) {
@@ -184,14 +171,9 @@ export function blogRoutes(opts: HandlerOpts,) {
     },)
     // ── Comments ─────────────────────────────────────────
     .post("/api/blog/posts/:id/comments", async (ctx: any,) => {
-      const { userId, } = extractAuth(ctx,);
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
 
       const post = await svc.getPost(ctx.params.id,);
       if (!post) {
@@ -313,13 +295,8 @@ export function blogRoutes(opts: HandlerOpts,) {
     },)
     // ── Follows ──────────────────────────────────────────
     .post("/api/blog/follow/:authorId", async (ctx: any,) => {
-      const { userId, } = extractAuth(ctx,);
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       await svc.follow(userId, ctx.params.authorId,);
       return jsonResponse({ success: true, },);
@@ -335,13 +312,8 @@ export function blogRoutes(opts: HandlerOpts,) {
       },
     },)
     .delete("/api/blog/follow/:authorId", async (ctx: any,) => {
-      const { userId, } = extractAuth(ctx,);
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       await svc.unfollow(userId, ctx.params.authorId,);
       return jsonResponse({ success: true, },);
@@ -357,15 +329,10 @@ export function blogRoutes(opts: HandlerOpts,) {
       },
     },)
     .get("/api/blog/follow/:authorId/status", async (ctx: any,) => {
-      const { userId, } = extractAuth(ctx,);
-      if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
-      const following = await svc.isFollowing(userId, ctx.params.authorId,);
+      const { following, } = await svc.getFollowStatus(userId, ctx.params.authorId,);
       return jsonResponse({ success: true, following, },);
     }, {
       response: {

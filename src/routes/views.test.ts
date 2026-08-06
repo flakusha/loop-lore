@@ -2,6 +2,8 @@
  * Tests for view serving routes - redirect and layout wrapping behavior.
  */
 import { describe, expect, test, } from "bun:test";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { applyI18n, viewRoutes, } from "./views";
 
 const mockDb = {} as never;
@@ -208,5 +210,36 @@ describe("applyI18n", () => {
   test("returns content unchanged when content is empty", () => {
     const t = (_key: string,) => "translated";
     expect(applyI18n("", t,),).toBe("",);
+  });
+});
+
+describe("chat list encryption badge", () => {
+  test("renders a lock badge for non-public chats and none for public", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "owner", "Owner", { id: "owner-1", } as any,);
+    await insertChats(db, "Encrypted chat", "owner-1", { encryption_level: "standard", },);
+    await insertChats(db, "Public chat", "owner-1", { encryption_level: "public", },);
+
+    const app = viewRoutes({ database: db, },);
+    const res = await app.handle(
+      new Request("http://localhost/dynamic/chats/list", { headers: { "HX-Request": "true", }, },),
+    );
+    expect(res.status,).toBe(200,);
+    const html = await res.text();
+
+    // Both chats are listed; the lock appears exactly once (standard only).
+    expect(html,).toContain("Encrypted chat",);
+    expect(html,).toContain("Public chat",);
+    const lockCount = html.split("🔒",).length - 1;
+    expect(lockCount,).toBe(1,);
+    // Split into cards and assert the lock lives in the encrypted chat's card
+    // (identified by its data-testid) and not the public one.
+    const cards = html.split('data-testid="',).filter((seg,) => seg.startsWith("chat-card-",));
+    const encryptedCard = cards.find((c,) => c.includes("Encrypted chat",));
+    const publicCard = cards.find((c,) => c.includes("Public chat",));
+    expect(encryptedCard,).toBeDefined();
+    expect(publicCard,).toBeDefined();
+    expect(encryptedCard ?? "",).toContain("🔒",);
+    expect(publicCard ?? "",).not.toContain("🔒",);
   });
 });
