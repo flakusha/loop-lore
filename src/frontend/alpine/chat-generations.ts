@@ -1,6 +1,7 @@
 import { apiFetch, } from "./htmx";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
+import { trackTelemetry, } from "./telemetry";
 import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat", },);
@@ -26,7 +27,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     },);
 
     es.addEventListener("stream-done", () => {
-      log.info("generation complete via SSE", { chatId, },);
+      trackTelemetry("generation.completed", { chatId, },);
       this.isGenerating = false;
       this.activeAttemptId = null;
       this.generationDetail = null;
@@ -88,7 +89,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
           this.generationLabel = `Generating${elapsed}${chars}`;
         }
       } else if (hadActiveAttempt) {
-        log.info("generation complete", { chatId, },);
+        trackTelemetry("generation.completed", { chatId, },);
         this.isGenerating = false;
         this.activeAttemptId = null;
         this.generationDetail = null;
