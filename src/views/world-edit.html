@@ -83,6 +83,23 @@
                     :placeholder="t('worlds.tagsPlaceholder')"
                   />
                 </div>
+                <div class="form-group">
+                  <label class="form-label" for="edit-kind">{{{t("worlds.kind")}}}</label>
+                  <select class="form-input" id="edit-kind" x-model="world.kind">
+                    <option value="rpg">RPG</option>
+                    <option value="chat">Chat channels</option>
+                  </select>
+                  <p class="form-hint">{{{t("worlds.kindHint")}}}</p>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="edit-visibility">{{{t("worlds.visibility")}}}</label>
+                  <select class="form-input" id="edit-visibility" x-model="world.visibility">
+                    <option value="private">Private</option>
+                    <option value="unlisted">Unlisted</option>
+                    <option value="public">Public</option>
+                  </select>
+                  <p class="form-hint">{{{t("worlds.visibilityHint")}}}</p>
+                </div>
                 <div style="display: flex; gap: var(--space-3); justify-content: space-between; margin-top: var(--space-6)">
                   <button
                     type="button"

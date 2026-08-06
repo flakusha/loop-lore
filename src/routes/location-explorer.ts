@@ -6,6 +6,7 @@
 // (unpaginated) tree data + enriched detail the explorer/detail panels need.
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { WorldVisibility, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import { safeJsonParse, } from "../utils";
 import { notFound, } from "../validation/middleware";
@@ -16,7 +17,7 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-/** World access (owner or admin). Returns a denied Response or null when OK. */
+/** World access (owner, admin, member, or public+authenticated). Returns a denied Response or null when OK. */
 async function requireWorldAccess(
   database: Kysely<DB>,
   worldId: string,
@@ -25,13 +26,20 @@ async function requireWorldAccess(
 ): Promise<Response | null> {
   const world = await database
     .selectFrom("worlds",)
-    .select("owner_id",)
+    .select(["owner_id", "visibility",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) {
-    return notFound("World not found",);
-  }
-  return null;
+  if (!world) { return notFound("World not found",); }
+  if (world.owner_id === userId || userRole === "admin") { return null; }
+  if (world.visibility === WorldVisibility.Public) { return null; }
+  const member = await database
+    .selectFrom("world_members",)
+    .select("actor_id",)
+    .where("world_id", "=", worldId,)
+    .where("actor_id", "=", userId,)
+    .executeTakeFirst();
+  if (member) { return null; }
+  return notFound("World not found",);
 }
 
 export function locationExplorerRoutes(opts: HandlerOpts,) {
