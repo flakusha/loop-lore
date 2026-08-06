@@ -51,7 +51,7 @@ async function checkQuestAccess(
     .select(["owner_id",],)
     .where("id", "=", questRow.world_id,)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) { return null; }
+  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) { return null; }
   return questRow;
 }
 
@@ -66,7 +66,7 @@ async function checkWorldAccess(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  return !(!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin"));
+  return !(!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo"));
 }
 
 async function handleListQuests(

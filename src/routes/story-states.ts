@@ -46,7 +46,7 @@ async function handleNpcState(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
+  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) {
     return jsonError({ message: "NPC state not found", status: HttpStatus.NotFound, },);
   }
 
@@ -111,7 +111,7 @@ async function handleNpcsAtLocation(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
+  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) {
     return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
 
@@ -134,7 +134,7 @@ async function handleLocationState(
     .select(["worlds.owner_id",],)
     .where("location_states.location_id", "=", locationId,)
     .executeTakeFirst();
-  if (!locWorld || (locWorld.owner_id !== userId && userRole !== "admin")) {
+  if (!locWorld || (locWorld.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) {
     return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
 
@@ -197,7 +197,7 @@ async function handleWorldStates(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
+  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) {
     return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
 
