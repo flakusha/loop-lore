@@ -75,7 +75,7 @@ export function isTelemetryEnabled(): boolean {
  */
 export function trackTelemetry(event: string, data?: Record<string, unknown>,): void {
   if (!isTelemetryEnabled()) { return; }
-  CURATED_EVENTS.add(event);
+  CURATED_EVENTS.add(event,);
   try {
     getLogger().info(event, data ?? {},);
   } catch {
@@ -91,7 +91,10 @@ let pageViewTimer: ReturnType<typeof setTimeout> | null = null;
 function trackPageView(): void {
   const path = location.pathname;
   if (path === lastPagePath) { return; }
-  if (pageViewTimer) { clearTimeout(pageViewTimer); pageViewTimer = null; }
+  if (pageViewTimer) {
+    clearTimeout(pageViewTimer,);
+    pageViewTimer = null;
+  }
   pageViewTimer = setTimeout(() => {
     lastPagePath = path;
     try {
