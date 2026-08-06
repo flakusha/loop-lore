@@ -24,6 +24,7 @@ import { messageSearch, } from "./message-search";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, WorldChannelChat, } from "./types";
+import { worldChannels, } from "./world-channels";
 
 const g = globalThis as Record<string, unknown>;
 
@@ -134,6 +135,7 @@ globalThis.chatState = function() {
     _worldChats: {} as Record<string, WorldChannelChat[]>,
     _worldExpanded: {} as Record<string, boolean>,
     _worldsLoading: false,
+    worldJoinCode: "",
 
     async searchChats(q: string,) {
       const query = (q || "").trim();
@@ -417,22 +419,6 @@ globalThis.chatState = function() {
       }
     },
 
-    /** Group a world's channels by location (channel category). */
-    worldChatGroups(worldId: string,) {
-      const chats = this._worldChats[worldId] || [];
-      const groups = new Map<string, { locationId: string; locationName: string; chats: WorldChannelChat[] }>();
-      for (const chat of chats) {
-        const key = chat.current_location_id ?? "unlocated";
-        let group = groups.get(key,);
-        if (!group) {
-          group = { locationId: key, locationName: chat.location_name || "No channel", chats: [], };
-          groups.set(key, group,);
-        }
-        group.chats.push(chat,);
-      }
-      return Array.from(groups.values(),);
-    },
-
     async selectChat(chatId: string,) {
       if (this.isGenerating) {
         this.$dispatch("show-toast", {
@@ -504,5 +490,6 @@ globalThis.chatState = function() {
     ...chatEditing,
     ...chatActions,
     ...chatUtils,
+    ...worldChannels,
   } as AlpineState<ChatState>;
 };
