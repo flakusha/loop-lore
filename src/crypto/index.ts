@@ -45,6 +45,8 @@ export {
   startAutoRotationTimer,
 } from "./key-rotation";
 export type { RotationResult, RotationSummary, } from "./key-rotation";
+export { decryptMessageContent, encryptMessageContent, } from "./message-content";
+export type { MessageContentRef, } from "./message-content";
 export { compressThenEncrypt, decryptThenDecompress, extractKeyIdFromPayload, isEncryptedPayload, } from "./pipeline";
 export type { EncryptedPayload, PipelineConfig, } from "./pipeline";
 export { getSmk, initSmk, isEncryptionEnabled, } from "./smk";
