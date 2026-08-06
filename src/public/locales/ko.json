@@ -178,6 +178,11 @@
     "revoke": "Revoke",
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., backup-key",
+    "apiEndpointPlaceholder": "https://api.openai.com/v1",
+    "modelPlaceholder": "e.g., gpt-4o",
+    "keyId": "ID: {id}",
+    "keyCreated": "Created: {date}",
+    "keyExpires": "Expires: {date}",
     "generate": "Generate",
     "revokeKey": "Revoke Key",
     "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
@@ -187,7 +192,19 @@
     "forwardSecrecy": "⚠️ Forward Secrecy",
     "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
     "preferences": "Preferences",
-    "generation": "Generation"
+    "generation": "Generation",
+    "nsfwConsent": "NSFW 콘텐츠 동의",
+    "nsfwConsentDescription": "성인 콘텐츠 생성에 대한 저장된 동의입니다.",
+    "nsfwStatus": "상태",
+    "nsfwEnabled": "활성화",
+    "nsfwDisabled": "비활성화",
+    "nsfwMaxRating": "최대 등급",
+    "nsfwRestrictions": "제한 사항",
+    "nsfwNone": "없음",
+    "nsfwBlocked": "차단됨",
+    "nsfwBanned": "밴됨",
+    "nsfwShadow": "섀도우 제한",
+    "nsfwConsentUnavailable": "NSFW 동의 상태를 불러올 수 없습니다."
   },
   "admin": {
     "title": "Administration",
@@ -527,6 +544,7 @@
     "settings": "설정",
     "logout": "로그아웃",
     "closeSidebar": "닫기",
+    "notifications": "알림",
     "openSidebar": "메뉴 열기"
   },
   "modals": {
@@ -573,6 +591,15 @@
     "cancelGeneration": "생성 취소",
     "send": "전송",
     "filterChats": "채팅 필터"
+  },
+  "notifications": {
+    "title": "알림",
+    "all": "전체",
+    "unread": "읽지 않음",
+    "listToggle": "보기 모드",
+    "viewAll": "모두 보기",
+    "filters": "알림 필터",
+    "filtersDesc": "읽지 않은 배지나 토스트에 표시하지 않으려는 알림 유형을 음소거합니다. 변경 사항은 자동으로 저장됩니다."
   },
   "placeholders": {
     "chatName": "채팅 이름",
@@ -684,6 +711,8 @@
     "roleplayStory": "Roleplay / Story",
     "characterParticipant": "Character / Participant",
     "searchCharacters": "Search characters...",
+    "switchToList": "Switch to list view",
+    "switchToGrid": "Switch to grid view",
     "impersonateCharacter": "Impersonate character (play as them)",
     "yourPersona": "Your Persona",
     "default": "Default",
