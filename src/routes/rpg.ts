@@ -14,7 +14,7 @@
  *     POST /api/rpg/stats/generate — generate stats (point-buy, 4d6-drop-lowest, standard)
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema.js";
 import type { DB, } from "../db/schema.js";
@@ -36,12 +36,79 @@ import {
   type StatBlock,
   validateStatBlock,
 } from "../rpg/stats.js";
-import { SuccessResponse, } from "../validation/schemas.js";
-import { jsonError, jsonResponse, } from "./http-utils.js";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas.js";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils.js";
 
 function log(): Logger {
   return getLogger().child({ module: "rpg-routes", },);
 }
+
+// ── Body schemas (TypeBox) ─────────────────────────────────
+
+const DiceSidesSchema = t.Union([
+  t.Literal(4,),
+  t.Literal(6,),
+  t.Literal(8,),
+  t.Literal(10,),
+  t.Literal(12,),
+  t.Literal(20,),
+  t.Literal(100,),
+],);
+
+const AdvantageModeSchema = t.Union([
+  t.Literal("normal",),
+  t.Literal("advantage",),
+  t.Literal("disadvantage",),
+],);
+
+const StatBlockSchema = t.Object({
+  str: t.Number(),
+  dex: t.Number(),
+  con: t.Number(),
+  int: t.Number(),
+  wis: t.Number(),
+  cha: t.Number(),
+},);
+
+const DiceRollBody = t.Object({
+  sides: DiceSidesSchema,
+  count: t.Optional(t.Number({ minimum: 1, },),),
+  modifier: t.Optional(t.Number(),),
+  exploding: t.Optional(t.Boolean(),),
+},);
+
+const DiceNotationBody = t.Object({
+  notation: t.String({ minLength: 1, },),
+},);
+
+const DiceAdvantageBody = t.Object({
+  modifier: t.Optional(t.Number(),),
+  advantage: t.Optional(AdvantageModeSchema,),
+},);
+
+const StatsBody = t.Object({
+  stats: StatBlockSchema,
+},);
+
+const AbilityNameSchema = t.Union([
+  t.Literal("str",),
+  t.Literal("dex",),
+  t.Literal("con",),
+  t.Literal("int",),
+  t.Literal("wis",),
+  t.Literal("cha",),
+],);
+
+const StatsGenerateBody = t.Object({
+  method: t.Union([
+    t.Literal("point_buy",),
+    t.Literal("4d6_drop_lowest",),
+    t.Literal("standard_array",),
+  ],),
+  /* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
+  allocation: t.Optional(t.Record(AbilityNameSchema, t.Number(),),),
+  /* eslint-enable unicorn/max-nested-calls */
+},);
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -58,6 +125,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .post(
         "/api/rpg/dice/roll",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as {
               sides: DiceSides;
@@ -74,7 +143,6 @@ export function rpgRoutes(opts: HandlerOpts,) {
             );
 
             // Log to database
-            const userId = ctx.userId ?? "anonymous";
             await logDiceRoll(
               { database, },
               {
@@ -98,7 +166,11 @@ export function rpgRoutes(opts: HandlerOpts,) {
           }
         },
         {
-          response: { 200: SuccessResponse, },
+          body: DiceRollBody,
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+          },
           detail: {
             summary: "Roll dice with crypto entropy",
             description: "Roll N dice of given type with optional modifier and exploding.",
@@ -109,6 +181,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .post(
         "/api/rpg/dice/notation",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as { notation: string };
             const result = rollFromNotation(body.notation,);
@@ -122,7 +196,11 @@ export function rpgRoutes(opts: HandlerOpts,) {
           }
         },
         {
-          response: { 200: SuccessResponse, },
+          body: DiceNotationBody,
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+          },
           detail: {
             summary: "Roll from dice notation",
             description: "Roll dice using standard notation like '2d6+3' or 'd20 adv'.",
@@ -133,6 +211,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .post(
         "/api/rpg/dice/advantage",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as {
               modifier?: number;
@@ -151,7 +231,11 @@ export function rpgRoutes(opts: HandlerOpts,) {
           }
         },
         {
-          response: { 200: SuccessResponse, },
+          body: DiceAdvantageBody,
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+          },
           detail: {
             summary: "Roll d20 with advantage/disadvantage",
             description: "Roll 2d20 and take higher (advantage) or lower (disadvantage).",
@@ -164,6 +248,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .post(
         "/api/rpg/stats/calculate",
         (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as { stats: StatBlock };
             const result = computeModifiers(body.stats,);
@@ -174,7 +260,11 @@ export function rpgRoutes(opts: HandlerOpts,) {
           }
         },
         {
-          response: { 200: SuccessResponse, },
+          body: StatsBody,
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+          },
           detail: {
             summary: "Compute ability modifiers",
             description: "Calculate modifier for each ability score using floor((stat-10)/2).",
@@ -185,6 +275,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .post(
         "/api/rpg/stats/validate",
         (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as { stats: StatBlock };
             const valid = validateStatBlock(body.stats,);
@@ -195,7 +287,11 @@ export function rpgRoutes(opts: HandlerOpts,) {
           }
         },
         {
-          response: { 200: SuccessResponse, },
+          body: StatsBody,
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+          },
           detail: {
             summary: "Validate a stat block",
             description: "Check all six ability scores are within [1, 30].",
@@ -206,6 +302,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .post(
         "/api/rpg/stats/generate",
         (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as {
               method: "point_buy" | "4d6_drop_lowest" | "standard_array";
@@ -245,7 +343,11 @@ export function rpgRoutes(opts: HandlerOpts,) {
           }
         },
         {
-          response: { 200: SuccessResponse, },
+          body: StatsGenerateBody,
+          response: {
+            200: SuccessResponse,
+            401: ErrorResponse,
+          },
           detail: {
             summary: "Generate stat block",
             description: "Generate stats using point-buy, 4d6-drop-lowest, or standard array.",
