@@ -13,7 +13,7 @@ import type { DB, } from "../db/schema";
 import { resolveProvider, } from "../generation/providers/registry";
 import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, } from "../utils";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -237,10 +237,8 @@ export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
     .post(
       "/:id/vn/generate-story",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError("Unauthorized", 401,);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const { id: chatId, } = ctx.params as { id: string };
         const body = ctx.body as GenerateStoryBody;
@@ -279,10 +277,8 @@ export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
     .post(
       "/:id/vn/generate-choices",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError("Unauthorized", 401,);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const { id: chatId, } = ctx.params as { id: string };
         const body = ctx.body as GenerateChoicesBody;
