@@ -7,6 +7,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
 import {
   ageGateRoutes,
   getRuntimeConfig,
@@ -126,6 +127,7 @@ describe("age-gate controller", () => {
   let mockDb: ReturnType<typeof createMockDb>;
 
   beforeEach(() => {
+    createLogger();
     mockDb = createMockDb();
     initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
   },);

@@ -2697,3 +2697,107 @@ export async function insertWorldInvites(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a achievements row. */
+export async function insertAchievements(
+  db: Db,
+  name: string,
+  description: string,
+  category: string,
+  tier: string,
+  opts?: {
+    id?: Generated<string>;
+    icon?: string | null;
+    is_secret?: Generated<number>;
+    is_hidden?: Generated<number>;
+    unlock_condition?: Generated<string>;
+    rewards?: Generated<string>;
+    metadata?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("achievements",).values({
+    id: crypto.randomUUID(),
+    name,
+    description,
+    category,
+    tier,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a player_achievements row. */
+export async function insertPlayerAchievements(
+  db: Db,
+  player_id: string,
+  achievement_id: string,
+  opts?: {
+    id?: Generated<string>;
+    progress?: Generated<number>;
+    max_progress?: Generated<number>;
+    is_unlocked?: Generated<number>;
+    unlocked_at?: string | null;
+    claimed_at?: string | null;
+    metadata?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("player_achievements",).values({
+    id: crypto.randomUUID(),
+    player_id,
+    achievement_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a playthroughs row. */
+export async function insertPlaythroughs(
+  db: Db,
+  player_id: string,
+  world_id: string,
+  opts?: {
+    id?: Generated<string>;
+    playthrough_number?: Generated<number>;
+    difficulty?: Generated<string>;
+    is_completed?: Generated<number>;
+    ending_id?: string | null;
+    ending_type?: string | null;
+    completion_time?: Generated<number>;
+    choices_made?: Generated<number>;
+    secrets_found?: Generated<number>;
+    achievements_unlocked?: Generated<number>;
+    metadata?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+    completed_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("playthroughs",).values({
+    id: crypto.randomUUID(),
+    player_id,
+    world_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a meta_progression row. */
+export async function insertMetaProgression(
+  db: Db,
+  opts?: {
+    player_id?: Generated<string>;
+    total_playthroughs?: Generated<number>;
+    endings_seen?: Generated<string>;
+    secrets_found?: Generated<string>;
+    achievements_unlocked?: Generated<string>;
+    permanent_bonuses?: Generated<string>;
+    unlocked_content?: Generated<string>;
+    metadata?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("meta_progression",).values({
+    ...opts,
+  } as any,).execute();
+}
