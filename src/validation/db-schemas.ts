@@ -1748,3 +1748,65 @@ export const WorldInvitesSchema = t.Object({
   uses: t.Optional(t.Number(),),
   revoked: t.Optional(t.Number(),),
 },);
+
+// ── achievements ────────────────────────────────────────────
+export const AchievementsSchema = t.Object({
+  name: t.String(),
+  description: t.String(),
+  category: t.String(),
+  tier: t.String(),
+  icon: t.Optional(t.String(),),
+  is_secret: t.Optional(t.Number(),),
+  is_hidden: t.Optional(t.Number(),),
+  unlock_condition: t.Optional(t.String(),),
+  rewards: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── player_achievements ────────────────────────────────────────────
+export const PlayerAchievementsSchema = t.Object({
+  player_id: t.String(),
+  achievement_id: t.String(),
+  progress: t.Optional(t.Number(),),
+  max_progress: t.Optional(t.Number(),),
+  is_unlocked: t.Optional(t.Number(),),
+  unlocked_at: t.Optional(t.String(),),
+  claimed_at: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── playthroughs ────────────────────────────────────────────
+export const PlaythroughsSchema = t.Object({
+  player_id: t.String(),
+  world_id: t.String(),
+  playthrough_number: t.Optional(t.Number(),),
+  difficulty: t.Optional(t.String(),),
+  is_completed: t.Optional(t.Number(),),
+  ending_id: t.Optional(t.String(),),
+  ending_type: t.Optional(t.String(),),
+  completion_time: t.Optional(t.Number(),),
+  choices_made: t.Optional(t.Number(),),
+  secrets_found: t.Optional(t.Number(),),
+  achievements_unlocked: t.Optional(t.Number(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  completed_at: t.Optional(t.String(),),
+},);
+
+// ── meta_progression ────────────────────────────────────────────
+export const MetaProgressionSchema = t.Object({
+  player_id: t.Optional(t.String(),),
+  total_playthroughs: t.Optional(t.Number(),),
+  endings_seen: t.Optional(t.String(),),
+  secrets_found: t.Optional(t.String(),),
+  achievements_unlocked: t.Optional(t.String(),),
+  permanent_bonuses: t.Optional(t.String(),),
+  unlocked_content: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);

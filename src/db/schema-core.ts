@@ -561,3 +561,68 @@ export interface WorldInvites {
   uses: Generated<number>;
   revoked: Generated<number>;
 }
+
+// ── achievements ────────────────────────────────────────────
+export interface Achievements {
+  id: Generated<string>;
+  name: string;
+  description: string;
+  category: string;
+  tier: string;
+  icon: string | null;
+  is_secret: Generated<number>;
+  is_hidden: Generated<number>;
+  unlock_condition: Generated<string>;
+  rewards: Generated<string>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── player_achievements ────────────────────────────────────────────
+export interface PlayerAchievements {
+  id: Generated<string>;
+  player_id: string;
+  achievement_id: string;
+  progress: Generated<number>;
+  max_progress: Generated<number>;
+  is_unlocked: Generated<number>;
+  unlocked_at: string | null;
+  claimed_at: string | null;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── playthroughs ────────────────────────────────────────────
+export interface Playthroughs {
+  id: Generated<string>;
+  player_id: string;
+  world_id: string;
+  playthrough_number: Generated<number>;
+  difficulty: Generated<string>;
+  is_completed: Generated<number>;
+  ending_id: string | null;
+  ending_type: string | null;
+  completion_time: Generated<number>;
+  choices_made: Generated<number>;
+  secrets_found: Generated<number>;
+  achievements_unlocked: Generated<number>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  completed_at: string | null;
+}
+
+// ── meta_progression ────────────────────────────────────────────
+export interface MetaProgression {
+  player_id: Generated<string>;
+  total_playthroughs: Generated<number>;
+  endings_seen: Generated<string>;
+  secrets_found: Generated<string>;
+  achievements_unlocked: Generated<string>;
+  permanent_bonuses: Generated<string>;
+  unlocked_content: Generated<string>;
+  metadata: Generated<string>;
+  updated_at: Generated<string>;
+}
