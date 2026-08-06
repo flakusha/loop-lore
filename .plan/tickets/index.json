@@ -3505,17 +3505,7 @@
     "title": "Browser console/page-error assertion",
     "type": "TASK"
   },
-  "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION": {
-    "hash": "83bde8b",
-    "extid": "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION",
-    "type": "TASK",
-    "title": "# TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION: Browser e2e coverage expansion — Playwright integration",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.md"
-  },
+1: @theirs
   "TASK-BROWSER-TEST-ISOLATION": {
     "epic": "epic-testing-qa.md",
     "extid": "TASK-BROWSER-TEST-ISOLATION",
