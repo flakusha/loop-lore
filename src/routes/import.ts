@@ -23,7 +23,7 @@ import { authenticate, } from "../middleware/auth";
 import { safeJsonStringify, uid, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonCreated, jsonError, } from "./http-utils";
+import { HttpStatus, jsonCreated, jsonError, unauthorizedResponse, } from "./http-utils";
 
 interface ImportActorOpts {
   character: CanonicalCharacter;
@@ -208,7 +208,7 @@ async function handleImport(
   userId: string,
   uploadDir?: string,
 ): Promise<Response> {
-  if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+  if (!userId) { return unauthorizedResponse(); }
 
   const contentType = request.headers.get("content-type",) ?? "";
 
