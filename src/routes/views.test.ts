@@ -2,6 +2,7 @@
  * Tests for view serving routes - redirect and layout wrapping behavior.
  */
 import { describe, expect, test, } from "bun:test";
+import { Elysia, } from "elysia";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { applyI18n, viewRoutes, } from "./views";
@@ -217,8 +218,8 @@ describe("chat list encryption badge", () => {
   test("renders a lock badge for non-public chats and none for public", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "owner", "Owner", { id: "owner-1", } as any,);
-    await insertChats(db, "Encrypted chat", "owner-1", { encryption_level: "standard", },);
-    await insertChats(db, "Public chat", "owner-1", { encryption_level: "public", },);
+    await insertChats(db, "Encrypted chat", "owner-1", { encryption_level: "standard", } as any,);
+    await insertChats(db, "Public chat", "owner-1", { encryption_level: "public", } as any,);
 
     const app = viewRoutes({ database: db, },);
     const res = await app.handle(
@@ -241,5 +242,37 @@ describe("chat list encryption badge", () => {
     expect(publicCard,).toBeDefined();
     expect(encryptedCard ?? "",).toContain("🔒",);
     expect(publicCard ?? "",).not.toContain("🔒",);
+  });
+});
+
+describe("NSFW moderation admin view", () => {
+  test("/views/nsfw-moderation is guarded for non-admin users", async () => {
+    const app = viewRoutes({ database: mockDb, },);
+    const res = await app.handle(new Request("http://localhost/views/nsfw-moderation",),);
+    expect(res.status,).toBe(302,);
+    expect(res.headers.get("Location",),).toBe("/",);
+  });
+
+  test("/views/nsfw-moderation renders consent state + audit log for admin", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "Moderator", "Moderator", { id: "admin-1", } as any,);
+    await insertUsers(db, "Target User", "Target", { id: "target-1", } as any,);
+
+    const app = new Elysia({ name: "test-views", },)
+      .derive(() => ({ userId: "admin-1", userRole: "admin", }))
+      .use(viewRoutes({ database: db, },),) as unknown as Elysia;
+
+    const res = await app.handle(new Request("http://localhost/views/nsfw-moderation?userId=target-1",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.text();
+    // Wrapped in the page layout
+    expect(body,).toContain("<!doctype html>",);
+    // Consent state + audit-log structural markers are rendered server-side
+    expect(body,).toContain("Consent State",);
+    expect(body,).toContain("Moderation Audit Log",);
+    expect(body,).toContain("target-1",);
+    // Lazy default consent row is present, and no moderation actions exist yet
+    expect(body,).toContain("NSFW enabled",);
+    expect(body,).toContain("No moderation actions recorded",);
   });
 });
