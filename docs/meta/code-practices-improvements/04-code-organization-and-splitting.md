@@ -59,8 +59,11 @@ modules (per AGENTS.md).
 7. **Enforce size mechanically**: add a size guard to CI (`tsc` can't, but a
    tiny `scripts/check-file-size.ts` or a `markdownlint`-style custom check,
    or simply rely on the new `sonarjs/cognitive-complexity` cap from `02` which
-   indirectly caps file density). Recommend a lightweight pre-commit line-count
-   warn for `src/**/*.ts` > 250L.
+   indirectly caps file density).
+   `scripts/check-file-size.ts` is the 250L soft guard (non-blocking; `--strict`
+   for CI). It **excludes** `*.test.ts`, `/migrations/`, and auto-generated files
+   (those carrying the `DO NOT EDIT MANUALLY` banner from the `db:sync-*`
+   generators) — they are legitimately large or owned by their generator.
 
 ## Suggested steps
 
@@ -68,4 +71,4 @@ modules (per AGENTS.md).
 - Move functions, add `index.ts` barrels, update imports (run `bun run typecheck`
   after each move — Bun's path alias makes this low-risk).
 - Add `src/routes/registry.ts`; refactor `elysia-app.ts` to iterate it.
-- Add `scripts/check-file-size.ts` (warn >250L) to `pre-commit` pipeline.
+- `scripts/check-file-size.ts` (warn >250L, excluding tests/migrations/generated) is the size guard; wire `--strict` into pre-commit/CI when the worst files are split.
