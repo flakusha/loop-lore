@@ -417,6 +417,69 @@ describe("ModerationHook", () => {
     const result = await hook.execute("Have a wonderful day full of kindness!", ctx,);
     expect(result.handled,).toBe(false,);
   });
+
+  test("tokenized matching ignores substrings (rudimentary contains 'rude' but is not the word)", async () => {
+    const result = await hook.execute(
+      "The plan is still rudimentary.",
+      makeContext({ content: "The plan is still rudimentary.", },),
+    );
+    expect(result.handled,).toBe(false,);
+  });
+
+  test("tokenized matching flags the exact word form with its weight", async () => {
+    const result = await hook.execute(
+      "Do not harass anyone in this group.",
+      makeContext({ content: "Do not harass anyone in this group.", },),
+    );
+    expect(result.handled,).toBe(true,);
+    expect(result.data?.severity,).toBe("severe",);
+    expect(result.data?.score,).toBe(3,);
+  });
+
+  test("mixed severe + moderate resolves severe", async () => {
+    const result = await hook.execute(
+      "The violence and offensive rants were troubling.",
+      makeContext({ content: "The violence and offensive rants were troubling.", },),
+    );
+    expect(result.data?.severity,).toBe("severe",);
+    expect(result.data?.score,).toBe(5,);
+    expect(result.suppressContent,).toBe(true,);
+  });
+
+  test("only severe content is suppressed; moderate is flagged without suppression", async () => {
+    const severe = await hook.execute(
+      "That is a direct threat.",
+      makeContext({ content: "That is a direct threat.", },),
+    );
+    expect(severe.suppressContent,).toBe(true,);
+
+    const moderate = await hook.execute(
+      "That was a rude remark.",
+      makeContext({ content: "That was a rude remark.", },),
+    );
+    expect(moderate.suppressContent,).toBeFalsy();
+    expect(moderate.data?.severity,).toBe("moderate",);
+    expect(moderate.data?.flags,).toContain("moderate",);
+  });
+
+  test("records an audit trail when content is flagged", async () => {
+    const calls: { actionType: string; reason: string }[] = [];
+    const auditHook = new ModerationHook({
+      auditRecorder: () => ({
+        recordAction: async (params,) => {
+          calls.push({ actionType: params.actionType, reason: params.reason, },);
+          return { id: "audit-1", };
+        },
+      }),
+    },);
+    await auditHook.execute(
+      "This is a hate-filled threat of violence.",
+      makeContext({ content: "This is a hate-filled threat of violence.", },),
+    );
+    expect(calls,).toHaveLength(1,);
+    expect(calls[0]!.actionType,).toBe("content_blocked",);
+    expect(calls[0]!.reason,).toContain("severe",);
+  });
 });
 
 // ── Chain Integration ────────────────────────────────────────
