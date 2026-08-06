@@ -396,6 +396,10 @@ async function start() {
     logger.addTransport(new DBTransport(database,),);
   }
 
+  // ── Telemetry retention cleanup (startup + every 24h) ────
+  const { startRetentionCleanup, } = await import("./telemetry/cleanup");
+  startRetentionCleanup(database,);
+
   // ── Background initialization (non-blocking) ─────────────
   const initPromises: Promise<void>[] = [];
 

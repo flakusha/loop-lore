@@ -121,4 +121,8 @@ export interface DB {
   chat_invites: import("./schema-core").ChatInvites;
   world_members: import("./schema-core").WorldMembers;
   world_invites: import("./schema-core").WorldInvites;
+  achievements: import("./schema-core").Achievements;
+  player_achievements: import("./schema-core").PlayerAchievements;
+  playthroughs: import("./schema-core").Playthroughs;
+  meta_progression: import("./schema-core").MetaProgression;
 }

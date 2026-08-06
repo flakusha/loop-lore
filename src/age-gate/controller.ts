@@ -17,6 +17,7 @@ import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
 import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
 import { isAdminRole, } from "../middleware/admin-gate";
 import * as AgeGateService from "./service";
 
@@ -88,7 +89,12 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
     const status = AgeGateService.getStatus(ageGateConfig.get(), user ?? null,);
     return jsonResponse(status,);
   } catch (error) {
-    return jsonError((error as Error).message, 500,);
+    // Never leak DB internals to the client — log the real error server-side.
+    getLogger().child({ module: "age-gate", },).error(
+      "GET /api/age-gate/status failed",
+      error instanceof Error ? error : undefined,
+    );
+    return jsonError("An error occurred", 500,);
   }
 }
 
@@ -123,7 +129,12 @@ export async function handleAccept({ database, userId, body, }: HandleAcceptOpts
     if (error instanceof AgeGateService.AgeGateError) {
       return jsonError(error.message, 400,);
     }
-    return jsonError((error as Error).message, 500,);
+    // Never leak DB internals to the client — log the real error server-side.
+    getLogger().child({ module: "age-gate", },).error(
+      "POST /api/age-gate/accept failed",
+      error instanceof Error ? error : undefined,
+    );
+    return jsonError("An error occurred", 500,);
   }
 }
 
