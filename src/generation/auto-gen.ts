@@ -18,7 +18,7 @@ import { callAux, } from "../aux-pipeline";
 import { MoodService, } from "../characters/services/mood-service";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
-import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled, } from "../crypto";
+import { compressThenEncrypt, deriveChatKeyForChat, ensureActorKey, getSmk, isEncryptionEnabled, } from "../crypto";
 import {
   CancelReason,
   CancelSource,
@@ -491,6 +491,10 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     const contentEncoding = ContentEncoding.Identity;
     if (d.isEncryptionEnabled()) {
       const smk = d.getSmk()!;
+      // ensureActorKey is required before deriveChatKeyForChat — without it the
+      // actor_key row is missing and derivation crashes in story/GM chats
+      // (the actor may never have been provisioned on this chat's path).
+      await d.ensureActorKey({ database, actorId: characterId, smk, },);
       const chatKey = await d.deriveChatKeyForChat(database, chatId, smk,);
       storedContent = await d.compressThenEncrypt({
         plaintext: accumulatedContent,
@@ -1071,6 +1075,7 @@ export interface GenDeps {
   buildFailoverList: typeof buildFailoverList;
   isEncryptionEnabled: () => boolean;
   getSmk: () => CryptoKey | null;
+  ensureActorKey: typeof ensureActorKey;
   deriveChatKeyForChat: typeof deriveChatKeyForChat;
   compressThenEncrypt: typeof compressThenEncrypt;
   markedParse: (src: string, opts?: Record<string, unknown>,) => string;
@@ -1095,6 +1100,7 @@ export function createDefaultDeps(): GenDeps {
     buildFailoverList,
     isEncryptionEnabled,
     getSmk,
+    ensureActorKey,
     deriveChatKeyForChat,
     compressThenEncrypt,
     markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
