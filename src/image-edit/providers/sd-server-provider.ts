@@ -283,7 +283,12 @@ export class SDServerEditProvider implements ImageEditProvider {
       },);
 
       if (!resp.ok) {
-        const errText = await resp.text().catch(() => "unknown");
+        let errText = "unknown";
+        try {
+          errText = await resp.text();
+        } catch {
+          // Error body read failed — keep "unknown" fallback
+        }
         throw new Error(`Upscale failed: ${errText}`,);
       }
 
@@ -319,7 +324,12 @@ export class SDServerEditProvider implements ImageEditProvider {
     },);
 
     if (!submitResp.ok) {
-      const errText = await submitResp.text().catch(() => "unknown");
+      let errText = "unknown";
+      try {
+        errText = await submitResp.text();
+      } catch {
+        // Error body read failed — keep "unknown" fallback
+      }
       throw new Error(`sd.cpp job submission failed: ${errText}`,);
     }
 
@@ -388,7 +398,12 @@ export class SDServerEditProvider implements ImageEditProvider {
     },);
 
     if (!resp.ok) {
-      const errText = await resp.text().catch(() => "unknown");
+      let errText = "unknown";
+      try {
+        errText = await resp.text();
+      } catch {
+        // Error body read failed — keep "unknown" fallback
+      }
       throw new Error(`sdapi ${endpoint} failed: ${errText}`,);
     }
 
@@ -425,7 +440,12 @@ export class SDServerEditProvider implements ImageEditProvider {
     },);
 
     if (!resp.ok) {
-      const errText = await resp.text().catch(() => "unknown");
+      let errText = "unknown";
+      try {
+        errText = await resp.text();
+      } catch {
+        // Error body read failed — keep "unknown" fallback
+      }
       throw new Error(`OpenAI image gen failed: ${errText}`,);
     }
 

@@ -29,7 +29,7 @@ const log = rootLog.child({ module: "world-edit", },);
       this.loading = true;
       this.error = false;
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}`, { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch(`/api/worlds/${this.worldId}`, { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.world = {
@@ -62,7 +62,7 @@ const log = rootLog.child({ module: "world-edit", },);
         }
         : {};
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}`, {
+        const res = await apiFetch(`/api/worlds/${this.worldId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ ...this.world, settings: jsonBody(settings,), },),
@@ -81,7 +81,7 @@ const log = rootLog.child({ module: "world-edit", },);
     async deleteWorld() {
       if (!confirm("Delete this world? All locations will be removed.",)) { return; }
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}`, { method: "DELETE", },);
+        const res = await apiFetch(`/api/worlds/${this.worldId}`, { method: "DELETE", },);
         if (res.ok) {
           showToast("success", "World deleted",);
           location.assign("/worlds",);

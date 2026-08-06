@@ -353,7 +353,7 @@ describe("export-shared routines", () => {
     expect(bundle.world_lore_entries,).toHaveLength(1,);
     expect(bundle.world_states,).toHaveLength(1,);
     expect(bundle.location_states,).toHaveLength(1,);
-    expect(items.find((i,) => i.id === worldId,),).toMatchObject({
+    expect(items.find((i,) => i.id === worldId),).toMatchObject({
       type: "story",
       name: "Story World",
       id: worldId,

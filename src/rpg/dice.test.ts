@@ -63,7 +63,7 @@ describe("rollD20WithAdvantage", () => {
     for (let i = 0; i < 100; i++) {
       const result = rollD20WithAdvantage("advantage",);
       expect(result.rawRolls.length,).toBe(2,);
-      const kept = Math.max(result.rawRolls[0]!, result.rawRolls[1]!,);
+      const kept = Math.max(result.rawRolls[0], result.rawRolls[1]!,);
       expect(result.value,).toBe(kept,);
     }
   });
@@ -72,7 +72,7 @@ describe("rollD20WithAdvantage", () => {
     for (let i = 0; i < 100; i++) {
       const result = rollD20WithAdvantage("disadvantage",);
       expect(result.rawRolls.length,).toBe(2,);
-      const kept = Math.min(result.rawRolls[0]!, result.rawRolls[1]!,);
+      const kept = Math.min(result.rawRolls[0], result.rawRolls[1]!,);
       expect(result.value,).toBe(kept,);
     }
   });
@@ -144,7 +144,7 @@ describe("rollDice", () => {
 
   it("statistical distribution: d20 average ~10.5", () => {
     const totals: number[] = [];
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 10_000; i++) {
       const result = rollDice(20, 1, 0,);
       totals.push(result.rawTotal,);
     }

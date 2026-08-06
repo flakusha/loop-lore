@@ -134,7 +134,7 @@ export class AvatarService {
         actor_id: opts.actorId,
         asset_id: opts.assetId,
         label: opts.label,
-        tags: JSON.stringify(opts.tags ?? {},),
+        tags: jsonStringifyOr(opts.tags ?? {},),
         is_primary: opts.isPrimary ? 1 : 0,
         sort_order: opts.sortOrder ?? 0,
         created_at: now,
@@ -176,7 +176,7 @@ export class AvatarService {
       updateData.label = opts.label;
     }
     if (opts.tags !== undefined) {
-      updateData.tags = JSON.stringify(opts.tags,);
+      updateData.tags = jsonStringifyOr(opts.tags,);
     }
     if (opts.isPrimary !== undefined) {
       if (opts.isPrimary) {
@@ -378,7 +378,7 @@ export class AvatarService {
         .updateTable("character_avatar_config",)
         .set({
           selection_rule: config.selectionRule ?? existingRow.selection_rule,
-          weights: JSON.stringify(mergedWeights,),
+          weights: jsonStringifyOr(mergedWeights,),
           fallback_chain: fallbackChain,
           updated_at: now,
         },)
@@ -404,8 +404,8 @@ export class AvatarService {
         id,
         actor_id: actorId,
         selection_rule: config.selectionRule ?? "emotion_first",
-        weights: JSON.stringify(config.weights ?? defaultWeights,),
-        fallback_chain: JSON.stringify(config.fallbackChain ?? [],),
+        weights: jsonStringifyOr(config.weights ?? defaultWeights,),
+        fallback_chain: jsonStringifyOr(config.fallbackChain ?? [],),
         created_at: now,
         updated_at: now,
       },)
@@ -466,9 +466,9 @@ export class AvatarService {
         .set({
           selection_rule_override: config.selectionRuleOverride ?? existing.selectionRuleOverride ?? null,
           weights_override: config.weightsOverride
-            ? JSON.stringify(config.weightsOverride,)
+            ? jsonStringifyOr(config.weightsOverride,)
             : (existing.weightsOverride
-              ? JSON.stringify(existing.weightsOverride,)
+              ? jsonStringifyOr(existing.weightsOverride,)
               : null),
           updated_at: now,
         },)
@@ -488,7 +488,7 @@ export class AvatarService {
         actor_id: actorId,
         selection_rule_override: config.selectionRuleOverride ?? null,
         weights_override: config.weightsOverride
-          ? JSON.stringify(config.weightsOverride,)
+          ? jsonStringifyOr(config.weightsOverride,)
           : null,
         created_at: now,
         updated_at: now,

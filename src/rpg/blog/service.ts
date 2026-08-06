@@ -8,7 +8,7 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import { notifyBlogComment, notifyBlogPost, } from "../../notifications/service.js";
-import { uid, } from "../../utils.js";
+import { jsonStringifyOr, uid, } from "../../utils.js";
 
 // ── Types ────────────────────────────────────────────────
 export type BlogPostVisibility = "public" | "followers" | "private";
@@ -135,7 +135,7 @@ export class BlogService {
       scheduled_at: input.scheduled_at ?? null,
       published_at: null as string | null,
       view_count: 0,
-      metadata: JSON.stringify(input.metadata ?? {},),
+      metadata: jsonStringifyOr(input.metadata ?? {},),
       created_at: now,
       updated_at: now,
     };
@@ -253,7 +253,7 @@ export class BlogService {
     }
     if (input.category !== undefined) { updates.category = input.category; }
     if (input.metadata !== undefined) {
-      updates.metadata = JSON.stringify(input.metadata,);
+      updates.metadata = jsonStringifyOr(input.metadata,);
     }
 
     const result = await this.db

@@ -7,6 +7,8 @@
 
 // ── Types ──────────────────────────────────────────────────
 
+import { jsonParseOr, } from "../../../utils";
+
 export interface VnTemplate {
   id: string;
   name: string;
@@ -88,10 +90,16 @@ export function substituteTemplate(
   text: string,
   variables: Record<string, unknown>,
 ): string {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, name,) => {
+  return text.replaceAll(/\{\{(\w+)\}\}/g, (match, name,) => {
     const value = variables[name];
     if (value === undefined) { return match; }
-    return String(value,);
+    if (typeof value === "object" && value !== null) {
+      return JSON.stringify(value,);
+    }
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      return String(value,);
+    }
+    return match;
   },);
 }
 
@@ -117,7 +125,7 @@ export function resolveTemplate(
     },
     variables: [
       ...resolvedParent.variables.filter(
-        (v,) => !template.variables.some((tv,) => tv.name === v.name),
+        (v,) => template.variables.every((tv,) => tv.name !== v.name),
       ),
       ...template.variables,
     ],
@@ -133,11 +141,7 @@ export function getTemplatesForWorld(worldId: string,): VnTemplate[] {
   const data = localStorage.getItem(key,);
   if (!data) { return []; }
 
-  try {
-    return JSON.parse(data,);
-  } catch {
-    return [];
-  }
+  return jsonParseOr(data, [],);
 }
 
 export function saveTemplate(template: VnTemplate,): void {
@@ -150,10 +154,10 @@ export function saveTemplate(template: VnTemplate,): void {
     version: template.version + 1,
   };
 
-  if (existing >= 0) {
-    templates[existing] = updated;
-  } else {
+  if (existing === -1) {
     templates.push(updated,);
+  } else {
+    templates[existing] = updated;
   }
 
   const key = `${STORAGE_PREFIX}${template.worldId}`;
@@ -169,7 +173,7 @@ export function deleteTemplate(worldId: string, templateId: string,): void {
 
 export function getTemplate(worldId: string, templateId: string,): VnTemplate | null {
   const templates = getTemplatesForWorld(worldId,);
-  return templates.find((t,) => t.id === templateId, null,) ?? null;
+  return templates.find((t,) => t.id === templateId) ?? null;
 }
 
 // ── Template Export/Import ──────────────────────────────────
@@ -179,13 +183,9 @@ export function exportTemplate(template: VnTemplate,): string {
 }
 
 export function importTemplate(json: string,): VnTemplate | null {
-  try {
-    const template = JSON.parse(json,) as VnTemplate;
-    if (!template.id || !template.name || !template.worldId) {
-      return null;
-    }
-    return template;
-  } catch {
+  const template = jsonParseOr<VnTemplate | null>(json, null,);
+  if (!template?.id || !template.name || !template.worldId) {
     return null;
   }
+  return template;
 }

@@ -3,7 +3,7 @@
 // CCv3 exporter for character cards.
 // Converts canonical character card to CCv3 format.
 
-import { safeJsonStringify, } from "../../utils";
+import { jsonStringifyOr, safeJsonStringify, } from "../../utils";
 import type { CanonicalCharacter, } from "../parser";
 import { exportBaseFields, exportLorebook, } from "./shared";
 
@@ -48,5 +48,5 @@ export function exportToCcV3(character: CanonicalCharacter,): Record<string, unk
 export function exportToCcV3Json(character: CanonicalCharacter,): string {
   const ccv3 = exportToCcV3(character,);
   const result = safeJsonStringify(ccv3, 2,);
-  return result.ok ? result.value : JSON.stringify(ccv3,);
+  return result.ok ? result.value : jsonStringifyOr(ccv3, "{}",);
 }

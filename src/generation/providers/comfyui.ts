@@ -81,7 +81,12 @@ export class ComfyUIClient {
     },);
 
     if (!resp.ok) {
-      const body = await resp.text().catch(() => "unknown");
+      let body = "unknown";
+      try {
+        body = await resp.text();
+      } catch {
+        // Error body read failed — keep "unknown" fallback
+      }
       throw new Error(`ComfyUI prompt submission failed [${resp.status}]: ${body}`,);
     }
 

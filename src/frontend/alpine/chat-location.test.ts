@@ -7,7 +7,7 @@ import type { ChatState, } from "./types";
 // `chat:location-changed` event. chat-location.ts dispatches via
 // `globalThis.dispatchEvent`.
 const windowEvents: Event[] = [];
-(globalThis as { dispatchEvent: (e: Event) => boolean }).dispatchEvent = (e: Event) => {
+(globalThis as { dispatchEvent: (e: Event,) => boolean }).dispatchEvent = (e: Event,) => {
   windowEvents.push(e,);
   return true;
 };
@@ -200,7 +200,9 @@ describe("chatLocation", () => {
     test("joins and refreshes the location-scoped list", async () => {
       const { state, } = buildCtx({ _selectedLocationId: "loc-2", },);
       await chatLocation.joinLocationChat!.call(state, "c1",);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(state.joinChat,).toHaveBeenCalledWith("c1",);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(state.loadLocationJoinable,).toHaveBeenCalled();
     });
   });

@@ -8,7 +8,7 @@
 import type { Kysely, } from "kysely";
 import type { CraftingDiscipline, CraftingStationType, QualityLevel, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 
 // ── Types ───────────────────────────────────────────────────
 
@@ -123,7 +123,7 @@ export class RecipesService {
           perfect_threshold: opts.perfectThreshold ?? 95,
           station_type_required: opts.stationTypeRequired ?? null,
           discovered_by_default: opts.discoveredByDefault ? 1 : 0,
-          tags: JSON.stringify(opts.tags ?? [],),
+          tags: jsonStringifyOr(opts.tags ?? [],),
           created_at: now,
           updated_at: now,
         },)
@@ -186,7 +186,7 @@ export class RecipesService {
       perfectThreshold: recipe.perfect_threshold,
       stationTypeRequired: recipe.station_type_required,
       discoveredByDefault: recipe.discovered_by_default === 1,
-      tags: JSON.parse(recipe.tags,) as string[],
+      tags: jsonParseOr(recipe.tags, [],),
       materials: materials.map((m,) => ({
         id: m.id,
         recipeId: m.recipe_id,
@@ -248,7 +248,7 @@ export class RecipesService {
         perfectThreshold: recipe.perfect_threshold,
         stationTypeRequired: recipe.station_type_required,
         discoveredByDefault: recipe.discovered_by_default === 1,
-        tags: JSON.parse(recipe.tags,) as string[],
+        tags: jsonParseOr(recipe.tags, [],),
         materials: materials.map((m,) => ({
           id: m.id,
           recipeId: m.recipe_id,
@@ -286,7 +286,7 @@ export class RecipesService {
     if (opts.perfectThreshold !== undefined) { updates.perfect_threshold = opts.perfectThreshold; }
     if (opts.stationTypeRequired !== undefined) { updates.station_type_required = opts.stationTypeRequired; }
     if (opts.discoveredByDefault !== undefined) { updates.discovered_by_default = opts.discoveredByDefault ? 1 : 0; }
-    if (opts.tags !== undefined) { updates.tags = JSON.stringify(opts.tags,); }
+    if (opts.tags !== undefined) { updates.tags = jsonStringifyOr(opts.tags,); }
 
     const result = await this.db
       .updateTable("crafting_recipes",)

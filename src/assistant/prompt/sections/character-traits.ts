@@ -25,8 +25,7 @@ export const characterTraitsSection: SectionBuilder = {
         const grouped = Object.groupBy(worldTraits, (t,) => t.trait_category,);
         for (const [cat, traits,] of Object.entries(grouped,)) {
           if (!traits) { continue; }
-          const lines: string[] = [];
-          for (const t of traits) { lines.push(`${t.trait_name}: ${t.trait_value}`,); }
+          const lines: string[] = Array.from(traits, t => `${t.trait_name}: ${t.trait_value}`,);
           parts.push(`[${cat}] ${lines.join(", ",)}`,);
         }
       }

@@ -32,7 +32,7 @@ export interface LongPressOptions {
 
 /** Check if user prefers reduced motion */
 function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)",).matches;
+  return globalThis.matchMedia("(prefers-reduced-motion: reduce)",).matches;
 }
 
 /**
@@ -98,7 +98,7 @@ export function onTap(element: Element, options: TapOptions,): () => void {
     callback(e,);
   };
 
-  if (prefersReducedMotion() || !("ontouchstart" in window)) {
+  if (prefersReducedMotion() || !("ontouchstart" in globalThis)) {
     element.addEventListener("click", handler,);
     return () => element.removeEventListener("click", handler,);
   }
@@ -125,10 +125,12 @@ export function onLongPress(element: Element, options: LongPressOptions,): () =>
   };
 
   const onCancel = (): void => {
-    if (timer !== null) {
-      clearTimeout(timer,);
-      timer = null;
+    if (timer === null) {
+      return;
     }
+
+    clearTimeout(timer,);
+    timer = null;
   };
 
   element.addEventListener("touchstart", onStart as EventListener, { passive: true, },);

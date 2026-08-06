@@ -14,7 +14,7 @@ import { jsonBody, } from "./json";
 
     async load() {
       try {
-        const res = await fetch("/api/settings", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/settings", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const s = await res.json();
           if (s.theme) { this.theme = s.theme; }
@@ -46,7 +46,7 @@ import { jsonBody, } from "./json";
         payload.temperature = this.temperature;
       }
       try {
-        await fetch("/api/settings", {
+        await apiFetch("/api/settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(payload,),

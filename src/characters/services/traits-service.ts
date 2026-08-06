@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
+import { jsonStringifyOr, } from "../../utils";
 import type {
   LocationTraitCreateInput,
   LocationTraitUpdateInput,
@@ -294,7 +295,7 @@ export class TraitsService {
         trait_value: opts.value,
         bonus: opts.bonus ?? 0,
         penalty: opts.penalty ?? 0,
-        effects: JSON.stringify(opts.effects ?? {},),
+        effects: jsonStringifyOr(opts.effects ?? {},),
         created_at: now,
         updated_at: now,
       },)
@@ -321,7 +322,7 @@ export class TraitsService {
         trait_value: opts.value,
         bonus: opts.bonus ?? existing.bonus,
         penalty: opts.penalty ?? existing.penalty,
-        effects: opts.effects ? JSON.stringify(opts.effects,) : existing.effects,
+        effects: opts.effects ? jsonStringifyOr(opts.effects,) : existing.effects,
         updated_at: new Date().toISOString(),
       },)
       .where("actor_id", "=", actorId,)

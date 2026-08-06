@@ -6,7 +6,7 @@
 import { type Kysely, } from "kysely";
 import { type DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
-import { jsonParseOr, } from "../utils/safe-json";
+import { jsonParseOr, jsonStringifyOr, } from "../utils/safe-json";
 
 export interface NsfwUserPrefs {
   id: string;
@@ -588,7 +588,7 @@ export class NsfwModerationService {
       title,
       body: reason,
       link: null,
-      data: JSON.stringify({ actionType, },),
+      data: jsonStringifyOr({ actionType, },),
       created_at: new Date().toISOString(),
     },).execute();
   }

@@ -414,7 +414,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       .where("actor_id", "=", characterId,)
       .executeTakeFirst();
     const nsfwPolicy = availability?.nsfw_policy
-      ? (JSON.parse(availability.nsfw_policy,) as Record<string, unknown>).level as string | undefined
+      ? jsonParseOr<Record<string, unknown>>(availability.nsfw_policy, {},).level as string | undefined
       : undefined;
 
     // Determine which hook event types to run based on config
@@ -618,18 +618,22 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     // ── Group chat cascade: trigger next AI turn if applicable ──
     if (chat?.type === "group" && finishReason !== "cancelled") {
       // Fire-and-forget: cascade runs in background, errors logged internally
-      d.triggerGroupCascade!({
-        database,
-        config,
-        chatId,
-        userId,
-        aiContent: accumulatedContent,
-        previousActorId: characterId,
-        depth: cascadeDepth,
-        deps: opts.deps,
-      },).catch(() => {
-        /* errors logged inside triggerGroupCascade */
-      },);
+      void (async () => {
+        try {
+          await d.triggerGroupCascade!({
+            database,
+            config,
+            chatId,
+            userId,
+            aiContent: accumulatedContent,
+            previousActorId: characterId,
+            depth: cascadeDepth,
+            deps: opts.deps,
+          },);
+        } catch {
+          /* errors logged inside triggerGroupCascade */
+        }
+      })();
     }
   } catch (error) {
     if (attemptId) {
