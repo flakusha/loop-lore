@@ -52,7 +52,7 @@
         <button
           class="btn btn-secondary btn-sm"
           x-on:click="view = view === 'grid' ? 'list' : 'grid'; localStorage.setItem('character-view', view); document.getElementById('character-grid').className = view === 'grid' ? 'character-grid' : 'character-grid list-view'"
-          :title="view === 'grid' ? 'Switch to list view' : 'Switch to grid view'"
+          :title="view === 'grid' ? t('characters.switchToList') : t('characters.switchToGrid')"
           data-testid="view-toggle"
         >
           <span x-show="view === 'grid'">☰</span>

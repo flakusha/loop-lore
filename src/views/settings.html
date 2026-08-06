@@ -148,7 +148,7 @@
               id="locale-select"
               data-testid="locale-select"
               x-model="locale"
-              @change="saveGeneral()"
+              @change="onLocaleChange()"
               x-bind:aria-label="t('settings.language')"
             >
               <template x-for="loc in locales" :key="loc.id">
@@ -237,7 +237,7 @@
               id="apiEndpoint"
               name="apiEndpoint"
               x-model="apiEndpoint"
-              placeholder="https://api.openai.com/v1"
+              x-bind:placeholder="t('settings.apiEndpointPlaceholder')"
             />
           </div>
           <div class="form-group">
@@ -248,7 +248,7 @@
               id="model"
               name="model"
               x-model="model"
-              placeholder="e.g., gpt-4o"
+              x-bind:placeholder="t('settings.modelPlaceholder')"
             />
           </div>
           <div class="form-group">
@@ -325,6 +325,29 @@
             </button>
             <button type="button" class="btn btn-secondary">{{{t("settings.importChats")}}}</button>
           </div>
+          <div class="settings-section" style="margin-top: var(--space-5)">
+            <div class="section-title">{{{t("settings.nsfwConsent")}}}</div>
+            <p class="zone-description">{{{t("settings.nsfwConsentDescription")}}}</p>
+            <template x-if="nsfwConsent">
+              <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-2) var(--space-4); margin-top: var(--space-3)">
+                <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwStatus")}}}</div>
+                <div
+                  style="font-size: 13px"
+                  x-text="nsfwConsent.nsfwEnabled ? t('settings.nsfwEnabled') : t('settings.nsfwDisabled')"
+                >
+                </div>
+                <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwMaxRating")}}}</div>
+                <div style="font-size: 13px" x-text="nsfwConsent.maxRating"></div>
+                <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwRestrictions")}}}</div>
+                <div style="font-size: 13px" x-text="nsfwRestrictionText()"></div>
+              </div>
+            </template>
+            <template x-if="!nsfwConsent">
+              <p class="zone-description" style="margin-top: var(--space-2)">
+                {{{t("settings.nsfwConsentUnavailable")}}}
+              </p>
+            </template>
+          </div>
           <div class="danger-zone">
             <div class="zone-title">{{{t("settings.dangerZone")}}}</div>
             <p class="zone-description">
@@ -399,10 +422,10 @@
                 <div class="space-y-1">
                   <div class="font-medium" x-text="key.name"></div>
                   <div class="text-xs text-gray-500 space-x-3">
-                    <span x-text="'ID: ' + key.id.slice(0, 8) + '...'"></span>
-                    <span x-text="'Created: ' + formatDate(key.createdAt)"></span>
+                    <span x-text="t('settings.keyId', { id: key.id.slice(0, 8) }) + '...'"></span>
+                    <span x-text="t('settings.keyCreated', { date: formatDate(key.createdAt) })"></span>
                     <template x-if="key.expiresAt">
-                      <span x-text="'Expires: ' + formatDate(key.expiresAt)"></span>
+                      <span x-text="t('settings.keyExpires', { date: formatDate(key.expiresAt) })"></span>
                     </template>
                   </div>
                 </div>
