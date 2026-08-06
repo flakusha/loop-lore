@@ -219,8 +219,7 @@ describe("exportRoutes", () => {
     expect((manifest.contents as Record<string, number>).worlds,).toBe(1,);
   });
 
-  test("assets export returns empty count when no assets exist", async () => {
-    const app = createApp(db,);
+  test("assets export returns empty count when no assets exist", async () => {    const app = createApp(db,);
     const res = await postExport(app, { include: ["assets",], },);
     expect(res.status,).toBe(200,);
 
@@ -266,5 +265,71 @@ describe("exportRoutes", () => {
     expect(contents.chats,).toBeDefined();
     expect(contents.worlds,).toBeUndefined();
     expect(contents.assets,).toBeUndefined();
+  });
+
+  test("locations export includes per-world location JSON scoped to owner", async () => {
+    const worldId = uid();
+    await db
+      .insertInto("worlds",)
+      .values({
+        id: worldId,
+        owner_id: userId,
+        name: "Loc Route World",
+        difficulty_modifier: 1,
+        difficulty_reroll: "none",
+        difficulty_state: "normal",
+      },)
+      .execute();
+    const locId = uid();
+    await db
+      .insertInto("locations",)
+      .values({
+        id: locId,
+        world_id: worldId,
+        name: "Gatehouse",
+      },)
+      .execute();
+
+    const app = createApp(db,);
+    const res = await postExport(app, { include: ["locations",], },);
+    expect(res.status,).toBe(200,);
+    const files = await parseZip(res,);
+
+    const path = `locations/${worldId}/${locId}.json`;
+    expect(files[path],).toBeDefined();
+    const loc = readJson(files, path,);
+    expect(loc.name,).toBe("Gatehouse",);
+
+    const manifest = readJson(files, "manifest.json",);
+    expect((manifest.contents as Record<string, number>).locations,).toBeGreaterThanOrEqual(1,);
+  });
+
+  test("story export includes a world bundle", async () => {
+    const worldId = uid();
+    await db
+      .insertInto("worlds",)
+      .values({
+        id: worldId,
+        owner_id: userId,
+        name: "Route Story World",
+        description: "A world",
+        difficulty_modifier: 1,
+        difficulty_reroll: "none",
+        difficulty_state: "normal",
+      },)
+      .execute();
+
+    const app = createApp(db,);
+    const res = await postExport(app, { include: ["story",], },);
+    expect(res.status,).toBe(200,);
+    const files = await parseZip(res,);
+
+    const bundle = readJson(files, `story/${worldId}.json`,);
+    const world = bundle.world as { name: string };
+    expect(world.name,).toBe("Route Story World",);
+    expect(bundle.locations as unknown[],).toBeInstanceOf(Array,);
+
+    const manifest = readJson(files, "manifest.json",);
+    expect((manifest.contents as Record<string, number>).story,).toBeGreaterThanOrEqual(1,);
   });
 });

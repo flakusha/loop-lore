@@ -15,6 +15,8 @@ import {
   exportAssetsToZip,
   exportCharactersToZip,
   exportChatsToZip,
+  exportLocationsToZip,
+  exportStoryToZip,
   exportWorldsToZip,
   finalizeExportZip,
 } from "./export-shared";
@@ -120,6 +122,25 @@ async function processExport(
       totalItems += assetCount?.count ?? 0;
     }
 
+    if (include.includes("locations",)) {
+      const locCount = await database
+        .selectFrom("locations",)
+        .innerJoin("worlds", "worlds.id", "locations.world_id",)
+        .select(({ fn, },) => [fn.count<number>("locations.id",).as("count",),])
+        .where("worlds.owner_id", "=", userId,)
+        .executeTakeFirst();
+      totalItems += locCount?.count ?? 0;
+    }
+
+    if (include.includes("story",)) {
+      const worldCount = await database
+        .selectFrom("worlds",)
+        .select(({ fn, },) => [fn.count<number>("id",).as("count",),])
+        .where("owner_id", "=", userId,)
+        .executeTakeFirst();
+      totalItems += worldCount?.count ?? 0;
+    }
+
     job.total = totalItems;
     job.progress = 0;
     job.currentStep = "Starting export...";
@@ -158,6 +179,18 @@ async function processExport(
     if (include.includes("worlds",)) {
       job.currentStep = "Exporting worlds...";
       await exportWorldsToZip(exportCtx,);
+    }
+
+    // Export locations
+    if (include.includes("locations",)) {
+      job.currentStep = "Exporting locations...";
+      await exportLocationsToZip(exportCtx,);
+    }
+
+    // Export story state
+    if (include.includes("story",)) {
+      job.currentStep = "Exporting story state...";
+      await exportStoryToZip(exportCtx,);
     }
 
     // Export assets

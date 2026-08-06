@@ -13,6 +13,8 @@ import {
   exportCharactersToZip,
   exportChatsToZip,
   type ExportItem,
+  exportLocationsToZip,
+  exportStoryToZip,
   exportWorldsToZip,
 } from "./export-shared";
 
@@ -200,5 +202,161 @@ describe("export-shared routines", () => {
     expect(counts.worlds,).toBe(1,);
     expect(zip.file(`worlds/${worldId}.json`,),).toBeDefined();
     expect(items[0]?.name,).toBe("SSE World",);
+  });
+
+  test("locations routine writes per-world files scoped to owner", async () => {
+    const worldId = uid();
+    await db
+      .insertInto("worlds",)
+      .values({
+        id: worldId,
+        owner_id: userId,
+        name: "Loc World",
+        difficulty_modifier: 1,
+        difficulty_reroll: "none",
+        difficulty_state: "normal",
+      },)
+      .execute();
+    const locId = uid();
+    await db
+      .insertInto("locations",)
+      .values({
+        id: locId,
+        world_id: worldId,
+        name: "Throne Room",
+      },)
+      .execute();
+
+    const zip = new JSZip();
+    const checksums: Record<string, string> = {};
+    const counts: Record<string, number> = {};
+    const items: ExportItem[] = [];
+
+    await exportLocationsToZip({
+      database: db,
+      userId,
+      zip,
+      checksums,
+      format: "json",
+      counts,
+      onItem: (item,) => {
+        items.push(item,);
+      },
+    },);
+
+    expect(counts.locations,).toBe(1,);
+    expect(zip.file(`locations/${worldId}/${locId}.json`,),).toBeDefined();
+    expect(items[0],).toMatchObject({
+      id: locId,
+      type: "location",
+      name: "Throne Room",
+      format: "json",
+    },);
+    expect(checksums[`locations/${worldId}/${locId}.json`],).toMatch(/^sha256:[a-f0-9]{64}$/,);
+  });
+
+  test("story routine writes a round-trippable world bundle", async () => {
+    const worldId = uid();
+    await db
+      .insertInto("worlds",)
+      .values({
+        id: worldId,
+        owner_id: userId,
+        name: "Story World",
+        description: "A world",
+        difficulty_modifier: 1,
+        difficulty_reroll: "none",
+        difficulty_state: "normal",
+      },)
+      .execute();
+    // quests.creator_id references actors.id
+    await insertCharacter(userId, "Test User",);
+    const locId = uid();
+    await db
+      .insertInto("locations",)
+      .values({
+        id: locId,
+        world_id: worldId,
+        name: "Dungeon",
+      },)
+      .execute();
+    const questId = uid();
+    await db
+      .insertInto("quests",)
+      .values({
+        id: questId,
+        world_id: worldId,
+        creator_id: userId,
+        name: "Slay Dragon",
+        type: "destruction",
+        target: 1,
+      },)
+      .execute();
+    await db
+      .insertInto("world_lore_entries",)
+      .values({
+        id: uid(),
+        world_id: worldId,
+        content: "The dragon sleeps.",
+      },)
+      .execute();
+    await db
+      .insertInto("world_states",)
+      .values({
+        id: uid(),
+        world_id: worldId,
+        snapshot: "{}",
+      },)
+      .execute();
+    await db
+      .insertInto("location_states",)
+      .values({
+        id: uid(),
+        location_id: locId,
+        world_id: worldId,
+      },)
+      .execute();
+
+    const zip = new JSZip();
+    const checksums: Record<string, string> = {};
+    const counts: Record<string, number> = {};
+    const items: ExportItem[] = [];
+
+    await exportStoryToZip({
+      database: db,
+      userId,
+      zip,
+      checksums,
+      format: "json",
+      counts,
+      onItem: (item,) => {
+        items.push(item,);
+      },
+    },);
+
+    expect(counts.story,).toBeGreaterThanOrEqual(1,);
+    const raw = await zip.file(`story/${worldId}.json`,)?.async("text",);
+    expect(raw,).toBeDefined();
+    const bundle = JSON.parse(raw as string,) as {
+      schema_version: string;
+      world: { name: string };
+      locations: { name: string }[];
+      quests: unknown[];
+      world_lore_entries: unknown[];
+      world_states: unknown[];
+      location_states: unknown[];
+    };
+    expect(bundle.schema_version,).toBe("1.0",);
+    expect(bundle.world.name,).toBe("Story World",);
+    expect(bundle.locations[0]?.name,).toBe("Dungeon",);
+    expect(bundle.quests,).toHaveLength(1,);
+    expect(bundle.world_lore_entries,).toHaveLength(1,);
+    expect(bundle.world_states,).toHaveLength(1,);
+    expect(bundle.location_states,).toHaveLength(1,);
+    expect(items.find((i,) => i.id === worldId,),).toMatchObject({
+      type: "story",
+      name: "Story World",
+      id: worldId,
+    },);
   });
 });

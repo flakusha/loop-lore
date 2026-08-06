@@ -15,6 +15,8 @@ import {
   exportAssetsToZip,
   exportCharactersToZip,
   exportChatsToZip,
+  exportLocationsToZip,
+  exportStoryToZip,
   exportWorldsToZip,
   finalizeExportZip,
 } from "./export-shared";
@@ -72,6 +74,16 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
     // Export worlds
     if (include.includes("worlds",)) {
       await exportWorldsToZip(exportCtx,);
+    }
+
+    // Export locations
+    if (include.includes("locations",)) {
+      await exportLocationsToZip(exportCtx,);
+    }
+
+    // Export story state
+    if (include.includes("story",)) {
+      await exportStoryToZip(exportCtx,);
     }
 
     // Export assets
