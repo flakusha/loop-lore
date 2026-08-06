@@ -65,6 +65,7 @@ import { keyManagementRoutes, } from "./routes/key-management";
 import { locationExplorerRoutes, } from "./routes/location-explorer";
 import { messageEncryptionRoutes, } from "./routes/message-encryption";
 import { messageReactionsRoutes, } from "./routes/message-reactions";
+import { messageSearchRoutes, } from "./routes/message-search";
 import { messagesRoutes, } from "./routes/messages";
 import { modelComparisonsRoutes, } from "./routes/model-comparisons";
 import { notificationsRoutes, } from "./routes/notifications";
@@ -83,6 +84,7 @@ import { usersRoutes, } from "./routes/users";
 import { viewRoutes, } from "./routes/views";
 import { vnChoiceRoutes, } from "./routes/vn-choices";
 import { vnGenerateRoutes, } from "./routes/vn-generate";
+import { worldImportRoutes, } from "./routes/world-import";
 import { worldInvitesRoutes, } from "./routes/world-invites";
 import { worldLoreEntriesRoutes, } from "./routes/world-lore-entries";
 import { worldsRoutes, } from "./routes/worlds";
@@ -176,6 +178,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(characterIoRoutes(handleOpts,),);
   app.use(messagesRoutes(handleOpts,),);
   app.use(messageReactionsRoutes(handleOpts,),);
+  app.use(messageSearchRoutes(handleOpts,),);
   app.use(chatsRoutes(handleOpts,),);
   app.use(chatSearchRoutes(handleOpts,),);
   app.use(invitesRoutes(handleOpts,),);
@@ -211,6 +214,7 @@ export function createApp(deps: AppDeps,): Elysia {
   // ── Bulk import/export (ZIP) ─────────────────────────────────────────────
   app.use(exportRoutes({ database: handleOpts.database, },),);
   app.use(exportSseRoutes({ database: handleOpts.database, },),);
+  app.use(worldImportRoutes(handleOpts,),);
 
   // ── Asset upload (standalone route) ──────────────────────────
   // WORKAROUND: Elysia 1.4.x body consumption bug. When a child plugin

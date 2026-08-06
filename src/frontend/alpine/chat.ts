@@ -9,6 +9,7 @@ import { chatFilters, } from "./chat-filters";
 import { chatGenerations, } from "./chat-generations";
 import { chatGroup, } from "./chat-group";
 import { chatKeys, } from "./chat-keys";
+import { chatLocation, } from "./chat-location";
 import { chatManagement, } from "./chat-management";
 import { chatMessages, } from "./chat-messages";
 import { chatPanels, } from "./chat-panels";
@@ -19,6 +20,7 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
+import { messageSearch, } from "./message-search";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, WorldChannelChat, } from "./types";
@@ -472,6 +474,12 @@ globalThis.chatState = function() {
       this._sections = [];
       this._activeSectionId = null;
       this._background = null;
+      this._locations = [];
+      this._selectedLocationId = "";
+      this._chatWorldId = null;
+      this._chatCurrentLocationId = null;
+      this._chatRecentLocationChanged = false;
+      this._locationJoinableChats = [];
       await Promise.all([this.loadSections(), this.loadBackground(),],);
     },
 
@@ -485,7 +493,9 @@ globalThis.chatState = function() {
     ...chatGroup,
     ...chatSettings,
     ...chatSections,
+    ...chatLocation,
     ...chatBackgrounds,
+    ...messageSearch,
     ...chatMessages,
     ...chatGenerations,
     ...chatVariants,
