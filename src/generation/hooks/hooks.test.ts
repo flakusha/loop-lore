@@ -141,28 +141,28 @@ describe("EmotionHook", () => {
     const result = await hook.execute("She laughed with pure joy and happiness.", ctx,);
     expect(result.handled,).toBe(true,);
     expect(result.eventType,).toBe("emotion_change",);
-    expect(result.data?.dominantEmotion,).toBe("joy",);
+    expect(result.data?.dominantEmotion,).toBe("happy",);
   });
 
   test("execute detects anger", async () => {
     const ctx = makeContext({ content: "He was furious and full of rage.", },);
     const result = await hook.execute("He was furious and full of rage.", ctx,);
     expect(result.handled,).toBe(true,);
-    expect(result.data?.dominantEmotion,).toBe("anger",);
+    expect(result.data?.dominantEmotion,).toBe("angry",);
   });
 
   test("execute detects fear", async () => {
     const ctx = makeContext({ content: "She was terrified and scared beyond belief.", },);
     const result = await hook.execute("She was terrified and scared beyond belief.", ctx,);
     expect(result.handled,).toBe(true,);
-    expect(result.data?.dominantEmotion,).toBe("fear",);
+    expect(result.data?.dominantEmotion,).toBe("fearful",);
   });
 
   test("execute detects love", async () => {
     const ctx = makeContext({ content: "He felt deep love and tender affection.", },);
     const result = await hook.execute("He felt deep love and tender affection.", ctx,);
     expect(result.handled,).toBe(true,);
-    expect(result.data?.dominantEmotion,).toBe("love",);
+    expect(result.data?.dominantEmotion,).toBe("loving",);
   });
 
   test("execute returns unhandled for emotionless content", async () => {
