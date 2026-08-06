@@ -110,8 +110,8 @@ export function createClient(baseUrl: string,) {
       return request<T>("PATCH", path, body,);
     },
 
-    del<T = unknown,>(path: string,): Promise<ApiResponse<T>> {
-      return request<T>("DELETE", path,);
+    del<T = unknown,>(path: string, body?: unknown,): Promise<ApiResponse<T>> {
+      return request<T>("DELETE", path, body,);
     },
 
     upload<T = unknown,>(path: string, formData: FormData,): Promise<ApiResponse<T>> {
