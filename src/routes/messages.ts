@@ -163,7 +163,13 @@ export function messagesRoutes(opts: HandlerOpts,) {
       .get(
         "/api/chats/:id/messages",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           const { id: chatId, } = ctx.params as { id: string };
+
+          const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+          if (!access.ok) { return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",); }
+
           const query = ctx.query as { page?: number; pageSize?: number; parentId?: string };
           const page = query.page ?? 1;
           const pageSize = query.pageSize ?? 20;
@@ -331,6 +337,9 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
+
+          const access = await checkChatAccess(database, message.chat_id, actorId, ctx.userRole as string | null,);
+          if (!access.ok) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
 
           await database
             .updateTable("messages",)
