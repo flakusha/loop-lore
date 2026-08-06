@@ -290,12 +290,29 @@ function generateManifest(
   lines.push(`      extraInDb: string[];`,);
   lines.push(`    }[];`,);
   lines.push(`  } {`,);
+  lines.push(`    const rows = (`,);
+  lines.push(`      sqlite`,);
+  lines.push(
+    `        .query("SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)`,
+  );
+  lines.push(`        .all() as { name: string; sql: string | null }[]`,);
+  lines.push(`    );`,);
+  lines.push(`    // FTS5 virtual tables (created via raw SQL) and their internal shadow tables`,);
+  lines.push(`    // are implementation details — drop them so they are not treated as extra tables.`,);
+  lines.push(`    const virtualRoots = new Set(`,);
+  lines.push(`      rows.filter((r,) => (r.sql ?? "").trim().toUpperCase().startsWith("CREATE VIRTUAL TABLE",),)`,);
+  lines.push(`        .map((r,) => r.name,),`,);
+  lines.push(`    );`,);
   lines.push(`    const actualTables = new Set(`,);
-  lines.push(`      (`,);
-  lines.push(`        sqlite`,);
-  lines.push(`          .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)`,);
-  lines.push(`          .all() as { name: string }[]`,);
-  lines.push(`      ).map((r,) => r.name),`,);
+  lines.push(`      rows.filter((r,) => {`,);
+  lines.push(`        if (virtualRoots.has(r.name,)) { return false; }`,);
+  lines.push(`        for (const suffix of ["_data", "_idx", "_content", "_docsize", "_config",]) {`,);
+  lines.push(`          if (r.name.endsWith(suffix,) && virtualRoots.has(r.name.slice(0, -suffix.length,),)) {`,);
+  lines.push(`            return false;`,);
+  lines.push(`          }`,);
+  lines.push(`        }`,);
+  lines.push(`        return true;`,);
+  lines.push(`      },).map((r,) => r.name,),`,);
   lines.push(`    );`,);
   lines.push(``,);
   lines.push(`    const missingTables: string[] = [];`,);
