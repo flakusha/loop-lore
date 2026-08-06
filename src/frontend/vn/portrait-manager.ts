@@ -25,15 +25,19 @@ export function getPortraitPosition(
   role: "assistant" | "user" | "system" | "narration",
 ): PortraitPosition {
   switch (role) {
-    case "assistant":
+    case "assistant": {
       return "left";
-    case "user":
+    }
+    case "user": {
       return "right";
+    }
     case "system":
-    case "narration":
+    case "narration": {
       return "center";
-    default:
+    }
+    default: {
       return "none";
+    }
   }
 }
 
@@ -64,13 +68,13 @@ export function createPortraitElement(config: PortraitConfig,): HTMLElement {
     img.alt = config.name;
     img.className = "vn-portrait-img";
     img.loading = "lazy";
-    el.appendChild(img,);
+    el.append(img,);
   }
 
   const label = document.createElement("div",);
   label.className = "vn-portrait-name";
   label.textContent = config.name;
-  el.appendChild(label,);
+  el.append(label,);
 
   return el;
 }
@@ -81,7 +85,7 @@ export function createPortraitElement(config: PortraitConfig,): HTMLElement {
 export function applyPortraitLayout(
   sceneEl: HTMLElement,
   position: PortraitPosition,
-  splitRatio: number = 40,
+  splitRatio = 40,
 ): void {
   // Clear existing portrait classes
   sceneEl.classList.remove("vn-layout-split", "vn-layout-overlay", "vn-layout-below",);

@@ -225,7 +225,7 @@ describe("TurnManager", () => {
       await db
         .insertInto("group_initiatives",)
         .values(
-          { chat_id: chatId, scene_id: "main", actor_id: "actor-ai-1", score: 3, } as never,
+          { chat_id: chatId, scene_id: "main", actor_id: "actor-ai-1", score: 3, },
         )
         .execute();
 
@@ -266,7 +266,7 @@ describe("TurnManager", () => {
       await db
         .insertInto("group_initiatives",)
         .values(
-          { chat_id: chatId, scene_id: "main", actor_id: "actor-ai-1", score: 0, } as never,
+          { chat_id: chatId, scene_id: "main", actor_id: "actor-ai-1", score: 0, },
         )
         .execute();
 

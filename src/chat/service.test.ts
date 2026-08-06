@@ -79,7 +79,7 @@ describe("createChat memory carry", () => {
       memoryCarry: "full",
     },);
     const carried = await carriedForChat(chatId,);
-    expect(carried.map((m,) => m.content).sort(),).toEqual(["fact one", "fact two",],);
+    expect(carried.map((m,) => m.content).sort((a, b,) => a.localeCompare(b,)),).toEqual(["fact one", "fact two",],);
   });
 
   it("carries only the selected ids on selective", async () => {

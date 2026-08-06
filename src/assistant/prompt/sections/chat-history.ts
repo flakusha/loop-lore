@@ -45,7 +45,7 @@ export const chatHistorySection: SectionBuilder = {
           content = "[encrypted message unavailable]";
         }
       }
-      out.push({ role: row.role as GenerationMessage["role"], content, },);
+      out.push({ role: row.role, content, },);
     }
     return out;
   },

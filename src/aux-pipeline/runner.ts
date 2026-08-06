@@ -21,7 +21,7 @@ import { isTelemetryEnabled, record, } from "../telemetry/service";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
 
 const DEFAULT_TIMEOUT_MS = 2000;
-const DEFAULT_TEMPERATURE = 0.0;
+const DEFAULT_TEMPERATURE = 0;
 const DEFAULT_MAX_TOKENS = 100;
 const AUX_TELEMETRY_EVENT = "aux.call";
 
@@ -144,13 +144,15 @@ export async function callAux(
  * The timer is cleared once the race settles and unref'd so it never
  * keeps the process alive.
  */
-function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | null> {
+async function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | null> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<null>((resolve,) => {
     timer = setTimeout(() => resolve(null,), ms,);
     timer.unref?.();
   },);
-  return Promise.race([promise, timeout,],).finally(() => {
+  try {
+    return await Promise.race([promise, timeout,],);
+  } finally {
     if (timer) { clearTimeout(timer,); }
-  },);
+  }
 }

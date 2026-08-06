@@ -91,11 +91,8 @@ export function buildEmotionPrompt(
     parts.push("character portrait",);
   }
 
-  // Add emotion modifier
-  parts.push(emotionModifier,);
-
-  // Add quality tags
-  parts.push(qualityTags,);
+  // Add emotion modifier + quality tags
+  parts.push(emotionModifier, qualityTags,);
 
   return parts.join(", ",);
 }

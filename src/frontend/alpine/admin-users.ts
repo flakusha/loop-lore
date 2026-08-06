@@ -33,7 +33,7 @@ export const adminUsers = {
       if (self.userSearch) { url += `&q=${encodeURIComponent(self.userSearch,)}`; }
       if (self.userRoleFilter) { url += `&role=${self.userRoleFilter}`; }
       if (self.userStatusFilter) { url += `&status=${self.userStatusFilter}`; }
-      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.users = data.data || [];

@@ -241,17 +241,17 @@ describe("no match", () => {
 describe("confidence", () => {
   test("modify_background has confidence 0.9", () => {
     const bg = COMMAND_PATTERNS.find((p,) => p.intent === "modify_background");
-    expect(bg?.confidence,).toBe(0.9,);
+    expect(bg?.confidence,).toBeCloseTo(0.9, 10,);
   });
 
   test("upscale has confidence 0.9", () => {
     const up = COMMAND_PATTERNS.find((p,) => p.intent === "upscale");
-    expect(up?.confidence,).toBe(0.9,);
+    expect(up?.confidence,).toBeCloseTo(0.9, 10,);
   });
 
   test("add_accessory has confidence 0.7", () => {
     const acc = COMMAND_PATTERNS.find((p,) => p.intent === "add_accessory");
-    expect(acc?.confidence,).toBe(0.7,);
+    expect(acc?.confidence,).toBeCloseTo(0.7, 10,);
   });
 });
 

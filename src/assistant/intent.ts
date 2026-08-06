@@ -10,9 +10,13 @@
  * Designed to be swapped for an LLM-based classifier later.
  */
 
-export type { AssistantIntent, } from "../regex/intent";
 import { INTENT_PATTERNS, SLASH_COMMAND, } from "../regex/intent";
 import type { AssistantIntent, } from "../regex/intent";
+
+// ── Avatar Change Intent Detection ──────────────────────────
+
+import type { AvatarTemplateConfig, } from "../config/sections/templates";
+export type { AssistantIntent, } from "../regex/intent";
 
 /** Result of intent detection */
 export interface IntentResult {
@@ -118,10 +122,6 @@ export function isApprovedTool(toolId: string,): boolean {
 export function getApiPolicy(apiId: string,): { description: string; requires_approval: boolean } | undefined {
   return EXTERNAL_APIS[apiId];
 }
-
-// ── Avatar Change Intent Detection ──────────────────────────
-
-import type { AvatarTemplateConfig, } from "../config/sections/templates";
 
 /**
  * Detect avatar change intent using config-defined patterns.

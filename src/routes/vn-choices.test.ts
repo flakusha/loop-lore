@@ -2,36 +2,22 @@ import { describe, expect, it, } from "bun:test";
 import { Elysia, } from "elysia";
 import { vnChoiceRoutes, } from "./vn-choices";
 
-// Mock database
-const mockDb = {
-  selectFrom: () => ({
-    selectAll: () => ({
-      where: () => ({
-        where: () => ({
-          orderBy: () => ({
-            execute: () => Promise.resolve([],),
-            executeTakeFirst: () => Promise.resolve(null,),
-          }),
-          executeTakeFirst: () => Promise.resolve(null,),
-        }),
-        executeTakeFirst: () => Promise.resolve(null,),
-      }),
-      executeTakeFirst: () => Promise.resolve(null,),
-    }),
-  }),
-  insertInto: () => ({
-    values: () => ({
-      execute: () => Promise.resolve({},),
-    }),
-  }),
-  updateTable: () => ({
-    set: () => ({
-      where: () => ({
-        execute: () => Promise.resolve({},),
-      }),
-    }),
-  }),
+// Mock database — flat self-referential chain (auth-gated routes fail before
+// any DB call; methods exist only to satisfy the route's type surface).
+const mockChain = {
+  selectFrom: () => mockChain,
+  selectAll: () => mockChain,
+  where: () => mockChain,
+  orderBy: () => mockChain,
+  insertInto: () => mockChain,
+  values: () => mockChain,
+  updateTable: () => mockChain,
+  set: () => mockChain,
+  execute: () => Promise.resolve([],),
+  executeTakeFirst: () => Promise.resolve(null,),
 };
+
+const mockDb = mockChain;
 
 const app = new Elysia().use(
   vnChoiceRoutes({ database: mockDb as any, },),

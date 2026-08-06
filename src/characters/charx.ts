@@ -4,7 +4,7 @@
 // ZIP archive containing card.json + assets/ directory.
 
 import JSZip from "jszip";
-import { jsonParseOr, } from "../utils";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
 import type { CharacterAsset, } from "./spec";
 
 interface CharxResult {
@@ -77,7 +77,9 @@ export async function createCharx(
   const zip = new JSZip();
 
   // Add card.json
-  zip.file("card.json", JSON.stringify(card, null, 2,),);
+  const cardJson = safeJsonStringify(card, 2,);
+  if (!cardJson.ok) { throw cardJson.error; }
+  zip.file("card.json", cardJson.value,);
 
   // Add assets
   for (const asset of assets) {

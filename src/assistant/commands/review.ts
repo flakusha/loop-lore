@@ -12,6 +12,7 @@
  *   /review location      — Review the current location
  */
 
+import { jsonParseOr, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 interface ReviewIssue {
@@ -216,12 +217,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
       }
 
       // Check connections
-      let connections: string[];
-      try {
-        connections = JSON.parse(location.connections,) as string[];
-      } catch {
-        connections = [];
-      }
+      const connections = jsonParseOr(location.connections, [],);
 
       if (connections.length === 0) {
         issues.push({ field: "connections", issue: "No connections to other locations", severity: "warning", },);
