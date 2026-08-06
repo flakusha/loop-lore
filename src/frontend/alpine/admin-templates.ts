@@ -1,4 +1,5 @@
 import { jsonBody, } from "./json";
+import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "admin-templates", },);
@@ -130,14 +131,14 @@ export const adminTemplates = {
         method: "DELETE",
       },);
       if (res.ok) {
-        (globalThis as any).showToast("success", "Profile deleted",);
+        (globalThis as any).showToast("success", t("toasts.profileDeleted",),);
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || "Failed to delete",);
+        (globalThis as any).showToast("error", err.error || t("toasts.failedDelete",),);
       }
     } catch {
-      (globalThis as any).showToast("error", "Network error",);
+      (globalThis as any).showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -165,7 +166,7 @@ export const adminTemplates = {
         },
       );
       if (res.ok) {
-        (globalThis as any).showToast("success", "Template saved",);
+        (globalThis as any).showToast("success", t("toasts.templateSaved",),);
         // Update local state
         if (this.selectedProfile.templates) {
           if (!this.selectedProfile.templates[detail]) {
@@ -178,10 +179,10 @@ export const adminTemplates = {
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || "Failed to save",);
+        (globalThis as any).showToast("error", err.error || t("toasts.failedSave",),);
       }
     } catch {
-      (globalThis as any).showToast("error", "Network error",);
+      (globalThis as any).showToast("error", t("toasts.networkError",),);
     } finally {
       this.savingTemplate = false;
     }
@@ -208,14 +209,14 @@ export const adminTemplates = {
         },
       );
       if (res.ok) {
-        (globalThis as any).showToast("success", "Defaults saved",);
+        (globalThis as any).showToast("success", t("toasts.defaultsSaved",),);
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || "Failed to save",);
+        (globalThis as any).showToast("error", err.error || t("toasts.failedSave",),);
       }
     } catch {
-      (globalThis as any).showToast("error", "Network error",);
+      (globalThis as any).showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -241,7 +242,7 @@ export const adminTemplates = {
         },),
       },);
       if (res.ok) {
-        (globalThis as any).showToast("success", "Profile created",);
+        (globalThis as any).showToast("success", t("toasts.profileCreated",),);
         this.showCreateModal = false;
         this.newProfile = {
           id: "",
@@ -253,10 +254,10 @@ export const adminTemplates = {
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || "Failed to create",);
+        (globalThis as any).showToast("error", err.error || t("toasts.failedCreate",),);
       }
     } catch {
-      (globalThis as any).showToast("error", "Network error",);
+      (globalThis as any).showToast("error", t("toasts.networkError",),);
     }
   },
 

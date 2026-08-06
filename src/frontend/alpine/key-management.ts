@@ -6,6 +6,7 @@
  */
 
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 
 export interface ActorKeyMeta {
@@ -40,12 +41,12 @@ export interface ActorKeyMeta {
       try {
         const res = await apiFetch("/api/keys", { headers: { Accept: "application/json", }, },);
         if (!res.ok) {
-          throw new Error("Failed to load keys",);
+          throw new Error(t("crypto.keyLoadFailed",),);
         }
         const data = await res.json();
         this.keys = data.keys ?? [];
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Failed to load keys";
+        this.error = error instanceof Error ? error.message : t("crypto.keyLoadFailed",);
       } finally {
         this.loading = false;
       }
@@ -64,13 +65,13 @@ export interface ActorKeyMeta {
         },);
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.message ?? "Failed to generate key",);
+          throw new Error(data.message ?? t("crypto.keyGenerateFailed",),);
         }
         this.showGenerateModal = false;
         this.newKeyName = "";
         await this.loadKeys();
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Failed to generate key";
+        this.error = error instanceof Error ? error.message : t("crypto.keyGenerateFailed",);
       } finally {
         this.loading = false;
       }
@@ -86,11 +87,11 @@ export interface ActorKeyMeta {
         },);
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.message ?? "Failed to rotate key",);
+          throw new Error(data.message ?? t("crypto.keyRotateFailed",),);
         }
         await this.loadKeys();
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Failed to rotate key";
+        this.error = error instanceof Error ? error.message : t("crypto.keyRotateFailed",);
       } finally {
         this.loading = false;
       }
@@ -113,14 +114,14 @@ export interface ActorKeyMeta {
         },);
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.message ?? "Failed to revoke key",);
+          throw new Error(data.message ?? t("crypto.keyRevokeFailed",),);
         }
         this.showRevokeModal = false;
         this.revokeKeyId = null;
         this.revokeKeyName = "";
         await this.loadKeys();
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Failed to revoke key";
+        this.error = error instanceof Error ? error.message : t("crypto.keyRevokeFailed",);
       } finally {
         this.loading = false;
       }

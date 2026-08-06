@@ -1,4 +1,5 @@
 import { browserCompressThenEncrypt, } from "../browser";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
@@ -18,8 +19,8 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.messages = data.data || [];
       this.totalPages = data.pagination?.totalPages ?? 1;
     } catch {
-      this.loadingError = "Failed to load messages";
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to load messages", },);
+      this.loadingError = t("toasts.failedLoadMessages",);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadMessages",), },);
     } finally {
       this.loadingMessages = false;
     }
@@ -53,7 +54,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
         this.hasMoreMessages = this.currentPage < this.totalPages;
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to load older messages", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadOlderMessages",), },);
     } finally {
       this.loadingOlder = false;
     }
@@ -121,7 +122,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const pendingAssets = this.pendingAssets ?? [];
     if (!text && pendingAssets.length === 0) { return; }
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No active chat", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
 
@@ -179,12 +180,12 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       } else {
         this.isGenerating = false;
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to send", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
         this.messages = msgs.filter((m,) => !m.id.startsWith("temp-",));
       }
     } catch {
       this.isGenerating = false;
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
       this.messages = msgs.filter((m,) => !m.id.startsWith("temp-",));
     }
   },

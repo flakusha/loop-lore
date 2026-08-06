@@ -7,6 +7,7 @@
 // stays the lightweight chat-header surface; this component backs the
 // standalone `/views/notifications` page.
 
+import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import type { NotificationCenterItem, NotificationCenterState, } from "./types";
 
@@ -24,16 +25,16 @@ const TYPE_ICONS: Record<string, string> = {
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  mention: "Mention",
-  quest_update: "Quest update",
-  item_offer: "Item offer",
-  world_event: "World event",
-  chat_invite: "Chat invite",
-  character_update: "Character update",
-  gm_action: "GM action",
-  system: "System",
-  blog_post: "Blog post",
-  blog_comment: "Blog comment",
+  mention: t("notifications.typeMention",),
+  quest_update: t("notifications.typeQuestUpdate",),
+  item_offer: t("notifications.typeItemOffer",),
+  world_event: t("notifications.typeWorldEvent",),
+  chat_invite: t("notifications.typeChatInvite",),
+  character_update: t("notifications.typeCharacterUpdate",),
+  gm_action: t("notifications.typeGmAction",),
+  system: t("notifications.typeSystem",),
+  blog_post: t("notifications.typeBlogPost",),
+  blog_comment: t("notifications.typeBlogComment",),
 };
 
 globalThis.notificationCenter = function(): NotificationCenterState {

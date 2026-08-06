@@ -1,5 +1,6 @@
 import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../vn";
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, GmConfig, Message, } from "./types";
@@ -150,13 +151,13 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         this.toggleImpersonation();
         // Re-init VN mode if toggle changed
         this.updateVnMode();
-        this.$dispatch?.("show-toast", { type: "success", message: "Chat settings saved", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatSettingsSaved",), },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to save settings", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSaveSettings",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error saving settings", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorSavingSettings",), },);
     }
   },
 

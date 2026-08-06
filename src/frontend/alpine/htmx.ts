@@ -1,5 +1,6 @@
 import { feFetch, } from "../fe-fetch";
 import { normalizeHeaderSlot, } from "./htmx-header";
+import { t, } from "./i18n";
 import { jsonParseOr, } from "./json";
 import { log, } from "./logger";
 
@@ -116,7 +117,7 @@ document.addEventListener("htmx:afterRequest", (e: Event,) => {
 
 document.addEventListener("asset:uploaded", () => {
   document.querySelector("#upload-modal",)?.classList.remove("open",);
-  showToast("success", "Asset uploaded",);
+  showToast("success", t("toasts.assetUploaded",),);
   const grid = document.querySelector("#asset-grid",);
   if (grid) { htmx.trigger(grid, "load",); }
 },);
@@ -125,29 +126,29 @@ document.addEventListener(
   "asset:duplicate",
   ((e: CustomEvent,) => {
     document.querySelector("#upload-modal",)?.classList.remove("open",);
-    const filename = e.detail?.filename ?? "Asset";
-    showToast("warning", `${filename} already exists`,);
+    const filename = e.detail?.filename ?? t("gallery.assetFallback",);
+    showToast("warning", t("toasts.assetAlreadyExists", { filename, },),);
     const grid = document.querySelector("#asset-grid",);
     if (grid) { htmx.trigger(grid, "load",); }
   }) as EventListener,
 );
 
 document.addEventListener("character:created", () => {
-  showToast("success", "Character created",);
+  showToast("success", t("toasts.characterCreated",),);
   const grid = document.querySelector("#character-grid",);
   if (grid) { htmx.trigger(grid, "load",); }
 },);
 
 document.addEventListener("character:imported", () => {
   document.querySelector("#import-modal",)?.classList.remove("open",);
-  showToast("success", "Character imported",);
+  showToast("success", t("toasts.characterImported",),);
   const grid = document.querySelector("#character-grid",);
   if (grid) { htmx.trigger(grid, "load",); }
 },);
 
 document.addEventListener("world:saved", () => {
   document.querySelector("#edit-world-modal",)?.classList.remove("open",);
-  showToast("success", "World saved",);
+  showToast("success", t("toasts.worldSaved",),);
   const detail = document.querySelector("#world-detail",);
   if (detail) { htmx.trigger(detail, "load",); }
 },);

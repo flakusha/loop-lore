@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "admin-chats", },);
@@ -51,16 +52,16 @@ export const adminChats = {
     try {
       const res = await apiFetch(`/api/admin/chats/${chatId}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "Chat deleted",);
+        showToast("success", t("toasts.chatDeleted",),);
         this.confirmDeleteChat = "";
         await this.loadChats();
         await (this as any).loadOverview();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed",);
+        showToast("error", err.error || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   searchChats() {

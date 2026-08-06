@@ -265,7 +265,7 @@ type LocaleInfoArray = LocaleInfo[];
       try {
         const res = await apiFetch("/api/settings/export",);
         if (!res.ok) {
-          showToast("error", "Export failed",);
+          showToast("error", t("toasts.exportFailed",),);
           return;
         }
         const blob = await res.blob();
@@ -276,11 +276,11 @@ type LocaleInfoArray = LocaleInfo[];
         document.body.append(a,);
         a.click();
         a.remove();
-        showToast("success", "Export downloaded",);
+        showToast("success", t("toasts.exportDownloaded",),);
         setTimeout(() => URL.revokeObjectURL(url,), 1000,);
       } catch (error) {
         log.warn("exportAllData failed", { error: String(error,), },);
-        showToast("error", "Export failed",);
+        showToast("error", t("toasts.exportFailed",),);
       }
     },
 
