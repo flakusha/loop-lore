@@ -77,6 +77,46 @@ describe("Assets E2E", () => {
     expect(Array.isArray(linksRes.data,),).toBe(true,);
   });
 
+  test("POST/DELETE share and DELETE link accept a JSON body", async () => {
+    // Upload
+    const file = new File(["shared asset",], "shared.png", { type: "image/png", },);
+    const formData = new FormData();
+    formData.append("file", file,);
+    const uploadRes = await api.upload<{ id: string }>("/api/assets", formData,);
+    const assetId = uploadRes.data!.id;
+
+    // Share with admin
+    const shareRes = await api.post(`/api/assets/${assetId}/share`, { actor_id: SEED.admin.id, },);
+    expect(shareRes.ok,).toBe(true,);
+
+    // Unshare via DELETE with body
+    const unshareRes = await api.del(`/api/assets/${assetId}/share`, { actor_id: SEED.admin.id, },);
+    expect(unshareRes.ok,).toBe(true,);
+    expect(unshareRes.status,).toBe(204,);
+    const sharesRes = await api.get<Array<{ actor_id: string }>>(`/api/assets/${assetId}/shares`,);
+    expect(sharesRes.data,).toEqual([],);
+
+    // Link to chat, then unlink via DELETE with body
+    const linkRes = await api.post(`/api/assets/${assetId}/links`, {
+      entityType: "chat",
+      entityId: SEED.chat.id,
+    },);
+    expect(linkRes.ok,).toBe(true,);
+
+    // The :linkId path param is vestigial — the body's entityType/entityId drive the unlink
+    const unlinkRes = await api.del(`/api/assets/${assetId}/links/any-link-id`, {
+      entityType: "chat",
+      entityId: SEED.chat.id,
+    },);
+    expect(unlinkRes.ok,).toBe(true,);
+    expect(unlinkRes.status,).toBe(204,);
+
+    const linksRes = await api.get<Array<{ entity_type: string; entity_id: string }>>(
+      `/api/assets/${assetId}/links`,
+    );
+    expect(linksRes.data,).toEqual([],);
+  });
+
   test("DELETE /api/assets/:id deletes asset", async () => {
     const file = new File(["delete me",], "delete.png", { type: "image/png", },);
     const formData = new FormData();
