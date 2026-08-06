@@ -125,4 +125,5 @@ export interface DB {
   player_achievements: import("./schema-core").PlayerAchievements;
   playthroughs: import("./schema-core").Playthroughs;
   meta_progression: import("./schema-core").MetaProgression;
+  character_skills: import("./schema-core").CharacterSkills;
 }

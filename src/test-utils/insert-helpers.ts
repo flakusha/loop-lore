@@ -2801,3 +2801,33 @@ export async function insertMetaProgression(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a character_skills row. */
+export async function insertCharacterSkills(
+  db: Db,
+  actor_id: string,
+  name: string,
+  category: string,
+  opts?: {
+    id?: Generated<string>;
+    world_id?: string | null;
+    description?: string | null;
+    level?: Generated<number>;
+    xp?: Generated<number>;
+    proficiency?: Generated<string>;
+    specialization?: string | null;
+    is_locked?: Generated<number>;
+    prerequisites?: Generated<string>;
+    metadata?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("character_skills",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    name,
+    category,
+    ...opts,
+  } as any,).execute();
+}
