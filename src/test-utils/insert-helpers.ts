@@ -78,7 +78,9 @@ import type {
   VisibilityOverride,
   WhiteneoteScope,
   WhiteneoteType,
+  WorldKind,
   WorldTraitCategory,
+  WorldVisibility,
 } from "../db/enums";
 import type { DB, } from "../db/schema";
 
@@ -266,6 +268,8 @@ export async function insertWorlds(
     description?: string | null;
     lore?: string | null;
     publication_status?: Generated<PublicationStatus>;
+    kind?: Generated<WorldKind>;
+    visibility?: Generated<WorldVisibility>;
     scan_depth?: Generated<number>;
     token_budget?: Generated<number>;
     difficulty_modifier?: Generated<number>;
@@ -2658,6 +2662,37 @@ export async function insertChatInvites(
   await db.insertInto("chat_invites",).values({
     id: crypto.randomUUID(),
     chat_id,
+    code,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a world_members row. */
+export async function insertWorldMembers(db: Db, world_id: string, actor_id: string,): Promise<void> {
+  await db.insertInto("world_members",).values({
+    world_id,
+    actor_id,
+  } as any,).execute();
+}
+
+/** Insert a world_invites row. */
+export async function insertWorldInvites(
+  db: Db,
+  world_id: string,
+  code: string,
+  opts?: {
+    id?: Generated<string>;
+    created_by?: string | null;
+    created_at?: Generated<string>;
+    expires_at?: string | null;
+    max_uses?: number | null;
+    uses?: Generated<number>;
+    revoked?: Generated<number>;
+  },
+): Promise<void> {
+  await db.insertInto("world_invites",).values({
+    id: crypto.randomUUID(),
+    world_id,
     code,
     ...opts,
   } as any,).execute();

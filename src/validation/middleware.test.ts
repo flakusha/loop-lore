@@ -12,6 +12,7 @@ import {
   MessageVisibilityUpdateBody,
   PaginationQuery,
   WorldCreateBody,
+  WorldUpdateBody,
 } from "./schemas";
 
 // ── Schema validation tests ─────────────────────────────────
@@ -212,6 +213,38 @@ describe("WorldCreateBody", () => {
 
   test("rejects empty name", () => {
     expect(C.Check({ name: "", },),).toBe(false,);
+  });
+
+  test("accepts kind: chat and visibility: public", () => {
+    expect(C.Check({ name: "My World", kind: "chat", visibility: "public", },),).toBe(true,);
+  });
+
+  test("rejects invalid kind", () => {
+    expect(C.Check({ name: "My World", kind: "sandbox", },),).toBe(false,);
+  });
+
+  test("rejects invalid visibility", () => {
+    expect(C.Check({ name: "My World", visibility: "open", },),).toBe(false,);
+  });
+});
+
+describe("WorldUpdateBody", () => {
+  const C = compile(WorldUpdateBody,);
+
+  test("accepts empty payload (all fields optional)", () => {
+    expect(C.Check({},),).toBe(true,);
+  });
+
+  test("accepts kind and visibility updates", () => {
+    expect(C.Check({ kind: "chat", visibility: "unlisted", },),).toBe(true,);
+  });
+
+  test("rejects invalid kind", () => {
+    expect(C.Check({ kind: "rpg-ish", },),).toBe(false,);
+  });
+
+  test("rejects invalid visibility", () => {
+    expect(C.Check({ visibility: "semi-public", },),).toBe(false,);
   });
 });
 
