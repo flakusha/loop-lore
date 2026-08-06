@@ -198,7 +198,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
     const result = await hook.execute(ctx.content, ctx,);
     expect(result.handled,).toBe(true,);
     expect(result.eventType,).toBe("emotion_change",);
-    expect(result.data?.dominantEmotion,).toBe("joy",);
+    expect(result.data?.dominantEmotion,).toBe("happy",);
   });
 
   test("6. NSFW hook gates content against actor policy", async () => {
