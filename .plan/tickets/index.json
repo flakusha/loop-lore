@@ -1951,17 +1951,17 @@
   "source": ".plan/tickets/TASK-chat-message-search.md",
   "status": "open"
  },
-  "TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP": {
-    "hash": "pending",
-    "extid": "TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP",
-    "type": "TASK",
-    "title": "Chat-only world channels (invite-driven membership)",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-chat-only-world-channels-invite-driven-membership.md"
-  },
+ "TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP": {
+  "hash": "pending",
+  "extid": "TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP",
+  "type": "TASK",
+  "title": "Chat-only world channels (invite-driven membership)",
+  "label": "task",
+  "priority": "Medium",
+  "epic": "",
+  "tags": [],
+  "source": ".plan/tickets/TASK-chat-only-world-channels-invite-driven-membership.md"
+ },
  "TASK-CHAT-PINS-FRONTEND": {
   "extid": "TASK-CHAT-PINS-FRONTEND",
   "type": "TASK",
@@ -6636,7 +6636,6 @@
   "tags": [],
   "source": ".plan/tickets/TASK-xmpp-integration.md"
  },
-
  "TASK-WORLD-ITEM-FRONTEND": {
   "hash": "c696fda",
   "extid": "TASK-WORLD-ITEM-FRONTEND",
@@ -6653,5 +6652,22 @@
    "settings"
   ],
   "source": ".plan/tickets/TASK-world-item-frontend.md"
+ },
+ "TASK-WORLD-ITEM-INSTANCE-NPC": {
+  "hash": "816b25c",
+  "extid": "TASK-WORLD-ITEM-INSTANCE-NPC",
+  "type": "TASK",
+  "title": "World item placement \u2014 give to NPC/actor",
+  "label": "task",
+  "priority": "Medium",
+  "epic": "epic-inventory-ui",
+  "tags": [
+   "items",
+   "instances",
+   "npc",
+   "placement",
+   "frontend"
+  ],
+  "source": ".plan/tickets/TASK-world-item-instance-npc.md"
  }
 }
