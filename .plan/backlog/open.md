@@ -44,16 +44,16 @@
 
 ## Schema drift / latent bugs
 
-| # | Item                                                                                        | Where                                             | Status                             |
-| - | ------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
-| 1 | Achievements, playthroughs, meta_progression tables missing from migrations (runtime crash) | `src/rpg/{achievements,replayability}/service.ts` | 🔴 Add migration or remove service |
-| 2 | `dice_roll_history` missing index                                                           | `src/db/migrations/026_rpg_mechanics.ts`          | 🟡 Add `(user_id, chat_id)` index  |
-| 3 | `migrateChat` parent_id not remapped (broken tree)                                          | `src/chat/service.ts:527+`                        | 🟡 Bug                             |
-| 4 | `chat-search.ts` param validation mismatch (`:id` vs `<id>`)                                | `src/routes/chat-search.ts:300`                   | 🟡 Align                           |
-| 5 | `chat.html` broken Handlebars partial `{{> {{>`                                             | `src/views/chat.html:39-41`                       | 🟡 Fix                             |
-| 6 | `content/compress.ts` unguarded `.zst` read (latent crash)                                  | `src/content/compress.ts:96+203`                  | 🟡 Guard                           |
-| 7 | `age-gate/controller.ts` error message leak                                                 | `src/age-gate/controller.ts:91,126`               | 🟡 Generic error                   |
-| 8 | Telemetry `chatId` data loss                                                             | `src/frontend/`                                   | 🟡 Fix (frontend i18n gaps closed 2026-08-06) |
+| # | Item                                                                                        | Where                                             | Status                                        |
+| - | ------------------------------------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------- |
+| 1 | Achievements, playthroughs, meta_progression tables missing from migrations (runtime crash) | `src/rpg/{achievements,replayability}/service.ts` | 🔴 Add migration or remove service            |
+| 2 | `dice_roll_history` missing index                                                           | `src/db/migrations/026_rpg_mechanics.ts`          | 🟡 Add `(user_id, chat_id)` index             |
+| 3 | `migrateChat` parent_id not remapped (broken tree)                                          | `src/chat/service.ts:527+`                        | 🟡 Bug                                        |
+| 4 | `chat-search.ts` param validation mismatch (`:id` vs `<id>`)                                | `src/routes/chat-search.ts:300`                   | 🟡 Align                                      |
+| 5 | `chat.html` broken Handlebars partial `{{> {{>`                                             | `src/views/chat.html:39-41`                       | 🟡 Fix                                        |
+| 6 | `content/compress.ts` unguarded `.zst` read (latent crash)                                  | `src/content/compress.ts:96+203`                  | 🟡 Guard                                      |
+| 7 | `age-gate/controller.ts` error message leak                                                 | `src/age-gate/controller.ts:91,126`               | 🟡 Generic error                              |
+| 8 | Telemetry `chatId` data loss                                                                | `src/frontend/`                                   | 🟡 Fix (frontend i18n gaps closed 2026-08-06) |
 
 ## Release hardening (mirrors `../high-value.md`; kept here for the open queue)
 
