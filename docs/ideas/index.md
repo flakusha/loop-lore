@@ -4,7 +4,7 @@ Research-driven feature proposals for loop-lore, derived from a deep-dive of `do
 plus analysis of community projects (SillyTavern, RisuAI, Agnai) and community
 feature requests. Each theme is broken into its own document and linked below.
 
-> These are **proposals** — not yet scheduled in `.plan/backlog.md` or
+> These are **proposals** — not yet scheduled in `.plan/backlog/` or
 > `.plan/roadmaps/roadmap.md`. Approved for drafting 2026-07-18; docs may be reorganized
 > later.
 

@@ -9,7 +9,7 @@ Browser-based 3D for worlds, characters, and navigation. Added per research revi
 > and constrained VMs will choke. All 3D features MUST be **progressive enhancement**:
 > capped at a device tier, default off, with a 2D fallback. Gate behind a capability
 > check (GPU/WebGL2, `deviceMemory`, `saveData`). Relates to deferred concept D.4
-> (3D World) in `.plan/backlog.md`.
+> (3D World) in `.plan/backlog/`.
 
 ## #31 3D world-map navigation
 
