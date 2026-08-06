@@ -160,16 +160,20 @@ export class EmotionAvatarService {
     activeJobs.set(jobId, job,);
 
     // Start generation in background (non-blocking)
-    this.runBatchJob(job, opts,).catch((error,) => {
-      getLogger().error(
-        "Batch emotion avatar generation failed",
-        error instanceof Error ? error : new Error(String(error,),),
-        { jobId: job.id, },
-      );
-      job.status = "failed";
-      job.error = String(error,);
-      job.completedAt = new Date().toISOString();
-    },);
+    void (async () => {
+      try {
+        await this.runBatchJob(job, opts,);
+      } catch (error) {
+        getLogger().error(
+          "Batch emotion avatar generation failed",
+          error instanceof Error ? error : new Error(String(error,),),
+          { jobId: job.id, },
+        );
+        job.status = "failed";
+        job.error = String(error,);
+        job.completedAt = new Date().toISOString();
+      }
+    })();
 
     return jobId;
   }

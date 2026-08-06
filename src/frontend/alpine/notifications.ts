@@ -65,7 +65,7 @@ export class NotificationsManager {
   /** Mark a chat read (POST) and clear its local unseen state. */
   async markRead(chatId: string,): Promise<void> {
     try {
-      await fetch(`/api/chats/${chatId}/mark-read`, { method: "PUT", },);
+      await apiFetch(`/api/chats/${chatId}/mark-read`, { method: "PUT", },);
     } catch {
       // network error — local state still updated below
     }
@@ -99,7 +99,7 @@ export class NotificationsManager {
 
   private async poll(): Promise<void> {
     try {
-      const res = await fetch("/api/chats/activity",);
+      const res = await apiFetch("/api/chats/activity",);
       if (!res.ok) { return; }
       const data = (await res.json()) as { chats: Record<string, ActivityEntry> };
       this.applySnapshot(data.chats,);

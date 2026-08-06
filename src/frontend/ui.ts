@@ -157,19 +157,21 @@ export function closeModal(el: Element,): void {
 }
 
 export function closeModalOnBackdrop(event: Event,): void {
-  if (event.target === event.currentTarget) {
-    const overlay = eventCurrentTarget<HTMLElement>(event,);
-    overlay?.classList.remove("open",);
+  if (event.target !== event.currentTarget) {
+    return;
+  }
 
-    // Release focus trap
-    modalFocusCleanup?.();
-    modalFocusCleanup = null;
+  const overlay = eventCurrentTarget<HTMLElement>(event,);
+  overlay?.classList.remove("open",);
 
-    // Restore previous focus
-    if (previousFocusElement) {
-      previousFocusElement.focus();
-      previousFocusElement = null;
-    }
+  // Release focus trap
+  modalFocusCleanup?.();
+  modalFocusCleanup = null;
+
+  // Restore previous focus
+  if (previousFocusElement) {
+    previousFocusElement.focus();
+    previousFocusElement = null;
   }
 }
 

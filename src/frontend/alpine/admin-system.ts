@@ -40,7 +40,7 @@ export const adminSystem = {
   async loadSystemConfig() {
     this.loadingSystemConfig = true;
     try {
-      const res = await fetch("/api/admin/system-config", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/admin/system-config", { headers: { Accept: "application/json", }, },);
       if (res.ok) { this.systemConfig = await res.json(); }
     } catch {
       log.warn("Network error loading system config",);
@@ -90,9 +90,9 @@ export const adminSystem = {
     this.loadingAnalytics = true;
     try {
       const [summaryRes, dailyRes, errorsRes,] = await Promise.all([
-        fetch("/api/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
-        fetch("/api/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
-        fetch("/api/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
       ],);
       if (summaryRes.ok) { this.analyticsSummary = await summaryRes.json(); }
       if (dailyRes.ok) { this.dailyStats = await dailyRes.json(); }
@@ -125,7 +125,7 @@ export const adminSystem = {
   async loadHealth() {
     this.loadingHealth = true;
     try {
-      const res = await fetch("/api/health", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/health", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.healthStatus = data.status || "unknown";
@@ -155,7 +155,7 @@ export const adminSystem = {
   async loadNsfwConfig() {
     this.loadingNsfw = true;
     try {
-      const res = await fetch("/api/admin/nsfw", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/admin/nsfw", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         this.nsfwConfig = await res.json();
       }

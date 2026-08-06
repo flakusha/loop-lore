@@ -11,7 +11,7 @@ import type { DB, } from "../db";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { resolveSystemPrompt, } from "../prompts";
-import { jsonParseOr, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
 function getLog() {
@@ -122,7 +122,7 @@ export async function storeMemories(
         memory_type: memory.memoryType,
         confidence: memory.confidence,
         importance: memory.importance,
-        keywords: JSON.stringify(memory.keywords,),
+        keywords: jsonStringifyOr(memory.keywords,),
         source_chat_id: chatId,
         scope: "character",
         privacy: "shared",

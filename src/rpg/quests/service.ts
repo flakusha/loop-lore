@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import { QuestStatus, QuestType, } from "../../db/enums-story";
 import { getDatabase, } from "../../db/index";
+import { jsonStringifyOr, } from "../../utils";
 import { assertRowUpdated, parseJsonField, } from "../shared/rpg-service-utils";
 
 /** Quest data from the database */
@@ -113,7 +114,7 @@ export class QuestService {
       type: input.type ?? QuestType.Discovery,
       status: QuestStatus.Active,
       priority: input.priority ?? 50,
-      config: JSON.stringify({
+      config: jsonStringifyOr({
         objectives: input.objectives ?? [],
       },),
       progress: 0,
@@ -121,7 +122,7 @@ export class QuestService {
       start_time: now,
       deadline: input.deadline ?? null,
       time_location_id: input.time_location_id ?? null,
-      rewards: JSON.stringify(input.rewards ?? [],),
+      rewards: jsonStringifyOr(input.rewards ?? [],),
       narrative_hooks: "[]",
       created_at: now,
       updated_at: now,
@@ -308,7 +309,7 @@ export class QuestService {
     await this.db
       .updateTable("quests",)
       .set({
-        config: JSON.stringify({ ...config, objectives, },),
+        config: jsonStringifyOr({ ...config, objectives, },),
         updated_at: new Date().toISOString(),
       },)
       .where("id", "=", questId,)
@@ -344,7 +345,7 @@ export class QuestService {
     await this.db
       .updateTable("quests",)
       .set({
-        rewards: JSON.stringify(rewards,),
+        rewards: jsonStringifyOr(rewards,),
         updated_at: new Date().toISOString(),
       },)
       .where("id", "=", questId,)

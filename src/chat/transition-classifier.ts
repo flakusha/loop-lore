@@ -68,7 +68,7 @@ function classifyWithRegex(content: string,): Omit<TransitionClassification, "so
       return {
         isTransition: true,
         type,
-        confidence: 1.0,
+        confidence: 1,
         locationHint: extractLocationHint(content,),
       };
     }
@@ -109,7 +109,7 @@ async function classifyWithAuxLlm(
   // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
   const response = await callAux("transition", config, db, messages, {
     userId,
-    temperature: 0.0,
+    temperature: 0,
     maxTokens: 100,
   },);
   if (!response) {
@@ -187,11 +187,17 @@ export async function classifyTransition(
 
 // ─── Helpers ──────────────────────────────────────────────────
 
+const TRANSITION_TYPES = new Set<TransitionType>([
+  "location_change",
+  "context_cut",
+  "description",
+],);
+
 /**
  * Check if a string is a valid transition type.
  */
 function isValidTransitionType(t: unknown,): t is TransitionType {
-  return t === "location_change" || t === "context_cut" || t === "description";
+  return TRANSITION_TYPES.has(t as TransitionType,);
 }
 
 /**
@@ -199,6 +205,6 @@ function isValidTransitionType(t: unknown,): t is TransitionType {
  * Simple heuristic: extract text after movement prepositions.
  */
 function extractLocationHint(content: string,): string | null {
-  const match = content.match(/(?:to|into|toward|inside|outside)\s+(.+?)(?:\.|,|$)/i,);
+  const match = /(?:to|into|toward|inside|outside)\s+(.+?)(?:\.|,|$)/i.exec(content,);
   return match?.[1]?.trim() ?? null;
 }

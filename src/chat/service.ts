@@ -14,7 +14,7 @@ import {
   PinnedState,
 } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { safeJsonParse, safeJsonStringify, } from "../utils";
+import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../utils";
 import { computeContextWindow, } from "./context-window";
 import { resolveResponseLength, } from "./response-length";
 import { estimateTokens, } from "./token-utils";
@@ -161,7 +161,7 @@ export async function createChat(
       world_id: params.worldId ?? null,
       current_location_id: params.currentLocationId ?? null,
       turn_strategy: (params.turnStrategy as never) ?? null,
-      gm_config: params.gmConfig ? JSON.stringify(params.gmConfig,) : null,
+      gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null,
       visual_novel: params.visualNovel ? 1 : 0,
       template_id: params.templateId ?? null,
     },)
@@ -258,12 +258,11 @@ export interface ChatSetupTemplate {
 export async function listChatSetupTemplates(
   database: Kysely<DB>,
 ): Promise<ChatSetupTemplate[]> {
-  const rows = await database
+  return await database
     .selectFrom("chat_setup_templates",)
     .selectAll()
     .orderBy("name", "asc",)
     .execute();
-  return rows;
 }
 
 /**
@@ -414,7 +413,7 @@ export async function createChatSetupTemplate(
       mode: params.mode ?? null,
       turn_strategy: params.turnStrategy ?? null,
       world_id: params.worldId ?? null,
-      gm_config: params.gmConfig ? JSON.stringify(params.gmConfig,) : null,
+      gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null,
       visual_novel: params.visualNovel ? 1 : 0,
     },)
     .execute();
@@ -454,7 +453,7 @@ export async function updateChatSetupTemplate(
   if (params.turnStrategy !== undefined) { updates.turn_strategy = params.turnStrategy; }
   if (params.worldId !== undefined) { updates.world_id = params.worldId; }
   if (params.gmConfig !== undefined) {
-    updates.gm_config = params.gmConfig ? JSON.stringify(params.gmConfig,) : null;
+    updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null;
   }
   if (params.visualNovel !== undefined) { updates.visual_novel = params.visualNovel ? 1 : 0; }
   updates.updated_at = new Date().toISOString();
@@ -576,7 +575,7 @@ export async function migrateChat(
       world_id: template.world_id ?? source.world_id,
       current_location_id: source.current_location_id,
       turn_strategy: (template.turn_strategy as never) ?? source.turn_strategy,
-      gm_config: gmConfig.ok && gmConfig.value ? JSON.stringify(gmConfig.value,) : null,
+      gm_config: gmConfig.ok && gmConfig.value ? jsonStringifyOr(gmConfig.value,) : null,
       visual_novel: template.visual_novel,
       parent_chat_id: chatId,
       template_id: template.id,
@@ -985,7 +984,7 @@ export async function updateChat(
     updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
   }
   if (params.gmConfig !== undefined) {
-    updates.gm_config = params.gmConfig ? JSON.stringify(params.gmConfig,) : null;
+    updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null;
   }
   if (typeof params.visualNovel === "boolean") {
     updates.visual_novel = params.visualNovel ? 1 : 0;

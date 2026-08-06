@@ -4,6 +4,7 @@
  * Adds intimacy levels, arousal state, and content rating context
  * when NSFW content is enabled and the chat involves NSFW characters.
  */
+import { jsonParseOr, } from "../../../utils";
 import type { SectionBuilder, } from "../types";
 
 /** Create an NSFW context section. */
@@ -67,8 +68,8 @@ export const nsfwContextSection: SectionBuilder = {
       .executeTakeFirst();
 
     if (desire) {
-      const turnOns = JSON.parse(desire.turn_ons,) as string[];
-      const hardLimits = JSON.parse(desire.hard_limits,) as string[];
+      const turnOns = jsonParseOr(desire.turn_ons, [],);
+      const hardLimits = jsonParseOr(desire.hard_limits, [],);
 
       if (turnOns.length > 0) {
         sections.push(`Turn-ons: ${turnOns.join(", ",)}`,);

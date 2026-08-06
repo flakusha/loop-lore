@@ -9,8 +9,8 @@
 
 import { readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import type { Kysely, Selectable } from "kysely";
+import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { getLogger } from "../logger";
@@ -53,11 +53,15 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   loadOrder.length = 0;
 
   // Load persisted plugin states
-  const rawStates = await db
-    .selectFrom("plugin_state")
-    .selectAll()
-    .execute()
-    .catch(() => []);
+  let rawStates: Selectable<PluginState>[] = [];
+  try {
+    rawStates = await db
+      .selectFrom("plugin_state")
+      .selectAll()
+      .execute();
+  } catch {
+    // plugin_state may not exist yet on first boot — proceed with no states
+  }
 
   for (const row of rawStates) {
     registry.setEnabled(row.name, row.enabled === 1);
@@ -144,12 +148,15 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
         log.info({ message: `Loaded plugin`, plugin: manifest.name, origin });
 
         // Persist new plugin to plugin_state if not already tracked
-        await db
-          .insertInto("plugin_state")
-          .values({ name: manifest.name, enabled: 1, enabled_at: new Date().toISOString() })
-          .onConflict((oc) => oc.column("name").doNothing())
-          .execute()
-          .catch(() => {});
+        try {
+          await db
+            .insertInto("plugin_state")
+            .values({ name: manifest.name, enabled: 1, enabled_at: new Date().toISOString() })
+            .onConflict((oc) => oc.column("name").doNothing())
+            .execute();
+        } catch {
+          // Persisting plugin state is best-effort
+        }
       } catch (error) {
         log.error({
           message: `Failed to load plugin`,

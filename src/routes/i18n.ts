@@ -8,6 +8,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLocaleInfo, getSupportedLocales, isLocale, } from "../i18n/locale-registry";
+import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
@@ -81,12 +82,12 @@ export function i18nRoutes({ database, }: I18nRoutesOpts,) {
           .where("id", "=", userId,)
           .executeTakeFirst();
 
-        const currentSettings = user?.settings ? JSON.parse(user.settings,) : {};
+        const currentSettings = user?.settings ? jsonParseOr(user.settings, {},) : {};
         const updatedSettings = { ...currentSettings, locale: newLocale, };
 
         await database
           .updateTable("users",)
-          .set({ settings: JSON.stringify(updatedSettings,), },)
+          .set({ settings: jsonStringifyOr(updatedSettings,), },)
           .where("id", "=", userId,)
           .execute();
 

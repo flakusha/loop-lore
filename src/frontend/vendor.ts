@@ -10,6 +10,10 @@ import morph from "@alpinejs/morph";
 import Alpine from "alpinejs";
 import htmx from "htmx.org";
 
+// Initialize Alpine stores from shared definition (single source of truth).
+// Wrapped in try-catch internally — a store failure never blocks Alpine.start().
+import { initAlpineStores, } from "./stores";
+
 const g = globalThis as Record<string, unknown>;
 g.htmx = htmx;
 g.Alpine = Alpine;
@@ -18,7 +22,6 @@ Alpine.plugin(morph,);
 // Configure htmx CSP nonce (passed from layout.html via globalThis.__cspNonce)
 const cspNonce = (g.__cspNonce as string) || "";
 if (cspNonce) {
-  htmx.config = htmx.config || {};
   htmx.config.inlineScriptNonce = cspNonce;
 }
 
@@ -60,8 +63,4 @@ require("htmx-ext-sse/sse.js",);
 // Auto-start after all deferred scripts have loaded.
 // MUST be registered before initAlpineStores so a store error never blocks it.
 document.addEventListener("DOMContentLoaded", () => Alpine.start(),);
-
-// Initialize Alpine stores from shared definition (single source of truth).
-// Wrapped in try-catch internally — a store failure never blocks Alpine.start().
-import { initAlpineStores, } from "./stores";
 initAlpineStores();

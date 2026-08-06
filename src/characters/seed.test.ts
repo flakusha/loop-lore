@@ -193,12 +193,12 @@ describe("seedCharacterTemplates", () => {
       .execute();
 
     const byName = Object.fromEntries(traits.map((t,) => [t.trait_name, t,]),);
-    expect(byName["species"]?.trait_value,).toBe("High Elf",); // title-cased
-    expect(byName["species"]?.trait_category,).toBe("identity",);
-    expect(byName["homeland"]?.trait_value,).toBe("Whispering Library",); // title-cased
-    expect(byName["homeland"]?.trait_category,).toBe("background",);
-    expect(byName["culture"]?.trait_value,).toBe("Old Tongue Scholar",);
-    expect(byName["culture"]?.trait_category,).toBe("background",);
+    expect(byName.species?.trait_value,).toBe("High Elf",); // title-cased
+    expect(byName.species?.trait_category,).toBe("identity",);
+    expect(byName.homeland?.trait_value,).toBe("Whispering Library",); // title-cased
+    expect(byName.homeland?.trait_category,).toBe("background",);
+    expect(byName.culture?.trait_value,).toBe("Old Tongue Scholar",);
+    expect(byName.culture?.trait_category,).toBe("background",);
   });
 
   test("does not write identity traits when identity fields omitted", async () => {

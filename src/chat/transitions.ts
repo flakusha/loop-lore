@@ -12,6 +12,7 @@ import { randomUUID, } from "node:crypto";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import type { ExtractedMemory, } from "../memory/types";
+import { jsonStringifyOr, } from "../utils";
 import { estimateTokens, } from "./token-utils";
 import { classifyTransition, } from "./transition-classifier";
 import type { ChatTransition, MessageRef, TransitionClassification, } from "./types";
@@ -223,7 +224,7 @@ async function storeMemoriesWithScope(
         memory_type: memory.memoryType,
         confidence: memory.confidence,
         importance: memory.importance,
-        keywords: JSON.stringify(memory.keywords,),
+        keywords: jsonStringifyOr(memory.keywords,),
         source_chat_id: chatId,
         scope,
         privacy: "shared",

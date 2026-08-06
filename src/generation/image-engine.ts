@@ -110,7 +110,12 @@ export async function generateImages(
       },);
 
       if (!resp.ok) {
-        const errText = await resp.text().catch(() => "unknown");
+        let errText = "unknown";
+        try {
+          errText = await resp.text();
+        } catch {
+          // Error body read failed — keep "unknown" fallback
+        }
         return failure(`Image generation failed: ${errText}`, 502,);
       }
 
@@ -140,7 +145,12 @@ export async function generateImages(
       },);
 
       if (!resp.ok) {
-        const errText = await resp.text().catch(() => "unknown");
+        let errText = "unknown";
+        try {
+          errText = await resp.text();
+        } catch {
+          // Error body read failed — keep "unknown" fallback
+        }
         return failure(`Image generation failed: ${errText}`, 502,);
       }
 
@@ -173,7 +183,12 @@ export async function generateImages(
       },);
 
       if (!submitResp.ok) {
-        const errText = await submitResp.text().catch(() => "unknown");
+        let errText = "unknown";
+        try {
+          errText = await submitResp.text();
+        } catch {
+          // Error body read failed — keep "unknown" fallback
+        }
         return failure(`sd.cpp job submission failed: ${errText}`, 502,);
       }
 

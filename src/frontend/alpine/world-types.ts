@@ -84,7 +84,7 @@ export interface WorldEditState {
   deleteLocation(locId: string,): Promise<void>;
   expandLoc(locId: string,): void;
   saveLocation(locId: string,): Promise<void>;
-loadItems(): Promise<void>;
+  loadItems(): Promise<void>;
   addItem(): Promise<void>;
   expandItem(itemId: string,): void;
   saveItem(itemId: string,): Promise<void>;

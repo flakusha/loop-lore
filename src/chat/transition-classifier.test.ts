@@ -44,7 +44,7 @@ describe("classifyTransition (regex patterns)", () => {
     expect(result.isTransition,).toBe(true,);
     expect(result.type,).toBe("location_change",);
     expect(result.source,).toBe("regex",);
-    expect(result.confidence,).toBe(1.0,);
+    expect(result.confidence,).toBe(1,);
   });
 
   it("detects scene shift", async () => {
@@ -205,7 +205,7 @@ describe("classifyTransition (edge cases)", () => {
   });
 
   it("handles very long content", async () => {
-    const longContent = "I walk to ".repeat(1000,) + "the tavern";
+    const longContent = `${"I walk to ".repeat(1000,)}the tavern`;
     const result = await classifyTransition(
       longContent,
       [],

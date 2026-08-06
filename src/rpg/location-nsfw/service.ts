@@ -12,6 +12,7 @@
 import type { Kysely, } from "kysely";
 import type { NsfwLocationType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { jsonStringifyOr, } from "../../utils";
 import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
@@ -102,9 +103,9 @@ export class LocationNsfwService {
         location_type: "bedroom",
         privacy_level: "private",
         discovery_chance: 10,
-        atmosphere: JSON.stringify(defaultAtmosphere,),
+        atmosphere: jsonStringifyOr(defaultAtmosphere,),
         equipment: "[]",
-        risks: JSON.stringify(defaultRisks,),
+        risks: jsonStringifyOr(defaultRisks,),
         created_at: now,
         updated_at: now,
       },)
@@ -139,11 +140,11 @@ export class LocationNsfwService {
     if (updates.privacyLevel !== undefined) { fields.privacy_level = updates.privacyLevel; }
     if (updates.discoveryChance !== undefined) { fields.discovery_chance = updates.discoveryChance; }
     if (updates.atmosphere !== undefined) {
-      fields.atmosphere = JSON.stringify({ ...current.atmosphere, ...updates.atmosphere, },);
+      fields.atmosphere = jsonStringifyOr({ ...current.atmosphere, ...updates.atmosphere, },);
     }
-    if (updates.equipment !== undefined) { fields.equipment = JSON.stringify(updates.equipment,); }
+    if (updates.equipment !== undefined) { fields.equipment = jsonStringifyOr(updates.equipment,); }
     if (updates.risks !== undefined) {
-      fields.risks = JSON.stringify({ ...current.risks, ...updates.risks, },);
+      fields.risks = jsonStringifyOr({ ...current.risks, ...updates.risks, },);
     }
 
     const result = await this.db

@@ -367,7 +367,12 @@ export class ImageEditService {
         },);
 
         if (!resp.ok) {
-          const errText = await resp.text().catch(() => "unknown");
+          let errText = "unknown";
+          try {
+            errText = await resp.text();
+          } catch {
+            // Error body read failed — keep "unknown" fallback
+          }
           throw new Error(`img2img generation failed: ${errText}`,);
         }
 
@@ -413,7 +418,12 @@ export class ImageEditService {
         },);
 
         if (!resp.ok) {
-          const errText = await resp.text().catch(() => "unknown");
+          let errText = "unknown";
+          try {
+            errText = await resp.text();
+          } catch {
+            // Error body read failed — keep "unknown" fallback
+          }
           throw new Error(`Image edit failed: ${errText}`,);
         }
 

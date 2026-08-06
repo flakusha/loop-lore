@@ -15,9 +15,9 @@
  * creates block-scoped variables that don't appear on `typeof globalThis`.
  */
 
-export {};
-
 import type { TranslationMap, } from "./i18n";
+
+export {};
 
 declare global {
   /* ── Vendor / framework globals ─────────────────────────────── */

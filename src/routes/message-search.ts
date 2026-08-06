@@ -7,7 +7,7 @@
 // dateFrom/dateTo, plus limit/offset pagination. Results include a match snippet
 // (with <mark> spans when q is given), a bm25 relevance score, and pagination info.
 import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
+import type { Kysely, QueryResult, } from "kysely";
 import { sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
@@ -57,9 +57,9 @@ const SNIPPET_LENGTH = 30;
 function buildFtsQuery(raw: string,): string {
   return raw
     .split(/\s+/,)
-    .filter((t,) => t.length > 0,)
-    .map((token,) => `"${token.replace(/"/g, '""')}"`,)
-    .join(" ");
+    .filter((t,) => t.length > 0)
+    .map((token,) => `"${token.replaceAll('"', '""',)}"`)
+    .join(" ",);
 }
 
 /**
@@ -86,22 +86,25 @@ function extraWhere(
   const clauses: ReturnType<typeof sql>[] = [];
 
   if (!isSingleChat && userRole !== "admin" && userRole !== "solo") {
-    clauses.push(sql`m.chat_id IN (
-      SELECT chat_id FROM chat_participants WHERE actor_id = ${userId}
-      UNION
-      SELECT id FROM chats WHERE created_by = ${userId}
-    )`);
+    clauses.push(sql`
+      m.chat_id IN (
+            SELECT chat_id FROM chat_participants WHERE actor_id = ${userId}
+            UNION
+            SELECT id FROM chats WHERE created_by = ${userId}
+          )
+    `,);
   }
-  if (query.chatId) { clauses.push(sql`m.chat_id = ${query.chatId}`); }
-  if (query.role) { clauses.push(sql`m.role = ${query.role}`); }
+  if (query.chatId) { clauses.push(sql`m.chat_id = ${query.chatId}`,); }
+  if (query.role) { clauses.push(sql`m.role = ${query.role}`,); }
   if (query.hasAttachment === "true") {
-    clauses.push(sql`m.attachments IS NOT NULL AND m.attachments != '[]'`);
+    clauses.push(sql`m.attachments IS NOT NULL AND m.attachments != '[]'`,);
   }
-  if (query.dateFrom) { clauses.push(sql`m.created_at >= ${query.dateFrom}`); }
-  if (query.dateTo) { clauses.push(sql`m.created_at <= ${query.dateTo}`); }
+  if (query.dateFrom) { clauses.push(sql`m.created_at >= ${query.dateFrom}`,); }
+  if (query.dateTo) { clauses.push(sql`m.created_at <= ${query.dateTo}`,); }
 
   if (clauses.length === 0) { return sql` `; }
-  return sql` AND ${sql.join(clauses, sql` AND `)}`;
+  const joined = sql.join(clauses, sql` AND `,);
+  return sql` AND ${joined}`;
 }
 
 export function messageSearchRoutes(opts: HandlerOpts,) {
@@ -122,7 +125,7 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
 
           // Single-chat scope: verify access first.
           if (query.chatId) {
-            const access = await checkChatAccess(database, query.chatId, userId, userRole);
+            const access = await checkChatAccess(database, query.chatId, userId, userRole,);
             if (!access.ok) { return notFound("Chat not found",); }
           }
 
@@ -130,7 +133,7 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
           const where = extraWhere(query, userId, userRole, Boolean(query.chatId,),);
 
           let rows: MessageSearchRow[];
-          let total: number;
+          let counted: QueryResult<{ total: number }> | undefined;
 
           if (ftsQuery) {
             const result = await sql<MessageSearchRow>`
@@ -158,14 +161,13 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
             `.execute(database,);
             rows = result.rows;
 
-            const counted = await sql<{ total: number }>`
+            counted = await sql<{ total: number }>`
               SELECT COUNT(*) AS total
               FROM messages_fts
               JOIN messages m ON m.id = messages_fts.message_id
               JOIN chats c ON c.id = m.chat_id
               WHERE messages_fts MATCH ${ftsQuery}${where}
             `.execute(database,);
-            total = counted.rows[0]?.total ?? 0;
           } else {
             const result = await sql<MessageSearchRow>`
               SELECT
@@ -191,14 +193,15 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
             `.execute(database,);
             rows = result.rows;
 
-            const counted = await sql<{ total: number }>`
+            counted = await sql<{ total: number }>`
               SELECT COUNT(*) AS total
               FROM messages m
               JOIN chats c ON c.id = m.chat_id
               WHERE 1=1${where}
             `.execute(database,);
-            total = counted.rows[0]?.total ?? 0;
           }
+
+          const total = counted?.rows[0]?.total ?? 0;
 
           const results = rows.map((row,) => ({
             messageId: row.messageId,
@@ -238,8 +241,7 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
           },
           detail: {
             summary: "Search messages",
-            description:
-              "Full-text search over message content, scoped to one chat or all accessible chats. " +
+            description: "Full-text search over message content, scoped to one chat or all accessible chats. " +
               "Filters compose with AND: chatId, q (FTS5 MATCH), role, hasAttachment, dateFrom/dateTo, limit/offset.",
             tags: ["Messages", "Search",],
           },

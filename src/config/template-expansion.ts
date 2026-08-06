@@ -28,7 +28,7 @@ export interface ExpansionConfig {
   /** Additional emotions to add */
   emotions?: Record<string, EmotionEntry>;
   /** Additional intent patterns to add */
-  intentPatterns?: Array<{ pattern: string; emotion: string }>;
+  intentPatterns?: { pattern: string; emotion: string }[];
   /** Whether to auto-generate missing emotion avatars via SD */
   generateMissingAvatars?: boolean;
 }
@@ -164,13 +164,15 @@ export function extractKeywords(config: AvatarTemplateConfig,): string[] {
 
   // Extract from emotion intents
   for (const emotion of Object.values(config.emotions,)) {
-    if (emotion.intent) {
-      // Extract key words from intent description
-      const words = emotion.intent.toLowerCase().split(/\s+/,);
-      for (const word of words) {
-        if (word.length > 3) { // Only meaningful words
-          keywords.add(word,);
-        }
+    if (!emotion.intent) {
+      continue;
+    }
+
+    // Extract key words from intent description
+    const words = emotion.intent.toLowerCase().split(/\s+/,);
+    for (const word of words) {
+      if (word.length > 3) { // Only meaningful words
+        keywords.add(word,);
       }
     }
   }

@@ -30,7 +30,7 @@ globalThis.personasPage = function() {
     async loadPersonas() {
       this.loading = true;
       try {
-        const res = await fetch("/api/personas", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/personas", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.personas = Array.isArray(data,) ? data : [];
@@ -75,7 +75,7 @@ globalThis.personasPage = function() {
         if (this.formDescription) { body.description = this.formDescription; }
         if (active) { body.isDefault = this.formIsDefault; }
 
-        const res = await fetch(url, {
+        const res = await apiFetch(url, {
           method,
           headers: { "Content-Type": "application/json", Accept: "application/json", },
           body: jsonBody(body,),
@@ -99,7 +99,7 @@ globalThis.personasPage = function() {
     async deletePersona(id: string,) {
       if (!confirm("Delete this persona?",)) { return; }
       try {
-        const res = await fetch(`/api/personas/${id}`, { method: "DELETE", },);
+        const res = await apiFetch(`/api/personas/${id}`, { method: "DELETE", },);
         if (res.ok) {
           this.personas = this.personas.filter((p,) => p.id !== id);
           this.filterList();

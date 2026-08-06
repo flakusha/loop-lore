@@ -24,7 +24,7 @@ export const adminWorlds = {
     try {
       let url = `/api/admin/worlds?page=${this.worldPage}&pageSize=${(this as any).pageSize}`;
       if (this.worldSearch) { url += `&q=${encodeURIComponent(this.worldSearch,)}`; }
-      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.worlds = data.data || [];

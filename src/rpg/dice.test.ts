@@ -144,7 +144,7 @@ describe("rollDice", () => {
 
   it("statistical distribution: d20 average ~10.5", () => {
     const totals: number[] = [];
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 10_000; i++) {
       const result = rollDice(20, 1, 0,);
       totals.push(result.rawTotal,);
     }

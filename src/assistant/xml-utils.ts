@@ -54,8 +54,8 @@ function escapeFence(content: string,): { escaped: string; fenceLen: number } {
 
 function escapeSentinel(content: string, tag: string,): string {
   return content
-    .replaceAll(new RegExp(`<<${tag}>>`, "g",), `[${tag}]`,)
-    .replaceAll(new RegExp(`<</${tag}>>`, "g",), `[/${tag}]`,);
+    .replaceAll(new RegExp(`<<${tag}>>`, "g",), () => `[${tag}]`,)
+    .replaceAll(new RegExp(`<</${tag}>>`, "g",), () => `[/${tag}]`,);
 }
 
 function wrapXml(tag: string, content: string,): string {

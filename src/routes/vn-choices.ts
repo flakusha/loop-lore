@@ -12,7 +12,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
-import { jsonParseOr, uid, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
 import {
   forbiddenResponse as forbidden,
   HttpStatus,
@@ -100,10 +100,10 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
               scene_index: body.sceneIndex,
               label: body.label,
               description: body.description ?? null,
-              consequences: JSON.stringify(body.consequences ?? {},),
-              relationship_impact: JSON.stringify(body.relationshipImpact ?? {},),
-              mood_impact: JSON.stringify(body.moodImpact ?? {},),
-              unlock_conditions: JSON.stringify(body.unlockConditions ?? {},),
+              consequences: jsonStringifyOr(body.consequences ?? {},),
+              relationship_impact: jsonStringifyOr(body.relationshipImpact ?? {},),
+              mood_impact: jsonStringifyOr(body.moodImpact ?? {},),
+              unlock_conditions: jsonStringifyOr(body.unlockConditions ?? {},),
               created_at: now,
             },)
             .execute();

@@ -219,7 +219,8 @@ describe("exportRoutes", () => {
     expect((manifest.contents as Record<string, number>).worlds,).toBe(1,);
   });
 
-  test("assets export returns empty count when no assets exist", async () => {    const app = createApp(db,);
+  test("assets export returns empty count when no assets exist", async () => {
+    const app = createApp(db,);
     const res = await postExport(app, { include: ["assets",], },);
     expect(res.status,).toBe(200,);
 
