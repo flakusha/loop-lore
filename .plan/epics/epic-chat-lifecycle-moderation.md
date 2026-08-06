@@ -1,6 +1,6 @@
 # EPIC: Chat Lifecycle, Transitions & Moderation
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

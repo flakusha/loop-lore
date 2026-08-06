@@ -1,6 +1,6 @@
 # EPIC: ComfyUI Plugin & Workflow Templates
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — unified ComfyUI + sd-server image editing, node discovery (comfyui/http/sdserver), workflow templates + LoRA shipped; GGUF model loading pending
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
