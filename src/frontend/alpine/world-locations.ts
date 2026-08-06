@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { WorldEditState, } from "./world-types";
@@ -65,10 +66,10 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
         await this.loadLocations();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed to add location",);
+        showToast("error", err.error || t("toasts.failedAddLocation",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -102,23 +103,23 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
           loc.description = this.editLocDesc.trim() || null;
         }
         this.expandedLoc = "";
-        showToast("success", "Location updated",);
+        showToast("success", t("toasts.locationUpdated",),);
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed",);
+        showToast("error", err.message || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
   async deleteLocation(locId: string,) {
-    if (!confirm("Delete this location?",)) { return; }
+    if (!confirm(t("worlds.deleteLocationConfirm",),)) { return; }
     try {
       const res = await apiFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
       if (res.ok) { await this.loadLocations(); }
     } catch {
-      showToast("error", "Failed to delete location",);
+      showToast("error", t("toasts.failedDeleteLocation",),);
     }
   },
 };

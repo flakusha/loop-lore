@@ -6,6 +6,7 @@
 //
 // Reuses the existing global `showToast` (declared on Window) for push toasts.
 
+import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import type { NotificationBellState, NotificationListItem, NotificationPrefsState, } from "./types";
 
@@ -21,14 +22,14 @@ const TYPE_ICONS: Record<string, string> = {
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  mention: "Mention",
-  quest_update: "Quest update",
-  item_offer: "Item offer",
-  world_event: "World event",
-  chat_invite: "Chat invite",
-  character_update: "Character update",
-  gm_action: "GM action",
-  system: "System",
+  mention: t("notifications.typeMention",),
+  quest_update: t("notifications.typeQuestUpdate",),
+  item_offer: t("notifications.typeItemOffer",),
+  world_event: t("notifications.typeWorldEvent",),
+  chat_invite: t("notifications.typeChatInvite",),
+  character_update: t("notifications.typeCharacterUpdate",),
+  gm_action: t("notifications.typeGmAction",),
+  system: t("notifications.typeSystem",),
 };
 
 let bellStream: EventSource | null = null;

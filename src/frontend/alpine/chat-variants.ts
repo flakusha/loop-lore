@@ -1,4 +1,5 @@
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
@@ -9,7 +10,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
   async regenerateResponse() {
     log.info("regenerateResponse", { chatId: this.activeChat, },);
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No active chat", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
     try {
@@ -20,10 +21,10 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       },);
       const data = await response.json();
       if (response.ok && data.ready) {
-        this.$dispatch?.("show-toast", { type: "info", message: "Regenerating response...", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("status.regeneratingResponse",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to regenerate", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedRegenerate",), },);
     }
   },
 
@@ -39,10 +40,10 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       },);
       if (res.ok) {
         await this.loadMessages();
-        this.$dispatch?.("show-toast", { type: "info", message: "New variant generated", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.newVariantGenerated",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to regenerate variant", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedRegenerateVariant",), },);
     } finally {
       this.isGenerating = false;
     }
@@ -61,14 +62,14 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       },);
       if (res.ok) { await this.loadMessages(); }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to switch variant", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
     }
   },
 
   async continueMessage(messageId: string,) {
     log.info("continueMessage", { messageId, chatId: this.activeChat, },);
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No active chat", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
     const msgEl = document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(messageId,)}"]`,);
@@ -83,7 +84,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       if (!response.ok || !data.ok) {
         this.$dispatch?.("show-toast", {
           type: "error",
-          message: data.error ?? "Failed to continue message",
+          message: data.error ?? t("toasts.failedContinueMessage",),
         },);
         return;
       }
@@ -91,16 +92,16 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       this.isContinuing = true;
       this.isGenerating = true;
       if (msgEl) { msgEl.classList.add("continued",); }
-      this.$dispatch?.("show-toast", { type: "info", message: "Continuing message...", },);
+      this.$dispatch?.("show-toast", { type: "info", message: t("status.continuingMessage",), },);
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error continuing message", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorContinuingMessage",), },);
     }
   },
 
   async retryFromPoint(attemptId: string, step: number,) {
     log.info("retryFromPoint", { attemptId, step, chatId: this.activeChat, },);
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No active chat", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
     try {
@@ -111,18 +112,21 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       },);
       const data = await response.json();
       if (!response.ok || !data.ok) {
-        this.$dispatch?.("show-toast", { type: "error", message: data.error ?? "Failed to retry", },);
+        this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.failedRetry",), },);
         return;
       }
       this.$dispatch?.("show-toast", {
         type: "info",
         message: data.resumeFromStep > 0
-          ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
-          : "Regenerating response...",
+          ? t("status.resumingFromStep", {
+            step: String(data.resumeFromStep + 1,),
+            total: String(data.totalSteps,),
+          },)
+          : t("status.regeneratingResponse",),
       },);
       this.isGenerating = true;
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error during retry", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorDuringRetry",), },);
     }
   },
 };

@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
@@ -58,15 +59,15 @@ export const adminSystem = {
         body: jsonBody({ key, value, },),
       },);
       if (res.ok) {
-        showToast("success", "Config saved",);
+        showToast("success", t("toasts.configSaved",),);
         delete this.sysConfigDirty[key];
         await this.loadSystemConfig();
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed",);
+        showToast("error", err.message || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   async deleteSystemConfig(key: string,) {
@@ -74,15 +75,15 @@ export const adminSystem = {
     try {
       const res = await apiFetch(`/api/admin/system-config/${key}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "Config deleted",);
+        showToast("success", t("toasts.configDeleted",),);
         this.confirmDeleteConfig = "";
         await this.loadSystemConfig();
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed",);
+        showToast("error", err.message || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -98,7 +99,7 @@ export const adminSystem = {
       if (dailyRes.ok) { this.dailyStats = await dailyRes.json(); }
       if (errorsRes.ok) { this.errorEvents = await errorsRes.json(); }
     } catch {
-      showToast("error", "Failed to load analytics",);
+      showToast("error", t("toasts.failedLoadAnalytics",),);
     } finally {
       this.loadingAnalytics = false;
     }
@@ -109,14 +110,14 @@ export const adminSystem = {
     try {
       const res = await apiFetch("/api/telemetry/analytics/purge?days=90", { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "Old telemetry events purged",);
+        showToast("success", t("toasts.telemetryPurged",),);
         await this.loadAnalytics();
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed",);
+        showToast("error", err.message || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     } finally {
       this.purgingAnalytics = false;
     }
@@ -134,7 +135,7 @@ export const adminSystem = {
         this.healthProviders = data.providers || [];
       }
     } catch {
-      showToast("error", "Failed to load health status",);
+      showToast("error", t("toasts.failedLoadHealth",),);
     } finally {
       this.loadingHealth = false;
     }
@@ -174,13 +175,13 @@ export const adminSystem = {
         body: jsonBody(this.nsfwConfig,),
       },);
       if (res.ok) {
-        showToast("success", "NSFW policy saved",);
+        showToast("success", t("toasts.nsfwPolicySaved",),);
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed",);
+        showToast("error", err.message || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 };

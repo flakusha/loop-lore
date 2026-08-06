@@ -17,6 +17,7 @@ import { chatSections, } from "./chat-sections";
 import { chatSettings, } from "./chat-settings";
 import { chatUtils, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
+import { t, } from "./i18n";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
@@ -49,7 +50,7 @@ globalThis.chatState = function() {
   return {
     // ── Core state ──
     isGenerating: false,
-    generationLabel: "Character is responding...",
+    generationLabel: t("status.characterResponding",),
     activeAttemptId: null as string | null,
     continuingMessageId: null as string | null,
     isContinuing: false,
@@ -86,7 +87,7 @@ globalThis.chatState = function() {
     currentPage: 1,
     totalPages: 1,
     scrollObserver: null as IntersectionObserver | null,
-    activeChatName: "Welcome to loop-lore",
+    activeChatName: t("chats.welcomeTitle",),
     galleryAssets: [] as {
       id: string;
       name?: string;
@@ -98,7 +99,7 @@ globalThis.chatState = function() {
       height?: number;
       alt_text?: string;
     }[],
-    userDisplayName: "User",
+    userDisplayName: t("common.user",),
     userRole: "solo",
     currentCharacter: null as {
       id: string;
@@ -205,15 +206,15 @@ globalThis.chatState = function() {
       try {
         const res = await apiFetch(`/api/chats/${chatId}/join`, { method: "POST", },);
         if (!res.ok) {
-          this.$dispatch?.("show-toast", { type: "error", message: "Could not join chat", },);
+          this.$dispatch?.("show-toast", { type: "error", message: t("toasts.couldNotJoinChat",), },);
           return;
         }
         // Refresh the joinable list + local chat list after joining.
         await Promise.all([this.loadJoinableChats(), this.loadChats?.(),],);
-        this.$dispatch?.("show-toast", { type: "info", message: "Joined chat", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.joinedChat",), },);
       } catch (error) {
         getLogger().error("Failed to join chat", error instanceof Error ? error : new Error(String(error,),), {},);
-        this.$dispatch?.("show-toast", { type: "error", message: "Failed to join chat", },);
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedJoinChat",), },);
       }
     },
 
@@ -351,7 +352,7 @@ globalThis.chatState = function() {
         const res = await apiFetch("/api/auth/me",);
         if (res.ok) {
           const user = await res.json();
-          this.userDisplayName = user.display_name || user.username || "User";
+          this.userDisplayName = user.display_name || user.username || t("common.user",);
           this.userRole = user.role || "solo";
         }
       } catch {
@@ -363,13 +364,13 @@ globalThis.chatState = function() {
       try {
         const res = await apiFetch(`/api/chats?${this._filterParams?.() ?? "pageSize=200"}`,);
         if (!res.ok) {
-          this.$dispatch("show-toast", { type: "error", message: "Failed to load chats", },);
+          this.$dispatch("show-toast", { type: "error", message: t("toasts.failedLoadChats",), },);
           return;
         }
         const data = await res.json();
         this.chats = data.data || [];
       } catch {
-        this.$dispatch("show-toast", { type: "error", message: "Failed to load chats", },);
+        this.$dispatch("show-toast", { type: "error", message: t("toasts.failedLoadChats",), },);
       }
     },
 
@@ -423,7 +424,7 @@ globalThis.chatState = function() {
       if (this.isGenerating) {
         this.$dispatch("show-toast", {
           type: "warning",
-          message: "Complete current generation before switching chats",
+          message: t("toasts.completeGenerationFirst",),
         },);
         return;
       }
@@ -437,7 +438,7 @@ globalThis.chatState = function() {
       Alpine.store("ui",).showGallery = false;
       Alpine.store("ui",).showCharacterInfo = false;
       const chat = this.chats.find((c: { id: string; name?: string },) => c.id === chatId);
-      this.activeChatName = chat?.name || "Chat";
+      this.activeChatName = chat?.name || t("chats.untitledChat",);
       if (g.Alpine) {
         try {
           Alpine.store("chat",).currentChat = chat || null;

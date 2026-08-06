@@ -4,6 +4,7 @@
  * Mirrors the `worldLocations` mixin. Item definitions CRUD against
  * /api/worlds/:worldId/items (world-level, owner/admin gated server-side).
  */
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { WorldEditState, } from "./world-types";
@@ -91,14 +92,14 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
         this.newItemRarity = "common";
         this.newItemValue = "0";
         this.newItemWeight = "0";
-        showToast("success", "Item created",);
+        showToast("success", t("toasts.itemCreated",),);
         await this.loadItems();
       } else {
         const err = await res.json();
-        showToast("error", err.error || err.message || "Failed to create item",);
+        showToast("error", err.error || err.message || t("toasts.failedCreateItem",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -136,28 +137,28 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       if (res.ok) {
         await this.loadItems();
         this.expandedItem = "";
-        showToast("success", "Item updated",);
+        showToast("success", t("toasts.itemUpdated",),);
       } else {
         const err = await res.json();
-        showToast("error", err.message || err.error || "Failed to update item",);
+        showToast("error", err.message || err.error || t("toasts.failedUpdateItem",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
   async deleteItem(itemId: string,) {
-    if (!confirm("Delete this item? Its placed instances will also be removed.",)) {
+    if (!confirm(t("worlds.deleteItemConfirm",),)) {
       return;
     }
     try {
       const res = await apiFetch(`/api/worlds/${this.worldId}/items/${itemId}`, { method: "DELETE", },);
       if (res.ok) { await this.loadItems(); }
       else {
-        showToast("error", "Failed to delete item",);
+        showToast("error", t("toasts.failedDeleteItem",),);
       }
     } catch {
-      showToast("error", "Failed to delete item",);
+      showToast("error", t("toasts.failedDeleteItem",),);
     }
   },
 
@@ -212,29 +213,29 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       if (res.ok) {
         this.placeQuantity = "1";
         this.placeLocationId = "";
-        showToast("success", "Item placed",);
+        showToast("success", t("toasts.itemPlaced",),);
         await this.loadInstances(itemId,);
       } else {
         const err = await res.json();
-        showToast("error", err.error || err.message || "Failed to place item",);
+        showToast("error", err.error || err.message || t("toasts.failedPlaceItem",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
   async destroyInstance(instanceId: string,) {
-    if (!confirm("Destroy this item instance?",)) { return; }
+    if (!confirm(t("worlds.destroyInstanceConfirm",),)) { return; }
     try {
       const res = await apiFetch(`/api/worlds/${this.worldId}/item-instances/${instanceId}`, {
         method: "DELETE",
       },);
       if (res.ok) { await this.loadInstances(this.expandedItem,); }
       else {
-        showToast("error", "Failed to destroy instance",);
+        showToast("error", t("toasts.failedDestroyInstance",),);
       }
     } catch {
-      showToast("error", "Failed to destroy instance",);
+      showToast("error", t("toasts.failedDestroyInstance",),);
     }
   },
 };
