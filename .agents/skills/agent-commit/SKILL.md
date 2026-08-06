@@ -220,9 +220,11 @@ For non-worktree commits (main repo), use the canonical command below.
    - **Main repo**: Use canonical command below
 
 6. **Verify**:
+
    ```bash
    git log --show-signature -1
    ```
+
    Confirm: Author=user, Committer=agent, signature=agent key.
 
 ---
