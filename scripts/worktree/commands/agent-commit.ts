@@ -8,6 +8,7 @@
 import { existsSync, } from "fs";
 import { dirname, resolve, } from "path";
 import { fileURLToPath, } from "url";
+import { branchToPath, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
@@ -38,7 +39,7 @@ export async function agentCommit(args: string[],): Promise<void> {
 
   // Find repo root and worktree path
   const repoRoot = resolve(__dirname, "..", "..", "..",);
-  const wtPath = resolve(repoRoot, "tree", branch,);
+  const wtPath = resolve(repoRoot, "tree", branchToPath(branch,),);
 
   if (!existsSync(resolve(wtPath, ".git",),)) {
     log("error", `worktree not found for branch '${branch}'`,);
