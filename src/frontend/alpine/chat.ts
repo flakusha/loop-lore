@@ -21,7 +21,7 @@ import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
-import type { AlpineState, ChatState, } from "./types";
+import type { AlpineState, ChatState, WorldChannelChat, } from "./types";
 
 const g = globalThis as Record<string, unknown>;
 
@@ -127,6 +127,11 @@ globalThis.chatState = function() {
       characterName: string;
       characterAvatar: string | null;
     }[],
+    // ── World channels (chat-only worlds) ──
+    _worlds: [] as { id: string; name: string }[],
+    _worldChats: {} as Record<string, WorldChannelChat[]>,
+    _worldExpanded: {} as Record<string, boolean>,
+    _worldsLoading: false,
 
     async searchChats(q: string,) {
       const query = (q || "").trim();
@@ -283,6 +288,7 @@ globalThis.chatState = function() {
       };
       addEventListener("storage", this._storageHandler,);
       await this.loadChats();
+      this.loadWorldChannels();
       this.loadJoinableChats();
       this.loadUserInfo();
       this.connectActivitySSE();
@@ -361,6 +367,68 @@ globalThis.chatState = function() {
       } catch {
         this.$dispatch("show-toast", { type: "error", message: "Failed to load chats", },);
       }
+    },
+
+    // ── World channels (chat-only worlds) ──
+    /** Load chat-only worlds and their grouped channels for the sidebar tree. */
+    async loadWorldChannels() {
+      if (this._worldsLoading) { return; }
+      this._worldsLoading = true;
+      try {
+        const res = await apiFetch("/api/worlds?pageSize=50",);
+        if (!res.ok) { return; }
+        const body = await res.json();
+        const rows = (body.data || []) as { id: string; name: string; kind?: string }[];
+        const worlds: { id: string; name: string }[] = [];
+        for (const w of rows) {
+          if (w.kind === "chat") {
+            worlds.push({ id: w.id, name: w.name, },);
+          }
+        }
+        this._worlds = worlds;
+        for (const w of this._worlds) {
+          await this.loadWorldChats(w.id,);
+        }
+      } catch {
+        /* ignore — chat list still works without the tree */
+      } finally {
+        this._worldsLoading = false;
+      }
+    },
+
+    /** Load one world's channel chats via the grouped endpoint. */
+    async loadWorldChats(worldId: string,) {
+      try {
+        const res = await apiFetch(`/api/worlds/${worldId}/chats`,);
+        if (!res.ok) { return; }
+        const body = await res.json();
+        this._worldChats = { ...this._worldChats, [worldId]: body.data || [], };
+      } catch {
+        this._worldChats = { ...this._worldChats, [worldId]: [], };
+      }
+    },
+
+    toggleWorld(worldId: string,) {
+      this._worldExpanded = { ...this._worldExpanded, [worldId]: !this._worldExpanded[worldId], };
+      if (this._worldExpanded[worldId] && !this._worldChats[worldId]) {
+        this.loadWorldChats(worldId,);
+      }
+    },
+
+    /** Group a world's channels by location (channel category). */
+    worldChatGroups(worldId: string,) {
+      const chats = this._worldChats[worldId] || [];
+      const groups = new Map<string, { locationId: string; locationName: string; chats: WorldChannelChat[] }>();
+      for (const chat of chats) {
+        const key = chat.current_location_id ?? "unlocated";
+        let group = groups.get(key,);
+        if (!group) {
+          group = { locationId: key, locationName: chat.location_name || "No channel", chats: [], };
+          groups.set(key, group,);
+        }
+        group.chats.push(chat,);
+      }
+      return Array.from(groups.values(),);
     },
 
     async selectChat(chatId: string,) {

@@ -72,6 +72,8 @@ export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated"
 export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer",],);
 export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",],);
 export const ActorVisibilitySchema = t.UnionEnum(["private", "public",],);
+export const WorldKindSchema = t.UnionEnum(["rpg", "chat",],);
+export const WorldVisibilitySchema = t.UnionEnum(["public", "unlisted", "private",],);
 export const ContentEncodingSchema = t.UnionEnum(["identity", "gzip", "zstd", "brotli",],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
@@ -319,6 +321,27 @@ export const InviteJoinParams = t.Object({
   code: t.String({ minLength: 1, },),
 },);
 
+// ── World invite routes ────────────────────────────────────
+
+/** World invite response shape (mirror of InviteSchema, world-scoped). */
+export const WorldInviteSchema = t.Object({
+  id: t.String({ minLength: 1, },),
+  worldId: t.String({ minLength: 1, },),
+  code: t.String({ minLength: 1, },),
+  createdBy: t.Nullable(t.String(),),
+  createdAt: t.String({ minLength: 1, },),
+  expiresAt: t.Nullable(t.String(),),
+  maxUses: t.Nullable(t.Numeric(),),
+  uses: t.Numeric(),
+  revoked: t.Boolean(),
+},);
+
+/** Params for world-scoped invite routes: world id + invite id. */
+export const WorldInviteParams = t.Object({
+  worldId: Id,
+  inviteId: Id,
+},);
+
 // ── Message routes ─────────────────────────────────────────
 
 export const MessageCreateBody = t.Object({
@@ -441,11 +464,15 @@ export const WorldCreateBody = t.Object({
   name: Name,
   description: t.Optional(t.String(),),
   locationCount: t.Optional(t.Numeric({ minimum: 0, },),),
+  kind: t.Optional(WorldKindSchema,),
+  visibility: t.Optional(WorldVisibilitySchema,),
 },);
 
 export const WorldUpdateBody = t.Object({
   name: t.Optional(Name,),
   description: t.Optional(t.String(),),
+  kind: t.Optional(WorldKindSchema,),
+  visibility: t.Optional(WorldVisibilitySchema,),
 },);
 
 export const WorldIdParams = t.Object({

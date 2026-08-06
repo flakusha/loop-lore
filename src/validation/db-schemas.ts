@@ -313,7 +313,9 @@ export const WhiteneoteTypeSchema = t.UnionEnum([
   "pacing",
   "theme",
 ],);
+export const WorldKindSchema = t.UnionEnum(["rpg", "chat",],);
 export const WorldTraitCategorySchema = t.UnionEnum(["environmental", "cultural", "magical", "social", "equipment",],);
+export const WorldVisibilitySchema = t.UnionEnum(["public", "unlisted", "private",],);
 
 // ── users ────────────────────────────────────────────
 export const UsersSchema = t.Object({
@@ -416,6 +418,8 @@ export const WorldsSchema = t.Object({
   description: t.Optional(t.String(),),
   lore: t.Optional(t.String(),),
   publication_status: t.Optional(PublicationStatusSchema,),
+  kind: t.Optional(WorldKindSchema,),
+  visibility: t.Optional(WorldVisibilitySchema,),
   scan_depth: t.Optional(t.Number(),),
   token_budget: t.Optional(t.Number(),),
   difficulty_modifier: t.Optional(t.Number(),),
@@ -1718,6 +1722,24 @@ export const ChatBackgroundAssignmentsSchema = t.Object({
 // ── chat_invites ────────────────────────────────────────────
 export const ChatInvitesSchema = t.Object({
   chat_id: t.String(),
+  code: t.String(),
+  created_by: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  max_uses: t.Optional(t.Number(),),
+  uses: t.Optional(t.Number(),),
+  revoked: t.Optional(t.Number(),),
+},);
+
+// ── world_members ────────────────────────────────────────────
+export const WorldMembersSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+},);
+
+// ── world_invites ────────────────────────────────────────────
+export const WorldInvitesSchema = t.Object({
+  world_id: t.String(),
   code: t.String(),
   created_by: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
