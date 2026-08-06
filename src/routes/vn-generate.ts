@@ -8,11 +8,13 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
+import { checkChatAccess, } from "../chat/service";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { resolveProvider, } from "../generation/providers/registry";
 import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, } from "../utils";
+import { forbidden, } from "../validation/middleware";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 // ── Types ──────────────────────────────────────────────────
@@ -241,6 +243,9 @@ export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
         if (typeof userId !== "string") { return userId; }
 
         const { id: chatId, } = ctx.params as { id: string };
+        const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+        if (!access.ok) { return forbidden(); }
+
         const body = ctx.body as GenerateStoryBody;
 
         try {
@@ -281,6 +286,9 @@ export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
         if (typeof userId !== "string") { return userId; }
 
         const { id: chatId, } = ctx.params as { id: string };
+        const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+        if (!access.ok) { return forbidden(); }
+
         const body = ctx.body as GenerateChoicesBody;
 
         try {

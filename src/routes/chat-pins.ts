@@ -4,6 +4,7 @@
 // Pins are stored in the `chat_pins` table and displayed in a pinned bar.
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
@@ -28,6 +29,9 @@ export function chatPinRoutes(opts: HandlerOpts,) {
           if (typeof userId !== "string") { return userId; }
 
           const chatId = ctx.params.id as string;
+
+          const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+          if (!access.ok) { return notFound("Chat not found",); }
 
           const pins = await database
             .selectFrom("chat_pins",)
@@ -71,26 +75,9 @@ export function chatPinRoutes(opts: HandlerOpts,) {
 
           const chatId = ctx.params.id as string;
 
-          // Only chat owner, admin, or participants can pin
-          const chat = await database
-            .selectFrom("chats",)
-            .select("created_by",)
-            .where("id", "=", chatId,)
-            .executeTakeFirst();
-          if (!chat) { return notFound("Chat not found",); }
-
-          const isOwner = chat.created_by === userId;
-          const isAdmin = (ctx.userRole as string | null) === "admin";
-          const isParticipant = await database
-            .selectFrom("chat_participants",)
-            .select("actor_id",)
-            .where("chat_id", "=", chatId,)
-            .where("actor_id", "=", userId,)
-            .executeTakeFirst();
-
-          if (!isOwner && !isAdmin && !isParticipant) {
-            return Response.json({ error: "Not authorized to pin", }, { status: 403, },);
-          }
+          // Only chat participants (or owner/admin) can pin
+          const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+          if (!access.ok) { return notFound("Chat not found",); }
 
           const { messageId, } = ctx.body as { messageId: string };
 
@@ -144,6 +131,9 @@ export function chatPinRoutes(opts: HandlerOpts,) {
           const chatId = ctx.params.id as string;
           const pinId = ctx.params.pinId as string;
 
+          const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+          if (!access.ok) { return notFound("Chat not found",); }
+
           // Only pinner, chat owner, or admin can unpin
           const pin = await database
             .selectFrom("chat_pins",)
@@ -161,7 +151,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
 
           const isPinner = pin.pinned_by === userId;
           const isOwner = chat.created_by === userId;
-          const isAdmin = (ctx.userRole as string | null) === "admin";
+          const isAdmin = (ctx.userRole as string | null) === "admin" || (ctx.userRole as string | null) === "solo";
 
           if (!isPinner && !isOwner && !isAdmin) {
             return Response.json({ error: "Not authorized to unpin", }, { status: 403, },);

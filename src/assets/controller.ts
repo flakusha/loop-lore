@@ -129,6 +129,25 @@ async function resolveAsset(
   return { asset, };
 }
 
+/**
+ * Load an asset and require the caller to be its owner.
+ * Returns the asset on success, or a Response on failure.
+ */
+async function requireAssetOwner(
+  database: Kysely<DB>,
+  assetId: string,
+  userId: string,
+): Promise<AssetRecord | Response> {
+  const asset = await database
+    .selectFrom("assets",)
+    .selectAll()
+    .where("id", "=", assetId,)
+    .executeTakeFirst();
+  if (!asset) { return notFoundResponse("Asset not found",); }
+  if (asset.owner_id !== userId) { return notOwnerResponse("Asset",); }
+  return asset;
+}
+
 export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config },) {
   return (
     new Elysia({ name: "assets", },)
@@ -201,6 +220,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
       },)
       .delete("/api/assets/:id", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
+
         const deleted = await deleteAsset({
           database,
           assetId: ctx.params.id,
@@ -258,10 +283,19 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       },)
       // ── Links sub-routes ─────────────────────────────
       .get("/api/assets/:id/links", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
         const links = await getAssetLinks(database, ctx.params.id,);
         return jsonResponse(links,);
       },)
       .post("/api/assets/:id/links", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
+
         const body = await ctx.request.json();
         await linkAsset({
           database,
@@ -271,6 +305,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         return jsonCreated({ id: ctx.params.id, },);
       },)
       .delete("/api/assets/:id/links/:linkId", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
+
         const body = (await ctx.request.json()) as { entityType?: string; entityId?: string };
         await unlinkAsset({
           database,
@@ -302,6 +342,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         return jsonCreated(share,);
       },)
       .delete("/api/assets/:id/share", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
+
         const body = (await ctx.request.json()) as { actor_id?: string };
         if (!body.actor_id) {
           return badRequestResponse("actor_id is required",);
@@ -311,6 +357,9 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         return jsonNoContent();
       },)
       .get("/api/assets/:id/shares", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
         const shares = await getAssetShares(database, ctx.params.id,);
         return jsonResponse(shares,);
       },)
