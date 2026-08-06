@@ -1,0 +1,35 @@
+<!-- In-chat message search bar (toggled via the header 🔍 button) -->
+<div
+  id="message-search-bar"
+  class="message-search-bar"
+  x-show="_msgSearchOpen"
+  x-cloak
+  @keydown.escape.window="closeMessageSearch()"
+  data-testid="message-search-bar"
+>
+  <span class="message-search-icon" aria-hidden="true">&#128269;</span>
+  <input
+    type="text"
+    class="message-search-input"
+    x-model="_msgSearchQuery"
+    @input="onMessageSearchInput()"
+    @keydown.enter.prevent="onMessageSearchEnter($event)"
+    @keydown.up.prevent="prevMessageMatch()"
+    @keydown.down.prevent="nextMessageMatch()"
+    x-ref="msgSearchInput"
+    :placeholder="t('chats.searchInChat') || 'Search in this chat…'"
+    data-testid="message-search-input"
+  />
+  <span class="message-search-count" x-show="_msgSearchMatches.length > 0" data-testid="message-search-count">
+    <span x-text="`${_msgSearchIndex + 1} / ${_msgSearchTotal} matches`"></span>
+  </span>
+  <button
+    class="message-search-clear"
+    @click="_msgSearchQuery = ''; runMessageSearch()"
+    title="Clear"
+    aria-label="Clear search"
+    data-testid="message-search-clear"
+  >
+    &#215;
+  </button>
+</div>
