@@ -178,6 +178,11 @@
     "revoke": "Revoke",
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., backup-key",
+    "apiEndpointPlaceholder": "https://api.openai.com/v1",
+    "modelPlaceholder": "e.g., gpt-4o",
+    "keyId": "ID: {id}",
+    "keyCreated": "Created: {date}",
+    "keyExpires": "Expires: {date}",
     "generate": "Generate",
     "revokeKey": "Revoke Key",
     "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
@@ -187,7 +192,19 @@
     "forwardSecrecy": "⚠️ Forward Secrecy",
     "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
     "preferences": "Preferences",
-    "generation": "Generation"
+    "generation": "Generation",
+    "nsfwConsent": "Consentimento de conteúdo NSFW",
+    "nsfwConsentDescription": "Seu consentimento armazenado para geração de conteúdo adulto.",
+    "nsfwStatus": "Status",
+    "nsfwEnabled": "Habilitado",
+    "nsfwDisabled": "Desabilitado",
+    "nsfwMaxRating": "Classificação máxima",
+    "nsfwRestrictions": "Restrições",
+    "nsfwNone": "Nenhuma",
+    "nsfwBlocked": "Bloqueado",
+    "nsfwBanned": "Banido",
+    "nsfwShadow": "Restrito silenciosamente",
+    "nsfwConsentUnavailable": "Não foi possível carregar o estado de consentimento NSFW."
   },
   "admin": {
     "title": "Administration",
@@ -527,6 +544,7 @@
     "settings": "Configurações",
     "logout": "Sair",
     "closeSidebar": "Fechar",
+    "notifications": "Notificações",
     "openSidebar": "Abrir menu"
   },
   "modals": {
@@ -573,6 +591,15 @@
     "cancelGeneration": "Cancelar geração",
     "send": "Enviar",
     "filterChats": "Filtrar chats"
+  },
+  "notifications": {
+    "title": "Notificações",
+    "all": "Todas",
+    "unread": "Não lidas",
+    "listToggle": "Modo de exibição",
+    "viewAll": "Ver todas",
+    "filters": "Filtros de notificações",
+    "filtersDesc": "Silencie os tipos de notificação que não deseja ver no selo de não lidas ou nos toasts. As alterações são salvas automaticamente."
   },
   "placeholders": {
     "chatName": "Nome do chat",
@@ -684,6 +711,8 @@
     "roleplayStory": "Roleplay / Story",
     "characterParticipant": "Character / Participant",
     "searchCharacters": "Search characters...",
+    "switchToList": "Switch to list view",
+    "switchToGrid": "Switch to grid view",
     "impersonateCharacter": "Impersonate character (play as them)",
     "yourPersona": "Your Persona",
     "default": "Default",

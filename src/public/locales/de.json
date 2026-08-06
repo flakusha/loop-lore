@@ -178,6 +178,11 @@
     "revoke": "Revoke",
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., backup-key",
+    "apiEndpointPlaceholder": "https://api.openai.com/v1",
+    "modelPlaceholder": "e.g., gpt-4o",
+    "keyId": "ID: {id}",
+    "keyCreated": "Created: {date}",
+    "keyExpires": "Expires: {date}",
     "generate": "Generate",
     "revokeKey": "Revoke Key",
     "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
@@ -187,7 +192,19 @@
     "forwardSecrecy": "⚠️ Forward Secrecy",
     "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
     "preferences": "Preferences",
-    "generation": "Generation"
+    "generation": "Generation",
+    "nsfwConsent": "NSFW-Inhaltszustimmung",
+    "nsfwConsentDescription": "Ihre gespeicherte Zustimmung zur Generierung von Erwachseneninhalten.",
+    "nsfwStatus": "Status",
+    "nsfwEnabled": "Aktiviert",
+    "nsfwDisabled": "Deaktiviert",
+    "nsfwMaxRating": "Max. Einstufung",
+    "nsfwRestrictions": "Einschränkungen",
+    "nsfwNone": "Keine",
+    "nsfwBlocked": "Blockiert",
+    "nsfwBanned": "Gesperrt",
+    "nsfwShadow": "Stumm eingeschränkt",
+    "nsfwConsentUnavailable": "NSFW-Zustimmungsstatus konnte nicht geladen werden."
   },
   "admin": {
     "title": "Administration",
@@ -527,6 +544,7 @@
     "settings": "Einstellungen",
     "logout": "Abmelden",
     "closeSidebar": "Schließen",
+    "notifications": "Benachrichtigungen",
     "openSidebar": "Menü öffnen"
   },
   "modals": {
@@ -573,6 +591,15 @@
     "cancelGeneration": "Generierung abbrechen",
     "send": "Senden",
     "filterChats": "Chats filtern"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "all": "Alle",
+    "unread": "Ungelesen",
+    "listToggle": "Ansichtsmodus",
+    "viewAll": "Alle anzeigen",
+    "filters": "Benachrichtigungsfilter",
+    "filtersDesc": "Stummgeschaltete Benachrichtigungstypen erscheinen nicht im Ungelesen-Abzeichen oder als Toast. Änderungen werden automatisch gespeichert."
   },
   "placeholders": {
     "chatName": "Chat-Name",
@@ -684,6 +711,8 @@
     "roleplayStory": "Roleplay / Story",
     "characterParticipant": "Character / Participant",
     "searchCharacters": "Search characters...",
+    "switchToList": "Switch to list view",
+    "switchToGrid": "Switch to grid view",
     "impersonateCharacter": "Impersonate character (play as them)",
     "yourPersona": "Your Persona",
     "default": "Default",
