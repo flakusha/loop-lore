@@ -4,8 +4,9 @@
  * Manages character skills, progression, mastery, and specialization.
  * Skills improve through use and can be specialized for enhanced effects.
  */
-import type { Kysely, } from "kysely";
+import type { Kysely, Selectable, Updateable, } from "kysely";
 import type { DB, } from "../../db";
+import type { CharacterSkills, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
@@ -118,7 +119,7 @@ export class SkillsService {
    */
   async createSkill(input: CreateSkillInput,): Promise<Skill> {
     const now = new Date().toISOString();
-    const id = crypto.randomUUID();
+    const id: string = crypto.randomUUID();
 
     const skillData = {
       id,
@@ -131,14 +132,14 @@ export class SkillsService {
       xp: 0,
       proficiency: ProficiencyLevel.Novice,
       specialization: null,
-      is_locked: false,
+      is_locked: 0,
       prerequisites: jsonStringifyOr(input.prerequisites ?? [],),
       metadata: jsonStringifyOr(input.metadata ?? {},),
       created_at: now,
       updated_at: now,
     };
 
-    await this.db.insertInto("character_skills" as any,).values(skillData,).execute();
+    await this.db.insertInto("character_skills",).values(skillData,).execute();
 
     getLog().info("Skill created", { id, actorId: input.actorId, name: input.name, },);
 
@@ -149,7 +150,7 @@ export class SkillsService {
    * Get a skill by ID
    */
   async getSkill(skillId: string,): Promise<Skill | null> {
-    const row = await (this.db as any)
+    const row = await this.db
       .selectFrom("character_skills",)
       .where("id", "=", skillId,)
       .selectAll()
@@ -162,7 +163,7 @@ export class SkillsService {
    * Get all skills for an actor
    */
   async getActorSkills(actorId: string, worldId?: string,): Promise<Skill[]> {
-    let query = (this.db as any)
+    let query = this.db
       .selectFrom("character_skills",)
       .where("actor_id", "=", actorId,)
       .orderBy("category", "asc",)
@@ -173,7 +174,7 @@ export class SkillsService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((row: any,) => this.rowToSkill(row,));
+    return rows.map((row,) => this.rowToSkill(row,));
   }
 
   /**
@@ -184,7 +185,7 @@ export class SkillsService {
     category: SkillCategory,
     worldId?: string,
   ): Promise<Skill[]> {
-    let query = (this.db as any)
+    let query = this.db
       .selectFrom("character_skills",)
       .where("actor_id", "=", actorId,)
       .where("category", "=", category,)
@@ -195,7 +196,7 @@ export class SkillsService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((row: any,) => this.rowToSkill(row,));
+    return rows.map((row,) => this.rowToSkill(row,));
   }
 
   /**
@@ -203,7 +204,7 @@ export class SkillsService {
    */
   async updateSkill(skillId: string, input: UpdateSkillInput,): Promise<Skill> {
     const now = new Date().toISOString();
-    const updates: Record<string, unknown> = {
+    const updates: Updateable<DB["character_skills"]> = {
       updated_at: now,
     };
 
@@ -213,7 +214,7 @@ export class SkillsService {
     if (input.specialization !== undefined) { updates.specialization = input.specialization; }
     if (input.metadata !== undefined) { updates.metadata = jsonStringifyOr(input.metadata,); }
 
-    await (this.db as any)
+    await this.db
       .updateTable("character_skills",)
       .set(updates,)
       .where("id", "=", skillId,)
@@ -226,7 +227,7 @@ export class SkillsService {
    * Delete a skill
    */
   async deleteSkill(skillId: string,): Promise<void> {
-    await (this.db as any)
+    await this.db
       .deleteFrom("character_skills",)
       .where("id", "=", skillId,)
       .execute();
@@ -248,7 +249,7 @@ export class SkillsService {
     const leveledUp = newLevel > oldLevel;
     const proficiencyChanged = newProficiency !== oldProficiency;
 
-    await (this.db as any)
+    await this.db
       .updateTable("character_skills",)
       .set({
         xp: newXp,
@@ -303,7 +304,7 @@ export class SkillsService {
       throw new Error("Skill must be at least Expert level to specialize",);
     }
 
-    await (this.db as any)
+    await this.db
       .updateTable("character_skills",)
       .set({
         specialization,
@@ -372,7 +373,7 @@ export class SkillsService {
       const node = nodeMap.get(skill.id,);
       if (!node) { continue; }
 
-      const prerequisites = this.parseJsonField<string[]>(skill.prerequisites, [],);
+      const prerequisites = skill.prerequisites;
 
       if (prerequisites.length === 0) {
         roots.push(node,);
@@ -430,19 +431,19 @@ export class SkillsService {
   /**
    * Convert database row to Skill interface
    */
-  private rowToSkill(row: any,): Skill {
+  private rowToSkill(row: Selectable<CharacterSkills>,): Skill {
     return {
       id: row.id,
       actorId: row.actor_id,
       worldId: row.world_id,
       name: row.name,
-      category: row.category,
+      category: row.category as SkillCategory,
       description: row.description,
       level: row.level,
       xp: row.xp,
-      proficiency: row.proficiency,
+      proficiency: row.proficiency as ProficiencyLevel,
       specialization: row.specialization,
-      isLocked: row.is_locked,
+      isLocked: row.is_locked === 1,
       prerequisites: this.parseJsonField<string[]>(row.prerequisites, [],),
       metadata: this.parseJsonField<Record<string, unknown>>(row.metadata, {},),
       createdAt: row.created_at,
