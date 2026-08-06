@@ -116,8 +116,9 @@ function readGitIssues(): Map<string, GitIssue> {
       const status = m[2] as "open" | "closed" | "done";
       const title = m[3];
 
-      // Extract extid from title (e.g. "TASK-006: Some title" → "TASK-006")
-      const extidMatch = title.match(/^(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA)-\d+/i,);
+      // Extract extid from title (e.g. "TASK-006: Some title" → "TASK-006",
+      // "TASK-chat-message-search: ..." → "TASK-CHAT-MESSAGE-SEARCH")
+      const extidMatch = title.match(/^(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA)-[a-z0-9-]+/i,);
       const extid = extidMatch?.[0]?.toUpperCase() ?? null;
 
       issues.set(hash, { hash, status, title, extid, },);
@@ -402,8 +403,8 @@ Options:
     );
   }
 
-  // Apply fixes
-  if (fixMode && totalIssues > 0) {
+  // Apply fixes (also when only advisory issues exist — e.g. missing-hash links)
+  if (fixMode && (totalIssues > 0 || advisoryCount > 0)) {
     console.log(`\n🔧 Applying fixes...`,);
     const fixedIndex = applyFixes(index, report, ticketFiles, gitIssues,);
 
