@@ -16,6 +16,7 @@ import { randomUUID, } from "node:crypto";
 import { createAsset, linkAsset, } from "../../assets/service";
 import { loadConfig, } from "../../config/load";
 import { pickSdProvider, } from "../../config/schema";
+import type { EmotionEntry, } from "../../config/sections/templates";
 import { EmotionType, } from "../../db/enums";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
@@ -238,6 +239,22 @@ export class EmotionAvatarService {
   }
 
   /**
+   * Resolve the generation prompt modifier for an emotion, preferring the
+   * config-driven per-emotion intent description
+   * (config.templates.avatar.emotions — keyed by lowercase emotion name) over
+   * the built-in EMOTION_PROMPT_MODIFIERS table. This is what consumes the
+   * avatar emotion asset map the generation path previously ignored.
+   *
+   * @param emotion - Emotion type being generated
+   * @param avatarEmotions - Optional config emotion map (lowercase keys)
+   * @returns Prompt modifier string
+   */
+  resolveEmotionPromptModifier(emotion: EmotionType, avatarEmotions?: Record<string, EmotionEntry>,): string {
+    const intent = avatarEmotions?.[(emotion as string).toLowerCase()]?.intent;
+    return intent ?? this.getEmotionPromptModifier(emotion,);
+  }
+
+  /**
    * Run the batch generation job.
    *
    * Generates images for each emotion sequentially to avoid
@@ -251,6 +268,8 @@ export class EmotionAvatarService {
 
     const config = loadConfig();
     const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
+    // Config-driven per-emotion intent/asset map consumed by prompt building.
+    const avatarEmotions = config.templates.avatar.emotions;
 
     if (!sdConfig) {
       throw new Error("No image generation provider configured",);
@@ -295,6 +314,7 @@ export class EmotionAvatarService {
           negativePrompt: opts.negativePrompt,
           baseAvatarId: opts.baseAvatarId,
           fallbackMode,
+          avatarEmotions,
         },);
 
         result.avatarId = generated.avatarId;
@@ -327,8 +347,9 @@ export class EmotionAvatarService {
     negativePrompt?: string;
     baseAvatarId?: string;
     fallbackMode?: "generation" | "none";
+    avatarEmotions?: Record<string, EmotionEntry>;
   },): Promise<{ avatarId: string; assetId: string }> {
-    const emotionModifier = this.getEmotionPromptModifier(opts.emotion,);
+    const emotionModifier = this.resolveEmotionPromptModifier(opts.emotion, opts.avatarEmotions,);
 
     // Build prompt: use explicit prefix if provided, otherwise use metadata fallback
     let prompt: string;

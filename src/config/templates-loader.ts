@@ -210,16 +210,29 @@ function mergeAvatarConfig(
     };
   }
 
-  // extend: add new emotions/patterns, config wins on conflict
+  // extend: consensus semantics shared with expandAvatarConfig —
+  // base emotions win on key conflicts; intent patterns are appended with
+  // (pattern, emotion) dedup so repeated overrides don't duplicate entries.
+  const mergedEmotions = { ...base.emotions, };
+  if (override.emotions) {
+    for (const [key, value,] of Object.entries(override.emotions,)) {
+      if (!Object.prototype.hasOwnProperty.call(mergedEmotions, key,)) {
+        mergedEmotions[key] = value;
+      }
+    }
+  }
+  const mergedPatterns = [...base.intentPatterns,];
+  if (override.intentPatterns) {
+    for (const pattern of override.intentPatterns) {
+      if (mergedPatterns.every((p,) => p.pattern !== pattern.pattern || p.emotion !== pattern.emotion)) {
+        mergedPatterns.push(pattern,);
+      }
+    }
+  }
   return {
-    ...base,
-    ...override,
     merge: base.merge,
-    emotions: { ...base.emotions, ...override.emotions, },
-    intentPatterns: [
-      ...base.intentPatterns,
-      ...(override.intentPatterns ?? []),
-    ],
+    emotions: mergedEmotions,
+    intentPatterns: mergedPatterns,
   };
 }
 

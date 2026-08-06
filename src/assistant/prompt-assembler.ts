@@ -6,14 +6,22 @@
 // docs/frontend/chat/prompt-creation.md for section ordering rationale.
 
 import type { Kysely, } from "kysely";
+import { MoodService, } from "../characters/services/mood-service";
 import { ChatMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { ContextCompactor, } from "../generation/context-compactor";
 import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
+import { getLogger, } from "../logger";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
 import { PRIORITY, } from "./prompt/types";
-import type { AssembleContext, AssembledPrompt, PromptParams, PromptSectionReport, } from "./prompt/types";
+import type {
+  AssembleChat,
+  AssembleContext,
+  AssembledPrompt,
+  PromptParams,
+  PromptSectionReport,
+} from "./prompt/types";
 
 export type { AssembledPrompt, PromptParams, PromptSectionReport, } from "./prompt/types";
 
@@ -47,14 +55,22 @@ export class PromptAssembler {
     const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;
     const tokenBudget = params.tokenBudget ?? 32_000;
 
+    // Wire the emotion prompt-injection loop: the emotionAvatar section fires
+    // only when params.emotion (or emotionAvatar) is set. Every generation
+    // callsite omits it, so default it to the character's persisted mood
+    // (character_mood.current_mood, kept current by the mood/emotion hooks).
+    // An explicit caller override always wins.
+    const currentEmotion = params.emotion ?? await this.resolveCurrentEmotion(params, chat,);
+    const efParams = currentEmotion ? { ...params, emotion: currentEmotion, } : params;
+
     const ctx: AssembleContext = {
       db: this.db,
       actor,
       chat,
-      params,
+      params: efParams,
       isStory,
       tokenBudget,
-      config: params.config,
+      config: efParams.config,
     };
 
     const sections: PromptSectionReport[] = [];
@@ -119,6 +135,26 @@ export class PromptAssembler {
       tokenBudget,
       sections,
     };
+  }
+
+  /**
+   * Resolve the character's current emotional state for prompt injection.
+   *
+   * @param params - Prompt params (emotion field read for the actor/world)
+   * @param chat - Assembled chat projection (provides the world scope)
+   * @returns The persisted current mood string, or undefined when mood is
+   *   absent/empty (in which case the emotionAvatar section stays off).
+   */
+  private async resolveCurrentEmotion(params: PromptParams, chat: AssembleChat,): Promise<string | undefined> {
+    try {
+      const mood = await new MoodService(this.db,).getMood(params.actorId, chat.world_id ?? undefined,);
+      return mood?.currentMood || undefined;
+    } catch (error) {
+      // Mood lookup is best-effort — never fail or slow down generation when
+      // the store is unavailable (e.g. mock DBs in tests/embedding contexts).
+      getLogger().debug("prompt-assembler: mood lookup failed, skipping emotion injection", { err: error, },);
+      return undefined;
+    }
   }
 }
 
