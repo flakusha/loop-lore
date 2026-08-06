@@ -13,7 +13,7 @@ import { join, } from "node:path";
 
 const ROOT = process.cwd();
 const EPICS_DIR = join(ROOT, ".plan/epics",);
-const BACKLOG = join(ROOT, ".plan/backlog.md",);
+const BACKLOG = join(ROOT, ".plan/backlog/active.md",);
 const OUT_EPICS = join(ROOT, ".plan/epics-index.md",);
 
 interface Epic {
@@ -135,7 +135,7 @@ for (const e of epics) {
 if (existsSync(BACKLOG,)) {
   md += "---\n\n";
   md += "## Backlog\n\n";
-  md += "Full backlog with prioritized tasks: [.plan/backlog.md](/.plan/backlog.md)\n\n";
+  md += "Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)\n\n";
 }
 
 writeFileSync(OUT_EPICS, md,);
