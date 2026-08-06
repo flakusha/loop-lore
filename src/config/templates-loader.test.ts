@@ -231,6 +231,40 @@ describe("mergeAvatarConfig", () => {
     expect(result.emotions.custom,).toBeDefined();
     expect(result.intentPatterns,).toHaveLength(0,);
   });
+
+  test("extend keeps base emotion on key conflict and dedups intent patterns", () => {
+    // The extend branch must agree with expandAvatarConfig: base emotion wins
+    // on a key conflict, and intent patterns append with (pattern, emotion)
+    // dedup instead of blindly concatenating.
+    const base: AvatarTemplateConfig = {
+      merge: "extend",
+      emotions: {
+        happy: { asset: "happy.png", intent: "smiles", },
+      },
+      intentPatterns: [
+        { pattern: "smile", emotion: "happy", },
+        { pattern: "cry", emotion: "sad", },
+      ],
+    };
+
+    const override: Partial<AvatarTemplateConfig> = {
+      emotions: {
+        happy: { asset: "override.png", intent: "grins", },
+        sad: { asset: "sad.png", intent: "frowns", },
+      },
+      intentPatterns: [
+        { pattern: "smile", emotion: "happy", },
+        { pattern: "beam", emotion: "happy", },
+      ],
+    };
+
+    const result = mergeAvatarConfig(base, override, "extend",);
+    expect(result.emotions.happy?.asset,).toBe("happy.png",);
+    expect(result.emotions.sad,).toBeDefined();
+    // base (smile-happy, cry-sad) + beam-happy; smile-happy deduped → 3
+    expect(result.intentPatterns,).toHaveLength(3,);
+    expect(result.intentPatterns.map((p,) => p.pattern),).toContain("beam",);
+  });
 });
 
 describe("mergeImageEditConfig", () => {
