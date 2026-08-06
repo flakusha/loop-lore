@@ -139,6 +139,19 @@
 
         <a
           class="nav-item"
+          href="/views/notifications"
+          hx-get="/views/notifications"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          x-on:click="window.closeSidebar()"
+          data-testid="nav-notifications"
+        >
+          <span>🔔</span> <span>{{{t("navigation.notifications")}}}</span>
+        </a>
+
+        <a
+          class="nav-item"
           href="/views/admin"
           hx-get="/views/admin"
           hx-target="#app-root"
