@@ -92,10 +92,14 @@ async function discoverFiles(): Promise<FileEntry[]> {
     seen.add(abs,);
   }
 
-  // Directory scans
+  // Directory scans. Each dir may be absent (e.g. `.opencode/context` is
+  // gitignored and missing in fresh worktrees/clones) — `Glob.scan({ cwd })`
+  // throws ENOENT on a missing cwd, so skip dirs that don't exist.
   for (const dir of CONTEXT_DIRS) {
+    const dirAbs = resolve(ROOT, dir,);
+    if (!existsSync(dirAbs,)) { continue; }
     const glob = new Glob("**/*.md",);
-    for await (const file of glob.scan({ cwd: resolve(ROOT, dir,), },)) {
+    for await (const file of glob.scan({ cwd: dirAbs, },)) {
       const abs = resolve(ROOT, dir, file,);
       if (seen.has(abs,)) { continue; }
       seen.add(abs,);
