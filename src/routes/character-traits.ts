@@ -477,8 +477,8 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
     },)
     // ── Bulk Traits ─────────────────────────────────────────
     .get("/api/actors/:actorId/traits", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
 

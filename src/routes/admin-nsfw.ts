@@ -15,7 +15,7 @@ import { setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { getRuntimeNsfwConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-config";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 function log(): Logger {
@@ -35,9 +35,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "admin-nsfw", },)
     // ── Get NSFW config ───────────────────────────────────
     .get("/api/admin/nsfw", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
       if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
       try {
@@ -63,9 +63,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
     .put(
       "/api/admin/nsfw",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const userRole = ctx.userRole as string | null;
-        if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
         if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
         const body = ctx.body as {
@@ -103,9 +103,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
     )
     // ── List character NSFW policies ──────────────────────
     .get("/api/admin/nsfw/policy", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
       if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
       try {
