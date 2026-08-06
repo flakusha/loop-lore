@@ -40,7 +40,7 @@ Repo-local context in `.opencode/context/` takes precedence over global `~/.conf
 | Security     | `.opencode/context/project-intelligence/security.md`   | `~/.config/opencode/context/project-intelligence/security.md`   |
 | Navigation   | `.opencode/context/core/navigation.md`                 | `~/.config/opencode/context/core/navigation.md`                 |
 
-Budget profiles: `ultra_lean` (8k), `lean` (12k), `balanced` (15k) — see lean-ctx docs.
+Budget profiles: `ultra_lean`, `lean`, `balanced` — see lean-ctx docs.
 
 ## Coding Conventions (Summary)
 
@@ -66,7 +66,7 @@ Reimplement SillyTavern RPG chat:
 - VN scene generation with choice cards
 - Emotion avatars with multi-provider text2img fallback
 - Regex extraction pipeline (image edits, intents, memory, transitions, etc.)
-- 203 test files covering services, routes, middleware, crypto, RPG systems
+- Tests covering services, routes, middleware, crypto, RPG systems
 
 ## Technology Constraints
 
@@ -103,26 +103,31 @@ fd "test" src/ --type f -e ts
 src/
 ├── server.ts            # HTTP entry
 ├── elysia-app.ts        # Elysia setup
-├── db/                  # Kysely + schema
+├── db/                  # Kysely + schema (migrations are source of truth)
 ├── config/              # Config loading
 ├── routes/              # REST handlers
-├── generation/          # LLM generation
+├── generation/          # LLM generation + hooks
 ├── story/               # Multi-LLM story
 ├── turning/             # Turn orchestration
+├── chat/                # Chat service layer (context window, transitions, moderation)
 ├── crypto/              # Encryption
-├── frontend/            # htmx + Alpine.js
+├── frontend/            # Bundled htmx + Alpine.js
+├── views/               # htmx templates (server-rendered)
+├── public/              # Static assets served at / (CSS, locales)
 ├── plugins/             # Plugin system
 ├── tui/                 # Blessed widgets
 ├── regex/               # Extraction pipeline (image edits, intents, memory, etc.)
 ├── rpg/                 # RPG subsystems (combat, quests, skills, loot, etc.)
 ├── characters/          # Character services (avatar, mood, traits, relationships)
 ├── assets/              # Asset service + metadata extraction
-├── memory/              # Memory budget, provisioning, purge
-├── i18n/                # Internationalization
+├── memory/              # Memory budget, provisioning, purge, decay
+├── i18n/                # Internationalization (server + frontend)
 ├── group-chat/          # Group chat mention parsing
-├── assistant/           # Rule-based assistant + commands
+├── assistant/           # Rule-based assistant + commands + prompt assembly
 ├── admin/               # Admin config, provider health
-├── middleware/           # Auth, NSFW gate, solo user, rate limit
+├── middleware/          # Auth, NSFW gate, solo user, rate limit, i18n
+├── auth/                # Authentication + sessions
+├── nsfw/                # NSFW gate + moderation service
 ├── transport/           # WebSocket transport layer
 ├── content/             # Hash injection, compression, encoding
 ├── personas/            # Persona service
@@ -130,6 +135,16 @@ src/
 ├── profanity/           # Profanity filter
 ├── age-gate/            # Age gate service
 ├── telemetry/           # Telemetry
+├── aux-pipeline/        # Auxiliary LLM pipeline
+├── battle/              # Battle/RPG combat UI glue
+├── image-edit/          # Image editing
+├── logger/              # Structured logging
+├── schemas/             # Generated/config schemas
+├── services/            # Cross-cutting services
+├── components/          # Shared UI components
+├── partials/            # htmx partials
+├── prompts/             # Prompt templates
+├── build/               # Build-time helpers (compress, copy-icons)
 ├── test-utils/          # Test insert helpers
 └── utils/               # Shared utilities
 
@@ -159,7 +174,7 @@ See `.agents/references/recommendations.md` — use these:
 ## Verification Gates (Required Before "Done")
 
 ```bash
-bun run check        # typecheck + lint + format + md lint + db schema gate
+bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, size, context-weight, unit + e2e tests
 bun test src/        # unit tests
 E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 ```
@@ -195,7 +210,10 @@ cd tree/feature-name
 # Agent commit (GPG-signed)
 ./scripts/worktree.sh agent-commit feature-name "feat(scope): message"
 
-# Finalize (checks + signed merge + cleanup)
+# Rebase onto updated dev
+./scripts/worktree.sh rebase feature-name
+
+# Finalize (checks + signed merge + cleanup; --force skips gates)
 ./scripts/worktree.sh finalize feature-name
 ```
 
@@ -214,6 +232,14 @@ cd tree/feature-name
 ./scripts/worktree.sh comment TASK-001 -m "text"
 ./scripts/worktree.sh attach TASK-001 ./file.md
 
+# State transitions
+./scripts/worktree.sh state TASK-001 done
+
+# Sync .plan/tickets/index.json with git issues
+./scripts/worktree.sh sync            # interactive
+bun run plan:sync                     # check
+bun run plan:sync:fix                 # apply fixes
+
 # Direct git-issue
 ./scripts/worktree.sh gi <command>
 ```
@@ -222,7 +248,7 @@ cd tree/feature-name
 
 - **`.plan/epics/`** — epic definitions
 - **`.plan/tickets/`** — task tickets
-- **`.plan/epics.md`** — consolidated status
+- **`.plan/epics-index.md`** — consolidated epic status (auto-generated from `.plan/epics/`)
 - **`.plan/features/`** — feature specs
 
 **`.plan/` is source of truth**; `docs/meta/` is reference only.
