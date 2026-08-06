@@ -5,6 +5,58 @@
 
 ---
 
+## Next In-Progress — Decision Queue (2026-08-05)
+
+> Every open/partial item across `backlog.md` + `immediate.md`, deduped, so finalize-vs-defer can be decided per row. **Recommend** = my proposal from the 0.1.0 value alignment (▲ finalize now / ▼ defer). **Decision** column left blank for the user. When a row is decided, move it: finalized → check off in its P2–P5 section; deferred → `backlog.md` `## P6+`.
+
+| ID | Item | Ticket / where | Recommend | Decision |
+| -- | ---- | -------------- | --------- | -------- |
+| A1 | NSFW audit-log UI + consent display | P0 partial (`immediate.md` L37, L70) | ▲ now | |
+| A2 | MFA (TOTP) + `/api/sessions` | `TASK-two-factor-multi-factor-auth.md` (P2-E) | ▼ defer | ▼ **Deferred 2026-08-05** — local server, local registrations, no external integrations — no auth overcomplication; draft/noop acceptable. Moved to `backlog.md` P6+ |
+| A3 | Message/reaction access-check UI | `TASK-dedupe-message-access-checks.md`, `TASK-fix-message-reactions-access.md` | ▲ now | ▲ **Finalized shipped 2026-08-05** — POST reaction now gated via `checkChatAccess`; dedupe done; `message-reactions.test.ts` (8 tests) |
+| A4 | Encryption + access-mgmt display | `TASK-encryption-access-management.md` (time-based expiry — separate/blocked feature); encryption/compression flow **already wired 2026-08-06** | ▲ done | ✅ **Value #4 already implemented** (2026-08-06 audit); remaining time-based-expiry access mgmt is blocked (P6+/separate epic) |
+| A5 | Lint-ts debt (291 files) → `check` 16/17 | `immediate.md` L468 | ▲ now | |
+| A6 | Size-strict debt (10 files) → `check` 17/17 | `immediate.md` L469 | ▲ now | |
+| A7 | e2e browser stabilization (auth redirect-loop) | `immediate.md` L470 | ▲ now | |
+| A8 | Unwired-code close-out (LoRA, dead `detectIntent`, swipe, GM-role effect) | `backlog.md` L112/L144+ | ▲ now | |
+| A9 | Release artifacts (release-process, tag `v0.1.0`, changelog) | `immediate.md` L472 | ▲ now | |
+| B1 | Registration frontend page | P2-B L186 | ▲ now | |
+| B2 | Chat message search & filter | `TASK-chat-message-search.md` (P2-B/P4/P5) | ▲ now | |
+| B3 | Chat transfer + location change | `TASK-chat-transfer-location.md` (P2-B/P4) | ▲ now | |
+| B4 | Stop generation (chat+VN) | P5 | ▲ now | |
+| B5 | Notification center + noise filtering | P5 | ▲ now | |
+| B6 | IO export/import (PNG/YAML/TOML/CHARX; world/loc/story) | P4/P5 | ▲ now | |
+| B7 | Prompt-template registry impl | `TASK-prompt-template-registry.md` | ▲ now | |
+| B8 | Memory selection UI + cross-actor hardening test | P2-C L242, P4, hardening L476 | ▲ now | |
+| B9 | i18n frontend strings + locale switcher | `backlog.md` L68 | ▲ now | |
+| B10 | Fine-tuning UX (provider health, fine-tune UI) | P4 L431 | ▲ now | |
+| C1 | Chat-type matrix UI (group chat, GM panels, quest log, story frontend) | P2-B/D, P4 L424 | ▲ now | |
+| C2 | NSFW 5-tier character rating runtime enforcement | P4 L425 | ▲ now | |
+| C3 | Assistant tooling (tool-call display, creation wizards, `/commands` tiered) | P2-C L232, P4 L428 | ▲ now | |
+| C4 | Char/world/loc flows (multi-format import, settings menus, mood meter) | P4 L427 | ▲ now | |
+| C5 | LLM providers (Anthropic/Ollama/Bedrock) | P4 L429 | ▲ now | |
+| C6 | Assets (signed URLs, compression flow) | P4 L430 | ▲ now | |
+| C7 | Group-chat VN party join/leave | `TASK-travel-party-migration.md` (P2-B L196) | ▲ now | |
+| D1 | Assistant panel in chat sidebar | P2-B L206 | ▲ now | |
+| D2 | Message actions UI (edit/delete/pin/react) | P2-B L207 | ▲ now | |
+| D3 | Assistant role selector + expand command buttons | P2-C L228/229 | ▲ now | |
+| D4 | Remove dead rule `detectIntent` | P2-C L230 | ▲ now | |
+| E1 | Wire GM panels + quest-log + unified GM↔assistant view | P2-D L278-280 | ▲ now | |
+| E2 | GM-guided story (user-as-GM UI + doc) | P2-Da L318-322 | ▲ now | |
+| F2 | M5 ModerationHook safety | AUX L253 | ▲ now | |
+| F1 | 9 AUX LLM enrichment tasks | P2-B L197-204 | ▼ defer | |
+| F3 | M6 AUX telemetry | AUX L254 | ▼ defer | |
+| G2 | World timeline §5.3/§5.4 convergence | `🟡 Partial` (backlog L57) | ▼ defer | |
+| G3 | External music linking | P2-B L190, `backlog.md` L139 (P6+) | ▼ defer | |
+| G4 | Authoring/creation ownership indicators | P2-E L351 | ▼ defer | |
+| G1 | memorySection cross-actor integration test | hardening L476 | ▲ now | |
+| G5 | `open-items.md` create-or-drop | hardening L480 | ▲ now | |
+| G6 | Avatar-gallery visibility inheritance | P2-F L372 | ▲ now | |
+
+**No decision needed (stale/dup):** login page htmx (auth views already exist, P2-E L334 — mark done).
+
+---
+
 ## Recent Wiring — LLM Text Templates (2026-08-03)
 
 **Feature**: config-driven system prompts for assistant/gm/vn/nsfw/aux (transition, intent, memory) domains, overridable via user `configs/templates/llm.yaml` (gitignored, only `.example.yaml` committed). Resolution: user config `systemPrompts[<purpose>]` → code default `LLM_PROMPT_DEFAULTS` (`src/prompts/registry.ts`).
@@ -37,7 +89,7 @@
 | **NSFW runtime config store + live enforcement**           | ✅ Shipped         | `src/nsfw/runtime-config.ts`, `admin-nsfw.ts`, mood-shift persistence in `auto-gen.ts` (63c765ce)                                                     | P0 audit-log UI + consent display still open |
 | **Emotion avatar generation from mood panel**              | ✅ Shipped         | `mood-panel.html`, `mood.ts`, `user-info.ts` (2794e3d5)                                                                                               | —                                            |
 | **Regenerate sibling variant** — swipe_index + idempotency | ✅ Shipped + tests | `src/chat/service.ts`, `src/generation/regenerate-variant.test.ts` (a777b590)                                                                         | —                                            |
-| **401-guard normalization** — 18 route files               | ✅ Shipped         | 3283d41e (activity, chats, gm-notes, messages, reactions, sessions, vn-choices, …)                                                                    | P2-E† canonical helper collapse open         |
+| **401-guard normalization** — 18 route files               | ✅ Shipped + P2-E† collapse | 3283d41e (activity, chats, gm-notes, messages, reactions, sessions, vn-choices, …); `requireCtxUser` deleted; Variant A + blog.ts migrated (2026-08-05) | Variants B/C/D/E + middleware deferred (separate-commit per ticket; middleware is separate module family) |
 | **Chat setup templates** — seed + admin CRUD + selector UI | ✅ Shipped         | 9619f259 + `new-chat.ts:29-67` (`#chat-template` select, pre-fills mode)                                                                              | —                                            |
 | **Group-chat initiative decrement**                        | ✅ Shipped + tests | `src/turning/turn-manager.ts` (30f20b7a)                                                                                                              | —                                            |
 | **Context-cut → memory promotion**                         | ✅ Shipped         | 09a451f2 (+ dead modules removed 7de41ec2)                                                                                                            | —                                            |
@@ -338,18 +390,18 @@ The existing infrastructure already supports this pattern:
 | Admin user mgmt        | ✅ Done                                                                                                                      | `src/frontend/alpine/admin-users.ts` — role editing, user list, search/filter |
 | Admin routes           | ✅ Done                                                                                                                      | `src/routes/admin.ts` — users, stats, providers, model-roles                  |
 | Encryption (browser)   | ✅ Done                                                                                                                      | `src/frontend/browser-crypto.ts` — AES-256-GCM                                |
-| MFA / Two-Factor       | ❌ Pending                                                                                                                   | No TOTP/MFA code found                                                        |
-| Message access checks  | ❌ Pending                                                                                                                   | `TASK-dedupe-message-access-checks.md`                                        |
-| Encryption status UI   | ❌ Pending                                                                                                                   | `TASK-encryption-access-management.md`                                        |
-| Reaction access gating | ❌ Pending                                                                                                                   | `TASK-fix-message-reactions-access.md`                                        |
+| MFA / Two-Factor       | ▼ Deferred (2026-08-05) — local-only auth, no external integrations; draft/noop acceptable; moved to P6+ | No TOTP/MFA code found                                                        |
+| Message access checks  | ✅ Shipped (2026-08-05) — access gated via `checkChatAccess`; POST reaction toggle now checked | `TASK-dedupe-message-access-checks.md`                                        |
+| Encryption status UI   | ✅ Done (2026-08-06) — per-chat key load (`chat-keys.ts` + `/api/chats/:id/encryption-key`) + key-mgmt settings tab (`key-management.ts`) + **chat-list 🔒 badge** (server-rendered from `chats.encryption_level`, `views.ts`); time-based-expiry access mgmt is separate blocked feature | `TASK-encryption-access-management.md`                                        |
+| Reaction access gating | ✅ Shipped (2026-08-05) — owner/participant/role via `checkChatAccess`; `message-reactions.test.ts` | `TASK-fix-message-reactions-access.md`                                        |
 | Authoring ownership    | 🟡 Partial — actor ownership enforced on character-io + emotion-avatars routes (f0c39927); broader authoring indicators open | `TASK-authoring-creation.md`                                                  |
 
 #### Remaining Work
 
-- [ ] Implement two-factor/MFA auth with setup UI (`TASK-two-factor-multi-factor-auth.md`)
-- [ ] Implement message-level access check UI (`TASK-dedupe-message-access-checks.md`)
-- [ ] Implement encryption + access management display (`TASK-encryption-access-management.md`)
-- [ ] Fix message reactions access check in UI (`TASK-fix-message-reactions-access.md`)
+- [x] ~~Implement two-factor/MFA auth with setup UI~~ — **Deferred 2026-08-05** to P6+ (local server, local registrations, no external integrations — no auth overcomplication; draft/noop acceptable). `TASK-two-factor-multi-factor-auth.md`
+- [x] Implement message-level access check UI (`TASK-dedupe-message-access-checks.md`) — **shipped 2026-08-05** (access gated via `checkChatAccess`; no dup helpers in `messages.ts`/`message-reactions.ts`)
+- [x] Encryption + access-mgmt display — **value #4 already wired 2026-08-06** (messages + assets compress-encrypt; per-chat key + key-mgmt UI) + **chat-list 🔒 badge shipped 2026-08-06** (rendered from `chats.encryption_level` in `views.ts`; tested via `/dynamic/chats/list`). Remaining time-based-expiry access mgmt is a **blocked P6+ feature** (`TASK-encryption-access-management.md`), separate from value #4.
+- [x] Fix message reactions access check in UI (`TASK-fix-message-reactions-access.md`) — **shipped 2026-08-05** (POST toggle now gated; `message-reactions.test.ts`, 8 tests)
 - [ ] Implement authoring/creation ownership indicators (`TASK-authoring-creation.md`)
 - [ ] **Verification**: `bun run check && bun test src/routes/auth.test.ts`
 
@@ -413,9 +465,9 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 | #  | Value feature                                                                                      | Status                     | Where / next                                                                                      |
 | -- | -------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------- |
 | 1  | **User registration**                                                                              | 🟡 partial                 | `POST /api/auth/register` route ✅ (`src/routes/auth.ts`); register frontend page pending         |
-| 2  | **User authentication**                                                                            | 🟡 partial                 | login/logout/demo-login/`/me` ✅; MFA (TOTP) + `/api/sessions` pending (P2-E)                     |
-| 3  | **Correct access** (chats, assets, worlds, locations)                                              | 🟢 core / 🟡 gaps          | actor ownership (f0c39927); unify 401 guards (P2-E†); message/reaction access checks open         |
-| 4  | **Encryption + compression flow**                                                                  | 🟡 partial                 | browser AES-256-GCM ✅; wire into message pipeline + asset storage compression                    |
+| 2  | **User authentication**                                                                            | 🟡 partial                 | login/logout/demo-login/`/me` ✅; `/api/sessions` pending (P2-E); **MFA (TOTP) deferred to P6+** (2026-08-05) |
+| 3  | **Correct access** (chats, assets, worlds, locations)                                              | 🟢 core / 🟡 gaps          | actor ownership (f0c39927); 401 guards unified (P2-E†, 2026-08-05); message/reaction access checks done; **world/location access checks SKIPPED 2026-08-06** (merge-risk w/ `tree/` worktree — revisit later) |
+| 4  | **Encryption + compression flow**                                                                  | ✅ Implemented + wired    | browser AES-256-GCM (`browser-crypto.ts`) ✅; `pipeline.ts` wired into messages (encrypt/decrypt + client pre-encrypt) + asset storage (`encryptAssetBlob`/`decryptAssetBlob`); key mgmt UI + `/api/chats/:id/encryption-key` ✅ (2026-08-06 audit) |
 | 5  | **Chats — all 9 types**                                                                            | 🟡 P2-B in progress        | autorenaming ✅, sections ✅, invites ✅, filters ✅; message search/transfer pending             |
 | 6  | **NSFW features, prompting, opt-in, sfw/nsfw caps**                                                | 🟢 core / 🟡 UI            | runtime config + live enforcement ✅; audit-log UI + consent display + character rating open      |
 | 7  | **Metadata extraction + captioning**                                                               | 🟢 done                    | regex pipeline ✅; caption-route wired `8f8c0abb`                                                 |
@@ -496,7 +548,7 @@ P3→P5 are aligned to the **0.1.0 highest-value feature list** (see `backlog.md
 - [ ] `memorySection` cross-actor integration test (P2-C hardening row)
 - [ ] AUX queue M5–M6 (ModerationHook safety, AUX telemetry) — M1–M4 done (shared runner, memory-extraction real model, dead model roles, mood/emotion hook consumption)
 - [ ] World timeline §5.3 forward-event steering + §5.4 cross-story convergence (cluster B greenfield)
-- [ ] Frontend gaps still open in P2-B/C/D/E tables (music linking, message search, chat transfer, party join/leave, quest-log UI, assistant↔GM reconciliation, tool-call display, MFA, encryption-access UI, avatar-gallery visibility inheritance) — **align remaining work to the back-linked P4/P5 value rows in `backlog.md`**
+- [ ] Frontend gaps still open in P2-B/C/D/E tables (music linking, message search, chat transfer, party join/leave, quest-log UI, assistant↔GM reconciliation, tool-call display, encryption-access UI, avatar-gallery visibility inheritance) — **align remaining work to the back-linked P4/P5 value rows in `backlog.md`**
 - [ ] `.plan/open-items.md` — referenced by backlog but missing; create or drop references
 
 ### Ordering (proposed)
@@ -528,7 +580,7 @@ P3→P5 are aligned to the **0.1.0 highest-value feature list** (see `backlog.md
 - **P2 emphasis**: VN mode → chat → assistant/tool calling → GM flows → GM-guided story creation → authorization/access → gallery. RPG mechanics deferred to P2-later.
 - **VN mode is complete (backend + frontend, 2026-07-31)** — `src/story/` (6 route files) + `src/frontend/vn/` scene renderer/portrait/transitions/templates; remaining VN work is `bun test src/story/` verification + gallery-in-scene inheritance.
 - **Chat system ties directly to assistant and GM flows** — implement in order: chat → assistant → GM → GM-guided story. Chat frontend has the most existing infrastructure (htmx + Alpine.js).
-- **Authorization + access are blocking** — no safe multi-user deployment without register route, MFA, and access checks. Backend `src/routes/auth.ts` and frontend login/register pages (`src/views/login.html`, `src/views/register.html`) are built; MFA and remaining access checks pending.
+- **Authorization + access are blocking** — no safe multi-user deployment without register route and access checks. Backend `src/routes/auth.ts` and frontend login/register pages (`src/views/login.html`, `src/views/register.html`) are built; MFA deferred to P6+ (local-only auth), remaining access checks pending.
 - **Gallery** — frontend (`src/frontend/pages/gallery.ts`) **and** backend are both implemented: list/upload served by `assetRoutes` (`GET/POST /api/assets`), gallery page + HTMX grid/search served by `viewRoutes` (`/views/gallery`, `/dynamic/gallery/*`) in `elysia-app.ts`. No `src/routes/gallery.ts` needed — asset routes already cover it.
 - **GM-guided story creation** is a natural extension of existing GM flows — the user becomes the turn orchestrator while LLMs handle character voices. Uses existing `group-chat.md` infrastructure, `GmConfig` types, and story-mode backend.
 - **Frontend architecture** — all new frontend work uses htmx + Alpine.js per project conventions (`AGENTS.md`). New `.ts` modules in `src/frontend/alpine/` or `.ts` pages in `src/frontend/pages/`.
