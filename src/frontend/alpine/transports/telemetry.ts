@@ -65,10 +65,17 @@ export class TelemetryTransport implements Transport {
     if (entry.module) { data.module = entry.module; }
     if (entry.error) { data.error = entry.error; }
 
+    // Flatten chatId (when present in meta) to top-level — the ingestion
+    // route reads ctx.body.chatId, so nesting it inside data silently
+    // drops it from every recorded event.
+    const chatId = typeof data.chatId === "string" ? data.chatId : undefined;
+    if (chatId !== undefined) { delete data.chatId; }
+
     const payload = {
       type: eventType,
       sessionId: entry.sessionId,
       userId: entry.userId,
+      chatId,
       data,
     };
 
