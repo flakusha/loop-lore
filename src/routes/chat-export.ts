@@ -7,6 +7,7 @@
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { decryptMessageContent, getSmk, } from "../crypto";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { notFound, } from "../validation/middleware";
@@ -246,12 +247,15 @@ export function chatExportRoutes(opts: HandlerOpts,) {
       if (!chat) { return notFound("Chat not found",); }
 
       // Fetch all confirmed, visible messages
-      const messages = await database
+      const rows = await database
         .selectFrom("messages",)
         .innerJoin("actors", "actors.id", "messages.actor_id",)
         .select([
           "messages.id",
+          "messages.chat_id",
           "messages.content",
+          "messages.content_encoding",
+          "messages.key_id",
           "messages.role",
           "messages.created_at",
           "messages.model_id",
@@ -264,6 +268,26 @@ export function chatExportRoutes(opts: HandlerOpts,) {
         .where("messages.role", "in", [MessageRole.User, MessageRole.Assistant, MessageRole.Character,],)
         .orderBy("messages.created_at", "asc",)
         .execute();
+
+      // Decrypt encrypted message bodies so exports carry plaintext, never the
+      // raw ciphertext (a data leak).
+      const smk = getSmk();
+      const messages: MessageData[] = [];
+      for (const row of rows) {
+        let content = row.content;
+        if (row.key_id && smk) {
+          content = await decryptMessageContent(database, row, smk,);
+        }
+        messages.push({
+          id: row.id,
+          content,
+          role: row.role,
+          created_at: row.created_at,
+          display_name: row.display_name,
+          model_id: row.model_id,
+          token_count_total: row.token_count_total,
+        },);
+      }
 
       const safeName = chat.name.replaceAll(/[^a-z0-9]/gi, "_",);
 
