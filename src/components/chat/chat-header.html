@@ -43,6 +43,16 @@
     </button>
     <button
       class="btn-icon"
+      title="Location"
+      aria-label="Location"
+      @click="$store.ui.showLocationPanel = !$store.ui.showLocationPanel"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-location-panel"
+    >
+      &#9873;
+    </button>
+    <button
+      class="btn-icon"
       title="Background"
       aria-label="Background"
       @click="$store.ui.showBackgroundPanel = !$store.ui.showBackgroundPanel"
@@ -50,6 +60,16 @@
       data-testid="toggle-background-panel"
     >
       &#9636;
+    </button>
+    <button
+      class="btn-icon"
+      title="Search messages"
+      aria-label="Search messages"
+      @click="window.toggleMessageSearch()"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-message-search"
+    >
+      &#128269;
     </button>
     <button
       class="btn-icon"
@@ -151,6 +171,9 @@
           </div>
         </template>
         <div class="notif-empty" x-show="items.length === 0">{{{t("chats.noNotifications")}}}</div>
+        <div class="notif-footer">
+          <a class="btn-link" href="/views/notifications" @click="open = false">{{{t("notifications.viewAll")}}}</a>
+        </div>
       </div>
     </div>
   </div>
