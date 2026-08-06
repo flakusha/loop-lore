@@ -1,0 +1,54 @@
+<!-- NSFW Moderation Audit View (admin-only) -->
+<header id="header-slot" class="main-header" data-testid="nsfw-moderation-header">
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+  <span class="title">NSFW Moderation Audit</span>
+</header>
+
+<div class="app-layout">
+  <main class="main-content" style="padding-top: 0">
+    <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
+      <div style="padding: var(--space-6)">
+        <!-- Target user selector (read-only audit is scoped to this user) -->
+        <form
+          method="get"
+          action="/views/nsfw-moderation"
+          style="display: flex; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5)"
+        >
+          <input
+            class="form-input"
+            type="text"
+            name="userId"
+            value="{{targetUserId}}"
+            placeholder="User ID (leave blank for yourself)"
+            style="flex: 1; min-width: 240px"
+          />
+          <button class="btn btn-primary btn-sm" type="submit">Load</button>
+        </form>
+
+        <!-- Consent state -->
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Consent State</h2>
+        <table class="admin-table" style="margin-bottom: var(--space-6)">
+          <tbody>
+            {{consentHtml}}
+          </tbody>
+        </table>
+
+        <!-- Audit log -->
+        <h2 style="font-size: 16px; font-weight: 600; margin: var(--space-5) 0 var(--space-3)">Moderation Audit Log</h2>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Action</th>
+              <th>Performed By</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{auditRows}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
