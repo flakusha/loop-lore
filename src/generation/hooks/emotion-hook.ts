@@ -5,6 +5,7 @@
  * emits emotion change events that trigger avatar selection updates.
  */
 
+import { EmotionType, } from "../../db/enums";
 import { getLogger, } from "../../logger";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
@@ -40,15 +41,35 @@ export class EmotionHook implements HookHandler {
     const indicators: string[] = [];
     const lower = content.toLowerCase();
 
+    // Emit canonical EmotionType values (lowercase, e.g. "happy", "sad",
+    // "fearful") so the detected dominant emotion maps 1:1 onto the avatar/
+    // provider/config emotion key sets. The previous homegrown names
+    // (joy/anger/sadness/fear/...) matched nothing downstream.
     const emotions = [
-      { name: "joy", keywords: ["happy", "joy", "delight", "cheerful", "laugh", "smile", "glad", "pleased",], },
-      { name: "anger", keywords: ["angry", "fury", "rage", "frustrated", "irritated", "mad", "annoyed",], },
-      { name: "sadness", keywords: ["sad", "sorrow", "grief", "mourn", "cry", "tear", "depressed", "heartbroken",], },
-      { name: "fear", keywords: ["afraid", "scared", "terrified", "fear", "dread", "anxious", "worried", "nervous",], },
-      { name: "surprise", keywords: ["surprised", "shocked", "astonished", "amazed", "astonishing", "unexpected",], },
-      { name: "disgust", keywords: ["disgust", "disgusted", "repulsive", "revolting", "nauseating",], },
-      { name: "love", keywords: ["love", "adore", "devoted", "passionate", "affection", "tender", "warm",], },
-      { name: "desire", keywords: ["desire", "craving", "longing", "yearning", "wanting", "lust",], },
+      {
+        name: EmotionType.Happy,
+        keywords: ["happy", "joy", "delight", "cheerful", "laugh", "smile", "glad", "pleased",],
+      },
+      { name: EmotionType.Angry, keywords: ["angry", "fury", "rage", "frustrated", "irritated", "mad", "annoyed",], },
+      {
+        name: EmotionType.Sad,
+        keywords: ["sad", "sorrow", "grief", "mourn", "cry", "tear", "depressed", "heartbroken",],
+      },
+      {
+        name: EmotionType.Fearful,
+        keywords: ["afraid", "scared", "terrified", "fear", "dread", "anxious", "worried", "nervous",],
+      },
+      {
+        name: EmotionType.Surprised,
+        keywords: ["surprised", "shocked", "astonished", "amazed", "astonishing", "unexpected",],
+      },
+      { name: EmotionType.Disgusted, keywords: ["disgust", "disgusted", "repulsive", "revolting", "nauseating",], },
+      {
+        name: EmotionType.Loving,
+        keywords: ["love", "adore", "devoted", "passionate", "affection", "tender", "warm",],
+      },
+      // desire/craving/longing → no dedicated EmotionType; fold into excited.
+      { name: EmotionType.Excited, keywords: ["desire", "craving", "longing", "yearning", "wanting", "lust",], },
     ];
 
     for (const emotion of emotions) {
