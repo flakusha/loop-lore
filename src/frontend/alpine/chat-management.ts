@@ -1,4 +1,5 @@
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
@@ -21,19 +22,19 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         this.chats = this.chats.filter((c,) => c.id !== chatId);
         if (this.activeChat === chatId) {
           this.activeChat = null;
-          this.activeChatName = "Welcome to loop-lore";
+          this.activeChatName = t("chats.welcomeTitle",);
           this.messages = [];
           Alpine.store("ui",).hasActiveChat = false;
           const titleEl = document.querySelector("#page-title",);
           if (titleEl) { titleEl.textContent = this.activeChatName; }
         }
-        this.$dispatch?.("show-toast", { type: "success", message: "Chat deleted", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatDeleted",), },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to delete chat", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedDeleteChat",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error deleting chat", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorDeletingChat",), },);
     }
     button?.blur();
   },
@@ -42,7 +43,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     log.info("openRenameModal", { chatId, },);
     const chat = this.chats.find((c,) => c.id === chatId);
     this._renameChatId = chatId;
-    this._renameChatName = chat?.name ?? "Chat";
+    this._renameChatName = chat?.name ?? t("chats.untitledChat",);
     Alpine.store("ui",).showRenameModal = true;
   },
 
@@ -68,13 +69,13 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
           if (titleEl) { titleEl.textContent = name; }
         }
         Alpine.store("ui",).showRenameModal = false;
-        this.$dispatch?.("show-toast", { type: "success", message: "Chat renamed", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatRenamed",), },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to rename chat", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedRenameChat",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error renaming chat", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorRenamingChat",), },);
     }
   },
 
@@ -96,10 +97,10 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         chat.isPinned = pinned ? 1 : 0;
         this.chats = [...this.chats,];
       } else {
-        this.$dispatch?.("show-toast", { type: "error", message: "Failed to update pin state", },);
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedUpdatePinState",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error updating pin state", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorUpdatingPinState",), },);
     }
   },
 
@@ -124,20 +125,23 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
       if (res.ok) {
         this.chats = this.chats.filter((c,) => !ids.includes(c.id,));
         this.selectedChats = [];
-        this.$dispatch?.("show-toast", { type: "success", message: `Archived ${ids.length} chat(s)`, },);
+        this.$dispatch?.("show-toast", {
+          type: "success",
+          message: t("toasts.archivedCount", { count: String(ids.length,), },),
+        },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to archive", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedArchive",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error archiving chats", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorArchivingChats",), },);
     }
   },
 
   async batchDelete() {
     const ids = this.selectedChats;
     if (ids.length === 0) { return; }
-    if (!confirm(`Delete ${ids.length} chat(s) and all their messages?`,)) { return; }
+    if (!confirm(t("modals.deleteChatsCount", { count: String(ids.length,), },),)) { return; }
     try {
       const res = await apiFetch("/api/chats/batch/delete", {
         method: "POST",
@@ -149,17 +153,20 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         this.selectedChats = [];
         if (this.activeChat && ids.includes(this.activeChat,)) {
           this.activeChat = null;
-          this.activeChatName = "Welcome to loop-lore";
+          this.activeChatName = t("chats.welcomeTitle",);
           this.messages = [];
           Alpine.store("ui",).hasActiveChat = false;
         }
-        this.$dispatch?.("show-toast", { type: "success", message: `Deleted ${ids.length} chat(s)`, },);
+        this.$dispatch?.("show-toast", {
+          type: "success",
+          message: t("toasts.deletedCount", { count: String(ids.length,), },),
+        },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to delete", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedDelete",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error deleting chats", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorDeletingChats",), },);
     }
   },
 
@@ -180,13 +187,16 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         a.download = "chats-export.json";
         a.click();
         URL.revokeObjectURL(url,);
-        this.$dispatch?.("show-toast", { type: "success", message: `Exported ${ids.length} chat(s)`, },);
+        this.$dispatch?.("show-toast", {
+          type: "success",
+          message: t("toasts.exportedCount", { count: String(ids.length,), },),
+        },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to export", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedExport",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error exporting chats", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorExportingChats",), },);
     }
   },
 };

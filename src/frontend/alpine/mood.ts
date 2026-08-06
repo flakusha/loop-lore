@@ -1,5 +1,6 @@
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
+import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
 
@@ -134,12 +135,12 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
 
       const baseAvatarId = this.currentCharacter?.avatar_asset_id ?? null;
       if (!baseAvatarId) {
-        this._emotionGenStatus = "No base avatar set for this character.";
+        this._emotionGenStatus = t("status.noBaseAvatar",);
         return;
       }
 
       this._emotionGenRunning = true;
-      this._emotionGenStatus = "Starting generation...";
+      this._emotionGenStatus = t("status.startingGeneration",);
       try {
         const genRes = await apiFetch(`/api/actors/${npc.actor_id}/emotion-avatars`, {
           method: "POST",
@@ -148,25 +149,25 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
         },);
         const genBody = await genRes.json().catch(() => ({}));
         if (!genRes.ok) {
-          this._emotionGenStatus = genBody.message ?? "Generation failed to start.";
+          this._emotionGenStatus = genBody.message ?? t("status.generationFailedToStart",);
           return;
         }
         this._emotionGenJobId = genBody.jobId ?? null;
-        this._emotionGenStatus = "Generating emotion avatars...";
+        this._emotionGenStatus = t("status.generatingEmotionAvatars",);
         await this._pollEmotionJob(npc.actor_id, this._emotionGenJobId,);
       } finally {
         this._emotionGenRunning = false;
       }
     } catch (error) {
       log.error("Failed to start emotion avatar generation", error instanceof Error ? error : undefined, {},);
-      this._emotionGenStatus = "Failed to start generation.";
+      this._emotionGenStatus = t("status.failedToStartGeneration",);
       this._emotionGenRunning = false;
     }
   },
 
   async _pollEmotionJob(actorId: string, jobId: string | null,) {
     if (!jobId) {
-      this._emotionGenStatus = "Generation started but no job id returned.";
+      this._emotionGenStatus = t("status.generationNoJobId",);
       return;
     }
     const deadline = Date.now() + 5 * 60 * 1000;
@@ -178,17 +179,17 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
         const job = await res.json();
         const status = job.status as string;
         if (status === "completed") {
-          this._emotionGenStatus = "Emotion avatars generated.";
+          this._emotionGenStatus = t("status.emotionAvatarsGenerated",);
           await this.loadEmotionAvatars();
           return;
         }
         if (status === "failed" || status === "cancelled") {
-          this._emotionGenStatus = `Generation ${status}.`;
+          this._emotionGenStatus = t("status.generationOutcome", { status, },);
           return;
         }
       } catch { /* keep polling */ }
     }
-    this._emotionGenStatus = "Generation timed out.";
+    this._emotionGenStatus = t("status.generationTimedOut",);
   },
 
   /**

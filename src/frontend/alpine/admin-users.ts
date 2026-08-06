@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
@@ -69,15 +70,15 @@ export const adminUsers = {
         body: jsonBody({ role: this.editRoleValue, },),
       },);
       if (res.ok) {
-        showToast("success", "Role updated",);
+        showToast("success", t("toasts.roleUpdated",),);
         this.cancelEditRole();
         await this.loadUsers();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed",);
+        showToast("error", err.error || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   async deleteUser(userId: string,) {
@@ -85,16 +86,16 @@ export const adminUsers = {
     try {
       const res = await apiFetch(`/api/admin/users/${userId}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "User deleted",);
+        showToast("success", t("toasts.userDeleted",),);
         this.confirmDeleteUser = "";
         await this.loadUsers();
         await (this as any).loadOverview();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed",);
+        showToast("error", err.error || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   searchUsers() {

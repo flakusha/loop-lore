@@ -1,5 +1,6 @@
 import { formattedGenerationTime, formattedTokensPerSecond, statsLine, } from "./chat-stats";
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
@@ -22,7 +23,10 @@ async function dispatchGenerationAction(
 ) {
   const prompt = (body.prompt as string) ?? "";
   if (!prompt && !body.assetIds) {
-    ctx.$dispatch?.("show-toast", { type: "warning", message: `No input provided for ${label.toLowerCase()}`, },);
+    ctx.$dispatch?.("show-toast", {
+      type: "warning",
+      message: t("toasts.actionNoInput", { action: label.toLowerCase(), },),
+    },);
     return;
   }
   try {
@@ -32,36 +36,39 @@ async function dispatchGenerationAction(
       body: jsonBody(body,),
     },);
     if (res.ok) {
-      ctx.$dispatch?.("show-toast", { type: "info", message: `${label} started`, },);
+      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.actionStarted", { action: label, },), },);
       ctx.connectGenerationSSE(chatId,);
     } else if (res.status === 501) {
       ctx.$dispatch?.("show-toast", {
         type: "info",
-        message: `${label} not configured — provider TBD`,
+        message: t("toasts.actionNotConfigured", { action: label, },),
       },);
     } else {
       const err = await res.json();
       ctx.$dispatch?.("show-toast", {
         type: "error",
-        message: err.error || `Failed: ${label.toLowerCase()}`,
+        message: err.error || t("toasts.actionFailed", { action: label.toLowerCase(), },),
       },);
     }
   } catch {
-    ctx.$dispatch?.("show-toast", { type: "error", message: `Network error: ${label.toLowerCase()}`, },);
+    ctx.$dispatch?.("show-toast", {
+      type: "error",
+      message: t("toasts.actionNetworkError", { action: label.toLowerCase(), },),
+    },);
   }
 }
 
 /** Dispatch create-quest command action. */
 async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId: string,) {
   if (!description) {
-    ctx.$dispatch?.("show-toast", { type: "warning", message: "No quest description provided", },);
+    ctx.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noQuestDescription",), },);
     return;
   }
   try {
     // Fetch chat to get world_id (backend requires /api/worlds/:worldId/quests)
     const chatRes = await apiFetch(`/api/chats/${chatId}`,);
     if (!chatRes.ok) {
-      ctx.$dispatch?.("show-toast", { type: "error", message: "Failed to load chat for quest creation", },);
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadChatForQuest",), },);
       return;
     }
     const chat = await chatRes.json();
@@ -69,7 +76,7 @@ async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId
     if (!worldId) {
       ctx.$dispatch?.("show-toast", {
         type: "warning",
-        message: "Quests require a world — this chat has no world assigned",
+        message: t("toasts.questsRequireWorld",),
       },);
       return;
     }
@@ -79,16 +86,16 @@ async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId
       body: jsonBody({ chatId, description, },),
     },);
     if (res.ok) {
-      ctx.$dispatch?.("show-toast", { type: "info", message: "Quest created", },);
+      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.questCreated",), },);
     } else {
       const err = await res.json();
       ctx.$dispatch?.("show-toast", {
         type: "error",
-        message: err.error || "Failed to create quest",
+        message: err.error || t("toasts.failedCreateQuest",),
       },);
     }
   } catch {
-    ctx.$dispatch?.("show-toast", { type: "error", message: "Network error creating quest", },);
+    ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCreatingQuest",), },);
   }
 }
 
@@ -96,27 +103,27 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
   _showCommandPalette: false,
   _activeCommand: "",
   _commandList: [
-    { name: "help", description: "Show available commands", },
-    { name: "roll", description: "Roll dice (e.g., /roll 2d6+3)", },
-    { name: "summarize", description: "Summarize recent messages", },
-    { name: "impersonate", description: "Play as a character", },
-    { name: "narrate", description: "Inject narration text", },
-    { name: "ooc", description: "Out-of-character message", },
-    { name: "debug", description: "Toggle prompt debug view", },
-    { name: "detail", description: "Set detail level (immersion/basic/detailed)", },
-    { name: "improve", description: "Improve text with AI", },
-    { name: "context", description: "Show conversation context", },
-    { name: "image", description: "Generate image from prompt", },
-    { name: "quest", description: "Manage quests (list/create/status)", },
-    { name: "video", description: "Generate video from prompt", },
-    { name: "sfx", description: "Generate sound effect", },
-    { name: "sound", description: "Alias for /sfx", },
-    { name: "music", description: "Generate music or link external source", },
-    { name: "caption", description: "Caption the last image", },
-    { name: "create", description: "Create char/loc/world/item", },
-    { name: "review", description: "Review entity data for completeness", },
-    { name: "clear", description: "Clear chat", },
-    { name: "stats", description: "Show chat statistics", },
+    { name: "help", description: t("commands.help",), },
+    { name: "roll", description: t("commands.roll",), },
+    { name: "summarize", description: t("commands.summarize",), },
+    { name: "impersonate", description: t("commands.impersonate",), },
+    { name: "narrate", description: t("commands.narrate",), },
+    { name: "ooc", description: t("commands.ooc",), },
+    { name: "debug", description: t("commands.debug",), },
+    { name: "detail", description: t("commands.detail",), },
+    { name: "improve", description: t("commands.improve",), },
+    { name: "context", description: t("commands.context",), },
+    { name: "image", description: t("commands.image",), },
+    { name: "quest", description: t("commands.quest",), },
+    { name: "video", description: t("commands.video",), },
+    { name: "sfx", description: t("commands.sfx",), },
+    { name: "sound", description: t("commands.sound",), },
+    { name: "music", description: t("commands.music",), },
+    { name: "caption", description: t("commands.caption",), },
+    { name: "create", description: t("commands.create",), },
+    { name: "review", description: t("commands.review",), },
+    { name: "clear", description: t("commands.clear",), },
+    { name: "stats", description: t("commands.stats",), },
   ] as { name: string; description: string }[],
   _filteredCommands: [] as { name: string; description: string }[],
 
@@ -173,7 +180,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
     if (action === "generate-caption") {
       const assetIds = (payload?.assetIds as string[]) ?? [];
       if (assetIds.length === 0) {
-        this.$dispatch?.("show-toast", { type: "warning", message: "No assets to caption", },);
+        this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noAssetsToCaption",), },);
         return;
       }
       await dispatchGenerationAction(
@@ -193,7 +200,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
       const label = action.replace("generate-", "",);
       this.$dispatch?.("show-toast", {
         type: "info",
-        message: `${label} generation not yet implemented`,
+        message: t("toasts.actionNotImplemented", { label, },),
       },);
       log.info("Unimplemented generation action", { action, },);
       return;
@@ -209,7 +216,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
         },);
         this.impersonationActive = false;
         this.impersonatingActorId = null;
-        this.$dispatch?.("show-toast", { type: "info", message: "Impersonation ended", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.impersonationEnded",), },);
       } else {
         await this.toggleImpersonate();
       }
@@ -233,7 +240,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
         if (!target) {
           this.$dispatch?.("show-toast", {
             type: "warning",
-            message: `Character "${characterName}" not found in this chat`,
+            message: t("toasts.characterNotFound", { name: characterName, },),
           },);
           return;
         }
@@ -247,17 +254,17 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
           this.impersonatingActorId = target.actor_id;
           this.$dispatch?.("show-toast", {
             type: "info",
-            message: `Playing as ${target.display_name || characterName}`,
+            message: t("toasts.playingAs", { name: target.display_name || characterName, },),
           },);
         } else {
           const err = await putRes.json();
           this.$dispatch?.("show-toast", {
             type: "error",
-            message: err.error || "Failed to start impersonation",
+            message: err.error || t("toasts.failedStartImpersonation",),
           },);
         }
       } catch {
-        this.$dispatch?.("show-toast", { type: "error", message: "Network error resolving character", },);
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorResolvingCharacter",), },);
       }
       return;
     }
@@ -275,12 +282,12 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
     log.warn("Unknown command action", { action, },);
     this.$dispatch?.("show-toast", {
       type: "warning",
-      message: `Unknown action: ${action}`,
+      message: t("toasts.unknownAction", { action, },),
     },);
   },
   async toggleImpersonate() {
     if (!this.activeChat || !this.currentCharacter) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No chat or character selected", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noChatOrCharacter",), },);
       return;
     }
 
@@ -294,12 +301,12 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
         if (res.ok) {
           this.impersonationActive = false;
           this.impersonatingActorId = null;
-          this.$dispatch?.("show-toast", { type: "info", message: "Impersonation ended", },);
+          this.$dispatch?.("show-toast", { type: "info", message: t("toasts.impersonationEnded",), },);
         } else {
           const err = await res.json();
           this.$dispatch?.("show-toast", {
             type: "error",
-            message: err.error || "Failed to end impersonation",
+            message: err.error || t("toasts.failedEndImpersonation",),
           },);
         }
       } else {
@@ -313,18 +320,20 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
           this.impersonatingActorId = this.currentCharacter.id;
           this.$dispatch?.("show-toast", {
             type: "info",
-            message: `Playing as ${this.currentCharacter.display_name || this.currentCharacter.name}`,
+            message: t("toasts.playingAs", {
+              name: this.currentCharacter.display_name || this.currentCharacter.name || "",
+            },),
           },);
         } else {
           const err = await res.json();
           this.$dispatch?.("show-toast", {
             type: "error",
-            message: err.error || "Failed to start impersonation",
+            message: err.error || t("toasts.failedStartImpersonation",),
           },);
         }
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error toggling impersonation", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorTogglingImpersonation",), },);
     }
   },
 
@@ -364,7 +373,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
   async generateImageFromMessage(msgId: string,) {
     log.info("generateImageFromMessage", { messageId: msgId, },);
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No active chat", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
     const msg = this.messages.find((m,) => m.id === msgId);
@@ -372,7 +381,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
     if (!prompt) {
       this.$dispatch?.("show-toast", {
         type: "warning",
-        message: "Message has no content for image generation",
+        message: t("toasts.messageNoContentForImage",),
       },);
       return;
     }
@@ -383,21 +392,21 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
         body: jsonBody({ chatId: this.activeChat, messageId: msgId, prompt, },),
       },);
       if (res.ok) {
-        this.$dispatch?.("show-toast", { type: "info", message: "Image generation started", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.imageGenerationStarted",), },);
       } else if (res.status === 501) {
         this.$dispatch?.("show-toast", {
           type: "info",
-          message: "Image generation not configured yet — feature planned for 0.1.x",
+          message: t("toasts.imageGenerationNotConfigured",),
         },);
       } else {
         const err = await res.json();
         this.$dispatch?.("show-toast", {
           type: "error",
-          message: err.error || "Failed to generate image",
+          message: err.error || t("toasts.failedGenerateImage",),
         },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error generating image", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorGeneratingImage",), },);
     }
   },
 
@@ -407,7 +416,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
     if (!msg) { return; }
     const imageAttachments = msg.attachments?.filter((a,) => a.type === "image") ?? [];
     if (imageAttachments.length === 0) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No images in this message to caption", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noImagesToCaption",), },);
       return;
     }
     try {
@@ -421,18 +430,18 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
         },),
       },);
       if (res.ok) {
-        this.$dispatch?.("show-toast", { type: "info", message: "Captioning started", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.captioningStarted",), },);
       } else if (res.status === 501) {
         this.$dispatch?.("show-toast", {
           type: "info",
-          message: "Captioning not configured yet — feature planned for 0.1.x",
+          message: t("toasts.captioningNotConfigured",),
         },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to caption", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedCaption",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error captioning", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCaptioning",), },);
     }
   },
 
