@@ -9,6 +9,7 @@
  * callback — keeps story module decoupled from provider resolution.
  */
 import type { Config, } from "../config/schema";
+import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../crypto";
 import {
   ContentEncoding,
   GameMasterType,
@@ -438,6 +439,24 @@ export class GameMasterService {
       .execute();
 
     for (const chat of chats) {
+      // Encrypt narration bodies when server-side encryption is enabled, so the
+      // story/GM write path matches auto-gen (encrypted rows: identity encoding
+      // + key_id set; read path keys on key_id presence).
+      let storedContent = text;
+      let storedKeyId: string | null = null;
+      if (isEncryptionEnabled()) {
+        const smk = getSmk()!;
+        const enc = await encryptMessageContent({
+          database: this.db,
+          chatId: chat.id,
+          actorId: narrator.id,
+          plaintext: text,
+          smk,
+        },);
+        storedContent = enc.storedContent;
+        storedKeyId = enc.keyId;
+      }
+
       await this.db
         .insertInto("messages",)
         .values({
@@ -445,7 +464,8 @@ export class GameMasterService {
           chat_id: chat.id,
           actor_id: narrator.id,
           role: MessageRole.System,
-          content: text,
+          content: storedContent,
+          key_id: storedKeyId,
           content_type: MessageContentType.Narration,
           content_format: MessageContentFormat.Markdown,
           content_encoding: ContentEncoding.Identity,
