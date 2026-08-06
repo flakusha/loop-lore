@@ -54,6 +54,7 @@ let container: HTMLElement | null = null;
 let settings: VnSettings | null = null;
 let currentChatId: string | null = null;
 let loadingIndicator: LoadingIndicator | null = null;
+let locationChangeHandler: ((e: Event,) => void) | null = null;
 
 /**
  * Initialize the VN scene renderer.
@@ -71,6 +72,15 @@ export function initVnRenderer(
   currentChatId = chatId ?? null;
   loadingIndicator = createLoadingIndicator(containerEl,);
 
+  // React to chat location changes (frontend-driven) with a short travel
+  // transition. Safe by design: this consumes a frontend DOM event and never
+  // touches location access-check logic.
+  if (locationChangeHandler) {
+    window.removeEventListener("chat:location-changed", locationChangeHandler,);
+  }
+  locationChangeHandler = handleLocationChanged;
+  window.addEventListener("chat:location-changed", locationChangeHandler,);
+
   // Preload images for current and upcoming scenes
   void preloadCurrentAndUpcoming();
 
@@ -81,6 +91,10 @@ export function initVnRenderer(
  * Destroy the VN renderer, cleaning up DOM.
  */
 export function destroyVnRenderer(): void {
+  if (locationChangeHandler) {
+    window.removeEventListener("chat:location-changed", locationChangeHandler,);
+    locationChangeHandler = null;
+  }
   destroyChoiceCards();
   loadingIndicator = null;
   if (container) {
@@ -184,6 +198,29 @@ function msgToScene(msg: VnMessage,): VnScene {
     role: msg.role,
     attachments: msg.attachments,
   };
+}
+
+/**
+ * Handle a `chat:location-changed` event: briefly fade the active scene out and
+ * back in to signal a location/travel transition. Only acts when the VN
+ * renderer is mounted and the event targets the currently-rendered chat.
+ */
+function handleLocationChanged(e: Event,): void {
+  const detail = (e as CustomEvent<{ chatId?: string; locationId?: string; locationName?: string | null }>).detail;
+  if (detail?.chatId && currentChatId && detail.chatId !== currentChatId) { return; }
+  if (!container || !settings) { return; }
+  const sceneEl = container.querySelector<HTMLElement>(".vn-scene",);
+  if (!sceneEl) { return; }
+  sceneEl.style.transition = "opacity 280ms ease";
+  sceneEl.style.opacity = "0";
+  window.setTimeout(() => {
+    if (sceneEl.isConnected) {
+      sceneEl.style.opacity = "1";
+      window.setTimeout(() => {
+        if (sceneEl.isConnected) { sceneEl.style.transition = ""; }
+      }, 300,);
+    }
+  }, 260,);
 }
 
 async function renderCurrentScene(animate: boolean = false,): Promise<void> {
