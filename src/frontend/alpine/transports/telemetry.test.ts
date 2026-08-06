@@ -6,7 +6,7 @@ import {
   TelemetryTransport,
 } from "./telemetry";
 
-const SENT_URL = "http://telemetry.test/event";
+const SENT_URL = "https://telemetry.test/event";
 
 function makeEntry(level: number, message: string | Record<string, unknown>,): LogEntry {
   return { level, timestamp: 0, time: "t", message, };
@@ -20,29 +20,29 @@ describe("TelemetryTransport curated gate", () => {
     blobs = [];
     originalNavigator = globalThis.navigator;
     (globalThis as { navigator: unknown }).navigator = {
-      sendBeacon: (_url: string, blob: Blob): boolean => {
+      sendBeacon: (_url: string, blob: Blob,): boolean => {
         blobs.push(blob,);
         return true;
       },
     };
-  });
+  },);
 
   afterEach(() => {
     (globalThis as { navigator: unknown }).navigator = originalNavigator;
-  });
+  },);
 
   async function ship(entry: LogEntry,): Promise<void> {
     await new TelemetryTransport(SENT_URL,).write(entry,);
   }
 
   async function payloads(): Promise<string[]> {
-    return Promise.all(blobs.map((b,) => b.text(),),);
+    return Promise.all(blobs.map((b,) => b.text()),);
   }
 
   it("ships warn level automatically", async () => {
     await ship(makeEntry(30, "generation error via SSE",),);
     expect(blobs.length,).toBe(1,);
-    expect((JSON.parse((await payloads())[0],),).type,).toBe("generation error via SSE",);
+    expect(JSON.parse((await payloads())[0]!,).type,).toBe("generation error via SSE",);
   });
 
   it("ships error level automatically", async () => {
@@ -72,7 +72,7 @@ describe("TelemetryTransport curated gate", () => {
     try {
       await ship(makeEntry(20, event,),);
       expect(blobs.length,).toBe(1,);
-      expect((JSON.parse((await payloads())[0],),).type,).toBe(event,);
+      expect(JSON.parse((await payloads())[0]!,).type,).toBe(event,);
     } finally {
       CURATED_EVENTS.delete(event,);
     }

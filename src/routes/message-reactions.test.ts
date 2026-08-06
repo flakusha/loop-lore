@@ -1,8 +1,9 @@
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { createLogger, } from "../logger";
 import { MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
@@ -34,7 +35,7 @@ function toggle(path: string, emoji: string,): Request {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: JSON.stringify({ emoji, },),
-  });
+  },);
 }
 
 function del(path: string,): Request {
@@ -43,7 +44,7 @@ function del(path: string,): Request {
 
 describe("messageReactionsRoutes access checks", () => {
   let db: Kysely<DB>;
-  let sqlite: Awaited<ReturnType<typeof createTestDb>>["sqlite"];
+  let sqlite: TestDb["sqlite"];
   let ownerId: string;
   let participantId: string;
   let outsiderId: string;
@@ -94,7 +95,7 @@ describe("messageReactionsRoutes access checks", () => {
     expect((await app.handle(get(`/api/messages/${messageId}/reactions`,),)).status,).toBe(401,);
     expect((await app.handle(toggle(`/api/messages/${messageId}/reactions`, "👍",),)).status,).toBe(401,);
     expect((await app.handle(del(`/api/messages/${messageId}/reactions`,),)).status,).toBe(401,);
-  },);
+  });
 
   test("404 when the message does not exist", async () => {
     const app = reactionApp(db, ownerId, null,);
@@ -102,7 +103,7 @@ describe("messageReactionsRoutes access checks", () => {
     expect((await app.handle(get(`/api/messages/${missing}/reactions`,),)).status,).toBe(404,);
     expect((await app.handle(toggle(`/api/messages/${missing}/reactions`, "👍",),)).status,).toBe(404,);
     expect((await app.handle(del(`/api/messages/${missing}/reactions`,),)).status,).toBe(404,);
-  },);
+  });
 
   test("chat owner can GET, POST, DELETE reactions", async () => {
     // non-privileged role (null) — passes purely via chat ownership
@@ -116,7 +117,7 @@ describe("messageReactionsRoutes access checks", () => {
 
     const removed = await app.handle(del(`/api/messages/${messageId}/reactions`,),);
     expect(removed.status,).toBe(200,);
-  },);
+  });
 
   test("chat participant can GET, POST, DELETE reactions", async () => {
     // non-privileged role (null) — passes purely via chat_participants
@@ -130,31 +131,31 @@ describe("messageReactionsRoutes access checks", () => {
 
     const removed = await app.handle(del(`/api/messages/${messageId}/reactions`,),);
     expect(removed.status,).toBe(200,);
-  },);
+  });
 
   test("non-participant outsider gets 404 (GET/POST/DELETE)", async () => {
     const app = reactionApp(db, outsiderId, null,);
     expect((await app.handle(get(`/api/messages/${messageId}/reactions`,),)).status,).toBe(404,);
     expect((await app.handle(toggle(`/api/messages/${messageId}/reactions`, "👍",),)).status,).toBe(404,);
     expect((await app.handle(del(`/api/messages/${messageId}/reactions`,),)).status,).toBe(404,);
-  },);
+  });
 
   test("admin role passes access check even for non-participant", async () => {
     const app = reactionApp(db, outsiderId, "admin",);
     expect((await app.handle(get(`/api/messages/${messageId}/reactions`,),)).status,).toBe(200,);
-  },);
+  });
 
   test("toggle adds then removes a reaction", async () => {
     const app = reactionApp(db, ownerId, null,);
 
     const add = await app.handle(toggle(`/api/messages/${messageId}/reactions`, "✨",),);
-    const addBody = (await add.json()) as { toggled: boolean; emoji: string };
-    expect(addBody,).toEqual({ toggled: true, emoji: "✨", },);
+    const firstToggleBody = (await add.json()) as { toggled: boolean; emoji: string };
+    expect(firstToggleBody,).toEqual({ toggled: true, emoji: "✨", },);
 
     const remove = await app.handle(toggle(`/api/messages/${messageId}/reactions`, "✨",),);
-    const removeBody = (await remove.json()) as { toggled: boolean; emoji: string };
-    expect(removeBody,).toEqual({ toggled: false, emoji: "✨", },);
-  },);
+    const secondToggleBody = (await remove.json()) as { toggled: boolean; emoji: string };
+    expect(secondToggleBody,).toEqual({ toggled: false, emoji: "✨", },);
+  });
 
   test("POST rejects an empty emoji", async () => {
     const app = reactionApp(db, ownerId, null,);
@@ -163,9 +164,9 @@ describe("messageReactionsRoutes access checks", () => {
       new Request(`${BASE}/api/messages/${messageId}/reactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ emoji: "", }),
-      }),
+        body: JSON.stringify({ emoji: "", },),
+      },),
     );
     expect(res.status,).toBe(400,);
-  },);
+  });
 });
