@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { WorldEditState, } from "./world-types";
@@ -48,7 +49,7 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     const trimmed = this.newInviteMaxUses.trim();
     const maxUses = trimmed ? Number(trimmed,) : null;
     if (maxUses !== null && (!Number.isInteger(maxUses,) || maxUses < 1)) {
-      showToast("error", "Max uses must be a positive integer",);
+      showToast("error", t("toasts.maxUsesPositiveInteger",),);
       return;
     }
     try {
@@ -63,13 +64,13 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
         this.newInviteMaxUses = "";
         this.showInviteForm = false;
         await this.copyInviteCode(invite.code,);
-        showToast("success", `Invite ${invite.code} created and copied`,);
+        showToast("success", t("toasts.inviteCreatedAndCopied", { code: invite.code, },),);
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed to create invite",);
+        showToast("error", err.error || t("toasts.failedCreateInvite",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -86,7 +87,7 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     if (!this.worldId) { return; }
     const invite = this.invites.find((row,) => row.id === inviteId);
     if (!invite) { return; }
-    if (!confirm(`Revoke invite ${invite.code}?`,)) { return; }
+    if (!confirm(t("worlds.revokeInviteConfirm", { code: invite.code, },),)) { return; }
     try {
       const res = await apiFetch(`/api/worlds/${this.worldId}/invites/${inviteId}`, {
         method: "DELETE",
@@ -97,13 +98,13 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
           if (row.id !== inviteId) { remaining.push(row,); }
         }
         this.invites = remaining;
-        showToast("success", "Invite revoked",);
+        showToast("success", t("toasts.inviteRevoked",),);
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed to revoke invite",);
+        showToast("error", err.error || t("toasts.failedRevokeInvite",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 };
