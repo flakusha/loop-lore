@@ -80,12 +80,25 @@ export class SchemaManifest {
       extraInDb: string[];
     }[];
   } {
+    const rows = sqlite
+      .query("SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)
+      .all() as { name: string; sql: string | null }[];
+    // FTS5 virtual tables (created via raw SQL) and their internal shadow tables
+    // are implementation details — drop them so they are not treated as extra tables.
+    const virtualRoots = new Set(
+      rows.filter((r,) => (r.sql ?? "").trim().toUpperCase().startsWith("CREATE VIRTUAL TABLE",))
+        .map((r,) => r.name),
+    );
     const actualTables = new Set(
-      (
-        sqlite
-          .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)
-          .all() as { name: string }[]
-      ).map((r,) => r.name),
+      rows.filter((r,) => {
+        if (virtualRoots.has(r.name,)) { return false; }
+        for (const suffix of ["_data", "_idx", "_content", "_docsize", "_config",]) {
+          if (r.name.endsWith(suffix,) && virtualRoots.has(r.name.slice(0, -suffix.length,),)) {
+            return false;
+          }
+        }
+        return true;
+      },).map((r,) => r.name),
     );
 
     const missingTables: string[] = [];

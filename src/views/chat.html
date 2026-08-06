@@ -4,7 +4,7 @@
 
 <div class="app-layout" x-data="chatState()">
   <main class="main-content">
-    {{> chat/chat-list-panel.html }}
+    {{> chat/message-search-bar.html }} {{> chat/chat-list-panel.html }}
 
     <!-- Chat container (centered) — switches between VN and bubble layout -->
     <div class="chat-container">
@@ -17,12 +17,28 @@
         data-testid="vn-container"
       >
       </div>
+      <!-- VN mode: stop control, visible only while a generation is in flight -->
+      <div
+        x-show="_vnEnabled && isGenerating"
+        x-cloak
+        class="vn-stop"
+        data-testid="vn-stop"
+      >
+        <button
+          class="btn btn-ghost btn-cancel"
+          @click="cancelGeneration()"
+          x-bind:title="t('chat.cancelGeneration')"
+        >
+          ⏹ {{{ t("common.cancel") }}}
+        </button>
+      </div>
       <!-- Bubble mode: standard message list -->
       <div x-show="!_vnEnabled">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
     </div>
 
-    {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/memory-panel.html }} {{>
-    chat/input-area.html }} {{> chat/sections-panel.html }} {{> chat/background-panel.html }}
+    {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/memory-panel.html }} {{> {{>
+    chat/input-area.html }} {{> chat/sections-panel.html }} {{> chat/background-panel.html }} {{>
+    chat/location-panel.html }}
 
     <!-- GM Panel (shadow notes + whitenotes sidebar) -->
     {{> chat/gm-panel.html }}

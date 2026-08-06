@@ -98,6 +98,40 @@ export interface NotificationPrefsState {
   save: () => Promise<void>;
 }
 
+/** A single notification row rendered by the notification center. */
+export interface NotificationCenterItem {
+  id: string;
+  type: string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  read: number;
+  createdAt?: string;
+}
+
+/** Standalone notification center page component (`/views/notifications`). */
+export interface NotificationCenterState {
+  loaded: boolean;
+  saving: boolean;
+  items: NotificationCenterItem[];
+  filter: "all" | "unread";
+  showFilters: boolean;
+  prefs: Record<string, boolean>;
+  types: { key: string; label: string }[];
+  init: () => void;
+  refresh: () => Promise<void>;
+  visible: () => NotificationCenterItem[];
+  unreadCount: () => number;
+  onOpen: (item: NotificationCenterItem,) => Promise<void>;
+  markRead: (id: string,) => Promise<void>;
+  markAllRead: () => Promise<void>;
+  loadPrefs: () => Promise<void>;
+  toggleType: (key: string,) => Promise<void>;
+  savePrefs: () => Promise<void>;
+  iconFor: (type: string,) => string;
+  timeAgo: (iso: string | undefined,) => string;
+}
+
 declare global {
   interface DocumentEventMap {
     "htmx:configRequest": CustomEvent<{ headers: Record<string, string> }>;
@@ -126,6 +160,7 @@ declare global {
     };
     notificationsBell: () => NotificationBellState;
     notificationPrefs: () => NotificationPrefsState;
+    notificationCenter: () => NotificationCenterState;
     chatState: () => AlpineState<ChatState>;
     worldEditState: () => AlpineState<WorldEditState>;
     adminPage: () => unknown;
@@ -153,6 +188,7 @@ declare global {
     __THEMES: { id: string; name: string; file: string }[];
     apiFetch: (url: string, options?: RequestInit,) => Promise<Response>;
     toggleSidebar: () => void;
+    toggleMessageSearch: () => void;
     closeSidebar: () => void;
     showToast: (type: string, message: string,) => void;
     applyTheme: (themeId: string,) => void;
@@ -164,6 +200,7 @@ declare global {
   var app: Window["app"];
   var notificationsBell: Window["notificationsBell"];
   var notificationPrefs: Window["notificationPrefs"];
+  var notificationCenter: Window["notificationCenter"];
   var __USER_ID: string | null | undefined;
   var __SESSION_ID: string | null | undefined;
 }
