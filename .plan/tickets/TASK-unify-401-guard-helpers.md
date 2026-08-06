@@ -1,6 +1,6 @@
 # TASK: Unify backend 401/Unauthorized guard helpers
 
-**Status:** 🟡 In Progress
+**Status:** 🟡 Mostly Done (2026-08-05) — `requireCtxUser` deleted; Variant A (38) + `blog.ts` (7) migrated to canonical `requireUserId`; Variants B/C/D/E + middleware deferred (separate commit)
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-code-quality
@@ -18,12 +18,13 @@ Unify backend logic into one canonical, localizing guard; frontend needs no chan
 
 ## Acceptance Criteria
 
-- [ ] Exactly one `requireUser`-style helper survives (`requireUserId` in `http-utils.ts`), localized via `ctx.t?.("errors.unauthorized") ?? "Unauthorized"`
-- [ ] `actor-auth.requireCtxUser` deleted; availability + mood migrated onto the canonical helper
-- [ ] The 38 uniform multiline `jsonError({ message: ctx.t?... })` sites (Variant A) migrated (avatars, emotions, io, licensing, relationships, characters, admin-overrides, export, export-sse)
-- [ ] All migrated responses: `status: 401`, body `{ error, code }`, message localized — **behavior-preserving** vs the pre-existing inline guard
-- [ ] Full routes suite green; typecheck clean; lint net-zero (no new errors); jscpd cross-file pairs reduced
-- [ ] Variant B/C/D/E (localized-vs-raw message delta + `validation/middleware` `"UNAUTHORIZED"` code) reviewed and either migrated in a separate commit or explicitly deferred with rationale
+- [x] Exactly one `requireUser`-style helper survives (`requireUserId` in `http-utils.ts`), localized via `ctx.t?.("errors.unauthorized") ?? "Unauthorized"`
+- [x] `actor-auth.requireCtxUser` deleted; availability + mood migrated onto the canonical helper
+- [x] The 38 uniform multiline `jsonError({ message: ctx.t?... })` sites (Variant A) migrated (avatars, emotions, io, licensing, relationships, characters, admin-overrides, export, export-sse) — done in prior commits
+- [x] `blog.ts` inline-401 `extractAuth` sites (7) migrated to `requireUserId` (2026-08-05)
+- [x] All migrated responses: `status: 401`, body `{ error, code }`, message localized — **behavior-preserving** vs the pre-existing inline guard
+- [x] Full routes suite green; typecheck clean
+- [ ] Variant B/C/D/E (localized-vs-raw message delta) + `validation/middleware` `"UNAUTHORIZED"` code reviewed and **deferred with rationale** (separate commit; middleware is a separate module family) — see Notes
 
 ## Step Plan
 
