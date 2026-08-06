@@ -542,3 +542,22 @@ export interface ChatInvites {
   uses: Generated<number>;
   revoked: Generated<number>;
 }
+
+// ── world_members ────────────────────────────────────────────
+export interface WorldMembers {
+  world_id: string;
+  actor_id: string;
+}
+
+// ── world_invites ────────────────────────────────────────────
+export interface WorldInvites {
+  id: Generated<string>;
+  world_id: string;
+  code: string;
+  created_by: string | null;
+  created_at: Generated<string>;
+  expires_at: string | null;
+  max_uses: number | null;
+  uses: Generated<number>;
+  revoked: Generated<number>;
+}

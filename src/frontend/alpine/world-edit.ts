@@ -8,7 +8,7 @@ const log = rootLog.child({ module: "world-edit", },);
   return {
     worldId: "",
     activeTab: "general",
-    world: { name: "", description: "", lore: "", },
+    world: { name: "", description: "", lore: "", kind: "rpg", visibility: "private", },
     tagsStr: "",
     loading: true,
     error: false,
@@ -32,6 +32,8 @@ const log = rootLog.child({ module: "world-edit", },);
             name: data.name ?? "",
             description: data.description ?? "",
             lore: data.lore ?? "",
+            kind: data.kind ?? "rpg",
+            visibility: data.visibility ?? "private",
           };
           if (data.settings) {
             const settings = jsonParseOr<{ tags?: string[] }>(data.settings, {},);
