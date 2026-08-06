@@ -48,7 +48,8 @@ import { FantasyService, } from "../rpg/fantasies/service";
 import { IntimacyService, } from "../rpg/intimacy/service";
 import { LocationNsfwService, } from "../rpg/location-nsfw/service";
 import { SeductionService, } from "../rpg/seduction/service";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { checkActorOwnership, } from "./actor-auth";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "nsfw-routes", },);
@@ -61,6 +62,15 @@ interface HandlerOpts {
 
 export function nsfwRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
+
+  /** Require the caller to own `targetActor` (or be admin/solo). Returns userId on success, else a Response. */
+  async function requireActorAccess(targetActor: string, ctx: any,): Promise<string | Response> {
+    const userId = requireUserId(ctx,);
+    if (typeof userId !== "string") { return userId; }
+    const ok = await checkActorOwnership(database, targetActor, userId, (ctx.userRole as string | null) ?? null,);
+    if (!ok) { return forbiddenResponse(); }
+    return userId;
+  }
 
   const intimacyService = new IntimacyService(database,);
   const seductionService = new SeductionService(database,);
@@ -76,6 +86,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/intimacy/:actorId/:targetId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const worldId = (ctx.query.worldId as string) ?? null;
             const pair = await intimacyService.getPair(
@@ -93,6 +105,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/intimacy/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const worldId = (ctx.query.worldId as string) ?? undefined;
             const pairs = await intimacyService.getActorPairs(
@@ -111,6 +125,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
+            const auth = await requireActorAccess((body.actorId as string) ?? "", ctx,);
+            if (typeof auth !== "string") { return auth; }
             const result = await intimacyService.applyAction({
               database,
               actorId: body.actorId as string,
@@ -138,6 +154,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/desire/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const profile = await seductionService.getDesireProfile(ctx.params.actorId,);
             return jsonResponse(profile,);
@@ -150,6 +168,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .put(
         "/api/nsfw/desire/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const body = ctx.body as Record<string, unknown>;
             const success = await seductionService.updateDesireProfile(
@@ -166,6 +186,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/skills/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const skills = await seductionService.getActorSkills(ctx.params.actorId,);
             return jsonResponse(skills,);
@@ -180,6 +202,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
+            const auth = await requireActorAccess((body.actorId as string) ?? "", ctx,);
+            if (typeof auth !== "string") { return auth; }
             const result = await seductionService.attemptSeduction({
               database,
               actorId: body.actorId as string,
@@ -200,6 +224,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/body/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const profile = await bodyService.getProfile(ctx.params.actorId,);
             return jsonResponse(profile,);
@@ -212,6 +238,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .put(
         "/api/nsfw/body/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const body = ctx.body as Record<string, unknown>;
             const success = await bodyService.updateProfile(
@@ -228,6 +256,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/arousal/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const worldId = (ctx.query.worldId as string) ?? null;
             const arousal = await seductionService.getArousal(ctx.params.actorId, worldId,);
@@ -241,6 +271,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .post(
         "/api/nsfw/arousal/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const body = ctx.body as Record<string, unknown>;
             const newLevel = await seductionService.modifyArousal(
@@ -261,6 +293,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .post(
         "/api/nsfw/encounters",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as Record<string, unknown>;
             const encounter = await encounterService.createEncounter({
@@ -282,6 +316,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/encounters/:id",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const encounter = await encounterService.getEncounter(ctx.params.id,);
             if (!encounter) {
@@ -297,6 +333,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .post(
         "/api/nsfw/encounters/:id/advance",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const result = await encounterService.advancePhase(ctx.params.id,);
             return jsonResponse(result,);
@@ -309,6 +347,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/encounters/world/:worldId",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const encounters = await encounterService.listEncounters(ctx.params.worldId,);
             return jsonResponse(encounters,);
@@ -323,6 +363,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/fantasies/:actorId",
         async (ctx: any,) => {
+          const auth = await requireActorAccess(ctx.params.actorId, ctx,);
+          if (typeof auth !== "string") { return auth; }
           try {
             const fantasies = await fantasyService.getActorFantasies(ctx.params.actorId,);
             return jsonResponse(fantasies,);
@@ -337,6 +379,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
+            const auth = await requireActorAccess((body.actorId as string) ?? "", ctx,);
+            if (typeof auth !== "string") { return auth; }
             const fantasy = await fantasyService.createFantasy({
               database,
               actorId: body.actorId as string,
@@ -357,6 +401,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
+            const auth = await requireActorAccess((body.actorId as string) ?? "", ctx,);
+            if (typeof auth !== "string") { return auth; }
             const result = await fantasyService.attemptDiscovery(
               body.actorId as string,
               body.context as string,
@@ -372,6 +418,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .post(
         "/api/nsfw/fantasies/:id/explore",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as Record<string, unknown>;
             const success = await fantasyService.recordExploration(
@@ -390,6 +438,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .get(
         "/api/nsfw/location/:locationId",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const config = await locationService.getConfig(ctx.params.locationId,);
             return jsonResponse(config,);
@@ -402,6 +452,8 @@ export function nsfwRoutes(opts: HandlerOpts,) {
       .put(
         "/api/nsfw/location/:locationId",
         async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as Record<string, unknown>;
             const success = await locationService.updateConfig(
