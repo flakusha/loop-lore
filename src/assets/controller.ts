@@ -215,7 +215,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        const body = (await ctx.request.json()) as { visibility?: string };
+        const body = ctx.body as { visibility?: string };
         if (
           !body.visibility ||
           ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public,].includes(
@@ -313,11 +313,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const owned = await requireAssetOwner(database, ctx.params.id, userId,);
         if (owned instanceof Response) { return owned; }
 
-        const body = await ctx.request.json();
+        const body = ctx.body as { entityType: AssetLinkEntity; entityId: string; label?: string };
         await linkAsset({
           database,
           assetId: ctx.params.id,
-          link: body as { entityType: AssetLinkEntity; entityId: string; label?: string },
+          link: body,
         },);
         return jsonCreated({ id: ctx.params.id, },);
       },)
@@ -328,7 +328,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const owned = await requireAssetOwner(database, ctx.params.id, userId,);
         if (owned instanceof Response) { return owned; }
 
-        const body = (await ctx.request.json()) as { entityType?: string; entityId?: string };
+        const body = ctx.body as { entityType?: string; entityId?: string };
         await unlinkAsset({
           database,
           assetId: ctx.params.id,
@@ -342,7 +342,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        const body = (await ctx.request.json()) as { actor_id?: string };
+        const body = ctx.body as { actor_id?: string };
         if (!body.actor_id) {
           return badRequestResponse("actor_id is required",);
         }
@@ -365,7 +365,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const owned = await requireAssetOwner(database, ctx.params.id, userId,);
         if (owned instanceof Response) { return owned; }
 
-        const body = (await ctx.request.json()) as { actor_id?: string };
+        const body = ctx.body as { actor_id?: string };
         if (!body.actor_id) {
           return badRequestResponse("actor_id is required",);
         }
