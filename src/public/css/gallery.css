@@ -258,10 +258,7 @@
   opacity: 0.5;
 }
 
-.gallery-upload-area .text {
-  font-size: 14px;
-}
-
+.gallery-upload-area .text,
 .gallery-upload-area .hint {
   font-size: 12px;
   margin-top: var(--space-1);
