@@ -11,22 +11,22 @@ Server-side i18n module (req.t), ARIA pass, keyboard navigation, 10 locales. Cli
 
 ## Linked Tasks
 
-| Task                            | Phase | Title                                | Status        |
-| ------------------------------- | ----- | ------------------------------------ | ------------- |
-| TASK-i18n-locale-completion     | 1     | Complete non-English locale files    | ✅ Complete   |
-| TASK-i18n-reconciliation-script | 1.5   | Validate locale files, detect drift  | ✅ Complete   |
-| TASK-i18n-route-adoption        | 2     | Wire ctx.t() into route handlers     | ✅ Complete   |
-| TASK-i18n-template-adoption     | 3     | Replace hardcoded strings in views   | ✅ Complete   |
-| TASK-i18n-alpine-client         | 4     | Add Alpine.js $t magic property      | ✅ Complete   |
-| TASK-i18n-settings-wiring       | 5     | Wire locale switcher to re-render UI | ✅ Complete   |
-| Frontend component strings      | 3.5   | Replace hardcoded strings in Alpine  | ✅ Complete   |
+| Task                            | Phase | Title                                | Status      |
+| ------------------------------- | ----- | ------------------------------------ | ----------- |
+| TASK-i18n-locale-completion     | 1     | Complete non-English locale files    | ✅ Complete |
+| TASK-i18n-reconciliation-script | 1.5   | Validate locale files, detect drift  | ✅ Complete |
+| TASK-i18n-route-adoption        | 2     | Wire ctx.t() into route handlers     | ✅ Complete |
+| TASK-i18n-template-adoption     | 3     | Replace hardcoded strings in views   | ✅ Complete |
+| TASK-i18n-alpine-client         | 4     | Add Alpine.js $t magic property      | ✅ Complete |
+| TASK-i18n-settings-wiring       | 5     | Wire locale switcher to re-render UI | ✅ Complete |
+| Frontend component strings      | 3.5   | Replace hardcoded strings in Alpine  | ✅ Complete |
 
 ## Summary
 
 All 10 locales complete at 1070 keys. Template adoption finished (layout `User` placeholder
 wired to `common.user`). Frontend component strings closed: ~105 hardcoded toast/status/notification
 strings across 31 Alpine components now resolve through `t()` against `__localeStrings`
-(toasts.*, status.*, commands.*, notifications.type* namespaces + 207 new keys × 9 locales
+(toasts._, status._, commands._, notifications.type_ namespaces + 207 new keys × 9 locales
 translated). See `.plan/backlog/open.md` row 8.
 
 ## Acceptance Criteria
