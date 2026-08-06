@@ -232,8 +232,8 @@ describe("emotion avatar content hooks in auto-gen", () => {
       .where("actor_id", "=", aiActorId,)
       .executeTakeFirst();
     expect(row,).toBeDefined();
-    // Emotional content produced a dominant "joy" emotion.
-    expect(row?.emotion,).toBe("joy",);
+    // Emotional content produced a dominant "happy" (canonical) emotion.
+    expect(row?.emotion,).toBe("happy",);
     expect(row?.content,).toBe(EMOTIONAL_CONTENT,);
   });
 
