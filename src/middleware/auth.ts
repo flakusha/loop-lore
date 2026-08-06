@@ -12,6 +12,7 @@
 import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
 import { verifyJwt, } from "../auth/jwt";
+import { loadConfig, } from "../config/load";
 import type { AuthConfig, } from "../config/schema";
 import { UserRole, UserStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -77,14 +78,20 @@ export async function authenticate({
       if (result.valid) {
         const { payload, } = result;
 
-        // Check if session still exists (logout = delete session row)
+        // Check if session still exists (logout = delete session row) and has
+        // not expired (sessionTimeoutHours from login).
         const session = await database
           .selectFrom("sessions",)
-          .select(["id",],)
+          .select(["id", "expires_at",],)
           .where("id", "=", payload.sid,)
           .executeTakeFirst();
 
-        if (session) {
+        const nowMs = Date.now();
+        const notExpired = session !== undefined &&
+          (session.expires_at === null ||
+            Date.parse(session.expires_at,) > nowMs);
+
+        if (session && notExpired) {
           // Fetch user to verify they still exist and are active
           const user = await database
             .selectFrom("users",)
@@ -287,15 +294,47 @@ export async function resolveUserIdFromRequest(
 ): Promise<string | null> {
   const cookieHeader = request.headers.get("Cookie",);
   const match = cookieHeader ? LL_TOKEN.exec(cookieHeader,) : null;
-  if (match) {
-    const tokenHash = crypto.createHash("sha256",).update(match[1]!,).digest("hex",);
+  const token = match?.[1] ?? null;
+  const nowMs = Date.now();
+
+  // JWTs are the production token: decode to sid, then resolve the session by
+  // id (the legacy token_hash path below is kept for opaque-token sessions).
+  if (token) {
+    const config = loadConfig();
+    const secret = config.auth.jwtSecret;
+    if (secret) {
+      const result = await verifyJwt({ secret, token, },);
+      if (result.valid) {
+        const sid = result.payload.sid;
+        const session = sid
+          ? await database
+            .selectFrom("sessions",)
+            .select(["user_id", "expires_at",],)
+            .where("id", "=", sid,)
+            .executeTakeFirst()
+          : undefined;
+        if (
+          session &&
+          (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)
+        ) {
+          return session.user_id;
+        }
+      }
+    }
+
+    // Legacy opaque-token sessions keyed by sha256(token) — kept for
+    // compatibility with test/older flows.
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
     const session = await database
       .selectFrom("sessions",)
-      .select(["user_id",],)
+      .select(["user_id", "expires_at",],)
       .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
-    if (session) { return session.user_id; }
+    if (session && (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)) {
+      return session.user_id;
+    }
   }
+
   const solo = await getOrCreateSoloUserForAuth(database, demoUsername,);
   return solo?.id ?? null;
 }
