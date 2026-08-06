@@ -18,13 +18,14 @@ import { exportToCcV3Json, } from "../characters/exporters/ccv3";
 import { exportToPng, } from "../characters/exporters/png";
 import { exportToYaml, } from "../characters/exporters/yaml";
 import type { CanonicalCharacter, } from "../characters/parser";
+import { decryptMessageContent, getSmk, } from "../crypto";
 import type {
   DB,
   Locations,
   LocationStates,
   Quests,
-  Worlds,
   WorldLoreEntries,
+  Worlds,
   WorldStates,
 } from "../db/schema";
 import { jsonParseOr, } from "../utils";
@@ -234,12 +235,15 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
   const chatsFolder = ctx.zip.folder("chats",);
 
   for (const chat of chats) {
-    const messages = await ctx.database
+    const rows = await ctx.database
       .selectFrom("messages",)
       .innerJoin("actors", "actors.id", "messages.actor_id",)
       .select([
         "messages.id",
+        "messages.chat_id",
         "messages.content",
+        "messages.content_encoding",
+        "messages.key_id",
         "messages.role",
         "messages.created_at",
         "actors.display_name",
@@ -248,19 +252,37 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       .orderBy("messages.created_at", "asc",)
       .execute();
 
+    // Decrypt encrypted message bodies so the ZIP export carries plaintext,
+    // never the raw ciphertext (a data leak).
+    const smk = getSmk();
+    const messages: {
+      id: string;
+      role: string;
+      author: string | null;
+      content: string;
+      created_at: string | Date;
+    }[] = [];
+    for (const row of rows) {
+      let content = row.content;
+      if (row.key_id && smk) {
+        content = await decryptMessageContent(ctx.database, row, smk,);
+      }
+      messages.push({
+        id: row.id,
+        role: row.role,
+        author: row.display_name,
+        content,
+        created_at: row.created_at,
+      },);
+    }
+
     const chatData = {
       id: chat.id,
       name: chat.name,
       type: chat.type,
       mode: chat.mode,
       created_at: chat.created_at,
-      messages: messages.map((m,) => ({
-        id: m.id,
-        role: m.role,
-        author: m.display_name,
-        content: m.content,
-        created_at: m.created_at,
-      })),
+      messages,
     };
 
     const filename = (chat.name ?? chat.id).replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
