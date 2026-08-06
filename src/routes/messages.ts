@@ -20,6 +20,7 @@ import {
   compressThenEncrypt,
   decryptThenDecompress,
   deriveChatKeyForChat,
+  encryptMessageContent,
   ensureActorKey,
   extractKeyIdFromPayload,
   getSmk,
@@ -394,17 +395,19 @@ export function messagesRoutes(opts: HandlerOpts,) {
             storedKeyId = extractKeyIdFromPayload(newContent.trim(),);
           } else if (isEncryptionEnabled()) {
             const smk = getSmk()!;
-            const chatKey = await deriveChatKeyForChat(database, msg.chat_id, smk,);
-            storedContent = await compressThenEncrypt({
+            const enc = await encryptMessageContent({
+              database,
+              chatId: msg.chat_id,
+              actorId: msg.actor_id,
               plaintext: newContent.trim(),
-              chatKey: chatKey.key,
-              keyId: chatKey.keyId,
-              config: {
+              smk,
+              pipeline: {
                 threshold: config.encryption.compressThreshold,
                 algorithm: config.encryption.compressAlgorithm,
               },
             },);
-            storedKeyId = chatKey.keyId;
+            storedContent = enc.storedContent;
+            storedKeyId = enc.keyId;
           }
 
           await database
@@ -538,17 +541,19 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
                   if (isEncryptionEnabled()) {
                     const smk = getSmk()!;
-                    const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-                    sysStoredContent = await compressThenEncrypt({
+                    const enc = await encryptMessageContent({
+                      database,
+                      chatId,
+                      actorId,
                       plaintext: result.systemMessage,
-                      chatKey: chatKey.key,
-                      keyId: chatKey.keyId,
-                      config: {
+                      smk,
+                      pipeline: {
                         threshold: config.encryption.compressThreshold,
                         algorithm: config.encryption.compressAlgorithm,
                       },
                     },);
-                    sysKeyId = chatKey.keyId;
+                    sysStoredContent = enc.storedContent;
+                    sysKeyId = enc.keyId;
                   }
 
                   await database
@@ -938,17 +943,19 @@ export function messagesRoutes(opts: HandlerOpts,) {
 
               if (isEncryptionEnabled()) {
                 const smk = getSmk()!;
-                const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-                replyStoredContent = await compressThenEncrypt({
+                const enc = await encryptMessageContent({
+                  database,
+                  chatId,
+                  actorId,
                   plaintext: assistantContent,
-                  chatKey: chatKey.key,
-                  keyId: chatKey.keyId,
-                  config: {
+                  smk,
+                  pipeline: {
                     threshold: config.encryption.compressThreshold,
                     algorithm: config.encryption.compressAlgorithm,
                   },
                 },);
-                replyKeyId = chatKey.keyId;
+                replyStoredContent = enc.storedContent;
+                replyKeyId = enc.keyId;
               }
 
               const replySwipe = await database

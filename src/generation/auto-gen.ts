@@ -972,6 +972,10 @@ async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
 
   if (deps.isEncryptionEnabled()) {
     const smk = deps.getSmk()!;
+    // ensureActorKey is required before deriveChatKeyForChat — without it the
+    // actor_key row is missing and derivation crashes in story/GM chats
+    // (the actor may never have been provisioned on this chat's path).
+    await deps.ensureActorKey({ database, actorId: turnResult.actorId, smk, },);
     const chatKey = await deps.deriveChatKeyForChat(database, chatId, smk,);
     storedContent = await deps.compressThenEncrypt({
       plaintext: turnResult.prompt,
