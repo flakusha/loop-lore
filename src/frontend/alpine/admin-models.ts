@@ -80,7 +80,7 @@ export const adminModels = {
   async loadModels() {
     this.loadingModels = true;
     try {
-      const res = await fetch("/api/admin/providers", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/admin/providers", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.providers = data.providers || [];
@@ -94,7 +94,7 @@ export const adminModels = {
   },
   async loadProviderModels(name: string,) {
     try {
-      const res = await fetch(`/api/admin/providers/${name}/models`, {
+      const res = await apiFetch(`/api/admin/providers/${name}/models`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -107,7 +107,7 @@ export const adminModels = {
   },
   async loadModelRoles() {
     try {
-      const res = await fetch("/api/admin/model-roles", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/admin/model-roles", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data: ModelRolesResponse = await res.json();
         this.overrides = data.overrides || {};
@@ -240,7 +240,7 @@ export const adminModels = {
 
   async loadSdStatus() {
     try {
-      const res = await fetch("/api/admin/sd-status", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/admin/sd-status", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.sdStatus = data.status;
@@ -255,7 +255,7 @@ export const adminModels = {
   async loadPlugins() {
     this.loadingPlugins = true;
     try {
-      const res = await fetch("/api/plugins", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/plugins", { headers: { Accept: "application/json", }, },);
       if (res.ok) { this.pluginList = await res.json(); }
     } catch {
       log.warn("Network error loading plugins",);
@@ -281,7 +281,7 @@ export const adminModels = {
 
   async loadSdConfig() {
     try {
-      const res = await fetch("/api/admin/system-config", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/admin/system-config", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const entries = await res.json();
         for (const e of entries) {

@@ -1,3 +1,4 @@
+import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "admin-templates", },);
@@ -84,7 +85,7 @@ export const adminTemplates = {
   async loadTemplates() {
     this.loadingTemplates = true;
     try {
-      const res = await fetch("/api/admin/templates", {
+      const res = await apiFetch("/api/admin/templates", {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -105,7 +106,7 @@ export const adminTemplates = {
 
   async selectProfile(id: string,) {
     try {
-      const res = await fetch(`/api/admin/templates/${id}`, {
+      const res = await apiFetch(`/api/admin/templates/${id}`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -160,7 +161,7 @@ export const adminTemplates = {
         {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ detail, mode, template: value, },),
+          body: jsonBody({ detail, mode, template: value, },),
         },
       );
       if (res.ok) {
@@ -197,7 +198,7 @@ export const adminTemplates = {
         {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({
+          body: jsonBody({
             cfgScale: d.cfgScale,
             steps: d.steps,
             sampler: d.sampler,
@@ -231,7 +232,7 @@ export const adminTemplates = {
       const res = await (globalThis as any).apiFetch("/api/admin/templates", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({
+        body: jsonBody({
           id: np.id,
           name: np.name,
           families,

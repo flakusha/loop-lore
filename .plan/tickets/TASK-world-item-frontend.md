@@ -12,17 +12,17 @@ Build the frontend UI for **world-level item definitions** — item creation and
 
 ## Backend API (exists, verified)
 
-| Route                                        | Method         | Purpose                              |
-| -------------------------------------------- | -------------- | ------------------------------------ |
-| `/api/worlds/:worldId/items`                 | GET            | List item definitions (paginated)    |
-| `/api/worlds/:worldId/items`                 | POST           | Create item definition               |
-| `/api/worlds/:worldId/items/:id`             | GET            | Get definition                       |
-| `/api/worlds/:worldId/items/:id`             | PUT            | Update definition (settings)         |
-| `/api/worlds/:worldId/items/:id`             | DELETE         | Delete definition                    |
-| `/api/worlds/:worldId/items/:id/instances`   | GET            | List placed instances                |
-| `/api/worlds/:worldId/item-instances`        | POST           | Place item in location / give to NPC |
-| `/api/worlds/:worldId/item-instances/:instanceId/transfer` | POST | Move items                 |
-| `/api/worlds/:worldId/item-instances/:instanceId`         | DELETE | Destroy instance           |
+| Route                                                      | Method | Purpose                              |
+| ---------------------------------------------------------- | ------ | ------------------------------------ |
+| `/api/worlds/:worldId/items`                               | GET    | List item definitions (paginated)    |
+| `/api/worlds/:worldId/items`                               | POST   | Create item definition               |
+| `/api/worlds/:worldId/items/:id`                           | GET    | Get definition                       |
+| `/api/worlds/:worldId/items/:id`                           | PUT    | Update definition (settings)         |
+| `/api/worlds/:worldId/items/:id`                           | DELETE | Delete definition                    |
+| `/api/worlds/:worldId/items/:id/instances`                 | GET    | List placed instances                |
+| `/api/worlds/:worldId/item-instances`                      | POST   | Place item in location / give to NPC |
+| `/api/worlds/:worldId/item-instances/:instanceId/transfer` | POST   | Move items                           |
+| `/api/worlds/:worldId/item-instances/:instanceId`          | DELETE | Destroy instance                     |
 
 Item definition fields (from `StoryItemResponse` / `ItemCategory` / `ItemRarity` in `src/db/enums`): name, description, `category` (ItemCategory), `rarity` (ItemRarity), `properties` JSON (stats/effects), `lore`/tags as supported.
 

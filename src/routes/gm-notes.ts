@@ -108,7 +108,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
             .where("chat_id", "=", id,)
             .executeTakeFirst();
 
-          const total = Number(countResult?.total ?? 0,);
+          const total = countResult?.total ?? 0;
           return jsonResponse({ items, total, page, pageSize, },);
         },
         { params: ChatIdParams, query: PaginationQuery, },
@@ -228,7 +228,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
             .where("chat_id", "=", id,)
             .executeTakeFirst();
 
-          const total = Number(countResult?.total ?? 0,);
+          const total = countResult?.total ?? 0;
           return jsonResponse({ items, total, page, pageSize, },);
         },
         { params: ChatIdParams, query: PaginationQuery, },
@@ -256,7 +256,7 @@ export function gmNotesRoutes(opts: HandlerOpts,) {
               type: body.type as never,
               content: body.content,
               priority: body.priority ?? 5,
-              scope: (body.scope as never) ?? "scene",
+              scope: (body.scope) ?? "scene",
               expires_at: body.expiresAt ?? null,
               created_at: now,
             },)

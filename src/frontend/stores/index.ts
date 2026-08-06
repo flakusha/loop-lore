@@ -37,8 +37,8 @@ export function initAlpineStores(): void {
   for (const [name, value,] of Object.entries(stores,)) {
     try {
       Alpine.store(name, value,);
-    } catch (err) {
-      console.warn(`[stores] Failed to register "${name}":`, err,);
+    } catch (error) {
+      console.warn(`[stores] Failed to register "${name}":`, error,);
     }
   }
 }

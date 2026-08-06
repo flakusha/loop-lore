@@ -263,10 +263,9 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       created_at: string | Date;
     }[] = [];
     for (const row of rows) {
-      let content = row.content;
-      if (row.key_id && smk) {
-        content = await decryptMessageContent(ctx.database, row, smk,);
-      }
+      const content = row.key_id && smk
+        ? await decryptMessageContent(ctx.database, row, smk,)
+        : row.content;
       messages.push({
         id: row.id,
         role: row.role,

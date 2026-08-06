@@ -87,14 +87,6 @@ export {
   makeSavingThrow,
 } from "./resolution-integration";
 
-// ── Deprecated adapters (route compatibility) ─────────────────
-
-export {
-  calculateAttackRoll,
-  calculateDefenseRoll,
-  processCombatRound,
-} from "./resolution-adapters";
-
 // ── Social Integration ────────────────────────────────────────
 
 export {

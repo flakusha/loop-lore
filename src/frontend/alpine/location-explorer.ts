@@ -5,6 +5,7 @@
 // states via the explorer API, renders a hierarchical tree (by
 // parent_location_id), and shows a detail pane for the selected location.
 // It is read-only — location CRUD lives in the Locations tab (world-locations.ts).
+import { jsonParseOr, } from "../../utils";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "location-explorer", },);
@@ -39,12 +40,8 @@ export interface ExplorerDetail {
 }
 
 const safeParseList = (raw: string,): string[] => {
-  try {
-    const v = JSON.parse(raw,);
-    return Array.isArray(v,) ? v as string[] : [];
-  } catch {
-    return [];
-  }
+  const v = jsonParseOr(raw, null,);
+  return Array.isArray(v,) ? v as string[] : [];
 };
 
 (globalThis as any).locationExplorerState = function(worldId: string,) {
@@ -101,7 +98,7 @@ const safeParseList = (raw: string,): string[] => {
       this.loading = true;
       this.error = false;
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/location-explorer`, {
+        const res = await apiFetch(`/api/worlds/${this.worldId}/location-explorer`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) {
@@ -125,7 +122,7 @@ const safeParseList = (raw: string,): string[] => {
     async selectLoc(locId: string,) {
       this.selectedLocId = locId;
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}/details`, {
+        const res = await apiFetch(`/api/worlds/${this.worldId}/locations/${locId}/details`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) { return; }

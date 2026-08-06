@@ -2,12 +2,14 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { worldItems, } from "./world-items";
 import type { WorldEditState, } from "./world-types";
 
-// The mixin's methods rely on browser globals (fetch / showToast / confirm).
-// Stub them on globalThis and restore after each test.
+// The mixin's methods rely on browser globals (apiFetch / showToast / confirm).
+// `apiFetch` is used as a declared global (loaders.d.ts sets `var apiFetch`) which
+// htmx.ts wires at runtime via `globalThis.apiFetch` — so stub that global directly
+// (mock.module only intercepts module imports; world-items.ts has no import).
 const fetchCalls: { url: string; opts?: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts?: RequestInit,) => Response) | null = null;
 
-const originalFetch = globalThis.fetch;
+const originalApiFetch = (globalThis as Record<string, unknown>).apiFetch;
 const originalShowToast = (globalThis as Record<string, unknown>).showToast;
 const originalConfirm = globalThis.confirm;
 
@@ -26,10 +28,10 @@ function mockFetch(status: number, body: unknown = {},) {
 beforeEach(() => {
   fetchCalls.length = 0;
   fetchHandler = null;
-  (globalThis as Record<string, unknown>).fetch = (url: string | URL, opts?: RequestInit,) => {
+  (globalThis as Record<string, unknown>).apiFetch = async (url: string | URL, opts?: RequestInit,) => {
     fetchCalls.push({ url: String(url,), opts, },);
-    if (!fetchHandler) { return Promise.resolve(new Response("{}", { status: 500, },),); }
-    return Promise.resolve(fetchHandler(String(url,), opts,),);
+    if (!fetchHandler) { return new Response("{}", { status: 500, },); }
+    return fetchHandler(String(url,), opts ?? {},);
   };
   (globalThis as Record<string, unknown>).showToast = () => {
     /* noop — toast assertions not needed for these paths */
@@ -39,7 +41,7 @@ beforeEach(() => {
 
 afterEach(() => {
   fetchHandler = null;
-  (globalThis as Record<string, unknown>).fetch = originalFetch;
+  (globalThis as Record<string, unknown>).apiFetch = originalApiFetch;
   (globalThis as Record<string, unknown>).showToast = originalShowToast;
   globalThis.confirm = originalConfirm;
 },);

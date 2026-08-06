@@ -295,6 +295,22 @@ export default tseslint.config(
     ],
     rules: { "unicorn/max-nested-calls": "off", },
   },
+  // Elysia route plugins with TypeBox request/response schema nesting
+  // (t.Object/t.Optional/t.Union) — schema composition, not logic nesting.
+  {
+    files: [
+      "src/routes/character-emotions.ts",
+      "src/routes/vn-generate.ts",
+      "src/routes/vn-choices.ts",
+      "src/routes/character-mood.ts",
+      "src/routes/story-states.ts",
+      "src/routes/nsfw-moderation.ts",
+      "src/routes/sessions.ts",
+      "src/routes/message-reactions.ts",
+      "src/routes/gm-notes.ts",
+    ],
+    rules: { "unicorn/max-nested-calls": "off", },
+  },
   {
     files: ["src/validation/schemas.ts",],
     rules: { "@typescript-eslint/consistent-type-definitions": "off", },
@@ -382,7 +398,8 @@ export default tseslint.config(
         "warn",
         {
           name: "fetch",
-          message: "Use apiFetch() from fe-fetch.ts instead of bare fetch (handles auth, CSRF, 401 redirect)",
+          message:
+            "Use apiFetch() (global set by alpine/htmx.ts; vanilla pages import feFetch) instead of bare fetch (handles auth, CSRF, 401 redirect)",
         },
       ],
     },
@@ -408,6 +425,9 @@ export default tseslint.config(
       // Type-aware rules require parserOptions.project — disabled here
       "@typescript-eslint/no-misused-promises": "off",
       "import/no-cycle": "off",
+      // Playwright clicks on CSS-hidden hamburger/sidebar need force:true —
+      // actionability checks fail before the sidebar animates open.
+      "sonarjs/no-forced-browser-interaction": "off",
     },
   },
   // ── Config/JS files: no TS parser, just Unicorn + SonarJS ─────
@@ -437,6 +457,22 @@ export default tseslint.config(
       "@typescript-eslint/consistent-type-definitions": "off",
       "sonarjs/cognitive-complexity": "off",
       "import/no-cycle": "off",
+    },
+  },
+  // ── Overrides: generated files (never hand-edit; the generators own the output) ──
+  {
+    files: [
+      "src/db/schema*.ts",
+      "src/db/schema-manifest.ts",
+      "src/test-utils/insert-helpers.ts",
+      "src/validation/db-schemas.ts",
+    ],
+    rules: {
+      // insert-helpers casts values() to satisfy Kysely's Generated-column
+      // types on tables whose id has a DB default; the generator emits it.
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "unicorn/require-array-sort-compare": "off",
+      "no-restricted-syntax": "off",
     },
   },
   // ── Overrides: test files ─────────────────────────────────────

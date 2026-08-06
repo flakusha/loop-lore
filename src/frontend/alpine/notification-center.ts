@@ -53,7 +53,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
 
     async refresh() {
       try {
-        const res = await fetch("/api/notifications",);
+        const res = await apiFetch("/api/notifications",);
         if (!res.ok) { return; }
         const data = jsonParseOr<{ items: NotificationCenterItem[] }>(await res.text(), { items: [], },);
         this.items = data.items ?? [];
@@ -65,12 +65,12 @@ globalThis.notificationCenter = function(): NotificationCenterState {
 
     /** Notifications visible under the active filter. */
     visible() {
-      return this.filter === "all" ? this.items : this.items.filter((n,) => !n.read,);
+      return this.filter === "all" ? this.items : this.items.filter((n,) => !n.read);
     },
 
     /** Number of unread notifications across the whole list. */
     unreadCount() {
-      return this.items.filter((n,) => !n.read,).length;
+      return this.items.filter((n,) => !n.read).length;
     },
 
     /** Mark-read on open, then follow the notification link when present. */
@@ -78,7 +78,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       if (!item.read) {
         item.read = 1;
         try {
-          await fetch(`/api/notifications/${item.id}`, {
+          await apiFetch(`/api/notifications/${item.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ read: true, },),
@@ -93,7 +93,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     /** Mark a single notification read without navigating. */
     async markRead(id: string,) {
       try {
-        await fetch(`/api/notifications/${id}`, {
+        await apiFetch(`/api/notifications/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ read: true, },),
@@ -101,22 +101,22 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       } catch {
         /* ignore */
       }
-      const item = this.items.find((n,) => n.id === id,);
+      const item = this.items.find((n,) => n.id === id);
       if (item) { item.read = 1; }
     },
 
     async markAllRead() {
       try {
-        await fetch("/api/notifications/read-all", { method: "PATCH", },);
+        await apiFetch("/api/notifications/read-all", { method: "PATCH", },);
       } catch {
         /* ignore */
       }
-      this.items = this.items.map((n,) => ({ ...n, read: 1, }),);
+      this.items = this.items.map((n,) => ({ ...n, read: 1, }));
     },
 
     async loadPrefs() {
       try {
-        const res = await fetch("/api/notifications/preferences",);
+        const res = await apiFetch("/api/notifications/preferences",);
         if (!res.ok) { return; }
         const data = jsonParseOr<{ enabled: Record<string, boolean> }>(await res.text(), { enabled: {}, },);
         this.prefs = data.enabled ?? {};
@@ -134,7 +134,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     async savePrefs() {
       this.saving = true;
       try {
-        await fetch("/api/notifications/preferences", {
+        await apiFetch("/api/notifications/preferences", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ enabled: this.prefs, },),

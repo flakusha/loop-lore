@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { getLogger, } from "../../logger";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
 function getLog() {
   return getLogger().child({ module: "npc-navigation", },);
@@ -118,7 +119,7 @@ export class NpcNavigationService {
       .updateTable("npc_states",)
       .set({
         location_id: updates.currentLocationId ?? current.currentLocationId,
-        schedule: JSON.stringify(schedule,),
+        schedule: jsonStringifyOr(schedule,),
         updated_at: new Date().toISOString(),
       },)
       .where("actor_id", "=", actorId,)
@@ -430,10 +431,6 @@ export class NpcNavigationService {
    */
   private parseSchedule(raw: string | null,): Record<string, unknown> {
     if (!raw) { return {}; }
-    try {
-      return JSON.parse(raw,);
-    } catch {
-      return {};
-    }
+    return jsonParseOr(raw, {},);
   }
 }

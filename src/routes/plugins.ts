@@ -72,16 +72,19 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
 
         registry.setEnabled(name, true,);
 
-        await database
-          .insertInto("plugin_state",)
-          .values({ name, enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null, },)
-          .onConflict((oc,) =>
-            oc
-              .column("name",)
-              .doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null, },)
-          )
-          .execute()
-          .catch(() => {},);
+        try {
+          await database
+            .insertInto("plugin_state",)
+            .values({ name, enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null, },)
+            .onConflict((oc,) =>
+              oc
+                .column("name",)
+                .doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null, },)
+            )
+            .execute();
+        } catch {
+          // Persisting plugin state is best-effort
+        }
 
         log().info("Plugin enabled", { plugin: name, },);
         return jsonResponse({ ok: true, },);
@@ -119,12 +122,17 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
 
         registry.setEnabled(name, false,);
 
-        await database
-          .insertInto("plugin_state",)
-          .values({ name, enabled: 0, disabled_at: new Date().toISOString(), },)
-          .onConflict((oc,) => oc.column("name",).doUpdateSet({ enabled: 0, disabled_at: new Date().toISOString(), },))
-          .execute()
-          .catch(() => {},);
+        try {
+          await database
+            .insertInto("plugin_state",)
+            .values({ name, enabled: 0, disabled_at: new Date().toISOString(), },)
+            .onConflict((oc,) =>
+              oc.column("name",).doUpdateSet({ enabled: 0, disabled_at: new Date().toISOString(), },)
+            )
+            .execute();
+        } catch {
+          // Persisting plugin state is best-effort
+        }
 
         log().info("Plugin disabled", { plugin: name, },);
         return jsonResponse({ ok: true, },);

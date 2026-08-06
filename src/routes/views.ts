@@ -37,9 +37,10 @@ import { getRawTranslations, } from "../i18n/locale-loader";
 import type { Locale, } from "../i18n/types";
 import { adminViewGuard, } from "../middleware/admin-gate";
 import { getNonce, } from "../middleware/csp-nonce";
-import { NsfwModerationService, type ModAction, type NsfwUserPrefs, } from "../nsfw/moderation-service";
 import { detectLocale, } from "../middleware/i18n";
+import { type ModAction, NsfwModerationService, type NsfwUserPrefs, } from "../nsfw/moderation-service";
 import { isFrontendTelemetryEnabled, } from "../telemetry/service";
+import { jsonStringifyOr, } from "../utils";
 import { SuccessResponse, } from "../validation/schemas";
 
 const VIEWS_DIR = join(import.meta.dir, "..", "views",);
@@ -113,8 +114,8 @@ function wrapWithLayout(
   let layout = readFileSync(layoutPath, "utf8",);
   layout = layout.replace("{{{content}}}", () => content,);
   layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"),);
-  layout = layout.replace("{{userId}}", () => JSON.stringify(userId ?? null,),);
-  layout = layout.replace("{{sessionId}}", () => JSON.stringify(sessionId ?? null,),);
+  layout = layout.replace("{{userId}}", () => jsonStringifyOr(userId ?? null, "null",),);
+  layout = layout.replace("{{sessionId}}", () => jsonStringifyOr(sessionId ?? null, "null",),);
   layout = layout.replaceAll("{{cspNonce}}", () => cspNonce ?? "",);
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
   // i18n: replace {{{t("key")}}} with translated string
@@ -124,12 +125,12 @@ function wrapWithLayout(
     const rawTranslations = getRawTranslations(locale as Locale,);
     if (rawTranslations) {
       const nonceAttr = cspNonce ? ` nonce="${cspNonce}"` : "";
-      const jsonData = JSON.stringify(rawTranslations,);
+      const jsonData = jsonStringifyOr(rawTranslations, "{}",);
       const injectScript =
         `<script type="application/json" id="locale-data"${nonceAttr}>${jsonData}</script><script${nonceAttr}>try{globalThis.__localeStrings = JSON.parse(document.getElementById("locale-data").textContent);}catch{}</script>`;
       layout = layout.replace(
         "<!-- Initialize locale from cookie/localStorage before page renders -->",
-        () => injectScript + "\n    <!-- Initialize locale from cookie/localStorage before page renders -->",
+        () => `${injectScript}\n    <!-- Initialize locale from cookie/localStorage before page renders -->`,
       );
     }
   }
@@ -390,7 +391,7 @@ function renderNsfwConsent(prefs: NsfwUserPrefs,): string {
   if (prefs.bannedBy) { rows.push(consentRow("Banned by", prefs.bannedBy,),); }
   if (prefs.bannedAt) { rows.push(consentRow("Banned at", prefs.bannedAt,),); }
   rows.push(consentRow("Consent updated", prefs.updatedAt,),);
-  return rows.join("\n            ");
+  return rows.join("\n            ",);
 }
 
 /** Render the moderation audit log rows (newest first). */
@@ -406,8 +407,8 @@ function renderNsfwAuditRows(actions: ModAction[],): string {
       <td style="font-size: 12px">${escapeHtml(a.actionType,)}</td>
       <td style="font-size: 12px">${escapeHtml(a.performedBy,)}</td>
       <td style="font-size: 12px">${escapeHtml(a.reason,)}</td>
-    </tr>`,
-  ).join("\n            ");
+    </tr>`
+  ).join("\n            ",);
 }
 
 /**
@@ -431,7 +432,7 @@ async function serveNsfwModerationAudit(
   const [prefs, actions,] = await Promise.all([
     svc.getPreferences(targetUserId,),
     svc.getAuditLog(targetUserId, { limit: 200, },),
-  ]);
+  ],);
 
   content = content.replace("{{targetUserId}}", () => escapeHtml(targetUserId,),);
   content = content.replace("{{consentHtml}}", () => renderNsfwConsent(prefs,),);
@@ -570,13 +571,14 @@ async function serveWorldDetailContent(
     .orderBy("name", "asc",)
     .execute();
 
-  const locationsJson = JSON.stringify(
+  const locationsJson = jsonStringifyOr(
     locations.map((l,) => ({
       id: l.id,
       name: l.name,
       description: l.description,
       world_id: l.world_id,
     })),
+    "[]",
   );
 
   return htmlResponse(
@@ -1475,23 +1477,23 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         }, {
           response: { 200: SuccessResponse, },
         },)
-        .get("/views/nsfw-moderation", async (ctx: any,) => {
-          const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-          const targetUserId = (ctx.query?.userId as string | undefined) || (ctx.userId as string);
-          const result = await serveNsfwModerationAudit(
-            database,
-            targetUserId ?? "",
-            isHtmx,
-            ctx.userId,
-            ctx.sessionId,
-            ctx.request,
-            ctx.t,
-          );
-          if (result) { return result; }
-          return new Response("Not found", { status: 404, },);
-        }, {
-          response: { 200: SuccessResponse, },
-        },),)
+          .get("/views/nsfw-moderation", async (ctx: any,) => {
+            const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+            const targetUserId = (ctx.query?.userId as string | undefined) || (ctx.userId as string);
+            const result = await serveNsfwModerationAudit(
+              database,
+              targetUserId ?? "",
+              isHtmx,
+              ctx.userId,
+              ctx.sessionId,
+              ctx.request,
+              ctx.t,
+            );
+            if (result) { return result; }
+            return new Response("Not found", { status: 404, },);
+          }, {
+            response: { 200: SuccessResponse, },
+          },),)
       // ── View templates (non-admin) ──────────────────────────────
       .get("/views/:name", (ctx: any,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";

@@ -117,8 +117,8 @@ import { adminWorlds, } from "./admin-worlds";
     async loadOverview() {
       try {
         const [statsRes, auditRes,] = await Promise.all([
-          fetch("/api/admin/stats", { headers: { Accept: "application/json", }, },),
-          fetch("/api/admin/audit?page=1&pageSize=10", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/admin/stats", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/admin/audit?page=1&pageSize=10", { headers: { Accept: "application/json", }, },),
         ],);
         if (statsRes.ok) { this.stats = await statsRes.json(); }
         if (auditRes.ok) {

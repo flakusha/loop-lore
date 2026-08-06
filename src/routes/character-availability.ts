@@ -5,6 +5,7 @@
  * usage policies, activity restrictions, and content policies.
  */
 import { Elysia, } from "elysia";
+import { jsonStringifyOr, } from "../utils";
 import { ActorIdParams, AvailabilityBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
@@ -83,7 +84,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
             status: status ?? existing.status,
             usage_policy: usagePolicy ?? existing.usage_policy,
             activity_restrictions: activityRestrictions
-              ? JSON.stringify(activityRestrictions,)
+              ? jsonStringifyOr(activityRestrictions,)
               : existing.activity_restrictions,
             content_policy: contentPolicy ?? existing.content_policy,
             nsfw_policy: nsfwPolicy ?? existing.nsfw_policy,
@@ -102,7 +103,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
           actor_id: actorId,
           status: status ?? "available",
           usage_policy: usagePolicy ?? null,
-          activity_restrictions: activityRestrictions ? JSON.stringify(activityRestrictions,) : "[]",
+          activity_restrictions: activityRestrictions ? jsonStringifyOr(activityRestrictions,) : "[]",
           content_policy: contentPolicy ?? null,
           nsfw_policy: nsfwPolicy ?? null,
           created_at: new Date().toISOString(),

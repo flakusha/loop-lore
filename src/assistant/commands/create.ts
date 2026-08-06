@@ -14,7 +14,7 @@
 import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
-import { uid, } from "../../utils";
+import { safeJsonParse, uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 const typeLabels: Record<string, string> = {
@@ -111,7 +111,9 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
     try {
       // Remove markdown code fences if present
       const cleaned = content.replace(/^```(?:json)?\s*\n?/, "",).replace(/\n?```\s*$/, "",);
-      entityData = JSON.parse(cleaned,) as Record<string, string>;
+      const parsed = safeJsonParse<Record<string, string>>(cleaned,);
+      if (!parsed.ok) { throw parsed.error; }
+      entityData = parsed.value;
     } catch {
       return {
         systemMessage: `**Failed to parse entity data from LLM response.**\n\nRaw output:\n${content.slice(0, 500,)}`,

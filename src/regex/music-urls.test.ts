@@ -10,7 +10,7 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
     test.each([
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "https://youtube.com/watch?v=abc123",
-      "http://www.youtube.com/watch?v=test",
+      "https://www.youtube.com/watch?v=test",
     ],)("matches %s", (url,) => {
       expect(isExternalMusicUrl(url,),).toBe(true,);
     },);
@@ -23,7 +23,7 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
   describe("YouTube short", () => {
     test.each([
       "https://youtu.be/dQw4w9WgXcQ",
-      "http://youtu.be/abc123",
+      "https://youtu.be/abc123",
     ],)("matches %s", (url,) => {
       expect(isExternalMusicUrl(url,),).toBe(true,);
     },);
@@ -33,7 +33,7 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
     test.each([
       "https://spotify.com/track/abc123",
       "https://www.spotify.com/playlist/xyz",
-      "http://spotify.com/track/test",
+      "https://spotify.com/track/test",
     ],)("matches %s", (url,) => {
       expect(isExternalMusicUrl(url,),).toBe(true,);
     },);
@@ -47,7 +47,7 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
     test.each([
       "https://soundcloud.com/artist/track",
       "https://www.soundcloud.com/user/sets/playlist",
-      "http://soundcloud.com/test",
+      "https://soundcloud.com/test",
     ],)("matches %s", (url,) => {
       expect(isExternalMusicUrl(url,),).toBe(true,);
     },);
@@ -57,7 +57,7 @@ describe("EXTERNAL_MUSIC_PATTERNS", () => {
     test.each([
       "https://bandcamp.com/artist/album",
       "https://www.bandcamp.com/track/test",
-      "http://bandcamp.com/artist/album",
+      "https://bandcamp.com/artist/album",
     ],)("matches %s", (url,) => {
       expect(isExternalMusicUrl(url,),).toBe(true,);
     },);

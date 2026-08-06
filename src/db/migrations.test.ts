@@ -19,7 +19,7 @@ const MIGRATIONS_DIR = path.join(__dirname, "migrations",);
 const MIGRATION_NAMES = readdirSync(MIGRATIONS_DIR,)
   .filter((f,): f is string => f.endsWith(".ts",))
   .map((f,) => f.replace(/\.ts$/, "",))
-  .sort();
+  .sort((a, b,) => a.localeCompare(b,));
 
 async function loadMigration(name: string,): Promise<Migration> {
   const module = await import(path.join(MIGRATIONS_DIR, `${name}.ts`,));

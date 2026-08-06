@@ -24,7 +24,7 @@ export interface VnChoice {
 let choices: VnChoice[] = [];
 let container: HTMLElement | null = null;
 let chatId: string | null = null;
-let sceneIndex: number = 0;
+let sceneIndex = 0;
 
 /**
  * Initialize the choice cards component.
@@ -125,7 +125,7 @@ function renderChoices(): void {
   const available = choices.filter((c,) => !c.selected);
   const selected = choices.filter((c,) => c.selected);
 
-  container.innerHTML = "";
+  container.replaceChildren();
 
   // Available choices (interactive)
   if (available.length > 0) {
@@ -147,10 +147,10 @@ function renderChoices(): void {
         selectChoice(choice.id,);
       },);
 
-      choiceList.appendChild(card,);
+      choiceList.append(card,);
     }
 
-    container.appendChild(choiceList,);
+    container.append(choiceList,);
   }
 
   // Selected choices (history, collapsed)
@@ -160,7 +160,7 @@ function renderChoices(): void {
 
     const summary = document.createElement("summary",);
     summary.textContent = `Past choices (${selected.length})`;
-    history.appendChild(summary,);
+    history.append(summary,);
 
     const historyList = document.createElement("div",);
     historyList.className = "vn-choice-history-list";
@@ -172,11 +172,11 @@ function renderChoices(): void {
         <span class="vn-choice-label">${escapeHtml(choice.label,)}</span>
         <span class="vn-choice-timestamp">${formatTime(choice.selected_at!,)}</span>
       `;
-      historyList.appendChild(item,);
+      historyList.append(item,);
     }
 
-    history.appendChild(historyList,);
-    container.appendChild(history,);
+    history.append(historyList,);
+    container.append(history,);
   }
 }
 

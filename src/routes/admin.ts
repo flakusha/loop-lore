@@ -30,6 +30,7 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { listProviders, } from "../generation/providers/registry";
 import { isAdminRole, } from "../middleware/admin-gate";
+import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import {
   AdminChatUpdateBody,
   AdminModelRoleOverrideBody,
@@ -803,7 +804,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           .select("value",)
           .where("key", "=", "sd.templates",)
           .executeTakeFirst();
-        const profiles = row ? JSON.parse(row.value,) : {};
+        const profiles = row ? jsonParseOr(row.value, {},) : {};
         return jsonResponse(profiles,);
       }, {
         response: {
@@ -829,7 +830,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .select("value",)
             .where("key", "=", "sd.templates",)
             .executeTakeFirst();
-          const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
+          const profiles: Record<string, unknown> = row ? jsonParseOr(row.value, {},) : {};
           if (!profiles[id]) {
             return jsonError({
               message: ctx.t?.("admin.templateNotFound",) ?? "Template not found",
@@ -842,12 +843,12 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .insertInto("system_config",)
             .values({
               key: "sd.templates",
-              value: JSON.stringify(profiles,),
+              value: jsonStringifyOr(profiles,),
               description: "SD image model prompt templates",
             },)
             .onConflict((oc,) =>
               oc.column("key",).doUpdateSet({
-                value: JSON.stringify(profiles,),
+                value: jsonStringifyOr(profiles,),
                 updated_at: new Date().toISOString(),
               },)
             )
@@ -874,7 +875,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .select("value",)
             .where("key", "=", "sd.templates",)
             .executeTakeFirst();
-          const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
+          const profiles: Record<string, unknown> = row ? jsonParseOr(row.value, {},) : {};
           if (profiles[id]) {
             return jsonError({
               message: ctx.t?.("admin.templateAlreadyExists",) ?? "Template already exists",
@@ -887,12 +888,12 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             .insertInto("system_config",)
             .values({
               key: "sd.templates",
-              value: JSON.stringify(profiles,),
+              value: jsonStringifyOr(profiles,),
               description: "SD image model prompt templates",
             },)
             .onConflict((oc,) =>
               oc.column("key",).doUpdateSet({
-                value: JSON.stringify(profiles,),
+                value: jsonStringifyOr(profiles,),
                 updated_at: new Date().toISOString(),
               },)
             )
@@ -916,7 +917,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           .select("value",)
           .where("key", "=", "sd.templates",)
           .executeTakeFirst();
-        const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
+        const profiles: Record<string, unknown> = row ? jsonParseOr(row.value, {},) : {};
         if (!profiles[id]) {
           return jsonError({
             message: ctx.t?.("admin.templateNotFound",) ?? "Template not found",
@@ -930,11 +931,11 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           .insertInto("system_config",)
           .values({
             key: "sd.templates",
-            value: JSON.stringify(profiles,),
+            value: jsonStringifyOr(profiles,),
             description: "SD image model prompt templates",
           },)
           .onConflict((oc,) =>
-            oc.column("key",).doUpdateSet({ value: JSON.stringify(profiles,), updated_at: new Date().toISOString(), },)
+            oc.column("key",).doUpdateSet({ value: jsonStringifyOr(profiles,), updated_at: new Date().toISOString(), },)
           )
           .execute();
         return jsonNoContent();

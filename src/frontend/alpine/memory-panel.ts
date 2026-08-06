@@ -50,7 +50,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
 
-      const res = await fetch(`/api/actors/${actorId}/memories`,);
+      const res = await apiFetch(`/api/actors/${actorId}/memories`,);
       if (!res.ok) { return; }
       const data = await res.json() as {
         items: Array<{
@@ -145,7 +145,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
 
     try {
-      const res = await fetch(`/api/actors/${actorId}/memories`, {
+      const res = await apiFetch(`/api/actors/${actorId}/memories`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -194,7 +194,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
 
     try {
-      await fetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+      await apiFetch(`/api/actors/${actorId}/memories/${memoryId}`, {
         method: "DELETE",
       },);
     } catch {
@@ -220,7 +220,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     mem.pinned = !mem.pinned;
 
     try {
-      await fetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+      await apiFetch(`/api/actors/${actorId}/memories/${memoryId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ pinned: mem.pinned, },),

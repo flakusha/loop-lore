@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { getLogger, } from "../../logger";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
 function getLog() {
   return getLogger().child({ module: "replayability", },);
@@ -146,7 +147,7 @@ export class ReplayabilityService {
       choices_made: 0,
       secrets_found: 0,
       achievements_unlocked: 0,
-      metadata: JSON.stringify(input.metadata ?? {},),
+      metadata: jsonStringifyOr(input.metadata ?? {},),
       created_at: now,
       updated_at: now,
       completed_at: null,
@@ -294,7 +295,7 @@ export class ReplayabilityService {
       .updateTable("playthroughs",)
       .set({
         secrets_found: secrets.length,
-        metadata: JSON.stringify({
+        metadata: jsonStringifyOr({
           ...playthrough.metadata,
           secrets,
         },),
@@ -359,12 +360,12 @@ export class ReplayabilityService {
     const metaProgressionData = {
       player_id: playerId,
       total_playthroughs: existing.totalPlaythroughs + 1,
-      endings_seen: JSON.stringify(endingsSeen,),
-      secrets_found: JSON.stringify(existing.secretsFound,),
-      achievements_unlocked: JSON.stringify(existing.achievementsUnlocked,),
-      permanent_bonuses: JSON.stringify(existing.permanentBonuses,),
-      unlocked_content: JSON.stringify(existing.unlockedContent,),
-      metadata: JSON.stringify(existing.metadata,),
+      endings_seen: jsonStringifyOr(endingsSeen,),
+      secrets_found: jsonStringifyOr(existing.secretsFound,),
+      achievements_unlocked: jsonStringifyOr(existing.achievementsUnlocked,),
+      permanent_bonuses: jsonStringifyOr(existing.permanentBonuses,),
+      unlocked_content: jsonStringifyOr(existing.unlockedContent,),
+      metadata: jsonStringifyOr(existing.metadata,),
       updated_at: now,
     };
 
@@ -408,11 +409,7 @@ export class ReplayabilityService {
    */
   private parseJsonField<T,>(raw: unknown, fallback: T,): T {
     if (typeof raw !== "string") { return fallback; }
-    try {
-      return JSON.parse(raw,) as T;
-    } catch {
-      return fallback;
-    }
+    return jsonParseOr(raw, fallback,);
   }
 
   /**

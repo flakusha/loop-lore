@@ -27,7 +27,7 @@ export const adminChats = {
       let url = `/api/admin/chats?page=${this.chatPage}&pageSize=${(this as any).pageSize}`;
       if (this.chatSearch) { url += `&q=${encodeURIComponent(this.chatSearch,)}`; }
       if (this.chatTypeFilter) { url += `&type=${this.chatTypeFilter}`; }
-      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.adminChats = data.data || [];

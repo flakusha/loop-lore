@@ -115,8 +115,8 @@ export class NsfwHook implements HookHandler {
         scope: "chat",
         scopeId: context.chatId,
       },);
-    } catch (err) {
-      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(err,), },);
+    } catch (error) {
+      getLogger().warn("nsfw-hook: failed to record audit log", { error: String(error,), },);
     }
   }
 
@@ -163,7 +163,7 @@ export class NsfwHook implements HookHandler {
       const response = await this.callAuxFn("nsfw", context.config, context.db, messages, {
         userId: context.userId,
         chatId: context.chatId,
-        temperature: 0.0,
+        temperature: 0,
         maxTokens: 50,
       },);
       if (!response) { return "none"; }
@@ -171,16 +171,21 @@ export class NsfwHook implements HookHandler {
       const parsed = jsonParseOr<{ rating?: string }>(response.content, {},);
       const rating = parsed?.rating;
       switch (rating) {
-        case "nsfw_mild":
+        case "nsfw_mild": {
           return "mild";
-        case "nsfw_moderate":
+        }
+        case "nsfw_moderate": {
           return "moderate";
-        case "nsfw_intense":
+        }
+        case "nsfw_intense": {
           return "intense";
-        case "nsfw_extreme":
+        }
+        case "nsfw_extreme": {
           return "extreme";
-        default:
+        }
+        default: {
           return "none"; // sfw or unparseable
+        }
       }
     } catch {
       getLogger()

@@ -46,7 +46,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
 
     async refresh() {
       try {
-        const res = await fetch("/api/notifications?unread=true",);
+        const res = await apiFetch("/api/notifications?unread=true",);
         if (!res.ok) { return; }
         const data = (await res.json()) as { items: NotificationListItem[] };
         this.items = data.items ?? [];
@@ -84,7 +84,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
     },
 
     async markRead(id: string,) {
-      await fetch(`/api/notifications/${id}`, {
+      await apiFetch(`/api/notifications/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ read: true, },),
@@ -94,13 +94,13 @@ globalThis.notificationsBell = function(): NotificationBellState {
     },
 
     async markAllRead() {
-      await fetch("/api/notifications/read-all", { method: "PATCH", },);
+      await apiFetch("/api/notifications/read-all", { method: "PATCH", },);
       this.items = this.items.map((i,) => ({ ...i, read: 1, }));
       this.unreadCount = 0;
     },
 
     async dismiss(id: string,) {
-      await fetch(`/api/notifications/${id}`, { method: "DELETE", },);
+      await apiFetch(`/api/notifications/${id}`, { method: "DELETE", },);
       this.items = this.items.filter((i,) => i.id !== id);
       this.unreadCount = this.items.filter((i,) => !i.read).length;
     },
@@ -126,7 +126,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
 
     async refresh() {
       try {
-        const res = await fetch("/api/notifications/preferences",);
+        const res = await apiFetch("/api/notifications/preferences",);
         if (!res.ok) { return; }
         const data = (await res.json()) as {
           enabled: Record<string, boolean>;
@@ -154,7 +154,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
     async save() {
       this.saving = true;
       try {
-        await fetch("/api/notifications/preferences", {
+        await apiFetch("/api/notifications/preferences", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, },),

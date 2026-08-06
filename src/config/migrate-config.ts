@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 import { parse as parseToml, } from "smol-toml";
 import { createLogger, } from "../logger";
+import { jsonStringifyOr, } from "../utils";
 
 const log = createLogger({ level: "info", },);
 
@@ -103,10 +104,10 @@ function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",)
       if (typeof value === "object" && value !== null) {
         lines.push(`${key}:`,);
         for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
-          lines.push(`  ${subKey}: ${JSON.stringify(subValue,)}`,);
+          lines.push(`  ${subKey}: ${jsonStringifyOr(subValue, "undefined",)}`,);
         }
       } else {
-        lines.push(`${key}: ${JSON.stringify(value,)}`,);
+        lines.push(`${key}: ${jsonStringifyOr(value, "undefined",)}`,);
       }
     }
     return `${lines.join("\n",)}\n`;
@@ -121,7 +122,7 @@ function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",)
         if (typeof subValue === "string") {
           lines.push(`${subKey} = "${subValue}"`,);
         } else {
-          lines.push(`${subKey} = ${JSON.stringify(subValue,)}`,);
+          lines.push(`${subKey} = ${jsonStringifyOr(subValue, "undefined",)}`,);
         }
       }
       lines.push("",);
@@ -129,7 +130,7 @@ function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",)
       if (typeof value === "string") {
         lines.push(`${key} = "${value}"`,);
       } else {
-        lines.push(`${key} = ${JSON.stringify(value,)}`,);
+        lines.push(`${key} = ${jsonStringifyOr(value, "undefined",)}`,);
       }
     }
   }
