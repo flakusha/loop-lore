@@ -484,4 +484,53 @@ export interface ChatState extends AlpineMagicThis {
   loadBackgrounds(): Promise<void>;
   setBackground(backgroundId: string,): Promise<void>;
   removeBackground(): Promise<void>;
+
+  // ── Chat Location (change / transfer / join at location) ─────
+  _locations: {
+    id: string;
+    name: string;
+    description: string | null;
+  }[];
+  _locationsLoading: boolean;
+  _locationOpen: boolean;
+  _selectedLocationId: string;
+  _chatWorldId: string | null;
+  _chatCurrentLocationId: string | null;
+  _chatRecentLocationChanged: boolean;
+  _locationBusy: boolean;
+  _locationJoinableChats: {
+    chatId: string;
+    chatName: string;
+    participantCount: number;
+    lastActiveAt: string | null;
+  }[];
+  toggleLocationPanel(): void;
+  loadLocations(): Promise<void>;
+  loadLocationJoinable(): Promise<void>;
+  joinLocationChat(chatId: string,): Promise<void>;
+  readonly selectedLocationName: string | null;
+  readonly currentLocationName: string | null;
+  changeChatLocation(): Promise<void>;
+  transferChatLocation(): Promise<void>;
+  _locationWorldId(): Promise<string | null>;
+  _emitLocationChanged(): void;
+
+  // ── Message search (message-search.ts) ──────────────────
+  _msgSearchOpen: boolean;
+  _msgSearchQuery: string;
+  _msgSearchMatches: string[];
+  _msgSearchTotal: number;
+  _msgSearchIndex: number;
+  _msgSearchLoading: boolean;
+  _msgSearchDebounce: ReturnType<typeof setTimeout> | null;
+  toggleMessageSearch(): void;
+  onMessageSearchInput(): void;
+  runMessageSearch(): Promise<void>;
+  applyMessageSearchHighlights(): void;
+  applySearchMatchActive(): void;
+  scrollToSearchMatch(index: number): void;
+  nextMessageMatch(): void;
+  prevMessageMatch(): void;
+  onMessageSearchEnter(event: KeyboardEvent): void;
+  closeMessageSearch(): void;
 }
