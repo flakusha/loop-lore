@@ -63,6 +63,20 @@ export interface WorldEditState {
   placeLocationId: string;
   placeQuantity: string;
   worldId: string | null;
+  invites: {
+    id: string;
+    worldId: string;
+    code: string;
+    createdAt: string;
+    expiresAt: string | null;
+    maxUses: number | null;
+    uses: number;
+    revoked: number;
+  }[];
+  loadingInvites: boolean;
+  invitesLoaded: boolean;
+  newInviteMaxUses: string;
+  showInviteForm: boolean;
   init(): void;
   saveWorld(): Promise<void>;
   loadLocations(): Promise<void>;
@@ -70,7 +84,7 @@ export interface WorldEditState {
   deleteLocation(locId: string,): Promise<void>;
   expandLoc(locId: string,): void;
   saveLocation(locId: string,): Promise<void>;
-  loadItems(): Promise<void>;
+loadItems(): Promise<void>;
   addItem(): Promise<void>;
   expandItem(itemId: string,): void;
   saveItem(itemId: string,): Promise<void>;
@@ -78,4 +92,8 @@ export interface WorldEditState {
   loadInstances(itemId: string,): Promise<void>;
   placeInstance(itemId: string,): Promise<void>;
   destroyInstance(instanceId: string,): Promise<void>;
+  loadInvites(): Promise<void>;
+  createInvite(): Promise<void>;
+  copyInviteCode(code: string,): void;
+  revokeInvite(inviteId: string,): Promise<void>;
 }
