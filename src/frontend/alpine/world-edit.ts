@@ -1,5 +1,6 @@
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
+import { worldInvites, } from "./world-invites";
 import { worldItems, } from "./world-items";
 import { worldLocations, } from "./world-locations";
 
@@ -14,6 +15,7 @@ const log = rootLog.child({ module: "world-edit", },);
     loading: true,
     error: false,
     saving: false,
+    ...worldInvites,
     ...worldLocations,
     ...worldItems,
 
