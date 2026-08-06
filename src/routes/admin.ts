@@ -287,7 +287,14 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         },
       },)
       .get("/api/admin/providers/:name/models", (ctx: any,) => {
-        const { params, } = ctx;
+        const { params, userRole, } = ctx;
+        if (!isAdminRole(userRole,)) {
+          return jsonError({
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
         const providerName = params.name as string;
 
         const health = getProviderHealth(providerName,);
@@ -307,6 +314,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
       }, {
         response: {
           200: t.Object({ name: t.String(), label: t.String(), models: t.Array(t.Any(),), status: t.String(), },),
+          403: ErrorResponse,
           404: ErrorResponse,
         },
       },)

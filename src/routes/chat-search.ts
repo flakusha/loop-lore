@@ -2,12 +2,12 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import {
   checkChatAccess,
-  getChat,
 } from "../chat/service";
 import type { Config, } from "../config/schema";
 import {
   ChatParticipantRole,
 } from "../db/enums";
+import { WorldVisibility, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import {
@@ -16,7 +16,6 @@ import {
   jsonError,
   jsonPaginated,
   jsonResponse,
-  notFoundResponse as notFound,
   requireUserId,
 } from "./http-utils";
 
@@ -217,13 +216,36 @@ export function chatSearchRoutes(opts: HandlerOpts,) {
           const chatId = (ctx.params as { id: string }).id;
 
           // Check chat exists and is world-linked (joinable)
-          const chatData = await getChat(database, chatId,);
-          if (!chatData) { return notFound(); }
+          const chatWorld = await database
+            .selectFrom("chats",)
+            .select("world_id",)
+            .where("id", "=", chatId,)
+            .executeTakeFirst();
 
-          const { chat, } = chatData;
-
-          if (!chat.world_id) {
+          if (!chatWorld?.world_id) {
             return jsonError({ message: "Chat is not joinable — no world assigned", status: 400, },);
+          }
+
+          // Check user can access the chat's world (owner/admin, public, or world member)
+          const world = await database
+            .selectFrom("worlds",)
+            .select(["owner_id", "visibility",],)
+            .where("id", "=", chatWorld.world_id,)
+            .executeTakeFirst();
+          const userRole = ctx.userRole as string | null;
+          const isOwnerOrAdmin = world !== undefined &&
+            (world.owner_id === userId || userRole === "admin" || userRole === "solo");
+          const isPublicWorld = world?.visibility === WorldVisibility.Public;
+          if (!isOwnerOrAdmin && !isPublicWorld) {
+            const member = await database
+              .selectFrom("world_members",)
+              .select("actor_id",)
+              .where("world_id", "=", chatWorld.world_id,)
+              .where("actor_id", "=", userId,)
+              .executeTakeFirst();
+            if (!member) {
+              return forbidden("You are not a member of this world",);
+            }
           }
 
           // Check user is not already a participant

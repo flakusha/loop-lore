@@ -27,7 +27,8 @@ import {
 } from "../generation/prompt-templates";
 import { getLogger, type Logger, } from "../logger";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
-import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { isAdminRole, } from "../middleware/admin-gate";
+import { ErrorCode, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 function log(): Logger {
@@ -75,6 +76,14 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
+      if (!isAdminRole(ctx.userRole as string | null,)) {
+        return jsonError({
+          message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
+
       try {
         const stored = await loadStoredTemplates(database,);
         const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
@@ -109,6 +118,14 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
+      if (!isAdminRole(ctx.userRole as string | null,)) {
+        return jsonError({
+          message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
+
       try {
         const stored = await loadStoredTemplates(database,);
         const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
@@ -130,6 +147,14 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .get("/api/admin/templates/:id", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
+
+      if (!isAdminRole(ctx.userRole as string | null,)) {
+        return jsonError({
+          message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
 
       const { id, } = ctx.params as { id: string };
       const stored = await loadStoredTemplates(database,);
@@ -241,6 +266,14 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+
+        if (!isAdminRole(ctx.userRole as string | null,)) {
+          return jsonError({
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
 
         const body = ctx.body as {
           id: string;
