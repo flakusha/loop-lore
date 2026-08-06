@@ -188,5 +188,5 @@ interface MigrationAuditRecord {
 - `docs/spec/character-spec.md` — character spec that these migrations update
 - `docs/spec/schema.md` — DB schema versioning and migration format
 - `src/db/migrations/` — migration files that implement the `down()` functions
-- `.plan/immediate.md` — current migration fixes (template_injection, schema-sync)
+- `.plan/backlog/active.md` — current migration fixes (template_injection, schema-sync)
 - `.plan/tickets/TASK-data-migration-transitivity.md` — transitivity tracking for migration states
