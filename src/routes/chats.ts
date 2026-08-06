@@ -617,12 +617,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const chat = await database
-            .selectFrom("chats",)
-            .select("created_by",)
-            .where("id", "=", id,)
-            .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
+          const access = await checkChatAccess(database, id, userId, userRole,);
+          if (!access.ok) {
             return notFound("Chat not found",);
           }
 
@@ -704,12 +700,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const chat = await database
-            .selectFrom("chats",)
-            .select("created_by",)
-            .where("id", "=", id,)
-            .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
+          const access = await checkChatAccess(database, id, userId, userRole,);
+          if (!access.ok) {
             return notFound("Chat not found",);
           }
 

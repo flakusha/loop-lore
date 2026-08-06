@@ -5,6 +5,7 @@
  * emotion intensity, and context tracking.
  */
 import { Elysia, t, } from "elysia";
+import { isAdminRole, } from "../middleware/admin-gate";
 import {
   ActorEmotionParams,
   ActorIdParams,
@@ -246,6 +247,10 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
+      if (!isAdminRole(ctx.userRole as string | null,)) {
+        return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, },);
+      }
+
       const { name, displayName, category, valence, arousal, icon, } = ctx.body;
 
       const id = crypto.randomUUID();
@@ -269,6 +274,7 @@ export function characterEmotionsRoutes(opts: HandlerOpts,) {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
+        403: ErrorResponse,
       },
       detail: {
         summary: "Create emotion definition",
