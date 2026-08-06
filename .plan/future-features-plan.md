@@ -163,7 +163,7 @@ Not in any feature — enterprise blockers for agentic workspace:
 
 - `.plan/implementation-plan.md` — active v0.1 checklist
 - `.plan/roadmaps/roadmap.md` — full roadmap with all planned features
-- `.plan/backlog.md` — deferred queue
+- `.plan/backlog/` — priority/high-value/active/open queue
 - `/docs/ideas/` — 34 ideas across 8 themes
 - `/docs/meta/assessments/feature-analysis.md` — business relevance analysis
 - `docs/spec/api-versioning.md` — API versioning spec
