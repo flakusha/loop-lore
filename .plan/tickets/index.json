@@ -32,6 +32,17 @@
     "title": "Alpine init hydration errors abort chat subtree rendering",
     "type": "BUG"
   },
+  "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU": {
+    "hash": "80e07be",
+    "extid": "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU",
+    "type": "BUG",
+    "title": "Asset link/share JSON routes 500 \"Body already used\" — Elysia sucrose body inference",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md"
+  },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "epic": "",
     "extid": "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE",
