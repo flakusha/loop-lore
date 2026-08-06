@@ -9,11 +9,25 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 | `bun run lint`               | ESLint (strict + unicorn + sonarjs)   |
 | `bun run lint:css`           | Stylelint on source CSS               |
 | `bun run lint:html`          | Markuplint on htmx/Alpine templates   |
-| `bun run md:lint`            | Markdownlint on docs/                 |
+| `bun run lint:html-scripts`  | Inline HTML script checks             |
+| `bun run lint:chaining`      | Promise chaining checks               |
+| `bun run lint:biome`         | Biome lint on docs/                   |
+| `bun run md:lint`            | Markdownlint on docs/ + .plan/        |
 | `bun run typecheck`          | TypeScript `tsc --noEmit`             |
-| `bun run typecheck:coverage` | Type coverage (>=85%)                 |
-| `bun run check`              | All checks: typecheck → lint → format |
-| `bun run format`             | Prettier                              |
+| `bun run typecheck:frontend` | Frontend TypeScript check             |
+| `bun run typecheck:coverage` | Type coverage (strict gate)           |
+| `bun run format:dprint`      | dprint check                          |
+| `bun run format:dprint:fix`  | dprint fmt                            |
+| `bun run check`              | Parallel gate runner (`check-parallel.mjs`): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, size, context-weight, unit + e2e |
+| `bun run db:sync-types`      | Regenerate DB types from migrations   |
+| `bun run db:sync-manifest`   | Regenerate schema manifest            |
+| `bun run db:schemas:check`   | Verify generated schemas are current  |
+| `bun run jscpd`              | Copy-paste detection (coarse)         |
+| `bun run jscpd:full`         | Copy-paste detection (fine)           |
+| `bun run size:check`         | File-size gate                        |
+| `bun run context:weight`     | Agent context weight check            |
+| `bun run plan:sync`          | Ticket index ↔ git issue sync check   |
+| `bun run plan:sync:fix`      | Apply ticket index fixes              |
 | `bun test`                   | Bun test runner (Jest-compatible)     |
 | `bun test --coverage`        | Test coverage report                  |
 
@@ -22,7 +36,8 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 | File                 | Purpose            |
 | -------------------- | ------------------ |
 | `eslint.config.mjs`  | Flat ESLint config |
-| `.prettierrc`        | Code formatting    |
+| `dprint.json`        | Code formatting    |
+| `biome.json`         | Docs linting       |
 | `.markdownlint.json` | Markdown rules     |
 | `.stylelintrc.json`  | CSS linting        |
 | `.markuplintrc.json` | HTML linting       |
@@ -56,9 +71,11 @@ Runs on commit: format → check → unit tests → e2e (with safeguards).
 | Command                                        | Description                                          |
 | ---------------------------------------------- | ---------------------------------------------------- |
 | `./scripts/worktree.sh ticket TYPE ID "Title"` | Create ticket + worktree (BUG/FIX/FEA/IDEA/TASK/SOL) |
-| `./scripts/worktree.sh epic NUM`               | Create epic branch + worktree                        |
+| `./scripts/worktree.sh ticket ... --epic X`    | Link ticket to an epic                               |
 | `./scripts/worktree.sh issues`                 | List open issues with branch mapping                 |
-| `./scripts/worktree.sh issue <args>`           | Run git-issue command directly                       |
+| `./scripts/worktree.sh state ID <state>`       | Transition issue status (open/in_progress/done)      |
+| `./scripts/worktree.sh sync`                   | Interactive ticket-index ↔ git issue sync            |
+| `./scripts/worktree.sh gi <args>`              | Run git-issue command directly                       |
 
 ### Extended Identifiers
 
@@ -82,33 +99,33 @@ Even in command chains with `&&`, use `rtk`:
 rtk git add . && rtk git commit -m "msg" && rtk git push
 ```
 
-### Build & Compile (80-90% savings)
+### Build & Compile
 
 ```bash
-rtk tsc         # TypeScript errors grouped by file (83%)
-rtk lint        # ESLint violations grouped (84%)
+rtk tsc         # TypeScript errors grouped by file
+rtk lint        # ESLint violations grouped
 rtk bun run build # Build output compressed
 ```
 
-### Test (90-99% savings)
+### Test
 
 ```bash
-rtk bun test          # Failures only (99% on passing tests)
-rtk vitest            # Vitest failures only (99.5%)
+rtk bun test          # Failures only
+rtk vitest            # Vitest failures only
 rtk test <cmd>        # Generic test wrapper - failures only
 ```
 
-### Git (59-80% savings)
+### Git
 
 ```bash
 rtk git status    # Compact status
 rtk git log       # Compact log (works with all flags)
-rtk git diff      # Compact diff (80%)
+rtk git diff      # Compact diff
 rtk git add       # Ultra-compact
 rtk git commit    # Ultra-compact
 ```
 
-### Files & Search (60-75% savings)
+### Files & Search
 
 ```bash
 rtk ls <path>       # Tree format, compact
@@ -121,5 +138,3 @@ rtk find <pattern>  # Grouped by directory
 rtk gain            # View token savings statistics
 rtk proxy <cmd>     # Run command without filtering (debug)
 ```
-
-Typical savings: **60-99%** on common development operations.
