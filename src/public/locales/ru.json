@@ -178,6 +178,11 @@
     "revoke": "Revoke",
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., backup-key",
+    "apiEndpointPlaceholder": "https://api.openai.com/v1",
+    "modelPlaceholder": "e.g., gpt-4o",
+    "keyId": "ID: {id}",
+    "keyCreated": "Created: {date}",
+    "keyExpires": "Expires: {date}",
     "generate": "Generate",
     "revokeKey": "Revoke Key",
     "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
@@ -187,7 +192,19 @@
     "forwardSecrecy": "⚠️ Forward Secrecy",
     "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
     "preferences": "Preferences",
-    "generation": "Generation"
+    "generation": "Generation",
+    "nsfwConsent": "Согласие на контент NSFW",
+    "nsfwConsentDescription": "Ваше сохранённое согласие на генерацию взрослого контента.",
+    "nsfwStatus": "Статус",
+    "nsfwEnabled": "Включено",
+    "nsfwDisabled": "Отключено",
+    "nsfwMaxRating": "Макс. рейтинг",
+    "nsfwRestrictions": "Ограничения",
+    "nsfwNone": "Нет",
+    "nsfwBlocked": "Заблокировано",
+    "nsfwBanned": "Забанено",
+    "nsfwShadow": "Скрытое ограничение",
+    "nsfwConsentUnavailable": "Не удалось загрузить состояние согласия NSFW."
   },
   "admin": {
     "title": "Administration",
@@ -527,6 +544,7 @@
     "settings": "Настройки",
     "logout": "Выйти",
     "closeSidebar": "Закрыть",
+    "notifications": "Уведомления",
     "openSidebar": "Открыть меню"
   },
   "modals": {
@@ -573,6 +591,15 @@
     "cancelGeneration": "Отменить генерацию",
     "send": "Отправить",
     "filterChats": "Фильтровать чаты"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "all": "Все",
+    "unread": "Непрочитанные",
+    "listToggle": "Режим просмотра",
+    "viewAll": "Показать все",
+    "filters": "Фильтры уведомлений",
+    "filtersDesc": "Отключите типы уведомлений, которые не хотите видеть в значке непрочитанных или во всплывающих сообщениях. Изменения сохраняются автоматически."
   },
   "placeholders": {
     "chatName": "Название чата",
@@ -684,6 +711,8 @@
     "roleplayStory": "Roleplay / Story",
     "characterParticipant": "Character / Participant",
     "searchCharacters": "Search characters...",
+    "switchToList": "Switch to list view",
+    "switchToGrid": "Switch to grid view",
     "impersonateCharacter": "Impersonate character (play as them)",
     "yourPersona": "Your Persona",
     "default": "Default",

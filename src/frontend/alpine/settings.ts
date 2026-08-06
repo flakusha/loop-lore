@@ -33,6 +33,14 @@ type LocaleInfoArray = LocaleInfo[];
     confirmDeleteText: "",
     saving: false,
     loaded: false,
+    nsfwConsent: null as null | {
+      nsfwEnabled: boolean;
+      maxRating: string;
+      blockedFromNsfw: boolean;
+      bannedFromNsfw: boolean;
+      shadowNsfw: boolean;
+      blockReason: string | null;
+    },
 
     async init() {
       const savedTheme = localStorage.getItem("theme-reference",);
@@ -49,6 +57,7 @@ type LocaleInfoArray = LocaleInfo[];
       if (detail) { this.detailLevel = detail; }
       await this.loadLocales();
       await this.loadSettings();
+      await this.loadNsfwConsent();
     },
 
     async loadLocales() {
@@ -98,6 +107,49 @@ type LocaleInfoArray = LocaleInfo[];
       this.loaded = true;
     },
 
+    /** Fetch the acting user's stored NSFW consent (enabled state, rating, restrictions). */
+    async loadNsfwConsent() {
+      const userId = (globalThis as any).__USER_ID as string | undefined;
+      if (!userId) { return; }
+      try {
+        const res = await fetch(`/api/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
+          headers: { Accept: "application/json", },
+        },);
+        if (res.ok) {
+          const body = await res.json() as { data?: Record<string, unknown> };
+          const d = body.data;
+          if (d && typeof d === "object") {
+            this.nsfwConsent = {
+              nsfwEnabled: d.nsfwEnabled === true,
+              maxRating: typeof d.maxRating === "string" ? d.maxRating : "",
+              blockedFromNsfw: d.blockedFromNsfw === true,
+              bannedFromNsfw: d.bannedFromNsfw === true,
+              shadowNsfw: d.shadowNsfw === true,
+              blockReason: typeof d.blockReason === "string" ? d.blockReason : null,
+            };
+          }
+        }
+      } catch (error) {
+        log.warn("loadNsfwConsent failed", { error: String(error,), },);
+      }
+    },
+
+    /** Human-readable summary of any NSFW access restrictions on this account. */
+    nsfwRestrictionText() {
+      if (!this.nsfwConsent) { return ""; }
+      const g = globalThis as { t?: (key: string,) => string };
+      const t = g.t ?? ((key: string,) => key);
+      const parts: string[] = [];
+      if (this.nsfwConsent.blockedFromNsfw) { parts.push(t("settings.nsfwBlocked",),); }
+      if (this.nsfwConsent.bannedFromNsfw) { parts.push(t("settings.nsfwBanned",),); }
+      if (this.nsfwConsent.shadowNsfw) { parts.push(t("settings.nsfwShadow",),); }
+      if (parts.length > 0) {
+        const appended = this.nsfwConsent.blockReason ? ` — ${this.nsfwConsent.blockReason}` : "";
+        return parts.join(", ",) + appended;
+      }
+      return t("settings.nsfwNone",);
+    },
+
     async saveGeneral() {
       await this.persistSettings({
         displayName: this.displayName,
@@ -105,6 +157,19 @@ type LocaleInfoArray = LocaleInfo[];
         theme: this.theme,
         locale: this.locale,
       },);
+    },
+
+    /**
+     * Handle a locale switch from the preferences select.
+     * Persists the choice, sets the server-side locale cookie, then reloads so
+     * the server re-serves views rendered in the new locale.
+     */
+    async onLocaleChange() {
+      await this.saveGeneral();
+      // Cookie is read by server-side locale detection on reload.
+      // eslint-disable-next-line unicorn/no-document-cookie
+      document.cookie = `ll_locale=${this.locale}; path=/; SameSite=Lax; max-age=31536000`;
+      globalThis.location.reload();
     },
 
     async saveChat() {

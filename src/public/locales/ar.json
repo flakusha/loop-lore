@@ -178,6 +178,11 @@
     "revoke": "Revoke",
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., backup-key",
+    "apiEndpointPlaceholder": "https://api.openai.com/v1",
+    "modelPlaceholder": "e.g., gpt-4o",
+    "keyId": "ID: {id}",
+    "keyCreated": "Created: {date}",
+    "keyExpires": "Expires: {date}",
     "generate": "Generate",
     "revokeKey": "Revoke Key",
     "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
@@ -187,7 +192,19 @@
     "forwardSecrecy": "⚠️ Forward Secrecy",
     "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
     "preferences": "Preferences",
-    "generation": "Generation"
+    "generation": "Generation",
+    "nsfwConsent": "الموافقة على محتوى NSFW",
+    "nsfwConsentDescription": "موافقتك المخزنة على توليد محتوى للبالغين.",
+    "nsfwStatus": "الحالة",
+    "nsfwEnabled": "مفعّل",
+    "nsfwDisabled": "معطّل",
+    "nsfwMaxRating": "أقصى تصنيف",
+    "nsfwRestrictions": "القيود",
+    "nsfwNone": "لا شيء",
+    "nsfwBlocked": "محظور",
+    "nsfwBanned": "ممنوع",
+    "nsfwShadow": "تقييد غير مرئي",
+    "nsfwConsentUnavailable": "تعذر تحميل حالة موافقة NSFW."
   },
   "admin": {
     "title": "Administration",
@@ -527,6 +544,7 @@
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج",
     "closeSidebar": "إغلاق",
+    "notifications": "الإشعارات",
     "openSidebar": "فتح القائمة"
   },
   "modals": {
@@ -573,6 +591,15 @@
     "cancelGeneration": "إلغاء التوليد",
     "send": "إرسال",
     "filterChats": "تصفية المحادثات"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "all": "الكل",
+    "unread": "غير المقروء",
+    "listToggle": "وضع العرض",
+    "viewAll": "عرض الكل",
+    "filters": "مرشحات الإشعارات",
+    "filtersDesc": "قم بكتم أنواع الإشعارات التي لا تريد رؤيتها في شارة غير المقروء أو التنبيهات. يتم حفظ التغييرات تلقائيًا."
   },
   "placeholders": {
     "chatName": "اسم المحادثة",
@@ -684,6 +711,8 @@
     "roleplayStory": "Roleplay / Story",
     "characterParticipant": "Character / Participant",
     "searchCharacters": "Search characters...",
+    "switchToList": "Switch to list view",
+    "switchToGrid": "Switch to grid view",
     "impersonateCharacter": "Impersonate character (play as them)",
     "yourPersona": "Your Persona",
     "default": "Default",

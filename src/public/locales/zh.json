@@ -178,6 +178,11 @@
     "revoke": "Revoke",
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., backup-key",
+    "apiEndpointPlaceholder": "https://api.openai.com/v1",
+    "modelPlaceholder": "e.g., gpt-4o",
+    "keyId": "ID: {id}",
+    "keyCreated": "Created: {date}",
+    "keyExpires": "Expires: {date}",
     "generate": "Generate",
     "revokeKey": "Revoke Key",
     "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
@@ -187,7 +192,19 @@
     "forwardSecrecy": "⚠️ Forward Secrecy",
     "forwardSecrecyDescription": "Messages encrypted with the old key will become inaccessible. This is by design for privacy — it ensures that if someone leaves a group chat, they cannot read new messages.",
     "preferences": "Preferences",
-    "generation": "Generation"
+    "generation": "Generation",
+    "nsfwConsent": "NSFW 内容同意",
+    "nsfwConsentDescription": "您对成人内容生成的已存储同意。",
+    "nsfwStatus": "状态",
+    "nsfwEnabled": "已启用",
+    "nsfwDisabled": "已禁用",
+    "nsfwMaxRating": "最高分级",
+    "nsfwRestrictions": "限制",
+    "nsfwNone": "无",
+    "nsfwBlocked": "已阻止",
+    "nsfwBanned": "已封禁",
+    "nsfwShadow": "影子限制",
+    "nsfwConsentUnavailable": "无法加载 NSFW 同意状态。"
   },
   "admin": {
     "title": "Administration",
@@ -527,6 +544,7 @@
     "settings": "设置",
     "logout": "退出登录",
     "closeSidebar": "关闭",
+    "notifications": "通知",
     "openSidebar": "打开菜单"
   },
   "modals": {
@@ -573,6 +591,15 @@
     "cancelGeneration": "取消生成",
     "send": "发送",
     "filterChats": "筛选聊天"
+  },
+  "notifications": {
+    "title": "通知",
+    "all": "全部",
+    "unread": "未读",
+    "listToggle": "视图模式",
+    "viewAll": "查看全部",
+    "filters": "通知过滤器",
+    "filtersDesc": "静音您不想在未读徽章或提示中看到的通知类型。更改会自动保存。"
   },
   "placeholders": {
     "chatName": "聊天名称",
@@ -684,6 +711,8 @@
     "roleplayStory": "Roleplay / Story",
     "characterParticipant": "Character / Participant",
     "searchCharacters": "Search characters...",
+    "switchToList": "Switch to list view",
+    "switchToGrid": "Switch to grid view",
     "impersonateCharacter": "Impersonate character (play as them)",
     "yourPersona": "Your Persona",
     "default": "Default",
