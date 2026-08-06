@@ -626,3 +626,22 @@ export interface MetaProgression {
   metadata: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── character_skills ────────────────────────────────────────────
+export interface CharacterSkills {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string | null;
+  name: string;
+  category: string;
+  description: string | null;
+  level: Generated<number>;
+  xp: Generated<number>;
+  proficiency: Generated<string>;
+  specialization: string | null;
+  is_locked: Generated<number>;
+  prerequisites: Generated<string>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
