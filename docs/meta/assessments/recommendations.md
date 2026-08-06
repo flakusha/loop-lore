@@ -78,4 +78,4 @@ cost)**.
 - Time-to-first-agent: from install to a working research/KB agent
 
 _Reintegrate as: input to `.plan/roadmaps/roadmap.md` (new "Agentic / Business" track)
-and `.plan/backlog.md`._
+and `.plan/backlog/`._
