@@ -1,4 +1,9 @@
-/* ── Visual Novel Mode Styles ─────────────────────────────── */
+/* ============================================================
+   loop-lore — Visual Novel Mode Styles
+   Consolidates src/frontend/vn/styles.css + the VN/GM panel
+   section that previously lived inside app.css. Served via
+   layout.html alongside app.css.
+   ============================================================ */
 
 .vn-container {
   position: relative;
@@ -8,6 +13,14 @@
   overflow: hidden;
   border-radius: var(--radius-md);
   background: var(--bg-primary);
+}
+
+/* VN stop control — floats over the scene top-right while generating */
+.vn-stop {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 10;
 }
 
 /* ── Scene ──────────────────────────────────────────────── */
@@ -68,7 +81,7 @@
 }
 
 .vn-layout-overlay .vn-dialogue-box {
-  background: rgba(0, 0, 0, 0.75);
+  background: rgb(0 0 0 / 75%);
   color: #fff;
   margin: var(--space-3);
   border-radius: var(--radius-md);
@@ -166,11 +179,7 @@
   padding: var(--space-3);
 }
 
-.vn-portrait-left {
-  grid-column: 1;
-  grid-row: 1;
-}
-
+.vn-portrait-left,
 .vn-portrait-right {
   grid-column: 1;
   grid-row: 1;
@@ -315,7 +324,7 @@
   color: var(--text-tertiary);
 }
 
-/* -- Loading Indicator ----------------------------------- */
+/* ── Loading Indicator ──────────────────────────────────── */
 
 .vn-loading-indicator {
   position: absolute;
@@ -327,7 +336,7 @@
   align-items: center;
   gap: var(--space-2, 0.5rem);
   padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
-  background: var(--bg-overlay, rgba(0, 0, 0, 0.7));
+  background: var(--bg-overlay, rgb(0 0 0 / 70%));
   border-radius: var(--radius-md, 0.375rem);
   color: var(--text-primary);
   font-size: 0.875rem;
@@ -357,14 +366,14 @@
   transition: transform 0.3s ease;
 }
 
-/* -- Attachments Panel ----------------------------------- */
+/* ── Attachments Panel ──────────────────────────────────── */
 
 .vn-attachments {
   margin-top: var(--space-3, 0.75rem);
   padding: var(--space-3, 0.75rem);
-  background: var(--bg-secondary, rgba(0, 0, 0, 0.5));
+  background: var(--bg-secondary, rgb(0 0 0 / 50%));
   border-radius: var(--radius-md, 0.375rem);
-  border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--border-primary, rgb(255 255 255 / 10%));
 }
 
 .vn-attachments-title {
@@ -400,7 +409,7 @@
   height: 60px;
   object-fit: cover;
   border-radius: var(--radius-sm, 0.25rem);
-  border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--border-primary, rgb(255 255 255 / 10%));
 }
 
 .vn-attachment-caption {
@@ -411,4 +420,99 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 80px;
+}
+
+/* ── GM Panel (chat overlay — grouped with VN chat chrome) ── */
+
+.gm-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-default);
+  z-index: 50;
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+.gm-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.gm-panel-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.gm-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.gm-form-group {
+  margin-bottom: var(--space-3);
+}
+
+.gm-full-width {
+  width: 100%;
+  margin-bottom: var(--space-3);
+}
+
+.gm-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.gm-note-card {
+  padding: var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+  font-size: 0.85rem;
+}
+
+.gm-note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gm-note-type {
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.gm-note-priority {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.gm-badge-revealed {
+  color: var(--accent-green);
+  font-size: 0.75rem;
+}
+
+.gm-note-content {
+  margin: var(--space-1) 0;
+  color: var(--text-primary);
+}
+
+.gm-note-actions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.gm-danger {
+  color: var(--accent-red);
+}
+
+.gm-toggle-active {
+  background: var(--bg-tertiary);
 }
