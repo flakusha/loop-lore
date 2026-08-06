@@ -8,6 +8,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { decryptMessageContent, getSmk, } from "../crypto";
+import { checkChatAccess, } from "../chat/service";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { notFound, } from "../validation/middleware";
@@ -232,16 +233,19 @@ export function chatExportRoutes(opts: HandlerOpts,) {
     async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
+      const userRole = ctx.userRole as string | null;
 
       const chatId = ctx.params.id as string;
       const format = (ctx.query.format as string) ?? "markdown";
 
-      // Verify chat exists and user has access
+      // Verify chat exists and user has access (owner/admin/solo/participant)
+      const access = await checkChatAccess(database, chatId, userId, userRole,);
+      if (!access.ok) { return notFound("Chat not found",); }
+
       const chat = await database
         .selectFrom("chats",)
         .select(["id", "name", "type", "mode", "created_at",],)
         .where("id", "=", chatId,)
-        .where("created_by", "=", userId,)
         .executeTakeFirst();
 
       if (!chat) { return notFound("Chat not found",); }
@@ -346,7 +350,7 @@ export function chatExportRoutes(opts: HandlerOpts,) {
       detail: {
         summary: "Export chat in requested format",
         description:
-          "Export a chat's messages as Markdown, JSON, HTML, or plain text. Supports only confirmed, visible messages from the authenticated user's chats.",
+          "Export a chat's messages as Markdown, JSON, HTML, or plain text. Supports only confirmed, visible messages, accessible to the chat owner, participants, admin, and solo user.",
         tags: ["Chats", "Export",],
       },
     },
