@@ -84,6 +84,91 @@ Investigate current browser e2e coverage (7 `*.browser.ts` files, 40 cases) and 
 16. **`chatState()` default-shape contract** (from `src/frontend/alpine/chat.ts` return object).
 17. **`ui` store default-shape contract** (from `src/frontend/stores/ui-store.ts`). *(TASK-chat-state-contract)*
 
+## High-Value Topic Matrix (2026-08-06)
+
+API-level e2e coverage (`tests/e2e/flows/*.test.ts`) exists for ALL 11 topics below; **browser/UI-level coverage is ZERO for all of them**. Each row: API coverage file → source surface → new browser test case.
+
+### 1. Chat compression-encryption-decryption-decompression flow
+- **API:** `encryption.test.ts` (key CRUD, round-trip, unicode/long/compress).
+- **Source:** `src/frontend/browser.ts` (compress→encrypt pipeline), `alpine/chat-keys.ts` (`loadChatKey` → `window.__chatKey`), `alpine/chat-messages.ts` (`sendMessage` wraps via `browserCompressThenEncrypt`), `htmx-encrypt.ts` (`hx-ext="encrypt"`, `data-encrypt` attr auto-decrypt after swap), `routes/message-encryption.ts`, `routes/messages.ts` server-side `decryptThenDecompress`.
+- **Gate:** encryption is **automatic when key present** (no user toggle); key fetched on `selectChat`.
+- **New browser cases:**
+  - `encryption-flow.browser.ts`: open seeded chat → assert `window.__chatKey` set (Alpine `chat-keys` state) → send message → assert rendered message **decrypts to plaintext after htmx swap** (no `[Encrypted — unable to decrypt]`) → fetch message via API → assert stored content is a non-plaintext encrypted payload (`{enc, nonce, algo, comp, keyId}` shape).
+  - Wrong-key path: assert server falls back to `[Encrypted — unable to decrypt]` placeholder.
+
+### 2. Registration flow
+- **API:** register handler in `auth.test.ts` + `src/routes/auth.ts` `handleRegister` (gates `config.auth.registrationOpen`, 3/hr rate limit).
+- **Source:** `src/views/register.html` + `components/auth-form-fields.html` (`register-submit`, `register-error`, `username-input`, `password-input`).
+- **New browser cases:**
+  - `register-flow.browser.ts`: navigate `/views/register` → fill → submit → assert redirect to login/chat + user exists via API. Duplicate-username → `register-error` swap. Registration-closed config → error shown.
+  - Blocked by the same 401-redirect loop as login if `auth.required=true` — see P0/`TASK-PLAN-E2E-STABILIZATION`.
+
+### 3. Authorization flow
+- **API:** `auth.test.ts` (login/demo/logout/me/401), `users.test.ts` (403 non-admin), `isolation.test.ts`, `age-gate.test.ts`.
+- **Source:** `middleware/auth.ts` (JWT bearer>cookie, solo fallback), `admin-gate.ts` (`adminViewGuard` 302, `requireAdmin`), `views/login.html` (`demo-login`, `signup-link`).
+- **New browser cases:**
+  - Successful login (valid `seedUsers` creds → redirect `/views/chat` + cookie set) — missing today (auth-flow only tests invalid creds).
+  - Demo-login click → htmx swap to authed view.
+  - Logout → lands on login, authed API calls 401.
+  - Admin view: `e2eadmin` sees `/views/admin`; non-admin gets 302 → `/`.
+
+### 4. Join/invite flow
+- **API:** `invite-join.test.ts` (chat invite create/list/revoke, join-by-code, expired/used/revoked).
+- **Source:** chat invites API-only (`routes/invites.ts`); **world invites have UI** in `views/world-edit.html` Invites tab (`world-invites.ts`: `show-create-invite-btn`, `submit-create-invite`, `invite-max-uses`, `copy-invite-code`, `revoke-invite`).
+- **New browser cases:**
+  - `world-invites-flow.browser.ts`: world-edit → Invites tab → create invite (set max-uses) → assert code renders → copy code → join via `/views/` join UI (if present) or via API with copied code → assert membership.
+  - Chat invites have **no browser UI** — API-only; document as known gap.
+
+### 5. All creation menus (character, world, location, chat)
+- **API:** `characters.test.ts`, `worlds.test.ts`, `chats.test.ts`, `chats-participants.test.ts`.
+- **Source:** `partials/characters/create-modal.html` (`create-character-form`: displayName/actorType/description/personality/scenario/welcomeMessage/tags), `partials/worlds/create-modal.html` + `edit-modal.html` (`create-world-form`), `alpine/world-locations.ts` (`addLocation/saveLocation/deleteLocation`), `views/new-chat.html` (`create-chat-form`: `chat-name-input`, `chat-type-select`, `chat-mode-select`, `participant-search`, `persona-select`).
+- **New browser cases:**
+  - Character create **persists** (submit → new card in grid → detail opens) — currently submit is clicked but result never asserted.
+  - World create persists → appears in list → world-edit loads.
+  - Location CRUD in world-edit: add → render → edit → delete.
+  - New-chat: fill advanced fields (type/mode/participant/persona) → create → lands in chat view with correct chat.
+
+### 6. Settings menus and modals (exposure level, context follow)
+- **API:** `users.test.ts` (PUT `/api/users/:id/settings`).
+- **Source:** `views/settings.html` + `alpine/settings.ts`: tabs general/chat/api/notifications/data/keys; testids `settings-header`, `save-general`, `save-api`, `theme-select`, `locale-select`, `api-provider`, `temp-slider`, `export-all`, `delete-all`, `settings-keys`; `key-management.ts` renders in settings modal "keys" tab.
+- **Note:** **"context follow" does not exist as a setting** — flagged by source audit; either add it or exclude from scope. Settings exposure level = per-tab save actions.
+- **New browser cases:**
+  - `settings-flow.browser.ts`: switch theme/locale → save → reload → persisted (localStorage/DB). Save API key via settings-api tab. Keys tab renders encryption key management. Export-all/delete-all buttons present + wired.
+
+### 7. Docs endpoint linkage + docs generation (./docs/ + .plan/)
+- **API:** none — `handleDocsRequest` in `src/server.ts` serves static `docs/.vitepress/dist`; gated by `docs.enabled`, `docs.public` allowlist, `DOCS_ENABLED=false`. Generation: `scripts/gen-plan-docs.ts` (.plan → epics-index), `scripts/gen-openapi.ts` (docs/reference/openapi.json), `scripts/reconcile.ts`.
+- **Note:** served by `src/server.ts`, **not** the Elysia app — browser-test harness uses `createApp()` (Elysia) + a separate Bun server; docs route may need harness wiring to be reachable.
+- **New browser cases:**
+  - `docs.browser.ts`: GET `/docs/` → 200 + HTML; GET `/docs/guide/...` → 200; non-public section (config `docs.public` allowlist) → 404; path traversal (`/docs/../secret`) → 404. Verify `.plan/epics-index.md` exists and is generated (script-level, not browser).
+
+### 8. Redirection
+- **API:** none directly; `redirectTo()` in `elysia-app.ts` (302), `/` → `/views/chat`|`/views/login`, `/register`, `/chat`; `/views/:name` .html→clean redirect in `routes/views.ts`.
+- **New browser cases:**
+  - `redirection.browser.ts`: unauthenticated `/` → login; authed `/` → chat. `/views/chat.html` → `/views/chat`. Unknown `/views/xyz` → `/views/`. **Regression guard: the auth redirect-loop bug (baseline failure) — assert no infinite `?redirect=` growth on `/views/login`.**
+
+### 9. Access correctness
+- **API:** `isolation.test.ts`, `worlds.test.ts` (cross-tenant), `characters.test.ts`, `chats.test.ts`.
+- **Source:** `chat/service.ts` `checkChatAccess` (owner|admin|solo|participant), `routes/worlds.ts` `requireWorldAccess` (owner|admin|public|member) + `requireWorldOwner`, `actor-auth.ts` `checkActorOwnership`.
+- **New browser cases:**
+  - Non-owner world detail → empty-state/404 (not data); admin sees all worlds.
+  - Non-participant chat → cannot open/send (UI surfaces 401 gracefully, no data leak).
+  - Solo/demo mode vs authed: view renders with/without user data.
+
+### 10. Gallery, previews, assets interactions, chat gallery
+- **API:** `assets.test.ts` (upload/list/get/link/delete), `chat-full.test.ts` (asset upload+link).
+- **Source:** `views/gallery.html` (`upload-button`, `asset-grid`, `filter-bar`), `partials/gallery/upload-modal.html` (`upload-form`, `upload-file-input`, `asset-label`), `preview-modal.html`; `components/chat/gallery-sidebar.html` (`gallery-upload-link`, `gallery-sidebar`), `media-preview-modal.html`; `assets/controller.ts`.
+- **New browser cases:**
+  - `gallery-flow.browser.ts`: open upload modal → pick file → upload → asset appears in grid. Click asset → preview modal opens.
+  - Chat gallery: open chat → gallery sidebar → upload/link asset from chat → preview from message media link.
+
+### 11. Search / filtering
+- **API:** search endpoints exist (`chat-search.ts` `/api/chats/search`, `message-search.ts` FTS5 `/api/messages/search`, `/dynamic/characters|worlds|chats|gallery/search`); no dedicated API e2e file.
+- **Source:** `components/filter-bar.html` (search input, `list-search`), `chat-list.html` (`#chat-search`), `components/chat/message-search-bar.html` (`message-search-input`).
+- **New browser cases:**
+  - `search-flow.browser.ts`: gallery filter-bar filters grid; chat-list search narrows list; message search returns matching messages (FTS5). Assert swapped DOM contains only matches.
+
+**Cross-cutting gaps (all topics):** no `assertNoPageErrors` anywhere (encryption/key-management and world-invite Alpine components are prime candidates for console errors); no persisted-result assertions; fixed sleeps.
+
 ## Current Baseline (this worktree, `bdea77f8`, 2026-08-06 run)
 
 Per-file results (full suite, `E2E_SAFEGUARD=1 bun test --max-concurrency=1` per file):
@@ -111,6 +196,17 @@ Per-file results (full suite, `E2E_SAFEGUARD=1 bun test --max-concurrency=1` per
 - [ ] Settings/personas/quests/notifications/gallery/new-chat-advanced coverage added
 - [ ] Admin + nsfw-moderation view tests (admin vs non-admin)
 - [ ] `chatState()` + `ui` store contract tests
+- [ ] **Topic 1:** `encryption-flow.browser.ts` — key set, encrypted send, client decrypt after swap, wrong-key placeholder
+- [ ] **Topic 2:** `register-flow.browser.ts` — success redirect, duplicate error, closed-registration error
+- [ ] **Topic 3:** successful login + demo-login + logout browser flows
+- [ ] **Topic 4:** `world-invites-flow.browser.ts` — create/copy/join/revoke via world-edit Invites tab
+- [ ] **Topic 5:** creation menus persist — character, world, location CRUD, new-chat advanced fields
+- [ ] **Topic 6:** `settings-flow.browser.ts` — theme/locale save+persist, API key tab, keys tab, export/delete wired
+- [ ] **Topic 7:** `docs.browser.ts` — `/docs/` 200, public allowlist 404, traversal 404
+- [ ] **Topic 8:** `redirection.browser.ts` — `/` authed vs anon, `.html`→clean, unknown view, no redirect-loop regression
+- [ ] **Topic 9:** access-correctness browser checks — non-owner world/chat denial surfaces without data leak
+- [ ] **Topic 10:** `gallery-flow.browser.ts` — upload→grid, preview modal, chat gallery sidebar + media preview
+- [ ] **Topic 11:** `search-flow.browser.ts` — gallery/chats/message search filters swapped DOM
 - [ ] Full browser suite green: `for f in tests/e2e/flows/browser/*.browser.ts; do bun test --max-concurrency=1 "./$f" || exit 1; done`
 
 ## Files
