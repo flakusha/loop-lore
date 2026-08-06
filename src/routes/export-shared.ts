@@ -12,13 +12,21 @@
  */
 
 import JSZip from "jszip";
-import type { Kysely, } from "kysely";
+import type { Kysely, Selectable, } from "kysely";
 import crypto from "node:crypto";
 import { exportToCcV3Json, } from "../characters/exporters/ccv3";
 import { exportToPng, } from "../characters/exporters/png";
 import { exportToYaml, } from "../characters/exporters/yaml";
 import type { CanonicalCharacter, } from "../characters/parser";
-import type { DB, } from "../db/schema";
+import type {
+  DB,
+  Locations,
+  LocationStates,
+  Quests,
+  Worlds,
+  WorldLoreEntries,
+  WorldStates,
+} from "../db/schema";
 import { jsonParseOr, } from "../utils";
 
 /**
@@ -27,7 +35,7 @@ import { jsonParseOr, } from "../utils";
  */
 export interface ExportItem {
   id: string;
-  type: "character" | "chat" | "world" | "asset";
+  type: "character" | "chat" | "world" | "location" | "story" | "asset";
   name: string;
   format: string;
   filename: string;
@@ -344,4 +352,111 @@ export async function exportAssetsToZip(ctx: ExportContext,): Promise<void> {
     },);
   }
   ctx.counts.assets = assets.length;
+}
+
+/**
+ * Canonical round-trippable world bundle: a world row plus every story-domain
+ * record owned by that world. Produced by {@link exportStoryToZip} and consumed
+ * by the world import route, so a single `story/<worldId>.json` file restores a
+ * world, its locations, and its story state.
+ */
+export interface WorldBundle {
+  schema_version: string;
+  world: Selectable<Worlds>;
+  locations: Selectable<Locations>[];
+  world_lore_entries: Selectable<WorldLoreEntries>[];
+  quests: Selectable<Quests>[];
+  world_states: Selectable<WorldStates>[];
+  location_states: Selectable<LocationStates>[];
+}
+
+/**
+ * Export the user's locations into `zip/locations/<worldId>/` as JSON.
+ * Ownership is scoped through the owning world. Populates
+ * `ctx.counts.locations`.
+ */
+export async function exportLocationsToZip(ctx: ExportContext,): Promise<void> {
+  const locations = await ctx.database
+    .selectFrom("locations",)
+    .innerJoin("worlds", "worlds.id", "locations.world_id",)
+    .selectAll("locations",)
+    .where("worlds.owner_id", "=", ctx.userId,)
+    .execute();
+
+  const locationsFolder = ctx.zip.folder("locations",);
+  for (const location of locations) {
+    const worldFolder = locationsFolder?.folder(location.world_id,);
+    const filename = `${location.id}.json`;
+    const content = JSON.stringify(location, null, 2,);
+    const checksumPath = `locations/${location.world_id}/${filename}`;
+    worldFolder?.file(filename, content,);
+    addChecksum(ctx.checksums, checksumPath, content,);
+
+    ctx.onItem?.({
+      id: location.id,
+      type: "location",
+      name: location.name,
+      format: "json",
+      filename: `${location.world_id}/${filename}`,
+      checksum: ctx.checksums[checksumPath] ?? "",
+      size: content.length,
+      metadata: { world_id: location.world_id, },
+    },);
+  }
+  ctx.counts.locations = locations.length;
+}
+
+/**
+ * Export a self-contained {@link WorldBundle} per owned world into
+ * `zip/story/<worldId>.json`. Populates `ctx.counts.story`.
+ */
+export async function exportStoryToZip(ctx: ExportContext,): Promise<void> {
+  const worlds = await ctx.database
+    .selectFrom("worlds",)
+    .selectAll()
+    .where("owner_id", "=", ctx.userId,)
+    .execute();
+
+  const storyFolder = ctx.zip.folder("story",);
+  for (const world of worlds) {
+    const [locations, loreEntries, quests, worldStates, locationStates,] = await Promise.all([
+      ctx.database.selectFrom("locations",).selectAll().where("world_id", "=", world.id,).execute(),
+      ctx.database.selectFrom("world_lore_entries",).selectAll().where("world_id", "=", world.id,).execute(),
+      ctx.database.selectFrom("quests",).selectAll().where("world_id", "=", world.id,).execute(),
+      ctx.database.selectFrom("world_states",).selectAll().where("world_id", "=", world.id,).execute(),
+      ctx.database.selectFrom("location_states",).selectAll().where("world_id", "=", world.id,).execute(),
+    ],);
+
+    const bundle: WorldBundle = {
+      schema_version: "1.0",
+      world,
+      locations,
+      world_lore_entries: loreEntries,
+      quests,
+      world_states: worldStates,
+      location_states: locationStates,
+    };
+
+    const filename = `${world.id}.json`;
+    const content = JSON.stringify(bundle, null, 2,);
+    const checksumPath = `story/${filename}`;
+    storyFolder?.file(filename, content,);
+    addChecksum(ctx.checksums, checksumPath, content,);
+
+    ctx.onItem?.({
+      id: world.id,
+      type: "story",
+      name: world.name ?? world.id,
+      format: "json",
+      filename,
+      checksum: ctx.checksums[checksumPath] ?? "",
+      size: content.length,
+      metadata: {
+        world_id: world.id,
+        location_count: locations.length,
+        quest_count: quests.length,
+      },
+    },);
+  }
+  ctx.counts.story = worlds.length;
 }
