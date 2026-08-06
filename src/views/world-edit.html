@@ -46,6 +46,13 @@
               >
                 Explore
               </button>
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeTab === 'items' }"
+                @click="activeTab = 'items'; loadItems()"
+              >
+                Items
+              </button>
             </div>
 
             <!-- General Tab -->
@@ -242,14 +249,227 @@
                 </template>
               </div>
 
+            <div
+              x-show="!loadingLocations && locationsLoaded && locations.length === 0"
+              class="empty-state"
+              style="padding: var(--space-12)"
+            >
+              <div class="icon">🗺️</div>
+              <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
+              <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
+            </div>
+            </div>
+
+            <!-- Items Tab (item creation + item settings) -->
+            <div x-show="activeTab === 'items'">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+                <h3 style="margin: 0">Items</h3>
+                <button
+                  class="btn btn-primary"
+                  @click="showAddForm = !showAddForm"
+                  x-text="showAddForm ? t('common.cancel') : 'Add Item'"
+                >
+                </button>
+              </div>
+
+              <div class="add-location-form" x-show="showAddForm" x-cloak>
+                <div class="form-group">
+                  <label class="form-label" for="item-name">Name</label>
+                  <input class="form-input" type="text" id="item-name" x-model="newItemName" placeholder="e.g., Iron Sword" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="item-desc">Description</label>
+                  <textarea class="form-input form-textarea" id="item-desc" x-model="newItemDesc" rows="2" placeholder="Short description"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                  <div class="form-group">
+                    <label class="form-label" for="item-category">Category</label>
+                    <select class="form-input" id="item-category" x-model="newItemCategory">
+                      <option value="weapon">Weapon</option>
+                      <option value="armor">Armor</option>
+                      <option value="consumable">Consumable</option>
+                      <option value="key_item">Key Item</option>
+                      <option value="quest_item">Quest Item</option>
+                      <option value="material">Material</option>
+                      <option value="tool">Tool</option>
+                      <option value="container">Container</option>
+                      <option value="treasure">Treasure</option>
+                      <option value="book">Book</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="item-rarity">Rarity</label>
+                    <select class="form-input" id="item-rarity" x-model="newItemRarity">
+                      <option value="common">Common</option>
+                      <option value="uncommon">Uncommon</option>
+                      <option value="rare">Rare</option>
+                      <option value="epic">Epic</option>
+                      <option value="legendary">Legendary</option>
+                      <option value="unique">Unique</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                  <div class="form-group">
+                    <label class="form-label" for="item-value">Value</label>
+                    <input class="form-input" type="number" id="item-value" x-model.number="newItemValue" min="0" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="item-weight">Weight</label>
+                    <input class="form-input" type="number" id="item-weight" x-model.number="newItemWeight" min="0" />
+                  </div>
+                </div>
+                <button class="btn btn-primary" @click="addItem()" :disabled="!newItemName.trim()">
+                  {{{t("common.add")}}}
+                </button>
+              </div>
+
+              <div x-show="loadingItems" class="empty-state" style="padding: var(--space-8)">
+                <div class="icon">⏳</div>
+                <div class="title">Loading items...</div>
+              </div>
+
+              <div x-show="!loadingItems && items.length > 0">
+                <template x-for="item in items" :key="item.id">
+                  <div
+                    class="location-item"
+                    style="padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md); cursor: pointer"
+                    @click="expandItem(item.id); loadInstances(item.id)"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                      <div class="location-info">
+                        <div class="location-name" x-text="item.name"></div>
+                        <div class="location-desc" x-text="(item.category + ' · ' + item.rarity)"></div>
+                      </div>
+                      <div class="location-actions" @click.stop>
+                        <button
+                          class="btn btn-danger"
+                          style="font-size: var(--fs-sm); padding: var(--space-1) var(--space-3)"
+                          @click="deleteItem(item.id)"
+                        >
+                          {{{t("common.delete")}}}
+                        </button>
+                      </div>
+                    </div>
+                    <div
+                      x-show="expandedItem === item.id"
+                      @click.stop
+                      style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default)"
+                    >
+                      <div style="display: grid; gap: var(--space-2)">
+                        <input class="form-input" style="font-size: var(--fs-base-sm)" x-model="editItemName" />
+                        <textarea class="form-input form-textarea" rows="2" style="font-size: var(--fs-base-sm)" x-model="editItemDesc" placeholder="Description"></textarea>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
+                          <select class="form-input" style="font-size: var(--fs-base-sm)" x-model="editItemCategory">
+                            <option value="weapon">Weapon</option>
+                            <option value="armor">Armor</option>
+                            <option value="consumable">Consumable</option>
+                            <option value="key_item">Key Item</option>
+                            <option value="quest_item">Quest Item</option>
+                            <option value="material">Material</option>
+                            <option value="tool">Tool</option>
+                            <option value="container">Container</option>
+                            <option value="treasure">Treasure</option>
+                            <option value="book">Book</option>
+                            <option value="other">Other</option>
+                          </select>
+                          <select class="form-input" style="font-size: var(--fs-base-sm)" x-model="editItemRarity">
+                            <option value="common">Common</option>
+                            <option value="uncommon">Uncommon</option>
+                            <option value="rare">Rare</option>
+                            <option value="epic">Epic</option>
+                            <option value="legendary">Legendary</option>
+                            <option value="unique">Unique</option>
+                          </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
+                          <input class="form-input" type="number" style="font-size: var(--fs-base-sm)" x-model.number="editItemValue" min="0" placeholder="Value" />
+                          <input class="form-input" type="number" style="font-size: var(--fs-base-sm)" x-model.number="editItemWeight" min="0" placeholder="Weight" />
+                        </div>
+                        <button
+                          class="btn btn-primary btn-xs"
+                          @click="saveItem(item.id)"
+                          style="justify-self: flex-start"
+                        >
+                          {{{t("common.save")}}}
+                        </button>
+                      </div>
+
+                      <!-- Placed instances -->
+                      <div style="margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--border-default)">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2)">
+                          <strong style="font-size: var(--fs-base-sm)">Instances</strong>
+                        </div>
+
+                        <div x-show="locations.length > 0" style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3)">
+                          <select
+                            class="form-input"
+                            style="font-size: var(--fs-base-sm); flex: 1"
+                            x-model="placeLocationId"
+                            :disabled="locations.length === 0"
+                          >
+                            <option value="">Place at location…</option>
+                            <template x-for="lc in locations" :key="lc.id">
+                              <option :value="lc.id" x-text="lc.name"></option>
+                            </template>
+                          </select>
+                          <input
+                            class="form-input"
+                            type="number"
+                            min="1"
+                            style="font-size: var(--fs-base-sm); width: 80px"
+                            x-model.number="placeQuantity"
+                            placeholder="Qty"
+                          />
+                          <button
+                            class="btn btn-secondary btn-xs"
+                            @click="placeInstance(item.id)"
+                            :disabled="!placeLocationId || !Number(placeQuantity)"
+                          >
+                            Place
+                          </button>
+                        </div>
+                        <div x-show="locations.length === 0" class="form-label" style="margin-bottom: var(--space-2)">
+                          No locations in this world yet — add one in the Locations tab to place items.
+                        </div>
+
+                        <div x-show="loadingInstances" class="form-label">Loading instances…</div>
+
+                        <div x-show="!loadingInstances && instances.length > 0">
+                          <template x-for="inst in instances" :key="inst.id">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default)">
+                              <span style="font-size: var(--fs-base-sm)" x-text="(locName(inst.location_id) + ' · ×' + inst.quantity)"></span>
+                              <button
+                                class="btn btn-danger btn-xs"
+                                style="font-size: var(--fs-sm); padding: var(--space-1) var(--space-2)"
+                                @click="destroyInstance(inst.id)"
+                              >
+                                Destroy
+                              </button>
+                            </div>
+                          </template>
+                        </div>
+                        <div
+                          x-show="!loadingInstances && instancesLoaded && instances.length === 0"
+                          class="form-label"
+                        >
+                          No placed instances yet.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
               <div
-                x-show="!loadingLocations && locationsLoaded && locations.length === 0"
+                x-show="!loadingItems && itemsLoaded && items.length === 0"
                 class="empty-state"
                 style="padding: var(--space-12)"
               >
-                <div class="icon">🗺️</div>
-                <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
-                <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
+                <div class="icon">📦</div>
+                <div class="title">No items yet</div>
+                <div class="description">Create an item definition for this world.</div>
               </div>
             </div>
 
