@@ -344,7 +344,7 @@
     "label": "feat",
     "priority": "high",
     "source": ".plan/tickets/FEAT-comfyui-plugin-workflow-templates.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "ComfyUI Plugin & Workflow Templates",
     "type": "FEAT"
@@ -455,7 +455,7 @@
     "label": "feat",
     "priority": "high",
     "source": ".plan/tickets/FEAT-i18n-accessibility-foundation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "i18n & Accessibility Foundation",
     "type": "FEAT"
@@ -503,7 +503,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-memory-systems-three-tier.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Memory Systems (Three-Tier)",
     "type": "FEAT"
@@ -1619,7 +1619,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-core-system.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "EPIC: Character Core System",
     "type": "TASK",
@@ -1716,7 +1716,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-mood-swings-happiness-meter.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Character: Mood Swings & Happiness Meter",
     "type": "TASK"
@@ -1742,7 +1742,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-character-multi-personality.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "character",
       "personality",
@@ -1759,7 +1759,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-multi-personality-system.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Character: Multi-Personality System",
     "type": "TASK"
@@ -1786,7 +1786,8 @@
     "tags": [],
     "title": "TASK character relationships",
     "type": "TASK",
-    "hash": "71a3535"
+    "hash": "71a3535",
+    "status": "done"
   },
   "TASK-CHARACTER-RPG-STATS": {
     "epic": "",
@@ -1938,7 +1939,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "EPIC: Chat Lifecycle, Transitions & Moderation",
     "type": "TASK",
@@ -1997,7 +1998,8 @@
     "source": ".plan/tickets/TASK-chat-only-world-channels-invite-driven-membership.md",
     "tags": [],
     "title": "Chat-only world channels (invite-driven membership)",
-    "type": "TASK"
+    "type": "TASK",
+    "status": "done"
   },
   "TASK-CHAT-PINS-FRONTEND": {
     "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
@@ -2136,7 +2138,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-chat-visual-novel-mode.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Chat: Visual Novel Mode",
     "type": "TASK"
@@ -2220,7 +2222,8 @@
     "tags": [],
     "title": "ComfyUI Node Discovery",
     "type": "TASK",
-    "hash": "e2c1866"
+    "hash": "e2c1866",
+    "status": "done"
   },
   "TASK-COMFYUI-TEMPLATE-REGISTRY": {
     "epic": "epic-comfyui-plugin",
@@ -2231,7 +2234,8 @@
     "tags": [],
     "title": "ComfyUI Workflow Template Registry",
     "type": "TASK",
-    "hash": "1d50bac"
+    "hash": "1d50bac",
+    "status": "done"
   },
   "TASK-COMPANION-BONDING-QUESTS": {
     "epic": "epic-companion-pet-mount",
@@ -2585,7 +2589,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-css-deduplication-jscpd-full.md"
+    "source": ".plan/tickets/TASK-css-deduplication-jscpd-full.md",
+    "status": "done"
   },
   "TASK-DATA-INTEGRITY-ACID": {
     "epic": "epic-data-integrity-acid",
@@ -2942,7 +2947,8 @@
     "source": ".plan/tickets/TASK-encryption-asset-encryption-update.md",
     "tags": [],
     "title": "Update Asset Encryption for Algorithm Extensibility",
-    "type": "TASK"
+    "type": "TASK",
+    "status": "done"
   },
   "TASK-ENCRYPTION-AUTO-KEY-ROTATION": {
     "epic": "epic-crypto",
@@ -3050,7 +3056,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-epic-36-lint-cognitive-complexity-misc.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "epic-36 lint: cognitive complexity + misc",
     "type": "TASK"
@@ -3617,7 +3623,8 @@
     "source": ".plan/tickets/TASK-i18n-locale-completion.md",
     "tags": [],
     "title": "i18n Locale Completion (Phase 1)",
-    "type": "TASK"
+    "type": "TASK",
+    "status": "done"
   },
   "TASK-I18N-RECONCILIATION-SCRIPT": {
     "epic": "epic-i18n",
@@ -4104,7 +4111,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-memory-decay-logic.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "memory",
       "decay",
@@ -4183,7 +4190,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wire trustModifier from Relationships into Memory Provision",
     "type": "TASK"
@@ -4558,7 +4565,7 @@
     "label": "task",
     "priority": "low (moderation — postpone)",
     "source": ".plan/tickets/TASK-nsfw-gate-moderation-events.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "NSFW Gate & Moderation Events",
     "type": "TASK"
@@ -5626,7 +5633,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-server-side-i18n-middleware.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Server-Side i18n Middleware",
     "type": "TASK"
@@ -6374,7 +6381,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wire-auto-rename.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "wiring"
@@ -6439,7 +6446,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wire memory promotion pipeline",
     "type": "TASK"
@@ -6452,7 +6459,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wire-memory-provision-context.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wire memory provision context",
     "type": "TASK"
@@ -6465,7 +6472,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wire-transitions.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "transitions",
