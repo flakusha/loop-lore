@@ -19,6 +19,8 @@ import type {
   TurnStatus,
   TurnType,
   PublicationStatus,
+  WorldKind,
+  WorldVisibility,
 } from "./enums";
 
 /**
@@ -34,6 +36,23 @@ import type {
  * DB Schema — Story Domain Tables
  *
 "40: @theirs\n41: @theirs\n42: @theirs"
+
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
 export interface Worlds {
   id: Generated<string>;
   owner_id: string;
@@ -41,6 +60,8 @@ export interface Worlds {
   description: string | null;
   lore: string | null;
   publication_status: Generated<PublicationStatus>;
+  kind: Generated<WorldKind>;
+  visibility: Generated<WorldVisibility>;
   scan_depth: Generated<number>;
   token_budget: Generated<number>;
   difficulty_modifier: Generated<number>;

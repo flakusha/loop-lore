@@ -177,7 +177,9 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "Worlds": {
     "difficulty_reroll": "DifficultyReroll",
     "difficulty_state": "DifficultyState",
+    "kind": "WorldKind",
     "publication_status": "PublicationStatus",
+    "visibility": "WorldVisibility",
   },
   "Locations": {
     "publication_status": "PublicationStatus",

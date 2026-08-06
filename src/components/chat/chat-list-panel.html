@@ -121,6 +121,56 @@
         </template>
       </div>
     </template>
+    <!-- World channels (chat-only worlds) tree -->
+    <template x-if="_worlds.length > 0">
+      <div
+        class="chat-world-tree"
+        style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-2)"
+      >
+        <div class="nav-section-title" style="padding: var(--space-2) var(--space-3) 0">World channels</div>
+        <template x-for="world in _worlds" :key="world.id">
+          <div class="world-node">
+            <a
+              class="nav-item"
+              href="#"
+              @click.prevent="toggleWorld(world.id)"
+              style="display: flex; justify-content: space-between; align-items: center"
+            >
+              <span class="name" x-text="world.name"></span>
+              <span class="badge" x-text="_worldExpanded[world.id] ? '▾' : '▸'"></span>
+            </a>
+            <template x-if="_worldExpanded[world.id]">
+              <div class="world-node-children" style="padding-left: var(--space-3)">
+                <template x-for="group in worldChatGroups(world.id)" :key="group.locationId">
+                  <div class="location-node">
+                    <div
+                      class="nav-section-title"
+                      style="padding: var(--space-1) var(--space-3); font-size: 11px; color: var(--text-secondary)"
+                    >
+                      <span x-text="group.locationName"></span>
+                    </div>
+                    <template x-for="chat in group.chats" :key="chat.id">
+                      <a
+                        class="nav-item"
+                        :class="{ active: activeChat === chat.id }"
+                        href="#"
+                        @click.prevent="selectChat(chat.id)"
+                        style="padding-left: var(--space-4)"
+                      >
+                        <span class="name" x-text="chat.name"></span>
+                      </a>
+                    </template>
+                  </div>
+                </template>
+                <template x-if="worldChatGroups(world.id).length === 0">
+                  <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No channels yet</div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
     <!-- Client-side filtered list -->
     <template x-if="_searchResults.length === 0">
       <div>

@@ -1,7 +1,15 @@
 import type { ChatState, } from "./chat-types";
 import type { WorldEditState, } from "./world-types";
 
-export type { ChatState, GenerationDetail, GmConfig, GroupedMessage, Message, MessageAttachment, } from "./chat-types";
+export type {
+  ChatState,
+  GenerationDetail,
+  GmConfig,
+  GroupedMessage,
+  Message,
+  MessageAttachment,
+  WorldChannelChat,
+} from "./chat-types";
 export type { EquipmentSlot, MemoryEntry, MemoryPanelState, RpgStats, StatusEffect, } from "./chat-types";
 export type { WorldEditState, } from "./world-types";
 

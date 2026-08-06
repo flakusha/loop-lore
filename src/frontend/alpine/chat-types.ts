@@ -140,6 +140,14 @@ export interface MemoryPanelState {
   newMemoryContent: string;
 }
 
+/** One channel chat row returned by GET /api/worlds/:worldId/chats. */
+export interface WorldChannelChat {
+  id: string;
+  name: string;
+  current_location_id: string | null;
+  location_name: string | null;
+}
+
 export interface ChatState extends AlpineMagicThis {
   isGenerating: boolean;
   generationLabel: string;
@@ -246,6 +254,15 @@ export interface ChatState extends AlpineMagicThis {
   applyChatFilters(): Promise<void>;
   _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
   searchChats(q: string,): Promise<void>;
+  // World channels (chat-only worlds) — sidebar tree.
+  _worlds: { id: string; name: string }[];
+  _worldChats: Record<string, WorldChannelChat[]>;
+  _worldExpanded: Record<string, boolean>;
+  _worldsLoading: boolean;
+  loadWorldChannels(): Promise<void>;
+  loadWorldChats(worldId: string,): Promise<void>;
+  toggleWorld(worldId: string,): void;
+  worldChatGroups(worldId: string,): { locationId: string; locationName: string; chats: WorldChannelChat[] }[];
   _joinableChats: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
   loadJoinableChats(): Promise<void>;
   joinChat(chatId: string,): Promise<void>;
