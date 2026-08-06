@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import type { ChatState, GroupedMessage, } from "./types";
 
 const getMarked = () => globalThis.__marked;
@@ -214,7 +215,7 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     const url = `/api/assets/${asset.id}/raw`;
     this.previewMediaAsset = {
       id: asset.id,
-      filename: asset.filename || asset.name || "Asset",
+      filename: asset.filename || asset.name || t("gallery.assetFallback",),
       asset_type: asset.asset_type,
       mime_type: asset.mime_type,
       size_bytes: asset.size_bytes,

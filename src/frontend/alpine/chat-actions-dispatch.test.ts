@@ -1,3 +1,4 @@
+import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { chatActions, } from "./chat-actions";
 
