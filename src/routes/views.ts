@@ -923,6 +923,7 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
         "chats.is_pinned",
         "chats.updated_at",
         "chats.created_at",
+        "chats.encryption_level",
         "worlds.name as world_name",
         "locations.name as location_name",
       ],)
@@ -979,6 +980,7 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
       "chats.is_pinned",
       "chats.updated_at",
       "chats.created_at",
+      "chats.encryption_level",
       "worlds.name as world_name",
       "locations.name as location_name",
     ],);
@@ -1035,6 +1037,7 @@ async function enrichChats(
     is_pinned: string;
     updated_at: string;
     created_at: string;
+    encryption_level: string;
     world_name: string | null;
     location_name: string | null;
   }[],
@@ -1046,6 +1049,7 @@ async function enrichChats(
     is_pinned: string;
     updated_at: string;
     created_at: string;
+    encryption_level: string;
     world_name: string | null;
     location_name: string | null;
     participant_count: number;
@@ -1088,6 +1092,7 @@ function renderChatListItems(rows: {
   created_at: string;
   world_name: string | null;
   location_name: string | null;
+  encryption_level: string;
   participant_count: number;
   last_message: string | null;
 }[],): string {
@@ -1097,6 +1102,11 @@ function renderChatListItems(rows: {
       const name = escapeHtml(r.name,);
       const typeLabel = r.type === "group" ? "👥" : "💬";
       const pinned = r.is_pinned === "pinned" ? " ★" : "";
+      const encryptionBadge = r.encryption_level !== "public" && r.encryption_level !== "none"
+        ? `<span title="Encrypted (${
+          escapeHtml(r.encryption_level,)
+        })" style="font-size:11px;color:var(--accent-cyan)">🔒</span>`
+        : "";
       const worldTag = r.world_name
         ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">🌍 ${
           escapeHtml(r.world_name,)
@@ -1128,7 +1138,7 @@ function renderChatListItems(rows: {
         <span style="font-size:18px;flex-shrink:0">${typeLabel}</span>
         <div style="flex:1;min-width:0">
           <div style="font-weight:500;font-size:14px;display:flex;align-items:center;gap:var(--space-1)">
-            ${name}${pinned ? `<span style="color:var(--accent-yellow)">${pinned}</span>` : ""}
+            ${name}${pinned ? `<span style="color:var(--accent-yellow)">${pinned}</span>` : ""}${encryptionBadge}
           </div>
           <div style="display:flex;gap:var(--space-2);margin-top:2px;flex-wrap:wrap;align-items:center">
             ${worldTag}${locationTag}
