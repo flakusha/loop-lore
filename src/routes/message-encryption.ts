@@ -9,6 +9,7 @@
  *   Returns encryption and anonymous mode status.
  */
 import { Elysia, } from "elysia";
+import { checkChatAccess, } from "../chat/service";
 import type { Config, } from "../config/schema";
 import {
   deriveChatKeyForChat,
@@ -18,8 +19,9 @@ import {
 } from "../crypto";
 import type { Db, } from "../db";
 import { getLogger, type Logger, } from "../logger";
+import { notFound, } from "../validation/middleware";
 import { SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "routes:message-encryption", },);
@@ -27,8 +29,15 @@ function log(): Logger {
 
 export function messageEncryptionRoutes(opts: { database: Db; config: Config },): Elysia {
   return new Elysia()
-    .get("/api/chats/:id/encryption-key", async ({ params, ...rest },) => {
+    .get("/api/chats/:id/encryption-key", async (req,) => {
+      const userId = requireUserId(req,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(req,);
+      const { params, ...rest } = req;
       const chatId = params.id;
+
+      const access = await checkChatAccess(opts.database, chatId, userId, userRole,);
+      if (!access.ok) { return notFound("Chat not found",); }
 
       if (!isEncryptionEnabled()) {
         return jsonError({
