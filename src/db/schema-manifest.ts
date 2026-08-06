@@ -877,6 +877,23 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
+  .table("character_skills", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    name: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    description: col("text",),
+    level: col("integer", { notNull: true, hasDefault: true, },),
+    xp: col("integer", { notNull: true, hasDefault: true, },),
+    proficiency: col("text", { notNull: true, hasDefault: true, },),
+    specialization: col("text",),
+    is_locked: col("integer", { notNull: true, hasDefault: true, },),
+    prerequisites: col("text", { notNull: true, hasDefault: true, },),
+    metadata: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("character_stats", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     actor_id: col("text", { notNull: true, },),
