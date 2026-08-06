@@ -13,6 +13,7 @@ import "./gm-panel";
 import "./htmx";
 import "./notifications";
 import "./user-notifications";
+import "./notification-center";
 import "./user-info";
 import "./settings";
 import "./personas";
