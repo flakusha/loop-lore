@@ -162,13 +162,15 @@ export class NotificationService {
     settings.notifications = merged;
 
     const serialized = safeJsonStringify(settings,);
-    if (serialized.ok) {
-      await this.db
-        .updateTable("users",)
-        .set({ settings: serialized.value, },)
-        .where("id", "=", userId,)
-        .execute();
+    if (!serialized.ok) {
+      // Don't report success for a preference we failed to persist.
+      throw new Error("Failed to serialize notification preferences",);
     }
+    await this.db
+      .updateTable("users",)
+      .set({ settings: serialized.value, },)
+      .where("id", "=", userId,)
+      .execute();
     return merged;
   }
 
