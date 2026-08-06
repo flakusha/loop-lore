@@ -1,5 +1,6 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { getConfigValue, } from "../admin/config";
 import { linkAsset, } from "../assets/service";
 import { parseCommand, } from "../assistant/command-parser";
 import { getCommand, } from "../assistant/commands/registry";
@@ -12,7 +13,13 @@ import {
   type MessageRef,
   promoteMessagesToMemories,
 } from "../chat";
-import { checkChatAccess, getMessageWithAccess, listMessages, type ServiceError, } from "../chat/service";
+import {
+  checkChatAccess,
+  getMessageWithAccess,
+  listMessages,
+  type ServiceError,
+  updateMessageVisibility,
+} from "../chat/service";
 import type { Config, } from "../config/schema";
 import { decodeContent, } from "../content/decode";
 import { encodeContent, } from "../content/encode";
@@ -33,7 +40,7 @@ import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation
 import { extractMentionedActorIds, parseInitiativeFlag, } from "../group-chat/mention-parser";
 import { getLogger, type Logger, } from "../logger";
 import { notifyMention, } from "../notifications/service";
-import { filter as filterProfanity, } from "../profanity/service";
+import { containsProfanity, filter as filterProfanity, } from "../profanity/service";
 import { safeJsonParse, safeJsonStringify, uid, } from "../utils";
 import { forbidden, notFound, } from "../validation/middleware";
 import {
@@ -498,6 +505,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
           const body = ctx.body as typeof MessageCreateBody.static;
 
           const filteredContent = filterProfanity(body.content,);
+          const hasProfanity = containsProfanity(body.content,);
           const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
           const effectiveContent = isInitiative ? cleanMessage : filteredContent;
 
@@ -666,6 +674,18 @@ export function messagesRoutes(opts: HandlerOpts,) {
             .execute();
 
           const attachments = body.attachments;
+
+          // ── Profanity moderation gate ─────────────────────────
+          // When the admin `profanity_filter` toggle is enabled, hide profane
+          // user messages behind moderation instead of silently censoring only.
+          // The censor above still runs regardless; this adds an opt-in
+          // flag/hide path (see docs/frontend/chat/assistant.md "moderation").
+          if (hasProfanity) {
+            const profanityFilter = (await getConfigValue(database, "profanity_filter",)) === "true";
+            if (profanityFilter) {
+              await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
+            }
+          }
           if (attachments && attachments.length > 0) {
             const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
             for (const [i, a,] of attachments.entries()) {
