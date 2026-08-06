@@ -7,6 +7,7 @@
 // `loadWorldChannels()` on ChatState. `joinWorldByCode()` is the only fetch,
 // hitting POST /api/world-invites/:code/join.
 import type { WorldChannelChat, } from "./chat-types";
+import { t, } from "./i18n";
 import type { ChatState, } from "./types";
 
 export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
@@ -18,7 +19,7 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
       const key = chat.current_location_id ?? "unlocated";
       let group = groups.get(key,);
       if (!group) {
-        group = { locationId: key, locationName: chat.location_name || "No channel", chats: [], };
+        group = { locationId: key, locationName: chat.location_name || t("toasts.noChannel",), chats: [], };
         groups.set(key, group,);
       }
       group.chats.push(chat,);
@@ -30,7 +31,7 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
   async joinWorldByCode() {
     const code = (this.worldJoinCode || "").trim();
     if (!code) {
-      this.$dispatch("show-toast", { type: "warning", message: "Enter a world invite code", },);
+      this.$dispatch("show-toast", { type: "warning", message: t("toasts.enterWorldInviteCode",), },);
       return;
     }
     try {
@@ -39,18 +40,18 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
       },);
       if (!res.ok) {
         const body = await res.json();
-        this.$dispatch("show-toast", { type: "error", message: body.error || "Could not join world", },);
+        this.$dispatch("show-toast", { type: "error", message: body.error || t("toasts.couldNotJoinWorld",), },);
         return;
       }
       const outcome = await res.json();
       this.worldJoinCode = "";
       this.$dispatch("show-toast", {
         type: "success",
-        message: outcome.alreadyMember ? "Already a member of this world" : "Joined world",
+        message: t(outcome.alreadyMember ? "toasts.alreadyMember" : "toasts.joinedWorld",),
       },);
       await this.loadWorldChannels();
     } catch {
-      this.$dispatch("show-toast", { type: "error", message: "Network error", },);
+      this.$dispatch("show-toast", { type: "error", message: t("toasts.networkError",), },);
     }
   },
 };

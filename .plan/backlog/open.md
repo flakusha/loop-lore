@@ -53,7 +53,7 @@
 | 5 | `chat.html` broken Handlebars partial `{{> {{>`                                             | `src/views/chat.html:39-41`                       | 🟡 Fix                             |
 | 6 | `content/compress.ts` unguarded `.zst` read (latent crash)                                  | `src/content/compress.ts:96+203`                  | 🟡 Guard                           |
 | 7 | `age-gate/controller.ts` error message leak                                                 | `src/age-gate/controller.ts:91,126`               | 🟡 Generic error                   |
-| 8 | Telemetry `chatId` data loss; ~25 frontend i18n gaps                                        | `src/frontend/`                                   | 🟡 Fix                             |
+| 8 | Telemetry `chatId` data loss                                                             | `src/frontend/`                                   | 🟡 Fix (frontend i18n gaps closed 2026-08-06) |
 
 ## Release hardening (mirrors `../high-value.md`; kept here for the open queue)
 

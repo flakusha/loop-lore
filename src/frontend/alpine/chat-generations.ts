@@ -1,4 +1,5 @@
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import { trackTelemetry, } from "./telemetry";
@@ -49,9 +50,9 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this._cleanupSSE();
       try {
         const data = jsonParseOr<{ error?: string }>(event.data, {},);
-        this.$dispatch?.("show-toast", { type: "error", message: data.error ?? "Generation failed", },);
+        this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.generationFailed",), },);
       } catch {
-        this.$dispatch?.("show-toast", { type: "error", message: "Generation failed", },);
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.generationFailed",), },);
       }
     },);
 
@@ -106,7 +107,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
   async cancelGeneration() {
     log.info("cancelGeneration", { chatId: this.activeChat, },);
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "No active chat to cancel", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChatToCancel",), },);
       return;
     }
     try {
@@ -124,15 +125,15 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       if (response.ok && data.ok) {
         this.isGenerating = false;
         this.activeAttemptId = null;
-        this.$dispatch?.("show-toast", { type: "info", message: "Generation cancelled", },);
+        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.generationCancelled",), },);
       } else {
         this.$dispatch?.("show-toast", {
           type: "error",
-          message: data.error ?? "Failed to cancel generation",
+          message: data.error ?? t("toasts.failedCancelGeneration",),
         },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error cancelling generation", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCancellingGeneration",), },);
     }
   },
 
