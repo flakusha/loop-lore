@@ -22,7 +22,7 @@ import { DifficultyReroll, DifficultyState, PublicationStatus, WorldKind, WorldV
 import type { DB, } from "../db/schema";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, uid, } from "../utils";
-import { notFound, unauthorized, } from "../validation/middleware";
+import { forbidden, notFound, unauthorized, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../validation/schemas";
 import {
   ErrorCode,
@@ -72,6 +72,27 @@ async function requireWorldAccess(
     .executeTakeFirst();
   if (member) { return null; }
   return notFound("World not found",);
+}
+
+/**
+ * Check the caller OWNS the world (or is admin/solo) — for MUTATIONS.
+ * Read access (public/member) is governed by requireWorldAccess.
+ * @returns error Response if denied, null if OK.
+ */
+async function requireWorldOwner(
+  database: Kysely<DB>,
+  worldId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<Response | null> {
+  const world = await database
+    .selectFrom("worlds",)
+    .select(["owner_id",],)
+    .where("id", "=", worldId,)
+    .executeTakeFirst();
+  if (!world) { return notFound("World not found",); }
+  if (world.owner_id === userId || userRole === "admin" || userRole === "solo") { return null; }
+  return forbidden("Forbidden",);
 }
 
 // ── Handlers ────────────────────────────────────────────────
@@ -163,7 +184,7 @@ async function handleUpdateWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   const updates: Record<string, unknown> = {};
@@ -189,7 +210,7 @@ async function handleDeleteWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   const locationIds = await database
@@ -229,7 +250,7 @@ async function handleInitializeStates(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   const state = new WorldStateService(database,);
@@ -318,7 +339,7 @@ async function handleCreateLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   const name = body.name as string | undefined;
@@ -380,7 +401,7 @@ async function handleUpdateLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   const updates: Record<string, unknown> = {};
@@ -415,7 +436,7 @@ async function handleDeleteLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   await database.deleteFrom("locations",).where("id", "=", locId,).where("world_id", "=", worldId,).execute();
