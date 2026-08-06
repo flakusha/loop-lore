@@ -32,7 +32,7 @@ if [[ -n "$MAIN_REPO_ROOT" && -f "$MAIN_REPO_ROOT/.credentials.env" ]]; then
     source "$MAIN_REPO_ROOT/.credentials.env"
 fi
 
-"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
+
 
 PROTECTED_BRANCHES="master main stg dev"
 
@@ -376,6 +376,680 @@ cmd_create() {
     echo -e "  cd $worktree_path"
 }
 
+cmd_new() {
+  local branch="$1"
+  local base="${2:-$(get_default_branch)}"
+
+  if [[ -z "$branch" ]]; then
+    echo -e "${RED}Error: branch name required${NC}"
+    echo "Usage: $(basename "$0") new <branch> [base]"
+    exit 1
+  fi
+
+  # Block operations on protected branches
+  if is_protected "$branch"; then
+    echo -e "${RED}Error: cannot create branch '$branch' — protected branch${NC}"
+    exit 1
+  fi
+
+  # Check if branch already exists
+  if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+    echo -e "${YELLOW}Branch '$branch' already exists. Use 'create' instead.${NC}"
+    exit 1
+  fi
+
+  # Check if base branch exists
+  if ! git -C "$REPO_ROOT" rev-parse --verify "$base" >/dev/null 2>&1; then
+    echo -e "${RED}Error: base branch '$base' does not exist${NC}"
+    exit 1
+  fi
+
+  local dir_name
+  dir_name="$(branch_to_path "$branch")"
+  local worktree_path="$TREE_DIR/$dir_name"
+
+  if [[ -d "$worktree_path" ]]; then
+    echo -e "${RED}Error: directory already exists: $worktree_path${NC}"
+    exit 1
+  fi
+
+  ensure_tree_dir
+  echo -e "${CYAN}Creating new branch '$branch' from '$base'${NC}"
+  git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
+  configure_signing "$worktree_path"
+  configure_hooks "$worktree_path"
+  echo -e "${GREEN}✓ Created: $worktree_path${NC}"
+  echo -e "  cd $worktree_path"
+}
+
+cmd_ticket() {
+  # Create a .plan/tickets/ file AND a git-native-issue
+  # Usage: ./scripts/worktree.sh ticket <TYPE> <title> [body] [options]
+  # Creates: .plan/tickets/TASK-{name}.md + git issue with Plan spec comment
+  local type=""
+  local title=""
+  local body=""
+  local labels=()
+  local priority=""
+  local epic=""
+  local effort="Medium"
+
+  # Parse required positional args
+  type="${1:-}"
+  title="${2:-}"
+  body="${3:-}"
+
+  if [[ -z "$type" ]] || [[ -z "$title" ]]; then
+    echo -e "${RED}Error: type and title required${NC}"
+    echo "Usage: $(basename "$0") ticket <TYPE> <title> [body] [options]"
+    echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA"
+    echo ""
+    echo "Options:"
+    echo "  -l, --label <label>    Add label (repeatable)"
+    echo "  -p, --priority <level> Set priority: low, medium, high, critical"
+    echo "  -e, --epic <epic>      Link to epic (e.g., epic-plugin-system)"
+    echo "  --effort <level>       Set effort: Small, Medium, Large, XL"
+    echo ""
+    echo "Example: $(basename "$0") ticket TASK 'Fix login' -l backend -l bug -p high -e epic-auth"
+    exit 1
+  fi
+
+  # Parse optional flags (shift past the 3 positional args)
+  shift 3 2>/dev/null || true
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -l | --label)
+        labels+=("$2")
+        shift 2
+        ;;
+      -p | --priority)
+        priority="$2"
+        shift 2
+        ;;
+      -e | --epic)
+        epic="$2"
+        shift 2
+        ;;
+      --effort)
+        effort="$2"
+        shift 2
+        ;;
+      *)
+        echo -e "${RED}Unknown option: $1${NC}"
+        exit 1
+        ;;
+    esac
+  done
+
+  # Normalize type to uppercase
+  type=$(echo "$type" | tr '[:lower:]' '[:upper:]')
+
+  # Validate type
+  case "$type" in
+    BUG | FEAT | FIX | IDEA | TASK | SOL | INFRA) ;;
+    *)
+      echo -e "${RED}Error: unknown type '$type'${NC}"
+      exit 1
+      ;;
+  esac
+
+  # Validate priority if provided
+  if [[ -n "$priority" ]]; then
+    case "$priority" in
+      low | medium | high | critical) ;;
+      *)
+        echo -e "${RED}Error: unknown priority '$priority' (use: low, medium, high, critical)${NC}"
+        exit 1
+        ;;
+    esac
+  fi
+
+  # Generate ticket name from title (kebab-case, lowercase, remove special chars)
+  local ticket_name
+  ticket_name=$(echo "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-60)
+
+  local ticket_file=".plan/tickets/${type}-${ticket_name}.md"
+
+  # Check if ticket file already exists
+  if [[ -f "$ticket_file" ]]; then
+    echo -e "${YELLOW}Ticket file already exists: $ticket_file${NC}"
+    exit 0
+  fi
+
+  # Create .plan/tickets/ directory if needed
+  mkdir -p .plan/tickets
+
+  # Create ticket file with frontmatter
+  echo -e "${CYAN}Creating ticket file: ${ticket_file}${NC}"
+  cat >"$ticket_file" <<EOF
+# ${type}: ${title}
+
+**Status:** ⬜ Not Started
+**Priority:** ${priority:-Medium}
+**Effort:** ${effort}
+EOF
+
+  # Add epic if provided
+  if [[ -n "$epic" ]]; then
+    echo "**Epic:** ${epic}" >>"$ticket_file"
+  fi
+
+  cat >>"$ticket_file" <<EOF
+
+## Summary
+
+${body:-No description provided.}
+
+## Acceptance Criteria
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
+EOF
+
+  echo -e "${GREEN}  ✓ Created ticket file${NC}"
+
+  # Create git issue with title embedding the extid
+  local year
+  year=$(date +%Y)
+  local extid="${type}-${ticket_name}"
+  local full_title="${extid}: ${title}"
+
+  echo -e "${CYAN}Creating git issue: ${extid}${NC}"
+  local issue_hash
+  issue_hash=$(git -C "$REPO_ROOT" issue create "$full_title" -m "$body" 2>&1)
+
+  # Extract issue hash from output (format: "Created issue <hash>")
+  local hash
+  hash=$(echo "$issue_hash" | grep -oP '[0-9a-f]{7,}')
+
+  if [[ -n "$hash" ]]; then
+    # Add Plan spec comment linking to the ticket file
+    git -C "$REPO_ROOT" issue comment "$hash" -m "Plan spec: ${ticket_file}" 2>/dev/null || true
+
+    # Add labels if provided
+    if [[ ${#labels[@]} -gt 0 ]]; then
+      local label_cmd=(git -C "$REPO_ROOT" issue edit "$hash")
+      for label in "${labels[@]}"; do
+        label_cmd+=(-l "$label")
+      done
+      "${label_cmd[@]}" 2>/dev/null || true
+    fi
+
+    # Add priority if provided
+    if [[ -n "$priority" ]]; then
+      git -C "$REPO_ROOT" issue edit "$hash" -p "$priority" 2>/dev/null || true
+    fi
+
+    echo -e "${GREEN}  ✓ Created git issue${NC}"
+  else
+    echo -e "${YELLOW}  ⚠ Could not extract issue hash — issue may not have been created${NC}"
+  fi
+
+  echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
+  echo -e "  Ticket file: ${ticket_file}"
+  [[ -n "$hash" ]] && echo -e "  Git issue: ${hash}"
+
+  # Sync index.json with new ticket
+  if [[ -f "$REPO_ROOT/scripts/sync-ticket-index.ts" ]]; then
+    echo -e "${CYAN}Syncing index.json...${NC}"
+    bun run "$REPO_ROOT/scripts/sync-ticket-index.ts" --fix 2>/dev/null || true
+  fi
+}
+
+cmd_issues() {
+  # List issues with optional filters
+  # Usage: ./scripts/worktree.sh issues [--all] [--format FORMAT]
+  local show_all=false
+  local format="oneline"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --all | -a)
+        show_all=true
+        shift
+        ;;
+      --format | -f)
+        format="$2"
+        shift 2
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
+  echo -e "${CYAN}Issues:${NC}"
+  if [[ "$show_all" == true ]]; then
+    git -C "$REPO_ROOT" issue ls --format "$format" 2>/dev/null
+  else
+    git -C "$REPO_ROOT" issue ls --format "$format" 2>/dev/null | head -50
+  fi
+}
+
+cmd_show() {
+  # Show issue details and comments
+  # Usage: ./scripts/worktree.sh show <ID>
+  local id="$1"
+
+  if [[ -z "$id" ]]; then
+    echo -e "${RED}Error: issue ID required${NC}"
+    echo "Usage: $(basename "$0") show <ID>"
+    exit 1
+  fi
+
+  # Try to find by extid pattern (e.g., TASK-001)
+  if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+    # Search for the issue by title pattern
+    local found_id
+    found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+    if [[ -n "$found_id" ]]; then
+      id="$found_id"
+    fi
+  fi
+
+  git -C "$REPO_ROOT" issue show "$id" 2>/dev/null
+}
+
+cmd_comment() {
+  # Add comment to issue
+  # Usage: ./scripts/worktree.sh comment <ID> -m <text>
+  local id="$1"
+  shift
+
+  if [[ -z "$id" ]]; then
+    echo -e "${RED}Error: issue ID required${NC}"
+    echo "Usage: $(basename "$0") comment <ID> -m <text>"
+    exit 1
+  fi
+
+  # Try to find by extid pattern (e.g., TASK-001)
+  if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+    local found_id
+    found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+    if [[ -n "$found_id" ]]; then
+      id="$found_id"
+    fi
+  fi
+
+  git -C "$REPO_ROOT" issue comment "$id" "$@" 2>/dev/null
+}
+
+cmd_edit() {
+  # Edit issue metadata
+  # Usage: ./scripts/worktree.sh edit <ID> [--label/--assignee/--priority]
+  local id="$1"
+  shift
+
+  if [[ -z "$id" ]]; then
+    echo -e "${RED}Error: issue ID required${NC}"
+    echo "Usage: $(basename "$0") edit <ID> [options]"
+    exit 1
+  fi
+
+  # Try to find by extid pattern (e.g., TASK-001)
+  if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+    local found_id
+    found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+    if [[ -n "$found_id" ]]; then
+      id="$found_id"
+    fi
+  fi
+
+  git -C "$REPO_ROOT" issue edit "$id" "$@" 2>/dev/null
+}
+
+cmd_state() {
+  # Change issue state
+  # Usage: ./scripts/worktree.sh state <ID> <STATE>
+  local id="$1"
+  local state="$2"
+
+  if [[ -z "$id" ]] || [[ -z "$state" ]]; then
+    echo -e "${RED}Error: issue ID and state required${NC}"
+    echo "Usage: $(basename "$0") state <ID> <STATE>"
+    echo "  STATE: open, closed"
+    exit 1
+  fi
+
+  # Try to find by extid pattern (e.g., TASK-001)
+  if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+    local found_id
+    found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+    if [[ -n "$found_id" ]]; then
+      id="$found_id"
+    fi
+  fi
+
+  # git-issue expects flag syntax (--open/--close), not a positional state
+  case "$state" in
+    open) git -C "$REPO_ROOT" issue state "$id" --open 2>/dev/null ;;
+    closed) git -C "$REPO_ROOT" issue state "$id" --close 2>/dev/null ;;
+    *) git -C "$REPO_ROOT" issue state "$id" --state "$state" 2>/dev/null ;;
+  esac
+}
+
+cmd_search() {
+  # Search issues by text pattern
+  # Usage: ./scripts/worktree.sh search <PATTERN>
+  local pattern="$1"
+
+  if [[ -z "$pattern" ]]; then
+    echo -e "${RED}Error: search pattern required${NC}"
+    echo "Usage: $(basename "$0") search <PATTERN>"
+    exit 1
+  fi
+
+  echo -e "${CYAN}Searching issues for: ${pattern}${NC}"
+  git -C "$REPO_ROOT" issue search "$pattern" 2>/dev/null
+}
+
+cmd_attach() {
+  # Attach file to issue as comment
+  # Usage: ./scripts/worktree.sh attach <ID> <FILE>
+  local id="$1"
+  local file="$2"
+
+  if [[ -z "$id" ]] || [[ -z "$file" ]]; then
+    echo -e "${RED}Error: issue ID and file required${NC}"
+    echo "Usage: $(basename "$0") attach <ID> <FILE>"
+    exit 1
+  fi
+
+  if [[ ! -f "$file" ]]; then
+    echo -e "${RED}Error: file not found: $file${NC}"
+    exit 1
+  fi
+
+  # Try to find by extid pattern (e.g., TASK-001)
+  if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+    local found_id
+    found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+    if [[ -n "$found_id" ]]; then
+      id="$found_id"
+    fi
+  fi
+
+  # Read file content and create comment
+  local content
+  content=$(cat "$file")
+  local filename
+  filename=$(basename "$file")
+
+  echo -e "${CYAN}Attaching $filename to issue $id...${NC}"
+  git -C "$REPO_ROOT" issue comment "$id" -m "## Attachment: $filename
+
+\`\`\`
+$content
+\`\`\`" 2>/dev/null
+  echo -e "${GREEN}✓ Attached $filename${NC}"
+}
+
+cmd_attach_dir() {
+  # Attach all files in directory to issue
+  # Usage: ./scripts/worktree.sh attach-dir <ID> <DIR>
+  local id="$1"
+  local dir="$2"
+
+  if [[ -z "$id" ]] || [[ -z "$dir" ]]; then
+    echo -e "${RED}Error: issue ID and directory required${NC}"
+    echo "Usage: $(basename "$0") attach-dir <ID> <DIR>"
+    exit 1
+  fi
+
+  if [[ ! -d "$dir" ]]; then
+    echo -e "${RED}Error: directory not found: $dir${NC}"
+    exit 1
+  fi
+
+  echo -e "${CYAN}Attaching files from $dir to issue $id...${NC}"
+  local count=0
+  for file in "$dir"/*; do
+    if [[ -f "$file" ]]; then
+      cmd_attach "$id" "$file"
+      ((count++))
+    fi
+  done
+  echo -e "${GREEN}✓ Attached $count files${NC}"
+}
+
+cmd_gi() {
+  # Shortcut for git-issue commands
+  # Usage: ./scripts/worktree.sh gi <args>
+  git -C "$REPO_ROOT" issue "$@" 2>/dev/null
+}
+
+cmd_list() {
+  echo -e "${CYAN}Active worktrees:${NC}"
+  echo ""
+  git -C "$REPO_ROOT" worktree list
+  echo ""
+
+  if [[ -d "$TREE_DIR" ]]; then
+    local count
+    count=$(find "$TREE_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
+    echo -e "${CYAN}Worktrees in ./tree/:${NC} $count"
+  else
+    echo -e "${YELLOW}No ./tree/ directory yet${NC}"
+  fi
+}
+
+cmd_new() {
+    local branch="$1"
+    local base="${2:-master}"
+
+    if [[ -z "$branch" ]]; then
+        echo -e "${RED}Error: branch name required${NC}"
+        echo "Usage: $(basename "$0") new <branch> [base]"
+        exit 1
+    fi
+
+    # Block operations on protected branches
+    if is_protected "$branch"; then
+        echo -e "${RED}Error: cannot create branch '$branch' — protected branch${NC}"
+        exit 1
+    fi
+
+    # Check if branch already exists
+    if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+        echo -e "${YELLOW}Branch '$branch' already exists. Use 'create' instead.${NC}"
+        exit 1
+    fi
+
+    # Check if base branch exists
+    if ! git -C "$REPO_ROOT" rev-parse --verify "$base" >/dev/null 2>&1; then
+        echo -e "${RED}Error: base branch '$base' does not exist${NC}"
+        exit 1
+    fi
+
+    local dir_name
+    dir_name="$(branch_to_path "$branch")"
+    local worktree_path="$TREE_DIR/$dir_name"
+
+    if [[ -d "$worktree_path" ]]; then
+        echo -e "${RED}Error: directory already exists: $worktree_path${NC}"
+        exit 1
+    fi
+
+    ensure_tree_dir
+    echo -e "${CYAN}Creating new branch '$branch' from '$base'${NC}"
+    git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
+    configure_signing "$worktree_path"
+// hint: Logic changed on both sides. Requires understanding intent of each change.
+    link_configs "$worktree_path"
+    configure_hooks "$worktree_path"
+    echo -e "${GREEN}✓ Created: $worktree_path${NC}"
+    echo -e "  cd $worktree_path"
+}
+
+cmd_ticket() {
+    # Create a git-native-issue ticket with year-prefixed ID
+    # Usage: ./scripts/worktree.sh ticket <TYPE> <NUM> <title> [body] [options]
+    # IDs use format: TYPE-YYYY-NNN (e.g., TASK-2026-025, FEAT-2026-001)
+    local type=""
+    local num=""
+    local title=""
+    local body=""
+    local labels=()
+    local priority=""
+
+    # Parse required positional args
+    type="${1:-}"
+    num="${2:-}"
+    title="${3:-}"
+    body="${4:-}"
+
+    if [[ -z "$type" ]] || [[ -z "$num" ]] || [[ -z "$title" ]]; then
+        echo -e "${RED}Error: type, number, and title required${NC}"
+        echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body] [options]"
+        echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA, EPIC"
+        echo "  NUM: 3-digit number (e.g., 025, 001)"
+        echo "  IDs use format TYPE-YYYY-NNN (e.g., TASK-2026-025)"
+        echo ""
+        echo "Options:"
+        echo "  -l, --label <label>    Add label (repeatable)"
+        echo "  -p, --priority <level> Set priority: low, medium, high, critical"
+        echo ""
+        echo "Example: $(basename "$0") ticket TASK 025 'Fix login' -l backend -l bug -p high"
+        exit 1
+    fi
+
+    # Parse optional flags (shift past the 4 positional args)
+    shift 4 2>/dev/null || true
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -l|--label)
+                labels+=("$2")
+                shift 2
+                ;;
+            -p|--priority)
+                priority="$2"
+                shift 2
+                ;;
+            *)
+                echo -e "${RED}Unknown option: $1${NC}"
+                exit 1
+                ;;
+        esac
+    done
+
+    # Normalize type to uppercase
+    type=$(echo "$type" | tr '[:lower:]' '[:upper:]')
+    
+    # Validate type
+    case "$type" in
+        BUG|FEAT|FIX|IDEA|TASK|SOL|INFRA|EPIC) ;;
+        *) echo -e "${RED}Error: unknown type '$type'${NC}"; exit 1 ;;
+    esac
+
+    # Validate priority if provided
+    if [[ -n "$priority" ]]; then
+        case "$priority" in
+            low|medium|high|critical) ;;
+            *) echo -e "${RED}Error: unknown priority '$priority' (use: low, medium, high, critical)${NC}"; exit 1 ;;
+        esac
+    fi
+
+    local year
+    year=$(date +%Y)
+    local extid="${type}-${year}-${num}"
+    local full_title="${extid}: ${title}"
+
+    # Check if already exists
+    if git -C "$REPO_ROOT" issue search "${extid}:" 2>/dev/null | grep -q "${extid}:"; then
+        echo -e "${YELLOW}Ticket ${extid} already exists${NC}"
+        exit 0
+    fi
+
+    echo -e "${CYAN}Creating ticket: ${extid}${NC}"
+    local issue_hash
+    issue_hash=$(git -C "$REPO_ROOT" issue create "$full_title" -m "$body")
+
+    # Extract issue hash from output (format: "Created issue <hash>")
+    local hash
+    hash=$(echo "$issue_hash" | grep -oP '[0-9a-f]{7,}')
+
+    # Add labels if provided
+    if [[ ${#labels[@]} -gt 0 ]] && [[ -n "$hash" ]]; then
+        local label_cmd=(git -C "$REPO_ROOT" issue edit "$hash")
+        for label in "${labels[@]}"; do
+            label_cmd+=(-l "$label")
+        done
+        "${label_cmd[@]}"
+    fi
+
+    # Add priority if provided
+    if [[ -n "$priority" ]] && [[ -n "$hash" ]]; then
+        git -C "$REPO_ROOT" issue edit "$hash" -p "$priority"
+    fi
+
+    echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
+}
+
+cmd_issues() {
+// hint: Structural and logic conflict. Both design and behavior differ.
+    # List open issues with branch status
+    # Usage: ./scripts/worktree.sh issues
+    echo -e "${CYAN}Open Issues:${NC}"
+    echo ""
+
+    if command -v git-issue &>/dev/null; then
+        git-issue ls --format full
+    elif command -v git &>/dev/null && git issue version &>/dev/null 2>&1; then
+        git issue ls --format full
+    else
+        echo -e "${RED}Error: git-issue not installed${NC}"
+        echo "Install: curl -sSL https://raw.githubusercontent.com/remenoscodes/git-native-issue/main/install.sh | sh"
+        exit 1
+    fi
+
+    echo ""
+    echo -e "${CYAN}Branch Mapping:${NC}"
+    # Show which issues have corresponding branches
+    git -C "$REPO_ROOT" for-each-ref --format='%(refname:short)' refs/heads/ticket/ 2>/dev/null | while read branch; do
+        echo -e "  ${GREEN}●${NC} $branch"
+    done
+}
+
+cmd_list() {
+    echo -e "${CYAN}Active worktrees:${NC}"
+    echo ""
+
+    local in_repo
+    in_repo=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "detached")
+
+    git -C "$REPO_ROOT" worktree list --porcelain | while IFS= read -r line; do
+        if [[ "$line" == worktree\ * ]]; then
+            local wt_path="${line#worktree }"
+            local rel_path
+            rel_path=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
+            if [[ "$rel_path" == "." ]]; then
+                rel_path="(main repo)"
+            fi
+            echo -e "  ${GREEN}●${NC} $rel_path"
+        elif [[ "$line" == branch\ * ]]; then
+            local branch="${line#branch refs/heads/}"
+            local marker=""
+            if [[ "$branch" == "$in_repo" ]]; then
+                marker=" ${YELLOW}(current)${NC}"
+            fi
+            echo -e "    Branch: ${CYAN}$branch${NC}$marker"
+        elif [[ "$line" == HEAD\ * ]]; then
+            local head="${line#HEAD }"
+            echo -e "    HEAD: ${head:0:8}"
+        elif [[ "$line" == "" ]]; then
+            echo ""
+        fi
+    done
+
+    if [[ -d "$TREE_DIR" ]]; then
+        local count
+        count=$(find "$TREE_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
+        echo -e "${CYAN}Worktrees in ./tree/:${NC} $count"
+    else
+        echo -e "${YELLOW}No ./tree/ directory yet${NC}"
+    fi
+}
 cmd_new() {
     local branch="$1"
     local base="${2:-master}"
@@ -858,7 +1532,7 @@ cmd_rebase() {
 }
 // hint: Structural and logic conflict. Both design and behavior differ.
 cmd_finalize() {
-"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
+
 
     # Resolve directory names (feature-foo) to branch names (feature/foo)
     local resolved
@@ -911,9 +1585,9 @@ cmd_finalize() {
     else
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
-"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
 
-"46: @both\n47: @theirs\n48: @theirs\n49: @theirs"
+
+
 
     # Step 4: Check branch has commits beyond base
     local base="master"
@@ -1162,6 +1836,7 @@ cmd_diff() {
   fi
 }
 
+
 cmd_branches() {
   # List branches with status (merged/pending) and worktree markers
   # Usage: ./scripts/worktree.sh branches
@@ -1225,6 +1900,7 @@ cmd_branches() {
   done
 }
 
+
 cmd_status() {
   # Show current branch status
   # Usage: ./scripts/worktree.sh status [branch]
@@ -1273,6 +1949,7 @@ cmd_status() {
   msg=$(git -C "$REPO_ROOT" log -1 --pretty=format:'%s' "$branch" 2>/dev/null)
   echo "  Last commit: $msg"
 }
+
 
 cmd_issue() {
     # Run git-issue command with native issue tracking
@@ -1424,7 +2101,6 @@ cmd_ticket() {
 
     echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
 }
-
 cmd_issues() {
 // hint: Structural and logic conflict. Both design and behavior differ.
     # List open issues with branch status
@@ -1465,7 +2141,7 @@ cmd_branches() {
 
   # Get worktree branches
   local wt_branches
-"28: @ours\n29: @ours\n30: @ours"
+
 
   for branch in $branches; do
     # Check if branch is protected
@@ -1565,7 +2241,8 @@ cmd_diff() {
 
   echo ""
 }
-"28: @ours\n29: @ours\n30: @ours"
+
+
 
 cmd_status() {
   # Show current branch status
@@ -1615,7 +2292,8 @@ cmd_status() {
   msg=$(git -C "$REPO_ROOT" log -1 --pretty=format:'%s' "$branch" 2>/dev/null)
   echo "  Last commit: $msg"
 }
-"28: @ours\n29: @ours\n30: @ours"
+
+
 # Main
 case "${1:-}" in
     create)
