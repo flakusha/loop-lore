@@ -1810,3 +1810,21 @@ export const MetaProgressionSchema = t.Object({
   metadata: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── character_skills ────────────────────────────────────────────
+export const CharacterSkillsSchema = t.Object({
+  actor_id: t.String(),
+  name: t.String(),
+  category: t.String(),
+  world_id: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+  level: t.Optional(t.Number(),),
+  xp: t.Optional(t.Number(),),
+  proficiency: t.Optional(t.String(),),
+  specialization: t.Optional(t.String(),),
+  is_locked: t.Optional(t.Number(),),
+  prerequisites: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
