@@ -4,18 +4,44 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 
 ## Directory Structure
 
-| Folder                          | Purpose                                   | Count |
-| ------------------------------- | ----------------------------------------- | ----- |
-| `tickets/`                      | Task specs (authoring, review, iteration) | 112   |
-| `epics/`                        | Epic definitions (major initiatives)      | 57    |
-| `roadmaps/`                     | Implementation roadmaps                   | 5     |
-| `research/`                     | Research artifacts, landscape analysis    | 2     |
-| `implementation-plan.md`        | Active implementation checklist (v0.1)    | 1     |
-| `future-features-plan.md`       | Full planned feature list                 | 1     |
-| `external-integrations-plan.md` | External integrations roadmap             | 1     |
-| `epics-index.md`                | Epic registry index                       | 1     |
+| Folder                          | Purpose                                            | Count |
+| ------------------------------- | -------------------------------------------------- | ----- |
+| `tickets/`                      | Task specs (authoring, review, iteration)          | ~539  |
+| `epics/`                        | Epic definitions (major initiatives)               | ~169  |
+| `backlog/`                      | **Status queue, split by priority/value/activity** | 4     |
+| `backlog/priority.md`           | High-priority workstack (P0–P2)                    | 1     |
+| `backlog/high-value.md`         | 0.1.0 value tiers (P3–P5) + release gate           | 1     |
+| `backlog/active.md`             | Ongoing / in-flight + decision queue               | 1     |
+| `backlog/open.md`               | Open debt, unwired code, deferred (P6+)            | 1     |
+| `roadmaps/`                     | Implementation roadmaps                            | 5     |
+| `research/`                     | Research artifacts, landscape analysis             | 2     |
+| `design/`                       | Design reconciliations                             | 5     |
+| `ideas/`                        | World/chat navigation proposals                    | 9     |
+| `features/`                     | Feature specs                                      | 1     |
+| `implementation-plan.md`        | Active implementation checklist (v0.1)             | 1     |
+| `future-features-plan.md`       | Full planned feature list                          | 1     |
+| `external-integrations-plan.md` | External integrations roadmap                      | 1     |
+| `epics-index.md`                | Epic registry index (generated)                    | 1     |
 
-> Note: `roadmaps/roadmap.md` is the master roadmap; the root-level planning docs above were relocated into `.plan/` alongside the existing folders.
+## Backlog Categories (`backlog/`)
+
+The former monolithic `immediate.md` / `backlog.md` / `open-items.md` were split into
+four small, single-purpose files to cut context pressure and remove duplication:
+
+| File            | Holds                                                              | Reads-when                     |
+| --------------- | ------------------------------------------------------------------ | ------------------------------ |
+| `priority.md`   | P0–P2 tiers (critical path, high priority, core workstream)        | Working on priority work       |
+| `high-value.md` | P3–P5 0.1.0 value tiers + Post-P3 release gate + milestone gates   | Triaging 0.1.0 scope / release |
+| `active.md`     | Ongoing / in-flight + open decision queue (finalize-vs-defer)      | Deciding what to do next       |
+| `open.md`       | Open debt (security/access), dead code, schema drift, deferred P6+ | Auditing what's open           |
+
+**Rules:**
+
+- **One home per item.** Every item lives in exactly one category file; rows are moved
+  (not mirrored) between files as they transition active → priority/high-value → open.
+- **Dedup:** `active.md` removes rows that mirror a `priority.md`/`open.md` row.
+- **Detail lives in `tickets/` + `epics/`**; category files are status views, not specs.
+- **Active items** referenced by git issues point at their `.plan/backlog/*.md` source.
 
 ## Git Issue Integration
 
