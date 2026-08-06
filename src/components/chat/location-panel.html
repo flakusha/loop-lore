@@ -1,0 +1,95 @@
+<!-- Chat Location Panel (in-chat location change / transfer / join at location) -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showLocationPanel"
+  @click="$store.ui.showLocationPanel = false"
+  x-cloak
+>
+</div>
+<aside
+  class="right-panel"
+  :style="{ display: $store?.ui?.showLocationPanel ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="location-panel"
+>
+  <button class="btn-icon" @click="$store.ui.showLocationPanel = false" x-bind:title="t('common.close')">
+    &times;
+  </button>
+  <div class="panel-content">
+    <div class="nav-section-title">Location</div>
+
+    <!-- Current location -->
+    <div style="margin-bottom: var(--space-3)">
+      <div class="form-label">Current location</div>
+      <div x-show="_chatCurrentLocationId" style="font-weight: 600" x-text="currentLocationName || '(current)'"></div>
+      <div x-show="_chatRecentLocationChanged" x-cloak style="font-size: 11px; color: var(--text-secondary)">
+        Location updated — reloading…
+      </div>
+      <div x-show="!_chatCurrentLocationId" style="font-size: 12px; color: var(--text-secondary)">
+        No location set — pick one below.
+      </div>
+    </div>
+
+    <!-- Location picker + actions -->
+    <div style="display: grid; gap: var(--space-2); margin-bottom: var(--space-3)">
+      <div class="form-label">Choose a location</div>
+      <select class="form-input" x-model="_selectedLocationId" @change="loadLocationJoinable()">
+        <option value="">Select location…</option>
+        <template x-for="loc in _locations" :key="loc.id">
+          <option :value="loc.id" x-text="loc.name"></option>
+        </template>
+      </select>
+      <div x-show="_locationsLoading && _locations.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+        Loading locations…
+      </div>
+      <div x-show="!_locationsLoading && _locations.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+        No locations in this world.
+      </div>
+
+      <div style="display: flex; gap: var(--space-2)">
+        <button
+          class="btn btn-primary btn-xs"
+          @click="changeChatLocation()"
+          :disabled="!_selectedLocationId || _locationBusy"
+          data-testid="location-change-btn"
+        >
+          Set location
+        </button>
+        <button
+          class="btn btn-secondary btn-xs"
+          @click="transferChatLocation()"
+          :disabled="!_selectedLocationId || _locationBusy"
+          data-testid="location-transfer-btn"
+        >
+          Transfer
+        </button>
+      </div>
+      <div style="font-size: 11px; color: var(--text-secondary)">
+        "Set location" updates this chat's current location; "Transfer" relocates the chat to the chosen location.
+      </div>
+    </div>
+
+    <!-- Joinable chats at the selected location (read-only discovery) -->
+    <div class="nav-section-title" style="margin-top: var(--space-4)">Chats here</div>
+    <div style="display: grid; gap: var(--space-2); max-height: 240px; overflow: auto">
+      <template x-for="room in _locationJoinableChats" :key="room.chatId">
+        <div
+          class="panel-item"
+          style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between"
+        >
+          <div style="display: grid; gap: 1px; overflow: hidden">
+            <span style="font-weight: 600; font-size: 13px" x-text="room.chatName"></span>
+            <span style="font-size: 11px; color: var(--text-secondary)">
+              <span x-text="room.participantCount"></span>
+              <span x-text="room.participantCount === 1 ? ' participant' : ' participants'"></span>
+            </span>
+          </div>
+          <button class="btn btn-xs btn-primary" @click="joinLocationChat(room.chatId)">Join</button>
+        </div>
+      </template>
+      <div x-show="_locationJoinableChats.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+        No joinable chats at the selected location.
+      </div>
+    </div>
+  </div>
+</aside>
