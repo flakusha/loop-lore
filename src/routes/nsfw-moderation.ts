@@ -5,11 +5,13 @@
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { NsfwModerationService, } from "../nsfw/moderation-service";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "nsfw-moderation-routes", },);
@@ -62,11 +64,34 @@ const auditQuery = t.Object({
 
 export function nsfwModerationRoutes(opts: HandlerOpts,) {
   const svc = new NsfwModerationService(opts.database,);
+  const database = opts.database;
+
+  /** Require an authenticated admin caller. Returns userId on success, else a Response. */
+  function requireAdmin(ctx: any,): string | Response {
+    const userId = requireUserId(ctx,);
+    if (typeof userId !== "string") { return userId; }
+    if ((ctx.userRole as string | null) !== "admin") {
+      return forbiddenResponse();
+    }
+    return userId;
+  }
+
+  /** Require the caller to be the target user themselves, or an admin. */
+  function requireOwnOrAdmin(ctx: any, targetUserId: string,): string | Response {
+    const userId = requireUserId(ctx,);
+    if (typeof userId !== "string") { return userId; }
+    if (targetUserId !== userId && (ctx.userRole as string | null) !== "admin") {
+      return forbiddenResponse();
+    }
+    return userId;
+  }
 
   return new Elysia({ name: "nsfw-moderation", },)
     // ── User Preferences ───────────────────────────────
 
     .get("/api/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
+      const auth = requireOwnOrAdmin(ctx, ctx.params.userId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const prefs = await svc.getPreferences(ctx.params.userId,);
         return jsonResponse({ ...SuccessResponse, data: prefs, },);
@@ -77,6 +102,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
     .put("/api/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
+      const auth = requireOwnOrAdmin(ctx, ctx.params.userId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const prefs = await svc.updatePreferences(ctx.params.userId, ctx.body,);
         return jsonResponse({ ...SuccessResponse, data: prefs, },);
@@ -88,6 +115,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
     // ── Block / Ban / Shadow ─────────────────────────
 
     .post("/api/nsfw/moderation/block", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
         const block = await svc.blockUser(targetUserId, performedBy, reason,);
@@ -97,6 +126,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { body: blockBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
     .post("/api/nsfw/moderation/unblock", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
         await svc.unblockUser(targetUserId, performedBy, reason,);
@@ -106,6 +137,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { body: unblockBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
     .post("/api/nsfw/moderation/ban", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
         const ban = await svc.banUser(targetUserId, performedBy, reason,);
@@ -115,6 +148,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
     .post("/api/nsfw/moderation/unban", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
         await svc.unbanUser(targetUserId, performedBy, reason,);
@@ -124,6 +159,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
     .post("/api/nsfw/moderation/shadow", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
         const shadow = await svc.shadowUser(targetUserId, performedBy, reason,);
@@ -133,6 +170,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
     .post("/api/nsfw/moderation/unshadow", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { targetUserId, performedBy, reason, } = ctx.body;
         await svc.unshadowUser(targetUserId, performedBy, reason,);
@@ -144,6 +183,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
     // ── Content Flags ────────────────────────────────
 
     .post("/api/nsfw/moderation/flags", async (ctx: any,) => {
+      const auth = requireUserId(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const flag = await svc.flagContent(ctx.body,);
         return jsonResponse({ ...SuccessResponse, data: flag, },);
@@ -152,6 +193,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { body: flagBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
     .get("/api/nsfw/moderation/flags", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const status = (ctx.query.status as string) ?? "pending";
         const limit = Number(ctx.query.limit ?? 50,);
@@ -163,6 +206,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { query: flagQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
     .put("/api/nsfw/moderation/flags/:id", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { resolvedBy, resolution, status, } = ctx.body;
         const flag = await svc.resolveFlag(ctx.params.id, resolvedBy, resolution, status,);
@@ -178,6 +223,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
     // ── Audit & GDPR ────────────────────────────────
 
     .get("/api/nsfw/moderation/audit/:userId", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const limit = Number(ctx.query.limit ?? 100,);
         const offset = Number(ctx.query.offset ?? 0,);
@@ -188,6 +235,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { params: userIdParam, query: auditQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
     .get("/api/nsfw/moderation/export/:userId", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const data = await svc.exportUserData(ctx.params.userId,);
         return jsonResponse({ ...SuccessResponse, data, },);
@@ -196,6 +245,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
     .delete("/api/nsfw/moderation/export/:userId", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         await svc.deleteUserData(ctx.params.userId,);
         return jsonResponse(SuccessResponse,);
@@ -205,10 +256,19 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
     }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
     // ── Per-Chat/World NSFW Override ──────────────────────────
     .get("/api/nsfw/moderation/effective/:chatId", async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const access = await checkChatAccess(
+        database,
+        ctx.params.chatId,
+        userId,
+        (ctx.userRole as string | null) ?? null,
+      );
+      if (!access.ok) { return notFound("Chat not found",); }
       try {
         const result = await svc.getEffectiveNsfw(
           ctx.params.chatId,
-          ctx.request?.headers?.get("x-user-id",) ?? "anonymous",
+          userId,
         );
         return jsonResponse({ ...SuccessResponse, data: result, },);
       } catch (error: unknown) {
@@ -216,6 +276,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       }
     }, { params: t.Object({ chatId: t.String(), },), response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
     .put("/api/nsfw/moderation/chat/:chatId", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
         await svc.setChatNsfwOverride(ctx.params.chatId, override,);
@@ -229,6 +291,8 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
       response: { 200: SuccessResponse, 500: ErrorResponse, },
     },)
     .put("/api/nsfw/moderation/world/:worldId", async (ctx: any,) => {
+      const auth = requireAdmin(ctx,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
         await svc.setWorldNsfwOverride(ctx.params.worldId, override,);
