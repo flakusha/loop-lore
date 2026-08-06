@@ -1,6 +1,6 @@
 # TASK: Unify backend 401/Unauthorized guard helpers
 
-**Status:** 🟡 Mostly Done (2026-08-05) — `requireCtxUser` deleted; Variant A (38) + `blog.ts` (7) migrated to canonical `requireUserId`; Variants B/C/D/E + middleware deferred (separate commit)
+**Status:** 🟢 Done (2026-08-06) — remaining raw-401 route sites migrated in `c99704c1`; only deliberate exclusions remain (separate module families, handler-funneled files)
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-code-quality
@@ -24,7 +24,9 @@ Unify backend logic into one canonical, localizing guard; frontend needs no chan
 - [x] `blog.ts` inline-401 `extractAuth` sites (7) migrated to `requireUserId` (2026-08-05)
 - [x] All migrated responses: `status: 401`, body `{ error, code }`, message localized — **behavior-preserving** vs the pre-existing inline guard
 - [x] Full routes suite green; typecheck clean
-- [ ] Variant B/C/D/E (localized-vs-raw message delta) + `validation/middleware` `"UNAUTHORIZED"` code reviewed and **deferred with rationale** (separate commit; middleware is a separate module family) — see Notes
+- [x] Variant B/C/D/E + raw `jsonError("Unauthorized")/ctx.userId` sites migrated to canonical factories (`requireUserId` / `unauthorizedResponse`) in `c99704c1` — admin-nsfw(3), admin-templates(7), character-emotion-avatars(6), character-traits GET /traits(1), vn-generate(2), model-comparisons(3, Variant E), import/chat-context helper guards(2).
+- [ ] **Deliberately excluded (separate module families):** `validation/middleware.auth` `code: "UNAUTHORIZED"`, `personas/controller.ts` (6), `characters/errors.ts` mapping. Also `quests.ts`/`story-items.ts`/`story-states.ts` still extract `ctx.userId as string | null` and funnel into handler helpers that raise 401 themselves (no inline divergent jsonError) — non-urgent follow-up.
+- [ ] **Known anomaly:** `requireUserId` breaks `request.json()` body read in `model-comparisons`' Elysia `.derive()`+`request.json()` test setup (400 "Body already used"); model-comparisons therefore uses inline `unauthorizedResponse()` on the same guard. Isolated to that file/test pattern — worth diagnosing if more `request.json()`-after-auth routes appear.
 
 ## Step Plan
 
