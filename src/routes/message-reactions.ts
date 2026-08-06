@@ -2,13 +2,16 @@
 //
 // Toggle emoji reactions on messages.
 // Uses toggle semantics: POST adds if absent, removes if present.
+// All reaction endpoints gate on message access (chat owner or participant)
+// via a single shared helper backed by chat/service.checkChatAccess.
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonResponse, requireUserId, } from "./http-utils";
+import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -33,6 +36,36 @@ const QUICK_EMOJIS = [
   "🌙",
 ];
 
+/**
+ * Resolve a message and verify the user may access it.
+ *
+ * Access policy: the chat owner, any chat participant, and admin/solo roles
+ * may react. Uses `checkChatAccess`, so this stays consistent with the rest of
+ * the message/chat pipelines.
+ *
+ * @returns the message's `chat_id` on success, or a 404 `Response` if the
+ *          message is missing or the user lacks access (returned to the caller
+ *          verbatim).
+ */
+async function resolveMessageAccess(
+  database: Kysely<DB>,
+  messageId: string,
+  userId: string,
+  userRole: string | null,
+): Promise<string | Response> {
+  const msg = await database
+    .selectFrom("messages",)
+    .select(["chat_id",])
+    .where("id", "=", messageId,)
+    .executeTakeFirst();
+  if (!msg) { return notFound("Message not found",); }
+
+  const access = await checkChatAccess(database, msg.chat_id, userId, userRole);
+  if (!access.ok) { return notFound("Message not found",); }
+
+  return msg.chat_id;
+}
+
 export function messageReactionsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
 
@@ -44,26 +77,11 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
 
-          // Verify message exists and user has access
-          const msg = await database
-            .selectFrom("messages",)
-            .innerJoin("chats", "chats.id", "messages.chat_id",)
-            .select(["messages.id", "messages.chat_id", "chats.created_by",],)
-            .where("messages.id", "=", messageId,)
-            .executeTakeFirst();
-          if (!msg) { return notFound("Message not found",); }
-
-          // Simple access check: chat owner or participant
-          const isOwner = msg.created_by === userId;
-          const isParticipant = await database
-            .selectFrom("chat_participants",)
-            .select("actor_id",)
-            .where("chat_id", "=", msg.chat_id,)
-            .where("actor_id", "=", userId,)
-            .executeTakeFirst();
-          if (!isOwner && !isParticipant) { return notFound("Message not found",); }
+          const access = await resolveMessageAccess(database, messageId, userId, userRole);
+          if (typeof access !== "string") { return access; }
 
           // Fetch all reactions for this message
           const reactions = await database
@@ -120,12 +138,16 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
           const { emoji, } = ctx.body as { emoji: string };
 
           if (!emoji || typeof emoji !== "string") {
             return Response.json({ error: "emoji is required", }, { status: 400, },);
           }
+
+          const access = await resolveMessageAccess(database, messageId, userId, userRole);
+          if (typeof access !== "string") { return access; }
 
           // Check existing reaction
           const existing = await database
@@ -185,26 +207,11 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
 
-          // Verify message exists and user has access
-          const msg = await database
-            .selectFrom("messages",)
-            .innerJoin("chats", "chats.id", "messages.chat_id",)
-            .select(["messages.id", "messages.chat_id", "chats.created_by",],)
-            .where("messages.id", "=", messageId,)
-            .executeTakeFirst();
-          if (!msg) { return notFound("Message not found",); }
-
-          // Simple access check: chat owner or participant
-          const isOwner = msg.created_by === userId;
-          const isParticipant = await database
-            .selectFrom("chat_participants",)
-            .select("actor_id",)
-            .where("chat_id", "=", msg.chat_id,)
-            .where("actor_id", "=", userId,)
-            .executeTakeFirst();
-          if (!isOwner && !isParticipant) { return notFound("Message not found",); }
+          const access = await resolveMessageAccess(database, messageId, userId, userRole);
+          if (typeof access !== "string") { return access; }
 
           await database
             .deleteFrom("message_reactions",)
