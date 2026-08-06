@@ -453,7 +453,7 @@ body {
   transition: all var(--transition-fast);
 }
 .new-message-btn:hover {
-  background: var(--accent-primary-80, var(--accent-primary));
+  background: var(--accent-primary);
   box-shadow: var(--shadow-lg);
 }
 
