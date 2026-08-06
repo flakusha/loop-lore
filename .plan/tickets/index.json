@@ -1951,6 +1951,17 @@
     "source": ".plan/tickets/TASK-chat-message-search.md",
     "status": "open"
   },
+  "TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP",
+    "type": "TASK",
+    "title": "Chat-only world channels (invite-driven membership)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-only-world-channels-invite-driven-membership.md"
+  },
   "TASK-CHAT-PINS-FRONTEND": {
     "extid": "TASK-CHAT-PINS-FRONTEND",
     "type": "TASK",

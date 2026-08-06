@@ -222,6 +222,24 @@ const publicationStatusDef: StateDef<PublicationStatus> = {
 
 export const publicationStatusMachine = createMachine(publicationStatusDef,);
 
+/** World mode — 'rpg' uses locations as a travel graph (current_location_id moves);
+ * 'chat' uses locations as channels (current_location_id is a static binding). */
+export const WorldKind = {
+  Rpg: "rpg",
+  Chat: "chat",
+} as const;
+export type WorldKind = (typeof WorldKind)[keyof typeof WorldKind];
+
+/** World visibility (single-server model — no federation, no per-channel ACLs).
+ * 'public' = any authenticated user, 'unlisted' = owner + world members (not listed),
+ * 'private' = owner + world members. */
+export const WorldVisibility = {
+  Public: "public",
+  Unlisted: "unlisted",
+  Private: "private",
+} as const;
+export type WorldVisibility = (typeof WorldVisibility)[keyof typeof WorldVisibility];
+
 const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
   values: ["generated", "validated", "approved", "rejected", "archived",] as const,
   initial: "generated",

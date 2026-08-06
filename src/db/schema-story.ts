@@ -21,6 +21,8 @@ import type {
   StackableState,
   TurnStatus,
   TurnType,
+  WorldKind,
+  WorldVisibility,
 } from "./enums";
 
 // ── worlds ────────────────────────────────────────────
@@ -31,6 +33,8 @@ export interface Worlds {
   description: string | null;
   lore: string | null;
   publication_status: Generated<PublicationStatus>;
+  kind: Generated<WorldKind>;
+  visibility: Generated<WorldVisibility>;
   scan_depth: Generated<number>;
   token_budget: Generated<number>;
   difficulty_modifier: Generated<number>;

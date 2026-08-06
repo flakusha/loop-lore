@@ -16,9 +16,9 @@
  */
 
 import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
+import { type ExpressionBuilder, type Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
-import { DifficultyReroll, DifficultyState, PublicationStatus, } from "../db/enums-story";
+import { DifficultyReroll, DifficultyState, PublicationStatus, WorldKind, WorldVisibility, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import { WorldStateService, } from "../story/world-state";
 import { safeJsonStringify, uid, } from "../utils";
@@ -42,7 +42,11 @@ interface HandleOpts {
 
 // ── Helpers ─────────────────────────────────────────────────
 
-/** Check world access; returns error Response if denied, null if OK. */
+/** Check world access; returns error Response if denied, null if OK.
+ *
+ * Single-server model (no federation, no per-channel ACLs): access is
+ * owner | admin | world member | (public AND authenticated). SFW/NSFW gating
+ * is orthogonal and handled by the existing canAccessNsfw chain. */
 async function requireWorldAccess(
   database: Kysely<DB>,
   worldId: string,
@@ -51,25 +55,58 @@ async function requireWorldAccess(
 ): Promise<Response | null> {
   const world = await database
     .selectFrom("worlds",)
-    .select("owner_id",)
+    .select(["owner_id", "visibility",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) {
-    return notFound("World not found",);
-  }
-  return null;
+  if (!world) { return notFound("World not found",); }
+  if (world.owner_id === userId || userRole === "admin") { return null; }
+  if (!userId) { return notFound("World not found",); }
+  // Public worlds are readable by any authenticated user.
+  if (world.visibility === WorldVisibility.Public) { return null; }
+  // Unlisted/private worlds: owner + world members (joined via invite) only.
+  const member = await database
+    .selectFrom("world_members",)
+    .select("actor_id",)
+    .where("world_id", "=", worldId,)
+    .where("actor_id", "=", userId,)
+    .executeTakeFirst();
+  if (member) { return null; }
+  return notFound("World not found",);
 }
 
 // ── Handlers ────────────────────────────────────────────────
 
 async function handleListWorlds(database: Kysely<DB>, page: number, pageSize: number, userId: string | null,) {
   const offset = (page - 1) * pageSize;
+
+  // Worlds visible to the user: owned, public, or joined (world member).
+  const memberWorldIds: string[] = [];
+  if (userId) {
+    const rows = await database
+      .selectFrom("world_members",)
+      .select("world_id",)
+      .where("actor_id", "=", userId,)
+      .execute();
+    for (const row of rows) {
+      memberWorldIds.push(row.world_id,);
+    }
+  }
+
   let countQuery = database.selectFrom("worlds",).select(database.fn.countAll<number>().as("total",),);
   let listQuery = database.selectFrom("worlds",).selectAll();
 
   if (userId) {
-    countQuery = countQuery.where("owner_id", "=", userId,);
-    listQuery = listQuery.where("owner_id", "=", userId,);
+    const visible = (eb: ExpressionBuilder<DB, "worlds">,) =>
+      eb.or([
+        eb("owner_id", "=", userId,),
+        eb("visibility", "=", WorldVisibility.Public,),
+        ...(memberWorldIds.length > 0 ? [eb("id", "in", memberWorldIds,),] : []),
+      ],);
+    countQuery = countQuery.where(visible,);
+    listQuery = listQuery.where(visible,);
+  } else {
+    countQuery = countQuery.where("visibility", "=", WorldVisibility.Public,);
+    listQuery = listQuery.where("visibility", "=", WorldVisibility.Public,);
   }
 
   const countResult = await countQuery.executeTakeFirst();
@@ -94,6 +131,8 @@ async function handleCreateWorld(database: Kysely<DB>, body: Record<string, unkn
       description: (body.description as string | undefined) ?? null,
       lore: (body.lore as string | undefined) ?? null,
       publication_status: PublicationStatus.Draft,
+      kind: (body.kind as WorldKind | undefined) ?? WorldKind.Rpg,
+      visibility: (body.visibility as WorldVisibility | undefined) ?? WorldVisibility.Private,
       scan_depth: 100,
       token_budget: 2000,
       difficulty_modifier: 1,
@@ -136,6 +175,8 @@ async function handleUpdateWorld(
   if (body.difficultyModifier != null) { updates.difficulty_modifier = body.difficultyModifier; }
   if (body.difficultyReroll != null) { updates.difficulty_reroll = body.difficultyReroll; }
   if (body.difficultyState != null) { updates.difficulty_state = body.difficultyState; }
+  if (body.kind != null) { updates.kind = body.kind; }
+  if (body.visibility != null) { updates.visibility = body.visibility; }
   updates.updated_at = new Date().toISOString();
 
   await database.updateTable("worlds",).set(updates,).where("id", "=", worldId,).execute();
@@ -381,6 +422,52 @@ async function handleDeleteLocation(
   return jsonNoContent();
 }
 
+/**
+ * List chats in a world the user participates in, optionally filtered by
+ * location — the grouped enumeration that powers the world channel tree.
+ * In a chat-only world, `chats.current_location_id` is the static channel
+ * binding; the frontend groups the returned rows by location.
+ */
+async function handleListWorldChats(
+  database: Kysely<DB>,
+  worldId: string,
+  userId: string | null,
+  userRole: string | null,
+  locationId: string | null,
+) {
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
+  if (!userId) { return unauthorized(); }
+
+  let query = database
+    .selectFrom("chats",)
+    .leftJoin("locations", "locations.id", "chats.current_location_id",)
+    .select([
+      "chats.id",
+      "chats.name",
+      "chats.current_location_id",
+      "chats.updated_at",
+      "locations.name as location_name",
+    ],)
+    .where("chats.world_id", "=", worldId,)
+    .where("chats.is_pinned", "!=", "archived",)
+    .where(
+      "chats.id",
+      "in",
+      database
+        .selectFrom("chat_participants",)
+        .select("chat_id",)
+        .where("actor_id", "=", userId,),
+    );
+
+  if (locationId) {
+    query = query.where("chats.current_location_id", "=", locationId,);
+  }
+
+  const chats = await query.orderBy("chats.updated_at", "desc",).execute();
+  return jsonResponse({ data: chats, },);
+}
+
 // ── Elysia plugin ───────────────────────────────────────────
 
 export function worldsRoutes({ database, }: HandleOpts,): Elysia {
@@ -609,6 +696,29 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
           summary: "Delete location",
           description: "Delete a location from a world.",
           tags: ["Worlds",],
+        },
+      },
+    )
+    .get(
+      "/api/worlds/:worldId/chats",
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        const locationId = (ctx.query?.locationId as string | undefined) ?? null;
+        return handleListWorldChats(database, ctx.params.worldId as string, userId, userRole, locationId,);
+      },
+      {
+        params: t.Object({ worldId: t.String(), },),
+        query: t.Optional(t.Object({ locationId: t.Optional(t.String(),), },),),
+        response: {
+          200: t.Object({ data: t.Array(t.Any(),), },),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "List world chats",
+          description:
+            "List chats in a world the user participates in, optionally filtered by location (world channel tree).",
+          tags: ["Worlds", "Chats",],
         },
       },
     )

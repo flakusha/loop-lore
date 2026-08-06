@@ -83,6 +83,7 @@ import { usersRoutes, } from "./routes/users";
 import { viewRoutes, } from "./routes/views";
 import { vnChoiceRoutes, } from "./routes/vn-choices";
 import { vnGenerateRoutes, } from "./routes/vn-generate";
+import { worldInvitesRoutes, } from "./routes/world-invites";
 import { worldLoreEntriesRoutes, } from "./routes/world-lore-entries";
 import { worldsRoutes, } from "./routes/worlds";
 import { handleApiRequest, } from "./server";
@@ -178,6 +179,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(chatsRoutes(handleOpts,),);
   app.use(chatSearchRoutes(handleOpts,),);
   app.use(invitesRoutes(handleOpts,),);
+  app.use(worldInvitesRoutes(handleOpts,),);
   app.use(gmNotesRoutes(handleOpts,),);
   app.use(vnChoiceRoutes({ database: handleOpts.database, },),);
   app.use(vnGenerateRoutes({ database: handleOpts.database, config, },),);
