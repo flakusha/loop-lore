@@ -713,7 +713,12 @@ cmd_state() {
     fi
   fi
 
-  git -C "$REPO_ROOT" issue state "$id" "$state" 2>/dev/null
+  # git-issue expects flag syntax (--open/--close), not a positional state
+  case "$state" in
+    open) git -C "$REPO_ROOT" issue state "$id" --open 2>/dev/null ;;
+    closed) git -C "$REPO_ROOT" issue state "$id" --close 2>/dev/null ;;
+    *) git -C "$REPO_ROOT" issue state "$id" --state "$state" 2>/dev/null ;;
+  esac
 }
 
 cmd_search() {
