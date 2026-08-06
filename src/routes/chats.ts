@@ -31,7 +31,7 @@ import type { DB, } from "../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
 import { getLogger, type Logger, } from "../logger";
 import { notifyChatInvite, } from "../notifications/service";
-import { safeJsonStringify, uid, } from "../utils";
+import { jsonParseOr, safeJsonParse, safeJsonStringify, uid, } from "../utils";
 import {
   BatchIdsBody,
   ChatCreateBody,
@@ -156,7 +156,9 @@ export function chatsRoutes(opts: HandlerOpts,) {
         }
         const text = await ctx.request.text();
         (ctx as { rawBodyText?: string }).rawBodyText = text;
-        return JSON.parse(text,);
+        const parsed = safeJsonParse(text,);
+        if (!parsed.ok) { throw parsed.error; }
+        return parsed.value;
       },)
       .get(
         "/api/chats",
@@ -227,11 +229,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           let rawBody: Record<string, unknown> = {};
           const rawText = (ctx as { rawBodyText?: string }).rawBodyText;
           if (rawText) {
-            try {
-              rawBody = JSON.parse(rawText,) as Record<string, unknown>;
-            } catch {
-              rawBody = {};
-            }
+            rawBody = jsonParseOr(rawText, {},);
           }
           const hasExplicit = (key: string,) => key in rawBody;
 
@@ -254,7 +252,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             participantIds: body.participantIds,
             gmConfig: hasExplicit("gmConfig",)
               ? body.gmConfig
-              : (template?.gm_config ? JSON.parse(template.gm_config,) : undefined),
+              : (template?.gm_config ? jsonParseOr(template.gm_config, {},) : undefined),
             visualNovel: hasExplicit("visualNovel",)
               ? body.visualNovel
               : (template ? template.visual_novel === 1 : undefined),
@@ -324,7 +322,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             mode: tmpl.mode,
             turnStrategy: tmpl.turn_strategy,
             worldId: tmpl.world_id,
-            gmConfig: tmpl.gm_config ? JSON.parse(tmpl.gm_config,) : null,
+            gmConfig: tmpl.gm_config ? jsonParseOr(tmpl.gm_config, {},) : null,
             visualNovel: tmpl.visual_novel === 1,
           }));
           return jsonResponse(payload,);
@@ -519,11 +517,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           let rawBody: Record<string, unknown> = {};
           const rawText = (ctx as { rawBodyText?: string }).rawBodyText;
           if (rawText) {
-            try {
-              rawBody = JSON.parse(rawText,) as Record<string, unknown>;
-            } catch {
-              rawBody = {};
-            }
+            rawBody = jsonParseOr(rawText, {},);
           }
           const hasExplicit = (key: string,) => key in rawBody;
 

@@ -4,6 +4,7 @@
  * Uses the same compress-then-encrypt pipeline as messages.
  * Assets inherit encryption tier from parent entity.
  */
+import { safeJsonParse, } from "../utils";
 import type { ChatKey, } from "./chat-keys";
 import { compressThenEncrypt, decryptThenDecompress, type PipelineConfig, } from "./pipeline";
 
@@ -79,8 +80,10 @@ export function isEncryptedAsset(buffer: Buffer,): boolean {
   try {
     const str = buffer.toString("utf8",).trim();
     if (!str.startsWith("{",)) { return false; }
-    const parsed = JSON.parse(str,);
-    return typeof parsed === "object" && parsed !== null && "enc" in parsed && "nonce" in parsed;
+    const parsed = safeJsonParse(str,);
+    if (!parsed.ok) { return false; }
+    return typeof parsed.value === "object" && parsed.value !== null && "enc" in parsed.value &&
+      "nonce" in parsed.value;
   } catch {
     return false;
   }

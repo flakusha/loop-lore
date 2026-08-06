@@ -38,11 +38,13 @@ export function preloadImage(url: string,): Promise<PreloadResult> {
   if (preloadQueue.has(url,)) {
     return new Promise((resolve,) => {
       const check = setInterval(() => {
-        if (!preloadQueue.has(url,)) {
-          clearInterval(check,);
-          const cached = imageCache.has(url,);
-          resolve({ url, loaded: cached, },);
+        if (preloadQueue.has(url,)) {
+          return;
         }
+
+        clearInterval(check,);
+        const cached = imageCache.has(url,);
+        resolve({ url, loaded: cached, },);
       }, 100,);
     },);
   }
@@ -52,21 +54,21 @@ export function preloadImage(url: string,): Promise<PreloadResult> {
   return new Promise((resolve,) => {
     const img = new Image();
 
-    img.onload = () => {
+    img.addEventListener("load", () => {
       imageCache.set(url, img,);
       preloadQueue.delete(url,);
       manageCacheSize();
       resolve({ url, loaded: true, },);
-    };
+    },);
 
-    img.onerror = () => {
+    img.addEventListener("error", () => {
       preloadQueue.delete(url,);
       resolve({
         url,
         loaded: false,
         error: `Failed to load: ${url}`,
       },);
-    };
+    },);
 
     img.src = url;
   },);
@@ -75,10 +77,9 @@ export function preloadImage(url: string,): Promise<PreloadResult> {
 // ── Batch Preloading ───────────────────────────────────────
 
 export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
-  const results = await Promise.all(
+  return await Promise.all(
     urls.map((url,) => preloadImage(url,)),
   );
-  return results;
 }
 
 // ── Scene Preloading ───────────────────────────────────────
@@ -91,7 +92,7 @@ export interface SceneImages {
 export async function preloadSceneImages(
   scenes: SceneImages[],
   currentIndex: number,
-  preloadCount: number = 2,
+  preloadCount = 2,
 ): Promise<PreloadStats> {
   const urlsToPreload: string[] = [];
 
@@ -142,14 +143,16 @@ export async function preloadSceneImages(
 // ── Cache Management ───────────────────────────────────────
 
 function manageCacheSize(): void {
-  if (imageCache.size > MAX_CACHE_SIZE) {
-    // Remove oldest entries (first N entries)
-    const entriesToRemove = imageCache.size - MAX_CACHE_SIZE;
-    const keys = [...imageCache.keys(),];
-    for (let i = 0; i < entriesToRemove; i++) {
-      const key = keys[i];
-      if (key) { imageCache.delete(key,); }
-    }
+  if (imageCache.size <= MAX_CACHE_SIZE) {
+    return;
+  }
+
+  // Remove oldest entries (first N entries)
+  const entriesToRemove = imageCache.size - MAX_CACHE_SIZE;
+  const keys = [...imageCache.keys(),];
+  for (let i = 0; i < entriesToRemove; i++) {
+    const key = keys[i];
+    if (key) { imageCache.delete(key,); }
   }
 }
 
@@ -175,7 +178,7 @@ export function getCachedImage(url: string,): HTMLImageElement | undefined {
 
 export function getImageWithFallback(
   url: string | undefined,
-  fallback: string = "/images/vn-placeholder.png",
+  fallback = "/images/vn-placeholder.png",
 ): string {
   if (!url) { return fallback; }
   return url;
@@ -199,13 +202,13 @@ export function createLoadingIndicator(
   const text = document.createElement("span",);
   text.className = "vn-loading-text";
   text.textContent = "Loading images...";
-  indicator.appendChild(text,);
+  indicator.append(text,);
 
   const progress = document.createElement("div",);
   progress.className = "vn-loading-progress";
-  indicator.appendChild(progress,);
+  indicator.append(progress,);
 
-  container.appendChild(indicator,);
+  container.append(indicator,);
 
   return {
     show: () => {

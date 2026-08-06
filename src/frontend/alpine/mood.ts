@@ -1,4 +1,5 @@
 import { apiFetch, } from "./htmx";
+import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
 
@@ -143,7 +144,7 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
         const genRes = await apiFetch(`/api/actors/${npc.actor_id}/emotion-avatars`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ baseAvatarId, },),
+          body: jsonBody({ baseAvatarId, },),
         },);
         const genBody = await genRes.json().catch(() => ({}));
         if (!genRes.ok) {
@@ -303,7 +304,7 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
       await apiFetch(`/api/actors/${npc.actor_id}/mood`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({
+        body: jsonBody({
           happiness,
           worldId: this._activeChatWorldId ?? undefined,
         },),
@@ -332,7 +333,7 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
       const moodRes = await apiFetch(`/api/actors/${npc.actor_id}/mood/delta`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({
+        body: jsonBody({
           delta,
           worldId: this._activeChatWorldId ?? undefined,
         },),

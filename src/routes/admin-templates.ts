@@ -26,6 +26,7 @@ import {
   type SdGenMode,
 } from "../generation/prompt-templates";
 import { getLogger, type Logger, } from "../logger";
+import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -47,16 +48,16 @@ async function loadStoredTemplates(db: Kysely<DB>,): Promise<StoredTemplates> {
   if (!raw) {
     return { profiles: {}, defaultProfileId: "sdxl", };
   }
-  try {
-    return JSON.parse(raw.value,) as StoredTemplates;
-  } catch {
+  const result = safeJsonParse<StoredTemplates>(raw.value,);
+  if (!result.ok) {
     log().warn("Failed to parse stored templates, resetting",);
     return { profiles: {}, defaultProfileId: "sdxl", };
   }
+  return result.value;
 }
 
 async function saveStoredTemplates(db: Kysely<DB>, data: StoredTemplates,): Promise<void> {
-  await setConfig(db, TEMPLATES_KEY, JSON.stringify(data,), "Custom prompt template profiles",);
+  await setConfig(db, TEMPLATES_KEY, jsonStringifyOr(data,), "Custom prompt template profiles",);
 }
 
 function mergeProfiles(

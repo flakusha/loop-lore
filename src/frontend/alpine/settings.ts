@@ -62,7 +62,7 @@ type LocaleInfoArray = LocaleInfo[];
 
     async loadLocales() {
       try {
-        const res = await fetch("/api/i18n/locales", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/i18n/locales", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.locales = data.locales as LocaleInfoArray;
@@ -87,7 +87,7 @@ type LocaleInfoArray = LocaleInfo[];
 
     async loadSettings() {
       try {
-        const res = await fetch("/api/settings", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/settings", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const settings = await res.json();
           if (settings.displayName) { this.displayName = settings.displayName; }
@@ -112,7 +112,7 @@ type LocaleInfoArray = LocaleInfo[];
       const userId = (globalThis as any).__USER_ID as string | undefined;
       if (!userId) { return; }
       try {
-        const res = await fetch(`/api/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
+        const res = await apiFetch(`/api/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
           headers: { Accept: "application/json", },
         },);
         if (res.ok) {
@@ -200,7 +200,7 @@ type LocaleInfoArray = LocaleInfo[];
 
     async testConnection() {
       try {
-        const res = await fetch("/api/generation/test-connection", { method: "POST", },);
+        const res = await apiFetch("/api/generation/test-connection", { method: "POST", },);
         if (res.ok) {
           log.info("Connection test succeeded",);
         } else {
@@ -226,7 +226,7 @@ type LocaleInfoArray = LocaleInfo[];
         if (payload.locale) {
           localStorage.setItem("locale", payload.locale as string,);
           // Use new i18n API endpoint for locale
-          await fetch("/api/i18n/locale", {
+          await apiFetch("/api/i18n/locale", {
             method: "PATCH",
             headers: { "Content-Type": "application/json", Accept: "application/json", },
             body: jsonBody({ locale: payload.locale, },),
@@ -240,13 +240,13 @@ type LocaleInfoArray = LocaleInfo[];
             }
           }
         }
-        const res = await fetch("/api/users/me/settings", {
+        const res = await apiFetch("/api/users/me/settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
           body: jsonBody(payload,),
         },);
         if (res.ok && payload.displayName) {
-          await fetch("/api/users/me", {
+          await apiFetch("/api/users/me", {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ displayName: payload.displayName, },),
@@ -263,7 +263,7 @@ type LocaleInfoArray = LocaleInfo[];
 
     async exportAllData() {
       try {
-        const res = await fetch("/api/settings/export",);
+        const res = await apiFetch("/api/settings/export",);
         if (!res.ok) {
           showToast("error", "Export failed",);
           return;
@@ -305,7 +305,7 @@ type LocaleInfoArray = LocaleInfo[];
       if (this.confirmDeleteText !== "DELETE") { return; }
       if (!confirm("This will permanently delete ALL your data. Continue?",)) { return; }
       try {
-        const res = await fetch("/api/users/me", { method: "DELETE", },);
+        const res = await apiFetch("/api/users/me", { method: "DELETE", },);
         if (!res.ok) { throw new Error("Delete failed",); }
       } catch (error) {
         log.warn("deleteAllData failed", { error: String(error,), },);

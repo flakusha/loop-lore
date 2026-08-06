@@ -17,6 +17,19 @@ import morph from "@alpinejs/morph";
 import Alpine from "alpinejs";
 import htmx from "htmx.org";
 
+// ── 7. Alpine stores ────────────────────────────────────────────
+import { initAlpineStores, } from "./stores";
+
+// ── 8. Alpine components (x-data functions on globalThis) ───────
+// Each import registers a globalThis.* function that Alpine picks up as x-data.
+import "./alpine/index";
+
+// ── 9. UI utilities (sidebar, toast, modal) ─────────────────────
+import "./ui";
+
+// ── 10. Gallery upload dropzone ─────────────────────────────────
+import "./gallery-upload";
+
 // ── 2. Expose on globalThis ─────────────────────────────────────
 const g = globalThis as Record<string, unknown>;
 g.htmx = htmx;
@@ -28,7 +41,6 @@ Alpine.plugin(morph,);
 // ── 4. htmx config ──────────────────────────────────────────────
 const cspNonce = (g.__cspNonce as string) || "";
 if (cspNonce) {
-  htmx.config = htmx.config || {};
   htmx.config.inlineScriptNonce = cspNonce;
 }
 
@@ -59,20 +71,7 @@ Alpine.magic("t", (el: HTMLElement,) => {
 require("htmx.org/dist/ext/alpine-morph.js",);
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require("htmx-ext-sse/sse.js",);
-
-// ── 7. Alpine stores ────────────────────────────────────────────
-import { initAlpineStores, } from "./stores";
 initAlpineStores();
-
-// ── 8. Alpine components (x-data functions on globalThis) ───────
-// Each import registers a globalThis.* function that Alpine picks up as x-data.
-import "./alpine/index";
-
-// ── 9. UI utilities (sidebar, toast, modal) ─────────────────────
-import "./ui";
-
-// ── 10. Gallery upload dropzone ─────────────────────────────────
-import "./gallery-upload";
 
 // ── 12. Start Alpine (after all registrations) ──────────────────
 document.addEventListener("DOMContentLoaded", () => Alpine.start(),);

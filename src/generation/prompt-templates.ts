@@ -127,12 +127,12 @@ export function resolveTemplate(template: string, ctx: TemplateContext,): string
 
   let result = template;
   for (const [key, value,] of Object.entries(tokenMap,)) {
-    result = result.replaceAll(TOKENS[key as TokenKey], value,);
+    result = result.replaceAll(TOKENS[key as TokenKey], () => value,);
   }
 
   if (ctx.extra) {
     for (const [key, value,] of Object.entries(ctx.extra,)) {
-      result = result.replaceAll(`{{${key}}}`, value,);
+      result = result.replaceAll(`{{${key}}}`, () => value,);
     }
   }
 

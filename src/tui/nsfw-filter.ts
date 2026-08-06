@@ -69,20 +69,25 @@ export class NsfwFilter {
     }
 
     switch (this.config.mode) {
-      case "show":
+      case "show": {
         return content;
+      }
 
-      case "blur":
+      case "blur": {
         return "[NSFW Content Hidden]";
+      }
 
-      case "hide":
+      case "hide": {
         return null;
+      }
 
-      case "fade_to_black":
+      case "fade_to_black": {
         return "[The scene fades to black...]";
+      }
 
-      default:
+      default: {
         return content;
+      }
     }
   }
 
