@@ -32,8 +32,8 @@ interface SeedResult {
 function normalizeSpecies(value: string,): string {
   return value
     .trim()
-    .replace(/\s+/g, " ",)
-    .replace(/\S+/g, (w,) => w[0]!.toUpperCase() + w.slice(1,).toLowerCase(),);
+    .replaceAll(/\s+/g, " ",)
+    .replaceAll(/\S+/g, (w,) => w[0]!.toUpperCase() + w.slice(1,).toLowerCase(),);
 }
 
 /** Resolved avatar image for seeding. */

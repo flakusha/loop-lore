@@ -530,9 +530,9 @@ export interface ChatState extends AlpineMagicThis {
   runMessageSearch(): Promise<void>;
   applyMessageSearchHighlights(): void;
   applySearchMatchActive(): void;
-  scrollToSearchMatch(index: number): void;
+  scrollToSearchMatch(index: number,): void;
   nextMessageMatch(): void;
   prevMessageMatch(): void;
-  onMessageSearchEnter(event: KeyboardEvent): void;
+  onMessageSearchEnter(event: KeyboardEvent,): void;
   closeMessageSearch(): void;
 }

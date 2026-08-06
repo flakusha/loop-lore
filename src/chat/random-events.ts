@@ -202,12 +202,12 @@ export async function generateRandomEvent(
  */
 function resolveTemplate(template: string,): string {
   return template
-    .replace("{weather}", pickRandom(WEATHER_OPTIONS,),)
-    .replace("{sound}", pickRandom(SOUND_OPTIONS,),)
-    .replace("{scent}", pickRandom(SCENT_OPTIONS,),)
-    .replace("{npc}", pickRandom(NPC_OPTIONS,),)
-    .replace("{location}", "the area",)
-    .replace("{time}", "now",);
+    .replace("{weather}", () => pickRandom(WEATHER_OPTIONS,),)
+    .replace("{sound}", () => pickRandom(SOUND_OPTIONS,),)
+    .replace("{scent}", () => pickRandom(SCENT_OPTIONS,),)
+    .replace("{npc}", () => pickRandom(NPC_OPTIONS,),)
+    .replace("{location}", () => "the area",)
+    .replace("{time}", () => "now",);
 }
 
 function pickRandom<T,>(arr: readonly T[],): T {

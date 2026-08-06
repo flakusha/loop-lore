@@ -16,6 +16,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { jsonStringifyOr, } from "../../utils";
 import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
@@ -139,9 +140,9 @@ export class FantasyService {
         fantasy_name: name,
         category,
         intensity: intensity ?? "mild",
-        requirements: JSON.stringify({ ...defaultRequirements, ...requirements, },),
-        fulfillment_effects: JSON.stringify({ ...defaultEffects, ...fulfillmentEffects, },),
-        risks: JSON.stringify({ ...defaultRisks, ...risks, },),
+        requirements: jsonStringifyOr({ ...defaultRequirements, ...requirements, },),
+        fulfillment_effects: jsonStringifyOr({ ...defaultEffects, ...fulfillmentEffects, },),
+        risks: jsonStringifyOr({ ...defaultRisks, ...risks, },),
         discovered_through: discoveredThrough ?? null,
         initial_reaction: initialReaction ?? "neutral",
         current_feeling: initialReaction ?? "neutral",

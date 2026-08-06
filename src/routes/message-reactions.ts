@@ -55,12 +55,12 @@ async function resolveMessageAccess(
 ): Promise<string | Response> {
   const msg = await database
     .selectFrom("messages",)
-    .select(["chat_id",])
+    .select(["chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
   if (!msg) { return notFound("Message not found",); }
 
-  const access = await checkChatAccess(database, msg.chat_id, userId, userRole);
+  const access = await checkChatAccess(database, msg.chat_id, userId, userRole,);
   if (!access.ok) { return notFound("Message not found",); }
 
   return msg.chat_id;
@@ -80,7 +80,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
 
-          const access = await resolveMessageAccess(database, messageId, userId, userRole);
+          const access = await resolveMessageAccess(database, messageId, userId, userRole,);
           if (typeof access !== "string") { return access; }
 
           // Fetch all reactions for this message
@@ -146,7 +146,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
             return Response.json({ error: "emoji is required", }, { status: 400, },);
           }
 
-          const access = await resolveMessageAccess(database, messageId, userId, userRole);
+          const access = await resolveMessageAccess(database, messageId, userId, userRole,);
           if (typeof access !== "string") { return access; }
 
           // Check existing reaction
@@ -210,7 +210,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
 
-          const access = await resolveMessageAccess(database, messageId, userId, userRole);
+          const access = await resolveMessageAccess(database, messageId, userId, userRole,);
           if (typeof access !== "string") { return access; }
 
           await database

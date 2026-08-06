@@ -17,17 +17,19 @@ import { buildSdCppLoraPrefix, discoverSdCppLoras, injectSdCppLora, } from "./di
 // ── Mock Helpers ─────────────────────────────────────────
 
 // Use a helper to mock fetch that works with Bun's testing
-function withMockFetch(
+async function withMockFetch(
   handler: (url: string,) => Response | Promise<Response>,
   fn: () => Promise<void>,
 ) {
   const originalFetch = globalThis.fetch;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, unicorn/no-global-object-property-assignment
+  // eslint-disable-next-line unicorn/no-global-object-property-assignment
   (globalThis as Record<string, unknown>).fetch = handler;
-  return fn().finally(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, unicorn/no-global-object-property-assignment
+  try {
+    return await fn();
+  } finally {
+    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     (globalThis as Record<string, unknown>).fetch = originalFetch;
-  },);
+  }
 }
 
 // ── sd.cpp Discovery Tests ───────────────────────────────

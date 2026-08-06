@@ -162,27 +162,25 @@ export const memorySection: SectionBuilder = {
     // can be revealed to this actor while private/secret/blocked memories are withheld
     // per-viewer.
     const ownerSources = [ctx.actor.id, ...participantIds.filter((p,) => p !== ctx.actor.id),];
-    const provisionTasks = ownerSources.map((ownerId,) => {
+    const provisionTasks = ownerSources.map(async (ownerId,) => {
       const isSpeaker = ownerId === ctx.actor.id;
-      const memories = fetchActorMemories(
+      const rows = await fetchActorMemories(
         ctx.db,
         ownerId,
         isSpeaker ? 50 : OTHER_MEMORY_CAP,
-      ).then(async (rows,) => {
-        if (rows.length === 0) { return []; }
-        const provisionCtx = await buildProvisionContext(
-          ctx.db,
-          ctx.actor.id,
-          ctx.chat.id,
-          ctx.chat.world_id,
-          ownerId, // owner may differ from viewer for cross-actor sharing
-        );
-        // No per-source budget trim — acceptance is by scope/privacy/shareability;
-        // the single combined budget is enforced once below.
-        const result = provisionMemories(rows, provisionCtx, Number.MAX_SAFE_INTEGER,);
-        return result.accepted;
-      },);
-      return memories;
+      );
+      if (rows.length === 0) { return []; }
+      const provisionCtx = await buildProvisionContext(
+        ctx.db,
+        ctx.actor.id,
+        ctx.chat.id,
+        ctx.chat.world_id,
+        ownerId, // owner may differ from viewer for cross-actor sharing
+      );
+      // No per-source budget trim — acceptance is by scope/privacy/shareability;
+      // the single combined budget is enforced once below.
+      const result = provisionMemories(rows, provisionCtx, Number.MAX_SAFE_INTEGER,);
+      return result.accepted;
     },);
 
     const provisioned = await Promise.all(provisionTasks,);

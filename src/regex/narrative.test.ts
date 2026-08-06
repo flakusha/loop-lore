@@ -18,7 +18,7 @@ describe("narrative regex", () => {
     });
 
     it("matches curly quotes", () => {
-      expect(DIALOGUE_QUOTES.test("\u201CHello\u201D",),).toBe(true,);
+      expect(DIALOGUE_QUOTES.test("\u{201C}Hello\u{201D}",),).toBe(true,);
       DIALOGUE_QUOTES.lastIndex = 0;
     });
 

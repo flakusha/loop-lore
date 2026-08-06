@@ -45,13 +45,13 @@ interface StoryGenerationResult {
 }
 
 interface ChoiceGenerationResult {
-  choices: Array<{
+  choices: {
     label: string;
     description: string;
     consequences?: Record<string, unknown>;
     relationshipImpact?: Record<string, unknown>;
     moodImpact?: Record<string, unknown>;
-  }>;
+  }[];
   sceneIndex: number;
   metadata: {
     model?: string;

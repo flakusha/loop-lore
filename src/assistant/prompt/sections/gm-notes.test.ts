@@ -81,7 +81,7 @@ describe("gmNotesSection", () => {
       WhiteneoteType.Tone,
       "Keep it eerie.",
       "2026-07-01T00:00:00Z",
-      { expires_at: "2026-07-02T00:00:00Z", } as any,
+      { expires_at: "2026-07-02T00:00:00Z", },
     );
     await insertWhitenotes(
       db,
@@ -89,7 +89,7 @@ describe("gmNotesSection", () => {
       WhiteneoteType.Tone,
       "Keep it hopeful.",
       "2026-08-01T00:00:00Z",
-      { expires_at: "2099-01-01T00:00:00Z", } as any,
+      { expires_at: "2099-01-01T00:00:00Z", },
     );
 
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);

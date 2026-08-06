@@ -12,10 +12,10 @@ Extend the world item-instance placement UI (shipped in `TASK-WORLD-ITEM-FRONTEN
 
 ## Backend (exists, verified)
 
-| Route | Body |
-| --- | --- |
-| `POST /api/worlds/:worldId/item-instances` | `{ itemId, locationId?, ownerActorId?, quantity }` |
-| `POST /api/worlds/:worldId/item-instances/:instanceId/transfer` | `{ quantity?, toLocationId?, toActorId? }` |
+| Route                                                           | Body                                               |
+| --------------------------------------------------------------- | -------------------------------------------------- |
+| `POST /api/worlds/:worldId/item-instances`                      | `{ itemId, locationId?, ownerActorId?, quantity }` |
+| `POST /api/worlds/:worldId/item-instances/:instanceId/transfer` | `{ quantity?, toLocationId?, toActorId? }`         |
 
 The world-edit page loads locations into state but has **no actor/NPC list**, so the place form has no actor target. Need an actor source first.
 

@@ -27,7 +27,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
       content,
       tokenize = 'porter unicode61'
     )
-  `.execute(db);
+  `.execute(db,);
 
   // ── Sync triggers ───────────────────────────────────────────
   // Insert: mirror the new message into the index.
@@ -37,7 +37,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
       INSERT INTO messages_fts(message_id, chat_id, content)
       VALUES (new.id, new.chat_id, new.content);
     END
-  `.execute(db);
+  `.execute(db,);
 
   // Delete: remove the message's index rows.
   await sql`
@@ -45,7 +45,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     AFTER DELETE ON messages BEGIN
       DELETE FROM messages_fts WHERE message_id = old.id;
     END
-  `.execute(db);
+  `.execute(db,);
 
   // Update: drop + re-insert so the index re-tokenizes new content.
   await sql`
@@ -55,19 +55,19 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
       INSERT INTO messages_fts(message_id, chat_id, content)
       VALUES (new.id, new.chat_id, new.content);
     END
-  `.execute(db);
+  `.execute(db,);
 
   // ── Backfill existing messages ──────────────────────────────
   // The table is freshly created here, so a plain copy is idempotent.
   await sql`
     INSERT INTO messages_fts(message_id, chat_id, content)
     SELECT id, chat_id, content FROM messages
-  `.execute(db);
+  `.execute(db,);
 }
 
 export async function down(db: Kysely<unknown>,): Promise<void> {
-  await sql`DROP TRIGGER IF EXISTS messages_fts_ai`.execute(db);
-  await sql`DROP TRIGGER IF EXISTS messages_fts_ad`.execute(db);
-  await sql`DROP TRIGGER IF EXISTS messages_fts_au`.execute(db);
-  await sql`DROP TABLE IF EXISTS messages_fts`.execute(db);
+  await sql`DROP TRIGGER IF EXISTS messages_fts_ai`.execute(db,);
+  await sql`DROP TRIGGER IF EXISTS messages_fts_ad`.execute(db,);
+  await sql`DROP TRIGGER IF EXISTS messages_fts_au`.execute(db,);
+  await sql`DROP TABLE IF EXISTS messages_fts`.execute(db,);
 }

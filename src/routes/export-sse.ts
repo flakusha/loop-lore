@@ -10,6 +10,7 @@ import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
 import type { DB, } from "../db/schema";
 import { resolveUserIdFromRequest, } from "../middleware/auth";
+import { safeJsonStringify, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import {
   exportAssetsToZip,
@@ -46,14 +47,6 @@ const jobs = new Map<string, ExportJob>();
 function sseData(obj: unknown,): string {
   const r = safeJsonStringify(obj,);
   return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
-}
-
-function safeJsonStringify(obj: unknown, indent?: number,): { ok: true; value: string } | { ok: false; error: Error } {
-  try {
-    return { ok: true, value: JSON.stringify(obj, null, indent,), };
-  } catch (error) {
-    return { ok: false, error: error as Error, };
-  }
 }
 
 async function processExport(
@@ -192,7 +185,6 @@ async function processExport(
       job.currentStep = "Exporting story state...";
       await exportStoryToZip(exportCtx,);
     }
-
     // Export assets
     if (include.includes("assets",)) {
       job.currentStep = "Exporting assets...";
@@ -250,9 +242,13 @@ export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
       jobs.set(jobId, job,);
 
       // Start processing in background
-      processExport(jobId, ctx.request, database, userId,).catch((error,) => {
-        console.error(`Export job ${jobId} failed:`, error,);
-      },);
+      void (async () => {
+        try {
+          await processExport(jobId, ctx.request, database, userId,);
+        } catch (error) {
+          console.error(`Export job ${jobId} failed:`, error,);
+        }
+      })();
 
       // Return SSE stream
       const encoder = new TextEncoder();

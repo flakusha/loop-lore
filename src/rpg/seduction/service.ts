@@ -15,7 +15,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -186,10 +186,10 @@ export class SeductionService {
     const now = new Date().toISOString();
     const clause: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.turnOns !== undefined) { clause.turn_ons = JSON.stringify(updates.turnOns,); }
-    if (updates.turnOffs !== undefined) { clause.turn_offs = JSON.stringify(updates.turnOffs,); }
-    if (updates.fetishes !== undefined) { clause.fetishes = JSON.stringify(updates.fetishes,); }
-    if (updates.hardLimits !== undefined) { clause.hard_limits = JSON.stringify(updates.hardLimits,); }
+    if (updates.turnOns !== undefined) { clause.turn_ons = jsonStringifyOr(updates.turnOns,); }
+    if (updates.turnOffs !== undefined) { clause.turn_offs = jsonStringifyOr(updates.turnOffs,); }
+    if (updates.fetishes !== undefined) { clause.fetishes = jsonStringifyOr(updates.fetishes,); }
+    if (updates.hardLimits !== undefined) { clause.hard_limits = jsonStringifyOr(updates.hardLimits,); }
     if (updates.desireDecayRate !== undefined) { clause.desire_decay_rate = updates.desireDecayRate; }
     if (updates.desireBuildupRate !== undefined) { clause.desire_buildup_rate = updates.desireBuildupRate; }
 
@@ -457,7 +457,7 @@ export class SeductionService {
     await this.db
       .updateTable("character_arousal",)
       .set({
-        modifiers: JSON.stringify(mods,),
+        modifiers: jsonStringifyOr(mods,),
         updated_at: now,
       },)
       .where("id", "=", state.id,)
@@ -583,10 +583,10 @@ export class SeductionService {
     return {
       id: row.id,
       actorId: row.actor_id,
-      turnOns: JSON.parse(row.turn_ons,) as string[],
-      turnOffs: JSON.parse(row.turn_offs,) as string[],
-      fetishes: JSON.parse(row.fetishes,) as string[],
-      hardLimits: JSON.parse(row.hard_limits,) as string[],
+      turnOns: jsonParseOr(row.turn_ons, [],),
+      turnOffs: jsonParseOr(row.turn_offs, [],),
+      fetishes: jsonParseOr(row.fetishes, [],),
+      hardLimits: jsonParseOr(row.hard_limits, [],),
       currentDesire: row.current_desire,
       desireDecayRate: row.desire_decay_rate,
       desireBuildupRate: row.desire_buildup_rate,
@@ -638,7 +638,7 @@ export class SeductionService {
       level: row.level,
       buildupRate: row.buildup_rate,
       decayRate: row.decay_rate,
-      modifiers: JSON.parse(row.modifiers,) as ArousalModifier[],
+      modifiers: jsonParseOr(row.modifiers, [],),
       lastUpdate: row.last_update,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

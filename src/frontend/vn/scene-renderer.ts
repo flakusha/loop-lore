@@ -67,7 +67,7 @@ export function initVnRenderer(
 ): void {
   container = containerEl;
   settings = getVnSettings(gmConfig,);
-  scenes = messages.map(msgToScene,);
+  scenes = messages.map((msg,) => msgToScene(msg,));
   currentIndex = Math.max(0, scenes.length - 1,);
   currentChatId = chatId ?? null;
   loadingIndicator = createLoadingIndicator(containerEl,);
@@ -76,10 +76,10 @@ export function initVnRenderer(
   // transition. Safe by design: this consumes a frontend DOM event and never
   // touches location access-check logic.
   if (locationChangeHandler) {
-    window.removeEventListener("chat:location-changed", locationChangeHandler,);
+    globalThis.removeEventListener("chat:location-changed", locationChangeHandler,);
   }
   locationChangeHandler = handleLocationChanged;
-  window.addEventListener("chat:location-changed", locationChangeHandler,);
+  globalThis.addEventListener("chat:location-changed", locationChangeHandler,);
 
   // Preload images for current and upcoming scenes
   void preloadCurrentAndUpcoming();
@@ -92,13 +92,13 @@ export function initVnRenderer(
  */
 export function destroyVnRenderer(): void {
   if (locationChangeHandler) {
-    window.removeEventListener("chat:location-changed", locationChangeHandler,);
+    globalThis.removeEventListener("chat:location-changed", locationChangeHandler,);
     locationChangeHandler = null;
   }
   destroyChoiceCards();
   loadingIndicator = null;
   if (container) {
-    container.innerHTML = "";
+    container.replaceChildren();
     container = null;
   }
   scenes = [];
@@ -111,33 +111,39 @@ export function destroyVnRenderer(): void {
  * Navigate to the next scene.
  */
 export function nextScene(): void {
-  if (currentIndex < scenes.length - 1) {
-    currentIndex++;
-    void preloadCurrentAndUpcoming();
-    renderCurrentScene(true,);
+  if (currentIndex >= scenes.length - 1) {
+    return;
   }
+
+  currentIndex++;
+  void preloadCurrentAndUpcoming();
+  renderCurrentScene(true,);
 }
 
 /**
  * Navigate to the previous scene.
  */
 export function prevScene(): void {
-  if (currentIndex > 0) {
-    currentIndex--;
-    void preloadCurrentAndUpcoming();
-    renderCurrentScene(true,);
+  if (currentIndex <= 0) {
+    return;
   }
+
+  currentIndex--;
+  void preloadCurrentAndUpcoming();
+  renderCurrentScene(true,);
 }
 
 /**
  * Jump to a specific scene index.
  */
 export function jumpToScene(index: number,): void {
-  if (index >= 0 && index < scenes.length) {
-    currentIndex = index;
-    void preloadCurrentAndUpcoming();
-    renderCurrentScene(true,);
+  if (!(index >= 0 && index < scenes.length)) {
+    return;
   }
+
+  currentIndex = index;
+  void preloadCurrentAndUpcoming();
+  renderCurrentScene(true,);
 }
 
 /**
@@ -191,7 +197,7 @@ function msgToScene(msg: VnMessage,): VnScene {
   return {
     messageId: msg.id,
     backgroundUrl: msg.background_url,
-    characterName: msg.name ?? (msg.role === "user" ? "You" : msg.role === "system" ? "System" : "Character"),
+    characterName: msg.name ?? (msg.role === "user" ? "You" : (msg.role === "system" ? "System" : "Character")),
     characterAvatar: msg.avatar_asset_id,
     text: msg.content,
     thinking: msg.thinking,
@@ -213,17 +219,19 @@ function handleLocationChanged(e: Event,): void {
   if (!sceneEl) { return; }
   sceneEl.style.transition = "opacity 280ms ease";
   sceneEl.style.opacity = "0";
-  window.setTimeout(() => {
-    if (sceneEl.isConnected) {
-      sceneEl.style.opacity = "1";
-      window.setTimeout(() => {
-        if (sceneEl.isConnected) { sceneEl.style.transition = ""; }
-      }, 300,);
+  globalThis.setTimeout(() => {
+    if (!sceneEl.isConnected) {
+      return;
     }
+
+    sceneEl.style.opacity = "1";
+    globalThis.setTimeout(() => {
+      if (sceneEl.isConnected) { sceneEl.style.transition = ""; }
+    }, 300,);
   }, 260,);
 }
 
-async function renderCurrentScene(animate: boolean = false,): Promise<void> {
+async function renderCurrentScene(animate = false,): Promise<void> {
   if (!container || !settings) { return; }
 
   const scene = scenes[currentIndex]!;
@@ -240,7 +248,7 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
     bg.className = "vn-background";
     bg.style.backgroundImage = `url(${scene.backgroundUrl})`;
     bg.style.backgroundSize = settings.imageScaling === "auto" ? "cover" : settings.imageScaling;
-    sceneEl.appendChild(bg,);
+    sceneEl.append(bg,);
   }
 
   // Portrait (for below and split layouts)
@@ -254,7 +262,7 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
         sizePercent: settings.portraitSize,
       };
       const portraitEl = createPortraitElement(portraitConfig,);
-      sceneEl.appendChild(portraitEl,);
+      sceneEl.append(portraitEl,);
     }
   }
 
@@ -269,7 +277,7 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
   const speakerEl = document.createElement("div",);
   speakerEl.className = "vn-speaker";
   speakerEl.textContent = scene.role === "narration" ? "Narrator" : scene.characterName;
-  dialogueBox.appendChild(speakerEl,);
+  dialogueBox.append(speakerEl,);
 
   // Thinking block (collapsed)
   if (scene.thinking) {
@@ -277,25 +285,25 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
     thinkingEl.className = "vn-thinking";
     const summary = document.createElement("summary",);
     summary.textContent = "Thinking...";
-    thinkingEl.appendChild(summary,);
+    thinkingEl.append(summary,);
     const thinkingContent = document.createElement("div",);
     thinkingContent.textContent = scene.thinking;
-    thinkingEl.appendChild(thinkingContent,);
-    dialogueBox.appendChild(thinkingEl,);
+    thinkingEl.append(thinkingContent,);
+    dialogueBox.append(thinkingEl,);
   }
 
   // Text content with typewriter
   const textEl = document.createElement("div",);
   textEl.className = "vn-text";
-  dialogueBox.appendChild(textEl,);
+  dialogueBox.append(textEl,);
 
   // Advance indicator
   const advanceEl = document.createElement("div",);
   advanceEl.className = "vn-advance";
   advanceEl.textContent = "▼";
-  dialogueBox.appendChild(advanceEl,);
+  dialogueBox.append(advanceEl,);
 
-  sceneEl.appendChild(dialogueBox,);
+  sceneEl.append(dialogueBox,);
 
   // Scene navigation
   const navEl = document.createElement("div",);
@@ -313,16 +321,16 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
   const counterEl = document.createElement("span",);
   counterEl.className = "vn-counter";
   counterEl.textContent = `${currentIndex + 1} / ${scenes.length}`;
-  navEl.appendChild(prevBtn,);
-  navEl.appendChild(counterEl,);
-  navEl.appendChild(nextBtn,);
-  sceneEl.appendChild(navEl,);
+  navEl.append(prevBtn,);
+  navEl.append(counterEl,);
+  navEl.append(nextBtn,);
+  sceneEl.append(navEl,);
 
   // Choice cards container
   if (currentChatId) {
     const choicesEl = document.createElement("div",);
     choicesEl.className = "vn-choices-container";
-    sceneEl.appendChild(choicesEl,);
+    sceneEl.append(choicesEl,);
     initChoiceCards(choicesEl, currentChatId, currentIndex,);
     loadChoices();
   }
@@ -334,7 +342,7 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
     const attachmentsTitle = document.createElement("div",);
     attachmentsTitle.className = "vn-attachments-title";
     attachmentsTitle.textContent = "Attachments";
-    attachmentsEl.appendChild(attachmentsTitle,);
+    attachmentsEl.append(attachmentsTitle,);
     const attachmentsGrid = document.createElement("div",);
     attachmentsGrid.className = "vn-attachments-grid";
     for (const attachment of scene.attachments) {
@@ -345,18 +353,18 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
       thumbEl.alt = attachment.caption || attachment.filename || "Attachment";
       thumbEl.loading = "lazy";
       thumbEl.className = "vn-attachment-thumb";
-      itemEl.appendChild(thumbEl,);
+      itemEl.append(thumbEl,);
       const label = attachment.caption || attachment.filename;
       if (label) {
         const captionEl = document.createElement("div",);
         captionEl.className = "vn-attachment-caption";
         captionEl.textContent = label;
-        itemEl.appendChild(captionEl,);
+        itemEl.append(captionEl,);
       }
-      attachmentsGrid.appendChild(itemEl,);
+      attachmentsGrid.append(itemEl,);
     }
-    attachmentsEl.appendChild(attachmentsGrid,);
-    sceneEl.appendChild(attachmentsEl,);
+    attachmentsEl.append(attachmentsGrid,);
+    sceneEl.append(attachmentsEl,);
   }
 
   // Click/space to advance or skip typewriter
@@ -373,8 +381,8 @@ async function renderCurrentScene(animate: boolean = false,): Promise<void> {
     const transitionType = scene.transition ?? settings.transition;
     await transitionScene(outgoing, sceneEl, { type: transitionType, },);
   } else {
-    container.innerHTML = "";
-    container.appendChild(sceneEl,);
+    container.replaceChildren();
+    container.append(sceneEl,);
   }
 
   // Run typewriter

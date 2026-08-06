@@ -13,7 +13,7 @@ import type { Kysely, } from "kysely";
 import type { IntimacyActionType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -251,8 +251,8 @@ export class IntimacyService {
       .updateTable("character_intimacy",)
       .set({
         score: newScore,
-        action_history: JSON.stringify(history,),
-        unlocked_thresholds: JSON.stringify(newUnlocked,),
+        action_history: jsonStringifyOr(history,),
+        unlocked_thresholds: jsonStringifyOr(newUnlocked,),
         updated_at: now,
       },)
       .where("id", "=", pair.id,)
@@ -310,7 +310,7 @@ export class IntimacyService {
    *
    * @param decayAmount - How much to decay per call (default 1).
    */
-  async decayAll(actorId: string, decayAmount: number = 1,): Promise<number> {
+  async decayAll(actorId: string, decayAmount = 1,): Promise<number> {
     const pairs = await this.db
       .selectFrom("character_intimacy",)
       .where("actor_id", "=", actorId,)
@@ -358,8 +358,8 @@ export class IntimacyService {
       targetActorId: row.target_actor_id,
       worldId: row.world_id,
       score: row.score,
-      actionHistory: JSON.parse(row.action_history,) as IntimacyHistoryEntry[],
-      unlockedThresholds: JSON.parse(row.unlocked_thresholds,) as number[],
+      actionHistory: jsonParseOr(row.action_history, [],),
+      unlockedThresholds: jsonParseOr(row.unlocked_thresholds, [],),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

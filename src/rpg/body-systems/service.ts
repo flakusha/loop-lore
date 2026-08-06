@@ -10,14 +10,14 @@
  * Body profile affects arousal buildup, encounter duration, and available actions.
  */
 import type { Kysely, } from "kysely";
-import type {
+import {
   BodyBuild,
-  HeatPhase,
-  SizeCategory,
+  type HeatPhase,
+  type SizeCategory,
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -163,22 +163,22 @@ export class BodySystemService {
     await this.getProfile(actorId,);
 
     const now = new Date().toISOString();
-    const setClause: Record<string, unknown> = { updated_at: now, };
+    const clause: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.stamina !== undefined) { setClause.stamina = clamp(updates.stamina,); }
-    if (updates.flexibility !== undefined) { setClause.flexibility = clamp(updates.flexibility,); }
-    if (updates.sensitivity !== undefined) { setClause.sensitivity = clamp(updates.sensitivity,); }
-    if (updates.endurance !== undefined) { setClause.endurance = clamp(updates.endurance,); }
-    if (updates.sizeCategory !== undefined) { setClause.size_category = updates.sizeCategory; }
-    if (updates.build !== undefined) { setClause.build = updates.build; }
-    if (updates.beauty !== undefined) { setClause.beauty = clamp(updates.beauty,); }
-    if (updates.charisma !== undefined) { setClause.charisma = clamp(updates.charisma,); }
-    if (updates.style !== undefined) { setClause.style = clamp(updates.style,); }
-    if (updates.scent !== undefined) { setClause.scent = updates.scent; }
+    if (updates.stamina !== undefined) { clause.stamina = clamp(updates.stamina,); }
+    if (updates.flexibility !== undefined) { clause.flexibility = clamp(updates.flexibility,); }
+    if (updates.sensitivity !== undefined) { clause.sensitivity = clamp(updates.sensitivity,); }
+    if (updates.endurance !== undefined) { clause.endurance = clamp(updates.endurance,); }
+    if (updates.sizeCategory !== undefined) { clause.size_category = updates.sizeCategory; }
+    if (updates.build !== undefined) { clause.build = updates.build; }
+    if (updates.beauty !== undefined) { clause.beauty = clamp(updates.beauty,); }
+    if (updates.charisma !== undefined) { clause.charisma = clamp(updates.charisma,); }
+    if (updates.style !== undefined) { clause.style = clamp(updates.style,); }
+    if (updates.scent !== undefined) { clause.scent = updates.scent; }
 
     const result = await this.db
       .updateTable("character_body_profile",)
-      .set(setClause,)
+      .set(clause,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
 
@@ -199,7 +199,7 @@ export class BodySystemService {
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: JSON.stringify(mods,),
+        modifications: jsonStringifyOr(mods,),
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -219,7 +219,7 @@ export class BodySystemService {
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: JSON.stringify(mods,),
+        modifications: jsonStringifyOr(mods,),
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -235,7 +235,7 @@ export class BodySystemService {
    */
   async getHeatCycle(
     actorId: string,
-    species: string = "human",
+    species = "human",
   ): Promise<HeatCycleState> {
     const row = await this.db
       .selectFrom("character_heat_cycle",)
@@ -270,7 +270,7 @@ export class BodySystemService {
         cycle_length_days: isHuman ? 0 : 30,
         current_phase: "normal",
         days_until_next_heat: isHuman ? 0 : 30,
-        effects: JSON.stringify(defaultEffects,),
+        effects: jsonStringifyOr(defaultEffects,),
         created_at: now,
         updated_at: now,
       },)
@@ -368,13 +368,15 @@ export class BodySystemService {
    */
   static calculateAvailableActions(profile: BodyProfile,): number {
     const base = Math.floor(profile.flexibility / 10,);
-    const buildBonus = profile.build === "athletic"
-      ? 2
-      : profile.build === "slim"
-      ? 1
-      : profile.build === "heavy"
-      ? -1
-      : 0;
+    const buildBonuses: Record<BodyBuild, number> = {
+      [BodyBuild.Athletic]: 2,
+      [BodyBuild.Slim]: 1,
+      [BodyBuild.Heavy]: -1,
+      [BodyBuild.Average]: 0,
+      [BodyBuild.Curvy]: 0,
+      [BodyBuild.Muscular]: 0,
+    };
+    const buildBonus = buildBonuses[profile.build];
     return Math.max(1, base + buildBonus,);
   }
 
@@ -417,7 +419,7 @@ export class BodySystemService {
       charisma: row.charisma,
       style: row.style,
       scent: row.scent,
-      modifications: JSON.parse(row.modifications,) as BodyModification[],
+      modifications: jsonParseOr(row.modifications, [],),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -441,7 +443,7 @@ export class BodySystemService {
       cycleLengthDays: row.cycle_length_days,
       currentPhase: row.current_phase,
       daysUntilNextHeat: row.days_until_next_heat,
-      effects: JSON.parse(row.effects,) as HeatEffects,
+      effects: jsonParseOr<HeatEffects>(row.effects, {} as HeatEffects,),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

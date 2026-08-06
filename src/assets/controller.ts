@@ -35,6 +35,7 @@ import {
   notOwnerResponse,
   requireUserId,
 } from "../routes/http-utils";
+import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import {
   canAccessAsset,
@@ -409,7 +410,7 @@ export async function handleUpload({
       status: HttpStatus.OK,
       headers: {
         "Content-Type": "application/json",
-        "HX-Trigger": JSON.stringify({ "asset:duplicate": { id: asset.id, filename: asset.filename, }, },),
+        "HX-Trigger": jsonStringifyOr({ "asset:duplicate": { id: asset.id, filename: asset.filename, }, },),
       },
     },);
   }
@@ -417,7 +418,7 @@ export async function handleUpload({
     status: HttpStatus.Created,
     headers: {
       "Content-Type": "application/json",
-      "HX-Trigger": JSON.stringify({ "asset:uploaded": null, },),
+      "HX-Trigger": jsonStringifyOr({ "asset:uploaded": null, },),
     },
   },);
 }

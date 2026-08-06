@@ -2,20 +2,18 @@ import { describe, expect, it, } from "bun:test";
 import { Elysia, } from "elysia";
 import { vnGenerateRoutes, } from "./vn-generate";
 
-// Mock database
-const mockDb = {
-  selectFrom: () => ({
-    innerJoin: () => ({
-      where: () => ({
-        select: () => ({
-          limit: () => ({
-            executeTakeFirst: () => Promise.resolve({ id: "test-actor-id", },),
-          }),
-        }),
-      }),
-    }),
-  }),
+// Mock database — flat self-referential chain (auth-gated routes fail before
+// the DB path is exercised; methods exist only to satisfy route type surface).
+const mockChain = {
+  selectFrom: () => mockChain,
+  innerJoin: () => mockChain,
+  where: () => mockChain,
+  select: () => mockChain,
+  limit: () => mockChain,
+  executeTakeFirst: () => Promise.resolve({ id: "test-actor-id", },),
 };
+
+const mockDb = mockChain;
 
 // Mock config
 const mockConfig = {

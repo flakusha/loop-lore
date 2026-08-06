@@ -24,7 +24,7 @@ const DEFAULT_DURATION: Record<TransitionType, number> = {
  * Check if user prefers reduced motion.
  */
 function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)",).matches;
+  return globalThis.matchMedia("(prefers-reduced-motion: reduce)",).matches;
 }
 
 /**
@@ -83,7 +83,8 @@ export function transitionScene(
       case "wipe": {
         incoming.style.clipPath = "inset(0 100% 0 0)";
         incoming.style.transition = `clip-path ${duration}ms ease`;
-        // Force reflow
+        // Force reflow — reading offsetHeight forces a synchronous layout pass.
+        // eslint-disable-next-line sonarjs/void-use -- the read itself is the side effect
         void incoming.offsetHeight;
         incoming.style.clipPath = "inset(0 0 0 0)";
         incoming.style.opacity = "1";
@@ -98,7 +99,8 @@ export function transitionScene(
           outgoing.style.filter = "blur(8px)";
           outgoing.style.opacity = "0";
         }
-        // Force reflow
+        // Force reflow — reading offsetHeight forces a synchronous layout pass.
+        // eslint-disable-next-line sonarjs/void-use -- the read itself is the side effect
         void incoming.offsetHeight;
         incoming.style.opacity = "1";
         incoming.style.filter = "blur(0)";

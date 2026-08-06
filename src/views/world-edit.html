@@ -256,15 +256,15 @@
                 </template>
               </div>
 
-            <div
-              x-show="!loadingLocations && locationsLoaded && locations.length === 0"
-              class="empty-state"
-              style="padding: var(--space-12)"
-            >
-              <div class="icon">🗺️</div>
-              <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
-              <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
-            </div>
+              <div
+                x-show="!loadingLocations && locationsLoaded && locations.length === 0"
+                class="empty-state"
+                style="padding: var(--space-12)"
+              >
+                <div class="icon">🗺️</div>
+                <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
+                <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
+              </div>
             </div>
 
             <!-- Items Tab (item creation + item settings) -->
@@ -282,11 +282,23 @@
               <div class="add-location-form" x-show="showAddForm" x-cloak>
                 <div class="form-group">
                   <label class="form-label" for="item-name">Name</label>
-                  <input class="form-input" type="text" id="item-name" x-model="newItemName" placeholder="e.g., Iron Sword" />
+                  <input
+                    class="form-input"
+                    type="text"
+                    id="item-name"
+                    x-model="newItemName"
+                    placeholder="e.g., Iron Sword"
+                  />
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="item-desc">Description</label>
-                  <textarea class="form-input form-textarea" id="item-desc" x-model="newItemDesc" rows="2" placeholder="Short description"></textarea>
+                  <textarea
+                    class="form-input form-textarea"
+                    id="item-desc"
+                    x-model="newItemDesc"
+                    rows="2"
+                    placeholder="Short description"
+                  ></textarea>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
                   <div class="form-group">
@@ -366,7 +378,13 @@
                     >
                       <div style="display: grid; gap: var(--space-2)">
                         <input class="form-input" style="font-size: var(--fs-base-sm)" x-model="editItemName" />
-                        <textarea class="form-input form-textarea" rows="2" style="font-size: var(--fs-base-sm)" x-model="editItemDesc" placeholder="Description"></textarea>
+                        <textarea
+                          class="form-input form-textarea"
+                          rows="2"
+                          style="font-size: var(--fs-base-sm)"
+                          x-model="editItemDesc"
+                          placeholder="Description"
+                        ></textarea>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
                           <select class="form-input" style="font-size: var(--fs-base-sm)" x-model="editItemCategory">
                             <option value="weapon">Weapon</option>
@@ -391,8 +409,22 @@
                           </select>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
-                          <input class="form-input" type="number" style="font-size: var(--fs-base-sm)" x-model.number="editItemValue" min="0" placeholder="Value" />
-                          <input class="form-input" type="number" style="font-size: var(--fs-base-sm)" x-model.number="editItemWeight" min="0" placeholder="Weight" />
+                          <input
+                            class="form-input"
+                            type="number"
+                            style="font-size: var(--fs-base-sm)"
+                            x-model.number="editItemValue"
+                            min="0"
+                            placeholder="Value"
+                          />
+                          <input
+                            class="form-input"
+                            type="number"
+                            style="font-size: var(--fs-base-sm)"
+                            x-model.number="editItemWeight"
+                            min="0"
+                            placeholder="Weight"
+                          />
                         </div>
                         <button
                           class="btn btn-primary btn-xs"
@@ -409,7 +441,10 @@
                           <strong style="font-size: var(--fs-base-sm)">Instances</strong>
                         </div>
 
-                        <div x-show="locations.length > 0" style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3)">
+                        <div
+                          x-show="locations.length > 0"
+                          style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3)"
+                        >
                           <select
                             class="form-input"
                             style="font-size: var(--fs-base-sm); flex: 1"
@@ -446,7 +481,10 @@
                         <div x-show="!loadingInstances && instances.length > 0">
                           <template x-for="inst in instances" :key="inst.id">
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default)">
-                              <span style="font-size: var(--fs-base-sm)" x-text="(locName(inst.location_id) + ' · ×' + inst.quantity)"></span>
+                              <span
+                                style="font-size: var(--fs-base-sm)"
+                                x-text="(locName(inst.location_id) + ' · ×' + inst.quantity)"
+                              ></span>
                               <button
                                 class="btn btn-danger btn-xs"
                                 style="font-size: var(--fs-sm); padding: var(--space-1) var(--space-2)"

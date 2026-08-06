@@ -27,7 +27,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     this.loadingLocations = true;
     this.locationsLoaded = false;
     try {
-      const res = await fetch(`/api/worlds/${this.worldId}/locations`, {
+      const res = await apiFetch(`/api/worlds/${this.worldId}/locations`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -47,7 +47,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
   async addLocation() {
     if (!this.newLocName.trim()) { return; }
     try {
-      const res = await fetch(`/api/worlds/${this.worldId}/locations`, {
+      const res = await apiFetch(`/api/worlds/${this.worldId}/locations`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -87,7 +87,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
 
   async saveLocation(locId: string,) {
     try {
-      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
+      const res = await apiFetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -115,7 +115,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
   async deleteLocation(locId: string,) {
     if (!confirm("Delete this location?",)) { return; }
     try {
-      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
       if (res.ok) { await this.loadLocations(); }
     } catch {
       showToast("error", "Failed to delete location",);
