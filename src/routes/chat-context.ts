@@ -24,6 +24,7 @@ import {
   HttpStatus,
   jsonError,
   jsonResponse,
+  unauthorizedResponse,
 } from "./http-utils";
 
 /** Lazy logger — resolved at request time, not module load. */
@@ -127,7 +128,7 @@ async function handleRegenerateMessage(
   style?: string,
 ): Promise<Response> {
   if (!userId) {
-    return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
+    return unauthorizedResponse();
   }
 
   // Verify chat access

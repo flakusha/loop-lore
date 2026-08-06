@@ -26,7 +26,7 @@ import {
   type SdGenMode,
 } from "../generation/prompt-templates";
 import { getLogger, type Logger, } from "../logger";
-import { jsonError, jsonResponse, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 function log(): Logger {
@@ -71,10 +71,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
   return new Elysia({ name: "admin-templates", },)
     // ── List all profiles (builtin + custom) ───────────────
     .get("/api/admin/templates", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       try {
         const stored = await loadStoredTemplates(database,);
@@ -107,10 +105,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     },)
     // ── Get full registry (all profiles with templates) ────
     .get("/api/admin/templates/registry", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       try {
         const stored = await loadStoredTemplates(database,);
@@ -131,10 +127,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     },)
     // ── Get one profile ───────────────────────────────────
     .get("/api/admin/templates/:id", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { id, } = ctx.params as { id: string };
       const stored = await loadStoredTemplates(database,);
@@ -154,10 +148,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .put(
       "/api/admin/templates/:id",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const { id, } = ctx.params as { id: string };
         const body = ctx.body as {
@@ -205,10 +197,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .put(
       "/api/admin/templates/:id/defaults",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const { id, } = ctx.params as { id: string };
         const body = ctx.body as {
@@ -248,10 +238,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .post(
       "/api/admin/templates",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const body = ctx.body as {
           id: string;
@@ -322,10 +310,8 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .delete(
       "/api/admin/templates/:id",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const { id, } = ctx.params as { id: string };
 

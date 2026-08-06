@@ -10,7 +10,7 @@ import { EmotionAvatarService, } from "../characters/services/emotion-avatar-ser
 import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { checkActorOwnership, } from "./actor-auth";
-import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
 interface HandlerOpts {
@@ -24,8 +24,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-emotion-avatars", },)
     // ── List batch generation jobs ────────────────────────────────
     .get("/api/actors/:actorId/emotion-avatars/jobs", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params as { actorId: string };
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
@@ -36,8 +36,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     },)
     // ── Get specific job status ───────────────────────────────────
     .get("/api/actors/:actorId/emotion-avatars/jobs/:jobId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params as { actorId: string };
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
@@ -50,8 +50,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     },)
     // ── Cancel a running job ──────────────────────────────────────
     .post("/api/actors/:actorId/emotion-avatars/jobs/:jobId/cancel", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params as { actorId: string };
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
@@ -66,8 +66,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     },)
     // ── Start batch generation ───────────────────────────────────
     .post("/api/actors/:actorId/emotion-avatars", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params as { actorId: string };
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
@@ -113,8 +113,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     },)
     // ── Get emotion prompt modifier ──────────────────────────────
     .get("/api/emotions/prompt-modifier/:emotion", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const { emotion, } = ctx.params as { emotion: string };
       const validEmotions = Object.values(EmotionType,) as string[];
@@ -126,8 +126,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
     },)
     // ── List available emotion types ───────────────────────────
     .get("/api/emotions/types", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const emotions = Object.values(EmotionType,).map((emotion,) => ({
         value: emotion,
