@@ -12,6 +12,7 @@
 
 import type { Kysely, } from "kysely";
 import { marked, } from "marked";
+import { detectAvatarChangeIntent, } from "../assistant/intent";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
 import { callAux, } from "../aux-pipeline";
 import { MoodService, } from "../characters/services/mood-service";
@@ -264,6 +265,16 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       groupParticipantIds = participants.map((p,) => p.actor_id).filter((id,) => id !== characterId);
     }
 
+    // Wire the config-driven avatar-change intent detector: when the user's
+    // latest message matches a pattern in config.templates.avatar.intentPatterns,
+    // the resolved emotion is injected as params.emotion so the emotionAvatar
+    // section fires (and the generation provider picks the matching emotion
+    // modifier). No match → undefined → the assembler falls back to the actor's
+    // persisted mood.
+    const detectedEmotion = userMessage && config.templates.avatar
+      ? detectAvatarChangeIntent(userMessage, config.templates.avatar,) ?? undefined
+      : undefined;
+
     const prompt = await assembler.assemble({
       actorId: characterId,
       chatId,
@@ -271,6 +282,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       groupParticipantIds,
       config,
       systemPromptOverride,
+      emotion: detectedEmotion,
     },);
     log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 

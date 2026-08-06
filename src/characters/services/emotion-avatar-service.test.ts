@@ -251,6 +251,20 @@ describe("EmotionAvatarService", () => {
       const result = emotionService.getEmotionPromptModifier("unknown" as EmotionType,);
       expect(result,).toBe("neutral expression",);
     });
+
+    it("prefers the config-driven emotion intent over the built-in modifier", () => {
+      const configEmotions = {
+        happy: { asset: "happy.png", intent: "radiant warm smile", },
+        sad: { asset: "sad.png", intent: "gentle sad expression", },
+      };
+      const result = emotionService.resolveEmotionPromptModifier(EmotionType.Happy, configEmotions,);
+      expect(result,).toBe("radiant warm smile",);
+    });
+
+    it("falls back to the built-in modifier when the emotion is absent from the config map", () => {
+      const result = emotionService.resolveEmotionPromptModifier(EmotionType.Happy, {},);
+      expect(result,).toBe(emotionService.getEmotionPromptModifier(EmotionType.Happy,),);
+    });
   });
 
   // ── Batch job lifecycle ────────────────────────────────────────
