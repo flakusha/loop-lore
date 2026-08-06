@@ -10,6 +10,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("description", "text",)
     .addColumn("lore", "text",)
     .addColumn("publication_status", "text", (col,) => col.notNull().defaultTo("draft",),)
+    .addColumn("kind", "text", (col,) => col.notNull().defaultTo("rpg",),)
+    .addColumn("visibility", "text", (col,) => col.notNull().defaultTo("private",),)
     .addColumn("scan_depth", "integer", (col,) => col.notNull().defaultTo(100,),)
     .addColumn("token_budget", "integer", (col,) => col.notNull().defaultTo(2000,),)
     .addColumn("difficulty_modifier", "real", (col,) => col.notNull().defaultTo(1,),)
