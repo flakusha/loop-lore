@@ -6,6 +6,7 @@
  */
 
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "user-info", },);
@@ -23,7 +24,7 @@ async function loadUserInfo(): Promise<void> {
       username?: string;
       role?: string;
     };
-    if (nameEl) { nameEl.textContent = user.display_name || user.username || "User"; }
+    if (nameEl) { nameEl.textContent = user.display_name || user.username || t("common.user",); }
     if (roleEl) { roleEl.textContent = user.role || "solo"; }
   } catch {
     log.debug("loadUserInfo failed — keeping placeholder",);

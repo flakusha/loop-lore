@@ -8,6 +8,7 @@
 // This module only drives existing endpoints — no location access-check
 // logic is modified.
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
@@ -119,7 +120,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   async changeChatLocation() {
     if (!this.activeChat || !this._selectedLocationId || this._locationBusy) { return; }
     if (this._selectedLocationId === this._chatCurrentLocationId) {
-      this.$dispatch?.("show-toast", { type: "info", message: "Chat is already in this location", },);
+      this.$dispatch?.("show-toast", { type: "info", message: t("toasts.chatAlreadyInLocation",), },);
       return;
     }
     this._locationBusy = true;
@@ -132,7 +133,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       if (res.ok) {
         this._chatCurrentLocationId = this._selectedLocationId;
         this._chatRecentLocationChanged = true;
-        this.$dispatch?.("show-toast", { type: "success", message: "Location updated", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.locationUpdated",), },);
         this._emitLocationChanged();
         // Reflect the new location in the chat list, background auto-sync, and
         // the joinable-at-location discovery list.
@@ -142,11 +143,11 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
           this._chatRecentLocationChanged = false;
         }, 2500,);
       } else {
-        this.$dispatch?.("show-toast", { type: "error", message: "Failed to change location", },);
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedChangeLocation",), },);
       }
     } catch (error) {
       log.warn("changeChatLocation failed", { error: String(error,), },);
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to change location", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedChangeLocation",), },);
     } finally {
       this._locationBusy = false;
     }
@@ -168,7 +169,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       if (res.ok) {
         this._chatCurrentLocationId = this._selectedLocationId;
         this._chatRecentLocationChanged = true;
-        this.$dispatch?.("show-toast", { type: "success", message: "Chat transferred", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatTransferred",), },);
         this._emitLocationChanged();
         await Promise.all([this.loadChats?.(), this.loadBackground?.(),],);
         await this.loadLocationJoinable();
@@ -176,11 +177,11 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
           this._chatRecentLocationChanged = false;
         }, 2500,);
       } else {
-        this.$dispatch?.("show-toast", { type: "error", message: "Failed to transfer chat", },);
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedTransferChat",), },);
       }
     } catch (error) {
       log.warn("transferChatLocation failed", { error: String(error,), },);
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to transfer chat", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedTransferChat",), },);
     } finally {
       this._locationBusy = false;
     }

@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "admin-worlds", },);
@@ -48,16 +49,16 @@ export const adminWorlds = {
     try {
       const res = await apiFetch(`/api/admin/worlds/${worldId}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "World deleted",);
+        showToast("success", t("toasts.worldDeleted",),);
         this.confirmDeleteWorld = "";
         await this.loadWorlds();
         await (this as any).loadOverview();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed",);
+        showToast("error", err.error || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   searchWorlds() {

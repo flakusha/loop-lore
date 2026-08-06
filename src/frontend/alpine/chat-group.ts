@@ -1,4 +1,5 @@
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import type { ChatState, } from "./types";
 
@@ -56,14 +57,14 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         }
         this.$dispatch?.("show-toast", {
           type: "success",
-          message: newPaused ? "AI generation paused" : "AI generation resumed",
+          message: t(newPaused ? "toasts.aiPaused" : "toasts.aiResumed",),
         },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to toggle pause", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedTogglePause",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error toggling pause", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorTogglingPause",), },);
     }
   },
 

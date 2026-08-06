@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import { worldInvites, } from "./world-invites";
@@ -67,27 +68,27 @@ const log = rootLog.child({ module: "world-edit", },);
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ ...this.world, settings: jsonBody(settings,), },),
         },);
-        if (res.ok) { showToast("success", "World saved",); }
+        if (res.ok) { showToast("success", t("toasts.worldSaved",),); }
         else {
           const err = await res.json();
-          showToast("error", err.error || "Failed to save",);
+          showToast("error", err.error || t("toasts.failedSaveWorld",),);
         }
       } catch {
-        showToast("error", "Network error",);
+        showToast("error", t("toasts.networkError",),);
       }
       this.saving = false;
     },
 
     async deleteWorld() {
-      if (!confirm("Delete this world? All locations will be removed.",)) { return; }
+      if (!confirm(t("worlds.deleteConfirm",),)) { return; }
       try {
         const res = await apiFetch(`/api/worlds/${this.worldId}`, { method: "DELETE", },);
         if (res.ok) {
-          showToast("success", "World deleted",);
+          showToast("success", t("toasts.worldDeleted",),);
           location.assign("/worlds",);
         }
       } catch {
-        showToast("error", "Failed to delete world",);
+        showToast("error", t("toasts.failedDeleteWorld",),);
       }
     },
   };
