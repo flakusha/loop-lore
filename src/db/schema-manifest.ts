@@ -1283,6 +1283,17 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
+  .table("world_invites", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    code: col("text", { notNull: true, },),
+    created_by: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+    max_uses: col("integer",),
+    uses: col("integer", { notNull: true, hasDefault: true, },),
+    revoked: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("world_items", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),
@@ -1318,6 +1329,10 @@ export const SCHEMA = new SchemaManifest()
     last_activated: col("text",),
     audience_scope: col("text",),
   },)
+  .table("world_members", {
+    world_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+  },)
   .table("world_states", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),
@@ -1345,6 +1360,8 @@ export const SCHEMA = new SchemaManifest()
     description: col("text",),
     lore: col("text",),
     publication_status: col("text", { notNull: true, hasDefault: true, },),
+    kind: col("text", { notNull: true, hasDefault: true, },),
+    visibility: col("text", { notNull: true, hasDefault: true, },),
     scan_depth: col("integer", { notNull: true, hasDefault: true, },),
     token_budget: col("integer", { notNull: true, hasDefault: true, },),
     difficulty_modifier: col("real", { notNull: true, hasDefault: true, },),
