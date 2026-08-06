@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, GalleryAsset, } from "./types";
@@ -36,13 +37,13 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
         const msgs = this.messages;
         const msg = msgs.find((m,) => m.id === msgId);
         if (msg) { msg.content = this.editContent.trim(); }
-        this.$dispatch?.("show-toast", { type: "success", message: "Message edited", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageEdited",), },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to save edit", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSaveEdit",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error saving edit", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorSavingEdit",), },);
     } finally {
       this.editingMessageId = null;
       this.editContent = "";
@@ -52,20 +53,20 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
   async removeMessage(msgId: string, event: Event,) {
     log.info("removeMessage", { messageId: msgId, },);
     if (!this.activeChat) { return; }
-    if (!confirm("Delete this message?",)) { return; }
+    if (!confirm(t("modals.deleteMessage",),)) { return; }
     event.stopImmediatePropagation();
     try {
       const res = await apiFetch(`/api/messages/${msgId}`, { method: "DELETE", },);
       if (res.ok) {
         const msgs = this.messages;
         this.messages = msgs.filter((m,) => m.id !== msgId);
-        this.$dispatch?.("show-toast", { type: "success", message: "Message removed", },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageRemoved",), },);
       } else {
         const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to remove", },);
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedRemove",), },);
       }
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Network error removing message", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorRemovingMessage",), },);
     }
   },
 
@@ -77,9 +78,9 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     const button = event.currentTarget as HTMLElement | null;
     try {
       await navigator.clipboard.writeText(msg.content,);
-      this.$dispatch?.("show-toast", { type: "success", message: "Copied to clipboard", },);
+      this.$dispatch?.("show-toast", { type: "success", message: t("toasts.copiedToClipboard",), },);
     } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: "Failed to copy", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedCopy",), },);
     }
     button?.blur();
   },
@@ -87,7 +88,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
   async handleAttach(event: Event,) {
     log.info("handleAttach",);
     if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: "Select a chat first", },);
+      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.selectChatFirst",), },);
       return;
     }
     const input = event.target as HTMLInputElement;
@@ -104,16 +105,22 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
         if (res.ok) {
           const asset = await res.json();
           this.pendingAssets = [...this.pendingAssets, { assetId: asset.id, filename: file.name, },];
-          this.$dispatch?.("show-toast", { type: "success", message: `Ready to attach: ${file.name}`, },);
+          this.$dispatch?.("show-toast", {
+            type: "success",
+            message: t("toasts.readyToAttach", { filename: file.name, },),
+          },);
         } else {
           const err = await res.json();
           this.$dispatch?.("show-toast", {
             type: "error",
-            message: err.error || `Failed to upload ${file.name}`,
+            message: err.error || t("toasts.failedUpload", { filename: file.name, },),
           },);
         }
       } catch {
-        this.$dispatch?.("show-toast", { type: "error", message: `Network error uploading ${file.name}`, },);
+        this.$dispatch?.("show-toast", {
+          type: "error",
+          message: t("toasts.networkErrorUploading", { filename: file.name, },),
+        },);
       }
     }
     input.value = "";

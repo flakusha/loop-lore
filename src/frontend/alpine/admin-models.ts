@@ -1,3 +1,4 @@
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
@@ -176,28 +177,28 @@ export const adminModels = {
         body: jsonBody({ provider, model, },),
       },);
       if (res.ok) {
-        showToast("success", `${role} role updated`,);
+        showToast("success", t("toasts.roleUpdatedFor", { role, },),);
         await this.loadModelRoles();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed",);
+        showToast("error", err.error || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   async clearModelRole(role: string,) {
     try {
       const res = await apiFetch(`/api/admin/model-roles/${role}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", `${role} role cleared`,);
+        showToast("success", t("toasts.roleClearedFor", { role, },),);
         await this.loadModelRoles();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed",);
+        showToast("error", err.error || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
   async rescanProviders() {
@@ -229,10 +230,10 @@ export const adminModels = {
           await this.loadProviderModels(p.name,);
         }
         this.providers = merged;
-        showToast("success", "Providers rescanned",);
-      } else { showToast("error", "Failed to rescan providers",); }
+        showToast("success", t("toasts.providersRescanned",),);
+      } else { showToast("error", t("toasts.failedRescanProviders",),); }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     } finally {
       this.scanning = false;
     }
@@ -268,14 +269,14 @@ export const adminModels = {
     try {
       const res = await apiFetch(`/api/plugins/${name}/${action}`, { method: "POST", },);
       if (res.ok) {
-        showToast("success", `Plugin ${action}d`,);
+        showToast("success", t(enable ? "toasts.pluginEnabled" : "toasts.pluginDisabled",),);
         await this.loadPlugins();
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed",);
+        showToast("error", err.message || t("toasts.failed",),);
       }
     } catch {
-      showToast("error", "Network error",);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -317,9 +318,9 @@ export const adminModels = {
           body: jsonBody(entry,),
         },);
       }
-      showToast("success", "SD configuration saved",);
+      showToast("success", t("toasts.sdConfigSaved",),);
     } catch {
-      showToast("error", "Failed to save SD config",);
+      showToast("error", t("toasts.failedSaveSdConfig",),);
     }
   },
 };
