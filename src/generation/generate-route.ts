@@ -12,6 +12,7 @@ import { randomUUID, } from "node:crypto";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
 import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
+import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../crypto";
 import {
   CancelReason,
   ChunkAction,
@@ -94,6 +95,25 @@ async function storeGeneratedMessage({
   const messageId = randomUUID();
   const status = result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed;
 
+  // Encrypt (and compress) the body when server-side encryption is enabled, so
+  // the generate-route write path matches auto-gen (which already encrypts).
+  // Encrypted rows carry content_encoding=identity + key_id set; the read path
+  // keys on key_id presence, not content_encoding.
+  let storedContent = result.content;
+  let storedKeyId: string | null = null;
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    const enc = await encryptMessageContent({
+      database,
+      chatId,
+      actorId,
+      plaintext: result.content,
+      smk,
+    },);
+    storedContent = enc.storedContent;
+    storedKeyId = enc.keyId;
+  }
+
   await database
     .insertInto("messages",)
     .values({
@@ -102,7 +122,8 @@ async function storeGeneratedMessage({
       actor_id: actorId,
       parent_id: parentMessageId,
       role: MessageRole.Assistant,
-      content: result.content,
+      content: storedContent,
+      key_id: storedKeyId,
       content_type: MessageContentType.Text,
       content_format: MessageContentFormat.Markdown,
       content_encoding: ContentEncoding.Identity,
