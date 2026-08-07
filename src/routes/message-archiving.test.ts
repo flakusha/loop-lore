@@ -8,19 +8,19 @@ import { join, } from "node:path";
 const ROUTES_DIR = import.meta.dir;
 
 describe("message archiving routes", () => {
-  test("messages.ts has archive endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "messages.ts",), "utf8",);
+  test("messages/archiving.ts has archive endpoint", () => {
+    const content = readFileSync(join(ROUTES_DIR, "messages", "archiving.ts",), "utf8",);
     expect(content,).toContain("/api/messages/:id/archive",);
     expect(content,).toContain("archived_at",);
   });
 
-  test("messages.ts has restore endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "messages.ts",), "utf8",);
+  test("messages/archiving.ts has restore endpoint", () => {
+    const content = readFileSync(join(ROUTES_DIR, "messages", "archiving.ts",), "utf8",);
     expect(content,).toContain("/api/messages/:id/restore",);
   });
 
-  test("messages.ts has purge endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "messages.ts",), "utf8",);
+  test("messages/archiving.ts has purge endpoint", () => {
+    const content = readFileSync(join(ROUTES_DIR, "messages", "archiving.ts",), "utf8",);
     expect(content,).toContain("/api/chats/:id/messages/purge",);
   });
 });

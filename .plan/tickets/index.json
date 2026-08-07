@@ -5200,6 +5200,39 @@
     "type": "TASK",
     "hash": "c8f2e8a"
   },
+  "TASK-FILE-SPLIT-CHAT-SERVICE": {
+    "hash": "pending",
+    "extid": "TASK-FILE-SPLIT-CHAT-SERVICE",
+    "type": "TASK",
+    "title": "# TASK-file-split-chat-service: Split `src/chat/service.ts` (1830L)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-file-split-chat-service.md"
+  },
+  "TASK-FILE-SPLIT-CLASS-FACTORY": {
+    "hash": "pending",
+    "extid": "TASK-FILE-SPLIT-CLASS-FACTORY",
+    "type": "TASK",
+    "title": "# TASK-file-split-class-factory: Convert class/stateful services to interface-merged factories (thisL)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-file-split-class-factory.md"
+  },
+  "TASK-FILE-SPLIT-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-FILE-SPLIT-ROUTES",
+    "type": "TASK",
+    "title": "# TASK-file-split-routes: Split oversized route modules (views/messages/auto-gen/admin)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-file-split-routes.md"
+  },
   "TASK-FIX-CRYPTO-ISOLATION": {
     "epic": "",
     "extid": "TASK-FIX-CRYPTO-ISOLATION",
@@ -8002,6 +8035,17 @@
     "tags": [],
     "title": "Signed URLs for Asset Downloads",
     "type": "TASK"
+  },
+  "TASK-SIZE-STRICT-DEBT": {
+    "hash": "pending",
+    "extid": "TASK-SIZE-STRICT-DEBT",
+    "type": "TASK",
+    "title": "# TASK-size-strict-debt: Close size-strict debt and promote size guard to CI gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-size-strict-debt.md"
   },
   "TASK-SKILL-CHECK": {
     "epic": "epic-battle-ui.md",

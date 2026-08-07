@@ -19,7 +19,7 @@ describe("MoodService", () => {
   beforeAll(async () => {
     const testDb = await createTestDb();
     db = testDb.db;
-    moodService = new MoodService(db,);
+    moodService = MoodService(db,);
 
     const { actorId, } = await createTestActors(db, "test-actor-mood-001",);
     testActorId = actorId;

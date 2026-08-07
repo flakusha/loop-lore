@@ -271,7 +271,7 @@ describe("emotion avatar content hooks in auto-gen", () => {
       deps,
     },);
 
-    const mood = await new MoodService(db,).getMood(aiActorId,);
+    const mood = await MoodService(db,).getMood(aiActorId,);
     expect(mood?.happiness,).toBe(55,);
     expect(mood?.currentMood,).toBe("neutral",);
   });
