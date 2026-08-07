@@ -4,7 +4,7 @@
  * CRUD for per-actor inventory items.
  */
 
-import { Elysia, } from "elysia";
+import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { EquipState, } from "../db/enums";

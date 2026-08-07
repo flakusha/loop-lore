@@ -11,7 +11,7 @@
  */
 import { afterAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { PromptAssembler, } from "../assistant/prompt-assembler";
+import type { PromptAssembler, } from "../assistant/prompt-assembler";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";

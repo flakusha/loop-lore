@@ -20,15 +20,13 @@ import {
   WorldKind,
   WorldVisibility,
 } from "../db/enums-story";
-import type { DB, } from "../db/schema";
-import type {
+import type { DB, 
   Locations,
   LocationStates,
   Quests,
   WorldLoreEntries,
   Worlds,
-  WorldStates,
-} from "../db/schema";
+  WorldStates} from "../db/schema";
 import { authenticate, } from "../middleware/auth";
 import { uid, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";

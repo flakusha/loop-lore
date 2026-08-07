@@ -232,7 +232,7 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   escapeHtml(str: string,) {
     const div = document.createElement("div",);
     div.textContent = str;
-    return div.innerHTML;
+    return div.getHTML();
   },
 
   async loadGalleryAssets() {
