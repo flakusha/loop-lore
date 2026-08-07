@@ -5,8 +5,7 @@
  * Blog records reuse chat-shaped content; routes manage the
  * blog-specific metadata layer.
  */
-import { Elysia, } from "elysia";
-import { t, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { TranslatorFn, } from "../i18n/types";
 import { BlogService, } from "../rpg/blog/service.js";
 import {
