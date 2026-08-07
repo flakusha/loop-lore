@@ -1,0 +1,113 @@
+import { Elysia, t, } from "elysia";
+import { isAdminRole, } from "../../middleware/admin-gate";
+import { ErrorResponse, PaginationQuery, } from "../../validation/schemas";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, parsePagination, } from "../http-utils";
+import type { AdminRouteOpts, } from "./types";
+
+export function auditRoutes(opts: AdminRouteOpts,) {
+  return (
+    new Elysia({ name: "admin-audit", },)
+      // ── Audit log ──────────────────────────────────────────
+      .get(
+        "/api/admin/audit",
+        async (ctx: any,) => {
+          const { userRole, request, } = ctx;
+          if (!isAdminRole(userRole,)) {
+            return jsonError({
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            },);
+          }
+          const url = new URL(request.url,);
+          const { page, pageSize, } = parsePagination(url.searchParams,);
+          const offset = (page - 1) * pageSize;
+          const eventType = url.searchParams.get("event_type",);
+          const userIdFilter = url.searchParams.get("user_id",);
+          const entityType = url.searchParams.get("entity_type",);
+          const q = url.searchParams.get("q",);
+
+          let query = opts.database
+            .selectFrom("log_entries",)
+            .selectAll()
+            .orderBy("created_at", "desc",)
+            .limit(pageSize,)
+            .offset(offset,);
+
+          if (eventType) {
+            query = query.where("event_type", "=", eventType,);
+          }
+          if (userIdFilter) {
+            query = query.where("user_id", "=", userIdFilter,);
+          }
+          if (entityType) {
+            query = query.where("entity_type", "=", entityType,);
+          }
+          if (q) {
+            const like = `%${q}%`;
+            query = query.where("message", "like", like,);
+          }
+
+          const entries = await query.execute();
+
+          let countQuery = opts.database
+            .selectFrom("log_entries",)
+            .select(opts.database.fn.countAll<number>().as("total",),);
+          if (eventType) {
+            countQuery = countQuery.where("event_type", "=", eventType,);
+          }
+          if (userIdFilter) {
+            countQuery = countQuery.where("user_id", "=", userIdFilter,);
+          }
+          if (entityType) {
+            countQuery = countQuery.where("entity_type", "=", entityType,);
+          }
+          if (q) {
+            const like = `%${q}%`;
+            countQuery = countQuery.where("message", "like", like,);
+          }
+          const countResult = await countQuery.executeTakeFirst();
+          const total = countResult?.total ?? 0;
+
+          return jsonResponse({ data: entries, total, page, pageSize, },);
+        },
+        {
+          query: PaginationQuery,
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            403: ErrorResponse,
+          },
+        },
+      )
+      .get("/api/admin/audit/:id", async (ctx: any,) => {
+        const { params: p, userRole, } = ctx;
+        if (!isAdminRole(userRole,)) {
+          return jsonError({
+            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
+        const { id, } = p as { id: string };
+        const entry = await opts.database
+          .selectFrom("log_entries",)
+          .selectAll()
+          .where("id", "=", id,)
+          .executeTakeFirst();
+        if (!entry) {
+          return jsonError({
+            message: ctx.t?.("admin.logEntryNotFound",) ?? "Log entry not found",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          },);
+        }
+        return jsonResponse(entry,);
+      }, {
+        response: {
+          200: t.Any(),
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+      },)
+  );
+}
