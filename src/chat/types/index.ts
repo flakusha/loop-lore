@@ -1,0 +1,53 @@
+/**
+ * Chat Module — Shared Types
+ *
+ * Types for chat lifecycle management: context windows, transitions,
+ * and moderation primitives. Used by the context window manager,
+ * transition system, and message routes.
+ */
+export type {
+  ChatMode,
+  GmConfig,
+  ModeFeatureFlags,
+} from "./config";
+export { MODE_DEFAULTS, resolveFeatureFlags, } from "./config";
+
+export type {
+  ContextThreshold,
+  ContextThresholds,
+  ContextWindow,
+  EventRef,
+  MemoryRef,
+  MessageRef,
+  MessageScore,
+} from "./context";
+
+export type {
+  ChatTransition,
+  TransitionClassification,
+  TransitionSource,
+  TransitionType,
+} from "./transitions";
+
+export type {
+  ModerationAction,
+  ModerationActionType,
+  ModerationScope,
+} from "./moderation";
+
+export type {
+  NsfwAuditEntry,
+  NsfwAuditEventType,
+  NsfwFlag,
+  NsfwFlagResolution,
+  NsfwFlagStatus,
+  NsfwModerationAction,
+  NsfwModerationActionType,
+  NsfwModerationScope,
+} from "./nsfw";
+
+export type {
+  ResponseLengthConfig,
+  ResponseLengthPreset,
+} from "./response-length";
+export { RESPONSE_LENGTH_DEFAULTS, } from "./response-length";
