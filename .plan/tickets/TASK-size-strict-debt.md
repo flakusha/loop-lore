@@ -14,6 +14,13 @@
 over 250L as a non-blocking report. Once the split tasks under this epic reduce offenders to 0,
 promote `size:strict` to a **blocking** gate.
 
+## Progress
+
+- 137 → 129 offenders (9 splits closed via `file-split-routes` → dev `eb3ed64f`):
+  routes/views, routes/admin, routes/chats, routes/worlds, routes/battle, routes/characters,
+  assets/service, validation/schemas, elysia-app. `src/server.ts` split into `server/` barrel;
+  `server/start.ts` (398L) deliberately kept intact — untested production bootstrap, no safety net.
+
 ## Approach
 
 - Track offender count per split task; the final "0 over 250L" state is the trigger.
