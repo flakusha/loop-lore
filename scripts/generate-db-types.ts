@@ -602,9 +602,19 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
     }
   }
 
-  // We need the actual enum values to generate schemas. Read them from enums-*.ts files
+  // We need the actual enum values to generate schemas. Read them from enums-*.ts
+  // files (top-level) AND from within split enums-*/ subdirectory modules.
   const enumDir = ENUM_DIR;
-  const enumFiles = readdirSync(enumDir,).filter((f,) => f.startsWith("enums-",) && f.endsWith(".ts",));
+  const enumFiles: string[] = readdirSync(enumDir,).filter((f,) => f.startsWith("enums-",) && f.endsWith(".ts",));
+  for (const dir of readdirSync(enumDir,)) {
+    if (dir.startsWith("enums-",) && !dir.endsWith(".ts",)) {
+      for (const f of readdirSync(join(enumDir, dir,),)) {
+        if (f.endsWith(".ts",) && !f.endsWith(".test.ts",)) {
+          enumFiles.push(join(dir, f,),);
+        }
+      }
+    }
+  }
   let allEnumsContent = "";
   for (const f of enumFiles) {
     allEnumsContent += readFileSync(join(enumDir, f,), "utf-8",) + "\n";
