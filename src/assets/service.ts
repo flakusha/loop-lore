@@ -14,8 +14,8 @@ import {
 } from "../crypto/asset-encryption";
 import type { ChatKey, } from "../crypto/chat-keys";
 import type { PipelineConfig, } from "../crypto/pipeline";
-import type { AssetType as AssetTypeT, } from "../db/enums";
-import { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "../db/enums";
+import type { AssetType as AssetTypeT,  AssetLinkEntity} from "../db/enums";
+import { AssetType, AssetVisibility, StorageBackend, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { extractImageMetadata, } from "./metadata";

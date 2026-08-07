@@ -175,10 +175,26 @@ const tsRules = {
   // ── Complexity ceiling ─────────────────────────────────────
   "sonarjs/cognitive-complexity": ["warn", 20,],
 
+  // eslint/typescript-eslint freshly resolved to 10.8.0/8.66.0 pulled in
+  // `unicorn/prefer-simple-condition-first` emissions not seen on the older
+  // 10.7.0/8.64.0 install. Surfaced as warn (repo convention: upgrade after
+  // fixes) — tracks TASK-eslint-1080-lint-debt. Not blocking.
+  "unicorn/prefer-simple-condition-first": "warn",
+
   // ── Import hygiene ─────────────────────────────────────────
   "import/no-cycle": ["error", { maxDepth: 1, },],
   "import/first": "error",
   "import/no-mutable-exports": "error",
+  "import/no-duplicates": "error",
+  "import/no-self-import": "error",
+
+  // ── Type-only imports & exhaustiveness (AGENTS.md naming + wiring hygiene) ──
+  "@typescript-eslint/consistent-type-imports": ["error", { disallowTypeAnnotations: false, },],
+  // Real non-exhaustive switches exist in RPG/battle/generation logic (see
+  // docs/meta follow-up). Surfaced as warn (repo convention: upgrade to error
+  // after violations are fixed), not blocking the gate.
+  "@typescript-eslint/switch-exhaustiveness-check": "warn",
+  "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
   // ── Custom restricted syntax ────────────────────────────────
   "no-restricted-syntax": ["warn", ...customRestrictedSyntax,],
@@ -424,7 +440,12 @@ export default tseslint.config(
       "@typescript-eslint/require-await": "off",
       // Type-aware rules require parserOptions.project — disabled here
       "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/switch-exhaustiveness-check": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
       "import/no-cycle": "off",
+      // `innerHTML()` here is the Playwright Locator read API, not DOM
+      // element.innerHTML — getHTML() doesn't exist on Locator. Rule misfires.
+      "unicorn/prefer-dom-node-html-methods": "off",
       // Playwright clicks on CSS-hidden hamburger/sidebar need force:true —
       // actionability checks fail before the sidebar animates open.
       "sonarjs/no-forced-browser-interaction": "off",

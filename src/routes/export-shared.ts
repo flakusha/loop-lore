@@ -11,7 +11,7 @@
  * @module routes/export-shared
  */
 
-import JSZip from "jszip";
+import type JSZip from "jszip";
 import type { Kysely, Selectable, } from "kysely";
 import crypto from "node:crypto";
 import { exportToCcV3Json, } from "../characters/exporters/ccv3";
