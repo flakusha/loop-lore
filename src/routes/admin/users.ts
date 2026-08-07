@@ -7,6 +7,7 @@ import {
   SuccessResponse,
   UserIdParams,
 } from "../../validation/schemas";
+import { AdminPaginatedEnvelope, AdminUserRow, } from "../../validation/schemas/responses";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -70,7 +71,7 @@ export function usersRoutes(opts: AdminRouteOpts,) {
         {
           query: PaginationQuery,
           response: {
-            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            200: AdminPaginatedEnvelope(AdminUserRow,),
             403: ErrorResponse,
           },
           detail: {
