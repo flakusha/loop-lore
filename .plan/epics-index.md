@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 167 epics
+**Total:** 168 epics
 
 ## Summary
 
@@ -62,6 +62,7 @@
 | ⬜ Not Started | Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI | High | High | 9 | [epic-frontend-backend-integration.md](/.plan/epics/epic-frontend-backend-integration.md) |
 | ⬜ Not Started | Frontend Bundle Optimization | High | Medium | 2 | [epic-frontend-bundle-optimization.md](/.plan/epics/epic-frontend-bundle-optimization.md) |
 | ⬜ Not Started | Frontend Component Architecture | Medium | Unknown | 0 | [epic-frontend-component-architecture.md](/.plan/epics/epic-frontend-component-architecture.md) |
+| ⬜ Not Started | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 5 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | ⬜ Not Started | Frontend Overview | Medium | Unknown | 0 | [epic-frontend-overview.md](/.plan/epics/epic-frontend-overview.md) |
 | ⬜ Not Started | Headers & Navigation Management | Medium | Unknown | 0 | [epic-frontend-headers-management.md](/.plan/epics/epic-frontend-headers-management.md) |
 | ⬜ Not Started | Headless Mode & Alternative Frontends | Medium | High | 33 | [epic-headless-alternative-frontends.md](/.plan/epics/epic-headless-alternative-frontends.md) |
@@ -691,6 +692,15 @@ Exploration and discovery mechanics — map exploration, fog of war, discovery r
 - **Effort:** Unknown
 - **Type:** Feature
 - **File:** `.plan/epics/epic-frontend-component-architecture.md`
+
+### Frontend HTML Deduplication & HTMX AJAX Reuse
+
+- **Status:** ⬜ Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Optimization Epic
+- **Tags:** frontend, htmx, partials, components, deduplication, ajax, reuse, views
+- **File:** `.plan/epics/epic-frontend-html-dedup-htmx-reuse.md`
 
 ### Frontend Overview
 

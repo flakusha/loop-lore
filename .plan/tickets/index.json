@@ -5573,6 +5573,61 @@
     "type": "TASK",
     "hash": "d1c9195"
   },
+  "TASK-HTML-DEDUP-AUDIT": {
+    "hash": "505cf7a",
+    "extid": "TASK-HTML-DEDUP-AUDIT",
+    "type": "TASK",
+    "title": "HTML Deduplication Audit",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-html-dedup-htmx-reuse",
+    "tags": [],
+    "source": ".plan/tickets/TASK-html-dedup-audit.md"
+  },
+  "TASK-HTML-DEDUP-SHARED-PARTIALS": {
+    "hash": "a3048e4",
+    "extid": "TASK-HTML-DEDUP-SHARED-PARTIALS",
+    "type": "TASK",
+    "title": "Extract Shared HTML Partials",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-html-dedup-htmx-reuse",
+    "tags": [],
+    "source": ".plan/tickets/TASK-html-dedup-shared-partials.md"
+  },
+  "TASK-HTMX-AJAX-REQUEST-HELPER": {
+    "hash": "ffa252b",
+    "extid": "TASK-HTMX-AJAX-REQUEST-HELPER",
+    "type": "TASK",
+    "title": "Centralize HTMX AJAX Request Helper",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-html-dedup-htmx-reuse",
+    "tags": [],
+    "source": ".plan/tickets/TASK-htmx-ajax-request-helper.md"
+  },
+  "TASK-HTMX-MIGRATE-VIEWS": {
+    "hash": "5a99217",
+    "extid": "TASK-HTMX-MIGRATE-VIEWS",
+    "type": "TASK",
+    "title": "Migrate Views to Shared Partials + Request Helper",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-html-dedup-htmx-reuse",
+    "tags": [],
+    "source": ".plan/tickets/TASK-htmx-migrate-views.md"
+  },
+  "TASK-HTMX-REUSE-E2E-VERIFY": {
+    "hash": "8b0fa75",
+    "extid": "TASK-HTMX-REUSE-E2E-VERIFY",
+    "type": "TASK",
+    "title": "HTMX Reuse E2E Verification",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-html-dedup-htmx-reuse",
+    "tags": [],
+    "source": ".plan/tickets/TASK-htmx-reuse-e2e-verify.md"
+  },
   "TASK-I18N-ALPINE-CLIENT": {
     "epic": "epic-i18n",
     "extid": "TASK-I18N-ALPINE-CLIENT",
