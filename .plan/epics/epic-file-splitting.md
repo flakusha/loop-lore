@@ -130,17 +130,33 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
 
 ## Task List
 
+- [x] Split `src/routes/views.ts` (1524L) into view-domain route modules (dev `eb3ed64f`)
+- [x] Split `src/routes/admin.ts` (1091L) into admin domain modules (dev `eb3ed64f`)
+- [x] Split `src/routes/chats.ts` (956L) into chat route modules (dev `eb3ed64f`)
+- [x] Split `src/routes/worlds.ts` (765L) into world route modules (dev `eb3ed64f`)
+- [x] Split `src/routes/battle.ts` (774L) into battle route modules (dev `eb3ed64f`)
+- [x] Split `src/routes/characters.ts` (553L) into character route modules (dev `eb3ed64f`)
+- [x] Split `src/assets/service.ts` (732L) into `assets/service/` barrel + domain modules (dev `eb3ed64f`)
+- [x] Split `src/validation/schemas.ts` (977L) into `validation/schemas/` barrel + 21 domain files (dev `eb3ed64f`)
+- [x] Split `src/server.ts` (652L) into `server/` barrel + handler/static-files/start (dev `eb3ed64f`)
+- [x] Split `src/elysia-app.ts` (267L) — extract `src/app/register-plugins.ts` (dev `eb3ed64f`)
 - [ ] Split `src/chat/service.ts` (1830L) into `src/chat/service/` barrel + domain modules
-- [ ] Split `src/routes/views.ts` (1524L) into view-domain route modules
 - [ ] Split `src/routes/messages.ts` (1121L) into `src/routes/messages/` (aligns TASK-split-messages-route)
 - [ ] Split `src/generation/auto-gen.ts` (1119L) into pipeline step modules
-- [ ] Split `src/routes/admin.ts` (1091L) into admin domain modules
-- [ ] Split `src/assets/service.ts` (732L)
-- [ ] Split `src/routes/worlds.ts` (765L)
-- [ ] Split `src/routes/characters.ts` (553L)
 - [ ] Convert class-based services (`characters/services/*`) to interface-merged factory + `thisL`
 - [ ] Apply derived-type single-source-of-truth where public types are hand-rolled in parallel
 - [ ] Close `size:strict` debt: 0 files remain >250L → promote `check-file-size.ts` to blocking CI gate
+
+## Progress
+
+- Round 1 (dev `283644f0`): class factories + thisL (mood/traits/relationships); flat-bank barrels
+  (auto-gen/chat/messages).
+- Round 2 (dev `eb3ed64f`): 6 route modules (views/admin/chats/worlds/battle/characters),
+  assets/service, validation/schemas, server.ts, elysia-app.ts.
+- `src/server/start.ts` (398L) deliberately kept intact: untested production bootstrap (e2e uses
+  `createTestServer`, not `start()`); splitting risks regression with no safety net. Documented
+  follow-on debt.
+- Offenders: 137 → 129 (`file-split-routes` closed 9; dev added 1).
 
 ## Files
 
