@@ -79,11 +79,14 @@
     </div>
 
     <!-- Chat list grid (loaded via HTMX) -->
-    <div id="chat-list-grid" hx-get="/dynamic/chats/list?pageSize=50" hx-trigger="load" hx-swap="innerHTML">
-      <div class="empty-state" style="padding: var(--space-12)">
-        <div class="icon">⏳</div>
-        <div class="title">{{{t("chats.loading")}}}</div>
-      </div>
+    <div
+      id="chat-list-grid"
+      data-loading-title="chats.loading"
+      hx-get="/dynamic/chats/list?pageSize=50"
+      hx-trigger="load"
+      hx-swap="innerHTML"
+    >
+      {{> loading-state.html}}
     </div>
   </main>
 </div>
