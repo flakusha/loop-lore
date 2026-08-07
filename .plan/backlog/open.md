@@ -4,22 +4,23 @@
 > `immediate.md` P6+. This is the **open-debt / deferred** holder. Actively-worked and
 > priority/value items live in `../active.md`, `../priority.md`, `../high-value.md`.
 
-## Security & access — VERIFY, NOT CONFIRMED CLOSED
+## Security & access — closed on dev (verified 2026-08-07)
 
-> ⚠️ The 2026-08-06 audit round 3 found these auth gaps. The `backlog.md` header claims
-> **all 4 critical bypasses + 9 access gaps fixed on branch `auth-access-fixes`
-> (commits `8f2a6d71` + `73cda7b9`)** — but that branch is **NOT merged into `dev`**
-> (verified 2026-08-06: `8f2a6d71` is not an ancestor of `HEAD`; no `auth-access-fixes`
-> branch exists). Treat all of these as **still open on `dev`** until the branch lands.
+> The 2026-08-06 audit round 3 auth gaps were fixed on branch `auth-access-fixes`
+> (commits `8f2a6d71` + `73cda7b9`, neither an ancestor of dev HEAD) **and the fixes
+> landed on `dev` under new hashes** after the branch was merged: `7dc68be7`
+> (critical bypasses: message, nsfw-moderation, nsfw, worlds) + `c78e5466`
+> (remaining access gaps: admin, assets, chat, world routes) + `c99704c1`
+> (401-guard unification → canonical `requireUserId`). All rows below are **closed on dev**.
 
 | # | Item                                                                                                                                                | Where                              | Status                                       |
 | - | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------- |
-| 1 | `message-encryption.ts` returns AES-GCM key without auth — chat access bypass                                                                       | `src/routes/message-encryption.ts` | 🔴 Open on dev; fix on `auth-access-fixes`   |
-| 2 | `nsfw-moderation.ts` trusts `x-user-id` header — spoofable identity                                                                                 | `src/routes/nsfw-moderation.ts`    | 🔴 Open on dev                               |
-| 3 | `worlds.ts` allows any authed user to mutate public worlds                                                                                          | `src/routes/worlds.ts`             | 🔴 Open on dev                               |
-| 4 | `nsfw.ts` — no auth/ownership on NSFW data                                                                                                          | `src/routes/nsfw.ts`               | 🔴 Open on dev                               |
-| 5 | Access gaps: chat-pins, chat-search join, vn-generate, character-emotions, chats export/participants, assets delete/link, world-scoped quests/story | across `src/routes/`               | 🔴 Open on dev                               |
-| 6 | World/location access checks                                                                                                                        | worlds/locations                   | 🟡 Skipped 2026-08-06 (merge-risk) — revisit |
+| 1 | `message-encryption.ts` returns AES-GCM key without auth — chat access bypass                                                                       | `src/routes/message-encryption.ts` | ✅ Closed (`requireUserId`+`checkChatAccess`) |
+| 2 | `nsfw-moderation.ts` trusts `x-user-id` header — spoofable identity                                                                                 | `src/routes/nsfw-moderation.ts`    | ✅ Closed (`requireUserId`+`requireAdmin`/`requireOwnOrAdmin`) |
+| 3 | `worlds.ts` allows any authed user to mutate public worlds                                                                                          | `src/routes/worlds.ts`             | ✅ Closed (`requireWorldOwner` on all 6 mutations) |
+| 4 | `nsfw.ts` — no auth/ownership on NSFW data                                                                                                          | `src/routes/nsfw.ts`               | ✅ Closed (`requireUserId` on all handlers) |
+| 5 | Access gaps: chat-pins, chat-search join, vn-generate, character-emotions, chats export/participants, assets delete/link, world-scoped quests/story | across `src/routes/`               | ✅ Closed (`c78e5466`) |
+| 6 | World/location access checks                                                                                                                        | worlds/locations                   | ✅ Closed — see below for remaining refinements |
 | 7 | `rpg.ts` POST endpoints missing body validation                                                                                                     | `src/routes/rpg.ts:52-257`         | 🟡 Open                                      |
 | 8 | Duplicate export endpoint (`chats.ts` vs `chat-export.ts`)                                                                                          | `src/routes/`                      | 🟡 Open — consolidate                        |
 
@@ -30,9 +31,9 @@
 | 1  | Entire transport module (~9 files) unwired                                                                                                                        | `src/transport/`                                               | 🟡 Aspirational roadmap infra (spec `transport-unified.md` Status: Partial; HTTP/2 stub; no client). Not a lost user feature — server serves over HTTP/1.1; SSE rolled separately. Keep, revisit when real-time chat ships |
 | 2  | Telemetry `startRetentionCleanup` never called                                                                                                                    | `src/telemetry/cleanup.ts:12`                                  | 🟡 Call on server startup                                                                                                                                                                                                  |
 | 3  | Notification prefs silent failure                                                                                                                                 | `src/notifications/service.ts:100-122`                         | 🟡 Return error on serialization failure                                                                                                                                                                                   |
-| 4  | Dead rule `detectIntent` (superseded by LLM `classifyIntent`)                                                                                                     | `src/assistant/intent.ts`                                      | 🟡 Remove                                                                                                                                                                                                                  |
-| 5  | LoRA routes implemented but `.use()` commented out                                                                                                                | `src/generation/lora/routes.ts`                                | 🟡 Wire or drop                                                                                                                                                                                                            |
-| 6  | Swipe-variant placeholder — regen row never filled by LLM                                                                                                         | `src/chat/service.ts:1528-1638`                                | 🟡 Confirm/fill                                                                                                                                                                                                            |
+| 4  | Dead rule `detectIntent` (superseded by LLM `classifyIntent`)                                                                                                     | `src/assistant/intent.ts`                                      | ✅ Removed 2026-08-07 (kept `detectAvatarChangeIntent`, wired) |
+| 5  | LoRA routes implemented but `.use()` commented out                                                                                                                | `src/generation/lora/routes.ts`                                | 🟡 Documented deferral — code is intentionally gated "when feature is ready for production" (`elysia-app.ts:19,195`); wire deliberately when ready, not dead |
+| 6  | Swipe-variant placeholder — regen row never filled by LLM                                                                                                         | `src/chat/service.ts` + `regenerate-variant.test.ts`           | ✅ Implemented + tested — `regenerateVariant` creates sibling variant with idempotency guard; covered by `tests` (stale claim) |
 | 7  | 11 dead chat/service methods reimplemented inline in routes                                                                                                       | `src/chat/service.ts`                                          | 🟡 Consolidate or delete                                                                                                                                                                                                   |
 | 8  | Frontend dead modules: `touch.ts`, `vendor.ts`, `app.ts`; Alpine components (`context-window`, `response-length`, `command-buttons`, `locale-picker`)             | `src/frontend/`                                                | 🟡 Remove or wire                                                                                                                                                                                                          |
 | 9  | Duplicate SSE activity stream (two connections)                                                                                                                   | `src/frontend/alpine/notifications.ts:35` + `chat-activity.ts` | 🟡 Dedupe                                                                                                                                                                                                                  |
@@ -80,11 +81,12 @@
 - GM role runtime effect — landed in `dev` (auto-gen branches prompt on `assistantRole`).
 - Duplicate-export / auth-bypass claims — flagged for **verification on `dev`** (see Security section above).
 
-## Preserved note — concurrent author's claim (2026-08-06, uncommitted in old `backlog.md`)
+## Preserved note — concurrent author's claim (2026-08-06 → **landed on dev 2026-08-07**)
 
 > The author's uncommitted `backlog.md` recorded the auth/access fixes as shipped **on branch
-> `auth-access-fixes` (commits `8f2a6d71` + `73cda7b9`)**, marking rows 192–222 ✅. That branch is
-> **not merged into `dev`** (verified 2026-08-06), so the fixes are staged, not landed. Kept verbatim
-> so the claim is not lost during the `.plan/backlog/` restructure:
+> `auth-access-fixes` (commits `8f2a6d71` + `73cda7b9`)**, marking rows 192–222 ✅. The original
+> commits were not directly merged, but the fixes **landed on `dev`** under new hashes —
+> `7dc68be7` (critical bypasses) + `c78e5466` (remaining gaps) + `c99704c1` (401-guard
+> unification). **RESOLVED — do not treat as open.**
 
 - **2026-08-06 auth/access fixes shipped (branch `auth-access-fixes`)**: **Commit `8f2a6d71`** closed the 4 critical bypasses — message-encryption key leak (`requireUserId`+`checkChatAccess`), nsfw-moderation (admin gates, real `userId` not `x-user-id`), nsfw.ts (all 21 handlers owner/`requireUserId`-gated), worlds public mutation (`requireWorldOwner` on all 6 mutations). **Commit `73cda7b9`** closed the remaining 9 gaps — admin provider-models gate + admin-templates (7 handlers) + character-emotions global create (`isAdminRole`); chat-pins/vn-generate/chats export+participants (`checkChatAccess`); chat-search join (world owner/public/member gate); assets delete/link/unlink/unshare (`requireAssetOwner`) + links/shares reads (`requireUserId`); world-scoped quests/story-states/story-items solo alignment. Backlog rows 192/193/194/196/197/210/211/212/213/214/216/217/219/220/222 marked ✅. Verdict: all 🔴 + 🟡 access-control round-3 rows closed; remaining round-3 = dead code, schema drift, duplicate-export consolidation, rpg.ts validation, telemetry/notification/age-gate rows.
