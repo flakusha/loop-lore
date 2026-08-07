@@ -29,7 +29,7 @@ async function worldOwnershipCheck({
     .select("owner_id",)
     .where("id", "=", parentId,)
     .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) { return false; }
+  if (!world || (world.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) { return false; }
 
   const entityId = _entityId;
   if (entityId) {
