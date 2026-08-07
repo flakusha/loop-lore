@@ -2848,6 +2848,17 @@
     "title": "Add Response Validation Schemas to Remaining Route Files",
     "type": "TASK"
   },
+  "TASK-ADD-TRACE-FATAL-LOG-LEVELS-AND-API-METHODS": {
+    "hash": "b8b74dc",
+    "extid": "TASK-ADD-TRACE-FATAL-LOG-LEVELS-AND-API-METHODS",
+    "type": "TASK",
+    "title": "Add trace + fatal log levels and API methods",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-logging-telemetry",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-trace-fatal-log-levels-and-api-methods.md"
+  },
   "TASK-AGENCY-STORY-POINTS": {
     "epic": "epic-agency-story-points",
     "extid": "TASK-AGENCY-STORY-POINTS",
@@ -5884,6 +5895,17 @@
     "title": "Info Bubbles Help Tooltips",
     "type": "TASK"
   },
+  "TASK-INSERT-LOG-FATAL-AND-LOG-TRACE-CALLS-AT-KEY-SITES": {
+    "hash": "da82d1c",
+    "extid": "TASK-INSERT-LOG-FATAL-AND-LOG-TRACE-CALLS-AT-KEY-SITES",
+    "type": "TASK",
+    "title": "Insert log.fatal and log.trace calls at key sites",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-logging-telemetry",
+    "tags": [],
+    "source": ".plan/tickets/TASK-insert-log-fatal-and-log-trace-calls-at-key-sites.md"
+  },
   "TASK-INSTALLED-PLUGINS": {
     "epic": "epic-plugin-management-ui.md",
     "extid": "TASK-INSTALLED-PLUGINS",
@@ -8594,6 +8616,17 @@
     "type": "TASK",
     "status": "done"
   },
+  "TASK-UNIFY-LOGGING-OUTPUT-TO-CANONICAL-JSONL": {
+    "hash": "2850cf8",
+    "extid": "TASK-UNIFY-LOGGING-OUTPUT-TO-CANONICAL-JSONL",
+    "type": "TASK",
+    "title": "Unify logging output to canonical JSONL",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-logging-telemetry",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unify-logging-output-to-canonical-jsonl.md"
+  },
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "epic": "epic-testing-qa",
     "extid": "TASK-UNIT-TESTS-UNTESTED-BATCH",
@@ -8664,6 +8697,17 @@
     "tags": [],
     "title": "User Story & Use Case Improvements",
     "type": "TASK"
+  },
+  "TASK-VERIFY-LOGGING-CHANGES-GREEN": {
+    "hash": "a51c266",
+    "extid": "TASK-VERIFY-LOGGING-CHANGES-GREEN",
+    "type": "TASK",
+    "title": "Verify logging changes green",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-logging-telemetry",
+    "tags": [],
+    "source": ".plan/tickets/TASK-verify-logging-changes-green.md"
   },
   "TASK-VISUAL-NOVEL-MODE": {
     "epic": "EPIC-2026-36",
