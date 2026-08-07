@@ -22,7 +22,7 @@ import { initializeProviders, } from "@/generation";
 import { createLogger, setGlobalLogger, } from "@/logger";
 import { resetSoloUserCache, } from "@/middleware/index";
 import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
-import { type Browser, type Page, chromium, } from "@playwright/test";
+import { type Browser, chromium, type Page, } from "@playwright/test";
 import type { Kysely, } from "kysely";
 import { spawnSync, } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
@@ -158,7 +158,7 @@ export async function createBrowserTest(
       // Close in reverse order (newest first) to avoid detached-frame races.
       const pages = [...openPages,];
       pages.reverse();
-      await Promise.allSettled(pages.map((page,) => page.close().catch(() => undefined,),),);
+      await Promise.allSettled(pages.map((page,) => page.close().catch(() => {},)),);
       openPages.clear();
     },
     close: async () => {
