@@ -303,11 +303,11 @@ export default tseslint.config(
   // ── God-module pragmatic overrides (structural rules; pending split per docs/meta/code-practices-improvements/04) ──
   {
     files: [
-      "src/routes/admin.ts",
+      "src/routes/admin/**",
       "src/routes/messages/**",
-      "src/routes/worlds.ts",
-      "src/routes/characters.ts",
-      "src/validation/schemas.ts",
+      "src/routes/worlds/**",
+      "src/routes/characters/**",
+      "src/validation/schemas/**",
     ],
     rules: { "unicorn/max-nested-calls": "off", },
   },
@@ -328,15 +328,15 @@ export default tseslint.config(
     rules: { "unicorn/max-nested-calls": "off", },
   },
   {
-    files: ["src/validation/schemas.ts",],
+    files: ["src/validation/schemas/**",],
     rules: { "@typescript-eslint/consistent-type-definitions": "off", },
   },
   {
-    files: ["src/routes/views.ts", "src/routes/characters.ts",],
+    files: ["src/routes/views/**", "src/routes/characters/**",],
     rules: { "@typescript-eslint/restrict-template-expressions": "off", },
   },
   {
-    files: ["src/routes/views.ts",],
+    files: ["src/routes/views/**",],
     rules: { "unicorn/no-unreadable-for-of-expression": "off", },
   },
   {
