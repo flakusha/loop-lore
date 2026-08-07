@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
-    "src/server.ts",
+    "src/server/index.ts",
     "src/tui/app.ts",
     "plugins/core/*/plugin.ts",
     "plugins/core/*/index.ts",
@@ -9,10 +9,11 @@
     "scripts/worktree/index.mjs"
   ],
   "project": [
-    "src/**/*.{ts,tsx,mts,cts}",
-    "scripts/**/*.{ts,mts,cts,mjs,cjs}",
-    "tests/**/*.{ts,tsx}",
-    "plugins/**/*.{ts,tsx}"
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "scripts/**/*.mjs",
+    "tests/**/*.ts",
+    "plugins/**/*.ts"
   ],
   // `exports`/`types` analysis is disabled: this repo's plugin + test-helper
   // API surface is re-exported and exercised via dynamic/test/entry patterns
