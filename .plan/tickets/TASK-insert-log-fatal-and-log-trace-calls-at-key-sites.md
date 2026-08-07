@@ -1,6 +1,6 @@
 # TASK: Insert log.fatal and log.trace calls at key sites
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-logging-telemetry
