@@ -5,7 +5,7 @@
  * defaults sanity checks.
  */
 
-import { ConfigSchema, } from "@/config/schema-class";
+import { createConfigSchema, envMap, jsonSchema, validate, } from "@/config/schema-class";
 
 import { describe, expect, test, } from "bun:test";
 
@@ -13,15 +13,15 @@ describe("ConfigSchema", () => {
   // ── Defaults sanity ─────────────────────────────────
 
   test("defaults are accessible and consistent", () => {
-    const cs = new ConfigSchema();
+    const cs = createConfigSchema();
     const d = cs.defaults;
     expect(d.server.port,).toBe(3000,);
     expect(d.db.type,).toBe("sqlite",);
   });
 
   test("defaults are deep-frozen (new instance each access)", () => {
-    const a = new ConfigSchema().defaults;
-    const b = new ConfigSchema().defaults;
+    const a = createConfigSchema().defaults;
+    const b = createConfigSchema().defaults;
     expect(a,).toEqual(b,);
     // Mutating one shouldn't affect the other
     a.server.port = 9999;
@@ -31,7 +31,7 @@ describe("ConfigSchema", () => {
   // ── envMap generation ───────────────────────────────────
 
   test("envMap returns known env var mappings", () => {
-    const map = ConfigSchema.envMap();
+    const map = envMap();
 
     expect(map.PORT,).toBe("server.port",);
     expect(map.HOST,).toBe("server.host",);
@@ -45,14 +45,14 @@ describe("ConfigSchema", () => {
   });
 
   test("envMap includes nested fields", () => {
-    const map = ConfigSchema.envMap();
+    const map = envMap();
     expect(map.TLS_KEY,).toBe("server.tls.key",);
     expect(map.TRANSPORT_COMPRESSION_ENABLED,).toBe("transport.compression.enabled",);
     expect(map.TRANSPORT_MAX_FRAME_SIZE,).toBe("transport.limits.maxFrameSize",);
   });
 
   test("envMap includes nsfw config", () => {
-    const map = ConfigSchema.envMap();
+    const map = envMap();
     expect(map.ALLOW_NSFW,).toBe("nsfw.allowNsfw",);
     expect(map.NSFW_MIN_AGE,).toBe("nsfw.nsfwMinAge",);
     expect(map.NSFW_DEFAULT_SCOPE,).toBe("nsfw.defaultNsfwScope",);
@@ -61,13 +61,13 @@ describe("ConfigSchema", () => {
   });
 
   test("envMap includes testing config", () => {
-    const map = ConfigSchema.envMap();
+    const map = envMap();
     expect(map.TESTING_LLAMA_MODEL,).toBe("testing.llamaModel",);
     expect(map.TESTING_SD_PORT,).toBe("testing.sdPort",);
   });
 
   test("envMap produces valid dot-paths", () => {
-    const map = ConfigSchema.envMap();
+    const map = envMap();
     for (const [key, path,] of Object.entries(map,)) {
       expect(path,).toMatch(/^[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9]*)*$/,);
       expect(key,).toMatch(/^[A-Z][A-Z0-9_]*$/,);
@@ -78,49 +78,49 @@ describe("ConfigSchema", () => {
 
   test("validate passes for valid default config", () => {
     expect(() => {
-      ConfigSchema.validate(new ConfigSchema().defaults,);
+      validate(createConfigSchema().defaults,);
     },).not.toThrow();
   });
 
   test("validate throws for invalid db type", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     (cfg.db as unknown as Record<string, unknown>).type = "mongodb";
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("db.type",);
   });
 
   test("validate throws for missing postgres url", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.db.type = "postgres";
     cfg.db.url = undefined;
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("db.url",);
   });
 
   test("validate throws for invalid port", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.server.port = -1;
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("port",);
     cfg.server.port = 100_000;
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("port",);
   });
 
   test("validate throws for invalid log level", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     (cfg.logging as unknown as Record<string, unknown>).level = "verbose";
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("logging.level",);
   });
 
   test("validate throws for provider missing baseUrl", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.generation.providers.openaiCompatible = [
       {
         name: "bad",
@@ -134,12 +134,12 @@ describe("ConfigSchema", () => {
       },
     ];
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("baseUrl",);
   });
 
   test("validate throws for provider missing model", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.generation.providers.openaiCompatible = [
       {
         name: "bad",
@@ -153,12 +153,12 @@ describe("ConfigSchema", () => {
       },
     ];
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("model",);
   });
 
   test("validate throws for anthropic missing apiKey", () => {
-    const cfg = structuredClone(new ConfigSchema().defaults,);
+    const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.generation.providers.anthropic = {
       name: "ant",
       label: "Anthropic",
@@ -170,14 +170,14 @@ describe("ConfigSchema", () => {
       models: { claude: { contextLimit: 200_000, maxOutput: 4000, }, },
     };
     expect(() => {
-      ConfigSchema.validate(cfg,);
+      validate(cfg,);
     },).toThrow("apiKey",);
   });
 
   // ── JSON Schema generation ──────────────────────────────
 
   test("jsonSchema produces valid structure", () => {
-    const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
+    const schema = jsonSchema() as Record<string, unknown>;
 
     expect(schema.$schema,).toBe("https://json-schema.org/draft/2020-12/schema",);
     expect(schema.type,).toBe("object",);
@@ -191,7 +191,7 @@ describe("ConfigSchema", () => {
   });
 
   test("jsonSchema includes required top-level sections", () => {
-    const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
+    const schema = jsonSchema() as Record<string, unknown>;
     const required = schema.required as string[];
     expect(required,).toContain("server",);
     expect(required,).toContain("db",);
@@ -199,7 +199,7 @@ describe("ConfigSchema", () => {
   });
 
   test("jsonSchema server port has min/max constraints", () => {
-    const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
+    const schema = jsonSchema() as Record<string, unknown>;
     const props = schema.properties as Record<string, Record<string, unknown>>;
     const port = props.server!.properties as Record<string, Record<string, unknown>>;
     expect(port.port!.minimum,).toBe(0,);
@@ -207,14 +207,14 @@ describe("ConfigSchema", () => {
   });
 
   test("jsonSchema db type has enum constraint", () => {
-    const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
+    const schema = jsonSchema() as Record<string, unknown>;
     const props = schema.properties as Record<string, Record<string, unknown>>;
     const db = props.db!.properties as Record<string, Record<string, unknown>>;
     expect(db.type!.enum,).toEqual(["sqlite", "postgres",],);
   });
 
   test("jsonSchema defaults match DEFAULTS values", () => {
-    const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
+    const schema = jsonSchema() as Record<string, unknown>;
     const props = schema.properties as Record<string, { properties: Record<string, { default: unknown }> }>;
 
     expect(props.server!.properties.port!.default,).toBe(3000,);
@@ -228,8 +228,8 @@ describe("ConfigSchema", () => {
   // ── Config format round-trip ────────────────────────────
 
   test("envMap keys map back to valid config paths", () => {
-    const map = ConfigSchema.envMap();
-    const cfg = structuredClone(new ConfigSchema().defaults,) as unknown as Record<string, unknown>;
+    const map = envMap();
+    const cfg = structuredClone(createConfigSchema().defaults,) as unknown as Record<string, unknown>;
 
     for (const dotPath of Object.values(map,)) {
       const parts = dotPath.split(".",);

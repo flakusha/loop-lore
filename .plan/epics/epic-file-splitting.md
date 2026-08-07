@@ -165,6 +165,21 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
   follow-on debt.
 - Offenders: 137 → 125 (round-2 closed 9, round-3 closed 4, dev added 1 via knip gate).
 
+## Wave plan (remaining 126 offenders, classified 2026-08-07)
+
+Offenders classified into 119 LOGIC / 12 DATA / 4 MIXED, three dominant shapes
+(class services, route modules, flat fn banks). Execution is batched by wave:
+
+- **Wave 1 — top monoliths (>530L)**: schema-class/schema/load (config cluster),
+  rpg/integration-registry, nsfw/moderation-service, battle/integration-schemas,
+  assets/controller, generation/generate-route, generation/generation-routes,
+  characters/avatar-service.
+- **Wave 2 — class services (~20)**: rpg/*/service.ts, story classes, characters,
+  notifications, image-edit, server-external-manager.
+- **Wave 3 — route modules (~25)**: src/routes/* single-factory modules.
+- **Wave 4 — flat fn banks + alpine (~45)**: battle, rpg utils, chat, utils, middleware, frontend.
+- **Wave 5 — DATA/MIXED (16)**: config schema/sections, db enums, chat/types, spec, nsfw schemas, vn templates, prompt-templates, builtin templates.
+
 ## Files
 
 - `scripts/check-file-size.ts` — size guard (already excludes tests/migrations/generated)

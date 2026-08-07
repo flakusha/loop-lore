@@ -4,7 +4,7 @@
  * Patterns for creating safe filenames, slugs, and sanitized strings.
  *
  * Sources: src/routes/export.ts, src/routes/export-sse.ts, src/routes/chat-export.ts,
- *          src/routes/characters.ts, src/routes/chats.ts, src/assets/controller.ts
+ *          src/routes/characters.ts, src/routes/chats.ts, src/assets/controller/
  */
 
 /** Replace non-alphanumeric characters with underscore (for filenames) */
