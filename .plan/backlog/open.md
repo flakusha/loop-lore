@@ -58,7 +58,8 @@
 
 ## Release hardening (mirrors `../high-value.md`; kept here for the open queue)
 
-- Lint-ts debt (291 files) · Size-strict debt (10 files) · e2e browser auth-loop ·
+- ~~Lint-ts debt (291 files)~~ → resolved (`eslint` exits 0, `e729a7c2`) · Size-strict debt (129 files,
+  `epic-file-splitting`, partially reduced 138→129 via `eb3ed64f`) · e2e browser auth-loop ·
   release-process + tag `v0.1.0` + changelog.
 
 ## Hardening / deferred clusters

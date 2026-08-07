@@ -33,6 +33,9 @@ const checks = {
   "format - dprint": "bun run format:dprint",
   "md - lint": "bun run md:lint",
 
+  // Dead-code analysis (knip)
+  "dead - code (knip)": "bun run dead:code",
+
   // DB schema staleness (regenerates into temp dir, diffs vs committed)
   "db - schema gate": "bun run scripts/check-db-schemas.ts",
 
@@ -171,25 +174,6 @@ async function runNonBlockingChecks() {
     }
   } catch {
     console.log("✓ No code duplication issues (jscpd:full)",);
-  }
-
-  // Dead-code analysis (knip)
-  try {
-    const knipProc = Bun.spawn(["bash", "-c", "bun run dead:code",], {
-      cwd: PROJECT_ROOT,
-      stdout: "pipe",
-      stderr: "pipe",
-    },);
-    await knipProc.exited;
-    const knipText = await new Response(knipProc.stdout,).text();
-    if (knipProc.exitCode !== 0 || knipText.includes("Unused ",)) {
-      console.log("⚠ Dead code detected (knip)",);
-      console.log("  Run 'bun run dead:code' for the full report",);
-    } else {
-      console.log("✓ No dead code detected (knip)",);
-    }
-  } catch {
-    console.log("⚠ Dead-code check skipped (knip)",);
   }
 }
 
