@@ -99,11 +99,11 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
             grouped.set(r.emoji, existing,);
           }
 
-          return jsonResponse([...grouped,].map(([emoji, data,],) => ({
+          return jsonResponse(Array.from(grouped, ([emoji, data,],) => ({
             emoji,
             count: data.count,
             userReacted: data.userReacted,
-          })),);
+          }),),);
         },
         {
           params: t.Object({ id: t.String(), },),

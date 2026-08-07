@@ -441,7 +441,7 @@ export function resetTurnActions(combatant: Combatant,): Combatant {
  * Reset reactions for a new round (start of turn cycle).
  */
 export function resetRoundReactions(combatants: Combatant[],): Combatant[] {
-  return combatants.map((c,) => ({ ...c, reactions: BASE_REACTIONS, }),);
+  return Array.from(combatants, (c,) => ({ ...c, reactions: BASE_REACTIONS, }),);
 }
 
 // ── Damage Application ──────────────────────────────────
@@ -505,9 +505,12 @@ export function isCombatOver(combatants: Combatant[],): {
   over: boolean;
   winner: "player" | "enemy" | null;
 } {
-  const alive = combatants.filter((c,) => c.hp > 0,);
-  const players = alive.filter((c,) => !c.isNpc,);
-  const enemies = alive.filter((c,) => c.isNpc,);
+  const alive: Combatant[] = [];
+  for (const c of combatants) { if (c.hp > 0) { alive.push(c,); } }
+  const players: Combatant[] = [];
+  for (const c of alive) { if (!c.isNpc) { players.push(c,); } }
+  const enemies: Combatant[] = [];
+  for (const c of alive) { if (c.isNpc) { enemies.push(c,); } }
 
   if (players.length === 0) {
     return { over: true, winner: "enemy", };

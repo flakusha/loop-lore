@@ -210,7 +210,9 @@ export function getEquippedInSlot(
 
 /** Get all equipped items */
 export function getEquippedItems(items: EquipmentItem[],): EquipmentItem[] {
-  return items.filter(item => item.equipped);
+  const equipped: EquipmentItem[] = [];
+  for (const item of items) { if (item.equipped) { equipped.push(item,); } }
+  return equipped;
 }
 
 /** Calculate total weight of items */

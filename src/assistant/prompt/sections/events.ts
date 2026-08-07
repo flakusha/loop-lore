@@ -96,7 +96,8 @@ function generateAmbientEvents(worldId: string,): ChatEvent[] {
   ];
 
   // Use worldId as a simple seed for deterministic selection
-  const seed = worldId.split("",).reduce((acc, c,) => acc + c.charCodeAt(0,), 0,);
+  let seed = 0;
+  for (const c of worldId.split("",)) { seed += c.charCodeAt(0,); }
   const idx = seed % ambientPool.length;
   return [ambientPool[idx]!,];
 }
@@ -123,9 +124,7 @@ export const eventSection: SectionBuilder = {
     allEvents.sort((a, b,) => b.importance - a.importance);
     const topEvents = allEvents.slice(0, 5,);
 
-    const eventText = topEvents
-      .map((e,) => `- [${e.type}] ${e.content}`)
-      .join("\n",);
+    const eventText = Array.from(topEvents, (e,) => `- [${e.type}] ${e.content}`,).join("\n",);
 
     return [{ role: "system", content: wrapSection("events", eventText,), },];
   },

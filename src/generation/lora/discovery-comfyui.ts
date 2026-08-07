@@ -111,14 +111,17 @@ export async function discoverComfyUILoras(
     }
 
     // Convert to LoRAModel objects
-    const loraModels: LoRAModel[] = modelNames
-      .filter((name: string,) => typeof name === "string" && name.length > 0)
-      .map((name: string,) => ({
-        name: extractLoRAName(name,),
-        filename: name,
-        path: name, // ComfyUI uses relative paths from models/loras/
-        backend: "comfyui" as const,
-      }));
+    const loraModels: LoRAModel[] = [];
+    for (const name of modelNames) {
+      if (typeof name === "string" && name.length > 0) {
+        loraModels.push({
+          name: extractLoRAName(name,),
+          filename: name,
+          path: name, // ComfyUI uses relative paths from models/loras/
+          backend: "comfyui" as const,
+        },);
+      }
+    }
 
     return {
       models: loraModels,
@@ -216,12 +219,12 @@ export function injectComfyUILora(
 
   if (!nodeId) {
     // No suitable node found, add at end
-    const maxId = Math.max(...Object.keys(nodes,).map(Number,), 0,);
+    const maxId = Math.max(...Array.from(Object.keys(nodes,), Number,), 0,);
     nodeId = String(maxId + 1,);
   }
 
   // Generate new node ID
-  const allIds = Object.keys(nodes,).map(Number,);
+  const allIds = Array.from(Object.keys(nodes,), Number,);
   const newNodeId = String(Math.max(...allIds, 0,) + 1,);
 
   // Create LoraLoader node

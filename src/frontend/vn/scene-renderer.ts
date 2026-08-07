@@ -67,7 +67,7 @@ export function initVnRenderer(
 ): void {
   container = containerEl;
   settings = getVnSettings(gmConfig,);
-  scenes = messages.map((msg,) => msgToScene(msg,));
+  scenes = Array.from(messages, (msg,) => msgToScene(msg,),);
   currentIndex = Math.max(0, scenes.length - 1,);
   currentChatId = chatId ?? null;
   loadingIndicator = createLoadingIndicator(containerEl,);
@@ -177,12 +177,12 @@ async function preloadCurrentAndUpcoming(): Promise<void> {
 
   loadingIndicator.show();
 
-  const sceneImages = scenes.map((s,): SceneImages => ({
+  const sceneImages = Array.from(scenes, (s,): SceneImages => ({
     backgroundUrl: s.backgroundUrl,
     portraitUrl: s.characterAvatar
       ? getPortraitUrl(s.characterAvatar,)
       : undefined,
-  }));
+  }),);
 
   const stats = await preloadSceneImages(sceneImages, currentIndex, 2,);
   loadingIndicator.updateProgress(stats.loaded + stats.cached, stats.total,);

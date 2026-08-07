@@ -84,11 +84,12 @@ export async function compressThenEncrypt({
     const attempts: ContentEncoding[] = [config.algorithm, "gzip", "brotli", "zstd",];
     // Deduplicate (in case config.algorithm equals one of the fallbacks)
     const seen = new Set<string>();
-    const uniqueAttempts = attempts.filter((a,) => {
-      if (seen.has(a,)) { return false; }
+    const uniqueAttempts: ContentEncoding[] = [];
+    for (const a of attempts) {
+      if (seen.has(a,)) { continue; }
       seen.add(a,);
-      return true;
-    },);
+      uniqueAttempts.push(a,);
+    }
 
     for (const algo of uniqueAttempts) {
       try {

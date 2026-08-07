@@ -142,6 +142,11 @@ export class LoggerImpl implements Logger {
 
   async flush(): Promise<void> {
     await this.queue.flush();
-    await Promise.all(this.transports.map((t,) => t.flush()),);
+    const results = await Promise.allSettled(
+      Array.from(this.transports, (t,) => t.flush(),),
+    );
+    for (const r of results) {
+      if (r.status === "rejected") { throw r.reason; }
+    }
   }
 }

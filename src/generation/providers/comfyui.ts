@@ -156,7 +156,7 @@ export class ComfyUIClient {
         if (result.error) {
           throw new Error(`ComfyUI execution failed: ${result.error}`,);
         }
-        return (result.images ?? []).map((img,) => img.filename);
+        return Array.from(result.images ?? [], (img,) => img.filename,);
       }
 
       await new Promise((r,) => setTimeout(r, this.pollIntervalMs,));

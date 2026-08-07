@@ -97,11 +97,11 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       chatId,
       turnId: turnResult.turnId,
       score: hallucinationAnalysis.score,
-      flags: hallucinationAnalysis.flags.map((f,) => ({
+      flags: Array.from(hallucinationAnalysis.flags, (f,) => ({
         entity: f.entityName,
         type: f.entityType,
         confidence: f.confidence,
-      })),
+      }),),
     },);
   }
 

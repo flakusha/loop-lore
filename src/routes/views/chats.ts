@@ -9,7 +9,7 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
   const pageSize = Math.min(100, rawPageSize,);
   const offset = (page - 1) * pageSize;
 
-  const [chats, countRow,] = await Promise.all([
+  const [chatsResult, countRowResult,] = await Promise.allSettled([
     database
       .selectFrom("chats",)
       .leftJoin("worlds", "worlds.id", "chats.world_id",)
@@ -34,6 +34,9 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
       .select((eb: any,) => eb.fn.countAll().as("total",))
       .executeTakeFirst(),
   ],);
+  // List + count are best-effort: a failed query yields an empty list / 0 total.
+  const chats = chatsResult.status === "fulfilled" ? chatsResult.value : [];
+  const countRow = countRowResult.status === "fulfilled" ? countRowResult.value : undefined;
 
   if (chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
@@ -97,10 +100,12 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   else if (sort === "oldest") { qb = qb.orderBy("chats.created_at", "asc",); }
   else { qb = qb.orderBy("chats.is_pinned", "desc",).orderBy("chats.updated_at", "desc",); }
 
-  const [chats, countRow,] = await Promise.all([
+  const [chatsResult, countRowResult,] = await Promise.allSettled([
     qb.limit(pageSize,).offset(offset,).execute(),
     qb.clearOrderBy().select((eb: any,) => eb.fn.countAll().as("total" as any,)).executeTakeFirst(),
   ],);
+  const chats = chatsResult.status === "fulfilled" ? chatsResult.value : [];
+  const countRow = countRowResult.status === "fulfilled" ? countRowResult.value : undefined;
 
   if (chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">

@@ -59,7 +59,9 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/messages/${msgId}`, { method: "DELETE", },);
       if (res.ok) {
         const msgs = this.messages;
-        this.messages = msgs.filter((m,) => m.id !== msgId);
+        const filtered: typeof msgs = [];
+        for (const m of msgs) { if (m.id !== msgId) { filtered.push(m,); } }
+        this.messages = filtered;
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageRemoved",), },);
       } else {
         const err = await res.json();
@@ -128,6 +130,8 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
 
   removePendingAsset(assetId: string,) {
     const pending = this.pendingAssets;
-    this.pendingAssets = pending.filter((a,) => a.assetId !== assetId);
+    const filtered: typeof pending = [];
+    for (const a of pending) { if (a.assetId !== assetId) { filtered.push(a,); } }
+    this.pendingAssets = filtered;
   },
 };

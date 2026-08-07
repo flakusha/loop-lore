@@ -112,16 +112,18 @@ export async function detectHallucinations(
     }
   }
 
-  const score = flags.length > 0
-    ? flags.reduce((sum, f,) => sum + f.confidence, 0,) / flags.length
-    : 0;
+  let scoreSum = 0;
+  for (const f of flags) { scoreSum += f.confidence; }
+  const score = flags.length > 0 ? scoreSum / flags.length : 0;
+
+  const flagNames = Array.from(flags, (f,) => f.entityName,);
 
   return {
     detected: flags.length > 0,
     score,
     flags,
     summary: flags.length > 0
-      ? `Potential hallucinations: ${flags.map((f,) => f.entityName).join(", ",)}`
+      ? `Potential hallucinations: ${flagNames.join(", ",)}`
       : "No hallucinations detected",
   };
 }
@@ -352,7 +354,7 @@ function isKnownEntity(
 
 /** Extract the sentence containing the entity for context. */
 function extractContext(text: string, entityName: string,): string {
-  const sentences = text.split(/[.!?]+/,).map((s,) => s.trim());
+  const sentences = Array.from(text.split(/[.!?]+/,), (s,) => s.trim(),);
   for (const sentence of sentences) {
     if (sentence.includes(entityName,)) {
       return sentence.slice(0, 200,);

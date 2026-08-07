@@ -102,13 +102,17 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
       const avatarsRes = await apiFetch(`/api/actors/${npc.actor_id}/avatars`,);
       if (avatarsRes.ok) {
         const avatars = await avatarsRes.json();
-        this._emotionAvatars = avatars
-          .filter((a: any,) => a.tags?.emotion)
-          .map((a: any,) => ({
-            emotion: a.tags.emotion,
-            avatarId: a.id,
-            assetId: a.asset_id,
-          }));
+        const emotionAvatars: { emotion: string; avatarId: string; assetId: string }[] = [];
+        for (const a of avatars) {
+          if (a.tags?.emotion) {
+            emotionAvatars.push({
+              emotion: a.tags.emotion,
+              avatarId: a.id,
+              assetId: a.asset_id,
+            },);
+          }
+        }
+        this._emotionAvatars = emotionAvatars;
 
         // Select the avatar matching current mood
         if (this._mood) {
@@ -202,14 +206,17 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
     this._activeEmotionsLoading = true;
     try {
-      const [activeRes, defsRes,] = await Promise.all([
+      const [activeRes, defsRes,] = await Promise.allSettled([
         apiFetch(`/api/actors/${actorId}/emotions`,),
         apiFetch(`/api/emotions`,),
       ],);
-      if (!activeRes.ok || !defsRes.ok) { return; }
+      if (activeRes.status !== "fulfilled" || defsRes.status !== "fulfilled") {
+        throw new Error("emotion load failed",);
+      }
+      if (!activeRes.value.ok || !defsRes.value.ok) { return; }
 
-      const active = await activeRes.json();
-      const defs = await defsRes.json();
+      const active = await activeRes.value.json();
+      const defs = await defsRes.value.json();
 
       const defMap = new Map<string, { id: string; icon: string | null; display_name: string }>();
       const defList = Array.isArray(defs,) ? defs : defs?.data ?? [];
@@ -218,13 +225,14 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
       }
 
       const activeList = Array.isArray(active,) ? active : active?.data ?? [];
-      this._activeEmotions = activeList
-        .map((e: { emotion_id: string; intensity: number },) => {
-          const def = defMap.get(e.emotion_id,);
-          if (!def) { return null; }
-          return { def, intensity: e.intensity ?? 0.5, };
-        },)
-        .filter(Boolean,) as { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
+      const outEmotions: typeof this._activeEmotions = [];
+      for (const e of activeList) {
+        const def = defMap.get(e.emotion_id,);
+        if (def) {
+          outEmotions.push({ def, intensity: e.intensity ?? 0.5, },);
+        }
+      }
+      this._activeEmotions = outEmotions;
     } catch (error) {
       log.error("Failed to load active emotions", error instanceof Error ? error : undefined, {},);
     } finally {

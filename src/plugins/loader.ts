@@ -75,10 +75,11 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
     }
 
     const entries = readdirSync(fullDir, { withFileTypes: true });
-    const pluginDirs = entries
-      .filter((e) => e.isDirectory())
-      .map((e) => e.name)
-      .sort((a, b) => a.localeCompare(b));
+    const pluginDirs: string[] = [];
+    for (const e of entries) {
+      if (e.isDirectory()) { pluginDirs.push(e.name); }
+    }
+    pluginDirs.sort((a, b) => a.localeCompare(b));
 
     for (const pluginName of pluginDirs) {
       const pluginDir = join(fullDir, pluginName);
