@@ -102,7 +102,7 @@ function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
     const decodedResult = safeFromBase64(text,);
     if (decodedResult.ok) {
       const decoded = decodedResult.buffer.toString("utf8",);
-      if (decoded.trim().startsWith("{",)) { candidates.push(decoded,); }
+      if (decoded.trimStart().startsWith("{",)) { candidates.push(decoded,); }
     }
   } catch {
     /* not base64 */

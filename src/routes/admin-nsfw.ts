@@ -15,8 +15,7 @@ import { setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { getRuntimeNsfwConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-config";
-import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
-import { HttpStatus, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "admin-nsfw", },);

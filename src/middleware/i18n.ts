@@ -21,7 +21,7 @@ import type { I18nConfig, Locale, } from "../i18n/types";
 export function parseAcceptLanguage(header: string,): string[] {
   const result: string[] = [];
   for (const part of header.split(",",)) {
-    const [lang,] = part.trim().split(";",);
+    const [lang,] = part.trim().split(";", 1,);
     const trimmed = lang?.trim();
     if (trimmed !== undefined && trimmed.length > 0) {
       result.push(trimmed,);

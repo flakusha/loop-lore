@@ -2,11 +2,14 @@
 # Shared virtual store across projects/worktrees — warm installs ~7× faster.
 # Packages live in <cache>/links/; node_modules/.bun/<pkg>@<ver> symlinks into it.
 # See https://bun.com/docs/pm/global-store
-globalStore = true
+# NOTE: globalStore + isolated linker leaves the worktree node_modules incomplete
+# (scoped deps like @sinclair not linked), breaking `bun check`/`bun test`. Disabled
+# here so the tree materializes a full, self-contained install.
+globalStore = false
 
 # Isolated linker: two-tier node_modules layout required for globalStore.
 # Top-level packages are symlinks → .bun/<pkg>@<ver>/node_modules/<pkg>.
-linker = "isolated"
+linker = "hoisted"
 
 [test]
 preload = ["./tests/setup-globals.ts"]

@@ -183,7 +183,7 @@ function renderChoices(): void {
 function escapeHtml(text: string,): string {
   const div = document.createElement("div",);
   div.textContent = text;
-  return div.innerHTML;
+  return div.getHTML();
 }
 
 function formatTime(iso: string,): string {

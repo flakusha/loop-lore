@@ -10,8 +10,7 @@
  * @module workflow-loader
  */
 
-import { readdir, readFile, } from "node:fs/promises";
-import { stat, } from "node:fs/promises";
+import { readdir, readFile,  stat} from "node:fs/promises";
 import { extname, join, } from "node:path";
 import { getLogger, } from "../logger";
 import { jsonParseOr, } from "../utils";
