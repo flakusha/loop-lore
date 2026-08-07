@@ -5,7 +5,7 @@ export const logging = {
   properties: {
     level: {
       type: "string",
-      enum: ["debug", "info", "warn", "error",],
+      enum: ["trace", "debug", "info", "warn", "error", "fatal",],
       default: "debug",
       description: "Log level",
     },

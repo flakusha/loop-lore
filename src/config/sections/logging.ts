@@ -32,7 +32,7 @@ export const loggingMeta = {
   properties: {
     level: {
       type: "string",
-      enum: ["debug", "info", "warn", "error",],
+      enum: ["trace", "debug", "info", "warn", "error", "fatal",],
       description: "Log level",
     },
     jsonlPath: { type: "string", description: "JSONL output path", },
