@@ -20,7 +20,7 @@ describe("RelationshipsService", () => {
   beforeAll(async () => {
     const testDb = await createTestDb();
     db = testDb.db;
-    relationshipsService = new RelationshipsService(db,);
+    relationshipsService = RelationshipsService(db,);
 
     const actors = await createTestActors(db, "test-actor-rel-001",);
     testActorId1 = actors.actorId;
