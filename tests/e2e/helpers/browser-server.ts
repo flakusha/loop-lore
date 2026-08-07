@@ -22,7 +22,7 @@ import { initializeProviders, } from "@/generation";
 import { createLogger, setGlobalLogger, } from "@/logger";
 import { resetSoloUserCache, } from "@/middleware/index";
 import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
-import { type Browser, chromium, } from "@playwright/test";
+import { type Browser, type Page, chromium, } from "@playwright/test";
 import type { Kysely, } from "kysely";
 import { spawnSync, } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
@@ -37,6 +37,10 @@ export interface BrowserTestContext {
   db: Kysely<DB>;
   config: Config;
   browser: Browser;
+  /** Open a page and track it so a test failure can't leak it into the next test. */
+  openPage: () => Promise<Page>;
+  /** Close every page still open (call in afterEach/finally to prevent failure cascade). */
+  closeAllPages: () => Promise<void>;
   close: () => Promise<void>;
 }
 
@@ -137,11 +141,26 @@ export async function createBrowserTest(
     viewport: { width: 1440, height: 900, },
   },);
 
+  // Track open pages so a timed-out test can't leak its page into the next test.
+  const openPages = new Set<Page>();
+  browserContext.on("page", (page,) => {
+    openPages.add(page,);
+    page.once("close", () => openPages.delete(page,),);
+  },);
+
   return {
     url,
     db,
     config,
     browser: browserContext as unknown as Browser,
+    openPage: async () => browserContext.newPage(),
+    closeAllPages: async () => {
+      // Close in reverse order (newest first) to avoid detached-frame races.
+      const pages = [...openPages,];
+      pages.reverse();
+      await Promise.allSettled(pages.map((page,) => page.close().catch(() => undefined,),),);
+      openPages.clear();
+    },
     close: async () => {
       await browser.close();
       bunServer.stop();
