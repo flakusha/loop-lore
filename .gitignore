@@ -2,7 +2,7 @@
 .gitattributes
 
 dist/
-node_modules/
+node_modules
 
 # Runtime data (stale in-project location — migrated to ../loop-lore-data/)
 data/
