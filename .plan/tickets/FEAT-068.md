@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `ea5b797`
-

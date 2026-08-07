@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `f77863b`
-

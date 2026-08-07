@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `e95b520`
-
