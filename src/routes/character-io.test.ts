@@ -61,7 +61,7 @@ async function seedActor(
 
 /** Seed a permanent trait so export has a non-empty section to filter. */
 async function seedTrait(db: TestDb["db"], actorId: string, name: string,): Promise<void> {
-  await new TraitsService(db,).createPermanentTrait({
+  await TraitsService(db,).createPermanentTrait({
     actorId,
     category: "personality",
     name,

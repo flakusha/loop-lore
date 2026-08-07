@@ -302,7 +302,7 @@ export default tseslint.config(
   {
     files: [
       "src/routes/admin.ts",
-      "src/routes/messages.ts",
+      "src/routes/messages/**",
       "src/routes/worlds.ts",
       "src/routes/characters.ts",
       "src/validation/schemas.ts",

@@ -53,9 +53,9 @@ export async function exportCharacterSystems(
   actorId: string,
   worldId?: string,
 ): Promise<CharacterSystemsExport> {
-  const traitsService = new TraitsService(db,);
-  const moodService = new MoodService(db,);
-  const relationshipsService = new RelationshipsService(db,);
+  const traitsService = TraitsService(db,);
+  const moodService = MoodService(db,);
+  const relationshipsService = RelationshipsService(db,);
   const avatarService = new AvatarService(db,);
 
   const exportData: CharacterSystemsExport = {
