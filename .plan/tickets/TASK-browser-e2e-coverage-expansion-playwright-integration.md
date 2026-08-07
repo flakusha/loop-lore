@@ -137,9 +137,7 @@ API-level e2e coverage (`tests/e2e/flows/*.test.ts`) exists for ALL 11 topics be
 
 ### 7. Docs endpoint linkage + docs generation (./docs/ + .plan/)
 - **API:** none — `handleDocsRequest` in `src/server.ts` serves static `docs/.vitepress/dist`; gated by `docs.enabled`, `docs.public` allowlist, `DOCS_ENABLED=false`. Generation: `scripts/gen-plan-docs.ts` (.plan → epics-index), `scripts/gen-openapi.ts` (docs/reference/openapi.json), `scripts/reconcile.ts`.
-- **Note:** served by `src/server.ts`, **not** the Elysia app — browser-test harness uses `createApp()` (Elysia) + a separate Bun server; docs route may need harness wiring to be reachable.
-- **New browser cases:**
-  - `docs.browser.ts`: GET `/docs/` → 200 + HTML; GET `/docs/guide/...` → 200; non-public section (config `docs.public` allowlist) → 404; path traversal (`/docs/../secret`) → 404. Verify `.plan/epics-index.md` exists and is generated (script-level, not browser).
+- **Note:** **NOT browser-testable in the E2E harness (2026-08-07).** `handleDocsRequest` is a private `server.ts` function mounted only from `server.ts` `start()`; the browser harness boots `createApp()` (Elysia) via `app.fetch()` directly and never runs `start()`, and `docs/.vitepress/dist` isn't built (`docs/.vitepress/dist` absent in worktree). So `/docs/` is unreachable in `*.browser.ts`. The docs handler + traversal/allowlist guards are server-internal behavior; `.plan`/`docs` generation is a build script. Defer `docs.browser.ts` until the harness mounts `handleDocsRequest` or docs are built into `dist/public`. (Not faking a vacuous 404 test.)
 
 ### 8. Redirection
 - **API:** none directly; `redirectTo()` in `elysia-app.ts` (302), `/` → `/views/chat`|`/views/login`, `/register`, `/chat`; `/views/:name` .html→clean redirect in `routes/views.ts`.
@@ -168,6 +166,11 @@ API-level e2e coverage (`tests/e2e/flows/*.test.ts`) exists for ALL 11 topics be
   - `search-flow.browser.ts`: gallery filter-bar filters grid; chat-list search narrows list; message search returns matching messages (FTS5). Assert swapped DOM contains only matches.
 
 **Cross-cutting gaps (all topics):** no `assertNoPageErrors` anywhere (encryption/key-management and world-invite Alpine components are prime candidates for console errors); no persisted-result assertions; fixed sleeps.
+
+## Access-Correctness Findings (from access-correctness.browser.ts, 2026-08-07)
+
+- **LOW (latent):** `checkChatAccess` (`src/chat/service.ts:67`) grants a **solo role read access to ANY chat by ID** via the `userRole === 'solo'` admin-equivalent short-circuit. Endpoints using it (GET /api/chats/:id, reactions, pins, notes, messages, encryption-key) would return a foreign chat's data to a solo user calling directly by ID. Not reachable through the current UI: the chat list is `created_by = userId`-scoped and the chat app redirects on a foreign `?chatid=` before fetching. Consider narrowing solo's chat read to owned/participant chats.
+- **INFO (asymmetric):** solo is treated as admin at the **chat** layer and at **world mutation** (`requireWorldOwner`) but as a **normal user** at the **world read** layer (`requireWorldAccess` checks `admin` only). World read denial is correctly enforced (verified); the asymmetry is inconsistent but not a leak.
 
 ## Current Baseline (this worktree, `bdea77f8`, 2026-08-06 run)
 
@@ -202,7 +205,7 @@ Per-file results (full suite, `E2E_SAFEGUARD=1 bun test --max-concurrency=1` per
 - [ ] **Topic 4:** `world-invites-flow.browser.ts` — create/copy/join/revoke via world-edit Invites tab
 - [ ] **Topic 5:** creation menus persist — character, world, location CRUD, new-chat advanced fields
 - [ ] **Topic 6:** `settings-flow.browser.ts` — theme/locale save+persist, API key tab, keys tab, export/delete wired
-- [ ] **Topic 7:** `docs.browser.ts` — `/docs/` 200, public allowlist 404, traversal 404
+- [ ] **Topic 7:** docs endpoint — **deferred**: unreachable in browser harness (`handleDocsRequest` private to `server.ts`, docs build absent). Documented in ticket.
 - [ ] **Topic 8:** `redirection.browser.ts` — `/` authed vs anon, `.html`→clean, unknown view, no redirect-loop regression
 - [ ] **Topic 9:** access-correctness browser checks — non-owner world/chat denial surfaces without data leak
 - [ ] **Topic 10:** `gallery-flow.browser.ts` — upload→grid, preview modal, chat gallery sidebar + media preview

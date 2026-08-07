@@ -7,6 +7,59 @@
 
 import type { Page, } from "@playwright/test";
 
+// ── Page error tracking ─────────────────────────────────────
+
+/**
+ * Collect page errors (uncaught exceptions) and console.error messages for a page.
+ * Wire in before the interesting interaction, then call `assertNoPageErrors` after.
+ * Returns a collector object with `errors`, `assert()`, and `detach()`.
+ */
+export function trackPageErrors(
+  page: Page,
+  options: { allowlist?: RegExp[] } = {},
+): { errors: string[]; assert: () => void; detach: () => void } {
+  const errors: string[] = [];
+  const allowlist = options.allowlist ?? [];
+
+  const onPageError = (error: Error,) => {
+    const msg = `pageerror: ${error.message}`;
+    if (!allowlist.some((re,) => re.test(msg,))) { errors.push(msg,); }
+  };
+  const onConsole = (message: import("@playwright/test").ConsoleMessage,) => {
+    if (message.type() !== "error") { return; }
+    const msg = `console.error: ${message.text()}`;
+    if (!allowlist.some((re,) => re.test(msg,))) { errors.push(msg,); }
+  };
+
+  page.on("pageerror", onPageError,);
+  page.on("console", onConsole,);
+
+  return {
+    errors,
+    assert: () => {
+      if (errors.length > 0) {
+        throw new Error(`Page errors detected (${errors.length}):\n${errors.join("\n")}`,);
+      }
+    },
+    detach: () => {
+      page.off("pageerror", onPageError,);
+      page.off("console", onConsole,);
+    },
+  };
+}
+
+/**
+ * Assert no page errors occurred since tracking started. Throws with collected
+ * messages otherwise. Call at end of test (after the interesting interaction).
+ */
+export async function assertNoPageErrors(page: Page, options: { allowlist?: RegExp[] } = {},): Promise<void> {
+  const tracker = trackPageErrors(page, options,);
+  // Give the event loop a beat so late errors are captured, then assert.
+  await page.waitForTimeout(50,);
+  tracker.assert();
+  tracker.detach();
+}
+
 // ── Wait for Alpine ─────────────────────────────────────────
 
 /**
@@ -122,4 +175,60 @@ export async function isAlpineInitialized(page: Page, selector: string,): Promis
     if (!el) { return false; }
     return "_x_dataStack" in el || "__x" in el || "_x_ignore" in el;
   }, selector,);
+}
+
+// ── Alpine component-local state ────────────────────────────
+
+/**
+ * Read a component's local reactive state via Alpine's internal data.
+ * Prefers `__x.getUnobservedData()` (keeps functions intact, strips Proxy),
+ * falls back to `Alpine.$data(el)`.
+ */
+export async function getAlpineData<T = Record<string, unknown>,>(
+  page: Page,
+  selector: string,
+): Promise<T> {
+  return page.evaluate((sel,) => {
+    const el = document.querySelector(sel,);
+    if (!el) {
+      throw new Error(`Element not found for Alpine state: ${sel}`,);
+    }
+    const x = (el as unknown as { __x?: { getUnobservedData?: () => unknown } },).__x;
+    const raw = x?.getUnobservedData ? x.getUnobservedData() : (globalThis as Record<string, unknown>).Alpine?.$data(el);
+    if (raw === undefined || raw === null) {
+      throw new Error(`Alpine state not available on ${sel} (element not initialized)`,);
+    }
+    // eslint-disable-next-line unicorn/prefer-structured-clone -- Alpine Proxy objects cannot be structuredClone'd
+    return JSON.parse(JSON.stringify(raw,),);
+  }, selector,) as Promise<T>;
+}
+
+/**
+ * Web-first poll for an Alpine component state predicate to hold.
+ * Replaces fixed waitForTimeout sleeps in state-assertion tests.
+ */
+export async function waitForAlpineState<T = Record<string, unknown>,>(
+  page: Page,
+  selector: string,
+  predicate: (state: T,) => boolean,
+  timeoutMs = 8000,
+): Promise<T> {
+  const start = Date.now();
+  let lastState: T | undefined;
+  let lastError: unknown;
+  for (;;) {
+    try {
+      lastState = await getAlpineData<T>(page, selector,);
+      if (predicate(lastState,)) { return lastState; }
+    } catch (error) {
+      lastError = error;
+    }
+    if (Date.now() - start > timeoutMs) {
+      throw new Error(
+        `waitForAlpineState timed out after ${timeoutMs}ms for '${selector}'. ` +
+        `Last state: ${JSON.stringify(lastState,)}${lastError ? ` Last error: ${String(lastError)}` : ""}`,
+      );
+    }
+    await page.waitForTimeout(100,);
+  }
 }
