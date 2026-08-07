@@ -1,6 +1,6 @@
 # TASK: Fix ESLint Errors — 73 errors across 16 files
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-08-07) — all 73 errors fixed on dev (`e729a7c2`; `bun run lint` exits 0)
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-continuous-improvement
