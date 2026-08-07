@@ -4,32 +4,32 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 
 ## Code Quality (Linting & Testing)
 
-| Command                      | Description                           |
-| ---------------------------- | ------------------------------------- |
-| `bun run lint`               | ESLint (strict + unicorn + sonarjs)   |
-| `bun run lint:css`           | Stylelint on source CSS               |
-| `bun run lint:html`          | Markuplint on htmx/Alpine templates   |
-| `bun run lint:html-scripts`  | Inline HTML script checks             |
-| `bun run lint:chaining`      | Promise chaining checks               |
-| `bun run lint:biome`         | Biome lint on docs/                   |
-| `bun run md:lint`            | Markdownlint on docs/ + .plan/        |
-| `bun run typecheck`          | TypeScript `tsc --noEmit`             |
-| `bun run typecheck:frontend` | Frontend TypeScript check             |
-| `bun run typecheck:coverage` | Type coverage (strict gate)           |
-| `bun run format:dprint`      | dprint check                          |
-| `bun run format:dprint:fix`  | dprint fmt                            |
+| Command                      | Description                                                                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run lint`               | ESLint (strict + unicorn + sonarjs)                                                                                                                                    |
+| `bun run lint:css`           | Stylelint on source CSS                                                                                                                                                |
+| `bun run lint:html`          | Markuplint on htmx/Alpine templates                                                                                                                                    |
+| `bun run lint:html-scripts`  | Inline HTML script checks                                                                                                                                              |
+| `bun run lint:chaining`      | Promise chaining checks                                                                                                                                                |
+| `bun run lint:biome`         | Biome lint on docs/                                                                                                                                                    |
+| `bun run md:lint`            | Markdownlint on docs/ + .plan/                                                                                                                                         |
+| `bun run typecheck`          | TypeScript `tsc --noEmit`                                                                                                                                              |
+| `bun run typecheck:frontend` | Frontend TypeScript check                                                                                                                                              |
+| `bun run typecheck:coverage` | Type coverage (strict gate)                                                                                                                                            |
+| `bun run format:dprint`      | dprint check                                                                                                                                                           |
+| `bun run format:dprint:fix`  | dprint fmt                                                                                                                                                             |
 | `bun run check`              | Parallel gate runner (`check-parallel.mjs`): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, size, context-weight, unit + e2e |
-| `bun run db:sync-types`      | Regenerate DB types from migrations   |
-| `bun run db:sync-manifest`   | Regenerate schema manifest            |
-| `bun run db:schemas:check`   | Verify generated schemas are current  |
-| `bun run jscpd`              | Copy-paste detection (coarse)         |
-| `bun run jscpd:full`         | Copy-paste detection (fine)           |
-| `bun run size:check`         | File-size gate                        |
-| `bun run context:weight`     | Agent context weight check            |
-| `bun run plan:sync`          | Ticket index ↔ git issue sync check   |
-| `bun run plan:sync:fix`      | Apply ticket index fixes              |
-| `bun test`                   | Bun test runner (Jest-compatible)     |
-| `bun test --coverage`        | Test coverage report                  |
+| `bun run db:sync-types`      | Regenerate DB types from migrations                                                                                                                                    |
+| `bun run db:sync-manifest`   | Regenerate schema manifest                                                                                                                                             |
+| `bun run db:schemas:check`   | Verify generated schemas are current                                                                                                                                   |
+| `bun run jscpd`              | Copy-paste detection (coarse)                                                                                                                                          |
+| `bun run jscpd:full`         | Copy-paste detection (fine)                                                                                                                                            |
+| `bun run size:check`         | File-size gate                                                                                                                                                         |
+| `bun run context:weight`     | Agent context weight check                                                                                                                                             |
+| `bun run plan:sync`          | Ticket index ↔ git issue sync check                                                                                                                                    |
+| `bun run plan:sync:fix`      | Apply ticket index fixes                                                                                                                                               |
+| `bun test`                   | Bun test runner (Jest-compatible)                                                                                                                                      |
+| `bun test --coverage`        | Test coverage report                                                                                                                                                   |
 
 ## Configuration Files
 

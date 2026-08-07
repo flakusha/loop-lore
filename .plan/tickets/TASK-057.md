@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `3048980`
-

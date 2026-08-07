@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `b45761d`
-

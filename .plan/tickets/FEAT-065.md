@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `3b6041a`
-

@@ -35,7 +35,7 @@ describe("Alpine state contract E2E", () => {
       expect(state.isContinuing,).toBe(false,);
       expect(state.activeChat,).toBeNull();
       // messages is empty until a chat is selected.
-      expect(state.messages,).toEqual([]);
+      expect(state.messages,).toEqual([],);
       // chats is auto-loaded on init (solo user's seeded chat appears).
       expect(Array.isArray(state.chats,),).toBe(true,);
       expect((state.chats as unknown[]).length,).toBeGreaterThan(0,);

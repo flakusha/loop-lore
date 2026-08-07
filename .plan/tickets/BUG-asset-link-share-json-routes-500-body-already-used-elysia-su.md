@@ -26,16 +26,16 @@ the native `TypeError: Body already used` → 500 via Elysia's default onError.
 
 Isolation via direct `sucrose(handler)` calls (scratch script, Elysia 1.4.29):
 
-| Handler shape | `inference.body` |
-|---|---|
-| `const body = await ctx.request.json()` (bare) | **false** → works |
-| `ctx.request.json()` + `as` cast | false → works |
-| `requireUserId(ctx)` then `ctx.request.json()` | **true** → 500 |
-| `requireUserId(ctx)` only (no body read) | **true** |
-| `noop(ctx)` then `ctx.request.json()` | **true** |
-| `await someHelper(ctx.params.id)` then `ctx.request.json()` | false → works |
-| `const userId = ctx.userId` (direct read) then `ctx.request.json()` | false → works |
-| `requireUserId(ctx)` then use `ctx.body` | true, but **works** (body already parsed) |
+| Handler shape                                                       | `inference.body`                          |
+| ------------------------------------------------------------------- | ----------------------------------------- |
+| `const body = await ctx.request.json()` (bare)                      | **false** → works                         |
+| `ctx.request.json()` + `as` cast                                    | false → works                             |
+| `requireUserId(ctx)` then `ctx.request.json()`                      | **true** → 500                            |
+| `requireUserId(ctx)` only (no body read)                            | **true**                                  |
+| `noop(ctx)` then `ctx.request.json()`                               | **true**                                  |
+| `await someHelper(ctx.params.id)` then `ctx.request.json()`         | false → works                             |
+| `const userId = ctx.userId` (direct read) then `ctx.request.json()` | false → works                             |
+| `requireUserId(ctx)` then use `ctx.body`                            | true, but **works** (body already parsed) |
 
 Mechanism confirmed at runtime: with a `bodyUsed` probe inside the handler, `ctx.request.bodyUsed`
 was already `true` at handler entry on the failing routes and `false` on the working bare route.
@@ -118,6 +118,7 @@ affected asset routes — `PATCH /:id`, `POST /:id/links`, `DELETE /:id/links/:l
 `POST /:id/share`, `DELETE /:id/share`. Commit `5a647564` (GPG-signed, on `dev`).
 
 **Verification**:
+
 - `E2E_SAFEGUARD=1 bun test tests/e2e/` → **184 pass / 0 fail** (25 files; both previously
   failing suites green: `assets.test.ts` 5/5, `chat-full.test.ts` 3/3).
 - `bun test src/assets/` → 19 pass / 0 fail; `bun run typecheck` clean; eslint + dprint clean.

@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `dd2d5e7`
-

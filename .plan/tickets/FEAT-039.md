@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `f1b66c6`
-

@@ -17,7 +17,14 @@ import {
   SuccessResponse,
 } from "../validation/schemas";
 import { checkActorOwnership, } from "./actor-auth";
-import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
+import {
+  forbiddenResponse as forbidden,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonResponse,
+  requireUserId,
+} from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;

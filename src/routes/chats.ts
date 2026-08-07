@@ -21,7 +21,8 @@ import {
 } from "../chat/service";
 import type { Config, } from "../config/schema";
 import type {
-  ChatParticipantRole} from "../db/enums";
+  ChatParticipantRole,
+} from "../db/enums";
 import {
   ContentEncoding,
   MessageContentFormat,

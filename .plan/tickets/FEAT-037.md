@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `f6f4511`
-
