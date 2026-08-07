@@ -63,7 +63,7 @@ function parseArgs(): MigrationOptions {
   }
 
   if (!options.input) {
-    log.error("Missing required argument: --input <config-file>",);
+    log.fatal("Missing required argument: --input <config-file>",);
     process.exit(1,);
   }
 
@@ -142,7 +142,7 @@ function main() {
 
   // Read and parse input config
   if (!existsSync(options.input,)) {
-    log.error(`Input file not found: ${options.input}`,);
+    log.fatal(`Input file not found: ${options.input}`,);
     process.exit(1,);
   }
 

@@ -47,7 +47,7 @@ export function parseCommand(input: string,): ParsedCommand | null {
 
   if (!command) { return null; }
 
-  getLog().debug("Parsed command", { command, args, },);
+  getLog().trace("Parsed command", { command, args, },);
   return { command, args, raw: trimmed, };
 }
 

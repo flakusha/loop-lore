@@ -21,7 +21,7 @@ async function main() {
   const sourceComponents = process.argv[5] ?? "./src/components";
 
   if (!existsSync(directory,)) {
-    log.error(`Directory not found: ${directory}`,);
+    log.fatal(`Directory not found: ${directory}`,);
     process.exit(1,);
   }
 
