@@ -46,8 +46,27 @@ g.toggleGroupPause = async function() {
   }
 };
 
+/**
+ * Merge a sub-module's own properties into the state object, preserving
+ * accessors (getters/setters) as live properties. A plain object spread
+ * (`...source`) EVALUATES getters at spread time and copies a stale snapshot,
+ * so computed state like `groupedMessages` never recomputes. Use this for any
+ * sub-module that declares `get`/`set` accessors consumed by templates.
+ */
+function mergeReactiveSource(target: Record<string, unknown>, source: object,): void {
+  for (const name of Object.getOwnPropertyNames(source,)) {
+    const desc = Object.getOwnPropertyDescriptor(source, name,);
+    if (!desc) { continue; }
+    if ("value" in desc) {
+      target[name] = desc.value;
+    } else {
+      Object.defineProperty(target, name, desc,);
+    }
+  }
+}
+
 globalThis.chatState = function() {
-  return {
+  const state: Record<string, unknown> = {
     // ── Core state ──
     isGenerating: false,
     generationLabel: t("status.characterResponding",),
@@ -231,9 +250,6 @@ globalThis.chatState = function() {
     // ── RPG Stats State ──
     ...rpgStats,
     showRpgPanel: false as boolean,
-
-    // ── GM Panel State ──
-    showGmPanel: false as boolean,
 
     // ── Mood System ──
     ...moodState,
@@ -480,7 +496,6 @@ globalThis.chatState = function() {
     ...chatGroup,
     ...chatSettings,
     ...chatSections,
-    ...chatLocation,
     ...chatBackgrounds,
     ...messageSearch,
     ...chatMessages,
@@ -490,7 +505,14 @@ globalThis.chatState = function() {
     ...chatManagement,
     ...chatEditing,
     ...chatActions,
-    ...chatUtils,
     ...worldChannels,
-  } as AlpineState<ChatState>;
+  };
+
+  // chatLocation + chatUtils declare `get` accessors (groupedMessages,
+  // selectedLocationName, currentLocationName). A plain spread would evaluate
+  // them once and freeze the result, so merge them descriptor-preserving.
+  mergeReactiveSource(state, chatLocation,);
+  mergeReactiveSource(state, chatUtils,);
+
+  return state as AlpineState<ChatState>;
 };

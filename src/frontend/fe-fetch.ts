@@ -48,6 +48,13 @@ export async function feFetch(url: string, options: RequestInit = {},): Promise<
     auth: { csrfToken: csrf || undefined, sessionToken: token ?? undefined, },
     handle401: true,
     onAuthError: () => {
+      // Avoid redirect loops: if we're already on the login or register page,
+      // a 401 from a background request (e.g. session check) must not re-encode
+      // ?redirect= and bounce us into an infinite chain.
+      const path = location.pathname;
+      if (path === "/views/login" || path === "/views/register") {
+        return;
+      }
       const redirect = encodeURIComponent(location.pathname + location.search,);
       location.assign(`/views/login?redirect=${redirect}`,);
     },
@@ -60,7 +67,13 @@ export async function feFetch(url: string, options: RequestInit = {},): Promise<
     throw result.error;
   }
 
-  return new Response(result.data, {
+  // 204/205/304 are null-body statuses per the Fetch spec; constructing a
+  // Response with any body source (including "") throws TypeError. Preserve
+  // the status with a null body so callers don't break on 2xx deletes/etc.
+  const body: BodyInit | null = result.status === 204 || result.status === 205 || result.status === 304
+    ? null
+    : result.data;
+  return new Response(body, {
     status: result.status,
     headers: result.headers,
   },);
