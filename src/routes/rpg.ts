@@ -36,7 +36,7 @@ import {
   type StatBlock,
   validateStatBlock,
 } from "../rpg/stats.js";
-import { ErrorResponse, SuccessResponse, } from "../validation/schemas.js";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils.js";
 
 function log(): Logger {
