@@ -1,0 +1,47 @@
+import { Elysia, } from "elysia";
+import type { Config, } from "../../config/schema";
+import type { Db, } from "../../db";
+import { auditRoutes, } from "./audit";
+import { chatsRoutes, } from "./chats";
+import { keyRotationRoutes, } from "./key-rotation";
+import { modelRolesRoutes, } from "./model-roles";
+import { providersRoutes, } from "./providers";
+import { sdStatusRoutes, } from "./sd-status";
+import { statsRoutes, } from "./stats";
+import { systemConfigRoutes, } from "./system-config";
+import { templatesRoutes, } from "./templates";
+import { usersRoutes, } from "./users";
+import { worldsRoutes, } from "./worlds";
+
+/**
+ * Admin Routes
+ *
+ * Admin-only endpoints:
+ *   GET  /api/admin/users          — list all users
+ *   GET  /api/admin/users/:id      — get user details
+ *   PATCH /api/admin/users/:id/role  — update user role
+ *   DELETE /api/admin/users/:id    — delete user (admin only)
+ *   GET  /api/admin/stats          — system statistics
+ *   GET  /api/admin/providers      — list providers with health status
+ *   GET  /api/admin/providers/:name/models — list models for a provider
+ *   POST /api/admin/providers/rescan — trigger provider re-scan
+ *   GET  /api/admin/model-roles    — get current role assignments
+ *   PUT  /api/admin/model-roles/:role — set role override
+ *   DELETE /api/admin/model-roles/:role — clear role override
+ */
+export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
+  return (
+    new Elysia({ name: "admin", },)
+      .use(usersRoutes(opts,),)
+      .use(statsRoutes(opts,),)
+      .use(providersRoutes(),)
+      .use(modelRolesRoutes(opts,),)
+      .use(sdStatusRoutes(opts,),)
+      .use(systemConfigRoutes(opts,),)
+      .use(worldsRoutes(opts,),)
+      .use(chatsRoutes(opts,),)
+      .use(templatesRoutes(opts,),)
+      .use(auditRoutes(opts,),)
+      .use(keyRotationRoutes(opts,),) as unknown as Elysia
+  );
+}

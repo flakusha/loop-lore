@@ -27,17 +27,17 @@ describe("message archiving routes", () => {
 
 describe("batch chat operations", () => {
   test("chats.ts has batch archive endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "chats.ts",), "utf8",);
+    const content = readFileSync(join(ROUTES_DIR, "chats", "batch.ts",), "utf8",);
     expect(content,).toContain("/api/chats/batch/archive",);
   });
 
   test("chats.ts has batch delete endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "chats.ts",), "utf8",);
+    const content = readFileSync(join(ROUTES_DIR, "chats", "batch.ts",), "utf8",);
     expect(content,).toContain("/api/chats/batch/delete",);
   });
 
   test("chats.ts has batch export endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "chats.ts",), "utf8",);
+    const content = readFileSync(join(ROUTES_DIR, "chats", "batch.ts",), "utf8",);
     expect(content,).toContain("/api/chats/batch/export",);
   });
 });
