@@ -1,18 +1,14 @@
+import { AdminPaginatedEnvelope, AdminUserRow, } from "../../validation/schemas/responses";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "admin-users", },);
 
-interface UserRow {
-  id: string;
-  username: string;
-  display_name: string | null;
-  role: string;
-  status: string;
-  created_at: string;
-  last_seen_at: string | null;
-}
+type UserRow = AdminUserRow;
+
+const EMPTY_ADMIN_USERS = { data: [], total: 0, page: 1, pageSize: 50, };
 
 export const adminUsers = {
   users: [] as UserRow[],
@@ -36,9 +32,9 @@ export const adminUsers = {
       if (self.userStatusFilter) { url += `&status=${self.userStatusFilter}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
-        const data = await res.json();
-        this.users = data.data || [];
-        this.userTotal = data.total || 0;
+        const data = parseOr(AdminPaginatedEnvelope(AdminUserRow,), await res.json(), EMPTY_ADMIN_USERS,);
+        this.users = data.data;
+        this.userTotal = data.total;
       }
     } catch {
       log.warn("Network error loading users",);

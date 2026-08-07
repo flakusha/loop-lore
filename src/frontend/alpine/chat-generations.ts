@@ -1,9 +1,11 @@
+import { ErrorEvent, } from "../../validation/schemas/responses";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import { trackTelemetry, } from "./telemetry";
 import type { ChatState, } from "./types";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "chat", },);
 const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: string,): string } | undefined;
@@ -49,7 +51,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.generationDetail = null;
       this._cleanupSSE();
       try {
-        const data = jsonParseOr<{ error?: string }>(event.data, {},);
+        const data = parseOr(ErrorEvent, jsonParseOr(event.data, null,), {},);
         this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.generationFailed",), },);
       } catch {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.generationFailed",), },);
