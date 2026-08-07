@@ -13,8 +13,8 @@
  * world it creates, so the world editor and invite endpoints are reachable.
  */
 
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Page, } from "@playwright/test";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
@@ -41,10 +41,10 @@ describe("World invites E2E", () => {
     await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
     await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 10_000, },);
     await page.click("[data-testid='create-world']",);
-    await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 8_000, },);
+    await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 8000, },);
     await page.locator("[data-testid='create-world-form'] #world-name",).waitFor({
       state: "attached",
-      timeout: 8_000,
+      timeout: 8000,
     },);
     await page.fill("[data-testid='create-world-form'] #world-name", `world-${Date.now()}`,);
     await page.click("[data-testid='create-world-form'] button[type='submit']",);
@@ -65,11 +65,11 @@ describe("World invites E2E", () => {
   /** On the world-edit page: open the Invites tab and create an invite. */
   async function createInvite(page: Page, maxUses: string,): Promise<void> {
     await page.locator(".world-edit-tab",).filter({ hasText: "Invites", },).click();
-    await page.locator("[data-testid='show-create-invite-btn']",).waitFor({ state: "visible", timeout: 8_000, },);
+    await page.locator("[data-testid='show-create-invite-btn']",).waitFor({ state: "visible", timeout: 8000, },);
     await page.click("[data-testid='show-create-invite-btn']",);
     await page.fill("#invite-max-uses", maxUses,);
     await page.click("[data-testid='submit-create-invite']",);
-    await page.locator("[data-testid='copy-invite-code']",).waitFor({ state: "visible", timeout: 8_000, },);
+    await page.locator("[data-testid='copy-invite-code']",).waitFor({ state: "visible", timeout: 8000, },);
   }
 
   describe("World creation via UI", () => {
@@ -120,7 +120,7 @@ describe("World invites E2E", () => {
         expect(row!.code,).toBeTruthy();
 
         // The invite code rendered in the DOM matches the persisted code.
-        const domCode = (await page.locator(".panel-item code",).first().textContent(),)?.trim();
+        const domCode = (await page.locator(".panel-item code",).first().textContent())?.trim();
         expect(domCode,).toBe(row!.code,);
       } finally {
         errors.assert();
@@ -150,7 +150,7 @@ describe("World invites E2E", () => {
         await page.click("[data-testid='revoke-invite']",);
 
         // The row leaves the UI (the revoke button disappears).
-        await page.locator("[data-testid='revoke-invite']",).waitFor({ state: "hidden", timeout: 8_000, },);
+        await page.locator("[data-testid='revoke-invite']",).waitFor({ state: "hidden", timeout: 8000, },);
         expect(await page.locator("[data-testid='revoke-invite']",).count(),).toBe(0,);
         expect(await page.locator("[data-testid='copy-invite-code']",).count(),).toBe(0,);
 

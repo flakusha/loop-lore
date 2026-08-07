@@ -23,12 +23,12 @@ export function trackPageErrors(
 
   const onPageError = (error: Error,) => {
     const msg = `pageerror: ${error.message}`;
-    if (!allowlist.some((re,) => re.test(msg,))) { errors.push(msg,); }
+    if (allowlist.every((re,) => !re.test(msg,))) { errors.push(msg,); }
   };
   const onConsole = (message: import("@playwright/test").ConsoleMessage,) => {
     if (message.type() !== "error") { return; }
     const msg = `console.error: ${message.text()}`;
-    if (!allowlist.some((re,) => re.test(msg,))) { errors.push(msg,); }
+    if (allowlist.every((re,) => !re.test(msg,))) { errors.push(msg,); }
   };
 
   page.on("pageerror", onPageError,);
@@ -38,7 +38,7 @@ export function trackPageErrors(
     errors,
     assert: () => {
       if (errors.length > 0) {
-        throw new Error(`Page errors detected (${errors.length}):\n${errors.join("\n")}`,);
+        throw new Error(`Page errors detected (${errors.length}):\n${errors.join("\n",)}`,);
       }
     },
     detach: () => {
@@ -193,8 +193,11 @@ export async function getAlpineData<T = Record<string, unknown>,>(
     if (!el) {
       throw new Error(`Element not found for Alpine state: ${sel}`,);
     }
-    const x = (el as unknown as { __x?: { getUnobservedData?: () => unknown } },).__x;
-    const raw = x?.getUnobservedData ? x.getUnobservedData() : (globalThis as Record<string, unknown>).Alpine?.$data(el);
+    const alpineEl = el as unknown as { __x?: { getUnobservedData?: () => unknown } };
+    const x = alpineEl.__x;
+    const raw = x?.getUnobservedData
+      ? x.getUnobservedData()
+      : (globalThis as Record<string, unknown>).Alpine?.$data(el,);
     if (raw === undefined || raw === null) {
       throw new Error(`Alpine state not available on ${sel} (element not initialized)`,);
     }
@@ -226,7 +229,8 @@ export async function waitForAlpineState<T = Record<string, unknown>,>(
     if (Date.now() - start > timeoutMs) {
       throw new Error(
         `waitForAlpineState timed out after ${timeoutMs}ms for '${selector}'. ` +
-        `Last state: ${JSON.stringify(lastState,)}${lastError ? ` Last error: ${String(lastError)}` : ""}`,
+          `Last state: ${JSON.stringify(lastState,)}` +
+          (lastError ? ` Last error: ${String(lastError,)}` : ""),
       );
     }
     await page.waitForTimeout(100,);
