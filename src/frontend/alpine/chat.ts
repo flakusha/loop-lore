@@ -1,5 +1,6 @@
 // ── Chat page component (chat.html) — core state + init ────
 
+import { ChatListResponse, } from "../../validation/schemas/responses";
 import { destroyVnRenderer, } from "../vn";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
@@ -25,7 +26,13 @@ import { messageSearch, } from "./message-search";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineMagicThis, AlpineState, ChatState, WorldChannelChat, } from "./types";
+import { parseOr, } from "./validation";
 import { worldChannels, } from "./world-channels";
+
+const EMPTY_CHAT_PAGE = {
+  data: [],
+  pagination: { total: 0, page: 1, pageSize: 200, totalPages: 0, },
+};
 
 const g = globalThis as Record<string, unknown>;
 
@@ -383,8 +390,8 @@ globalThis.chatState = function() {
           this.$dispatch("show-toast", { type: "error", message: t("toasts.failedLoadChats",), },);
           return;
         }
-        const data = await res.json();
-        this.chats = data.data || [];
+        const page = parseOr(ChatListResponse, await res.json(), EMPTY_CHAT_PAGE,);
+        this.chats = page.data;
       } catch {
         this.$dispatch("show-toast", { type: "error", message: t("toasts.failedLoadChats",), },);
       }

@@ -5,15 +5,15 @@
  * Used by both Alpine app (chat pages) and vanilla UI (non-chat pages).
  */
 
+import { TranslationMapSchema, } from "../validation/schemas/responses";
+import { parseOr, } from "./alpine/validation";
+
 /** Supported locale IDs */
 export type Locale = "en" | "es" | "fr" | "de" | "ja" | "ko" | "zh" | "pt" | "ru" | "ar";
 
-/** Locale metadata */
-export interface LocaleInfo {
-  id: Locale;
-  name: string;
-  nativeName: string;
-  direction: "ltr" | "rtl";
+/** Nested translation map */
+export interface TranslationMap {
+  [key: string]: string | TranslationMap;
 }
 
 /** All supported locales with metadata */
@@ -36,9 +36,12 @@ export const DEFAULT_LOCALE: Locale = "en";
 /** All supported locale IDs */
 export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY,) as Locale[];
 
-/** Nested translation map */
-export interface TranslationMap {
-  [key: string]: string | TranslationMap;
+/** Locale metadata */
+export interface LocaleInfo {
+  id: Locale;
+  name: string;
+  nativeName: string;
+  direction: "ltr" | "rtl";
 }
 
 /**
@@ -122,7 +125,9 @@ export async function loadTranslations(locale: string,): Promise<TranslationMap 
   try {
     const res = await fetch(`/locales/${locale}.json`,);
     if (res.ok) {
-      return await res.json() as TranslationMap;
+      const raw = await res.json();
+      const strings = parseOr(TranslationMapSchema, raw, null as unknown as TranslationMap,) as TranslationMap | null;
+      return strings;
     }
   } catch {
     // network error or invalid JSON

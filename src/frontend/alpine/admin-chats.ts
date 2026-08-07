@@ -1,17 +1,13 @@
+import { AdminChatRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
 import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "admin-chats", },);
 
-interface ChatRow {
-  id: string;
-  name: string | null;
-  type: string;
-  is_pinned: string;
-  world_id: string | null;
-  created_at: string;
-  updated_at: string;
-}
+type ChatRow = AdminChatRow;
+
+const EMPTY_ADMIN_CHATS = { data: [], total: 0, page: 1, pageSize: 50, };
 
 export const adminChats = {
   adminChats: [] as ChatRow[],
@@ -30,9 +26,9 @@ export const adminChats = {
       if (this.chatTypeFilter) { url += `&type=${this.chatTypeFilter}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
-        const data = await res.json();
-        this.adminChats = data.data || [];
-        this.chatTotal = data.total || 0;
+        const data = parseOr(AdminPaginatedEnvelope(AdminChatRow,), await res.json(), EMPTY_ADMIN_CHATS,);
+        this.adminChats = data.data;
+        this.chatTotal = data.total;
       }
     } catch {
       log.warn("Network error loading chats",);
