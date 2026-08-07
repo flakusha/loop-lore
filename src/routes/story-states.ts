@@ -95,7 +95,10 @@ async function handleNpcState(
   void notifyGmAction(database, {
     worldId,
     description: `NPC ${actorId} state updated`,
-  },).catch(() => {},);
+  },)
+    // GM-action notification failure is non-fatal — swallow.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    .catch(() => {},);
   return jsonResponse(updated,);
 }
 
@@ -176,7 +179,10 @@ async function handleLocationState(
     void notifyGmAction(database, {
       worldId: locWorldRow.world_id,
       description: `Location ${locationId} state updated`,
-    },).catch(() => {},);
+    },)
+      // GM-action notification failure is non-fatal — swallow.
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .catch(() => {},);
   }
   const updated = await state.getLocationState(locationId,);
   return jsonResponse(updated,);

@@ -55,7 +55,7 @@ function modelInfoFromOpenAi(raw: Record<string, unknown>,): ModelInfo {
   if (typeof raw.max_output === "number") { info.maxOutput = raw.max_output; }
   if (typeof raw.thinking === "boolean") { info.thinking = raw.thinking; }
   if (typeof raw.tool_calling === "boolean") { info.toolCalling = raw.tool_calling; }
-  if (Array.isArray(raw.modalities,)) { info.modalities = raw.modalities.map(String,); }
+  if (Array.isArray(raw.modalities,)) { info.modalities = Array.from(raw.modalities, String,); }
   const sizeMatch = /(\d+(?:\.\d+)?\s*[bB])/i.exec(id,);
   if (sizeMatch) { info.paramSize = sizeMatch[1]!.replaceAll(/\s+/g, "",); }
   return info;
@@ -103,11 +103,13 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       throw new ProviderError("Empty response from provider", undefined, 500, true,);
     }
 
-    const toolCalls = choice.message?.tool_calls?.map((tc,) => ({
-      id: tc.id,
-      type: tc.type,
-      function: { name: tc.function.name, arguments: tc.function.arguments, },
-    }));
+    const toolCalls = choice.message?.tool_calls
+      ? Array.from(choice.message.tool_calls, (tc,) => ({
+        id: tc.id,
+        type: tc.type,
+        function: { name: tc.function.name, arguments: tc.function.arguments, },
+      }),)
+      : undefined;
 
     return {
       content: choice.message?.content ?? "",
@@ -228,13 +230,14 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     }
 
     const toolCalls = toolCallAccum.size > 0
-      ? [...toolCallAccum,]
-        .sort(([a,], [b,],) => a - b)
-        .map(([, v,],) => ({
+      ? Array.from(
+        [...toolCallAccum,].sort(([a,], [b,],) => a - b),
+        ([, v,],) => ({
           id: v.id ?? "",
           type: v.type ?? ("function" as const),
           function: { name: v.function.name ?? "", arguments: v.function.arguments, },
-        }))
+        }),
+      )
       : undefined;
 
     if (toolCalls) {
@@ -289,7 +292,9 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     }
 
     const data = (await response.json()) as { data?: Record<string, unknown>[] };
-    return data.data?.map((m,) => modelInfoFromOpenAi(m,)) ?? [];
+    return data.data
+      ? Array.from(data.data, (m,) => modelInfoFromOpenAi(m,),)
+      : [];
   }
 
   // ── Internal helpers ───────────────────────────────────

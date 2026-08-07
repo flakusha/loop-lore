@@ -56,7 +56,7 @@ export function parseMentions(text: string,): ParsedMention[] {
   }
 
   if (mentions.length > 0) {
-    log.debug("Parsed mentions", { count: mentions.length, names: mentions.map((m,) => m.name), },);
+    log.debug("Parsed mentions", { count: mentions.length, names: Array.from(mentions, (m,) => m.name,), },);
   }
 
   return mentions;

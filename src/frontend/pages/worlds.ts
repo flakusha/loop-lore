@@ -151,7 +151,11 @@ globalThis.worldDetail = function(initial: { worldId: string; locations: Locatio
       try {
         const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
         if (res.ok) {
-          this.locations = this.locations.filter((l: LocationData,) => l.id !== locId);
+          const remaining: LocationData[] = [];
+          for (const l of this.locations) {
+            if (l.id !== locId) { remaining.push(l,); }
+          }
+          this.locations = remaining;
           showToast("success", "Location deleted",);
         } else {
           const err = await res.json();

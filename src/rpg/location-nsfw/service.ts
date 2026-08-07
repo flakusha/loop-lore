@@ -168,7 +168,7 @@ export class LocationNsfwService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r,));
+    return Array.from(rows, (r,) => this.getRow(r,),);
   }
 
   /**

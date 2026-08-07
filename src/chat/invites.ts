@@ -178,7 +178,7 @@ export async function listInvites(
     .where("chat_id", "=", chatId,)
     .orderBy("created_at", "desc",)
     .execute();
-  return rows.map((row,) => toRow(row,));
+  return Array.from(rows, (row,) => toRow(row,),);
 }
 
 // ── Revoke ──────────────────────────────────────────────────

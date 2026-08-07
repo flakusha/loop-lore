@@ -36,9 +36,11 @@ async function discoverMigrations(): Promise<DataMigration[]> {
     const dirPath = path.join(baseDir, entry,);
     if (!statSync(dirPath,).isDirectory()) { continue; }
 
-    const files = readdirSync(dirPath,)
-      .filter((f,) => f.startsWith("v",) && f.endsWith(".ts",))
-      .toSorted((a, b,) => a.localeCompare(b,));
+    const matched: string[] = [];
+    for (const f of readdirSync(dirPath,)) {
+      if (f.startsWith("v",) && f.endsWith(".ts",)) { matched.push(f,); }
+    }
+    const files = matched.toSorted((a, b,) => a.localeCompare(b,));
 
     for (const file of files) {
       const mod = await import(path.join(dirPath, file,));

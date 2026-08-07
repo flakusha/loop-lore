@@ -87,7 +87,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         const stored = await loadStoredTemplates(database,);
         const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
 
-        const profiles = Object.values(merged,).map((p,) => ({
+        const profiles = Array.from(Object.values(merged,), (p,) => ({
           id: p.id,
           name: p.name,
           families: p.families,
@@ -96,7 +96,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
           defaults: p.defaults,
           isBuiltin: p.id in BUILTIN_PROFILES,
           templateCount: countTemplates(p.templates,),
-        }));
+        }),);
 
         return jsonResponse({
           profiles,
@@ -376,7 +376,9 @@ function countTemplates(templates: ImageModelProfile["templates"],): number {
   let count = 0;
   const templateValues = Object.values(templates ?? {},);
   for (const detail of templateValues) {
-    count += Object.values(detail,).filter((t,) => t.length > 0).length;
+    for (const t of Object.values(detail,)) {
+      if (t.length > 0) { count += 1; }
+    }
   }
   return count;
 }

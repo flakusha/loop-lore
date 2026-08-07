@@ -90,12 +90,12 @@ export class TurnManager {
       ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc",],).execute()
       : await query.where("actors.agent_type", "!=", "none",).execute();
 
-    const participants: TurnParticipant[] = filtered.map((p,) => ({
+    const participants: TurnParticipant[] = Array.from(filtered, (p,) => ({
       actorId: p.actor_id,
       type: p.actor_type,
       agentType: p.agent_type,
       talkativity: p.talkativity ?? 5,
-    }));
+    }),);
 
     // Inject initiative scores when using initiative strategy
     if (this.state?.strategy === TurnStrategy.Initiative) {
@@ -107,7 +107,7 @@ export class TurnManager {
         .where("scene_id", "=", currentScene,)
         .execute();
 
-      const initiativeMap = new Map(initiatives.map((i,) => [i.actor_id, i.score,]),);
+      const initiativeMap = new Map(Array.from(initiatives, (i,) => [i.actor_id, i.score,],),);
       for (const p of participants) {
         const score = initiativeMap.get(p.actorId,);
         if (score != null) {
@@ -128,7 +128,7 @@ export class TurnManager {
       const bOrder = typeOrder[b.agentType] ?? 99;
       return aOrder - bOrder;
     },);
-    this.state.turnOrder = participants.map((p,) => p.actorId);
+    this.state.turnOrder = Array.from(participants, (p,) => p.actorId,);
   }
 
   // ─── Initialization ───────────────────────────────────────────

@@ -150,7 +150,7 @@ export class ChatWidget {
 
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
-    const items = messages.map((msg,) => {
+    const items = Array.from(messages, (msg,) => {
       /* eslint-disable unicorn/no-incorrect-template-string-interpolation */
       const prefix = msg.actorName ? `{bold}${msg.actorName}{/bold}: ` : `{bold}${msg.role}{/bold}: `;
       /* eslint-enable unicorn/no-incorrect-template-string-interpolation */

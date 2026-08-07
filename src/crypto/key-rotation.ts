@@ -53,7 +53,7 @@ export async function findExpiredKeys(
     .distinct()
     .execute();
 
-  return expired.map((r,) => r.actor_id);
+  return Array.from(expired, (r,) => r.actor_id,);
 }
 
 /**

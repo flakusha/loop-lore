@@ -31,7 +31,13 @@ export function createRoutes(opts: HandlerOpts,) {
         if (typeof userId !== "string") { return userId; }
 
         const id = uid();
-        const parsedTags = tags ? tags.split(",",).map((t: string,) => t.trim()).filter(Boolean,) : [];
+        const parsedTags: string[] = [];
+        if (tags) {
+          for (const t of tags.split(",",)) {
+            const trimmed = t.trim();
+            if (trimmed) { parsedTags.push(trimmed,); }
+          }
+        }
         const settings = parsedTags.length > 0 ? jsonStringifyOr({ tags: parsedTags, },) : "{}";
         await database
           .insertInto("actors",)

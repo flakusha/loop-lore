@@ -7,6 +7,7 @@
 
 import { TranslationMapSchema, } from "../validation/schemas/responses";
 import { parseOr, } from "./alpine/validation";
+import { feFetch, } from "./fe-fetch";
 
 /** Supported locale IDs */
 export type Locale = "en" | "es" | "fr" | "de" | "ja" | "ko" | "zh" | "pt" | "ru" | "ar";
@@ -123,7 +124,7 @@ export function interpolate(
  */
 export async function loadTranslations(locale: string,): Promise<TranslationMap | null> {
   try {
-    const res = await fetch(`/locales/${locale}.json`,);
+    const res = await feFetch(`/locales/${locale}.json`,);
     if (res.ok) {
       const raw = await res.json();
       const strings = parseOr(TranslationMapSchema, raw, null as unknown as TranslationMap,) as TranslationMap | null;

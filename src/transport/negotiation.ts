@@ -83,7 +83,10 @@ export function negotiate(
 
   // ── Extensions ────────────────────────────────────────
   const clientExtensions = parseExtensions(request.headers.get("sec-websocket-extensions",),);
-  const extensions = serverCaps.extensions.filter((ext,) => clientExtensions.includes(ext,));
+  const extensions: typeof serverCaps.extensions = [];
+  for (const ext of serverCaps.extensions) {
+    if (clientExtensions.includes(ext,)) { extensions.push(ext,); }
+  }
 
   return {
     protocol,

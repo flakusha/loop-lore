@@ -33,10 +33,22 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
       },);
       if (res.ok) {
         const data = await res.json();
-        this.locations = (data.data || []).map((l: Record<string, unknown>,) => ({
-          ...l,
-          connections: (l as { connections?: unknown[] }).connections || [],
-        }));
+        this.locations = Array.from(
+          (data.data ?? []) as Array<{
+            id: string;
+            name: string;
+            description: string | null;
+            parent_location_id: string | null;
+            connections?: unknown[];
+          }>,
+          (l,) => ({
+            id: l.id,
+            name: l.name,
+            description: l.description,
+            parent_location_id: l.parent_location_id,
+            connections: l.connections || [],
+          }),
+        );
         this.locationsLoaded = true;
       }
     } catch (error) {

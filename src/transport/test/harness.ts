@@ -82,8 +82,12 @@ export async function validateProtocol(
   }
 
   const totalDurationMs = performance.now() - startTime;
-  const passed = results.filter((r,) => r.passed).length;
-  const failed = results.filter((r,) => !r.passed).length;
+  let passed = 0;
+  let failed = 0;
+  for (const r of results) {
+    if (r.passed) { passed++; }
+    else { failed++; }
+  }
 
   return {
     // set by caller after validateProtocol() returns; protocol name not known here

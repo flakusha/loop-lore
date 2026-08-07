@@ -41,7 +41,7 @@ const TAG_RE = /^(?<kind>character|item|monster|location):(?<modality>image|vide
  * @returns strings like `"character:image"`, `"location:video"`
  */
 export function composeWorkflowTags(tags: readonly WorkflowTag[],): string[] {
-  return tags.map((t,) => `${t.kind}:${t.modality}`);
+  return Array.from(tags, (t,) => `${t.kind}:${t.modality}`,);
 }
 
 /**

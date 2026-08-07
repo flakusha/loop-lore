@@ -423,7 +423,11 @@ export class NpcNavigationService {
       .limit(5,) // Limit to nearby locations
       .execute();
 
-    return nearbyLocations.map((l,) => l.location_id).filter(Boolean,);
+    const connections: string[] = [];
+    for (const l of nearbyLocations) {
+      if (l.location_id) { connections.push(l.location_id,); }
+    }
+    return connections;
   }
 
   /**

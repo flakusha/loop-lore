@@ -89,4 +89,7 @@ export const AdminTemplateListResponse = Type.Object({
   customCount: Type.Number(),
 },);
 export type AdminTemplateListResponse = Static<typeof AdminTemplateListResponse>;
+// Public alias: `ProfileSummary` is re-exported for consumers (e.g.
+// admin-templates.ts) to keep the API name stable vs AdminTemplateProfile.
+// eslint-disable-next-line sonarjs/redundant-type-aliases
 export type ProfileSummary = AdminTemplateProfile;

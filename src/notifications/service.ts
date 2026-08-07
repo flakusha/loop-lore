@@ -112,7 +112,7 @@ async function participantActorIds(db: Kysely<DB>, chatId: string,): Promise<str
     .select("actor_id",)
     .where("chat_id", "=", chatId,)
     .execute();
-  return rows.map((r,) => r.actor_id);
+  return Array.from(rows, (r,) => r.actor_id,);
 }
 
 async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promise<string[]> {
@@ -122,7 +122,7 @@ async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promi
     .innerJoin("chats", "chats.id", "chat_participants.chat_id",)
     .where("chats.world_id", "=", worldId,)
     .execute();
-  return [...new Set(rows.map((r,) => r.actor_id),),];
+  return [...new Set(Array.from(rows, (r,) => r.actor_id,),),];
 }
 
 export class NotificationService {
@@ -215,7 +215,7 @@ export class NotificationService {
     let query = this.db.selectFrom("notifications",).selectAll().where("user_id", "=", userId,);
     if (unreadOnly) { query = query.where("read", "=", 0,); }
     const rows = await query.orderBy("created_at", "desc",).limit(50,).execute();
-    return rows.map((row,) => mapRow(row,));
+    return Array.from(rows, (row,) => mapRow(row,),);
   }
 
   /** Count of unread notifications for a user. */
@@ -263,7 +263,7 @@ export class NotificationService {
     if (chatId) { query = query.where("link", "like", `%${chatId}%`,); }
     const rows = await query.orderBy("created_at", "desc",).limit(5,).execute();
     if (rows.length === 0) { return ""; }
-    const lines = rows.map((r,) => {
+    const lines = Array.from(rows, (r,) => {
       const bodyPart = r.body ? `: ${r.body}` : "";
       return `- ${r.title}${bodyPart}`;
     },);
@@ -278,12 +278,12 @@ export async function notifyMention(
   opts: { chatId: string; senderId: string; mentionedActorIds: string[]; messageId: string },
 ): Promise<void> {
   if (opts.mentionedActorIds.length === 0) { return; }
-  const [chat, sender,] = await Promise.all([
+  const [chatResult, senderResult,] = await Promise.allSettled([
     db.selectFrom("chats",).select("name",).where("id", "=", opts.chatId,).executeTakeFirst(),
     db.selectFrom("actors",).select("display_name",).where("id", "=", opts.senderId,).executeTakeFirst(),
   ],);
-  const senderName = sender?.display_name ?? "Someone";
-  const chatName = chat?.name ?? "a chat";
+  const senderName = senderResult.status === "fulfilled" ? senderResult.value?.display_name ?? "Someone" : "Someone";
+  const chatName = chatResult.status === "fulfilled" ? chatResult.value?.name ?? "a chat" : "a chat";
   const svc = new NotificationService(db,);
   for (const actorId of opts.mentionedActorIds) {
     if (actorId === opts.senderId) { continue; }
@@ -302,12 +302,12 @@ export async function notifyChatInvite(
   db: Kysely<DB>,
   opts: { chatId: string; invitedUserId: string; inviterId: string },
 ): Promise<void> {
-  const [chat, inviter,] = await Promise.all([
+  const [chatResult, inviterResult,] = await Promise.allSettled([
     db.selectFrom("chats",).select("name",).where("id", "=", opts.chatId,).executeTakeFirst(),
     db.selectFrom("actors",).select("display_name",).where("id", "=", opts.inviterId,).executeTakeFirst(),
   ],);
-  const inviterName = inviter?.display_name ?? "Someone";
-  const chatName = chat?.name ?? "a group chat";
+  const inviterName = inviterResult.status === "fulfilled" ? inviterResult.value?.display_name ?? "Someone" : "Someone";
+  const chatName = chatResult.status === "fulfilled" ? chatResult.value?.name ?? "a group chat" : "a group chat";
   await new NotificationService(db,).create({
     userId: opts.invitedUserId,
     type: NotificationType.ChatInvite,

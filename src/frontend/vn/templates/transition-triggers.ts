@@ -89,9 +89,11 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
 export function evaluateTriggers(
   context: VnTriggerContext,
 ): VnTemplate | null {
-  const matchingTriggers = TRANSITION_TRIGGERS
-    .filter((trigger,) => trigger.condition(context,))
-    .sort((a, b,) => b.priority - a.priority);
+  const matchingTriggers: VnTransitionTrigger[] = [];
+  for (const trigger of TRANSITION_TRIGGERS) {
+    if (trigger.condition(context,)) { matchingTriggers.push(trigger,); }
+  }
+  matchingTriggers.sort((a, b,) => b.priority - a.priority);
 
   if (matchingTriggers.length === 0) { return null; }
 

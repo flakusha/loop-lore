@@ -99,13 +99,13 @@ async function handleGetContext(
   // Determine max tokens from config or model
   const maxTokens = 32_000; // Default; could be overridden per-chat/model
 
-  const messageRefs: MessageRef[] = messages.map((m,) => ({
+  const messageRefs: MessageRef[] = Array.from(messages, (m,) => ({
     messageId: m.id,
     role: m.role,
     content: m.content,
     tokenCount: estimateTokens(m.content,),
     createdAt: m.created_at,
-  }));
+  }),);
 
   const result = computeContextWindow(messageRefs, maxTokens,);
 

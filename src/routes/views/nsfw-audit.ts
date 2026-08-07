@@ -39,14 +39,13 @@ function renderNsfwAuditRows(actions: ModAction[],): string {
         <td colspan="4" class="empty-state" style="padding: var(--space-8)">No moderation actions recorded</td>
       </tr>`;
   }
-  return actions.map((a,) =>
+  return Array.from(actions, (a,) =>
     `<tr>
       <td style="font-size: 12px; white-space: nowrap">${escapeHtml(a.createdAt,)}</td>
       <td style="font-size: 12px">${escapeHtml(a.actionType,)}</td>
       <td style="font-size: 12px">${escapeHtml(a.performedBy,)}</td>
       <td style="font-size: 12px">${escapeHtml(a.reason,)}</td>
-    </tr>`
-  ).join("\n            ",);
+    </tr>`,).join("\n            ",);
 }
 
 /**
@@ -67,10 +66,15 @@ async function serveNsfwModerationAudit(
   if (!content) { return null; }
 
   const svc = new NsfwModerationService(database,);
-  const [prefs, actions,] = await Promise.all([
+  const [prefsResult, actionsResult,] = await Promise.allSettled([
     svc.getPreferences(targetUserId,),
     svc.getAuditLog(targetUserId, { limit: 200, },),
   ],);
+  // The audit view needs both; preserve all-or-nothing behavior.
+  if (prefsResult.status === "rejected") { throw prefsResult.reason; }
+  if (actionsResult.status === "rejected") { throw actionsResult.reason; }
+  const prefs = prefsResult.value;
+  const actions = actionsResult.value;
 
   content = content.replace("{{targetUserId}}", () => escapeHtml(targetUserId,),);
   content = content.replace("{{consentHtml}}", () => renderNsfwConsent(prefs,),);

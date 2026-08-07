@@ -213,7 +213,10 @@ export class BodySystemService {
     const profile = await this.getProfile(actorId,);
     if (index < 0 || index >= profile.modifications.length) { return false; }
 
-    const mods = profile.modifications.filter((_, i,) => i !== index);
+    const mods: typeof profile.modifications = [];
+    for (let i = 0; i < profile.modifications.length; i++) {
+      if (i !== index) { mods.push(profile.modifications[i]!,); }
+    }
 
     const now = new Date().toISOString();
     await this.db

@@ -20,22 +20,20 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
     </div>`,);
   }
 
-  const cards = actors
-    .map((c,) => {
-      const avatar = c.avatar_asset_id
-        ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
-        : "<span>👤</span>";
-      const name = escapeHtml(c.display_name,);
-      const desc = escapeHtml(c.description || "",);
-      return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
+  const cards = Array.from(actors, (c,) => {
+    const avatar = c.avatar_asset_id
+      ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
+      : "<span>👤</span>";
+    const name = escapeHtml(c.display_name,);
+    const desc = escapeHtml(c.description || "",);
+    return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
         <div class="name">${name}</div>
         <div class="description">${desc}</div>
       </div>
     </div>`;
-    },)
-    .join("",);
+  },).join("",);
 
   return htmlResponse(cards,);
 }
@@ -140,15 +138,13 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Pr
     );
   }
 
-  const items = chats
-    .map((c,) => {
-      const name = escapeHtml(c.name,);
-      return `<div class="chat-item" onclick="location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
+  const items = Array.from(chats, (c,) => {
+    const name = escapeHtml(c.name,);
+    return `<div class="chat-item" onclick="location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
       <div class="chat-info"><h4 class="chat-name">${name}</h4><p class="chat-preview">No messages yet</p></div>
       <span class="chat-time">${c.updated_at ? new Date(c.updated_at,).toLocaleDateString() : ""}</span>
     </div>`;
-    },)
-    .join("",);
+  },).join("",);
 
   return htmlResponse(items,);
 }

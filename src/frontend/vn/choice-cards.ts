@@ -81,7 +81,10 @@ export async function selectChoice(choiceId: string,): Promise<VnChoice | null> 
     if (res.ok) {
       const data = await res.json();
       const selected = data.data;
-      choices = choices.map((c,) => c.id === choiceId ? { ...c, selected: 1, selected_at: selected.selected_at, } : c);
+      choices = Array.from(
+        choices,
+        (c,) => c.id === choiceId ? { ...c, selected: 1, selected_at: selected.selected_at, } : c,
+      );
       renderChoices();
       return selected;
     }
@@ -122,8 +125,12 @@ export function getAccumulatedImpacts(): {
 function renderChoices(): void {
   if (!container) { return; }
 
-  const available = choices.filter((c,) => !c.selected);
-  const selected = choices.filter((c,) => c.selected);
+  const available: VnChoice[] = [];
+  const selected: VnChoice[] = [];
+  for (const c of choices) {
+    if (c.selected) { selected.push(c,); }
+    else { available.push(c,); }
+  }
 
   container.replaceChildren();
 

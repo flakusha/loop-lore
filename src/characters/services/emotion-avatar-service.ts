@@ -150,10 +150,10 @@ export class EmotionAvatarService {
       actorId: opts.actorId,
       baseAvatarId: opts.baseAvatarId,
       status: "pending",
-      results: emotions.map((emotion,) => ({
+      results: Array.from(emotions, (emotion,) => ({
         emotion,
         status: "pending" as const,
-      })),
+      }),),
       startedAt: new Date().toISOString(),
     };
 

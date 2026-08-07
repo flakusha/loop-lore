@@ -35,7 +35,7 @@ export function templatesRoutes(opts: HandlerOpts,) {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           const templates = await listChatSetupTemplates(database,);
-          const payload = templates.map((tmpl,) => ({
+          const payload = Array.from(templates, (tmpl,) => ({
             id: tmpl.id,
             slug: tmpl.slug,
             name: tmpl.name,
@@ -45,7 +45,7 @@ export function templatesRoutes(opts: HandlerOpts,) {
             worldId: tmpl.world_id,
             gmConfig: tmpl.gm_config ? jsonParseOr(tmpl.gm_config, {},) : null,
             visualNovel: tmpl.visual_novel === 1,
-          }));
+          }),);
           return jsonResponse(payload,);
         },
         { response: { 200: t.Array(ChatSetupTemplateSchema,), }, },

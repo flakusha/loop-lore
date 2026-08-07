@@ -53,19 +53,17 @@ async function serveGalleryGrid(database: Kysely<DB>, params?: URLSearchParams,)
     }
   }
 
-  const cards = assets
-    .map((a,) => {
-      const filename = escapeHtml(a.filename,);
-      const size = formatSize(a.size_bytes,);
-      return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+  const cards = Array.from(assets, (a,) => {
+    const filename = escapeHtml(a.filename,);
+    const size = formatSize(a.size_bytes,);
+    return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
       <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
         <span class="type">${size}</span>
       </div>
     </div>`;
-    },)
-    .join("",);
+  },).join("",);
 
   return htmlResponse(cards,);
 }

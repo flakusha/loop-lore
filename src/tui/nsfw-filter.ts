@@ -118,6 +118,10 @@ export class NsfwFilter {
    * Remove a keyword from the filter list.
    */
   removeKeyword(keyword: string,): void {
-    this.config.keywords = this.config.keywords.filter((kw,) => kw !== keyword);
+    const kept: string[] = [];
+    for (const kw of this.config.keywords) {
+      if (kw !== keyword) { kept.push(kw,); }
+    }
+    this.config.keywords = kept;
   }
 }

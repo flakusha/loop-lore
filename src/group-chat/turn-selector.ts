@@ -72,14 +72,17 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
     .where("actors.agent_type", "!=", "none",)
     .execute();
 
-  const aiParticipants = participants.filter((p,) => p.actor_type !== "user");
+  const aiParticipants: (typeof participants)[number][] = [];
+  for (const p of participants) {
+    if (p.actor_type !== "user") { aiParticipants.push(p,); }
+  }
   if (aiParticipants.length === 0) { return null; }
 
   // @mention override: if user mentioned someone, they get priority
   if (userMessage && aiParticipants.length > 0) {
     const mentionedIds = extractMentionedActorIds(
       userMessage,
-      aiParticipants.map((p,) => ({ actorId: p.actor_id, displayName: p.display_name, })),
+      Array.from(aiParticipants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
     );
 
     if (mentionedIds.length > 0) {
@@ -133,5 +136,5 @@ async function getRecentActorIds(db: Kysely<DB>, chatId: string, limit: number,)
     .limit(limit,)
     .execute();
 
-  return [...new Set(recent.map((m,) => m.actor_id),),];
+  return [...new Set(Array.from(recent, (m,) => m.actor_id,),),];
 }

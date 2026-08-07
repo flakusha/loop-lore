@@ -232,7 +232,7 @@ export async function listActorKeys(database: Kysely<DB>, actorId: string,): Pro
     .orderBy("created_at", "desc",)
     .execute();
 
-  return rows.map((r,) => ({
+  return Array.from(rows, (r,) => ({
     id: r.id,
     actorId: r.actor_id,
     name: r.name,
@@ -240,5 +240,5 @@ export async function listActorKeys(database: Kysely<DB>, actorId: string,): Pro
     status: r.status,
     createdAt: r.created_at,
     expiresAt: r.expires_at,
-  }));
+  }),);
 }

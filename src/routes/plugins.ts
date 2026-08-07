@@ -29,7 +29,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
           return forbidden("Admin access required",);
         }
 
-        const plugins = registry.listPlugins().map((p,) => ({
+        const plugins = Array.from(registry.listPlugins(), (p,) => ({
           name: p.manifest.name,
           version: p.manifest.version,
           description: p.manifest.description,
@@ -37,7 +37,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
           origin: p.origin,
           enabled: registry.isEnabled(p.manifest.name,),
           routeCount: registry.getPluginRoutes(p.manifest.name,).length,
-        }));
+        }),);
 
         return jsonResponse(plugins,);
       },

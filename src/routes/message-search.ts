@@ -55,11 +55,13 @@ const SNIPPET_LENGTH = 30;
  * syntax errors and injection via operators like `->`, `*`, or `NEAR`.
  */
 function buildFtsQuery(raw: string,): string {
-  return raw
-    .split(/\s+/,)
-    .filter((t,) => t.length > 0)
-    .map((token,) => `"${token.replaceAll('"', '""',)}"`)
-    .join(" ",);
+  const tokens: string[] = [];
+  for (const t of raw.split(/\s+/,)) {
+    if (t.length > 0) {
+      tokens.push(`"${t.replaceAll('"', '""',)}"`,);
+    }
+  }
+  return tokens.join(" ",);
 }
 
 /**
@@ -203,7 +205,7 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
 
           const total = counted?.rows[0]?.total ?? 0;
 
-          const results = rows.map((row,) => ({
+          const results = Array.from(rows, (row,) => ({
             messageId: row.messageId,
             chatId: row.chatId,
             chatName: row.chatName,
@@ -214,7 +216,7 @@ export function messageSearchRoutes(opts: HandlerOpts,) {
             createdAt: row.createdAt,
             attachments: parseAttachments(row.attachments,),
             matchScore: row.matchScore ?? 0,
-          }));
+          }),);
 
           log().info("Message search", {
             chatId: query.chatId ?? null,

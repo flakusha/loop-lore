@@ -111,7 +111,7 @@ export function rollDice(notation: string,): DiceResult | null {
     count: parsed.count,
     sides: parsed.sides,
     modifier: parsed.modifier,
-    rolls: rolls.map((r,) => r.value),
+    rolls: Array.from(rolls, (r,) => r.value,),
     total,
   },);
 
@@ -132,7 +132,7 @@ export function rollDice(notation: string,): DiceResult | null {
  * @returns Formatted string (e.g., "🎲 2d6+3: [4, 5] + 3 = 12")
  */
 export function formatDiceResult(result: DiceResult,): string {
-  const rollValues = result.rolls.map((r,) => r.value).join(", ",);
+  const rollValues = Array.from(result.rolls, (r,) => r.value,).join(", ",);
   const modifierStr = result.modifier > 0
     ? ` + ${result.modifier}`
     : (result.modifier < 0

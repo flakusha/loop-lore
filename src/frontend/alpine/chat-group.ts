@@ -87,10 +87,11 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     if (atMatch) {
       this._mentionQuery = (atMatch[1] ?? "").toLowerCase();
       this._showMentionAutocomplete = true;
-      this._mentionResults = this._chatParticipants.filter((p: any,) => {
+      this._mentionResults = [];
+      for (const p of this._chatParticipants) {
         const name = (p.display_name || p.name || "").toLowerCase();
-        return name.includes(this._mentionQuery,);
-      },);
+        if (name.includes(this._mentionQuery,)) { this._mentionResults.push(p,); }
+      }
     } else {
       this._showMentionAutocomplete = false;
       this._mentionQuery = "";

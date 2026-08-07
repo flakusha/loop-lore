@@ -164,12 +164,12 @@ export class CircuitBreaker {
     consecutiveFailures: number;
     cooldownRemainingMs: number;
   }[] {
-    return [...this.circuits,].map(([name, circuit,],) => ({
+    return Array.from(this.circuits, ([name, circuit,],) => ({
       name,
       state: circuit.state,
       consecutiveFailures: circuit.consecutiveFailures,
       cooldownRemainingMs: Math.max(0, circuit.cooldownUntil - Date.now(),),
-    }));
+    }),);
   }
 }
 

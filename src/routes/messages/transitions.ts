@@ -91,7 +91,7 @@ export async function handleSceneTransitions(
     .limit(2,)
     .execute();
 
-  const recentContent = recentMsgs.map((m,) => m.content).reverse();
+  const recentContent = Array.from(recentMsgs, (m,) => m.content,).reverse();
 
   const classification = await classifyTransitionMessage(
     effectiveContent,
@@ -139,7 +139,11 @@ export async function handleSceneTransitions(
     let promotedMemoryIds: string[] = [];
     try {
       // Candidate messages at risk of trimming: everything visible in the chat.
-      const [promotionCandidates, chatCtx, participants,] = await Promise.all([
+      const [
+        promotionCandidatesResult,
+        chatCtxResult,
+        participantsResult,
+      ] = await Promise.allSettled([
         database
           .selectFrom("messages",)
           .select(["id", "role", "content", "created_at",],)
@@ -158,14 +162,20 @@ export async function handleSceneTransitions(
           .where("chat_id", "=", chatId,)
           .execute(),
       ],);
+      if (promotionCandidatesResult.status !== "fulfilled") { throw promotionCandidatesResult.reason; }
+      if (chatCtxResult.status !== "fulfilled") { throw chatCtxResult.reason; }
+      if (participantsResult.status !== "fulfilled") { throw participantsResult.reason; }
+      const promotionCandidates = promotionCandidatesResult.value;
+      const chatCtx = chatCtxResult.value;
+      const participants = participantsResult.value;
 
-      const messageRefs: MessageRef[] = promotionCandidates.map((m,) => ({
+      const messageRefs: MessageRef[] = Array.from(promotionCandidates, (m,) => ({
         messageId: m.id,
         role: m.role,
         content: m.content ?? "",
         tokenCount: Math.ceil((m.content ?? "").length * 0.3,),
         createdAt: m.created_at,
-      }));
+      }),);
 
       promotedMemoryIds = await promoteMessagesToMemories(database, {
         messages: messageRefs,
@@ -173,7 +183,7 @@ export async function handleSceneTransitions(
         actorId: actorId ?? "",
         chatId,
         worldId: chatCtx?.world_id ?? null,
-        participantIds: participants.map((p,) => p.actor_id),
+        participantIds: Array.from(participants, (p,) => p.actor_id,),
       },);
     } catch (error) {
       log().warn("Context cut memory promotion failed", {

@@ -37,24 +37,32 @@ export function readRoutes(opts: HandlerOpts,) {
           parentId: query.parentId,
         },);
 
-        const enriched = await Promise.all(
-          messages.map(async (m,) => {
-            const row = m as Readonly<{
-              content: string;
-              content_encoding: string;
-              key_id: string | null;
-              chat_id: string;
-              attachments?: string | null;
-            }>;
-            const attachments = await enrichAttachments(database, row.attachments ?? null,);
-            try {
-              const content = await resolveMessageContent(database, row, config,);
-              return { ...m, content, attachments, };
-            } catch {
-              return { ...m, content: "[Encrypted — unable to decrypt]", attachments, };
-            }
-          },),
-        );
+        const enrichPromises: Promise<Record<string, unknown>>[] = [];
+        for (const m of messages) {
+          enrichPromises.push(
+            (async (): Promise<Record<string, unknown>> => {
+              const row = m as Readonly<{
+                content: string;
+                content_encoding: string;
+                key_id: string | null;
+                chat_id: string;
+                attachments?: string | null;
+              }>;
+              const attachments = await enrichAttachments(database, row.attachments ?? null,);
+              try {
+                const content = await resolveMessageContent(database, row, config,);
+                return { ...m, content, attachments, };
+              } catch {
+                return { ...m, content: "[Encrypted — unable to decrypt]", attachments, };
+              }
+            })(),
+          );
+        }
+        const enrichResults = await Promise.allSettled(enrichPromises,);
+        const enriched: Record<string, unknown>[] = [];
+        for (const r of enrichResults) {
+          if (r.status === "fulfilled") { enriched.push(r.value,); }
+        }
 
         return jsonPaginated({ data: enriched, total, page, pageSize, },);
       },
@@ -124,16 +132,24 @@ export function readRoutes(opts: HandlerOpts,) {
           .orderBy("created_at", "asc",)
           .execute();
 
-        const enriched = await Promise.all(
-          variants.map(async (v,) => {
-            try {
-              const c = await resolveMessageContent(database, v, config,);
-              return { ...v, content: c, };
-            } catch {
-              return { ...v, content: "[Encrypted — unable to decrypt]", };
-            }
-          },),
-        );
+        const variantPromises: Promise<Record<string, unknown>>[] = [];
+        for (const v of variants) {
+          variantPromises.push(
+            (async (): Promise<Record<string, unknown>> => {
+              try {
+                const c = await resolveMessageContent(database, v, config,);
+                return { ...v, content: c, };
+              } catch {
+                return { ...v, content: "[Encrypted — unable to decrypt]", };
+              }
+            })(),
+          );
+        }
+        const variantResults = await Promise.allSettled(variantPromises,);
+        const enriched: Record<string, unknown>[] = [];
+        for (const r of variantResults) {
+          if (r.status === "fulfilled") { enriched.push(r.value,); }
+        }
 
         return jsonResponse(enriched,);
       },

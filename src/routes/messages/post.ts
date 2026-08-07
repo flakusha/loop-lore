@@ -153,26 +153,33 @@ export async function persistMentions(
     .execute();
   const mentionedActorIds = extractMentionedActorIds(
     filteredContent,
-    participants.map((p,) => ({ actorId: p.actor_id, displayName: p.display_name, })),
+    Array.from(participants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
   );
   if (mentionedActorIds.length > 0) {
-    await Promise.all(
-      mentionedActorIds.map(async (actorId: string,) => {
-        try {
-          await database
-            .insertInto("chat_mentions",)
-            .values({ id: uid(), message_id: messageId, actor_id: actorId, },)
-            .execute();
-        } catch {
-          /* ignore duplicate */
-        }
-      },),
-    );
+    const insertPromises: Promise<void>[] = [];
+    for (const actorId of mentionedActorIds) {
+      insertPromises.push(
+        (async (): Promise<void> => {
+          try {
+            await database
+              .insertInto("chat_mentions",)
+              .values({ id: uid(), message_id: messageId, actor_id: actorId, },)
+              .execute();
+          } catch {
+            /* ignore duplicate */
+          }
+        })(),
+      );
+    }
+    await Promise.allSettled(insertPromises,);
     void notifyMention(database, {
       chatId,
       senderId,
       mentionedActorIds,
       messageId,
-    },).catch(() => {},);
+    },)
+      // Mention notification failure is non-fatal — swallow.
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .catch(() => {},);
   }
 }

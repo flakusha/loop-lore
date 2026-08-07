@@ -83,7 +83,9 @@ export async function listMessages(
     .execute();
 
   // Compute variant counts/indexes
-  const parentIds = [...new Set(messages.map((m,) => m.parent_id).filter(Boolean,),),];
+  const parentIdSet = new Set<string>();
+  for (const m of messages) { if (m.parent_id) { parentIdSet.add(m.parent_id,); } }
+  const parentIds = [...parentIdSet,];
   const variantCounts = new Map<string, number>();
   const variantIndexes = new Map<string, number>();
 
@@ -91,7 +93,7 @@ export async function listMessages(
     const siblings = await database
       .selectFrom("messages",)
       .select(["id", "parent_id", "swipe_index", "created_at",],)
-      .where("parent_id", "in", parentIds as string[],)
+      .where("parent_id", "in", parentIds,)
       .where("chat_id", "=", params.chatId,)
       .where("visibility", "=", "visible",)
       .orderBy("swipe_index", "asc",)
@@ -110,11 +112,11 @@ export async function listMessages(
     }
   }
 
-  const enriched = messages.map((m,) => ({
+  const enriched = Array.from(messages, (m,) => ({
     ...m,
     variantIndex: m.parent_id ? (variantIndexes.get(m.id,) ?? 0) : undefined,
     totalVariants: m.parent_id ? (variantCounts.get(m.parent_id,) ?? 1) : undefined,
-  }));
+  }),);
 
   return { data: enriched as unknown as Record<string, unknown>[], total, };
 }

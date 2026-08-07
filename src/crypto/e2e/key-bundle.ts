@@ -194,5 +194,5 @@ export async function listBundleUsers(
     .where("status", "=", "active",)
     .execute();
 
-  return rows.map((r,) => r.actor_id);
+  return Array.from(rows, (r,) => r.actor_id,);
 }

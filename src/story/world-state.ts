@@ -78,7 +78,7 @@ export class WorldStateService {
       .orderBy("priority", "desc",)
       .execute();
 
-    const activeQuests = questRows.map((q,) => ({
+    const activeQuests = Array.from(questRows, (q,) => ({
       id: q.id,
       name: q.name,
       type: q.type,
@@ -88,7 +88,7 @@ export class WorldStateService {
         const parsed = jsonParseOr<QuestConfig | null>(q.config, null,);
         return parsed && typeof parsed.type === "string" ? parsed : ({} as unknown as QuestConfig);
       })(),
-    }));
+    }),);
 
     const participantRows = await this.db
       .selectFrom("chat_participants",)
@@ -141,14 +141,14 @@ export class WorldStateService {
       .limit(recentTurnCount,)
       .execute();
 
-    const recentTurns = turnRows.toReversed().map((t,) => ({
+    const recentTurns = Array.from(turnRows.toReversed(), (t,) => ({
       turnNumber: t.turn_number,
       actorId: t.actor_id,
       turnType: t.turn_type,
       prompt: t.prompt_sent,
       response: t.response_received,
       qualityScore: t.quality_score,
-    }));
+    }),);
 
     const turnManagerState = chat.story_state
       ? jsonParseOr(chat.story_state, {

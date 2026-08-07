@@ -77,9 +77,14 @@ export function preloadImage(url: string,): Promise<PreloadResult> {
 // ── Batch Preloading ───────────────────────────────────────
 
 export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
-  return await Promise.all(
-    urls.map((url,) => preloadImage(url,)),
+  const settled = await Promise.allSettled(
+    Array.from(urls, (url,) => preloadImage(url,),),
   );
+  const out: PreloadResult[] = [];
+  for (const r of settled) {
+    if (r.status === "fulfilled") { out.push(r.value,); }
+  }
+  return out;
 }
 
 // ── Scene Preloading ───────────────────────────────────────
@@ -119,7 +124,10 @@ export async function preloadSceneImages(
   const uniqueUrls = [...new Set(urlsToPreload,),];
 
   // Filter out already cached
-  const urlsToFetch = uniqueUrls.filter((url,) => !imageCache.has(url,));
+  const urlsToFetch: string[] = [];
+  for (const url of uniqueUrls) {
+    if (!imageCache.has(url,)) { urlsToFetch.push(url,); }
+  }
 
   if (urlsToFetch.length === 0) {
     return {
@@ -132,10 +140,17 @@ export async function preloadSceneImages(
 
   const results = await preloadImages(urlsToFetch,);
 
+  let loadedCount = 0;
+  let failedCount = 0;
+  for (const r of results) {
+    if (r.loaded) { loadedCount++; }
+    else { failedCount++; }
+  }
+
   return {
     total: uniqueUrls.length,
-    loaded: results.filter((r,) => r.loaded).length,
-    failed: results.filter((r,) => !r.loaded).length,
+    loaded: loadedCount,
+    failed: failedCount,
     cached: uniqueUrls.length - urlsToFetch.length,
   };
 }
