@@ -10,7 +10,7 @@ import { dirname, } from "node:path";
 import { fileURLToPath, } from "node:url";
 import { createLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";
-import { ConfigSchema, } from "./schema-class";
+import { jsonSchema, } from "./schema-class";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
 const log = createLogger({ level: "info", },);
@@ -34,7 +34,7 @@ const DOMAINS: Record<string, string[]> = {
 };
 
 function main() {
-  const fullSchema = ConfigSchema.jsonSchema();
+  const fullSchema = jsonSchema();
   let generated = 0;
 
   for (const [domain, paths,] of Object.entries(DOMAINS,)) {
