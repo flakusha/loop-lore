@@ -34,7 +34,8 @@ import {
   isEncryptedPayload,
   isEncryptionEnabled,
 } from "../crypto";
-import { ContentEncoding, MessageContentFormat, MessageContentType, MessageRole, } from "../db/enums";
+import type { ContentEncoding} from "../db/enums";
+import { MessageContentFormat, MessageContentType, MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
 import { extractMentionedActorIds, parseInitiativeFlag, } from "../group-chat/mention-parser";

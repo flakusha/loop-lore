@@ -13,7 +13,7 @@
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { LoreScope, } from "../../assistant/lore/audience";
-import { WorldEventType, } from "../../db/enums";
+import type { WorldEventType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { promoteEventToLore, } from "../events/promote-lore";
 import { serializeOrThrow, } from "../shared/story-utils";
