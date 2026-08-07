@@ -14,7 +14,7 @@ describe("Registration flow E2E", () => {
   let ctx: BrowserTestContext;
 
   beforeAll(async () => {
-    ctx = await createBrowserTest({ auth: { required: true, registrationOpen: true, }, });
+    ctx = await createBrowserTest({ auth: { required: true, registrationOpen: true, }, },);
   }, 45_000,);
 
   afterAll(async () => {
@@ -64,7 +64,7 @@ describe("Registration flow E2E", () => {
         // User persisted.
         const row = await ctx.db
           .selectFrom("users",)
-          .select(["username",])
+          .select(["username",],)
           .where("username", "=", username,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();

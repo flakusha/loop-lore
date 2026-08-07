@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `243e54a`
-

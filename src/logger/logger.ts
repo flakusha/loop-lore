@@ -10,7 +10,16 @@ import { levelFromConfig, shouldEmit, } from "./levels";
 import { applyLimits, } from "./limits";
 import { AsyncLogQueue, } from "./queue";
 import { ConsoleTransport, } from "./transports/console";
-import type { LogEntry, Logger, LoggerBindings, LogOptions, Transport,  LogLevel, LoggerConfig, SizeLimits} from "./types";
+import type {
+  LogEntry,
+  Logger,
+  LoggerBindings,
+  LoggerConfig,
+  LogLevel,
+  LogOptions,
+  SizeLimits,
+  Transport,
+} from "./types";
 import { LogLevelNumeric, } from "./types";
 
 export class LoggerImpl implements Logger {

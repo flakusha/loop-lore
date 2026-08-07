@@ -56,11 +56,11 @@ describe("Gallery flow E2E", () => {
         while (Date.now() < deadline) {
           row = await ctx.db
             .selectFrom("assets",)
-            .select(["id", "filename",])
+            .select(["id", "filename",],)
             .where("filename", "=", "browser-test.png",)
             .executeTakeFirst();
           if (row) { break; }
-          await new Promise((resolve,) => setTimeout(resolve, 250,),);
+          await new Promise((resolve,) => setTimeout(resolve, 250,));
         }
         expect(row,).not.toBeNull();
         expect(row!.filename,).toBe("browser-test.png",);

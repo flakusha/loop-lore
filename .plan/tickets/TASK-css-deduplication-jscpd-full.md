@@ -10,12 +10,12 @@ Deduplicate CSS detected by jscpd:full (108 clones, 861 dup lines / 17.94%): app
 
 ## Result
 
-| Metric | Before | After |
-|---|---|---|
-| Clones | 108 | 70 (-35%) |
-| Duplicated lines | 861 (17.94%) | 431 (10.00%) |
+| Metric            | Before        | After         |
+| ----------------- | ------------- | ------------- |
+| Clones            | 108           | 70 (-35%)     |
+| Duplicated lines  | 861 (17.94%)  | 431 (10.00%)  |
 | Duplicated tokens | 8558 (20.59%) | 5238 (13.49%) |
-| Total CSS lines | 4800 | 4312 (-488) |
+| Total CSS lines   | 4800          | 4312 (-488)   |
 
 Remaining 70 clones are jscpd tokenizer noise (comment/brace subsequence matches, values-differing theme structure matches) — not full-rule duplicates.
 

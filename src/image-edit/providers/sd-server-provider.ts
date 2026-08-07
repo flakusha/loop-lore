@@ -21,7 +21,8 @@ import type {
   ImageEditRequest,
   ImageEditResult,
   SDServerCapabilities,
- WorkflowTemplate} from "../types";
+  WorkflowTemplate,
+} from "../types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function log() {
