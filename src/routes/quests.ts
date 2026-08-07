@@ -176,7 +176,10 @@ async function handleQuest(
   void notifyQuestUpdate(database, {
     worldId: questRow.world_id,
     questName: updated?.name ?? "Quest",
-  },).catch(() => {},);
+  },)
+    // Quest-update notification failure is non-fatal — swallow.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    .catch(() => {},);
   return jsonResponse(updated,);
 }
 
@@ -223,7 +226,10 @@ async function handleProgress(
     worldId: questRow.world_id,
     chatId: body?.chatId as string | undefined,
     questName: questNameRow?.name ?? "Quest",
-  },).catch(() => {},);
+  },)
+    // Quest-progress notification failure is non-fatal — swallow.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    .catch(() => {},);
   return jsonResponse(entry,);
 }
 

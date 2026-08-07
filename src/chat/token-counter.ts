@@ -39,7 +39,9 @@ export interface TokenCountResult {
  * @returns Total estimated token count
  */
 export function countMessageTokens(messages: CountableMessage[],): number {
-  return messages.reduce((total, msg,) => total + defaultTokenCount(msg.content,), 0,);
+  let total = 0;
+  for (const msg of messages) { total += defaultTokenCount(msg.content,); }
+  return total;
 }
 
 /**

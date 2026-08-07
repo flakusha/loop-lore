@@ -174,7 +174,7 @@ export class SkillsService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((row,) => this.rowToSkill(row,));
+    return Array.from(rows, (row,) => this.rowToSkill(row,),);
   }
 
   /**
@@ -196,7 +196,7 @@ export class SkillsService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((row,) => this.rowToSkill(row,));
+    return Array.from(rows, (row,) => this.rowToSkill(row,),);
   }
 
   /**
@@ -331,9 +331,10 @@ export class SkillsService {
     }
 
     const actorSkills = await this.getActorSkills(actorId, worldId,);
-    const actorSkillIds = new Set(actorSkills.map((s,) => s.id),);
+    const actorSkillIds = new Set(Array.from(actorSkills, (s,) => s.id,),);
 
-    const missing = prerequisites.filter((id,) => !actorSkillIds.has(id,));
+    const missing: string[] = [];
+    for (const id of prerequisites) { if (!actorSkillIds.has(id,)) { missing.push(id,); } }
 
     return {
       met: missing.length === 0,

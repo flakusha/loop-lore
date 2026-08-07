@@ -192,7 +192,7 @@ export class ReplayabilityService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((row: any,) => this.rowToPlaythrough(row,));
+    return Array.from(rows, (row: any,) => this.rowToPlaythrough(row,),);
   }
 
   /**

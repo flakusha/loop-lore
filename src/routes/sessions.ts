@@ -84,7 +84,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
             .select(database.fn.count("id",).as("count",),)
             .where("user_id", "=", userId,);
 
-        const [rows, countResult,] = await Promise.all([
+        const [rowsRes, countRes,] = await Promise.allSettled([
           filteredQuery
             .orderBy("created_at", "desc",)
             .limit(pageSize,)
@@ -92,9 +92,11 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
             .execute(),
           countQuery.executeTakeFirst(),
         ],);
+        const rows = rowsRes.status === "fulfilled" ? rowsRes.value : [];
+        const countResult = countRes.status === "fulfilled" ? countRes.value : undefined;
 
         const total = Number(countResult?.count ?? 0,);
-        const sessions = rows.map((s,) => sanitizeSession(s, sessionId,));
+        const sessions = Array.from(rows, (s,) => sanitizeSession(s, sessionId,),);
 
         return jsonResponse({
           data: sessions,

@@ -135,10 +135,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts,) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
-      const emotions = Object.values(EmotionType,).map((emotion,) => ({
+      const emotions = Array.from(Object.values(EmotionType,), (emotion,) => ({
         value: emotion,
         displayName: emotion.charAt(0,).toUpperCase() + emotion.slice(1,),
-      }));
+      }),);
       return jsonResponse(emotions,);
     },);
 }

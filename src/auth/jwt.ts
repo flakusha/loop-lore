@@ -6,7 +6,7 @@
  */
 
 import { getLogger, } from "../logger/index";
-import { jsonParseOr, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../utils";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function getLog() {
@@ -111,8 +111,8 @@ export async function signJwt(opts: SignJwtOpts,): Promise<string> {
   };
 
   const encoder = new TextEncoder();
-  const headerB64 = base64urlEncode(encoder.encode(JSON.stringify(header,),),);
-  const payloadB64 = base64urlEncode(encoder.encode(JSON.stringify(payload,),),);
+  const headerB64 = base64urlEncode(encoder.encode(jsonStringifyOr(header, "{}",),),);
+  const payloadB64 = base64urlEncode(encoder.encode(jsonStringifyOr(payload, "{}",),),);
   const signingInput = `${headerB64}.${payloadB64}`;
 
   const key = await importSecretKey(opts.secret,);

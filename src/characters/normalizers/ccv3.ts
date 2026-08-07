@@ -43,12 +43,14 @@ export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacte
     ? buildLorebook(cardData.character_book,)
     : undefined;
 
-  const assets: CharacterAsset[] | undefined = cardData.assets?.map((asset,) => ({
-    type: asset.type ?? "unknown",
-    name: asset.name ?? "unnamed",
-    uri: asset.uri ?? "",
-    ext: asset.ext ?? "",
-  }));
+  const assets: CharacterAsset[] | undefined = cardData.assets
+    ? Array.from(cardData.assets, (asset,) => ({
+      type: asset.type ?? "unknown",
+      name: asset.name ?? "unnamed",
+      uri: asset.uri ?? "",
+      ext: asset.ext ?? "",
+    }),)
+    : undefined;
 
   return {
     ...buildCanonicalFields(raw,),

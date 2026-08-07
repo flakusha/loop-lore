@@ -108,7 +108,7 @@ export async function getDiceRollHistory(
 
   const rows = await query.execute();
 
-  return rows.map((r,) => ({
+  return Array.from(rows, (r,) => ({
     id: r.id,
     sides: r.sides,
     count: r.count,
@@ -117,7 +117,7 @@ export async function getDiceRollHistory(
     total: r.total,
     purpose: r.purpose,
     createdAt: r.created_at,
-  }));
+  }),);
 }
 
 // ── Character Stats ──────────────────────────────────────────
@@ -360,13 +360,13 @@ export async function getXpHistory(
     .orderBy("created_at", "desc",)
     .limit(limit,)
     .execute();
-  return rows.map((r,) => ({
+  return Array.from(rows, (r,) => ({
     id: r.id,
     amount: r.amount,
     source: r.source,
     description: r.description,
     createdAt: r.created_at,
-  }));
+  }),);
 }
 
 // ── Loot Tables ──────────────────────────────────────────────
@@ -483,7 +483,8 @@ export async function rollLootTable(
     .execute();
 
   // Weighted random selection
-  const totalWeight = entries.reduce((sum, e,) => sum + e.weight, 0,);
+  let totalWeight = 0;
+  for (const e of entries) { totalWeight += e.weight; }
   let random = Math.random() * totalWeight;
 
   for (const entry of entries) {

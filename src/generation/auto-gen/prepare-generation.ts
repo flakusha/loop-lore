@@ -73,7 +73,9 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
       .select(["actor_id",],)
       .where("chat_id", "=", chatId,)
       .execute();
-    groupParticipantIds = participants.map((p,) => p.actor_id).filter((id,) => id !== actorId);
+    const participantIds: string[] = [];
+    for (const p of participants) { if (p.actor_id !== actorId) { participantIds.push(p.actor_id,); } }
+    groupParticipantIds = participantIds;
   }
 
   // Wire the config-driven avatar-change intent detector: when the user's

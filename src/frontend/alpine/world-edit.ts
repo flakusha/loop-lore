@@ -54,14 +54,14 @@ const log = rootLog.child({ module: "world-edit", },);
 
     async saveWorld() {
       this.saving = true;
-      const settings = this.tagsStr
-        ? {
-          tags: this.tagsStr
-            .split(",",)
-            .map((t: string,) => t.trim())
-            .filter(Boolean,),
+      const tags: string[] = [];
+      if (this.tagsStr) {
+        for (const t of this.tagsStr.split(",",)) {
+          const trimmed = t.trim();
+          if (trimmed) { tags.push(trimmed,); }
         }
-        : {};
+      }
+      const settings = this.tagsStr ? { tags, } : {};
       try {
         const res = await apiFetch(`/api/worlds/${this.worldId}`, {
           method: "PUT",

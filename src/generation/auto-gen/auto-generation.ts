@@ -204,7 +204,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     if (attemptId) {
       try {
         await d.failGeneration({ attemptId, error: error as Error, db: database, },);
-      } catch {}
+      } catch {
+        // markFailure is best-effort; a failure here is already being handled.
+      }
     }
     // Record generation failure telemetry
     if (isTelemetryEnabled()) {
@@ -222,7 +224,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       const buf = d.getOrCreateBuffer(chatId,);
       buf.signalError((error as Error).message,);
       d.scheduleBufferCleanup(chatId,);
-    } catch {}
+    } catch {
+      // Buffer error signalling is best-effort; the error is already surfaced.
+    }
 
     const err = error instanceof Error ? error : new Error(String(error,),);
     const log = getLogger().child({ module: "auto-gen", },);

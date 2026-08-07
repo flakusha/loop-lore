@@ -256,10 +256,9 @@ export function calculatePregnancyRisk(
 
   // Contraception reduces probability
   if (useProtection && health.contraception.length > 0) {
-    const avgEffectiveness = health.contraception.reduce(
-      (sum, m,) => sum + m.effectiveness,
-      0,
-    ) / health.contraception.length;
+    let effectivenessSum = 0;
+    for (const m of health.contraception) { effectivenessSum += m.effectiveness; }
+    const avgEffectiveness = effectivenessSum / health.contraception.length;
     probability *= 1 - (avgEffectiveness / 100);
     factors.push(`contraception: -${avgEffectiveness}%`,);
   }

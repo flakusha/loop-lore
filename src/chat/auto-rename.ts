@@ -67,7 +67,7 @@ export function buildRenamePrompt(
   characterName: string,
   messages: string[],
 ): string {
-  const lines = messages.map((m, i,) => `${i % 2 === 0 ? "User" : characterName}: ${m}`);
+  const lines = Array.from(messages, (m, i,) => `${i % 2 === 0 ? "User" : characterName}: ${m}`,);
   const messageBlock = lines.join("\n",);
 
   return `Generate a short, descriptive chat title (max 40 characters) for this conversation. Include the character name and the main topic. Do not use quotes or punctuation at the end.

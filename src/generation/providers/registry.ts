@@ -31,10 +31,10 @@ export function getProvider(name: string,): LLMProvider | undefined {
 }
 
 export function listProviders(): { name: string; capabilities: LLMProvider["capabilities"] }[] {
-  return [...registry,].map(([name, provider,],) => ({
+  return Array.from(registry, ([name, provider,],) => ({
     name,
     capabilities: provider.capabilities,
-  }));
+  }),);
 }
 
 // ── Resolution ────────────────────────────────────────────

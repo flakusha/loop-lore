@@ -314,7 +314,7 @@ export class SeductionService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.rowToSkill(r,));
+    return Array.from(rows, (r,) => this.rowToSkill(r,),);
   }
 
   // ── Arousal State ─────────────────────────────────────

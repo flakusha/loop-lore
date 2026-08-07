@@ -99,7 +99,8 @@ async function main() {
     }
   }
 
-  const totalAfter = files.reduce((sum, f,) => sum + readFileSync(f,).length, 0,);
+  let totalAfter = 0;
+  for (const f of files) { totalAfter += readFileSync(f,).length; }
 
   log.info(`Compressed ${total} files`,);
   log.info(`Original: ${originalBytes} bytes`,);

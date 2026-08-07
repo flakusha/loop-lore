@@ -163,15 +163,18 @@ export async function generateRandomEvent(
   const { messageCount, messagesSinceLastEvent = 999, } = opts;
 
   // Filter eligible events (minMessages and cooldown checks)
-  const eligible = EVENT_POOL.filter((e,) =>
-    messageCount >= e.minMessages &&
-    messagesSinceLastEvent >= e.cooldown
-  );
+  const eligible: Omit<RandomEvent, "id" | "content">[] = [];
+  for (const e of EVENT_POOL) {
+    if (messageCount >= e.minMessages && messagesSinceLastEvent >= e.cooldown) {
+      eligible.push(e,);
+    }
+  }
 
   if (eligible.length === 0) { return null; }
 
   // Weighted random selection
-  const totalWeight = eligible.reduce((sum, e,) => sum + e.weight, 0,);
+  let totalWeight = 0;
+  for (const e of eligible) { totalWeight += e.weight; }
   let roll = Math.random() * totalWeight;
 
   let selected = eligible[0]!;

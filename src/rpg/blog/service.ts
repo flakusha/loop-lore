@@ -214,7 +214,7 @@ export class BlogService {
     if (rows.length === 0) { return []; }
 
     // Batch-fetch tags to avoid N+1
-    const postIds = rows.map((r,) => r.id);
+    const postIds = Array.from(rows, (r,) => r.id,);
     const tagRows = (await this.db
       .selectFrom("blog_tags",)
       .select(["post_id", "tag",],)
@@ -228,10 +228,10 @@ export class BlogService {
       tagsByPost.set(tr.post_id, arr,);
     }
 
-    return rows.map((row,) => ({
+    return Array.from(rows, (row,) => ({
       ...row,
       tags: tagsByPost.get(row.id,) ?? [],
-    }));
+    }),);
   }
 
   async updatePost(
@@ -386,7 +386,7 @@ export class BlogService {
       .select("follower_id",)
       .where("author_id", "=", authorId,)
       .execute();
-    return rows.map((r: any,) => r.follower_id as string);
+    return Array.from(rows, (r: any,) => r.follower_id as string,);
   }
 
   async isFollowing(
@@ -440,11 +440,11 @@ export class BlogService {
 
   // ── Tags (internal) ──────────────────────────────────
   private async addTags(postId: string, tags: string[],): Promise<void> {
-    const rows = tags.map((tag,) => ({
+    const rows = Array.from(tags, (tag,) => ({
       id: uid(),
       post_id: postId,
       tag: tag.trim().toLowerCase(),
-    }));
+    }),);
     await this.db.insertInto("blog_tags",).values(rows,).execute();
   }
 
@@ -461,6 +461,6 @@ export class BlogService {
       .select("tag",)
       .where("post_id", "=", postId,)
       .execute();
-    return rows.map((r: any,) => r.tag as string);
+    return Array.from(rows, (r: any,) => r.tag as string,);
   }
 }

@@ -67,7 +67,7 @@ registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
     };
   }
 
-  const assetIds = linkedAssets.map((a,) => a.id);
+  const assetIds = Array.from(linkedAssets, (a,) => a.id,);
 
   try {
     const response = await handleImageCaption({
@@ -96,10 +96,12 @@ registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
       };
     }
 
-    const captionList = captions
-      .filter((c,) => c.caption)
-      .map((c,) => `**${c.assetId.slice(0, 8,)}:** ${c.caption}`)
-      .join("\n\n",);
+    // Build caption list — filter captions with content, then format each
+    const captionLines: string[] = [];
+    for (const c of captions) {
+      if (c.caption) { captionLines.push(`**${c.assetId.slice(0, 8,)}:** ${c.caption}`,); }
+    }
+    const captionList = captionLines.join("\n\n",);
 
     return {
       systemMessage: captionList

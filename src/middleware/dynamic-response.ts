@@ -208,7 +208,7 @@ export class DynamicResponsePolicy {
   /** Merge `Accept-Encoding` into an existing Vary header without duplicates. */
   private mergeVary(existing: string | null,): string {
     if (!existing) { return "Accept-Encoding"; }
-    const parts = existing.split(",",).map((p,) => p.trim());
+    const parts = Array.from(existing.split(",",), (p,) => p.trim(),);
     if (parts.some((p,) => p.toLowerCase() === "accept-encoding")) { return existing; }
     return [...parts, "Accept-Encoding",].join(", ",);
   }

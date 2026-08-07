@@ -54,7 +54,7 @@ async function resolveActorIdentity(
   actorId: string,
   worldId: string | null,
 ): Promise<ActorIdentity> {
-  const [traitRows, professionRows,] = await Promise.all([
+  const identityResults = await Promise.allSettled([
     db
       .selectFrom("character_permanent_traits",)
       .select(["trait_name", "trait_value",],)
@@ -69,8 +69,12 @@ async function resolveActorIdentity(
         .execute()
       : Promise.resolve([] as { discipline: string }[],),
   ],);
-
-  const traits = traitRows as LoreIdentityRow[];
+  const traitMetaResult = identityResults[0];
+  const professionResult = identityResults[1];
+  if (traitMetaResult.status === "rejected") { throw traitMetaResult.reason; }
+  if (professionResult.status === "rejected") { throw professionResult.reason; }
+  const traits = traitMetaResult.value as LoreIdentityRow[];
+  const professionRows = professionResult.value;
   const species = traits.find((t,) => t.trait_name === "species")?.trait_value ?? "human";
   const professions = new Set<string>();
   for (const t of traits) {
@@ -92,7 +96,7 @@ export const loreSection: SectionBuilder = {
     const { actor, chat, params, } = ctx;
     const locationId = chat.current_location_id ?? null;
 
-    const [actorLore, worldLore, identity,] = await Promise.all([
+    const loreResults = await Promise.allSettled([
       ctx.db
         .selectFrom("actor_lore_entries",)
         .select([
@@ -131,11 +135,20 @@ export const loreSection: SectionBuilder = {
         : Promise.resolve([] as LoreRow[],),
       resolveActorIdentity(ctx.db, actor.id, chat.world_id,),
     ],);
+    const actorLoreResult = loreResults[0];
+    const worldLoreResult = loreResults[1];
+    const identityResult = loreResults[2];
+    if (actorLoreResult.status === "rejected") { throw actorLoreResult.reason; }
+    if (worldLoreResult.status === "rejected") { throw worldLoreResult.reason; }
+    if (identityResult.status === "rejected") { throw identityResult.reason; }
+    const actorLore = actorLoreResult.value;
+    const worldLore = worldLoreResult.value;
+    const identity = identityResult.value;
 
     const identityWithLocation: ActorIdentity = { ...identity, locationId, };
 
     const contextWords = params.selectiveKeys
-      ? new Set(params.selectiveKeys.map((k,) => k.toLowerCase()),)
+      ? new Set(Array.from(params.selectiveKeys, (k,) => k.toLowerCase(),),)
       : await recentUserWords(ctx.db, params.chatId,);
     const isRelevant = (entry: LoreRow,): boolean => {
       // Audience gate first — forbidden lore is never considered for activation.
@@ -153,7 +166,10 @@ export const loreSection: SectionBuilder = {
       return keys.some((k,) => contextWords.has(k.toLowerCase(),));
     };
 
-    const relevantEntries = [...actorLore, ...worldLore,].filter((entry,) => isRelevant(entry,));
+    const relevantEntries: LoreRow[] = [];
+    for (const entry of [...actorLore, ...worldLore,]) {
+      if (isRelevant(entry,)) { relevantEntries.push(entry,); }
+    }
 
     // Update last_activated for entries that were included
     const now = new Date().toISOString();
@@ -179,7 +195,7 @@ export const loreSection: SectionBuilder = {
       }
     }
 
-    const loreText = relevantEntries.map((e,) => e.content).join("\n\n",);
+    const loreText = Array.from(relevantEntries, (e,) => e.content,).join("\n\n",);
 
     return loreText ? [{ role: "system", content: wrapSection("lore", loreText,), },] : [];
   },

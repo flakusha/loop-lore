@@ -301,7 +301,9 @@ export function calculateTotalTokens(
   messages: ContextMessage[],
   tokenCountFn: TokenCountFn = defaultTokenCount,
 ): number {
-  return messages.reduce((sum, msg,) => sum + tokensForMessage(msg, tokenCountFn,), 0,);
+  let sum = 0;
+  for (const msg of messages) { sum += tokensForMessage(msg, tokenCountFn,); }
+  return sum;
 }
 
 function zeroMetadata(tokens: number, count: number,): CompressionMetadata {

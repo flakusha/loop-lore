@@ -214,13 +214,13 @@ export function vnChoiceRoutes(opts: HandlerOpts,) {
             .execute();
 
           return jsonResponse({
-            data: history.map((h,) => ({
+            data: Array.from(history, (h,) => ({
               ...h,
               consequences: jsonParseOr(h.consequences, {},),
               relationship_impact: jsonParseOr(h.relationship_impact, {},),
               mood_impact: jsonParseOr(h.mood_impact, {},),
               unlock_conditions: jsonParseOr(h.unlock_conditions, {},),
-            })),
+            }),),
           },);
         },
         {

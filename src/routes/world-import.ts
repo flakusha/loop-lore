@@ -36,7 +36,11 @@ type Row = Record<string, unknown>;
 
 function rowsOf(value: unknown,): Row[] {
   if (!Array.isArray(value,)) { return []; }
-  return value.filter((v,) => v && typeof v === "object") as Row[];
+  const rows: Row[] = [];
+  for (const v of value) {
+    if (v && typeof v === "object") { rows.push(v as Row,); }
+  }
+  return rows;
 }
 
 function rowOf(value: unknown,): Row | null {
@@ -115,11 +119,12 @@ export async function importWorldBundle(
   // avoid FK ordering issues, then backfill parents in a second pass.
   const locationRows = rowsOf(bundle.locations,);
   const locationIdMap = new Map<string, string>();
-  const locationValues: Insertable<Locations>[] = locationRows.map((row,) => {
+  const locationValues: Insertable<Locations>[] = [];
+  for (const row of locationRows) {
     const oldId = str(row, "id",);
     const newId = uid();
     if (oldId) { locationIdMap.set(oldId, newId,); }
-    return {
+    locationValues.push({
       id: newId,
       world_id: worldId,
       name: str(row, "name",) ?? "Unnamed Location",
@@ -127,8 +132,8 @@ export async function importWorldBundle(
       publication_status: (row.publication_status as PublicationStatus) ?? PublicationStatus.Draft,
       parent_location_id: null,
       connections: str(row, "connections",) ?? "[]",
-    };
-  },);
+    },);
+  }
   if (locationValues.length > 0) {
     await database.insertInto("locations",).values(locationValues,).execute();
   }

@@ -53,7 +53,10 @@ export async function validateConnections(
 ): Promise<Response | null> {
   if (!Array.isArray(connections,)) { return null; }
 
-  const connIds = connections.filter((id,): id is string => typeof id === "string");
+  const connIds: string[] = [];
+  for (const id of connections) {
+    if (typeof id === "string") { connIds.push(id,); }
+  }
   if (connIds.length === 0) { return null; }
 
   const existing = await database
@@ -62,9 +65,12 @@ export async function validateConnections(
     .where("world_id", "=", worldId,)
     .where("id", "in", connIds,)
     .execute();
-  const existingIds = new Set(existing.map((l,) => l.id),);
+  const existingIds = new Set(Array.from(existing, (l,) => l.id,),);
 
-  const missing = connIds.filter((id,) => !existingIds.has(id,));
+  const missing: string[] = [];
+  for (const id of connIds) {
+    if (!existingIds.has(id,)) { missing.push(id,); }
+  }
   if (missing.length > 0) {
     return jsonError({
       message: `Invalid connection locations: ${missing.join(", ",)}`,

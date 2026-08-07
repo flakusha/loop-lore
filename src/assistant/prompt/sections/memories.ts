@@ -81,7 +81,7 @@ async function buildProvisionContext(
     .where("chat_id", "=", chatId,)
     .execute();
 
-  const participantIds = participants.map((p,) => p.actor_id);
+  const participantIds = Array.from(participants, (p,) => p.actor_id,);
   const trustModifier = await computeTrustModifier(db, actorId, participantIds, worldId,);
 
   return {
@@ -114,7 +114,7 @@ async function fetchActorMemories(
     .limit(limit,)
     .execute();
 
-  return rows.map((r,) => ({
+  return Array.from(rows, (r,) => ({
     id: r.id,
     actorId: r.actor_id,
     userId: r.user_id ?? undefined,
@@ -136,7 +136,7 @@ async function fetchActorMemories(
     expiresAt: r.expires_at ?? undefined,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
-  }));
+  }),);
 }
 
 export const memorySection: SectionBuilder = {
@@ -161,8 +161,10 @@ export const memorySection: SectionBuilder = {
     // run with owner != viewer for other participants, so shared/public memories of others
     // can be revealed to this actor while private/secret/blocked memories are withheld
     // per-viewer.
-    const ownerSources = [ctx.actor.id, ...participantIds.filter((p,) => p !== ctx.actor.id),];
-    const provisionTasks = ownerSources.map(async (ownerId,) => {
+    const otherParticipants: string[] = [];
+    for (const p of participantIds) { if (p !== ctx.actor.id) { otherParticipants.push(p,); } }
+    const ownerSources = [ctx.actor.id, ...otherParticipants,];
+    const provisionTasks = Array.from(ownerSources, async (ownerId,) => {
       const isSpeaker = ownerId === ctx.actor.id;
       const rows = await fetchActorMemories(
         ctx.db,
@@ -183,8 +185,14 @@ export const memorySection: SectionBuilder = {
       return result.accepted;
     },);
 
-    const provisioned = await Promise.all(provisionTasks,);
-    const allAccepted = provisioned.flat();
+    const provisionResults = await Promise.allSettled(provisionTasks,);
+    const provisioned: MemoryEntry[][] = [];
+    for (const r of provisionResults) {
+      if (r.status === "rejected") { throw r.reason; }
+      provisioned.push(r.value,);
+    }
+    const allAccepted: MemoryEntry[] = [];
+    for (const list of provisioned) { for (const m of list) { allAccepted.push(m,); } }
     if (allAccepted.length === 0) { return []; }
 
     // Enforce a single combined token budget across all owners (pinned first, then by
@@ -215,9 +223,7 @@ export const memorySection: SectionBuilder = {
 
     if (injectionResult.selected.length === 0) { return []; }
 
-    const memoryText = injectionResult.selected
-      .map((m,) => `- [${m.memoryType}] ${m.content}`)
-      .join("\n",);
+    const memoryText = Array.from(injectionResult.selected, (m,) => `- [${m.memoryType}] ${m.content}`,).join("\n",);
 
     // XML delimiting with per-session nonce prevents injected memories from being
     // mistaken for instructions by the model.

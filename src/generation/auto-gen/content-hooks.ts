@@ -82,7 +82,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
 
   if (!hookResult.allowed) {
     getLogger().child({ module: "auto-gen", },).warn("Generation blocked by content hooks", {
-      reason: hookResult.events.map((e,) => e.reason).join("; ",),
+      reason: Array.from(hookResult.events, (e,) => e.reason,).join("; ",),
     },);
     return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, };
   }

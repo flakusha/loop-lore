@@ -25,8 +25,12 @@ export function selectWithinBudget<
   const { maxTokens = DEFAULT_MAX_TOKENS, respectPins = true, } = config;
 
   // Separate pinned and unpinned
-  const pinned = respectPins ? memories.filter((m,) => m.pinned) : [];
-  const unpinned = memories.filter((m,) => !m.pinned);
+  const pinned: T[] = [];
+  const unpinned: T[] = [];
+  for (const m of memories) {
+    if (respectPins && m.pinned) { pinned.push(m,); }
+    else { unpinned.push(m,); }
+  }
 
   // Sort unpinned by importance desc, then confidence desc
   unpinned.sort((a, b,) => {
@@ -35,7 +39,8 @@ export function selectWithinBudget<
   },);
 
   // Calculate budget consumed by pinned memories
-  const pinnedTokens = pinned.reduce((sum, m,) => sum + estimateTokens(m.content,), 0,);
+  let pinnedTokens = 0;
+  for (const m of pinned) { pinnedTokens += estimateTokens(m.content,); }
   const remaining = maxTokens - pinnedTokens;
 
   if (remaining <= 0) {
@@ -77,11 +82,14 @@ export async function getMemoriesWithinBudget(
     .execute();
 
   // Apply confidence filter (pinned memories bypass this)
-  const filtered = allMemories.filter((m,) => m.confidence >= minConfidence);
+  const filtered: typeof allMemories = [];
+  for (const m of allMemories) {
+    if (m.confidence >= minConfidence) { filtered.push(m,); }
+  }
 
   // Apply budget
   return selectWithinBudget(
-    filtered.map((m,) => ({ ...m, pinned: false, })),
+    Array.from(filtered, (m,) => ({ ...m, pinned: false, }),),
     { maxTokens, respectPins, },
   );
 }

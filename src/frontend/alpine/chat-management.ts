@@ -19,7 +19,9 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     try {
       const res = await apiFetch(`/api/chats/${chatId}`, { method: "DELETE", },);
       if (res.ok) {
-        this.chats = this.chats.filter((c,) => c.id !== chatId);
+        const filtered: typeof this.chats = [];
+        for (const c of this.chats) { if (c.id !== chatId) { filtered.push(c,); } }
+        this.chats = filtered;
         if (this.activeChat === chatId) {
           this.activeChat = null;
           this.activeChatName = t("chats.welcomeTitle",);
@@ -123,7 +125,9 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         body: jsonBody({ ids, },),
       },);
       if (res.ok) {
-        this.chats = this.chats.filter((c,) => !ids.includes(c.id,));
+        const filtered: typeof this.chats = [];
+        for (const c of this.chats) { if (!ids.includes(c.id,)) { filtered.push(c,); } }
+        this.chats = filtered;
         this.selectedChats = [];
         this.$dispatch?.("show-toast", {
           type: "success",
@@ -149,7 +153,9 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         body: jsonBody({ ids, },),
       },);
       if (res.ok) {
-        this.chats = this.chats.filter((c,) => !ids.includes(c.id,));
+        const filtered: typeof this.chats = [];
+        for (const c of this.chats) { if (!ids.includes(c.id,)) { filtered.push(c,); } }
+        this.chats = filtered;
         this.selectedChats = [];
         if (this.activeChat && ids.includes(this.activeChat,)) {
           this.activeChat = null;

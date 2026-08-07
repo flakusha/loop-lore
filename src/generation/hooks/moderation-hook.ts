@@ -118,7 +118,7 @@ export class ModerationHook implements HookHandler {
     const suppress = flags.severity === "severe";
     await this.recordAudit(context, flags, suppress,);
 
-    const matched = flags.matched.map((m,) => m.term).join(", ",);
+    const matched = Array.from(flags.matched, (m,) => m.term,).join(", ",);
     log.warn("moderation-hook: content flagged", {
       severity: flags.severity,
       score: flags.score,
@@ -133,7 +133,7 @@ export class ModerationHook implements HookHandler {
         flagged: true,
         severity: flags.severity,
         score: flags.score,
-        matched: flags.matched.map((m,) => ({ term: m.term, count: m.count, })),
+        matched: Array.from(flags.matched, (m,) => ({ term: m.term, count: m.count, }),),
         // Backward-compatible severity list (severe/moderate), kept for existing consumers.
         flags: [flags.severity,],
       },
@@ -200,7 +200,7 @@ export class ModerationHook implements HookHandler {
         targetUserId: context.actorId,
         performedBy: "system",
         reason: `Moderation ${suppressed ? "blocked" : "flagged"}: ${flags.severity} (score ${flags.score}) — ${
-          flags.matched.map((m,) => `${m.term}×${m.count}`).join(", ",)
+          Array.from(flags.matched, (m,) => `${m.term}×${m.count}`,).join(", ",)
         }`,
         scope: "chat",
         scopeId: context.chatId,

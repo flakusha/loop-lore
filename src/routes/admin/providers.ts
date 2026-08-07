@@ -20,7 +20,7 @@ export function providersRoutes() {
         }
 
         const health = getHealthCache();
-        const providers = listProviders().map((p,) => {
+        const providers = Array.from(listProviders(), (p,) => {
           const status = health.find((h,) => h.name === p.name);
           return {
             name: p.name,
@@ -85,7 +85,7 @@ export function providersRoutes() {
 
         const results = await scanAllProviders();
         return jsonResponse({
-          providers: results.map((p,) => providerToSummary(p,)),
+          providers: Array.from(results, (p,) => providerToSummary(p,),),
         },);
       }, {
         response: {

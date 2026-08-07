@@ -42,7 +42,8 @@ export function parseCommand(input: string,): ParsedCommand | null {
   const spaceIdx = trimmed.indexOf(" ",);
   const command = (spaceIdx === -1 ? trimmed.slice(1,) : trimmed.slice(1, spaceIdx,)).toLowerCase();
   const rawArgs = spaceIdx === -1 ? "" : trimmed.slice(spaceIdx + 1,);
-  const args = rawArgs.split(/\s+/,).filter(Boolean,);
+  const args: string[] = [];
+  for (const part of rawArgs.split(/\s+/,)) { if (part) { args.push(part,); } }
 
   if (!command) { return null; }
 

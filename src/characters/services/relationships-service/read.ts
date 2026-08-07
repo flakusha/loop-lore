@@ -25,7 +25,7 @@ export async function getRelationships(
     .selectAll()
     .execute();
 
-  return rows.map((row,) => rowToRelationship(row,));
+  return Array.from(rows, (row,) => rowToRelationship(row,),);
 }
 
 /** Args for {@link getRelationship}. */

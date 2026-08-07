@@ -447,6 +447,12 @@ export default tseslint.config(
       // Playwright clicks on CSS-hidden hamburger/sidebar need force:true —
       // actionability checks fail before the sidebar animates open.
       "sonarjs/no-forced-browser-interaction": "off",
+      // Test code may use array helpers / empty stubs / bare fetch+JSON
+      // intentionally — migration not recommended in e2e (see above).
+      "no-restricted-syntax": "off",
+      "no-empty": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "no-restricted-globals": "off",
     },
   },
   // ── Config/JS files: no TS parser, just Unicorn + SonarJS ─────
@@ -495,8 +501,11 @@ export default tseslint.config(
     },
   },
   // ── Overrides: test files ─────────────────────────────────────
+  // Test code may use array-allocating helpers, empty stubs, and bare
+  // fetch/JSON intentionally. Migrating tests to safe-function/OOP
+  // patterns adds churn and risk without production benefit.
   {
-    files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts",],
+    files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts", "**/*.test-helper.ts",],
     rules: {
       "sonarjs/no-identical-functions": "off",
       "unicorn/consistent-function-scoping": "off",
@@ -513,6 +522,9 @@ export default tseslint.config(
       "sonarjs/explicit-test-skip": "off",
       "@typescript-eslint/no-require-imports": "off",
       "no-restricted-syntax": "off",
+      "no-empty": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "no-restricted-globals": "off",
     },
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────

@@ -82,7 +82,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
-    const vnMessages = this.messages.map((m,) => toVnMessage(m,));
+    const vnMessages = Array.from(this.messages, (m,) => toVnMessage(m,),);
     if (vnMessages.length === 0) {
       destroyVnRenderer();
       return;
