@@ -280,7 +280,7 @@ function isContextRelevant(
     return false;
   }
 
-  const memoryKeywords = new Set(memory.keywords.map((k,) => k.toLowerCase()),);
+  const memoryKeywords = new Set(Array.from(memory.keywords, (k,) => k.toLowerCase(),),);
   let overlap = 0;
 
   for (const keyword of ctx.currentKeywords) {

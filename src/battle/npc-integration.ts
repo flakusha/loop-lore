@@ -68,9 +68,9 @@ export function makeNPCDecision(
   const negotiateWeight = personality.intelligence * (personality.loyalty / 100);
 
   // Check battle memories for patterns
-  const recentDefeats = battleMemories
-    .filter(m => m.outcome === "defeat")
-    .slice(-3,); // Last 3 defeats
+  const defeats: NPCBattleMemory[] = [];
+  for (const m of battleMemories) { if (m.outcome === "defeat") { defeats.push(m,); } }
+  const recentDefeats = defeats.slice(-3,); // Last 3 defeats
 
   let memoryModifier = 0;
   for (const defeat of recentDefeats) {
@@ -106,7 +106,8 @@ export function makeNPCDecision(
     };
   }
 
-  const totalWeight = decisions.reduce((sum, d,) => sum + Math.max(0, d.weight,), 0,);
+  let totalWeight = 0;
+  for (const d of decisions) { totalWeight += Math.max(0, d.weight,); }
   const confidence = totalWeight > 0
     ? Math.round((Math.max(0, bestDecision.weight,) / totalWeight) * 100,)
     : 50;
@@ -266,8 +267,9 @@ export function wouldNPCSurrender(
   surrenderChance += (50 - personality.courage) / 2;
 
   // Recent defeats increase surrender chance
-  const recentDefeats = battleMemories.filter(m => m.outcome === "defeat").length;
-  surrenderChance += recentDefeats * 5;
+  let defeatCount = 0;
+  for (const m of battleMemories) { if (m.outcome === "defeat") { defeatCount++; } }
+  surrenderChance += defeatCount * 5;
 
   // Cap at 95%
   surrenderChance = Math.min(95, Math.max(0, surrenderChance,),);

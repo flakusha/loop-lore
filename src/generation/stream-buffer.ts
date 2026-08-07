@@ -65,7 +65,11 @@ export class StreamBuffer {
 
   /** Replay events from a given sequence number (0 = all) */
   replay(fromSequence = 0,): StreamEvent[] {
-    return this.events.filter((e,) => e.sequence >= fromSequence);
+    const out: StreamEvent[] = [];
+    for (const e of this.events) {
+      if (e.sequence >= fromSequence) { out.push(e,); }
+    }
+    return out;
   }
 
   /** Subscribe to live events. Returns unsubscribe function. */

@@ -182,12 +182,12 @@ globalThis.chatState = function() {
           : (body as {
             data?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
           }).data ?? [];
-        this._searchResults = data.map((r,) => ({
+        this._searchResults = Array.from(data, (r,) => ({
           chatId: r.chatId as string,
           chatName: r.chatName as string,
           characterName: r.characterName as string,
           characterAvatar: r.characterAvatar ?? null,
-        }));
+        }),);
       } catch (error) {
         getLogger().error("Failed to search chats", error instanceof Error ? error : new Error(String(error,),), {},);
         this._searchResults = [];
@@ -212,12 +212,12 @@ globalThis.chatState = function() {
           : (body as {
             data?: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
           }).data ?? [];
-        this._joinableChats = data.map((r,) => ({
+        this._joinableChats = Array.from(data, (r,) => ({
           chatId: r.chatId as string,
           chatName: r.chatName as string,
           participantCount: (r.participantCount as number) ?? 0,
           lastActiveAt: (r.lastActiveAt as string | null) ?? null,
-        }));
+        }),);
       } catch (error) {
         getLogger().error(
           "Failed to load joinable chats",
@@ -236,7 +236,8 @@ globalThis.chatState = function() {
           return;
         }
         // Refresh the joinable list + local chat list after joining.
-        await Promise.all([this.loadJoinableChats(), this.loadChats?.(),],);
+        const joinReload = await Promise.allSettled([this.loadJoinableChats(), this.loadChats?.(),],);
+        if (joinReload.some((r,) => r.status === "rejected")) { throw new Error("join reload failed",); }
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.joinedChat",), },);
       } catch (error) {
         getLogger().error("Failed to join chat", error instanceof Error ? error : new Error(String(error,),), {},);
@@ -247,7 +248,9 @@ globalThis.chatState = function() {
     get filteredChats() {
       const filter = (this._chatFilter || "").toLowerCase();
       if (!filter) { return this.chats; }
-      return this.chats.filter((c: { name?: string },) => (c.name || "").toLowerCase().includes(filter,));
+      const out: typeof this.chats = [];
+      for (const c of this.chats) { if ((c.name || "").toLowerCase().includes(filter,)) { out.push(c,); } }
+      return out;
     },
 
     get currentChat() {
@@ -475,7 +478,13 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
+      const selectReload = await Promise.allSettled([
+        this.loadMessages(),
+        this.loadGalleryAssets(),
+        this.loadCharacterInfo(),
+        this.loadMood(),
+      ],);
+      if (selectReload.some((r,) => r.status === "rejected")) { throw new Error("select chat reload failed",); }
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
@@ -490,7 +499,8 @@ globalThis.chatState = function() {
       this._chatCurrentLocationId = null;
       this._chatRecentLocationChanged = false;
       this._locationJoinableChats = [];
-      await Promise.all([this.loadSections(), this.loadBackground(),],);
+      const sectionReload = await Promise.allSettled([this.loadSections(), this.loadBackground(),],);
+      if (sectionReload.some((r,) => r.status === "rejected")) { throw new Error("section reload failed",); }
     },
 
     getChatId() {

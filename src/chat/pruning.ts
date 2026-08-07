@@ -119,10 +119,14 @@ export function scoreMessage(msg: ScorableMessage,): MessageScore {
 
   // Keywords: lore, decision, emotion, location (0.2 weight)
   const lowerContent = msg.content.toLowerCase();
-  const loreMatches = LORE_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
-  const decisionMatches = DECISION_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
-  const emotionMatches = EMOTION_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
-  const locationMatches = LORE_CONTENT_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
+  let loreMatches = 0;
+  for (const kw of LORE_KEYWORDS) { if (lowerContent.includes(kw,)) { loreMatches++; } }
+  let decisionMatches = 0;
+  for (const kw of DECISION_KEYWORDS) { if (lowerContent.includes(kw,)) { decisionMatches++; } }
+  let emotionMatches = 0;
+  for (const kw of EMOTION_KEYWORDS) { if (lowerContent.includes(kw,)) { emotionMatches++; } }
+  let locationMatches = 0;
+  for (const kw of LORE_CONTENT_KEYWORDS) { if (lowerContent.includes(kw,)) { locationMatches++; } }
   const keywordScore = Math.min(1, (loreMatches + decisionMatches + emotionMatches + locationMatches) / 4,);
   if (keywordScore > 0.3) {
     reasons.push(`keywords(${loreMatches + decisionMatches + emotionMatches + locationMatches})`,);
@@ -187,7 +191,7 @@ export function pruneMessages(
   }
 
   // Score all messages
-  const scores = messages.map((msg,) => scoreMessage(msg,));
+  const scores = Array.from(messages, (msg,) => scoreMessage(msg,),);
 
   // Sort by score ascending (lowest first = most likely to prune)
   const sortedIndices = Array.from({ length: scores.length, }, (_, i,) => i,).sort(
@@ -196,7 +200,8 @@ export function pruneMessages(
 
   // Determine which to prune
   const toPrune = new Set<number>();
-  let currentTokens = messages.reduce((sum, msg,) => sum + Math.ceil(msg.content.length * 0.3,), 0,);
+  let currentTokens = 0;
+  for (const msg of messages) { currentTokens += Math.ceil(msg.content.length * 0.3,); }
 
   for (const idx of sortedIndices) {
     if (currentTokens <= config.targetTokens) { break; }
@@ -244,7 +249,8 @@ export function pruneMessages(
     }. Strategy: ${config.strategy}.`;
   }
 
-  const tokensSaved = pruned.reduce((sum, msg,) => sum + Math.ceil(msg.content.length * 0.3,), 0,);
+  let tokensSaved = 0;
+  for (const msg of pruned) { tokensSaved += Math.ceil(msg.content.length * 0.3,); }
 
   return {
     kept,

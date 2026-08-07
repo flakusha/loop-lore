@@ -82,8 +82,8 @@ export function normalizeLorebookEntry(
 export function buildLorebook(
   characterBook: Record<string, unknown>,
 ): LorebookData {
-  const entries = (characterBook.entries as Record<string, unknown>[] ?? [])
-    .map((e,) => normalizeLorebookEntry(e,));
+  const source = characterBook.entries as Record<string, unknown>[] ?? [];
+  const entries = Array.from(source, (e,) => normalizeLorebookEntry(e,),);
 
   return {
     name: characterBook.name as string | undefined,

@@ -4,7 +4,7 @@
  * Manages VN mode preferences per-chat. Reads from GmConfig and localStorage.
  */
 
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
 export interface VnSettings {
   enabled: boolean;
@@ -66,7 +66,7 @@ export function saveVnSettings(settings: Partial<VnSettings>,): void {
   const current = getVnSettings();
   const merged = { ...current, ...settings, };
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged,),);
+    localStorage.setItem(STORAGE_KEY, jsonStringifyOr(merged,),);
   } catch { /* ignore quota errors */ }
 }
 

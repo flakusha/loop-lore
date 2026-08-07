@@ -81,7 +81,7 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
         results?: { messageId: string }[];
         total?: number;
       };
-      this._msgSearchMatches = (body.results ?? []).map((r,) => r.messageId);
+      this._msgSearchMatches = Array.from(body.results ?? [], (r,) => r.messageId,);
       this._msgSearchTotal = body.total ?? this._msgSearchMatches.length;
       this._msgSearchIndex = 0;
       this.applyMessageSearchHighlights();
@@ -103,7 +103,7 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     );
     const matches = this._msgSearchMatches;
     if (matches.length > 0) {
-      const selector = matches.map((id,) => `[data-message-id="${CSS.escape(id,)}"]`).join(",",);
+      const selector = Array.from(matches, (id,) => `[data-message-id="${CSS.escape(id,)}"]`,).join(",",);
       scope.querySelectorAll<HTMLElement>(selector,).forEach((el,) => el.classList.add("search-match",));
       this.applySearchMatchActive();
     } else {

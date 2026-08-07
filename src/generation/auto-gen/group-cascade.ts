@@ -81,7 +81,8 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     .where("actors.agent_type", "!=", "none",)
     .execute();
 
-  const aiParticipants = participants.filter((p,) => p.actor_type !== "user");
+  const aiParticipants: (typeof participants)[number][] = [];
+  for (const p of participants) { if (p.actor_type !== "user") { aiParticipants.push(p,); } }
   if (aiParticipants.length === 0) { return; }
 
   // Determine if cascade should continue
@@ -90,11 +91,12 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   // Check for @mentions in the AI response
   const mentionedIds = extractMentionedActorIds(
     aiContent,
-    aiParticipants.map((p,) => ({ actorId: p.actor_id, displayName: p.display_name, })),
+    Array.from(aiParticipants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
   );
 
   // Filter out the previous actor from mentions (can't mention yourself)
-  const validMentions = mentionedIds.filter((id,) => id !== previousActorId);
+  const validMentions: string[] = [];
+  for (const id of mentionedIds) { if (id !== previousActorId) { validMentions.push(id,); } }
 
   if (validMentions.length > 0) {
     // Pick the first mentioned actor
@@ -115,7 +117,8 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     // If the strategy selects the same actor, skip
     if (nextActorId === previousActorId) {
       // Try to find a different actor
-      const others = aiParticipants.filter((p,) => p.actor_id !== previousActorId);
+      const others: (typeof aiParticipants)[number][] = [];
+      for (const p of aiParticipants) { if (p.actor_id !== previousActorId) { others.push(p,); } }
       nextActorId = others.length > 0 ? others[0]!.actor_id : null;
     }
     if (nextActorId) {

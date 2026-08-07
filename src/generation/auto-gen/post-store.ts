@@ -103,11 +103,11 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     log.warn("Hallucination detected in generation", {
       chatId,
       score: hallucinationAnalysis.score,
-      flags: hallucinationAnalysis.flags.map((f,) => ({
+      flags: Array.from(hallucinationAnalysis.flags, (f,) => ({
         entity: f.entityName,
         type: f.entityType,
         confidence: f.confidence,
-      })),
+      }),),
     },);
   }
   // Record generation telemetry event

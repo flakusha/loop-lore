@@ -44,7 +44,13 @@ globalThis.personasPage = function() {
 
     filterList() {
       const q = this.search.toLowerCase().trim();
-      this.filtered = q ? this.personas.filter((p,) => p.name.toLowerCase().includes(q,)) : this.personas;
+      if (!q) {
+        this.filtered = this.personas;
+        return;
+      }
+      const out: PersonaItem[] = [];
+      for (const p of this.personas) { if (p.name.toLowerCase().includes(q,)) { out.push(p,); } }
+      this.filtered = out;
     },
 
     editPersona(p: PersonaItem,) {
@@ -101,7 +107,9 @@ globalThis.personasPage = function() {
       try {
         const res = await apiFetch(`/api/personas/${id}`, { method: "DELETE", },);
         if (res.ok) {
-          this.personas = this.personas.filter((p,) => p.id !== id);
+          const out: PersonaItem[] = [];
+          for (const p of this.personas) { if (p.id !== id) { out.push(p,); } }
+          this.personas = out;
           this.filterList();
         }
       } catch (error) {

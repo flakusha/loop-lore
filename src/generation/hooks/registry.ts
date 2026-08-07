@@ -54,7 +54,8 @@ export async function runHookChain(options: HookChainOptions,): Promise<HookChai
   }
 
   const allowed = !suppressedContent;
-  const events = results.filter((r,) => r.handled);
+  const events: HookResult[] = [];
+  for (const r of results) { if (r.handled) { events.push(r,); } }
 
   return { allowed, results, suppressedContent, events, };
 }

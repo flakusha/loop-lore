@@ -82,9 +82,12 @@ export class MoodHook implements HookHandler {
   }
 
   private determineDominantMood(indicators: string[],): string {
-    const positive = indicators.filter((i,) => i.startsWith("positive:",)).length;
-    const negative = indicators.filter((i,) => i.startsWith("negative:",)).length;
-    const neutral = indicators.filter((i,) => i.startsWith("neutral:",)).length;
+    let positive = 0;
+    for (const i of indicators) { if (i.startsWith("positive:",)) { positive += 1; } }
+    let negative = 0;
+    for (const i of indicators) { if (i.startsWith("negative:",)) { negative += 1; } }
+    let neutral = 0;
+    for (const i of indicators) { if (i.startsWith("neutral:",)) { neutral += 1; } }
 
     if (positive >= negative && positive >= neutral) { return "positive"; }
     if (negative >= positive && negative >= neutral) { return "negative"; }

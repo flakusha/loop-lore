@@ -133,9 +133,13 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
     if (value.startsWith("/",) && !value.includes(" ",)) {
       const query = value.slice(1,).toLowerCase();
       this._showCommandPalette = true;
-      this._filteredCommands = query
-        ? this._commandList.filter((c,) => c.name.includes(query,))
-        : this._commandList;
+      if (query) {
+        const filtered: typeof this._commandList = [];
+        for (const c of this._commandList) { if (c.name.includes(query,)) { filtered.push(c,); } }
+        this._filteredCommands = filtered;
+      } else {
+        this._filteredCommands = this._commandList;
+      }
     } else {
       this._showCommandPalette = false;
     }
@@ -414,7 +418,9 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
     log.info("captionMessage", { messageId: msgId, },);
     const msg = this.messages.find((m,) => m.id === msgId);
     if (!msg) { return; }
-    const imageAttachments = msg.attachments?.filter((a,) => a.type === "image") ?? [];
+    const attachments = msg.attachments ?? [];
+    const imageAttachments: NonNullable<typeof msg.attachments> = [];
+    for (const a of attachments) { if (a.type === "image") { imageAttachments.push(a,); } }
     if (imageAttachments.length === 0) {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noImagesToCaption",), },);
       return;
@@ -426,7 +432,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
         body: jsonBody({
           chatId: this.activeChat,
           messageId: msgId,
-          assetIds: imageAttachments.map((a,) => a.assetId),
+          assetIds: Array.from(imageAttachments, (a,) => a.assetId,),
         },),
       },);
       if (res.ok) {

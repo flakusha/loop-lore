@@ -88,7 +88,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     const idx = this._sections.findIndex((s,) => s.id === sectionId);
     const target = idx + dir;
     if (idx === -1 || target < 0 || target >= this._sections.length) { return; }
-    const reordered = this._sections.map((s,) => ({ ...s, }));
+    const reordered = Array.from(this._sections, (s,) => ({ ...s, }),);
     const tmp = reordered[idx]!;
     reordered[idx] = reordered[target]!;
     reordered[target] = tmp;
@@ -96,7 +96,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/chats/${this.activeChat}/sections/reorder`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ sectionIds: reordered.map((s,) => s.id), },),
+        body: jsonBody({ sectionIds: Array.from(reordered, (s,) => s.id,), },),
       },);
       if (res.ok) { await this.loadSections(); }
     } catch (error) {

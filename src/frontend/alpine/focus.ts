@@ -35,6 +35,8 @@ export function trapFocus(container: Element,): () => void {
   const last = getLastFocusable(container,);
 
   if (!first && !last) {
+    // No focusable elements — return a no-op cleanup.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return () => {};
   }
 

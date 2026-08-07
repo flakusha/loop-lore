@@ -377,7 +377,7 @@ export class ImageEditService {
         }
 
         const data = (await resp.json()) as { images: string[] };
-        resultImages = data.images.map((b64,) => Buffer.from(b64, "base64",));
+        resultImages = Array.from(data.images, (b64,) => Buffer.from(b64, "base64",),);
         break;
       }
       case "openai": {
@@ -428,7 +428,7 @@ export class ImageEditService {
         }
 
         const data = (await resp.json()) as { data: { b64_json: string }[] };
-        resultImages = data.data.map((d,) => Buffer.from(d.b64_json, "base64",));
+        resultImages = Array.from(data.data, (d,) => Buffer.from(d.b64_json, "base64",),);
         break;
       }
       default: {

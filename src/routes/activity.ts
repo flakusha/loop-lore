@@ -46,17 +46,18 @@ export async function computeActivity(
   if (participants.length === 0) { return {}; }
 
   const lastReadByChat = new Map<string, string | null>();
-  const chatIds = participants.map((p,) => {
+  const chatIds: string[] = [];
+  for (const p of participants) {
     lastReadByChat.set(p.chat_id, p.last_read_message_id,);
-    return p.chat_id;
-  },);
+    chatIds.push(p.chat_id,);
+  }
 
   const chats = await database
     .selectFrom("chats",)
     .select(["id", "name",],)
     .where("id", "in", chatIds,)
     .execute();
-  const chatNames = new Map(chats.map((c,) => [c.id, c.name,]),);
+  const chatNames = new Map(Array.from(chats, (c,) => [c.id, c.name,],),);
 
   const latestMessages = await database
     .selectFrom("messages",)
@@ -65,9 +66,12 @@ export async function computeActivity(
     .where("visibility", "=", "visible",)
     .groupBy("chat_id",)
     .execute();
-  const latestByChat = new Map(latestMessages.map((m,) => [m.chat_id, m.latest_created,]),);
+  const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created,],),);
 
-  const lastReadIds = [...lastReadByChat.values(),].filter(Boolean,) as string[];
+  const lastReadIds: string[] = [];
+  for (const v of lastReadByChat.values()) {
+    if (v) { lastReadIds.push(v,); }
+  }
   const lastReadMap = new Map<string, string>();
   if (lastReadIds.length > 0) {
     const lastReadMsgs = await database
