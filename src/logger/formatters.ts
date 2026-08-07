@@ -9,10 +9,12 @@ import type { LogEntry, } from "./types";
 // ── Console Pretty Format ──────────────────────────────────
 
 const LEVEL_COLORS: Record<number, string> = {
+  5: "\u{1B}[2m", // dim
   10: "\u{1B}[90m", // gray
   20: "\u{1B}[36m", // cyan
   30: "\u{1B}[33m", // yellow
   40: "\u{1B}[31m", // red
+  50: "\u{1B}[1;31m", // bold red
 };
 
 const RESET = "\u{1B}[0m";
@@ -61,10 +63,12 @@ export function formatConsole(
 }
 
 const LEVEL_CSS: Record<number, string> = {
+  5: "color:#666;",
   10: "color:#888;",
   20: "color:#06c;",
   30: "color:#c90;",
   40: "color:#c00;font-weight:bold;",
+  50: "color:#900;font-weight:bold;",
 };
 
 // ── JSONL Serialization ────────────────────────────────────

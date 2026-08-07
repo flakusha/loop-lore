@@ -210,7 +210,7 @@ describe("validateConfig", () => {
 
   test("throws on invalid logging level", () => {
     const config = validConfig();
-    config.logging.level = "trace" as "debug";
+    config.logging.level = "verbose" as "debug";
     expect(() => {
       validateConfig(config,);
     },).toThrow(/logging\.level/,);

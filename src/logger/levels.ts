@@ -12,6 +12,9 @@ export { LogLevel, LogLevelNumeric, } from "./types";
  */
 export function levelFromConfig(level: LogLevelT,): number {
   switch (level) {
+    case "trace": {
+      return 5;
+    }
     case "debug": {
       return 10;
     }
@@ -24,6 +27,9 @@ export function levelFromConfig(level: LogLevelT,): number {
     case "error": {
       return 40;
     }
+    case "fatal": {
+      return 50;
+    }
     default: {
       return 20; // safe default
     }
@@ -35,6 +41,9 @@ export function levelFromConfig(level: LogLevelT,): number {
  */
 export function numericToLabel(numeric: number,): string {
   switch (numeric) {
+    case 5: {
+      return "TRACE";
+    }
     case 10: {
       return "DEBUG";
     }
@@ -46,6 +55,9 @@ export function numericToLabel(numeric: number,): string {
     }
     case 40: {
       return "ERROR";
+    }
+    case 50: {
+      return "FATAL";
     }
     default: {
       return String(numeric,);

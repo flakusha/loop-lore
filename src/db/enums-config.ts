@@ -13,10 +13,12 @@ export const DbType = {
 export type DbType = (typeof DbType)[keyof typeof DbType];
 
 export const LogLevel = {
+  Trace: "trace",
   Debug: "debug",
   Info: "info",
   Warn: "warn",
   Error: "error",
+  Fatal: "fatal",
 } as const;
 export type LogLevel = (typeof LogLevel)[keyof typeof LogLevel];
 

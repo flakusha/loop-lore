@@ -10,6 +10,7 @@ import { levelFromConfig, shouldEmit, } from "./levels";
 import { applyLimits, } from "./limits";
 import { AsyncLogQueue, } from "./queue";
 import { ConsoleTransport, } from "./transports/console";
+import { FileTransport, } from "./transports/file";
 import type {
   LogEntry,
   Logger,
@@ -58,7 +59,16 @@ export class LoggerImpl implements Logger {
     this.limits = { ...limitsFromNested, ...limitsFromFlat, };
 
     this.transports = [new ConsoleTransport(),];
-    // Future: JSONLTransport, DBTransport added here when config provided
+    // Canonical machine-readable JSONL output when a path is configured.
+    if (config?.jsonlPath) {
+      this.transports.push(
+        new FileTransport({
+          path: config.jsonlPath,
+          maxBytes: config.jsonlMaxBytes,
+          maxFiles: config.jsonlMaxFiles,
+        },),
+      );
+    }
 
     this.queue = new AsyncLogQueue(this.transports, {
       queueMaxSize: config?.queueMaxSize ?? 10_000,
@@ -104,6 +114,10 @@ export class LoggerImpl implements Logger {
     this.queue.enqueue(limited,);
   }
 
+  trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
+    this.log("trace", message, undefined, meta,);
+  }
+
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("debug", message, undefined, meta,);
   }
@@ -118,6 +132,10 @@ export class LoggerImpl implements Logger {
 
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("error", message, error, meta,);
+  }
+
+  fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
+    this.log("fatal", message, error, meta,);
   }
 
   child(bindings: LoggerBindings,): Logger {
