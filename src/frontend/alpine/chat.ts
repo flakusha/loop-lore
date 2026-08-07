@@ -24,7 +24,7 @@ import { memoryPanel, } from "./memory-panel";
 import { messageSearch, } from "./message-search";
 import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
-import type { AlpineState, ChatState, WorldChannelChat, } from "./types";
+import type { AlpineMagicThis, AlpineState, ChatState, WorldChannelChat, } from "./types";
 import { worldChannels, } from "./world-channels";
 
 const g = globalThis as Record<string, unknown>;
@@ -66,7 +66,7 @@ function mergeReactiveSource(target: Record<string, unknown>, source: object,): 
 }
 
 globalThis.chatState = function() {
-  const state: Record<string, unknown> = {
+  const state: Record<string, unknown> & ThisType<ChatState & AlpineMagicThis> = {
     // ── Core state ──
     isGenerating: false,
     generationLabel: t("status.characterResponding",),
@@ -514,5 +514,5 @@ globalThis.chatState = function() {
   mergeReactiveSource(state, chatLocation,);
   mergeReactiveSource(state, chatUtils,);
 
-  return state as AlpineState<ChatState>;
+  return state as unknown as AlpineState<ChatState>;
 };
