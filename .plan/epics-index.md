@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 168 epics
+**Total:** 170 epics
 
 ## Summary
 
@@ -77,6 +77,7 @@
 | ⬜ Not Started                                                                                                                                                         | Licensing                                                           | Low                       | Unknown                            | 0     | [epic-licensing.md](/.plan/epics/epic-licensing.md)                                                       |
 | ⬜ Not Started                                                                                                                                                         | LLM Request Throughput & Message Scheduling                         | Medium                    | Large                              | 13    | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md)                                                       |
 | ⬜ Not Started                                                                                                                                                         | Logging & Structured Logging                                        | Medium                    | Unknown                            | 0     | [epic-logging.md](/.plan/epics/epic-logging.md)                                                           |
+| ⬜ Not Started                                                                                                                                                         | Logging & Telemetry — Complete Level Set + Canonical JSONL          | High                      | Medium                             | 5     | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md)                                       |
 | ⬜ Not Started                                                                                                                                                         | Login & Authentication UI                                           | Medium                    | Unknown                            | 0     | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md)                                             |
 | ⬜ Not Started                                                                                                                                                         | Magic & Spell Systems                                               | Medium                    | Very High                          | 0     | [epic-magic-spell-systems.md](/.plan/epics/epic-magic-spell-systems.md)                                   |
 | ⬜ Not Started                                                                                                                                                         | Messages & Message Pipeline                                         | High                      | Medium                             | 0     | [epic-messages.md](/.plan/epics/epic-messages.md)                                                         |
@@ -113,7 +114,7 @@
 | 🟡 In Progress                                                                                                                                                         | Character Specification & Unified API                               | High                      | High                               | 0     | [epic-character-spec.md](/.plan/epics/epic-character-spec.md)                                             |
 | 🟡 In Progress                                                                                                                                                         | Continuous Improvement — Lint, TypeCheck, Build, Coverage           | High                      | Medium                             | 8     | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md)                             |
 | 🟡 In Progress                                                                                                                                                         | Epic: Configurable Template System                                  | High                      | Large                              | 0     | [epic-config-templates.md](/.plan/epics/epic-config-templates.md)                                         |
-| 🟡 In Progress                                                                                                                                                         | File Splitting & God-Module Refactor                                | High                      | Very High                          | 16    | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md)                                             |
+| 🟡 In Progress                                                                                                                                                         | File Splitting & God-Module Refactor                                | High                      | Very High                          | 11    | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md)                                             |
 | 🟡 In Progress                                                                                                                                                         | Shared Schemas — Reputation, Consent, NSFW Content Rating           | High                      | Medium                             | 7     | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md)                                             |
 | 🟡 In Progress                                                                                                                                                         | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation    | High                      | Medium                             | 34    | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md)                         |
 | 🟡 In Progress                                                                                                                                                         | Visual Novel Mode — Dynamic Generation & Q&A Mode                   | Medium                    | Very High                          | 0     | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md)                                       |
@@ -822,6 +823,15 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Effort:** Unknown
 - **Type:** Feature
 - **File:** `.plan/epics/epic-logging.md`
+
+### Logging & Telemetry — Complete Level Set + Canonical JSONL
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Infrastructure Epic
+- **Tags:** logging, telemetry, logger, jsonl, observability, levels, trace, fatal
+- **File:** `.plan/epics/epic-logging-telemetry.md`
 
 ### Login & Authentication UI
 
