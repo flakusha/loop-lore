@@ -13,8 +13,8 @@
  * Runs in default solo mode (auth NOT required). seedUsers() creates the
  * e2euser owner; createBrowserTest() seeds the solo 'demo' user.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { ChatMode, ChatType, WorldVisibility, } from "@/db/enums";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, seedUsers, } from "../../helpers/seed";
@@ -105,7 +105,7 @@ describe("Access control E2E", () => {
         // The world-edit shell renders, then the Alpine component fetches
         // /api/worlds/:id, which is access-gated (requireWorldAccess).
         const worldApi = page.waitForResponse(
-          (res,) => res.url().includes(`/api/worlds/${WORLD_ID}`) && res.request().method() === "GET",
+          (res,) => res.url().includes(`/api/worlds/${WORLD_ID}`,) && res.request().method() === "GET",
           { timeout: 10_000, },
         );
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}/edit`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
@@ -116,7 +116,7 @@ describe("Access control E2E", () => {
 
         // loadWorld() settles into the error/empty state, hiding the ⏳ loading
         // indicator. Wait for that, then assert the edit form does not render.
-        await page.waitForFunction(() => !document.body.innerText.includes("⏳"), null, { timeout: 8_000, },);
+        await page.waitForFunction(() => !(document.body.textContent || "").includes("⏳",), null, { timeout: 8000, },);
         expect(await page.locator(".world-edit-tabs",).count(),).toBe(0,);
       } finally {
         errors.assert();
@@ -133,11 +133,15 @@ describe("Access control E2E", () => {
       try {
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
         // The #world-detail container htmx-loads /dynamic/worlds/:id/detail on page load.
-        await page.waitForFunction(() => {
-          const el = document.querySelector("#world-detail",);
-          return !!el && el.children.length > 0 && !(el.textContent || "").includes("⏳");
-        }, null, { timeout: 8_000, },);
-        const bodyText = await page.evaluate(() => document.body.innerText,);
+        await page.waitForFunction(
+          () => {
+            const el = document.querySelector("#world-detail",);
+            return !!el && el.children.length > 0 && !(el.textContent || "").includes("⏳",);
+          },
+          null,
+          { timeout: 8000, },
+        );
+        const bodyText = await page.evaluate(() => document.body.textContent || "");
         // serveWorldDetailContent allows owner/admin only; solo is denied → no name leak.
         expect(bodyText,).not.toContain(WORLD_NAME,);
       } finally {
@@ -156,18 +160,21 @@ describe("Access control E2E", () => {
         allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
       },);
       try {
-        await page.goto(`${ctx.url}/views/chat?chatid=${CHAT_ID}`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
+        await page.goto(`${ctx.url}/views/chat?chatid=${CHAT_ID}`, {
+          waitUntil: "domcontentloaded",
+          timeout: 15_000,
+        },);
         // The chat app only keeps chats the user created; a foreign chatid is
         // dropped (redirect to /views/chat) before any message fetch.
         await page.locator("#message-list",).waitFor({ state: "attached", timeout: 10_000, },);
         await page
-          .waitForFunction(() => !new URLSearchParams(location.search,).has("chatid",), null, { timeout: 8_000, })
-          .catch(() => { /* redirect may not be observed; the message-count guard below is authoritative */ },);
+          .waitForFunction(() => !new URLSearchParams(location.search,).has("chatid",), null, { timeout: 8000, },)
+          .catch(() => {/* redirect may not be observed; the message-count guard below is authoritative */},);
 
         // Give the message layer a beat to settle, then assert no content leaks.
         await page.waitForTimeout(600,);
         expect(await page.locator("#message-list .message",).count(),).toBe(0,);
-        const bodyText = await page.evaluate(() => document.body.innerText,);
+        const bodyText = await page.evaluate(() => document.body.textContent || "");
         expect(bodyText,).not.toContain(MSG_SECRET,);
       } finally {
         errors.assert();
