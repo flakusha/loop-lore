@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `c598f22`
-
