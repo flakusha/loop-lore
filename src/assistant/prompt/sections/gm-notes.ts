@@ -51,12 +51,12 @@ async function fetchActiveWhitenotes(
     .limit(MAX_WHITENOTES,)
     .execute();
 
-  return rows.map((r,) => ({
+  return Array.from(rows, (r,) => ({
     type: r.type,
     content: r.content,
     priority: r.priority,
     scope: r.scope,
-  }));
+  }),);
 }
 
 /** Fetch unrevealed shadow notes (hidden influences) for the chat. */
@@ -73,31 +73,34 @@ async function fetchUnrevealedShadowNotes(
     .limit(MAX_SHADOW_NOTES,)
     .execute();
 
-  return rows.map((r,) => ({ type: r.type, content: r.content, }));
+  return Array.from(rows, (r,) => ({ type: r.type, content: r.content, }),);
 }
 
 export const gmNotesSection: SectionBuilder = {
   name: "gmNotes",
   enabled: () => true,
   build: async (ctx,) => {
-    const [whitenotes, shadowNotes,] = await Promise.all([
+    const noteResults = await Promise.allSettled([
       fetchActiveWhitenotes(ctx.db, ctx.chat.id,),
       fetchUnrevealedShadowNotes(ctx.db, ctx.chat.id,),
     ],);
+    const whitenotesResult = noteResults[0];
+    const shadowNotesResult = noteResults[1];
+    if (whitenotesResult.status === "rejected") { throw whitenotesResult.reason; }
+    if (shadowNotesResult.status === "rejected") { throw shadowNotesResult.reason; }
+    const whitenotes = whitenotesResult.value;
+    const shadowNotes = shadowNotesResult.value;
 
     if (whitenotes.length === 0 && shadowNotes.length === 0) { return []; }
 
     const parts: string[] = [];
     if (whitenotes.length > 0) {
-      const text = whitenotes
-        .map((n,) => `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`)
+      const text = Array.from(whitenotes, (n,) => `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,)
         .join("\n",);
       parts.push(wrapSection("whitenotes", text,),);
     }
     if (shadowNotes.length > 0) {
-      const text = shadowNotes
-        .map((n,) => `- [${n.type}] ${n.content}`)
-        .join("\n",);
+      const text = Array.from(shadowNotes, (n,) => `- [${n.type}] ${n.content}`,).join("\n",);
       parts.push(wrapSection("shadow_notes", text,),);
     }
 

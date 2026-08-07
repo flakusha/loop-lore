@@ -32,7 +32,7 @@ export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: s
     .orderBy("actor_id", "asc",)
     .execute();
 
-  return rows.map((r,) => r.actor_id);
+  return Array.from(rows, (r,) => r.actor_id,);
 }
 
 /**

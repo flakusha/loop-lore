@@ -11,6 +11,7 @@ import { checkChatAccess, } from "../chat/service";
 import { decryptMessageContent, getSmk, } from "../crypto";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { safeJsonStringify, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
@@ -69,7 +70,7 @@ function formatJson(
   chat: { id: string; name: string; type: string; mode: string; created_at: string },
   messages: MessageData[],
 ): string {
-  return JSON.stringify(
+  const sr = safeJsonStringify(
     {
       chat: {
         id: chat.id,
@@ -78,7 +79,7 @@ function formatJson(
         mode: chat.mode,
         created_at: chat.created_at,
       },
-      messages: messages.map((m,) => ({
+      messages: Array.from(messages, (m,) => ({
         id: m.id,
         role: m.role,
         author: m.display_name,
@@ -86,23 +87,22 @@ function formatJson(
         created_at: m.created_at,
         model_id: m.model_id,
         token_count: m.token_count_total,
-      })),
+      }),),
       exported_at: new Date().toISOString(),
     },
-    null,
     2,
   );
+  return sr.ok ? sr.value : "{}";
 }
 
 function formatHtml(chat: { name: string; type: string; mode: string }, messages: MessageData[],): string {
-  const messageHtml = messages
-    .map((msg,) => {
-      const author = msg.display_name || msg.role;
-      const roleLabel = msg.role === MessageRole.User ? "You" : author;
-      const roleClass = msg.role === MessageRole.User ? "user" : "assistant";
-      const time = new Date(msg.created_at,).toLocaleString();
+  const messageHtml = Array.from(messages, (msg,) => {
+    const author = msg.display_name || msg.role;
+    const roleLabel = msg.role === MessageRole.User ? "You" : author;
+    const roleClass = msg.role === MessageRole.User ? "user" : "assistant";
+    const time = new Date(msg.created_at,).toLocaleString();
 
-      return `
+    return `
     <div class="message ${roleClass}">
       <div class="header">
         <span class="sender">${escapeHtml(roleLabel,)}</span>
@@ -110,8 +110,7 @@ function formatHtml(chat: { name: string; type: string; mode: string }, messages
       </div>
       <div class="content">${escapeHtml(msg.content,)}</div>
     </div>`;
-    },)
-    .join("\n",);
+  },).join("\n",);
 
   return `<!DOCTYPE html>
 <html lang="en">

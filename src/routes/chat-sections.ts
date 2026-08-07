@@ -241,7 +241,7 @@ export function chatSectionsRoutes(opts: HandlerOpts,) {
             .select("id",)
             .where("chat_id", "=", chatId,)
             .execute();
-          const existingIds = new Set(existing.map((s,) => s.id),);
+          const existingIds = new Set(Array.from(existing, (s,) => s.id,),);
           if (sectionIds.some((id,) => !existingIds.has(id,))) {
             return jsonResponse({ error: "sectionIds contains an unknown section", }, 400,);
           }

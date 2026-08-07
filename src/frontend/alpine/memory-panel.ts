@@ -66,7 +66,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         }>;
       };
 
-      this.memoryPanel.characterMemories = (data.items ?? []).map((m,) => ({
+      this.memoryPanel.characterMemories = Array.from(data.items ?? [], (m,) => ({
         id: m.id,
         content: m.content,
         type: m.memory_type as MemoryEntry["type"],
@@ -76,7 +76,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         pinned: !!m.pinned,
         createdAt: m.created_at,
         tokenCount: estimateTokens(m.content,),
-      }));
+      }),);
 
       this._updateTokenCount();
     } catch {
@@ -110,11 +110,16 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
 
     if (!query) { return memories; }
 
-    return memories.filter(
-      (m,) =>
+    const filtered: MemoryEntry[] = [];
+    for (const m of memories) {
+      if (
         m.content.toLowerCase().includes(query,) ||
-        m.keywords.some((k,) => k.toLowerCase().includes(query,)),
-    );
+        m.keywords.some((k,) => k.toLowerCase().includes(query,))
+      ) {
+        filtered.push(m,);
+      }
+    }
+    return filtered;
   },
 
   getCurrentMemoryList(): MemoryEntry[] {
@@ -237,6 +242,8 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       ...this.memoryPanel.assistantMemories,
       ...this.memoryPanel.worldMemories,
     ];
-    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
+    let total = 0;
+    for (const m of allMemories) { total += m.tokenCount || 0; }
+    this.memoryPanel.tokensUsed = total;
   },
 };

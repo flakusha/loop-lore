@@ -11,9 +11,11 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
     provider: {
       async getMigrations(): Promise<Record<string, Migration>> {
         const migrationsDirectory = path.join(__dirname, "migrations",);
-        const files = readdirSync(migrationsDirectory,)
-          .filter((f,): f is string => f.endsWith(".ts",))
-          .toSorted((a, b,) => a.localeCompare(b,));
+        const matched: string[] = [];
+        for (const f of readdirSync(migrationsDirectory,)) {
+          if (f.endsWith(".ts",)) { matched.push(f,); }
+        }
+        const files = matched.toSorted((a, b,) => a.localeCompare(b,));
         const migrations: Record<string, Migration> = {};
         for (const file of files) {
           const module = await import(path.join(migrationsDirectory, file,));

@@ -150,10 +150,13 @@ export function exportRoutes(opts: HandlerOpts,) {
             .where("asset_links.entity_type", "=", "actor",)
             .where("asset_links.entity_id", "=", ctx.params.actorId,)
             .execute();
-          const assets = assetRows.map((a,) => ({
-            path: a.filename,
-            data: readFileSync(a.storage_path,),
-          })).filter((a,) => a.data.length > 0);
+          const assets: { path: string; data: Buffer }[] = [];
+          for (const a of assetRows) {
+            const data = readFileSync(a.storage_path,);
+            if (data.length > 0) {
+              assets.push({ path: a.filename, data, },);
+            }
+          }
           const charxBuf = await createCharx(v3Data, assets,);
           return new Response(new Uint8Array(charxBuf,), {
             headers: {

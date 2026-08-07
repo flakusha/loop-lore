@@ -121,7 +121,7 @@ export async function generateImages(
 
       const data = (await resp.json()) as { data: { b64_json: string }[] };
       return ok(
-        data.data.map((d,) => decodeB64(d.b64_json,)),
+        Array.from(data.data, (d,) => decodeB64(d.b64_json,),),
         outputFormat === "jpeg" ? "image/jpeg" : "image/png",
       );
     }
@@ -155,7 +155,7 @@ export async function generateImages(
       }
 
       const sdData = (await resp.json()) as { images: string[] };
-      return ok(sdData.images.map((b64,) => decodeB64(b64,)), "image/png",);
+      return ok(Array.from(sdData.images, (b64,) => decodeB64(b64,),), "image/png",);
     }
     case "sdcpp": {
       const sdcppUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/img_gen`;
@@ -243,7 +243,7 @@ export async function generateImages(
         return failure("sd.cpp job timed out", 504,);
       }
 
-      return ok(jobImages.map((b64,) => decodeB64(b64,)), "image/png",);
+      return ok(Array.from(jobImages, (b64,) => decodeB64(b64,),), "image/png",);
     }
     case "comfyui": {
       const workflowName = opts.workflow ?? "txt2img";

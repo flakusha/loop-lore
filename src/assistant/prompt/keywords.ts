@@ -10,14 +10,16 @@ import { jsonParseOr, } from "../../utils";
 /** Parse the `actor_memories.keywords` JSON column (string[] | null). */
 export function parseKeywords(raw: unknown,): string[] {
   if (raw == null) { return []; }
-  if (Array.isArray(raw,)) { return raw.map(String,); }
+  if (Array.isArray(raw,)) { return Array.from(raw, String,); }
   if (typeof raw === "string") {
     const parsed = jsonParseOr<unknown>(raw, null,);
-    if (Array.isArray(parsed,)) { return parsed.map(String,); }
-    return raw
-      .split(",",)
-      .map((s,) => s.trim())
-      .filter(Boolean,);
+    if (Array.isArray(parsed,)) { return Array.from(parsed, String,); }
+    const out: string[] = [];
+    for (const s of raw.split(",",)) {
+      const trimmed = s.trim();
+      if (trimmed) { out.push(trimmed,); }
+    }
+    return out;
   }
   return [];
 }
@@ -35,10 +37,9 @@ export async function recentUserWords(db: Kysely<DB>, chatId: string,): Promise<
     .limit(1,)
     .executeTakeFirst();
   if (!row?.content) { return new Set(); }
-  return new Set(
-    row.content
-      .toLowerCase()
-      .split(/[^a-z0-9]+/i,)
-      .filter(Boolean,),
-  );
+  const words: string[] = [];
+  for (const w of row.content.toLowerCase().split(/[^a-z0-9]+/i,)) {
+    if (w) { words.push(w,); }
+  }
+  return new Set(words,);
 }

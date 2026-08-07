@@ -118,7 +118,8 @@ export async function rotateKeyOnLeave(
 
   // Get remaining participant IDs (excluding departed)
   const allActorIds = await getChatParticipantActorIds(database, chatId,);
-  const remainingActorIds = allActorIds.filter((id,) => id !== departedParticipantId);
+  const remainingActorIds: string[] = [];
+  for (const id of allActorIds) { if (id !== departedParticipantId) { remainingActorIds.push(id,); } }
 
   if (remainingActorIds.length === 0) {
     throw new Error("Cannot rotate key: no remaining participants",);

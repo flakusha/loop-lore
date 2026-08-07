@@ -212,20 +212,18 @@ export class ResponseHeaderPolicy {
   /** Build `Link: <…>; rel=preload` hints with a best-effort `as` token. */
   private buildLinkHeader(): string {
     if (this.config.linkPreload.length === 0) { return ""; }
-    return this.config.linkPreload
-      .map((path,) => {
-        const as = path.endsWith(".css",) ? "style" : (path.endsWith(".js",) ? "script" : "");
-        const suffix = as ? `; as=${as}` : "";
-        return `<${path}>; rel=preload${suffix}`;
-      },)
-      .join(", ",);
+    return Array.from(this.config.linkPreload, (path,) => {
+      const as = path.endsWith(".css",) ? "style" : (path.endsWith(".js",) ? "script" : "");
+      const suffix = as ? `; as=${as}` : "";
+      return `<${path}>; rel=preload${suffix}`;
+    },).join(", ",);
   }
 
   /** Build `Reporting-Endpoints: name="url", …` from the config map. */
   private buildReportingEndpoints(): string {
     const entries = Object.entries(this.config.reportingEndpoints,);
     if (entries.length === 0) { return ""; }
-    return entries.map(([name, url,],) => `${name}="${url}"`).join(", ",);
+    return Array.from(entries, ([name, url,],) => `${name}="${url}"`,).join(", ",);
   }
 
   /**

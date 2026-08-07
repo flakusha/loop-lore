@@ -29,7 +29,7 @@ export class PromptAssembler {
   constructor(private readonly db: Kysely<DB>,) {}
 
   async assemble(params: PromptParams,): Promise<AssembledPrompt> {
-    const [actor, chat,] = await Promise.all([
+    const projectionResults = await Promise.allSettled([
       this.db
         .selectFrom("actors",)
         .select([
@@ -51,6 +51,12 @@ export class PromptAssembler {
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),
     ],);
+    const actorResult = projectionResults[0];
+    const chatResult = projectionResults[1];
+    if (actorResult.status === "rejected") { throw actorResult.reason; }
+    if (chatResult.status === "rejected") { throw chatResult.reason; }
+    const actor = actorResult.value;
+    const chat = chatResult.value;
 
     const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;
     const tokenBudget = params.tokenBudget ?? 32_000;
@@ -88,18 +94,23 @@ export class PromptAssembler {
       }
     }
 
-    let totalTokens = sections.reduce((sum, s,) => sum + (s.dropped ? 0 : s.tokens), 0,);
+    let totalTokens = 0;
+    for (const s of sections) { if (!s.dropped) { totalTokens += s.tokens; } }
 
     if (totalTokens > tokenBudget) {
       // Drop sections in descending priority order (lowest priority first).
-      const ordered = sections
-        .map((s, i,) => ({ ...s, index: i, }))
-        .filter((s,) => !s.dropped && PRIORITY[s.name as keyof typeof PRIORITY] > 0)
-        .sort(
-          (a, b,) =>
-            (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
-            (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
-        );
+      const ordered: (PromptSectionReport & { index: number })[] = [];
+      for (const [si, s,] of sections.entries()) {
+        if (s.dropped) { continue; }
+        if (PRIORITY[s.name as keyof typeof PRIORITY] > 0) {
+          ordered.push({ ...s, index: si, },);
+        }
+      }
+      ordered.sort(
+        (a, b,) =>
+          (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
+          (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
+      );
 
       for (const section of ordered) {
         if (totalTokens <= tokenBudget) { break; }

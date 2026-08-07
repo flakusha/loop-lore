@@ -28,7 +28,16 @@ import type {
   Worlds,
   WorldStates,
 } from "../db/schema";
-import { jsonParseOr, } from "../utils";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
+
+/**
+ * Pretty-print a JSON value (2-space indent) safely, mirroring the previous
+ * `JSON.stringify(value, null, 2)` calls. Never throws.
+ */
+function prettyJson(value: unknown,): string {
+  const sr = safeJsonStringify(value, 2,);
+  return sr.ok ? sr.value : "{}";
+}
 
 /**
  * Per-item export metadata, surfaced via the `onItem` sink. The SSE handler
@@ -93,12 +102,15 @@ export interface FinalizeExportInput {
 export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Buffer> {
   const { zip, checksums, counts, userId, now, format, include, assetManifest, } = input;
 
+  let itemCount = 0;
+  for (const n of Object.values(counts,)) { itemCount += n; }
+
   const exportInfo = {
     exported_at: now.toISOString(),
     exported_by: userId,
     format,
     includes: include,
-    item_count: Object.values(counts,).reduce((a, b,) => a + b, 0,),
+    item_count: itemCount,
   };
   const schemaVersion = {
     schema_version: "1.0",
@@ -106,16 +118,16 @@ export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Bu
   };
 
   const metadataFolder = zip.folder("metadata",);
-  const exportInfoStr = JSON.stringify(exportInfo, null, 2,);
+  const exportInfoStr = prettyJson(exportInfo,);
   metadataFolder?.file("export-info.json", exportInfoStr,);
   addChecksum(checksums, "metadata/export-info.json", exportInfoStr,);
 
-  const schemaVersionStr = JSON.stringify(schemaVersion, null, 2,);
+  const schemaVersionStr = prettyJson(schemaVersion,);
   metadataFolder?.file("schema-version.json", schemaVersionStr,);
   addChecksum(checksums, "metadata/schema-version.json", schemaVersionStr,);
 
   if (assetManifest) {
-    const assetManifestStr = JSON.stringify(assetManifest, null, 2,);
+    const assetManifestStr = prettyJson(assetManifest,);
     metadataFolder?.file("asset-manifest.json", assetManifestStr,);
     addChecksum(checksums, "metadata/asset-manifest.json", assetManifestStr,);
   }
@@ -129,13 +141,13 @@ export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Bu
     checksums,
   };
   const manifest = assetManifest ? { ...manifestBase, asset_manifest: assetManifest, } : manifestBase;
-  const manifestStr = JSON.stringify(manifest, null, 2,);
+  const manifestStr = prettyJson(manifest,);
   zip.file("manifest.json", manifestStr,);
   addChecksum(checksums, "manifest.json", manifestStr,);
 
   // Regenerate ZIP with the final manifest (checksums updated)
   const finalManifest = assetManifest ? { ...manifestBase, asset_manifest: assetManifest, } : manifestBase;
-  zip.file("manifest.json", JSON.stringify(finalManifest, null, 2,),);
+  zip.file("manifest.json", prettyJson(finalManifest,),);
 
   return zip.generateAsync({ type: "nodebuffer", },);
 }
@@ -285,7 +297,7 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
     };
 
     const filename = (chat.name ?? chat.id).replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
-    const content = JSON.stringify(chatData, null, 2,);
+    const content = prettyJson(chatData,);
     chatsFolder?.file(`${filename}.json`, content,);
     addChecksum(ctx.checksums, `chats/${filename}.json`, content,);
 
@@ -320,7 +332,7 @@ export async function exportWorldsToZip(ctx: ExportContext,): Promise<void> {
 
   const worldsFolder = ctx.zip.folder("worlds",);
   for (const world of worlds) {
-    const content = JSON.stringify(world, null, 2,);
+    const content = prettyJson(world,);
     worldsFolder?.file(`${world.id}.json`, content,);
     addChecksum(ctx.checksums, `worlds/${world.id}.json`, content,);
 
@@ -408,7 +420,7 @@ export async function exportLocationsToZip(ctx: ExportContext,): Promise<void> {
   for (const location of locations) {
     const worldFolder = locationsFolder?.folder(location.world_id,);
     const filename = `${location.id}.json`;
-    const content = JSON.stringify(location, null, 2,);
+    const content = prettyJson(location,);
     const checksumPath = `locations/${location.world_id}/${filename}`;
     worldFolder?.file(filename, content,);
     addChecksum(ctx.checksums, checksumPath, content,);
@@ -440,13 +452,18 @@ export async function exportStoryToZip(ctx: ExportContext,): Promise<void> {
 
   const storyFolder = ctx.zip.folder("story",);
   for (const world of worlds) {
-    const [locations, loreEntries, quests, worldStates, locationStates,] = await Promise.all([
+    const [locationsRes, loreEntriesRes, questsRes, worldStatesRes, locationStatesRes,] = await Promise.allSettled([
       ctx.database.selectFrom("locations",).selectAll().where("world_id", "=", world.id,).execute(),
       ctx.database.selectFrom("world_lore_entries",).selectAll().where("world_id", "=", world.id,).execute(),
       ctx.database.selectFrom("quests",).selectAll().where("world_id", "=", world.id,).execute(),
       ctx.database.selectFrom("world_states",).selectAll().where("world_id", "=", world.id,).execute(),
       ctx.database.selectFrom("location_states",).selectAll().where("world_id", "=", world.id,).execute(),
     ],);
+    const locations = locationsRes.status === "fulfilled" ? locationsRes.value : [];
+    const loreEntries = loreEntriesRes.status === "fulfilled" ? loreEntriesRes.value : [];
+    const quests = questsRes.status === "fulfilled" ? questsRes.value : [];
+    const worldStates = worldStatesRes.status === "fulfilled" ? worldStatesRes.value : [];
+    const locationStates = locationStatesRes.status === "fulfilled" ? locationStatesRes.value : [];
 
     const bundle: WorldBundle = {
       schema_version: "1.0",
@@ -459,7 +476,7 @@ export async function exportStoryToZip(ctx: ExportContext,): Promise<void> {
     };
 
     const filename = `${world.id}.json`;
-    const content = JSON.stringify(bundle, null, 2,);
+    const content = prettyJson(bundle,);
     const checksumPath = `story/${filename}`;
     storyFolder?.file(filename, content,);
     addChecksum(ctx.checksums, checksumPath, content,);

@@ -493,5 +493,7 @@ export function filterAllowedRatings(
   userAge: number | null,
 ): ContentRating[] {
   if (userAge === null) { return ["sfw",]; }
-  return ratings.filter((r,) => isContentRatingAllowed(r, userAge,));
+  const allowed: ContentRating[] = [];
+  for (const r of ratings) { if (isContentRatingAllowed(r, userAge,)) { allowed.push(r,); } }
+  return allowed;
 }
