@@ -43,13 +43,13 @@ re-implementing it per view.
 
 ## Linked Tasks
 
-| Task                                    | Title                                                    | Priority | Status      |
-| --------------------------------------- | -------------------------------------------------------- | -------- | ----------- |
-| TASK-html-dedup-audit                   | Audit + map repeated frontend HTML fragments             | High     | Not Started |
-| TASK-html-dedup-shared-partials         | Extract shared partials/components                       | High     | Not Started |
-| TASK-htmx-ajax-request-helper           | Centralize htmx request config in shared helper          | High     | Not Started |
-| TASK-htmx-migrate-views                 | Migrate views to shared partials + request helper        | Medium   | Not Started |
-| TASK-htmx-reuse-e2e-verify              | Verify browser e2e green after refactor                  | Medium   | Not Started |
+| Task                            | Title                                             | Priority | Status      |
+| ------------------------------- | ------------------------------------------------- | -------- | ----------- |
+| TASK-html-dedup-audit           | Audit + map repeated frontend HTML fragments      | High     | Not Started |
+| TASK-html-dedup-shared-partials | Extract shared partials/components                | High     | Not Started |
+| TASK-htmx-ajax-request-helper   | Centralize htmx request config in shared helper   | High     | Not Started |
+| TASK-htmx-migrate-views         | Migrate views to shared partials + request helper | Medium   | Not Started |
+| TASK-htmx-reuse-e2e-verify      | Verify browser e2e green after refactor           | Medium   | Not Started |
 
 ## Acceptance Criteria
 
