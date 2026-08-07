@@ -4,7 +4,7 @@ import { join, } from "node:path";
 import { createLogger, } from "../logger";
 import { coerceValue, deepMerge, loadConfig, setByPath, validateConfig, validateDatabaseSafety, } from "./load";
 import type { Config, } from "./schema";
-import { ConfigSchema, } from "./schema-class";
+import { createConfigSchema, } from "./schema-class";
 
 beforeAll(() => {
   // loadConfig → template expansion calls getLogger(), which throws unless a
@@ -15,7 +15,7 @@ beforeAll(() => {
 
 describe("DEFAULTS", () => {
   function defaults() {
-    return structuredClone(new ConfigSchema().defaults,);
+    return structuredClone(createConfigSchema().defaults,);
   }
 
   test("has all required config sections", () => {
@@ -153,7 +153,7 @@ describe("setByPath", () => {
 
 describe("validateConfig", () => {
   function validConfig(): Config {
-    return structuredClone(new ConfigSchema().defaults,);
+    return structuredClone(createConfigSchema().defaults,);
   }
 
   test("passes on valid defaults", () => {
@@ -412,7 +412,7 @@ configPath = "~/models/llama-swap.yaml"
 
 describe("validateDatabaseSafety", () => {
   function sqliteConfig(overrides?: Partial<Config["db"]>,): Config {
-    const defaults = structuredClone(new ConfigSchema().defaults,);
+    const defaults = structuredClone(createConfigSchema().defaults,);
     defaults.db.type = "sqlite";
     defaults.db.sqliteFilename = "/tmp/test.db";
     if (overrides) { Object.assign(defaults.db, overrides,); }
