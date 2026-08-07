@@ -6,6 +6,10 @@ import { describe, expect, test, } from "bun:test";
 import { levelFromConfig, numericToLabel, shouldEmit, } from "./levels";
 
 describe("levelFromConfig", () => {
+  test("maps trace → 5", () => {
+    expect(levelFromConfig("trace",),).toBe(5,);
+  });
+
   test("maps debug → 10", () => {
     expect(levelFromConfig("debug",),).toBe(10,);
   });
@@ -22,12 +26,20 @@ describe("levelFromConfig", () => {
     expect(levelFromConfig("error",),).toBe(40,);
   });
 
+  test("maps fatal → 50", () => {
+    expect(levelFromConfig("fatal",),).toBe(50,);
+  });
+
   test("unknown level defaults to 20 (info)", () => {
-    expect(levelFromConfig("trace" as "info",),).toBe(20,);
+    expect(levelFromConfig("verbose" as "info",),).toBe(20,);
   });
 });
 
 describe("numericToLabel", () => {
+  test("maps 5 → TRACE", () => {
+    expect(numericToLabel(5,),).toBe("TRACE",);
+  });
+
   test("maps 10 → DEBUG", () => {
     expect(numericToLabel(10,),).toBe("DEBUG",);
   });
@@ -42,6 +54,10 @@ describe("numericToLabel", () => {
 
   test("maps 40 → ERROR", () => {
     expect(numericToLabel(40,),).toBe("ERROR",);
+  });
+
+  test("maps 50 → FATAL", () => {
+    expect(numericToLabel(50,),).toBe("FATAL",);
   });
 
   test("unknown numeric returns string", () => {
