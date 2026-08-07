@@ -1,6 +1,6 @@
 # TASK: Add trace + fatal log levels and API methods
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-logging-telemetry
