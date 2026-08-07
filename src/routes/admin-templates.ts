@@ -28,7 +28,7 @@ import {
 import { getLogger, type Logger, } from "../logger";
 import { isAdminRole, } from "../middleware/admin-gate";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
-import { ErrorCode, jsonError, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "admin-templates", },);

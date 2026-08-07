@@ -12,7 +12,7 @@ import { CancelReason, CancelSource, ChunkAction, GenerationStatus, PolicyType, 
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";
-import { safeTransition,  activeGenerations, chatToAttempt, updateAttemptStatus} from "./cancellation-tracker";
+import { activeGenerations, chatToAttempt, safeTransition, updateAttemptStatus, } from "./cancellation-tracker";
 import { storePartialContent, } from "./continuation";
 import { detectPolicyMismatch, } from "./policy-detector";
 import { detectTheatricalLoop, } from "./repetition-detector";

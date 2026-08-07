@@ -15,15 +15,15 @@ Investigate current browser e2e coverage (7 `*.browser.ts` files, 40 cases) and 
 
 ### What the 7 browser suites cover today
 
-| Suite | Cases | What it asserts |
-| ----- | ----- | --------------- |
-| `smoke.browser.ts` | 10 | Per-view presence: chat, characters, gallery, settings, worlds, new-chat, login, layout/nav (testid existence only) |
-| `navigation.browser.ts` | ~8 | Sidebar htmx nav, hamburger toggle, header-slot integrity, new-chat create+redirect, settings shell, login presence |
-| `htmx-alpine.browser.ts` | ~13 | htmx→Alpine init, morph state reset, Escape-key panel close, htmx modal lazy-load (characters create, gallery upload), toast dedup, sidebar store sync, chat-list selection, chat-settings + user-preferences modals |
-| `characters-flow.browser.ts` | ~5 | Grid load, create/import modal open, detail modal open, start-chat redirect |
-| `worlds-flow.browser.ts` | ~4 | List load, create modal open + fields, seeded list render, world-card → detail nav |
-| `chat-flow.browser.ts` | ~5 | Panel/toggle presence, message input/send/attach/form presence, chat-list template, cancel-generation |
-| `auth-flow.browser.ts` | 4 | Login form render, demo-login `hx-post`, signup link, invalid-login htmx error swap |
+| Suite                        | Cases | What it asserts                                                                                                                                                                                                      |
+| ---------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `smoke.browser.ts`           | 10    | Per-view presence: chat, characters, gallery, settings, worlds, new-chat, login, layout/nav (testid existence only)                                                                                                  |
+| `navigation.browser.ts`      | ~8    | Sidebar htmx nav, hamburger toggle, header-slot integrity, new-chat create+redirect, settings shell, login presence                                                                                                  |
+| `htmx-alpine.browser.ts`     | ~13   | htmx→Alpine init, morph state reset, Escape-key panel close, htmx modal lazy-load (characters create, gallery upload), toast dedup, sidebar store sync, chat-list selection, chat-settings + user-preferences modals |
+| `characters-flow.browser.ts` | ~5    | Grid load, create/import modal open, detail modal open, start-chat redirect                                                                                                                                          |
+| `worlds-flow.browser.ts`     | ~4    | List load, create modal open + fields, seeded list render, world-card → detail nav                                                                                                                                   |
+| `chat-flow.browser.ts`       | ~5    | Panel/toggle presence, message input/send/attach/form presence, chat-list template, cancel-generation                                                                                                                |
+| `auth-flow.browser.ts`       | 4     | Login form render, demo-login `hx-post`, signup link, invalid-login htmx error swap                                                                                                                                  |
 
 ### Structural gaps (all 7 files)
 
@@ -36,18 +36,18 @@ Investigate current browser e2e coverage (7 `*.browser.ts` files, 40 cases) and 
 
 ### Views with NO browser coverage at all
 
-| View | Interactive logic unexercised |
-| ---- | ----------------------------- |
-| `register` | Signup form submit, validation, redirect to login/chat |
-| `personas` | Persona list/CRUD |
-| `quests` | Quest list, active/complete, progress rendering (`quests.ts`) |
-| `notifications` | Notification center (Alpine `notification-center.ts`), read/unread, dismiss |
-| `admin` | Admin panel (admin-guarded), user/nsfw/character overrides |
-| `nsfw-moderation` | Moderation audit view (admin-guarded) |
-| `world-edit` | World edit form, location CRUD (`worlds.ts` `createLocation`/`deleteLocation`/`initializeStates`), item states |
-| `character-edit` | Character edit form, trait/mood/avatar sub-editors |
-| `chat-list` | Chat list view (separate from chat view) |
-| `new-chat` advanced fields | Template/persona/memory-carry/impersonate selects (only basic create tested) |
+| View                       | Interactive logic unexercised                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `register`                 | Signup form submit, validation, redirect to login/chat                                                         |
+| `personas`                 | Persona list/CRUD                                                                                              |
+| `quests`                   | Quest list, active/complete, progress rendering (`quests.ts`)                                                  |
+| `notifications`            | Notification center (Alpine `notification-center.ts`), read/unread, dismiss                                    |
+| `admin`                    | Admin panel (admin-guarded), user/nsfw/character overrides                                                     |
+| `nsfw-moderation`          | Moderation audit view (admin-guarded)                                                                          |
+| `world-edit`               | World edit form, location CRUD (`worlds.ts` `createLocation`/`deleteLocation`/`initializeStates`), item states |
+| `character-edit`           | Character edit form, trait/mood/avatar sub-editors                                                             |
+| `chat-list`                | Chat list view (separate from chat view)                                                                       |
+| `new-chat` advanced fields | Template/persona/memory-carry/impersonate selects (only basic create tested)                                   |
 
 ### Partially covered (presence only, no behavior)
 
@@ -61,9 +61,9 @@ Investigate current browser e2e coverage (7 `*.browser.ts` files, 40 cases) and 
 
 ### P0 — harness hardening (prereq for everything below)
 
-1. `assertNoPageErrors(page)` helper — fail on `pageerror`/`console.error` with allowlist; invoke in all suites. *(TASK-browser-console-assert)*
-2. Per-test `try/finally` page close; close-all-pages on failure. *(TASK-browser-test-isolation)*
-3. `getAlpineData` + `waitForAlpineState` helpers; migrate htmx-alpine/chat-flow off fixed sleeps. *(TASK-alpine-state-testing)*
+1. `assertNoPageErrors(page)` helper — fail on `pageerror`/`console.error` with allowlist; invoke in all suites. _(TASK-browser-console-assert)_
+2. Per-test `try/finally` page close; close-all-pages on failure. _(TASK-browser-test-isolation)_
+3. `getAlpineData` + `waitForAlpineState` helpers; migrate htmx-alpine/chat-flow off fixed sleeps. _(TASK-alpine-state-testing)_
 
 ### P1 — critical flows (currently zero coverage)
 
@@ -86,7 +86,7 @@ Investigate current browser e2e coverage (7 `*.browser.ts` files, 40 cases) and 
 ### P3 — Alpine state contracts
 
 1. **`chatState()` default-shape contract** (from `src/frontend/alpine/chat.ts` return object).
-2. **`ui` store default-shape contract** (from `src/frontend/stores/ui-store.ts`). *(TASK-chat-state-contract)*
+2. **`ui` store default-shape contract** (from `src/frontend/stores/ui-store.ts`). _(TASK-chat-state-contract)_
 
 ## High-Value Topic Matrix (2026-08-06)
 
@@ -191,16 +191,16 @@ API-level e2e coverage (`tests/e2e/flows/*.test.ts`) exists for ALL 11 topics be
 
 Per-file results (full suite, `E2E_SAFEGUARD=1 bun test --max-concurrency=1` per file):
 
-| Suite | Pass | Fail | Error | Notes |
-| ----- | ---- | ---- | ----- | ----- |
-| `auth-flow.browser.ts` | 3 | 1 | 1 | Auth redirect loop (below) |
-| `characters-flow.browser.ts` | 10 | 0 | 0 | Soft-logs a 404 console error (non-failing) |
-| `chat-flow.browser.ts` | 12 | 0 | 0 | Presence only — no send |
-| `htmx-alpine.browser.ts` | 17 | 0 | 0 | Epic's "13 pass / 4 fail" is stale; hydration bug appears fixed on dev |
-| `navigation.browser.ts` | 13 | 0 | 0 | |
-| `smoke.browser.ts` | 19 | 0 | 0 | |
-| `worlds-flow.browser.ts` | 7 | 0 | 0 | |
-| **Total** | **81** | **1** | **1** | |
+| Suite                        | Pass   | Fail  | Error | Notes                                                                  |
+| ---------------------------- | ------ | ----- | ----- | ---------------------------------------------------------------------- |
+| `auth-flow.browser.ts`       | 3      | 1     | 1     | Auth redirect loop (below)                                             |
+| `characters-flow.browser.ts` | 10     | 0     | 0     | Soft-logs a 404 console error (non-failing)                            |
+| `chat-flow.browser.ts`       | 12     | 0     | 0     | Presence only — no send                                                |
+| `htmx-alpine.browser.ts`     | 17     | 0     | 0     | Epic's "13 pass / 4 fail" is stale; hydration bug appears fixed on dev |
+| `navigation.browser.ts`      | 13     | 0     | 0     |                                                                        |
+| `smoke.browser.ts`           | 19     | 0     | 0     |                                                                        |
+| `worlds-flow.browser.ts`     | 7      | 0     | 0     |                                                                        |
+| **Total**                    | **81** | **1** | **1** |                                                                        |
 
 **The only failing suite is `auth-flow`, blocked by an auth redirect loop:** under `auth.required=true`, something on `/views/login` (loaded without a session) receives a 401; `feFetch`/htmx's 401 handler runs `location.assign('/views/login?redirect=' + encodeURIComponent(location.pathname + location.search))` (`src/frontend/fe-fetch.ts:50-53`). Already on login, the next load repeats — each hop re-encodes the previous `?redirect=` value, producing an infinite growing chain (`?redirect=%2Fviews%2Flogin%3Fredirect%3D%252Fviews%252Flogin...`). Client-side loop, not a server view gate. Fix: skip the 401-redirect when already on `/views/login` (and `/views/register`), or exempt login-page requests. Tracked as `TASK-PLAN-E2E-STABILIZATION`.
 
