@@ -1,16 +1,13 @@
+import { AdminPaginatedEnvelope, AdminWorldRow, } from "../../validation/schemas/responses";
 import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "admin-worlds", },);
 
-interface WorldRow {
-  id: string;
-  name: string;
-  description: string | null;
-  owner_id: string;
-  created_at: string;
-  updated_at: string;
-}
+type WorldRow = AdminWorldRow;
+
+const EMPTY_ADMIN_WORLDS = { data: [], total: 0, page: 1, pageSize: 50, };
 
 export const adminWorlds = {
   worlds: [] as WorldRow[],
@@ -27,9 +24,9 @@ export const adminWorlds = {
       if (this.worldSearch) { url += `&q=${encodeURIComponent(this.worldSearch,)}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
-        const data = await res.json();
-        this.worlds = data.data || [];
-        this.worldTotal = data.total || 0;
+        const data = parseOr(AdminPaginatedEnvelope(AdminWorldRow,), await res.json(), EMPTY_ADMIN_WORLDS,);
+        this.worlds = data.data;
+        this.worldTotal = data.total;
       }
     } catch {
       log.warn("Network error loading worlds",);

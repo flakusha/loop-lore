@@ -88,6 +88,7 @@
   },
   "dependencies": {
     "@elysia/openapi": "^1.4.15",
+    "@sinclair/typebox": "^0.34.52",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.11.0",
     "clean-css": "^5.3.3",

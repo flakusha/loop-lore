@@ -1,11 +1,17 @@
-import type { ChatState, } from "./types";
+import type { ChatState, Message, } from "./types";
+import { MessageListResponse, } from "../../validation/schemas/responses";
 import { browserCompressThenEncrypt, } from "../browser";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 import { t, } from "./i18n";
 
 const log = rootLog.child({ module: "chat", },);
 
+const EMPTY_MESSAGE_PAGE = {
+  data: [],
+  pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
+};
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   async loadMessages() {
     log.info("loadMessages", { chatId: this.activeChat, },);
@@ -15,9 +21,12 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.hasMoreMessages = true;
     try {
       const res = await apiFetch(`/api/chats/${this.activeChat}/messages?page=1&pageSize=50`,);
-      const data = await res.json();
-      this.messages = data.data || [];
-      this.totalPages = data.pagination?.totalPages ?? 1;
+      const page = parseOr(MessageListResponse, await res.json(), EMPTY_MESSAGE_PAGE,);
+      // Wire rows are validated by MessageListResponse; nullable columns decode
+      // to `T | null` while the display `Message` type uses optional (`T | undefined`).
+      // The validation guarantees shape, so this narrows null→undefined equivalence.
+      this.messages = page.data as unknown as Message[];
+      this.totalPages = page.pagination.totalPages;
     } catch {
       this.loadingError = t("toasts.failedLoadMessages",);
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadMessages",), },);
@@ -43,14 +52,14 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const prevScrollHeight = el?.scrollHeight ?? 0;
     try {
       const res = await apiFetch(`/api/chats/${this.activeChat}/messages?page=${nextPage}&pageSize=50`,);
-      const data = await res.json();
-      const older = data.data || [];
+      const page = parseOr(MessageListResponse, await res.json(), EMPTY_MESSAGE_PAGE,);
+      const older = page.data as unknown as Message[];
       if (older.length === 0) {
         this.hasMoreMessages = false;
       } else {
         this.messages = [...older, ...this.messages,];
         this.currentPage = nextPage;
-        this.totalPages = data.pagination?.totalPages ?? this.totalPages;
+        this.totalPages = page.pagination.totalPages;
         this.hasMoreMessages = this.currentPage < this.totalPages;
       }
     } catch {
