@@ -19,7 +19,7 @@ describe("TraitsService", () => {
   beforeAll(async () => {
     const testDb = await createTestDb();
     db = testDb.db;
-    traitsService = new TraitsService(db,);
+    traitsService = TraitsService(db,);
 
     const { actorId, } = await createTestActors(db,);
     testActorId = actorId;
