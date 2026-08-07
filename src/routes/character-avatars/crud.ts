@@ -1,0 +1,190 @@
+import { Elysia, } from "elysia";
+import { AvatarService, } from "../../characters/services/avatar-service";
+import {
+  ActorIdAvatarIdParams,
+  ActorIdAvatarParams,
+  AvatarCreateBody,
+  AvatarResponse,
+  AvatarUpdateBody,
+  ErrorResponse,
+  ListResponse,
+  SuccessResponse,
+} from "../../validation/schemas";
+import { checkActorOwnership, } from "../actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
+import type { HandlerOpts, } from "./types";
+
+/**
+ * Avatars CRUD sub-plugin — list/get/create/update/delete actor avatars.
+ */
+export function crudRoutes(opts: HandlerOpts,) {
+  const { database, } = opts;
+  const avatarService = new AvatarService(database,);
+
+  return (
+    new Elysia({ name: "character-avatars-crud", },)
+      .get("/api/actors/:actorId/avatars", async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const { actorId, } = ctx.params;
+
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+        const avatars = await avatarService.getAvatars(actorId,);
+        return jsonResponse(avatars,);
+      }, {
+        params: ActorIdAvatarParams,
+        response: {
+          200: ListResponse(AvatarResponse,),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "List actor avatars",
+          description: "List all avatars for a given actor.",
+          tags: ["Avatars",],
+        },
+      },)
+      .get("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const { actorId, avatarId, } = ctx.params;
+
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+
+        const avatar = await avatarService.getAvatar(avatarId,);
+        if (!avatar) {
+          return jsonError({
+            message: ctx.t?.("characters.avatarNotFound",) ?? "Avatar not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+        return jsonResponse(avatar,);
+      }, {
+        params: ActorIdAvatarIdParams,
+        response: {
+          200: AvatarResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Get actor avatar",
+          description: "Get a specific avatar by ID for a given actor.",
+          tags: ["Avatars",],
+        },
+      },)
+      .post("/api/actors/:actorId/avatars", async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const { actorId, } = ctx.params;
+
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+
+        const { assetId, label, tags, isPrimary, sortOrder, } = ctx.body;
+
+        const avatarId = await avatarService.createAvatar({
+          actorId,
+          assetId,
+          label: label ?? "",
+          tags: tags ?? {},
+          isPrimary: isPrimary ?? false,
+          sortOrder: sortOrder ?? 0,
+        },);
+        return jsonCreated({ id: avatarId, },);
+      }, {
+        params: ActorIdAvatarParams,
+        body: AvatarCreateBody,
+        response: {
+          200: AvatarResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Create actor avatar",
+          description: "Create a new avatar for an actor. Requires an assetId.",
+          tags: ["Avatars",],
+        },
+      },)
+      .put("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const { actorId, avatarId, } = ctx.params;
+
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+
+        const { label, tags, isPrimary, sortOrder, } = ctx.body;
+
+        await avatarService.updateAvatar(avatarId, {
+          label,
+          tags,
+          isPrimary,
+          sortOrder,
+        },);
+        return jsonResponse({ ok: true, },);
+      }, {
+        params: ActorIdAvatarIdParams,
+        body: AvatarUpdateBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Update actor avatar",
+          description: "Update an existing avatar's label, tags, primary flag, or sort order.",
+          tags: ["Avatars",],
+        },
+      },)
+      .delete("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+
+        const { actorId, avatarId, } = ctx.params;
+
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+
+        await avatarService.deleteAvatar(avatarId,);
+        return jsonNoContent();
+      }, {
+        params: ActorIdAvatarIdParams,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Delete actor avatar",
+          description: "Delete an avatar by ID.",
+          tags: ["Avatars",],
+        },
+      },)
+  );
+}
