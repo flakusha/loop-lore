@@ -13,7 +13,7 @@ import type { DB, } from "../db/schema";
 
 import { jsonParseOr, } from "../utils";
 import { applyEvents, } from "./events";
-import { ItemsService, } from "./items";
+import type { ItemsService, } from "./items";
 import { PROGRESS_CALCULATORS, } from "./quests/registry";
 import {
   selectActiveQuests,
@@ -22,7 +22,7 @@ import {
   upsertQuestProgress,
 } from "./shared/story-utils";
 import type { QuestConfig, QuestReward, WorldEvent, } from "./types";
-import { WorldStateService, } from "./world-state";
+import type { WorldStateService, } from "./world-state";
 
 // ── Progress Entry ───────────────────────────────────────────
 

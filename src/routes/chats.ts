@@ -20,8 +20,9 @@ import {
   updateImpersonation,
 } from "../chat/service";
 import type { Config, } from "../config/schema";
+import type {
+  ChatParticipantRole} from "../db/enums";
 import {
-  ChatParticipantRole,
   ContentEncoding,
   MessageContentFormat,
   MessageContentType,

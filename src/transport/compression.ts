@@ -1,7 +1,7 @@
 // src/transport/compression.ts — Transparent compression decorator
 
 import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync, } from "node:zlib";
-import { CompressionAlgorithm, } from "../db/enums";
+import type { CompressionAlgorithm, } from "../db/enums";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import type { Connection, ProtocolHandler, } from "./protocol.unified";
 

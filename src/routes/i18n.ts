@@ -10,8 +10,7 @@ import type { DB, } from "../db/schema";
 import { getLocaleInfo, getSupportedLocales, isLocale, } from "../i18n/locale-registry";
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
-import { HttpStatus, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
 
 export interface I18nRoutesOpts {
   database: Kysely<DB>;
