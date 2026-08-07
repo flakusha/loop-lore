@@ -1,6 +1,6 @@
 # TASK: HTMX Reuse E2E Verification
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Low
 **Epic:** epic-frontend-html-dedup-htmx-reuse
@@ -22,10 +22,11 @@ run the browser and unit gates after each migration task.
 
 ## Acceptance Criteria
 
-- [ ] Full browser e2e suite green after migration
-- [ ] `bun run check` passes
-- [ ] htmx-alpine + chat-flow browser flows unchanged in number of passing assertions
-- [ ] No new fixed-sleep waits introduced
+- [x] Full browser e2e suite green after migration — 113 pass / 0 fail across 18 files (2026-08-07)
+- [x] `bun run check` passes
+- [x] htmx-alpine + chat-flow browser flows unchanged in number of passing assertions
+- [x] No new fixed-sleep waits introduced — fixed a broken textContent-based wait in access-correctness (x-show keeps node in DOM); now asserts on computed style
+- [x] Browser suite confirmed to run in parallel (true per-process isolation; the shared `bun test f1 f2 …` form clobbers process-global singletons, so per-file invocation is required)
 
 ## Files
 
