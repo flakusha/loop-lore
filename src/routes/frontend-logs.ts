@@ -6,8 +6,9 @@
  *
  * POST /api/frontend/logs  — accept log batch
  *
- * Note: The incoming log entry shape uses `level: string` ("debug"/"info"/"warn"/"error")
- * from the browser. This differs from the internal LogEntry type (`level: number` 10/20/30/40).
+ * Note: The incoming log entry shape uses `level: string`
+ * ("trace"/"debug"/"info"/"warn"/"error"/"fatal") from the browser. This differs from the
+ * internal LogEntry type (`level: number` 5/10/20/30/40/50).
  * The switch below maps string level → BE logger method at the boundary.
  *
  * Elysia plugin — public route (no auth).
@@ -56,6 +57,10 @@ export function frontendLogsRoutes() {
       const msg = `[FE] ${entry.message}`;
 
       switch (entry.level) {
+        case "trace": {
+          log.trace(msg, meta,);
+          break;
+        }
         case "debug": {
           log.debug(msg, meta,);
           break;
@@ -70,6 +75,10 @@ export function frontendLogsRoutes() {
         }
         case "error": {
           log.error(msg, undefined, meta,);
+          break;
+        }
+        case "fatal": {
+          log.fatal(msg, undefined, meta,);
           break;
         }
         default: {
