@@ -329,7 +329,7 @@ function main() {
     writeFileSync(outputPath, r.ok ? r.value : "{}",);
     log.info(`Generated character schema: ${outputPath}`,);
   } catch (error) {
-    log.error(`Failed to write schema: ${error instanceof Error ? error.message : String(error,)}`,);
+    log.fatal(`Failed to write schema: ${error instanceof Error ? error.message : String(error,)}`,);
     process.exit(1,);
   }
 }

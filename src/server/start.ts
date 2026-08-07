@@ -382,7 +382,7 @@ export async function start() {
 
   process.on("uncaughtException", (err,) => {
     try {
-      logger.error({ message: "Uncaught exception", error: String(err,), },);
+      logger.fatal({ message: "Uncaught exception", error: String(err,), },);
     } catch {
       /* last resort */
     }
@@ -391,7 +391,7 @@ export async function start() {
 
   process.on("unhandledRejection", (reason,) => {
     try {
-      logger.error({ message: "Unhandled rejection", error: String(reason,), },);
+      logger.fatal({ message: "Unhandled rejection", error: String(reason,), },);
     } catch {
       /* last resort */
     }
