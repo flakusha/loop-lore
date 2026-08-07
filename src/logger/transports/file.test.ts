@@ -63,11 +63,11 @@ describe("FileTransport", () => {
       await t.write(entry(20, `rotation message ${i}`,),);
     }
 
-    const files = (await readdir(dir,)).filter((f,) => f.startsWith("rot.log",));
+    const files = new Set((await readdir(dir,)).filter((f,) => f.startsWith("rot.log",)),);
     // Active + up to maxFiles(=2) rotation files; older ones get dropped.
-    expect(files.some((f,) => f === "rot.log"),).toBe(true,);
+    expect(files.has("rot.log",),).toBe(true,);
     // No file beyond path.(maxFiles) remains.
-    expect(files.some((f,) => f === "rot.log.3"),).toBe(false,);
+    expect(files.has("rot.log.3",),).toBe(false,);
   });
 
   test("drop-all rotation keeps only active file when maxFiles is 0", async () => {
