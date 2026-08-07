@@ -30,7 +30,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
   beforeAll(async () => {
     createLogger({ level: "warn", },);
     ({ db, sqlite, } = await createTestDb());
-    moodService = new MoodService(db,);
+    moodService = MoodService(db,);
 
     // Seed user
     await db.insertInto("users",).values({

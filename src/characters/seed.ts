@@ -121,7 +121,7 @@ export async function seedCharacterTemplates(
     return result;
   }
 
-  const traits = new TraitsService(database,);
+  const traits = TraitsService(database,);
   const avatars = new AvatarService(database,);
 
   for (const template of config.templates) {

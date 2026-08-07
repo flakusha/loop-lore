@@ -34,9 +34,9 @@ export async function importCharacterSystems(
   data: CharacterSystemsExport,
   worldId?: string,
 ): Promise<CharacterSystemsImportResult> {
-  const traitsService = new TraitsService(db,);
-  const moodService = new MoodService(db,);
-  const relationshipsService = new RelationshipsService(db,);
+  const traitsService = TraitsService(db,);
+  const moodService = MoodService(db,);
+  const relationshipsService = RelationshipsService(db,);
   const avatarService = new AvatarService(db,);
 
   const result: CharacterSystemsImportResult = {
