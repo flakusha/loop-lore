@@ -70,7 +70,7 @@ export async function feFetch(url: string, options: RequestInit = {},): Promise<
   // 204/205/304 are null-body statuses per the Fetch spec; constructing a
   // Response with any body source (including "") throws TypeError. Preserve
   // the status with a null body so callers don't break on 2xx deletes/etc.
-  const body: BodyInit | null = result.status === 204 || result.status === 205 || result.status === 304
+  const body: BodyInit | null = [204, 205, 304,].includes(result.status,)
     ? null
     : result.data;
   return new Response(body, {
