@@ -2,7 +2,7 @@
 # Example: loop-lore config for local external-server testing
 # ───────────────────────────────────────────────────────────
 # Copy to config.server-external.yaml, edit paths, then start:
-#   bun run src/server.ts
+#   bun run src/server/index.ts
 #
 # Port strategy:
 #   loop-lore app    → 9000
