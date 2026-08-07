@@ -5,7 +5,7 @@ registerCommand("help", () => {
   const lines = [
     "**Available Commands:**",
     "",
-    ...cmds.map((c,) => `- \`/${c}\``),
+    ...Array.from(cmds, (c,) => `- \`/${c}\``,),
     "",
     "Type `/<command>` to execute. Use arrow keys or click to select from the palette.",
   ];

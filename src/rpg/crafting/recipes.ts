@@ -133,7 +133,7 @@ export class RecipesService {
         await trx
           .insertInto("crafting_recipe_materials",)
           .values(
-            opts.materials.map((mat,) => ({
+            Array.from(opts.materials, (mat,) => ({
               id: uid(),
               recipe_id: id,
               item_id: mat.itemId,
@@ -143,7 +143,7 @@ export class RecipesService {
               bonus_effect: mat.bonusEffect ?? null,
               sort_order: mat.sortOrder ?? 0,
               created_at: now,
-            })),
+            }),),
           )
           .execute();
       }
@@ -187,7 +187,7 @@ export class RecipesService {
       stationTypeRequired: recipe.station_type_required,
       discoveredByDefault: recipe.discovered_by_default === 1,
       tags: jsonParseOr(recipe.tags, [],),
-      materials: materials.map((m,) => ({
+      materials: Array.from(materials, (m,) => ({
         id: m.id,
         recipeId: m.recipe_id,
         itemId: m.item_id,
@@ -196,7 +196,7 @@ export class RecipesService {
         qualityRequirement: m.quality_requirement,
         bonusEffect: m.bonus_effect,
         sortOrder: m.sort_order,
-      })),
+      }),),
       createdAt: recipe.created_at,
       updatedAt: recipe.updated_at,
     };
@@ -249,7 +249,7 @@ export class RecipesService {
         stationTypeRequired: recipe.station_type_required,
         discoveredByDefault: recipe.discovered_by_default === 1,
         tags: jsonParseOr(recipe.tags, [],),
-        materials: materials.map((m,) => ({
+        materials: Array.from(materials, (m,) => ({
           id: m.id,
           recipeId: m.recipe_id,
           itemId: m.item_id,
@@ -258,7 +258,7 @@ export class RecipesService {
           qualityRequirement: m.quality_requirement,
           bonusEffect: m.bonus_effect,
           sortOrder: m.sort_order,
-        })),
+        }),),
         createdAt: recipe.created_at,
         updatedAt: recipe.updated_at,
       },);
@@ -321,7 +321,7 @@ export class RecipesService {
         await trx
           .insertInto("crafting_recipe_materials",)
           .values(
-            materials.map((mat,) => ({
+            Array.from(materials, (mat,) => ({
               id: uid(),
               recipe_id: recipeId,
               item_id: mat.itemId,
@@ -331,7 +331,7 @@ export class RecipesService {
               bonus_effect: mat.bonusEffect ?? null,
               sort_order: mat.sortOrder ?? 0,
               created_at: now,
-            })),
+            }),),
           )
           .execute();
       }

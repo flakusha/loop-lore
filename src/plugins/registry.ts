@@ -71,11 +71,19 @@ class PluginRegistry {
   }
 
   getPluginsByOrigin(origin: PluginOrigin): LoadedPlugin[] {
-    return [...this.plugins.values()].filter((p) => p.origin === origin);
+    const out: LoadedPlugin[] = [];
+    for (const p of this.plugins.values()) {
+      if (p.origin === origin) { out.push(p); }
+    }
+    return out;
   }
 
   getAllRoutes(): RouteDefinition[] {
-    return [...this.routes.values()].flat();
+    const out: RouteDefinition[] = [];
+    for (const defs of this.routes.values()) {
+      for (const r of defs) { out.push(r); }
+    }
+    return out;
   }
 
   getPluginRoutes(pluginName: string): RouteDefinition[] {
@@ -83,11 +91,19 @@ class PluginRegistry {
   }
 
   getAllTools(): ToolDefinition[] {
-    return [...this.tools.values()].flat();
+    const out: ToolDefinition[] = [];
+    for (const defs of this.tools.values()) {
+      for (const t of defs) { out.push(t); }
+    }
+    return out;
   }
 
   getAllAgentRoles(): AgentRoleDefinition[] {
-    return [...this.agentRoles.values()].flat();
+    const out: AgentRoleDefinition[] = [];
+    for (const defs of this.agentRoles.values()) {
+      for (const r of defs) { out.push(r); }
+    }
+    return out;
   }
 
   /** Look up a single agent role by its id across all plugins. */
@@ -96,15 +112,27 @@ class PluginRegistry {
   }
 
   getAllUIComponents(): UIComponentDefinition[] {
-    return [...this.uiComponents.values()].flat();
+    const out: UIComponentDefinition[] = [];
+    for (const defs of this.uiComponents.values()) {
+      for (const c of defs) { out.push(c); }
+    }
+    return out;
   }
 
   getAllEventHandlers(): EventHandlerDefinition[] {
-    return [...this.eventHandlers.values()].flat();
+    const out: EventHandlerDefinition[] = [];
+    for (const defs of this.eventHandlers.values()) {
+      for (const h of defs) { out.push(h); }
+    }
+    return out;
   }
 
   getAllMigrations(): MigrationDefinition[] {
-    return [...this.migrations.values()].flat();
+    const out: MigrationDefinition[] = [];
+    for (const defs of this.migrations.values()) {
+      for (const m of defs) { out.push(m); }
+    }
+    return out;
   }
 
   // ── Lifecycle ─────────────────────────────────────────────
@@ -129,7 +157,7 @@ class PluginRegistry {
   }
 
   listPluginStates(): { name: string; enabled: boolean }[] {
-    return [...this.plugins.keys()].map((name) => ({
+    return Array.from(this.plugins.keys(), (name) => ({
       name,
       enabled: this.isEnabled(name),
     }));

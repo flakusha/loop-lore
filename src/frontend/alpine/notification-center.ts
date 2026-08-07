@@ -45,7 +45,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     filter: "all",
     showFilters: false,
     prefs: {} as Record<string, boolean>,
-    types: Object.keys(TYPE_LABELS,).map((key,) => ({ key, label: TYPE_LABELS[key] ?? key, })),
+    types: Array.from(Object.keys(TYPE_LABELS,), (key,) => ({ key, label: TYPE_LABELS[key] ?? key, }),),
 
     init() {
       void this.refresh();
@@ -66,12 +66,17 @@ globalThis.notificationCenter = function(): NotificationCenterState {
 
     /** Notifications visible under the active filter. */
     visible() {
-      return this.filter === "all" ? this.items : this.items.filter((n,) => !n.read);
+      if (this.filter === "all") { return this.items; }
+      const out: NotificationCenterItem[] = [];
+      for (const n of this.items) { if (!n.read) { out.push(n,); } }
+      return out;
     },
 
     /** Number of unread notifications across the whole list. */
     unreadCount() {
-      return this.items.filter((n,) => !n.read).length;
+      let count = 0;
+      for (const n of this.items) { if (!n.read) { count += 1; } }
+      return count;
     },
 
     /** Mark-read on open, then follow the notification link when present. */
@@ -112,7 +117,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       } catch {
         /* ignore */
       }
-      this.items = this.items.map((n,) => ({ ...n, read: 1, }));
+      this.items = Array.from(this.items, (n,) => ({ ...n, read: 1, }),);
     },
 
     async loadPrefs() {

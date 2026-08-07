@@ -329,7 +329,8 @@ function findBestTemplate(
   text: string,
   _parameters: Record<string, string>,
 ): EditTemplate | undefined {
-  const intentTemplates = EDIT_TEMPLATES.filter((t,) => t.intent === intent);
+  const intentTemplates: EditTemplate[] = [];
+  for (const t of EDIT_TEMPLATES) { if (t.intent === intent) { intentTemplates.push(t,); } }
 
   if (intentTemplates.length === 0) {
     return undefined;
@@ -340,7 +341,8 @@ function findBestTemplate(
 
   for (const template of intentTemplates) {
     const templateWords = template.name.toLowerCase().split(/\s+/,);
-    const matchCount = templateWords.filter((w,) => lowerText.includes(w,)).length;
+    let matchCount = 0;
+    for (const w of templateWords) { if (lowerText.includes(w,)) { matchCount += 1; } }
 
     if (matchCount > 0) {
       return template;
@@ -358,7 +360,9 @@ function findBestTemplate(
  * @returns Array of matching templates
  */
 export function getTemplatesForIntent(intent: CommandIntent,): EditTemplate[] {
-  return EDIT_TEMPLATES.filter((t,) => t.intent === intent);
+  const out: EditTemplate[] = [];
+  for (const t of EDIT_TEMPLATES) { if (t.intent === intent) { out.push(t,); } }
+  return out;
 }
 
 /**

@@ -75,7 +75,7 @@ globalThis.app = function() {
 
     async loadLocale(locale: string,) {
       try {
-        const res = await fetch(`/locales/${locale}.json`,);
+        const res = await apiFetch(`/locales/${locale}.json`,);
         if (res.ok) {
           const strings = await res.json() as TranslationMap;
           this.localeStrings = strings;

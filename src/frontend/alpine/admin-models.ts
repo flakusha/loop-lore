@@ -115,7 +115,7 @@ export const adminModels = {
         // Build a stable, fully-populated list so every role has a
         // reactive target for x-model (avoids selects losing/resetting state).
         // Use the server's authoritative validRoles (no server-dep import needed).
-        this.modelRoleList = (data.validRoles || []).map((role,) => {
+        this.modelRoleList = Array.from(data.validRoles || [], (role,) => {
           const found = (data.roles || []).find((r,) => r.role === role);
           return { role, provider: found?.provider ?? "", model: found?.model ?? "", };
         },);

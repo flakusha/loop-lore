@@ -14,7 +14,8 @@ export const examplesSection: SectionBuilder = {
 
     // mes_example format: <START> delimited role:content pairs
     const examples: GenerationMessage[] = [];
-    const blocks = raw.split("<START>",).filter(Boolean,);
+    const blocks: string[] = [];
+    for (const b of raw.split("<START>",)) { if (b) { blocks.push(b,); } }
 
     for (const block of blocks) {
       const trimmed = block.trim();

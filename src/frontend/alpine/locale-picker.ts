@@ -17,7 +17,7 @@ export function localePicker() {
     },
 
     locales() {
-      return SUPPORTED_LOCALES.map((localeId,) => {
+      return Array.from(SUPPORTED_LOCALES, (localeId,) => {
         const info = LOCALE_REGISTRY[localeId];
         return { id: localeId, name: info.name, nativeName: info.nativeName, direction: info.direction, };
       },);

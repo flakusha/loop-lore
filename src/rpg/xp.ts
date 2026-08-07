@@ -252,5 +252,7 @@ export function grantsAsi(level: number,): boolean {
  * Get maximum ASI increases remaining for a character.
  */
 export function asiRemaining(currentLevel: number,): number {
-  return (ASI_LEVELS as readonly number[]).filter((l,) => l > currentLevel).length;
+  let count = 0;
+  for (const l of (ASI_LEVELS as readonly number[])) { if (l > currentLevel) { count++; } }
+  return count;
 }

@@ -161,7 +161,10 @@ export async function updateChat(
   }
 
   // Enforce key-mechanic immutability once online
-  const attemptedMechanics = KEY_MECHANIC_PARAMS.filter((field,) => params[field] !== undefined);
+  const attemptedMechanics: (typeof KEY_MECHANIC_PARAMS)[number][] = [];
+  for (const field of KEY_MECHANIC_PARAMS) {
+    if (params[field] !== undefined) { attemptedMechanics.push(field,); }
+  }
   if (attemptedMechanics.length > 0 && (await isChatOnline(database, chatId,))) {
     return {
       code: "key_mechanic_conflict",

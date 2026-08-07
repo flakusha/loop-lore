@@ -116,13 +116,16 @@ import { adminWorlds, } from "./admin-worlds";
     // ── Overview ────────────────────────────────────────
     async loadOverview() {
       try {
-        const [statsRes, auditRes,] = await Promise.all([
+        const [statsRes, auditRes,] = await Promise.allSettled([
           apiFetch("/api/admin/stats", { headers: { Accept: "application/json", }, },),
           apiFetch("/api/admin/audit?page=1&pageSize=10", { headers: { Accept: "application/json", }, },),
         ],);
-        if (statsRes.ok) { this.stats = await statsRes.json(); }
-        if (auditRes.ok) {
-          const d = await auditRes.json();
+        if (statsRes.status !== "fulfilled" || auditRes.status !== "fulfilled") {
+          throw new Error("admin overview load failed",);
+        }
+        if (statsRes.value.ok) { this.stats = await statsRes.value.json(); }
+        if (auditRes.value.ok) {
+          const d = await auditRes.value.json();
           this.recentEntries = (d.data || []).slice(0, 10,);
         }
       } catch {

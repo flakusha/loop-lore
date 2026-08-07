@@ -48,8 +48,9 @@ export async function start() {
           ...config.generation,
           providers: {
             ...config.generation.providers,
-            sd: discovered.map((b,) =>
-              backendToConfig(b, b.apiFamily === "comfyui" ? "comfyui-auto" : "sd-server-auto",)
+            sd: Array.from(
+              discovered,
+              (b,) => backendToConfig(b, b.apiFamily === "comfyui" ? "comfyui-auto" : "sd-server-auto",),
             ),
           },
         },
@@ -63,12 +64,15 @@ export async function start() {
   // Startup health check — scan providers and log any failures
   const { scanAllProviders, } = await import("../admin/provider-health");
   const healthResults = await scanAllProviders();
-  const failedProviders = healthResults.filter((p,) => p.status !== "healthy");
+  const failedProviders: (typeof healthResults)[number][] = [];
+  for (const p of healthResults) {
+    if (p.status !== "healthy") { failedProviders.push(p,); }
+  }
   const startLogger = getLogger();
   if (failedProviders.length > 0) {
     startLogger.warn("providers unreachable on startup", {
       module: "server",
-      failedProviders: failedProviders.map((p,) => p.name),
+      failedProviders: Array.from(failedProviders, (p,) => p.name,),
     },);
   } else {
     startLogger.info("all providers healthy", { module: "server", count: healthResults.length, },);
@@ -253,7 +257,7 @@ export async function start() {
   }
 
   // Resolve all background init before proceeding to rest
-  await Promise.all(initPromises,);
+  await Promise.allSettled(initPromises,);
 
   // ── Load all plugins (core → community → local) ──────
   await loadAllPlugins(database,);

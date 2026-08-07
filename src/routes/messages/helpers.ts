@@ -69,7 +69,7 @@ export async function enrichAttachments(
   const attachData = parsed.value;
   if (!Array.isArray(attachData,) || attachData.length === 0) { return null; }
 
-  const assetIds = attachData.map((a,) => a.assetId);
+  const assetIds = Array.from(attachData, (a,) => a.assetId,);
   if (assetIds.length === 0) { return null; }
 
   const assets = await database
@@ -88,9 +88,9 @@ export async function enrichAttachments(
     .where("id", "in", assetIds,)
     .execute();
 
-  const assetMap = new Map(assets.map((a,) => [a.id, a,]),);
+  const assetMap = new Map(Array.from(assets, (a,) => [a.id, a,],),);
 
-  return attachData.map((a,) => {
+  return Array.from(attachData, (a,) => {
     const asset = assetMap.get(a.assetId,);
     return {
       assetId: a.assetId,

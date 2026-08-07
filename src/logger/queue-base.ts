@@ -96,8 +96,16 @@ export abstract class AsyncLogQueueBase {
     const batch = this.buffer.splice(0, this.batchSize,);
 
     const results = await Promise.allSettled(
-      this.transports.map((transport,) => {
-        return Promise.all(batch.map((logEntry,) => transport.write(logEntry,)),);
+      Array.from(this.transports, async (transport,) => {
+        const writes = Array.from(batch, (logEntry,) => transport.write(logEntry,),);
+        // Keep per-transport abort semantics: if any write fails, that
+        // transport's entry rejects (outer allSettled records the reason).
+        const settled = await Promise.allSettled(writes,);
+        for (const s of settled) {
+          if (s.status === "rejected") { throw s.reason; }
+        }
+        // Return shape matches PromiseSettledResult<Awaited<void>[]>; values are unused.
+        return Array.from(batch, () => void 0,);
       },),
     );
 

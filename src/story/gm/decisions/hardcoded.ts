@@ -38,9 +38,12 @@ export const hardcodedDecision: GmDecisionStrategy = (deps, context, actorId,) =
     `Respond in character. Use *action descriptions* for narration. Keep response 50-300 words.`,
   );
 
+  const promptPartsFiltered: string[] = [];
+  for (const p of promptParts) { if (p) { promptPartsFiltered.push(p,); } }
+
   return {
     nextActorId: actorId,
-    turnPrompt: promptParts.filter(Boolean,).join("\n",),
+    turnPrompt: promptPartsFiltered.join("\n",),
     turnConstraints: {
       maxTokens: deps.config.llmConfig?.maxTokens ?? 800,
       tone: location.atmosphere ?? undefined,

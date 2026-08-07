@@ -190,7 +190,7 @@ export class AchievementsService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((row: any,) => this.rowToAchievement(row,));
+    return Array.from(rows, (row: any,) => this.rowToAchievement(row,),);
   }
 
   /**
@@ -263,7 +263,7 @@ export class AchievementsService {
       .selectAll()
       .execute();
 
-    return rows.map((row: any,) => this.rowToPlayerAchievement(row,));
+    return Array.from(rows, (row: any,) => this.rowToPlayerAchievement(row,),);
   }
 
   /**
@@ -400,7 +400,10 @@ export class AchievementsService {
     const playerAchievements = await this.getPlayerAchievements(playerId,);
     const allAchievements = await this.listAchievements(undefined, true,);
 
-    const unlocked = playerAchievements.filter((pa,) => pa.isUnlocked);
+    const unlocked: typeof playerAchievements = [];
+    for (const pa of playerAchievements) {
+      if (pa.isUnlocked) { unlocked.push(pa,); }
+    }
 
     const byCategory: Record<string, number> = {};
     const byTier: Record<string, number> = {};

@@ -357,7 +357,7 @@ export class SDServerEditProvider implements ImageEditProvider {
 
       if (statusData.status === "done") {
         if (!statusData.images?.length) { throw new Error("sd.cpp completed but no images",); }
-        return statusData.images.map((_b64, i,) => {
+        return Array.from(statusData.images, (_b64, i,) => {
           const id = uid();
           return {
             id,
@@ -408,7 +408,7 @@ export class SDServerEditProvider implements ImageEditProvider {
     }
 
     const data = (await resp.json()) as { images: string[] };
-    return data.images.map((_b64, i,) => {
+    return Array.from(data.images, (_b64, i,) => {
       const id = uid();
       return {
         id,
@@ -450,7 +450,7 @@ export class SDServerEditProvider implements ImageEditProvider {
     }
 
     const data = (await resp.json()) as { data: { b64_json: string }[] };
-    return data.data.map((_entry, i,) => {
+    return Array.from(data.data, (_entry, i,) => {
       const id = uid();
       return {
         id,

@@ -339,7 +339,7 @@ export const ARMOR_LOOT: LootEntry[] = [
 export function createLootTable(
   items: { name: string; rarity: Rarity; weight?: number; minLevel?: number }[],
 ): LootEntry[] {
-  return items.map((item,) => ({
+  return Array.from(items, (item,) => ({
     name: item.name,
     description: "",
     type: "miscellaneous",
@@ -350,12 +350,14 @@ export function createLootTable(
     minLevel: item.minLevel ?? 1,
     goldValue: 0,
     metadata: {},
-  }));
+  }),);
 }
 
 /**
  * Merge multiple loot tables into one.
  */
 export function mergeLootTables(...tables: LootEntry[][]): LootEntry[] {
-  return tables.flat();
+  const out: LootEntry[] = [];
+  for (const sub of tables) { for (const x of sub) { out.push(x,); } }
+  return out;
 }
