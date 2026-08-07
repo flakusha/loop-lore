@@ -40,7 +40,7 @@ async function computeTrustModifier(
 ): Promise<number> {
   if (participantIds.length === 0) { return 0; }
 
-  const relationshipsService = new RelationshipsService(db,);
+  const relationshipsService = RelationshipsService(db,);
   let totalTrust = 0;
   let count = 0;
 
