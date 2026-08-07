@@ -37,7 +37,7 @@
           {{> filter-bar.html}}
         </div>
       </div>
-      <div
+<div
         id="world-list"
         data-testid="world-list"
         hx-get="/dynamic/worlds/list"
@@ -45,10 +45,7 @@
         hx-swap="innerHTML"
         hx-indicator="#worlds-indicator"
       >
-        <div class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">⏳</div>
-          <div class="title">{{{t("common.loading")}}}</div>
-        </div>
+        {{> loading-state.html}}
       </div>
       <div id="worlds-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-4)">
         <span class="spinner"></span>

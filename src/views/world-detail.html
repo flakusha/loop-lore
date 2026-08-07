@@ -35,10 +35,7 @@
         hx-trigger="load"
         hx-swap="innerHTML"
       >
-        <div class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">⏳</div>
-          <div class="title">{{{t("common.loading")}}}</div>
-        </div>
+        {{> loading-state.html}}
       </div>
     </div>
     <div id="modal-container"></div>

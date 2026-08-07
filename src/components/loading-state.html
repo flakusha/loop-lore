@@ -1,0 +1,20 @@
+<!--
+  Loading State Component
+  Reusable: spinner placeholder shown while an htmx lazy-load container fetches.
+  Alpine-managed via data attributes on the parent (the htmx container):
+    data-loading-testid="characters-loading"   (optional test id)
+    data-loading-title="chats.loading"          (i18n key; defaults to common.loading)
+    data-loading-style="grid-column: 1 / -1"    (optional inline style override)
+-->
+<div
+  class="empty-state"
+  :style="$el.closest('[data-loading-style]')?.dataset.loadingStyle || 'padding: var(--space-12)'"
+  :data-testid="$el.closest('[data-loading-testid]')?.dataset.loadingTestid || undefined"
+>
+  <div class="icon">⏳</div>
+  <div
+    class="title"
+    x-text="$el.closest('[data-loading-title]')?.dataset.loadingTitle ? t($el.closest('[data-loading-title]').dataset.loadingTitle) : t('common.loading')"
+  >
+  </div>
+</div>
