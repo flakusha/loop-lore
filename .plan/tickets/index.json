@@ -41,7 +41,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md"
+    "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md",
+    "status": "done"
   },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "epic": "",
@@ -3505,7 +3506,17 @@
     "title": "Browser console/page-error assertion",
     "type": "TASK"
   },
-1: @theirs
+  "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION": {
+    "hash": "bdea77f8",
+    "extid": "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION",
+    "type": "TASK",
+    "title": "Browser e2e coverage expansion — Playwright integration",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-testing-qa",
+    "tags": [],
+    "source": ".plan/tickets/TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.md"
+  },
   "TASK-BROWSER-TEST-ISOLATION": {
     "epic": "epic-testing-qa.md",
     "extid": "TASK-BROWSER-TEST-ISOLATION",
