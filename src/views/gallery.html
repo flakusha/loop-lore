@@ -39,18 +39,17 @@
         <span x-show="view === 'list'">⊞</span>
       </button>
     </div>
-    <div
+<div
       id="asset-grid"
       data-testid="asset-grid"
+      data-loading-testid="gallery-loading"
+      data-loading-style="grid-column: 1 / -1"
       hx-get="/dynamic/gallery/grid"
       hx-trigger="load"
       hx-swap="innerHTML"
       hx-indicator="#gallery-indicator"
     >
-      <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
-        <div class="icon">⏳</div>
-        <div class="title">{{{t("common.loading")}}}</div>
-      </div>
+      {{> loading-state.html}}
     </div>
     <div id="gallery-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-4)">
       <span class="spinner"></span>

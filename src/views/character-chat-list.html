@@ -36,14 +36,12 @@
         class="chat-list"
         data-character-id="{{characterSlug}}"
         data-testid="character-chat-list"
+        data-loading-title="chats.loading"
         hx-get="/dynamic/characters/{{characterSlug}}/chat-list"
         hx-trigger="load"
         hx-swap="innerHTML"
       >
-        <div class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">⏳</div>
-          <div class="title">{{{t("chats.loading")}}}</div>
-        </div>
+        {{> loading-state.html}}
       </div>
     </div>
   </main>

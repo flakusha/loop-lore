@@ -59,19 +59,17 @@
           <span x-show="view === 'list'">⊞</span>
         </button>
       </div>
-      <div
+<div
         id="character-grid"
         class="character-grid"
         data-testid="character-grid"
+        data-loading-testid="characters-loading"
         hx-get="/dynamic/characters/grid"
         hx-trigger="load"
         hx-swap="innerHTML"
         hx-indicator="#characters-indicator"
       >
-        <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-loading">
-          <div class="icon">⏳</div>
-          <div class="title">{{{t("common.loading")}}}</div>
-        </div>
+        {{> loading-state.html}}
       </div>
       <div
         id="characters-indicator"
