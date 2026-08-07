@@ -63,7 +63,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
   ContentEncoding: ["identity", "gzip", "zstd", "brotli",],
   // enums-config
   DbType: ["sqlite", "postgres",],
-  LogLevel: ["debug", "info", "warn", "error",],
+  LogLevel: ["trace", "debug", "info", "warn", "error", "fatal",],
   AgeGateMode: ["none", "self-declaration", "verification",],
 };
 

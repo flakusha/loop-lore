@@ -79,10 +79,13 @@ export function validateDomainConfig(domain: string, parsed: Record<string, unkn
     }
     case "logging": {
       const logging = parsed.logging as Record<string, unknown> | undefined;
-      if (logging?.level !== undefined && !["debug", "info", "warn", "error",].includes(logging.level as string,)) {
+      if (
+        logging?.level !== undefined &&
+        !["trace", "debug", "info", "warn", "error", "fatal",].includes(logging.level as string,)
+      ) {
         throw new Error(
           `Invalid logging.level in ${filePath}: "${logging
-            .level as unknown as string}". Must be debug/info/warn/error`,
+            .level as unknown as string}". Must be trace/debug/info/warn/error/fatal`,
         );
       }
       break;

@@ -81,6 +81,10 @@ class LightLogger implements Logger {
     }
   }
 
+  trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
+    this.log("trace", message, undefined, meta,);
+  }
+
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("debug", message, undefined, meta,);
   }
@@ -95,6 +99,10 @@ class LightLogger implements Logger {
 
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("error", message, error, meta,);
+  }
+
+  fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
+    this.log("fatal", message, error, meta,);
   }
 
   child(bindings: LoggerBindings,): Logger {

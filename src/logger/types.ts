@@ -6,16 +6,18 @@ import type { LogLevel, } from "../db/enums-config";
 
 /** Numeric level values — higher = more severe */
 export const LogLevelNumeric: Record<LogLevel, number> = {
+  trace: 5,
   debug: 10,
   info: 20,
   warn: 30,
   error: 40,
+  fatal: 50,
 } as const;
 
 // ── Log Entry ──────────────────────────────────────────────
 
 export interface LogEntry {
-  /** Numeric level: 10|20|30|40 */
+  /** Numeric level: 5|10|20|30|40|50 */
   level: number;
   /** Unix epoch seconds */
   timestamp: number;
@@ -40,10 +42,12 @@ export interface LogEntry {
 // ── Logger Interface ───────────────────────────────────────
 
 export interface Logger {
+  trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void;
+  fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void;
 
   /** Create child logger with inherited bindings */
   child(bindings: LoggerBindings,): Logger;
