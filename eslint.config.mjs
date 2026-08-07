@@ -178,7 +178,7 @@ const tsRules = {
   // eslint/typescript-eslint freshly resolved to 10.8.0/8.66.0 pulled in
   // `unicorn/prefer-simple-condition-first` emissions not seen on the older
   // 10.7.0/8.64.0 install. Surfaced as warn (repo convention: upgrade after
-  // fixes) — tracks TASK-eslint-1080-lint-debt. Not blocking.
+  // fixes). Tracks TASK-eslint-1080-lint-debt.
   "unicorn/prefer-simple-condition-first": "warn",
 
   // ── Import hygiene ─────────────────────────────────────────
@@ -197,7 +197,7 @@ const tsRules = {
   "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
   // ── Custom restricted syntax ────────────────────────────────
-  "no-restricted-syntax": ["warn", ...customRestrictedSyntax,],
+  "no-restricted-syntax": ["error", ...customRestrictedSyntax,],
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
   "@typescript-eslint/no-unsafe-assignment": "off",
@@ -227,8 +227,8 @@ const tsRules = {
   "unicorn/require-array-sort-compare": "warn",
   "unicorn/prefer-await": "warn",
   "@typescript-eslint/require-await": "warn",
-  "no-empty": "warn",
-  "@typescript-eslint/no-empty-function": "warn",
+  "no-empty": "error",
+  "@typescript-eslint/no-empty-function": "error",
   "@typescript-eslint/no-floating-promises": "off",
 
   // ── Banned pattern enforcement (banned-patterns.md) ─────────
@@ -344,7 +344,7 @@ export default tseslint.config(
     rules: { "unicorn/prefer-export-from": "off", },
   },
   {
-    files: ["src/nsfw/moderation-service.ts",],
+    files: ["src/nsfw/moderation-service/**/*.ts",],
     rules: {
       "@typescript-eslint/array-type": "off",
       "@typescript-eslint/no-unnecessary-type-assertion": "off",
@@ -409,9 +409,9 @@ export default tseslint.config(
       // Frontend DOM patterns
       "@typescript-eslint/prefer-regexp-exec": "off",
       "@typescript-eslint/no-unnecessary-type-conversion": "off",
-      // Enforce apiFetch over bare fetch in frontend (warn — upgrade after violations fixed)
+      // Enforce apiFetch over bare fetch in frontend (error — safe function usage)
       "no-restricted-globals": [
-        "warn",
+        "error",
         {
           name: "fetch",
           message:
@@ -581,7 +581,7 @@ export default tseslint.config(
     ],
     rules: {
       "no-restricted-syntax": [
-        "warn",
+        "error",
         // Allow JSON.stringify in assertNever (used for error messages only)
         ...customRestrictedSyntax.filter((rule,) =>
           rule.selector !== "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']"
