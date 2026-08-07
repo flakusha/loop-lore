@@ -17,7 +17,7 @@ import { dirname, } from "node:path";
 import { fileURLToPath, } from "node:url";
 import { createLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";
-import { ConfigSchema, } from "./schema-class";
+import { jsonSchema, } from "./schema-class";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
 const log = createLogger({ level: "info", },);
@@ -103,7 +103,7 @@ function ensureArrayItems(schema: JSONSchema,): JSONSchema {
 
 function main() {
   // Start from the base JSON Schema
-  const baseSchema = ConfigSchema.jsonSchema();
+  const baseSchema = jsonSchema();
 
   // Apply TOML optimizations
   let tomlSchema = ensureArrayItems(baseSchema,);

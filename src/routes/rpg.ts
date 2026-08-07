@@ -16,6 +16,9 @@
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema";
+import type { DB, } from "../db/schema.js";
+import { getLogger, type Logger, } from "../logger";
 import {
   type AdvantageMode,
   type DiceSides,
@@ -152,7 +155,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
                 modifier: body.modifier ?? 0,
                 advantageMode: "normal",
                 exploding: body.exploding ?? false,
-                rawRolls: result.dice.map((d,) => d.value),
+                rawRolls: Array.from(result.dice, (d,) => d.value,),
                 rawTotal: result.rawTotal,
                 total: result.total,
                 purpose: "dice_roll",
