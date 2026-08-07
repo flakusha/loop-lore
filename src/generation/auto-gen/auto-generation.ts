@@ -16,19 +16,19 @@ import {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
+import { getLogger, } from "../../logger";
+import { resolveSystemPrompt, } from "../../prompts";
+import { isTelemetryEnabled, record, } from "../../telemetry/service";
+import { jsonParseOr, uid, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
 import type { HookEventType, } from "../hooks";
 import { processStreamingChunk, } from "../index";
-import { getLogger, } from "../../logger";
-import { resolveSystemPrompt, } from "../../prompts";
 import type { ChunkEvent, } from "../providers/types";
-import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import { applyRegexTransforms, } from "../transforms";
-import { jsonParseOr, uid, } from "../../utils";
 import { classifyIntent, } from "./classify-intent";
 import { createDefaultDeps, type GenDeps, } from "./deps";
-import { renderStreamMessage, } from "./stream-render";
 import { triggerStoryModeGeneration, } from "./story-mode";
+import { renderStreamMessage, } from "./stream-render";
 
 export interface AutoGenOpts {
   database: Kysely<DB>;

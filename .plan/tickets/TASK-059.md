@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `50b7c49`
-

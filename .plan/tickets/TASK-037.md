@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `650079b`
-

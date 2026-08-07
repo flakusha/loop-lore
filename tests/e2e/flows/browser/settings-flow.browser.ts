@@ -46,7 +46,7 @@ describe("Settings flow E2E", () => {
         // PUT /api/users/me sets users.display_name for the solo user.
         const row = await ctx.db
           .selectFrom("users",)
-          .select(["display_name",])
+          .select(["display_name",],)
           .where("id", "=", SEED.solo.id,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();
@@ -71,13 +71,13 @@ describe("Settings flow E2E", () => {
 
         const row = await ctx.db
           .selectFrom("users",)
-          .select(["settings",])
+          .select(["settings",],)
           .where("id", "=", SEED.solo.id,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();
         expect(row!.settings,).toContain(theme,);
 
-        const lsTheme = await page.evaluate(() => localStorage.getItem("theme-preference",),);
+        const lsTheme = await page.evaluate(() => localStorage.getItem("theme-preference",));
         expect(lsTheme,).toBe(theme,);
       } finally {
         errors.assert();

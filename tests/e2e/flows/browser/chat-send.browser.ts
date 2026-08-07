@@ -11,8 +11,8 @@
  * instead of fixed sleeps.
  */
 
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { ensureActorKey, getSmk, } from "@/crypto";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { waitForAlpineState, } from "../../helpers/htmx-alpine";
 import { SEED, seedAll, } from "../../helpers/seed";
@@ -74,7 +74,7 @@ describe("Chat send round-trip (plaintext)", () => {
       // Persisted in DB as plaintext (no key_id).
       const row = await ctx.db
         .selectFrom("messages",)
-        .select(["content", "key_id", "chat_id",])
+        .select(["content", "key_id", "chat_id",],)
         .where("chat_id", "=", SEED.soloChat.id,)
         .where("content", "=", sent,)
         .executeTakeFirst();
@@ -91,7 +91,7 @@ describe("Chat send round-trip (plaintext)", () => {
       await openAndSelectChat(page,);
       const before = await ctx.db
         .selectFrom("messages",)
-        .select(ctx.db.fn.countAll().as("count"),)
+        .select(ctx.db.fn.countAll().as("count",),)
         .where("chat_id", "=", SEED.soloChat.id,)
         .executeTakeFirstOrThrow();
 
@@ -100,7 +100,7 @@ describe("Chat send round-trip (plaintext)", () => {
 
       const after = await ctx.db
         .selectFrom("messages",)
-        .select(ctx.db.fn.countAll().as("count"),)
+        .select(ctx.db.fn.countAll().as("count",),)
         .where("chat_id", "=", SEED.soloChat.id,)
         .executeTakeFirstOrThrow();
       expect(Number(after.count,),).toBe(Number(before.count,),);
@@ -134,7 +134,7 @@ describe("Chat encryption flow (SMK configured)", () => {
     await ensureActorKey({ database: ctx.db, actorId: SEED.solo.id, smk: smk!, },);
     await ctx.db
       .updateTable("chats",)
-      .set({ encryption_level: "standard", })
+      .set({ encryption_level: "standard", },)
       .where("id", "=", SEED.soloChat.id,)
       .execute();
   }, 45_000,);
@@ -177,7 +177,7 @@ describe("Chat encryption flow (SMK configured)", () => {
       // DB stores an encrypted payload, not the plaintext.
       const row = await ctx.db
         .selectFrom("messages",)
-        .select(["content", "key_id", "chat_id",])
+        .select(["content", "key_id", "chat_id",],)
         .where("chat_id", "=", SEED.soloChat.id,)
         .orderBy("created_at", "desc",)
         .executeTakeFirst();
@@ -185,7 +185,7 @@ describe("Chat encryption flow (SMK configured)", () => {
       expect(row!.content,).not.toContain(secret,);
       expect(row!.key_id,).not.toBeNull();
       // Payload shape: { enc, nonce, algo, comp, keyId } JSON.
-      expect(row!.content,).toMatch(/^\{"enc":/);
+      expect(row!.content,).toMatch(/^\{"enc":/,);
     } finally {
       await page.close();
     }

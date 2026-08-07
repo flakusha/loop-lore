@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `bbd1623`
-

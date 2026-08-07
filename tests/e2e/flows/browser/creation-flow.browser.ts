@@ -48,7 +48,7 @@ describe("Creation flows E2E", () => {
         // Persisted in DB (solo user context).
         const row = await ctx.db
           .selectFrom("actors",)
-          .select(["id", "display_name",])
+          .select(["id", "display_name",],)
           .where("display_name", "=", name,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();
@@ -81,7 +81,7 @@ describe("Creation flows E2E", () => {
         // Persisted in DB.
         const row = await ctx.db
           .selectFrom("worlds",)
-          .select(["id", "name",])
+          .select(["id", "name",],)
           .where("name", "=", name,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();
@@ -110,7 +110,7 @@ describe("Creation flows E2E", () => {
         await page.click("[data-testid='create-world-form'] button[type='submit']",);
         const worldRow = await ctx.db
           .selectFrom("worlds",)
-          .select(["id", "owner_id",])
+          .select(["id", "owner_id",],)
           .where("name", "=", worldName,)
           .executeTakeFirst();
         expect(worldRow,).not.toBeNull();
@@ -127,8 +127,8 @@ describe("Creation flows E2E", () => {
         // Reveal the add-location form (its toggle sets showAddForm = true).
         // The toggle is the header button with text "Add location".
         await page.evaluate(() => {
-          const toggle = [...document.querySelectorAll("button",)].find((b,) =>
-            b.textContent?.trim()?.toLowerCase().includes("add location",),
+          const toggle = [...document.querySelectorAll("button",),].find((b,) =>
+            b.textContent?.trim()?.toLowerCase().includes("add location",)
           );
           (toggle as HTMLElement | undefined)?.click();
         },);
@@ -138,15 +138,15 @@ describe("Creation flows E2E", () => {
         await page.fill("#loc-name", locName,);
         await page.waitForTimeout(200,);
         await page.evaluate(() => {
-          const addBtn = [...document.querySelectorAll(".add-location-form button",)].find((b,) =>
-            b.textContent?.trim()?.toLowerCase() === "add",
+          const addBtn = [...document.querySelectorAll(".add-location-form button",),].find((b,) =>
+            b.textContent?.trim()?.toLowerCase() === "add"
           );
           (addBtn as HTMLElement | undefined)?.click();
         },);
 
         const row = await ctx.db
           .selectFrom("locations",)
-          .select(["id", "name", "world_id",])
+          .select(["id", "name", "world_id",],)
           .where("name", "=", locName,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();

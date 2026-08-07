@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `94642c5`
-

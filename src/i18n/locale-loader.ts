@@ -9,7 +9,7 @@ import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { jsonParseOr, } from "../utils";
 import { flattenTranslations, } from "./translator";
-import type { Locale, TranslationMap,  FlatTranslationMap} from "./types";
+import type { FlatTranslationMap, Locale, TranslationMap, } from "./types";
 
 /** In-memory cache: locale → flattened translations */
 const localeCache = new Map<Locale, FlatTranslationMap>();

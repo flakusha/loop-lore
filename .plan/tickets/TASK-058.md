@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `318c966`
-

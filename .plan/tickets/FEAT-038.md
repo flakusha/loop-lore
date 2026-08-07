@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `e25c9ee`
-

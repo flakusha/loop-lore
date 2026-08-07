@@ -22,8 +22,8 @@ import { SyntheticDataStatus, SyntheticDataType, SyntheticTestMode, } from "../.
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, uid, } from "../../utils";
 import type { GameMasterService, } from "../game-master";
-import type { QualityEvaluator} from "../quality-evaluator";
-import { createQualityEvaluator } from "../quality-evaluator";
+import type { QualityEvaluator, } from "../quality-evaluator";
+import { createQualityEvaluator, } from "../quality-evaluator";
 import type { CaseResult, } from "../shared/story-utils";
 import { collectScoresAndVariance, countByStatus, skippedResult, varianceResult, } from "../shared/story-utils";
 import type { TurnManager, } from "../turn-manager";

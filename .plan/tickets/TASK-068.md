@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `76f72b8`
-
