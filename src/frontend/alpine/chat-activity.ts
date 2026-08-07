@@ -1,6 +1,8 @@
+import { ActivitySnapshot, } from "../../validation/schemas/responses";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "chat-activity", },);
 
@@ -16,12 +18,9 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
     this._activityEventSource = activitySource;
 
     activitySource.addEventListener("activity", (event: MessageEvent,) => {
-      const data = jsonParseOr<{ chats?: Record<string, { unseenCount: number; chatName: string }> }>(
-        event.data,
-        {},
-      );
+      const data = parseOr(ActivitySnapshot, jsonParseOr(event.data, null,), { chats: {}, },);
       try {
-        const chats: Record<string, { unseenCount: number; chatName: string }> = data.chats ?? {};
+        const chats: Record<string, { unseenCount: number; chatName: string }> = data.chats;
 
         const counts: Record<string, number> = {};
         for (const [chatId, entry,] of Object.entries(chats,)) {

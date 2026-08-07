@@ -1,27 +1,13 @@
+import { AdminTemplateListResponse, } from "../../validation/schemas/responses";
+import type { ProfileSummary as ProfileSummaryType, } from "../../validation/schemas/responses";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "admin-templates", },);
 
-interface ProfileDefaults {
-  cfgScale: number;
-  steps: number;
-  sampler: string;
-  scheduler?: string;
-  clipSkip?: number;
-}
-
-interface ProfileSummary {
-  id: string;
-  name: string;
-  families: string[];
-  promptFormat: string;
-  maxTokenHint: number;
-  defaults: ProfileDefaults;
-  isBuiltin: boolean;
-  templateCount: number;
-}
+type ProfileSummary = ProfileSummaryType;
 
 interface ProfileDetail extends ProfileSummary {
   templates: Record<string, Record<string, string>>;
@@ -90,11 +76,16 @@ export const adminTemplates = {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
-        const data = await res.json();
-        this.templateProfiles = data.profiles || [];
+        const data = parseOr(AdminTemplateListResponse, await res.json(), {
+          profiles: [],
+          defaultProfileId: "sdxl",
+          builtinCount: 0,
+          customCount: 0,
+        },);
+        this.templateProfiles = data.profiles;
         this.defaultProfileId = data.defaultProfileId || "sdxl";
-        this.builtinCount = data.builtinCount || 0;
-        this.customCount = data.customCount || 0;
+        this.builtinCount = data.builtinCount;
+        this.customCount = data.customCount;
       }
     } catch {
       log.warn("Network error loading templates",);

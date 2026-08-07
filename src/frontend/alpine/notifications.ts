@@ -6,7 +6,9 @@
 // SSE connection is repaired by the next poll, a missed poll is covered
 // by the next SSE event. Unseen counts drive sidebar/chat-list badges
 // and a toast when a message lands in a chat the user isn't viewing.
+import { ActivitySnapshot, } from "../../validation/schemas/responses";
 import { jsonParseOr, } from "./json";
+import { parseOr, } from "./validation";
 
 interface ActivityEntry {
   unseenCount: number;
@@ -82,12 +84,8 @@ export class NotificationsManager {
     try {
       this.es = new EventSource("/api/activity/stream",);
       this.es.addEventListener("activity", (ev,) => {
-        const data = jsonParseOr<{ chats: Record<string, ActivityEntry> }>(ev.data, {
-          chats: {},
-        },);
-        if (data) {
-          this.applySnapshot(data.chats,);
-        }
+        const data = parseOr(ActivitySnapshot, jsonParseOr(ev.data, null,), { chats: {}, },);
+        this.applySnapshot(data.chats,);
       },);
       this.es.addEventListener("error", () => {
         // Browser auto-reconnects; polling covers the gap.
@@ -101,7 +99,7 @@ export class NotificationsManager {
     try {
       const res = await apiFetch("/api/chats/activity",);
       if (!res.ok) { return; }
-      const data = (await res.json()) as { chats: Record<string, ActivityEntry> };
+      const data = parseOr(ActivitySnapshot, await res.json(), { chats: {}, },);
       this.applySnapshot(data.chats,);
     } catch {
       // transient — next tick retries
