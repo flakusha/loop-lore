@@ -25,10 +25,7 @@ import {
   rollDice,
   rollFromNotation,
 } from "../rpg/dice.js";
-import { logDiceRoll, } from "../rpg/service.js";
-import type { Config, } from "../config/schema.js";
-import type { DB, } from "../db/schema.js";
-import { getLogger, type Logger, } from "../logger";
+import { logDiceRoll, } from "../rpg/service";
 import {
   type AbilityName,
   computeModifiers,
@@ -36,8 +33,8 @@ import {
   pointBuy,
   rollStats4d6,
   standardArray,
-  validateStatBlock,
   type StatBlock,
+  validateStatBlock,
 } from "../rpg/stats.js";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils.js";
@@ -246,7 +243,6 @@ export function rpgRoutes(opts: HandlerOpts,) {
           },
         },
       )
-
       // ── Stats: Calculate ──────────────────────────────────
 
       .post(
@@ -328,7 +324,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
               case "4d6_drop_lowest": {
                 const rolls = rollStats4d6();
                 const stats = defaultStatBlock();
-                const abilities = ["str", "dex", "con", "int", "wis", "cha"] as const;
+                const abilities = ["str", "dex", "con", "int", "wis", "cha",] as const;
                 for (let i = 0; i < 6; i++) {
                   stats[abilities[i]!] = rolls[i]!;
                 }
@@ -337,8 +333,9 @@ export function rpgRoutes(opts: HandlerOpts,) {
               case "standard_array": {
                 return jsonResponse({ method: "standard_array", array: standardArray(), },);
               }
-              default:
+              default: {
                 return jsonError("Unknown generation method", 400,);
+              }
             }
           } catch (error) {
             log().error("Failed to generate stats", error instanceof Error ? error : undefined,);
