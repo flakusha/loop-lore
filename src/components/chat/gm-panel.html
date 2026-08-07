@@ -1,14 +1,14 @@
 <!-- GM Panel — Shadow Notes & Whitenotes sidebar -->
 <div
-  x-show="showGmPanel"
+  x-show="$store.ui.showGmPanel"
   x-cloak
   class="gm-panel"
-  @keydown.escape.window="showGmPanel = false"
+  @keydown.escape.window="$store.ui.showGmPanel = false"
   data-testid="gm-panel"
 >
   <div class="gm-panel-header">
     <h3>GM Panel</h3>
-    <button class="btn-icon" @click="showGmPanel = false" aria-label="Close GM Panel">&times;</button>
+    <button class="btn-icon" @click="$store.ui.showGmPanel = false" aria-label="Close GM Panel">&times;</button>
   </div>
 
   <!-- GM Panel Content (loaded via htmx or Alpine sub-component) -->

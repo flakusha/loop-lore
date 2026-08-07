@@ -22,10 +22,10 @@
     <div style="margin-bottom: var(--space-3)">
       <div class="form-label">Current</div>
       <div x-show="_background" style="display: flex; align-items: center; gap: var(--space-2)">
-        <span style="font-weight: 600" x-text="_background.name"></span>
+        <span style="font-weight: 600" x-text="_background?.name ?? ''"></span>
         <span
           style="font-size: 11px; color: var(--text-secondary)"
-          x-show="_background.location_id"
+          x-show="_background?.location_id"
           x-text="'(location-scoped)'"
         >
         </span>
