@@ -149,7 +149,7 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
 - [ ] Convert class-based services (`characters/services/*`) to interface-merged factory + `thisL`
 - [ ] Apply derived-type single-source-of-truth where public types are hand-rolled in parallel
 - [x] Close `size:strict` debt: 0 files remain >250L → promote `check-file-size.ts` to blocking CI gate
-  (only `src/server/start.ts` remains as documented exception, kept intentionally — untested bootstrap)
+      (only `src/server/start.ts` remains as documented exception, kept intentionally — untested bootstrap)
 
 ## Progress
 
@@ -169,8 +169,8 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
     generation, notifications, server-external-manager, turn-manager, tui/chat,
     image-edit). Pattern A (class kept + `db`/state-threaded dispatchers) where consumers
     use `new`; Pattern B (interface-merged factory + thisL) for zero-`new` cases. 116 → 78.
-  - Wave 3 (dev `0f339b55`): 30 route modules (auth, export-*, character-*, nsfw, story-*,
-    blog, quests, admin-templates, rpg, chat-*, entity-routes, vn-generate, users,
+  - Wave 3 (dev `0f339b55`): 30 route modules (auth, export-_, character-_, nsfw, story-_,
+    blog, quests, admin-templates, rpg, chat-_, entity-routes, vn-generate, users,
     gm-notes, notifications, etc.) → facade + sub-plugin dirs. 78 → 48.
   - Waves 4+5 (dev `6c372968`): 46 flat fn banks + alpine + DATA/MIXED (frontend/alpine,
     vn, generation, chat, config, db enums-*, middleware, utils, crypto, memory, battle,
@@ -210,9 +210,54 @@ Offenders classified into 119 LOGIC / 12 DATA / 4 MIXED, three dominant shapes
 ## Acceptance Criteria
 
 - [x] `bun run check` passes all gates; `size:strict` reports 0 files over 250L —
-  **except the single documented exception `src/server/start.ts` (untested bootstrap, kept
-  as follow-on debt)**. Core size-strict debt closed: 137 → 1.
+      **except the single documented exception `src/server/start.ts` (untested bootstrap, kept
+      as follow-on debt)**. Core size-strict debt closed: 137 → 1.
 - [x] No behavior change (pure refactor) — full unit (3397) + e2e suites pass
 - [x] Every split preserves the external import surface via a barrel re-export
 - [x] `bun run dead:code` still exits 0 (no orphaned exports left behind)
 - [x] Class converts preserve behavior; type-source single-truth where interfaces were parallel
+
+## Worktree Contracts (from .plan/contract-*.md)
+
+### Pattern A — class/stateful module → interface-merged factory + thisL dispatchers
+
+For classes like `AvatarService`, `TraitsService`, `RelationshipsService`, `EmotionAvatarService`, `PromptAssembler`:
+
+- Create a directory `X/` (same name as the file) replacing `X.ts`.
+- `X/index.ts`: empty interface merge + factory function returning `self`.
+- `X/types.ts`: option types, return types, service/context interface.
+- `X/<method>.ts`: one dispatcher file per method.
+- Update callers: `new X(db)` → `X(db)`.
+
+### Pattern B — flat function bank / route module → barrel + domain subdir
+
+For `chat/service.ts`, `routes/*.ts`, `generation/auto-gen.ts`, etc.:
+
+- Move to `subdir/` with `index.ts` barrel re-exporting the same public names.
+- Group functions by domain into sibling files.
+- Barrel's re-export list must match previous exports exactly (knip `dead:code` exits 0).
+
+### Round-3 Deep-Split Targets
+
+| File | Current Size | Split Strategy |
+|------|-------------|----------------|
+| `src/generation/auto-gen/auto-generation.ts` | 588L | Extract pipeline steps into sibling files |
+| `src/chat/service/chats.ts` | 352L | `crud.ts` + `batch.ts` |
+| `src/chat/service/messages.ts` | 335L | `read.ts` + `write.ts` |
+| `src/chat/service/transitions.ts` | 369L | Extract carry blocks into helper files |
+
+### Route-Module Split
+
+`routes/views.ts` (1524L) → `routes/views/` directory with:
+- `index.ts` barrel re-exporting `viewRoutes`
+- Domain files: `layout.ts`, `partials.ts`, `characters.ts`, `worlds.ts`, `nsfw-audit.ts`, `search.ts`, `chats.ts`
+- Shared constants in `constants.ts` / `shared.ts`
+
+### Golden Rules
+
+1. **Pure refactor, zero behavior change.** Don't alter DB queries, error messages, HTTP status codes, or exported signatures.
+2. **Preserve external import surface.** Barrel re-exports must match previous exports exactly.
+3. **Small files.** Each split file <250L (200L preferred).
+4. **Run checks in worktree.** `bun run typecheck`, `bun test`, `bunx eslint`, `bun run dead:code`.
+5. **Do NOT modify tests** to force green.
+6. Do NOT touch `node_modules`, `bun.lock`, `package.json`, `bunfig.toml`.
