@@ -21,11 +21,12 @@ import type { Kysely, } from "kysely";
 import { SyntheticDataStatus, SyntheticDataType, SyntheticTestMode, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, uid, } from "../../utils";
-import { GameMasterService, } from "../game-master";
-import { createQualityEvaluator, QualityEvaluator, } from "../quality-evaluator";
+import type { GameMasterService, } from "../game-master";
+import type { QualityEvaluator} from "../quality-evaluator";
+import { createQualityEvaluator } from "../quality-evaluator";
 import type { CaseResult, } from "../shared/story-utils";
 import { collectScoresAndVariance, countByStatus, skippedResult, varianceResult, } from "../shared/story-utils";
-import { TurnManager, } from "../turn-manager";
+import type { TurnManager, } from "../turn-manager";
 import { SyntheticGenerator, } from "./generator";
 import type { SyntheticCase, } from "./types";
 

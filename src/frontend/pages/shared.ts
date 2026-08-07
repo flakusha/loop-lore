@@ -18,7 +18,7 @@ export async function fetchPartial(path: string,): Promise<string | null> {
 export function escapeHtml(str: string,): string {
   const div = document.createElement("div",);
   div.textContent = str;
-  return div.innerHTML;
+  return div.getHTML();
 }
 
 export function formatSize(bytes: number,): string {

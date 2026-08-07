@@ -19,8 +19,7 @@ import type {
   ImageEditProvider,
   ImageEditRequest,
   ImageEditResult,
-} from "../types";
-import type { WorkflowTemplate, } from "../types";
+ WorkflowTemplate} from "../types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function log() {

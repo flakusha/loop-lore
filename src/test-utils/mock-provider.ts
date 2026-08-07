@@ -4,7 +4,6 @@
  * Implements LLMProvider interface. Configurable failure/stream-error flags.
  * Used by:
  *   - src/generation/generate-route.test.ts (unit)
- *   - tests/e2e/helpers/mocks/llm.ts (e2e, re-exports as MockLLMProvider)
  *
  * Register via registerProvider("name", mock) before use.
  */
