@@ -147,7 +147,7 @@ export class PromptAssembler {
    */
   private async resolveCurrentEmotion(params: PromptParams, chat: AssembleChat,): Promise<string | undefined> {
     try {
-      const mood = await new MoodService(this.db,).getMood(params.actorId, chat.world_id ?? undefined,);
+      const mood = await MoodService(this.db,).getMood(params.actorId, chat.world_id ?? undefined,);
       return mood?.currentMood || undefined;
     } catch (error) {
       // Mood lookup is best-effort — never fail or slow down generation when

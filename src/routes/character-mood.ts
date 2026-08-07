@@ -21,7 +21,7 @@ import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from
 
 export function characterMoodRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
-  const moodService = new MoodService(database,);
+  const moodService = MoodService(database,);
 
   return new Elysia({ name: "character-mood", },)
     .get("/api/actors/:actorId/mood", async (ctx: any,) => {

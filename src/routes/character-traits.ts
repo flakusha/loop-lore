@@ -21,11 +21,11 @@ import {
   WorldTraitCreateBody,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
 export function characterTraitsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
-  const traitsService = new TraitsService(database,);
+  const traitsService = TraitsService(database,);
 
   return new Elysia({ name: "character-traits", },)
     // ── Permanent Traits (Layer 0) ──────────────────────────
