@@ -97,14 +97,13 @@ async function classifyWithAuxLlm(
   userId?: string,
 ): Promise<Omit<TransitionClassification, "source"> | null> {
   // Build minimal context: system + recent messages + current message
-  const messages = [
+  const messages: { role: "system" | "user"; content: string }[] = [
     { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "transition",), },
-    ...recentMessages.map((m,) => ({
-      role: "user" as const,
-      content: m.slice(0, 200,),
-    })),
-    { role: "user" as const, content, },
   ];
+  for (const m of recentMessages) {
+    messages.push({ role: "user" as const, content: m.slice(0, 200,), },);
+  }
+  messages.push({ role: "user" as const, content, },);
 
   // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
   const response = await callAux("transition", config, db, messages, {

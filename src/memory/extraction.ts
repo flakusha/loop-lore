@@ -29,10 +29,10 @@ export async function extractMemories(
 ): Promise<ExtractedMemory[]> {
   const { actorId, chatId, aiContent, userContent, config, userId, } = opts;
 
-  const conversationContext = [
-    userContent ? `User: ${userContent}` : "",
-    `Assistant: ${aiContent}`,
-  ].filter(Boolean,).join("\n",);
+  const contextParts: string[] = [];
+  if (userContent) { contextParts.push(`User: ${userContent}`,); }
+  contextParts.push(`Assistant: ${aiContent}`,);
+  const conversationContext = contextParts.join("\n",);
 
   const prompt = `${resolveSystemPrompt(config.templates.llm, "memory",)}\n\nConversation:\n${conversationContext}`;
   const messages: GenerationMessage[] = [{ role: "user", content: prompt, },];
@@ -56,7 +56,11 @@ export async function extractMemories(
       return [];
     }
 
-    return parsed.filter((m,) => m.confidence >= 0.5 && m.content.length > 10);
+    const result: ExtractedMemory[] = [];
+    for (const m of parsed) {
+      if (m.confidence >= 0.5 && m.content.length > 10) { result.push(m,); }
+    }
+    return result;
   } catch (error) {
     getLog().warn("Extraction failed", { error: (error as Error).message, actorId, chatId, },);
     return [];

@@ -118,15 +118,15 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           pinned?: boolean;
         }>;
       };
-      characterMemories = (data.items ?? []).map((m,) => ({
+      characterMemories = Array.from(data.items ?? [], (m,) => ({
         id: m.id,
         content: m.content,
         type: m.memory_type,
         importance: m.importance,
         pinned: !!m.pinned,
         tokens: estimateTokens(m.content,),
-      }));
-      selectedMemoryIds = new Set(characterMemories.map((m,) => m.id),);
+      }),);
+      selectedMemoryIds = new Set(Array.from(characterMemories, (m,) => m.id,),);
       renderMemoryList();
     } catch {
       characterMemories = [];
@@ -136,9 +136,10 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   function renderMemoryList() {
     if (!memoryCheckboxList || !memoryCountLabel) { return; }
 
-    const selectedTokens = characterMemories
-      .filter((m,) => selectedMemoryIds.has(m.id,))
-      .reduce((sum, m,) => sum + m.tokens, 0,);
+    let selectedTokens = 0;
+    for (const m of characterMemories) {
+      if (selectedMemoryIds.has(m.id,)) { selectedTokens += m.tokens; }
+    }
 
     memoryCountLabel.textContent = `${characterMemories.length} memories`;
     if (memoryTokenCount) { memoryTokenCount.textContent = String(selectedTokens,); }
@@ -146,11 +147,12 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       memoryTokenEstimate.style.display = characterMemories.length > 0 ? "block" : "none";
     }
 
-    memoryCheckboxList.innerHTML = characterMemories
-      .map((m,) => {
-        const checked = selectedMemoryIds.has(m.id,) ? "checked" : "";
-        const preview = m.content.length > 80 ? `${m.content.slice(0, 80,)}...` : m.content;
-        return `<label style="display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)">
+    const checkboxLabels: string[] = [];
+    for (const m of characterMemories) {
+      const checked = selectedMemoryIds.has(m.id,) ? "checked" : "";
+      const preview = m.content.length > 80 ? `${m.content.slice(0, 80,)}...` : m.content;
+      checkboxLabels.push(
+        `<label style="display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)">
           <input type="checkbox" value="${m.id}" ${checked} onchange="window._toggleMemorySelect('${m.id}', this.checked)" style="margin-top: 2px" />
           <div>
             <div style="color: var(--text-primary)">${escapeHtml(preview,)}</div>
@@ -158,9 +160,10 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           m.pinned ? " · 📌" : ""
         }</div>
           </div>
-        </label>`;
-      },)
-      .join("",);
+        </label>`,
+      );
+    }
+    memoryCheckboxList.innerHTML = checkboxLabels.join("",);
   }
 
   (globalThis as any)._toggleMemorySelect = function(id: string, checked: boolean,) {
@@ -191,7 +194,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
         selectedMemoryIds.clear();
         memorySelectAllBtn.textContent = "Select All";
       } else {
-        selectedMemoryIds = new Set(characterMemories.map((m,) => m.id),);
+        selectedMemoryIds = new Set(Array.from(characterMemories, (m,) => m.id,),);
         memorySelectAllBtn.textContent = "Deselect All";
       }
       renderMemoryList();
@@ -213,19 +216,23 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   function renderSelected() {
     if (!selectedEl) { return; }
-    selectedEl.innerHTML = selected
-      .map(
-        (a: any,) =>
-          `<span style="display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px">
+    const selectedItems = Array.from(
+      selected,
+      (a: any,) =>
+        `<span style="display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px">
         ${escapeHtml(a.display_name || a.name || "Unknown",)}
         <button type="button" class="btn-icon" style="font-size:14px;width:18px;height:18px" data-id="${a.id}" onclick="removeParticipant('${a.id}')">&times;</button>
       </span>`,
-      )
-      .join("",);
+    );
+    selectedEl.innerHTML = selectedItems.join("",);
   }
 
   globalThis.removeParticipant = function(id: string,) {
-    selected = selected.filter((a: any,) => a.id !== id);
+    const next: any[] = [];
+    for (const a of selected) {
+      if (a.id !== id) { next.push(a,); }
+    }
+    selected = next;
     renderSelected();
     updateMemoryCarryVisibility();
     if (resultsEl) { resultsEl.style.display = "none"; }
@@ -258,13 +265,16 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   function renderResults(filtered: any[],) {
     if (!resultsEl) { return; }
-    resultsEl.innerHTML = filtered.length === 0
-      ? '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>'
-      : filtered
-        .map((a: any,) => {
-          const disabled = isGroup() && selected.find((s: any,) => s.id === a.id);
-          const onclickAttr = disabled ? "" : `onclick="selectActorFromList('${a.id}')"`;
-          return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${
+    if (filtered.length === 0) {
+      resultsEl.innerHTML =
+        '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>';
+    } else {
+      const resultItems: string[] = [];
+      for (const a of filtered) {
+        const disabled = isGroup() && selected.find((s: any,) => s.id === a.id);
+        const onclickAttr = disabled ? "" : `onclick="selectActorFromList('${a.id}')"`;
+        resultItems.push(
+          `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${
             disabled ? "opacity:0.4;cursor:default" : ""
           }" ${onclickAttr} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
           <span style="font-size:16px">${a.avatar_asset_id ? "" : "👤"}</span>
@@ -275,10 +285,11 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           }</div>
           </div>
           ${disabled ? '<span style="margin-left:auto;font-size:12px;color:var(--text-secondary)">added</span>' : ""}
-        </div>`;
-        },)
-        .join("",);
-    resultsEl.style.display = "block";
+        </div>`,
+        );
+      }
+      resultsEl.innerHTML = resultItems.join("",);
+    }
   }
 
   searchInput.addEventListener("input", function() {
@@ -330,7 +341,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           name,
           type: chatType.value,
           mode: $<HTMLSelectElement>("#chat-mode",)?.value,
-          participantIds: selected.map((a: any,) => a.id),
+          participantIds: Array.from(selected, (a: any,) => a.id,),
           personaId,
           impersonateActorId: impersonateId,
           memoryCarry: memoryCarryMode,

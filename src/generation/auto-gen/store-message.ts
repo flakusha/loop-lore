@@ -65,7 +65,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
       transformed = true;
       storedText = transformResult.text;
       log.debug("regex transforms applied", {
-        transforms: transformResult.applied.map((t,) => ({ name: t.name, matches: t.matches, })),
+        transforms: Array.from(transformResult.applied, (t,) => ({ name: t.name, matches: t.matches, }),),
       },);
     }
   }

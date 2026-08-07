@@ -15,20 +15,18 @@ export function parseAcceptProtocols(accept: string | null,): TransportProtocol[
     webtransport: TransportProtocol.WebTransport,
   };
 
-  return accept
-    .split(",", 100,)
-    .map((part,) => {
-      const [proto, qStr,] = part.trim().split(";", 2,);
-      const q = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
-      const key = proto!.trim();
-      if (!Object.hasOwn(map, key,)) {
-        return null;
-      }
-      return { protocol: map[key], q, };
-    },)
-    .filter((entry,): entry is { protocol: TransportProtocol; q: number } => entry != null)
-    .toSorted((a, b,) => b.q - a.q)
-    .map((entry,) => entry.protocol);
+  const parsed: { protocol: TransportProtocol; q: number }[] = [];
+  for (const part of accept.split(",", 100,)) {
+    const [proto, qStr,] = part.trim().split(";", 2,);
+    const q = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const key = proto!.trim();
+    if (!Object.hasOwn(map, key,)) {
+      continue;
+    }
+    parsed.push({ protocol: map[key]!, q, },);
+  }
+  const sorted = parsed.toSorted((a, b,) => b.q - a.q);
+  return Array.from(sorted, (entry,) => entry.protocol,);
 }
 
 /**
@@ -43,20 +41,18 @@ export function parseAcceptEncoding(acceptEncoding: string | null,): Compression
     identity: CompressionAlgorithm.None,
   };
 
-  return acceptEncoding
-    .split(",", 100,)
-    .map((part,) => {
-      const [algo, qStr,] = part.trim().split(";", 2,);
-      const q = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
-      const key = algo!.trim();
-      if (!Object.hasOwn(map, key,)) {
-        return null;
-      }
-      return { algorithm: map[key], q, };
-    },)
-    .filter((entry,): entry is { algorithm: CompressionAlgorithm; q: number } => entry != null)
-    .toSorted((a, b,) => b.q - a.q)
-    .map((entry,) => entry.algorithm);
+  const parsed: { algorithm: CompressionAlgorithm; q: number }[] = [];
+  for (const part of acceptEncoding.split(",", 100,)) {
+    const [algo, qStr,] = part.trim().split(";", 2,);
+    const q = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const key = algo!.trim();
+    if (!Object.hasOwn(map, key,)) {
+      continue;
+    }
+    parsed.push({ algorithm: map[key]!, q, },);
+  }
+  const sorted = parsed.toSorted((a, b,) => b.q - a.q);
+  return Array.from(sorted, (entry,) => entry.algorithm,);
 }
 
 /**
@@ -64,5 +60,5 @@ export function parseAcceptEncoding(acceptEncoding: string | null,): Compression
  */
 export function parseExtensions(header: string | null,): string[] {
   if (!header) { return []; }
-  return header.split(",",).map((ext,) => ext.trim().split(";", 1,)[0]!.trim());
+  return Array.from(header.split(",",), (ext,) => ext.trim().split(";", 1,)[0]!.trim(),);
 }

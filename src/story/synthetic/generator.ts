@@ -99,7 +99,7 @@ export class SyntheticGenerator {
       .executeTakeFirst();
     if (!chat) { return null; }
 
-    const [messages, quests, questProgress, worldStates,] = await Promise.all([
+    const [messagesResult, questsResult, questProgressResult, worldStatesResult,] = await Promise.allSettled([
       this.db
         .selectFrom("messages",)
         .select(["actor_id", "role", "content",],)
@@ -125,30 +125,51 @@ export class SyntheticGenerator {
         .limit(20,)
         .execute(),
     ],);
+    // Preserve Promise.all abort semantics: rethrow on any rejected query.
+    const messages = messagesResult.status === "fulfilled"
+      ? messagesResult.value
+      : (() => {
+        throw messagesResult.reason;
+      })();
+    const quests = questsResult.status === "fulfilled"
+      ? questsResult.value
+      : (() => {
+        throw questsResult.reason;
+      })();
+    const questProgress = questProgressResult.status === "fulfilled"
+      ? questProgressResult.value
+      : (() => {
+        throw questProgressResult.reason;
+      })();
+    const worldStates = worldStatesResult.status === "fulfilled"
+      ? worldStatesResult.value
+      : (() => {
+        throw worldStatesResult.reason;
+      })();
 
     return {
       chatId,
       worldId: chat.world_id ?? null,
-      messages: messages.map((m,) => ({
+      messages: Array.from(messages, (m,) => ({
         actorId: m.actor_id,
         role: m.role,
         content: m.content,
-      })),
-      quests: quests.map((q,) => ({
+      }),),
+      quests: Array.from(quests, (q,) => ({
         id: q.id,
         type: q.type,
         status: q.status,
         config: jsonParseOr(q.config, {},),
-      })),
-      questProgress: questProgress.map((p,) => ({
+      }),),
+      questProgress: Array.from(questProgress, (p,) => ({
         questId: p.quest_id,
         progress: p.progress,
         status: p.status,
-      })),
-      worldStates: worldStates.map((w,) => ({
+      }),),
+      worldStates: Array.from(worldStates, (w,) => ({
         id: w.id,
         snapshot: jsonParseOr(w.snapshot, {},),
-      })),
+      }),),
     };
   }
 
@@ -182,33 +203,33 @@ export class SyntheticGenerator {
 
   private buildTurnSequence(source: SyntheticSource,): SyntheticCase[] {
     const seq = source.messages.slice(0, this.maxScenarios,);
-    return seq.map((m, i,) => ({
+    return Array.from(seq, (m, i,) => ({
       id: this.idGenerator(),
       type: SyntheticDataType.TurnSequence,
       description: `Replay turn ${i + 1} from actor ${m.actorId}`,
       input: { actorId: m.actorId, role: m.role, priorContent: m.content.slice(0, 200,), },
       expected: { nextActorId: seq[i + 1]?.actorId ?? null, },
-    }));
+    }),);
   }
 
   private buildQualityEvaluation(source: SyntheticSource,): SyntheticCase[] {
-    return source.messages.slice(0, this.maxScenarios,).map((m,) => ({
+    return Array.from(source.messages.slice(0, this.maxScenarios,), (m,) => ({
       id: this.idGenerator(),
       type: SyntheticDataType.QualityEvaluation,
       description: `Score narrative quality for actor ${m.actorId} message`,
       input: { content: m.content.slice(0, 200,), },
       expected: { passed: true, minScore: 0.6, },
-    }));
+    }),);
   }
 
   private buildQuestProgression(source: SyntheticSource,): SyntheticCase[] {
-    return source.questProgress.slice(0, this.maxScenarios,).map((p,) => ({
+    return Array.from(source.questProgress.slice(0, this.maxScenarios,), (p,) => ({
       id: this.idGenerator(),
       type: SyntheticDataType.QuestProgression,
       description: `Advance quest ${p.questId} from progress ${p.progress}`,
       input: { questId: p.questId, currentProgress: p.progress, },
       expected: { status: p.status, advanced: p.progress < 100, },
-    }));
+    }),);
   }
 
   private buildWorldStateTransition(source: SyntheticSource,): SyntheticCase[] {
@@ -230,25 +251,35 @@ export class SyntheticGenerator {
   }
 
   private buildRegenerationCase(source: SyntheticSource,): SyntheticCase[] {
-    const failed = source.messages.filter((m,) => m.role === "system").slice(0, this.maxScenarios,);
-    return failed.map((m,) => ({
-      id: this.idGenerator(),
-      type: SyntheticDataType.RegenerationCase,
-      description: `Regenerate low-quality turn for actor ${m.actorId}`,
-      input: { actorId: m.actorId, original: m.content.slice(0, 200,), },
-      expected: { regenerated: true, improvedScore: 0.7, },
-    }));
+    const failed: SyntheticCase[] = [];
+    for (const m of source.messages) {
+      if (m.role === "system" && failed.length < this.maxScenarios) {
+        failed.push({
+          id: this.idGenerator(),
+          type: SyntheticDataType.RegenerationCase,
+          description: `Regenerate low-quality turn for actor ${m.actorId}`,
+          input: { actorId: m.actorId, original: m.content.slice(0, 200,), },
+          expected: { regenerated: true, improvedScore: 0.7, },
+        },);
+      }
+    }
+    return failed;
   }
 
   private buildGmEscalation(source: SyntheticSource,): SyntheticCase[] {
-    const escalatable = source.quests.filter((q,) => q.status === "active").slice(0, this.maxScenarios,);
-    return escalatable.map((q,) => ({
-      id: this.idGenerator(),
-      type: SyntheticDataType.GmEscalation,
-      description: `GM escalation for stalled quest ${q.id}`,
-      input: { questId: q.id, config: q.config, },
-      expected: { escalated: true, decision: "inject_event", },
-    }));
+    const escalatable: SyntheticCase[] = [];
+    for (const q of source.quests) {
+      if (q.status === "active" && escalatable.length < this.maxScenarios) {
+        escalatable.push({
+          id: this.idGenerator(),
+          type: SyntheticDataType.GmEscalation,
+          description: `GM escalation for stalled quest ${q.id}`,
+          input: { questId: q.id, config: q.config, },
+          expected: { escalated: true, decision: "inject_event", },
+        },);
+      }
+    }
+    return escalatable;
   }
 
   // ─── Persistence ──────────────────────────────────────────────

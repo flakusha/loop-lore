@@ -47,7 +47,7 @@ export async function getChatContext(
     .where("chat_participants.chat_id", "=", chatId,)
     .execute();
 
-  const activeParticipants = participants.map((p,) => p.actor_id);
+  const activeParticipants = Array.from(participants, (p,) => p.actor_id,);
 
   const messages = await database
     .selectFrom("messages",)
@@ -58,13 +58,13 @@ export async function getChatContext(
     .limit(100,)
     .execute();
 
-  const messageRefs = messages.reverse().map((m,) => ({
+  const messageRefs = Array.from(messages.reverse(), (m,) => ({
     messageId: m.id,
     role: m.role,
     content: m.content ?? "",
     tokenCount: m.token_count_total ?? estimateTokens(m.content ?? "",),
     createdAt: m.created_at,
-  }));
+  }),);
 
   return computeContextWindow(messageRefs, maxTokens, {
     mode,

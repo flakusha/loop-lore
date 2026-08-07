@@ -59,9 +59,9 @@ export class QualityEvaluator {
     for (const dim of DIMENSIONS) {
       scores[dim] = this.scorers[dim](ctx,);
     }
-    const overall = Math.round(
-      DIMENSIONS.reduce((sum, dim,) => sum + scores[dim] * this.config.weights[dim], 0,),
-    );
+    let sum = 0;
+    for (const dim of DIMENSIONS) { sum += scores[dim] * this.config.weights[dim]; }
+    const overall = Math.round(sum,);
     return { ...scores, overall, };
   }
 

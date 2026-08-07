@@ -112,7 +112,10 @@ export function participantRoutes(opts: HandlerOpts,) {
               chatId: id,
               invitedUserId: body.actorId,
               inviterId: userId,
-            },).catch(() => {},);
+            },)
+              // Notification failure is non-fatal — swallow.
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              .catch(() => {},);
           } catch {
             /* skip duplicate */
           }

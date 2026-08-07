@@ -73,9 +73,9 @@ describe("parse", () => {
     try {
       parse(BookSchema, { id: 1, title: "T", },);
       expect.unreachable();
-    } catch (err) {
-      expect(err,).toBeInstanceOf(TypeBoxParseError,);
-      const e = err as TypeBoxParseError;
+    } catch (error) {
+      expect(error,).toBeInstanceOf(TypeBoxParseError,);
+      const e = error as TypeBoxParseError;
       expect(e.errors.length,).toBeGreaterThan(0,);
       expect(e.message,).toContain("id",);
     }

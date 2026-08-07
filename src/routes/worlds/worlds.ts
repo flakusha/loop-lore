@@ -141,7 +141,7 @@ export async function handleDeleteWorld(
     .select("id",)
     .where("world_id", "=", worldId,)
     .execute();
-  const locIds = locationIds.map((l,) => l.id);
+  const locIds = Array.from(locationIds, (l,) => l.id,);
   if (locIds.length > 0) {
     await database.deleteFrom("location_states",).where("location_id", "in", locIds,).execute();
   }
@@ -151,7 +151,7 @@ export async function handleDeleteWorld(
   await database.deleteFrom("world_lore_entries",).where("world_id", "=", worldId,).execute();
 
   const questIds = await database.selectFrom("quests",).select("id",).where("world_id", "=", worldId,).execute();
-  const qIds = questIds.map((q,) => q.id);
+  const qIds = Array.from(questIds, (q,) => q.id,);
   if (qIds.length > 0) { await database.deleteFrom("quest_progress",).where("quest_id", "in", qIds,).execute(); }
 
   await database.deleteFrom("quests",).where("world_id", "=", worldId,).execute();

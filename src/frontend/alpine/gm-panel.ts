@@ -48,7 +48,7 @@ export interface Whiteneote {
     async init() {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
-      await Promise.all([
+      await Promise.allSettled([
         this.loadShadowNotes(chatId,),
         this.loadWhitenotes(chatId,),
       ],);

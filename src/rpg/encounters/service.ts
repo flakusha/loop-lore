@@ -304,7 +304,7 @@ export class EncounterService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((r,) => this.getRow(r,));
+    return Array.from(rows, (r,) => this.getRow(r,),);
   }
 
   /**

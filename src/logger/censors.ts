@@ -73,11 +73,10 @@ function censorObject(
     } else if (val !== null && typeof val === "object" && !Array.isArray(val,)) {
       result[key] = censorObject(val as Record<string, unknown>, rules, depth + 1, maxDepth,);
     } else if (Array.isArray(val,)) {
-      result[key] = val.map((item: unknown,) =>
+      result[key] = Array.from(val, (item: unknown,) =>
         typeof item === "object" && item !== null
           ? censorObject(item as Record<string, unknown>, rules, depth + 1, maxDepth,)
-          : item
-      );
+          : item,);
     } else {
       result[key] = val;
     }
@@ -89,7 +88,7 @@ function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDept
   if (depth > maxDepth || value === null || value === undefined) { return value; }
 
   if (Array.isArray(value,)) {
-    return value.map((item: unknown,) => censorValue(item, rules, depth, maxDepth,));
+    return Array.from(value, (item: unknown,) => censorValue(item, rules, depth, maxDepth,),);
   }
 
   if (typeof value === "object") {
@@ -123,5 +122,5 @@ export function censorMeta({
  * Convert extra field name strings to CensorRule objects.
  */
 export function fieldNamesToRules(fields: string[],): CensorRule[] {
-  return fields.map((f,) => ({ field: f, }));
+  return Array.from(fields, (f,) => ({ field: f, }),);
 }

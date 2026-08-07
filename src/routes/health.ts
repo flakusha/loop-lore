@@ -19,7 +19,7 @@ export function healthRoutes(_opts: { database: Db; config: Config },): Elysia {
     const degraded = hasUnhealthyProviders();
     const uptime = Math.floor((Date.now() - startTime) / 1000,);
     const timestamp = new Date().toISOString();
-    const providerList = providers.map((p,) => providerToSummary(p,));
+    const providerList = Array.from(providers, (p,) => providerToSummary(p,),);
 
     return jsonResponse({
       status: degraded ? "degraded" : "ok",

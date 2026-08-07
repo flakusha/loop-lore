@@ -37,9 +37,14 @@ function formatReviewReport(entityLabel: string, entityName: string, issues: Rev
     return report;
   }
 
-  const errors = issues.filter((i,) => i.severity === "error");
-  const warnings = issues.filter((i,) => i.severity === "warning");
-  const info = issues.filter((i,) => i.severity === "info");
+  const errors: typeof issues = [];
+  const warnings: typeof issues = [];
+  const info: typeof issues = [];
+  for (const i of issues) {
+    if (i.severity === "error") { errors.push(i,); }
+    else if (i.severity === "warning") { warnings.push(i,); }
+    else { info.push(i,); }
+  }
 
   if (errors.length > 0) {
     report += `**Errors (${errors.length}):**\n`;
