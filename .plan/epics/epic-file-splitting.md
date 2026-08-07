@@ -239,16 +239,17 @@ For `chat/service.ts`, `routes/*.ts`, `generation/auto-gen.ts`, etc.:
 
 ### Round-3 Deep-Split Targets
 
-| File | Current Size | Split Strategy |
-|------|-------------|----------------|
-| `src/generation/auto-gen/auto-generation.ts` | 588L | Extract pipeline steps into sibling files |
-| `src/chat/service/chats.ts` | 352L | `crud.ts` + `batch.ts` |
-| `src/chat/service/messages.ts` | 335L | `read.ts` + `write.ts` |
-| `src/chat/service/transitions.ts` | 369L | Extract carry blocks into helper files |
+| File                                         | Current Size | Split Strategy                            |
+| -------------------------------------------- | ------------ | ----------------------------------------- |
+| `src/generation/auto-gen/auto-generation.ts` | 588L         | Extract pipeline steps into sibling files |
+| `src/chat/service/chats.ts`                  | 352L         | `crud.ts` + `batch.ts`                    |
+| `src/chat/service/messages.ts`               | 335L         | `read.ts` + `write.ts`                    |
+| `src/chat/service/transitions.ts`            | 369L         | Extract carry blocks into helper files    |
 
 ### Route-Module Split
 
 `routes/views.ts` (1524L) → `routes/views/` directory with:
+
 - `index.ts` barrel re-exporting `viewRoutes`
 - Domain files: `layout.ts`, `partials.ts`, `characters.ts`, `worlds.ts`, `nsfw-audit.ts`, `search.ts`, `chats.ts`
 - Shared constants in `constants.ts` / `shared.ts`
