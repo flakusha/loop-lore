@@ -1,0 +1,11 @@
+/**
+ * Key Rotation — Auto-rotation logic for actor keys.
+ *
+ * Original module split into domain modules; this barrel preserves the
+ * public import surface (`key-rotation` / `key-rotation/index`).
+ */
+export { runAutoRotation, } from "./auto-run";
+export { findExpiredKeys, } from "./find-expired";
+export { rotateActorKeyAndReEncrypt, } from "./rotate";
+export { startAutoRotationTimer, } from "./timer";
+export type { RotationResult, RotationSummary, } from "./types";

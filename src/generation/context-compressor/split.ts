@@ -1,0 +1,20 @@
+import type { ContextMessage, } from "../context-window-config";
+import type { SplitMessages, } from "./types";
+
+/** Separate leading system messages from conversation messages */
+export function splitSystemMessages(messages: ContextMessage[],): SplitMessages {
+  const system: ContextMessage[] = [];
+  const conversation: ContextMessage[] = [];
+
+  let inSystemBlock = true;
+  for (const msg of messages) {
+    if (inSystemBlock && msg.role === "system") {
+      system.push(msg,);
+    } else {
+      inSystemBlock = false;
+      conversation.push(msg,);
+    }
+  }
+
+  return { system, conversation, };
+}

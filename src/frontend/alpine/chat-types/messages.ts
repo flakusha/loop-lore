@@ -1,0 +1,51 @@
+export interface MessageAttachment {
+  assetId: string;
+  order: number;
+  caption: string;
+  label: string;
+  url: string;
+  thumbUrl?: string;
+  filename: string;
+  mimeType: string;
+  type: string;
+  width: number;
+  height: number;
+}
+
+export interface Message {
+  id: string;
+  role: string;
+  content: string;
+  created_at: string;
+  edited_at?: string;
+  thinking?: string;
+  actor_name?: string;
+  variantIndex?: number;
+  totalVariants?: number;
+  attachments?: MessageAttachment[];
+  model_id?: string;
+  provider?: string;
+  token_count_prompt?: number;
+  token_count_completion?: number;
+  token_count_total?: number;
+  generation_time_ms?: number;
+  tokens_per_second?: number;
+  status?: string;
+  emotion?: string;
+  reactions?: { emoji: string; count: number; userReacted: boolean }[];
+  pinned?: boolean;
+}
+
+export interface GroupedMessage extends Message {
+  group?: boolean;
+  groupCount?: number;
+}
+
+export interface GenerationDetail {
+  model?: string;
+  elapsedMs?: number;
+  chunksReceived?: number;
+  charsReceived?: number;
+  status?: string;
+  attemptId?: string;
+}
