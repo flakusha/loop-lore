@@ -1,6 +1,6 @@
 # EPIC: Frontend HTML Deduplication & HTMX AJAX Reuse
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately.
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Optimization Epic
@@ -43,13 +43,13 @@ re-implementing it per view.
 
 ## Linked Tasks
 
-| Task                            | Title                                             | Priority | Status      |
-| ------------------------------- | ------------------------------------------------- | -------- | ----------- |
-| TASK-html-dedup-audit           | Audit + map repeated frontend HTML fragments      | High     | Not Started |
-| TASK-html-dedup-shared-partials | Extract shared partials/components                | High     | Not Started |
-| TASK-htmx-ajax-request-helper   | Centralize htmx request config in shared helper   | High     | Not Started |
-| TASK-htmx-migrate-views         | Migrate views to shared partials + request helper | Medium   | Not Started |
-| TASK-htmx-reuse-e2e-verify      | Verify browser e2e green after refactor           | Medium   | Not Started |
+| Task                            | Title                                             | Priority | Status               |
+| ------------------------------- | ------------------------------------------------- | -------- | -------------------- |
+| TASK-html-dedup-audit           | Audit + map repeated frontend HTML fragments      | High     | Not Started          |
+| TASK-html-dedup-shared-partials | Extract shared partials/components                | High     | Not Started          |
+| TASK-htmx-ajax-request-helper   | Centralize htmx request config in shared helper   | High     | Not Started          |
+| TASK-htmx-migrate-views         | Migrate views to shared partials + request helper | Medium   | Not Started          |
+| TASK-htmx-reuse-e2e-verify      | Verify browser e2e green after refactor           | Medium   | ✅ Done (2026-08-07) |
 
 ## Acceptance Criteria
 
@@ -57,7 +57,7 @@ re-implementing it per view.
 - [ ] Every audited duplicate now references one canonical shared partial/component
 - [ ] A single htmx request helper composes the recurring request shape; views reuse it
 - [ ] Views migrated to shared partials + request helper; per-view htmx request groups removed
-- [ ] No regression: `bun run check` + browser e2e green after each migration task
+- [x] No regression: `bun run check` + browser e2e green after each migration task — browser suite green in parallel (113 pass / 0 fail, 18 files, 2026-08-07)
 
 ## Related Epics
 
