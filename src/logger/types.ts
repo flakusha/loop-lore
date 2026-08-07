@@ -2,7 +2,7 @@
  * Logger types — LogEntry, Logger, Transport, support interfaces.
  */
 
-import { LogLevel, } from "../db/enums-config";
+import type { LogLevel, } from "../db/enums-config";
 
 /** Numeric level values — higher = more severe */
 export const LogLevelNumeric: Record<LogLevel, number> = {

@@ -4,7 +4,7 @@
  * CRUD for per-actor lorebook entries (character_book).
  */
 
-import { Elysia, } from "elysia";
+import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { createEntityRoutes, } from "./entity-routes";

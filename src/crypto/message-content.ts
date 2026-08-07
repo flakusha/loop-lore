@@ -13,7 +13,7 @@
 
 import type { Kysely, } from "kysely";
 import { decodeContent, } from "../content/decode";
-import { ContentEncoding, } from "../db/enums";
+import type { ContentEncoding, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { ensureActorKey, } from "./actor-keys";
 import { deriveChatKeyForChat, } from "./chat-keys";

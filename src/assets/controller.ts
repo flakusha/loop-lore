@@ -22,7 +22,8 @@ import { existsSync, readFileSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { deriveChatKeyForChat, getSmk, } from "../crypto";
-import { AssetLinkEntity, AssetVisibility, } from "../db/enums";
+import type { AssetLinkEntity} from "../db/enums";
+import { AssetVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import {
   badRequestResponse,

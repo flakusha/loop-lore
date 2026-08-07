@@ -3,8 +3,7 @@
  *
  * Request shapes for story, GM override, and synthetic data endpoints.
  */
-import type { TurnStrategy as TS, } from "../db/enums";
-import type { SyntheticDataType as SDT, SyntheticTestMode as STM, } from "../db/enums";
+import type { SyntheticDataType as SDT, SyntheticTestMode as STM, TurnStrategy as TS, } from "../db/enums";
 import type { GameMasterConfig, GameMasterDecision, QualityThresholds, } from "./story-types";
 
 export interface StartStoryRequest {

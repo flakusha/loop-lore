@@ -5,7 +5,7 @@
  * Uses custom ownership check via worlds table.
  */
 
-import { Elysia, } from "elysia";
+import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { createEntityRoutes, } from "./entity-routes";

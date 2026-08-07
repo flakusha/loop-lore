@@ -18,9 +18,8 @@ import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../utils";
 import { computeContextWindow, } from "./context-window";
 import { resolveResponseLength, } from "./response-length";
 import { estimateTokens, } from "./token-utils";
-import type { ResponseLengthPreset, } from "./types";
+import type { ResponseLengthPreset,  ContextWindow, ModeFeatureFlags, ResponseLengthConfig} from "./types";
 import { resolveFeatureFlags, } from "./types";
-import type { ContextWindow, ModeFeatureFlags, ResponseLengthConfig, } from "./types";
 
 // ─── Error Type ───────────────────────────────────────────────
 
