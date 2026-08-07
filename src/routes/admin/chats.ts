@@ -7,6 +7,7 @@ import {
   PaginationQuery,
   SuccessResponse,
 } from "../../validation/schemas";
+import { AdminChatRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -60,7 +61,7 @@ export function chatsRoutes(opts: AdminRouteOpts,) {
         {
           query: PaginationQuery,
           response: {
-            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            200: AdminPaginatedEnvelope(AdminChatRow,),
             403: ErrorResponse,
           },
         },

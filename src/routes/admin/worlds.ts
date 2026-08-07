@@ -1,6 +1,7 @@
 import { Elysia, t, } from "elysia";
 import { isAdminRole, } from "../../middleware/admin-gate";
 import { ErrorResponse, PaginationQuery, WorldIdParams, } from "../../validation/schemas";
+import { AdminPaginatedEnvelope, AdminWorldRow, } from "../../validation/schemas/responses";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -49,7 +50,7 @@ export function worldsRoutes(opts: AdminRouteOpts,) {
         {
           query: PaginationQuery,
           response: {
-            200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+            200: AdminPaginatedEnvelope(AdminWorldRow,),
             403: ErrorResponse,
           },
         },

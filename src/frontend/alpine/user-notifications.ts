@@ -6,9 +6,11 @@
 //
 // Reuses the existing global `showToast` (declared on Window) for push toasts.
 
+import { NotificationsEvent, NotificationsRefresh, } from "../../validation/schemas/responses";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
-import type { NotificationBellState, NotificationListItem, NotificationPrefsState, } from "./types";
+import type { NotificationBellState, NotificationPrefsState, } from "./types";
+import { parseOr, } from "./validation";
 
 const TYPE_ICONS: Record<string, string> = {
   mention: "@",
@@ -49,8 +51,8 @@ globalThis.notificationsBell = function(): NotificationBellState {
       try {
         const res = await apiFetch("/api/notifications?unread=true",);
         if (!res.ok) { return; }
-        const data = (await res.json()) as { items: NotificationListItem[] };
-        this.items = data.items ?? [];
+        const data = parseOr(NotificationsRefresh, await res.json(), { items: [], },);
+        this.items = data.items;
         this.unreadCount = this.items.filter((i,) => !i.read).length;
       } catch {
         /* ignore */
@@ -61,7 +63,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
       if (bellStream) { return; }
       bellStream = new EventSource("/api/notifications/stream",);
       bellStream.addEventListener("notifications", (ev: MessageEvent,) => {
-        const data = jsonParseOr<{ unreadCount: number; items: NotificationListItem[] }>(ev.data, {
+        const data = parseOr(NotificationsEvent, jsonParseOr(ev.data, null,), {
           unreadCount: 0,
           items: [],
         },);
