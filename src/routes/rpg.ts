@@ -25,7 +25,7 @@ import {
   rollDice,
   rollFromNotation,
 } from "../rpg/dice.js";
-import { logDiceRoll, } from "../rpg/service.js";
+import { logDiceRoll, } from "../rpg/service";
 import {
   type AbilityName,
   computeModifiers,
