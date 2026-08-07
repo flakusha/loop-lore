@@ -1,17 +1,12 @@
+import { AdminAuditRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "admin-audit", },);
 
-interface AuditEntry {
-  id: string;
-  level: number;
-  message: string;
-  module: string | null;
-  event_type: string | null;
-  entity_type: string | null;
-  entity_id: string | null;
-  created_at: string;
-}
+type AuditEntry = AdminAuditRow;
+
+const EMPTY_ADMIN_AUDIT = { data: [], total: 0, page: 1, pageSize: 50, };
 
 export const adminAudit = {
   auditEntries: [] as AuditEntry[],
@@ -31,9 +26,9 @@ export const adminAudit = {
       if (this.auditSearch) { url += `&q=${encodeURIComponent(this.auditSearch,)}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
-        const data = await res.json();
-        this.auditEntries = data.data || [];
-        this.auditTotal = data.total || 0;
+        const data = parseOr(AdminPaginatedEnvelope(AdminAuditRow,), await res.json(), EMPTY_ADMIN_AUDIT,);
+        this.auditEntries = data.data;
+        this.auditTotal = data.total;
       }
     } catch {
       log.warn("Network error loading audit",);

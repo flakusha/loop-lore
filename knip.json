@@ -41,6 +41,7 @@
     "@markuplint/html-spec",
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
     "@elysia/openapi",
+    "@sinclair/typebox", // frontend bundle + validation schemas; frontend entries not in knip's entry list
     "@types/clean-css",
     "@types/dompurify",
     "@types/html-minifier-terser",
