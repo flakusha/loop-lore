@@ -11,7 +11,7 @@ export const validate = (config: Config,): void => {
   if (config.server.port < 0 || config.server.port > 65_535) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);
   }
-  if (!["debug", "info", "warn", "error",].includes(config.logging.level,)) {
+  if (!["trace", "debug", "info", "warn", "error", "fatal",].includes(config.logging.level,)) {
     throw new Error(`Invalid logging.level: "${config.logging.level}"`,);
   }
   for (const p of config.generation.providers.openaiCompatible) {
