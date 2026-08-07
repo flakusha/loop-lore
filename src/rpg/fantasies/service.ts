@@ -185,7 +185,7 @@ export class FantasyService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r as any,));
+    return Array.from(rows, (r,) => this.getRow(r as any,),);
   }
 
   /**
@@ -203,7 +203,7 @@ export class FantasyService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r as any,));
+    return Array.from(rows, (r,) => this.getRow(r as any,),);
   }
 
   /**
@@ -375,7 +375,8 @@ export class FantasyService {
 
   /** Infer fantasy name from context keywords. */
   private inferName(context: string,): string {
-    const words = context.split(/\s+/,).filter((w,) => w.length > 3);
+    const words: string[] = [];
+    for (const w of context.split(/\s+/,)) { if (w.length > 3) { words.push(w,); } }
     const name = words.slice(0, 3,).join(" ",);
     return name.charAt(0,).toUpperCase() + name.slice(1,);
   }

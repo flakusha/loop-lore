@@ -114,9 +114,16 @@ export async function discoverAllLoras(
     forceRefresh?: boolean;
   },
 ): Promise<LoRADiscoveryResult[]> {
-  return await Promise.all(
-    backends.map(({ backend, baseUrl, },) => discoverLoras(backend, baseUrl, options,)),
+  // Use allSettled: each discoverLoras returns a result (errors encoded in the
+  // result), so partial failures are collected rather than aborting.
+  const settled = await Promise.allSettled(
+    Array.from(backends, ({ backend, baseUrl, },) => discoverLoras(backend, baseUrl, options,),),
   );
+  const results: LoRADiscoveryResult[] = [];
+  for (const r of settled) {
+    if (r.status === "fulfilled") { results.push(r.value,); }
+  }
+  return results;
 }
 
 /**

@@ -129,14 +129,14 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
         .orderBy(sql<number>`count(*)`, "desc",)
         .execute();
 
-      const leaderboard = rows.map((r,) => ({
+      const leaderboard = Array.from(rows, (r,) => ({
         reference_model: r.reference_model,
         totalComparisons: r.totalComparisons,
         betterCount: r.betterCount,
         worseCount: r.worseCount,
         sameCount: r.sameCount,
         avgConfidence: Math.round(r.avgConfidence * 100,) / 100,
-      }));
+      }),);
 
       return jsonResponse({ leaderboard, },);
     }, {

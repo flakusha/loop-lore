@@ -18,7 +18,7 @@ export async function batchArchiveChats(
     .where("id", "in", chatIds,)
     .where("created_by", "=", userId,)
     .execute();
-  const ownedIds = owned.map((c,) => c.id);
+  const ownedIds = Array.from(owned, (c,) => c.id,);
   if (ownedIds.length === 0) { return []; }
 
   await database
@@ -46,7 +46,7 @@ export async function batchDeleteChats(
     .where("id", "in", chatIds,)
     .where("created_by", "=", userId,)
     .execute();
-  const ownedIds = owned.map((c,) => c.id);
+  const ownedIds = Array.from(owned, (c,) => c.id,);
   if (ownedIds.length === 0) { return 0; }
 
   for (const chatId of ownedIds) {
@@ -79,20 +79,20 @@ export async function batchExportChats(
 
   if (owned.length === 0) { return null; }
 
-  return Promise.all(
-    owned.map(async (chat,) => {
-      const messages = await database
-        .selectFrom("messages",)
-        .selectAll()
-        .where("chat_id", "=", chat.id,)
-        .orderBy("created_at", "asc",)
-        .execute();
-      const participants = await database
-        .selectFrom("chat_participants",)
-        .selectAll()
-        .where("chat_id", "=", chat.id,)
-        .execute();
-      return { chat, messages, participants, };
-    },),
-  );
+  const exports: { chat: (typeof owned)[number]; messages: unknown[]; participants: unknown[] }[] = [];
+  for (const chat of owned) {
+    const messages = await database
+      .selectFrom("messages",)
+      .selectAll()
+      .where("chat_id", "=", chat.id,)
+      .orderBy("created_at", "asc",)
+      .execute();
+    const participants = await database
+      .selectFrom("chat_participants",)
+      .selectAll()
+      .where("chat_id", "=", chat.id,)
+      .execute();
+    exports.push({ chat, messages, participants, },);
+  }
+  return exports;
 }

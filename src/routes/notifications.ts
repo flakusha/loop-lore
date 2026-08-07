@@ -45,10 +45,12 @@ export class NotificationStreamer {
     const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
       try {
         const service = new NotificationService(this.database,);
-        const [count, recent,] = await Promise.all([
+        const [countRes, recentRes,] = await Promise.allSettled([
           service.getUnreadCount(this.userId,),
           service.list(this.userId, false,),
         ],);
+        const count = countRes.status === "fulfilled" ? countRes.value : 0;
+        const recent = recentRes.status === "fulfilled" ? recentRes.value : [];
         const snap = `${count}:${recent[0]?.id ?? ""}`;
         if (snap !== lastSnapshot) {
           lastSnapshot = snap;
@@ -63,10 +65,12 @@ export class NotificationStreamer {
       start: async (controller,) => {
         try {
           const service = new NotificationService(this.database,);
-          const [count, recent,] = await Promise.all([
+          const [countRes, recentRes,] = await Promise.allSettled([
             service.getUnreadCount(this.userId,),
             service.list(this.userId, false,),
           ],);
+          const count = countRes.status === "fulfilled" ? countRes.value : 0;
+          const recent = recentRes.status === "fulfilled" ? recentRes.value : [];
           lastSnapshot = `${count}:${recent[0]?.id ?? ""}`;
           send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
         } catch (error) {

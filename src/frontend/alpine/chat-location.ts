@@ -137,7 +137,8 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         this._emitLocationChanged();
         // Reflect the new location in the chat list, background auto-sync, and
         // the joinable-at-location discovery list.
-        await Promise.all([this.loadChats?.(), this.loadBackground?.(),],);
+        const reload = await Promise.allSettled([this.loadChats?.(), this.loadBackground?.(),],);
+        if (reload.some((r,) => r.status === "rejected")) { throw new Error("chat reload failed",); }
         await this.loadLocationJoinable();
         globalThis.setTimeout(() => {
           this._chatRecentLocationChanged = false;
@@ -171,7 +172,8 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         this._chatRecentLocationChanged = true;
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatTransferred",), },);
         this._emitLocationChanged();
-        await Promise.all([this.loadChats?.(), this.loadBackground?.(),],);
+        const reload = await Promise.allSettled([this.loadChats?.(), this.loadBackground?.(),],);
+        if (reload.some((r,) => r.status === "rejected")) { throw new Error("chat reload failed",); }
         await this.loadLocationJoinable();
         globalThis.setTimeout(() => {
           this._chatRecentLocationChanged = false;
@@ -207,12 +209,12 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         : (body as {
           data?: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
         }).data ?? [];
-      this._locationJoinableChats = data.map((r,) => ({
+      this._locationJoinableChats = Array.from(data, (r,) => ({
         chatId: r.chatId as string,
         chatName: r.chatName as string,
         participantCount: (r.participantCount as number) ?? 0,
         lastActiveAt: (r.lastActiveAt as string | null) ?? null,
-      }));
+      }),);
     } catch (error) {
       log.warn("loadLocationJoinable failed", { error: String(error,), },);
       this._locationJoinableChats = [];

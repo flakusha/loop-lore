@@ -90,14 +90,17 @@ export const adminSystem = {
   async loadAnalytics() {
     this.loadingAnalytics = true;
     try {
-      const [summaryRes, dailyRes, errorsRes,] = await Promise.all([
+      const [summaryRes, dailyRes, errorsRes,] = await Promise.allSettled([
         apiFetch("/api/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
       ],);
-      if (summaryRes.ok) { this.analyticsSummary = await summaryRes.json(); }
-      if (dailyRes.ok) { this.dailyStats = await dailyRes.json(); }
-      if (errorsRes.ok) { this.errorEvents = await errorsRes.json(); }
+      if (summaryRes.status !== "fulfilled" || dailyRes.status !== "fulfilled" || errorsRes.status !== "fulfilled") {
+        throw new Error("analytics load failed",);
+      }
+      if (summaryRes.value.ok) { this.analyticsSummary = await summaryRes.value.json(); }
+      if (dailyRes.value.ok) { this.dailyStats = await dailyRes.value.json(); }
+      if (errorsRes.value.ok) { this.errorEvents = await errorsRes.value.json(); }
     } catch {
       showToast("error", t("toasts.failedLoadAnalytics",),);
     } finally {

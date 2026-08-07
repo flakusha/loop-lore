@@ -62,11 +62,15 @@ const safeParseList = (raw: string,): string[] => {
     },
 
     get roots(): ExplorerLocation[] {
-      return this.locations.filter((l,) => !l.parent_location_id);
+      const out: ExplorerLocation[] = [];
+      for (const l of this.locations) { if (!l.parent_location_id) { out.push(l,); } }
+      return out;
     },
 
     childrenOf(id: string,): ExplorerLocation[] {
-      return this.locations.filter((l,) => l.parent_location_id === id);
+      const out: ExplorerLocation[] = [];
+      for (const l of this.locations) { if (l.parent_location_id === id) { out.push(l,); } }
+      return out;
     },
 
     isExpanded(id: string,): boolean {
@@ -80,10 +84,16 @@ const safeParseList = (raw: string,): string[] => {
     get filteredLocations(): ExplorerLocation[] {
       const q = this.search.trim().toLowerCase();
       if (!q) { return this.locations; }
-      return this.locations.filter((l,) =>
-        l.name.toLowerCase().includes(q,) ||
-        (l.description || "").toLowerCase().includes(q,)
-      );
+      const out: ExplorerLocation[] = [];
+      for (const l of this.locations) {
+        if (
+          l.name.toLowerCase().includes(q,) ||
+          (l.description || "").toLowerCase().includes(q,)
+        ) {
+          out.push(l,);
+        }
+      }
+      return out;
     },
 
     hasChildren(id: string,): boolean {
@@ -135,8 +145,8 @@ const safeParseList = (raw: string,): string[] => {
 
     connectionNames(loc: ExplorerLocation,): string {
       const ids = safeParseList(loc.connections,);
-      const byId = new Map(this.locations.map((l,) => [l.id, l.name,]),);
-      return ids.map((id,) => byId.get(id,) ?? id).join(", ",);
+      const byId = new Map(Array.from(this.locations, (l,) => [l.id, l.name,],),);
+      return Array.from(ids, (id,) => byId.get(id,) ?? id,).join(", ",);
     },
 
     npcList(loc: ExplorerLocation,): string[] {

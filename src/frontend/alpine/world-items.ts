@@ -50,7 +50,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       },);
       if (res.ok) {
         const data = await res.json();
-        this.items = (data.data || []).map((it: Record<string, unknown>,) => ({
+        this.items = Array.from(data.data || [], (it: Record<string, unknown>,) => ({
           id: it.id as string,
           name: it.name as string,
           description: (it.description as string | null) ?? null,
@@ -61,7 +61,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
           stackable: Boolean(it.stackable,),
           max_stack: Number(it.max_stack,) || 1,
           properties: (it.properties as Record<string, unknown> | null) ?? null,
-        }));
+        }),);
         this.itemsLoaded = true;
       }
     } catch (error) {
@@ -178,7 +178,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
           const data = (raw as Record<string, unknown>).data;
           rows = Array.isArray(data,) ? data : [];
         }
-        this.instances = rows.map((inst: unknown,) => {
+        this.instances = Array.from(rows, (inst: unknown,) => {
           const rec = (inst && typeof inst === "object" ? inst : {}) as Record<string, unknown>;
           return {
             id: rec.id as string,

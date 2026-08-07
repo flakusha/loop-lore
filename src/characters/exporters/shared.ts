@@ -55,7 +55,7 @@ export function exportLorebookEntries(
   entries: LorebookEntry[],
   options: { includeUseRegex?: boolean } = {},
 ): Record<string, unknown>[] {
-  return entries.map((entry,) => {
+  return Array.from(entries, (entry,) => {
     const mapped: Record<string, unknown> = {
       keys: entry.keys,
       content: entry.content,

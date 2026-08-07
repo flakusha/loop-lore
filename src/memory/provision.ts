@@ -77,10 +77,11 @@ export function provisionMemories(
 
   // Apply token budget
   const withinBudget = selectWithinBudget(accepted, { maxTokens, respectPins: true, },);
-  const tokensUsed = withinBudget.reduce((sum, m,) => sum + estimateTokens(m.content,), 0,);
+  let tokensUsed = 0;
+  for (const m of withinBudget) { tokensUsed += estimateTokens(m.content,); }
 
   // Track rejected-by-budget
-  const acceptedIds = new Set(withinBudget.map((m,) => m.id),);
+  const acceptedIds = new Set(Array.from(withinBudget, (m,) => m.id,),);
   for (const memory of accepted) {
     if (!acceptedIds.has(memory.id,)) {
       rejected.push({ memory, reason: "budget_exceeded", },);

@@ -217,10 +217,11 @@ export const adminTemplates = {
     const np = this.newProfile;
     if (!np.id || !np.name) { return; }
     try {
-      const families = np.families
-        .split(",",)
-        .map((s,) => s.trim())
-        .filter(Boolean,);
+      const families: string[] = [];
+      for (const s of np.families.split(",",)) {
+        const trimmed = s.trim();
+        if (trimmed) { families.push(trimmed,); }
+      }
       const res = await (globalThis as any).apiFetch("/api/admin/templates", {
         method: "POST",
         headers: { "Content-Type": "application/json", },

@@ -158,11 +158,11 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const lastMsg = msgs.findLast((m,) => !m.id.startsWith("temp-",));
     if (lastMsg) { body.parentId = lastMsg.id; }
     if (pendingAssets.length > 0) {
-      body.attachments = pendingAssets.map((a, i,) => ({
+      body.attachments = Array.from(pendingAssets, (a, i,) => ({
         assetId: a.assetId,
         order: i,
         label: "message-attachment",
-      }));
+      }),);
     }
 
     this.isGenerating = true;
@@ -190,12 +190,16 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
         this.isGenerating = false;
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
-        this.messages = msgs.filter((m,) => !m.id.startsWith("temp-",));
+        const filtered: typeof msgs = [];
+        for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m,); } }
+        this.messages = filtered;
       }
     } catch {
       this.isGenerating = false;
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
-      this.messages = msgs.filter((m,) => !m.id.startsWith("temp-",));
+      const filtered: typeof msgs = [];
+      for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m,); } }
+      this.messages = filtered;
     }
   },
 
@@ -230,7 +234,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
 
   async loadAllReactions() {
     if (!this.activeChat || this.messages.length === 0) { return; }
-    const ids = this.messages.map((m,) => m.id);
-    await Promise.allSettled(ids.map((id,) => this.loadMessageReactions(id,)),);
+    const ids = Array.from(this.messages, (m,) => m.id,);
+    await Promise.allSettled(Array.from(ids, (id,) => this.loadMessageReactions(id,),),);
   },
 };

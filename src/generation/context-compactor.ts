@@ -58,7 +58,9 @@ export class ContextCompactor {
 
   /** Total estimated tokens across a message list. */
   totalTokens(messages: GenerationMessage[],): number {
-    return messages.reduce((sum, m,) => sum + estimateTokens(m.content ?? "",), 0,);
+    let sum = 0;
+    for (const m of messages) { sum += estimateTokens(m.content ?? "",); }
+    return sum;
   }
 
   /**
@@ -74,7 +76,7 @@ export class ContextCompactor {
     const keep = messages.slice(-this.keepLast,);
     const older = messages.slice(0, messages.length - this.keepLast,);
 
-    const segments = older.map((m,) => `${m.role}: ${m.content ?? ""}`);
+    const segments = Array.from(older, (m,) => `${m.role}: ${m.content ?? ""}`,);
     const summary = await this.summarizer(segments,);
 
     const summaryMessage: GenerationMessage = {

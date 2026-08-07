@@ -73,9 +73,10 @@ export async function handleRun(request: Request,): Promise<Response> {
   const provider = getProvider(body.backend,);
 
   // Check required parameters
-  const missing = template.parameters
-    .filter((p,) => p.required && !body.params[p.name])
-    .map((p,) => p.name);
+  const missing: string[] = [];
+  for (const p of template.parameters) {
+    if (p.required && !body.params[p.name]) { missing.push(p.name,); }
+  }
   if (missing.length > 0) {
     return jsonError({
       message: `Missing required parameters: ${missing.join(", ",)}`,
@@ -115,7 +116,7 @@ export async function handleTemplates(request: Request,): Promise<Response> {
   }
 
   // Return lightweight summaries (exclude build function)
-  const summaries = templates.map(({ build: _build, ...rest },) => rest);
+  const summaries = Array.from(templates, ({ build: _build, ...rest },) => rest,);
 
   return jsonResponse({ data: summaries, },);
 }

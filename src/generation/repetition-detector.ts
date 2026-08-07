@@ -91,7 +91,10 @@ function detectPatterns(text: string, config: RepetitionDetectionConfig,): Repet
   const fingerprints = extractNGrams(text, NGRAM_SIZE,);
 
   // Filter to n-grams that appear multiple times
-  const repeatedFingerprints = fingerprints.filter((fp,) => fp.positions.length >= config.minRepetitions);
+  const repeatedFingerprints: NGramFingerprint[] = [];
+  for (const fp of fingerprints) {
+    if (fp.positions.length >= config.minRepetitions) { repeatedFingerprints.push(fp,); }
+  }
 
   if (repeatedFingerprints.length === 0) { return []; }
 
@@ -123,7 +126,10 @@ function deduplicatePatterns(patterns: RepetitionPattern[],): RepetitionPattern[
 
   for (const pattern of patterns) {
     // Skip if all positions are within already-seen ranges
-    const uniquePositions = pattern.positions.filter((p,) => !seenPositions.has(p,));
+    const uniquePositions: number[] = [];
+    for (const p of pattern.positions) {
+      if (!seenPositions.has(p,)) { uniquePositions.push(p,); }
+    }
     if (uniquePositions.length < pattern.count * 0.5) { continue; }
 
     // Mark all positions as seen

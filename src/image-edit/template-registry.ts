@@ -38,12 +38,16 @@ class TemplateRegistry {
 
   /** Filter templates by category */
   listByCategory(category: ImageEditCategory,): WorkflowTemplate[] {
-    return this.listAll().filter((t,) => t.category === category);
+    const out: WorkflowTemplate[] = [];
+    for (const t of this.listAll()) { if (t.category === category) { out.push(t,); } }
+    return out;
   }
 
   /** Filter templates available for a specific backend */
   listForBackend(backend: ImageEditBackend,): WorkflowTemplate[] {
-    return this.listAll().filter((t,) => t.backends.includes(backend,));
+    const out: WorkflowTemplate[] = [];
+    for (const t of this.listAll()) { if (t.backends.includes(backend,)) { out.push(t,); } }
+    return out;
   }
 
   /** Filter templates that can run on the given backend AND have all required nodes installed */
@@ -51,11 +55,16 @@ class TemplateRegistry {
     backend: ImageEditBackend,
     installedNodes: Set<string>,
   ): WorkflowTemplate[] {
-    return this.listAll().filter(
-      (t,) =>
+    const out: WorkflowTemplate[] = [];
+    for (const t of this.listAll()) {
+      if (
         t.backends.includes(backend,) &&
-        t.required_nodes.every((node,) => installedNodes.has(node,)),
-    );
+        t.required_nodes.every((node,) => installedNodes.has(node,))
+      ) {
+        out.push(t,);
+      }
+    }
+    return out;
   }
 
   /** Unregister a template by ID */

@@ -19,7 +19,8 @@ import type { TurnStrategy as TurnStrategyType, } from "../db/enums";
 
 /** Weighted random selection using talkativity scores */
 function weightedRandomSelect(participants: { actorId: string; talkativity: number }[],): string {
-  const totalWeight = participants.reduce((sum, p,) => sum + p.talkativity, 0,);
+  let totalWeight = 0;
+  for (const p of participants) { totalWeight += p.talkativity; }
   if (totalWeight <= 0) { return participants[0]!.actorId; }
 
   let roll = Math.random() * totalWeight;
@@ -52,10 +53,10 @@ export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, c
 export const initiativeSelect: TurnStrategyFn = (participants,) => {
   const hasInitiative = participants.some((p,) => (p as { initiativeScore?: number }).initiativeScore);
   if (hasInitiative) {
-    const boosted = participants.map((p,) => ({
+    const boosted = Array.from(participants, (p,) => ({
       actorId: p.actorId,
       talkativity: p.talkativity + ((p as { initiativeScore?: number }).initiativeScore ?? 0) * 3,
-    }));
+    }),);
     return weightedRandomSelect(boosted,);
   }
   return weightedRandomSelect(participants,);
@@ -88,10 +89,10 @@ export const hybridSelect: TurnStrategyFn = (
       if (mentioned) { return mentioned.actorId; }
     }
     // Context-mention boost: actors mentioned in recent messages get a weight bump
-    const boosted = participants.map((p,) => ({
+    const boosted = Array.from(participants, (p,) => ({
       ...p,
       talkativity: p.talkativity + (ctx.recentActorIds?.includes(p.actorId,) ? 3 : 0),
-    }));
+    }),);
     return weightedRandomSelect(boosted,);
   }
   // Story mode: scene-based with quest triggers

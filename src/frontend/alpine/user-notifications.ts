@@ -53,7 +53,9 @@ globalThis.notificationsBell = function(): NotificationBellState {
         if (!res.ok) { return; }
         const data = parseOr(NotificationsRefresh, await res.json(), { items: [], },);
         this.items = data.items;
-        this.unreadCount = this.items.filter((i,) => !i.read).length;
+        let unread = 0;
+        for (const i of this.items) { if (!i.read) { unread += 1; } }
+        this.unreadCount = unread;
       } catch {
         /* ignore */
       }
@@ -68,12 +70,18 @@ globalThis.notificationsBell = function(): NotificationBellState {
           items: [],
         },);
         if (data.items.length === 0 && !data.unreadCount) { return; }
-        const known = new Set(this.items.map((i,) => i.id),);
+        const known = new Set(Array.from(this.items, (i,) => i.id,),);
         for (const n of data.items) {
           if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
         }
         this.items = data.items;
-        this.unreadCount = data.unreadCount ?? data.items.filter((i,) => !i.read).length;
+        if (data.unreadCount == null) {
+          let unread = 0;
+          for (const i of data.items) { if (!i.read) { unread += 1; } }
+          this.unreadCount = unread;
+        } else {
+          this.unreadCount = data.unreadCount;
+        }
       },);
     },
 
@@ -92,20 +100,26 @@ globalThis.notificationsBell = function(): NotificationBellState {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ read: true, },),
       },);
-      this.items = this.items.map((i,) => (i.id === id ? { ...i, read: 1, } : i));
-      this.unreadCount = this.items.filter((i,) => !i.read).length;
+      this.items = Array.from(this.items, (i,) => (i.id === id ? { ...i, read: 1, } : i),);
+      let unread = 0;
+      for (const i of this.items) { if (!i.read) { unread += 1; } }
+      this.unreadCount = unread;
     },
 
     async markAllRead() {
       await apiFetch("/api/notifications/read-all", { method: "PATCH", },);
-      this.items = this.items.map((i,) => ({ ...i, read: 1, }));
+      this.items = Array.from(this.items, (i,) => ({ ...i, read: 1, }),);
       this.unreadCount = 0;
     },
 
     async dismiss(id: string,) {
       await apiFetch(`/api/notifications/${id}`, { method: "DELETE", },);
-      this.items = this.items.filter((i,) => i.id !== id);
-      this.unreadCount = this.items.filter((i,) => !i.read).length;
+      const filteredItems: typeof this.items = [];
+      for (const i of this.items) { if (i.id !== id) { filteredItems.push(i,); } }
+      this.items = filteredItems;
+      let unread = 0;
+      for (const i of this.items) { if (!i.read) { unread += 1; } }
+      this.unreadCount = unread;
     },
 
     goTo(link: string | null,) {
@@ -121,7 +135,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
     saving: false,
     enabled: {},
     mutedWorlds: [] as string[],
-    types: Object.keys(TYPE_LABELS,).map((key,) => ({ key, label: TYPE_LABELS[key] ?? key, })),
+    types: Array.from(Object.keys(TYPE_LABELS,), (key,) => ({ key, label: TYPE_LABELS[key] ?? key, }),),
 
     init() {
       void this.refresh();
@@ -150,7 +164,13 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
 
     async toggleMuteWorld(worldId: string,) {
       const has = this.mutedWorlds.includes(worldId,);
-      this.mutedWorlds = has ? this.mutedWorlds.filter((w,) => w !== worldId) : [...this.mutedWorlds, worldId,];
+      if (has) {
+        const filtered: string[] = [];
+        for (const w of this.mutedWorlds) { if (w !== worldId) { filtered.push(w,); } }
+        this.mutedWorlds = filtered;
+      } else {
+        this.mutedWorlds = [...this.mutedWorlds, worldId,];
+      }
       await this.save();
     },
 

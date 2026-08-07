@@ -39,13 +39,11 @@ registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
         };
       }
 
-      const questList = quests
-        .map((q,) => {
-          const progress = q.target > 0 ? ` (${q.progress}/${q.target})` : "";
-          const desc = q.description ? `\n  ${q.description.slice(0, 100,)}` : "";
-          return `- **${q.name}**${progress}${desc}`;
-        },)
-        .join("\n",);
+      const questList = Array.from(quests, (q,) => {
+        const progress = q.target > 0 ? ` (${q.progress}/${q.target})` : "";
+        const desc = q.description ? `\n  ${q.description.slice(0, 100,)}` : "";
+        return `- **${q.name}**${progress}${desc}`;
+      },).join("\n",);
 
       return {
         systemMessage: `**Active Quests (${quests.length}):**\n\n${questList}`,

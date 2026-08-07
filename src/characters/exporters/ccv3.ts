@@ -27,12 +27,12 @@ export function exportToCcV3(character: CanonicalCharacter,): Record<string, unk
 
   // Assets (V3 addition)
   if (character.assets?.length) {
-    data.assets = character.assets.map((asset,) => ({
+    data.assets = Array.from(character.assets, (asset,) => ({
       type: asset.type,
       name: asset.name,
       uri: asset.uri,
       ext: asset.ext,
-    }));
+    }),);
   }
 
   return {

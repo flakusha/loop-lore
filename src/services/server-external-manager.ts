@@ -351,7 +351,11 @@ export class ServerExternalManager {
         instance.process.kill("SIGKILL",);
       }
     }
-    this.instances = this.instances.filter((i,) => i !== instance);
+    const kept: ServerInstance[] = [];
+    for (const i of this.instances) {
+      if (i !== instance) { kept.push(i,); }
+    }
+    this.instances = kept;
   }
 
   /** Stop all managed servers */
