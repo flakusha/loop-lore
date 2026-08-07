@@ -114,9 +114,19 @@ describe("Access control E2E", () => {
         // not a member → 404.
         expect(res.status(),).toBe(404,);
 
-        // loadWorld() settles into the error/empty state, hiding the ⏳ loading
-        // indicator. Wait for that, then assert the edit form does not render.
-        await page.waitForFunction(() => !(document.body.textContent || "").includes("⏳",), null, { timeout: 8000, },);
+        // loadWorld() settles into the error/empty state: the ⏳ loading
+        // indicator is hidden (x-show => display:none) and the edit form does
+        // not render for a non-owner. Assert on the loading element's computed
+        // style — x-show never removes the node from the DOM, so textContent
+        // based waits would hang forever.
+        await page.waitForFunction(
+          () => {
+            const loadEl = document.querySelector("#world-edit-form [x-show='loading']",);
+            return loadEl instanceof HTMLElement && getComputedStyle(loadEl,).display === "none";
+          },
+          null,
+          { timeout: 8000, },
+        );
         expect(await page.locator(".world-edit-tabs",).count(),).toBe(0,);
       } finally {
         errors.assert();
