@@ -141,7 +141,10 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
 - [x] Split `src/server.ts` (652L) into `server/` barrel + handler/static-files/start (dev `eb3ed64f`)
 - [x] Split `src/elysia-app.ts` (267L) — extract `src/app/register-plugins.ts` (dev `eb3ed64f`)
 - [ ] Split `src/chat/service.ts` (1830L) into `src/chat/service/` barrel + domain modules
-- [ ] Split `src/routes/messages.ts` (1121L) into `src/routes/messages/` (aligns TASK-split-messages-route)
+- [x] Split `src/routes/messages.ts` (1121L) into `src/routes/messages/` (aligns TASK-split-messages-route)
+- [x] Split `src/generation/auto-gen/auto-generation.ts` (588L, round-1 shallow) into pipeline step helpers (dev `5a4f0b2a`)
+- [x] Deep-split `src/chat/service/{chats,messages,transitions}.ts` (round-1 shallow sub-files) into crud/batch, read/write, carry helpers (dev `5a4f0b2a`)
+- [ ] Split `src/chat/service.ts` (1830L) into `src/chat/service/` barrel + domain modules
 - [ ] Split `src/generation/auto-gen.ts` (1119L) into pipeline step modules
 - [ ] Convert class-based services (`characters/services/*`) to interface-merged factory + `thisL`
 - [ ] Apply derived-type single-source-of-truth where public types are hand-rolled in parallel
@@ -153,10 +156,14 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
   (auto-gen/chat/messages).
 - Round 2 (dev `eb3ed64f`): 6 route modules (views/admin/chats/worlds/battle/characters),
   assets/service, validation/schemas, server.ts, elysia-app.ts.
+- Round 3 (dev `5a4f0b2a`): deep-split round-1 shallow artifacts — auto-generation.ts
+  (588→239L, 7 pipeline steps), chat/service/{chats,messages,transitions} (crud/batch,
+  read/write, 6 carry helpers). Also repointed config example to `src/server/index.ts`
+  (round-2 stale ref).
 - `src/server/start.ts` (398L) deliberately kept intact: untested production bootstrap (e2e uses
   `createTestServer`, not `start()`); splitting risks regression with no safety net. Documented
   follow-on debt.
-- Offenders: 137 → 129 (`file-split-routes` closed 9; dev added 1).
+- Offenders: 137 → 125 (round-2 closed 9, round-3 closed 4, dev added 1 via knip gate).
 
 ## Files
 
