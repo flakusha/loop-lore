@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `b7eb320`
-

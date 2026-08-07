@@ -20,7 +20,7 @@ import {
   WorldAvatarConfigBody,
 } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
 export function characterAvatarsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;

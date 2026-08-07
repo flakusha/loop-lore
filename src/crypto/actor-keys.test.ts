@@ -18,7 +18,7 @@ import { Kysely, } from "kysely";
 import { createSqliteDialect, } from "../db/index";
 import { up as migrate, } from "../db/migrations/001_init";
 import type { DB, } from "../db/schema";
-import { initSmk,  getSmk} from "./smk";
+import { getSmk, initSmk, } from "./smk";
 
 /**
  * Tests for crypto/actor-keys.ts — Actor key CRUD

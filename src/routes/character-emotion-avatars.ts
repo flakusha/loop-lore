@@ -10,7 +10,14 @@ import { EmotionAvatarService, } from "../characters/services/emotion-avatar-ser
 import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { checkActorOwnership, } from "./actor-auth";
-import { forbiddenResponse as forbidden, jsonCreated, jsonError, jsonResponse, requireUserId,  HttpStatus} from "./http-utils";
+import {
+  forbiddenResponse as forbidden,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonResponse,
+  requireUserId,
+} from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;

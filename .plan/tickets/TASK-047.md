@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `378e7a2`
-
