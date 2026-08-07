@@ -104,8 +104,8 @@
     </button>
     <button
       class="btn-icon"
-      :class="showGmPanel ? 'gm-toggle-active' : ''"
-      @click="showGmPanel = !showGmPanel"
+      :class="$store.ui.showGmPanel ? 'gm-toggle-active' : ''"
+      @click="$store.ui.showGmPanel = !$store.ui.showGmPanel"
       title="GM Panel"
       aria-label="Toggle GM Panel"
       data-testid="gm-toggle"

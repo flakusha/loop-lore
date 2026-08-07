@@ -58,7 +58,7 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
 
     this._keydownHandler = (e: KeyboardEvent,) => {
       if (e.key === "Escape") {
-        if (this.showGmPanel) { this.showGmPanel = false; }
+        if (Alpine.store("ui",).showGmPanel) { Alpine.store("ui",).showGmPanel = false; }
         else if (Alpine.store("ui",).showChatList) { Alpine.store("ui",).showChatList = false; }
         else if (Alpine.store("ui",).showGallery) { Alpine.store("ui",).showGallery = false; }
         else if (Alpine.store("ui",).showCharacterInfo) { Alpine.store("ui",).showCharacterInfo = false; }

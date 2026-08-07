@@ -190,8 +190,6 @@ export interface ChatState extends AlpineMagicThis {
   impersonationActive: boolean;
   impersonatingActorId: string | null;
 
-  showGmPanel: boolean;
-
   editingMessageId: string | null;
   editContent: string;
   previewMediaAsset: GalleryAsset | null;
