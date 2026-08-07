@@ -20,7 +20,7 @@ describe("Auth session E2E", () => {
   let ctx: BrowserTestContext;
 
   beforeAll(async () => {
-    ctx = await createBrowserTest({ auth: { required: true, }, });
+    ctx = await createBrowserTest({ auth: { required: true, }, },);
     await seedUsers(ctx.db,);
   }, 45_000,);
 
@@ -34,7 +34,11 @@ describe("Auth session E2E", () => {
     await page.waitForTimeout(300,);
   }
 
-  async function login(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>, username: string, password: string,) {
+  async function login(
+    page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
+    username: string,
+    password: string,
+  ) {
     await gotoLogin(page,);
     await page.fill("[data-testid='username-input']", username,);
     await page.fill("[data-testid='password-input']", password,);

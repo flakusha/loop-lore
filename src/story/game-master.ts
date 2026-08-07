@@ -21,8 +21,8 @@ import {
 } from "../db/enums";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { applyEvents, extractEvents, validateEvents, } from "./events";
-import type { QualityEvaluator} from "./quality-evaluator";
-import { createQualityEvaluator } from "./quality-evaluator";
+import type { QualityEvaluator, } from "./quality-evaluator";
+import { createQualityEvaluator, } from "./quality-evaluator";
 import type {
   GameMasterConfig,
   GameMasterDecision,

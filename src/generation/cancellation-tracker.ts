@@ -11,8 +11,8 @@
 
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import type { PolicyType} from "../db/enums";
-import { CancelReason, GenerationStatus, generationStatusMachine } from "../db/enums";
+import type { PolicyType, } from "../db/enums";
+import { CancelReason, GenerationStatus, generationStatusMachine, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";

@@ -6,7 +6,7 @@
  */
 
 import { levelFromConfig, shouldEmit, } from "../../logger/levels";
-import type { LogEntry, Logger, LoggerBindings, Transport,  LogLevel} from "../../logger/types";
+import type { LogEntry, Logger, LoggerBindings, LogLevel, Transport, } from "../../logger/types";
 import { LogLevelNumeric, } from "../../logger/types";
 import { formatTime, unixSec, } from "../../utils/date";
 import { AsyncLogQueue, } from "./queue";

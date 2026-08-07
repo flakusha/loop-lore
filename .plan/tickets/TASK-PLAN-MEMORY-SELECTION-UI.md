@@ -8,4 +8,3 @@
 **Related**:
 
 Git issue: `05c03f1`
-
