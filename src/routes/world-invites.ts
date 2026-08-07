@@ -55,7 +55,7 @@ async function isWorldOwner(
     .select("owner_id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  return Boolean(world,) && (world!.owner_id === userId || userRole === "admin");
+  return Boolean(world,) && (world!.owner_id === userId || userRole === "admin" || userRole === "solo");
 }
 
 export function worldInvitesRoutes(opts: HandlerOpts,) {
