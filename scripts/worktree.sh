@@ -185,6 +185,26 @@ configure_hooks() {
     git -C "$worktree_path" config core.hooksPath "$hooks_dir"
     echo -e "${GREEN}  ✓ Hooks configured: $hooks_dir${NC}"
 }
+
+# Share the main repo's node_modules with a worktree (avoids a full bun install per worktree)
+configure_deps() {
+  local worktree_path="$1"
+
+  if [[ -e "$worktree_path/node_modules" ]]; then
+    echo -e "${YELLOW}  Skipped: node_modules already present in worktree${NC}"
+    return 0
+  fi
+
+  if [[ ! -d "$REPO_ROOT/node_modules" ]]; then
+    echo -e "${YELLOW}  Skipped: $REPO_ROOT/node_modules not found — run 'bun install' in the main repo first${NC}"
+    return 0
+  fi
+
+  ln -s "$REPO_ROOT/node_modules" "$worktree_path/node_modules"
+  echo -e "${GREEN}  ✓ node_modules linked → $REPO_ROOT/node_modules${NC}"
+}
+
+# Build GPG signing flags for merge commits (sets GIT_MERGE_FLAGS array)
 gpg_merge_flags() {
     GIT_MERGE_FLAGS=()
     if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
@@ -369,9 +389,9 @@ cmd_create() {
     echo -e "${CYAN}Creating worktree for branch: $branch${NC}"
     git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
     configure_signing "$worktree_path"
-// hint: Logic changed on both sides. Requires understanding intent of each change.
     link_configs "$worktree_path"
     configure_hooks "$worktree_path"
+    configure_deps "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -418,6 +438,7 @@ cmd_new() {
   git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
   configure_signing "$worktree_path"
   configure_hooks "$worktree_path"
+  configure_deps "$worktree_path"
   echo -e "${GREEN}✓ Created: $worktree_path${NC}"
   echo -e "  cd $worktree_path"
 }
