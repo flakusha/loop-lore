@@ -32,6 +32,7 @@ export const uiStoreDefinition: Record<string, unknown> = {
 
   // ── State flags ──────────────────────────────────────
   hasActiveChat: false,
+  showGmPanel: false,
 
   // ── Active entity refs ───────────────────────────────
   activePersona: null,
