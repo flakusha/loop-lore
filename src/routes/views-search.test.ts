@@ -5,22 +5,25 @@ import { join, } from "node:path";
 const VIEWS_DIR = join(import.meta.dir, "..", "views",);
 const ROUTES_DIR = import.meta.dir;
 const COMPONENTS_DIR = join(import.meta.dir, "..", "components",);
+// Route module moved to views/ subdir during the file-split refactor; the
+// search endpoints are registered in plugin-dynamic.ts (handlers in search.ts).
+const VIEWS_ROUTES = join(ROUTES_DIR, "views", "plugin-dynamic.ts",);
 
 describe("views search endpoints", () => {
   test("views.ts has gallery search endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "views.ts",), "utf8",);
+    const content = readFileSync(VIEWS_ROUTES, "utf8",);
     expect(content,).toContain("/dynamic/gallery/search",);
     expect(content,).toContain("serveGallerySearch",);
   });
 
   test("views.ts has characters search endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "views.ts",), "utf8",);
+    const content = readFileSync(VIEWS_ROUTES, "utf8",);
     expect(content,).toContain("/dynamic/characters/search",);
     expect(content,).toContain("serveCharactersSearch",);
   });
 
   test("views.ts has worlds search endpoint", () => {
-    const content = readFileSync(join(ROUTES_DIR, "views.ts",), "utf8",);
+    const content = readFileSync(VIEWS_ROUTES, "utf8",);
     expect(content,).toContain("/dynamic/worlds/search",);
     expect(content,).toContain("serveWorldsSearch",);
   });

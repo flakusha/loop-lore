@@ -1,0 +1,32 @@
+/**
+ * Asset Service — input validation
+ */
+
+/**
+ * Validate file size against config limit.
+ */
+export function validateFileSize(sizeBytes: number, maxSize: number,): string | null {
+  if (sizeBytes > maxSize) {
+    const maxMb = (maxSize / 1_048_576).toFixed(0,);
+    return `File too large. Maximum size is ${maxMb} MB.`;
+  }
+  return null;
+}
+
+const ALLOWED_MIME_PREFIXES = [
+  "image/",
+  "audio/",
+  "video/",
+  "application/pdf",
+  "text/plain",
+  "application/json",
+];
+
+/**
+ * Validate MIME type is allowed.
+ */
+export function validateMimeType(mime: string,): string | null {
+  const allowed = ALLOWED_MIME_PREFIXES.some((prefix,) => mime.startsWith(prefix,));
+  if (!allowed) { return `Unsupported file type: ${mime}`; }
+  return null;
+}
