@@ -1,6 +1,6 @@
 # Epic: NPC Navigation
 
-**Status:** 📝 Draft
+**Status:** 🟢 Code+tests+schema done (migration 001/p07); UNWIRED
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -74,3 +74,11 @@ interface WorldStateChange {
 - `epic-character-core-system.md` (character stats, traits)
 - `epic-world-locations.md` (location system)
 - `specs/npc-navigation.md` (full design spec)
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`NpcNavigationService` (src/rpg/npc-navigation/, state + movement + processing + pathfinding,
+backed by `npc_states` + `location_states`, migration 001/p07) is code-complete + tested but has
+ZERO external importers. Resolution: mount it under `/api/rpg/npc-navigation`
+(move/pathfind/state) via the WIRED-7 mount pattern — tracked by
+`TASK-wire-npc-navigation-routes`.

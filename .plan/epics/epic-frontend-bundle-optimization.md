@@ -19,14 +19,15 @@ Reduce frontend JS bundle size from ~1.34MB to ~134KB (10x reduction) via code-s
 - Enable gzip/brotli compression on build output
 - Add bundle size CI gate (soft limit per chunk, hard limit total)
 - Remove unused dependencies and dead code
+- Remove dead frontend modules (`app.ts`, `touch.ts`, `vendor.ts`, `alpine/locale-picker.ts`)
 
 ## Current State
 
 | Bundle           | Size        | Loaded                       |
 | ---------------- | ----------- | ---------------------------- |
-| `app.js`         | 616K        | Always (core framework)      |
+| `app.js`         | 616K        | Always (core framework) — (DEAD — see TASK-remove-dead-frontend-modules)      |
 | `pages.js`       | 540K        | Always (all pages)           |
-| `vendor.js`      | 116K        | Always (htmx, Alpine, morph) |
+| `vendor.js`      | 116K        | Always (htmx, Alpine, morph) — (DEAD — see TASK-remove-dead-frontend-modules) |
 | `chat-vendor.js` | 72K         | Chat page only               |
 | **Total**        | **~1.34MB** |                              |
 
@@ -51,6 +52,7 @@ Reduce frontend JS bundle size from ~1.34MB to ~134KB (10x reduction) via code-s
 | TASK-frontend-compression     | Enable gzip/brotli pre-compression in build pipeline   | Medium   | Not Started |
 | TASK-frontend-size-gate       | Add bundle size CI gate (soft/hard limits)             | Medium   | Not Started |
 | TASK-frontend-tree-shake      | Tree-shake unused dependencies and dead code           | Low      | Not Started |
+| TASK-remove-dead-frontend-modules | Remove dead frontend modules (app.ts, touch.ts, vendor.ts, locale-picker.ts) | High | Not Started |
 
 ## Acceptance Criteria
 
