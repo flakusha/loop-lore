@@ -48,12 +48,11 @@ No trade system exists — `ItemsService.transfer()` moves items but has no curr
 
 - `src/routes/trade.ts` — trade offer/accept/cancel routes
 - `src/services/trade.ts` — TradeService (offer/accept/cancel logic)
-- `src/db/migrations/032_trade_system.ts` — currency table + trade indexes
 
 ## Files to Modify
 
 - `src/story/items/index.ts` — add `trade()` method (or extend transfer)
-- `src/db/schema-story.ts` — add `actor_currencies` table
+- `src/db/migrations/parts/005_actor_data.ts` — add `actor_currencies` table (inline, reinit) or add `gold` column to `npc_states`/`actors`
 - `src/routes/crafting/orders.ts` — delegate to TradeService for payment
 
 ## Related
