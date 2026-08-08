@@ -2732,6 +2732,17 @@
     "type": "TASK",
     "hash": "9ca71ff"
   },
+  "TASK-ACTOR-ITEM-SERVICE": {
+    "hash": "c68b555",
+    "extid": "TASK-ACTOR-ITEM-SERVICE",
+    "type": "TASK",
+    "title": "Actor Item Service (Equip/Unequip, Weight, Trade)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actor-item-service.md"
+  },
   "TASK-ACTOR-LICENSING-FRONTEND": {
     "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
     "extid": "TASK-ACTOR-LICENSING-FRONTEND",
@@ -4124,6 +4135,17 @@
     "title": "CI/CD Pipeline",
     "type": "TASK"
   },
+  "TASK-CLEAN-TRANSFER-ORPHANS": {
+    "hash": "307552d",
+    "extid": "TASK-CLEAN-TRANSFER-ORPHANS",
+    "type": "TASK",
+    "title": "Clean Up Item Transfer Orphans (Zero-Quantity Rows)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-clean-transfer-orphans.md"
+  },
   "TASK-CLI-IMPORT-EXPORT": {
     "epic": "epic-import-export-io\\",
     "extid": "TASK-CLI-IMPORT-EXPORT",
@@ -5244,6 +5266,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-file-split-routes.md"
   },
+  "TASK-FIX-ACTOR-ITEM-VALUE-TYPE": {
+    "hash": "a97459f",
+    "extid": "TASK-FIX-ACTOR-ITEM-VALUE-TYPE",
+    "type": "TASK",
+    "title": "Fix Actor Items Value Type (text → integer)",
+    "label": "task",
+    "priority": "P3 — Low",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+  },
   "TASK-FIX-CRYPTO-ISOLATION": {
     "epic": "",
     "extid": "TASK-FIX-CRYPTO-ISOLATION",
@@ -5670,7 +5703,8 @@
     "priority": "Medium",
     "epic": "epic-frontend-html-dedup-htmx-reuse",
     "tags": [],
-    "source": ".plan/tickets/TASK-htmx-reuse-e2e-verify.md"
+    "source": ".plan/tickets/TASK-htmx-reuse-e2e-verify.md",
+    "status": "done"
   },
   "TASK-I18N-ALPINE-CLIENT": {
     "epic": "epic-i18n",
@@ -5815,6 +5849,17 @@
     "title": "Implement crafting UI",
     "type": "TASK"
   },
+  "TASK-IMPLEMENT-ITEM-TRANSFER-EVENT": {
+    "hash": "b39a4db",
+    "extid": "TASK-IMPLEMENT-ITEM-TRANSFER-EVENT",
+    "type": "TASK",
+    "title": "Implement Item Transfer Event (ApplyItemTransfer)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-item-transfer-event.md"
+  },
   "TASK-IMPLEMENT-MEMORY-DECAY-LOGIC": {
     "hash": "ab3dad5",
     "extid": "TASK-IMPLEMENT-MEMORY-DECAY-LOGIC",
@@ -5826,6 +5871,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-implement-memory-decay-logic.md",
     "status": "done"
+  },
+  "TASK-IMPLEMENT-TRADE": {
+    "hash": "f71d103",
+    "extid": "TASK-IMPLEMENT-TRADE",
+    "type": "TASK",
+    "title": "Implement Trade System (Transfer + Currency)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-trade.md"
   },
   "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS": {
     "epic": "epic-crafting-professions",
@@ -6054,6 +6110,17 @@
     "title": "Licensing",
     "type": "TASK"
   },
+  "TASK-LINK-NPC-INVENTORY": {
+    "hash": "f92dee7",
+    "extid": "TASK-LINK-NPC-INVENTORY",
+    "type": "TASK",
+    "title": "Link NPC Inventory to World Items (Replace Denormalized JSON)",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-link-npc-inventory.md"
+  },
   "TASK-LLM-QUEUE": {
     "epic": "",
     "extid": "TASK-LLM-QUEUE",
@@ -6184,6 +6251,17 @@
     "tags": [],
     "title": "EPIC: Magic & Spell Systems",
     "type": "TASK"
+  },
+  "TASK-MAP-BATTLE-EQUIPMENT": {
+    "hash": "f4fdcb7",
+    "extid": "TASK-MAP-BATTLE-EQUIPMENT",
+    "type": "TASK",
+    "title": "Map Battle Equipment to World Item Definitions",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-map-battle-equipment.md"
   },
   "TASK-MATRIX-INTEGRATION": {
     "epic": "epic-communications-integrations.md",
@@ -6967,6 +7045,17 @@
     "tags": [],
     "title": "Party Migration & Travel",
     "type": "TASK"
+  },
+  "TASK-PERSIST-LOOT-DROPS": {
+    "hash": "ecec58f",
+    "extid": "TASK-PERSIST-LOOT-DROPS",
+    "type": "TASK",
+    "title": "Persist Loot Drops (Generate → World Items)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persist-loot-drops.md"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
     "hash": "5fb353d",
@@ -8616,6 +8705,17 @@
     "type": "TASK",
     "status": "done"
   },
+  "TASK-UNIFY-ITEM-TYPES": {
+    "hash": "dc711fa",
+    "extid": "TASK-UNIFY-ITEM-TYPES",
+    "type": "TASK",
+    "title": "Unify Item Type Taxonomies",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unify-item-types.md"
+  },
   "TASK-UNIFY-LOGGING-OUTPUT-TO-CANONICAL-JSONL": {
     "hash": "2850cf8",
     "extid": "TASK-UNIFY-LOGGING-OUTPUT-TO-CANONICAL-JSONL",
@@ -8831,6 +8931,17 @@
     ],
     "title": "Wire context pruning into prompt assembly",
     "type": "TASK"
+  },
+  "TASK-WIRE-CRAFTING-ROUTES": {
+    "hash": "a2a2669",
+    "extid": "TASK-WIRE-CRAFTING-ROUTES",
+    "type": "TASK",
+    "title": "Wire Crafting Routes (Expose RecipesService via HTTP)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-crafting-routes.md"
   },
   "TASK-WIRE-GM-SERVICE-STORY-MODE": {
     "epic": "EPIC-2026-28",
