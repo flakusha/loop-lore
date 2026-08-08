@@ -1,0 +1,5 @@
+# TUI configuration example
+# Domain: tui — terminal UI (blessed)
+
+[tui]
+enabled = true
