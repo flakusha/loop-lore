@@ -15,6 +15,10 @@ Inventory system specification — covers item storage, equipment slots, invento
 - Spec: `docs/spec/inventory.md`
 - Related: `docs/spec/actors.md`, `docs/spec/items.md`
 
+## Implementation
+
+> **Active development tracked in:** [`epic-item-systems-unification.md`](/epic-item-systems-unification) — unifies inventory systems, adds equip/trade/weight mechanics, and links NPC inventory to world items.
+
 ## Inventory Systems
 
 ### Core Inventory Model
