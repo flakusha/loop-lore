@@ -9144,6 +9144,17 @@
     "title": "Wire memory provision context",
     "type": "TASK"
   },
+  "TASK-WIRE-NPC-NAVIGATION-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-NPC-NAVIGATION-ROUTES",
+    "type": "TASK",
+    "title": "Wire NPC Navigation Routes",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-npc-navigation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-npc-navigation-routes.md"
+  },
   "TASK-WIRE-QUESTS-ROUTES": {
     "hash": "pending",
     "extid": "TASK-WIRE-QUESTS-ROUTES",
@@ -9154,6 +9165,17 @@
     "epic": "epic-quests-encounters",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-quests-routes.md"
+  },
+  "TASK-WIRE-REPLAYABILITY-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-REPLAYABILITY-ROUTES",
+    "type": "TASK",
+    "title": "Wire Replayability Routes",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-replayability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-replayability-routes.md"
   },
   "TASK-WIRE-SKILLS-ROUTES": {
     "hash": "pending",
@@ -9195,6 +9217,28 @@
     "tags": [],
     "title": "Wire trust modifier to relationships",
     "type": "TASK"
+  },
+  "TASK-WIRE-WORLD-LOCATION-TRAITS-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-WORLD-LOCATION-TRAITS-ROUTES",
+    "type": "TASK",
+    "title": "Wire World Location Traits Routes",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-world-location-traits-routes.md"
+  },
+  "TASK-WIRE-XP-LOOT-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-XP-LOOT-ROUTES",
+    "type": "TASK",
+    "title": "Wire XP & Loot Routes",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
   },
   "TASK-WORLD-ALPINE": {
     "epic": "epic-world-management-ui.md",
