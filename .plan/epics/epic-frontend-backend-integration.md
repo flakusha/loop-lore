@@ -36,6 +36,34 @@ Frontend review found **~150 frontend call sites** all resolve to real backend r
 | **LoRA Discovery**            | `/api/lora/*` (discover, list, status, clear, validate)                                                                                                 | No frontend at all                                                     |
 | **Sessions**                  | `/api/sessions`                                                                                                                                         | Server-internal only                                                   |
 
+## Backend → Frontend Mapping (from reconciliation-frontend-ux.md)
+
+### World & Locations System
+
+| Backend Component | Frontend Requirement | Status | Priority |
+|---|---|---|---|
+| World CRUD | World management UI | ⬜ Not Started | High |
+| Location CRUD | Location explorer UI | ⬜ Not Started | High |
+| Travel system | Travel UI (route selection, progress) | ⬜ Not Started | High |
+| Time tracking | Time display widget | ⬜ Not Started | Medium |
+| NPC placement | NPC location display | ⬜ Not Started | Medium |
+| Random encounters | Encounter UI | ⬜ Not Started | Medium |
+| Diplomacy system | Faction relations UI | ⬜ Not Started | Low |
+
+**Missing Frontend Epics:**
+- `epic-world-management-ui` — World/location CRUD, explorer, map view
+- `epic-travel-ui` — Route selection, progress tracking, fast travel
+- `epic-npc-management-ui` — NPC viewer, relationship map, memory browser
+
+### Battle & Action Systems
+
+| Backend Component | Frontend Requirement | Status | Priority |
+|---|---|---|---|
+| Battle state | Battle UI (health bars, status) | ⬜ Not Started | High |
+| Turn-based mechanics | Turn order display | ⬜ Not Started | High |
+| Battle actions | Action selection UI | ⬜ Not Started | High |
+| Battle log | Battle history viewer | ⬜ Not Started | Medium |
+
 ## Scope
 
 ### Phase 1 — Core Gameplay (P0)
