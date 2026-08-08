@@ -3594,6 +3594,17 @@
     "type": "TASK",
     "hash": "bb9d6c9"
   },
+  "TASK-CHARACTER-CONFIG-SKILLS-PROFESSIONS": {
+    "hash": "pending",
+    "extid": "TASK-CHARACTER-CONFIG-SKILLS-PROFESSIONS",
+    "type": "TASK",
+    "title": "Character Config — Skills & Professions in Templates",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-skills-professions-config",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-config-skills-professions.md"
+  },
   "TASK-CHARACTER-CORE-SYSTEM": {
     "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-CORE-SYSTEM",
@@ -4344,6 +4355,17 @@
     "tags": [],
     "title": "Config Migration Tool",
     "type": "TASK"
+  },
+  "TASK-CONSOLIDATE-QUEST-ENGINES": {
+    "hash": "pending",
+    "extid": "TASK-CONSOLIDATE-QUEST-ENGINES",
+    "type": "TASK",
+    "title": "Consolidate Quest Engines",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-quests-encounters",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-quest-engines.md"
   },
   "TASK-CONTEXT-CUT-MEMORY-PROMOTION": {
     "closed_issue": "TASK-context-cut-memory-promotion: Context Cut & Memory Promotion",
@@ -5123,6 +5145,17 @@
     "tags": [],
     "title": "Equipment Slots",
     "type": "TASK"
+  },
+  "TASK-EQUIPMENT-STAT-PREVIEW": {
+    "hash": "pending",
+    "extid": "TASK-EQUIPMENT-STAT-PREVIEW",
+    "type": "TASK",
+    "title": "Character Stats Changes from Equipment (Live Preview)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-equipment-stat-preview.md"
   },
   "TASK-ERROR-ENVELOPE": {
     "epic": "epic-error-envelope",
@@ -6041,6 +6074,17 @@
     "title": "I/O Formats",
     "type": "TASK"
   },
+  "TASK-ITEM-CONFIG-TEMPLATES": {
+    "hash": "pending",
+    "extid": "TASK-ITEM-CONFIG-TEMPLATES",
+    "type": "TASK",
+    "title": "Item Config Templates (Idempotent Seeding from Config)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-skills-professions-config",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-config-templates.md"
+  },
   "TASK-ITEM-DETAILS": {
     "epic": "epic-inventory-ui.md",
     "extid": "TASK-ITEM-DETAILS",
@@ -6051,6 +6095,39 @@
     "tags": [],
     "title": "Item Details Panel",
     "type": "TASK"
+  },
+  "TASK-ITEM-EDIT-PERMISSIONS-HISTORY": {
+    "hash": "pending",
+    "extid": "TASK-ITEM-EDIT-PERMISSIONS-HISTORY",
+    "type": "TASK",
+    "title": "Item Edit Permissions & History (Audit Trail)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-edit-permissions-history.md"
+  },
+  "TASK-ITEM-GENERATION": {
+    "hash": "pending",
+    "extid": "TASK-ITEM-GENERATION",
+    "type": "TASK",
+    "title": "Item Generation (Procedural & LLM-Assisted)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-generation.md"
+  },
+  "TASK-ITEM-PROVISIONING-DASHBOARD": {
+    "hash": "pending",
+    "extid": "TASK-ITEM-PROVISIONING-DASHBOARD",
+    "type": "TASK",
+    "title": "Item Provisioning Dashboard (World-Level Allocation View)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-provisioning-dashboard.md"
   },
   "TASK-ITEM-SPEC-PARAMETERS": {
     "epic": "RPG Mechanics & Extensible Game Systems",
@@ -6595,6 +6672,17 @@
     "tags": [],
     "title": "NPC Inventory and Trading",
     "type": "TASK"
+  },
+  "TASK-NPC-INVENTORY-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-NPC-INVENTORY-FRONTEND",
+    "type": "TASK",
+    "title": "NPC Inventory Frontend (View & Trade)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-inventory-frontend.md"
   },
   "TASK-NPC-MEMORY": {
     "epic": "NPC/Actor System, Memory & Knowledge Systems",
@@ -7319,6 +7407,28 @@
     "tags": [],
     "title": "Pre-Compiled Hot Binary Modules",
     "type": "TASK"
+  },
+  "TASK-PROFESSIONS-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-PROFESSIONS-FRONTEND",
+    "type": "TASK",
+    "title": "Professions Frontend (Crafting Disciplines UI)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-skills-professions-config",
+    "tags": [],
+    "source": ".plan/tickets/TASK-professions-frontend.md"
+  },
+  "TASK-PROFESSIONS-SERVICE-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-PROFESSIONS-SERVICE-ROUTES",
+    "type": "TASK",
+    "title": "Professions Service & Routes (Crafting Disciplines)",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "epic-skills-professions-config",
+    "tags": [],
+    "source": ".plan/tickets/TASK-professions-service-routes.md"
   },
   "TASK-PROMOTE-SIZE-CHECK-TO-CI": {
     "epic": "epic-code-quality",
@@ -8180,6 +8290,28 @@
     "title": "Skills System Implementation",
     "type": "TASK"
   },
+  "TASK-SKILLS-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-SKILLS-FRONTEND",
+    "type": "TASK",
+    "title": "Skills Frontend (Skill Tree & Progression UI)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-skills-professions-config",
+    "tags": [],
+    "source": ".plan/tickets/TASK-skills-frontend.md"
+  },
+  "TASK-SKILLS-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-SKILLS-ROUTES",
+    "type": "TASK",
+    "title": "Skills Routes (Expose SkillsService via HTTP)",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "epic-skills-professions-config",
+    "tags": [],
+    "source": ".plan/tickets/TASK-skills-routes.md"
+  },
   "TASK-SMART-CONTEXT-PRUNING": {
     "epic": "EPIC-2026-36",
     "extid": "TASK-smart-context-pruning",
@@ -8899,6 +9031,17 @@
     "title": "EPIC: Weather & Environmental Effects",
     "type": "TASK"
   },
+  "TASK-WIRE-ACHIEVEMENTS-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-ACHIEVEMENTS-ROUTES",
+    "type": "TASK",
+    "title": "Wire Achievements Routes",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-achievements",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-achievements-routes.md"
+  },
   "TASK-WIRE-AUTO-RENAME": {
     "epic": "EPIC-2026-28",
     "extid": "TASK-wire-auto-rename",
@@ -9000,6 +9143,28 @@
     "tags": [],
     "title": "Wire memory provision context",
     "type": "TASK"
+  },
+  "TASK-WIRE-QUESTS-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-QUESTS-ROUTES",
+    "type": "TASK",
+    "title": "Wire Quests Routes",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-quests-encounters",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-quests-routes.md"
+  },
+  "TASK-WIRE-SKILLS-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-SKILLS-ROUTES",
+    "type": "TASK",
+    "title": "Wire Skills Routes",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-skills-routes.md"
   },
   "TASK-WIRE-TRANSITIONS": {
     "epic": "EPIC-2026-28",
