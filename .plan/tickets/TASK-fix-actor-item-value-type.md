@@ -28,25 +28,23 @@ export interface Items {
 
 ## Work
 
-1. **Migration** — `034_fix_actor_item_value_type.ts`:
-   - Cast existing text values to integer (handle NULL, empty string, non-numeric gracefully)
-   - Alter column type from `text` to `integer`
-   - Set default to 0
+1. **Schema (inline, no new migration)** — DB is reinit, so no data cast needed. Edit `actor_items.value` in `parts/005_actor_data.ts`:
+   - Change column type from `text` to `integer` (default 0, nullable)
+   - No backfill/cast required (fresh DB)
 2. **Update schema** — `schema-core.ts` `ActorItems.value` → `Generated<number>`
 3. **Update routes** — `actor-items.ts` field mapping already maps `value` → `value`, no change needed
 4. **Update validation** — `db-schemas.ts` ensure `value` is numeric
 
 ## Acceptance Criteria
 
-- [ ] `actor_items.value` column is integer type
-- [ ] Existing data migrated (non-numeric → 0 or NULL)
+- [ ] `actor_items.value` column is integer type (inline in `parts/005_actor_data.ts`)
 - [ ] `ActorItems.value` type is `number` in schema
 - [ ] `bun test src/` green; `bun run check` green
 
 ## Files to Modify
 
 - `src/db/schema-core.ts` — `ActorItems.value` type
-- `src/db/migrations/034_fix_actor_item_value_type.ts` — new migration
+- `src/db/migrations/parts/005_actor_data.ts` — change `value` column to integer (inline, reinit)
 - `src/db/column-types.ts` — update type mapping
 - `src/validation/db-schemas.ts` — update validation schema
 
