@@ -5,7 +5,7 @@
 **Effort:** Medium
 **Epic:** epic-character-spec
 **Labels:** seeding, character, identity, race, origin, culture, lore, trait
-**Related:** `FEAT-character-spec-inclusion-race-origin-culture.md`, `FEAT-race-origin-lore-identity-model.md`, `FEAT-race-origin-lore-identity-memory-config.md`, `FEAT-origin-capture-generation-seeding.md`, `FEAT-seed-default-characters-avatar.md`, `src/characters/seed.ts`, `src/config/sections/characters.ts`, `src/characters/services/traits-service.ts`, `src/characters/services/personality-service.ts`, `src/assistant/lore/audience.ts`, `.plan/features/feature-character-template-seeding.md`
+**Related:** `FEAT-character-spec-inclusion-race-origin-culture.md`, `FEAT-race-origin-lore-identity-model.md`, `FEAT-race-origin-lore-identity-memory-config.md`, `FEAT-origin-capture-generation-seeding.md`, `FEAT-seed-default-characters-avatar.md`, `src/characters/seed.ts`, `src/config/sections/characters.ts`, `src/characters/services/traits-service.ts`, `src/characters/services/personality-service.ts`, `src/assistant/lore/audience.ts`, `.plan/epics/epic-character-core-system.md`
 
 ## Summary
 
@@ -88,7 +88,7 @@ Document: template identity fields, how they map to `character_permanent_traits`
 - `src/characters/seed.ts` — persist identity traits after actor insert (primary change)
 - `src/characters/services/traits-service.ts` — reuse `createPermanentTrait` (read-only if seeded here)
 - `src/characters/seed.test.ts` — seeding identity tests
-- `.plan/features/feature-character-template-seeding.md` — document identity seeding
+- `.plan/epics/epic-character-core-system.md` — document identity seeding
 
 ## Notes
 

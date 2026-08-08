@@ -9,7 +9,7 @@
 ## Current State (2026-08-03)
 
 - ✅ **LLM-modality foundation shipped** — config-file builtins registry: `LLM_PROMPT_DEFAULTS` (12 purposes) + `resolveSystemPrompt()` (`src/prompts/registry.ts`), user overrides via `configs/templates/llm.yaml` (extend/override/replace), 10 consumers wired (commit `9aefe593`). This corresponds to the registry's `builtins` + config-overlay `resolve`; the `prompt_templates` DB table (`userTemplates`) and unified `{{variable}}` `render` remain future work (`TASK-prompt-library.md`).
-- 🟡 Registry hardening (typed purposes, single defaults source, llm.yaml validation): `TASK-prompt-template-registry.md`, design `.plan/design/prompt-template-registry.md`.
+- 🟡 Registry hardening (typed purposes, single defaults source, llm.yaml validation): `TASK-prompt-template-registry.md`, design `.plan/epics/epic-config-templates.md`.
 - ⬜ DB `prompt_templates`/`template_variables` tables, `template-service.ts`, `/api/templates/:modality` routes, LLM `{{var}}` interpolation — future (Migration path below).
 
 ---
