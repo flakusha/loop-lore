@@ -1,0 +1,8 @@
+# Assets configuration example
+# Domain: assets — file upload and storage
+
+[assets]
+enabled = true
+uploadDir = "../loop-lore-data/uploads"
+maxFileSize = 10485760 # 10 MB
+compression = true
