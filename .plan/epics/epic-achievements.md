@@ -1,6 +1,6 @@
 # Epic: Achievements
 
-**Status:** 📝 Draft
+**Status:** 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -135,11 +135,11 @@ interface SocialSharing {
 
 ## Tasks
 
-- [ ] Achievement data model (schema + migration)
-- [ ] Achievement CRUD API routes
+- [x] Achievement data model (schema + migration)
+- [x] Achievement CRUD API routes
 - [ ] Unlock condition evaluation engine
-- [ ] Progress tracking system
-- [ ] Reward grant pipeline
+- [x] Progress tracking system
+- [x] Reward grant pipeline
 - [ ] Achievement notification system
 - [ ] Trophy case / display UI
 - [ ] Secret achievement reveal logic
@@ -174,3 +174,12 @@ interface SocialSharing {
 ## Tickets
 
 - `TASK-achievements.md` — implementation tasks
+- `TASK-wire-achievements-routes.md` — wire AchievementsService under `/api/rpg/achievements`
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`AchievementsService` (src/rpg/achievements/, CRUD + progress, backed by `achievements` +
+`player_achievements`, migration 035) is code-complete + tested but has ZERO external importers.
+Resolution: mount it under `/api/rpg/achievements` (CRUD + progress/claim) via the WIRED-7
+mount pattern — tracked by `TASK-wire-achievements-routes`. Display/trophy-case remains separate
+frontend work tracked by FEAT-achievements.
