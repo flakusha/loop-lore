@@ -58,28 +58,34 @@ LLM — on a sane architecture:
 
 ```
 src/
-├── server.ts          Bun HTTP entry point
 ├── elysia-app.ts      Elysia setup + route registration
+├── server/            HTTP entry (handler, index, start, static-files)
 ├── db/                Kysely init + schema types + migrations
 ├── config/            Config loading + hot-reload + templates
 ├── routes/            REST API endpoints (100+ route files)
+├── app/              Plugin registration (register-plugins.ts)
 ├── assets/            Asset service + metadata extraction
 ├── assistant/         Assistant service + commands (dice, music)
 ├── characters/        Character services (avatar, mood, traits)
 ├── chat/              Chat engine (hallucination guard, transitions)
 ├── content/           Hash injection, compression, encoding
 ├── crypto/            Encryption (actor keys, BYOK, SMK, at-rest)
+├── eslint-rules/      Custom ESLint rules (param-limit)
 ├── frontend/          htmx + Alpine.js + VN renderer
 ├── generation/        LLM generation (multi-provider, streaming)
 ├── memory/            Memory budget, provisioning, purge
 ├── middleware/         Auth, NSFW gate, solo user, rate limit
 ├── plugins/           Plugin registry + hooks
+├── public/            Static assets served at / (CSS, locales, img)
 ├── regex/             Extraction pipeline (image edits, intents, etc.)
 ├── rpg/               RPG subsystems (combat, quests, skills, loot)
 ├── routes/            REST handlers
+├── scripts/           Build scripts (commit-check, smoke-app, version-bump)
 ├── story/             Multi-LLM story engine
+├── transport/         WebSocket transport layer (aspirational)
 ├── turning/           Turn orchestration
 ├── tui/               Terminal UI (blessed)
+├── validation/        Elysia t (TypeBox) schemas + middleware
 └── utils/             Shared utilities
 ```
 
@@ -132,17 +138,16 @@ bun test src/
 
 ## Documentation
 
-- `docs/implementation.md` — Full tech details, API reference, env vars
-- `docs/schema.md` — Database schema and migrations
-- `docs/assets.md` — Asset system (replaces gallery)
-- `docs/tui.md` — TUI architecture and keyboard shortcuts
-- `docs/architecture.md` — System layers and request flow
-- `docs/frontend.md` — htmx + Alpine.js frontend
-- `docs/users-sessions.md` — User roles and session management
-- `docs/messages.md` — Message system and detail levels
-- `docs/build-deploy.md` — Build and deployment
+- `docs/spec/` — Core specs (106 files)
+- `docs/frontend/` — UX specs (17 files)
+- `docs/guide/` — User guides
+- `docs/reference/` — Reference documentation
+- `docs/ideas/` — Design ideas and proposals
 - `docs/meta/code-practices-improvements/*` — Code practices research
 - `docs/meta/pattern-divergence.md` — Quantified divergence audit
+- `docs/meta/` — Research, assessments, reviews, workflow
+- `docs/public/` — Public-facing docs
+- `docs/i18n/` — Localized README translations
 - `.plan/` — Task tracking (source of truth for active work)
 - `.agents/references/` — Coding conventions (banned patterns, recommendations)
 - `AGENTS.md` — Agent instructions and project overview
