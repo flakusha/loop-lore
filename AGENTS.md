@@ -250,10 +250,10 @@ bun run plan:sync:fix                 # apply fixes
 
 ## Planning System
 
-- **`.plan/epics/`** — epic definitions
+- **`.plan/epics/`** — epic definitions (includes merged design/roadmaps/ideas/research/features content)
 - **`.plan/tickets/`** — task tickets
 - **`.plan/epics-index.md`** — consolidated epic status (auto-generated from `.plan/epics/`)
-- **`.plan/features/`** — feature specs
+- **`.plan/backlog/`** — priority workstack and open/deferred items
 
 **`.plan/` is source of truth**; `docs/meta/` is reference only.
 
