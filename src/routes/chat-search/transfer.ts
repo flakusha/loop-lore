@@ -68,7 +68,7 @@ export function transferRoutes(opts: HandlerOpts,) {
           return jsonResponse({ ok: true, locationId: body.locationId, },);
         },
         {
-          params: t.Object({ chatId: t.String({ format: "uuid", },), },),
+          params: t.Object({ id: t.String({ format: "uuid", },), },),
           body: t.Object({ locationId: t.String({ format: "uuid", },), },),
         },
       )
