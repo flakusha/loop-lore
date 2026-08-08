@@ -28,10 +28,9 @@ Consolidate **4 divergent item type taxonomies** into a single canonical system.
 2. **Deprecate `ActorItemType`** — migrate `actor_items.item_type` to use `ItemCategory` (or keep as alias with CHECK constraint)
 3. **Deprecate `ItemQuality`** — replace with `ItemRarity` in `EquipmentItem` interface
 4. **Align loot `Rarity`** — use `ItemRarity` from `enums-story/items.ts` in `rpg/loot/types.ts`
-5. **Migration** — add `030_unify_item_types.ts` migration to:
-   - Add `artifact` to `ItemRarity` if not present
-   - Backfill `actor_items.item_type` values to match `ItemCategory`
-   - Add CHECK constraint enforcing valid category values
+5. **Schema (inline, no new migration)** — DB is reinit, so edit the existing migration that creates the table:
+   - `parts/003_worlds.ts` — extend `items` table: add CHECK constraint on `category`/`rarity` enforcing unified `ItemCategory`/`ItemRarity` values (incl. `artifact` tier)
+   - `parts/005_actor_data.ts` — `actor_items.item_type`: add CHECK constraint against unified `ItemCategory` values; no backfill needed (reinit)
 
 ## Acceptance Criteria
 
@@ -41,7 +40,7 @@ Consolidate **4 divergent item type taxonomies** into a single canonical system.
 - [ ] `ItemQuality` marked deprecated (JSDoc @deprecated) or removed
 - [ ] Loot `Rarity` type aliases to `ItemRarity`
 - [ ] `EquipmentItem.quality` → `rarity: ItemRarity`
-- [ ] Migration adds `artifact` tier + backfills data
+- [ ] `items` + `actor_items` carry CHECK constraints over unified enums (artifact tier included)
 - [ ] All existing tests pass; `bun run check` green
 
 ## Files to Modify
@@ -50,7 +49,8 @@ Consolidate **4 divergent item type taxonomies** into a single canonical system.
 - `src/db/enums-core/flags.ts` — deprecate `ActorItemType`
 - `src/battle/items-integration.ts` — use `ItemRarity`
 - `src/rpg/loot/types.ts` — alias to `ItemRarity`
-- `src/db/migrations/030_unify_item_types.ts` — new migration
+- `src/db/migrations/parts/003_worlds.ts` — CHECK constraints on `items` (inline)
+- `src/db/migrations/parts/005_actor_data.ts` — CHECK constraint on `actor_items.item_type` (inline)
 - `src/db/schema-crafting.ts` — update references
 
 ## Related
