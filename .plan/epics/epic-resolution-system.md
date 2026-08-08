@@ -5,7 +5,7 @@
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** resolution, dice, ruleset, pbta, fate, gurps, d20
-**Source:** .plan/research/rpg-landscape.md §6.3, §9, §10
+**Source:** .plan/epics/epic-rpg-patterns.md §6.3, §9, §10
 
 ## Summary
 

@@ -5,8 +5,8 @@
 **Labels**: chat, templates, chat-setup, architecture
 **Assignee**:
 **Epic**: epic-story-mode-ui
-**Related**: BUG-chat-settings-modal-invalid-mode, .plan/design/chat-mode-reconciliation.md,
-.plan/design/chat-template-config-lifecycle.md, FEAT-chat-template-config-lifecycle
+**Related**: BUG-chat-settings-modal-invalid-mode, .plan/epics/epic-chat-lifecycle-moderation.md,
+.plan/epics/epic-config-templates.md, FEAT-chat-template-config-lifecycle
 
 ## Description
 
@@ -49,13 +49,13 @@ cascade, max memory-carry tokens).
 ## Relationship to existing work
 
 - The 3-axis split (`ChatType` / `ChatMode` incl. `battle|question|inventory` /
-  `ResponseStyle`) in `.plan/design/chat-mode-reconciliation.md` should be applied first or
+  `ResponseStyle`) in `.plan/epics/epic-chat-lifecycle-moderation.md` should be applied first or
   in lockstep — templates select `mode` which is currently overloaded.
 - `gmConfig` human/hybrid GM is unreachable from UI today (shape gap documented in
   `epic-assistant-gm-flows.md`) — templates should wait on or drive that reconciliation.
 - Battle (`TASK-chat-battle-mode-switch.md`) and VN-start (`TASK-chat-visual-novel-mode.md`)
   are mode overlays; templates can express "start already in VN/battle" once those exist.
-- **Online-config policy** (see `.plan/design/chat-template-config-lifecycle.md`): templates
+- **Online-config policy** (see `.plan/epics/epic-config-templates.md`): templates
   are **bound at creation**. Once a chat is online (has a confirmed message), its key
   mechanics (`mode`, `turnStrategy`, `gmConfig.assistantRole`, `visualNovel`, `worldId`,
   `responseStyle`) are **immutable**. Changing them requires **migrating to a new chat**

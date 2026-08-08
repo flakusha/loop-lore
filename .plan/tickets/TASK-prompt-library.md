@@ -10,7 +10,7 @@
 > (`src/prompts/registry.ts`, 12 purposes, `resolveSystemPrompt`, `configs/templates/llm.yaml`)
 > is the foundation this library builds on — `prompt_templates` DB table = `userTemplates`,
 > registry `builtins` + `resolve` already exist. See `FEAT-065-template-system.md` +
-> `.plan/design/prompt-template-registry.md` (registry hardening: `TASK-prompt-template-registry.md`).
+> `.plan/epics/epic-config-templates.md` (registry hardening: `TASK-prompt-template-registry.md`).
 
 ## Summary
 
