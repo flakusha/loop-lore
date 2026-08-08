@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 172 epics
+**Total:** 176 epics
 
 ## Summary
 
@@ -11,7 +11,6 @@
 | ------ | ----- | -------- | ------ | ----- | ---- |
 | 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Archival Workflow | Medium | Medium | 19 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
-| 📝 Draft | Epic: Achievements | Medium | Medium | 17 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | 📝 Draft | Epic: Chat Privacy | Medium | Medium | 4 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
@@ -19,14 +18,10 @@
 | 📝 Draft | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
 | 📝 Draft | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
 | 📝 Draft | Epic: Locations | High | High | 4 | [epic-locations.md](/.plan/epics/epic-locations.md) |
-| 📝 Draft | Epic: NPC Navigation | High | High | 0 | [epic-npc-navigation.md](/.plan/epics/epic-npc-navigation.md) |
 | 📝 Draft | Epic: NPCs | High | High | 4 | [epic-npcs.md](/.plan/epics/epic-npcs.md) |
 | 📝 Draft | Epic: Plugin Extension Points | Medium | Medium | 4 | [epic-plugin-extension-points.md](/.plan/epics/epic-plugin-extension-points.md) |
-| 📝 Draft | Epic: Quests & Encounters | High | High | 4 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
 | 📝 Draft | Epic: Relationships | High | High | 0 | [epic-relationships.md](/.plan/epics/epic-relationships.md) |
-| 📝 Draft | Epic: Replayability | Medium | Medium | 0 | [epic-replayability.md](/.plan/epics/epic-replayability.md) |
-| 📝 Draft | Epic: Skills | High | High | 0 | [epic-skills.md](/.plan/epics/epic-skills.md) |
-| 📝 Draft | Epic: Time Scale | Medium | Medium | 0 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
+| 📝 Draft | Epic: Time Scale | High | Medium | 8 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | ⬜ Not Started | Admin Panel & Dashboard | Medium | Unknown | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Unknown | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
@@ -144,9 +139,18 @@
 | Draft — description under `tree/chore-docs-reconcile` (docs chore)\ | Epic 26: Multi-Instance Reconciliation — Implementation Plan | Unknown | Unknown | 0 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
 | Draft — description under `tree/chore-docs-reconcile` (docs chore)\ | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | Unknown | Unknown | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending) | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
+| 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | 📝 Draft — planning under `tree/chore-docs-reconcile` | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
+| Draft | Epic: Lore Knowledge System | High | Medium | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built) | Epic: Memory & Knowledge Systems | High | High | 4 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
+| Draft | Epic: Memory Propagation | High | Medium | 5 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
+| 🟢 Code+tests+schema done (migration 001/p07); UNWIRED | Epic: NPC Navigation | High | High | 0 | [epic-npc-navigation.md](/.plan/epics/epic-npc-navigation.md) |
+| 🟡 Implementation exists (rpg/quests + story/quest-engine); DUAL-SYSTEM + unwired | Epic: Quests & Encounters | High | High | 4 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
+| Draft | Epic: Rarity Extensions | High | Medium | 6 | [epic-rarity-extensions.md](/.plan/epics/epic-rarity-extensions.md) |
+| 🟢 Code+tests+schema done (migration 035); UNWIRED | Epic: Replayability | Medium | Medium | 0 | [epic-replayability.md](/.plan/epics/epic-replayability.md) |
+| 🟢 Code+tests+schema done (migration 036); UNWIRED | Epic: Skills | High | High | 0 | [epic-skills.md](/.plan/epics/epic-skills.md) |
+| Draft | Epic: Timeline System | High | High | 6 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
 | Not Started | Epic: World Diplomacy & Karma | Medium | High | 0 | [epic-world-diplomacy-karma.md](/.plan/epics/epic-world-diplomacy-karma.md) |
 | Not Started | Epic: World Encounters & Resources | Medium | High | 0 | [epic-world-encounters.md](/.plan/epics/epic-world-encounters.md) |
 | Not Started | Epic: World NPCs | High | High | 0 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
@@ -169,7 +173,7 @@
 | 🟡 Permanently Ongoing | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
 | 🟡 Partial (openai-compatible complete; native providers deferred) | Provider & Plugin Ecosystem | Medium | Large | 16 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
 | Not Started | RAG & Document Processing — Quick Reference | High | High | 0 | [epic-rag-document-processing-quickref.md](/.plan/epics/epic-rag-document-processing-quickref.md) |
-| 🟡 Phase 1 Complete — Core systems (dice, stats, combat, XP, loot) implemented in `src/rpg/` | RPG Mechanics & Extensible Game Systems | Medium | Very High | 28 | [epic-rpg-mechanics.md](/.plan/epics/epic-rpg-mechanics.md) |
+| 🟡 Partial — Phase 1 core (dice/stats/combat/xp/loot) code+tests+schema done but UNWIRED; combat has no DB schema (in-memory engine) | RPG Mechanics & Extensible Game Systems | Medium | Very High | 28 | [epic-rpg-mechanics.md](/.plan/epics/epic-rpg-mechanics.md) |
 | 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 2 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Unknown | Security & Sandboxing — Epic | Unknown | Unknown | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
@@ -178,7 +182,7 @@
 | 🟡 In Progress (2026-08-01 — GM notes panel done; world/NPC/event controls + quest log + turn order pending) | Story Mode UI | P1 — High | Medium | 14 | [epic-story-mode-ui.md](/.plan/epics/epic-story-mode-ui.md) |
 | 🟡 Permanently Ongoing | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | 🟡 Permanently Ongoing | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 0 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
-| 🟡 Partially Built — HTTP/2 + WebSocket handlers exist; HTTP/3 + WebTransport missing | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
+| 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
 | 🟡 Permanently Ongoing | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
 | ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`) | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 
@@ -203,15 +207,6 @@
 - **Type:** Feature Epic
 - **Tags:** archival, soft-delete, retention, purge, data-lifecycle
 - **File:** `.plan/epics/epic-archival-workflow.md`
-
-### Epic: Achievements
-
-- **Status:** 📝 Draft
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** achievements, trophies, badges, milestones, rewards
-- **File:** `.plan/epics/epic-achievements.md`
 
 ### Epic: Analytics & Observability
 
@@ -290,17 +285,6 @@ Items specification — covers item types, properties, interactions, loot tables
 
 Locations specification — covers world locations, travel mechanics, place properties, and location-based interactions. Supersedes location sections in `docs/spec/worlds.md`.
 
-### Epic: NPC Navigation
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** npc, navigation, ai, pathfinding, movement
-- **File:** `.plan/epics/epic-npc-navigation.md`
-
-NPC navigation system — autonomous movement, pathfinding, and location-based behavior for non-player characters. Covers NPC movement patterns, location awareness, travel mechanics, and dynamic world interaction.
-
 ### Epic: NPCs
 
 - **Status:** 📝 Draft
@@ -323,17 +307,6 @@ NPC system specification — covers NPC behavior models, dialogue systems, AI-dr
 
 Wire up registered-but-unwired plugin extension points. The plugin system has types and registry but lacks EventBus, ToolExecutor, and UI mounting.
 
-### Epic: Quests & Encounters
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** quests, encounters, missions, exploration, events
-- **File:** `.plan/epics/epic-quests-encounters.md`
-
-Quests and encounters system specification — covers quest generation, encounter mechanics, mission tracking, and dynamic event systems. Supersedes quest sections in `docs/spec/worlds.md`.
-
 ### Epic: Relationships
 
 - **Status:** 📝 Draft
@@ -345,38 +318,16 @@ Quests and encounters system specification — covers quest generation, encounte
 
 Character relationship system — romance, friendship, rivalry, loyalty, trust, and social bonding mechanics. Covers relationship states, progression, decay, jealousy, commitment, and social dynamics between characters and the player.
 
-### Epic: Replayability
-
-- **Status:** 📝 Draft
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** replayability, branching, new-game-plus, alternate-paths, endings
-- **File:** `.plan/epics/epic-replayability.md`
-
-Replayability systems — new game plus, alternate story paths, multiple endings, and content that encourages multiple playthroughs. Covers branching narratives, secret content, and progression persistence.
-
-### Epic: Skills
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** skills, abilities, progression, mastery, specialization
-- **File:** `.plan/epics/epic-skills.md`
-
-Character skill system — abilities, progression, mastery, and specialization mechanics. Covers skill trees, skill points, prerequisites, synergies, and skill-based gameplay.
-
 ### Epic: Time Scale
 
 - **Status:** 📝 Draft
-- **Priority:** Medium
+- **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
 - **Tags:** time, scale, progression, seasons, day-night
 - **File:** `.plan/epics/epic-time-scale.md`
 
-Time scale system — manage game time progression, day/night cycles, seasons, and time-based events. Covers time flow control, time-gated content, and temporal mechanics.
+Time scale system — manage game time progression, day/night cycles, seasons, and time-based events. Covers time flow control, time-gated content, and temporal mechanics. Required upstream for Timeline System epic.
 
 ### 3D Asset Generation (Future)
 
@@ -1437,6 +1388,15 @@ ComfyUI is the primary integration target for image generation and editing.
 
 Multi-system epic combining:
 
+### Epic: Achievements
+
+- **Status:** 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** achievements, trophies, badges, milestones, rewards
+- **File:** `.plan/epics/epic-achievements.md`
+
 ### Epic: AO NSFW Game Mechanics
 
 - **Status:** Draft
@@ -1456,6 +1416,15 @@ Game mechanics for adult/NSFW content — intimacy systems, seduction, relations
 - **Type:** Feature Epic / Cross-cutting Framework
 - **File:** `.plan/epics/epic-config-extensions.md`
 
+### Epic: Lore Knowledge System
+
+- **Status:** Draft
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** lore, knowledge, propagation, timeline-specific, secrets
+- **File:** `.plan/epics/epic-lore-knowledge.md`
+
 ### Epic: Memory & Knowledge Systems
 
 - **Status:** 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built)
@@ -1466,6 +1435,77 @@ Game mechanics for adult/NSFW content — intimacy systems, seduction, relations
 - **File:** `.plan/epics/epic-memory-knowledge-systems.md`
 
 Three-tier memory system — episodic, semantic, and procedural memory. Covers memory selection UI, lorebook activation, and cross-chat memory persistence.
+
+### Epic: Memory Propagation
+
+- **Status:** Draft
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** memory, propagation, cross-timeline, cross-chat, isolation
+- **File:** `.plan/epics/epic-memory-propagation.md`
+
+### Epic: NPC Navigation
+
+- **Status:** 🟢 Code+tests+schema done (migration 001/p07); UNWIRED
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** npc, navigation, ai, pathfinding, movement
+- **File:** `.plan/epics/epic-npc-navigation.md`
+
+NPC navigation system — autonomous movement, pathfinding, and location-based behavior for non-player characters. Covers NPC movement patterns, location awareness, travel mechanics, and dynamic world interaction.
+
+### Epic: Quests & Encounters
+
+- **Status:** 🟡 Implementation exists (rpg/quests + story/quest-engine); DUAL-SYSTEM + unwired
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** quests, encounters, missions, exploration, events
+- **File:** `.plan/epics/epic-quests-encounters.md`
+
+Quests and encounters system specification — covers quest generation, encounter mechanics, mission tracking, and dynamic event systems. Supersedes quest sections in `docs/spec/worlds.md`.
+
+### Epic: Rarity Extensions
+
+- **Status:** Draft
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** rarity, timeline, events, modifiers, distribution
+- **File:** `.plan/epics/epic-rarity-extensions.md`
+
+### Epic: Replayability
+
+- **Status:** 🟢 Code+tests+schema done (migration 035); UNWIRED
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** replayability, branching, new-game-plus, alternate-paths, endings
+- **File:** `.plan/epics/epic-replayability.md`
+
+Replayability systems — new game plus, alternate story paths, multiple endings, and content that encourages multiple playthroughs. Covers branching narratives, secret content, and progression persistence.
+
+### Epic: Skills
+
+- **Status:** 🟢 Code+tests+schema done (migration 036); UNWIRED
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** skills, abilities, progression, mastery, specialization
+- **File:** `.plan/epics/epic-skills.md`
+
+Character skill system — abilities, progression, mastery, and specialization mechanics. Covers skill trees, skill points, prerequisites, synergies, and skill-based gameplay.
+
+### Epic: Timeline System
+
+- **Status:** Draft
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** timeline, branching, world events, chronology
+- **File:** `.plan/epics/epic-timeline-system.md`
 
 ### Epic: World Diplomacy & Karma
 
@@ -1666,7 +1706,7 @@ Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
 
 ### RPG Mechanics & Extensible Game Systems
 
-- **Status:** 🟡 Phase 1 Complete — Core systems (dice, stats, combat, XP, loot) implemented in `src/rpg/`
+- **Status:** 🟡 Partial — Phase 1 core (dice/stats/combat/xp/loot) code+tests+schema done but UNWIRED; combat has no DB schema (in-memory engine)
 - **Priority:** Medium
 - **Effort:** Very High
 - **Type:** Feature Epic
@@ -1746,7 +1786,7 @@ Centralized hub for messengers, social networks, and email integration. Unified 
 
 ### Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport)
 
-- **Status:** 🟡 Partially Built — HTTP/2 + WebSocket handlers exist; HTTP/3 + WebTransport missing
+- **Status:** 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing
 - **Priority:** Medium
 - **Effort:** Medium (remaining gaps only)
 - **Type:** Feature Epic
