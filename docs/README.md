@@ -185,33 +185,15 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 | 🟡 In Progress | Some sub-tasks merged |
 | ✅ Complete | All acceptance criteria met |
 
-### Roadmaps & Ideas (`.plan/roadmaps/`, `.plan/ideas/`, `.plan/features/`)
+### Roadmaps & Ideas
 
-Exploration docs and creative research. Lower precedence than epics/tickets.
+Exploration docs and creative research merged into `.plan/epics/`.
 
-| Directory | Purpose |
-|-----------|---------|
-| `.plan/roadmaps/` | Implementation roadmaps (3 files) |
-| `.plan/ideas/` | Creative/UX ideas (34 ideas across 8 themes) |
-| `.plan/features/` | Feature specs (28 files) |
+> **Precedence:** `AGENTS.md > .plan/epics+tickets > src/ > docs/spec > .plan/backlog`
 
-> **Precedence:** `AGENTS.md > .plan/epics+tickets > src/ > docs/spec > .plan/features+ideas+roadmaps`
+### Ideas
 
-### Ideas (`ideas/`)
-
-Creative and UX exploration docs, sourced from analysis of community projects.
-
-| Document                                                               | Topics                                 |
-| ---------------------------------------------------------------------- | -------------------------------------- |
-| [`ideas/index.md`](./ideas/index.md)                                   | Master index: 34 ideas across 8 themes |
-| [`ideas/authoring-creation.md`](./ideas/authoring-creation.md)         | Authoring & creation tools             |
-| [`ideas/immersion-presentation.md`](./ideas/immersion-presentation.md) | Immersion & presentation               |
-| [`ideas/memory-continuity.md`](./ideas/memory-continuity.md)           | Memory & continuity systems            |
-| [`ideas/platform-reach.md`](./ideas/platform-reach.md)                 | Platform reach & accessibility         |
-| [`ideas/prompt-output-control.md`](./ideas/prompt-output-control.md)   | Prompt & output control                |
-| [`ideas/social-multiplayer.md`](./ideas/social-multiplayer.md)         | Social & multiplayer                   |
-| [`ideas/worlds-3d-navigation.md`](./ideas/worlds-3d-navigation.md)     | 3D world navigation                    |
-| [`ideas/analytics-meta.md`](./ideas/analytics-meta.md)                 | Analytics & meta features              |
+Creative and UX exploration docs merged into `.plan/epics/epic-worlds-extension.md`.
 
 ---
 
@@ -282,7 +264,7 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 Project planning, reviews, analysis, and research.
 
 > In-repo planning now lives under `.plan/` — see `.plan/backlog/`,
-> `.plan/backlog/open.md`, `.plan/roadmaps/roadmap.md`, and
+> `.plan/backlog/open.md`, `.plan/epics/epic-architecture.md`, and
 > `.plan/implementation-plan.md`.
 
 ### Reviews (`meta/reviews/`)
