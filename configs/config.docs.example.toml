@@ -1,0 +1,8 @@
+# Documentation configuration example
+# Domain: docs — in-app documentation panel
+
+[docs]
+enabled = true
+
+# Optional: restrict visible docs to specific paths
+# public = ["guide/", "reference/"]

@@ -1,0 +1,8 @@
+# BYO Key configuration example
+# Domain: byokey — bring-your-own API key
+
+[byoKey]
+enabled = true
+
+# Optional: server-side encryption key for stored keys
+# encryptionKey = "base64-encoded-32-byte-key"

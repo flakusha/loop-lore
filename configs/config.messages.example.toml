@@ -1,0 +1,10 @@
+# Messages configuration example
+# Domain: messages — chat message handling
+
+[messages]
+autoHideInvalid = false
+hideConfirmation = true
+maxLength = 100000 # max characters per message
+maxGenerationRetries = 3
+generationTimeoutMs = 30000
+idempotencyExpiryHours = 24

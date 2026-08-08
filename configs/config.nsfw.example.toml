@@ -1,0 +1,10 @@
+# NSFW configuration example
+# Domain: nsfw — NSFW content gating
+
+[nsfw]
+allowNsfw = true
+nsfwMinAge = 18
+defaultNsfwScope = "none" # none | user | session | global
+consentRequired = true
+auditLogging = false
+useLlmClassifier = false

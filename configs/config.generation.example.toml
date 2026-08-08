@@ -1,0 +1,11 @@
+# Generation configuration example
+# Domain: generation — LLM provider settings
+
+[generation]
+defaultProvider = "" # e.g. "openaiCompatible"
+defaultModels = {} # { openaiCompatible = "gpt-4" }
+
+[generation.providers]
+openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
+# sd = [] # stable diffusion providers
+# llamaSwap = { url = "http://localhost:8080" }
