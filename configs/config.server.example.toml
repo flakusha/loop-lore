@@ -1,0 +1,11 @@
+# Server configuration example
+# Domain: server — HTTP server settings
+# All options shown with defaults; uncomment to override
+
+[server]
+port = 3000
+host = "localhost"
+
+[server.tls]
+key = "../loop-lore-data/certs/key.pem"
+cert = "../loop-lore-data/certs/cert.pem"

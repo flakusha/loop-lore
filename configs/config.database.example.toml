@@ -1,0 +1,10 @@
+# Database configuration example
+# Domain: database — SQLite or PostgreSQL
+
+[db]
+type = "sqlite"
+sqliteFilename = "../loop-lore-data/loop-lore.db"
+
+# For Postgres:
+# type = "postgres"
+# url = "postgres://user:pass@localhost:5432/loop-lore"

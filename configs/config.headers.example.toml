@@ -1,0 +1,36 @@
+# Headers configuration example
+# Domain: headers — security headers (CSP, HSTS, etc.)
+
+[headers]
+enabled = true
+referrerPolicy = "strict-origin-when-cross-origin"
+xContentTypeOptions = true
+xFrameOptions = "DENY" # DENY | SAMEORIGIN
+permissionsPolicy = "camera=(), microphone=(), geolocation=()"
+crossOriginOpenerPolicy = "same-origin"
+crossOriginEmbedderPolicy = "require-corp"
+crossOriginResourcePolicy = "same-origin"
+timingAllowOrigin = ""
+immutableHashedAssets = true
+
+[headers.csp]
+enabled = true
+defaultSrc = ["'self'"]
+scriptSrc = ["'self'"]
+styleSrc = ["'self'", "'unsafe-inline'"]
+imgSrc = ["'self'", "data:", "blob:"]
+fontSrc = ["'self'"]
+connectSrc = ["'self'", "wss:", "https:"]
+objectSrc = ["'none'"]
+baseUri = ["'self'"]
+frameAncestors = ["'none'"]
+upgradeInsecureRequests = true
+
+# Optional: client hints and early hints
+# acceptClientHints = ["sec-ch-ua", "sec-ch-ua-platform"]
+# saveData = true
+# earlyHints = { enabled = false }
+
+# Optional: reporting
+# reportingEndpoints = { csp = "/report/csp" }
+# nel = { enabled = false, reportTo = "default" }
