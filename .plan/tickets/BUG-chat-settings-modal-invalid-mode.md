@@ -15,7 +15,7 @@
 only accepts `direct|group|story`, so saving chat settings sent an invalid value → Elysia
 validation reject / silent data corruption.
 
-Originally flagged as a live bug in `.plan/design/chat-mode-reconciliation.md:32`.
+Originally flagged as a live bug in `.plan/epics/epic-chat-lifecycle-moderation.md:32`.
 
 ## Root Cause
 
