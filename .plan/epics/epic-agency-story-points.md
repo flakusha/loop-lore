@@ -4,7 +4,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
-**Source:** .plan/research/rpg-landscape.md §6.4, §6.7, §9
+**Source:** .plan/epics/epic-rpg-patterns.md §6.4, §6.7, §9
 
 ## Summary
 

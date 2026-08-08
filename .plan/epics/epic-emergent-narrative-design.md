@@ -4,7 +4,7 @@
 **Priority:** Medium
 **Effort:** Low
 **Type:** Design Principle Epic
-**Source:** .plan/research/rpg-landscape.md §6.7, §7, §9
+**Source:** .plan/epics/epic-rpg-patterns.md §6.7, §7, §9
 
 ## Summary
 

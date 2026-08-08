@@ -5,9 +5,9 @@
 **Labels**: chat, templates, config, lifecycle, migration, architecture
 **Assignee**:
 **Epic**: epic-story-mode-ui
-**Related**: IDEA-chat-setup-templates, .plan/design/chat-template-config-lifecycle.md,
-.plan/design/chat-mode-reconciliation.md, BUG-chat-settings-modal-invalid-mode,
-FEAT-message-swipe-replay-branch, .plan/design/prompt-template-registry.md
+**Related**: IDEA-chat-setup-templates, .plan/epics/epic-config-templates.md,
+.plan/epics/epic-chat-lifecycle-moderation.md, BUG-chat-settings-modal-invalid-mode,
+FEAT-message-swipe-replay-branch, .plan/epics/epic-config-templates.md
 (distinct domain: chat _setup_ template binding vs LLM _prompt text_ registry — do not conflate)
 
 ## Description
@@ -22,7 +22,7 @@ panel-freeze. This lets foundational mechanics be swapped under a live conversat
 
 ## Design
 
-See `.plan/design/chat-template-config-lifecycle.md` for the full design. Summary:
+See `.plan/epics/epic-config-templates.md` for the full design. Summary:
 
 - **Key mechanics** (immutable once online): `mode`, `turnStrategy`, `gmConfig.assistantRole`,
   `visualNovel`, `worldId`, `responseStyle`, `type`.
