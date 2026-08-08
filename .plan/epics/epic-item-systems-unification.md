@@ -59,23 +59,74 @@ Unify the fragmented item systems and close critical gaps identified in the RPG 
 | `TASK-wire-crafting-routes.md` | Expose `RecipesService` via HTTP, connect material consumption | P1 |
 | `TASK-persist-loot-drops.md` | `generateLoot()` → `placeInLocation()` / `giveToNpc()` | P1 |
 | `TASK-implement-trade.md` | Transfer with currency, `crafting_orders` as economy backbone | P1 |
+| `TASK-item-provisioning-dashboard.md` | World-level allocation view (all items → where allocated) | P1 |
+| `TASK-npc-inventory-frontend.md` | View NPC inventories + trade with NPCs | P1 |
+| `TASK-equipment-stat-preview.md` | Live stat delta preview when equipping/unequipping | P1 |
 | `TASK-clean-transfer-orphans.md` | Delete `world_items` rows where `quantity <= 0` | P2 |
 | `TASK-implement-item-transfer-event.md` | Resolve `applyItemTransfer()` → `ItemsService.transfer()` | P2 |
 | `TASK-actor-item-service.md` | Dedicated service: equip/unequip, weight limit, trade | P2 |
 | `TASK-map-battle-equipment.md` | Map `EquipmentItem` → `ItemDefinition`, shared enum | P2 |
+| `TASK-item-generation.md` | Procedural + LLM-assisted item generation | P2 |
+| `TASK-item-edit-permissions-history.md` | Edit permissions + item provenance audit trail | P2 |
 | `TASK-fix-actor-item-value-type.md` | `actor_items.value` text → integer | P3 |
+
+## Implementation Approach
+
+### Migration policy (this epic)
+
+**No new migration files.** DB is reinit, so schema changes are **inlined into the existing
+migration that first creates the affected table**. Backfills/data-casts are unnecessary.
+
+| Target table | Inline home (existing migration) |
+|--------------|----------------------------------|
+| `items`, `locations`, `worlds` | `parts/003_worlds.ts` |
+| `actors`, `world_items` | `parts/004_chats_actors.ts` |
+| `actor_items`, `actor_currencies` | `parts/005_actor_data.ts` |
+| `npc_states` | `parts/007_story_generation.ts` |
+| `crafting_*` | `011_crafting_professions.ts` |
+| `character_skills` | `036_character_skills.ts` |
+
+Affected schema edits: `items` category/rarity CHECK (unify), `world_items` `CHECK(quantity>0)`
+(clean-orphans), `actor_items.value` → integer (fix-value-type), `actor_items.item_type` CHECK
+(unify), keep-but-deprecate `npc_states.inventory` (link-npc-inventory), `actor_currencies`
+table (trade).
+
+Generate-after edits: `bun run db:sync-types && bun run db:sync-manifest`, verify
+`bun run db:schemas:check`.
+
+## Implementation Order (dependency-first)
+
+1. `TASK-unify-item-types` — foundational enum consolidation (everything depends on it)
+2. `TASK-fix-actor-item-value-type` — small schema fix
+3. `TASK-clean-transfer-orphans` — transfer correctness (trade/event depend on it)
+4. `TASK-implement-item-transfer-event` — event handler → real transfer
+5. `TASK-persist-loot-drops` — loot → world_items (uses transfer/place)
+6. `TASK-wire-crafting-routes` — expose RecipesService (material consumption uses transfer)
+7. `TASK-implement-trade` — currency + trade (needs clean transfer + unified types)
+8. `TASK-actor-item-service` — equip/weight (needs unified types + numeric value)
+9. `TASK-map-battle-equipment` — battle → world defs (needs unified types)
+10. Frontend/epic-P1 tickets (provisioning dashboard, NPC inventory UI, equipment preview) — build on backend above
+
+Cross-feature note: the same inline-migration policy applies to related epics touching the same
+tables (`epic-skills` → `036_character_skills.ts`; `epic-crafting-professions` → `011`; economy
+tables → `005_actor_data.ts`). No serialized new migrations here.
 
 ## Acceptance Criteria
 
 - [ ] Single item type taxonomy (`ItemCategory` + `ItemRarity`) used across all systems
 - [ ] NPC inventory resolved via `world_items.owner_actor_id` (no denormalized JSON)
 - [ ] Crafting recipes, stations, and orders accessible via HTTP routes
-- ] Loot generation persists items as `world_items` instances
+- [ ] Loot generation persists items as `world_items` instances
 - [ ] Trade endpoint: transfer items + currency between actors
 - [ ] No orphaned `world_items` rows (quantity > 0 constraint or cleanup)
 - [ ] Story event item transfers resolve to actual `ItemsService.transfer()` calls
 - [ ] Actor items have equip/unequip with stat effects and weight limits
 - [ ] Battle equipment maps to world item definitions
+- [ ] **Frontend**: World item provisioning dashboard (allocate items to locations/NPCs)
+- [ ] **Frontend**: NPC inventory view + trading interface
+- [ ] **Frontend**: Equipment stat delta preview (live feedback on equip/unequip)
+- [ ] **Frontend**: Item generation UI (procedural + LLM-assisted)
+- [ ] **Frontend**: Item history/provenance timeline
 - [ ] `bun run check` green; all new code covered by tests
 
 ## Related Epics
