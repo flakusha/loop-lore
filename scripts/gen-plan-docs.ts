@@ -13,7 +13,7 @@ import { join, } from "node:path";
 
 const ROOT = process.cwd();
 const EPICS_DIR = join(ROOT, ".plan/epics",);
-const BACKLOG = join(ROOT, ".plan/backlog/active.md",);
+const BACKLOG = join(ROOT, ".plan/backlog/open.md",);
 const OUT_EPICS = join(ROOT, ".plan/epics-index.md",);
 
 interface Epic {

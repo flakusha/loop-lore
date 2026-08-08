@@ -249,7 +249,7 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 Project planning, reviews, analysis, and research.
 
 > In-repo planning now lives under `.plan/` — see `.plan/backlog/`,
-> `.plan/backlog/active.md`, `.plan/roadmaps/roadmap.md`, and
+> `.plan/backlog/open.md`, `.plan/roadmaps/roadmap.md`, and
 > `.plan/implementation-plan.md`.
 
 ### Reviews (`meta/reviews/`)
