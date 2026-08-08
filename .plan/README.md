@@ -6,16 +6,14 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 
 | Folder                          | Purpose                                            | Count |
 | ------------------------------- | -------------------------------------------------- | ----- |
-| `tickets/`                      | Task specs (authoring, review, iteration)          | ~539  |
-| `epics/`                        | Epic definitions (major initiatives)               | ~169  |
-| `backlog/`                      | **Status queue, split by priority/value/activity** | 4     |
-| `backlog/priority.md`           | High-priority workstack (P0–P2)                    | 1     |
-| `backlog/high-value.md`         | 0.1.0 value tiers (P3–P5) + release gate           | 1     |
-| `backlog/active.md`             | Ongoing / in-flight + decision queue               | 1     |
-| `backlog/open.md`               | Open debt, unwired code, deferred (P6+)            | 1     |
+| `tickets/`                      | Task specs (authoring, review, iteration)          | ~761  |
+| `epics/`                        | Epic definitions (major initiatives)               | ~172  |
+| `backlog/`                      | **Status queue (consolidated: 2 docs)**         | 2     |
+| `backlog/priority.md`           | Full priority ladder (P0–P6+) + 0.1.0 value tiers | 1   |
+| `backlog/open.md`               | In-flight, debt, unwired code, deferred (P6+)   | 1     |
 | `roadmaps/`                     | Implementation roadmaps                            | 5     |
 | `research/`                     | Research artifacts, landscape analysis             | 2     |
-| `design/`                       | Design reconciliations                             | 5     |
+| `design/`                       | Design reconciliations                             | 6     |
 | `ideas/`                        | World/chat navigation proposals                    | 9     |
 | `features/`                     | Feature specs                                      | 1     |
 | `implementation-plan.md`        | Active implementation checklist (v0.1)             | 1     |
@@ -26,20 +24,21 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 ## Backlog Categories (`backlog/`)
 
 The former monolithic `immediate.md` / `backlog.md` / `open-items.md` were split into
-four small, single-purpose files to cut context pressure and remove duplication:
+small single-purpose files, then re-consolidated (2026-08-08) into **two** backlog files
+to cut duplication:
 
 | File            | Holds                                                              | Reads-when                     |
 | --------------- | ------------------------------------------------------------------ | ------------------------------ |
-| `priority.md`   | P0–P2 tiers (critical path, high priority, core workstream)        | Working on priority work       |
-| `high-value.md` | P3–P5 0.1.0 value tiers + Post-P3 release gate + milestone gates   | Triaging 0.1.0 scope / release |
-| `active.md`     | Ongoing / in-flight + open decision queue (finalize-vs-defer)      | Deciding what to do next       |
-| `open.md`       | Open debt (security/access), dead code, schema drift, deferred P6+ | Auditing what's open           |
+| `priority.md`   | Full priority ladder P0–P6+ (critical path → core → 0.1.0 value tiers → release gate) | Working on priority / release  |
+| `open.md`       | In-flight/decision queue, debt, unwired code, schema drift, deferred P6+ | Auditing what's open / deciding |
 
 **Rules:**
 
-- **One home per item.** Every item lives in exactly one category file; rows are moved
-  (not mirrored) between files as they transition active → priority/high-value → open.
-- **Dedup:** `active.md` removes rows that mirror a `priority.md`/`open.md` row.
+- **One home per item.** Every item lives in exactly one backlog file; rows are moved
+  (not mirrored) between `priority.md` and `open.md` as they transition open → in-flight →
+  priority/high-value.
+- **Dedup:** `open.md` removes rows that mirror a `priority.md` tier; `priority.md` does
+  not restate `open.md` debt.
 - **Detail lives in `tickets/` + `epics/`**; category files are status views, not specs.
 - **Active items** referenced by git issues point at their `.plan/backlog/*.md` source.
 
