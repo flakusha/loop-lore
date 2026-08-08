@@ -23,14 +23,23 @@ export async function carryHistory(
     .where("chat_id", "=", sourceChatId,)
     .orderBy("created_at", "asc",)
     .execute();
+
+  // Maps a source-chat message id to its id in the migrated chat, so the
+  // carried tree's parent_id links resolve within the new chat instead of
+  // pointing back at stale source-chat ids. Rows are inserted in created_at
+  // order, so a parent always precedes (and is remapped before) its children.
+  const idRemap = new Map<string, string>();
+
   for (const m of messages) {
+    const newId = crypto.randomUUID();
+    const parentId = m.parent_id ? (idRemap.get(m.parent_id,) ?? null) : null;
     await database
       .insertInto("messages",)
       .values({
-        id: crypto.randomUUID(),
+        id: newId,
         chat_id: newChatId,
         actor_id: m.actor_id,
-        parent_id: m.parent_id,
+        parent_id: parentId,
         role: m.role,
         content: m.content,
         key_id: m.key_id,
@@ -46,8 +55,6 @@ export async function carryHistory(
         archived_at: m.archived_at,
       },)
       .execute();
+    idRemap.set(m.id, newId,);
   }
-  // Note: parent_id remapping for the tree is not performed here — the
-  // active-leaf flatten (see swipe/replay design) treats migrated history as
-  // a flat branch. Full tree remap is a follow-up.
 }
