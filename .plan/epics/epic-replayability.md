@@ -1,6 +1,6 @@
 # Epic: Replayability
 
-**Status:** 📝 Draft
+**Status:** 🟢 Code+tests+schema done (migration 035); UNWIRED
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -69,3 +69,14 @@ interface MetaProgression {
 
 - `epic-emergent-narrative-design.md` (story branching)
 - `specs/replayability.md` (full design spec)
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`ReplayabilityService` (src/rpg/replayability/, playthrough + endings + meta + ngp, backed by
+`playthroughs` + `meta_progression`, migration 035) is code-complete + tested but has ZERO
+external importers — mount it under `/api/rpg/replayability` via `TASK-wire-replayability-routes`
+(WIRED-7 mount pattern). Data-model dedup open: `achievements_unlocked` is represented 3 ways
+(`player_achievements` rows, `playthroughs` int count, `meta_progression` JSON array) and
+`secrets_found` 2 ways; make `player_achievements` the source of truth — tracked by
+`TASK-reconcile-achievement-unlock-sources` (runs AFTER the achievements + replayability routes
+are wired).

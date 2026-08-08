@@ -1,6 +1,6 @@
 # Epic: Skills
 
-**Status:** 📝 Draft
+**Status:** 🟢 Code+tests+schema done (migration 036); UNWIRED
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -63,3 +63,10 @@ interface SynergyBonus {
 - `epic-character-core-system.md` (character stats, levels)
 - `epic-magic-spell-systems.md` (spell skills)
 - `specs/skills.md` (full design spec)
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`SkillsService` (src/rpg/skills/, CRUD + tree + progression, backed by `character_skills`,
+migration 036) is code-complete + tested but has ZERO external importers. Resolution: mount it
+under `/api/rpg/skills` (CRUD + tree + progression) via the WIRED-7 mount pattern — tracked by
+`TASK-wire-skills-routes`.

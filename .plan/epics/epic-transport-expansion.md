@@ -1,6 +1,6 @@
 # EPIC: Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport)
 
-**Status:** 🟡 Partially Built — HTTP/2 + WebSocket handlers exist; HTTP/3 + WebTransport missing
+**Status:** 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing
 **Priority:** Medium
 **Effort:** Medium (remaining gaps only)
 **Type:** Feature Epic
@@ -69,3 +69,13 @@ the existing handlers are server-reachable.
 ## Linked Tasks
 
 - TASK-transport-expansion.md
+- TASK-transport-server-wiring.md
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`src/transport/` has ZERO external importers outside itself. `ws.ts` send() is real, but
+`http1.ts` (lines 25-28) and `h2.ts` (lines 28-31) send() are silent no-op stubs, and the server
+does not advertise H2/WS (`DEFAULT_CAPABILITIES` in `negotiation.ts` offers HTTP/1.1 only).
+Resolution: implement real send() for http1/h2, advertise H2/WS in `DEFAULT_CAPABILITIES`, and
+hook the transport into the server — tracked by `TASK-transport-server-wiring`. HTTP/3 + 
+WebTransport remain separate existing tasks.
