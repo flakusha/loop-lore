@@ -5,7 +5,7 @@ plus analysis of community projects (SillyTavern, RisuAI, Agnai) and community
 feature requests. Each theme is broken into its own document and linked below.
 
 > These are **proposals** — not yet scheduled in `.plan/backlog/` or
-> `.plan/roadmaps/roadmap.md`. Approved for drafting 2026-07-18; docs may be reorganized
+> `.plan/epics/epic-architecture.md`. Approved for drafting 2026-07-18; docs may be reorganized
 > later.
 
 ## Gap summary
@@ -51,4 +51,4 @@ Features popular in competing projects but **absent** from loop-lore docs:
 - **Memory/world (#10–14)** needs the unbuilt `memory-system.md` and `rpg-mechanics.md` engines.
 - **3D (#31–34)** needs device-tier gating; not for weak devices.
 
-Linked from: [.plan/roadmaps/roadmap.md](/plan/roadmaps/roadmap.md)
+Linked from: [.plan/epics/epic-architecture.md](/plan/epics/epic-architecture.md)
