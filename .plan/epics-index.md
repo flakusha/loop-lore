@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 171 epics
+**Total:** 172 epics
 
 ## Summary
 
@@ -73,7 +73,7 @@
 | ⬜ Not Started | Internationalization (i18n) | Medium | Unknown | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
 | ⬜ Not Started | Inventory & Trading UI | P1 — High | Medium | 14 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | ⬜ Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
-| ⬜ Not Started | Item Systems Unification & Gap Closure | High | High | 9 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
+| ⬜ Not Started | Item Systems Unification & Gap Closure | High | High | 15 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | ⬜ Not Started | Licensing | Low | Unknown | 0 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
 | ⬜ Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | ⬜ Not Started | Logging & Structured Logging | Medium | Unknown | 0 | [epic-logging.md](/.plan/epics/epic-logging.md) |
@@ -95,6 +95,7 @@
 | ⬜ Not Started | RAG & Document Processing | High | High | 89 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
 | ⬜ Not Started | RAG & Document UI | P2 — Medium | Medium | 17 | [epic-rag-ui.md](/.plan/epics/epic-rag-ui.md) |
 | ⬜ Not Started | Resolution System & Ruleset Family | High | Medium | 0 | [epic-resolution-system.md](/.plan/epics/epic-resolution-system.md) |
+| ⬜ Not Started | RPG Skills, Professions & Config Templates | High | High | 9 | [epic-skills-professions-config.md](/.plan/epics/epic-skills-professions-config.md) |
 | ⬜ Not Started | Settings & Preferences UI | Medium | Unknown | 0 | [epic-frontend-settings.md](/.plan/epics/epic-frontend-settings.md) |
 | ⬜ Not Started | Social Interaction Systems | Medium | High | 0 | [epic-social-interaction.md](/.plan/epics/epic-social-interaction.md) |
 | ⬜ Not Started | Stealth & Crime Systems | Medium | High | 0 | [epic-stealth-crime.md](/.plan/epics/epic-stealth-crime.md) |
@@ -984,6 +985,15 @@ Comprehensive magic and spellcasting system — spell schools, elemental magic, 
 - **Type:** Feature Epic
 - **Tags:** resolution, dice, ruleset, pbta, fate, gurps, d20
 - **File:** `.plan/epics/epic-resolution-system.md`
+
+### RPG Skills, Professions & Config Templates
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** skills, professions, character, config, templates, seeding, rpg
+- **File:** `.plan/epics/epic-skills-professions-config.md`
 
 ### Settings & Preferences UI
 

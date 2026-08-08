@@ -30,9 +30,7 @@ if (remaining <= 0) {
 ## Work
 
 1. **Fix transfer logic** — when `remaining <= 0`, delete the source row instead of setting quantity to 0
-2. **Add cleanup migration** — `033_cleanup_orphan_world_items.ts`:
-   - Delete all `world_items` rows where `quantity <= 0`
-   - Add CHECK constraint: `quantity > 0` (prevent future orphans)
+2. **Add CHECK constraint (inline, no new migration)** — DB is reinit, so no cleanup migration needed. Add `CHECK (quantity > 0)` to `world_items` in `parts/004_chats_actors.ts` to prevent future orphans
 3. **Update tests** — verify transfer deletes source row on full transfer
 4. **Audit destroy()** — ensure `destroy()` also cleans up properly (it already deletes, but verify)
 
@@ -40,15 +38,14 @@ if (remaining <= 0) {
 
 - [ ] Full transfer deletes source `world_items` row (no quantity=0 orphans)
 - [ ] Partial transfer still works (source row keeps remaining quantity)
-- [ ] Migration removes all existing zero-quantity rows
-- [ ] CHECK constraint `quantity > 0` enforced at DB level
+- [ ] CHECK constraint `quantity > 0` enforced at DB level (inline in `parts/004_chats_actors.ts`)
 - [ ] `bun test src/` green; `bun run check` green
 
 ## Files to Modify
 
 - `src/story/items/instances.ts` — fix transfer to delete on full transfer
-- `src/db/migrations/033_cleanup_orphan_world_items.ts` — cleanup + constraint
-- `src/db/schema-story.ts` — add CHECK constraint to `world_items`
+- `src/db/migrations/parts/004_chats_actors.ts` — add `CHECK (quantity > 0)` to `world_items` (inline)
+- `src/db/schema-story.ts` — reflect CHECK constraint on `world_items` (regenerated)
 
 ## Related
 
