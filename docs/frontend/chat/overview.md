@@ -36,7 +36,7 @@ that make it useful are **not yet implemented**:
   selection (`round_robin`, `initiative`, `scene_based`, etc.). Talkativity
   scores bias _which_ actor is selected (implemented in `src/group-chat/turn-selector.ts`).
   Gap: talkativity does not yet influence _how much_ the selected actor says
-  (see `.plan/design/group-chat-reconciliation.md` G2).
+  (see `.plan/epics/epic-world-chat-channels-invites.md` G2).
 - **Multi-user** — the new-chat UI filters out `actor_type = user`, so multiple humans
   cannot currently be added as participants.
 - **Story orchestration** — `ChatMode.Story` is selectable but the story API/turn-manager is
@@ -59,7 +59,7 @@ A per-chat configuration that controls how the LLM generates responses. Not impl
 
 Each style maps to a system prompt instruction appended to the chat context. The style is selectable per chat (not per-character) so the same character can have short action chats and long literary chats.
 
-See [chat-mode-reconciliation.md](../../.plan/design/chat-mode-reconciliation.md) for full design covering three orthogonal axes: ChatType (participant structure), ChatMode (behavioral mode), and ResponseStyle.
+See [epic-chat-lifecycle-moderation.md](../../.plan/epics/epic-chat-lifecycle-moderation.md) for full design covering three orthogonal axes: ChatType (participant structure), ChatMode (behavioral mode), and ResponseStyle.
 
 **Future considerations**:
 

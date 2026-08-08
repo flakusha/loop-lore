@@ -2,7 +2,7 @@
 
 **Status:** Design (research complete)
 **Owner:** chat setup templates
-**Related:** `.plan/design/chat-template-config-lifecycle.md`, `.plan/tickets/IDEA-chat-setup-templates.md`
+**Related:** `.plan/epics/epic-config-templates.md`, `.plan/tickets/IDEA-chat-setup-templates.md`
 
 ## Overview
 
@@ -93,7 +93,7 @@ Each template carries limits so a preset never creates an unmanageable chat:
 
 ## See Also
 
-- `.plan/design/chat-template-config-lifecycle.md` — full research & design
+- `.plan/epics/epic-config-templates.md` — full research & design (merged from `design/`)
 - `.plan/tickets/IDEA-chat-setup-templates.md` — creation-preset ticket
-- `.plan/design/chat-mode-reconciliation.md` — 3-axis split (ChatType/ChatMode/ResponseStyle)
+- `.plan/epics/epic-chat-lifecycle-moderation.md` — 3-axis split (ChatType/ChatMode/ResponseStyle, merged from `design/`)
 - `docs/frontend/chat/assistant.md` — GM/assistant roles (`gmConfig`)
