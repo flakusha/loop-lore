@@ -10,6 +10,8 @@
 
 Complete inventory management and trading interface, including item grid/list view, equipment loadout, NPC trading, and player-to-player trading.
 
+> **Backend dependency:** This epic depends on [`epic-item-systems-unification.md`](/epic-item-systems-unification) for the unified item types, trade system, and actor item service that the UI consumes.
+
 ## Core Features
 
 ### Inventory Management
