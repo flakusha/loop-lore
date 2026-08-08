@@ -5,7 +5,7 @@
 **Effort:** Medium
 **Epic:** epic-character-spec
 **Labels:** seeding, character, avatar, asset, gallery
-**Related:** `TASK-character-avatar-gallery-binding.md`, `FEAT-seed-default-characters-identity.md`, `src/characters/seed.ts`, `src/config/sections/characters.ts`, `src/characters/services/avatar-service.ts`, `src/assets/service.ts`, `.plan/features/feature-character-template-seeding.md`
+**Related:** `TASK-character-avatar-gallery-binding.md`, `FEAT-seed-default-characters-identity.md`, `src/characters/seed.ts`, `src/config/sections/characters.ts`, `src/characters/services/avatar-service.ts`, `src/assets/service.ts`, `.plan/epics/epic-character-core-system.md`
 
 ## Summary
 
@@ -86,7 +86,7 @@ Document the `avatar` field, the resolved source location, and that a seeded ava
 - `src/assets/service.ts` — reuse `createAsset` (read-only)
 - bundled avatar assets (new location, e.g. `assets/avatars/`) — default images
 - `src/characters/seed.test.ts` — avatar seeding tests
-- `.plan/features/feature-character-template-seeding.md` — document avatar seeding
+- `.plan/epics/epic-character-core-system.md` — document avatar seeding
 
 ## Notes
 

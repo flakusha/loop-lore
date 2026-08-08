@@ -7,7 +7,7 @@
 **Epic**: epic-messages
 **Related**: TASK-quick-regen-button, docs/spec/messages.md,
 docs/frontend/chat/message-actions.md, docs/frontend/chat/message-bubbles.md,
-.plan/design/chat-template-config-lifecycle.md, FEAT-chat-template-config-lifecycle
+.plan/epics/epic-config-templates.md, FEAT-chat-template-config-lifecycle
 
 ## Description
 
@@ -62,7 +62,7 @@ The infrastructure already exists in code and docs; only the plan + some wiring 
 - Variant counter increments (`2/4 → 3/4`); UI swipe left/right cycles, swipe right on last
   variant requests a new generation.
 
-**Online-chat tie-in** (per `.plan/design/chat-template-config-lifecycle.md`): swipe/replay is a
+**Online-chat tie-in** (per `.plan/epics/epic-config-templates.md`): swipe/replay is a
 **session-state** operation — it does not mutate key mechanics, so it is always allowed on an
 online chat. Regenerate overrides (temperature/model) are per-request, not bound mechanics.
 

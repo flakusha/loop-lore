@@ -21,7 +21,7 @@ timeline flatten).
 - `docs/spec/messages.md`
 - `docs/frontend/chat/message-bubbles.md` — variant switcher / swipe UI spec
 - `docs/frontend/chat/message-actions.md` — Regenerate action (variant-aware)
-- `.plan/design/chat-template-config-lifecycle.md` — swipe/replay is a session-state op (always allowed online)
+- `.plan/epics/epic-config-templates.md` — swipe/replay is a session-state op (always allowed online)
 
 ## Tickets
 
