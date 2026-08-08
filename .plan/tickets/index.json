@@ -7661,6 +7661,17 @@
     "title": "Rate Limiting & Telemetry",
     "type": "TASK"
   },
+  "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
+    "hash": "pending",
+    "extid": "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES",
+    "type": "TASK",
+    "title": "Reconcile Achievement Unlock Sources",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-replayability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-achievement-unlock-sources.md"
+  },
   "TASK-RECONCILIATION-PLAN": {
     "epic": "epic-logic-reconciliation",
     "extid": "TASK-reconciliation-plan",
@@ -7735,6 +7746,17 @@
     "tags": [],
     "title": "Relationships System Implementation",
     "type": "TASK"
+  },
+  "TASK-REMOVE-DEAD-FRONTEND-MODULES": {
+    "hash": "pending",
+    "extid": "TASK-REMOVE-DEAD-FRONTEND-MODULES",
+    "type": "TASK",
+    "title": "Remove Dead Frontend Modules",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-bundle-optimization",
+    "tags": [],
+    "source": ".plan/tickets/TASK-remove-dead-frontend-modules.md"
   },
   "TASK-REMOVE-DIST-ARTIFACT": {
     "epic": "epic-continuous-improvement",
@@ -8757,6 +8779,17 @@
     "title": "Transport Layer Expansion",
     "type": "TASK"
   },
+  "TASK-TRANSPORT-SERVER-WIRING": {
+    "hash": "pending",
+    "extid": "TASK-TRANSPORT-SERVER-WIRING",
+    "type": "TASK",
+    "title": "Transport Server Wiring",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-transport-expansion",
+    "tags": [],
+    "source": ".plan/tickets/TASK-transport-server-wiring.md"
+  },
   "TASK-TRAVEL-INTERFACE": {
     "epic": "epic-world-management-ui.md",
     "extid": "TASK-TRAVEL-INTERFACE",
@@ -9057,6 +9090,17 @@
     ],
     "title": "Wire auto-rename into message pipeline",
     "type": "TASK"
+  },
+  "TASK-WIRE-COMBAT-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-WIRE-COMBAT-ROUTES",
+    "type": "TASK",
+    "title": "Wire Combat Routes",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-combat-routes.md"
   },
   "TASK-WIRE-CONTEXT-PRUNING": {
     "epic": "EPIC-2026-28",
