@@ -36,3 +36,15 @@ interface PlaceInteraction {
 - [ ] Travel mechanics functional
 - [ ] Place interactions working
 - [ ] Location-based events operational
+
+## World & Location Traits
+
+`WorldLocationTraitsService` (src/rpg/world-location-traits/, backed by
+`character_world_traits` + `character_location_traits`, migration 010) tracks per-character
+world and location traits.
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`WorldLocationTraitsService` is code-complete + tested but has ZERO external importers.
+Resolution: mount it under `/api/rpg/world-location-traits` (world + location traits +
+aggregate) via the WIRED-7 mount pattern — tracked by `TASK-wire-world-location-traits-routes`.
