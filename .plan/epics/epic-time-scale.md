@@ -1,60 +1,43 @@
 # Epic: Time Scale
 
 **Status:** 📝 Draft
-**Priority:** Medium
+**Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** time, scale, progression, seasons, day-night
 
 ## Overview
 
-Time scale system — manage game time progression, day/night cycles, seasons, and time-based events. Covers time flow control, time-gated content, and temporal mechanics.
+Time scale system — manage game time progression, day/night cycles, seasons, and time-based events. Covers time flow control, time-gated content, and temporal mechanics. Required upstream for Timeline System epic.
 
-## Time Systems
+## Core Concepts
 
-### Core Time Model
+### Time Flow
 
-interface TimeScale {
-}
-interface GameTime {
-}
-interface RealTime {
-}
-interface TimeCompression {
-}
+- **Real-time**: 1 game minute = 1 real minute (1:1)
+- **Compressed**: Configurable ratio (e.g., 1 game hour = 1 real minute)
+- **Paused**: Time does not progress (player-initiated or system-triggered)
+- **Manual**: GM advances time explicitly
 
 ### Day/Night Cycle
 
-interface DayNightCycle {
-}
-interface TimeOfDay {
-}
-interface LightingState {
-}
-interface ActivitySchedule {
-}
+- 24-hour game day divided into periods: dawn, morning, afternoon, evening, night
+- Each period affects: lighting, NPC behavior, available activities, event probability
+- Configurable day length (default: 24 game hours)
 
 ### Seasons & Calendar
 
-interface Season {
-}
-interface Calendar {
-}
-interface Holiday {
-}
-interface SeasonalEvent {
-}
+- 4 seasons: spring, summer, autumn, winter
+- Each season lasts N game days (configurable)
+- Seasons affect: weather patterns, available events, NPC schedules, item availability
+- Calendar system: game date tracked separately from real date
 
 ### Time-Based Events
 
-interface TimedEvent {
-}
-interface Cooldown {
-}
-interface Schedule {
-}
-interface TimeGate {
-}
+- **Timed events**: Trigger at specific game times
+- **Cooldowns**: Prevent action spamming (real-time or game-time)
+- **Schedules**: Recurring events (daily, weekly, seasonal)
+- **Time-gated content**: Unlock after N game days or specific dates
 
 ## Key Behaviors
 
@@ -65,8 +48,26 @@ interface TimeGate {
 - Cooldowns prevent action spamming
 - Scheduled events create predictable world rhythms
 
+## Acceptance Criteria
+
+- [ ] Time flow control (real-time, compressed, paused, manual)
+- [ ] Day/night cycle with configurable periods
+- [ ] Season system with configurable duration
+- [ ] Time-based event scheduler
+- [ ] Cooldown system (real-time and game-time)
+- [ ] Time-gated content support
+- [ ] GM time advance controls
+- [ ] Unit tests for time progression logic
+
 ## Dependencies
 
-- `epic-world-locations.md` (location time)
+- None (foundational epic)
+
+## Dependents
+
+- `epic-timeline-system.md` (extends time scale with branching timelines)
+
+## Related Epics
+
 - `epic-weather-environment.md` (seasonal weather)
-- `specs/time-scale.md` (full design spec)
+- `epic-world-locations.md` (location-based time zones)

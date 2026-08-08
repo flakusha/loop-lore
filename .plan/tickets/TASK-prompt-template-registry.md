@@ -4,7 +4,7 @@
 **Priority:** Medium
 **Effort:** Low–Med
 **Epic:** epic-config-templates
-**Related:** FEAT-065-template-system.md (unified registry — LLM foundation), epic-assistant-generation-extensions.md (prompt-library backend), FEAT-chat-template-config-lifecycle.md (chat setup templates — distinct domain), .plan/design/prompt-template-registry.md
+**Related:** FEAT-065-template-system.md (unified registry — LLM foundation), epic-assistant-generation-extensions.md (prompt-library backend), FEAT-chat-template-config-lifecycle.md (chat setup templates — distinct domain), .plan/epics/epic-config-templates.md
 
 ## Summary
 
@@ -22,7 +22,7 @@ keys, single source of truth for defaults, dead accessor removal, and llm.yaml l
 `LLM_PROMPT_DEFAULTS` (12 purposes: chat/summarize/imagePrompt/ooc/assistant/gm/nsfw/vn/
 vnChoices/transition/intent/memory) + `resolveSystemPrompt()` already layer user config
 (`configs/templates/llm.yaml`, extend/override/replace merge) over code defaults. 10 consumers
-wired (assistant, gm, vn, vnChoices, transition, intent, memory). Design: `.plan/design/prompt-template-registry.md`.
+wired (assistant, gm, vn, vnChoices, transition, intent, memory). Design: `.plan/epics/epic-config-templates.md`.
 
 ## Scope
 
