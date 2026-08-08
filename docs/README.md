@@ -21,22 +21,43 @@ hand-written spec as an authoritative current-state contract.
 
 Reimplementation of SillyTavern with enhanced features:
 
-- TUI mode
-- Database support (local and remote)
-- Asset system (images/audio/video, replacing old gallery)
+- TUI mode + Web UI (htmx + Alpine.js)
+- Database support (`bun:sqlite` → Kysely, PG via dialect swap)
+- Asset system (images/audio/video, polymorphic linking)
 - Character system with JSON card import/export
-- RPG mechanics: **❌ Not implemented** (no dice engine, no stats/combat/XP/loot)
+- RPG mechanics: **🟡 Partially implemented** (dice, stats, combat, XP, loot, skills, professions — see [RPG Status](#rpg-mechanics-status))
+- Item systems: **🟡 Partially implemented** (definitions, instances, loot tables — unification in progress)
 - Enhanced assistant chat (user assistance focused)
 - User management & multi-session support
 - Message persistence & reliability
+
+### RPG Mechanics Status
+
+| System | Status | Code Location | Plan Epic |
+|--------|--------|---------------|-----------|
+| Dice engine | ✅ Implemented | `src/rpg/dice.ts` | `epic-rpg-mechanics` |
+| Character stats | ✅ Implemented | `src/rpg/stats.ts`, `db: character_stats` | `epic-rpg-mechanics` |
+| Combat | ✅ Implemented | `src/rpg/combat.ts` | `epic-rpg-mechanics` |
+| XP & leveling | ✅ Implemented | `src/rpg/xp.ts` | `epic-rpg-mechanics` |
+| Loot tables | 🟡 Service only (not persisted) | `src/rpg/loot/` | `epic-item-systems-unification` |
+| Skills | 🟡 Service only (no routes) | `src/rpg/skills/`, `db: character_skills` | `epic-skills-professions-config` |
+| Professions | 🟡 Tables only (no service/routes) | `db: professions` | `epic-skills-professions-config` |
+| Item definitions | ✅ Implemented | `src/story/items/`, `db: items` | `epic-item-systems-unification` |
+| Item instances | ✅ Implemented | `src/story/items/`, `db: world_items` | `epic-item-systems-unification` |
+| Item unification | 🔲 Planned | — | `epic-item-systems-unification` |
+| Trade/Economy | 🔲 Planned | — | `epic-item-systems-unification` |
+| Crafting execution | 🔲 Planned (recipes service exists) | `src/rpg/crafting/` | `epic-crafting-professions` |
 
 ## Document Structure
 
 ```
 docs/
-├── spec/                    Core technical specs (25 files)
+├── spec/                    Core technical specs (60+ files)
 │   └── integrations/        External tool integration specs
-├── .plan/            Planned features, roadmaps, ideas
+├── .plan/                   Planning system (source of truth for tasks)
+│   ├── epics/               Epic definitions (172 epics)
+│   ├── tickets/             Task tickets (600+ tasks)
+│   ├── epics-index.md       Auto-generated epic status index
 │   ├── features/            Feature specs (28 files)
 │   ├── roadmaps/            Implementation roadmaps (3 files)
 │   └── ideas/               Creative/UX ideas (9 files)
@@ -57,7 +78,24 @@ docs/
 
 ## Core Specifications (`spec/`)
 
-Authoritative technical specs for implemented systems. These are the primary reference for code changes.
+Technical specs for systems. Cross-referenced with `.plan/` epics for implementation status.
+
+> **⚠️ Specs are aspirational.** They describe intended design, not necessarily current `src/` state. Always verify against `src/` and `.plan/epics/` for the latest implementation status.
+
+### Spec ↔ Plan Reconciliation
+
+| Spec | Implements | Related Epic | Spec Status |
+|------|-----------|--------------|-------------|
+| `spec/rpg-mechanics.md` | Dice, stats, combat, XP, loot | `epic-rpg-mechanics` | 🟡 Partial (see RPG Status) |
+| `spec/actors.md` | Actor data model, inventory | `epic-item-systems-unification` | 🟡 Inventory gaps |
+| `spec/character-spec.md` | Character import/export | `epic-character-core-system` | ✅ Largely current |
+| `spec/crafting-professions.md` | Crafting disciplines | `epic-crafting-professions`, `epic-skills-professions-config` | 🟡 DB layer done, routes pending |
+| `spec/economy-trading.md` | Trade, market dynamics | `epic-item-systems-unification` | 🔲 Not started |
+| `spec/items.md` | Item types, properties | `epic-item-systems-unification` | 🔲 Not started |
+| `spec/inventory.md` | Inventory management | `epic-item-systems-unification` | 🔲 Not started |
+| `spec/architecture.md` | System layers, request flow | — | ✅ Current |
+| `spec/schema.md` | Full DB schema | — | 🟡 Regenerate after migrations |
+| `spec/api-routes.md` | REST API contract | — | 🟡 Regenerate after routes added |
 
 ### Architecture & Core
 
@@ -119,50 +157,45 @@ Authoritative technical specs for implemented systems. These are the primary ref
 
 ---
 
-## Planned Features & Roadmaps (`.plan/`)
+## Planning System (`.plan/`)
 
-Future features, exploration docs, and implementation roadmaps. Not yet implemented.
+**Source of truth** for task tracking and feature specs. Auto-generated index at `.plan/epics-index.md` (172 epics).
 
-### Roadmaps (`.plan/roadmaps/`)
+### Epic System
 
-| Document                                                                                         | Topics                              |
-| ------------------------------------------------------------------------------------------------ | ----------------------------------- |
-| [`.plan/roadmaps/rpg-implementation-roadmap.md`](./.plan/roadmaps/rpg-implementation-roadmap.md) | RPG mechanics implementation phases |
-| [`.plan/roadmaps/implementation-approaches.md`](./.plan/roadmaps/implementation-approaches.md)   | Technical approach comparison       |
-| [`.plan/roadmaps/implementation-samples.md`](./.plan/roadmaps/implementation-samples.md)         | Code samples and patterns           |
+| Directory | Purpose | Count |
+|-----------|---------|-------|
+| `.plan/epics/` | Epic definitions (feature breakdown, acceptance criteria) | 172 epics |
+| `.plan/tickets/` | Task tickets (implementation work items) | 600+ tasks |
+| `.plan/epics-index.md` | Auto-generated consolidated epic status | — |
 
-### Features (`.plan/features/`)
+### Active Epics (Recently Created)
 
-| Document                                                                                         | Topics                                         |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
-| [`.plan/features/creative-studio.md`](./.plan/features/creative-studio.md)                       | Creative tools and studio features             |
-| [`.plan/features/cross-device-sync.md`](./.plan/features/cross-device-sync.md)                   | Cross-device state synchronization             |
-| [`.plan/features/auto-translation.md`](./.plan/features/auto-translation.md)                     | Auto-translation system                        |
-| [`.plan/features/notifications-expansion.md`](./.plan/features/notifications-expansion.md)       | Extended notification system with noise levels |
-| [`.plan/features/filtering-pagination.md`](./.plan/features/filtering-pagination.md)             | Combined filter and pagination improvements    |
-| [`.plan/features/procedural-assets.md`](./.plan/features/procedural-assets.md)                   | Procedurally generated assets                  |
-| [`.plan/features/plot-autopilot.md`](./.plan/features/plot-autopilot.md)                         | Automated plot progression                     |
-| [`.plan/features/shared-worlds.md`](./.plan/features/shared-worlds.md)                           | Multi-user shared worlds                       |
-| [`.plan/features/memory-visualization.md`](./.plan/features/memory-visualization.md)             | Memory visualization UI                        |
-| [`.plan/features/mobile-native-ux.md`](./.plan/features/mobile-native-ux.md)                     | Mobile/native UX patterns                      |
-| [`.plan/features/multimodal-input.md`](./.plan/features/multimodal-input.md)                     | Multimodal input (voice, image, etc.)          |
-| [`.plan/features/device-tier-gating.md`](./.plan/features/device-tier-gating.md)                 | Feature gating by device capability            |
-| [`.plan/features/lore-consistency-checker.md`](./.plan/features/lore-consistency-checker.md)     | Lore/world consistency validation              |
-| [`.plan/features/offline-world-events.md`](./.plan/features/offline-world-events.md)             | Offline world event system                     |
-| [`.plan/features/personas.md`](./.plan/features/personas.md)                                     | Persona features                               |
-| [`.plan/features/regex-output-transforms.md`](./.plan/features/regex-output-transforms.md)       | Regex-based output transforms                  |
-| [`.plan/features/prompt-injection.md`](./.plan/features/prompt-injection.md)                     | Prompt injection defense                       |
-| [`.plan/features/provider-system.md`](./.plan/features/provider-system.md)                       | LLM provider abstraction                       |
-| [`.plan/features/testing.md`](./.plan/features/testing.md)                                       | Testing strategy and goals                     |
-| [`.plan/features/transport-unified.md`](./.plan/features/transport-unified.md)                   | HTTP/WS/WebTransport abstraction               |
-| [`.plan/features/frontend-extensions.md`](./.plan/features/frontend-extensions.md)               | Frontend extension points                      |
-| [`.plan/features/use-case-agentic-workspace.md`](./.plan/features/use-case-agentic-workspace.md) | Agentic workspace use case                     |
-| [`.plan/features/assets-attribution.md`](./.plan/features/assets-attribution.md)                 | License/attribution for assets                 |
-| [`.plan/features/admin-statistics.md`](./.plan/features/admin-statistics.md)                     | Admin statistics dashboard                     |
-| [`.plan/features/ci-maintenance.md`](./.plan/features/ci-maintenance.md)                         | CI maintenance automation                      |
-| [`.plan/features/e2e-benchmarks.md`](./.plan/features/e2e-benchmarks.md)                         | E2E performance benchmarks                     |
-| [`.plan/features/edge-cases.md`](./.plan/features/edge-cases.md)                                 | Edge case handling                             |
-| [`.plan/features/i18n-implementation.md`](./.plan/features/i18n-implementation.md)               | i18n implementation details                    |
+| Epic | Priority | Status | Tasks | Scope |
+|------|----------|--------|-------|-------|
+| [`epic-item-systems-unification.md`](/.plan/epics/epic-item-systems-unification.md) | High | ⬜ Not Started | 15 | Unify item types, link NPC inventory, wire crafting, implement trade, item seeding |
+| [`epic-skills-professions-config.md`](/.plan/epics/epic-skills-professions-config.md) | High | ⬜ Not Started | 6 | Skills routes, professions service, character config skills/prof, item config templates |
+
+### Epic Status Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| 📝 Draft | Aspirational spec, not yet actionable |
+| ⬜ Not Started | Ready for implementation |
+| 🟡 In Progress | Some sub-tasks merged |
+| ✅ Complete | All acceptance criteria met |
+
+### Roadmaps & Ideas (`.plan/roadmaps/`, `.plan/ideas/`, `.plan/features/`)
+
+Exploration docs and creative research. Lower precedence than epics/tickets.
+
+| Directory | Purpose |
+|-----------|---------|
+| `.plan/roadmaps/` | Implementation roadmaps (3 files) |
+| `.plan/ideas/` | Creative/UX ideas (34 ideas across 8 themes) |
+| `.plan/features/` | Feature specs (28 files) |
+
+> **Precedence:** `AGENTS.md > .plan/epics+tickets > src/ > docs/spec > .plan/features+ideas+roadmaps`
 
 ### Ideas (`ideas/`)
 
