@@ -286,3 +286,9 @@ Multi-system epic combining:
 - TASK-internal-external-flagging.md
 - TASK-nsfw-gate-moderation-events.md
 - TASK-user-block-ban-shadow.md
+
+## Wiring & Resolution Plan (2026-08-08 audit)
+
+`RecipesService` (`src/rpg/crafting/recipes/`) is built; the remaining 5 crafting services
+(professions, stations, quality, process, gathering) + wiring are tracked by existing tickets
+`TASK-complete-crafting-system-services` and `TASK-wire-crafting-routes` — no new ticket needed.
