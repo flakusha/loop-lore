@@ -127,8 +127,7 @@ export async function loadTranslations(locale: string,): Promise<TranslationMap 
     const res = await feFetch(`/locales/${locale}.json`,);
     if (res.ok) {
       const raw = await res.json();
-      const strings = parseOr(TranslationMapSchema, raw, null as unknown as TranslationMap,) as TranslationMap | null;
-      return strings;
+      return parseOr(TranslationMapSchema, raw, null as unknown as TranslationMap,) as TranslationMap | null;
     }
   } catch {
     // network error or invalid JSON

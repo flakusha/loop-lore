@@ -101,8 +101,8 @@ fd "test" src/ --type f -e ts
 
 ```
 src/
-├── server.ts            # HTTP entry
 ├── elysia-app.ts        # Elysia setup
+├── server/              # HTTP entry (handler, index, start, static-files)
 ├── db/                  # Kysely + schema (migrations are source of truth)
 ├── config/              # Config loading
 ├── routes/              # REST handlers
@@ -111,6 +111,7 @@ src/
 ├── turning/             # Turn orchestration
 ├── chat/                # Chat service layer (context window, transitions, moderation)
 ├── crypto/              # Encryption
+├── eslint-rules/        # Custom ESLint rules (param-limit)
 ├── frontend/            # Bundled htmx + Alpine.js
 ├── views/               # htmx templates (server-rendered)
 ├── public/              # Static assets served at / (CSS, locales)
@@ -118,6 +119,7 @@ src/
 ├── tui/                 # Blessed widgets
 ├── regex/               # Extraction pipeline (image edits, intents, memory, etc.)
 ├── rpg/                 # RPG subsystems (combat, quests, skills, loot, etc.)
+├── scripts/             # Build scripts (commit-check, smoke-app, version-bump)
 ├── characters/          # Character services (avatar, mood, traits, relationships)
 ├── assets/              # Asset service + metadata extraction
 ├── memory/              # Memory budget, provisioning, purge, decay
@@ -134,6 +136,7 @@ src/
 ├── notifications/       # Notification service
 ├── profanity/           # Profanity filter
 ├── age-gate/            # Age gate service
+├── app/                 # Plugin registration (register-plugins.ts)
 ├── telemetry/           # Telemetry
 ├── aux-pipeline/        # Auxiliary LLM pipeline
 ├── battle/              # Battle/RPG combat UI glue
@@ -146,6 +149,7 @@ src/
 ├── prompts/             # Prompt templates
 ├── build/               # Build-time helpers (compress, copy-icons)
 ├── test-utils/          # Test insert helpers
+├── validation/          # Elysia t (TypeBox) schemas + middleware
 └── utils/               # Shared utilities
 
 docs/spec/               # Core specs
