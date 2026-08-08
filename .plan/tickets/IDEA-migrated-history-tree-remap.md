@@ -6,7 +6,7 @@
 **Assignee**:
 **Epic**: epic-messages
 **Related**: FEAT-chat-template-config-lifecycle, FEAT-message-swipe-replay-branch,
-.plan/design/chat-template-config-lifecycle.md
+.plan/epics/epic-config-templates.md
 
 ## Description
 

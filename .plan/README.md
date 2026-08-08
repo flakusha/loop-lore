@@ -7,18 +7,10 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 | Folder                          | Purpose                                            | Count |
 | ------------------------------- | -------------------------------------------------- | ----- |
 | `tickets/`                      | Task specs (authoring, review, iteration)          | ~761  |
-| `epics/`                        | Epic definitions (major initiatives)               | ~172  |
+| `epics/`                        | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) | ~174  |
 | `backlog/`                      | **Status queue (consolidated: 2 docs)**         | 2     |
 | `backlog/priority.md`           | Full priority ladder (P0–P6+) + 0.1.0 value tiers | 1   |
 | `backlog/open.md`               | In-flight, debt, unwired code, deferred (P6+)   | 1     |
-| `roadmaps/`                     | Implementation roadmaps                            | 5     |
-| `research/`                     | Research artifacts, landscape analysis             | 2     |
-| `design/`                       | Design reconciliations                             | 6     |
-| `ideas/`                        | World/chat navigation proposals                    | 9     |
-| `features/`                     | Feature specs                                      | 1     |
-| `implementation-plan.md`        | Active implementation checklist (v0.1)             | 1     |
-| `future-features-plan.md`       | Full planned feature list                          | 1     |
-| `external-integrations-plan.md` | External integrations roadmap                      | 1     |
 | `epics-index.md`                | Epic registry index (generated)                    | 1     |
 
 ## Backlog Categories (`backlog/`)
