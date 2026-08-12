@@ -1494,6 +1494,17 @@
     "title": "Config File Separation — Per-Domain JSON Schemas",
     "type": "FEAT"
   },
+  "FEAT-CONFIGS-PATH-RESOLUTION-FILE-RELATIVE-WINDOWS-MACOS-PARITY": {
+    "hash": "b2ed9d6",
+    "extid": "FEAT-CONFIGS-PATH-RESOLUTION-FILE-RELATIVE-WINDOWS-MACOS-PARITY",
+    "type": "FEAT",
+    "title": "Configs path resolution — file-relative + Windows/macOS parity",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-configs-path-resolution",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-configs-path-resolution-file-relative-windows-macos-parity.md"
+  },
   "FEAT-CONFIGURATION-EXTENSIONS-ECE": {
     "epic": "epic-config-extensions",
     "extid": "FEAT-CONFIGURATION-EXTENSIONS-ECE",
