@@ -786,6 +786,7 @@
     "edited": "(edited)",
     "thinking": "Thinking…",
     "thinkingProcess": "Thinking process",
+    "callTool": "Call tool",
     "newMessages": "↓ New messages",
     "copy": "Copy",
     "regenerate": "Regenerate",

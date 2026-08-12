@@ -562,6 +562,44 @@ body {
   margin-top: var(--space-1);
 }
 
+/* --- Tool-call blocks (function-calling display) --- */
+.tool-calls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+.tool-call-block {
+  font-size: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-secondary);
+}
+.tool-call-block summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  user-select: none;
+}
+.tool-call-name {
+  font-family: var(--font-mono, monospace);
+  color: var(--accent, var(--text-primary));
+  font-size: 12px;
+}
+.tool-call-args {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-2);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary, var(--bg-secondary));
+  border-radius: 4px;
+  max-height: 240px;
+  overflow: auto;
+}
+
 /* --- Message action buttons (shared) --- */
 .btn-icon-action {
   width: 44px;

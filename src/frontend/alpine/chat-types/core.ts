@@ -10,6 +10,10 @@ export interface ChatCoreState extends AlpineMagicThis {
   continuingMessageId: string | null;
   isContinuing: boolean;
   _generationEventSource: EventSource | null;
+  /** Rendered tool-call blocks emitted during live streaming (prepended to stream container). */
+  _streamToolCalls: string[];
+  /** Latest streamed content HTML (preserved so tool-call renders don't wipe it). */
+  _streamContent: string;
   chats: {
     id: string;
     name?: string;
@@ -172,6 +176,7 @@ export interface ChatCoreState extends AlpineMagicThis {
     token_count_total?: number;
   },): string;
   connectGenerationSSE(chatId: string,): void;
+  renderStreamContainer(): void;
   _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;
   connectActivitySSE(): void;
