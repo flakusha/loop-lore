@@ -55,6 +55,7 @@ export {
   type ItemType,
   type LootTableEntry,
   repairItem,
+  toEquipmentItem,
 } from "./items-integration";
 
 // ── NPC Integration ───────────────────────────────────────────

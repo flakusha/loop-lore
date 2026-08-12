@@ -1,5 +1,5 @@
-import { getLogger, } from "../../../logger";
-import { jsonParseOr, } from "../../../utils";
+import type { Logger, } from "../../../logger";
+import { getRpgLog, parseJsonField, } from "../../shared/rpg-service-utils";
 import type {
   Achievement,
   AchievementReward,
@@ -7,16 +7,12 @@ import type {
   UnlockCondition,
 } from "./types";
 
-export function getLog() {
-  return getLogger().child({ module: "achievements", },);
-}
-
 /**
- * Parse JSON field safely
+ * Get the achievements module logger.
+ * Delegates to the shared RPG logger factory.
  */
-export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
-  if (typeof raw !== "string") { return fallback; }
-  return jsonParseOr(raw, fallback,);
+export function getLog(): Logger {
+  return getRpgLog("achievements");
 }
 
 /**

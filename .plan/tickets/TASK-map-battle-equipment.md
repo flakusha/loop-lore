@@ -1,6 +1,6 @@
 # TASK: Map Battle Equipment to World Item Definitions
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-12)
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Epic:** epic-item-systems-unification
@@ -48,12 +48,20 @@ interface EquipmentItem {
 
 ## Acceptance Criteria
 
-- [ ] `EquipmentItem` is derived from `ItemDefinition` (not standalone)
-- [ ] `ItemQuality` deprecated → `ItemRarity`
-- [ ] `ItemType` deprecated → `ItemCategory`
-- [ ] Battle equipment calculate endpoint accepts world item IDs
-- [ ] Equipping in battle updates `actor_items.equipped`
-- [ ] `bun test src/` green; `bun run check` green
+- [x] `EquipmentItem` is derived from `ItemDefinition` (not standalone) — via `toEquipmentItem()`
+- [x] `ItemQuality` deprecated → `ItemRarity` (removed in `TASK-unify-item-types`)
+- [x] `ItemType` deprecated → `ItemCategory` (mapped via `categoryToType`/`categoryToSlot`; `ItemType` kept for battle-function compat)
+- [x] Battle equipment calculate endpoint accepts world item IDs (`/api/battle/equipment/calculate-from-items`)
+- [x] Equipping in battle updates `actor_items.equipped` (via `ActorItemsService.equip()` from `TASK-actor-item-service`)
+- [x] `bun test src/` green; `bun run check` green
+
+## Notes (impl 2026-08-12)
+
+- Added `EquipmentSource` shape + `toEquipmentItem()` adapter: category→type/slot, `properties` JSON → `EquipmentModifier[]` (damage/bonus→attack, ac→defense, requiredLevel/requiredStats).
+- Added `categoryToType()`/`categoryToSlot()` mappers.
+- New endpoint `POST /api/battle/equipment/calculate-from-items` resolves `items` rows → `EquipmentItem[]` → modifiers. Existing body-based `calculate` preserved.
+- `ItemType` retained (battle functions consume it); `ItemQuality` fully removed in prior task. `ItemRarity` unified.
+- 10 new adapter tests; full suite 3424 pass / 0 fail; typecheck + frontend + coverage (96.91%) pass.
 
 ## Files to Modify
 
