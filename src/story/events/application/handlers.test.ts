@@ -114,4 +114,13 @@ describe("applyItemTransfer", () => {
       applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sword", fromActorId: actorB, }),),
     ).resolves.toBeUndefined();
   });
+
+  test("skips ambiguous fuzzy matches (does not pick arbitrary def)", async () => {
+    // Two defs share the "Iron..." fragment — no unambiguous single match.
+    const dupId = uid();
+    await insertItems(db, worldId, "Iron Sword", "weapon", { id: dupId, } as never,);
+    await expect(
+      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sw", }),),
+    ).resolves.toBeUndefined();
+  });
 });
