@@ -200,7 +200,7 @@ export interface ActorItems {
   description: string | null;
   item_type: ItemCategory;
   quantity: Generated<number>;
-  value: string | null;
+  value: Generated<number>;
   weight: number | null;
   tags: string | null;
   metadata: string | null;
