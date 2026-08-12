@@ -1206,6 +1206,7 @@ export const SCHEMA = new SchemaManifest()
     archived_at: col("text",),
     format_version: col("integer", { notNull: true, hasDefault: true, },),
     section_id: col("text",),
+    tool_calls: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {
