@@ -190,7 +190,11 @@ export async function start() {
 
   process.on("SIGTERM", () => void shutdown("SIGTERM",),);
   process.on("SIGINT", () => void shutdown("SIGINT",),);
-  process.on("SIGHUP", () => void shutdown("SIGHUP",),);
+  // SIGHUP is unsupported on Windows — registering a handler there throws at
+  // boot. Windows never delivers SIGHUP, so omitting the handler is safe.
+  if (process.platform !== "win32") {
+    process.on("SIGHUP", () => void shutdown("SIGHUP",),);
+  }
 
   process.on("uncaughtException", (err,) => {
     try {

@@ -3140,6 +3140,94 @@
     "title": "Assistant Commands Extension",
     "type": "TASK"
   },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-CHARACTER": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-CHARACTER",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Character Generation Workflow",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-character.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-BATCH": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-BATCH",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Gallery Batch Operations",
+    "label": "task",
+    "priority": "Medium (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.7)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-batch.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-EDIT": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-EDIT",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Gallery Edit Workflows",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.8)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-ITEM": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-ITEM",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Item Generation Workflow",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-item.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-LOCATION": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-LOCATION",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Location Generation Workflow",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-location.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-NPC": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-NPC",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — NPC Generation Workflow",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-npc.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — World Generation Workflow",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-world.md"
+  },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Workflow Templates",
+    "label": "task",
+    "priority": "High (MVP scoped, post-Gate C)",
+    "epic": "`epic-assistant-creative-studio-workflows`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+  },
   "TASK-ASSISTANT-GENERATION-EXTENSIONS": {
     "epic": "epic-assistant-generation-extensions",
     "extid": "TASK-ASSISTANT-GENERATION-EXTENSIONS",
@@ -3178,6 +3266,28 @@
     "tags": [],
     "title": "Assistant/GM Flows Reconciliation",
     "type": "TASK"
+  },
+  "TASK-ASSISTANT-NSFW-API-PREFILTERING": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-NSFW-API-PREFILTERING",
+    "type": "TASK",
+    "title": "Assistant — NSFW Prefiltering for Third-Party API Workflows",
+    "label": "task",
+    "priority": "High (NSFW safety is a blocker for any third-party dispatch)",
+    "epic": "`epic-assistant-creative-studio-workflows`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-nsfw-api-prefiltering.md"
+  },
+  "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION",
+    "type": "TASK",
+    "title": "Assistant — Third-Party API Integration (Nano Banana, etc.)",
+    "label": "task",
+    "priority": "High (post-Gate C)",
+    "epic": "`epic-assistant-creative-studio-workflows`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-third-party-api-integration.md"
   },
   "TASK-ASYMMETRIC-KEY-PAIRS": {
     "epic": "epic-crypto",
@@ -4550,6 +4660,72 @@
     "title": "World/Location Detail Modal",
     "type": "TASK"
   },
+  "TASK-CROSS-PLATFORM-CI-MATRIX": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-PLATFORM-CI-MATRIX",
+    "type": "TASK",
+    "title": "Cross-Platform CI Matrix (Windows + macOS)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cross-platform-portability.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-platform-ci-matrix.md"
+  },
+  "TASK-CROSS-PLATFORM-DEV-TOOLING-PORT": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-PLATFORM-DEV-TOOLING-PORT",
+    "type": "TASK",
+    "title": "Cross-Platform Dev Tooling Port (Windows/macOS)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-cross-platform-portability.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-platform-dev-tooling-port.md"
+  },
+  "TASK-CROSS-PLATFORM-FILESYSTEM-PATH-GUARD": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-PLATFORM-FILESYSTEM-PATH-GUARD",
+    "type": "TASK",
+    "title": "Cross-Platform Filesystem Path Guard (Windows/macOS)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cross-platform-portability.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-platform-filesystem-path-guard.md"
+  },
+  "TASK-CROSS-PLATFORM-PORTABILITY": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-PLATFORM-PORTABILITY",
+    "type": "TASK",
+    "title": "Cross-Platform Portability — Windows & macOS (run from repo + single binary)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cross-platform-portability.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-platform-portability.md"
+  },
+  "TASK-CROSS-PLATFORM-SINGLE-BINARY": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-PLATFORM-SINGLE-BINARY",
+    "type": "TASK",
+    "title": "Single-Binary Build (bun build --compile)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-cross-platform-portability.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-platform-single-binary.md"
+  },
+  "TASK-CROSS-STORY-PROPAGATION": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-STORY-PROPAGATION",
+    "type": "TASK",
+    "title": "Cross-story event propagation logic",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "`epic-timeline-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-story-propagation.md"
+  },
   "TASK-CRYPTO-ALGORITHM-FACTORY": {
     "epic": "epic-crypto",
     "extid": "TASK-CRYPTO-ALGORITHM-FACTORY",
@@ -4672,6 +4848,17 @@
     "title": "Consolidate duplicate message access checks",
     "type": "TASK",
     "hash": "54a2871"
+  },
+  "TASK-DEDUPE-SSE-ACTIVITY-STREAM": {
+    "hash": "pending",
+    "extid": "TASK-DEDUPE-SSE-ACTIVITY-STREAM",
+    "type": "TASK",
+    "title": "Deduplicate SSE activity stream (two connections to /api/activity/stream)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-backend-integration.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
   },
   "TASK-DENO-SUPPORT": {
     "epic": "epic-deno-support",
@@ -6291,6 +6478,17 @@
     "tags": [],
     "title": "LoRA Discovery & Application",
     "type": "TASK"
+  },
+  "TASK-LORE-TIMELINE-REVEAL": {
+    "hash": "pending",
+    "extid": "TASK-LORE-TIMELINE-REVEAL",
+    "type": "TASK",
+    "title": "Add `timeline_id` + `reveal_condition` to lore entries",
+    "label": "task",
+    "priority": "High",
+    "epic": "`epic-lore-knowledge.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-timeline-reveal.md"
   },
   "TASK-LOREBOOK-EXPORT": {
     "epic": "epic-import-export-io",
@@ -8697,6 +8895,61 @@
     "tags": [],
     "title": "Time/Weather Widget",
     "type": "TASK"
+  },
+  "TASK-TIMELINE-BRANCHING-UI": {
+    "hash": "pending",
+    "extid": "TASK-TIMELINE-BRANCHING-UI",
+    "type": "TASK",
+    "title": "Timeline branching UI — world detail page",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "`epic-timeline-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-branching-ui.md"
+  },
+  "TASK-TIMELINE-ID-WORLD-TIMELINE-EVENTS": {
+    "hash": "pending",
+    "extid": "TASK-TIMELINE-ID-WORLD-TIMELINE-EVENTS",
+    "type": "TASK",
+    "title": "Add `timeline_id` to `world_timeline_events`",
+    "label": "task",
+    "priority": "High",
+    "epic": "`epic-timeline-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
+  },
+  "TASK-TIMELINE-MEMORY-INJECTION": {
+    "hash": "pending",
+    "extid": "TASK-TIMELINE-MEMORY-INJECTION",
+    "type": "TASK",
+    "title": "Timeline-aware memory injection",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "`epic-memory-propagation.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-memory-injection.md"
+  },
+  "TASK-TIMELINE-RARITY-MULTIPLIER": {
+    "hash": "pending",
+    "extid": "TASK-TIMELINE-RARITY-MULTIPLIER",
+    "type": "TASK",
+    "title": "Add `rarity_multiplier` to `world_timeline_events`",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "`epic-rarity-extensions.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-rarity-multiplier.md"
+  },
+  "TASK-TIMELINE-SELECTION-API": {
+    "hash": "pending",
+    "extid": "TASK-TIMELINE-SELECTION-API",
+    "type": "TASK",
+    "title": "Timeline selection API — backend endpoints",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "`epic-timeline-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-selection-api.md"
   },
   "TASK-TOOLING-IMPROVEMENT": {
     "epic": "epic-tooling-improvement",
