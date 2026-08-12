@@ -36,8 +36,8 @@ No trade system exists — `ItemsService.transfer()` moves items but has no curr
 ## Acceptance Criteria
 
 - [x] Actor currency balances tracked (gold per actor per world)
-- [x] Trade offer creates a pending exchange (items + gold ↔ items + gold)
-- [x] Trade acceptance atomically transfers both directions
+- [ ] Trade offer creates a pending exchange (implemented as a synchronous two-sided `trade()` + `POST /trade/execute`; no persistent offer/accept/cancel lifecycle — see notes)
+- [x] Trade acceptance atomically transfers both directions (via `trade()` in a single transaction)
 - [x] Insufficient funds/items rejected with clear error
 - [ ] Crafting orders use the trade system for payment (deferred — `crafting_orders` service/routes not yet built; TradeService is the primitives layer for it)
 - [ ] NPC trading works (sell to NPC, buy from NPC inventory) (deferred — relies on NPC inventory/trade counterparty wrapper; TradeService supports any actor owner)
