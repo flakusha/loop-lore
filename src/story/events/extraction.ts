@@ -157,17 +157,17 @@ export function extractEvents({
     const match = pattern.exec(messageContent,);
     if (match?.[1]) {
       const direct = match[0].toLowerCase();
-      const isDrop = direct.includes("drops",) || direct.includes("leaves",);
+      // The acting actor is the source when giving away or dropping an item;
+      // they are the receiver when taking/picking up/acquiring one.
+      const isSource = /gives|hands|offers|passes|trades|drops|leaves|abandons|puts/.test(direct);
       events.push({
         type: WorldEventType.ItemTransfer,
         actorId,
         timestamp,
         locationId: currentLocationId ?? undefined,
         data: {
-          // The acting actor is the source when dropping/leaving an item;
-          // otherwise they receive it (give/take directed at another actor).
-          fromActorId: isDrop ? actorId : null,
-          toActorId: isDrop ? null : actorId,
+          fromActorId: isSource ? actorId : null,
+          toActorId: isSource ? null : actorId,
           itemName: match[1].trim(),
           quantity: 1,
         },
