@@ -3,7 +3,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
-import { getLogger, } from "../../../logger";
+import { getRpgLog, } from "../../shared/rpg-service-utils";
 import {
   getMovementState,
   updateMovementState,
@@ -12,7 +12,7 @@ import type { MovementResult, } from "./types";
 import { MovementPattern, } from "./types";
 
 function getLog() {
-  return getLogger().child({ module: "npc-navigation", },);
+  return getRpgLog("npc-navigation");
 }
 
 /**
