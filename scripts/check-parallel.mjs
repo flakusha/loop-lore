@@ -175,6 +175,32 @@ async function runNonBlockingChecks() {
   } catch {
     console.log("✓ No code duplication issues (jscpd:full)",);
   }
+
+  // Markdown stale-link check (non-blocking — reports broken internal links)
+  try {
+    const linksProc = Bun.spawn(["bash", "-c", "bun run md:links",], {
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    },);
+    await linksProc.exited;
+    const [stdout, stderr] = await Promise.all([
+      new Response(linksProc.stdout,).text(),
+      new Response(linksProc.stderr,).text(),
+    ]);
+    const linksText = stdout + stderr;
+    if (linksText.includes("broken",)) {
+      console.log(`⚠ Markdown stale-link check found broken internal links:`,);
+      for (const line of linksText.trim().split("\n",)) {
+        if (line.includes("broken target",)) { console.log(`  ${line}`,); }
+      }
+      console.log("  Fix target paths or defer to non-blocking (see scripts/check-md-links.ts)",);
+    } else {
+      console.log("✓ Markdown links OK",);
+    }
+  } catch (err) {
+    console.log(`⚠ Markdown stale-link check skipped (${err.message})`,);
+  }
 }
 
 // ── Main ────────────────────────────────────────────────────────
