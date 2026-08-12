@@ -35,7 +35,7 @@ export function generateLoot(
     }
   }
   if (eligible.length === 0) {
-    return { drops: [], totalGoldValue: 0, hasRareDrop: false, };
+    return { drops: [], totalGoldValue: 0, hasRareDrop: false, worldItemIds: [], };
   }
 
   for (let i = 0; i < dropCount; i++) {
@@ -50,7 +50,7 @@ export function generateLoot(
     }
   }
 
-  return { drops, totalGoldValue, hasRareDrop, };
+  return { drops, totalGoldValue, hasRareDrop, worldItemIds: [], };
 }
 
 /**
@@ -86,6 +86,7 @@ function rollOneDrop(
         description: entry.description,
         type: entry.type,
         rarity: entry.rarity,
+        itemId: entry.itemId,
         quantity,
         goldValue: entry.goldValue,
         totalGoldValue: entry.goldValue * quantity,
@@ -102,6 +103,7 @@ function rollOneDrop(
     description: last.description,
     type: last.type,
     rarity: last.rarity,
+    itemId: last.itemId,
     quantity,
     goldValue: last.goldValue,
     totalGoldValue: last.goldValue * quantity,
