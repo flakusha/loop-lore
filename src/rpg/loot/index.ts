@@ -12,6 +12,8 @@ export {
 
 export { generateLoot, } from "./generation.js";
 
+export { persistLoot, toCategory, } from "./persist.js";
+
 export {
   ARMOR_LOOT,
   COMMON_CONSUMABLES,
