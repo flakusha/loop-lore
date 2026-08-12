@@ -14,7 +14,8 @@ export const hardcodedDecision: GmDecisionStrategy = (deps, context, actorId,) =
   if (npcState) {
     promptParts.push(`Health: ${npcState.health}/100. Mental state: ${npcState.mental_state}.`,);
     if (npcState.inventory.length > 0) {
-      promptParts.push(`Carrying: ${npcState.inventory.join(", ",)}.`,);
+      const names = npcState.inventory.map(i => i.quantity > 1 ? `${i.name}×${i.quantity}` : i.name,);
+      promptParts.push(`Carrying: ${names.join(", ",)}.`,);
     }
   }
 
