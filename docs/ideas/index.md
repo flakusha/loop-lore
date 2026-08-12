@@ -8,20 +8,45 @@ feature requests. Each theme is broken into its own document and linked below.
 > `.plan/epics/epic-architecture.md`. Approved for drafting 2026-07-18; docs may be reorganized
 > later.
 
-## Gap summary
+## Gap summary — current 2025-2026 project state
 
-Features popular in competing projects but **absent** from loop-lore docs:
+Features popular in competing projects but **absent** from loop-lore. Each notes the
+leading implementation + current capability, refreshed 2026-08-12 against SillyTavern,
+RisuAI, Agnai, Chub, NovelAI, Open WebUI, KoboldCpp. Bidirectional import/export interop
+matrix: `.plan/tickets/TASK-cross-tool-data-portability-review.md`.
 
-- Emotion portraits (RisuAI killer feature)
-- Visual Novel mode (SillyTavern)
-- Regex / scripted output transforms (RisuAI most-requested)
-- Auto-translation layer (RisuAI)
-- TTS / voice narration (SillyTavern narrate-all)
-- Adaptive audio / dynamic music
-- Memory & relationship visualization
-- Cross-device E2E sync
-- Conversation analytics
-- 3D worlds & navigation
+- **Emotion portraits** — _RisuAI killer feature._ Per-char `emotionImages[]` +
+  `emotionPrompt`; classifier (Ax.Model / MiniLM) emits `<Emotion="...">`; ST Expression
+  Images swaps sprites via sentiment classifier (ONNX go-emotions ~28 labels, GIF). →
+  loop-lore gap = embedding/LLM classifier + `<Emotion>` parse.
+  [RisuAI](https://github.com/kwaroran/RisuAI) ·
+  [ST](https://docs.sillytavern.app/extensions/expression-images/)
+- **Visual Novel mode** — _SillyTavern_ built-in VN UI + Prome ext; sprites-per-emotion +
+  background layering. → loop-lore has VN scenes; adopt layering.
+  [ST](https://docs.sillytavern.app/)
+- **Regex / scripted output transforms** — _RisuAI most-requested._ RisuAI 4-phase regex
+  (`editinput`/`editoutput`/`editprocess`/`editdisplay`) + `@@actions` + CBS; ST STscript
+  Turing-complete + Quick Replies + 200+ slash cmds + World-Info Automation IDs. →
+  loop-lore seed = regex extraction; prioritize phase split + QR automation.
+  [RisuAI](https://deepwiki.com/kwaroran/Risuai/5.2.3-regex-scripts-and-processing) ·
+  [ST](https://docs.sillytavern.app/extensions/)
+- **Auto-translation layer** — _RisuAI / ST._ RisuAI runtime translate w/ ChatML slots +
+  `combineTranslation`; ST (8 providers, auto-mode, caching). → loop-lore lacks.
+  [ST](https://docs.sillytavern.app/extensions/translation/)
+- **TTS / voice narration** — _SillyTavern narrate-all._ ~15 providers, per-char+persona
+  voice map, asterisk-quote filtering; RVC cloning. → loop-lore absent.
+  [ST](https://docs.sillytavern.app/extensions/tts/)
+- **Adaptive audio / dynamic music** — _SillyTavern Dynamic Audio._ Per-emotion BGM
+  (`[emotion]_[n].mp3`), auto switch; Blip animates text. → loop-lore absent; cheap mapping.
+  [ST](https://docs.sillytavern.app/extensions/dynamic-audio/)
+- **Memory & relationship visualization** — No peer has graph viz (ST = Summarize +
+  Vectorization; RisuAI = SuperMemory/HypaMemory). → loop-lore greenfield differentiator.
+  [ST](https://docs.sillytavern.app/usage/core-concepts/worldinfo/)
+- **Cross-device E2E sync** — Greenfield (ST local-only; RisuRealm cloud not E2E).
+  → loop-lore could lead.
+- **Conversation analytics** — Greenfield (ST only per-char token stats). → differentiator.
+- **3D worlds & navigation** — Adjacent only: ST Live2D/VRM + EmulatorJS; no 3D nav.
+  → loop-lore idea unmet by peers.
 
 ## Themes
 

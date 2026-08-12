@@ -70,11 +70,11 @@ loop-lore is developed and CI-tested on Linux. This epic removes the Linux-only 
 
 ## Testing Strategy
 
-| Test | Coverage | Files |
-| ---- | -------- | ----- |
-| Unit | OS-aware path guard parity (win/mac/linux path shapes) | `src/assets/service/file-system.test.ts` |
-| CI | `bun test` + `bun run check` green on Windows + macOS runners | CI workflow |
-| Build | `bun build --compile` artifact boots + serves assets on each OS | `tests/e2e/` |
+| Test  | Coverage                                                        | Files                                    |
+| ----- | --------------------------------------------------------------- | ---------------------------------------- |
+| Unit  | OS-aware path guard parity (win/mac/linux path shapes)          | `src/assets/service/file-system.test.ts` |
+| CI    | `bun test` + `bun run check` green on Windows + macOS runners   | CI workflow                              |
+| Build | `bun build --compile` artifact boots + serves assets on each OS | `tests/e2e/`                             |
 
 ## Linked Tasks
 

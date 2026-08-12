@@ -27,7 +27,7 @@ wiring and features**. Three pillars:
 Deliberately **complements, not duplicates**, the two existing testing epics:
 `epic-testing-qa.md` (permanently-ongoing umbrella) and `epic-testing-benchmarking.md`
 (performance/load — out of scope here). Browser-reliability tasks already scoped as
-*un-started candidates* in the QA epic are **adopted into this epic** and resolved
+_un-started candidates_ in the QA epic are **adopted into this epic** and resolved
 here; the QA epic keeps ownership of unit-coverage expansion and dialect-matrix work.
 
 ## Problem
@@ -54,7 +54,7 @@ Ground truth from the current repo (verified 2026-08-12):
     cascade) where older tests lack `try/finally`.
 - **knip in `bun check` misses wiring.** `check` already runs `dead - code (knip)`,
   but `knip.json` sets `"exclude": ["exports", "types"]` — unused exports/types are
-  NOT reported, and knip has no notion of *wired* (a route file mounted in
+  NOT reported, and knip has no notion of _wired_ (a route file mounted in
   `elysia-app.ts`, a plugin registered+loaded via `src/app/register-plugins.ts`, a
   service with ≥1 importer). "Unwired" regressions recur: `epic-achievements`
   shipped code-complete+tests with **zero importers** ("UNWIRED — routes pending");
@@ -96,21 +96,21 @@ browser tests can pass while Alpine hydration is broken.
 - **Scenario catalog.** A canonical matrix: feature pillar → scenario → browser test
   → status. Feature pillars: register, auth/session, chat send + state, assistant
   tool-call UI, GM panels + quest log, gallery batch (select/download/delete), world
-  + location access, invite/join, api-keys, search, settings, navigation, characters,
-  generation (with mocked providers — see Pillar 3). Generate a coverage report
-  (every pillar ≥1 browser test, green, non-flaky).
+  - location access, invite/join, api-keys, search, settings, navigation, characters,
+    generation (with mocked providers — see Pillar 3). Generate a coverage report
+    (every pillar ≥1 browser test, green, non-flaky).
 
 ### Pillar 2 — Unwired / dead-code gate on `bun check`
 
 - **`scripts/check-wiring.ts`** (pattern-match `scripts/check-db-schemas.ts` /
   `scripts/check-file-size.ts`), added to `check-parallel.mjs`. Static scans:
   - Every `src/routes/*.ts` route module has a mount call in `src/elysia-app.ts`
-    (or a central route-collection module) — flag *unwired routes*.
+    (or a central route-collection module) — flag _unwired routes_.
   - Every `plugins/core/*/plugin.ts` / `plugins/community/*/plugin.ts` is registered
     and loaded via `src/app/register-plugins.ts` (or the loader manifest) — flag
-    *registered-but-never-loaded* / *loaded-but-never-registered*.
+    _registered-but-never-loaded_ / _loaded-but-never-registered_.
   - Every module under `src/services/`, `src/assistant/`, `src/rpg/` etc. has ≥1
-    importer reachable from an entry — flag *orphan services*.
+    importer reachable from an entry — flag _orphan services_.
   - Report zero-importer exports beyond the entry graph.
 - **Tighten knip where safe.** Re-enable `exports` analysis (or a scoped subset) so
   dead exported functions are caught; keep the documented `ignoreDependencies` for
@@ -195,12 +195,12 @@ See "Platform-integrations tickets" pattern — created via `worktree.sh ticket`
 linked to this epic:
 
 - [ ] `TASK-e2e-browser-reliability-hardening` — runner decision, web-first polling,
-  console/page-error assertion everywhere, per-test isolation, dead-config cleanup.
+      console/page-error assertion everywhere, per-test isolation, dead-config cleanup.
 - [ ] `TASK-e2e-alpine-state-harness` — `getAlpineData`/`waitForAlpineState`, migrate
-  htmx-alpine/chat-flow off presence+sleeps, pin `chatState()` contract.
+      htmx-alpine/chat-flow off presence+sleeps, pin `chatState()` contract.
 - [ ] `TASK-e2e-scenario-catalog` — feature→scenario→test matrix + coverage report;
-  add missing pillar tests.
+      add missing pillar tests.
 - [ ] `TASK-wiring-dead-code-gate` — `check:wiring` + knip `exports` tightening +
-  route-test coverage assertion.
+      route-test coverage assertion.
 - [ ] `TASK-generation-mock-scenario-provider` — full-surface mock + fake ComfyUI server.
 - [ ] `TASK-generation-cassette-replay` — record/replay harness + first fixtures.

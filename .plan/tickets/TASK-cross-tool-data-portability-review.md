@@ -72,19 +72,19 @@ From `epic-import-export-io.md` (code-audit, fully implemented):
 
 ### Character cards
 
-| Format                 | loop-lore | ST   | RisuAI | Agnai | Chub | NovelAI |
-| ---------------------- | --------- | ---- | ------ | ----- | ---- | ------- |
-| CCV2 PNG (`chara`)     | ✅✅      | ✅✅ | ✅✅   | ✅✅  | hub  | —       |
-| CCV3 PNG (`ccv3`)      | ✅✅      | ✅✅ | ✅✅   | ≈    | hub  | —       |
-| CHARX `.charx`         | ✅✅      | ✅✅ | ✅✅   | —    | hub  | —       |
-| JSON V2/V3             | ✅✅      | ✅✅ | ✅✅   | ✅✅ | ✅   | —       |
-| Tavern V1/V2           | ✅✅      | ✅✅ | ✅     | ✅✅ | ✅   | —       |
-| YAML / TOML            | ✅✅      | —   | —     | —    | —   | —       |
-| Character.AI           | ✅✅      | ✅  | —     | ✅   | —   | —       |
-| Charas/Pyg/ooba        | —        | ✅  | —     | ✅   | —   | —       |
-| NAI Card V2            | —        | —   | —     | —    | —   | ✅      |
-| Lorebook (book/V2)     | ✅ partial| ✅✅ | ✅✅   | ✅✅ | hub  | ≈       |
-| CHARX JPEG / RCC       | partial  | —   | ✅✅   | —    | —   | —       |
+| Format             | loop-lore  | ST   | RisuAI | Agnai | Chub | NovelAI |
+| ------------------ | ---------- | ---- | ------ | ----- | ---- | ------- |
+| CCV2 PNG (`chara`) | ✅✅       | ✅✅ | ✅✅   | ✅✅  | hub  | —       |
+| CCV3 PNG (`ccv3`)  | ✅✅       | ✅✅ | ✅✅   | ≈     | hub  | —       |
+| CHARX `.charx`     | ✅✅       | ✅✅ | ✅✅   | —     | hub  | —       |
+| JSON V2/V3         | ✅✅       | ✅✅ | ✅✅   | ✅✅  | ✅   | —       |
+| Tavern V1/V2       | ✅✅       | ✅✅ | ✅     | ✅✅  | ✅   | —       |
+| YAML / TOML        | ✅✅       | —    | —      | —     | —    | —       |
+| Character.AI       | ✅✅       | ✅   | —      | ✅    | —    | —       |
+| Charas/Pyg/ooba    | —          | ✅   | —      | ✅    | —    | —       |
+| NAI Card V2        | —          | —    | —      | —     | —    | ✅      |
+| Lorebook (book/V2) | ✅ partial | ✅✅ | ✅✅   | ✅✅  | hub  | ≈       |
+| CHARX JPEG / RCC   | partial    | —    | ✅✅   | —     | —    | —       |
 
 (✅✅ = import+export both; ✅ = one direction; ≈ = partial)
 
@@ -92,11 +92,11 @@ From `epic-import-export-io.md` (code-audit, fully implemented):
 
 | Format                   | loop-lore | ST   | RisuAI | Agnai | Chub |
 | ------------------------ | --------- | ---- | ------ | ----- | ---- |
-| loop-lore MD/JSON/HTML   | export    | —   | —     | —    | —   |
-| ST `.jsonl` (re-import)  | ❌ gap    | ✅✅ | —     | —    | —   |
-| Agnai / Tavern JSONL     | ❌ gap    | ✅  | —     | ✅✅ | ✅   |
-| RisuAI `.risup`/RisuSave | ❌ gap    | ✅  | ✅✅   | —    | —   |
-| `.txt` (one-way)         | ❌ (add?) | ✅  | —     | —    | —   |
+| loop-lore MD/JSON/HTML   | export    | —    | —      | —     | —    |
+| ST `.jsonl` (re-import)  | ❌ gap    | ✅✅ | —      | —     | —    |
+| Agnai / Tavern JSONL     | ❌ gap    | ✅   | —      | ✅✅  | ✅   |
+| RisuAI `.risup`/RisuSave | ❌ gap    | ✅   | ✅✅   | —     | —    |
+| `.txt` (one-way)         | ❌ (add?) | ✅   | —      | —     | —    |
 
 ## Gaps (prioritized)
 

@@ -14,7 +14,7 @@
 
 ```typescript
 // rpg/loot/generation.ts
-export function generateLoot(entries, level, dropCount, luckModifier): LootResult {
+export function generateLoot(entries, level, dropCount, luckModifier,): LootResult {
   // Returns { drops: LootDrop[], totalGoldValue, hasRareDrop }
   // LootDrop = { name, type, rarity, quantity, goldValue, metadata }
   // ❌ No item_id, no world_items row created

@@ -29,25 +29,25 @@ backend with prompt preview, step validation, and confirmation gating (see
 ## Acceptance Criteria
 
 - [ ] `configs/templates/workflows/world-generation.yaml` defines the workflow
-  (intent.target `world`, steps, dispatch, approval).
+      (intent.target `world`, steps, dispatch, approval).
 - [ ] `entity_type_presets.world` added to
-  `configs/templates/workflows/entity-types.yaml`.
+      `configs/templates/workflows/entity-types.yaml`.
 - [ ] `INTENT_PATTERNS` routes `create/generate/new world` triggers to the workflow.
 - [ ] Runner validates each step; blocks on schema/consistency/duplicate failure.
 - [ ] Confirmation gate required before dispatch.
 - [ ] Dispatch creates the world with seeded default identity context (see
-  `FEAT-origin-capture-generation-seeding.md` for culture-bearing world lore).
+      `FEAT-origin-capture-generation-seeding.md` for culture-bearing world lore).
 - [ ] Unit test: intent → workflow routing + step validation; integration: end-to-end
-  world creation via `/create` wrapped by the workflow.
+      world creation via `/create` wrapped by the workflow.
 
 ## Files
 
-| File                                          | Action |
-| --------------------------------------------- | ------ |
-| `configs/templates/workflows/world-generation.yaml` | new    |
-| `configs/templates/workflows/entity-types.yaml` | modify |
-| `src/regex/intent.ts`                        | verify (target exists) |
-| `src/assistant/workflow-runner.ts`           | reuse  |
+| File                                                | Action                 |
+| --------------------------------------------------- | ---------------------- |
+| `configs/templates/workflows/world-generation.yaml` | new                    |
+| `configs/templates/workflows/entity-types.yaml`     | modify                 |
+| `src/regex/intent.ts`                               | verify (target exists) |
+| `src/assistant/workflow-runner.ts`                  | reuse                  |
 
 ## Related
 

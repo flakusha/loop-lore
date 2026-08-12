@@ -57,46 +57,46 @@ binary distribution (`epic-precompiled-hot-binaries.md`), Deno compile
 ## Tier 1 — As-Repository Portability (highest priority)
 
 - [x] **T1.1** Guard `SIGHUP` in `src/server/start.ts` (FIX APPLIED, uncommitted —
-  verify + commit).
+      verify + commit).
 - [ ] **T1.2** Make `src/assets/service/file-system.ts` path guard OS-aware
-  (use `node:path` `sep`/`isAbsolute`; Windows root + profile-dir checks).
-  Security-sensitive — add a test per platform path shape.
+      (use `node:path` `sep`/`isAbsolute`; Windows root + profile-dir checks).
+      Security-sensitive — add a test per platform path shape.
 - [ ] **T1.3** Port remaining `worktree.sh` core commands (ticket, issues, commit,
-  finalize, sync) to TS under `scripts/worktree/`, or document Git Bash/WSL as a
-  Windows dev prerequisite in `docs/guide/getting-started.md`.
+      finalize, sync) to TS under `scripts/worktree/`, or document Git Bash/WSL as a
+      Windows dev prerequisite in `docs/guide/getting-started.md`.
 - [ ] **T1.4** Replace `execSync("git …")` shell strings in `scripts/` with
-  portable `Bun.$` / `spawn` arg-arrays (no shell interpolation).
+      portable `Bun.$` / `spawn` arg-arrays (no shell interpolation).
 - [ ] **T1.5** Confirm no runtime `/tmp` or hardcoded unix paths remain
-  (runtime already uses `os.tmpdir()`; audit clean except tests).
+      (runtime already uses `os.tmpdir()`; audit clean except tests).
 - [ ] **T1.6** Add a CI matrix (Windows + macOS runners) executing
-  `bun test` + `bun run check` (ties `epic-cicd-pipeline.md`) so portability
-  regressions are caught continuously.
+      `bun test` + `bun run check` (ties `epic-cicd-pipeline.md`) so portability
+      regressions are caught continuously.
 - [ ] **T1.7** Document Windows/macOS dev setup in `docs/guide/getting-started.md`
-  (Bun/Node install, OpenSSL on PATH, git on PATH, WSL/Git Bash for bash scripts).
+      (Bun/Node install, OpenSSL on PATH, git on PATH, WSL/Git Bash for bash scripts).
 
 ## Tier 2 — As Built App (single binary)
 
 - [ ] **T2.1** Spike `bun build --compile --target=bun src/server/index.ts` →
-  standalone executable on each OS. Verify config/db path resolution under the
-  compiled context (`import.meta.dir`, `process.cwd()`, env overrides).
+      standalone executable on each OS. Verify config/db path resolution under the
+      compiled context (`import.meta.dir`, `process.cwd()`, env overrides).
 - [ ] **T2.2** Static-asset strategy for the compiled binary: `bun build --compile`
-  does NOT auto-embed arbitrary files. Switch `src/server/static-files.ts` (or
-  the `dist/public` loader) to `Bun.embed`/embedded assets, or document an
-  external `public/` directory shipped alongside the binary.
+      does NOT auto-embed arbitrary files. Switch `src/server/static-files.ts` (or
+      the `dist/public` loader) to `Bun.embed`/embedded assets, or document an
+      external `public/` directory shipped alongside the binary.
 - [ ] **T2.3** Evaluate `deno compile` as alternative (ties `epic-deno-support.md`);
-  note `import.meta.dir`/`Bun.*` API differences.
+      note `import.meta.dir`/`Bun.*` API differences.
 - [ ] **T2.4** Ensure native hot-binary modules ship Windows `.dll` / macOS
-  `.dylib` (ties `epic-precompiled-hot-binaries.md`) so a compiled app keeps
-  native crypto/compression speed.
+      `.dylib` (ties `epic-precompiled-hot-binaries.md`) so a compiled app keeps
+      native crypto/compression speed.
 
 ## Acceptance Criteria (overall)
 
 - [ ] `bun run dev` boots on Windows + macOS without throwing (no unsupported
-  signal / path / shell assumptions at startup).
+      signal / path / shell assumptions at startup).
 - [ ] `bun test` + `bun run check` green on Windows + macOS CI runners.
 - [ ] A `bun build --compile` artifact runs on each OS with assets + DB working.
 - [ ] Windows/macOS dev prerequisites documented; no undocumented bash-only steps
-  block first-run.
+      block first-run.
 
 ## Files
 

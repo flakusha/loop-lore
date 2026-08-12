@@ -14,15 +14,15 @@ reference always matches the code.
 
 ## Current State
 
-| Area               | File                          | State      | Notes                       |
-| ------------------ | ----------------------------- | ---------- | --------------------------- |
-| API Reference      | `docs/reference/api.md`       | 🟡 Manual  | 196L hand-written markdown  |
-| Route definitions  | `src/routes/*.ts`             | ✅ Elysia  | 30+ route files             |
-| Validation schemas | `src/validation/schemas.ts`   | ✅ TypeBox | `t.Object`, `t.Union`, etc. |
-| OpenAPI spec       | —                             | ❌         | No spec exists              |
-| Spec generation    | —                             | ❌         | No code→spec pipeline       |
-| Doc generation     | —                             | ❌         | No spec→markdown pipeline   |
-| API versioning     | `docs/spec/api-versioning.md` | 📝 Planned | EPIC-2026-32 (prerequisite) |
+| Area               | File                          | State      | Notes                                                                                       |
+| ------------------ | ----------------------------- | ---------- | ------------------------------------------------------------------------------------------- |
+| API Reference      | `docs/reference/api.md`       | 🟡 Manual  | 196L hand-written markdown                                                                  |
+| Route definitions  | `src/routes/*.ts`             | ✅ Elysia  | 30+ route files                                                                             |
+| Validation schemas | `src/validation/schemas.ts`   | ✅ TypeBox | `t.Object`, `t.Union`, etc.                                                                 |
+| OpenAPI spec       | —                             | ❌         | No spec exists                                                                              |
+| Spec generation    | —                             | ❌         | No code→spec pipeline                                                                       |
+| Doc generation     | —                             | ❌         | No spec→markdown pipeline                                                                   |
+| API versioning     | `docs/spec/api-versioning.md` | 📝 Planned | EPIC-2026-32 (prerequisite) — [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md) |
 
 ## Design
 
