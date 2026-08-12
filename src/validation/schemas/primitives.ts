@@ -129,11 +129,6 @@ export const NoteCategorySchema = t.UnionEnum([
   "combat",
   "session",
 ],);
-/**
- * @deprecated Use `ItemCategorySchema` — `actor_items.item_type` now stores
- * unified `ItemCategory` values.
- */
-export const ActorItemTypeSchema = t.UnionEnum(["equipment", "consumable", "key_item", "artifact", "misc",],);
 export const ItemCategorySchema = t.UnionEnum([
   "weapon",
   "armor",
