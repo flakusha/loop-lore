@@ -8,9 +8,7 @@ import type {
   EquipmentModifier,
   EquipmentSlot,
 } from "./integration-schemas";
-
-/** Item quality tiers */
-export type ItemQuality = "common" | "uncommon" | "rare" | "epic" | "legendary";
+import type { ItemRarity, } from "../db/enums";
 
 /** Item type */
 export type ItemType =
@@ -35,8 +33,8 @@ export interface EquipmentItem {
   type: ItemType;
   /** Equipment slot (if equippable) */
   slot?: EquipmentSlot;
-  /** Item quality */
-  quality: ItemQuality;
+  /** Item rarity */
+  rarity: ItemRarity;
   /** Stat modifiers when equipped */
   modifiers: EquipmentModifier[];
   /** Durability (0-100) */
@@ -186,18 +184,20 @@ export function calculateSellPrice(
   item: EquipmentItem,
   basePrice: number,
 ): number {
-  const qualityMultipliers: Record<ItemQuality, number> = {
+  const rarityMultipliers: Record<ItemRarity, number> = {
     common: 1,
     uncommon: 1.5,
     rare: 2.5,
     epic: 5,
     legendary: 10,
+    unique: 15,
+    artifact: 20,
   };
 
-  const qualityMultiplier = qualityMultipliers[item.quality] ?? 1;
+  const rarityMultiplier = rarityMultipliers[item.rarity] ?? 1;
   const durabilityFactor = item.durability / item.maxDurability;
 
-  return Math.round(basePrice * qualityMultiplier * durabilityFactor * 0.5,);
+  return Math.round(basePrice * rarityMultiplier * durabilityFactor * 0.5,);
 }
 
 /** Get items in a specific equipment slot */

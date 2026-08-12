@@ -55,9 +55,11 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
     "container",
     "treasure",
     "book",
+    "artifact",
+    "misc",
     "other",
   ],
-  ItemRarity: ["common", "uncommon", "rare", "epic", "legendary", "unique",],
+  ItemRarity: ["common", "uncommon", "rare", "epic", "legendary", "unique", "artifact",],
   ItemVisibility: ["visible", "hidden",],
   // enums-content
   ContentEncoding: ["identity", "gzip", "zstd", "brotli",],
