@@ -13,6 +13,8 @@ export interface LootEntry {
   type: string;
   /** Rarity */
   rarity: Rarity;
+  /** Optional existing item definition ID to persist as (else created on-the-fly) */
+  itemId?: string;
   /** Drop weight (higher = more likely) */
   weight: number;
   /** Minimum quantity */
@@ -37,6 +39,8 @@ export interface LootDrop {
   type: string;
   /** Rarity */
   rarity: Rarity;
+  /** Optional item definition ID the drop maps to */
+  itemId?: string;
   /** Quantity rolled */
   quantity: number;
   /** Gold value per unit */
@@ -55,4 +59,6 @@ export interface LootResult {
   totalGoldValue: number;
   /** Whether a rare+ item was found */
   hasRareDrop: boolean;
+  /** World item instance IDs created after persistence (empty until persisted) */
+  worldItemIds: string[];
 }

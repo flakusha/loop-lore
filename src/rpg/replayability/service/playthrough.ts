@@ -1,9 +1,10 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
-import { getLogger, } from "../../../logger";
-import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
-import type { CreatePlaythroughInput, Playthrough, } from "./types";
-import { PlusDifficulty, } from "./types";
+import { getRpgLog, parseJsonField, } from "../../shared/rpg-service-utils";
+function getLog() {
+  return getRpgLog("replayability");
+}
+import { jsonStringifyOr, } from "../../../utils";
 
 function getLog() {
   return getLogger().child({ module: "replayability", },);
