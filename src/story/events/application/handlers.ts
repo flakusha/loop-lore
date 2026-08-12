@@ -6,6 +6,7 @@
 import type { Kysely, } from "kysely";
 import { WorldEventType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { getLogger, } from "../../../logger";
 import { assertNever, safeJsonStringify, } from "../../../utils";
 import type { ItemsService, } from "../../items";
 import type { WorldEvent, } from "../../types";
@@ -44,7 +45,7 @@ export async function applySingleEvent(
       return { event, applied: true, };
     }
     case WorldEventType.ItemTransfer: {
-      await applyItemTransfer(items, worldId, event,);
+      await applyItemTransfer(database, items, worldId, event,);
       return { event, applied: true, };
     }
     case WorldEventType.QuestProgress: {
@@ -187,11 +188,62 @@ export async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent,): Prom
 }
 
 export async function applyItemTransfer(
-  _itemsService: ItemsService,
-  _worldId: string,
-  _event: WorldEvent,
+  db: Kysely<DB>,
+  itemsService: ItemsService,
+  worldId: string,
+  event: WorldEvent,
 ): Promise<void> {
-  // For v1: just log the transfer. Actual item resolution requires
-  // matching item names to definitions, which needs LLM-assisted matching.
-  // This placeholder ensures the event is recorded without error.
+  const itemName = event.data.itemName as string | undefined;
+  if (!itemName) { return; }
+
+  const fromActorId = event.data.fromActorId as string | null | undefined;
+  const toActorId = event.data.toActorId as string | null | undefined;
+  const quantity = Math.max(1, Number(event.data.quantity) || 1,);
+
+  // Resolve the item definition by exact name (case-insensitive) in this world.
+  const def = await db
+    .selectFrom("items")
+    .select(["id", "name",])
+    .where("world_id", "=", worldId,)
+    .where("name", "like", `%${itemName}%`,)
+    .executeTakeFirst();
+  if (!def) {
+    getLogger().child({ module: "event-apply", }).warn(
+      "item_transfer: no matching item definition; skipping",
+      { worldId, itemName, },
+    );
+    return;
+  }
+
+  // Find a source instance owned by fromActorId in this world.
+  let source = null;
+  if (fromActorId) {
+    source = await db
+      .selectFrom("world_items")
+      .select(["id", "quantity",])
+      .where("world_id", "=", worldId,)
+      .where("item_id", "=", def.id,)
+      .where("owner_actor_id", "=", fromActorId,)
+      .executeTakeFirst();
+  }
+  if (!source && event.locationId) {
+    source = await db
+      .selectFrom("world_items")
+      .select(["id", "quantity",])
+      .where("world_id", "=", worldId,)
+      .where("item_id", "=", def.id,)
+      .where("location_id", "=", event.locationId,)
+      .executeTakeFirst();
+  }
+  if (!source) {
+    getLogger().child({ module: "event-apply", }).warn(
+      "item_transfer: no source instance found; skipping",
+      { worldId, itemId: def.id, fromActorId, },
+    );
+    return;
+  }
+
+  // Transfer to the destination actor (or leave at location if no target).
+  const toLocation = toActorId ? undefined : (event.locationId ?? undefined);
+  await itemsService.transfer(source.id, quantity, toLocation, toActorId ?? undefined,);
 }

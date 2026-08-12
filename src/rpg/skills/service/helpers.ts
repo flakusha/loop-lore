@@ -10,7 +10,7 @@ import { ProficiencyLevel, } from "./types";
  * Delegates to the shared RPG logger factory.
  */
 export function getLog(): Logger {
-  return getRpgLog("skills");
+  return getRpgLog("skills",);
 }
 
 /** XP thresholds for each proficiency level */

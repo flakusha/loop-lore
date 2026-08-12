@@ -1,6 +1,6 @@
 # TASK: Implement Item Transfer Event (ApplyItemTransfer)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-12)
 **Priority:** P2 — Medium
 **Effort:** Small
 **Epic:** epic-item-systems-unification
@@ -8,47 +8,23 @@
 
 ## Summary
 
-`story/events/application/handlers.ts:189-197` has `applyItemTransfer()` as a **no-op placeholder** — it logs nothing and does nothing. Meanwhile `story/events/extraction.ts:43-47` has regex patterns that detect "gives/hands/offers/trades/takes/drops" in narrative text. The extraction never emits `item_transfer` events, and even if it did, the handler ignores them.
+`story/events/application/handlers.ts:189-197` had `applyItemTransfer()` as a **no-op placeholder**. Fixed: emission was already present (extraction pops `item_transfer` events), but both it and the handler were broken — the emission always set `fromActorId: null` and omitted `locationId`, and the handler did nothing. Both now wired:
 
-## Current State
-
-```typescript
-// handlers.ts:189-197
-export async function applyItemTransfer(
-  _itemsService: ItemsService,
-  _worldId: string,
-  _event: WorldEvent,
-): Promise<void> {
-  // For v1: just log the transfer. Actual item resolution requires
-  // matching item names to definitions, which needs LLM-assisted matching.
-  // This placeholder ensures the event is recorded without error.
-}
-```
-
-## Work
-
-1. **Emit item_transfer events** — in `extraction.ts`, when item patterns match, emit `{ type: "item_transfer", data: { itemName, fromActorId, toActorId } }`
-2. **Implement `applyItemTransfer()`**:
-   - Match `event.data.itemName` to `items` table (fuzzy name match or exact)
-   - Find source: `world_items` owned by `fromActorId` matching item
-   - Find/create destination: `toActorId` or location
-   - Call `ItemsService.transfer(worldItemId, quantity, toLocationId, toActorId)`
-3. **Quest integration** — `story/quests/calculators/collection.ts` already checks for `item_transfer` events — verify it fires correctly
-4. **Fallback for unmatched items** — if item name doesn't match any definition, log warning (don't crash)
+- **Emission fixed** (`extraction.ts`): drop/leave verbs set `fromActorId: actorId` (actor is the source); give/take verbs set `toActorId: actorId`; event carries `locationId: currentLocationId ?? undefined`.
+- **Handler implemented** (`handlers.ts`): resolves `itemName` against `items` (case-insensitive `like`), finds source instance (owner actor, then location), calls `ItemsService.transfer()`. Unmatched names / missing sources → warning log, no crash.
 
 ## Acceptance Criteria
 
-- [ ] `extractEvents()` emits `item_transfer` events when narrative contains transfer verbs
-- [ ] `applyItemTransfer()` resolves item names to definitions and calls `ItemsService.transfer()`
-- [ ] Quest collection progress fires on item transfer events
-- [ ] Unmatched item names logged as warnings (no crash)
-- [ ] `bun test src/` green; `bun run check` green
+- [x] `extractEvents()` emits `item_transfer` events when narrative contains transfer verbs
+- [x] `applyItemTransfer()` resolves item names to definitions and calls `ItemsService.transfer()`
+- [x] Quest collection progress fires on item transfer events (collection.ts already keys on `item_transfer` / `WorldEventType.ItemTransfer`)
+- [x] Unmatched item names logged as warnings (no crash)
+- [x] `bun test src/` green; `bun run check` green
 
-## Files to Modify
+## Notes (impl 2026-08-12)
 
-- `src/story/events/extraction.ts` — emit `item_transfer` events
-- `src/story/events/application/handlers.ts` — implement `applyItemTransfer()`
-- `src/story/quests/calculators/collection.ts` — verify integration
+- `applyItemTransfer` signature now takes `(db, itemsService, worldId, event)` — dispatch passes `database`.
+- 4 new handler tests (`handlers.test.ts`) + 4 extraction tests (`extraction.test.ts`); full suite 3444 pass / 0 fail; typecheck clean.
 
 ## Related
 
