@@ -1,6 +1,6 @@
 # TASK-size-strict-debt: Close size-strict debt and promote size guard to CI gate
 
-**Status**: open
+**Status**: ✅ split complete — 0 offenders; promotion-to-CI pending
 **Priority**: medium
 **Labels**: tooling, size-check, ci, refactor
 **Assignee**:
@@ -23,7 +23,8 @@ promote `size:strict` to a **blocking** gate.
     split into `server/` barrel.
   - Round 3: auto-gen/auto-generation.ts (588→239L), chat/service/{chats,messages,
     transitions} deep-splits (crud/batch, read/write, carry helpers).
-- `src/server/start.ts` (398L) deliberately kept intact — untested production bootstrap, no safety net.
+  - `src/server/start.ts` (398L) split into `init-background-services.ts` + `init-asset-compression.ts`;
+    `start.ts` now 212L, both new modules ≤123L. Done 2026-08-12.
 
 ## Approach
 
@@ -31,11 +32,22 @@ promote `size:strict` to a **blocking** gate.
 - Keep the guard threshold at 250L (soft ceiling; AGENTS.md convention is <200L but 250L is the
   enforced soft limit). Do not lower the threshold as a substitute for splitting.
 
-## Acceptance Criteria
+## Resolution (2026-08-12)
 
-- [ ] `bun run check` size-strict reports 0 files over 250L (excluding tests/migrations/generated)
-- [ ] Size check wired to fail the build (blocking) when an offending file is introduced
-- [ ] `docs/meta/code-practices-improvements/04` updated to reflect actual enforcement state
+- **0 files over 250L**: `bun run check size-strict` → ✓ PASS. `start.ts` = 212L,
+  `init-background-services.ts` = 122L, `init-asset-compression.ts` = 109L.
+- Split was behavior-preserving: extracted (1) character-template seeding + external AI
+  auto-start (`initBackgroundServices`) and (2) frontend auto-build + asset pre-compression
+  + hash injection (`initAssetCompression`). Both take deps as params; no top-level await,
+  no TODO placeholders. `smoke.browser.ts` (19/19) + `htmx-alpine.browser.ts` (17/17) still green.
+- Remaining `bun run check` failures (`format-dprint` 46 files, `md-lint` 124 issues) are
+  pre-existing repo-wide and unrelated to this task.
+
+### Promotion-to-CI (remaining AC)
+- [ ] Promote `size:strict` to blocking gate (wire to fail build on new offender)
+- [ ] Update `docs/meta/code-practices-improvements/04` to reflect enforcement state
+
+These two items are gate/CI plumbing, not file-splitting; the size debt itself is closed.
 
 ## Notes
 
