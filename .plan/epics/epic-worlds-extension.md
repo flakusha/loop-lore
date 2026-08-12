@@ -377,3 +377,11 @@ rule: block_swear_words
   action: kick_user
 ```
 
+
+## Generation via Creative Studio Workflows
+
+World creation through the assistant is specified as a **config-driven workflow template**
+in `epic-assistant-creative-studio-workflows.md` §7.6. The `world-generation` workflow
+(`TASK-assistant-creative-studio-workflow-world.md`) wraps `/create world` with step
+building, `entity_type_presets.world` validation, and schema/consistency/duplicate
+quality gates.

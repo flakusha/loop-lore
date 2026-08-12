@@ -107,3 +107,13 @@ and polls for completion.
 | `src/characters/review.test.ts`          | Review workflow state transitions                   |
 | `src/characters/validator-rules.test.ts` | World/style validation rules                        |
 | `src/characters/integration.test.ts`     | Full import → validate → store → export pipeline    |
+
+## Generation via Creative Studio Workflows
+
+Character creation through the assistant is specified as a **config-driven workflow
+template** in `epic-assistant-creative-studio-workflows.md` §7.6 — not as a one-off
+slash command. The `character-generation` workflow
+(`TASK-assistant-creative-studio-workflow-character.md`) wraps `/create character` with
+step-by-step prompt building, `entity_type_presets.character` validation, and
+schema/consistency/duplicate quality gates. Identity fields (name/species/homeland/
+culture) align with `FEAT-origin-capture-generation-seeding.md`.
