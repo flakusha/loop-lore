@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 177 epics
+**Total:** 178 epics
 
 ## Summary
 
@@ -42,6 +42,7 @@
 | ⬜ Not Started | Client-Side Routing | Medium | Unknown | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | ⬜ Not Started | Communications Integrations | Medium | High | 60 | [epic-communications-integrations.md](/.plan/epics/epic-communications-integrations.md) |
 | ⬜ Not Started | Companion, Pet & Mount Systems | Medium | Very High | 0 | [epic-companion-pet-mount.md](/.plan/epics/epic-companion-pet-mount.md) |
+| ⬜ Not Started | Cross-Platform Portability — Windows & macOS | High | Large | 11 | [epic-cross-platform-portability.md](/.plan/epics/epic-cross-platform-portability.md) |
 | ⬜ Not Started | Database Schema | High | Medium | 0 | [epic-schema.md](/.plan/epics/epic-schema.md) |
 | ⬜ Not Started | Deno Support (Possible Node) | Low | Medium | 20 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
 | ⬜ Not Started | Disease & Poison Systems | Medium | High | 0 | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md) |
@@ -513,6 +514,15 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **File:** `.plan/epics/epic-companion-pet-mount.md`
 
 Companion, pet, and mount system — NPC companions with loyalty/progression, pet taming/evolution, mount riding/training, and pet battle mechanics. Integrates with existing actor system and RPG mechanics.
+
+### Cross-Platform Portability — Windows & macOS
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Infrastructure Epic
+- **Tags:** cross-platform, windows, macos, portability, build, runtime
+- **File:** `.plan/epics/epic-cross-platform-portability.md`
 
 ### Database Schema
 
