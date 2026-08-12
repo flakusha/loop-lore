@@ -12,41 +12,41 @@ Three gaps identified: (1) **Skills & Professions** have DB tables + services bu
 
 ## Current State Assessment
 
-| System | DB Tables | Service | Routes | Frontend | Config Templates | Seeding |
-|--------|-----------|---------|--------|----------|-----------------|---------|
-| Skills | `character_skills` (036) | ✅ `SkillsService` | ❌ none | ❌ none | ❌ none | ❌ none |
-| Professions | `professions`, `profession_specializations` (011) | ❌ none | ❌ none | ❌ none | ❌ none | ❌ none |
-| Character templates | — | ✅ `seedCharacterTemplates` | — | — | ✅ exists (no skills/prof) | ✅ on start |
-| Item templates | — | ❌ none | — | — | ❌ none | ❌ none |
+| System              | DB Tables                                         | Service                     | Routes  | Frontend | Config Templates           | Seeding     |
+| ------------------- | ------------------------------------------------- | --------------------------- | ------- | -------- | -------------------------- | ----------- |
+| Skills              | `character_skills` (036)                          | ✅ `SkillsService`          | ❌ none | ❌ none  | ❌ none                    | ❌ none     |
+| Professions         | `professions`, `profession_specializations` (011) | ❌ none                     | ❌ none | ❌ none  | ❌ none                    | ❌ none     |
+| Character templates | —                                                 | ✅ `seedCharacterTemplates` | —       | —        | ✅ exists (no skills/prof) | ✅ on start |
+| Item templates      | —                                                 | ❌ none                     | —       | —        | ❌ none                    | ❌ none     |
 
 ## Key Issues
 
 ### 🔴 Critical
 
-| # | Issue | Impact |
-|---|-------|--------|
-| 1 | **Skills unreachable** — `SkillsService` exists, `character_skills` table exists, but no HTTP routes | Dead code |
-| 2 | **Professions unreachable** — `professions` table exists, no service, no routes | Dead code |
-| 3 | **No item config templates** — items can't be seeded from config like characters can | Manual item creation only |
+| # | Issue                                                                                                | Impact                    |
+| - | ---------------------------------------------------------------------------------------------------- | ------------------------- |
+| 1 | **Skills unreachable** — `SkillsService` exists, `character_skills` table exists, but no HTTP routes | Dead code                 |
+| 2 | **Professions unreachable** — `professions` table exists, no service, no routes                      | Dead code                 |
+| 3 | **No item config templates** — items can't be seeded from config like characters can                 | Manual item creation only |
 
 ### 🟡 High
 
-| # | Issue | Impact |
-|---|-------|--------|
-| 4 | **Seeded characters have no skills** — templates lack `skills`/`professions` fields | Empty skill sheets |
-| 5 | **No skill frontend** — character panel shows no skill tree, progression, or specialization | No gameplay visibility |
+| # | Issue                                                                                                              | Impact                  |
+| - | ------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| 4 | **Seeded characters have no skills** — templates lack `skills`/`professions` fields                                | Empty skill sheets      |
+| 5 | **No skill frontend** — character panel shows no skill tree, progression, or specialization                        | No gameplay visibility  |
 | 6 | **Professions not linked to skills** — crafting disciplines exist in `professions` table but no service wires them | No crafting progression |
 
 ## Sub-Tasks
 
-| Task | Scope | Priority |
-|------|-------|----------|
-| `TASK-skills-routes.md` | Expose `SkillsService` via HTTP (CRUD, XP, tree, prerequisites) | P0 |
-| `TASK-professions-service-routes.md` | Create `ProfessionsService` + routes for profession progression | P0 |
-| `TASK-character-config-skills-professions.md` | Extend `CharacterTemplate` with `skills[]` + `professions[]` fields, seed them | P1 |
-| `TASK-item-config-templates.md` | Create item template config section + idempotent item seeding on start | P1 |
-| `TASK-skills-frontend.md` | Skill tree UI, progression display, specialization in character panel | P2 |
-| `TASK-professions-frontend.md` | Profession UI: level, discipline, bonuses, crafting station link | P2 |
+| Task                                          | Scope                                                                          | Priority |
+| --------------------------------------------- | ------------------------------------------------------------------------------ | -------- |
+| `TASK-skills-routes.md`                       | Expose `SkillsService` via HTTP (CRUD, XP, tree, prerequisites)                | P0       |
+| `TASK-professions-service-routes.md`          | Create `ProfessionsService` + routes for profession progression                | P0       |
+| `TASK-character-config-skills-professions.md` | Extend `CharacterTemplate` with `skills[]` + `professions[]` fields, seed them | P1       |
+| `TASK-item-config-templates.md`               | Create item template config section + idempotent item seeding on start         | P1       |
+| `TASK-skills-frontend.md`                     | Skill tree UI, progression display, specialization in character panel          | P2       |
+| `TASK-professions-frontend.md`                | Profession UI: level, discipline, bonuses, crafting station link               | P2       |
 
 ## Acceptance Criteria
 

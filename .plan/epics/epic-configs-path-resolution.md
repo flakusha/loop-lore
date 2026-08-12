@@ -86,12 +86,12 @@ Path **values** read from config resolve against `process.cwd()` at consumption 
 
 ## Testing Strategy
 
-| Test | Coverage | Files |
-| ---- | -------- | ----- |
-| Unit | Load config from non-repo cwd; relative values resolve against config file root | `src/config/load/load.test.ts`, `src/config/domain-configs.test.ts` (extend) |
-| Unit | Path shapes: win32 / darwin / linux through resolver + guard | `src/config/load/resolve.test.ts`, `src/assets/service/file-system.test.ts` |
-| Regression | Existing cwd-based tests still green (default cwd path) | `bun test src/` |
-| CI | Windows + macOS runner matrix (config load suite) | CI workflow (with portability epic T1.6) |
+| Test       | Coverage                                                                        | Files                                                                        |
+| ---------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Unit       | Load config from non-repo cwd; relative values resolve against config file root | `src/config/load/load.test.ts`, `src/config/domain-configs.test.ts` (extend) |
+| Unit       | Path shapes: win32 / darwin / linux through resolver + guard                    | `src/config/load/resolve.test.ts`, `src/assets/service/file-system.test.ts`  |
+| Regression | Existing cwd-based tests still green (default cwd path)                         | `bun test src/`                                                              |
+| CI         | Windows + macOS runner matrix (config load suite)                               | CI workflow (with portability epic T1.6)                                     |
 
 ## Linked Tasks
 

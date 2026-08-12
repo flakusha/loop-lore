@@ -17,8 +17,8 @@ ComfyUI workflows) from the platform's existing pipeline, return results, and ea
 credits/priority for validated contribution.
 
 This is the **complementary** direction to `epic-platform-integrations` Tier 3:
-there the platform *rents* GPU from third-party marketplaces (Vast.ai/RunPod, pays
-money); here the platform *accepts contributions* from its own users (rewards
+there the platform _rents_ GPU from third-party marketplaces (Vast.ai/RunPod, pays
+money); here the platform _accepts contributions_ from its own users (rewards
 credits). Gamers running an RPG chat app have idle gaming GPUs — a natural,
 community-aligned capacity pool.
 
@@ -30,16 +30,16 @@ Ground truth (verified 2026-08-12):
   registered in `src/generation/providers/registry.ts` (`registerProvider`,
   `resolveProvider`, `buildFailoverList`, `callWithFailover` + circuit breaker).
   Capacity = platform-owned providers only.
-- **BYOK is consumption-only.** `epic-byok-api-keys.md` lets a player use *their own
-  key* for *their own requests*; `epic-byok-local-models.md` lets a player run *their
-  own model* on *their own machine*. Neither lets a user contribute capacity to the
-  platform to help it serve *other* users or reduce the operator's cost.
+- **BYOK is consumption-only.** `epic-byok-api-keys.md` lets a player use _their own
+  key_ for _their own requests_; `epic-byok-local-models.md` lets a player run _their
+  own model_ on _their own machine_. Neither lets a user contribute capacity to the
+  platform to help it serve _other_ users or reduce the operator's cost.
 - **No contribution path exists.** A user with an idle GPU cannot offer it to the
   site. There is no node registry, no task dispatch to user machines, no reward
   mechanism, no trust/validation layer.
 - `epic-platform-integrations` deferred GPU-marketplace provisioning (Vast.ai/RunPod
-  instance lifecycle) as Tier 3 out of core scope — that is the *rent* direction and
-  is intentionally separate from this *contribute* epic.
+  instance lifecycle) as Tier 3 out of core scope — that is the _rent_ direction and
+  is intentionally separate from this _contribute_ epic.
 - **Trust is the hard problem.** Prompts contain private roleplay content; a
   contributor network must never route sensitive data to untrusted nodes, must
   sandbox task execution, and must validate results (malicious/faulty nodes) before
@@ -65,6 +65,7 @@ Ground truth (verified 2026-08-12):
 ### Pillar 1 — Compute node agent (contributor side)
 
 Small agent users run on their machine (two form factors):
+
 - **Native daemon** (Go/Python/Bun) for GPU inference — registers, advertises
   capabilities (GPU model/VRAM, CPU cores, RAM), heartbeats, pulls tasks, executes
   (vLLM/llama.cpp for LLM; ComfyUI workflow for SD), returns results.
@@ -155,13 +156,13 @@ sandboxed (dedicated process/container/WASM) with no access to platform secrets.
 
 ## Related Epics
 
-- **`epic-byok-api-keys.md`** — player uses *own key* for *own requests* (consumption).
-  This epic is the *contribution* direction: user provides capacity to serve the
+- **`epic-byok-api-keys.md`** — player uses _own key_ for _own requests_ (consumption).
+  This epic is the _contribution_ direction: user provides capacity to serve the
   platform. Shared territory: key/credential handling, provider routing, fallback.
-- **`epic-byok-local-models.md`** — player runs *own model* on *own machine*. This epic
-  reuses the llama.cpp/ComfyUI node mechanics but for *platform-dispatched* tasks.
+- **`epic-byok-local-models.md`** — player runs _own model_ on _own machine_. This epic
+  reuses the llama.cpp/ComfyUI node mechanics but for _platform-dispatched_ tasks.
 - **`epic-platform-integrations.md`** (EPIC-046) — Tier 3 deferred GPU-marketplace
-  *renting* (Vast.ai/RunPod). Complementary: rent (platform pays) vs contribute
+  _renting_ (Vast.ai/RunPod). Complementary: rent (platform pays) vs contribute
   (platform rewards). Both feed the same provider registry; distinct trust/economics.
 - **`epic-api-library-distribution.md`** — outbound API/library distribution; distinct
   direction (distributing APIs out, not accepting compute in). Reference only.
@@ -174,20 +175,20 @@ sandboxed (dedicated process/container/WASM) with no access to platform secrets.
 ## Tickets
 
 - [ ] `TASK-distributed-compute-node-agent` — contributor node agent (native daemon +
-  browser/WASM client): register, capability advertise, heartbeat, task pull/exec/
-  result, pause; sandboxed execution.
+      browser/WASM client): register, capability advertise, heartbeat, task pull/exec/
+      result, pause; sandboxed execution.
 - [ ] `TASK-distributed-node-registry-dispatcher` — platform hub: node registry +
-  heartbeat/health eviction + capability index + task queue + dispatch policy +
-  failover to platform providers.
+      heartbeat/health eviction + capability index + task queue + dispatch policy +
+      failover to platform providers.
 - [ ] `TASK-distributed-generation-integration` — `distributed` provider in
-  `registry.ts`; LLM (vLLM/llama.cpp) + ComfyUI task contracts; wire into
-  `resolveProvider`/`callWithFailover`; config-gated failover tier.
+      `registry.ts`; LLM (vLLM/llama.cpp) + ComfyUI task contracts; wire into
+      `resolveProvider`/`callWithFailover`; config-gated failover tier.
 - [ ] `TASK-distributed-trust-security` — node attestation, sandboxing,
-  data-sensitivity hard gate (private content never to untrusted nodes), redundant
-  result validation, reputation, abuse limits.
+      data-sensitivity hard gate (private content never to untrusted nodes), redundant
+      result validation, reputation, abuse limits.
 - [ ] `TASK-distributed-rewards-ledger` — contribution ledger + reward computation +
-  redemption (credits/priority/points), rewards only on validated tasks.
+      redemption (credits/priority/points), rewards only on validated tasks.
 - [ ] `TASK-distributed-contributor-ui` — node management panel (register, status,
-  earnings, task history, model allowlist, consent, pause).
+      earnings, task history, model allowlist, consent, pause).
 - [ ] `TASK-distributed-incentive-community` — reward tiers, referral, leaderboard,
-  badges.
+      badges.

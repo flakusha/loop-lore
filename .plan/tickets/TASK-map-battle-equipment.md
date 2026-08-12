@@ -17,9 +17,9 @@
 interface EquipmentItem {
   id: string;
   name: string;
-  type: ItemType;        // ← different from ItemCategory
+  type: ItemType; // ← different from ItemCategory
   slot?: EquipmentSlot;
-  quality: ItemQuality;  // ← different from ItemRarity
+  quality: ItemQuality; // ← different from ItemRarity
   modifiers: EquipmentModifier[];
   durability: number;
   maxDurability: number;

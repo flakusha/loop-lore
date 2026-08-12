@@ -77,5 +77,5 @@ the existing handlers are server-reachable.
 `http1.ts` (lines 25-28) and `h2.ts` (lines 28-31) send() are silent no-op stubs, and the server
 does not advertise H2/WS (`DEFAULT_CAPABILITIES` in `negotiation.ts` offers HTTP/1.1 only).
 Resolution: implement real send() for http1/h2, advertise H2/WS in `DEFAULT_CAPABILITIES`, and
-hook the transport into the server — tracked by `TASK-transport-server-wiring`. HTTP/3 + 
+hook the transport into the server — tracked by `TASK-transport-server-wiring`. HTTP/3 +
 WebTransport remain separate existing tasks.

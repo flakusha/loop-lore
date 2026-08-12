@@ -85,7 +85,6 @@ _TBD — create implementation tickets._
 - Story points: introduce yes/no?
 - Crafting scope: full auction house vs lightweight scarcity?
 
-
 ---
 
 ## Merged from `.plan/epics/epic-rpg-patterns.md`
@@ -468,7 +467,6 @@ between MUD persistence + AI generation.
   resource-scarcity + recipe + reputation-gated blueprints (recommended)?
 - Voyage (Latitude, 2026) is the closest commercial cousin to loop-lore's full
   vision (creator worlds + RPG mechanics + AI). Worth tracking as inspiration reference.
-
 
 ---
 
@@ -1041,4 +1039,3 @@ this document.
 - MDA framework (Hunicke/LeBlanc/Zubek); emergence theory (MoldStud, numberanalytics,
   Design Lab 2026, emergentmind 2026).
 - Gubell "How the Roguelike Genre Originated" (2026).
-
