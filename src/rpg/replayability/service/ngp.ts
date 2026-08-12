@@ -6,7 +6,7 @@ import type { NewGamePlusInput, Playthrough, } from "./types";
 import { PlusDifficulty, } from "./types";
 
 function getLog() {
-  return getRpgLog("replayability");
+  return getRpgLog("replayability",);
 }
 
 /**
