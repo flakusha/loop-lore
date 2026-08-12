@@ -25,6 +25,28 @@ function sseData(obj: unknown,): string {
   return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
 }
 
+/** Escape HTML special characters for safe injection into rendered output. */
+function escapeHtml(str: string,): string {
+  return str
+    .replaceAll("&", "&amp;",)
+    .replaceAll("<", "&lt;",)
+    .replaceAll(">", "&gt;",)
+    .replaceAll('"', "&quot;",)
+    .replaceAll("'", "&#39;",);
+}
+
+/** Render a collapsible tool-call block for the live stream consumer. */
+function renderToolCallBlock(toolName: string, toolArguments: string,): string {
+  const name = escapeHtml(toolName,);
+  const args = escapeHtml(toolArguments,);
+  return (
+    `<details class="tool-call-block" data-testid="tool-call-block">` +
+    `<summary>🛠 Call tool: <code>${name}</code></summary>` +
+    `<pre class="tool-call-args">${args}</pre>` +
+    `</details>`
+  );
+}
+
 export interface StreamToClientOpts {
   input: GenerateRequest;
   database: Kysely<DB>;
@@ -55,6 +77,9 @@ export function streamToClient({
   let accumulatedThinking = "";
   let abortController: AbortController | null = null;
   const buffer = getOrCreateBuffer(input.chatId,);
+  // Function calls requested by the assistant across tool rounds; persisted
+  // on the final message and replayed to the live stream consumer.
+  const collectedToolCalls: { id: string; type: "function"; function: { name: string; arguments: string } }[] = [];
 
   const sseStream = new ReadableStream({
     async start(controller,) {
@@ -102,9 +127,19 @@ export function streamToClient({
             break;
           }
 
-          // Emit tool_call events to client
+          // Emit tool_call events to client + record for persistence
           for (const tc of response.toolCalls) {
+            collectedToolCalls.push({
+              id: tc.id,
+              type: "function" as const,
+              function: { name: tc.function.name, arguments: tc.function.arguments, },
+            },);
             controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc, },),),);
+            // Replay to the live stream consumer (GET /api/generation/stream/:chatId)
+            buffer.append(
+              "tool_call",
+              renderToolCallBlock(tc.function.name, tc.function.arguments,),
+            );
           }
 
           // Add assistant message with tool calls
@@ -136,6 +171,7 @@ export function streamToClient({
             ...finalResponse,
             content: finalResponse.content || accumulatedContent,
             thinking: finalResponse.thinking || accumulatedThinking || undefined,
+            toolCalls: collectedToolCalls.length > 0 ? collectedToolCalls : undefined,
           },
           finalResponse.finishReason === "cancelled",
           finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,

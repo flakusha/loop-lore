@@ -18,8 +18,9 @@ import {
 } from "../../db/enums";
 import type { CancelReason, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { safeJsonStringify, } from "../../utils";
 import { completeGeneration, } from "../cancellation-manager";
-import type { GenerationResult, } from "../types";
+import type { GenerationResult, GenerationToolCall, } from "../types";
 
 interface StoreMessageOpts {
   database: Kysely<DB>;
@@ -64,6 +65,12 @@ async function storeGeneratedMessage({
     storedKeyId = enc.keyId;
   }
 
+  let toolCallsJson: string | null = null;
+  if (result.toolCalls && result.toolCalls.length > 0) {
+    const r = safeJsonStringify(result.toolCalls,);
+    toolCallsJson = r.ok ? r.value : null;
+  }
+
   await database
     .insertInto("messages",)
     .values({
@@ -85,6 +92,7 @@ async function storeGeneratedMessage({
       status,
       visibility: MessageVisibility.Visible,
       continuation_index: continuationNumber ?? null,
+      tool_calls: toolCallsJson,
     },)
     .execute();
 
@@ -98,7 +106,7 @@ export function buildGenerationResult(
   response: {
     content: string;
     thinking?: string;
-    toolCalls?: unknown[];
+    toolCalls?: GenerationToolCall[];
     finishReason: string;
     usage: { promptTokens: number; completionTokens: number; totalTokens: number };
   },
@@ -108,6 +116,7 @@ export function buildGenerationResult(
   return {
     content: response.content,
     thinking: response.thinking,
+    toolCalls: response.toolCalls && response.toolCalls.length > 0 ? response.toolCalls : undefined,
     tokenUsage: {
       promptTokens: response.usage.promptTokens,
       completionTokens: response.usage.completionTokens,

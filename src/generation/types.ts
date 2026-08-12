@@ -16,6 +16,7 @@ export { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONS
 export type {
   GenerationResult,
   GenerationStep,
+  GenerationToolCall,
   PolicyAnalysis,
   PolicyIndicator,
   RepetitionAnalysis,

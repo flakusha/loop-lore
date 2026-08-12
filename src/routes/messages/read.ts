@@ -9,7 +9,13 @@ import {
   MessageVariantBody,
 } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonPaginated, jsonResponse, requireUserId, } from "../http-utils";
-import { enrichAttachments, isServiceError, resolveMessageContent, serviceErrorToResponse, } from "./helpers";
+import {
+  enrichAttachments,
+  isServiceError,
+  parseToolCalls,
+  resolveMessageContent,
+  serviceErrorToResponse,
+} from "./helpers";
 import type { HandlerOpts, } from "./types";
 
 export function readRoutes(opts: HandlerOpts,) {
@@ -47,13 +53,15 @@ export function readRoutes(opts: HandlerOpts,) {
                 key_id: string | null;
                 chat_id: string;
                 attachments?: string | null;
+                tool_calls?: string | null;
               }>;
               const attachments = await enrichAttachments(database, row.attachments ?? null,);
+              const toolCalls = parseToolCalls(row.tool_calls ?? null,);
               try {
                 const content = await resolveMessageContent(database, row, config,);
-                return { ...m, content, attachments, };
+                return { ...m, content, attachments, tool_calls: toolCalls, };
               } catch {
-                return { ...m, content: "[Encrypted — unable to decrypt]", attachments, };
+                return { ...m, content: "[Encrypted — unable to decrypt]", attachments, tool_calls: toolCalls, };
               }
             })(),
           );
@@ -97,13 +105,14 @@ export function readRoutes(opts: HandlerOpts,) {
         const message = msgResult;
 
         const attachments = await enrichAttachments(database, message.attachments as string | null,);
+        const toolCalls = parseToolCalls(message.tool_calls as string | null,);
         let content: string;
         try {
           content = await resolveMessageContent(database, message as any, config,);
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
-        return jsonResponse({ ...message, content, attachments, },);
+        return jsonResponse({ ...message, content, attachments, tool_calls: toolCalls, },);
       },
       { params: MessageIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
     )
