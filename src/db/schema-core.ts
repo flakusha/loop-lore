@@ -210,6 +210,17 @@ export interface ActorItems {
   updated_at: Generated<string>;
 }
 
+// ── actor_currencies ────────────────────────────────────────────
+export interface ActorCurrencies {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string;
+  currency_type: string;
+  balance: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 // ── system_config ────────────────────────────────────────────
 export interface SystemConfig {
   key: Generated<string>;
