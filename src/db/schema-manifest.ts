@@ -606,7 +606,7 @@ export const SCHEMA = new SchemaManifest()
     description: col("text",),
     item_type: col("text", { notNull: true, },),
     quantity: col("integer", { notNull: true, hasDefault: true, },),
-    value: col("text",),
+    value: col("integer", { notNull: true, hasDefault: true, },),
     weight: col("real",),
     tags: col("text", { hasDefault: true, },),
     metadata: col("text", { hasDefault: true, },),
