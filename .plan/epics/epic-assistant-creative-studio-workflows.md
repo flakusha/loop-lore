@@ -52,11 +52,20 @@ confirmable, template-driven prompt + dispatch plan.
 
 ### 7.1 Workflow Template Schema
 
-Stored as YAML in `configs/templates/workflows/*.yaml`, loaded by the existing template
-loader pipeline (`src/config/templates-loader.ts` + `src/config/sections/templates.ts`).
+Stored as YAML in `configs/templates/workflows/*.yaml`, loaded by an extension to the
+existing template loader pipeline (`src/config/templates-loader/index.ts` +
+`src/config/sections/templates.ts`).
+
+**Note (loader limitation):** The current template loader
+(`src/config/templates-loader/discovery.ts`) uses a `TEMPLATE_FILES` map that maps
+*single filenames* to domains (e.g. `"llm.yaml"` → `"llm"`). Workflows introduce a
+**multi-file directory** pattern (`configs/templates/workflows/*.yaml`) that requires a
+new directory-scanning discovery mechanism — `findTemplateFiles()` does not currently
+recurse into subdirectories or collect multiple files per domain. See §7.5 for the
+template system architecture and §7.3 for in-source default pattern.
+
 Each workflow is a named, versioned template with metadata, step definitions, parameter
 slots, backend dispatch, and approval policy.
-
 ```yaml
 # configs/templates/workflows/minimax-h3-video.yaml
 merge: extend
