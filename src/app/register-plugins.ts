@@ -46,6 +46,7 @@ import { chatPinRoutes, } from "../routes/chat-pins";
 import { chatSearchRoutes, } from "../routes/chat-search";
 import { chatSectionsRoutes, } from "../routes/chat-sections";
 import { chatsRoutes, } from "../routes/chats";
+import { craftingRecipeRoutes, } from "../routes/crafting";
 import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
 import { frontendLogsRoutes, } from "../routes/frontend-logs";
@@ -122,6 +123,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(actorNotesRoutes(handleOpts,),);
   app.use(worldLoreEntriesRoutes(handleOpts,),);
   app.use(worldsRoutes(handleOpts,),);
+  app.use(craftingRecipeRoutes(handleOpts,),);
   app.use(chatSectionsRoutes(handleOpts,),);
   app.use(chatBackgroundsRoutes(handleOpts,),);
   app.use(locationExplorerRoutes(handleOpts,),);
