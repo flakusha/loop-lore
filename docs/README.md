@@ -265,7 +265,7 @@ Project planning, reviews, analysis, and research.
 
 > In-repo planning now lives under `.plan/` — see `.plan/backlog/`,
 > `.plan/backlog/open.md`, `.plan/epics/epic-architecture.md`, and
-> `.plan/implementation-plan.md`.
+> `.plan/epics-index.md`.
 
 ### Reviews (`meta/reviews/`)
 
