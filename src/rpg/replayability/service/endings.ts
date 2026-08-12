@@ -6,7 +6,7 @@ import { getPlaythrough, } from "./playthrough";
 import type { EndingType, Playthrough, } from "./types";
 
 function getLog() {
-  return getRpgLog("replayability");
+  return getRpgLog("replayability",);
 }
 
 /**
