@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 179 epics
+**Total:** 180 epics
 
 ## Summary
 
@@ -133,6 +133,7 @@
 | Not Started | Communications Integrations — Quick Reference | Medium | High | 0 | [epic-communications-integrations-quickref.md](/.plan/epics/epic-communications-integrations-quickref.md) |
 | 📝 Draft → 🟡 In Progress (MVP scoped) | Creative Studio | High (MVP), Medium (full) | High | 0 | [epic-creative-studio.md](/.plan/epics/epic-creative-studio.md) |
 | 🔵 Research | DB & Asset Snapshot Recovery | High | High | 7 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
+| 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 6 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
 | 🟡 In Progress (migration + schema done) | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | 🟡 Partial | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | 🟡 Core Built, Integration Pending | Encryption Workflow | Medium | Unknown | 27 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
@@ -1339,6 +1340,15 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Type:** Research & Planning Epic
 - **Tags:** database, backup, recovery, snapshots, disaster-recovery
 - **File:** `.plan/epics/epic-db-asset-snapshot-recovery.md`
+
+### E2E & Integration Testing Reliability
+
+- **Status:** 🟡 Draft — analysis complete, tickets scoped
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Infrastructure Epic
+- **Tags:** testing, e2e, browser, integration, mocking, dead-code, wiring, reliability
+- **File:** `.plan/epics/epic-e2e-integration-testing.md`
 
 ### Emotion-Avatar Message Binding
 

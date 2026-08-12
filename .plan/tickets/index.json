@@ -4947,6 +4947,39 @@
     "title": "Dynamic Avatars — Dota 2 Style Animated Mugshots",
     "type": "TASK"
   },
+  "TASK-E2E-ALPINE-STATE-HARNESS": {
+    "hash": "950f39f",
+    "extid": "TASK-E2E-ALPINE-STATE-HARNESS",
+    "type": "TASK",
+    "title": "E2E Alpine state harness",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-alpine-state-harness.md"
+  },
+  "TASK-E2E-BROWSER-RELIABILITY-HARDENING": {
+    "hash": "a7df405",
+    "extid": "TASK-E2E-BROWSER-RELIABILITY-HARDENING",
+    "type": "TASK",
+    "title": "E2E browser reliability hardening",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-browser-reliability-hardening.md"
+  },
+  "TASK-E2E-SCENARIO-CATALOG-COVERAGE": {
+    "hash": "0f20270",
+    "extid": "TASK-E2E-SCENARIO-CATALOG-COVERAGE",
+    "type": "TASK",
+    "title": "E2E scenario catalog + coverage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-scenario-catalog-coverage.md"
+  },
   "TASK-E2E-TEST-IMPROVEMENTS": {
     "epic": "",
     "extid": "TASK-E2E-TEST-IMPROVEMENTS",
@@ -5715,6 +5748,28 @@
     "tags": [],
     "title": "Gallery: Minimal Image Asset Viewer",
     "type": "TASK"
+  },
+  "TASK-GENERATION-CASSETTE-RECORD-REPLAY": {
+    "hash": "e651e04",
+    "extid": "TASK-GENERATION-CASSETTE-RECORD-REPLAY",
+    "type": "TASK",
+    "title": "Generation cassette record/replay",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-cassette-record-replay.md"
+  },
+  "TASK-GENERATION-MOCK-SCENARIO-PROVIDER": {
+    "hash": "5ff5952",
+    "extid": "TASK-GENERATION-MOCK-SCENARIO-PROVIDER",
+    "type": "TASK",
+    "title": "Generation mock scenario provider",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-mock-scenario-provider.md"
   },
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "epic": "",
@@ -9624,6 +9679,17 @@
     "epic": "epic-rpg-mechanics",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
+  },
+  "TASK-WIRING-DEAD-CODE-CHECK-GATE": {
+    "hash": "fc3d9db",
+    "extid": "TASK-WIRING-DEAD-CODE-CHECK-GATE",
+    "type": "TASK",
+    "title": "Wiring + dead-code check gate",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wiring-dead-code-check-gate.md"
   },
   "TASK-WORLD-ALPINE": {
     "epic": "epic-world-management-ui.md",
