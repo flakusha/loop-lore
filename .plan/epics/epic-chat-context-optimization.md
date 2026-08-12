@@ -101,6 +101,9 @@ accuracy. Over/under-estimation causes premature whole-section drops (loss) or b
 | TASK-ctx-lore-budget  | Cap unbounded lore section with a token budget (currently never budgeted)                  | Med     | Not Started |
 | TASK-ctx-token-accuracy| Golden tests: token estimates vs tiktoken ground truth; budget enforcement boundaries    | Med     | Not Started |
 | TASK-ctx-leanctx-doc  | Research note codifying lean-ctx/tiktoken applicability (see Research)                     | Low     | Not Started |
+| TASK-ctx-storemark    | § Write-up of story-front-end context-template precedent → guard spec (recent-verbatim + summary-card) | Low | Not Started |
+| TASK-ctx-summary-self | Evaluate ACON-style guideline learning for lossy-by-summary tier (future; no import)       | Low     | Not Started |
+| TASK-ctx-cache-note   | Telemetry note for provider prompt-caching (stable system prefix → cache hits)             | Low     | Not Started |
 
 ## Open Questions
 
@@ -113,6 +116,67 @@ accuracy. Over/under-estimation causes premature whole-section drops (loss) or b
    Recommend: keep only the debug route's needed state, backed by PATH A's assembler.
 4. Dead `context-compressor/` — delete entirely, or migrate its strategy enum into ContextCompactor?
    Recommend: fold `strategy` option into `ContextCompactor`, delete the dead package.
+
+## Tooling Landscape & Applicability (2026-08 research)
+
+Sweep of net tooling across the three requested arenas, with a verdict for THIS repo
+(Bun + TypeScript, Elysia, no external AI-services at runtime). Applicability is graded
+**import** (usable as a runtime dep), **borrow** (not importable, but the technique
+maps to our tier model), **pattern** (external service/reference design only).
+
+### Arena 1 — Chat & story-based (RPG/character-AI)
+
+The closest analog space is the RP/character front-end ecosystem (SillyTavern and kin).
+Their context model is the canonical precedent for our lossless/lossy split:
+- **Context Templates / Prompt Manager** (SillyTavern): user-defined ordered "macros"
+  (character card, scenario, lorebook, world info, author's note, persona, chat history,
+  summary) each assigned a slot + a fixed **context size** budget; the last N recent
+  messages are always kept verbatim (lossless), older messages roll into a
+  **summarized "chat metadata"/"summary card"** (lossy) inserted at a fixed position.
+  Verdict: **borrow** — loop-lore already does this via `PROMPT_SECTIONS` +
+  `ContextCompactor`; our gap is the *explicit lossless-vs-lossy guard*, which ST's
+  "always keep recent verbatim" models directly.
+- **Lorebooks / world info with activation + cooldown** (SillyTavern/Character.AI style):
+  lossy-by-selection — our `loreSection`/`lorebook` already matches; leaves the unbounded
+  (never token-budgeted) lore risk the epic flags.
+
+### Arena 2 — Agentic (memory + context for long-horizon agents)
+
+- **LLMLingua** (microsoft, 6.5k★, EMNLP'23/ACL'24): lossy prompt + KV-compression,
+  up to 20× via perplexity-gated token pruning (LLMLingua-1/2, Selective Context).
+  Verdict: **borrow only** — it is a **Python** library (`pip llmlingua`), cannot be a
+  Bun/TS runtime dep; and perplexity research shows structured/code text compresses well
+  but **prose/plots poorly** — directly relevant: our XML-tagged sections are good pruning
+  targets, story prose is a bad one. Reimplementing its perplexity gate in TS is heavy
+  and off-mission; the actionable takeaway is *never token-prune narrative prose*.
+- **ACON** (microsoft/acon, MIT, arXiv 2510.00615): compresses agentic
+  `History → Reasoning + Refined Observation` per step, and **learns compression
+  guidelines** by diffing full-vs-compressed trajectories. Verdict: **pattern** —
+  validates our lossy-by-summary tier and suggests a self-improving summarizer; the
+  observation-compression loop maps to a future "compress world-state observation"
+  feature, not something to import.
+- **Agent memory frameworks — Mem0, Zep, Letta/MemGPT, A-MEM, MemPalace, DPM**:
+  external services/architectures (temporal knowledge graphs, hierarchical memory,
+  stateless projection memory that matches summarization quality with retrieval
+  latency). Verdict: **pattern only** — each is a heavyweight external service or
+  Python server; none is an embeddable Bun lib, and loop-lore already owns
+  `epic-memory-knowledge-systems` (three-tier) + `epic-memory-propagation`. Their
+  *hierarchical-then-retrieval* memory shape is the model for making our lossy memory
+  tier smarter than raw importance-sort.
+
+### Arena 3 — General / LLM-side (for completeness)
+
+- **Token counting (lossless budget):** `@dqbd/tiktoken` (WASM, Bun-compatible,
+  cl100k/o200k/various + BPE) — the concrete import for accurate counting. Also
+  `gpt-tokenizer` (pure TS, offline). Verdict: **import** (primary win).
+- **FlashCompact taxonomy** (morphllm) classifies compaction as: verbatim (lossless),
+  LLM summarization, opaque/latent, LLMLingua token-pruning. **Awesome-Context-Compression-LLMs**
+  taxonomizes explicit (input) / implicit (latent: PCC, CLaRa 32-64× memory-slot
+  autoencoders) / inference-time KV compression. Verdict: **pattern** — latent/opaque
+  compression is experimental and provider-dependent; skip for v1, note as future.
+- **Prompt caching** (Anthropic cache_control / OpenAI auto / Vertex): KV-level cost
+  optimization, orthogonal to our token-budget work but worth a telemetry note
+  (stable system-prompt prefix → cache hits).
 
 ## Research / References
 
@@ -132,6 +196,13 @@ accuracy. Over/under-estimation causes premature whole-section drops (loss) or b
 - Perplexity finding: code/token-pruning compress better than math/logic — relevant when an RPG prompt
   contains structured (XML-tagged) sections; structured sections are good pruning targets, prose/plots are poor.
 - Current repo heuristics: `src/chat/token-utils.ts`, `context-window-config.ts:57`, `context-compactor.ts:16`.
+- Tooling landscape sources (2026-08):
+  - LLMLingua (Python, 20×, token-pruning): https://github.com/microsoft/LLMLingua
+  - ACON (agentic observation compression + learned guidelines, MIT): https://github.com/microsoft/acon · arXiv:2510.00615
+  - Awesome-Context-Compression-LLMs (explicit/implicit/KV taxonomy): https://github.com/broalantaps/Awesome-Context-Compression-LLMs
+  - FlashCompact (compaction taxonomy: verbatim/summarize/opaque/pruning): https://www.morphllm.com/flashcompact
+  - tiktoken (WASM, Bun-ok): `@dqbd/tiktoken` · gpt-tokenizer (pure TS)
+  - Agent memory frameworks (pattern refs): Mem0, Zep, Letta/MemGPT, A-MEM, MemPalace, DPM (stateless projection memory)
 
 ## Related Epics
 
