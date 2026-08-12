@@ -40,3 +40,13 @@ interface ItemInteraction {
 - [ ] Item properties and interactions working
 - [ ] Loot tables functional
 - [ ] Item lifecycle (create, use, destroy) operational
+
+## Generation via Creative Studio Workflows
+
+Item creation through the assistant is specified as a **config-driven workflow template**
+in `epic-assistant-creative-studio-workflows.md` §7.6. The `item-generation` workflow
+(`TASK-assistant-creative-studio-workflow-item.md`) wraps the LLM item endpoint
+(`POST /api/worlds/:worldId/items/generate-llm`, from `TASK-item-generation.md`) with
+step building, `entity_type_presets.item` validation, and schema/balance/duplicate
+quality gates. This is the canonical "Creative Studio's item workflow" referenced by
+`TASK-item-generation.md`.

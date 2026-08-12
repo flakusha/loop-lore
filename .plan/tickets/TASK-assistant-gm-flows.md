@@ -27,6 +27,12 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - ✅ `/create` command — LLM entity generation (char/loc/world/item) with inline prompt templates, inserts to actors/locations/worlds/items
 - ❌ No quality validation pipeline (schema/consistency/duplicate checks)
 - ❌ No confirmation gating (direct insert, no user approval)
+- ⚠️ **Resolution (gating + UX layer):** assistant-driven entity creation is specified
+  as config-driven **workflow templates** in `epic-assistant-creative-studio-workflows.md`
+  §7.6. Entity-generation workflows wrap `/create` with prompt preview, per-entity step
+  validation (`entity_type_presets`), and confirmation/quality gates (schema/consistency/
+  duplicate) — closing both gaps above without forking the creation backends. Tracked
+  per-entity in `TASK-assistant-creative-studio-workflow-{character,world,location,item,npc}.md`.
 - ✅ GameMasterService wired into story-mode generation (see `TASK-wire-gm-service-story-mode.md`)
 - ❌ No shared prompt templates (`src/assistant/prompt/templates/` doesn't exist; prompts inline in create.ts)
 
@@ -53,6 +59,8 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 ## Linked Epics
 
 - `epic-assistant-gm-flows.md`
+- `epic-assistant-creative-studio-workflows.md` — provides the gating/UX workflow layer
+  that closes the quality-validation + confirmation-gating gaps above (§7.6 entity workflows)
 
 ## Acceptance Criteria
 
