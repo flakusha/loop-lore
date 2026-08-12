@@ -1,6 +1,6 @@
 # TASK: Fix Actor Items Value Type (text → integer)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-12)
 **Priority:** P3 — Low
 **Effort:** Small
 **Epic:** epic-item-systems-unification
@@ -37,9 +37,16 @@ export interface Items {
 
 ## Acceptance Criteria
 
-- [ ] `actor_items.value` column is integer type (inline in `parts/005_actor_data.ts`)
-- [ ] `ActorItems.value` type is `number` in schema
-- [ ] `bun test src/` green; `bun run check` green
+- [x] `actor_items.value` column is integer type (inline in `parts/005_actor_data.ts`)
+- [x] `ActorItems.value` type is `number` in schema
+- [x] `bun test src/` green; `bun run check` green
+
+## Notes (impl 2026-08-12)
+
+- `005_actor_data.ts`: `value` `text` → `integer notNull default 0` (DB reinit — no backfill needed).
+- Regenerated `schema-core.ts` (`Generator<number>`), `insert-helpers.ts` (`value?: Generated<number>`), `validation/db-schemas.ts` (`value: t.Optional(t.Number()) -> notNull default`).
+- `ActorItemsService` transfer copies `size` correctly typed; no string assumptions found.
+- Verified: db schemas gate green, full suite 3414 pass / 0 fail, typecheck + frontend + coverage (96.90%) pass.
 
 ## Files to Modify
 

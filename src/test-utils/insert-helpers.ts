@@ -595,7 +595,7 @@ export async function insertActorItems(
     id?: Generated<string>;
     description?: string | null;
     quantity?: Generated<number>;
-    value?: string | null;
+    value?: Generated<number>;
     weight?: number | null;
     tags?: string | null;
     metadata?: string | null;
