@@ -6805,6 +6805,39 @@
     "title": "Narration Pipeline — TTS + Ambient + SFX Mix",
     "type": "TASK"
   },
+  "TASK-NATIVE-ADAPTERS-VERTEX-COHERE-REPLICATE-CLOUDFLARE": {
+    "hash": "7d5b38e",
+    "extid": "TASK-NATIVE-ADAPTERS-VERTEX-COHERE-REPLICATE-CLOUDFLARE",
+    "type": "TASK",
+    "title": "Native Adapters Vertex Cohere Replicate Cloudflare",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-native-adapters-vertex-cohere-replicate-cloudflare.md"
+  },
+  "TASK-NATIVE-ANTHROPIC-MESSAGES-ADAPTER": {
+    "hash": "be2cb7b",
+    "extid": "TASK-NATIVE-ANTHROPIC-MESSAGES-ADAPTER",
+    "type": "TASK",
+    "title": "Native Anthropic Messages Adapter",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-native-anthropic-messages-adapter.md"
+  },
+  "TASK-NATIVE-AWS-BEDROCK-ADAPTER": {
+    "hash": "30fd582",
+    "extid": "TASK-NATIVE-AWS-BEDROCK-ADAPTER",
+    "type": "TASK",
+    "title": "Native AWS Bedrock Adapter",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-native-aws-bedrock-adapter.md"
+  },
   "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH": {
     "epic": "epic-non-standard-browser-crypto",
     "extid": "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH",
@@ -7309,6 +7342,17 @@
     "title": "OpenAPI Specification",
     "type": "TASK"
   },
+  "TASK-OPERATOR-PLATFORM-CREDENTIAL-STORE": {
+    "hash": "301358f",
+    "extid": "TASK-OPERATOR-PLATFORM-CREDENTIAL-STORE",
+    "type": "TASK",
+    "title": "Operator Platform Credential Store",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-operator-platform-credential-store.md"
+  },
   "TASK-OUTPUT-CONTROL-TRANSFORMS": {
     "epic": "epic-output-control-transforms",
     "extid": "TASK-OUTPUT-CONTROL-TRANSFORMS",
@@ -7441,6 +7485,39 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-PLAN-UNWIRED-CODEOUT.md"
+  },
+  "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA": {
+    "hash": "948e44f",
+    "extid": "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA",
+    "type": "TASK",
+    "title": "Platform Catalog Config Schema",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-platform-catalog-config-schema.md"
+  },
+  "TASK-PLATFORM-CONNECTOR-CORE-PLUGIN": {
+    "hash": "4a98efa",
+    "extid": "TASK-PLATFORM-CONNECTOR-CORE-PLUGIN",
+    "type": "TASK",
+    "title": "Platform Connector Core Plugin",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-platform-connector-core-plugin.md"
+  },
+  "TASK-PLATFORM-HEALTH-DISCOVERY-COST-DISPLAY": {
+    "hash": "94fcf99",
+    "extid": "TASK-PLATFORM-HEALTH-DISCOVERY-COST-DISPLAY",
+    "type": "TASK",
+    "title": "Platform Health Discovery Cost Display",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-platform-health-discovery-cost-display.md"
   },
   "TASK-PLATFORM-INTEGRATIONS": {
     "epic": "epic-platform-integrations",
@@ -8873,6 +8950,17 @@
     "title": "LLM Thinking Tag Context Prune",
     "type": "TASK",
     "hash": "d02e61f"
+  },
+  "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG": {
+    "hash": "d0ba5cb",
+    "extid": "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG",
+    "type": "TASK",
+    "title": "Tier-1 OpenAI-Compatible Platform Catalog",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tier-1-openai-compatible-platform-catalog.md"
   },
   "TASK-TIME-SCALE": {
     "epic": "epic-time-scale",
