@@ -4923,6 +4923,83 @@
     "title": "EPIC: Disease & Poison Systems",
     "type": "TASK"
   },
+  "TASK-DISTRIBUTED-COMPUTE-NODE-AGENT": {
+    "hash": "da3d305",
+    "extid": "TASK-DISTRIBUTED-COMPUTE-NODE-AGENT",
+    "type": "TASK",
+    "title": "Distributed compute node agent",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-compute-node-agent.md"
+  },
+  "TASK-DISTRIBUTED-CONTRIBUTOR-UI": {
+    "hash": "19cf1a4",
+    "extid": "TASK-DISTRIBUTED-CONTRIBUTOR-UI",
+    "type": "TASK",
+    "title": "Distributed contributor UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-contributor-ui.md"
+  },
+  "TASK-DISTRIBUTED-GENERATION-INTEGRATION": {
+    "hash": "a7b48e7",
+    "extid": "TASK-DISTRIBUTED-GENERATION-INTEGRATION",
+    "type": "TASK",
+    "title": "Distributed generation integration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-generation-integration.md"
+  },
+  "TASK-DISTRIBUTED-INCENTIVE-COMMUNITY-LAYER": {
+    "hash": "11c6f44",
+    "extid": "TASK-DISTRIBUTED-INCENTIVE-COMMUNITY-LAYER",
+    "type": "TASK",
+    "title": "Distributed incentive community layer",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-incentive-community-layer.md"
+  },
+  "TASK-DISTRIBUTED-NODE-REGISTRY-DISPATCHER": {
+    "hash": "80fa855",
+    "extid": "TASK-DISTRIBUTED-NODE-REGISTRY-DISPATCHER",
+    "type": "TASK",
+    "title": "Distributed node registry + dispatcher",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-node-registry-dispatcher.md"
+  },
+  "TASK-DISTRIBUTED-REWARDS-LEDGER": {
+    "hash": "ff2a8da",
+    "extid": "TASK-DISTRIBUTED-REWARDS-LEDGER",
+    "type": "TASK",
+    "title": "Distributed rewards ledger",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-rewards-ledger.md"
+  },
+  "TASK-DISTRIBUTED-TRUST-SECURITY-VALIDATION": {
+    "hash": "6bb86a2",
+    "extid": "TASK-DISTRIBUTED-TRUST-SECURITY-VALIDATION",
+    "type": "TASK",
+    "title": "Distributed trust security validation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-distributed-compute-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-distributed-trust-security-validation.md"
+  },
   "TASK-DOCUMENT-PROCESSING-PIPELINE": {
     "epic": "epic-rag-document-processing.md",
     "extid": "TASK-DOCUMENT-PROCESSING-PIPELINE",
