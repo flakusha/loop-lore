@@ -1,6 +1,6 @@
 # TASK: Link NPC Inventory to World Items (Replace Denormalized JSON)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-12)
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-item-systems-unification
@@ -34,12 +34,22 @@ inventory: jsonParseOr(npcRow.inventory, []),
 
 ## Acceptance Criteria
 
-- [ ] `ItemsService.giveToNpc()` is the only way to add items to NPC inventory
-- [ ] `npc_states.inventory` column deprecated (or removed)
-- [ ] `NpcState.inventory` type is `ItemInstance[]` (id, name, quantity, etc.)
-- [ ] GM prompt shows item names from resolved `ItemInstance` records
-- [ ] No backfill needed (DB reinit); `npc_states.inventory` column deprecated only
-- [ ] `bun test src/` green; `bun run check` green
+- [x] `ItemsService.giveToNpc()` is the only way to add items to NPC inventory
+- [x] `npc_states.inventory` column deprecated (or removed)
+- [x] `NpcState.inventory` type is `ItemInstance[]` (id, name, quantity, etc.)
+- [x] GM prompt shows item names from resolved `ItemInstance` records
+- [x] No backfill needed (DB reinit); `npc_states.inventory` column deprecated only
+- [x] `bun test src/` green; `bun run check` green
+
+## Notes (impl 2026-08-12)
+
+- `NpcState.inventory: string[]` → `ItemInstance[]` (imported type from `story/items/types`).
+- `getNpcInventory()` typed `Promise<ItemInstance[]>`, aliases `world_items`+`items` joins to `ItemInstance` shape (adds `visibility`, parses `properties` via `jsonParseOr`, coerces nullable `description`).
+- `world-state/context.ts` builds one `ItemsService` and calls `getNpcInventory(actorId)` per NPC — no longer reads `npc_states.inventory`.
+- GM `hardcoded.ts` renders names with quantity suffix (`Sword×2`).
+- Legacy `npc_states.inventory` column: no longer written by `world-state/init.ts` (relies on default); removed from mutable JSON fields in `routes/story-states/handlers.ts`; migration comment notes it's kept for reinit compat.
+- `ActorItemType` fully **removed** (not just deprecated) from `flags.ts`, `enums.test.ts`, `enums.ts` doc, `primitives.ts`; `column-types.ts` maps `item_type` → `ItemCategory` (from previous task).
+- Verified: `db:schemas:check` green, full suite 3402 pass / 0 fail, typecheck + frontend + coverage (96.92%) pass.
 
 ## Files to Modify
 

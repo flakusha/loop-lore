@@ -52,21 +52,6 @@ export const NoteCategory = {
 } as const;
 export type NoteCategory = (typeof NoteCategory)[keyof typeof NoteCategory];
 
-// ── Actor Items ───────────────────────────────────────────
-/**
- * @deprecated Use `ItemCategory` from `enums-story/items.ts` instead. The
- * `actor_items.item_type` column now stores unified `ItemCategory` values
- * (see `src/db/column-types.ts`). Kept only for import compatibility.
- */
-export const ActorItemType = {
-  Equipment: "equipment",
-  Consumable: "consumable",
-  KeyItem: "key_item",
-  Artifact: "artifact",
-  Misc: "misc",
-} as const;
-export type ActorItemType = (typeof ActorItemType)[keyof typeof ActorItemType];
-
 // ── Model Roles ───────────────────────────────────────────
 export const ModelRole = {
   Main: "main",

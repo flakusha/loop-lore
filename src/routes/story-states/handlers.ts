@@ -37,7 +37,6 @@ export async function handleNpcState(
   const jsonFields: Record<string, string> = {
     knowledge: "knowledge",
     relationships: "relationships",
-    inventory: "inventory",
     schedule: "schedule",
   };
 
