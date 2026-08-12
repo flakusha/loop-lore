@@ -22,16 +22,16 @@ Character templates are seeded idempotently from config on server start, but **i
 1. **Create item template config types** — `src/config/sections/items/types.ts`:
    ```typescript
    interface ItemTemplate {
-     id?: string;                    // hard ID for deterministic seeding
+     id?: string; // hard ID for deterministic seeding
      name: string;
      description?: string;
-     category: ItemCategory;         // unified taxonomy
-     rarity?: ItemRarity;            // default "common"
+     category: ItemCategory; // unified taxonomy
+     rarity?: ItemRarity; // default "common"
      stackable?: boolean;
      maxStack?: number;
      value?: number;
      weight?: number;
-     properties?: Record<string, unknown>;  // stats, effects, damage, ac, etc.
+     properties?: Record<string, unknown>; // stats, effects, damage, ac, etc.
      tags?: string[];
      creator?: string;
    }

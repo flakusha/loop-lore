@@ -66,12 +66,12 @@ workflows:
     name: "Minimax H3 Video"
     description: "Generate a short video via Minimax H3 API"
     category: "video"
-    model_family: minimax-h3      # maps to a model family preset (see § 7.1b)
+    model_family: minimax-h3 # maps to a model family preset (see § 7.1b)
     version: "1.0.0"
     intent:
       # Maps to AssistantIntent in src/regex/intent.ts
       type: generate
-      target: image-generation     # reuse existing generation target
+      target: image-generation # reuse existing generation target
       confidence_threshold: 0.6
       requires_approval: true
       # Keyword/regex triggers for intent matching
@@ -98,7 +98,7 @@ workflows:
         description: "Describe motion, camera movement, and visual style"
         type: prompt
         required: false
-        format_template: "{{raw}}"  # family-specific formatting applied at dispatch
+        format_template: "{{raw}}" # family-specific formatting applied at dispatch
         recommendations:
           - "Use cinematic terms (slow zoom, tracking shot)"
         default: "cinematic, smooth motion, 4K"
@@ -158,7 +158,7 @@ model_family_presets:
   sd-1-5:
     name: "Stable Diffusion 1.5"
     category: image
-    prompt_format: tags        # comma-separated, weighted (word:1.3), no natural prose
+    prompt_format: tags # comma-separated, weighted (word:1.3), no natural prose
     token_limit: 75
     weight_syntax: true
     negative_prompt: true
@@ -247,7 +247,7 @@ model_family_presets:
     name: "Qwen Image Edit"
     extends: qwen-image
     prompt_format: edit-instruction
-    modes: [t2i, i2i]        # dual-mode: text-to-image generation AND image-to-image edit
+    modes: [t2i, i2i] # dual-mode: text-to-image generation AND image-to-image edit
     recommendations:
       - "Specify what to KEEP and what to CHANGE (i2i edit mode)"
       - "Use precise spatial/attribute descriptions"
@@ -318,25 +318,25 @@ model_family_presets:
 
 #### Model Family Reference
 
-| Family key          | Category | Prompt format      | Weight syntax | Notes                                     |
-| ------------------- | -------- | ------------------ | ------------- | ----------------------------------------- |
-| `sd-1-5`            | image    | tags (comma-sep)   | yes           | Classic SD tag prompting                  |
-| `sd-1-5-pony`       | image    | mixed (tags+rating)| yes           | SDXL-based, needs rating tags             |
-| `sdxl`              | image    | mixed (natural+tags)| yes          | Natural desc + weighted tags at end       |
-| `sd-xl-illustrious` | image    | mixed              | yes           | SDXL variant, artist trigger words        |
-| `sd-xl-noob`        | image    | tags               | yes           | SDXL variant, prefers tag-based           |
-| `sd-xl-chroma`      | image    | mixed              | yes           | SDXL variant (Zeta/Kroma/Radiance)        |
-| `flux`              | image    | natural            | no            | No weighting, avoid "masterpiece"         |
-| `flux-kontext`      | image    | edit-instruction   | no            | "change X to Y", "make X wear Z"          |
-| `qwen-image`        | image    | natural            | no            | Qwen image generation                     |
-| `qwen-edit`         | image    | edit-instruction   | no            | dual mode: t2i generation + i2i edit ("keep X, change Y") |
-| `wan`               | video    | natural            | no            | Wan video generation                      |
-| `ltx`               | video    | natural            | no            | LTX video generation                      |
-| `krea-2`            | image    | natural            | no            | Style reference support                   |
-| `anima`             | image    | natural            | no            | Anima image generation                    |
-| `ideogram-4`        | image    | json               | no            | Structured JSON prompt (not free text)    |
-| `z-image`           | image    | tags               | yes           | Z-Image, SD-like tag convention           |
-| `minimax-h3`        | video    | natural            | no            | Minimax H3 video generation               |
+| Family key          | Category | Prompt format        | Weight syntax | Notes                                                     |
+| ------------------- | -------- | -------------------- | ------------- | --------------------------------------------------------- |
+| `sd-1-5`            | image    | tags (comma-sep)     | yes           | Classic SD tag prompting                                  |
+| `sd-1-5-pony`       | image    | mixed (tags+rating)  | yes           | SDXL-based, needs rating tags                             |
+| `sdxl`              | image    | mixed (natural+tags) | yes           | Natural desc + weighted tags at end                       |
+| `sd-xl-illustrious` | image    | mixed                | yes           | SDXL variant, artist trigger words                        |
+| `sd-xl-noob`        | image    | tags                 | yes           | SDXL variant, prefers tag-based                           |
+| `sd-xl-chroma`      | image    | mixed                | yes           | SDXL variant (Zeta/Kroma/Radiance)                        |
+| `flux`              | image    | natural              | no            | No weighting, avoid "masterpiece"                         |
+| `flux-kontext`      | image    | edit-instruction     | no            | "change X to Y", "make X wear Z"                          |
+| `qwen-image`        | image    | natural              | no            | Qwen image generation                                     |
+| `qwen-edit`         | image    | edit-instruction     | no            | dual mode: t2i generation + i2i edit ("keep X, change Y") |
+| `wan`               | video    | natural              | no            | Wan video generation                                      |
+| `ltx`               | video    | natural              | no            | LTX video generation                                      |
+| `krea-2`            | image    | natural              | no            | Style reference support                                   |
+| `anima`             | image    | natural              | no            | Anima image generation                                    |
+| `ideogram-4`        | image    | json                 | no            | Structured JSON prompt (not free text)                    |
+| `z-image`           | image    | tags                 | yes           | Z-Image, SD-like tag convention                           |
+| `minimax-h3`        | video    | natural              | no            | Minimax H3 video generation                               |
 
 ### 7.2 Runtime Flow
 
@@ -389,21 +389,20 @@ The existing `AssistantIntent` taxonomy (`src/regex/intent.ts`) defines
 
 ### 7.5 Reuse of Template System
 
-| Template domain         | Config file                  | Epic ref                        |
-| ----------------------- | ---------------------------- | ------------------------------- |
-| LLM system prompts      | `configs/templates/llm.yaml` | `epic-config-templates.md` Phase 4 |
-| SD image profiles       | `configs/templates/sd.yaml`  | `epic-config-templates.md` Phase 2 |
-| Avatar emotion patterns | `configs/templates/avatar.yaml` | `epic-config-templates.md` Phase 3 |
-| Image-edit workflows  | `configs/templates/image-edit.yaml` | `epic-config-templates.md` Phase 4 |
-| **Assistant workflows** | `configs/templates/workflows/*.yaml` | **this epic**                   |
-| **± Model family presets** | `configs/templates/workflows/model-families.yaml` | **this epic** (§7.1b)       |
-| **± Entity type presets** | `configs/templates/workflows/entity-types.yaml` | **this epic** (§7.6c)      |
-| **± Third-party adapters** | `configs/templates/workflows/third-party-adapters.yaml` | **this epic** (Phase 4)  |
+| Template domain            | Config file                                             | Epic ref                           |
+| -------------------------- | ------------------------------------------------------- | ---------------------------------- |
+| LLM system prompts         | `configs/templates/llm.yaml`                            | `epic-config-templates.md` Phase 4 |
+| SD image profiles          | `configs/templates/sd.yaml`                             | `epic-config-templates.md` Phase 2 |
+| Avatar emotion patterns    | `configs/templates/avatar.yaml`                         | `epic-config-templates.md` Phase 3 |
+| Image-edit workflows       | `configs/templates/image-edit.yaml`                     | `epic-config-templates.md` Phase 4 |
+| **Assistant workflows**    | `configs/templates/workflows/*.yaml`                    | **this epic**                      |
+| **± Model family presets** | `configs/templates/workflows/model-families.yaml`       | **this epic** (§7.1b)              |
+| **± Entity type presets**  | `configs/templates/workflows/entity-types.yaml`         | **this epic** (§7.6c)              |
+| **± Third-party adapters** | `configs/templates/workflows/third-party-adapters.yaml` | **this epic** (Phase 4)            |
 
 All share the same `MergeStrategy` type (`"replace" | "extend" | "override"`)
 from `src/config/sections/templates.ts` and the `findConfigFile()` /
 `parseFileContent()` / `deepMerge()` pipeline in the config loader.
-
 
 ### 7.6 Entity Generation Workflows
 
@@ -412,7 +411,7 @@ workflow category, not a generic "entity generation" afterthought. These workflo
 give the existing `/create` assistant command the **prompt preview, validation, and
 confirmation gating** it currently lacks (see `TASK-assistant-gm-flows.md`: `/create`
 inserts directly with no quality pipeline and no user approval). Image/video vary by
-*model family* (§7.1b); entity workflows vary by *entity shape*.
+_model family_ (§7.1b); entity workflows vary by _entity shape_.
 
 #### 7.6a Intent → Entity Workflow Mapping
 
@@ -420,13 +419,13 @@ inserts directly with no quality pipeline and no user approval). Image/video var
 entity types. Workflow templates bind to these targets 1:1, so `classifyIntent` routing
 feeds straight into `WorkflowRunner.startWorkflow(...)`.
 
-| Entity    | `intent.target` | In `INTENT_PATTERNS`?      | Creation backend (dispatch)                                                        |
-| --------- | --------------- | -------------------------- | --------------------------------------------------------------------------------- |
-| Character | `character`     | ✅ (L27)                   | `src/assistant/commands/create.ts` → actor insert                                 |
-| World     | `world`         | ✅ (L48)                   | world creation service                                                            |
-| Location  | `location`      | ✅ (L41)                   | world-location insert                                                             |
-| Item      | `item`          | ✅ (L34)                   | `POST /api/worlds/:worldId/items/generate-llm` (see `TASK-item-generation.md`)    |
-| NPC       | `npc`           | ❌ — needs new target      | actor insert with `is_npc`                                                        |
+| Entity    | `intent.target` | In `INTENT_PATTERNS`? | Creation backend (dispatch)                                                    |
+| --------- | --------------- | --------------------- | ------------------------------------------------------------------------------ |
+| Character | `character`     | ✅ (L27)              | `src/assistant/commands/create.ts` → actor insert                              |
+| World     | `world`         | ✅ (L48)              | world creation service                                                         |
+| Location  | `location`      | ✅ (L41)              | world-location insert                                                          |
+| Item      | `item`          | ✅ (L34)              | `POST /api/worlds/:worldId/items/generate-llm` (see `TASK-item-generation.md`) |
+| NPC       | `npc`           | ❌ — needs new target | actor insert with `is_npc`                                                     |
 
 **Decision (open):** add `npc` as a distinct `INTENT_PATTERNS` target (preferred — clean
 separation, matches `epic-npcs.md`), OR route NPC generation through the `character`
@@ -463,8 +462,8 @@ entity_type_presets:
       identity.name: { min_length: 1, max_length: 120 }
       identity.homeland: { max_length: 120 }
     consistency_gates:
-      - type: duplicate        # no two actors with same name + world_id
-      - type: schema           # matches actors table NOT NULL / FK
+      - type: duplicate # no two actors with same name + world_id
+      - type: schema # matches actors table NOT NULL / FK
     dispatch_target: actor-insert
   item:
     required_steps: [category, rarity, stats_intent]
@@ -472,7 +471,7 @@ entity_type_presets:
       rarity: { options: [common, uncommon, rare, epic, legendary] }
     consistency_gates:
       - type: schema
-      - type: balance          # stats within world progression curve
+      - type: balance # stats within world progression curve
     dispatch_target: item-generate-llm
 ```
 
@@ -503,7 +502,7 @@ entity generation. The workflow system is the **gating + UX layer** that wraps i
 ```
 
 This closes the `TASK-assistant-gm-flows.md` gap (no quality validation / no confirmation
-gating) without forking the creation backends. Entity workflows are the *only* sanctioned
+gating) without forking the creation backends. Entity workflows are the _only_ sanctioned
 path for assistant-driven entity creation post-MVP.
 
 #### 7.6f Example: Character Generation Workflow
@@ -550,7 +549,7 @@ workflows:
         name: "World"
         type: select
         required: true
-        source: worlds          # populated from user's worlds
+        source: worlds # populated from user's worlds
     dispatch:
       backend: tool_exec
       target: create-character
@@ -566,6 +565,7 @@ workflows:
 
 Analogous workflow files exist for `world-generation`, `location-generation`,
 `item-generation`, `npc-generation` (see the per-entity subtickets).
+
 #### 7.7 Gallery Batch Operations
 
 The gallery UI (`src/frontend/…/gallery-sidebar.html`, `partials/gallery/preview-modal.html`)
@@ -628,11 +628,12 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
   scope / ownership), `duplicate` (same source + params → warn), NSFW policy reuse.
 - **Dispatch separation** — edit workflows set `backend: image_edit` → `src/image-edit/routes.ts
   handleRun`, **not** the generation pipeline. This is the key boundary vs §7.1 generation workflows.
+
 ---
 
 ## Use Case: Minimax H3 Video Generation (End-to-End Walkthrough)
 
-1. **User** types: *"Generate a 5-second video of a cyberpunk samurai drawing his sword in the rain."*
+1. **User** types: _"Generate a 5-second video of a cyberpunk samurai drawing his sword in the rain."_
 
 2. **Intent detection** (`classifyIntent` in `src/generation/auto-gen.ts:74`):
    - Matches `minimax` + `video` triggers in `INTENT_PATTERNS`.
@@ -655,13 +656,13 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
    - User cancels → abort.
 
 6. **Dispatch** → `src/generation/llm-queue.ts` (via `epic-llm-queue.md` for throughput
-  scheduling) → Minimax H3 provider → result attached to chat as video asset.
+   scheduling) → Minimax H3 provider → result attached to chat as video asset.
 
 ---
 
 ## Use Case: Nano Banana Image Generation w/ NSFW Prefiltering
 
-1. **User** types: *"Create a spicy portrait of my character in lingerie."*
+1. **User** types: _"Create a spicy portrait of my character in lingerie."_
 
 2. **Intent detection**: matches `nano.banana` + `image` triggers in `INTENT_PATTERNS`.
    Routes to `nano-banana-image` workflow template (model_family: `z-image`).
@@ -679,7 +680,7 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
    - Step 3: Parameters — steps=30, cfg=7, size=1024x1024 (from `z-image` preset).
 
 5. **Final confirmation**: shows formatted prompt (`character tags, lingerie tags, rating:explicit`)
-   + NSFW label attached to payload.
+   - NSFW label attached to payload.
 
 6. **Dispatch** → `POST /api/generation/third-party` → Nano Banana backend → result
    attached to chat as image asset, labeled with NSFW rating tag.
@@ -690,35 +691,35 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
 
 ### What exists (foundation to build on)
 
-| Component                        | Status   | Location                                         |
-| -------------------------------- | -------- | ------------------------------------------------ |
-| Config template loader           | ✅ Shipped | `src/config/templates-loader.ts`, `sections/templates.ts` |
-| Merge strategies (replace/extend/override) | ✅ Shipped | `src/config/sections/templates.ts` |
-| `AssistantIntent` taxonomy     | ✅ Shipped | `src/regex/intent.ts:11`                         |
-| `INTENT_PATTERNS` keyword array  | ✅ Shipped | `src/regex/intent.ts:17-97`                      |
-| `classifyIntent` (LLM)           | ⚠️ Partial | `src/generation/auto-gen.ts:74` (no timeout, no apiKey, temp 0.1) |
-| Slash command parser + registry  | ✅ Shipped | `src/assistant/command-parser.ts`, `commands/registry.ts` |
-| Prompt assembler (section pipeline) | ✅ Shipped | `src/assistant/prompt-assembler.ts`          |
-| `SDRequest` / `generateImage`    | 🟡 Dead stub | `src/assistant/sd.ts` (no provider wiring)    |
-| `ScenarioSource` store + bridge   | 🟡 Dead stub | `src/assistant/scenario-source.ts` (no DB table) |
-| `/image` command                  | 🟡 Action dispatch only | `src/assistant/commands/image.ts` (832 bytes) |
-| Dead `detectIntent()`             | ✅ Removed 2026-08-07 | `src/assistant/intent.ts` (see `.plan/backlog/open.md` row 4) |
+| Component                                  | Status                  | Location                                                          |
+| ------------------------------------------ | ----------------------- | ----------------------------------------------------------------- |
+| Config template loader                     | ✅ Shipped              | `src/config/templates-loader.ts`, `sections/templates.ts`         |
+| Merge strategies (replace/extend/override) | ✅ Shipped              | `src/config/sections/templates.ts`                                |
+| `AssistantIntent` taxonomy                 | ✅ Shipped              | `src/regex/intent.ts:11`                                          |
+| `INTENT_PATTERNS` keyword array            | ✅ Shipped              | `src/regex/intent.ts:17-97`                                       |
+| `classifyIntent` (LLM)                     | ⚠️ Partial               | `src/generation/auto-gen.ts:74` (no timeout, no apiKey, temp 0.1) |
+| Slash command parser + registry            | ✅ Shipped              | `src/assistant/command-parser.ts`, `commands/registry.ts`         |
+| Prompt assembler (section pipeline)        | ✅ Shipped              | `src/assistant/prompt-assembler.ts`                               |
+| `SDRequest` / `generateImage`              | 🟡 Dead stub            | `src/assistant/sd.ts` (no provider wiring)                        |
+| `ScenarioSource` store + bridge            | 🟡 Dead stub            | `src/assistant/scenario-source.ts` (no DB table)                  |
+| `/image` command                           | 🟡 Action dispatch only | `src/assistant/commands/image.ts` (832 bytes)                     |
+| Dead `detectIntent()`                      | ✅ Removed 2026-08-07   | `src/assistant/intent.ts` (see `.plan/backlog/open.md` row 4)     |
 
 ### What needs building
 
-| Layer              | Item                                           |
-| ------------------ | ---------------------------------------------- |
-| Schema             | Workflow template types in `sections/templates.ts` |
-| Loader             | Workflow template loading in `templates-loader.ts` |
-| Model family presets | `configs/templates/workflows/model-families.yaml` + formatter engine |
-| Intent routing     | Extend `INTENT_PATTERNS` with workflow triggers |
-| Runner             | `src/assistant/workflow-runner.ts` (start/preview/step/confirm/dispatch) |
-| Defaults           | `configs/templates/workflows/defaults.yaml` (in-source) |
-| Dispatch           | Wire to `/api/generation/video` + existing generation providers |
-| Frontend           | Creative studio step UI + confirmation modal   |
-| Third-party APIs   | Integration framework for Minimax H3, Nano Banana, etc. (see TASK) |
-| NSFW prefiltering  | Per-backend NSFW policy + consent (see TASK)   |
-| Tests              | Workflow loader, step validation, intent matching |
+| Layer                | Item                                                                     |
+| -------------------- | ------------------------------------------------------------------------ |
+| Schema               | Workflow template types in `sections/templates.ts`                       |
+| Loader               | Workflow template loading in `templates-loader.ts`                       |
+| Model family presets | `configs/templates/workflows/model-families.yaml` + formatter engine     |
+| Intent routing       | Extend `INTENT_PATTERNS` with workflow triggers                          |
+| Runner               | `src/assistant/workflow-runner.ts` (start/preview/step/confirm/dispatch) |
+| Defaults             | `configs/templates/workflows/defaults.yaml` (in-source)                  |
+| Dispatch             | Wire to `/api/generation/video` + existing generation providers          |
+| Frontend             | Creative studio step UI + confirmation modal                             |
+| Third-party APIs     | Integration framework for Minimax H3, Nano Banana, etc. (see TASK)       |
+| NSFW prefiltering    | Per-backend NSFW policy + consent (see TASK)                             |
+| Tests                | Workflow loader, step validation, intent matching                        |
 
 ---
 
@@ -746,20 +747,19 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
 - Adding NSFW labeling/prefiltering for third-party API dispatch (that's
   `TASK-assistant-nsfw-api-prefiltering`)
 
-
 ### NSFW Handling for Workflows
 
 Third-party image/video generation APIs (Minimax H3, Nano Banana, Ideogram 4, etc.) enforce
 NSFW restrictions differently — some reject NSFW outright, some require explicit labeling,
 and some allow it with moderation flags. The workflow system must handle this at dispatch time:
 
-| Concern              | Approach                                                |
-| -------------------- | ------------------------------------------------------- |
-| Content classification | Workflow `dispatch` includes an `nsfw_policy` field with per-backend rules |
-| Prefiltering          | Run the assembled prompt through the NSFW moderation service before dispatch (`src/nsfw/`) |
-| Internal labeling     | If NSFW content is detected and the backend allows it, attach the NSFW content rating tag to the payload |
-| Rejection routing     | If the backend rejects NSFW, route to an alternative NSFW-capable backend or notify the user |
-| User consent          | For NSFW-capable backends, require explicit consent (reuses `epic-nsfw-moderation-priority.md` consent infrastructure) |
+| Concern                | Approach                                                                                                               |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Content classification | Workflow `dispatch` includes an `nsfw_policy` field with per-backend rules                                             |
+| Prefiltering           | Run the assembled prompt through the NSFW moderation service before dispatch (`src/nsfw/`)                             |
+| Internal labeling      | If NSFW content is detected and the backend allows it, attach the NSFW content rating tag to the payload               |
+| Rejection routing      | If the backend rejects NSFW, route to an alternative NSFW-capable backend or notify the user                           |
+| User consent           | For NSFW-capable backends, require explicit consent (reuses `epic-nsfw-moderation-priority.md` consent infrastructure) |
 
 Example `nsfw_policy` in a workflow template:
 
@@ -769,17 +769,16 @@ dispatch:
   target: nano-banana
   endpoint: /api/generation/third-party
   nsfw_policy:
-    classification_required: true   # prefilter before dispatch
-    allowed: true                   # backend accepts NSFW-labeled content
-    consent_required: true          # per-user consent gate
-    label_field: nsfw_tag           # field name in payload
+    classification_required: true # prefilter before dispatch
+    allowed: true # backend accepts NSFW-labeled content
+    consent_required: true # per-user consent gate
+    label_field: nsfw_tag # field name in payload
     fallback:
       - backend: comfyui
       - backend: sd-server
 ```
 
-See `TASK-assistant-nsfw-api-prefiltering.md` for implementation.
----
+## See `TASK-assistant-nsfw-api-prefiltering.md` for implementation.
 
 ## Tasks
 
@@ -804,27 +803,27 @@ See `TASK-assistant-nsfw-api-prefiltering.md` for implementation.
 
 ## Files
 
-| File                                      | Status   |
-| ----------------------------------------- | -------- |
-| `src/config/sections/templates.ts`         | modify   |
-| `src/config/templates-loader.ts`           | modify   |
-| `configs/templates/workflows/defaults.yaml`| new      |
-| `configs/templates/workflows/model-families.yaml` | new |
-| `configs/templates/workflows/entity-types.yaml` | new (entity type presets, §7.6c) |
-| `src/regex/intent.ts`                     | modify   |
-| `src/assistant/workflow-runner.ts`        | new      |
-| `src/assistant/workflow-runner.test.ts`   | new      |
-| `src/frontend/creative-studio/workflow.ts`| new      |
-| `src/routes/generation/video.ts`          | new (dispatch target) |
-| `configs/templates/workflows/third-party-adapters.yaml` | new (third-party API adapters) |
-| `src/routes/generation/third-party.ts`    | new (third-party API dispatch) |
-| `.plan/tickets/TASK-assistant-creative-studio-workflows.md` | new |
-| `.plan/tickets/TASK-assistant-third-party-api-integration.md` | new |
-| `.plan/tickets/TASK-assistant-nsfw-api-prefiltering.md` | new |
-| `src/frontend/alpine/chat-utils/gallery.ts` (selection store) | modify  |
-| `src/routes/assets.ts` — `POST /api/assets/batch-download` handler (zip) | new (mount in `src/elysia-app.ts`) |
-| `src/assistant/workflows/gallery-edit.ts`                     | new (edit workflow UX over src/image-edit) |
-| `configs/templates/workflows/gallery-edit.yaml`               | new      |
+| File                                                                     | Status                                     |
+| ------------------------------------------------------------------------ | ------------------------------------------ |
+| `src/config/sections/templates.ts`                                       | modify                                     |
+| `src/config/templates-loader.ts`                                         | modify                                     |
+| `configs/templates/workflows/defaults.yaml`                              | new                                        |
+| `configs/templates/workflows/model-families.yaml`                        | new                                        |
+| `configs/templates/workflows/entity-types.yaml`                          | new (entity type presets, §7.6c)           |
+| `src/regex/intent.ts`                                                    | modify                                     |
+| `src/assistant/workflow-runner.ts`                                       | new                                        |
+| `src/assistant/workflow-runner.test.ts`                                  | new                                        |
+| `src/frontend/creative-studio/workflow.ts`                               | new                                        |
+| `src/routes/generation/video.ts`                                         | new (dispatch target)                      |
+| `configs/templates/workflows/third-party-adapters.yaml`                  | new (third-party API adapters)             |
+| `src/routes/generation/third-party.ts`                                   | new (third-party API dispatch)             |
+| `.plan/tickets/TASK-assistant-creative-studio-workflows.md`              | new                                        |
+| `.plan/tickets/TASK-assistant-third-party-api-integration.md`            | new                                        |
+| `.plan/tickets/TASK-assistant-nsfw-api-prefiltering.md`                  | new                                        |
+| `src/frontend/alpine/chat-utils/gallery.ts` (selection store)            | modify                                     |
+| `src/routes/assets.ts` — `POST /api/assets/batch-download` handler (zip) | new (mount in `src/elysia-app.ts`)         |
+| `src/assistant/workflows/gallery-edit.ts`                                | new (edit workflow UX over src/image-edit) |
+| `configs/templates/workflows/gallery-edit.yaml`                          | new                                        |
 
 ---
 

@@ -16,13 +16,13 @@
 // story/items/instances.ts:139-146
 if (remaining <= 0) {
   // Transfer all — update row with new owner
-  await db.updateTable("world_items")
+  await db.updateTable("world_items",)
     .set({
-      quantity: 0,  // ← orphan!
+      quantity: 0, // ← orphan!
       location_id: toLocationId ?? null,
       owner_actor_id: toActorId ?? null,
-    })
-    .where("id", worldItemId)
+    },)
+    .where("id", worldItemId,)
     .execute();
 }
 ```

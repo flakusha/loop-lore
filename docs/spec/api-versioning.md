@@ -1,6 +1,6 @@
 # API Versioning Strategy
 
-Status: Planned (EPIC-2026-32). No versioning exists today — all routes at `/api/{resource}`.
+Status: Planned (EPIC-2026-32 → [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md)). No versioning exists today — all routes at `/api/{resource}`.
 
 ---
 

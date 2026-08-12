@@ -1108,7 +1108,6 @@ interface DyingState {
 
 - `epic-rpg-mechanics.md`
 
-
 ---
 
 ## Merged from `.plan/epics/epic-rpg-mechanics.md`
@@ -1225,4 +1224,3 @@ Skills derived from attributes:
 ### File: src/rpg/xp.ts
 
 XP tracking on world actor state, level-up logic.
-

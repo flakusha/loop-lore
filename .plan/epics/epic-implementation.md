@@ -289,7 +289,6 @@ export async function archiveChatWithAssets(chatId: string, userId: string,): Pr
 - Large attachment count → batch inserts
 - Asset shared between chats → only archive this link
 
-
 ---
 
 ## Merged from `.plan/epics/epic-implementation.md`
@@ -629,4 +628,3 @@ export async function createSignedURL(assetId: string, userId: string,): Promise
 - Multiple downloads → same token reusable
 - Token leaked → revoke all user tokens
 - Large file streaming → range requests
-

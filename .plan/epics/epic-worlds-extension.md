@@ -139,7 +139,6 @@ interface LocationTag {
 }
 ```
 
-
 ---
 
 ## Merged from `.plan/epics/epic-worlds-extension.md`
@@ -164,7 +163,6 @@ interface WorldMessage {
 }
 ```
 
-
 ---
 
 ## Merged from `.plan/epics/epic-worlds-extension.md`
@@ -185,7 +183,6 @@ World A <-> Mesh Gateway <-> World B
   v                          v
 User X's reputation follows X across worlds
 ```
-
 
 ---
 
@@ -210,7 +207,6 @@ const locationCommands = {
 };
 ```
 
-
 ---
 
 ## Merged from `.plan/epics/epic-worlds-extension.md`
@@ -232,7 +228,6 @@ const locationCommands = {
     - allow: [guild_members, admins]
     - block: [guest_users]
 ```
-
 
 ---
 
@@ -262,7 +257,6 @@ cmd: create_item
     - item_created
     - notify_subscribers
 ```
-
 
 ---
 
@@ -326,7 +320,6 @@ Speculative concepts for reusing existing chat, world, and location features in 
 
 _These ideas are intentionally speculative and should be revisited during planning sessions to assess feasibility and alignment with project goals._
 
-
 ---
 
 ## Merged from `.plan/epics/epic-worlds-extension.md`
@@ -352,7 +345,6 @@ _These ideas are intentionally speculative and should be revisited during planni
 }
 ```
 
-
 ---
 
 ## Merged from `.plan/epics/epic-worlds-extension.md`
@@ -376,7 +368,6 @@ rule: block_swear_words
     role: guest_user
   action: kick_user
 ```
-
 
 ## Generation via Creative Studio Workflows
 

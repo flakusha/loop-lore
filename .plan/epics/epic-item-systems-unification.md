@@ -12,63 +12,63 @@ Unify the fragmented item systems and close critical gaps identified in the RPG 
 
 ## Current State Assessment
 
-| System | DB Tables | Service | Routes | Frontend | Status |
-|--------|-----------|---------|--------|----------|--------|
-| Item definitions (world) | `items` | ✅ `ItemsService` | ✅ `story-items` | ✅ `world-items.ts` | Functional |
-| World item instances | `world_items` | ✅ `ItemsService` | ✅ `story-items` | ✅ `world-items.ts` | Functional, orphans |
-| Actor/NPC inventory | `actor_items` | ❌ none (generic factory) | ✅ `actor-items` (CRUD) | ❌ none | No equip logic |
-| NPC runtime inventory | `npc_states.inventory` (JSON) | ❌ none | ❌ none | ❌ none | Denormalized |
-| Loot tables | — | ✅ `rpg/loot` | ❌ none | ❌ none | Not persisted |
-| Battle equipment | — | ✅ `battle/items-integration` | ✅ `battle/equipment` | ❌ none | Siloed type system |
-| Crafting | 8 tables | ✅ `rpg/crafting/recipes` | ❌ none | ❌ none | Unreachable |
-| Trade/Economy | `crafting_orders` | ❌ none | ❌ none | ❌ none | Not implemented |
+| System                   | DB Tables                     | Service                       | Routes                  | Frontend            | Status              |
+| ------------------------ | ----------------------------- | ----------------------------- | ----------------------- | ------------------- | ------------------- |
+| Item definitions (world) | `items`                       | ✅ `ItemsService`             | ✅ `story-items`        | ✅ `world-items.ts` | Functional          |
+| World item instances     | `world_items`                 | ✅ `ItemsService`             | ✅ `story-items`        | ✅ `world-items.ts` | Functional, orphans |
+| Actor/NPC inventory      | `actor_items`                 | ❌ none (generic factory)     | ✅ `actor-items` (CRUD) | ❌ none             | No equip logic      |
+| NPC runtime inventory    | `npc_states.inventory` (JSON) | ❌ none                       | ❌ none                 | ❌ none             | Denormalized        |
+| Loot tables              | —                             | ✅ `rpg/loot`                 | ❌ none                 | ❌ none             | Not persisted       |
+| Battle equipment         | —                             | ✅ `battle/items-integration` | ✅ `battle/equipment`   | ❌ none             | Siloed type system  |
+| Crafting                 | 8 tables                      | ✅ `rpg/crafting/recipes`     | ❌ none                 | ❌ none             | Unreachable         |
+| Trade/Economy            | `crafting_orders`             | ❌ none                       | ❌ none                 | ❌ none             | Not implemented     |
 
 ## Key Issues (from Review)
 
 ### 🔴 Critical
 
-| # | Issue | Impact |
-|---|-------|--------|
-| 1 | **4 item type taxonomies** — `ItemCategory` (11), `ActorItemType` (5), `ItemQuality` (5), `Rarity` (5 vs 6 tiers) | No interoperability between systems |
-| 2 | **NPC inventory denormalized** — `npc_states.inventory` is JSON string array, not linked to `world_items` | GM sees names but can't resolve to items |
-| 3 | **No trade/economy** — `crafting_orders` unused, transfer is move-not-trade, no currency | No player-driven economy |
-| 4 | **Crafting unreachable** — 8 tables + service exist, 0 HTTP routes | Dead code |
+| # | Issue                                                                                                             | Impact                                   |
+| - | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| 1 | **4 item type taxonomies** — `ItemCategory` (11), `ActorItemType` (5), `ItemQuality` (5), `Rarity` (5 vs 6 tiers) | No interoperability between systems      |
+| 2 | **NPC inventory denormalized** — `npc_states.inventory` is JSON string array, not linked to `world_items`         | GM sees names but can't resolve to items |
+| 3 | **No trade/economy** — `crafting_orders` unused, transfer is move-not-trade, no currency                          | No player-driven economy                 |
+| 4 | **Crafting unreachable** — 8 tables + service exist, 0 HTTP routes                                                | Dead code                                |
 
 ### 🟡 High
 
-| # | Issue | Impact |
-|---|-------|--------|
-| 5 | **Loot not persisted** — `generateLoot()` returns anonymous drops, no `world_items` creation | Loot drops vanish |
-| 6 | **Item transfer leaves orphans** — `quantity: 0` rows never cleaned up | DB bloat |
-| 7 | **Event extraction no-op** — `applyItemTransfer()` is placeholder | Story events never fire item transfers |
-| 8 | **Actor items lack service** — raw generic CRUD, no equip logic, no weight limit | No gameplay depth |
-| 9 | **Battle `EquipmentItem` siloed** — separate type system, no mapping to world items | Can't equip world items in battle |
+| # | Issue                                                                                        | Impact                                 |
+| - | -------------------------------------------------------------------------------------------- | -------------------------------------- |
+| 5 | **Loot not persisted** — `generateLoot()` returns anonymous drops, no `world_items` creation | Loot drops vanish                      |
+| 6 | **Item transfer leaves orphans** — `quantity: 0` rows never cleaned up                       | DB bloat                               |
+| 7 | **Event extraction no-op** — `applyItemTransfer()` is placeholder                            | Story events never fire item transfers |
+| 8 | **Actor items lack service** — raw generic CRUD, no equip logic, no weight limit             | No gameplay depth                      |
+| 9 | **Battle `EquipmentItem` siloed** — separate type system, no mapping to world items          | Can't equip world items in battle      |
 
 ### 🟠 Medium
 
-| # | Issue | Impact |
-|---|-------|--------|
+| #  | Issue                                                                             | Impact             |
+| -- | --------------------------------------------------------------------------------- | ------------------ |
 | 10 | **`value` type mismatch** — `actor_items.value` is text, `items.value` is integer | Data inconsistency |
 
 ## Sub-Tasks
 
-| Task | Scope | Priority |
-|------|-------|----------|
-| `TASK-unify-item-types.md` | Single `ItemDefinition` taxonomy, map all variants | P0 |
-| `TASK-link-npc-inventory.md` | Replace JSON array with `world_items.owner_actor_id` references | P0 |
-| `TASK-wire-crafting-routes.md` | Expose `RecipesService` via HTTP, connect material consumption | P1 |
-| `TASK-persist-loot-drops.md` | `generateLoot()` → `placeInLocation()` / `giveToNpc()` | P1 |
-| `TASK-implement-trade.md` | Transfer with currency, `crafting_orders` as economy backbone | P1 |
-| `TASK-item-provisioning-dashboard.md` | World-level allocation view (all items → where allocated) | P1 |
-| `TASK-npc-inventory-frontend.md` | View NPC inventories + trade with NPCs | P1 |
-| `TASK-equipment-stat-preview.md` | Live stat delta preview when equipping/unequipping | P1 |
-| `TASK-clean-transfer-orphans.md` | Delete `world_items` rows where `quantity <= 0` | P2 |
-| `TASK-implement-item-transfer-event.md` | Resolve `applyItemTransfer()` → `ItemsService.transfer()` | P2 |
-| `TASK-actor-item-service.md` | Dedicated service: equip/unequip, weight limit, trade | P2 |
-| `TASK-map-battle-equipment.md` | Map `EquipmentItem` → `ItemDefinition`, shared enum | P2 |
-| `TASK-item-generation.md` | Procedural + LLM-assisted item generation | P2 |
-| `TASK-item-edit-permissions-history.md` | Edit permissions + item provenance audit trail | P2 |
-| `TASK-fix-actor-item-value-type.md` | `actor_items.value` text → integer | P3 |
+| Task                                    | Scope                                                           | Priority |
+| --------------------------------------- | --------------------------------------------------------------- | -------- |
+| `TASK-unify-item-types.md`              | Single `ItemDefinition` taxonomy, map all variants              | P0       |
+| `TASK-link-npc-inventory.md`            | Replace JSON array with `world_items.owner_actor_id` references | P0       |
+| `TASK-wire-crafting-routes.md`          | Expose `RecipesService` via HTTP, connect material consumption  | P1       |
+| `TASK-persist-loot-drops.md`            | `generateLoot()` → `placeInLocation()` / `giveToNpc()`          | P1       |
+| `TASK-implement-trade.md`               | Transfer with currency, `crafting_orders` as economy backbone   | P1       |
+| `TASK-item-provisioning-dashboard.md`   | World-level allocation view (all items → where allocated)       | P1       |
+| `TASK-npc-inventory-frontend.md`        | View NPC inventories + trade with NPCs                          | P1       |
+| `TASK-equipment-stat-preview.md`        | Live stat delta preview when equipping/unequipping              | P1       |
+| `TASK-clean-transfer-orphans.md`        | Delete `world_items` rows where `quantity <= 0`                 | P2       |
+| `TASK-implement-item-transfer-event.md` | Resolve `applyItemTransfer()` → `ItemsService.transfer()`       | P2       |
+| `TASK-actor-item-service.md`            | Dedicated service: equip/unequip, weight limit, trade           | P2       |
+| `TASK-map-battle-equipment.md`          | Map `EquipmentItem` → `ItemDefinition`, shared enum             | P2       |
+| `TASK-item-generation.md`               | Procedural + LLM-assisted item generation                       | P2       |
+| `TASK-item-edit-permissions-history.md` | Edit permissions + item provenance audit trail                  | P2       |
+| `TASK-fix-actor-item-value-type.md`     | `actor_items.value` text → integer                              | P3       |
 
 ## Implementation Approach
 
@@ -77,14 +77,14 @@ Unify the fragmented item systems and close critical gaps identified in the RPG 
 **No new migration files.** DB is reinit, so schema changes are **inlined into the existing
 migration that first creates the affected table**. Backfills/data-casts are unnecessary.
 
-| Target table | Inline home (existing migration) |
-|--------------|----------------------------------|
-| `items`, `locations`, `worlds` | `parts/003_worlds.ts` |
-| `actors`, `world_items` | `parts/004_chats_actors.ts` |
-| `actor_items`, `actor_currencies` | `parts/005_actor_data.ts` |
-| `npc_states` | `parts/007_story_generation.ts` |
-| `crafting_*` | `011_crafting_professions.ts` |
-| `character_skills` | `036_character_skills.ts` |
+| Target table                      | Inline home (existing migration) |
+| --------------------------------- | -------------------------------- |
+| `items`, `locations`, `worlds`    | `parts/003_worlds.ts`            |
+| `actors`, `world_items`           | `parts/004_chats_actors.ts`      |
+| `actor_items`, `actor_currencies` | `parts/005_actor_data.ts`        |
+| `npc_states`                      | `parts/007_story_generation.ts`  |
+| `crafting_*`                      | `011_crafting_professions.ts`    |
+| `character_skills`                | `036_character_skills.ts`        |
 
 Affected schema edits: `items` category/rarity CHECK (unify), `world_items` `CHECK(quantity>0)`
 (clean-orphans), `actor_items.value` → integer (fix-value-type), `actor_items.item_type` CHECK
