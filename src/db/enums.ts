@@ -16,7 +16,7 @@
  *               ActorType, AgentType, ChatParticipantRole, MessageRole, MessageContentType,
  *               MessageContentFormat, MessageStatus, MessageVisibility, ActorVisibility,
  *               PinnedState, DefaultState, EquipState, StackableState, KeyType, KeyStatus,
- *               NoteCategory, ActorItemType, ModelRole
+ *               NoteCategory, ModelRole
  *   enums-content: ContentEncoding
  *   enums-generation: GenerationStatus, CancelReason, CancelSource, ChunkAction
  *   enums-story: TurnType, TurnStatus, QuestType, QuestStatus, QuestProgressStatus,
