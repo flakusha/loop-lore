@@ -54,6 +54,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("weight", "real", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint(
+      "ck_items_category",
+      sql`category IN ('weapon','armor','consumable','key_item','quest_item','material','tool','container','treasure','book','artifact','misc','other')`,
+    )
+    .addCheckConstraint(
+      "ck_items_rarity",
+      sql`rarity IN ('common','uncommon','rare','epic','legendary','unique','artifact')`,
+    )
     .execute();
 
   await database.schema.createIndex("idx_items_world",).on("items",).column("world_id",).execute();
