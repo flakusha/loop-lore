@@ -12,7 +12,7 @@ import type { MovementResult, } from "./types";
 import { MovementPattern, } from "./types";
 
 function getLog() {
-  return getRpgLog("npc-navigation");
+  return getRpgLog("npc-navigation",);
 }
 
 /**

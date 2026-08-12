@@ -12,7 +12,7 @@ import type {
  * Delegates to the shared RPG logger factory.
  */
 export function getLog(): Logger {
-  return getRpgLog("achievements");
+  return getRpgLog("achievements",);
 }
 
 /**
