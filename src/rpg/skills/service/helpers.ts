@@ -1,15 +1,16 @@
 import type { Selectable, } from "kysely";
 import type { CharacterSkills, } from "../../../db/schema";
-import { getLogger, } from "../../../logger";
-import { jsonParseOr, } from "../../../utils";
+import type { Logger, } from "../../../logger";
+import { getRpgLog, parseJsonField, } from "../../shared/rpg-service-utils";
 import type { Skill, SkillCategory, } from "./types";
 import { ProficiencyLevel, } from "./types";
 
 /**
- * Get the skills logger child
+ * Get the skills module logger.
+ * Delegates to the shared RPG logger factory.
  */
-export function getLog() {
-  return getLogger().child({ module: "skills", },);
+export function getLog(): Logger {
+  return getRpgLog("skills");
 }
 
 /** XP thresholds for each proficiency level */
@@ -50,14 +51,6 @@ export function calculateProficiency(xp: number,): ProficiencyLevel {
     return ProficiencyLevel.Apprentice;
   }
   return ProficiencyLevel.Novice;
-}
-
-/**
- * Parse JSON field safely
- */
-export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
-  if (typeof raw !== "string") { return fallback; }
-  return jsonParseOr(raw, fallback,);
 }
 
 /**
