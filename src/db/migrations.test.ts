@@ -189,6 +189,7 @@ describe("001_init — full schema", () => {
     "actor_memories",
     "actor_notes",
     "actor_items",
+    "actor_currencies",
     "actor_lore_entries",
     "world_lore_entries",
     "assets",

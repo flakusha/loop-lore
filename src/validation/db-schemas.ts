@@ -645,6 +645,16 @@ export const ActorItemsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
+// ── actor_currencies ────────────────────────────────────────────
+export const ActorCurrenciesSchema = t.Object({
+  actor_id: t.String(),
+  world_id: t.String(),
+  currency_type: t.String(),
+  balance: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
 // ── actor_lore_entries ────────────────────────────────────────────
 export const ActorLoreEntriesSchema = t.Object({
   actor_id: t.String(),
