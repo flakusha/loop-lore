@@ -6,7 +6,6 @@
  */
 import type { Generated, } from "kysely";
 import type {
-  ActorItemType,
   ActorType,
   AgentType,
   ChatMode,
@@ -14,6 +13,7 @@ import type {
   ChatType,
   ContentEncoding,
   EquipState,
+  ItemCategory,
   KeyStatus,
   KeyType,
   MessageContentFormat,
@@ -198,7 +198,7 @@ export interface ActorItems {
   actor_id: string;
   name: string;
   description: string | null;
-  item_type: ActorItemType;
+  item_type: ItemCategory;
   quantity: Generated<number>;
   value: string | null;
   weight: number | null;

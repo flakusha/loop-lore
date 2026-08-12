@@ -7,7 +7,9 @@ export const RARITY_WEIGHTS: Record<Rarity, number> = {
   common: 50,
   uncommon: 30,
   rare: 15,
+  epic: 8,
   legendary: 4,
+  unique: 2,
   artifact: 1,
 };
 
@@ -16,7 +18,9 @@ const RARITY_LEVEL_BONUS: Record<Rarity, number> = {
   common: 0,
   uncommon: 0,
   rare: 1,
+  epic: 1,
   legendary: 2,
+  unique: 2,
   artifact: 3,
 };
 

@@ -12,6 +12,8 @@ export const ItemCategory = {
   Container: "container",
   Treasure: "treasure",
   Book: "book",
+  Artifact: "artifact",
+  Misc: "misc",
   Other: "other",
 } as const;
 export type ItemCategory = (typeof ItemCategory)[keyof typeof ItemCategory];
@@ -23,6 +25,7 @@ export const ItemRarity = {
   Epic: "epic",
   Legendary: "legendary",
   Unique: "unique",
+  Artifact: "artifact",
 } as const;
 export type ItemRarity = (typeof ItemRarity)[keyof typeof ItemRarity];
 

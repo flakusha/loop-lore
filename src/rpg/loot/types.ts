@@ -1,5 +1,7 @@
-/** Item rarity tiers */
-export type Rarity = "common" | "uncommon" | "rare" | "legendary" | "artifact";
+import type { ItemRarity, } from "../../db/enums";
+
+/** Item rarity tiers — unified with the canonical `ItemRarity` enum. */
+export type Rarity = ItemRarity;
 
 /** Loot table entry */
 export interface LootEntry {
