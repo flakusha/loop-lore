@@ -5,8 +5,8 @@
 > ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no
 > XP. No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on
 > `worlds` table but no code reads or enforces them. This spec is entirely
-> aspirational. See [`.plan/implementation-plan.md`](/plan/implementation-plan.md) "Skipped During
-> Implementation" section.
+> aspirational. See `.plan/epics-index.md` for the epic registry superseding the
+> former `.plan/implementation-plan.md`.
 
 ## Philosophy: Mechanics Serve Narrative
 
