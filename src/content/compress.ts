@@ -116,13 +116,17 @@ export async function compressAssets(
   const files = walkDirectory(destinationDirectory,);
   let originalBytes = 0;
   const compressedBytes: Record<"gz" | "zst" | "br", number> = { gz: 0, zst: 0, br: 0, };
+  const bun = Bun as { zstdCompressSync?: (data: Buffer,) => Buffer };
+  const zstdFn = bun.zstdCompressSync;
 
   for (const file of files) {
     const stat = readFileSync(file,);
     originalBytes += stat.length;
     await compressFile(file,);
     compressedBytes.gz += readFileSync(`${file}.gz`, { encoding: null, },).length;
-    compressedBytes.zst += readFileSync(`${file}.zst`, { encoding: null, },).length;
+    if (zstdFn) {
+      compressedBytes.zst += readFileSync(`${file}.zst`, { encoding: null, },).length;
+    }
     compressedBytes.br += readFileSync(`${file}.br`, { encoding: null, },).length;
   }
 
