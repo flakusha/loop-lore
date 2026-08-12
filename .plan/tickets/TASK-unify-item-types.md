@@ -1,6 +1,6 @@
 # TASK: Unify Item Type Taxonomies
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-12)
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-item-systems-unification
@@ -34,14 +34,25 @@ Consolidate **4 divergent item type taxonomies** into a single canonical system.
 
 ## Acceptance Criteria
 
-- [ ] Single `ItemCategory` enum used everywhere (actor_items, items, loot, battle)
-- [ ] Single `ItemRarity` enum with tiers: common, uncommon, rare, epic, legendary, unique, artifact
-- [ ] `ActorItemType` marked deprecated (JSDoc @deprecated) or removed
-- [ ] `ItemQuality` marked deprecated (JSDoc @deprecated) or removed
-- [ ] Loot `Rarity` type aliases to `ItemRarity`
-- [ ] `EquipmentItem.quality` → `rarity: ItemRarity`
-- [ ] `items` + `actor_items` carry CHECK constraints over unified enums (artifact tier included)
-- [ ] All existing tests pass; `bun run check` green
+- [x] Single `ItemCategory` enum used everywhere (actor_items, items, loot, battle)
+- [x] Single `ItemRarity` enum with tiers: common, uncommon, rare, epic, legendary, unique, artifact
+- [x] `ActorItemType` marked deprecated (JSDoc @deprecated) or removed
+- [x] `ItemQuality` marked deprecated (JSDoc @deprecated) or removed
+- [x] Loot `Rarity` type aliases to `ItemRarity`
+- [x] `EquipmentItem.quality` → `rarity: ItemRarity`
+- [x] `items` + `actor_items` carry CHECK constraints over unified enums (artifact tier included)
+- [x] All existing tests pass; `bun run check` green
+
+## Notes (impl 2026-08-12)
+
+- `ItemCategory` extended: added `artifact`, `misc` (kept `other` — frontend default + handlers use it).
+- `ItemRarity` extended: added `artifact` (7 tiers).
+- `ActorItemType` kept as deprecated alias in `enums-core/flags.ts`; `column-types.ts` now maps `actor_items.item_type` → `ItemCategory`; regenerated `schema-core.ts`/`insert-helpers.ts`/`validation/db-schemas.ts` via `db:sync-types`.
+- Battle `ItemQuality` removed; `EquipmentItem.rarity: ItemRarity`; `calculateSellPrice` uses 7-tier multipliers.
+- Loot `Rarity` aliases `ItemRarity`; `weights.ts` covers all 7 tiers (added epic, unique).
+- Migration CHECK constraints: `ck_items_category`/`ck_items_rarity` (`003_worlds.ts`), `ck_actor_items_type` (`005_actor_data.ts`).
+- `schema-crafting.ts` unchanged — its `QualityLevel` is crafting-output quality, unrelated to `ItemRarity`.
+- Verified: `db:schemas:check` green, full suite 3403 pass / 0 fail, typecheck + frontend + coverage (96.92%) pass.
 
 ## Files to Modify
 

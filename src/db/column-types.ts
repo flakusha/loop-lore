@@ -11,7 +11,7 @@
 export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "ActorItems": {
     "equipped": "EquipState",
-    "item_type": "ActorItemType",
+    "item_type": "ItemCategory",
   },
   "ActorKeys": {
     "key_type": "KeyType",
