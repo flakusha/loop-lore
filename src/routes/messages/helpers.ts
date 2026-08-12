@@ -109,6 +109,23 @@ export async function enrichAttachments(
   },);
 }
 
+/** A function call persisted on an assistant message (mirrors GenerationToolCall). */
+export interface ToolCallRecord {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
+}
+
+/** Parse a message's stored `tool_calls` JSON payload into a typed array (null when empty/invalid). */
+export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolCallRecord[] | null {
+  if (!toolCallsJson) { return null; }
+  const parsed = safeJsonParse<ToolCallRecord[]>(toolCallsJson,);
+  if (!parsed.ok) { return null; }
+  const calls = parsed.value;
+  if (!Array.isArray(calls,) || calls.length === 0) { return null; }
+  return calls;
+}
+
 /**
  * Resolve the plaintext content of a stored message, decrypting its payload
  * when it was stored encrypted (key_id set).

@@ -304,6 +304,7 @@ export interface Messages {
   archived_at: string | null;
   format_version: Generated<number>;
   section_id: string | null;
+  tool_calls: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
