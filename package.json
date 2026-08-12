@@ -41,6 +41,8 @@
     "lint:biome": "biome lint docs/",
     "lint:biome:fix": "biome lint --write docs/",
     "md:lint": "markdownlint-cli2 \"docs/**/*.md\" \".plan/**/*.md\"",
+    "md:links": "bun run scripts/check-md-links.ts",
+    "md:links:fix": "bun run scripts/check-md-links.ts --fix",
     "md:lint:fix": "markdownlint-cli2 --fix \"docs/**/*.md\" \".plan/**/*.md\"",
     "typecheck": "tsc --noEmit --project tsconfig.backend.json",
     "typecheck:frontend": "tsc --noEmit --project tsconfig.frontend.json",
