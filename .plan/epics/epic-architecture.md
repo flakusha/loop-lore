@@ -161,4 +161,3 @@ See `.plan/implementation-plan.md` for completed epics, `.plan/backlog/` for act
 | [FEAT-2026-014](/meta/issues/#feat-2026-014) | Smart-regen transforms  | low      | `.plan/backlog/` |
 
 <!-- ISSUE-MAP-END -->
-

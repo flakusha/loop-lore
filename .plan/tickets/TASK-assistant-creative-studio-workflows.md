@@ -20,18 +20,18 @@ merge: `replace` | `extend` | `override`) and the `AssistantIntent` taxonomy
 
 ## Current State (2026-08-08)
 
-| Component                     | Status  | Location                              |
-| ----------------------------- | ------- | ------------------------------------- |
-| Config template loader        | ✅ Shipped | `src/config/templates-loader.ts`     |
-| Merge strategies              | ✅ Shipped | `src/config/sections/templates.ts`   |
-| `AssistantIntent` taxonomy    | ✅ Shipped | `src/regex/intent.ts:11`             |
-| `INTENT_PATTERNS`             | ✅ Shipped | `src/regex/intent.ts:17-97`          |
-| `classifyIntent` (LLM)        | ⚠️ Partial | `src/generation/auto-gen.ts:74`      |
-| Slash command parser          | ✅ Shipped | `src/assistant/command-parser.ts`    |
-| `SDRequest` / `generateImage` | 🟡 Dead stub | `src/assistant/sd.ts`               |
-| `ScenarioSource`              | 🟡 Dead stub | `src/assistant/scenario-source.ts`   |
-| `/image` command              | 🟡 Action dispatch | `src/assistant/commands/image.ts` |
-| `detectIntent()`              | ✅ Removed 2026-08-07 | see `.plan/backlog/open.md` row 4 |
+| Component                     | Status                | Location                           |
+| ----------------------------- | --------------------- | ---------------------------------- |
+| Config template loader        | ✅ Shipped            | `src/config/templates-loader.ts`   |
+| Merge strategies              | ✅ Shipped            | `src/config/sections/templates.ts` |
+| `AssistantIntent` taxonomy    | ✅ Shipped            | `src/regex/intent.ts:11`           |
+| `INTENT_PATTERNS`             | ✅ Shipped            | `src/regex/intent.ts:17-97`        |
+| `classifyIntent` (LLM)        | ⚠️ Partial             | `src/generation/auto-gen.ts:74`    |
+| Slash command parser          | ✅ Shipped            | `src/assistant/command-parser.ts`  |
+| `SDRequest` / `generateImage` | 🟡 Dead stub          | `src/assistant/sd.ts`              |
+| `ScenarioSource`              | 🟡 Dead stub          | `src/assistant/scenario-source.ts` |
+| `/image` command              | 🟡 Action dispatch    | `src/assistant/commands/image.ts`  |
+| `detectIntent()`              | ✅ Removed 2026-08-07 | see `.plan/backlog/open.md` row 4  |
 
 ## Design
 
@@ -78,7 +78,7 @@ User message
 - [ ] Dispatch to `POST /api/generation/video` (and other pipelines)
 - [ ] Default workflows: video, image, image-edit, character/world/location/entity gen
 - [ ] Model family presets: SD (1.5/SDXL/Illustrious/Noob/Pony/Chroma), Flux, Qwen (Edit),
-  Wan, LTX, Krea 2, Anima, Ideogram 4 (JSON), Z-Image, Minimax H3 — all with correct prompt formatting
+      Wan, LTX, Krea 2, Anima, Ideogram 4 (JSON), Z-Image, Minimax H3 — all with correct prompt formatting
 - [ ] NSFW prefiltering + consent gate integrated for third-party API backends
 - [ ] Merge strategies (replace/extend/override) work for workflows
 - [ ] Plugin extension point registers additional workflows
@@ -139,21 +139,21 @@ User message
 
 ## Files
 
-| File                                      | Action   |
-| ----------------------------------------- | -------- |
-| `src/config/sections/templates.ts`        | modify   |
-| `src/config/templates-loader.ts`          | modify   |
-| `configs/templates/workflows/entity-types.yaml` | new (entity type presets, §7.6c) |
-| `configs/templates/workflows/defaults.yaml` | new  |
-| `configs/templates/workflows/model-families.yaml` | new  |
-| `src/regex/intent.ts`                    | modify   |
-| `src/assistant/workflow-runner.ts`       | new      |
-| `src/assistant/workflow-runner.test.ts`  | new      |
-| `src/assistant/sd.ts`                    | activate |
-| `src/assistant/scenario-source.ts`       | activate |
-| `src/routes/generation/video.ts`         | new      |
-| `src/routes/generation/third-party.ts`  | new (third-party API dispatch) |
-| `src/frontend/creative-studio/workflow.ts` | new    |
+| File                                              | Action                           |
+| ------------------------------------------------- | -------------------------------- |
+| `src/config/sections/templates.ts`                | modify                           |
+| `src/config/templates-loader.ts`                  | modify                           |
+| `configs/templates/workflows/entity-types.yaml`   | new (entity type presets, §7.6c) |
+| `configs/templates/workflows/defaults.yaml`       | new                              |
+| `configs/templates/workflows/model-families.yaml` | new                              |
+| `src/regex/intent.ts`                             | modify                           |
+| `src/assistant/workflow-runner.ts`                | new                              |
+| `src/assistant/workflow-runner.test.ts`           | new                              |
+| `src/assistant/sd.ts`                             | activate                         |
+| `src/assistant/scenario-source.ts`                | activate                         |
+| `src/routes/generation/video.ts`                  | new                              |
+| `src/routes/generation/third-party.ts`            | new (third-party API dispatch)   |
+| `src/frontend/creative-studio/workflow.ts`        | new                              |
 
 ## Related
 
