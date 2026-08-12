@@ -55,6 +55,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("sort_order", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint(
+      "ck_actor_items_type",
+      sql`item_type IN ('weapon','armor','consumable','key_item','quest_item','material','tool','container','treasure','book','artifact','misc','other')`,
+    )
     .execute();
 
   await database.schema.createIndex("idx_actor_items_actor",).on("actor_items",).column("actor_id",).execute();

@@ -9,7 +9,6 @@
  */
 import type { Generated, Kysely, } from "kysely";
 import type {
-  ActorItemType,
   ActorType,
   AdminOverrideAction,
   AgentType,
@@ -591,7 +590,7 @@ export async function insertActorItems(
   db: Db,
   actor_id: string,
   name: string,
-  item_type: ActorItemType,
+  item_type: ItemCategory,
   opts?: {
     id?: Generated<string>;
     description?: string | null;
