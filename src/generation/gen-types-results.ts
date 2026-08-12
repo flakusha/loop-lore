@@ -13,11 +13,20 @@ import type { CancelReason, CancelSource, PolicyIndicatorType, PolicySeverity, P
  * repetition analysis, and policy analysis.
  */
 
+/** A single function-call requested by the assistant during generation. */
+export interface GenerationToolCall {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
+}
+
 export interface GenerationResult {
   /** The generated content */
   content: string;
   /** Thinking/reasoning content if available */
   thinking?: string;
+  /** Function calls requested by the assistant (executed server-side). */
+  toolCalls?: GenerationToolCall[];
   /** Token usage */
   tokenUsage: TokenUsage;
   /** Generation time in ms */

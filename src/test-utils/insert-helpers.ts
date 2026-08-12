@@ -813,6 +813,7 @@ export async function insertMessages(
     archived_at?: string | null;
     format_version?: Generated<number>;
     section_id?: string | null;
+    tool_calls?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
