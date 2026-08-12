@@ -19,7 +19,7 @@ Two independent `EventSource` connections are opened to the **same** endpoint
 
 Both parse the same `ActivitySnapshot` body and apply unseen-counts. This doubles
 server load/connections and can cause double-apply of snapshots. (Note
-`user-notifications.ts:66` opens a *different* `/api/notifications/stream` — that one
+`user-notifications.ts:66` opens a _different_ `/api/notifications/stream` — that one
 is fine and out of scope.)
 
 ## Fix

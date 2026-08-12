@@ -30,26 +30,26 @@ backend with prompt preview, step validation, and confirmation gating (see
 ## Acceptance Criteria
 
 - [ ] `configs/templates/workflows/location-generation.yaml` defines the workflow
-  (intent.target `location`, steps, dispatch, approval).
+      (intent.target `location`, steps, dispatch, approval).
 - [ ] `entity_type_presets.location` added to
-  `configs/templates/workflows/entity-types.yaml`.
+      `configs/templates/workflows/entity-types.yaml`.
 - [ ] `INTENT_PATTERNS` routes `create/generate/new location` / `world ... location`
-  triggers to the workflow.
+      triggers to the workflow.
 - [ ] Runner validates each step; blocks on schema/consistency/duplicate failure
-  (e.g. impossible biome for parent world).
+      (e.g. impossible biome for parent world).
 - [ ] Confirmation gate required before dispatch.
 - [ ] Dispatch inserts the location scoped by `world_id` with valid connections.
 - [ ] Unit test: intent → workflow routing + step validation; integration: end-to-end
-  location creation via `/create` wrapped by the workflow.
+      location creation via `/create` wrapped by the workflow.
 
 ## Files
 
-| File                                            | Action |
-| ----------------------------------------------- | ------ |
-| `configs/templates/workflows/location-generation.yaml` | new    |
-| `configs/templates/workflows/entity-types.yaml` | modify |
-| `src/regex/intent.ts`                          | verify (target exists) |
-| `src/assistant/workflow-runner.ts`             | reuse  |
+| File                                                   | Action                 |
+| ------------------------------------------------------ | ---------------------- |
+| `configs/templates/workflows/location-generation.yaml` | new                    |
+| `configs/templates/workflows/entity-types.yaml`        | modify                 |
+| `src/regex/intent.ts`                                  | verify (target exists) |
+| `src/assistant/workflow-runner.ts`                     | reuse                  |
 
 ## Related
 

@@ -13,6 +13,7 @@
 ## Current State
 
 `SkillsService` methods:
+
 - `createSkill(input)`, `getSkill(id)`, `updateSkill(id, input)`, `deleteSkill(id)`
 - `getActorSkills(actorId, worldId?)`, `getSkillsByCategory(actorId, category, worldId?)`
 - `addXp(skillId, xpAmount)`, `specializeSkill(skillId, specialization)`

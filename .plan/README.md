@@ -4,14 +4,14 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 
 ## Directory Structure
 
-| Folder                          | Purpose                                            | Count |
-| ------------------------------- | -------------------------------------------------- | ----- |
-| `tickets/`                      | Task specs (authoring, review, iteration)          | ~761  |
-| `epics/`                        | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) | ~174  |
-| `backlog/`                      | **Status queue (consolidated: 2 docs)**         | 2     |
-| `backlog/priority.md`           | Full priority ladder (P0–P6+) + 0.1.0 value tiers | 1   |
-| `backlog/open.md`               | In-flight, debt, unwired code, deferred (P6+)   | 1     |
-| `epics-index.md`                | Epic registry index (generated)                    | 1     |
+| Folder                | Purpose                                                                                       | Count |
+| --------------------- | --------------------------------------------------------------------------------------------- | ----- |
+| `tickets/`            | Task specs (authoring, review, iteration)                                                     | ~761  |
+| `epics/`              | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) | ~174  |
+| `backlog/`            | **Status queue (consolidated: 2 docs)**                                                       | 2     |
+| `backlog/priority.md` | Full priority ladder (P0–P6+) + 0.1.0 value tiers                                             | 1     |
+| `backlog/open.md`     | In-flight, debt, unwired code, deferred (P6+)                                                 | 1     |
+| `epics-index.md`      | Epic registry index (generated)                                                               | 1     |
 
 ## Backlog Categories (`backlog/`)
 
@@ -19,10 +19,10 @@ The former monolithic `immediate.md` / `backlog.md` / `open-items.md` were split
 small single-purpose files, then re-consolidated (2026-08-08) into **two** backlog files
 to cut duplication:
 
-| File            | Holds                                                              | Reads-when                     |
-| --------------- | ------------------------------------------------------------------ | ------------------------------ |
-| `priority.md`   | Full priority ladder P0–P6+ (critical path → core → 0.1.0 value tiers → release gate) | Working on priority / release  |
-| `open.md`       | In-flight/decision queue, debt, unwired code, schema drift, deferred P6+ | Auditing what's open / deciding |
+| File          | Holds                                                                                 | Reads-when                      |
+| ------------- | ------------------------------------------------------------------------------------- | ------------------------------- |
+| `priority.md` | Full priority ladder P0–P6+ (critical path → core → 0.1.0 value tiers → release gate) | Working on priority / release   |
+| `open.md`     | In-flight/decision queue, debt, unwired code, schema drift, deferred P6+              | Auditing what's open / deciding |
 
 **Rules:**
 

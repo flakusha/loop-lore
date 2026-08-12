@@ -32,26 +32,26 @@ step validation, and confirmation gating the base command lacks (see
 ## Acceptance Criteria
 
 - [ ] `configs/templates/workflows/character-generation.yaml` defines the workflow
-  (intent.target `character`, steps, dispatch, approval).
+      (intent.target `character`, steps, dispatch, approval).
 - [ ] `entity_type_presets.character` added to
-  `configs/templates/workflows/entity-types.yaml`.
+      `configs/templates/workflows/entity-types.yaml`.
 - [ ] `INTENT_PATTERNS` routes `create/generate/new character` triggers to the workflow.
 - [ ] Runner validates each step against the preset; blocks on schema/consistency/duplicate failure.
 - [ ] Confirmation gate required before dispatch.
 - [ ] Dispatch inserts the actor with correct `world_id` scoping (no duplicate name+world).
 - [ ] Identity fields align with `FEAT-origin-capture-generation-seeding.md` (`origin` →
-  homeland, `culture` → culture, `species` → race).
+      homeland, `culture` → culture, `species` → race).
 - [ ] Unit test: intent → workflow routing + step validation; integration: end-to-end
-  character creation via `/create` wrapped by the workflow.
+      character creation via `/create` wrapped by the workflow.
 
 ## Files
 
-| File                                                | Action |
-| --------------------------------------------------- | ------ |
-| `configs/templates/workflows/character-generation.yaml` | new    |
-| `configs/templates/workflows/entity-types.yaml`    | modify |
-| `src/regex/intent.ts`                              | verify (target exists) |
-| `src/assistant/workflow-runner.ts`                 | reuse  |
+| File                                                    | Action                 |
+| ------------------------------------------------------- | ---------------------- |
+| `configs/templates/workflows/character-generation.yaml` | new                    |
+| `configs/templates/workflows/entity-types.yaml`         | modify                 |
+| `src/regex/intent.ts`                                   | verify (target exists) |
+| `src/assistant/workflow-runner.ts`                      | reuse                  |
 
 ## Related
 
