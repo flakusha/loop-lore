@@ -1,7 +1,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
 import { jsonStringifyOr, } from "../../../utils";
-import { parseJsonField, } from "./playthrough";
+import { parseJsonField, } from "../../shared/rpg-service-utils";
 import type { EndingType, MetaProgression, PermanentBonus, } from "./types";
 
 /** Get meta-progression for a player */

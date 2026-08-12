@@ -157,14 +157,9 @@ export async function transfer(
   const remaining = source.quantity - actualTransfer;
 
   if (remaining <= 0) {
-    // Transfer all — update row with new owner
+    // Transfer all — delete the source row (no zero-quantity orphans).
     await db
-      .updateTable("world_items",)
-      .set({
-        quantity: 0,
-        location_id: toLocationId ?? null,
-        owner_actor_id: toActorId ?? null,
-      },)
+      .deleteFrom("world_items",)
       .where("id", "=", worldItemId,)
       .execute();
   } else {

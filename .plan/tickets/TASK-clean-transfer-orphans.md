@@ -1,6 +1,6 @@
 # TASK: Clean Up Item Transfer Orphans (Zero-Quantity Rows)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-08-12)
 **Priority:** P2 — Medium
 **Effort:** Small
 **Epic:** epic-item-systems-unification
@@ -36,10 +36,18 @@ if (remaining <= 0) {
 
 ## Acceptance Criteria
 
-- [ ] Full transfer deletes source `world_items` row (no quantity=0 orphans)
-- [ ] Partial transfer still works (source row keeps remaining quantity)
-- [ ] CHECK constraint `quantity > 0` enforced at DB level (inline in `parts/004_chats_actors.ts`)
-- [ ] `bun test src/` green; `bun run check` green
+- [x] Full transfer deletes source `world_items` row (no quantity=0 orphans)
+- [x] Partial transfer still works (source row keeps remaining quantity)
+- [x] CHECK constraint `quantity > 0` enforced at DB level (inline in `parts/004_chats_actors.ts`)
+- [x] `bun test src/` green; `bun run check` green
+
+## Notes (impl 2026-08-12)
+
+- `transfer()` full-transfer branch now `deleteFrom` source instead of `quantity: 0`.
+- Added `ck_world_items_quantity` CHECK (`quantity > 0`) to `world_items` in `004_chats_actors.ts`; regenerated `schema-manifest.ts`.
+- Audited `destroy()` — already deletes on full/undefined, reduces on partial (no orphans).
+- No other code writes zero-quantity to `world_items`. Verified via grep.
+- 6 new `instances.test.ts` tests (full/partial transfer + destroy paths); full suite 3436 pass / 0 fail (3 stable runs); typecheck + frontend + coverage (96.91%) pass.
 
 ## Files to Modify
 
