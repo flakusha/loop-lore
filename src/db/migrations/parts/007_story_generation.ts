@@ -163,6 +163,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("mental_state", "text", (col,) => col.notNull().defaultTo("calm",),)
     .addColumn("knowledge", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("relationships", "text", (col,) => col.notNull().defaultTo("{}",),)
+    // NPC inventory now lives in `world_items.owner_actor_id` (see
+    // ItemsService.getNpcInventory). Column kept for reinit compat only;
+    // no new writes — ItemsService.giveToNpc() grants via world_items.
     .addColumn("inventory", "text", (col,) => col.notNull().defaultTo("[]",),)
     .addColumn("schedule", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
