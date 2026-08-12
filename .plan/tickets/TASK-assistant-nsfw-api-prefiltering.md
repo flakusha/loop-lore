@@ -139,6 +139,6 @@ Workflow confirmation → User confirms
 - **Epic:** `epic-assistant-creative-studio-workflows.md`
 - **Task:** `TASK-assistant-third-party-api-integration.md` — third-party dispatch (depends on this for NSFW-aware payload)
 - **Task:** `TASK-assistant-creative-studio-workflows.md` — workflow runner
-- **EPIC-046:** `epic-nsfw-moderation-priority.md` — NSFW moderation infrastructure, consent gate, 5-tier rating
+- **NSFW Moderation Priority:** `epic-nsfw-moderation-priority.md` — NSFW moderation infrastructure, consent gate, 5-tier rating
 - `priority.md` P0 NSFW row — runtime config + live enforcement shipped (2026-08-03)
 - `src/schemas/` — shared NSFW content rating schema

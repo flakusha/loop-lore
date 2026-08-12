@@ -4,7 +4,7 @@
 **Priority**: low
 **Labels**: feature, characters, licensing
 **Assignee**:
-**Epic**: EPIC-046 (Creative Studio)
+**Epic**: EPIC-059 (Creative Studio)
 
 ## Description
 
