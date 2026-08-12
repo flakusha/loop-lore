@@ -52,6 +52,7 @@ import { exportSseRoutes, } from "../routes/export-sse";
 import { frontendLogsRoutes, } from "../routes/frontend-logs";
 import { gmNotesRoutes, } from "../routes/gm-notes";
 import { healthRoutes, } from "../routes/health";
+import { tradeRoutes, } from "../routes/trade";
 import { i18nRoutes, } from "../routes/i18n";
 import { importRoutes, } from "../routes/import";
 import { invitesRoutes, } from "../routes/invites";
@@ -124,6 +125,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(worldLoreEntriesRoutes(handleOpts,),);
   app.use(worldsRoutes(handleOpts,),);
   app.use(craftingRecipeRoutes(handleOpts,),);
+  app.use(tradeRoutes(handleOpts,),);
   app.use(chatSectionsRoutes(handleOpts,),);
   app.use(chatBackgroundsRoutes(handleOpts,),);
   app.use(locationExplorerRoutes(handleOpts,),);
