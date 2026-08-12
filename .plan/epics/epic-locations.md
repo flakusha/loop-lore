@@ -48,3 +48,11 @@ world and location traits.
 `WorldLocationTraitsService` is code-complete + tested but has ZERO external importers.
 Resolution: mount it under `/api/rpg/world-location-traits` (world + location traits +
 aggregate) via the WIRED-7 mount pattern — tracked by `TASK-wire-world-location-traits-routes`.
+
+## Generation via Creative Studio Workflows
+
+Location creation through the assistant is specified as a **config-driven workflow
+template** in `epic-assistant-creative-studio-workflows.md` §7.6. The `location-generation`
+workflow (`TASK-assistant-creative-studio-workflow-location.md`) wraps `/create location`
+with step building, `entity_type_presets.location` validation (geography consistency
+against the parent world), and schema/consistency/duplicate quality gates.
