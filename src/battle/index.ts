@@ -52,7 +52,6 @@ export {
   generateLoot,
   getEquippedInSlot,
   getEquippedItems,
-  type ItemQuality,
   type ItemType,
   type LootTableEntry,
   repairItem,

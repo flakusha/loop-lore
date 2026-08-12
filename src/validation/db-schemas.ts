@@ -9,7 +9,6 @@
  */
 import { t, } from "elysia";
 
-export const ActorItemTypeSchema = t.UnionEnum(["equipment", "consumable", "key_item", "artifact", "misc",],);
 export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "system",],);
 export const AdminOverrideActionSchema = t.UnionEnum(["ban", "approve", "restrict", "restore",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
@@ -133,9 +132,19 @@ export const ItemCategorySchema = t.UnionEnum([
   "container",
   "treasure",
   "book",
+  "artifact",
+  "misc",
   "other",
 ],);
-export const ItemRaritySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary", "unique",],);
+export const ItemRaritySchema = t.UnionEnum([
+  "common",
+  "uncommon",
+  "rare",
+  "epic",
+  "legendary",
+  "unique",
+  "artifact",
+],);
 export const ItemVisibilitySchema = t.UnionEnum(["visible", "hidden",],);
 export const KeyStatusSchema = t.UnionEnum(["active", "expired", "revoked",],);
 export const KeyTypeSchema = t.UnionEnum(["signing", "encryption", "symmetric", "master", "primary",],);
@@ -623,7 +632,7 @@ export const ActorNotesSchema = t.Object({
 export const ActorItemsSchema = t.Object({
   actor_id: t.String(),
   name: t.String(),
-  item_type: ActorItemTypeSchema,
+  item_type: ItemCategorySchema,
   description: t.Optional(t.String(),),
   quantity: t.Optional(t.Number(),),
   value: t.Optional(t.String(),),
