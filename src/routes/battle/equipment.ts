@@ -8,13 +8,15 @@ import {
   generateLoot,
   type LootTableEntry,
   repairItem,
+  toEquipmentItem,
 } from "../../battle";
 import { SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function equipmentRoutes(_opts: HandlerOpts,) {
+export function equipmentRoutes(opts: HandlerOpts,) {
+  const { database, } = opts;
   return new Elysia({ name: "battle-equipment", },)
     .post(
       "/api/battle/equipment/calculate",
@@ -33,6 +35,51 @@ export function equipmentRoutes(_opts: HandlerOpts,) {
         detail: {
           summary: "Calculate equipment modifiers",
           description: "Calculate stat modifiers from equipped items.",
+          tags: ["Battle",],
+        },
+      },
+    )
+    .post(
+      "/api/battle/equipment/calculate-from-items",
+      async (ctx: any,) => {
+        try {
+          const body = ctx.body as { itemIds: string[]; equipped?: Record<string, boolean> };
+          if (!Array.isArray(body.itemIds,) || body.itemIds.length === 0) {
+            return jsonError("itemIds must be a non-empty array", 400,);
+          }
+          const rows = await database
+            .selectFrom("items")
+            .select(["id", "name", "description", "category", "rarity", "properties",])
+            .where("id", "in", body.itemIds,)
+            .execute();
+          const byId = new Map(rows.map(r => [r.id, r,],));
+          const equipment: EquipmentItem[] = Array.from(body.itemIds, (id,) => {
+            const row = byId.get(id,);
+            if (!row) { return null; }
+            const item = toEquipmentItem({
+              id: row.id,
+              name: row.name,
+              description: row.description ?? "",
+              category: row.category,
+              rarity: row.rarity,
+              properties: (() => {
+                try { return JSON.parse(row.properties,); } catch { return {}; }
+              })(),
+            },);
+            if (body.equipped?.[id]) { item.equipped = true; }
+            return item;
+          },).filter((i): i is EquipmentItem => i !== null,);
+          return jsonResponse(calculateEquipmentModifiers(equipment,),);
+        } catch (error) {
+          log().error("Failed to calculate modifiers from item IDs", error instanceof Error ? error : undefined,);
+          return jsonError("Internal server error", 500,);
+        }
+      },
+      {
+        response: { 200: SuccessResponse, 400: SuccessResponse, },
+        detail: {
+          summary: "Calculate modifiers from world item IDs",
+          description: "Resolve world item definitions and compute equipment stat modifiers.",
           tags: ["Battle",],
         },
       },
