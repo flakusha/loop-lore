@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 181 epics
+**Total:** 182 epics
 
 ## Summary
 
@@ -12,6 +12,7 @@
 | 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Archival Workflow | Medium | Medium | 19 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
+| 📝 Draft | Epic: API Versioning (v1/v2+) | High | Medium | 5 | [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md) |
 | 📝 Draft | Epic: Assistant Creative Studio — Workflow Templates | High (MVP scoped, post-Gate C) | Large | 32 | [epic-assistant-creative-studio-workflows.md](/.plan/epics/epic-assistant-creative-studio-workflows.md) |
 | 📝 Draft | Epic: Chat Privacy | Medium | Medium | 4 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
@@ -223,6 +224,17 @@
 - **File:** `.plan/epics/epic-analytics-observability.md`
 
 Conversation analytics and observability dashboard. Covers per-chat cost tracking, model comparison, and memory visualization.
+
+### Epic: API Versioning (v1/v2+)
+
+- **Status:** 📝 Draft
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** api, versioning, routes, compatibility, deprecation, openapi
+- **File:** `.plan/epics/epic-api-versioning.md`
+
+Introduce explicit API versioning (`/api/v1/`, `/api/v2/`) so breaking changes
 
 ### Epic: Assistant Creative Studio — Workflow Templates
 

@@ -6,7 +6,7 @@
 **Type:** Feature Epic
 **Tags:** creative-studio, search, modals, toolbar, unified-search
 **Plan.md:** §46
-**Issue:** `EPIC-046`
+**Issue:** `EPIC-059`
 **Spec:** `docs/spec/creative-studio.md`, `docs/spec/gm-shadow-notes.md`
 
 ## Summary
@@ -91,6 +91,7 @@ Unified creative tools for assistant chat: context menus, modals for locations/w
 | Bulk operations              | `src/routes/search-bulk.ts`                                | Med    | new    |
 | Real-time updates (SSE)      | `src/routes/search-sse.ts`                                 | Med    | new    |
 | Plugin type registration     | `src/search/plugin-types.ts`                               | Low    | new    |
+| Workflow step UI + confirmation modal (owned by `epic-assistant-creative-studio-workflows.md`) | `src/frontend/creative-studio/workflow.ts` | Med | new |
 
 ## Dependencies
 

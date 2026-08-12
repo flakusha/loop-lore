@@ -194,6 +194,20 @@ endpoint. Automating provisioning is **out of core scope** — the connector con
 - `src/config/schema.ts` — config types
 - `src/db/enums.ts` — ProviderCapabilities.type enum
 - `docs/spec/integrations/` — integration specifications
+## Frontend Components
+
+FEAT-093 (API Key Management UI) and FEAT-094 (Provider Health Dashboard) require UI but are
+not enumerated in the Files list above. They must not duplicate the BYOK API-keys surface
+(`epic-byok-api-keys.md` → `src/frontend/settings/api-keys.ts`). Proposed frontend additions:
+
+- `src/frontend/settings/platform-credentials.ts` (new) — operator platform credential
+  management, distinct from BYO *user* keys in `api-keys.ts`; reuses `src/crypto` `encryptValue`.
+- `src/frontend/admin/provider-health.ts` (new) — wires `GET /api/providers` (extended in
+  §Mechanism) into a status + discovered-models + per-model cost view.
+- `src/components/provider-health.html` (new) — dashboard partial rendered by the admin view.
+
+Tracked by `TASK-platform-health-discovery-cost-display.md` (health + discovery + cost) and the
+operator credential store ticket; add explicit frontend subtasks there.
 
 ## References
 
