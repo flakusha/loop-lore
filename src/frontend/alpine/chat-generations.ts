@@ -21,12 +21,14 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     this._generationEventSource = es;
 
     es.addEventListener("stream-update", (event: MessageEvent,) => {
-      const container = document.querySelector("#stream-container",);
-      if (container) {
-        const DOMPurify = getDOMPurify();
-        container.innerHTML = DOMPurify ? DOMPurify.sanitize(event.data,) : event.data;
-      }
+      this._streamContent = event.data;
+      this.renderStreamContainer();
       this.activeAttemptId = chatId;
+    },);
+
+    es.addEventListener("tool_call", (event: MessageEvent,) => {
+      this._streamToolCalls.push(event.data,);
+      this.renderStreamContainer();
     },);
 
     es.addEventListener("stream-done", () => {
@@ -34,6 +36,8 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.isGenerating = false;
       this.activeAttemptId = null;
       this.generationDetail = null;
+      this._streamToolCalls = [];
+      this._streamContent = "";
       this._cleanupSSE();
       void (async () => {
         try {
@@ -49,6 +53,8 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.isGenerating = false;
       this.activeAttemptId = null;
       this.generationDetail = null;
+      this._streamToolCalls = [];
+      this._streamContent = "";
       this._cleanupSSE();
       try {
         const data = parseOr(ErrorEvent, jsonParseOr(event.data, null,), {},);
@@ -139,11 +145,21 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  renderStreamContainer() {
+    const container = document.querySelector("#stream-container",);
+    if (!container) { return; }
+    const DOMPurify = getDOMPurify();
+    const html = `${this._streamToolCalls.join("",)}${this._streamContent}`;
+    container.innerHTML = DOMPurify ? DOMPurify.sanitize(html,) : html;
+  },
+
   _cleanupSSE() {
     if (this._generationEventSource) {
       this._generationEventSource.close();
       this._generationEventSource = null;
     }
+    this._streamToolCalls = [];
+    this._streamContent = "";
     const container = document.querySelector("#stream-container",);
     if (container) { container.replaceChildren(); }
   },

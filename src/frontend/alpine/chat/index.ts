@@ -74,6 +74,8 @@ globalThis.chatState = function() {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
+    _streamToolCalls: [] as string[],
+    _streamContent: "",
     chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
     messages: [] as {
@@ -82,6 +84,7 @@ globalThis.chatState = function() {
       content: string;
       created_at: string;
       thinking?: string;
+      tool_calls?: { id: string; type: "function"; function: { name: string; arguments: string } }[] | null;
       actor_name?: string;
       totalVariants?: number;
       variantIndex?: number;
