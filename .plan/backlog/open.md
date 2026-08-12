@@ -68,6 +68,14 @@ P6+). "Remove dead rule `detectIntent`" (D4) dropped — already Removed 2026-08
 - **Multi-instance reconciliation spec** — expanded `docs/spec/multi-instance-reconciliation.md` with Phase 1-4 details, configuration, health endpoints, and integration points (2026-08-07).
 - **`.plan/` root cleanup** — removed duplication from `.plan/` root. Merged `contract-*.md` → `epic-file-splitting.md`, `external-integrations-plan.md` → `epic-platform-integrations.md`, `reconciliation-frontend-ux.md` → `epic-frontend-backend-integration.md`. Moved `gap-closure-report.md` → `.plan/tickets/`. Deleted `future-features-plan.md` (empty), `implementation-plan.md` (epics-index.md supersedes). `.plan/` root now contains only `README.md`, `epics-index.md`, `cross-mechanics-integration-matrix.md` (2026-08-07).
 - **Backlog consolidation** — `active.md` + `high-value.md` merged into `open.md`/`priority.md` (2026-08-08).
+- **Assistant tool-call UI (Gate C, C3)** — shipped (2026-08-12): assistant function
+  calls now persisted (`messages.tool_calls`, migration 037), returned by the messages
+  read API, rendered as collapsible tool-call blocks in chat bubbles, and shown live in
+  the stream container via `tool_call` SSE. Remaining Gate C sub-items verified complete
+  on `dev`: register page (`/register`→`/views/register` + `POST /api/auth/register`),
+  prompt registry (`src/prompts/registry.ts`), GM panels (`chat/gm-panel.html`) + quest
+  log (`/views/quests`), and world/location access (`requireWorldAccess`/`requireWorldOwner`
+  enforced on all locations handlers). Worktree: `p2g-gate-c`.
 
 ## Security & access — closed on dev (verified 2026-08-07)
 
