@@ -33,9 +33,9 @@ export function assertRowDeleted(numRows: number, label: string,): void {
   }
 }
 
-/** Parse a JSON field safely, returning fallback on error */
-export function parseJsonField<T,>(raw: string | null | undefined, fallback: T,): T {
-  if (raw == null) { return fallback; }
+/** Parse a JSON field safely from an unknown source, returning fallback on error or non-string input */
+export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
+  if (typeof raw !== "string") { return fallback; }
   const result = safeJsonParse<T>(raw,);
   return result.ok ? result.value : fallback;
 }
