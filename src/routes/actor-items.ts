@@ -9,9 +9,10 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { EquipState, } from "../db/enums";
 import { createEntityRoutes, } from "./entity-routes";
+import { actorItemsGameplayRoutes, } from "./actor-items/service";
 
 export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysia {
-  return createEntityRoutes(
+  const crud = createEntityRoutes(
     {
       parentPrefix: "actors",
       parentParam: "actorId",
@@ -49,4 +50,5 @@ export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysi
     },
     opts,
   );
+  return crud.use(actorItemsGameplayRoutes(opts,),) as unknown as Elysia;
 }
