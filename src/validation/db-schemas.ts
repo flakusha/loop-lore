@@ -761,6 +761,7 @@ export const MessagesSchema = t.Object({
   archived_at: t.Optional(t.String(),),
   format_version: t.Optional(t.Number(),),
   section_id: t.Optional(t.String(),),
+  tool_calls: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
