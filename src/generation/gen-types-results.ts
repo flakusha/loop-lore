@@ -7,7 +7,6 @@
 
 import type { CancelReason, CancelSource, PolicyIndicatorType, PolicySeverity, PolicyType, } from "../db/enums";
 
-
 /**
  * Generation Types — Results & Analysis
  *
@@ -19,6 +18,8 @@ export interface GenerationResult {
   content: string;
   /** Thinking/reasoning content if available */
   thinking?: string;
+  /** Function calls requested by the assistant (executed server-side). */
+  toolCalls?: GenerationToolCall[];
   /** Token usage */
   tokenUsage: TokenUsage;
   /** Generation time in ms */
@@ -87,4 +88,11 @@ export interface GenerationStep {
   error?: string;
   /** Result reference (message ID, asset ID, etc.) */
   resultId?: string;
+}
+
+/** A single function-call requested by the assistant during generation. */
+export interface GenerationToolCall {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
 }
