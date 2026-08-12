@@ -1,28 +1,24 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { serve, } from "bun";
-import { spawnSync, } from "node:child_process";
-import { existsSync, statSync, } from "node:fs";
-import { join, } from "node:path";
 import { initAgeGate, } from "../age-gate/controller";
 import { ensureTlsCerts, } from "../config/cert";
 import { loadConfig, } from "../config/load";
-import { compressAssets, copyDirectory, } from "../content/compress";
-import { injectContentHashes, } from "../content/hash-injection";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
 import { createApp, } from "../elysia-app";
-import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "../generation";
+import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
-import { backendToConfig, discoverBackends, } from "../services/sd-discovery";
 import { ServerExternalManager, } from "../services/server-external-manager";
 import { createRequestHandler, } from "./handler";
-import { createNonApiHandler, DOCS_PATH, walkDirectorySync, } from "./static-files";
+import { initAssetCompression, } from "./init-asset-compression";
+import { initBackgroundServices, } from "./init-background-services";
+import { createNonApiHandler, } from "./static-files";
 
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
@@ -40,6 +36,7 @@ export async function start() {
 
   // ── Auto-discover SD backends if not configured ──────────
   if (!config.generation.providers.sd || config.generation.providers.sd.length === 0) {
+    const { discoverBackends, backendToConfig, } = await import("../services/sd-discovery");
     const discovered = await discoverBackends({ timeoutMs: 2000, },);
     if (discovered.length > 0) {
       config = {
@@ -157,200 +154,14 @@ export async function start() {
   const { startRetentionCleanup, } = await import("../telemetry/cleanup");
   startRetentionCleanup(database,);
 
-  // ── Background initialization (non-blocking) ─────────────
-  const initPromises: Promise<void>[] = [];
-
-  // Seed character templates from config (idempotent)
-  if (config.characters.enabled) {
-    initPromises.push(
-      (async () => {
-        const { seedCharacterTemplates, mergeCharacterTemplates, } = await import("../characters/seed");
-        const { CHARACTERS_DEFAULTS, } = await import("../config/sections/characters");
-
-        // Use character templates from template loader (configs/templates/character.yaml)
-        // Merge built-in defaults with template-loaded characters
-        const templateCharacters = config.templates.character.templates;
-        const mergedTemplates = mergeCharacterTemplates(
-          CHARACTERS_DEFAULTS.templates,
-          templateCharacters,
-        );
-
-        const mergedConfig = { ...config.characters, templates: mergedTemplates, };
-        const result = await seedCharacterTemplates(database, mergedConfig, null, config.assets.uploadDir,);
-        if (result.created > 0) {
-          logger.info("character templates seeded", {
-            module: "server",
-            created: result.created,
-            skipped: result.skipped,
-          },);
-        }
-        if (result.errors.length > 0) {
-          logger.warn("character template seeding had errors", { module: "server", errors: result.errors, },);
-        }
-      })(),
-    );
-  }
-
-  // Auto-start external AI servers (llama.cpp, sd.cpp) in background
-  const autoStart = config.generation.autoStart;
-  if (autoStart) {
-    const llamaCppCfg = autoStart?.llamaCpp;
-    if (llamaCppCfg?.enabled) {
-      serverLogger.info("auto-starting llama.cpp", { module: "server", port: llamaCppCfg.port, },);
-      initPromises.push(
-        (async () => {
-          const instance = await serverManager.startLlamaCpp(llamaCppCfg,);
-          if (instance) {
-            const name = llamaCppCfg.alias || "llama";
-            registerProvider(
-              name,
-              new OpenAiCompatibleProvider({
-                name,
-                label: "Auto-started llama.cpp",
-                baseUrl: `http://127.0.0.1:${instance.port}/v1`,
-                model: name,
-                timeout: 30_000,
-                retries: 3,
-                allowUserApiKey: false,
-                models: {},
-              },),
-            );
-            if (!config.generation.defaultProvider) {
-              config.generation.defaultProvider = name;
-            }
-            config.generation.defaultModels[name] ??= name;
-          }
-        })(),
-      );
-    }
-    const llamaSwapCfg = autoStart?.llamaSwap;
-    if (llamaSwapCfg?.enabled) {
-      serverLogger.info("auto-starting llama-swap", {
-        module: "server",
-        configPath: llamaSwapCfg.configPath,
-      },);
-      initPromises.push(
-        (async () => {
-          const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
-          if (instance) {
-            serverLogger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
-          } else {
-            serverLogger.warn("llama-swap auto-start failed or skipped", { module: "server", },);
-          }
-        })(),
-      );
-    }
-    const sdCppCfg = autoStart?.sdCpp;
-    if (sdCppCfg?.enabled) {
-      serverLogger.info("auto-starting sd-cpp", { module: "server", port: sdCppCfg.port, },);
-      initPromises.push(
-        (async () => {
-          const instance = await serverManager.startSdCpp(sdCppCfg,);
-          if (!instance) {
-            serverLogger.warn("sd-cpp auto-start failed or skipped", { module: "server", },);
-          }
-        })(),
-      );
-    }
-  } else {
-    serverLogger.debug("autoStart not configured — skipping external server launch", { module: "server", },);
-  }
-
-  // Resolve all background init before proceeding to rest
-  await Promise.allSettled(initPromises,);
+  // ── Background init (character templates + external AI servers) ──
+  await initBackgroundServices(database, config, serverLogger, serverManager,);
 
   // ── Load all plugins (core → community → local) ──────
   await loadAllPlugins(database,);
 
-  // ── Auto-build frontend JS if missing ────────────────────
-  const distPublic = join(import.meta.dir, "..", "..", "dist", "public",);
-  const jsTarget = join(distPublic, "app.js",);
-  if (!existsSync(jsTarget,)) {
-    logger.info({ message: "Frontend JS not built — auto-building...", },);
-    const result = spawnSync("bun", ["run", "build:frontend",], {
-      stdio: ["ignore", "inherit", "inherit",],
-    },);
-    if (result.status === 0) {
-      logger.info({ message: "Frontend build complete", },);
-    } else {
-      logger.error({ message: "Frontend build failed — some features unavailable", },);
-    }
-  }
-
-  const sourcePublicDirectory = join(import.meta.dir, "..", "..", "src", "public",);
-  const sourceViewsDirectory = join(import.meta.dir, "..", "..", "src", "views",);
-  const destinationPublicDirectory = join(import.meta.dir, "..", "..", "dist", "public",);
-
-  // Helper: check if source is newer than destination
-  function needsCompression(srcDir: string, destDir: string,): boolean {
-    if (!existsSync(destDir,)) { return true; }
-    const srcFiles = walkDirectorySync(srcDir,);
-    for (const f of srcFiles) {
-      const srcPath = join(srcDir, f,);
-      const destPath = join(destDir, f,);
-      if (!existsSync(destPath,)) { return true; }
-      const srcStat = statSync(srcPath,);
-      const destStat = statSync(destPath,);
-      if (srcStat.mtimeMs > destStat.mtimeMs) { return true; }
-    }
-    return false;
-  }
-
-  // ── Pre-compress static assets (parallel, graceful on failure) ──
-  const compressionJobs: { label: string; src: string; dest: string }[] = [];
-  if (existsSync(sourcePublicDirectory,)) {
-    copyDirectory(sourcePublicDirectory, destinationPublicDirectory,);
-    if (needsCompression(sourcePublicDirectory, destinationPublicDirectory,)) {
-      compressionJobs.push({ label: "public", src: sourcePublicDirectory, dest: destinationPublicDirectory, },);
-    }
-  }
-  if (existsSync(sourceViewsDirectory,)) {
-    copyDirectory(sourceViewsDirectory, destinationPublicDirectory,);
-    if (needsCompression(sourceViewsDirectory, destinationPublicDirectory,)) {
-      compressionJobs.push({ label: "views", src: sourceViewsDirectory, dest: destinationPublicDirectory, },);
-    }
-  }
-  if (existsSync(DOCS_PATH,)) {
-    compressionJobs.push({ label: "docs", src: DOCS_PATH, dest: DOCS_PATH, },);
-  }
-
-  if (compressionJobs.length > 0) {
-    const promises: Promise<void>[] = [];
-    for (const job of compressionJobs) {
-      promises.push(
-        (async () => {
-          const result = await compressAssets(job.src, job.dest,);
-          if (result.total > 0) {
-            logger.info({
-              message: `Compressed ${job.label}`,
-              total: result.total,
-              bytes: result.originalBytes,
-              gz: result.compressedBytes.gz,
-              zst: result.compressedBytes.zst,
-              br: result.compressedBytes.br,
-            },);
-          }
-        })(),
-      );
-    }
-    const results = await Promise.allSettled(promises,);
-    for (const r of results) {
-      if (r.status === "rejected") {
-        logger.warn({ message: "Asset compression failed", error: String(r.reason,), },);
-      }
-    }
-  }
-
-  // Inject content-hashed filenames into HTML (enables immutable cache for hashed assets).
-  // Runs after copyDirectory so newly-copied HTML templates also get hashed references.
-  const hashResult = injectContentHashes(destinationPublicDirectory,);
-  if (hashResult.replaced > 0) {
-    logger.info({
-      message: "Hash-injected references",
-      replaced: hashResult.replaced,
-      skipped: hashResult.skipped,
-    },);
-  }
+  // ── Pre-compress static assets + hash-inject HTML ──────
+  await initAssetCompression(logger,);
 
   // ── Start liveliness probes for managed servers ──────────
   serverManager.startLivenessProbes();
