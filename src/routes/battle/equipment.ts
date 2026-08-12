@@ -10,6 +10,7 @@ import {
   repairItem,
   toEquipmentItem,
 } from "../../battle";
+import { ItemsService, } from "../../story/items";
 import { SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
@@ -157,14 +158,30 @@ export function equipmentRoutes(opts: HandlerOpts,) {
     )
     .post(
       "/api/battle/equipment/loot",
-      (ctx: any,) => {
+      async (ctx: any,) => {
         try {
           const body = ctx.body as {
             lootTable: LootTableEntry[];
             monsterLevel: number;
+            worldId: string;
+            actorId?: string;
+            locationId?: string;
           };
-          const loot = generateLoot(body.lootTable, body.monsterLevel,);
-          return jsonResponse(loot,);
+          const { lootTable, monsterLevel, worldId, actorId, locationId, } = body;
+          const loot = generateLoot(lootTable, monsterLevel,);
+          if (!worldId || (!actorId && !locationId)) {
+            return jsonResponse(loot,);
+          }
+          // Persist drops that reference real item definitions.
+          const items = new ItemsService(database,);
+          const worldItemIds: string[] = [];
+          for (const drop of loot) {
+            const id = actorId
+              ? await items.giveToNpc(drop.itemId, actorId, worldId, drop.quantity,)
+              : await items.placeInLocation(drop.itemId, locationId!, worldId, drop.quantity,);
+            worldItemIds.push(id,);
+          }
+          return jsonResponse({ ...loot, worldItemIds, },);
         } catch (error) {
           log().error("Failed to generate loot", error instanceof Error ? error : undefined,);
           return jsonError("Internal server error", 500,);
@@ -174,7 +191,7 @@ export function equipmentRoutes(opts: HandlerOpts,) {
         response: { 200: SuccessResponse, },
         detail: {
           summary: "Generate loot from table",
-          description: "Roll loot drops based on monster level and loot table.",
+          description: "Roll loot drops based on monster level and loot table; persists instances when worldId + destination given.",
           tags: ["Battle",],
         },
       },
