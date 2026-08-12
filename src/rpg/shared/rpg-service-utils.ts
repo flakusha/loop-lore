@@ -2,7 +2,17 @@
  * Shared RPG service utilities — deduplicated helpers used across service files.
  */
 import type { Kysely, } from "kysely";
+import { getLogger, } from "../../logger";
+import type { Logger, } from "../../logger";
 import { safeJsonParse, uid, } from "../../utils";
+
+/**
+ * Create a module-scoped logger for RPG services.
+ * Replaces the per-service `getLog()` wrapper pattern.
+ */
+export function getRpgLog(moduleName: string,): Logger {
+  return getLogger().child({ module: moduleName, },);
+}
 
 /** Generate a new ID and timestamp */
 export function nowAndId(): { id: string; now: string } {
