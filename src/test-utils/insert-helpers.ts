@@ -614,6 +614,28 @@ export async function insertActorItems(
   } as any,).execute();
 }
 
+/** Insert a actor_currencies row. */
+export async function insertActorCurrencies(
+  db: Db,
+  actor_id: string,
+  world_id: string,
+  currency_type: string,
+  opts?: {
+    id?: Generated<string>;
+    balance?: Generated<number>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("actor_currencies",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    world_id,
+    currency_type,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a actor_lore_entries row. */
 export async function insertActorLoreEntries(
   db: Db,

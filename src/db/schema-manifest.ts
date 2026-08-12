@@ -599,6 +599,15 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Core: Actor Systems ──────────────────────────────────────────────
+  .table("actor_currencies", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    currency_type: col("text", { notNull: true, },),
+    balance: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("actor_items", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
