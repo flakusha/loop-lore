@@ -5,6 +5,7 @@
  * from current DB state.
  */
 import { jsonParseOr, } from "../../utils";
+import { ItemsService, } from "../items";
 import type { LocationState, NpcState, QuestConfig, StoryContext, } from "../types";
 import type { WorldState, } from "./types";
 
@@ -102,6 +103,7 @@ export async function buildContext(
     .execute();
 
   const actors: StoryContext["actors"] = [];
+  const items = new ItemsService(state.db,);
   for (const p of participantRows) {
     const npcRow = p.agent_type === "npc" || p.agent_type === "ai"
       ? await state.db.selectFrom("npc_states",).selectAll().where("actor_id", "=", p.id,).executeTakeFirst()
@@ -114,7 +116,7 @@ export async function buildContext(
         mental_state: npcRow.mental_state,
         knowledge: jsonParseOr(npcRow.knowledge, {},),
         relationships: jsonParseOr(npcRow.relationships, {},),
-        inventory: jsonParseOr(npcRow.inventory, [],),
+        inventory: await items.getNpcInventory(p.id,),
         schedule: jsonParseOr(npcRow.schedule, {},),
       };
     }

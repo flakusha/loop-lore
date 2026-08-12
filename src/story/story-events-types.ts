@@ -5,6 +5,7 @@
  * Leaf node — no imports from other story type modules.
  */
 import type { WorldEventType as WET, } from "../db/enums";
+import type { ItemInstance, } from "./items/types";
 
 // ─── World Events ────────────────────────────────────────────────
 export interface WorldEvent {
@@ -21,7 +22,7 @@ export interface NpcState {
   mental_state: string;
   knowledge: Record<string, { fact: string; confidence: number; source: string }>;
   relationships: Record<string, number>;
-  inventory: string[];
+  inventory: ItemInstance[];
   schedule: Record<string, { action: string; locationId?: string }>;
 }
 

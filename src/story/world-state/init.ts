@@ -34,7 +34,6 @@ export async function initializeNpcStates(state: WorldState, worldId: string,): 
           location_id: null,
           health: 100,
           mental_state: "neutral",
-          inventory: "[]",
           relationships: "{}",
           knowledge: "{}",
           schedule: "{}",
