@@ -63,6 +63,25 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema.createIndex("idx_actor_items_actor",).on("actor_items",).column("actor_id",).execute();
 
+  // ── Actor Currencies (trade/eco balances per world) ────
+  await database.schema
+    .createTable("actor_currencies",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",),)
+    .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id",),)
+    .addColumn("currency_type", "text", (col,) => col.notNull(),)
+    .addColumn("balance", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint("ck_actor_currencies_balance", sql`balance >= 0`,)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_actor_currencies_actor_world",)
+    .on("actor_currencies",)
+    .columns(["actor_id", "world_id",],)
+    .execute();
+
   // ── Actor Lore Entries (character_book) ──────────────
   await database.schema
     .createTable("actor_lore_entries",)
@@ -94,6 +113,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.dropIndex("idx_actor_currencies_actor_world",).execute();
+  await database.schema.dropTable("actor_currencies",).execute();
   await database.schema.dropTable("actor_lore_entries",).execute();
   await database.schema.dropTable("actor_items",).execute();
   await database.schema.dropTable("actor_notes",).execute();
