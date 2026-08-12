@@ -3752,7 +3752,7 @@
     "hash": "87448ef"
   },
   "TASK-CHARACTER-LICENSING": {
-    "epic": "",
+    "epic": "EPIC-059 (Creative Studio)",
     "extid": "TASK-CHARACTER-LICENSING",
     "git_issue": "16b8345",
     "hash": "16b8345",
@@ -3880,7 +3880,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-RELATIONSHIPS": {
-    "epic": "",
+    "epic": "EPIC-059 (Creative Studio)",
     "extid": "TASK-CHARACTER-RELATIONSHIPS",
     "label": "task",
     "priority": "medium",
@@ -3892,7 +3892,7 @@
     "status": "done"
   },
   "TASK-CHARACTER-RPG-STATS": {
-    "epic": "",
+    "epic": "EPIC-059 (Creative Studio)",
     "extid": "TASK-CHARACTER-RPG-STATS",
     "label": "task",
     "priority": "medium",
@@ -3925,7 +3925,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-TEMPLATE-SEEDING": {
-    "epic": "",
+    "epic": "EPIC-059 (Creative Studio)",
     "extid": "TASK-CHARACTER-TEMPLATE-SEEDING",
     "label": "task",
     "priority": "medium",
@@ -9921,5 +9921,16 @@
     "tags": [],
     "title": "XMPP Integration",
     "type": "TASK"
+  },
+  "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW",
+    "type": "TASK",
+    "title": "# Cross-Tool Data Portability Review (both directions)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-tool-data-portability-review.md"
   }
 }

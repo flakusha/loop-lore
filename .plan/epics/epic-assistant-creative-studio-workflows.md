@@ -572,14 +572,20 @@ The gallery UI (`src/frontend/…/gallery-sidebar.html`, `partials/gallery/previ
 renders `galleryAssets[]` with per-item **click-to-preview**, copy-URL, download, delete — but
 there is **no selection state**. Batch operations add a selection layer:
 
-- **Selection model** — `selectedAssetIds: Set<string>` in the chat Alpine store (peer to
-  `galleryAssets`, `src/frontend/alpine/chat-types/core.ts` / `chat-utils/gallery.ts`); toggled
-  via checkbox, shift-click range, "select all visible". UI-only; not persisted server-side by default.
-- **Batch download** — collect selected IDs → `POST /api/assets/batch-download` (new handler in
-  the asset routes) returns a zip stream (server-side zip keeps auth + bandwidth local). Client-side
-  zip is a fallback only if the server endpoint is absent.
-- **Batch actions (v1 scope: download + delete)** — move-to-world / attach-to-message / tag / export
-  are future workflows over the selection set, explicitly out of v1.
+- **Selection model** — `selectedAssetIds: string[]` in the chat Alpine store, a **peer array
+  to `galleryAssets`** (`src/frontend/alpine/chat-types/core.ts` / `chat-utils/gallery.ts`) so
+  Alpine `x-for` iterates it directly (a `Set` would not render — use `[...selectedAssetIds]` if a
+  Set is preferred). Toggled via checkbox, shift-click range, "select all visible". UI-only; not
+  persisted server-side by default.
+- **View (where it renders)** — per-item checkboxes + a batch-action bar are added to
+  `src/components/chat/gallery-sidebar.html` (modify), backed by the `selectedAssetIds` state in
+  `chat-utils/gallery.ts`. No new component file required for v1.
+- **Batch download** — collect selected IDs → `POST /api/assets/batch-download`. Handler lives in
+  a new `src/routes/assets.ts` (export `assetsRoutes`, mount in `src/elysia-app.ts` alongside the
+  existing inline `POST /api/assets`), returns a server-side zip stream (keeps auth + bandwidth
+  local). Client-side zip is a fallback only if the server endpoint is absent.
+- **Batch actions (v1 scope: download + delete)** — move-to-world / attach-to-message / tag /
+  export are future workflows over the selection set, explicitly out of v1.
 - **Gates** — batch download honors NSFW rating visibility (omit/restrict un-consented NSFW) and
   asset ownership/scope.
 
@@ -816,7 +822,7 @@ See `TASK-assistant-nsfw-api-prefiltering.md` for implementation.
 | `.plan/tickets/TASK-assistant-third-party-api-integration.md` | new |
 | `.plan/tickets/TASK-assistant-nsfw-api-prefiltering.md` | new |
 | `src/frontend/alpine/chat-utils/gallery.ts` (selection store) | modify  |
-| asset routes — `batch-download` handler (zip)                 | modify  |
+| `src/routes/assets.ts` — `POST /api/assets/batch-download` handler (zip) | new (mount in `src/elysia-app.ts`) |
 | `src/assistant/workflows/gallery-edit.ts`                     | new (edit workflow UX over src/image-edit) |
 | `configs/templates/workflows/gallery-edit.yaml`               | new      |
 
