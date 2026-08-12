@@ -33,20 +33,20 @@ Reimplementation of SillyTavern with enhanced features:
 
 ### RPG Mechanics Status
 
-| System | Status | Code Location | Plan Epic |
-|--------|--------|---------------|-----------|
-| Dice engine | ✅ Implemented | `src/rpg/dice.ts` | `epic-rpg-mechanics` |
-| Character stats | ✅ Implemented | `src/rpg/stats.ts`, `db: character_stats` | `epic-rpg-mechanics` |
-| Combat | ✅ Implemented | `src/rpg/combat.ts` | `epic-rpg-mechanics` |
-| XP & leveling | ✅ Implemented | `src/rpg/xp.ts` | `epic-rpg-mechanics` |
-| Loot tables | 🟡 Service only (not persisted) | `src/rpg/loot/` | `epic-item-systems-unification` |
-| Skills | 🟡 Service only (no routes) | `src/rpg/skills/`, `db: character_skills` | `epic-skills-professions-config` |
-| Professions | 🟡 Tables only (no service/routes) | `db: professions` | `epic-skills-professions-config` |
-| Item definitions | ✅ Implemented | `src/story/items/`, `db: items` | `epic-item-systems-unification` |
-| Item instances | ✅ Implemented | `src/story/items/`, `db: world_items` | `epic-item-systems-unification` |
-| Item unification | 🔲 Planned | — | `epic-item-systems-unification` |
-| Trade/Economy | 🔲 Planned | — | `epic-item-systems-unification` |
-| Crafting execution | 🔲 Planned (recipes service exists) | `src/rpg/crafting/` | `epic-crafting-professions` |
+| System             | Status                              | Code Location                             | Plan Epic                        |
+| ------------------ | ----------------------------------- | ----------------------------------------- | -------------------------------- |
+| Dice engine        | ✅ Implemented                      | `src/rpg/dice.ts`                         | `epic-rpg-mechanics`             |
+| Character stats    | ✅ Implemented                      | `src/rpg/stats.ts`, `db: character_stats` | `epic-rpg-mechanics`             |
+| Combat             | ✅ Implemented                      | `src/rpg/combat.ts`                       | `epic-rpg-mechanics`             |
+| XP & leveling      | ✅ Implemented                      | `src/rpg/xp.ts`                           | `epic-rpg-mechanics`             |
+| Loot tables        | 🟡 Service only (not persisted)     | `src/rpg/loot/`                           | `epic-item-systems-unification`  |
+| Skills             | 🟡 Service only (no routes)         | `src/rpg/skills/`, `db: character_skills` | `epic-skills-professions-config` |
+| Professions        | 🟡 Tables only (no service/routes)  | `db: professions`                         | `epic-skills-professions-config` |
+| Item definitions   | ✅ Implemented                      | `src/story/items/`, `db: items`           | `epic-item-systems-unification`  |
+| Item instances     | ✅ Implemented                      | `src/story/items/`, `db: world_items`     | `epic-item-systems-unification`  |
+| Item unification   | 🔲 Planned                          | —                                         | `epic-item-systems-unification`  |
+| Trade/Economy      | 🔲 Planned                          | —                                         | `epic-item-systems-unification`  |
+| Crafting execution | 🔲 Planned (recipes service exists) | `src/rpg/crafting/`                       | `epic-crafting-professions`      |
 
 ## Document Structure
 
@@ -84,18 +84,18 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 
 ### Spec ↔ Plan Reconciliation
 
-| Spec | Implements | Related Epic | Spec Status |
-|------|-----------|--------------|-------------|
-| `spec/rpg-mechanics.md` | Dice, stats, combat, XP, loot | `epic-rpg-mechanics` | 🟡 Partial (see RPG Status) |
-| `spec/actors.md` | Actor data model, inventory | `epic-item-systems-unification` | 🟡 Inventory gaps |
-| `spec/character-spec.md` | Character import/export | `epic-character-core-system` | ✅ Largely current |
-| `spec/crafting-professions.md` | Crafting disciplines | `epic-crafting-professions`, `epic-skills-professions-config` | 🟡 DB layer done, routes pending |
-| `spec/economy-trading.md` | Trade, market dynamics | `epic-item-systems-unification` | 🔲 Not started |
-| `spec/items.md` | Item types, properties | `epic-item-systems-unification` | 🔲 Not started |
-| `spec/inventory.md` | Inventory management | `epic-item-systems-unification` | 🔲 Not started |
-| `spec/architecture.md` | System layers, request flow | — | ✅ Current |
-| `spec/schema.md` | Full DB schema | — | 🟡 Regenerate after migrations |
-| `spec/api-routes.md` | REST API contract | — | 🟡 Regenerate after routes added |
+| Spec                           | Implements                    | Related Epic                                                  | Spec Status                      |
+| ------------------------------ | ----------------------------- | ------------------------------------------------------------- | -------------------------------- |
+| `spec/rpg-mechanics.md`        | Dice, stats, combat, XP, loot | `epic-rpg-mechanics`                                          | 🟡 Partial (see RPG Status)      |
+| `spec/actors.md`               | Actor data model, inventory   | `epic-item-systems-unification`                               | 🟡 Inventory gaps                |
+| `spec/character-spec.md`       | Character import/export       | `epic-character-core-system`                                  | ✅ Largely current               |
+| `spec/crafting-professions.md` | Crafting disciplines          | `epic-crafting-professions`, `epic-skills-professions-config` | 🟡 DB layer done, routes pending |
+| `spec/economy-trading.md`      | Trade, market dynamics        | `epic-item-systems-unification`                               | 🔲 Not started                   |
+| `spec/items.md`                | Item types, properties        | `epic-item-systems-unification`                               | 🔲 Not started                   |
+| `spec/inventory.md`            | Inventory management          | `epic-item-systems-unification`                               | 🔲 Not started                   |
+| `spec/architecture.md`         | System layers, request flow   | —                                                             | ✅ Current                       |
+| `spec/schema.md`               | Full DB schema                | —                                                             | 🟡 Regenerate after migrations   |
+| `spec/api-routes.md`           | REST API contract             | —                                                             | 🟡 Regenerate after routes added |
 
 ### Architecture & Core
 
@@ -163,27 +163,27 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 
 ### Epic System
 
-| Directory | Purpose | Count |
-|-----------|---------|-------|
-| `.plan/epics/` | Epic definitions (feature breakdown, acceptance criteria) | 172 epics |
-| `.plan/tickets/` | Task tickets (implementation work items) | 600+ tasks |
-| `.plan/epics-index.md` | Auto-generated consolidated epic status | — |
+| Directory              | Purpose                                                   | Count      |
+| ---------------------- | --------------------------------------------------------- | ---------- |
+| `.plan/epics/`         | Epic definitions (feature breakdown, acceptance criteria) | 172 epics  |
+| `.plan/tickets/`       | Task tickets (implementation work items)                  | 600+ tasks |
+| `.plan/epics-index.md` | Auto-generated consolidated epic status                   | —          |
 
 ### Active Epics (Recently Created)
 
-| Epic | Priority | Status | Tasks | Scope |
-|------|----------|--------|-------|-------|
-| [`epic-item-systems-unification.md`](/.plan/epics/epic-item-systems-unification.md) | High | ⬜ Not Started | 15 | Unify item types, link NPC inventory, wire crafting, implement trade, item seeding |
-| [`epic-skills-professions-config.md`](/.plan/epics/epic-skills-professions-config.md) | High | ⬜ Not Started | 6 | Skills routes, professions service, character config skills/prof, item config templates |
+| Epic                                                                                  | Priority | Status         | Tasks | Scope                                                                                   |
+| ------------------------------------------------------------------------------------- | -------- | -------------- | ----- | --------------------------------------------------------------------------------------- |
+| [`epic-item-systems-unification.md`](/.plan/epics/epic-item-systems-unification.md)   | High     | ⬜ Not Started | 15    | Unify item types, link NPC inventory, wire crafting, implement trade, item seeding      |
+| [`epic-skills-professions-config.md`](/.plan/epics/epic-skills-professions-config.md) | High     | ⬜ Not Started | 6     | Skills routes, professions service, character config skills/prof, item config templates |
 
 ### Epic Status Legend
 
-| Symbol | Meaning |
-|--------|---------|
-| 📝 Draft | Aspirational spec, not yet actionable |
-| ⬜ Not Started | Ready for implementation |
-| 🟡 In Progress | Some sub-tasks merged |
-| ✅ Complete | All acceptance criteria met |
+| Symbol         | Meaning                               |
+| -------------- | ------------------------------------- |
+| 📝 Draft       | Aspirational spec, not yet actionable |
+| ⬜ Not Started | Ready for implementation              |
+| 🟡 In Progress | Some sub-tasks merged                 |
+| ✅ Complete    | All acceptance criteria met           |
 
 ### Roadmaps & Ideas
 

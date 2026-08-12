@@ -381,4 +381,3 @@ const MODE_INSTRUCTIONS: Record<ChatMode, string> = {
 2. **Mode transitions** — Can a chat switch from `story` to `battle` mid-conversation? Yes — the mode affects generation, not state. Switching is safe.
 
 3. **Response style vs max_tokens** — Should `custom` style use `response_style_custom` as max_tokens, or should it be a multiplier? Recommendation: direct max_tokens for simplicity.
-

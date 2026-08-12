@@ -29,22 +29,22 @@ compression code ships, and token accounting uses a char heuristic everywhere.
 
 ## Key Feature
 
-| Feature                 | ID           | Effort | Description                                                                 |
-| ----------------------- | ------------ | ------ | --------------------------------------------------------------------------- |
-| Lossless/lossy tier model | FEA-ctx-tier | High   | Per-section losslessness contract: lossless tiers never summarized/truncated |
+| Feature                   | ID           | Effort | Description                                                                                                                |
+| ------------------------- | ------------ | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Lossless/lossy tier model | FEA-ctx-tier | High   | Per-section losslessness contract: lossless tiers never summarized/truncated                                               |
 | Consolidate dead system   | FEA-ctx-dead | Med    | Delete/merge PATH B (context-window.injectMemories/injectEvents, getChatContext consumers) + context-compressor/ dead code |
-| Accurate token counting   | FEA-ctx-tok  | Med    | Replace char heuristic (×0.3 / ~4 chars-per-token) with real tokenizer (tiktoken) |
-| Compression metadata      | FEA-ctx-meta | Low    | Emit droppedTokens/compressedTokens/section-drops to telemetry per request |
-| History compaction policy | FEA-ctx-sum  | Med    | Make summarize-vs-truncate configurable per mode; lossless window never summarized |
-| Tooling assessment        | FEA-ctx-tool | Low    | Document lean-ctx / tiktoken (rtk) applicability for chat context (research outcome below) |
+| Accurate token counting   | FEA-ctx-tok  | Med    | Replace char heuristic (×0.3 / ~4 chars-per-token) with real tokenizer (tiktoken)                                          |
+| Compression metadata      | FEA-ctx-meta | Low    | Emit droppedTokens/compressedTokens/section-drops to telemetry per request                                                 |
+| History compaction policy | FEA-ctx-sum  | Med    | Make summarize-vs-truncate configurable per mode; lossless window never summarized                                         |
+| Tooling assessment        | FEA-ctx-tool | Low    | Document lean-ctx / tiktoken (rtk) applicability for chat context (research outcome below)                                 |
 
 ## Lossless / Lossy Contract (owner decision)
 
-| Tier | Data | Policy |
-| ---- | ---- | ------ |
-| **Lossless** | system, persona/actorHeader, NSFW gate, authorNote, GM notes, pinned examples, **recent chat history** (lossless window, `keepLast`), **current location + world/location state**, dynamic date/time | Always verbatim. Excess in a lossless tier drops the **oldest** member only if the tier itself is allowed to shrink (recent chat → promote older to lossy summary); it must never be silently summarized. |
-| **Lossy-by-selection** | memories, lore beyond actives, events beyond top-N, ambient | Dropped/capped by importance/confidence/relevance + budget. Kept content verbatim but selection is lossy. |
-| **Lossy-by-summary** | history older than the lossless window | ContextCompactor summarizes into one `[Conversation Summary]` system message. |
+| Tier                   | Data                                                                                                                                                                                                 | Policy                                                                                                                                                                                                    |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lossless**           | system, persona/actorHeader, NSFW gate, authorNote, GM notes, pinned examples, **recent chat history** (lossless window, `keepLast`), **current location + world/location state**, dynamic date/time | Always verbatim. Excess in a lossless tier drops the **oldest** member only if the tier itself is allowed to shrink (recent chat → promote older to lossy summary); it must never be silently summarized. |
+| **Lossy-by-selection** | memories, lore beyond actives, events beyond top-N, ambient                                                                                                                                          | Dropped/capped by importance/confidence/relevance + budget. Kept content verbatim but selection is lossy.                                                                                                 |
+| **Lossy-by-summary**   | history older than the lossless window                                                                                                                                                               | ContextCompactor summarizes into one `[Conversation Summary]` system message.                                                                                                                             |
 
 Rule: a lossless-tier section is never listed in the priority-drop path while a
 lossy tier above it has remaining slack; lossless is dropped **last**, lossy is
@@ -70,6 +70,7 @@ dropped **first**.
   test-only). This layer never feeds the LLM.
 
 **Dead compression code:**
+
 - `src/generation/context-compressor/` (`compressMessages`) is referenced **only by its own test** — not wired.
 - `compactPromptHistory` export (`prompt-assembler.ts:183`) has **no callers**.
 - `context-window-config.ts` `DEFAULT_CONTEXT_WINDOW` + `compressMessages` are unused by the real
@@ -80,6 +81,7 @@ dropped **first**.
 accuracy. Over/under-estimation causes premature whole-section drops (loss) or budget blowouts.
 
 **Per-section current behavior (grounded):**
+
 - chat-history: **verbatim**, decrypted, limit `floor(tokenBudget/4)` msgs (`chat-history.ts:13-51`) — already lossless.
 - story-context (location + location_states time/weather/atmosphere): verbatim, story-mode only (`story-context.ts:12-42`).
 - memories: lossy-by-selection — provision (scope/privacy/shareability/trust) + injection
@@ -91,19 +93,19 @@ accuracy. Over/under-estimation causes premature whole-section drops (loss) or b
 
 ## Candidate Tasks
 
-| Task                  | Title                                                                                     | Priority | Status      |
-| --------------------- | ----------------------------------------------------------------------------------------- | -------- | ----------- |
-| TASK-ctx-tier-model   | Add per-section `losslessness` flag to section specs; enforce lossless-last in budget/drop | High     | Not Started |
-| TASK-ctx-dead-code    | Delete PATH B (`src/chat/context-window.ts`, `service/context.ts`, `token-counter.ts:81`, dead `injectMemories/injectEvents`, `getChatContext`) or repoint debug route to PATH A; remove context-compressor/ + compactPromptHistory | High | Not Started |
-| TASK-ctx-tiktoken     | Adopt `@dqbd/tiktoken` (WASM) tokenizer; per-model encodings; replace char heuristic. Keep pure fallback when model unknown | High | Not Started |
-| TASK-ctx-metrics      | Emit compression metadata (original/compressed tokens, count, section drops, per-tier loss) to telemetry + `compress-metadata` on response | Med | Not Started |
-| TASK-ctx-summarize-cfg| Configurable strategy (sliding/summarize/truncate) + lossless window size per mode; wire into build-prompt (stop hardcoding 0.85/keepLast) | Med | Not Started |
-| TASK-ctx-lore-budget  | Cap unbounded lore section with a token budget (currently never budgeted)                  | Med     | Not Started |
-| TASK-ctx-token-accuracy| Golden tests: token estimates vs tiktoken ground truth; budget enforcement boundaries    | Med     | Not Started |
-| TASK-ctx-leanctx-doc  | Research note codifying lean-ctx/tiktoken applicability (see Research)                     | Low     | Not Started |
-| TASK-ctx-storemark    | § Write-up of story-front-end context-template precedent → guard spec (recent-verbatim + summary-card) | Low | Not Started |
-| TASK-ctx-summary-self | Evaluate ACON-style guideline learning for lossy-by-summary tier (future; no import)       | Low     | Not Started |
-| TASK-ctx-cache-note   | Telemetry note for provider prompt-caching (stable system prefix → cache hits)             | Low     | Not Started |
+| Task                    | Title                                                                                                                                                                                                                               | Priority | Status      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| TASK-ctx-tier-model     | Add per-section `losslessness` flag to section specs; enforce lossless-last in budget/drop                                                                                                                                          | High     | Not Started |
+| TASK-ctx-dead-code      | Delete PATH B (`src/chat/context-window.ts`, `service/context.ts`, `token-counter.ts:81`, dead `injectMemories/injectEvents`, `getChatContext`) or repoint debug route to PATH A; remove context-compressor/ + compactPromptHistory | High     | Not Started |
+| TASK-ctx-tiktoken       | Adopt `@dqbd/tiktoken` (WASM) tokenizer; per-model encodings; replace char heuristic. Keep pure fallback when model unknown                                                                                                         | High     | Not Started |
+| TASK-ctx-metrics        | Emit compression metadata (original/compressed tokens, count, section drops, per-tier loss) to telemetry + `compress-metadata` on response                                                                                          | Med      | Not Started |
+| TASK-ctx-summarize-cfg  | Configurable strategy (sliding/summarize/truncate) + lossless window size per mode; wire into build-prompt (stop hardcoding 0.85/keepLast)                                                                                          | Med      | Not Started |
+| TASK-ctx-lore-budget    | Cap unbounded lore section with a token budget (currently never budgeted)                                                                                                                                                           | Med      | Not Started |
+| TASK-ctx-token-accuracy | Golden tests: token estimates vs tiktoken ground truth; budget enforcement boundaries                                                                                                                                               | Med      | Not Started |
+| TASK-ctx-leanctx-doc    | Research note codifying lean-ctx/tiktoken applicability (see Research)                                                                                                                                                              | Low      | Not Started |
+| TASK-ctx-storemark      | § Write-up of story-front-end context-template precedent → guard spec (recent-verbatim + summary-card)                                                                                                                              | Low      | Not Started |
+| TASK-ctx-summary-self   | Evaluate ACON-style guideline learning for lossy-by-summary tier (future; no import)                                                                                                                                                | Low      | Not Started |
+| TASK-ctx-cache-note     | Telemetry note for provider prompt-caching (stable system prefix → cache hits)                                                                                                                                                      | Low      | Not Started |
 
 ## Open Questions
 
@@ -128,13 +130,14 @@ maps to our tier model), **pattern** (external service/reference design only).
 
 The closest analog space is the RP/character front-end ecosystem (SillyTavern and kin).
 Their context model is the canonical precedent for our lossless/lossy split:
+
 - **Context Templates / Prompt Manager** (SillyTavern): user-defined ordered "macros"
   (character card, scenario, lorebook, world info, author's note, persona, chat history,
   summary) each assigned a slot + a fixed **context size** budget; the last N recent
   messages are always kept verbatim (lossless), older messages roll into a
   **summarized "chat metadata"/"summary card"** (lossy) inserted at a fixed position.
   Verdict: **borrow** — loop-lore already does this via `PROMPT_SECTIONS` +
-  `ContextCompactor`; our gap is the *explicit lossless-vs-lossy guard*, which ST's
+  `ContextCompactor`; our gap is the _explicit lossless-vs-lossy guard_, which ST's
   "always keep recent verbatim" models directly.
 - **Lorebooks / world info with activation + cooldown** (SillyTavern/Character.AI style):
   lossy-by-selection — our `loreSection`/`lorebook` already matches; leaves the unbounded
@@ -148,7 +151,7 @@ Their context model is the canonical precedent for our lossless/lossy split:
   Bun/TS runtime dep; and perplexity research shows structured/code text compresses well
   but **prose/plots poorly** — directly relevant: our XML-tagged sections are good pruning
   targets, story prose is a bad one. Reimplementing its perplexity gate in TS is heavy
-  and off-mission; the actionable takeaway is *never token-prune narrative prose*.
+  and off-mission; the actionable takeaway is _never token-prune narrative prose_.
 - **ACON** (microsoft/acon, MIT, arXiv 2510.00615): compresses agentic
   `History → Reasoning + Refined Observation` per step, and **learns compression
   guidelines** by diffing full-vs-compressed trajectories. Verdict: **pattern** —
@@ -161,7 +164,7 @@ Their context model is the canonical precedent for our lossless/lossy split:
   latency). Verdict: **pattern only** — each is a heavyweight external service or
   Python server; none is an embeddable Bun lib, and loop-lore already owns
   `epic-memory-knowledge-systems` (three-tier) + `epic-memory-propagation`. Their
-  *hierarchical-then-retrieval* memory shape is the model for making our lossy memory
+  _hierarchical-then-retrieval_ memory shape is the model for making our lossy memory
   tier smarter than raw importance-sort.
 
 ### Arena 3 — General / LLM-side (for completeness)
@@ -181,7 +184,7 @@ Their context model is the canonical precedent for our lossless/lossy split:
 ## Research / References
 
 - **lean-ctx applicability — NOT a runtime dependency.** lean-ctx (this harness's context tool)
-  compresses *coding-agent* tool output (read/grep/shell) via selective context + token-efficient
+  compresses _coding-agent_ tool output (read/grep/shell) via selective context + token-efficient
   compression; it targets developer workflows, not product LLM prompts, and lives in the harness,
   not the repo. **Borrow its strategies** (selective pruning, compression-ratio metadata, charset
   heuristics for fast estimation) but do not import it into `loop-lore` runtime. See

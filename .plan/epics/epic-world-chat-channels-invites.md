@@ -484,7 +484,6 @@ the talkativity prompt mapping (G2).
 | `selectNextActor` — consecutive guard re-runs strategy                         | G4         |
 | `groupParticipantsSection` — still passes display_name/description/personality | Regression |
 
-
 ---
 
 ## Merged from `.plan/epics/epic-world-chat-channels-invites.md`
@@ -1062,4 +1061,3 @@ These designs connect to the group chat reconciliation doc:
 | `PollService.createVote()` — duplicate vote prevention            | Edge case  |
 | `PollService.changeVote()` — updates with changed_from history    | Edge case  |
 | `PollService.expirePoll()` — timeout closes poll                  | Lifecycle  |
-

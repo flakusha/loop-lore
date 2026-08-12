@@ -206,4 +206,3 @@ templates:
 - `configs/characters/*.yaml` — Example character files
 - `configs/templates/character.example.yaml` — Example template config
 - `.plan/tickets/TASK-character-template-seeding.md` — Task tracking
-
