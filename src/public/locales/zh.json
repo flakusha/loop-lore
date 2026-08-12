@@ -855,7 +855,8 @@
     "noChatsYet": "No chats yet",
     "filterChats": "Filter chats",
     "untitledChat": "对话",
-    "welcomeTitle": "欢迎来到 loop-lore"
+    "welcomeTitle": "欢迎来到 loop-lore",
+    "callTool": "Call tool"
   },
   "personas": {
     "title": "Personas",

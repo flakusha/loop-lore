@@ -12,6 +12,13 @@ export interface MessageAttachment {
   height: number;
 }
 
+/** A function call the assistant invoked during generation (mirrors GenerationToolCall). */
+export interface ToolCall {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
+}
+
 export interface Message {
   id: string;
   role: string;
@@ -19,6 +26,7 @@ export interface Message {
   created_at: string;
   edited_at?: string;
   thinking?: string;
+  tool_calls?: ToolCall[] | null;
   actor_name?: string;
   variantIndex?: number;
   totalVariants?: number;
