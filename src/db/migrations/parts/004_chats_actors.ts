@@ -116,6 +116,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("respawnable", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint("ck_world_items_quantity", sql`quantity > 0`,)
     .execute();
 
   await database.schema.createIndex("idx_world_items_world",).on("world_items",).column("world_id",).execute();

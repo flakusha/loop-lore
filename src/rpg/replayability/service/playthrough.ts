@@ -1,19 +1,12 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
+import { jsonStringifyOr, } from "../../../utils";
 import { getRpgLog, parseJsonField, } from "../../shared/rpg-service-utils";
+import type { CreatePlaythroughInput, Playthrough, } from "./types";
+import { PlusDifficulty, } from "./types";
+
 function getLog() {
   return getRpgLog("replayability");
-}
-import { jsonStringifyOr, } from "../../../utils";
-
-function getLog() {
-  return getLogger().child({ module: "replayability", },);
-}
-
-/** Parse JSON field safely */
-export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
-  if (typeof raw !== "string") { return fallback; }
-  return jsonParseOr(raw, fallback,);
 }
 
 /** Convert database row to Playthrough interface */
