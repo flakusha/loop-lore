@@ -11,58 +11,28 @@
  * everything else → accessory.
  */
 import type { Kysely, Transaction } from "kysely";
-import { EquipState, type ItemCategory } from "../db/enums";
+import { EquipState } from "../db/enums";
 import type { DB } from "../db/schema";
 import { jsonParseOr } from "../utils";
+import {
+  ENCUMBRANCE,
+  type CarryStatus,
+  type Encumbrance,
+  type EquipResult,
+  slotForCategory,
+} from "./actor-items/equip";
 
-/** Per-actor equip layout. */
-export const EQUIP_SLOTS = ["weapon", "armor", "accessory",] as const;
-export type EquipSlot = (typeof EQUIP_SLOTS)[number];
-
-/** Slot an ItemCategory occupies when equipped. */
-export function slotForCategory(category: ItemCategory,): EquipSlot | null {
-  switch (category) {
-    case "weapon":
-      return "weapon";
-    case "armor":
-      return "armor";
-    case "consumable":
-    case "key_item":
-    case "quest_item":
-    case "material":
-    case "tool":
-    case "container":
-    case "treasure":
-    case "book":
-    case "artifact":
-    case "misc":
-    case "other":
-      return "accessory";
-  }
-}
-
-/** Encumbrance levels. */
-export const ENCUMBRANCE = {
-  Light: "light",
-  Medium: "medium",
-  Overloaded: "overloaded",
-} as const;
-export type Encumbrance = (typeof ENCUMBRANCE)[keyof typeof ENCUMBRANCE];
-
-/** Result of a carry check. */
-export interface CarryStatus {
-  carried: number;
-  capacity: number;
-  encumbrance: Encumbrance;
-  canCarry: (additionalWeight: number) => boolean;
-}
-
-/** Equip attempt result. */
-export interface EquipResult {
-  ok: boolean;
-  itemId?: string;
-  reason?: string;
-}
+export {
+  ENCUMBRANCE,
+  EQUIP_SLOTS,
+  slotForCategory,
+} from "./actor-items/equip";
+export type {
+  CarryStatus,
+  Encumbrance,
+  EquipResult,
+  EquipSlot,
+} from "./actor-items/equip";
 
 export class ActorItemsService {
   private readonly db: Kysely<DB>;

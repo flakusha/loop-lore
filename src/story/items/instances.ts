@@ -6,8 +6,8 @@
 import type { Transaction, } from "kysely";
 import { ItemVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
-import type { ItemState, ItemInstance, TransferResult, } from "./types";
+import { uid, safeJsonStringify, } from "../../utils";
+import type { ItemState, TransferResult, } from "./types";
 
 /** Place item instance in a location */
 export async function placeInLocation(
@@ -97,40 +97,7 @@ export async function getAtLocation(state: ItemState, locationId: string, includ
   return query.execute();
 }
 
-/** Get items carried by an NPC */
-export async function getNpcInventory(state: ItemState, actorId: string,): Promise<ItemInstance[]> {
-  const rows = await state.db
-    .selectFrom("world_items",)
-    .innerJoin("items", "items.id", "world_items.item_id",)
-    .select([
-      "world_items.id as world_item_id",
-      "world_items.item_id",
-      "world_items.quantity",
-      "world_items.visibility",
-      "items.name",
-      "items.description",
-      "items.category",
-      "items.rarity",
-      "items.properties",
-      "items.value",
-      "items.weight",
-    ],)
-    .where("world_items.owner_actor_id", "=", actorId,)
-    .execute();
-  return Array.from(rows, (row,) => ({
-    worldItemId: row.world_item_id,
-    itemId: row.item_id,
-    name: row.name,
-    description: row.description ?? "",
-    category: row.category,
-    rarity: row.rarity,
-    quantity: row.quantity,
-    properties: jsonParseOr(row.properties, {},),
-    value: row.value,
-    weight: row.weight,
-    visibility: row.visibility,
-  }),);
-}
+export { getNpcInventory, } from "./npc-inventory";
 
 /** Transfer items between locations, NPCs, or from world to actor */
 export async function transfer(
