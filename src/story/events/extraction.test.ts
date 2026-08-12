@@ -16,12 +16,12 @@ const LOC = "loc-1";
 const ACTOR = "actor-1";
 
 describe("extractEvents — item transfer direction", () => {
-  test("give → actor is the receiver", () => {
+  test("give → actor is the source (gives away)", () => {
     const events = extractEvents({ messageContent: "Sam gives the Iron Sword to Kara.", actorId: ACTOR, currentLocationId: LOC, },);
     const item = events.find((e,) => e.type === WorldEventType.ItemTransfer,);
     expect(item,).toBeDefined();
-    expect(item!.data.fromActorId,).toBeNull();
-    expect(item!.data.toActorId,).toBe(ACTOR,);
+    expect(item!.data.fromActorId,).toBe(ACTOR,);
+    expect(item!.data.toActorId,).toBeNull();
     expect(item!.locationId,).toBe(LOC,);
   });
 

@@ -86,8 +86,8 @@ export async function persistLoot(
     worldItemIds.push(await persistDrop(items, drop, dest, category,),);
   }
 
-  result.worldItemIds = worldItemIds;
-  return result;
+  // Return a fresh object — do not mutate the caller's `result`.
+  return { ...result, worldItemIds, };
 }
 
 async function persistDrop(

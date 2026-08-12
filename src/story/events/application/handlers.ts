@@ -4,6 +4,7 @@
  * Per-event-type DB handlers, dispatched from applySingleEvent.
  */
 import type { Kysely, } from "kysely";
+import { sql, } from "kysely";
 import { WorldEventType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
@@ -200,16 +201,31 @@ export async function applyItemTransfer(
   const toActorId = event.data.toActorId as string | null | undefined;
   const quantity = Math.max(1, Number(event.data.quantity) || 1,);
 
-  // Resolve the item definition by exact name (case-insensitive) in this world.
-  const def = await db
+  // Resolve the item definition — exact (case-insensitive) match first,
+  // then a single unambiguous fuzzy match, to avoid picking an arbitrary
+  // row when several defs share a prefix/name fragment.
+  const exact = await db
     .selectFrom("items")
     .select(["id", "name",])
     .where("world_id", "=", worldId,)
-    .where("name", "like", `%${itemName}%`,)
+    .where(sql<boolean>`lower(name) = lower(${itemName})`)
     .executeTakeFirst();
+
+  let def = exact;
+  if (!def) {
+    const fuzzy = await db
+      .selectFrom("items")
+      .select(["id", "name",])
+      .where("world_id", "=", worldId,)
+      .where("name", "like", `%${itemName}%`,)
+      .limit(2,)
+      .execute();
+    // Only act when the fuzzy match is unambiguous.
+    if (fuzzy.length === 1) { def = fuzzy[0]; }
+  }
   if (!def) {
     getLogger().child({ module: "event-apply", }).warn(
-      "item_transfer: no matching item definition; skipping",
+      "item_transfer: no unambiguous matching item definition; skipping",
       { worldId, itemName, },
     );
     return;
