@@ -635,7 +635,7 @@ export const ActorItemsSchema = t.Object({
   item_type: ItemCategorySchema,
   description: t.Optional(t.String(),),
   quantity: t.Optional(t.Number(),),
-  value: t.Optional(t.String(),),
+  value: t.Optional(t.Number(),),
   weight: t.Optional(t.Number(),),
   tags: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),

@@ -47,7 +47,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("description", "text",)
     .addColumn("item_type", "text", (col,) => col.notNull(),)
     .addColumn("quantity", "integer", (col,) => col.notNull().defaultTo(1,),)
-    .addColumn("value", "text",)
+    .addColumn("value", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("weight", "real",)
     .addColumn("tags", "text", (col,) => col.defaultTo("[]",),)
     .addColumn("metadata", "text", (col,) => col.defaultTo("{}",),)
