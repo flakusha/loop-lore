@@ -12,13 +12,13 @@ Consolidate **4 divergent item type taxonomies** into a single canonical system.
 
 ## Current Taxonomies
 
-| Taxonomy | File | Values | Used By |
-|----------|------|--------|---------|
-| `ItemCategory` | `enums-story/items.ts` | weapon, armor, consumable, key_item, quest_item, material, tool, container, treasure, book, other | `items` table, `ItemsService` |
-| `ActorItemType` | `enums-core/flags.ts` | equipment, consumable, key_item, artifact, misc | `actor_items` table |
-| `ItemQuality` | `battle/items-integration.ts` | common, uncommon, rare, epic, legendary | `EquipmentItem` |
-| `Rarity` (loot) | `rpg/loot/types.ts` | common, uncommon, rare, legendary, artifact | Loot generation |
-| `ItemRarity` | `enums-story/items.ts` | common, uncommon, rare, epic, legendary, unique | `items` table |
+| Taxonomy        | File                          | Values                                                                                            | Used By                       |
+| --------------- | ----------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `ItemCategory`  | `enums-story/items.ts`        | weapon, armor, consumable, key_item, quest_item, material, tool, container, treasure, book, other | `items` table, `ItemsService` |
+| `ActorItemType` | `enums-core/flags.ts`         | equipment, consumable, key_item, artifact, misc                                                   | `actor_items` table           |
+| `ItemQuality`   | `battle/items-integration.ts` | common, uncommon, rare, epic, legendary                                                           | `EquipmentItem`               |
+| `Rarity` (loot) | `rpg/loot/types.ts`           | common, uncommon, rare, legendary, artifact                                                       | Loot generation               |
+| `ItemRarity`    | `enums-story/items.ts`        | common, uncommon, rare, epic, legendary, unique                                                   | `items` table                 |
 
 ## Work
 

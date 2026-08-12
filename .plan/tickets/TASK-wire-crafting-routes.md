@@ -12,19 +12,19 @@ The crafting system has **8 DB tables** and a full `RecipesService` but **zero H
 
 ## Current State
 
-| Table | Service | Routes |
-|-------|---------|--------|
-| `crafting_recipes` | ✅ `RecipesService` | ❌ none |
-| `crafting_recipe_materials` | ✅ via RecipesService | ❌ none |
-| `crafting_station_defs` | ❌ none | ❌ none |
-| `crafting_station_instances` | ❌ none | ❌ none |
-| `professions` | ❌ none | ❌ none |
-| `profession_specializations` | ❌ none | ❌ none |
-| `recipe_discoveries` | ❌ none | ❌ none |
-| `crafting_attempts` | ❌ none | ❌ none |
-| `crafting_orders` | ❌ none | ❌ none |
-| `gathering_node_defs` | ❌ none | ❌ none |
-| `gathering_node_instances` | ❌ none | ❌ none |
+| Table                        | Service               | Routes  |
+| ---------------------------- | --------------------- | ------- |
+| `crafting_recipes`           | ✅ `RecipesService`   | ❌ none |
+| `crafting_recipe_materials`  | ✅ via RecipesService | ❌ none |
+| `crafting_station_defs`      | ❌ none               | ❌ none |
+| `crafting_station_instances` | ❌ none               | ❌ none |
+| `professions`                | ❌ none               | ❌ none |
+| `profession_specializations` | ❌ none               | ❌ none |
+| `recipe_discoveries`         | ❌ none               | ❌ none |
+| `crafting_attempts`          | ❌ none               | ❌ none |
+| `crafting_orders`            | ❌ none               | ❌ none |
+| `gathering_node_defs`        | ❌ none               | ❌ none |
+| `gathering_node_instances`   | ❌ none               | ❌ none |
 
 ## Work
 

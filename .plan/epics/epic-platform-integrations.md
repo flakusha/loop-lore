@@ -12,65 +12,65 @@ Expand the provider system to cover all major local and remote inference platfor
 
 ## Current State Audit
 
-| Component                  | File                                            | Status         |
-| -------------------------- | ----------------------------------------------- | -------------- |
-| OpenAI-compatible provider | `src/generation/providers/openai-compatible.ts` | Production     |
-| ComfyUI client             | `src/generation/providers/comfyui.ts`           | Production     |
-| Provider registry          | `src/generation/providers/registry.ts`          | Production     |
-| Circuit breaker            | `src/generation/providers/circuit-breaker.ts`   | Production     |
-| Provider types             | `src/generation/providers/types.ts`             | Complete       |
-| Bedrock config             | `src/config/schema.ts`                          | Dead code only (ConverseStream + OpenAI-compat family now available — see Research §) |
-| Plugin registry + lifecycle| `src/plugins/{registry,loader,types}.ts`        | Production (`PluginOrigin = "core" \| "community" \| "local"` — core-plugin provenance already modeled) |
-| Operator platform keys     | `src/routes/api-keys.ts` (`user_api_keys`)      | Production — BYO *user* keys; server-operator keys not yet present |
+| Component                   | File                                            | Status                                                                                                  |
+| --------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| OpenAI-compatible provider  | `src/generation/providers/openai-compatible.ts` | Production                                                                                              |
+| ComfyUI client              | `src/generation/providers/comfyui.ts`           | Production                                                                                              |
+| Provider registry           | `src/generation/providers/registry.ts`          | Production                                                                                              |
+| Circuit breaker             | `src/generation/providers/circuit-breaker.ts`   | Production                                                                                              |
+| Provider types              | `src/generation/providers/types.ts`             | Complete                                                                                                |
+| Bedrock config              | `src/config/schema.ts`                          | Dead code only (ConverseStream + OpenAI-compat family now available — see Research §)                   |
+| Plugin registry + lifecycle | `src/plugins/{registry,loader,types}.ts`        | Production (`PluginOrigin = "core" \| "community" \| "local"` — core-plugin provenance already modeled) |
+| Operator platform keys      | `src/routes/api-keys.ts` (`user_api_keys`)      | Production — BYO _user_ keys; server-operator keys not yet present                                      |
 
 ## Feature Breakdown
 
 ### Group 1: LLM Text Providers (FEAT-076 to FEAT-083)
 
-| FEAT | Provider | API | Status |
-|------|----------|-----|--------|
-| FEAT-076 | Anthropic Native | `POST https://api.anthropic.com/v1/messages` | Schema only |
-| FEAT-077 | Google Gemini Native | `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent` | Schema only |
-| FEAT-078 | Groq | OpenAI-compat `https://api.groq.com/openai/v1` | Not started |
-| FEAT-079 | Together AI & Fireworks | OpenAI-compat | Not started |
-| FEAT-080 | DeepSeek | OpenAI-compat `https://api.deepseek.com/v1` | Not started |
-| FEAT-081 | Mistral Native | OpenAI-compat `https://api.mistral.ai/v1` | Not started |
-| FEAT-082 | Ollama Native | `http://localhost:11434/api/` | Schema only |
-| FEAT-083 | HuggingFace Inference | `https://api-inference.huggingface.co/` | Not started |
+| FEAT     | Provider                | API                                                                                    | Status      |
+| -------- | ----------------------- | -------------------------------------------------------------------------------------- | ----------- |
+| FEAT-076 | Anthropic Native        | `POST https://api.anthropic.com/v1/messages`                                           | Schema only |
+| FEAT-077 | Google Gemini Native    | `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent` | Schema only |
+| FEAT-078 | Groq                    | OpenAI-compat `https://api.groq.com/openai/v1`                                         | Not started |
+| FEAT-079 | Together AI & Fireworks | OpenAI-compat                                                                          | Not started |
+| FEAT-080 | DeepSeek                | OpenAI-compat `https://api.deepseek.com/v1`                                            | Not started |
+| FEAT-081 | Mistral Native          | OpenAI-compat `https://api.mistral.ai/v1`                                              | Not started |
+| FEAT-082 | Ollama Native           | `http://localhost:11434/api/`                                                          | Schema only |
+| FEAT-083 | HuggingFace Inference   | `https://api-inference.huggingface.co/`                                                | Not started |
 
 ### Group 2: Image Generation (FEAT-084 to FEAT-086)
 
-| FEAT | Provider | API | Status |
-|------|----------|-----|--------|
-| FEAT-084 | DALL-E 3 | `POST https://api.openai.com/v1/images/generations` | Not started |
-| FEAT-085 | Stability AI | `POST https://api.stability.ai/v2beta/stable-image/generate/sd3` | Not started |
-| FEAT-086 | Replicate | `POST https://api.replicate.com/v1/models/{owner}/{name}/predictions` | Not started |
+| FEAT     | Provider     | API                                                                   | Status      |
+| -------- | ------------ | --------------------------------------------------------------------- | ----------- |
+| FEAT-084 | DALL-E 3     | `POST https://api.openai.com/v1/images/generations`                   | Not started |
+| FEAT-085 | Stability AI | `POST https://api.stability.ai/v2beta/stable-image/generate/sd3`      | Not started |
+| FEAT-086 | Replicate    | `POST https://api.replicate.com/v1/models/{owner}/{name}/predictions` | Not started |
 
 ### Group 3: Embeddings (FEAT-087 to FEAT-088)
 
-| FEAT | Provider | Use Case | Status |
-|------|----------|----------|--------|
+| FEAT     | Provider                             | Use Case                         | Status      |
+| -------- | ------------------------------------ | -------------------------------- | ----------- |
 | FEAT-087 | Cloud (OpenAI, Cohere, Voyage, Jina) | Memory semantic search, lorebook | Not started |
-| FEAT-088 | Local (Ollama, llama.cpp) | Zero-cost offline | Not started |
+| FEAT-088 | Local (Ollama, llama.cpp)            | Zero-cost offline                | Not started |
 
 ### Group 4: Voice (FEAT-089 to FEAT-091)
 
-| FEAT | Provider | Type | Status |
-|------|----------|------|--------|
-| FEAT-089 | ElevenLabs | TTS | Not started |
-| FEAT-090 | OpenAI TTS + Whisper | TTS + STT | Not started |
+| FEAT     | Provider                      | Type      | Status      |
+| -------- | ----------------------------- | --------- | ----------- |
+| FEAT-089 | ElevenLabs                    | TTS       | Not started |
+| FEAT-090 | OpenAI TTS + Whisper          | TTS + STT | Not started |
 | FEAT-091 | Local (Piper, faster-whisper) | TTS + STT | Not started |
 
 ### Group 5: Infrastructure (FEAT-092 to FEAT-097)
 
-| FEAT | Feature | Status |
-|------|---------|--------|
-| FEAT-092 | Provider Failover Chains | Not started |
-| FEAT-093 | API Key Management UI | Not started |
-| FEAT-094 | Provider Health Dashboard | Not started |
-| FEAT-095 | Model Catalog Sync | Not started |
+| FEAT     | Feature                                     | Status      |
+| -------- | ------------------------------------------- | ----------- |
+| FEAT-092 | Provider Failover Chains                    | Not started |
+| FEAT-093 | API Key Management UI                       | Not started |
+| FEAT-094 | Provider Health Dashboard                   | Not started |
+| FEAT-095 | Model Catalog Sync                          | Not started |
 | FEAT-096 | Auto-Start Expansion (Ollama, vLLM, SGLang) | Not started |
-| FEAT-097 | Usage Cost Tracking | Not started |
+| FEAT-097 | Usage Cost Tracking                         | Not started |
 
 ## Implementation Phases
 
@@ -85,6 +85,7 @@ Expand the provider system to cover all major local and remote inference platfor
 ### Provider Interface Extension
 
 Need new interfaces beyond `LLMProvider`:
+
 - `EmbeddingProvider` (embed method)
 - `ImageProvider` (generate, img2img, inpaint)
 - `TTSProvider` (synthesize)
@@ -100,13 +101,13 @@ All provider API keys encrypted at rest using `src/crypto/`. BYO keys encrypted 
 
 ## Platform Integrations
 
-| Platform         | Integration Type             | Status               |
-| ---------------- | ---------------------------- | -------------------- |
-| SillyTavern      | Character card import/export | ✅ Partial (Epic 14) |
-| RisuAI           | Character card import        | ⬜ Not Started       |
-| Character.AI     | Character import             | ⬜ Not Started       |
-| Discord          | Bot integration              | ⬜ Not Started       |
-| Telegram         | Bot integration              | ⬜ Not Started       |
+| Platform     | Integration Type             | Status               |
+| ------------ | ---------------------------- | -------------------- |
+| SillyTavern  | Character card import/export | ✅ Partial (Epic 14) |
+| RisuAI       | Character card import        | ⬜ Not Started       |
+| Character.AI | Character import             | ⬜ Not Started       |
+| Discord      | Bot integration              | ⬜ Not Started       |
+| Telegram     | Bot integration              | ⬜ Not Started       |
 
 ## Research (2026-08-12): External Platform Catalog + Core-Plugin Connectors
 
@@ -122,42 +123,42 @@ adapter code — a config entry.**
 
 ### Tier 1 — OpenAI-compatible (config-only)
 
-| Platform        | Base URL / shape                                   | Auth        | Notes |
-| --------------- | -------------------------------------------------- | ----------- | ----- |
-| OpenAI          | `https://api.openai.com/v1`                        | bearer      | Chat Completions + Responses API |
-| OpenRouter      | `https://openrouter.ai/api/v1`                     | bearer      | 400+ models, `:free` suffix, routing/fallback, credit billing |
-| Google Gemini   | `https://generativelanguage.googleapis.com/v1beta/openai` | bearer | official OpenAI-compat endpoint; native also available |
-| Groq            | `https://api.groq.com/openai/v1`                   | bearer      | fast LPU inference |
-| Mistral         | `https://api.mistral.ai/v1`                        | bearer      | La Plateforme |
-| Together AI     | `https://api.together.xyz/v1`                      | bearer      | |
-| Fireworks AI    | `https://api.fireworks.ai/inference/v1`            | bearer      | |
-| DeepSeek        | `https://api.deepseek.com/v1`                      | bearer      | |
-| xAI (Grok)      | `https://api.x.ai/v1`                              | bearer      | |
-| NVIDIA NIM      | `https://integrate.api.nvidia.com/v1`              | bearer      | |
-| Cerebras        | `https://api.cerebras.ai/v1`                       | bearer      | |
-| Azure OpenAI    | `https://<res>.openai.azure.com/openai/deployments/{deployment}` | bearer + `api-version` | deployment-scoped, query param |
-| Vast.ai         | per-instance `http://<ip>:<port>/v1` (vLLM)        | bearer (instance key) | GPU marketplace; serverless proxy + rented vLLM instances |
-| RunPod          | per-endpoint `https://<endpoint-id>.<region>.runpod.net/v1` | bearer | serverless worker-vllm + pods; OpenAI-compat `/v1/chat/completions`, `/v1/models` |
-| Lambda          | per-instance (vLLM)                                | bearer      | GPU cloud |
-| Ollama / LM Studio / LocalAI | `http://localhost:11434/v1` etc.          | none/bearer | local OpenAI-compat; overlaps `epic-byok-local-models` |
+| Platform                     | Base URL / shape                                                 | Auth                   | Notes                                                                             |
+| ---------------------------- | ---------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------- |
+| OpenAI                       | `https://api.openai.com/v1`                                      | bearer                 | Chat Completions + Responses API                                                  |
+| OpenRouter                   | `https://openrouter.ai/api/v1`                                   | bearer                 | 400+ models, `:free` suffix, routing/fallback, credit billing                     |
+| Google Gemini                | `https://generativelanguage.googleapis.com/v1beta/openai`        | bearer                 | official OpenAI-compat endpoint; native also available                            |
+| Groq                         | `https://api.groq.com/openai/v1`                                 | bearer                 | fast LPU inference                                                                |
+| Mistral                      | `https://api.mistral.ai/v1`                                      | bearer                 | La Plateforme                                                                     |
+| Together AI                  | `https://api.together.xyz/v1`                                    | bearer                 |                                                                                   |
+| Fireworks AI                 | `https://api.fireworks.ai/inference/v1`                          | bearer                 |                                                                                   |
+| DeepSeek                     | `https://api.deepseek.com/v1`                                    | bearer                 |                                                                                   |
+| xAI (Grok)                   | `https://api.x.ai/v1`                                            | bearer                 |                                                                                   |
+| NVIDIA NIM                   | `https://integrate.api.nvidia.com/v1`                            | bearer                 |                                                                                   |
+| Cerebras                     | `https://api.cerebras.ai/v1`                                     | bearer                 |                                                                                   |
+| Azure OpenAI                 | `https://<res>.openai.azure.com/openai/deployments/{deployment}` | bearer + `api-version` | deployment-scoped, query param                                                    |
+| Vast.ai                      | per-instance `http://<ip>:<port>/v1` (vLLM)                      | bearer (instance key)  | GPU marketplace; serverless proxy + rented vLLM instances                         |
+| RunPod                       | per-endpoint `https://<endpoint-id>.<region>.runpod.net/v1`      | bearer                 | serverless worker-vllm + pods; OpenAI-compat `/v1/chat/completions`, `/v1/models` |
+| Lambda                       | per-instance (vLLM)                                              | bearer                 | GPU cloud                                                                         |
+| Ollama / LM Studio / LocalAI | `http://localhost:11434/v1` etc.                                 | none/bearer            | local OpenAI-compat; overlaps `epic-byok-local-models`                            |
 
 ### Tier 2 — Native API (custom adapter as core plugin)
 
-| Platform        | API / endpoint                                   | Auth          | Notes |
-| --------------- | ------------------------------------------------ | ------------- | ----- |
-| Anthropic       | Messages `https://api.anthropic.com/v1/messages` | `x-api-key` + `anthropic-version` | extended thinking, tool use, streaming |
-| AWS Bedrock     | `ConverseStream` / `Converse` (native) **or** new OpenAI-compat family | IAM / SigV4 (key/role) | region-scoped model IDs; OpenAI-compat ChatCompletions now available |
-| Google Vertex AI| native (GenAI)                                   | OAuth / ADC   | enterprise Gemini; OpenAI-compat via Gemini Enterprise Agent Platform |
-| Cohere          | native `https://api.cohere.ai/v2/chat`           | bearer        | |
-| Replicate       | native `https://api.replicate.com/v1/models`     | bearer        | cloud inference, async jobs |
-| Cloudflare Workers AI | native `https://api.cloudflare.com/client/v4/accounts/{a}/ai/run` | bearer | OpenAI-compat also available |
+| Platform              | API / endpoint                                                         | Auth                              | Notes                                                                 |
+| --------------------- | ---------------------------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------- |
+| Anthropic             | Messages `https://api.anthropic.com/v1/messages`                       | `x-api-key` + `anthropic-version` | extended thinking, tool use, streaming                                |
+| AWS Bedrock           | `ConverseStream` / `Converse` (native) **or** new OpenAI-compat family | IAM / SigV4 (key/role)            | region-scoped model IDs; OpenAI-compat ChatCompletions now available  |
+| Google Vertex AI      | native (GenAI)                                                         | OAuth / ADC                       | enterprise Gemini; OpenAI-compat via Gemini Enterprise Agent Platform |
+| Cohere                | native `https://api.cohere.ai/v2/chat`                                 | bearer                            |                                                                       |
+| Replicate             | native `https://api.replicate.com/v1/models`                           | bearer                            | cloud inference, async jobs                                           |
+| Cloudflare Workers AI | native `https://api.cloudflare.com/client/v4/accounts/{a}/ai/run`      | bearer                            | OpenAI-compat also available                                          |
 
 ### Tier 3 — GPU marketplace lifecycle (optional, deferred)
 
 Vast.ai / RunPod expose **instance management** APIs (list/rent/stop instances, create
 serverless endpoints, fetch endpoint URL + key) beyond the OpenAI-compatible inference
 endpoint. Automating provisioning is **out of core scope** — the connector consumes a
-*configured* endpoint. Documented as future `vast-ai` / `runpod` lifecycle plugins.
+_configured_ endpoint. Documented as future `vast-ai` / `runpod` lifecycle plugins.
 
 ### Mechanism: first-class citizens via core plugins
 
@@ -173,7 +174,7 @@ endpoint. Automating provisioning is **out of core scope** — the connector con
    each exporting a factory returning an `LLMProvider`, registered with
    `PluginOrigin = "core"` — first-class, individually toggleable, independent.
 4. **Server-operator credentials**: encrypted at rest (reuse `src/crypto` `encryptValue`),
-   keyed per platform, in a new `platform_credentials` store — **distinct from** BYO *user*
+   keyed per platform, in a new `platform_credentials` store — **distinct from** BYO _user_
    keys (`user_api_keys`). Never logged (structured-logger redaction).
 5. **Health / discovery / cost**: `GET /api/providers` (from `src/admin/provider-health.ts`)
    extended to list every catalog platform with status, capabilities, discovered models, and
@@ -194,6 +195,7 @@ endpoint. Automating provisioning is **out of core scope** — the connector con
 - `src/config/schema.ts` — config types
 - `src/db/enums.ts` — ProviderCapabilities.type enum
 - `docs/spec/integrations/` — integration specifications
+
 ## Frontend Components
 
 FEAT-093 (API Key Management UI) and FEAT-094 (Provider Health Dashboard) require UI but are
@@ -201,7 +203,7 @@ not enumerated in the Files list above. They must not duplicate the BYOK API-key
 (`epic-byok-api-keys.md` → `src/frontend/settings/api-keys.ts`). Proposed frontend additions:
 
 - `src/frontend/settings/platform-credentials.ts` (new) — operator platform credential
-  management, distinct from BYO *user* keys in `api-keys.ts`; reuses `src/crypto` `encryptValue`.
+  management, distinct from BYO _user_ keys in `api-keys.ts`; reuses `src/crypto` `encryptValue`.
 - `src/frontend/admin/provider-health.ts` (new) — wires `GET /api/providers` (extended in
   §Mechanism) into a status + discovered-models + per-model cost view.
 - `src/components/provider-health.html` (new) — dashboard partial rendered by the admin view.

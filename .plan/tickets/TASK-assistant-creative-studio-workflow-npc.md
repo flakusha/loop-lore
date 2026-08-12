@@ -32,24 +32,24 @@ adds it (per §7.6a decision: prefer a distinct `npc` target over reusing `chara
 
 - [ ] `npc` added as a `generate` target in `INTENT_PATTERNS` with appropriate triggers.
 - [ ] `configs/templates/workflows/npc-generation.yaml` defines the workflow
-  (intent.target `npc`, steps, dispatch, approval).
+      (intent.target `npc`, steps, dispatch, approval).
 - [ ] `entity_type_presets.npc` added to
-  `configs/templates/workflows/entity-types.yaml`.
+      `configs/templates/workflows/entity-types.yaml`.
 - [ ] `INTENT_PATTERNS` routes `create/generate/new npc` triggers to the workflow.
 - [ ] Runner validates each step; blocks on schema/consistency/duplicate failure.
 - [ ] Confirmation gate required before dispatch.
 - [ ] Dispatch inserts the actor with `is_npc: true` and correct `world_id` scoping.
 - [ ] Unit test: intent → workflow routing + step validation; integration: end-to-end
-  NPC creation via `/create` wrapped by the workflow.
+      NPC creation via `/create` wrapped by the workflow.
 
 ## Files
 
-| File                                      | Action |
-| ----------------------------------------- | ------ |
-| `src/regex/intent.ts`                    | modify (add `npc` target) |
-| `configs/templates/workflows/npc-generation.yaml` | new    |
-| `configs/templates/workflows/entity-types.yaml` | modify |
-| `src/assistant/workflow-runner.ts`       | reuse  |
+| File                                              | Action                    |
+| ------------------------------------------------- | ------------------------- |
+| `src/regex/intent.ts`                             | modify (add `npc` target) |
+| `configs/templates/workflows/npc-generation.yaml` | new                       |
+| `configs/templates/workflows/entity-types.yaml`   | modify                    |
+| `src/assistant/workflow-runner.ts`                | reuse                     |
 
 ## Related
 

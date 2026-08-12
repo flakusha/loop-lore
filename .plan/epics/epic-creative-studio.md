@@ -73,25 +73,25 @@ Unified creative tools for assistant chat: context menus, modals for locations/w
 
 ## Tasks
 
-| Task                         | Files                                                      | Effort | Source |
-| ---------------------------- | ---------------------------------------------------------- | ------ | ------ |
-| Unified search API endpoint  | `src/routes/search.ts`                                     | Med    | new    |
-| Unified search frontend page | `src/frontend/creative-studio/search.ts`                   | Med    | new    |
-| Note detail modal            | `src/frontend/creative-studio/modals/note-modal.ts`        | Low    | new    |
-| World/Location detail modal  | `src/frontend/creative-studio/modals/world-modal.ts`       | Low    | new    |
-| Item detail modal            | `src/frontend/creative-studio/modals/item-modal.ts`        | Low    | new    |
-| Creative toolbar             | `src/frontend/creative-studio/toolbar.ts`                  | Low    | new    |
-| Intent detection             | `src/assistant/intent-detection.ts`                        | High   | new    |
-| Command sandboxing           | `src/assistant/command-sandbox.ts`                         | High   | new    |
-| Character creation wizard    | `src/frontend/creative-studio/wizards/character-wizard.ts` | Med    | new    |
-| Note ↔ Memory cross-linking  | `src/db/migrations/xxx-note-memory-links.ts`               | Med    | new    |
-| Asset ↔ Note cross-linking   | `src/routes/asset-notes.ts`                                | Low    | new    |
-| Context menu system          | `src/frontend/creative-studio/context-menu.ts`             | Med    | new    |
-| Book compilation             | `src/story/book-compiler.ts`                               | High   | new    |
-| Bulk operations              | `src/routes/search-bulk.ts`                                | Med    | new    |
-| Real-time updates (SSE)      | `src/routes/search-sse.ts`                                 | Med    | new    |
-| Plugin type registration     | `src/search/plugin-types.ts`                               | Low    | new    |
-| Workflow step UI + confirmation modal (owned by `epic-assistant-creative-studio-workflows.md`) | `src/frontend/creative-studio/workflow.ts` | Med | new |
+| Task                                                                                           | Files                                                      | Effort | Source |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------ | ------ |
+| Unified search API endpoint                                                                    | `src/routes/search.ts`                                     | Med    | new    |
+| Unified search frontend page                                                                   | `src/frontend/creative-studio/search.ts`                   | Med    | new    |
+| Note detail modal                                                                              | `src/frontend/creative-studio/modals/note-modal.ts`        | Low    | new    |
+| World/Location detail modal                                                                    | `src/frontend/creative-studio/modals/world-modal.ts`       | Low    | new    |
+| Item detail modal                                                                              | `src/frontend/creative-studio/modals/item-modal.ts`        | Low    | new    |
+| Creative toolbar                                                                               | `src/frontend/creative-studio/toolbar.ts`                  | Low    | new    |
+| Intent detection                                                                               | `src/assistant/intent-detection.ts`                        | High   | new    |
+| Command sandboxing                                                                             | `src/assistant/command-sandbox.ts`                         | High   | new    |
+| Character creation wizard                                                                      | `src/frontend/creative-studio/wizards/character-wizard.ts` | Med    | new    |
+| Note ↔ Memory cross-linking                                                                    | `src/db/migrations/xxx-note-memory-links.ts`               | Med    | new    |
+| Asset ↔ Note cross-linking                                                                     | `src/routes/asset-notes.ts`                                | Low    | new    |
+| Context menu system                                                                            | `src/frontend/creative-studio/context-menu.ts`             | Med    | new    |
+| Book compilation                                                                               | `src/story/book-compiler.ts`                               | High   | new    |
+| Bulk operations                                                                                | `src/routes/search-bulk.ts`                                | Med    | new    |
+| Real-time updates (SSE)                                                                        | `src/routes/search-sse.ts`                                 | Med    | new    |
+| Plugin type registration                                                                       | `src/search/plugin-types.ts`                               | Low    | new    |
+| Workflow step UI + confirmation modal (owned by `epic-assistant-creative-studio-workflows.md`) | `src/frontend/creative-studio/workflow.ts`                 | Med    | new    |
 
 ## Dependencies
 

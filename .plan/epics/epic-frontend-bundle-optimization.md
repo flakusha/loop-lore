@@ -23,13 +23,13 @@ Reduce frontend JS bundle size from ~1.34MB to ~134KB (10x reduction) via code-s
 
 ## Current State
 
-| Bundle           | Size        | Loaded                       |
-| ---------------- | ----------- | ---------------------------- |
+| Bundle           | Size        | Loaded                                                                        |
+| ---------------- | ----------- | ----------------------------------------------------------------------------- |
 | `app.js`         | 616K        | Always (core framework) — (DEAD — see TASK-remove-dead-frontend-modules)      |
-| `pages.js`       | 540K        | Always (all pages)           |
+| `pages.js`       | 540K        | Always (all pages)                                                            |
 | `vendor.js`      | 116K        | Always (htmx, Alpine, morph) — (DEAD — see TASK-remove-dead-frontend-modules) |
-| `chat-vendor.js` | 72K         | Chat page only               |
-| **Total**        | **~1.34MB** |                              |
+| `chat-vendor.js` | 72K         | Chat page only                                                                |
+| **Total**        | **~1.34MB** |                                                                               |
 
 ## Target State
 
@@ -43,16 +43,16 @@ Reduce frontend JS bundle size from ~1.34MB to ~134KB (10x reduction) via code-s
 
 ## Linked Tasks
 
-| Task                          | Title                                                  | Priority | Status      |
-| ----------------------------- | ------------------------------------------------------ | -------- | ----------- |
-| TASK-frontend-bundle-analysis | Analyze bundle composition and identify bloat          | High     | Not Started |
-| TASK-frontend-lazy-pages      | Lazy-load page bundles (code-split by route)           | High     | Not Started |
-| TASK-frontend-lazy-vendor     | Lazy-load vendor chunks (separate core vs page vendor) | High     | Not Started |
-| TASK-frontend-dedup-chunks    | Extract shared utilities into deduplicated chunk       | Medium   | Not Started |
-| TASK-frontend-compression     | Enable gzip/brotli pre-compression in build pipeline   | Medium   | Not Started |
-| TASK-frontend-size-gate       | Add bundle size CI gate (soft/hard limits)             | Medium   | Not Started |
-| TASK-frontend-tree-shake      | Tree-shake unused dependencies and dead code           | Low      | Not Started |
-| TASK-remove-dead-frontend-modules | Remove dead frontend modules (app.ts, touch.ts, vendor.ts, locale-picker.ts) | High | Not Started |
+| Task                              | Title                                                                        | Priority | Status      |
+| --------------------------------- | ---------------------------------------------------------------------------- | -------- | ----------- |
+| TASK-frontend-bundle-analysis     | Analyze bundle composition and identify bloat                                | High     | Not Started |
+| TASK-frontend-lazy-pages          | Lazy-load page bundles (code-split by route)                                 | High     | Not Started |
+| TASK-frontend-lazy-vendor         | Lazy-load vendor chunks (separate core vs page vendor)                       | High     | Not Started |
+| TASK-frontend-dedup-chunks        | Extract shared utilities into deduplicated chunk                             | Medium   | Not Started |
+| TASK-frontend-compression         | Enable gzip/brotli pre-compression in build pipeline                         | Medium   | Not Started |
+| TASK-frontend-size-gate           | Add bundle size CI gate (soft/hard limits)                                   | Medium   | Not Started |
+| TASK-frontend-tree-shake          | Tree-shake unused dependencies and dead code                                 | Low      | Not Started |
+| TASK-remove-dead-frontend-modules | Remove dead frontend modules (app.ts, touch.ts, vendor.ts, locale-picker.ts) | High     | Not Started |
 
 ## Acceptance Criteria
 

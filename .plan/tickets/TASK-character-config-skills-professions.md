@@ -31,17 +31,17 @@ interface CharacterTemplate {
    ```typescript
    interface SkillTemplate {
      name: string;
-     category: SkillCategory;  // combat, magic, crafting, etc.
-     level?: number;           // default 1
-     proficiency?: ProficiencyLevel;  // default "novice"
+     category: SkillCategory; // combat, magic, crafting, etc.
+     level?: number; // default 1
+     proficiency?: ProficiencyLevel; // default "novice"
      specialization?: string;
    }
    ```
 3. **Profession template type**:
    ```typescript
    interface ProfessionTemplate {
-     discipline: CraftingDiscipline;  // alchemy, smithing, etc.
-     level?: number;                  // default 1
+     discipline: CraftingDiscipline; // alchemy, smithing, etc.
+     level?: number; // default 1
      specializations?: string[];
    }
    ```
