@@ -36,3 +36,12 @@ interface NPCMemoryEntry {
 - [ ] NPC state machine functional
 - [ ] NPC memory system working
 - [ ] Dialogue system operational
+
+## Generation via Creative Studio Workflows
+
+NPC creation through the assistant is specified as a **config-driven workflow template**
+in `epic-assistant-creative-studio-workflows.md` §7.6. The `npc-generation` workflow
+(`TASK-assistant-creative-studio-workflow-npc.md`) adds a new `npc` `INTENT_PATTERNS`
+target and wraps actor-insert (`is_npc: true`) with step building,
+`entity_type_presets.npc` validation, and schema/consistency/duplicate quality gates.
+Faction-allegiance steps reference `epic-faction-reputation.md`.
