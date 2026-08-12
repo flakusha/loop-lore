@@ -53,31 +53,31 @@ image editing — dispatch to `src/image-edit/routes.ts handleRun`.
 ## Acceptance Criteria
 
 - [ ] `configs/templates/workflows/gallery-edit.yaml` defines edit workflows per
-  template (img2img/inpaint/controlnet/upscale/lora) with `backend: image_edit`.
+      template (img2img/inpaint/controlnet/upscale/lora) with `backend: image_edit`.
 - [ ] Gallery "Edit" action opens the workflow, binds the source asset as `input_image`,
-  and previews steps + recommendations.
+      and previews steps + recommendations.
 - [ ] `qwen-edit` usable in **both** `t2i` (generation) and `i2i` (edit) modes from the
-  workflow; §7.1b preset carries `modes: [t2i, i2i]`.
+      workflow; §7.1b preset carries `modes: [t2i, i2i]`.
 - [ ] ControlNet / LoRA exposed as parameters on img2img/inpaint (not separate
-  workflows).
+      workflows).
 - [ ] Runner validates steps, requires confirmation, dispatches to
-  `POST /api/image-edit/run` (routes to `src/image-edit` providers, not generation).
+      `POST /api/image-edit/run` (routes to `src/image-edit` providers, not generation).
 - [ ] Result asset added to gallery with correct world scope / ownership.
 - [ ] NSFW policy + ownership gates applied pre-dispatch.
 - [ ] `klein` / `minimax-h3` edit support resolved (research note) before presets added.
 - [ ] Unit test: asset→template binding + dispatch routing to image-edit; integration:
-  edit an image asset end-to-end via the workflow.
+      edit an image asset end-to-end via the workflow.
 
 ## Files
 
-| File                                                | Action |
-| --------------------------------------------------- | ------ |
-| `configs/templates/workflows/gallery-edit.yaml`     | new    |
-| `src/assistant/workflows/gallery-edit.ts`           | new (edit workflow UX over src/image-edit) |
-| `configs/templates/workflows/model-families.yaml`   | modify (qwen-edit `modes`, edit-capable entries) |
-| `src/image-edit/routes.ts`                          | reuse (handleRun dispatch target) |
-| `src/image-edit/templates/builtin/*`                | reuse (img2img/inpaint/controlnet/upscale/lora) |
-| `src/assistant/workflow-runner.ts`                  | reuse  |
+| File                                              | Action                                           |
+| ------------------------------------------------- | ------------------------------------------------ |
+| `configs/templates/workflows/gallery-edit.yaml`   | new                                              |
+| `src/assistant/workflows/gallery-edit.ts`         | new (edit workflow UX over src/image-edit)       |
+| `configs/templates/workflows/model-families.yaml` | modify (qwen-edit `modes`, edit-capable entries) |
+| `src/image-edit/routes.ts`                        | reuse (handleRun dispatch target)                |
+| `src/image-edit/templates/builtin/*`              | reuse (img2img/inpaint/controlnet/upscale/lora)  |
+| `src/assistant/workflow-runner.ts`                | reuse                                            |
 
 ## Related
 

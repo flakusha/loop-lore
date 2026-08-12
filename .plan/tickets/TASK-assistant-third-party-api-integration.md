@@ -14,6 +14,7 @@ This is the **dispatch adapter layer** — NOT the API provider implementation i
 (that lives in `epic-audio-video-sound.md` / `epic-assistant-generation-extensions.md`).
 
 Each third-party API has a different:
+
 - Request format / payload schema
 - Authentication model (API key, OAuth, BYO key)
 - Rate limits and throughput constraints
@@ -40,14 +41,14 @@ request through the LLM queue (`epic-llm-queue.md`).
 
 ```typescript
 interface ThirdPartyAdapter {
-  id: string;             // e.g. "nano-banana", "minimax-h3", "ideogram-4"
-  name: string;           // human-readable
-  model_family: string;  // e.g. "z-image", "minimax-h3", "ideogram-4"
-  endpoint: string;      // API endpoint
+  id: string; // e.g. "nano-banana", "minimax-h3", "ideogram-4"
+  name: string; // human-readable
+  model_family: string; // e.g. "z-image", "minimax-h3", "ideogram-4"
+  endpoint: string; // API endpoint
   auth: "api_key" | "oauth" | "byo_key";
-  buildPayload(workflow_result: WorkflowResult): Promise<ThirdPartyPayload>;
-  parseResponse(response: unknown): Promise<ThirdPartyResult>;
-  getRateLimit?: () => { requests_per_minute: number, tokens_per_minute: number };
+  buildPayload(workflow_result: WorkflowResult,): Promise<ThirdPartyPayload>;
+  parseResponse(response: unknown,): Promise<ThirdPartyResult>;
+  getRateLimit?: () => { requests_per_minute: number; tokens_per_minute: number };
 }
 ```
 
@@ -57,16 +58,16 @@ Each adapter reads the workflow's assembled steps + the active model_family pres
 (`configs/templates/workflows/model-families.yaml`) and builds the provider-specific
 payload:
 
-| Model family       | Payload structure                                       |
-| ------------------ | ------------------------------------------------------- |
-| `sd-1-5`           | `{"prompt": "tags", "negative_prompt": "...", "steps": N, "cfg_scale": N, ...}` |
-| `sdxl`             | `{"prompt": "natural desc, (tag:1.2)", "steps": N, ...}` |
-| `flux`             | `{"prompt": "natural description", "steps": N, ...}`   |
-| `qwen-edit`        | `{"prompt": "keep X, change Y to Z", "ref_image": "..."}` |
-| `ideogram-4`       | `{"text_prompt": "...", "style": "...", "color_palette": "..."}` |
-| `z-image`          | `{"prompt": "tags", "steps": N, "cfg_scale": N, ...}`   |
-| `minimax-h3`       | `{"prompt": "natural", "duration": N, "resolution": "..."}` |
-| `wan` / `ltx`      | `{"prompt": "natural", "duration": N, "fps": N}`         |
+| Model family  | Payload structure                                                               |
+| ------------- | ------------------------------------------------------------------------------- |
+| `sd-1-5`      | `{"prompt": "tags", "negative_prompt": "...", "steps": N, "cfg_scale": N, ...}` |
+| `sdxl`        | `{"prompt": "natural desc, (tag:1.2)", "steps": N, ...}`                        |
+| `flux`        | `{"prompt": "natural description", "steps": N, ...}`                            |
+| `qwen-edit`   | `{"prompt": "keep X, change Y to Z", "ref_image": "..."}`                       |
+| `ideogram-4`  | `{"text_prompt": "...", "style": "...", "color_palette": "..."}`                |
+| `z-image`     | `{"prompt": "tags", "steps": N, "cfg_scale": N, ...}`                           |
+| `minimax-h3`  | `{"prompt": "natural", "duration": N, "resolution": "..."}`                     |
+| `wan` / `ltx` | `{"prompt": "natural", "duration": N, "fps": N}`                                |
 
 ### Third-Party API Registry
 
@@ -122,12 +123,12 @@ adapters:
 
 ## Files
 
-| File                                        | Status |
-| ------------------------------------------- | ------ |
-| `src/assistant/third-party-adapters.ts`      | new    |
-| `src/assistant/third-party-adapters.test.ts` | new    |
-| `configs/templates/workflows/third-party-adapters.yaml` | new |
-| `src/assistant/workflow-runner.ts`           | modify (dispatch integration) |
+| File                                                    | Status                        |
+| ------------------------------------------------------- | ----------------------------- |
+| `src/assistant/third-party-adapters.ts`                 | new                           |
+| `src/assistant/third-party-adapters.test.ts`            | new                           |
+| `configs/templates/workflows/third-party-adapters.yaml` | new                           |
+| `src/assistant/workflow-runner.ts`                      | modify (dispatch integration) |
 
 ## Acceptance Criteria
 

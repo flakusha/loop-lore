@@ -37,25 +37,25 @@ search results / world), filters (type, date, rating), action.
 ## Acceptance Criteria
 
 - [ ] `selectedAssetIds` store added to chat Alpine state; checkbox + shift-range +
-  select-all toggle wired in gallery UI (`gallery-sidebar.html` / grid).
+      select-all toggle wired in gallery UI (`gallery-sidebar.html` / grid).
 - [ ] `POST /api/assets/batch-download` handler streams a zip of selected assets;
-  honors auth + ownership; 404s/omits assets the user cannot access.
+      honors auth + ownership; 404s/omits assets the user cannot access.
 - [ ] NSFW gating: batch download omits or restricts un-consented NSFW assets per
-  visibility policy.
+      visibility policy.
 - [ ] v1 batch delete over the selection set, with confirmation.
 - [ ] Client-side zip fallback only when the server endpoint is unavailable.
 - [ ] Unit test: selection toggle + batch-download auth/NSFW filtering; integration:
-  select N assets → zip contains exactly N authorized, non-restricted assets.
+      select N assets → zip contains exactly N authorized, non-restricted assets.
 
 ## Files
 
-| File                                                | Action |
-| --------------------------------------------------- | ------ |
-| `src/frontend/alpine/chat-types/core.ts`            | modify (add `selectedAssetIds`) |
-| `src/frontend/alpine/chat-utils/gallery.ts`         | modify (selection helpers) |
-| `src/frontend/…/gallery-sidebar.html` / grid        | modify (checkboxes, select-all) |
-| asset routes (e.g. `src/routes/assets.ts`)          | modify (`batch-download` handler) |
-| `src/assistant/workflow-runner.ts`                  | reuse (optional `gallery-batch` workflow) |
+| File                                         | Action                                    |
+| -------------------------------------------- | ----------------------------------------- |
+| `src/frontend/alpine/chat-types/core.ts`     | modify (add `selectedAssetIds`)           |
+| `src/frontend/alpine/chat-utils/gallery.ts`  | modify (selection helpers)                |
+| `src/frontend/…/gallery-sidebar.html` / grid | modify (checkboxes, select-all)           |
+| asset routes (e.g. `src/routes/assets.ts`)   | modify (`batch-download` handler)         |
+| `src/assistant/workflow-runner.ts`           | reuse (optional `gallery-batch` workflow) |
 
 ## Related
 

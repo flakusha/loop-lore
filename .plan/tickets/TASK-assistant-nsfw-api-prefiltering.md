@@ -41,24 +41,24 @@ dispatch:
   target: nano-banana
   endpoint: /api/generation/third-party
   nsfw_policy:
-    classification_required: true   # run NSFW moderation before dispatch
-    allowed: true                   # backend accepts NSFW-labeled content
-    consent_required: true          # per-user consent gate before dispatch
-    label_field: nsfw_label         # field name in API payload
-    rating_tier: explicit           # NSFW content rating tier (sfw/suggestive/mature/explicit)
-    fallback:                       # backends to try if primary rejects NSFW
+    classification_required: true # run NSFW moderation before dispatch
+    allowed: true # backend accepts NSFW-labeled content
+    consent_required: true # per-user consent gate before dispatch
+    label_field: nsfw_label # field name in API payload
+    rating_tier: explicit # NSFW content rating tier (sfw/suggestive/mature/explicit)
+    fallback: # backends to try if primary rejects NSFW
       - backend: comfyui
       - backend: sd-server
 ```
 
 ### NSFW Policy States Per Backend
 
-| Backend type          | classification_required | allowed | consent_required | label_field | fallback needed |
-| --------------------- | ----------------------- | ------- | ---------------- | ----------- | --------------- |
-| NSFW-rejecting (Ideogram 4) | true              | false   | n/a              | n/a         | yes (local SD)  |
-| NSFW-allowing w/ label (Nano Banana) | true   | true    | yes              | `nsfw_label`| yes (optional)  |
-| NSFW-allowing w/ flag (ComfyUI local) | true     | true    | per-user setting | `nsfw`      | n/a             |
-| NSFW-neutral (FLUX local) | false               | n/a     | n/a              | n/a         | n/a             |
+| Backend type                          | classification_required | allowed | consent_required | label_field  | fallback needed |
+| ------------------------------------- | ----------------------- | ------- | ---------------- | ------------ | --------------- |
+| NSFW-rejecting (Ideogram 4)           | true                    | false   | n/a              | n/a          | yes (local SD)  |
+| NSFW-allowing w/ label (Nano Banana)  | true                    | true    | yes              | `nsfw_label` | yes (optional)  |
+| NSFW-allowing w/ flag (ComfyUI local) | true                    | true    | per-user setting | `nsfw`       | n/a             |
+| NSFW-neutral (FLUX local)             | false                   | n/a     | n/a              | n/a          | n/a             |
 
 ### Runtime Flow (NSFW-aware dispatch)
 
@@ -115,13 +115,13 @@ Workflow confirmation → User confirms
 
 ## Files
 
-| File                                        | Status   |
-| ------------------------------------------- | -------- |
-| `src/config/sections/templates.ts`           | modify (add nsfw_policy types) |
-| `src/assistant/workflow-runner.ts`           | modify (NSFW prefilter + consent + fallback) |
-| `src/assistant/workflow-runner.test.ts`      | new (NSFW policy tests) |
-| `configs/templates/workflows/defaults.yaml` | modify (add nsfw_policy to third-party workflows) |
-| `.plan/tickets/TASK-assistant-third-party-api-integration.md` | related |
+| File                                                          | Status                                            |
+| ------------------------------------------------------------- | ------------------------------------------------- |
+| `src/config/sections/templates.ts`                            | modify (add nsfw_policy types)                    |
+| `src/assistant/workflow-runner.ts`                            | modify (NSFW prefilter + consent + fallback)      |
+| `src/assistant/workflow-runner.test.ts`                       | new (NSFW policy tests)                           |
+| `configs/templates/workflows/defaults.yaml`                   | modify (add nsfw_policy to third-party workflows) |
+| `.plan/tickets/TASK-assistant-third-party-api-integration.md` | related                                           |
 
 ## Acceptance Criteria
 
