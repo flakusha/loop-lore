@@ -86,6 +86,20 @@
                 <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
               </details>
             </template>
+            <!-- Tool calls the assistant invoked (function-calling display) -->
+            <template x-if="msg.tool_calls && msg.tool_calls.length > 0">
+              <div class="tool-calls" data-testid="tool-calls">
+                <template x-for="tc in msg.tool_calls" :key="tc.id">
+                  <details class="tool-call-block">
+                    <summary>
+                      🛠 {{{t("chats.callTool")}}}:
+                      <code class="tool-call-name" x-text="tc.function.name"></code>
+                    </summary>
+                    <pre class="tool-call-args" x-text="tc.function.arguments"></pre>
+                  </details>
+                </template>
+              </div>
+            </template>
             <template x-if="editingMessageId !== msg.id">
               <div class="content" x-html="renderMarkdown(msg.content)"></div>
             </template>
