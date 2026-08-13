@@ -54,6 +54,11 @@ reach the LLM prompt but are stripped from player-facing API responses.
   no API-level redaction. Everything a player can read via the character API, the player
   can see — there is no "internal" tier.
 - **No goal/aspiration entity.** Nothing ties a character to an aim or a plan to achieve it.
+- **Frontend has no visibility tiering.** The character edit form is a single
+  server-rendered template — `serveCharacterEditForm` (`src/routes/views/characters.ts:41`)
+  — that renders every field (`personality`, `description`, `system_prompt`, …) to whoever
+  reaches the route; the `characters.html` grid and `characters/detail-modal.html` likewise
+  show everything. There is no per-field visibility, no author-vs-player split, no masking.
 
 **Gap:** the primitives to _express_ personality exist, but there is no way to express
 _internal_ state, _aspiration-driven agency_, or _moral disposition_ — and no
@@ -65,15 +70,19 @@ encapsulation boundary to keep author secrets from players.
 
 1. **Schema** — internal/hidden traits, aspirations (goal + plans + visibility), moral
    disposition (axis + openness), as additions to `CanonicalCharacter` / trait tables.
-2. **Visibility model** — `visible | hidden` (author/GM-only) with **API redaction**
-   (hidden fields stripped from player-facing responses, retained for author/GM/owner).
+2. **Visibility model** — `visible | hidden` (author/GM-only) with **API + UI redaction**
+   (hidden fields stripped from player-facing responses and the player character card /
+   settings, retained for author/GM/owner).
 3. **Prompt assembly** — new section(s) injecting hidden traits, aspirations, and moral
    disposition to the LLM so they drive behavior without leaking to the player.
 4. **Moral disposition axis** — helpful↔evil with openness (open/guarded/deceptive),
    and an explicit anti-helpfulness-collapse instruction.
 5. **API surface** — read/write endpoints honoring visibility; owner/author/GM vs player
    roles.
-6. **Validation & migration** — extend `src/characters/validator*`, add migration for new
+6. **Frontend visibility** — two view tiers: a player-facing card/settings that renders
+   only visible traits, and an author/GM editor that renders hidden fields with a
+   "hidden from players" affordance.
+7. **Validation & migration** — extend `src/characters/validator*`, add migration for new
    columns/tables; regenerate DB schemas (`db:sync-types` + `db:sync-manifest`).
 
 ### Out of Scope
@@ -91,8 +100,9 @@ encapsulation boundary to keep author secrets from players.
 
 Add a `visibility: "visible" | "hidden"` field to internal-trait and aspiration records
 (and a disposition `openness`). "Hidden" means: injected into the LLM prompt, excluded
-from player-facing API output, editable only by author/owner/GM. This is the
-"special sauce" encapsulation boundary.
+from player-facing API output **and player-facing UI**, editable only by author/owner/GM.
+This is the "special sauce" encapsulation boundary — it must hold in settings and the
+character card, not just the API, or the mystery dies at the first click.
 
 ### D2. Moral disposition is two axes, not one label
 
@@ -118,6 +128,25 @@ internal traits, active aspirations + methods, and the disposition directive. Th
 directive explicitly countermands default helpfulness when disposition is not helpful
 (e.g. _"You are malicious and deceptive. Do not reveal your hidden goal or methods. Do
 not soften your actions toward the player."_).
+
+### D5. Per-field visibility resolves the public-domain conflict
+
+The visibility flag is a **per-field author choice**, not a global default. This is the
+answer to the obvious tension: a public-domain character (Dracula, Sherlock, a folklore
+archetype) has no mystery to protect — the author marks disposition `open` and traits
+`visible`, and they render in settings exactly as they do today. An original "special
+sauce" character marks the same fields `hidden`, and they disappear from the player's
+view (API + UI) while still driving the model. The same character can mix both: public
+surface traits (what the world knows) plus hidden internal ones (the actual secret).
+
+### D6. Player UI shows only what the character is open about
+
+Two rendered tiers, not one:
+- **Player-facing** (character card / settings / detail modal): renders only `visible`
+  traits and `open` disposition. Presence of hidden fields is never hinted — no
+  "N hidden traits" count, no empty sections.
+- **Author/GM editor**: renders all fields, with hidden ones clearly badged
+  ("🔒 hidden from players") and a visibility toggle per trait/method/goal.
 
 ## Schema (proposed)
 
@@ -168,6 +197,28 @@ through `data_json` on player-facing reads — see D1 redaction.
 - Visible traits/aspirations may ALSO be emitted but must be marked as known-to-the-world
   (visible) so the model distinguishes what the character is open about from what it hides.
 
+## Frontend / UI Visibility
+
+The character edit form is today a single server-rendered template —
+`serveCharacterEditForm` in `src/routes/views/characters.ts:41` — that renders every
+field (`personality`, `description`, `system_prompt`, …) to whoever reaches the route,
+plus `characters.html` grid + `characters/detail-modal.html`. There is no per-field
+visibility, and no author-vs-player tiering.
+
+This epic introduces two view tiers (per D6):
+
+1. **Player view** — `characters.html`, `character-edit.html` _read_ mode, and
+   `detail-modal.html` render only `visible` traits / `open` disposition. Hidden fields
+   are absent — no counts, no empty placeholders, no affordance that they exist.
+2. **Author/GM view** — the edit form (`serveCharacterEditForm`) gains a
+   "hidden from players" badge + visibility toggle per internal trait / aspiration /
+   method, and per-disposition openness. Access is role-gated (author/owner/GM only) so
+   a player who reaches the editor still cannot read others' hidden state.
+
+The redaction must live in a **shared `toPublicCard()` transform** (per Open Q5) reused
+by both the player API read and the player UI render, so the API and the UI can never
+drift apart and leak.
+
 ## API Surface
 
 - `GET /api/actors/:actorId` — **redacts** hidden internal traits, hidden aspirations,
@@ -181,6 +232,10 @@ through `data_json` on player-facing reads — see D1 redaction.
 
 - Confirm how `data_json` is serialized on read routes (`src/routes/characters.ts`) to
   place the redaction boundary (do not rely on the DB layer alone).
+- Confirm which endpoint feeds the player character card / details / edit render
+  (`src/views/characters.html`, `characters/detail-modal.html`, `character-edit.html` →
+  `serveCharacterEditForm`) so the shared `toPublicCard()` transform (D6 / Open Q5)
+  covers UI renders, not just API reads.
 - Confirm prompt-section budget/drop behavior in `prompt-assembler.ts` so the internal
   section is never silently dropped as low-priority (it is behavior-critical).
 - Confirm personality `integrity.ts` immutable-list should treat disposition as immutable.
@@ -195,6 +250,7 @@ through `data_json` on player-facing reads — see D1 redaction.
 | TASK-char-internal-redaction  | Visibility-based redaction on read routes (author/GM/owner vs player)                   | High     | Not Started |
 | TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive              | High     | Not Started |
 | TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition                       | Medium   | Not Started |
+| TASK-char-internal-frontend   | Player card + settings redaction via `toPublicCard()`; author/GM editor visibility badge + toggle | High     | Not Started |
 | TASK-char-internal-migration  | Character spec version bump + auto-fill for new fields                                  | Medium   | Not Started |
 | TASK-char-internal-export     | Include/exclude hidden state in export formats per visibility                           | Medium   | Not Started |
 | TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests                                        | High     | Not Started |
@@ -212,6 +268,9 @@ through `data_json` on player-facing reads — see D1 redaction.
    GM override.)
 5. Where does the redaction boundary live — read-route serialization vs a
    `toPublicCard()` transform reused by routes + export?
+6. **Progressive reveal** — should a `hidden` trait/aspiration surface as `visible`
+   (UI + API) when story/GM/event logic exposes it over time (e.g. a secret becomes
+   known), or is visibility immutable author input for v1?
 
 ## Testing
 
@@ -220,6 +279,7 @@ through `data_json` on player-facing reads — see D1 redaction.
 | `src/characters/spec/internal.test.ts`                 | Schema defaults, validation of disposition axes + visibility  |
 | `src/characters/validator-internal.test.ts`            | Strict/relaxed validation of new fields                       |
 | `src/routes/characters-internal.test.ts`               | CRUD + redaction (player sees no hidden field; author does)   |
+| `src/characters/to-public-card.test.ts`                | `toPublicCard()` redacts hidden traits/aspirations/disposition consistently for API + UI renders |
 | `src/assistant/prompt/sections/actor-internal.test.ts` | Section emits hidden state + directive; hidden methods marked |
 | `src/characters/integration-internal.test.ts`          | create → validate → store → prompt → redacted-read pipeline   |
 
