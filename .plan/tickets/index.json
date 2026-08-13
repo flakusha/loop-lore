@@ -4568,6 +4568,17 @@
     "type": "TASK",
     "hash": "890506b"
   },
+  "TASK-CRAFTING-STATIONS-EXECUTION": {
+    "hash": "pending",
+    "extid": "TASK-CRAFTING-STATIONS-EXECUTION",
+    "type": "TASK",
+    "title": "Crafting Stations & Execution (stations CRUD + `POST /craft` + orders)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-rpg-wiring-phase3.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+  },
   "TASK-CRAFTING-SYSTEM": {
     "epic": "RPG Mechanics & Extensible Game Systems",
     "extid": "TASK-CRAFTING-SYSTEM",
@@ -4736,6 +4747,17 @@
     "epic": "`epic-timeline-system.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-cross-story-propagation.md"
+  },
+  "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW": {
+    "hash": "pending",
+    "extid": "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW",
+    "type": "TASK",
+    "title": "# Cross-Tool Data Portability Review (both directions)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-tool-data-portability-review.md"
   },
   "TASK-CRYPTO-ALGORITHM-FACTORY": {
     "epic": "epic-crypto",
@@ -9215,6 +9237,17 @@
     "type": "TASK",
     "hash": "db5c4e7"
   },
+  "TASK-TRADE-HISTORY-NPC-COUNTERPARTY": {
+    "hash": "pending",
+    "extid": "TASK-TRADE-HISTORY-NPC-COUNTERPARTY",
+    "type": "TASK",
+    "title": "Trade History + NPC Counterparty",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-rpg-wiring-phase3.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
+  },
   "TASK-TRADING-INTERFACE": {
     "epic": "epic-inventory-ui.md",
     "extid": "TASK-TRADING-INTERFACE",
@@ -9932,16 +9965,5 @@
     "tags": [],
     "title": "XMPP Integration",
     "type": "TASK"
-  },
-  "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW": {
-    "hash": "pending",
-    "extid": "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW",
-    "type": "TASK",
-    "title": "# Cross-Tool Data Portability Review (both directions)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-cross-tool-data-portability-review.md"
   }
 }
