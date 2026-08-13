@@ -73,7 +73,6 @@
 | ⬜ Not Started | Internationalization (i18n) | Medium | Unknown | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
 | ⬜ Not Started | Inventory & Trading UI | P1 — High | Medium | 14 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | ⬜ Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
-| ⬜ Not Started | Item Systems Unification & Gap Closure | High | High | 15 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | ⬜ Not Started | Licensing | Low | Unknown | 0 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
 | ⬜ Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | ⬜ Not Started | Logging & Structured Logging | Medium | Unknown | 0 | [epic-logging.md](/.plan/epics/epic-logging.md) |
@@ -170,6 +169,7 @@
 | ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately. | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending) | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
+| 🟡 In Progress (backend 10/15 complete — 2026-08-12) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | 🟡 Permanently Ongoing | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | 🟡 Phase 1 Complete, Phase 2 Partial | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
@@ -802,15 +802,6 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **File:** `.plan/epics/epic-item-system-extensions.md`
 
 Extended item system mechanics — durability degradation, stat effects, stats drift, unique item tracking, duplicate protection, and overpowered item management. Builds on core item system from RPG Mechanics epic.
-
-### Item Systems Unification & Gap Closure
-
-- **Status:** ⬜ Not Started
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** items, inventory, trade, crafting, loot, npc, economy, unification
-- **File:** `.plan/epics/epic-item-systems-unification.md`
 
 ### Licensing
 
@@ -1702,6 +1693,15 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Effort:** Med
 - **Type:** Feature Epic
 - **File:** `.plan/epics/epic-impersonation.md`
+
+### Item Systems Unification & Gap Closure
+
+- **Status:** 🟡 In Progress (backend 10/15 complete — 2026-08-12)
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** items, inventory, trade, crafting, loot, npc, economy, unification
+- **File:** `.plan/epics/epic-item-systems-unification.md`
 
 ### Logging & Telemetry — Complete Level Set + Canonical JSONL
 

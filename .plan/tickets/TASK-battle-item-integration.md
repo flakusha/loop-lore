@@ -3,7 +3,7 @@
 **Epic:** Battle & Action Systems, Item System Extensions
 **Priority:** High
 **Effort:** High
-**Status:** Not Started
+**Status:** 🟡 Partially Complete — superseded backend by `TASK-map-battle-equipment`; durability-in-combat/combat-equipment-use open (2026-08-12)
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G1 (Battle ↔ Items)
 
@@ -40,7 +40,16 @@ Battle currently uses "Use item" as an action type but never references `epic-it
 
 ## Acceptance Criteria
 
-- [ ] Battle action uses equipment from inventory for stat calculations
-- [ ] Enemy defeat triggers loot drop into inventory
-- [ ] Item durability decreases on combat use
-- [ ] Equipment affects at least one combat stat (damage, AC, or save)
+- [ ] Battle action uses equipment from inventory for stat calculations (partially — `calculateEquipmentModifiers`/`canEquipItem` exist; not wired to battle actions)
+- [x] Enemy defeat triggers loot drop into inventory (via `generateLoot` + `POST /api/battle/equipment/loot` persistence)
+- [ ] Item durability decreases on combat use (open — `applyDurabilityDamage` exists but no combat hook)
+- [x] Equipment affects at least one combat stat (damage, AC, or save) (via `toEquipmentItem` → `EquipmentModifier[]` / `calculateEquipmentModifiers`)
+
+### Superseded / carried forward (2026-08-12)
+
+Most of this ticket's backend surface shipped under `TASK-map-battle-equipment.md` (✅ Complete):
+equipment→battle mapping (`toEquipmentItem`, `categoryToType`/`categoryToSlot`, `EquipmentSource`),
+stat modifiers (`calculateEquipmentModifiers`), equip eligibility (`canEquipItem`), durability
+repair/apply helpers, and loot generation (`generateLoot`). The remaining open items above
+(combat-action equipment usage + durability degradation in combat) are carried forward and
+tracked under `epic-item-systems-unification` → `epic-battle-integration-gaps`.
