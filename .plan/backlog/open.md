@@ -63,6 +63,22 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 
 **Stale/dup (no decision needed):** login page htmx — auth views already exist.
 
+## Item-systems deferred follow-ups (from `epic-item-systems-unification` backend 10/15)
+
+> Backend wire-* work landed 2026-08-12 (10/10 tickets complete + review pass). The following
+> were explicitly deferred and remain open — see `epic-item-systems-unification.md`
+> § Remaining Points for full details.
+
+| # | Deferred point | Blocks on | Where tracked |
+|---|----------------|-----------|---------------|
+| IS1 | Crafting station def/instance CRUD + `GET stations` route | `StationsService` (`TASK-complete-crafting-system-services`) | `TASK-wire-crafting-routes.md` |
+| IS2 | Crafting attempt execution (`POST /craft`: consume materials → output, success/skill/level checks) | `CraftingProcessService` | `TASK-wire-crafting-routes.md` |
+| IS3 | Crafting orders placed/fulfilled via HTTP (+ payment) | `CraftingProcessService` + TradeService (payment primitive exists) | `TASK-wire-crafting-routes.md`, `TASK-implement-trade.md` |
+| IS4 | Trade offer/accept/cancel lifecycle (persistent pending exchanges) | — | `TASK-implement-trade.md` |
+| IS5 | NPC trading (sell to NPC, buy from NPC inventory) | `TASK-npc-inventory-frontend` | `TASK-implement-trade.md` |
+| IS6 | Trade history queryable | — | `TASK-implement-trade.md` |
+| IS7 | Combat-action equipment usage + durability degradation in combat | — | `TASK-battle-item-integration.md` |
+
 ## Recent wiring (reference)
 
 - **SSE refactor (in-flight, `dev`)** — `stream-to-client.ts` split; `sse-utils.ts`
