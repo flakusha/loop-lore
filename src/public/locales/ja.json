@@ -566,7 +566,8 @@
     "logout": "ログアウト",
     "closeSidebar": "閉じる",
     "notifications": "通知",
-    "openSidebar": "メニューを開く"
+    "openSidebar": "メニューを開く",
+    "docs": "ドキュメント"
   },
   "modals": {
     "confirm": "確認",

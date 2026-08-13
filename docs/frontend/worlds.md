@@ -82,7 +82,10 @@ Worlds contain many locations. Locations form a travel graph.
 
 **Actions**: Edit (secondary), Delete (danger, with confirmation), "New Chat Room" (primary — navigates to character browser)
 
-## World Create/Edit (`/worlds/new`, `/worlds/:id/edit`)
+## World Create/Edit
+
+Create is a modal on the worlds page (**+ New** header button loads
+`/partials/worlds/create-modal`). Edit is a page at `/worlds/:id/edit`.
 
 Single-column form, max-width 600px, centered.
 

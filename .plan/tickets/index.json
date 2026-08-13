@@ -5033,6 +5033,50 @@
     "tags": [],
     "source": ".plan/tickets/TASK-distributed-trust-security-validation.md"
   },
+  "TASK-DOCS-FIX-DANGLING-LINKS": {
+    "hash": "pending",
+    "extid": "TASK-DOCS-FIX-DANGLING-LINKS",
+    "type": "TASK",
+    "title": "Fix dangling vitepress sidebar links",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-docs-reconciliation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-fix-dangling-links.md"
+  },
+  "TASK-DOCS-GUIDE-HOW-TOS": {
+    "hash": "pending",
+    "extid": "TASK-DOCS-GUIDE-HOW-TOS",
+    "type": "TASK",
+    "title": "User guide how-tos",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-docs-reconciliation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-guide-how-tos.md"
+  },
+  "TASK-DOCS-RECONCILE-IMPLEMENTATION": {
+    "hash": "pending",
+    "extid": "TASK-DOCS-RECONCILE-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Reconcile specs + API reference with implementation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-docs-reconciliation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-reconcile-implementation.md"
+  },
+  "TASK-DOCS-UI-ENDPOINT-LINKAGE": {
+    "hash": "pending",
+    "extid": "TASK-DOCS-UI-ENDPOINT-LINKAGE",
+    "type": "TASK",
+    "title": "Docs UI endpoint linkage",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-docs-reconciliation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
+  },
   "TASK-DOCUMENT-PROCESSING-PIPELINE": {
     "epic": "epic-rag-document-processing.md",
     "extid": "TASK-DOCUMENT-PROCESSING-PIPELINE",
