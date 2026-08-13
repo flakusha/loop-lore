@@ -566,7 +566,8 @@
     "logout": "Cerrar sesión",
     "closeSidebar": "Cerrar",
     "notifications": "Notificaciones",
-    "openSidebar": "Abrir menú"
+    "openSidebar": "Abrir menú",
+    "docs": "Documentación"
   },
   "modals": {
     "confirm": "Confirmar",

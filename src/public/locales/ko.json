@@ -566,7 +566,8 @@
     "logout": "로그아웃",
     "closeSidebar": "닫기",
     "notifications": "알림",
-    "openSidebar": "메뉴 열기"
+    "openSidebar": "메뉴 열기",
+    "docs": "문서"
   },
   "modals": {
     "confirm": "확인",

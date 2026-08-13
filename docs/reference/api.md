@@ -66,7 +66,7 @@ All endpoints prefixed with `/api/`.
 
 ### List
 
-`GET /api/chats/:chatId/messages` — query: `page`, `pageSize` (max 200), `parentId`, `before`
+`GET /api/chats/:chatId/messages` — query: `page`, `pageSize` (max 200), `parentId`
 
 ### Send
 
@@ -88,7 +88,7 @@ All endpoints prefixed with `/api/`.
 
 ### Create
 
-`POST /api/actors` — body: `{ displayName, actorType, description, systemPrompt }` — returns `{ id }` 201
+`POST /api/actors` — body: `{ displayName, actorType, agentType, description, systemPrompt }` — returns `{ id }` 201
 
 ### Update
 
@@ -106,7 +106,7 @@ All endpoints prefixed with `/api/`.
 
 ### Create
 
-`POST /api/worlds` — body: `{ name, description, lore }` — returns `{ id }` 201
+`POST /api/worlds` — body: `{ name, description, locationCount, kind, visibility }` — returns `{ id }` 201
 
 ### Get
 
@@ -150,11 +150,11 @@ All endpoints prefixed with `/api/`.
 
 ### Upload
 
-`POST /api/assets` — multipart `file` — returns `{ id, filename, mimeType, sizeBytes, urls: { raw, compressed, thumb } }`
+`POST /api/assets` — multipart `file` (+ optional `alt_text`, `chat_id`) — returns `{ id, filename, mime_type, asset_type, size_bytes, storage_backend, alt_text }`, 201 (200 with `duplicate: true` if the same file already exists).
 
 ### List
 
-`GET /api/assets?type=image` — paginated
+`GET /api/assets?entity_type=image&entity_id=...&label=...` — paginated; filters by `entity_type`, `entity_id`, `label` plus standard pagination.
 
 ### Link
 

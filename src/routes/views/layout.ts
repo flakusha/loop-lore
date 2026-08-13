@@ -10,6 +10,29 @@ import { COMPONENTS_DIR, I18N_TEMPLATE_RE, ICONS_DIR, VIEWS_DIR, } from "./const
 
 const viewCache = new Map<string, string>();
 
+/**
+ * Docs are served when DOCS_ENABLED is not explicitly "false" — matches the
+ * gate in src/server/static-files.ts (handleDocsRequest). Keeping both on the
+ * same condition means the sidebar link only appears when /docs/ responds.
+ */
+function isDocsServed(): boolean {
+  return process.env.DOCS_ENABLED !== "false";
+}
+
+/**
+ * Sidebar nav item linking to the in-app vitepress docs endpoint. Injected by
+ * wrapWithLayout in place of `{{docsNav}}`; rendered only when docs are served.
+ */
+const DOCS_NAV_HTML = `
+        <a
+          class="nav-item"
+          href="/docs/"
+          data-testid="nav-docs"
+        >
+          <span>📚</span> <span>{{{t("navigation.docs")}}}</span>
+        </a>
+`.trim();
+
 function wrapWithLayout(
   content: string,
   title?: string,
@@ -25,6 +48,7 @@ function wrapWithLayout(
   let layout = readFileSync(layoutPath, "utf8",);
   layout = layout.replace("{{{content}}}", () => content,);
   layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"),);
+  layout = layout.replace("{{docsNav}}", () => (isDocsServed() ? DOCS_NAV_HTML : ""),);
   layout = layout.replace("{{userId}}", () => jsonStringifyOr(userId ?? null, "null",),);
   layout = layout.replace("{{sessionId}}", () => jsonStringifyOr(sessionId ?? null, "null",),);
   layout = layout.replaceAll("{{cspNonce}}", () => cspNonce ?? "",);
