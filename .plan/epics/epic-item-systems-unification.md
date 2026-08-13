@@ -1,6 +1,6 @@
 # EPIC: Item Systems Unification & Gap Closure
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress (backend 10/15 complete — 2026-08-12)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -54,21 +54,35 @@ Unify the fragmented item systems and close critical gaps identified in the RPG 
 
 | Task                                    | Scope                                                           | Priority |
 | --------------------------------------- | --------------------------------------------------------------- | -------- |
-| `TASK-unify-item-types.md`              | Single `ItemDefinition` taxonomy, map all variants              | P0       |
-| `TASK-link-npc-inventory.md`            | Replace JSON array with `world_items.owner_actor_id` references | P0       |
-| `TASK-wire-crafting-routes.md`          | Expose `RecipesService` via HTTP, connect material consumption  | P1       |
-| `TASK-persist-loot-drops.md`            | `generateLoot()` → `placeInLocation()` / `giveToNpc()`          | P1       |
-| `TASK-implement-trade.md`               | Transfer with currency, `crafting_orders` as economy backbone   | P1       |
-| `TASK-item-provisioning-dashboard.md`   | World-level allocation view (all items → where allocated)       | P1       |
-| `TASK-npc-inventory-frontend.md`        | View NPC inventories + trade with NPCs                          | P1       |
-| `TASK-equipment-stat-preview.md`        | Live stat delta preview when equipping/unequipping              | P1       |
-| `TASK-clean-transfer-orphans.md`        | Delete `world_items` rows where `quantity <= 0`                 | P2       |
-| `TASK-implement-item-transfer-event.md` | Resolve `applyItemTransfer()` → `ItemsService.transfer()`       | P2       |
-| `TASK-actor-item-service.md`            | Dedicated service: equip/unequip, weight limit, trade           | P2       |
-| `TASK-map-battle-equipment.md`          | Map `EquipmentItem` → `ItemDefinition`, shared enum             | P2       |
-| `TASK-item-generation.md`               | Procedural + LLM-assisted item generation                       | P2       |
-| `TASK-item-edit-permissions-history.md` | Edit permissions + item provenance audit trail                  | P2       |
-| `TASK-fix-actor-item-value-type.md`     | `actor_items.value` text → integer                              | P3       |
+| ✅ `TASK-unify-item-types.md`            | Single `ItemDefinition` taxonomy, map all variants              | P0       |
+| ✅ `TASK-link-npc-inventory.md`          | Replace JSON array with `world_items.owner_actor_id` references | P0       |
+| ✅ `TASK-wire-crafting-routes.md`        | Expose `RecipesService` via HTTP (recipe CRUD done; stations/attempts/orders deferred — see below) | P1 |
+| ✅ `TASK-persist-loot-drops.md`          | `generateLoot()` → `placeInLocation()` / `giveToNpc()`          | P1       |
+| ✅ `TASK-implement-trade.md`             | Currency ledger + atomic two-sided trade (offer/accept lifecycle + NPC trading deferred — see below) | P1 |
+| ⬜ `TASK-item-provisioning-dashboard.md` | World-level allocation view (all items → where allocated)       | P1       |
+| ⬜ `TASK-npc-inventory-frontend.md`      | View NPC inventories + trade with NPCs                          | P1       |
+| ⬜ `TASK-equipment-stat-preview.md`      | Live stat delta preview when equipping/unequipping              | P1       |
+| ✅ `TASK-clean-transfer-orphans.md`      | Delete `world_items` rows where `quantity <= 0`                 | P2       |
+| ✅ `TASK-implement-item-transfer-event.md` | Resolve `applyItemTransfer()` → `ItemsService.transfer()`     | P2       |
+| ✅ `TASK-actor-item-service.md`          | Dedicated service: equip/unequip, weight limit, trade           | P2       |
+| ✅ `TASK-map-battle-equipment.md`        | Map `EquipmentItem` → `ItemDefinition`, shared enum             | P2       |
+| ⬜ `TASK-item-generation.md`             | Procedural + LLM-assisted item generation                       | P2       |
+| ⬜ `TASK-item-edit-permissions-history.md` | Edit permissions + item provenance audit trail                | P2       |
+| ✅ `TASK-fix-actor-item-value-type.md`   | `actor_items.value` text → integer                              | P3       |
+
+## Remaining Points (deferred from completed backend tasks)
+
+The following were explicitly deferred while wiring the backend and remain
+as follow-up work (not yet ticketed as standalone tasks):
+
+| # | Point | Where it was deferred | Notes |
+|---|-------|----------------------|-------|
+| 1 | Crafting station defin/instance CRUD + `GET stations` route | `TASK-wire-crafting-routes` | Requires `StationsService` (see `TASK-complete-crafting-system-services`) |
+| 2 | Crafting attempt execution (consume materials → produce output, success/skill/level checks) + `POST /craft` route | `TASK-wire-crafting-routes` | Requires `CraftingProcessService` |
+| 3 | Crafting orders placed/fulfilled via HTTP (+ payment) | `TASK-wire-crafting-routes`, `TASK-implement-trade` | `crafting_orders` table exists; TradeService is the payment primitive |
+| 4 | Trade offer/accept/cancel lifecycle (persistent pending exchanges) | `TASK-implement-trade` | Only synchronous `POST /trade/execute` exists |
+| 5 | NPC trading (sell to NPC, buy from NPC inventory) | `TASK-implement-trade`, `TASK-npc-inventory-frontend` | TradeService supports any actor owner; needs a counterparty wrapper |
+| 6 | Trade history queryable | `TASK-implement-trade` | No history table yet |
 
 ## Implementation Approach
 
@@ -113,21 +127,22 @@ tables → `005_actor_data.ts`). No serialized new migrations here.
 
 ## Acceptance Criteria
 
-- [ ] Single item type taxonomy (`ItemCategory` + `ItemRarity`) used across all systems
-- [ ] NPC inventory resolved via `world_items.owner_actor_id` (no denormalized JSON)
-- [ ] Crafting recipes, stations, and orders accessible via HTTP routes
-- [ ] Loot generation persists items as `world_items` instances
-- [ ] Trade endpoint: transfer items + currency between actors
-- [ ] No orphaned `world_items` rows (quantity > 0 constraint or cleanup)
-- [ ] Story event item transfers resolve to actual `ItemsService.transfer()` calls
-- [ ] Actor items have equip/unequip with stat effects and weight limits
-- [ ] Battle equipment maps to world item definitions
+- [x] Single item type taxonomy (`ItemCategory` + `ItemRarity`) used across all systems
+- [x] NPC inventory resolved via `world_items.owner_actor_id` (no denormalized JSON)
+- [x] Crafting recipes accessible via HTTP routes (recipe CRUD)
+- [ ] Crafting stations and orders accessible via HTTP routes (deferred — §Remaining Points #1–3; needs `StationsService`/`CraftingProcessService`)
+- [x] Loot generation persists items as `world_items` instances
+- [x] Trade endpoint: transfer items + currency between actors (synchronous `POST /trade/execute`)
+- [x] No orphaned `world_items` rows (quantity > 0 CHECK + delete-on-full-transfer)
+- [x] Story event item transfers resolve to actual `ItemsService.transfer()` calls
+- [x] Actor items have equip/unequip with weight limits (stat-effect application deferred — `TASK-actor-item-service.md`)
+- [x] Battle equipment maps to world item definitions
 - [ ] **Frontend**: World item provisioning dashboard (allocate items to locations/NPCs)
 - [ ] **Frontend**: NPC inventory view + trading interface
 - [ ] **Frontend**: Equipment stat delta preview (live feedback on equip/unequip)
 - [ ] **Frontend**: Item generation UI (procedural + LLM-assisted)
 - [ ] **Frontend**: Item history/provenance timeline
-- [ ] `bun run check` green; all new code covered by tests
+- [x] `bun run check` green; all new code covered by tests (typecheck/coverage/db-schema green; size-strict fixed)
 
 ## Related Epics
 
