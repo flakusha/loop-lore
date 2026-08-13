@@ -28,6 +28,7 @@ interface CharacterTemplate {
    - `skills?: SkillTemplate[]` — starting skills with level/proficiency
    - `professions?: ProfessionTemplate[]` — starting disciplines with level
 2. **Skill template type**:
+
    ```typescript
    interface SkillTemplate {
      name: string;
@@ -37,7 +38,9 @@ interface CharacterTemplate {
      specialization?: string;
    }
    ```
+
 3. **Profession template type**:
+
    ```typescript
    interface ProfessionTemplate {
      discipline: CraftingDiscipline; // alchemy, smithing, etc.
@@ -45,6 +48,7 @@ interface CharacterTemplate {
      specializations?: string[];
    }
    ```
+
 4. **Update seeder** — `src/characters/seed/templates.ts`:
    - After creating actor, iterate `template.skills[]` → `SkillsService.createSkill()`
    - Iterate `template.professions[]` → `ProfessionsService.createProfession()`
