@@ -6,9 +6,21 @@
 - Git
 - SQLite3 (local dev)
 
-## Install
+## Quick Start
 
-Server at `http://localhost:3000`
+```bash
+git clone <repository-url>
+cd loop-lore
+bun install
+bun run db:migrate
+bun run dev
+```
+
+Server starts at `http://localhost:3000`.
+
+**Next:** [Your First Chat](/guide/first-chat) — create a character and send
+your first message. For full setup details (env vars, Docker, Windows) see
+[Installation](/guide/installation).
 
 ## Scripts
 

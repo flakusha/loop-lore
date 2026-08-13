@@ -577,7 +577,8 @@
     "logout": "Log Out",
     "closeSidebar": "Close sidebar",
     "notifications": "Notifications",
-    "openSidebar": "Open Menu"
+    "openSidebar": "Open Menu",
+    "docs": "Docs"
   },
   "modals": {
     "confirm": "Confirm",
