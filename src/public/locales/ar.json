@@ -566,7 +566,8 @@
     "logout": "تسجيل الخروج",
     "closeSidebar": "إغلاق",
     "notifications": "الإشعارات",
-    "openSidebar": "فتح القائمة"
+    "openSidebar": "فتح القائمة",
+    "docs": "التوثيق"
   },
   "modals": {
     "confirm": "تأكيد",

@@ -566,7 +566,8 @@
     "logout": "Выйти",
     "closeSidebar": "Закрыть",
     "notifications": "Уведомления",
-    "openSidebar": "Открыть меню"
+    "openSidebar": "Открыть меню",
+    "docs": "Документация"
   },
   "modals": {
     "confirm": "Подтвердить",
