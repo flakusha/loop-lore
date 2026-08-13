@@ -10,42 +10,15 @@ import { CancelReason, ChunkAction, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { extractAndStoreMemories, } from "../../memory";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
-import { safeJsonStringify, } from "../../utils";
 import { failGeneration, processStreamingChunk, } from "../cancellation-manager";
 import { callWithFailover, } from "../providers/registry";
 import type { ChunkEvent, GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
 import { getOrCreateBuffer, scheduleBufferCleanup, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
+import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
 import type { GenerateRequest, } from "./types";
-
-function sseData(obj: unknown,): string {
-  const r = safeJsonStringify(obj,);
-  return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
-}
-
-/** Escape HTML special characters for safe injection into rendered output. */
-function escapeHtml(str: string,): string {
-  return str
-    .replaceAll("&", "&amp;",)
-    .replaceAll("<", "&lt;",)
-    .replaceAll(">", "&gt;",)
-    .replaceAll('"', "&quot;",)
-    .replaceAll("'", "&#39;",);
-}
-
-/** Render a collapsible tool-call block for the live stream consumer. */
-function renderToolCallBlock(toolName: string, toolArguments: string,): string {
-  const name = escapeHtml(toolName,);
-  const args = escapeHtml(toolArguments,);
-  return (
-    `<details class="tool-call-block" data-testid="tool-call-block">` +
-    `<summary>🛠 Call tool: <code>${name}</code></summary>` +
-    `<pre class="tool-call-args">${args}</pre>` +
-    `</details>`
-  );
-}
 
 export interface StreamToClientOpts {
   input: GenerateRequest;
