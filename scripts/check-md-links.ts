@@ -30,9 +30,9 @@
  *
  * Usage: `bun run scripts/check-md-links.ts`
  */
+import { Glob, } from "bun";
 import { existsSync, } from "node:fs";
 import { dirname, join, resolve, } from "node:path";
-import { Glob, } from "bun";
 
 const PROJECT_ROOT = import.meta.dir + "/..";
 const GLOBS = ["docs/**/*.md", ".plan/**/*.md",];
@@ -59,7 +59,7 @@ function collectLinks(text: string,): string[] {
   let m: RegExpExecArray | null;
   while ((m = inlineRe.exec(text,)) !== null) {
     const inner = m[2] ?? "";
-    const target = inner.match(/([^)\s"']+)/);
+    const target = inner.match(/([^)\s"']+)/,);
     if (target) { links.push(target[1],); }
   }
   // Reference definitions + usages (simplified: resolve refs inline)
@@ -120,7 +120,7 @@ async function checkFile(file: string,): Promise<void> {
   if (seen.has(file,)) { return; }
   seen.add(file,);
   const raw = await Bun.file(file,).text();
-  const body = stripInlineCode(stripCodeBlocks(raw,));
+  const body = stripInlineCode(stripCodeBlocks(raw,),);
   const links = collectLinks(body,);
 
   for (const target of links) {
@@ -130,7 +130,7 @@ async function checkFile(file: string,): Promise<void> {
     if (!resolved) { continue; }
     if (!existsSync(resolved,)) {
       broken++;
-      console.error(`[md-links] ${file} → broken target: ${target} (resolved ${resolved})`);
+      console.error(`[md-links] ${file} → broken target: ${target} (resolved ${resolved})`,);
     }
   }
 }
@@ -138,7 +138,7 @@ async function checkFile(file: string,): Promise<void> {
 async function main(): Promise<void> {
   const files = new Set<string>();
   for (const g of GLOBS) {
-    for await (const f of new Glob(g,).scan({ cwd: PROJECT_ROOT, })) {
+    for await (const f of new Glob(g,).scan({ cwd: PROJECT_ROOT, },)) {
       files.add(join(PROJECT_ROOT, f,),);
     }
   }
@@ -146,10 +146,10 @@ async function main(): Promise<void> {
   for (const file of files) { await checkFile(file,); }
 
   if (broken > 0) {
-    console.error(`\n[md-links] ${broken} broken internal link(s) found. Fix target paths or update the doc.`);
+    console.error(`\n[md-links] ${broken} broken internal link(s) found. Fix target paths or update the doc.`,);
     process.exit(1,);
   }
-  console.log(`[md-links] OK — ${files.size} markdown file(s), all internal links resolve.`);
+  console.log(`[md-links] OK — ${files.size} markdown file(s), all internal links resolve.`,);
 }
 
 main().catch((err,) => {
