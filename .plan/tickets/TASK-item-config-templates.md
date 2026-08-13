@@ -20,6 +20,7 @@ Character templates are seeded idempotently from config on server start, but **i
 ## Work
 
 1. **Create item template config types** — `src/config/sections/items/types.ts`:
+
    ```typescript
    interface ItemTemplate {
      id?: string; // hard ID for deterministic seeding
@@ -40,6 +41,7 @@ Character templates are seeded idempotently from config on server start, but **i
      templates: ItemTemplate[];
    }
    ```
+
 2. **Create defaults** — `src/config/sections/items/defaults.ts`:
    - Starter items: Iron Sword, Health Potion, Leather Armor, Torch, Rope, Gold Ring
    - Each with full properties (damage, healing, AC, etc.)
