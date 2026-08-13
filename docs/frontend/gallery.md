@@ -44,8 +44,8 @@ Full overlay modal, centered. Max-width 800px, max-height 85vh.
 
 **Footer bar**:
 
-- Left: metadata chips — file type, size (human-readable), linked entities count, upload date
-- Right: action buttons — "Copy URL", "Link to..." (opens sub-dialog), "Download", "Delete"
+- Left: metadata chips — file type (MIME), size (human-readable)
+- Right: action buttons — "Copy URL", "Download", "Delete"
 
 **Dismiss**: click ×, click outside modal, press Escape.
 
@@ -62,12 +62,13 @@ Overlay modal, max-width 500px.
 
 **Form fields** (below upload zone):
 
-- Label (text input, optional — for search/filter)
-- "Link to" section: entity type dropdown (Chat / Character / Message / None) + entity ID text input (shown when a type is selected)
+- Label (`alt_text`, optional — for search/filter)
 
 **Actions**: Upload (primary, full-width), Cancel (ghost)
 
-**Upload progress**: button shows spinner, drop zone shows "Uploading..." with filename. On completion: toast "Uploaded [filename]", modal closes, grid refreshes.
+**Upload progress**: form posts to `/api/assets` via htmx; on completion the
+asset grid refreshes and the modal closes. A duplicate upload returns the
+existing asset with a toast notification.
 
 ## States
 
@@ -78,4 +79,3 @@ Overlay modal, max-width 500px.
 | Filter, no results | "No assets match the current filter." with "Clear filters" link                                                                                                               |
 | Upload error       | Toast: "Failed to upload [filename]. [Retry]"                                                                                                                                 |
 | Delete initiated   | Confirmation dialog: "Delete [filename]? This cannot be undone." Cancel (secondary) / Delete (danger). On confirm, card animates out (fade + shrink), toast confirms deletion |
-| Link dialog open   | Sub-dialog within the modal: entity type dropdown + entity ID input + "Link" button                                                                                           |

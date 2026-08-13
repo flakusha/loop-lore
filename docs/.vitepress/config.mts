@@ -39,13 +39,18 @@ export default defineConfig({
           items: [
             { text: 'Introduction', link: '/guide/getting-started' },
             { text: 'Installation', link: '/guide/installation' },
+            { text: 'Your First Chat', link: '/guide/first-chat' },
           ],
         },
         {
-          text: 'Characters & RPG',
+          text: 'User Guides',
           collapsed: false,
           items: [
             { text: 'Creating Characters', link: '/guide/characters' },
+            { text: 'Personas', link: '/guide/personas' },
+            { text: 'Worlds', link: '/guide/worlds' },
+            { text: 'Gallery', link: '/guide/gallery' },
+            { text: 'Settings', link: '/guide/settings' },
           ],
         },
       ],
@@ -76,7 +81,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: 'Actor Data Model', link: '/spec/actors' },
-            { text: 'Character & Persona Setup', link: '/spec/character-setup' },
+            { text: 'Character & Persona Setup', link: '/spec/character-spec' },
             { text: 'RPG Mechanics', link: '/spec/rpg-mechanics' },
             { text: 'Memory System', link: '/spec/memory-system' },
           ],
@@ -92,7 +97,7 @@ export default defineConfig({
           text: 'Interfaces',
           collapsed: false,
           items: [
-            { text: 'TUI Mode', link: '/spec/tui' },
+            { text: 'TUI Mode', link: '/spec/terminal-ui' },
             { text: 'Transport Layer', link: '/spec/transport-unified' },
           ],
         },
