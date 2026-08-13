@@ -566,7 +566,8 @@
     "logout": "退出登录",
     "closeSidebar": "关闭",
     "notifications": "通知",
-    "openSidebar": "打开菜单"
+    "openSidebar": "打开菜单",
+    "docs": "文档"
   },
   "modals": {
     "confirm": "确认",

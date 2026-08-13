@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 187 epics
+**Total:** 188 epics
 
 ## Summary
 
@@ -114,6 +114,7 @@
 | 🟡 In Progress | Assistant/GM Flows Reconciliation | High | High | 14 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | 🟡 In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | 🟡 In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 8 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
+| 🟡 In Progress | Documentation Reconciliation & UX | Medium | Medium | 4 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
 | 🟡 In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
 | 🟡 In Progress | Shared Schemas — Reputation, Consent, NSFW Content Rating | High | Medium | 7 | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md) |
 | 🟡 In Progress | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 34 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
@@ -1167,6 +1168,15 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 - **Type:** Improvement Epic
 - **Tags:** lint, typecheck, build, coverage, eslint, typescript
 - **File:** `.plan/epics/epic-continuous-improvement.md`
+
+### Documentation Reconciliation & UX
+
+- **Status:** 🟡 In Progress
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic / Docs Chore
+- **Tags:** docs, vitepress, guide, api, reconciliation, linkage
+- **File:** `.plan/epics/epic-docs-reconciliation.md`
 
 ### Epic: Configurable Template System
 
