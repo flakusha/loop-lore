@@ -184,10 +184,10 @@ async function runNonBlockingChecks() {
       stderr: "pipe",
     },);
     await linksProc.exited;
-    const [stdout, stderr] = await Promise.all([
+    const [stdout, stderr,] = await Promise.all([
       new Response(linksProc.stdout,).text(),
       new Response(linksProc.stderr,).text(),
-    ]);
+    ],);
     const linksText = stdout + stderr;
     if (linksText.includes("broken",)) {
       console.log(`⚠ Markdown stale-link check found broken internal links:`,);
@@ -198,8 +198,8 @@ async function runNonBlockingChecks() {
     } else {
       console.log("✓ Markdown links OK",);
     }
-  } catch (err) {
-    console.log(`⚠ Markdown stale-link check skipped (${err.message})`,);
+  } catch (error) {
+    console.log(`⚠ Markdown stale-link check skipped (${error.message})`,);
   }
 }
 
