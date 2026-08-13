@@ -3,6 +3,7 @@
   "indentWidth": 2,
   "lineWidth": 120,
   "excludes": [
+    "**/.plan/**",
     "**/node_modules",
     "**/dist",
     "**/data",
