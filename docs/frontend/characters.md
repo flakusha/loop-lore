@@ -37,11 +37,11 @@ Character cards arranged in a responsive grid. Minimum card width 180px, cards f
 
 ---
 
-## Character Create/Edit (`/characters/new`, `/characters/:slug/edit`)
+## Character Create (`+ New` modal on `/views/characters`)
 
-### Layout
-
-Single column form, centered, max-width 600px. No sidebar visible — the form replaces the main content area. A back link at the top navigates to `/characters`.
+Create is a modal on the characters page (no `/characters/new` page route).
+The **+ New** header button loads `/partials/characters/create-modal` into the
+modal container.
 
 ### Form Sections
 
@@ -63,15 +63,17 @@ Single column form, centered, max-width 600px. No sidebar visible — the form r
 
 ### Actions
 
-- "Save" button (primary, top of form, sticky)
-- "Cancel" button (ghost, next to Save — navigates back to `/characters` or previous page)
+- "Save" button (primary)
+- "Cancel" button (ghost — closes the modal)
 
 ### Behavior
 
 - Validation errors appear inline below each field (red text, small, appears on blur or submit)
-- Leaving the page with unsaved changes triggers the browser's "unsaved changes" dialog
-- On successful save: redirect to the character's chat list (`/character/:slug`)
-- On save error: inline banner at top of form "Failed to save. [Retry]". Form data is preserved.
+- On successful save: modal closes, grid refreshes with the new character
+
+## Character Edit (`/characters/:id/edit`)
+
+Single column form, centered, max-width 600px. No sidebar visible — the form replaces the main content area. A back link at the top navigates back to `/characters`.
 
 ### States
 
