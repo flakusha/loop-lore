@@ -67,6 +67,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       token_count_prompt INTEGER, token_count_completion INTEGER, token_count_total INTEGER,
       status TEXT NOT NULL DEFAULT 'sending', visibility TEXT NOT NULL DEFAULT 'visible',
       continuation_index INTEGER,
+      tool_calls TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `,);
