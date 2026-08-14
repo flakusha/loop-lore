@@ -51,7 +51,10 @@
   ],
   "ignoreBinaries": [
     "sha256sum", // CI checksum step
-    "wait" // shell helper
+    "wait", // shell helper
+    "pip", // scancode install (scripts/check-licenses.ts)
+    "scancode", // license compliance gate (scripts/check-licenses.ts)
+    "fossa" // license compliance gate (scripts/check-licenses.ts)
   ],
   "ignore": [
     // ── Sample-plugin public API types ─────────────────────────────
