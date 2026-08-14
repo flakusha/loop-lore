@@ -69,7 +69,7 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
     if (!latestMessage?.id) { return; }
 
     try {
-      await apiFetch(`/api/chats/${chatId}/mark-read`, {
+      await apiFetch(`/api/v1/chats/${chatId}/mark-read`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ messageId: latestMessage.id, },),
