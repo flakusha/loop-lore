@@ -7,7 +7,7 @@ import { importWorldBundle, } from "./bundle";
 import { rowOf, } from "./rows";
 import type { HandlerOpts, } from "./types";
 
-export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "/api"): Elysia {
+export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "world-import", },).post(prefix + "/import/world", async (ctx: any,) => {
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
     if (authResult instanceof Response) { return authResult; }

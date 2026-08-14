@@ -63,7 +63,7 @@ describe("toEquipmentItem", () => {
     expect(item.maxDurability,).toBe(100,);
     expect(item.requiredLevel,).toBe(1,);
     expect(item.equipped,).toBe(false,);
-    expect(item.modifiers,).toContainEqual({ stat: "attack", value: 8, });
+    expect(item.modifiers,).toContainEqual({ stat: "attack", value: 8, },);
   });
 
   test("maps damage/bonus to attack and ac to defense", () => {
@@ -72,8 +72,8 @@ describe("toEquipmentItem", () => {
       category: "armor",
       properties: { ac: 5, bonus: 2, },
     },);
-    expect(item.modifiers,).toContainEqual({ stat: "defense", value: 5, });
-    expect(item.modifiers,).toContainEqual({ stat: "attack", value: 2, });
+    expect(item.modifiers,).toContainEqual({ stat: "defense", value: 5, },);
+    expect(item.modifiers,).toContainEqual({ stat: "attack", value: 2, },);
   });
 
   test("reads requiredLevel from properties", () => {

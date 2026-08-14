@@ -19,7 +19,7 @@ import { forbidden, notFound, } from "../validation/middleware";
 import { ApiKeyCreateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
-export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config }, prefix = "/api") {
+export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config }, prefix = "/api",) {
   const config = cfg;
   return new Elysia({ name: "api-keys", },)
     .get(prefix + "/user-api-keys", async (ctx,) => {

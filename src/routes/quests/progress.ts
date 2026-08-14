@@ -10,7 +10,7 @@ import {
 } from "../../validation/schemas";
 import { handleProgress, } from "./handlers";
 
-export function questProgressRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function questProgressRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-progress", },)
     .post(prefix + "/quests/:id/progress", async (ctx: any,) => {
       const userId = ctx.userId as string | null;

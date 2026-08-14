@@ -14,7 +14,7 @@ const nsfwOverrideBody = t.Object({
   override: t.Union([t.Literal("enabled",), t.Literal("disabled",), t.Null(),],),
 },);
 
-export function overridesRoutes(opts: HandlerOpts, prefix = "/api") {
+export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
   const database = opts.database;
 

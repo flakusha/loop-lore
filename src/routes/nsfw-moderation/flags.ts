@@ -8,7 +8,7 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { flagBody, flagQuery, requireAdmin, resolveFlagBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function flagsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 
   return (

@@ -1,9 +1,9 @@
 import type { Kysely, } from "kysely";
 import { HeatPhase, } from "../../../db/enums";
-import { Species, } from "../enums";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../../utils";
+import { Species, } from "../enums";
 import type { HeatCycleState, HeatEffects, } from "./types";
 
 /** Convert database row to HeatCycleState object */

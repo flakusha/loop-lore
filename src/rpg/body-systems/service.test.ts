@@ -1,11 +1,11 @@
 import { Database, } from "bun:sqlite";
 import { describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
+import { HeatPhase, } from "../../db/enums";
 import { createSqliteDialect, } from "../../db/index";
 import { createLogger, } from "../../logger";
-import { BodySystemService, } from "./service";
-import { HeatPhase, } from "../../db/enums";
 import { Species, } from "./enums";
+import { BodySystemService, } from "./service";
 
 // Initialize logger for tests (error only to suppress noise)
 createLogger({ level: "error", },);

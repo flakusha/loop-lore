@@ -19,7 +19,7 @@ import {
 import { NoteIdParams, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
-export function shadowRoutes(opts: HandlerOpts, prefix = "/api") {
+export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

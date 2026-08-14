@@ -6,7 +6,7 @@ import {
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function readRoutes(opts: HandlerOpts, prefix = "/api") {
+export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-read", },)

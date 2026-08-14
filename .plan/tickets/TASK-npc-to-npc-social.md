@@ -21,6 +21,7 @@ Extends `TASK-social-interaction.md` (player-facing social skills) with NPC-to-N
 ## Implementation
 
 ### Decision-to-Interact
+
 NPCs decide whether to initiate conversation based on:
 - Proximity (nearby NPCs)
 - Activity (idle NPCs more likely to chat)
@@ -29,6 +30,7 @@ NPCs decide whether to initiate conversation based on:
 - Time of day (social hours vs private hours)
 
 ### Conversation Generation
+
 ```typescript
 interface NPCConversation {
   initiator_id: string;
@@ -44,18 +46,21 @@ interface NPCConversation {
 ```
 
 ### Information Propagation
+
 - NPCs share facts from episodic memory during conversations
 - Information spreads through social network (A tells B, B tells C)
 - Trust affects whether information is believed
 - Gossip can distort information over propagation distance
 
 ### Emergent Social Dynamics
+
 - Clusters form based on shared interests/values
 - Conflicts emerge from incompatible beliefs
 - Reputation spreads through gossip network
 - Social events (festivals, meetings) increase interaction density
 
 ## Integration Points
+
 - **TASK-social-interaction.md** — Player-facing social skills (this extends with NPC-to-NPC)
 - **TASK-npc-behavior.md** — NPC state machine includes social state
 - **TASK-npc-memory.md** — Episodic memory provides conversation topics
@@ -64,6 +69,7 @@ interface NPCConversation {
 - **epic-character-core-system.md** — Memory architecture provides facts for exchange
 
 ## Acceptance Criteria
+
 - [ ] NPCs decide to interact based on proximity/activity/relationship/mood
 - [ ] NPC-to-NPC conversations generate with topics from shared context
 - [ ] Conversations affect relationship strength between NPCs
@@ -74,6 +80,7 @@ interface NPCConversation {
 - [ ] Performance: NPC social simulation runs without blocking player interactions
 
 ## Open Questions
+
 1. How many simultaneous NPC conversations should the system support?
 2. Should NPC conversations be LLM-generated or template-based? (cost vs quality)
 3. How far should information propagate before it becomes unreliable?
