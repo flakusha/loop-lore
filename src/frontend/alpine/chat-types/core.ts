@@ -83,6 +83,8 @@ export interface ChatCoreState extends AlpineMagicThis {
   _gmProvider: string;
   _gmTemperature: number;
   _gmMaxTokens: number;
+  // Per-actor model overrides (multi-LLM story mode) — persisted to gm_config.actorModels.
+  _actorModels: Record<string, { model: string; provider: string }>;
 
   // VN (visual novel) mode settings — persisted to gm_config.
   _vnEnabled: boolean;
