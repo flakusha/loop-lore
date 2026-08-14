@@ -32,6 +32,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _gmType: "llm" as "llm" | "human" | "hybrid",
   _gmHumanActorId: "",
   _gmEscalationThreshold: 0.5,
+  _gmModel: "",
+  _gmProvider: "",
+  _gmTemperature: 0.7,
+  _gmMaxTokens: 2000,
   _chatParticipants: [] as { actor_id: string; name: string; display_name?: string }[],
   _personas: [] as any[],
   _debugView: false,
@@ -67,6 +71,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       this._gmType = config.type ?? "llm";
       this._gmHumanActorId = config.humanGM?.actorId ?? "";
       this._gmEscalationThreshold = config.escalationThreshold ?? 0.5;
+      this._gmModel = config.llmConfig?.model ?? "";
+      this._gmProvider = config.llmConfig?.provider ?? "";
+      this._gmTemperature = config.llmConfig?.temperature ?? 0.7;
+      this._gmMaxTokens = config.llmConfig?.maxTokens ?? 2000;
     }
     await this.loadChatParticipants();
     Alpine.store("ui",).showChatSettings = true;
@@ -131,6 +139,17 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         vnAutoAdvance: this._vnAutoAdvance,
         type: this._gmType,
       };
+      if (this._gmModel.trim()) {
+        gmConfig.llmConfig = {
+          model: this._gmModel.trim(),
+          provider: this._gmProvider.trim(),
+          systemPrompt: "",
+          temperature: this._gmTemperature,
+          maxTokens: this._gmMaxTokens,
+        };
+      } else {
+        delete gmConfig.llmConfig;
+      }
       if (this._gmType === "human" || this._gmType === "hybrid") {
         gmConfig.humanGM = { actorId: this._gmHumanActorId, notifications: true, };
       } else {
