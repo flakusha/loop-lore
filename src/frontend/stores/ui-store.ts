@@ -35,6 +35,7 @@ export const uiStoreDefinition: Record<string, unknown> = {
   showGmPanel: false,
   showParticipants: false,
   showGmGuidance: false,
+  showQuestLog: false,
 
   // ── Active entity refs ───────────────────────────────
   activePersona: null,
