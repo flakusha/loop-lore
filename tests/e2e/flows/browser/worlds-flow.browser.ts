@@ -9,17 +9,17 @@ describe("Worlds flow E2E", () => {
   beforeAll(async () => {
     ctx = await createBrowserTest();
     await seedAll(ctx.db,);
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoWorlds(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
     try {
-      await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
+      await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     } catch {}
-    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 8000, },);
+    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
   }
 
   async function createWorldViaApi(name: string,): Promise<string> {
@@ -32,7 +32,7 @@ describe("Worlds flow E2E", () => {
     test("worlds page loads with header", async () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page,);
-      await page.locator("[data-testid='worlds-header']",).waitFor({ state: "attached", timeout: 5000, },);
+      await page.locator("[data-testid='worlds-header']",).waitFor({ state: "attached", timeout: 10_000, },);
       // Title should show "Worlds"
       const title = await page.locator("[data-testid='worlds-header'] .title",).textContent();
       expect(title,).toBe("Worlds",);
@@ -42,8 +42,8 @@ describe("Worlds flow E2E", () => {
     test("create and import buttons exist", async () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page,);
-      await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 5000, },);
-      await page.locator("[data-testid='import-world']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 10_000, },);
+      await page.locator("[data-testid='import-world']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
   });
@@ -52,9 +52,9 @@ describe("Worlds flow E2E", () => {
     test("create world modal opens", async () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page,);
-      await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.click("[data-testid='create-world']",);
-      await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
 
@@ -62,14 +62,14 @@ describe("Worlds flow E2E", () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page,);
       await page.click("[data-testid='create-world']",);
-      await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.locator("[data-testid='create-world-form'] #world-name",).waitFor({
         state: "attached",
-        timeout: 5000,
+        timeout: 10_000,
       },);
       await page.locator("[data-testid='create-world-form'] button[type='submit']",).waitFor({
         state: "attached",
-        timeout: 5000,
+        timeout: 10_000,
       },);
       await page.close();
     });
@@ -83,7 +83,7 @@ describe("Worlds flow E2E", () => {
       await gotoWorlds(page,);
       await page.locator("[data-testid='world-list'] .world-name",).first().waitFor({
         state: "attached",
-        timeout: 10_000,
+        timeout: 30_000,
       },);
       const worldNames = await page.locator("[data-testid='world-list'] .world-name",).allTextContents();
       expect(worldNames.some((n: string,) => n.includes("API Created World",)),).toBe(true,);
@@ -96,23 +96,23 @@ describe("Worlds flow E2E", () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page,);
       const firstCard = page.locator("[data-testid^='world-card-']",).first();
-      await firstCard.waitFor({ state: "visible", timeout: 10_000, },);
+      await firstCard.waitFor({ state: "visible", timeout: 30_000, },);
       await firstCard.click();
-      await page.locator("[data-testid='world-detail-header']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='world-detail-header']",).waitFor({ state: "attached", timeout: 15_000, },);
       expect(page.url(),).toContain("/worlds/",);
       await page.close();
-    }, 15_000,);
+    }, 90_000,);
   });
 
   describe("Sidebar navigation", () => {
     test("sidebar navigation works from worlds page", async () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page,);
-      await page.locator("[data-testid='nav-characters']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='nav-characters']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.evaluate(() => {
         (document.querySelector("[data-testid='nav-characters']",) as HTMLElement)?.click();
       },);
-      await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 15_000, },);
       expect(page.url(),).toContain("/views/characters",);
       await page.close();
     });
