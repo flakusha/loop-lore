@@ -1,6 +1,6 @@
 # TASK: Assistant/GM Flows
 
-**Status:** 🟡 In Progress — GM Panel + Command Buttons Done
+**Status:** 🟡 In Progress — GM panel + command buttons + GM-config authoring + story-mode frontend + GM-guided creation + per-actor multi-LLM + gmGuidance consumption shipped; entity-generation quality/confirmation gating + story chat view remaining
 **Priority:** High
 **Effort:** High
 **Epic:** epic-assistant-gm-flows
@@ -20,7 +20,7 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - ✅ GM role dropdown in chat settings (state flows load→save via `chat-settings.ts`)
 - ❌ Slash command parser → ✅ **wired** (messages.ts:543 dispatch + 21 handlers)
 - ❌ Tool call display in chat bubbles
-- ❌ GM role switching has no runtime effect (`assistantRole` stored, never branched on)
+- ✅ GM role switching has runtime effect (GM-guided creation flow: new-chat "Game Master guided story" toggle pre-sets `assistantRole:gm` + `mode:story`, auto-opens settings; story-mode generation runs `GameMasterService`; `gmGuidance` consumed via `4b0dd146`)
 
 ### Backend: 🟡 Partial
 
