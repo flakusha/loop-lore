@@ -84,6 +84,9 @@ Legend:
 | G15 | **Disease**   | **Weather**  | Weather lists disease (plague zones); Disease now references Weather for transmission conditions.     | **RESOLVED** — Disease epic updated with weather transmission cross-ref.    |
 | G16 | **Companion** | **Battle**   | Companion references Battle; Battle now lists Companion in dependents table with participation rules. | **RESOLVED** — Battle epic dependents table includes Companion.             |
 | G17 | **RPG**       | **CharCore** | RPG now references Character Core in Related Epics with ownership clarification.                      | **RESOLVED** — RPG epic updated with CharCore cross-ref and ownership note. |
+| G24 | **Memory**    | **CharCore** | Memory has `emotional_valence` field but no structured emotion-impact; CharCore has coping/mood but no memory integration. | **NEW** — Add `MemoryEmotionImpact` to episodic memories; integrate with mood/coping/relationship services. |
+| G25 | **Memory**    | **Time Scale** | Memory has real-time timestamps; Time Scale has game-time progression but no memory integration.    | **NEW** — Convert memory timestamps to game-time; decay per game-day; permanent memories survive compression. |
+| G26 | **Memory**    | **Timeline** | Memory has no `timeline_id`; Timeline has timeline branching but no memory integration.              | **NEW** — Add `timeline_id` to memories; timeline-specific recall; cross-timeline propagation per memory scopes. |
 
 ## Standardized Integration Template
 
@@ -150,6 +153,28 @@ These epics have `## Related Epics` but no `## Integration Points`:
 
 5. **Shared schemas** — Faction/Social reputation overlap needs resolution. Two systems defining `reputation` differently will cause conflicts at implementation time.
 
+## Cross-Cutting Capabilities from Emergent Platforms (2026-08-14)
+
+> Extension of the matrix beyond the 17 RPG sub-systems, informed by the **emergent
+> rpg/agentic/creative platform sweep** (inspiration sources, not competitors — see
+> `docs/ideas/emergent-platform-landscape-2026.md` and `epic-platform-research.md`
+> candidates 13–18). These are **cross-cutting capabilities** that touch several matrix
+> systems rather than single pairwise gaps. All are **P6+ deferred** under the 0.1.0
+> alignment unless marked; none block P3–P5. Revisit when P6+ RPG work starts.
+
+| # | Capability | Touches matrix systems | Inspiration source | Recommended action | Severity |
+| -- | ---------- | ---------------------- | ------------------ | ------------------ | -------- |
+| G18 | **Agentic NPC autonomy** (memory + goals + emotion + autonomous action) | Battle, Social, Narrative, CharCore, Companion | Inworld AI, Convai, generative-agents | Turn `npcs`/`battle` NPC-AI from scripted toward goal/memory-driven. P6+, fold into existing actor/NPC epics (no new epic). | 🔴 High (future) |
+| G19 | **Agent-memory scoring** (recency×importance×relevance + reflection) | RPG, Social, Narrative, CharCore | generative-agents, RisuAI HypaMemory, Kindroid | Upgrade `memory` purge/decay toward a scored model shared by all character-facing systems. P6+. | 🟡 Medium (future) |
+| G20 | **Living-world persistence across time + between sessions** | Weather, Economy, Faction, Social, Narrative, Exploration | AI Town, Nomi, AI Dungeon | Extend `world_events`/`timeline` + "world continues without you" (#14). P6+. | 🟡 Medium (future) |
+| G21 | **Asset-consistency generation** (reference conditioning + in-chat edit) | CharCore, Exploration, Narrative, Housing, Weather | Luma, Runway, Krea, RisuAI dynamic-assets | Keep a character/scene's look across generated images; in-chat img-edit. **Med difficulty, do not defer** — clean pull candidate. | 🟢 Low |
+| G22 | **Event-driven automation** (Quick-Replies / auto-execute on startup/user/ai) | All (cross-cutting) | SillyTavern Quick Replies, RisuAI dynamic-* | Event-triggered slash-command/regex automation — cheap, pure frontend, 0.1.0 quick-win candidate. | 🟢 Low |
+| G23 | **Dynamic memory/messages** (assistant writes memory notes mid-response; multi-message) | CharCore, Memory, Narrative | RisuAI | Extend the shipped tool-call SSE toward durable in-chat memory writes — 0.1.0 quick-win candidate. | 🟢 Low |
+
+**0.1.0 note:** G21, G22, G23 are the only rows with **no P6+ blocker** — they are the
+emergent-sweep quick wins achievable during 0.1.0 (see `backlog/priority.md` quick-win
+section). G18–G20 are P6+ cross-enhancements with deferred siblings.
+
 ---
 
 ## Pre-Compiled Hot Binary Modules Integration
@@ -180,3 +205,35 @@ These epics have `## Related Epics` but no `## Integration Points`:
 | --------------- | --------- | --------------------------------------- |
 | binary.loaded   | emits     | Notify system when native module loaded |
 | binary.fallback | emits     | Notify system when falling back to JS   |
+
+## Research-Driven Integration Gaps (2026-08-14)
+
+> Gaps identified from research on agentic NPC systems (Inworld AI, generative-agents, Convai, RisuAI). All are **P6+ deferred** under 0.1.0 alignment. Revisit when P6+ RPG work starts.
+
+| #  | System A                    | System B                    | Current State                                                                                                    | Recommended Action                                                                                              | Severity |
+| -- | --------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------- |
+| G27 | **BDI Planning**            | **Character Internal Traits** | BDI planning loop (`TASK-npc-bdi-planning.md`) needs aspiration data; internal traits (`epic-character-internal-traits.md`) defines aspirations but no planning integration.     | Aspirations drive daily planning; trait values affect plan priorities. Bidirectional cross-ref needed.           | 🟡 Medium |
+| G28 | **BDI Planning**            | **Mood/Happiness**          | BDI planning loop needs mood data for plan priorities; mood system (`TASK-character-mood-happiness.md`) exists but no planning integration.                                      | Mood affects plan priorities and reaction mode selection. Cross-ref needed.                                     | 🟡 Medium |
+| G29 | **NPC-to-NPC Social**       | **Relationships**           | NPC-to-NPC social sim (`TASK-npc-to-npc-social.md`) needs relationship strength; relationship system (`TASK-character-relationships.md`) exists but no NPC-to-NPC integration. | Relationship strength drives interaction probability; conversations affect relationship evolution.               | 🟡 Medium |
+| G30 | **NPC-to-NPC Social**       | **Memory Architecture**     | NPC-to-NPC social sim needs episodic memory for conversation topics; memory system exists but no social integration.                                                            | Episodic memories provide conversation topics; conversations generate new episodic memories.                     | 🟡 Medium |
+| G31 | **Agent Memory Scoring**    | **Emotion Impact**          | Agent memory scoring (`TASK-agent-memory-scoring.md`) needs emotional valence; emotion impact (`TASK-memory-emotion-impact.md`) exists but no scoring integration.               | Emotional memories get importance boost in scoring model. Cross-ref needed.                                     | 🟡 Medium |
+| G32 | **Living-World Persistence** | **BDI Planning**           | Living-world persistence (`TASK-living-world-persistence.md`) needs NPC schedules; BDI planning (`TASK-npc-bdi-planning.md`) provides daily plans but no between-session integration. | NPC daily plans advance between sessions; world events interrupt plans.                                         | 🟡 Medium |
+| G33 | **Living-World Persistence** | **Relationships**          | Living-world persistence needs relationship drift; relationship system exists but no between-session integration.                                                               | Relationships drift over elapsed time; catch-up summary includes relationship changes.                           | 🟡 Medium |
+| G34 | **Voice Profile**           | **Mood/Happiness**          | Voice profile system (`TASK-character-voice-profile.md`) needs mood data; mood system exists but no voice integration.                                                          | Mood modulates voice parameters (verbosity, pace, formality). Cross-ref needed.                                 | 🟡 Medium |
+| G35 | **Voice Profile**           | **Character Growth**        | Voice profile system needs growth data; character growth (`TASK-character-growth-development.md`) exists but no voice integration.                                               | Voice evolves with character growth; milestones can unlock new speech patterns.                                 | 🟠 Low |
+| G36 | **Character Growth**        | **Internal Traits**         | Character growth system needs trait data; internal traits exist but no growth integration.                                                                                      | Personality maturation affects trait values; growth events trigger trait shifts.                                 | 🟡 Medium |
+| G37 | **Character Growth**        | **Relationships**           | Character growth system needs relationship data; relationship system exists but no growth integration.                                                                          | Relational milestones drive growth events; growth affects relationship dynamics.                                | 🟡 Medium |
+
+### Research Cross-Reference Map
+
+| Research Extension                    | Platform Candidate | Maps to Gap(s)     | Related Tickets                              |
+| ------------------------------------- | ------------------ | ------------------ | -------------------------------------------- |
+| PAD Emotional Model                   | E1                 | G28, G34           | TASK-character-mood-happiness.md             |
+| Memory Architecture (4-tier)          | E2                 | G30, G31           | TASK-agent-memory-scoring.md, FEAT-memory-systems-three-tier.md |
+| NPC-to-NPC Social Sim                 | E1                 | G29, G30           | TASK-npc-to-npc-social.md                    |
+| BDI Goal-Pursuit Loop                 | E1                 | G27, G28, G32      | TASK-npc-bdi-planning.md                     |
+| Voice & Speech Profiles (D10)         | E5                 | G34, G35           | TASK-character-voice-profile.md              |
+| Dynamic Relationship Evolution        | E1                 | G29, G33, G37      | TASK-character-relationships.md              |
+| Character Growth & Development        | E1                 | G35, G36, G37      | TASK-character-growth-development.md         |
+| Living-World Between-Session          | E3                 | G32, G33           | TASK-living-world-persistence.md             |
+| AI Director / Narrative Pacing        | E1                 | (in epic-assistant-gm-flows.md) | N/A (deferred)                  |
