@@ -36,6 +36,7 @@ scenario-source feature from the recovered interface.
 ## Acceptance Criteria
 
 ### Phase 1 — DB (required)
+
 - [ ] New migration `src/db/migrations/*` creating `scenario_sources`:
       id (pk), origin (enum: creative_llm|blog_seed|manual), world_sketch (text),
       reusable (bool), tags (json array), usage_count (int, default 0),
@@ -46,6 +47,7 @@ scenario-source feature from the recovered interface.
 - [ ] Update Kysely `DB` types + `src/validation/db-schemas.ts` via the generator.
 
 ### Phase 2 — Service (required)
+
 - [ ] Implement `storeScenarioSource` / `findScenarioSources` / `getRandomScenarioSource`
       against the new table (real Kysely queries; `find` matches world_sketch + tags,
       orders by relevance + last_used_at; `getRandom` selects by reusable).
@@ -54,6 +56,7 @@ scenario-source feature from the recovered interface.
       DB-specific imports in non-Kysely modules. Keep file < 200 lines.
 
 ### Phase 3 — Wire + tests (required)
+
 - [ ] Route or consumer: expose scenario source behind a route or assistant command
       (recommend reusing recovered `src/assistant/` home; register where `/image`
       generation dispatches). State the chosen integration point in the ticket.
