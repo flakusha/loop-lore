@@ -40,10 +40,11 @@ Memory selection UI: mid-chat panel, pinning, context window integration. From `
 - [x] Browse available memories
 - [x] Pin/unpin memories
 - [x] Inject memories into context
-- [ ] Unit tests for UI logic
-- [ ] Integration tests for memory workflow
+- [x] Unit tests for UI logic
+- [x] Integration tests for memory workflow
 
 ## Notes
 
 - Reference `epic-memory-systems.md` for full system design
-- Core functionality complete, tests may be pending
+- Shipped on `dev`: pin persistence + injection + panel open (`1fd6514f`); assistant/world tabs populated by `scope` (`5e62eea7`).
+- UI logic + workflow covered by `memory-panel.test.ts`, `actor-memories-pin.test.ts`, `actor-memories-scope.test.ts`, `memories-pin.test.ts`, `decide.test.ts`.
