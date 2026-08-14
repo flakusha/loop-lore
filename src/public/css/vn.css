@@ -449,6 +449,129 @@
   font-size: 1rem;
 }
 
+/* ── Participant Panel (group-chat member management) ── */
+
+.participant-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-default);
+  z-index: 50;
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+.participant-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.participant-panel-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.participant-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.participant-card {
+  padding: var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+  font-size: 0.85rem;
+}
+
+.participant-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.participant-name {
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.participant-card-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.participant-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.participant-field-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.participant-initiative {
+  width: 64px;
+}
+
+.participant-add {
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+  padding-top: var(--space-3);
+}
+
+.participant-add h4 {
+  margin: 0 0 var(--space-2);
+  font-size: 0.9rem;
+}
+
+.participant-search {
+  margin-bottom: var(--space-2);
+}
+
+.participant-add-list {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.participant-add-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.participant-add-row .participant-name {
+  flex: 1;
+}
+
+.participant-add-empty {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
 .gm-tabs {
   display: flex;
   gap: var(--space-2);
