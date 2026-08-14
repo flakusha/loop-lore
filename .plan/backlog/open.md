@@ -5,18 +5,18 @@
 > below). Holds what is **currently in flight / needing a decision / open debt / deferred
 > (P6+)**. The priority ladder P0→P6+ lives in `../priority.md`.
 >
-> **Context recovery note (2026-08-13):** this refresh reflects (a) Gate C sub-items
-> verified shipped on `dev` 2026-08-12, (b) item-systems backend wiring landed in worktree
-> `rpg-wire-routes` (13 commits, unmerged), (c) docs-reconciliation epic work sitting
-> uncommitted in worktree `docs-reconcile`, (d) `dev` ahead of `origin/dev` by 19 commits
-> (unreleased), and (e) uncommitted SSE-refactor work on `dev` itself. Worktree rows are
-> W1–W4 below — these are the immediate next actions for other agents.
+> **Context recovery note (2026-08-14):** this refresh reflects (a) Gate C sub-items
+> verified shipped on `dev` 2026-08-12, (b) **both worktrees merged** — item-systems
+> backend wiring (`rpg-wire-routes`) and docs reconciliation (`docs-reconcile`) landed on
+> `dev`, (c) SSE refactor already committed (`082c20cf`), (d) `dev` ahead of `origin/dev`
+> by 39 commits (unreleased — push still pending, row W3 below). The only remaining worktree
+> row is W3 (push); W1/W2/W4 resolved.
 
 ## Status header
 
-P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped 2026-08-12; RPG wiring
-landing) · Regex ✅ · P3–P5 → 0.1.0 value tiers (see `../priority.md`) · Gate C: core done,
-GM-guided story (P2-Da) greenfield.
+P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped 2026-08-12; item-systems
+wiring + docs reconciliation **merged 2026-08-14**) · Regex ✅ · P3–P5 → 0.1.0 value tiers
+(see `../priority.md`) · Gate C: core done, GM-guided story (P2-Da) greenfield.
 
 ## In-flight / decision queue — rows needing a finalize-vs-defer call
 
@@ -44,10 +44,7 @@ GM-guided story (P2-Da) greenfield.
 | F3  | M6 AUX telemetry (tokens/latency per call)                                              | `../priority.md` Hardening                   | ▲ now                           |                       |
 | G2  | World timeline §5.3 forward-event steering + §5.4 cross-story convergence              | `epic-world-timeline*` (cluster B)           | ▲ now                           |                       |
 | G6  | Avatar-gallery visibility inheritance                                                  | `../priority.md` P2-F                        | ▲ now                           |                       |
-| W1  | **Finalize worktree `rpg-wire-routes`** — commit 3 dirty plan files (epic updates + TASK-assistant-creative-studio-workflows), rebase 14 commits of `dev` drift, merge | `tree/rpg-wire-routes` (13 ahead / 14 behind) | ▲ now — first land-order |                       |
-| W2  | **Finalize worktree `docs-reconcile`** — commit uncommitted docs+locales+layout work, finish `TASK-docs-reconcile-implementation.md` audit, merge | `tree/docs-reconcile` (0 commits, all uncommitted) | ▲ now — second land-order | |
-| W3  | **Push `dev` → `origin/dev`** (19 commits, Gate C + new epics) after W1/W2 rebases      | `dev` (ahead 19)                             | ▲ before release                |                       |
-| W4  | **Commit `dev` uncommitted work**: SSE refactor (`sse-utils.ts` extraction from `stream-to-client.ts`), md-link checker script tweaks, `epic-character-internal-traits.md` edit | `src/generation/generate-route/`, `scripts/check-md-links.ts`, `scripts/check-parallel.mjs` | ▲ now — do before W3 |                       |
+| W3  | **Push `dev` → `origin/dev`** (39 commits, Gate C + item-systems + docs reconciliation epics) | `dev` (ahead 39) | ▲ before release | |
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority.md` P2-C                     | ▲ now                           | 🟡 partial (shipped: tool-call UI 2026-08-12) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority.md` P2-C                        | ▲ now                           | 🟡 partial             |
 | E1  | Unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12)                      | `../priority.md` P2-D                        | ▲ now                           | 🟡 partial             |
@@ -57,11 +54,31 @@ linking) · G4 (authoring ownership indicators) — these sit in § Hardening / 
 clusters below. Rows removed here: all shipped since last refresh — **B1** (register
 frontend page ✅ 2026-08-12), **B7** (prompt-template registry `src/prompts/registry.ts` ✅
 2026-08-12), **A6** (size-strict ✅ closed 2026-08-12 — 0 files over 250L), **F2** (M5
-ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved), and MFA
-(deferred P6+). "Remove dead rule `detectIntent`" (D4) dropped — already Removed
-2026-08-07 (see § Dead / unwired code).
+ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved), **W1** (worktree
+`rpg-wire-routes` ✅ merged 2026-08-14), **W2** (worktree `docs-reconcile` ✅ merged
+2026-08-14), **W4** (SSE refactor ✅ committed `082c20cf`), and MFA (deferred P6+).
+"Remove dead rule `detectIntent`" (D4) dropped — already Removed 2026-08-07 (see § Dead / unwired code).
 
 **Stale/dup (no decision needed):** login page htmx — auth views already exist.
+
+## Open / next actions (post-merge planning, 2026-08-14)
+
+- **W3 (only worktree row left): Push `dev` → `origin/dev`** — 39 commits ahead, after
+  `bun run check` + `bun test src/` gate on dev. Before release (row A9).
+- **Broken internal markdown links (NEW find, non-blocking `check-md-links`)** — 17 dead
+  links across 4 files, distinct from the vitepress-sidebar scope already fixed by
+  `TASK-docs-fix-dangling-links.md` (✅ done). Targets reference renamed/nonexistent
+  specs; fold into `TASK-docs-reconcile-implementation.md` (in-progress spec-vs-`src/`
+  audit) or a dedicated follow-up ticket.
+  - `docs/README.md` → `./spec/personas.md`, `./spec/tui.md` (2)
+  - `docs/spec/build-deploy.md` → `./configuration.md` (1)
+  - `docs/spec/battle-integration.md` → `battle-design`, `equipment`, `social`,
+    `npc-actors`, `weather`, `resolution`, `content-management` (7)
+  - `docs/spec/nsfw-integration.md` → `nsfw-design`, `housing`, `weather`, `social`,
+    `disease`, `character-core`, `chat-lifecycle` (7)
+  - Resolution: `git ls-files docs/spec/` shows the real filenames (e.g. `battle.md` vs
+    `battle-design.md`, `weather-environment.md` vs `weather.md`); fix each target, or
+    drop the link if the spec genuinely does not exist.
 
 ## Item-systems deferred follow-ups (from `epic-item-systems-unification` backend 10/15)
 
@@ -81,14 +98,14 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 
 ## Recent wiring (reference)
 
-- **SSE refactor (in-flight, `dev`)** — `stream-to-client.ts` split; `sse-utils.ts`
-  extracted (untracked); chat.html stream markup simplified (2026-08-13, uncommitted —
-  see row W4).
-- **Item-systems unification backend 10/15 (worktree `rpg-wire-routes`)** — single item
+- **SSE refactor (merged `082c20cf`)** — `sse-utils.ts` extracted from
+  `stream-to-client.ts`; `src/generation/generate-route/sse-utils.ts`; chat.html stream
+  markup simplified (2026-08-13/14, committed on `dev`).
+- **Item-systems unification backend 10/15 (merged 2026-08-14, `rpg-wire-routes`)** — single item
   taxonomy, NPC inventory → `world_items.owner_actor_id`, actor items (equip/carry/
   transfer), world items → equipment, loot persisted as world items, item-transfer event
   handler, crafting recipe CRUD, currency ledger + atomic two-sided trade, module splits
-  under size gate (2026-08-12, 13 commits — see row W1).
+  under size gate (2026-08-12, 13 commits, merged to `dev`).
 - **Gate C sub-items verified complete on `dev` (2026-08-12)** — register page
   (`/register` + `POST /api/auth/register`), prompt registry (`src/prompts/registry.ts`),
   GM panels (`chat/gm-panel.html`) + quest log (`/views/quests`), world/location access
@@ -96,10 +113,13 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   tool-call UI (persisted `messages.tool_calls` migration 037, rendered collapsible
   blocks, live `tool_call` SSE). Worktree: `p2g-gate-c`.
 - **Size-strict debt closed (2026-08-12)** — `size:strict` reports 0 files over 250L.
-- **Docs reconciliation (worktree `docs-reconcile`)** — docs nav link in sidebar
+- **Docs reconciliation (merged 2026-08-14, `docs-reconcile`)** — docs nav link in sidebar
   (`{{docsNav}}` gated on `DOCS_ENABLED`, 10 locales), 2 dead vitepress sidebar links
   fixed, 5 new guide pages (first-chat, personas, worlds, gallery, settings) +
-  rewritten getting-started; 2/4 tickets done, 2 in progress (see row W2).
+  rewritten getting-started; **3/4 tickets done** (fix-dangling-links, guide-how-tos,
+  ui-endpoint-linkage), **1 in progress** (`TASK-docs-reconcile-implementation.md` —
+  spec-vs-`src/` audit). Follow-on open: 17 broken internal markdown links
+  (see § Open / next actions below).
 - **AUX M5 ModerationHook safety** — shipped (2026-08-06): tokenized word-boundary
   matching, severity scoring, audit trail, non-destructive suppression.
 - **Emotions** — EmotionHook emits canonical `EmotionType`; prompt `emotion` defaults +
@@ -143,10 +163,10 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 | 6  | Swipe-variant placeholder — regen row never filled by LLM                                                                                                         | `src/chat/service.ts` + `regenerate-variant.test.ts`           | ✅ Implemented + tested — `regenerateVariant` creates sibling variant with idempotency guard (stale claim)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 7  | 11 dead chat/service methods reimplemented inline in routes                                                                                                       | `src/chat/service/`                                            | 🟡 Open — dedupe pass                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 8  | Frontend dead modules: `touch.ts`, `vendor.ts`, root `app.ts`; Alpine `locale-picker.ts`                                                                          | `src/frontend/`                                                | 🟡 WIRE → `TASK-remove-dead-frontend-modules`: `context-window`/`response-length`/`command-buttons` WIRED (`alpine/index.ts:29-31`); still DEAD: `touch.ts`, root `app.ts`, `vendor.ts` (superseded by `alpine-init.ts`), `locale-picker.ts` never imported (verified 2026-08-08) — scheduled for deletion                                                                                                                                                                                                                                                                                                                                                                                                             |
-| 9  | Duplicate SSE activity stream (two connections)                                                                                                                   | `src/frontend/alpine/notifications.ts:35` + `chat-activity.ts` | 🟡 Dedupe — SSE refactor in flight on `dev` (row W4) touches this area                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 9  | Duplicate SSE activity stream (two connections)                                                                                                                   | `src/frontend/alpine/notifications.ts:35` + `chat-activity.ts` | 🟡 Dedupe — SSE refactor merged (`082c20cf`) but dedupe remains open |
 | 10 | `scenario-source.ts`, `sd.ts` dead + stub                                                                                                                         | `src/assistant/`                                               | 🟡 Delete                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 11 | Music/SFX/Video generation stubs (no provider)                                                                                                                    | `src/assistant/commands/`                                      | 🟡 Implement provider or disable                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| 12 | RPG services unwired from production                                                                                                                              | `src/rpg/*/service/`                                           | 🟡 WIRE → **WIRED 2026-08-12 (worktree `rpg-wire-routes`)**: items taxonomy + actor items, NPC inventory, world-items→equipment, loot persist, item-transfer events, crafting recipe CRUD, trade ledger (see `epic-item-systems-unification.md` 10/15). **STILL UNWIRED**: achievements, replayability, skills, quests (dual-system), npc-navigation, world-location-traits, crafting stations/attempts/orders, combat, xp (tickets: `TASK-wire-*-routes` × 8, `TASK-consolidate-quest-engines`, `TASK-crafting-stations-execution` — see `epic-rpg-wiring-phase3.md`) (verified 2026-08-13)                                                                                                                                    |
+| 12 | RPG services unwired from production                                                                                                                              | `src/rpg/*/service/`                                           | 🟡 WIRE → **WIRED + MERGED 2026-08-14 (`rpg-wire-routes`)**: items taxonomy + actor items, NPC inventory, world-items→equipment, loot persist, item-transfer events, crafting recipe CRUD, trade ledger (see `epic-item-systems-unification.md` 10/15). **STILL UNWIRED**: achievements, replayability, skills, quests (dual-system), npc-navigation, world-location-traits, crafting stations/attempts/orders, combat, xp (tickets: `TASK-wire-*-routes` × 8, `TASK-consolidate-quest-engines`, `TASK-crafting-stations-execution` — see `epic-rpg-wiring-phase3.md`) (verified 2026-08-14)                                                                                                                                    |
 | 13 | Dual quest system (`rpg/quests` vs `story/quest-engine`)                                                                                                          | divergence                                                     | 🟡 WIRE → `TASK-consolidate-quest-engines` (then `TASK-wire-quests-routes`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | 14 | `profanity.containsProfanity` wired (profanity_filter gate, `b275ef4d`); `admin.getUnhealthyProviders` redundant helper                                            | services                                                       | ✅ containsProfanity wired (opt-in hide); getUnhealthyProviders keep (info via `/api/health` + `/api/admin/providers`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
@@ -194,7 +214,7 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 - Size-strict debt — closed (2026-08-12, 0 files over 250L).
 - `chat.html` malformed partial + `compress.ts` unguarded `.zst` read — fixed (2026-08-12).
 - Item-systems unification backend subset (10/15) — landed in worktree `rpg-wire-routes`
-  (2026-08-12, awaiting merge — row W1).
+  (2026-08-12), **merged to `dev` 2026-08-14** (row W1 resolved).
 - memorySection cross-actor integration test — shipped (`memories.test.ts`).
 - M5 ModerationHook safety — shipped (2026-08-06).
 - GM role runtime effect — landed in `dev` (auto-gen branches prompt on `assistantRole`).
