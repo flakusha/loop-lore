@@ -22,10 +22,10 @@ Character impersonation — 1 character can be impersonated once per world (exce
 | API      | `PUT /api/chats/:id/persona`          | `routes/chats.ts:606`                       | Sets `persona_id`                                               |
 | API      | `GET/POST/PATCH/DELETE /api/personas` | `personas/controller.ts`                    | Full CRUD + convert-to-character                                |
 | Prompt   | `<user_persona>` section              | `assistant/prompt/sections/user-persona.ts` | Reads impersonated actor OR persona, injects into system prompt |
-| Service  | `updateImpersonation()`               | `chat/service.ts:508`                       | Helper exists (unused by route — see duplication gap)           |
-| Frontend | `toggleImpersonate()`                 | `frontend/alpine/chat-actions.ts:214`       | Calls impersonate API for current character                     |
-| Frontend | `loadImpersonationState()`            | `frontend/alpine/chat-actions.ts:268`       | Reads participants on chat load                                 |
-| Frontend | Chat settings persona/impersonation   | `frontend/alpine/chat-settings.ts:113-155`  | `toggleImpersonation()`, `loadPersonas()`, `setPersona()`       |
+| Service  | `updateImpersonation()`               | `chat/service/participants.ts:22`           | Re-exported via `chat/service/index.ts`                         |
+| Frontend | `toggleImpersonation()`               | `frontend/alpine/chat-settings.ts:186`      | Saves impersonation on settings save; reads via `loadImpersonationState` |
+| Frontend | `loadImpersonationState()`            | `frontend/alpine/chat-settings.ts:208`      | Reads participants on chat load                                 |
+| Frontend | Chat settings persona/impersonation   | `frontend/alpine/chat-settings.ts:164-229`  | `toggleImpersonation()`, `loadPersonas()`, `setPersona()`       |
 | Frontend | Personas page                         | `frontend/alpine/personas.ts`               | Full CRUD via Alpine                                            |
 | Commands | `/impersonate` and `/char`            | `assistant/commands/impersonate.ts`         | Returns `impersonate-toggle` / `impersonate-select` actions     |
 | Intent   | `impersonate` intent                  | `assistant/intent.ts:30`                    | Registered, no approval required                                |
