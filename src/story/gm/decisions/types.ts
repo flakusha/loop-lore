@@ -8,6 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../../config/schema";
+import type { GmGuidance, } from "../../../chat/types/config";
 import type { DB, } from "../../../db/schema";
 import type { GenerationMessage, } from "../../../generation/types";
 import type { GameMasterConfig, GameMasterDecision, StoryContext, } from "../../types";
@@ -32,6 +33,8 @@ export interface GmDecisionDeps {
   chatId: string;
   /** Config-driven default GM system prompt (used when config.llmConfig.systemPrompt is absent) */
   systemPromptDefault?: string;
+  /** Human-GM narrative guidance steering this turn (from chat gm_config). */
+  gmGuidance?: GmGuidance;
 }
 
 /** Produces the next turn decision for a selected actor. */

@@ -35,6 +35,13 @@ export const hardcodedDecision: GmDecisionStrategy = (deps, context, actorId,) =
     );
   }
 
+  if (deps.gmGuidance?.constraints?.length) {
+    promptParts.push(`GM guidance — constraints: ${deps.gmGuidance.constraints.join("; ",)}`,);
+  }
+  if (deps.gmGuidance?.sceneDescription) {
+    promptParts.push(`GM scene direction: ${deps.gmGuidance.sceneDescription}`,);
+  }
+
   promptParts.push(
     `Respond in character. Use *action descriptions* for narration. Keep response 50-300 words.`,
   );
