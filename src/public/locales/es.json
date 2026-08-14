@@ -1113,7 +1113,9 @@
     "roleUpdatedFor": "Rol {role} actualizado",
     "roleClearedFor": "Rol {role} eliminado",
     "failedSave": "No se pudo guardar",
-    "failedCreate": "No se pudo crear"
+    "failedCreate": "No se pudo crear",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance"
   },
   "status": {
     "characterResponding": "El personaje está respondiendo...",

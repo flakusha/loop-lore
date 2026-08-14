@@ -15,6 +15,7 @@ import {
   requireUserId,
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
+import { gmGuidanceRoutes, } from "./gm-guidance";
 
 export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
@@ -197,7 +198,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             : {};
 
           // Determine the prompt purpose from chat mode + assistant role
-          const assistantRole = (gmConfig as Record<string, unknown>).assistantRole as string | undefined;
+          const assistantRole = gmConfig.assistantRole as string | undefined;
           let purpose = "chat";
           if (mode === "story") {
             purpose = assistantRole === "gm" ? "gm" : "chat";
@@ -239,5 +240,6 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
         { params: ChatIdParams, },
       )
+      .use(gmGuidanceRoutes(opts, prefix,),)
   );
 }
