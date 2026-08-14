@@ -17,13 +17,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Avatars CRUD sub-plugin — list/get/create/update/delete actor avatars.
  */
-export function crudRoutes(opts: HandlerOpts,) {
+export function crudRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);
 
   return (
     new Elysia({ name: "character-avatars-crud", },)
-      .get("/api/actors/:actorId/avatars", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/avatars", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -50,7 +50,7 @@ export function crudRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .get("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -84,7 +84,7 @@ export function crudRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .post("/api/actors/:actorId/avatars", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/avatars", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -122,7 +122,7 @@ export function crudRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .put("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+      .put(prefix + "/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -158,7 +158,7 @@ export function crudRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .delete("/api/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+      .delete(prefix + "/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

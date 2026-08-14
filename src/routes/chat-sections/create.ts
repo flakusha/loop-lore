@@ -6,14 +6,14 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { ChatSectionCreateBody, type HandlerOpts, } from "./types";
 
-export function createRoutes(opts: HandlerOpts,) {
+export function createRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-sections-create", },)
       // ── Create a section ──────────────────────────────────
       .post(
-        "/api/chats/:id/sections",
+        prefix + "/chats/:id/sections",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -12,12 +12,12 @@ import {
 import { type HandlerOpts, } from "../actor-auth.js";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
 
-export function blogCommentRoutes(opts: HandlerOpts,) {
+export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-comments", },)
-    .post("/api/blog/posts/:id/comments", async (ctx: any,) => {
+    .post(prefix + "/blog/posts/:id/comments", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const t = ctx.t as TranslatorFn | undefined;
@@ -48,7 +48,7 @@ export function blogCommentRoutes(opts: HandlerOpts,) {
         tags: ["Blog",],
       },
     },)
-    .get("/api/blog/posts/:id/comments", async (ctx: any,) => {
+    .get(prefix + "/blog/posts/:id/comments", async (ctx: any,) => {
       const comments = await svc.listComments(ctx.params.id, {
         limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,

@@ -4,13 +4,13 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function statsRoutes(opts: AdminRouteOpts,) {
+export function statsRoutes(opts: AdminRouteOpts, prefix = "/api") {
   const db = opts.database;
 
   return (
     new Elysia({ name: "admin-stats", },)
       // ── Stats ──────────────────────────────────────────────
-      .get("/api/admin/stats", async (ctx: any,) => {
+      .get(prefix + "/admin/stats", async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

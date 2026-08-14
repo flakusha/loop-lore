@@ -25,10 +25,10 @@ export { resetLoginRateLimiter, resetRegisterRateLimiter, } from "./shared";
 
 // ── Public routes: auth runs but won't block ─────────────────
 
-export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
+export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-public", },)
     .post(
-      "/api/auth/login",
+      prefix + "/auth/login",
       async ({ request, ...rest },) =>
         handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
@@ -43,7 +43,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
       },
     )
     .post(
-      "/api/demo-login",
+      prefix + "/demo-login",
       async ({ request, ...rest },) =>
         handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
@@ -58,7 +58,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
       },
     )
     .post(
-      "/api/auth/register",
+      prefix + "/auth/register",
       async ({ request, ...rest },) =>
         handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
@@ -76,10 +76,10 @@ export function authPublicRoutes({ database, config, }: HandleOpts,): Elysia {
 
 // ── Protected routes: require auth ───────────────────────────
 
-export function authProtectedRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-protected", },)
     .post(
-      "/api/auth/logout",
+      prefix + "/auth/logout",
       async ({ request, },) => handleLogout(request, database,),
       {
         response: {
@@ -94,7 +94,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> },): E
       },
     )
     .get(
-      "/api/auth/me",
+      prefix + "/auth/me",
       async ({ request, ...rest },) => handleMe(request, database, (rest as any).userId as string | null | undefined,),
       {
         response: {

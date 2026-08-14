@@ -5,14 +5,14 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import type { HandlerOpts, } from "./types";
 
-export function removeRoutes(opts: HandlerOpts,) {
+export function removeRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-sections-remove", },)
       // ── Delete a section ──────────────────────────────────
       .delete(
-        "/api/chats/:id/sections/:sectionId",
+        prefix + "/chats/:id/sections/:sectionId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

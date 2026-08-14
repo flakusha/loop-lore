@@ -13,11 +13,11 @@ import { ErrorResponse, SuccessResponse, UserIdParams, UserProfileUpdateBody, } 
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
-export function manageRoutes(opts: UsersRoutesOpts,) {
+export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api") {
   return (
     new Elysia({ name: "users-manage", },)
       .get(
-        "/api/users/:id",
+        prefix + "/users/:id",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -54,7 +54,7 @@ export function manageRoutes(opts: UsersRoutesOpts,) {
         },
       )
       .put(
-        "/api/users/:id",
+        prefix + "/users/:id",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -106,7 +106,7 @@ export function manageRoutes(opts: UsersRoutesOpts,) {
         },
       )
       .put(
-        "/api/users/:id/settings",
+        prefix + "/users/:id/settings",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -156,7 +156,7 @@ export function manageRoutes(opts: UsersRoutesOpts,) {
         },
       )
       .delete(
-        "/api/users/:id",
+        prefix + "/users/:id",
         async (ctx,) => {
           const userRole = (ctx as any).userRole as string | null;
           const targetId = (ctx as any).params.id as string;

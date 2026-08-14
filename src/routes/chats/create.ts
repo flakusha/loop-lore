@@ -19,13 +19,13 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function createRoutes(opts: HandlerOpts,) {
+export function createRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chats-create", },)
       .post(
-        "/api/chats",
+        prefix + "/chats",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
