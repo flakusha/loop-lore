@@ -23,7 +23,7 @@ compression code ships, and token accounting uses a char heuristic everywhere.
 - Assembly pipeline: `src/assistant/prompt-assembler.ts`, `src/assistant/prompt/registry.ts`
 - Budget orchestration: `src/generation/generate-route/build-prompt.ts`, `handler.ts`
 - Compaction: `src/generation/context-compactor.ts` (wired), `src/generation/context-compressor/` (dead)
-- Add slots: `src/chat/context-window.ts`, `src/chat/service/context.ts`, `src/chat/token-counter.ts`
+- Add slots: `src/chat/context-window.ts`, `src/chat/token-counter.ts`
 - Memory tiers/lossy selection: `src/memory/provision.ts`, `src/memory/budget.ts`
 - Token estimate: `src/chat/token-utils.ts`, `src/generation/context-window-config.ts`
 
@@ -96,7 +96,7 @@ accuracy. Over/under-estimation causes premature whole-section drops (loss) or b
 | Task                    | Title                                                                                                                                                                                                                               | Priority | Status      |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
 | TASK-ctx-tier-model     | Add per-section `losslessness` flag to section specs; enforce lossless-last in budget/drop                                                                                                                                          | High     | Not Started |
-| TASK-ctx-dead-code      | Delete PATH B (`src/chat/context-window.ts`, `service/context.ts`, `token-counter.ts:81`, dead `injectMemories/injectEvents`, `getChatContext`) or repoint debug route to PATH A; remove context-compressor/ + compactPromptHistory | High     | Not Started |
+| TASK-ctx-dead-code      | Delete PATH B — `service/context.ts` + `getChatContext` done 2026-08-14; remaining: `context-window.ts`, `token-counter.ts:81`, dead `injectMemories/injectEvents`, or repoint debug route to PATH A; remove context-compressor/ + compactPromptHistory | High     | 🟡 Partial (context.ts + getChatContext deleted) |
 | TASK-ctx-tiktoken       | Adopt `@dqbd/tiktoken` (WASM) tokenizer; per-model encodings; replace char heuristic. Keep pure fallback when model unknown                                                                                                         | High     | Not Started |
 | TASK-ctx-metrics        | Emit compression metadata (original/compressed tokens, count, section drops, per-tier loss) to telemetry + `compress-metadata` on response                                                                                          | Med      | Not Started |
 | TASK-ctx-summarize-cfg  | Configurable strategy (sliding/summarize/truncate) + lossless window size per mode; wire into build-prompt (stop hardcoding 0.85/keepLast)                                                                                          | Med      | Not Started |
