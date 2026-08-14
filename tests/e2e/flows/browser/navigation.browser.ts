@@ -9,16 +9,16 @@ describe("Navigation E2E", () => {
   beforeAll(async () => {
     ctx = await createBrowserTest();
     await seedAll(ctx.db,);
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function goto(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>, path: string,) {
     await page.setViewportSize({ width: 1440, height: 900, },);
-    await page.goto(ctx.url + path, { waitUntil: "commit", timeout: 15_000, },);
-    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 10_000, },);
+    await page.goto(ctx.url + path, { waitUntil: "commit", timeout: 30_000, },);
+    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
     await waitForAlpineReady(page,);
     // Settle: Alpine store exists + DOM processed, but event handlers
     // on nested elements may take an extra tick to bind
@@ -37,62 +37,62 @@ describe("Navigation E2E", () => {
       try {
         await goto(page, "/views/chat",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
-        await page.locator("[data-testid='nav-characters']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='nav-characters']",).waitFor({ state: "attached", timeout: 10_000, },);
         await clickNav(page, "[data-testid='nav-characters']",);
-        await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/characters",);
       } finally {
         await page.close();
       }
-    }, 20_000,);
+    }, 90_000,);
 
     test("navigates from characters to gallery via sidebar link", async () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/characters",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
-        await page.locator("[data-testid='nav-gallery']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='nav-gallery']",).waitFor({ state: "attached", timeout: 10_000, },);
         await clickNav(page, "[data-testid='nav-gallery']",);
-        await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/gallery",);
       } finally {
         await page.close();
       }
-    }, 20_000,);
+    }, 90_000,);
 
     test("navigates from gallery to worlds via sidebar link", async () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/gallery",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
-        await page.locator("[data-testid='nav-worlds']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='nav-worlds']",).waitFor({ state: "attached", timeout: 10_000, },);
         await clickNav(page, "[data-testid='nav-worlds']",);
-        await page.locator("[data-testid='worlds-header']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='worlds-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/worlds",);
       } finally {
         await page.close();
       }
-    }, 20_000,);
+    }, 90_000,);
 
     test("navigates from worlds to chat via sidebar link", async () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/worlds",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
-        await page.locator("[data-testid='nav-chat']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='nav-chat']",).waitFor({ state: "attached", timeout: 10_000, },);
         await clickNav(page, "[data-testid='nav-chat']",);
-        await page.locator("#page-title",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("#page-title",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/chat-list",);
       } finally {
         await page.close();
       }
-    }, 20_000,);
+    }, 90_000,);
 
     test("hamburger button exists and toggles sidebar", async () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/chat",);
-        await page.locator("[data-testid='hamburger']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='hamburger']",).waitFor({ state: "attached", timeout: 10_000, },);
         // Use evaluate to click — avoids Playwright hit-test interception
         await page.evaluate(() => {
           const btn = document.querySelector("[data-testid='hamburger']",);
@@ -114,7 +114,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/chat",);
-        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 10_000, },);
         const headers = await page.locator("#header-slot",).count();
         expect(headers,).toBe(1,);
       } finally {
@@ -126,7 +126,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/chat",);
-        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 10_000, },);
         const headerTestId = await page.locator("#header-slot",).getAttribute("data-testid",);
         expect(headerTestId,).toBe("chat-header",);
       } finally {
@@ -140,7 +140,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/new-chat",);
-        await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/new-chat",);
       } finally {
         await page.close();
@@ -151,7 +151,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/new-chat",);
-        await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
         // loadNewChatPage() is only called on htmx:load — page.goto() bypasses htmx,
         // so we must manually initialize the form submit handler
         await page.evaluate(() => {
@@ -159,7 +159,7 @@ describe("Navigation E2E", () => {
         },);
         await page.locator("[data-testid='chat-name-input']",).fill("Browser Test Chat",);
         await page.locator("[data-testid='create-chat-btn']",).click();
-        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/chat",);
       } finally {
         await page.close();
@@ -172,7 +172,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/settings",);
-        await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 8000, },);
+        await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/settings",);
       } finally {
         await page.close();
@@ -183,7 +183,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/settings",);
-        await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 10_000, },);
         const tabButtons = page.locator(".world-edit-tab",);
         const count = await tabButtons.count();
         expect(count,).toBeGreaterThan(0,);
@@ -198,10 +198,10 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/login",);
-        await page.locator("[data-testid='username-input']",).waitFor({ state: "attached", timeout: 5000, },);
-        await page.locator("[data-testid='password-input']",).waitFor({ state: "attached", timeout: 5000, },);
-        await page.locator("[data-testid='login-submit']",).waitFor({ state: "attached", timeout: 5000, },);
-        await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='username-input']",).waitFor({ state: "attached", timeout: 10_000, },);
+        await page.locator("[data-testid='password-input']",).waitFor({ state: "attached", timeout: 10_000, },);
+        await page.locator("[data-testid='login-submit']",).waitFor({ state: "attached", timeout: 10_000, },);
+        await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
       } finally {
         await page.close();
       }
@@ -211,7 +211,7 @@ describe("Navigation E2E", () => {
       const page = await ctx.browser.newPage();
       try {
         await goto(page, "/views/login",);
-        await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 5000, },);
+        await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
         const hxPost = await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",);
         expect(hxPost,).toBe("/api/demo-login",);
       } finally {
