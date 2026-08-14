@@ -33,6 +33,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config },): El
         keywords: "keywords",
         sourceChatId: "source_chat_id",
         expiresAt: "expires_at",
+        pinned: "pinned",
       },
       jsonFields: ["keywords",],
       defaults: {
