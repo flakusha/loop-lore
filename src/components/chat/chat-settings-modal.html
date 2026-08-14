@@ -205,6 +205,32 @@
         />
       </div>
 
+      <div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+        <label class="form-label">Per-Actor Models (multi-LLM)</label>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+          Assign a different model to each story participant. Blank = use the GM model above.
+        </p>
+        <template x-for="p in _chatParticipants" :key="p.actor_id">
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); align-items: center">
+            <span style="min-width: 120px; font-size: 13px" x-text="p.display_name || p.name"></span>
+            <input
+              class="form-input"
+              type="text"
+              x-model="_actorModels[p.actor_id].model"
+              placeholder="model"
+              :data-testid="'settings-actor-model-' + p.actor_id"
+            />
+            <input
+              class="form-input"
+              type="text"
+              x-model="_actorModels[p.actor_id].provider"
+              placeholder="provider"
+              :data-testid="'settings-actor-provider-' + p.actor_id"
+            />
+          </div>
+        </template>
+      </div>
+
       <!-- Mood Editing (GM/Admin only) -->
       <template x-if="_moodCanEdit">
         <div class="form-group">

@@ -995,3 +995,70 @@ describe("GameMasterService — injectNarration", () => {
     expect(messages,).toHaveLength(0,);
   });
 });
+
+describe("GameMasterService — per-actor multi-LLM model assignment", () => {
+  test("llmDecision uses per-actor model when actorModels is set", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, });
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    const captured: { model?: string; provider?: string }[] = [];
+    const generateText: GenerateTextFn = (params,) => {
+      captured.push({ model: params.model, provider: params.provider, });
+      return Promise.resolve("*He acts.*");
+    };
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: {
+        type: GameMasterType.Llm,
+        llmConfig: {
+          model: "gm-model",
+          provider: "gm-provider",
+          systemPrompt: "You are the Game Master.",
+          temperature: 0.7,
+          maxTokens: 800,
+        },
+        actorModels: { [actorId]: { model: "actor-model", provider: "actor-provider" } },
+      },
+      generateText,
+    });
+    await gm.initialize();
+    await gm.executeTurn(actorId,);
+    expect(captured.length,).toBeGreaterThanOrEqual(1,);
+    expect(captured[0]!.model,).toBe("actor-model",);
+    expect(captured[0]!.provider,).toBe("actor-provider",);
+  },);
+
+  test("falls back to GM llmConfig model when actor has no override", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, });
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    const captured: { model?: string }[] = [];
+    const generateText: GenerateTextFn = (params,) => {
+      captured.push({ model: params.model, });
+      return Promise.resolve("*He acts.*");
+    };
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: {
+        type: GameMasterType.Llm,
+        llmConfig: {
+          model: "gm-model",
+          provider: "gm-provider",
+          systemPrompt: "You are the Game Master.",
+          temperature: 0.7,
+          maxTokens: 800,
+        },
+      },
+      generateText,
+    });
+    await gm.initialize();
+    await gm.executeTurn(actorId,);
+    expect(captured[0]!.model,).toBe("gm-model",);
+  },);
+});
