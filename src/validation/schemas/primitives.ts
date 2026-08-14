@@ -35,9 +35,22 @@ export const TurnStrategySchema = t.UnionEnum([
 ],);
 
 /** Chat-level GM configuration — stored as JSON in `chats.gm_config` */
+/** Per-participant turn priority for GM-guided story guidance. */
+export const GmTurnPrioritySchema = t.UnionEnum(["high", "medium", "low",],);
+
+/** Narrative guidance a human Game Master applies to a story chat. */
+export const GmGuidanceSchema = t.Object({
+  constraints: t.Array(t.String(),),
+  targetCharacter: t.Optional(t.String(),),
+  sceneDescription: t.Optional(t.String(),),
+  turnPriority: t.Record(t.String(), GmTurnPrioritySchema,),
+},);
+
 export const GmConfigSchema = t.Object({
   assistantRole: t.Optional(t.UnionEnum(["off", "helper", "gm", "moderator",],),),
   visualNovel: t.Optional(t.Boolean(),),
+  storyMode: t.Optional(t.Boolean(),),
+  gmGuidance: t.Optional(GmGuidanceSchema,),
 },);
 
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);

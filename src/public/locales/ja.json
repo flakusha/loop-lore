@@ -1113,7 +1113,9 @@
     "roleUpdatedFor": "{role} ロールを更新しました",
     "roleClearedFor": "{role} ロールを解除しました",
     "failedSave": "保存に失敗しました",
-    "failedCreate": "作成に失敗しました"
+    "failedCreate": "作成に失敗しました",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",
