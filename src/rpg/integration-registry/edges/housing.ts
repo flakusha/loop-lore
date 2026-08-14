@@ -4,7 +4,7 @@
  * Cross-system edges involving Housing. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges involving the Housing system. */
 export const HOUSING_EDGES: IntegrationEdge[] = [

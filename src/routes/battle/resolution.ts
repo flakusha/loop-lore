@@ -11,7 +11,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api") {
+export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-resolution", },)
     .post(
       prefix + "/battle/resolution/damage",

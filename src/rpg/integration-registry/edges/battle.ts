@@ -4,7 +4,7 @@
  * Cross-system edges where Battle is the source system. Migrated verbatim from
  * the former `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges rooted at the Battle system. */
 export const BATTLE_EDGES: IntegrationEdge[] = [

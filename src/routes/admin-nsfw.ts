@@ -30,7 +30,7 @@ interface NsfwAdminConfig {
   nsfwMinAge: number;
 }
 
-export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "admin-nsfw", },)
     // ── Get NSFW config ───────────────────────────────────
     .get(prefix + "/admin/nsfw", async (ctx: any,) => {

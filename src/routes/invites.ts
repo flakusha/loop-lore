@@ -65,7 +65,7 @@ async function isChatOwner(
   return Boolean(chat,) && (chat!.created_by === userId || userRole === "admin");
 }
 
-export function invitesRoutes(opts: HandlerOpts, prefix = "/api") {
+export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

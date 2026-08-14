@@ -6,12 +6,12 @@
  * `toEquipmentItem` builder that decodes stat modifiers from
  * item `properties` JSON.
  */
+import type { ItemCategory, ItemRarity, } from "../db/enums";
 import type {
   CombatStats,
   EquipmentModifier,
   EquipmentSlot,
 } from "./integration-schemas";
-import type { ItemCategory, ItemRarity, } from "../db/enums";
 
 /** Item type */
 export type ItemType =
@@ -119,13 +119,13 @@ export function toEquipmentItem(def: EquipmentSource,): EquipmentItem {
   const bonus = typeof props.bonus === "number" ? props.bonus : undefined;
 
   if (typeof damage === "number" && damage !== 0) {
-    modifiers.push({ stat: "attack", value: damage, });
+    modifiers.push({ stat: "attack", value: damage, },);
   }
   if (typeof bonus === "number" && bonus !== 0) {
-    modifiers.push({ stat: "attack", value: bonus, });
+    modifiers.push({ stat: "attack", value: bonus, },);
   }
   if (typeof ac === "number" && ac !== 0) {
-    modifiers.push({ stat: "defense", value: ac, });
+    modifiers.push({ stat: "defense", value: ac, },);
   }
 
   const requiredLevel = typeof props.requiredLevel === "number" ? props.requiredLevel : 1;

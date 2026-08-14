@@ -13,7 +13,7 @@ import {
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
 
-export function blogPostRoutes(opts: HandlerOpts, prefix = "/api") {
+export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const svc = new BlogService(database,);
 

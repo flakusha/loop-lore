@@ -3,7 +3,7 @@ import { jsonPaginated, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { ChatSearchQuery, type HandlerOpts, } from "./types";
 
-export function searchRoutes(opts: HandlerOpts, prefix = "/api") {
+export function searchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

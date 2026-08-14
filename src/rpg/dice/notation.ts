@@ -1,7 +1,7 @@
 import { rollDice, } from "./roll.js";
 import {
-  AdvantageMode,
   ADVANTAGE_NOTATION,
+  AdvantageMode,
   type DiceRollResult,
   type DiceSides,
   type ParsedDice,

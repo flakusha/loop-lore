@@ -15,7 +15,7 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api") {
+export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "admin-character-overrides", },)

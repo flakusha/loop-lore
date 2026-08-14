@@ -17,10 +17,9 @@ import { v1Routes, } from "./index";
 function createV1App(db: Kysely<DB>, userId: string | null,): Elysia {
   const t = (k: string,) => k;
   return new Elysia({ name: "test-v1", },)
-    .derive(() => ({ userId, userRole: userId ? "admin" : null, sessionId: null, locale: "en", t, }),)
+    .derive(() => ({ userId, userRole: userId ? "admin" : null, sessionId: null, locale: "en", t, }))
     .use(v1Routes({ database: db, config: {} as any, },),) as unknown as Elysia;
 }
-
 
 describe("v1 API versioning", () => {
   let db: Kysely<DB>;
@@ -47,7 +46,7 @@ describe("v1 API versioning", () => {
     const body = await res.json() as Record<string, unknown>;
     expect(body.meta,).toBeDefined();
     expect((body.meta as Record<string, unknown>).api_version,).toBe("1",);
-  },);
+  });
 
   test("GET /api/v1/chats returns 200 (userId flows through v1 barrel)", async () => {
     const app = createV1App(db, userId,);
@@ -57,14 +56,14 @@ describe("v1 API versioning", () => {
     const body = await res.json() as Record<string, unknown>;
     expect(body.meta,).toBeDefined();
     expect((body.meta as Record<string, unknown>).api_version,).toBe("1",);
-  },);
+  });
 
   test("GET /api/v1/chats without userId returns 401", async () => {
     const app = createV1App(db, null,);
     const res = await app.handle(new Request("http://localhost/api/v1/chats",),);
     // Auth guard should reject — userId is null
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("GET /api/v1/users/me returns 200 (userId flows through v1 barrel)", async () => {
     const app = createV1App(db, userId,);
@@ -72,5 +71,5 @@ describe("v1 API versioning", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.meta,).toBeDefined();
-  },);
+  });
 });

@@ -159,7 +159,7 @@ export function extractEvents({
       const direct = match[0].toLowerCase();
       // The acting actor is the source when giving away or dropping an item;
       // they are the receiver when taking/picking up/acquiring one.
-      const isSource = /gives|hands|offers|passes|trades|drops|leaves|abandons|puts/.test(direct);
+      const isSource = /gives|hands|offers|passes|trades|drops|leaves|abandons|puts/.test(direct,);
       events.push({
         type: WorldEventType.ItemTransfer,
         actorId,

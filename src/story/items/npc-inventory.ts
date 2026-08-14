@@ -7,7 +7,7 @@
  * to keep that module under the size ceiling.
  */
 import { jsonParseOr, } from "../../utils";
-import type { ItemState, ItemInstance, } from "./types";
+import type { ItemInstance, ItemState, } from "./types";
 
 /** Get items carried by an NPC */
 export async function getNpcInventory(state: ItemState, actorId: string,): Promise<ItemInstance[]> {

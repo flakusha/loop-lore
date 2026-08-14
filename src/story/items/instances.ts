@@ -6,7 +6,7 @@
 import type { Transaction, } from "kysely";
 import { ItemVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { uid, safeJsonStringify, } from "../../utils";
+import { safeJsonStringify, uid, } from "../../utils";
 import type { ItemState, TransferResult, } from "./types";
 
 /** Place item instance in a location */

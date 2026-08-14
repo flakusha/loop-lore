@@ -11,7 +11,7 @@ import {
   handleUpdateWorld,
 } from "./worlds";
 
-export function worldRoutes(opts: HandleOpts, prefix = "/api") {
+export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "worlds-crud", },)

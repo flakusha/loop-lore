@@ -13,7 +13,7 @@ import {
 } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function preferencesRoutes(opts: HandlerOpts, prefix = "/api") {
+export function preferencesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 
   return (

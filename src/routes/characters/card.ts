@@ -7,7 +7,7 @@ import {
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function cardRoutes(opts: HandlerOpts, prefix = "/api") {
+export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-card", },)

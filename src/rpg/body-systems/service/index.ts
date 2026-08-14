@@ -16,8 +16,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { HeatPhase, } from "../../../db/enums";
-import { Species, } from "../enums";
 import type { DB, } from "../../../db/schema";
+import { Species, } from "../enums";
 import {
   calculateArousalModifier as calculateArousalModifierDispatch,
   calculateAvailableActions as calculateAvailableActionsDispatch,

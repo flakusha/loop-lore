@@ -5,7 +5,7 @@ import { AdminSystemConfigBody, ErrorResponse, SuccessResponse, } from "../../va
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api") {
+export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-system-config", },)
       // ── System configuration ───────────────────────────────

@@ -5,7 +5,7 @@ import { AdminTemplateCreateBody, AdminTemplateUpdateBody, ErrorResponse, } from
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api") {
+export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-templates", },)
       // ── Template management ─────────────────────────────────
