@@ -3,8 +3,8 @@
 // Location controls surface for the active chat. It lists the world's
 // locations, lets the user change the chat's current location (PUT
 // /api/v1/chats/:id/location), transfer the chat to a location (POST
-// /api/v1/chats/:id/transfer), and discover/join other chats already at a
-// selected location (GET /api/v1/chats/joinable + POST /api/v1/chats/:id/join).
+// /api/chats/:id/transfer), and discover/join other chats already at a
+// selected location (GET /api/chats/joinable + POST /api/chats/:id/join).
 // This module only drives existing endpoints — no location access-check
 // logic is modified.
 import { apiFetch, } from "./htmx";
@@ -155,7 +155,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Transfer the chat to a location (POST /api/v1/chats/:id/transfer).
+   * Transfer the chat to a location (POST /api/chats/:id/transfer).
    * Participant-gated server-side; validates the location is in the chat's world.
    */
   async transferChatLocation() {
