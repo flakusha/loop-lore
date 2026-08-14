@@ -84,6 +84,18 @@ export interface ChatCoreState extends AlpineMagicThis {
   _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   _vnAutoAdvance: boolean;
 
+  // Prompt template preview
+  _promptTemplate: {
+    purpose: string;
+    prompt: string;
+    source: string;
+    characterName: string | null;
+    registryDefault: string;
+  } | null;
+  _promptLoading: boolean;
+  _promptExpanded: boolean;
+  loadPromptTemplate(): Promise<void>;
+
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
