@@ -121,7 +121,7 @@
   font-size: 13px;
   padding: 6px 10px;
   border-radius: 6px;
-  background: var(--accent-primary-12, rgba(78, 201, 176, 0.12));
+  background: var(--accent-primary-12, rgb(78 201 176 / 12%));
   border: 1px solid var(--accent-primary, #4ec9b0);
   color: var(--text-primary, #e0e0e0);
 }
@@ -146,19 +146,19 @@
 .story-quality-badge.is-good {
   color: var(--success, #4caf50);
   border-color: var(--success, #4caf50);
-  background: rgba(76, 175, 80, 0.1);
+  background: rgb(76 175 80 / 10%);
 }
 
 .story-quality-badge.is-mid {
   color: var(--warning, #f59e0b);
   border-color: var(--warning, #f59e0b);
-  background: rgba(245, 158, 11, 0.1);
+  background: rgb(245 158 11 / 10%);
 }
 
 .story-quality-badge.is-low {
   color: var(--accent-red, #f44336);
   border-color: var(--accent-red, #f44336);
-  background: rgba(244, 67, 54, 0.1);
+  background: rgb(244 67 54 / 10%);
 }
 
 /* ── GM Story Control panel ─────────────────────────────────────── */
@@ -197,8 +197,12 @@
 }
 
 @keyframes story-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .gm-status-text {
@@ -421,7 +425,7 @@
   max-width: 90vw;
   background: var(--bg-secondary, #16213e);
   border-left: 1px solid var(--border-default, #333);
-  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+  box-shadow: -4px 0 16px rgb(0 0 0 / 30%);
   z-index: 60;
   display: flex;
   flex-direction: column;

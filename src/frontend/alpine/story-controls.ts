@@ -48,7 +48,7 @@ export async function storyControl(
   action: StoryControlAction,
   body?: unknown,
 ): Promise<StoryControlResult> {
-  if (inFlight.has(action)) { return { ok: false, message: "story control busy", }; }
+  if (inFlight.has(action,)) { return { ok: false, message: "story control busy", }; }
   inFlight.add(action,);
   try {
     const res = await apiFetch(`/api/chats/${chatId}/story/${action}`, {

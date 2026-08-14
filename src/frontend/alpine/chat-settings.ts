@@ -1,25 +1,12 @@
-import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../vn";
+import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
+import { syncVnRenderer, } from "./chat-settings/vn";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
-import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
+import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
-import type { ChatState, GmConfig, Message, } from "./types";
+import type { ChatState, GmConfig, } from "./types";
 
 const log = rootLog.child({ module: "chat-settings", },);
-
-/** Map a chat-page message to the VN renderer's message shape. */
-function toVnMessage(m: Message,): VnMessage {
-  const role = m.role as VnMessage["role"];
-  const isVnRole = ["assistant", "user", "system",].includes(role,);
-  return {
-    id: m.id,
-    role: isVnRole ? role : "narration",
-    name: m.actor_name,
-    content: m.content,
-    thinking: m.thinking,
-    attachments: m.attachments as VnMessage["attachments"],
-  };
-}
 
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
@@ -62,25 +49,26 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._groupPaused = this.isChatPaused(chat,);
     await this.loadChatParticipants();
     const config = chat?.gm_config ? jsonParseOr<GmConfig>(chat.gm_config, {},) : {};
-    this._assistantRole = config.assistantRole ?? "off";
-    this._vnEnabled = config.visualNovel ?? false;
-    this._vnLayout = config.vnLayout ?? "overlay";
-    this._vnTypewriter = config.vnTypewriter ?? true;
-    this._vnTypewriterSpeed = config.vnTypewriterSpeed ?? 30;
-    this._vnTransition = config.vnTransition ?? "fade";
-    this._vnAutoAdvance = config.vnAutoAdvance ?? false;
-    this._gmType = config.type ?? "llm";
-    this._gmHumanActorId = config.humanGM?.actorId ?? "";
-    this._gmEscalationThreshold = config.escalationThreshold ?? 0.5;
-    this._gmModel = config.llmConfig?.model ?? "";
-    this._gmProvider = config.llmConfig?.provider ?? "";
-    this._gmTemperature = config.llmConfig?.temperature ?? 0.7;
-    this._gmMaxTokens = config.llmConfig?.maxTokens ?? 2000;
+    const fields = readGmSettings(config,);
+    this._assistantRole = fields.assistantRole;
+    this._vnEnabled = fields.vnEnabled;
+    this._vnLayout = fields.vnLayout;
+    this._vnTypewriter = fields.vnTypewriter;
+    this._vnTypewriterSpeed = fields.vnTypewriterSpeed;
+    this._vnTransition = fields.vnTransition;
+    this._vnAutoAdvance = fields.vnAutoAdvance;
+    this._gmType = fields.gmType;
+    this._gmHumanActorId = fields.gmHumanActorId;
+    this._gmEscalationThreshold = fields.gmEscalationThreshold;
+    this._gmModel = fields.gmModel;
+    this._gmProvider = fields.gmProvider;
+    this._gmTemperature = fields.gmTemperature;
+    this._gmMaxTokens = fields.gmMaxTokens;
     // Seed per-actor model overrides from saved config (or empty defaults)
     // so the modal bindings have a stable object per participant.
     const actorModels: Record<string, { model: string; provider: string }> = {};
     for (const p of this._chatParticipants) {
-      actorModels[p.actor_id] = config.actorModels?.[p.actor_id] ?? { model: "", provider: "" };
+      actorModels[p.actor_id] = config.actorModels?.[p.actor_id] ?? { model: "", provider: "", };
     }
     this._actorModels = actorModels;
     Alpine.store("ui",).showChatSettings = true;
@@ -106,77 +94,33 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
    */
   updateVnMode() {
     const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat);
-    const config = chat?.gm_config
-      ? jsonParseOr<GmConfig>(chat.gm_config, {},)
-      : {};
-    const enabled = config.visualNovel ?? this._vnEnabled;
-    const container = document.querySelector<HTMLElement>("#vn-container",);
-
-    if (!enabled || !container) {
-      destroyVnRenderer();
-      container?.replaceChildren();
-      return;
-    }
-
-    const vnMessages = Array.from(this.messages, (m,) => toVnMessage(m,),);
-    if (vnMessages.length === 0) {
-      destroyVnRenderer();
-      return;
-    }
-    initVnRenderer(container, vnMessages, config as Record<string, unknown>, this.activeChat ?? undefined,);
+    syncVnRenderer(this.messages, chat?.gm_config, this._vnEnabled, this.activeChat ?? undefined,);
   },
 
   async saveChatSettings() {
     log.info("saveChatSettings", { chatId: this.activeChat, },);
     if (!this.activeChat || !this._chatSettingsName.trim()) { return; }
     try {
-      const activeChatObj = this.chats.find((c,) => c.id === this.activeChat,);
+      const activeChatObj = this.chats.find((c,) => c.id === this.activeChat);
       const existing = activeChatObj?.gm_config
         ? jsonParseOr<GmConfig>(activeChatObj.gm_config, {},)
         : {};
-      const gmConfig: Record<string, unknown> = {
-        ...existing,
+      const gmConfig = buildGmConfig(existing, {
         assistantRole: this._assistantRole,
-        visualNovel: this._vnEnabled,
+        vnEnabled: this._vnEnabled,
         vnLayout: this._vnLayout,
         vnTypewriter: this._vnTypewriter,
         vnTypewriterSpeed: this._vnTypewriterSpeed,
         vnTransition: this._vnTransition,
         vnAutoAdvance: this._vnAutoAdvance,
-        type: this._gmType,
-      };
-      if (this._gmModel.trim()) {
-        gmConfig.llmConfig = {
-          model: this._gmModel.trim(),
-          provider: this._gmProvider.trim(),
-          systemPrompt: "",
-          temperature: this._gmTemperature,
-          maxTokens: this._gmMaxTokens,
-        };
-      } else {
-        delete gmConfig.llmConfig;
-      }
-      const actorModels: Record<string, { model: string; provider: string }> = {};
-      for (const [actorId, m, ] of Object.entries(this._actorModels)) {
-        if (m.model?.trim()) {
-          actorModels[actorId] = { model: m.model.trim(), provider: m.provider?.trim() ?? "" };
-        }
-      }
-      if (Object.keys(actorModels,).length > 0) {
-        gmConfig.actorModels = actorModels;
-      } else {
-        delete gmConfig.actorModels;
-      }
-      if (this._gmType === "human" || this._gmType === "hybrid") {
-        gmConfig.humanGM = { actorId: this._gmHumanActorId, notifications: true, };
-      } else {
-        delete gmConfig.humanGM;
-      }
-      if (this._gmType === "hybrid") {
-        gmConfig.escalationThreshold = this._gmEscalationThreshold;
-      } else {
-        delete gmConfig.escalationThreshold;
-      }
+        gmType: this._gmType,
+        gmHumanActorId: this._gmHumanActorId,
+        gmEscalationThreshold: this._gmEscalationThreshold,
+        gmModel: this._gmModel,
+        gmProvider: this._gmProvider,
+        gmTemperature: this._gmTemperature,
+        gmMaxTokens: this._gmMaxTokens,
+      }, this._actorModels,);
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),
         isPaused: this._groupPaused,
@@ -199,15 +143,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         if (chat) {
           chat.name = this._chatSettingsName.trim();
           chat.turn_strategy = this._chatSettingsTurnStrategy;
-          if (chat.story_state) {
-            const st = jsonParseOr<Record<string, unknown>>(chat.story_state, {},);
-            st.isPaused = this._groupPaused;
-            const serialized = safeJsonStringify(st,);
-            chat.story_state = serialized.ok ? serialized.value : chat.story_state;
-          } else {
-            const serialized = safeJsonStringify({ isPaused: this._groupPaused, },);
-            chat.story_state = serialized.ok ? serialized.value : "{}";
-          }
+          setStoryPaused(chat, this._groupPaused,);
           if (globalThis.Alpine) {
             try {
               Alpine.store("chat",).currentChat = chat;
@@ -299,5 +235,4 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     }
     await this.loadPersonas();
   },
-
 };

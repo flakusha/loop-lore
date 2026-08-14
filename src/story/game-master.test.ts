@@ -10,6 +10,7 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import type { GmGuidance, } from "../chat/types/config";
 import type { Config, } from "../config/schema";
 import { GameMasterType, } from "../db/enums";
 import { createSqliteDialect, setTestDatabase, } from "../db/index";
@@ -17,7 +18,6 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { NSFW_POLICY_LEVELS_PROMPT, } from "../prompts";
 import { GameMasterService, type GenerateTextFn, } from "./game-master";
-import type { GmGuidance, } from "../chat/types/config";
 import type { GameMasterConfig, QualityThresholds, } from "./types";
 
 // ── Test DB factory ───────────────────────────────────────────
@@ -728,7 +728,7 @@ describe("GameMasterService — executeTurn", () => {
     await seedParticipant(testDb, chatId, villainId,);
 
     const gmGuidance: GmGuidance = {
-      constraints: ["Keep it tense — no easy answers"],
+      constraints: ["Keep it tense — no easy answers",],
       targetCharacter: villainId,
       sceneDescription: "A storm rages outside the tavern",
       turnPriority: {},
@@ -1000,13 +1000,13 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
   test("llmDecision uses per-actor model when actorModels is set", async () => {
     const worldId = await seedWorld(testDb,);
     const locId = await seedLocation(testDb, worldId,);
-    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, });
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, },);
     const actorId = await seedActor(testDb,);
     await seedParticipant(testDb, chatId, actorId,);
     const captured: { model?: string; provider?: string }[] = [];
     const generateText: GenerateTextFn = (params,) => {
-      captured.push({ model: params.model, provider: params.provider, });
-      return Promise.resolve("*He acts.*");
+      captured.push({ model: params.model, provider: params.provider, },);
+      return Promise.resolve("*He acts.*",);
     };
     const gm = new GameMasterService({
       db: testDb,
@@ -1020,27 +1020,27 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
           temperature: 0.7,
           maxTokens: 800,
         },
-        actorModels: { [actorId]: { model: "actor-model", provider: "actor-provider" } },
+        actorModels: { [actorId]: { model: "actor-model", provider: "actor-provider", }, },
       },
       generateText,
-    });
+    },);
     await gm.initialize();
     await gm.executeTurn(actorId,);
     expect(captured.length,).toBeGreaterThanOrEqual(1,);
     expect(captured[0]!.model,).toBe("actor-model",);
     expect(captured[0]!.provider,).toBe("actor-provider",);
-  },);
+  });
 
   test("falls back to GM llmConfig model when actor has no override", async () => {
     const worldId = await seedWorld(testDb,);
     const locId = await seedLocation(testDb, worldId,);
-    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, });
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, },);
     const actorId = await seedActor(testDb,);
     await seedParticipant(testDb, chatId, actorId,);
     const captured: { model?: string }[] = [];
     const generateText: GenerateTextFn = (params,) => {
-      captured.push({ model: params.model, });
-      return Promise.resolve("*He acts.*");
+      captured.push({ model: params.model, },);
+      return Promise.resolve("*He acts.*",);
     };
     const gm = new GameMasterService({
       db: testDb,
@@ -1056,9 +1056,9 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
         },
       },
       generateText,
-    });
+    },);
     await gm.initialize();
     await gm.executeTurn(actorId,);
     expect(captured[0]!.model,).toBe("gm-model",);
-  },);
+  });
 });

@@ -14,8 +14,8 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
-import type { HandlerOpts, } from "./types";
 import { gmGuidanceRoutes, } from "./gm-guidance";
+import type { HandlerOpts, } from "./types";
 
 export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

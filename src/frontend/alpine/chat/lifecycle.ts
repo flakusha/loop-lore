@@ -73,7 +73,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
       await this.selectChat(chatId,);
-      if (params.get("openSettings")) {
+      if (params.get("openSettings",)) {
         await this.openChatSettings();
       }
     }

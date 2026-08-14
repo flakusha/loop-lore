@@ -11,12 +11,13 @@
 | **RunPod** | Serverless inference, flexible GPU options, managed serverless | • Pay-per-second compute (no upfront cost)<br>• Built-in serverless functions<br>• Easy GPU scaling (RTX, A100, H100)<br>• Simple network sharing between pods<br>• Good for variable workloads | • Less mature than AWS/GCP<br>• Limited free tier<br>• Pricing varies by region |
 | **Lambda Labs** | High-performance GPU inference, consistent performance | • Competitive GPU pricing (~$1.29/hr baseline)<br>• Strong performance for LLM workloads<br>• Enterprise-grade infrastructure<br>• Good for steady-state inference | • Higher hourly rates than RunPod for GPU seats<br>• Less flexible serverless options |
 | **Vast.ai** | Cost-sensitive GPU compute, marketplace variety | • Competitive GPU pricing (often lower than Lambda)<br>• Large model marketplace<br>• Flexible compute options | • Variable quality across providers<br>• Less predictable pricing |
-| **OVH Cloud** | Budget-conscious, regional presence | • Cheapest GPU options in some regions<br>• Broad data center network |
-| **AWS Lambda** | Existing AWS ecosystem, hybrid deployments | • Mature, reliable<br>• Can integrate with existing AWS infra |
+| **OVH Cloud** | Budget-conscious, regional presence | • Cheapest GPU options in some regions<br>• Broad data center network | • Limited regions<br>• Fewer GPU instance types |
+| **AWS Lambda** | Existing AWS ecosystem, hybrid deployments | • Mature, reliable<br>• Can integrate with existing AWS infra | • Cold starts for GPU workloads<br>• Complex pricing model |
 
 ## Detailed Analysis
 
 ### RunPod
+
 - **Pricing Model**: Pay-per-second serverless compute (no upfront costs)
 - **GPU Options**: RTX series, A100, H100, RTX 4090
 - **Serverless Functions**: Yes - can run llama.cpp pods as serverless functions
@@ -29,6 +30,7 @@
 - **Cons**: Less mature than AWS/GCP, limited free tier
 
 ### Lambda Labs
+
 - **Pricing Model**: GPU hourly rates + storage + network
 - **GPU Options**: A100, H100, RTX variants
 - **Serverless**: Not primarily serverless; more focused on GPU clusters
@@ -41,6 +43,7 @@
 - **Cons**: Higher hourly rates, less serverless-oriented
 
 ### Vast.ai
+
 - **Pricing Model**: Per-hour GPU rentals + spot instances
 - **GPU Options**: Wide range from consumer to enterprise GPUs
 - **Network Sharing**: Via shared volumes
@@ -74,17 +77,20 @@ Given the nature of Loop-Lore (RPG chat application with LLM inference):
 ## Deployment Considerations
 
 ### GPU Requirements for Loop-Lore
+
 - **Inference**: LFM/Llama models typically run well on RTX 3090/4090
 - **Recommendation**: RTX 4090 (24GB) for best balance of price/performance
 - **Training**: A100/H100 if you plan to train custom models
 
 ### Network Sharing Needs
+
 - If you plan to share state between inference pods (e.g., session cache in Redis):
   - RunPod: Use network volumes for state sharing
   - Lambda Labs: Cluster networking or shared volumes
   - OVH: Private network or VPN setups
 
 ### Networking Architecture
+
 - For cross-pod communication (chat list updates, user presence):
   - Use gRPC/WebSocket over encrypted channels
   - Consider Redis/PostgreSQL for shared state
@@ -99,6 +105,7 @@ Given the nature of Loop-Lore (RPG chat application with LLM inference):
 5. **Final Decision** - Choose provider based on cost vs. operational simplicity
 
 ## References
+
 - [RunPod Pricing](https://www.runpod.io/pricing)
 - [Lambda Labs Pricing](https://lambda.labs/pricing)
 - [Vast.ai Pricing](https://vast.ai/pricing)

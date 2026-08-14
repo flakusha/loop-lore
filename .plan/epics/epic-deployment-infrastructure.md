@@ -1,9 +1,11 @@
 # Epic: Deployment Infrastructure (Docker & Bare Metal)
 
 ## Overview
+
 Containerize the loop-lore application and establish deployment strategies for both containerized environments (Docker) and bare-metal servers. Evaluate cost-effective hosting options that support storage and GPU compute for LLM inference workloads.
 
 ## Goals
+
 - Package the application in a reproducible Docker image
 - Create a bare-metal deployment guide for on-premises or cloud VM deployments
 - Compare and evaluate affordable hosting providers with storage and GPU capabilities
@@ -11,12 +13,14 @@ Containerize the loop-lore application and establish deployment strategies for b
 - Implement health checks and monitoring for production readiness
 
 ## Scope
+
 - **In-scope**: Loop-lore (RPG chat application) built with Bun, Elysia, HTMX + Alpine.js
 - **Out-of-scope**: Application code changes (these are infrastructure improvements)
 
 ## Deliverables
 
 ### Epic Tasks
+
 1. **TASK-001**: Dockerize the application
    - Containerize all services (server, frontend, assets)
    - Define multi-stage Docker build for minimal image size
@@ -45,6 +49,7 @@ Containerize the loop-lore application and establish deployment strategies for b
    - Alerting rules for critical failures
 
 ## Success Criteria
+
 - Docker image builds successfully on Linux x86_64
 - Bare metal guide is tested on a reference machine
 - At least three hosting providers evaluated with cost/performance comparison
@@ -52,16 +57,19 @@ Containerize the loop-lore application and establish deployment strategies for b
 - Monitoring stack integrated and verified
 
 ## Risks
+
 - Docker networking might conflict with existing setup
 - GPU instances may have variable pricing; need to research current rates
 - Some providers may lack SSH access for bare metal management
 
 ## Related Epics
+
 - epic-deployment-topologies.md
 - epic-database-asset-snapshot-recovery.md
 - epic-frontend-admin
 
 ## Assumptions
+
 - Current codebase is stable and deployable
 - Team has access to cloud provider accounts for testing
 - Budget flexibility for evaluating multiple hosting options

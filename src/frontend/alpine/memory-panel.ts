@@ -5,12 +5,9 @@
  * Loads character memories from the active chat's actor participants.
  */
 
-import { jsonBody, jsonParseOr, } from "./json";
+import { jsonBody, } from "./json";
+import { memoriesForTab, type MemoryApiRow, toMemoryEntry, } from "./memory-panel/transform";
 import type { ChatState, MemoryEntry, } from "./types";
-/** Estimate tokens from content length (~4 chars per token). */
-function estimateTokens(content: string,): number {
-  return Math.ceil(content.length / 4,);
-}
 
 export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   memoryPanel: {
@@ -54,45 +51,16 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
 
       const res = await apiFetch(`/api/actors/${actorId}/memories`,);
       if (!res.ok) { return; }
-      const data = await res.json() as {
-        items: Array<{
-          id: string;
-          content: string;
-          memory_type: string;
-          confidence: number;
-          importance: number;
-          keywords: string | string[];
-          source_chat_id?: string;
-          pinned?: boolean;
-          scope?: string;
-          created_at: string;
-        }>;
-      };
+      const data = await res.json() as { items?: MemoryApiRow[] };
 
       const characterMemories: MemoryEntry[] = [];
       const assistantMemories: MemoryEntry[] = [];
       const worldMemories: MemoryEntry[] = [];
-
-      const items = data.items ?? [];
-      for (const m of items) {
-        const entry: MemoryEntry = {
-          id: m.id,
-          content: m.content,
-          type: m.memory_type as MemoryEntry["type"],
-          confidence: m.confidence,
-          importance: m.importance,
-          keywords: typeof m.keywords === "string"
-            ? jsonParseOr<string[]>(m.keywords || "[]", [],)
-            : (m.keywords ?? []),
-          pinned: !!m.pinned,
-          createdAt: m.created_at,
-          tokenCount: estimateTokens(m.content,),
-          scope: (m.scope as MemoryEntry["scope"]) ?? "character",
-        };
-        const scope = entry.scope ?? "character";
-        if (scope === "assistant") {
+      for (const m of data.items ?? []) {
+        const entry = toMemoryEntry(m, "character",);
+        if (entry.scope === "assistant") {
           assistantMemories.push(entry,);
-        } else if (scope === "world") {
+        } else if (entry.scope === "world") {
           worldMemories.push(entry,);
         } else {
           characterMemories.push(entry,);
@@ -111,27 +79,9 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   getFilteredMemories(): MemoryEntry[] {
-    const query = this.memoryPanel.searchQuery.toLowerCase();
-
-    let memories: MemoryEntry[];
-    switch (this.memoryPanel.activeTab) {
-      case "character": {
-        memories = this.memoryPanel.characterMemories;
-        break;
-      }
-      case "assistant": {
-        memories = this.memoryPanel.assistantMemories;
-        break;
-      }
-      case "world": {
-        memories = this.memoryPanel.worldMemories;
-        break;
-      }
-      default: {
-        memories = [];
-      }
-    }
-
+    const panel = this.memoryPanel;
+    const query = panel.searchQuery.toLowerCase();
+    const memories = memoriesForTab(panel, panel.activeTab,);
     if (!query) { return memories; }
 
     const filtered: MemoryEntry[] = [];
@@ -147,20 +97,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   getCurrentMemoryList(): MemoryEntry[] {
-    switch (this.memoryPanel.activeTab) {
-      case "character": {
-        return this.memoryPanel.characterMemories;
-      }
-      case "assistant": {
-        return this.memoryPanel.assistantMemories;
-      }
-      case "world": {
-        return this.memoryPanel.worldMemories;
-      }
-      default: {
-        return [];
-      }
-    }
+    return memoriesForTab(this.memoryPanel, this.memoryPanel.activeTab,);
   },
 
   searchMemories() {
@@ -187,31 +124,9 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         },),
       },);
       if (!res.ok) { return; }
-      const created = await res.json() as {
-        id: string;
-        content: string;
-        memory_type: string;
-        confidence: number;
-        importance: number;
-        keywords: string | string[];
-        scope?: string;
-        created_at: string;
-      };
+      const created = await res.json() as MemoryApiRow;
 
-      const newMemory: MemoryEntry = {
-        id: created.id,
-        content: created.content,
-        type: created.memory_type as MemoryEntry["type"],
-        confidence: created.confidence,
-        importance: created.importance,
-        keywords: typeof created.keywords === "string"
-          ? jsonParseOr<string[]>(created.keywords || "[]", [],)
-          : (created.keywords ?? []),
-        createdAt: created.created_at,
-        tokenCount: estimateTokens(created.content,),
-        scope: (created.scope as MemoryEntry["scope"]) ?? this.memoryPanel.activeTab,
-      };
-
+      const newMemory = toMemoryEntry(created, this.memoryPanel.activeTab,);
       this.getCurrentMemoryList().unshift(newMemory,);
       this.memoryPanel.newMemoryContent = "";
       this.memoryPanel.showCreateForm = false;
@@ -245,8 +160,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     const actorId = this._getCharacterActorId();
     if (!actorId) { return; }
 
-    const memories = this.getCurrentMemoryList();
-    const mem = memories.find((m,) => m.id === memoryId);
+    const mem = this.getCurrentMemoryList().find((m,) => m.id === memoryId);
     if (!mem) { return; }
 
     mem.pinned = !mem.pinned;

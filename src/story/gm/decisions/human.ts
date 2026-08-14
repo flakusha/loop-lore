@@ -6,7 +6,7 @@ import type { GmDecisionStrategy, } from "./types";
 export const humanDecision: GmDecisionStrategy = (deps, context, actorId,) => {
   const actor = context.actors.find((a,) => a.id === actorId);
 
-  const promptParts = [`[Human GM] Select prompt for ${actor?.displayName ?? "actor"}...`];
+  const promptParts = [`[Human GM] Select prompt for ${actor?.displayName ?? "actor"}...`,];
   if (deps.gmGuidance?.constraints?.length) {
     promptParts.push(`GM guidance — constraints: ${deps.gmGuidance.constraints.join("; ",)}`,);
   }

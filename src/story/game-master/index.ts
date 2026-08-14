@@ -14,8 +14,8 @@
  * surface (and any methods kept on the prototype) is unchanged.
  */
 import type { Kysely, } from "kysely";
-import type { Config, } from "../../config/schema";
 import type { GmGuidance, } from "../../chat/types/config";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { QualityEvaluator, } from "../quality-evaluator";
 import { createQualityEvaluator, } from "../quality-evaluator";
