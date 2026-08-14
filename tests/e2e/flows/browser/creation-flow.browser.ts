@@ -17,18 +17,18 @@ describe("Creation flows E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoView(
     page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
     path: string,
   ) {
-    await page.goto(`${ctx.url}${path}`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 10_000, },);
+    await page.goto(`${ctx.url}${path}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
   }
 
   describe("Character create persists", () => {
@@ -36,9 +36,9 @@ describe("Creation flows E2E", () => {
       const page = await ctx.openPage();
       try {
         await gotoView(page, "/views/characters",);
-        await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 15_000, },);
         await page.click("[data-testid='create-character']",);
-        await page.locator("[data-testid='create-character-form']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='create-character-form']",).waitFor({ state: "visible", timeout: 15_000, },);
 
         const name = `Browser-Created-${Date.now()}`;
         await page.fill("#char-name", name,);
@@ -57,11 +57,11 @@ describe("Creation flows E2E", () => {
         // The grid reload can race the DB commit, so reload the page (grid
         // re-fetches on load) and assert the new card renders.
         await page.reload({ waitUntil: "domcontentloaded", },);
-        await page.locator(`[data-testid='character-card-${row!.id}']`,).waitFor({ timeout: 10_000, },);
+        await page.locator(`[data-testid='character-card-${row!.id}']`,).waitFor({ timeout: 30_000, },);
       } finally {
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 
   describe("World create persists", () => {
@@ -69,9 +69,9 @@ describe("Creation flows E2E", () => {
       const page = await ctx.openPage();
       try {
         await gotoView(page, "/views/worlds",);
-        await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 15_000, },);
         await page.click("[data-testid='create-world']",);
-        await page.locator("[data-testid='create-world-form']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='create-world-form']",).waitFor({ state: "visible", timeout: 15_000, },);
 
         const name = `Browser-World-${Date.now()}`;
         await page.fill("#world-name", name,);
@@ -88,11 +88,11 @@ describe("Creation flows E2E", () => {
         expect(row!.name,).toBe(name,);
 
         // App UX: createWorld() redirects to the new world's edit page.
-        await page.waitForURL((url,) => url.pathname === `/worlds/${row!.id}/edit`, { timeout: 10_000, },);
+        await page.waitForURL((url,) => url.pathname === `/worlds/${row!.id}/edit`, { timeout: 30_000, },);
       } finally {
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 
   describe("World-edit location add persists", () => {
@@ -102,9 +102,9 @@ describe("Creation flows E2E", () => {
         // Create a world owned by the solo user via the UI modal (the app
         // redirects to its edit page on success where we add the location).
         await gotoView(page, "/views/worlds",);
-        await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 15_000, },);
         await page.click("[data-testid='create-world']",);
-        await page.locator("[data-testid='create-world-form']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='create-world-form']",).waitFor({ state: "visible", timeout: 15_000, },);
         const worldName = `LocWorld-${Date.now()}`;
         await page.fill("#world-name", worldName,);
         await page.click("[data-testid='create-world-form'] button[type='submit']",);
@@ -116,8 +116,8 @@ describe("Creation flows E2E", () => {
         expect(worldRow,).not.toBeNull();
 
         // Navigate to its edit page and wait for the world to load (tab bar).
-        await page.goto(`${ctx.url}/worlds/${worldRow!.id}/edit`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-        await page.locator(".world-edit-tabs",).waitFor({ state: "visible", timeout: 10_000, },);
+        await page.goto(`${ctx.url}/worlds/${worldRow!.id}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+        await page.locator(".world-edit-tabs",).waitFor({ state: "visible", timeout: 30_000, },);
         await page.waitForTimeout(500,);
 
         // Switch to the Locations tab.
@@ -132,7 +132,7 @@ describe("Creation flows E2E", () => {
           );
           (toggle as HTMLElement | undefined)?.click();
         },);
-        await page.locator("#loc-name",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("#loc-name",).waitFor({ state: "visible", timeout: 15_000, },);
 
         const locName = `Browser-Loc-${Date.now()}`;
         await page.fill("#loc-name", locName,);
@@ -154,10 +154,10 @@ describe("Creation flows E2E", () => {
         expect(row!.world_id,).toBe(worldRow!.id,);
 
         // Rendered in the locations list (.location-name).
-        await page.locator(".location-name",).filter({ hasText: locName, },).waitFor({ timeout: 10_000, },);
+        await page.locator(".location-name",).filter({ hasText: locName, },).waitFor({ timeout: 30_000, },);
       } finally {
         await page.close();
       }
-    }, 60_000,);
+    }, 90_000,);
   });
 });

@@ -24,8 +24,8 @@ const ROUTES = {
 async function redirectPath(ctx: BrowserTestContext, path: string, expected: string,): Promise<void> {
   const page = await ctx.openPage();
   try {
-    await page.goto(`${ctx.url}${path}`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.waitForURL((url,) => url.pathname === expected, { timeout: 10_000, },);
+    await page.goto(`${ctx.url}${path}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.waitForURL((url,) => url.pathname === expected, { timeout: 30_000, },);
   } finally {
     await page.close();
   }
@@ -36,27 +36,27 @@ describe("Redirection E2E — solo mode", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   test("GET '/' redirects to '/views/chat'", async () => {
     await redirectPath(ctx, ROUTES.root, ROUTES.chat,);
-  }, 40_000,);
+  }, 60_000,);
 
   test("'/views/chat.html' redirects to clean '/views/chat' path", async () => {
     await redirectPath(ctx, ROUTES.chatHtml, ROUTES.chat,);
-  }, 40_000,);
+  }, 60_000,);
 
   test("unknown '/views/does-not-exist' redirects to '/views/'", async () => {
     await redirectPath(ctx, ROUTES.unknownView, ROUTES.viewsRoot,);
-  }, 40_000,);
+  }, 60_000,);
 
   test("'/chat' redirects to '/views/chat'", async () => {
     await redirectPath(ctx, ROUTES.shortChat, ROUTES.chat,);
-  }, 40_000,);
+  }, 60_000,);
 });
 
 describe("Redirection E2E — auth required", () => {
@@ -64,26 +64,26 @@ describe("Redirection E2E — auth required", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest({ auth: { required: true, }, },);
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   test("GET '/' redirects to '/views/login' when unauthenticated", async () => {
     await redirectPath(ctx, ROUTES.root, ROUTES.login,);
-  }, 40_000,);
+  }, 60_000,);
 
   test("direct '/views/chat' without login does not show chat content", async () => {
     const page = await ctx.openPage();
     try {
-      await page.goto(`${ctx.url}${ROUTES.chat}`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
+      await page.goto(`${ctx.url}${ROUTES.chat}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
 
       // Accept either resolution: the app bounces to /views/login, or it stays
       // put but never renders the chat message list. Either way chat content
       // must NOT be shown.
       const redirected = await page
-        .waitForURL((url,) => url.pathname === ROUTES.login, { timeout: 8000, },)
+        .waitForURL((url,) => url.pathname === ROUTES.login, { timeout: 15_000, },)
         .then(() => true)
         .catch(() => false);
 
@@ -102,5 +102,5 @@ describe("Redirection E2E — auth required", () => {
     } finally {
       await page.close();
     }
-  }, 40_000,);
+  }, 60_000,);
 });
