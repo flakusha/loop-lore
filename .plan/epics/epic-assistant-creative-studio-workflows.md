@@ -66,6 +66,7 @@ template system architecture and §7.3 for in-source default pattern.
 
 Each workflow is a named, versioned template with metadata, step definitions, parameter
 slots, backend dispatch, and approval policy.
+
 ```yaml
 # configs/templates/workflows/minimax-h3-video.yaml
 merge: extend
@@ -420,7 +421,7 @@ workflow category, not a generic "entity generation" afterthought. These workflo
 give the existing `/create` assistant command the **prompt preview, validation, and
 confirmation gating** it currently lacks (see `TASK-assistant-gm-flows.md`: `/create`
 inserts directly with no quality pipeline and no user approval). Image/video vary by
-_model family_ (§7.1b); entity workflows vary by _entity shape_.
+*model family* (§7.1b); entity workflows vary by *entity shape*.
 
 #### 7.6a Intent → Entity Workflow Mapping
 
@@ -511,7 +512,7 @@ entity generation. The workflow system is the **gating + UX layer** that wraps i
 ```
 
 This closes the `TASK-assistant-gm-flows.md` gap (no quality validation / no confirmation
-gating) without forking the creation backends. Entity workflows are the _only_ sanctioned
+gating) without forking the creation backends. Entity workflows are the *only* sanctioned
 path for assistant-driven entity creation post-MVP.
 
 #### 7.6f Example: Character Generation Workflow
@@ -642,7 +643,7 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
 
 ## Use Case: Minimax H3 Video Generation (End-to-End Walkthrough)
 
-1. **User** types: _"Generate a 5-second video of a cyberpunk samurai drawing his sword in the rain."_
+1. **User** types: *"Generate a 5-second video of a cyberpunk samurai drawing his sword in the rain."*
 
 2. **Intent detection** (`classifyIntent` in `src/generation/auto-gen.ts:74`):
    - Matches `minimax` + `video` triggers in `INTENT_PATTERNS`.
@@ -671,7 +672,7 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
 
 ## Use Case: Nano Banana Image Generation w/ NSFW Prefiltering
 
-1. **User** types: _"Create a spicy portrait of my character in lingerie."_
+1. **User** types: *"Create a spicy portrait of my character in lingerie."*
 
 2. **Intent detection**: matches `nano.banana` + `image` triggers in `INTENT_PATTERNS`.
    Routes to `nano-banana-image` workflow template (model_family: `z-image`).
@@ -709,8 +710,8 @@ implemented** `src/image-edit/` subsystem as a workflow UX layer — same patter
 | `classifyIntent` (LLM)                     | ⚠️ Partial               | `src/generation/auto-gen.ts:74` (no timeout, no apiKey, temp 0.1) |
 | Slash command parser + registry            | ✅ Shipped              | `src/assistant/command-parser.ts`, `commands/registry.ts`         |
 | Prompt assembler (section pipeline)        | ✅ Shipped              | `src/assistant/prompt-assembler.ts`                               |
-| `SDRequest` / `generateImage`              | 🟡 Dead stub            | `src/assistant/sd.ts` (no provider wiring)                        |
-| `ScenarioSource` store + bridge            | 🟡 Dead stub            | `src/assistant/scenario-source.ts` (no DB table)                  |
+| `SDRequest` / `generateImage`              | ✅ Removed 2026-08-14   | `src/assistant/sd.ts` deleted (dead stub, zero imports)           |
+| `ScenarioSource` store + bridge            | ✅ Removed 2026-08-14   | `src/assistant/scenario-source.ts` deleted (dead stub, zero imports) |
 | `/image` command                           | 🟡 Action dispatch only | `src/assistant/commands/image.ts` (832 bytes)                     |
 | Dead `detectIntent()`                      | ✅ Removed 2026-08-07   | `src/assistant/intent.ts` (see `.plan/backlog/open.md` row 4)     |
 
@@ -913,8 +914,8 @@ dispatch:
 - `src/assistant/command-parser.ts` — slash command parsing (`BUILTIN_COMMANDS`)
 - `src/assistant/commands/registry.ts` — `CommandContext`, `CommandResult`, `registerCommand`
 - `src/assistant/prompt-assembler.ts` — ordered section pipeline (pattern to follow)
-- `src/assistant/sd.ts` — dead `SDRequest` / `generateImage` stubs (to replace)
-- `src/assistant/scenario-source.ts` — dead `ScenarioSource` stubs (to activate)
+- `src/assistant/sd.ts` — ~~dead stubs~~ REMOVED 2026-08-14 (to reimplement from scratch)
+- `src/assistant/scenario-source.ts` — ~~dead stubs~~ REMOVED 2026-08-14 (to reimplement from scratch)
 - `src/assistant/commands/image.ts` — current `/image` action dispatch (832 bytes)
 - `src/generation/auto-gen.ts:74` — `classifyIntent` LLM routing (needs timeout/apiKey fix)
 - `docs/spec/creative-studio.md` — creative studio spec (stub)
@@ -923,7 +924,7 @@ dispatch:
   `image-edit.example.yaml`, `character.example.yaml`, `expansion.example.yaml` —
   existing template example files (pattern to follow)
 - `.plan/backlog/open.md` § Dead / unwired code — `detectIntent` removal (row 4),
-  `scenario-source.ts` + `sd.ts` dead stubs (row 10)
+  `scenario-source.ts` + `sd.ts` dead stubs (row 10 — DELETED 2026-08-14)
 - `.plan/epics/epic-config-templates.md` — template system design doc
 - `.plan/tickets/TASK-assistant-command-execution-intent-detection.md` — intent detection task
 - `.plan/tickets/TASK-assistant-generation-extensions.md` — image/audio backend providers
