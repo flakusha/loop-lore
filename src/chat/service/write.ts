@@ -1,32 +1,16 @@
 /**
- * Message write operations: variants, regeneration, delete, edit.
+ * Message write operations: variant regeneration.
+ *
+ * selectVariant, deleteMessage, editMessage removed 2026-08-14 —
+ * routes implement these inline; see git history for prior implementations.
  */
 import type { Kysely, } from "kysely";
 import { MessageStatus, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { getMessageVariants, } from "./read";
 import type {
   RegenerateVariantParams,
   RegenerateVariantResult,
-  ServiceError,
 } from "./types";
-
-/**
- * Select a variant by index.
- */
-export async function selectVariant(
-  database: Kysely<DB>,
-  parentId: string,
-  chatId: string,
-  variantIndex: number,
-): Promise<Record<string, unknown> | ServiceError> {
-  const variants = await getMessageVariants(database, parentId, chatId,);
-  const selected = variants[variantIndex];
-  if (!selected) {
-    return { code: "bad_request", message: "Invalid variant index", };
-  }
-  return selected;
-}
 
 /** Prefix for the idempotency mark on pending regen variant rows. */
 const REGEN_IDEMPOTENCY_PREFIX = "regen:variant:";
@@ -138,69 +122,4 @@ export async function regenerateMessageVariant(
     .execute();
 
   return { ok: true, replayed: false, variantMessageId, swipeIndex, };
-}
-
-/**
- * Soft-delete a message (set visibility to hidden_by_user).
- */
-export async function deleteMessage(
-  database: Kysely<DB>,
-  messageId: string,
-  actorId: string,
-): Promise<ServiceError | { ok: true }> {
-  const message = await database
-    .selectFrom("messages",)
-    .selectAll()
-    .where("id", "=", messageId,)
-    .executeTakeFirst();
-
-  if (!message) {
-    return { code: "not_found", message: "Message not found", };
-  }
-
-  await database
-    .updateTable("messages",)
-    .set({ visibility: "hidden_by_user", hidden_by: actorId, },)
-    .where("id", "=", messageId,)
-    .execute();
-
-  return { ok: true, };
-}
-
-/**
- * Edit a user message's content.
- */
-export async function editMessage(
-  database: Kysely<DB>,
-  messageId: string,
-  userId: string,
-  userRole: string | null,
-  newContent: string,
-): Promise<ServiceError | { id: string; content: string; edited_at: string }> {
-  const msg = await database
-    .selectFrom("messages",)
-    .select(["id", "actor_id", "role", "chat_id",],)
-    .where("id", "=", messageId,)
-    .executeTakeFirst();
-
-  if (!msg) {
-    return { code: "not_found", message: "Message not found", };
-  }
-
-  if (msg.actor_id !== userId && userRole !== "admin") {
-    return { code: "forbidden", message: "Cannot edit this message", };
-  }
-
-  if (msg.role !== "user") {
-    return { code: "bad_request", message: "Only user messages can be edited", };
-  }
-
-  const now = new Date().toISOString();
-  await database
-    .updateTable("messages",)
-    .set({ content: newContent.trim(), edited_at: now, },)
-    .where("id", "=", messageId,)
-    .execute();
-
-  return { id: messageId, content: newContent.trim(), edited_at: now, };
 }

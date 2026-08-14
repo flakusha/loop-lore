@@ -1,65 +1,34 @@
-import { ActivitySnapshot, } from "../../validation/schemas/responses";
-import { jsonBody, jsonParseOr, } from "./json";
-import { log as rootLog, } from "./logger";
+// Chat activity — unseen counts and mark-read.
+//
+// SSE + polling is handled by NotificationsManager (notifications.ts).
+// This module delegates to it for unseen counts and mark-read,
+// avoiding a duplicate EventSource to /api/activity/stream.
+import { jsonBody, } from "./json";
 import type { ChatState, } from "./types";
-import { parseOr, } from "./validation";
 
-const log = rootLog.child({ module: "chat-activity", },);
+/** Public API surface we need from the NotificationsManager singleton. */
+interface ActivityManager {
+  getUnseenCount(chatId: string,): number;
+  getAllUnseen(): Record<string, number>;
+  clearUnseen(chatId: string,): void;
+  markRead(chatId: string,): Promise<void>;
+  setActiveChat(chatId: string | null,): void;
+}
+
+/** Typed accessor for the global NotificationsManager singleton. */
+function getManager(): ActivityManager | undefined {
+  const g = globalThis;
+  if (g && typeof g === "object" && "notifications" in g) {
+    const mgr = g.notifications;
+    if (mgr && typeof mgr === "object" && "getUnseenCount" in mgr) {
+      return mgr as ActivityManager;
+    }
+  }
+  return undefined;
+}
 
 export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
   _unseenCounts: {},
-  _activityEventSource: null as EventSource | null,
-
-  connectActivitySSE() {
-    this.disconnectActivitySSE();
-
-    const streamUrl = "/api/activity/stream";
-    const activitySource = new EventSource(streamUrl,);
-    this._activityEventSource = activitySource;
-
-    activitySource.addEventListener("activity", (event: MessageEvent,) => {
-      const data = parseOr(ActivitySnapshot, jsonParseOr(event.data, null,), { chats: {}, },);
-      try {
-        const chats: Record<string, { unseenCount: number; chatName: string }> = data.chats;
-
-        const counts: Record<string, number> = {};
-        for (const [chatId, entry,] of Object.entries(chats,)) {
-          counts[chatId] = entry.unseenCount || 0;
-        }
-        this._unseenCounts = counts;
-
-        const active = this.activeChat;
-        for (const [chatId, entry,] of Object.entries(chats,)) {
-          if (chatId === active || !entry.unseenCount) { continue; }
-          this.$dispatch?.("show-toast", {
-            type: "info",
-            message: `${entry.chatName}: ${entry.unseenCount} new message${entry.unseenCount === 1 ? "" : "s"}`,
-          },);
-        }
-      } catch {
-        /* malformed event, skip */
-      }
-    },);
-
-    activitySource.addEventListener("stream-error", () => {
-      log.warn("activity SSE stream error, will auto-reconnect",);
-    },);
-
-    activitySource.addEventListener("error", () => {
-      if (activitySource.readyState === EventSource.CLOSED) {
-        log.debug("activity SSE connection closed",);
-      }
-    },);
-  },
-
-  disconnectActivitySSE() {
-    if (!this._activityEventSource) {
-      return;
-    }
-
-    this._activityEventSource.close();
-    this._activityEventSource = null;
-  },
 
   async markChatAsRead(chatId: string,) {
     const messages = this.messages;
@@ -75,15 +44,22 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
         body: jsonBody({ messageId: latestMessage.id, },),
       },);
 
-      const counts = this._unseenCounts;
-      counts[chatId] = 0;
-      this._unseenCounts = { ...counts, };
+      const mgr = getManager();
+      if (mgr) {
+        mgr.clearUnseen(chatId,);
+        this._unseenCounts = mgr.getAllUnseen();
+      } else {
+        const counts = this._unseenCounts;
+        counts[chatId] = 0;
+        this._unseenCounts = { ...counts, };
+      }
     } catch {
       /* non-critical, retry on next poll */
     }
   },
 
   getUnseenCount(chatId: string,): number {
-    return this._unseenCounts[chatId] ?? 0;
+    const mgr = getManager();
+    return mgr ? mgr.getUnseenCount(chatId,) : (this._unseenCounts[chatId] ?? 0);
   },
 };
