@@ -19,7 +19,7 @@ import { join, } from "node:path";
 /**
 ABI version the loader requires (packed `(major<<16)|(minor<<8)|patch`).
 */
-const REQUIRED_ABI_VERSION = (0 << 16) | (1 << 8);
+const REQUIRED_ABI_VERSION = (0 << 16) | (2 << 8);
 
 /**
 Platform → shared-library filename, matching the Rust crate output name.
@@ -47,6 +47,18 @@ const SYMBOLS = {
   ll_blake3: {
     args: [FFIType.ptr, FFIType.usize, FFIType.ptr, FFIType.usize,],
     returns: FFIType.i32,
+  },
+  ll_zstd_compress: {
+    args: [FFIType.ptr, FFIType.usize, FFIType.ptr, FFIType.usize, FFIType.i32,],
+    returns: FFIType.i32,
+  },
+  ll_zstd_decompress: {
+    args: [FFIType.ptr, FFIType.usize, FFIType.ptr, FFIType.usize,],
+    returns: FFIType.i32,
+  },
+  ll_zstd_decompress_bound: {
+    args: [FFIType.ptr, FFIType.usize,],
+    returns: FFIType.i64,
   },
 } as const;
 
@@ -108,7 +120,7 @@ export function resolveNativeBinaryPath(): string | null {
  * @returns The dlopen handle + verified ABI version, or null when
  *   unavailable (missing binary, wrong platform, version mismatch, dlopen error).
  */
-export function getNativeModule(): { handle: NativeBlake3Symbols; version: number } | null {
+export function getNativeModule(): { handle: NativeBlake3Symbols & NativeZstdSymbols; version: number } | null {
   if (cachedModule !== undefined) {
     return cachedModule;
   }
