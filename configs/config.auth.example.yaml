@@ -1,0 +1,19 @@
+# Auth configuration example (YAML)
+# Domain: auth — authentication and sessions
+# Twin of config.auth.example.toml
+
+auth:
+  required: false
+  registrationOpen: true
+  sessionTimeoutHours: 24
+  maxSessionsPerUser: 10
+  demoUsername: "demo"
+  demoAutoSetup: true
+
+  # Optional: admin bootstrap credentials
+  # adminUsername: "admin"
+  # adminPassword: "changeme"
+
+  # Optional: JWT settings
+  # jwtSecret: "generate-with-openssl-rand-hex-32"
+  # jwtExpiresIn: "7d"

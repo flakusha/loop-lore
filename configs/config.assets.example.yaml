@@ -1,0 +1,9 @@
+# Assets configuration example (YAML)
+# Domain: assets — file upload and storage
+# Twin of config.assets.example.toml
+
+assets:
+  enabled: true
+  uploadDir: "../loop-lore-data/uploads"
+  maxFileSize: 10485760 # 10 MB
+  compression: true

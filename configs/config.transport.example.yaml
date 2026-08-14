@@ -1,0 +1,18 @@
+# Transport configuration example (YAML)
+# Domain: transport — HTTP/WebSocket/WebTransport protocols
+# Twin of config.transport.example.toml
+
+transport:
+  defaultProtocol: "http/1.1"
+  enableWebSocket: true
+  enableWebTransport: false
+  enableH2: false
+  enableH3: false
+  compression:
+    enabled: false
+    default: "none" # none | gzip | deflate | br
+    threshold: 256 # bytes — compress responses larger than this
+  limits:
+    maxFrameSize: 65536
+    maxPayload: 327680
+    maxConcurrentStreams: 100
