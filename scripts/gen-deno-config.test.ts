@@ -27,14 +27,14 @@ const SAMPLE: {
 };
 
 describe("transformCommand", () => {
-  const names = new Set(Object.keys(SAMPLE.scripts,));
+  const names = new Set(Object.keys(SAMPLE.scripts,),);
 
   test("bun run <script> → deno task <script>", () => {
-    expect(transformCommand("bun run build:frontend", names,)).toBe("deno task build:frontend",);
+    expect(transformCommand("bun run build:frontend", names,),).toBe("deno task build:frontend",);
   });
 
   test("bun run <file> → deno run <file>", () => {
-    expect(transformCommand("bun run src/server/index.ts", names,)).toBe("deno run src/server/index.ts",);
+    expect(transformCommand("bun run src/server/index.ts", names,),).toBe("deno run src/server/index.ts",);
   });
 
   test("preserves && with spacing", () => {
@@ -44,11 +44,11 @@ describe("transformCommand", () => {
   });
 
   test("bunx <pkg> → deno run -A npm:<pkg>", () => {
-    expect(transformCommand("bunx vitepress dev docs", names,)).toBe("deno run -A npm:vitepress dev docs",);
+    expect(transformCommand("bunx vitepress dev docs", names,),).toBe("deno run -A npm:vitepress dev docs",);
   });
 
   test("bun test → deno test", () => {
-    expect(transformCommand("bun test --isolate", names,)).toBe("deno test --isolate",);
+    expect(transformCommand("bun test --isolate", names,),).toBe("deno test --isolate",);
   });
 
   test("bun build is left to bun (no deno subcommand)", () => {
@@ -90,8 +90,8 @@ describe("idempotency", () => {
   test("key ordering is stable regardless of input key order", () => {
     const shuffled = {
       ...SAMPLE,
-      dependencies: { kysely: "^0.29.4", elysia: "^1.4.29" },
-      devDependencies: { eslint: "^10.8.0", vitepress: "^1.6.4" },
+      dependencies: { kysely: "^0.29.4", elysia: "^1.4.29", },
+      devDependencies: { eslint: "^10.8.0", vitepress: "^1.6.4", },
     };
     const a = stableStringify(buildDenoConfig(SAMPLE,),);
     const b = stableStringify(buildDenoConfig(shuffled,),);
@@ -99,13 +99,13 @@ describe("idempotency", () => {
   });
 
   test("stableStringify sorts nested keys deterministically", () => {
-    const obj = { b: 1, a: { d: 4, c: 3 }, e: [2, 1], };
+    const obj = { b: 1, a: { d: 4, c: 3, }, e: [2, 1,], };
     expect(stableStringify(obj,),).toBe(
-      JSON.stringify({ a: { c: 3, d: 4 }, b: 1, e: [2, 1] }, null, 2,) + "\n",
+      JSON.stringify({ a: { c: 3, d: 4, }, b: 1, e: [2, 1,], }, null, 2,) + "\n",
     );
   });
 });
 
 afterEach(() => {
   // no shared state to reset
-});
+},);

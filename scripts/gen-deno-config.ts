@@ -118,13 +118,13 @@ export function buildDenoConfig(pkg: PackageJson,): DenoConfig {
   const allDeps = { ...deps, ...devDeps, };
 
   const imports: Record<string, string> = {};
-  for (const [name, version] of Object.entries(allDeps)) {
+  for (const [name, version,] of Object.entries(allDeps,)) {
     imports[name] = `npm:${name}@${version}`;
   }
 
   const scriptNames = new Set(Object.keys(pkg.scripts ?? {},),);
   const tasks: Record<string, string> = {};
-  for (const [name, cmd] of Object.entries(pkg.scripts ?? {},)) {
+  for (const [name, cmd,] of Object.entries(pkg.scripts ?? {},)) {
     tasks[name] = transformCommand(cmd, scriptNames,);
   }
 
@@ -151,7 +151,7 @@ if (import.meta.main) {
   const outPath = resolve(root, "deno.json",);
 
   const pkg = JSON.parse(readFileSync(pkgPath, "utf8",),) as PackageJson;
-  const out = stableStringify(buildDenoConfig(pkg),);
+  const out = stableStringify(buildDenoConfig(pkg,),);
 
   if (check) {
     if (!existsSync(outPath,)) {
