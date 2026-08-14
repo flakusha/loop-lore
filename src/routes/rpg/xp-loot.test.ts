@@ -56,8 +56,8 @@ describe("XP & loot (auth-gated)", () => {
       .use(xpLootRoutes({ database: db, } as any,),) as any;
   }
 
-  async function json(res: Response,) {
-    return res.json() as unknown;
+  async function json<T,>(res: Response,): Promise<T> {
+    return res.json() as T;
   }
 
   test("awards XP and reports level-up", async () => {
@@ -76,7 +76,7 @@ describe("XP & loot (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ ledgerId: string }>(res,);
     expect(typeof body.ledgerId,).toBe("string",);
   });
 
@@ -90,7 +90,7 @@ describe("XP & loot (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ level: number }>(res,);
     expect(body.level,).toBe(4,);
   });
 
@@ -104,7 +104,7 @@ describe("XP & loot (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ xpToNextLevel: number }>(res,);
     expect(body.xpToNextLevel,).toBe(300,);
   });
 
@@ -133,7 +133,7 @@ describe("XP & loot (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ drops: unknown[] }>(res,);
     expect(Array.isArray(body.drops,),).toBe(true,);
   });
 
@@ -147,7 +147,7 @@ describe("XP & loot (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ id: string }>(res,);
     expect(typeof body.id,).toBe("string",);
   });
 
