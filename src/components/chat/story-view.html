@@ -1,0 +1,74 @@
+<!-- Story Mode View — header bar, GM selection strip, quest update banners -->
+<!-- Rendered only for story chats (`chat.mode === "story"` / gm_config.storyMode). -->
+<div class="story-view" x-show="isStoryMode" x-cloak data-testid="story-view">
+  <!-- Header bar: world name, quest progress, controls (pause / step / panels) -->
+  <div class="story-header">
+    <div class="story-header-left">
+      <span class="story-world-name">
+        <span class="story-world-icon">🌍</span>
+        <span x-text="worldName || t('story.world')"></span>
+      </span>
+      <div class="story-quest-progress" x-show="quests.length > 0">
+        <span class="story-quest-label">{{{t("story.questProgress")}}}</span>
+        <template x-for="quest in quests.slice(0, 2)" :key="quest.id">
+          <span class="story-quest-chip" x-text="quest.name + ' ' + questProgressPct(quest) + '%'"></span>
+        </template>
+      </div>
+    </div>
+    <div class="story-controls">
+      <button
+        class="btn btn-sm btn-ghost"
+        @click="togglePause()"
+        :title="running ? t('story.pause') : t('story.resume')"
+        :data-testid="running ? 'story-pause' : 'story-resume'"
+      >
+        <span x-show="running">{{icon:player-pause}}</span>
+        <span x-show="!running">{{icon:player-play}}</span>
+      </button>
+      <button
+        class="btn btn-sm btn-ghost"
+        @click="stepTurn()"
+        title="{{{t("story.step")}}}"
+        data-testid="story-step"
+      >
+        ⏭️
+      </button>
+      <button
+        class="btn btn-sm btn-ghost"
+        @click="$store.ui.showGmPanel = !$store.ui.showGmPanel"
+        :class="$store.ui.showGmPanel ? 'gm-toggle-active' : ''"
+        title="{{{t("story.gmPanel")}}}"
+        data-testid="story-gm-panel"
+      >
+        🎭
+      </button>
+      <button
+        class="btn btn-sm btn-ghost"
+        @click="$store.ui.showQuestLog = !$store.ui.showQuestLog"
+        :class="$store.ui.showQuestLog ? 'gm-toggle-active' : ''"
+        title="{{{t("story.questLog")}}}"
+        data-testid="story-quest-log"
+      >
+        📜
+      </button>
+    </div>
+  </div>
+
+  <!-- GM selection strip: next actor + prompt being used -->
+  <div class="story-gm-strip" x-show="nextActorName" data-testid="story-gm-strip">
+    <span class="story-gm-label">{{{t("story.gmSelection")}}}</span>
+    <span class="story-next-actor" x-text="nextActorName"></span>
+    <span class="story-prompt-preview" x-show="promptSent" x-text="promptSent"></span>
+  </div>
+
+  <!-- Quest update banners (from the latest story turn's quest_progress) -->
+  <div class="story-banners" x-show="banners.length > 0" data-testid="story-banners">
+    <template x-for="banner in banners" :key="banner.questName">
+      <div class="story-banner">
+        <span class="story-banner-icon">📜</span>
+        <span x-text="banner.questName"></span>
+        <span class="story-banner-progress">+<span x-text="banner.progress"></span>%</span>
+      </div>
+    </template>
+  </div>
+</div>

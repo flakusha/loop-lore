@@ -1,0 +1,111 @@
+<!-- GM Story Control Panel — turn order, active quests, world state, controls -->
+<!-- Nest inside the gm-panel "Story" tab. Reads shared state from the storyState scope. -->
+<div class="gm-story-panel" x-show="isStoryMode" data-testid="gm-story-panel">
+  <!-- Status bar: running indicator, turn number, next actor -->
+  <div class="gm-status-bar">
+    <span class="gm-running-dot" :class="running ? 'is-running' : 'is-idle'" aria-hidden="true"></span>
+    <span x-show="running" class="gm-status-text">{{{t("story.running")}}}</span>
+    <span x-show="!running" class="gm-status-text">{{{t("story.idle")}}}</span>
+    <span class="gm-turn-number" x-show="turnNumber != null">{{{t("story.turn")}}} <span x-text="turnNumber"></span></span>
+    <span class="gm-next-actor" x-show="nextActorName">{{{t("story.nextActor")}}}: <strong x-text="nextActorName"></strong></span>
+  </div>
+
+  <!-- Turn order -->
+  <div class="gm-section">
+    <h4 class="gm-section-title">{{{t("story.turnOrder")}}}</h4>
+    <div class="gm-turn-order" x-show="actors.length > 0">
+      <template x-for="actor in actors" :key="actor.id">
+        <div class="gm-turn-actor">
+          <span class="gm-turn-index" x-text="actor.order + 1"></span>
+          <span class="gm-turn-name" x-text="actor.name"></span>
+          <span class="gm-turn-role" x-text="actor.role"></span>
+          <span class="gm-turn-status" :class="actor.isActive ? 'is-ready' : 'is-waiting'">
+            <span x-text="actor.isActive ? t('story.ready') : t('story.waiting')"></span>
+          </span>
+        </div>
+      </template>
+    </div>
+    <p class="gm-section-hint" x-show="actors.length === 0">{{{t("story.noActors")}}}</p>
+  </div>
+
+  <!-- Active quests -->
+  <div class="gm-section">
+    <h4 class="gm-section-title">{{{t("story.activeQuests")}}}</h4>
+    <div class="gm-quests" x-show="quests.length > 0">
+      <template x-for="quest in quests" :key="quest.id">
+        <div class="gm-quest-row">
+          <div class="gm-quest-head">
+            <span class="gm-quest-name" x-text="quest.name"></span>
+            <span class="gm-quest-pct" x-text="questProgressPct(quest) + '%'"></span>
+            <button
+              class="btn-icon gm-quest-delete"
+              :title="t('story.deleteQuest')"
+              @click="deleteQuest(quest.id)"
+              data-testid="delete-quest"
+            >&times;</button>
+          </div>
+          <div class="gm-quest-bar">
+            <div
+              class="gm-quest-bar-fill"
+              :style="'width: ' + questProgressPct(quest) + '%'"
+              :class="quest.status === 'completed' ? 'is-complete' : ''"
+            ></div>
+          </div>
+        </div>
+      </template>
+    </div>
+    <p class="gm-section-hint" x-show="quests.length === 0">{{{t("story.noQuests")}}}</p>
+    <div class="gm-new-quest">
+      <input
+        class="form-input"
+        x-model="$refs.newQuestName.value"
+        :placeholder="t('story.newQuestPlaceholder')"
+        data-testid="new-quest-input"
+      />
+      <button class="btn btn-primary btn-sm" @click="createQuest($refs.newQuestName.value); $refs.newQuestName.value = ''" data-testid="new-quest-submit">
+        {{{t("story.newQuest")}}}
+      </button>
+    </div>
+  </div>
+
+  <!-- World state -->
+  <div class="gm-section">
+    <h4 class="gm-section-title">{{{t("story.worldState")}}}</h4>
+    <div class="gm-world-state">
+      <div class="gm-world-chip" x-show="worldState.timeOfDay">
+        <span class="gm-chip-label">{{{t("story.time")}}}</span>
+        <span x-text="worldState.timeOfDay"></span>
+      </div>
+      <div class="gm-world-chip" x-show="worldState.weather">
+        <span class="gm-chip-label">{{{t("story.weather")}}}</span>
+        <span x-text="worldState.weather"></span>
+      </div>
+      <div class="gm-world-chip" x-show="worldState.atmosphere">
+        <span class="gm-chip-label">{{{t("story.atmosphere")}}}</span>
+        <span x-text="worldState.atmosphere"></span>
+      </div>
+      <div class="gm-world-npcs" x-show="worldState.npcs.length > 0">
+        <span class="gm-chip-label">{{{t("story.npcsPresent")}}}</span>
+        <template x-for="npc in worldState.npcs" :key="npc.actorId">
+          <span class="gm-npc-tag" x-text="npc.displayName"></span>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Control buttons -->
+  <div class="gm-section">
+    <h4 class="gm-section-title">{{{t("story.controls")}}}</h4>
+    <div class="gm-controls">
+      <button class="btn btn-sm" :class="running ? 'btn-ghost' : 'btn-primary'" @click="togglePause()" data-testid="gm-pause">
+        <span x-show="running">{{icon:player-pause}}</span>
+        <span x-show="!running">{{icon:player-play}}</span>
+        <span x-text="running ? t('story.pause') : t('story.resume')"></span>
+      </button>
+      <button class="btn btn-sm btn-ghost" @click="stepTurn()" data-testid="gm-step">{{{t("story.step")}}}</button>
+      <button class="btn btn-sm btn-ghost" @click="escalateToMe()" data-testid="gm-escalate">{{{t("story.escalateToMe")}}}</button>
+      <button class="btn btn-sm btn-ghost" @click="injectNarration()" data-testid="gm-inject">{{{t("story.injectNarration")}}}</button>
+    </div>
+    <p class="gm-section-hint">{{{t("story.controlsHint")}}}</p>
+  </div>
+</div>
