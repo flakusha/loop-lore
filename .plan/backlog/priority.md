@@ -122,7 +122,7 @@ inheritance, `bun test src/story/` verification.
 
 ## P4 — Core Experience (open remainder of P3 rows)
 
-- [ ] Memory + template injection UX — memory selection UI (mid-chat, pinning); template injection UX (registry impl shipped)
+- [ ] Memory + template injection UX — memory selection UI (mid-chat, pinning); **template injection UX partial** (read-only prompt preview in chat settings modal 2026-08-14; open: inline override per-chat)
 - [ ] Character/world/location flows — multi-format import, creation + settings menus, mood & happiness meter (P3 #14)
 - [ ] Assistant tooling — creation wizards, `/commands` tiered access (tool-call display ✅ 2026-08-12) (P3 #16 / P2-C)
 - [ ] LLM providers — Anthropic/Ollama/Bedrock (embeddings foundation) (P3 #15)
