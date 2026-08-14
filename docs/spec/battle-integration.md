@@ -205,11 +205,10 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 
 ## Related Resources
 
-- [Battle System Design Doc](docs/spec/battle-design.md)
-- [Equipment System Specs](docs/spec/equipment.md)
-- [Social Interaction Design](docs/spec/social.md)
-- [NPC Actor System](docs/spec/npc-actors.md)
-- [Weather System](docs/spec/weather.md)
-- [Resolution System](docs/spec/resolution.md)
-- [Content Management](docs/spec/content-management.md)
+- [Battle System Design Doc](docs/spec/battle.md)
+- [Equipment System Specs](docs/spec/items.md)
+- [Social Interaction Design](docs/spec/social-interaction.md)
+- [NPC Actor System](docs/spec/npcs.md)
+- [Weather System](docs/spec/weather-environment.md)
+- [Resolution System](docs/spec/rpg-mechanics.md)
 - [Plugin System](docs/spec/plugin-system.md)
