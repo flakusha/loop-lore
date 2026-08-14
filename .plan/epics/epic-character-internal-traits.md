@@ -1,10 +1,10 @@
 # EPIC: Character Internal Traits, Aspirations & Moral Disposition
 
-**Status:** 🟡 Draft
+**Status:** 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
-**Tags:** characters, npc, internal-traits, aspirations, goals, moral-disposition, alignment, hidden-state, prompt-assembly
+**Tags:** characters, npc, internal-traits, aspirations, goals, moral-disposition, alignment, hidden-state, prompt-assembly, coping, approach, autonomy, free-will
 
 ## Summary
 
@@ -21,6 +21,9 @@ Three capabilities, each with a schema + API + prompt-assembly surface:
 3. **Moral disposition (helpfulness ↔ evilness) + openness** — an explicit axis so a
    character can be helpful/kind, egotistical, outgoing, _or_ secretly/openly evil,
    and the model is instructed not to sand off the edges.
+4. **Behavioral dimensions** — coping mechanisms (stress response), approach tendencies
+   (behavioral method), and autonomy/free will (group vs solo preference). These are
+   the "how" behind personality's "who" and disposition's "what."
 
 This epic is **schema/API-focused**: it defines the data model, the API shape, and the
 prompt-injection mechanics. It is intentionally decoupled from the runtime goal-tracking
@@ -61,28 +64,33 @@ reach the LLM prompt but are stripped from player-facing API responses.
   show everything. There is no per-field visibility, no author-vs-player split, no masking.
 
 **Gap:** the primitives to _express_ personality exist, but there is no way to express
-_internal_ state, _aspiration-driven agency_, or _moral disposition_ — and no
-encapsulation boundary to keep author secrets from players.
+_internal_ state, _aspiration-driven agency_, _moral disposition_, _coping strategies_,
+_approach tendencies_, or _autonomy preferences_ — and no encapsulation boundary to
+keep author secrets from players.
 
 ## Scope
 
 ### In Scope
 
 1. **Schema** — internal/hidden traits, aspirations (goal + plans + visibility), moral
-   disposition (axis + openness), as additions to `CanonicalCharacter` / trait tables.
+   disposition (axis + openness), coping profile, approach tendency, autonomy preference,
+   as additions to `CanonicalCharacter` / trait tables.
 2. **Visibility model** — `visible | hidden` (author/GM-only) with **API + UI redaction**
    (hidden fields stripped from player-facing responses and the player character card /
    settings, retained for author/GM/owner).
-3. **Prompt assembly** — new section(s) injecting hidden traits, aspirations, and moral
-   disposition to the LLM so they drive behavior without leaking to the player.
+3. **Prompt assembly** — new section(s) injecting hidden traits, aspirations, moral
+   disposition, coping, approach, and autonomy to the LLM so they drive behavior
+   without leaking to the player.
 4. **Moral disposition axis** — helpful↔evil with openness (open/guarded/deceptive),
    and an explicit anti-helpfulness-collapse instruction.
-5. **API surface** — read/write endpoints honoring visibility; owner/author/GM vs player
+5. **Behavioral dimensions** — coping (stress response pattern), approach (behavioral
+   method), autonomy (group vs solo preference) — the "how" behind personality.
+6. **API surface** — read/write endpoints honoring visibility; owner/author/GM vs player
    roles.
-6. **Frontend visibility** — two view tiers: a player-facing card/settings that renders
+7. **Frontend visibility** — two view tiers: a player-facing card/settings that renders
    only visible traits, and an author/GM editor that renders hidden fields with a
    "hidden from players" affordance.
-7. **Validation & migration** — extend `src/characters/validator*`, add migration for new
+8. **Validation & migration** — extend `src/characters/validator*`, add migration for new
    columns/tables; regenerate DB schemas (`db:sync-types` + `db:sync-manifest`).
 
 ### Out of Scope
@@ -93,6 +101,10 @@ encapsulation boundary to keep author secrets from players.
   author input, not a learned reputation.
 - Intimidation/deception _skill mechanics_ (`epic-social-interaction.md`) — those consume
   this epic's data but are separate.
+- Mood state management (`TASK-character-mood-happiness.md`) — coping _activates_ when mood
+  drops, but mood state itself is managed by the mood service.
+- Relationship graph queries (`TASK-character-relationships.md`) — autonomy and coping
+  _reference_ relationship strength, but the graph itself is managed by the relationships service.
 
 ## Key Design Decisions
 
@@ -148,6 +160,132 @@ Two rendered tiers, not one:
 - **Author/GM editor**: renders all fields, with hidden ones clearly badged
   ("🔒 hidden from players") and a visibility toggle per trait/method/goal.
 
+### D7. Coping mechanisms — how the character handles stress and failure
+
+Mood (from `TASK-character-mood-happiness`) is a **reactive state** — what the
+character feels right now. Coping is a **stable behavioral pattern** — what they
+_do_ when stressed, failing, or facing setbacks. A "withdraw" coper goes silent
+under pressure; a "double_down" coper refuses to accept failure; a "seek_comfort"
+coper turns to allies. These are author-planted, not learned.
+
+Coping is distinct from personality (immutable) and mood (reactive state).
+It is the _strategy_ behind emotional expression — the bridge between "I feel
+bad" and "I act this way when I feel bad."
+
+```typescript
+type CopingStyle =
+  | "withdraw"         // retreat, isolate, go silent
+  | "lash_out"         // anger, aggression, blame others
+  | "seek_comfort"     // seek allies, ask for help
+  | "rationalize"      // explain it away, minimize
+  | "double_down"      // persist harder, refuse to accept failure
+  | "adapt"            // flexible, find new approach
+  | "deny"             // pretend it didn't happen
+  | "compartmentalize"; // push it aside, focus on other things
+
+interface CopingProfile {
+  primary: CopingStyle;        // default response to stress
+  secondary?: CopingStyle;     // fallback when primary fails or is blocked
+  triggers?: string[];         // what events activate coping (e.g. "betrayal", "failure", "loss")
+  visibility: TraitVisibility; // hidden = character's coping is a secret
+}
+```
+
+**Integration with mood:** When happiness drops below a threshold (e.g. `≤40`),
+the coping profile activates. The prompt section emits the coping directive so
+the model shifts behavior — e.g. _"When stressed, this character withdraws and
+becomes terse. Do not have them seek help unless no other option exists."_
+
+**Integration with relationships:** `seek_comfort` coping prefers allies (high
+`strength` relationships); `withdraw` coping ignores relationship strength.
+The model can use relationship data to determine _who_ the character turns to.
+
+### D8. Approach tendencies — the character's behavioral method
+
+Moral disposition (D2) is what the character **values** (helpful ↔ evil).
+Approach tendency is what they **do** — their method of interacting with
+problems, people, and opportunities. A "self_interested" disposition +
+"manipulative" approach = a schemer who uses others. The same disposition +
+"pragmatic" approach = a selfish but honest operator. The combination matters.
+
+```typescript
+type ApproachTendency =
+  | "altruistic"       // help others first, even at cost
+  | "pragmatic"        // what works best, no moral weight
+  | "opportunistic"    // take advantage when it appears
+  | "manipulative"     // use others for own goals
+  | "destructive"      // tear things down to rebuild
+  | "constructive"     // build things up, find solutions
+  | "avoidant"         // avoid conflict and difficult choices
+  | "confrontational"; // seek out conflict, challenge directly
+
+interface ApproachProfile {
+  tendency: ApproachTendency;
+  context_dependent: boolean; // does approach change by situation? (if true, emit context rules)
+  contexts?: Array<{          // optional: situation-specific overrides
+    situation: string;        // e.g. "combat", "negotiation", "romance"
+    tendency: ApproachTendency;
+  }>;
+  visibility: TraitVisibility;
+}
+```
+
+**Anti-collapse directive:** When approach is NOT "altruistic", the prompt must
+explicitly countermand default LLM helpfulness: _"This character's approach is
+manipulative. They will not help the player unless it serves their own goals.
+Do not rationalize their selfishness away."_
+
+### D9. Autonomy / free will — group vs solo preference
+
+The "free will" dimension: does the character prefer to stay with the party,
+go solo, or split off when it suits them? This drives **proactive agency** —
+the character's willingness to make independent decisions, explore alone, or
+defy the group's direction.
+
+This is distinct from personality (which defines _who they are_) and
+relationships (which define _who they're connected to_). Autonomy defines
+_how they move through the world_ — the behavioral signature of independence.
+
+```typescript
+type AutonomyPreference =
+  | "loyal"        // stays with group, follows leader, resists separation
+  | "independent"  // prefers solo but will cooperate when needed
+  | "loner"        // actively avoids group, prefers solitude
+  | "social"       // seeks group, dislikes being alone
+  | "situational"  // depends on context, goals, mood
+  | "leader"       // takes charge, directs group decisions
+  | "follower"     // defers to others, goes along with plans
+  | "wanderer";    // unpredictable, comes and goes freely
+
+interface AutonomyProfile {
+  preference: AutonomyPreference;
+  solo_comfort: number;          // 0–100: how comfortable alone
+  group_comfort: number;         // 0–100: how comfortable in group
+  initiative: number;            // 0–100: likelihood of independent action
+  separation_triggers?: string[]; // what causes them to split from group
+  reunion_triggers?: string[];   // what brings them back
+  visibility: TraitVisibility;
+}
+```
+
+**Integration with relationships:** Characters with high `strength` relationships
+have higher `group_comfort` (the relationship _anchors_ them). A "loyal" character
+with a strong ally relationship will resist separation even under stress.
+A "wanderer" with weak relationships will drift regardless.
+
+**Integration with aspirations:** A character whose aspiration `priority` is
+high and whose autonomy `preference` is "independent" will proactively pursue
+their goal even if it means leaving the group. The prompt section emits:
+_"This character will pursue their goal of [X] independently. They may leave
+the party if the group's direction conflicts with their aim."_
+
+**Integration with coping:** A "withdraw" coper with "loner" autonomy will
+physically leave the group when stressed. A "seek_comfort" coper with "social"
+autonomy will cling harder. The combination creates distinct behavioral
+signatures.
+
+---
+
 ## Schema (proposed)
 
 ```ts
@@ -181,11 +319,49 @@ export interface MoralDisposition {
   openness: OpennessAxis; // open ↔ hidden
   note?: string; // optional author rationale
 }
+
+export type CopingStyle =
+  | "withdraw" | "lash_out" | "seek_comfort" | "rationalize"
+  | "double_down" | "adapt" | "deny" | "compartmentalize";
+
+export interface CopingProfile {
+  primary: CopingStyle;
+  secondary?: CopingStyle;
+  triggers?: string[];
+  visibility: TraitVisibility;
+}
+
+export type ApproachTendency =
+  | "altruistic" | "pragmatic" | "opportunistic" | "manipulative"
+  | "destructive" | "constructive" | "avoidant" | "confrontational";
+
+export interface ApproachProfile {
+  tendency: ApproachTendency;
+  context_dependent: boolean;
+  contexts?: Array<{ situation: string; tendency: ApproachTendency }>;
+  visibility: TraitVisibility;
+}
+
+export type AutonomyPreference =
+  | "loyal" | "independent" | "loner" | "social"
+  | "situational" | "leader" | "follower" | "wanderer";
+
+export interface AutonomyProfile {
+  preference: AutonomyPreference;
+  solo_comfort: number;
+  group_comfort: number;
+  initiative: number;
+  separation_triggers?: string[];
+  reunion_triggers?: string[];
+  visibility: TraitVisibility;
+}
 ```
 
 Storage: extend `CanonicalCharacter` with
 `internal_traits?: InternalTrait[]`, `aspirations?: Aspiration[]`,
-`moral_disposition?: MoralDisposition`. Persist hidden state so it is **not** exposed
+`moral_disposition?: MoralDisposition`, `coping?: CopingProfile`,
+`approach?: ApproachProfile`, `autonomy?: AutonomyProfile`.
+Persist hidden state so it is **not** exposed
 through `data_json` on player-facing reads — see D1 redaction.
 
 ## Prompt Assembly
@@ -193,9 +369,16 @@ through `data_json` on player-facing reads — see D1 redaction.
 - New builder `actorInternalSection` in `src/assistant/prompt/sections/actor-internal.ts`,
   registered after `actorHeaderSection` in `src/assistant/prompt/registry.ts`.
 - Emits a `<internal>` block: hidden internal traits, active aspirations + hidden
-  methods, and the disposition directive (D4).
+  methods, disposition directive (D4), and behavioral dimensions (D7–D9).
 - Visible traits/aspirations may ALSO be emitted but must be marked as known-to-the-world
   (visible) so the model distinguishes what the character is open about from what it hides.
+- **Coping (D7):** emitted conditionally when mood `happiness ≤ 40` or a trigger
+  event matches. Includes primary/secondary style and integration note.
+- **Approach (D8):** always emitted when set. Anti-collapse directive included
+  when tendency is not "altruistic".
+- **Autonomy (D9):** always emitted when set. Includes preference, initiative
+  score, and separation/reunion triggers. Integration with aspirations and
+  relationships referenced in the directive.
 
 ## Frontend / UI Visibility
 
@@ -208,23 +391,28 @@ visibility, and no author-vs-player tiering.
 This epic introduces two view tiers (per D6):
 
 1. **Player view** — `characters.html`, `character-edit.html` _read_ mode, and
-   `detail-modal.html` render only `visible` traits / `open` disposition. Hidden fields
-   are absent — no counts, no empty placeholders, no affordance that they exist.
+   `detail-modal.html` render only `visible` traits / `open` disposition /
+   `visible` coping/approach/autonomy. Hidden fields are absent — no counts,
+   no empty placeholders, no affordance that they exist.
 2. **Author/GM view** — the edit form (`serveCharacterEditForm`) gains a
    "hidden from players" badge + visibility toggle per internal trait / aspiration /
-   method, and per-disposition openness. Access is role-gated (author/owner/GM only) so
-   a player who reaches the editor still cannot read others' hidden state.
+   method / coping profile / approach profile / autonomy profile, and per-disposition
+   openness. Access is role-gated (author/owner/GM only) so a player who reaches
+   the editor still cannot read others' hidden state.
 
 The redaction must live in a **shared `toPublicCard()` transform** (per Open Q5) reused
 by both the player API read and the player UI render, so the API and the UI can never
-drift apart and leak.
+drift apart and leak. The transform must handle all 6 hidden dimensions: internal traits,
+aspirations, disposition, coping, approach, and autonomy.
 
 ## API Surface
 
 - `GET /api/actors/:actorId` — **redacts** hidden internal traits, hidden aspirations,
-  and `deceptive`/`hidden` disposition openness for non-author/GM/owner callers.
+  `deceptive`/`hidden` disposition openness, hidden coping profiles, hidden approach
+  profiles, and hidden autonomy profiles for non-author/GM/owner callers.
 - `PUT /api/actors/:actorId` + dedicated endpoints
-  (`internal-traits`, `aspirations`, `moral-disposition`) — author/owner/GM only.
+  (`internal-traits`, `aspirations`, `moral-disposition`, `coping`,
+  `approach`, `autonomy`) — author/owner/GM only.
 - Role enforcement aligned with `epic-character-spec.md` review workflow (Admin/Moderator/
   User/GM). A player must never read another character's hidden state.
 
@@ -239,21 +427,25 @@ drift apart and leak.
 - Confirm prompt-section budget/drop behavior in `prompt-assembler.ts` so the internal
   section is never silently dropped as low-priority (it is behavior-critical).
 - Confirm personality `integrity.ts` immutable-list should treat disposition as immutable.
+- Confirm coping/approach/autonomy are expression-layer (mutable by GM/event) not
+  personality-layer (immutable) — recommend: expression-layer, like mood.
+- Confirm mood service exposes happiness threshold for coping activation.
+- Confirm relationship service exposes strength data for autonomy/coping integration.
 
 ## Tasks
 
 | Task                          | Description                                                                             | Priority | Status      |
 | ----------------------------- | --------------------------------------------------------------------------------------- | -------- | ----------- |
-| TASK-char-internal-schema     | Add `InternalTrait`/`Aspiration`/`MoralDisposition` types + `CanonicalCharacter` fields | High     | Not Started |
-| TASK-char-internal-db         | Migration: internal-traits + aspirations tables; `db:sync-types`/`db:sync-manifest`     | High     | Not Started |
+| TASK-char-internal-schema     | Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachProfile`/`AutonomyProfile` types + `CanonicalCharacter` fields | High     | Not Started |
+| TASK-char-internal-db         | Migration: internal-traits + aspirations + coping + approach + autonomy tables; `db:sync-types`/`db:sync-manifest`     | High     | Not Started |
 | TASK-char-internal-validation | Extend `validator/fields.ts` + strict/relaxed modes for new fields                      | High     | Not Started |
 | TASK-char-internal-redaction  | Visibility-based redaction on read routes (author/GM/owner vs player)                   | High     | Not Started |
-| TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive              | High     | Not Started |
-| TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition                       | Medium   | Not Started |
+| TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive + coping/approach/autonomy directives | High     | Not Started |
+| TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition / coping / approach / autonomy | Medium   | Not Started |
 | TASK-char-internal-frontend   | Player card + settings redaction via `toPublicCard()`; author/GM editor visibility badge + toggle | High     | Not Started |
 | TASK-char-internal-migration  | Character spec version bump + auto-fill for new fields                                  | Medium   | Not Started |
 | TASK-char-internal-export     | Include/exclude hidden state in export formats per visibility                           | Medium   | Not Started |
-| TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests                                        | High     | Not Started |
+| TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests (all 6 behavioral dimensions)          | High     | Not Started |
 
 ## Open Questions
 
@@ -271,17 +463,31 @@ drift apart and leak.
 6. **Progressive reveal** — should a `hidden` trait/aspiration surface as `visible`
    (UI + API) when story/GM/event logic exposes it over time (e.g. a secret becomes
    known), or is visibility immutable author input for v1?
+7. **Coping activation threshold** — should coping trigger at a fixed `happiness ≤ 40`
+   threshold, or should authors set per-character activation points?
+8. **Approach context rules** — for `context_dependent: true`, should the model infer
+   the situation from chat context, or should the author enumerate all applicable
+   contexts explicitly?
+9. **Autonomy vs GM control** — when a character's autonomy says "leave the group"
+   but the GM/story wants them to stay, which wins? Recommend: GM override with a
+   prompt directive explaining the constraint.
+10. **Coping + mood feedback loop** — can coping _change_ mood? (e.g. "withdraw" coping
+    → isolation → lower happiness → more withdrawal). If so, the prompt must include
+    a stabilization directive to prevent spirals.
+11. **Relationship-dependent autonomy** — should `group_comfort` be computed from
+    relationship data (dynamic), or authored independently (static)? Recommend:
+    authored baseline + relationship modifier for v1.
 
 ## Testing
 
 | Test File                                              | Coverage                                                      |
 | ------------------------------------------------------ | ------------------------------------------------------------- |
-| `src/characters/spec/internal.test.ts`                 | Schema defaults, validation of disposition axes + visibility  |
+| `src/characters/spec/internal.test.ts`                 | Schema defaults, validation of disposition axes + visibility + coping styles + approach tendencies + autonomy preferences |
 | `src/characters/validator-internal.test.ts`            | Strict/relaxed validation of new fields                       |
 | `src/routes/characters-internal.test.ts`               | CRUD + redaction (player sees no hidden field; author does)   |
-| `src/characters/to-public-card.test.ts`                | `toPublicCard()` redacts hidden traits/aspirations/disposition consistently for API + UI renders |
-| `src/assistant/prompt/sections/actor-internal.test.ts` | Section emits hidden state + directive; hidden methods marked |
-| `src/characters/integration-internal.test.ts`          | create → validate → store → prompt → redacted-read pipeline   |
+| `src/characters/to-public-card.test.ts`                | `toPublicCard()` redacts hidden traits/aspirations/disposition/coping/approach/autonomy consistently for API + UI renders |
+| `src/assistant/prompt/sections/actor-internal.test.ts` | Section emits hidden state + directive; coping triggers on low happiness; approach anti-collapse; autonomy + aspiration integration |
+| `src/characters/integration-internal.test.ts`          | create → validate → store → prompt → redacted-read pipeline (all 6 dimensions) |
 
 ## Related Epics
 
@@ -292,6 +498,9 @@ drift apart and leak.
 - `epic-social-interaction.md` — deception/intimidation mechanics consume hidden disposition
 - `epic-assistant-gm-flows.md` — GM authoring UI for hidden state
 - `epic-chat-context-optimization.md` — lossless tiering: hidden state is a lossless system/persona tier
+- `TASK-character-mood-happiness.md` — mood state (coping activates when mood drops)
+- `TASK-character-relationships.md` — relationship graph (autonomy + coping reference relationship strength)
+- `TASK-character-personality-integrity.md` — immutable personality (behavioral dimensions are expression, not personality)
 
 ## Tickets
 

@@ -1,6 +1,6 @@
 # TASK: User guide how-tos
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-docs-reconciliation.md

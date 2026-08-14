@@ -1,14 +1,14 @@
 # Priority — Workstack & 0.1.0 Value Tiers (P0–P6+)
 
-> **Last updated:** 2026-08-13. Holds the **entire priority ladder** P0→P6+. `../open.md`
-> holds debt & deferred work and the in-flight/decision queue (worktree rows W1–W4).
+> **Last updated:** 2026-08-14. Holds the **entire priority ladder** P0→P6+. `../open.md`
+> holds debt & deferred work and the in-flight/decision queue (remaining row W3 — push).
 > Non-value work sits in `../open.md` unless it blocks these tiers.
 >
-> **Since 2026-08-08 refresh:** Gate C core shipped + verified on `dev` (2026-08-12) —
+> **Since 2026-08-14 refresh:** Gate C core shipped + verified on `dev` (2026-08-12) —
 > tool-call UI, register page, prompt registry, GM panels, quest log, world/location
-> access; size-strict debt closed (only red gate left: lint-ts); item-systems backend
-> wiring 10/15 landed in worktree `rpg-wire-routes` (pending merge); docs-reconciliation
-> epic in flight in worktree `docs-reconcile`.
+> access; size-strict debt closed (only red gate left: lint-ts); **item-systems backend
+> wiring 10/15 + docs-reconciliation epic both merged to `dev` 2026-08-14**
+> (worktrees `rpg-wire-routes` + `docs-reconcile`).
 
 ## Status header
 
@@ -39,7 +39,7 @@ P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 
 
 > Emphasis: VN mode, chat, assistant, tool calling, GM flows, GM-guided story, auth/access,
 > gallery. RPG mechanics deferred to P2-later — **except the item-systems backend wiring
-> which landed 2026-08-12 in worktree `rpg-wire-routes`** (see P2-later row + `epic-rpg-wiring-phase3.md`).
+> which merged to `dev` 2026-08-14 from worktree `rpg-wire-routes`** (see P2-later row + `epic-rpg-wiring-phase3.md`).
 > Detailed per-tier tickets live in `../tickets/`.
 
 | Tier     | Topic                                 | Tickets                                                                                                                                                                               | Status                                                                                                                                                        |
@@ -53,7 +53,7 @@ P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 
 | P2-E†    | Unify 401 Guard Helpers (debt)        | `TASK-unify-401-guard-helpers.md`                                                                                                                                                     | ✅ Shipped 2026-08-06 (`c99704c1`) — remaining handler-funneled extraction tracked in `../open.md`                                                            |
 | P2-F     | Gallery                               | `TASK-gallery-minimal-image-asset-viewer.md`, `TASK-config-gallery-attachment-idempotent.md`                                                                                          | ✅ Backend + frontend; avatar-gallery visibility inheritance open                                                                                             |
 | P2-G     | LoRA Discovery & Application          | `TASK-lora-discovery-application.md`                                                                                                                                                  | 🟡 Routes implemented but `.use()` commented out — wire or drop (see `../open.md`)                                                                            |
-| P2-later | RPG Mechanics (wire phase-3)          | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md`, `TASK-wire-*-routes.md` × 8, `TASK-consolidate-quest-engines.md`                 | 🟡 **Item-systems backend 10/15 landed 2026-08-12 (`rpg-wire-routes`)**; remaining unwired services → `epic-rpg-wiring-phase3.md`                               |
+| P2-later | RPG Mechanics (wire phase-3)          | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md`, `TASK-wire-*-routes.md` × 8, `TASK-consolidate-quest-engines.md`                 | 🟡 **Item-systems backend 10/15 merged 2026-08-14 (`rpg-wire-routes`)**; remaining unwired services → `epic-rpg-wiring-phase3.md`                               |
 | P2-later | Character System                      | `TASK-character-system-p2.md`                                                                                                                                                         | ⏸ Deferred                                                                                                                                                    |
 | P2-later | World & Locations                     | `epic-world-locations.md`                                                                                                                                                             | ⏸ Deferred                                                                                                                                                    |
 
@@ -112,7 +112,7 @@ inheritance, `bun test src/story/` verification.
 | 14 | Character/world/location flows                          | 🟡 partial             | character-io ✅; world/location creation + export/import menus pending                                                                      |
 | 15 | LLM support (chat/captioning/intent/embeddings)         | 🟢 chat/caption/intent | providers ✅; `classifyIntent` wired; embeddings greenfield                                                                                 |
 | 16 | Assistant creative tooling                              | 🟡 partial             | command buttons + parser ✅; **tool-call UI ✅ (2026-08-12)**; creation wizards pending                                                     |
-| 17 | Frontend fully wired                                    | 🟡 ongoing             | menus/modals/side-menus/docs — docs reconciliation in flight (worktree `docs-reconcile`, row W2 in `../open.md`)                            |
+| 17 | Frontend fully wired                                    | 🟡 ongoing             | menus/modals/side-menus/docs — docs reconciliation **merged 2026-08-14** (`docs-reconcile`); 17 broken internal md links open (see `../open.md`)                            |
 | —  | IO: import/export (characters/worlds/locations/stories) | 🟡 partial             | JSON char import ✅; PNG/YAML/TOML/CHARX + world/loc/story export ✅ (2026-08-06)                                                           |
 | —  | Stop generation (chat/VN)                               | 🟢 shipped             | chat abort/cancel + VN in-scene stop overlay (2026-08-06)                                                                                   |
 | —  | Notifications + center                                  | 🟢 shipped             | SSE + unread badge + center UI + per-type mute (2026-08-06)                                                                                 |
@@ -135,7 +135,7 @@ inheritance, `bun test src/story/` verification.
 
 - [x] IO (export/import) ✅; Stop generation ✅; Notification center ✅; chat message search ✅; swipe-variant ✅ (implemented + tested); GM role runtime effect ✅ (committed on `dev`)
 - [ ] Frontend wiring — all menus/modals/side-menus/documentation linkage; in-chat asset preview + linkage; assistant panel; message actions UI (see P4/P2 tiers)
-- [ ] **Implemented → wired** — wire/drop LoRA routes (P2-G); SSE refactor in flight (`dev`, row W4 in `../open.md`); remaining RPG services → `epic-rpg-wiring-phase3.md`; ~~dead `detectIntent`~~ ✅ removed (see `../open.md`)
+- [ ] **Implemented → wired** — wire/drop LoRA routes (P2-G); SSE refactor ✅ (merged `082c20cf`, row W4 resolved in `../open.md`); remaining RPG services → `epic-rpg-wiring-phase3.md`; ~~dead `detectIntent`~~ ✅ removed (see `../open.md`)
 
 ## Post-P3 — Road to Happy 0.1.0
 
@@ -158,8 +158,8 @@ tracking: `epic-release-010.md`.
 - [ ] **Lint-ts debt** — ~196 warnings / 291 pre-existing files → `check` 16/17 (last red gate). Refactor tickets; gate → 17/17.
 - [x] **Size-strict debt** — ✅ closed 2026-08-12 (0 files over 250L).
 - [ ] **e2e browser stabilization** — kill auth redirect-loop (`/views/login?redirect=<nested login>`), fix page-load timeouts.
-- [ ] **Unwired/leftover close-out** — wire/drop LoRA routes, RPG services phase-3 (see `epic-rpg-wiring-phase3.md`), SSE refactor commit (row W4).
-- [ ] **Release artifacts** — `docs/meta/release-process.md`, signed tag `v0.1.0`, changelog/release notes, **push `dev`→`origin/dev`** (19 commits; rows W1–W4 in `../open.md`).
+- [ ] **Unwired/leftover close-out** — wire/drop LoRA routes, RPG services phase-3 (see `epic-rpg-wiring-phase3.md`); SSE refactor ✅ committed (`082c20cf`; row W4 resolved in `../open.md`).
+- [ ] **Release artifacts** — `docs/meta/release-process.md`, signed tag `v0.1.0`, changelog/release notes, **push `dev`→`origin/dev`** (39 commits; row W3 in `../open.md`).
 
 ### Hardening (before tagging, non-blocking)
 
