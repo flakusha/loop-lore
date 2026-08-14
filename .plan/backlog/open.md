@@ -6,17 +6,22 @@
 > (P6+)**. The priority ladder P0→P6+ lives in `../priority.md`.
 >
 > **Context recovery note (2026-08-14):** this refresh reflects (a) Gate C sub-items
-> verified shipped on `dev` 2026-08-12, (b) **both worktrees merged** — item-systems
-> backend wiring (`rpg-wire-routes`) and docs reconciliation (`docs-reconcile`) landed on
-> `dev`, (c) SSE refactor already committed (`082c20cf`), (d) `dev` ahead of `origin/dev`
-> by 39 commits (unreleased — push still pending, row W3 below). The only remaining worktree
-> row is W3 (push); W1/W2/W4 resolved.
+> verified shipped on `dev` 2026-08-12, (b) **worktrees merged** — item-systems
+> backend wiring (`rpg-wire-routes`), docs reconciliation (`docs-reconcile`),
+> memory-selection UI (dev `5e62eea7`/`3d8ba302`), C1 group-chat participant panel
+> (`7cd4a06b`), and recovered-features all landed on `dev`, (c) SSE refactor committed
+> (`082c20cf`), (d) `dev` ahead of `origin/dev` by **75 commits** (unreleased — push
+> still pending, row W3 below), (e) **A5 lint-ts + A7 e2e CLOSED 2026-08-14** in
+> worktrees `lint-ts-debt` + `e2e-stabilization` (check gate 18/18; browser e2e
+> 19/19 ×2). GM-guided story (P2-Da) in-flight in worktree `feature/gm-guided-story-ui`.
 
 ## Status header
 
 P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped 2026-08-12; item-systems
-wiring + docs reconciliation **merged 2026-08-14**) · Regex ✅ · P3–P5 → 0.1.0 value tiers
-(see `../priority.md`) · Gate C: core done, GM-guided story (P2-Da) greenfield.
+wiring + docs reconciliation + memory-selection UI + C1 participant panel merged
+2026-08-14; **lint-ts + e2e gates closed 2026-08-14**) · Regex ✅ · P3–P5 → 0.1.0 value
+tiers (see `../priority.md`) · Gate C: core done, GM-guided story (P2-Da) in-flight
+(worktree `feature/gm-guided-story-ui`).
 
 ## In-flight / decision queue — rows needing a finalize-vs-defer call
 
@@ -26,8 +31,8 @@ wiring + docs reconciliation **merged 2026-08-14**) · Regex ✅ · P3–P5 → 
 
 | ID  | Item                                                                                    | Ticket / where                               | Recommend                       | Decision              |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
-| A5  | Lint-ts debt → `check` lint gate red — 655 problems (64 errors + 591 warnings), **last red gate**. Plan: `TASK-PLAN-LINT-TS-DEBT.md` (44 errors auto-fixable, 20 manual) | `../priority.md` "Open → close" + ticket | ▲ now (release-blocking) |  |
-| A7  | e2e browser stabilization (auth redirect-loop)                                          | `../priority.md` "Open → close"              | ▲ now                           |                       |
+| A5  | Lint-ts debt → `check` lint gate red — 655 problems (64 errors + 591 warnings), **last red gate**. Plan: `TASK-PLAN-LINT-TS-DEBT.md` (44 errors auto-fixable, 20 manual) | `../priority.md` "Open → close" + ticket | ▲ now (release-blocking) | ✅ **CLOSED 2026-08-14** (worktree `lint-ts-debt`) — `bun run lint` EXIT 0 (0 errors; 193 warnings tracked); check gate **18/18** |
+| A7  | e2e browser stabilization (auth redirect-loop)                                          | `../priority.md` "Open → close"              | ▲ now                           | ✅ **CLOSED 2026-08-14** (worktree `e2e-stabilization`) — flake was timing (45s beforeAll, 5-15s page loads), not redirect logic; `test:e2e:browser` **19/19 files ×2** |
 | A8  | Unwired-code close-out (LoRA wire/drop + remaining RPG services)                        | `../priority.md` P5 + `epic-rpg-wiring-phase3.md` | ▲ now                     |                       |
 | A9  | Release artifacts (release-process, tag `v0.1.0`, changelog) + push `dev`→`origin/dev`  | `../priority.md` "Open → close"              | ▲ now                           |                       |
 | B8  | Memory selection UI (mid-chat, pinning) + prompt-template UX                           | `../priority.md` P4                          | ▲ now                           | ✅ done (memory-selection UI + assistant/world tabs shipped dev 5e62eea7; prompt-template preview 2026-08-14) |
@@ -40,11 +45,11 @@ wiring + docs reconciliation **merged 2026-08-14**) · Regex ✅ · P3–P5 → 
 | C7  | Group-chat VN party join/leave                                                         | `TASK-travel-party-migration.md`             | ▲ now                           |                       |
 | D1  | Assistant panel in chat sidebar                                                        | `../priority.md` P2-C                        | ▲ now                           |                       |
 | D2  | Message actions UI (edit/delete/pin/react)                                             | `../priority.md` P2-C                        | ▲ now                           |                       |
-| E2  | GM-guided story (user-as-GM UI + doc) — **Gate C remainder**                           | `../priority.md` P2-Da                       | ▲ now                           |                       |
+| E2  | GM-guided story (user-as-GM UI + doc) — **Gate C remainder**                           | `../priority.md` P2-Da                       | ▲ now                           | 🟡 in-flight — UI + persistence implemented in worktree `feature/gm-guided-story-ui` (commit `669d7912`); orchestrator consumption pending |
 | F3  | M6 AUX telemetry (tokens/latency per call)                                              | `../priority.md` Hardening                   | ▲ now                           |                       |
 | G2  | World timeline §5.3 forward-event steering + §5.4 cross-story convergence              | `epic-world-timeline*` (cluster B)           | ▲ now                           |                       |
 | G6  | Avatar-gallery visibility inheritance                                                  | `../priority.md` P2-F                        | ▲ now                           |                       |
-| W3  | **Push `dev` → `origin/dev`** (39 commits, Gate C + item-systems + docs reconciliation epics) | `dev` (ahead 39) | ▲ before release | |
+| W3  | **Push `dev` → `origin/dev`** (75 commits: Gate C + item-systems + docs-reconcile + memory-selection UI + C1 panel + recover + lint-ts/e2e worktrees pending) | `dev` (ahead 75) | ▲ before release | |
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority.md` P2-C                     | ▲ now                           | 🟡 partial (shipped: tool-call UI 2026-08-12) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority.md` P2-C                        | ▲ now                           | 🟡 partial             |
 | E1  | Unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12)                      | `../priority.md` P2-D                        | ▲ now                           | 🟡 partial             |
@@ -61,10 +66,21 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 
 **Stale/dup (no decision needed):** login page htmx — auth views already exist.
 
-## Open / next actions (post-merge planning, 2026-08-14)
+## Open / next actions (2026-08-14, after A5/A7 closure)
 
-- **W3 (only worktree row left): Push `dev` → `origin/dev`** — 39 commits ahead, after
-  `bun run check` + `bun test src/` gate on dev. Before release (row A9).
+- **W3: Push `dev` → `origin/dev`** — **75 commits ahead**, after merging the
+  `lint-ts-debt` + `e2e-stabilization` worktrees and running `bun run check` +
+  `bun test src/` on dev. Before release (row A9). Pre-push hook blocks agent
+  commits — human push required.
+- **A5 lint-ts debt (CLOSED 2026-08-14)** — `tree/lint-ts-debt`: 68→0 errors,
+  `bun run lint` EXIT 0; `bun run check` 18/18 (incl. dprint + md-lint fixes for
+  pre-existing YAML-twin + ticket-format issues). 193 warnings remain tracked.
+- **A7 e2e browser stabilization (CLOSED 2026-08-14)** — `tree/e2e-stabilization`:
+  timeout budgets raised (beforeAll 45s→90s, page loads 10-15s→30s, waits 5-8s→10-15s)
+  plus `ctx?.close()` guard; `test:e2e:browser` 19/19 files ×2 clean runs. Redirect
+  logic was correct (fe-fetch already guards login/register); flake was timing.
+- **Remaining release blockers: A8** (unwired-code close-out) **+ A9** (release
+  artifacts, tag v0.1.0, changelog, push).
 - **Broken internal markdown links (resolved 2026-08-14)** — the 17 dead links
   flagged pre-merge (across `docs/README.md`, `docs/spec/build-deploy.md`,
   `battle-integration.md`, `nsfw-integration.md`) are fixed: `bun run md:links` ✅
