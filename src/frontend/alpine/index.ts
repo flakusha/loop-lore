@@ -11,6 +11,8 @@ import "./app";
 import "./chat";
 import "./gm-panel";
 import "./gm-guidance";
+import "./story-state";
+import "./story-controls";
 import "./htmx";
 import "./notifications";
 import "./user-notifications";
