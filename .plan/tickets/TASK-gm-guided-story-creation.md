@@ -1,9 +1,24 @@
 # TASK: GM-Guided Story Creation
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress (UI + persistence implemented in worktree `feature/gm-guided-story-ui`; orchestrator consumption pending)
 **Priority:** High
 **Effort:** High
 **Epic:** epic-assistant-gm-flows
+
+## Progress (2026-08-14)
+
+Implemented in worktree `feature/gm-guided-story-ui` (commit `669d7912`, GPG-signed):
+
+- ✅ `GmConfig` extended with `storyMode` + `gmGuidance` (backend `src/chat/types/config.ts` + frontend `src/frontend/alpine/chat-types/gm.ts`)
+- ✅ `GmParticipant` type added (frontend) for the user-GM model
+- ✅ `PUT /api/v1/chats/:id/gm-guidance` endpoint (runtime-patchable, no online key-mechanic lock) + `updateGmGuidance` service
+- ✅ Dedicated `gm-guidance` Alpine component + Chat Settings panel (scene, target character, constraints, turn priority, apply/clear)
+- ✅ `/guide` + `/scene` command buttons open the GM Guidance panel
+- ✅ Validation schemas extended (`GmConfigSchema`, `GmGuidanceUpdateBody`)
+- ✅ Documented in `docs/frontend/chat/group-chat.md`
+- ✅ Service + component tests (9 passing)
+
+**Pending:** The story orchestrator (`GameMasterService` / turn selector) does not yet *consume* `gm_config.gmGuidance` to actually steer character turns at runtime — that is a backend integration follow-up (separate ticket).
 
 ## Summary
 
