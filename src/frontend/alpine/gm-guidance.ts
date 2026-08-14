@@ -22,7 +22,7 @@ const log = rootLog.child({ module: "gm-guidance", },);
 /** Resolve the active chat id from the global Alpine `chat` store. */
 function activeChatId(): string | null {
   const alpine = (globalThis as { Alpine?: { store: (name: string,) => Record<string, unknown> } }).Alpine;
-  const chat = alpine?.store("chat") as { currentChat?: { id?: string } } | undefined;
+  const chat = alpine?.store("chat",) as { currentChat?: { id?: string } } | undefined;
   return chat?.currentChat?.id ?? null;
 }
 
@@ -76,7 +76,12 @@ interface GmGuidanceComponent {
       try {
         const res = await apiFetch(`/api/v1/chats/${chatId}/participants`,);
         if (res.ok) {
-          this._gmParticipants = await res.json() as { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
+          this._gmParticipants = await res.json() as {
+            actor_id: string;
+            name: string;
+            display_name?: string;
+            actor_type?: string;
+          }[];
         }
       } catch {
         /* ignore */

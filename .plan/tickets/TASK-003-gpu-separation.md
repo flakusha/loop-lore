@@ -32,6 +32,7 @@
 ## Service Separation
 
 ### RunPod ComfyUI (Image/Video Generation)
+
 - **Repository**: `/home/flak/git-ai/runpod-comfy`
 - **Purpose**: SDXL, Anima, Krea 2, Minimax H3
 - **GPU Requirements**: RTX 4090 (24GB) minimum, PRO 6000 (48GB) for 4K+ video
@@ -39,9 +40,10 @@
 - **Models Stored**: SDXL checkpoints, LoRAs, ControlNet, Anima models, Minimax H3
 
 ### LLM Inference Service (Text Generation)
+
 - **Purpose**: llama-swap, llama.cpp for chat completion
 - **GPU Requirements**: RTX 4090 (24GB) or A100 (40GB) for larger contexts
-- **Deployment Options**: 
+- **Deployment Options**:
   - RunPod Serverless (separate endpoint)
   - Lambda Labs (steady-state)
   - Vast.ai (cost-sensitive)

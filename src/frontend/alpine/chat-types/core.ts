@@ -48,12 +48,10 @@ export interface ChatCoreState extends AlpineMagicThis {
   detailLevel: "Immersion" | "Basic" | "Detailed";
   impersonationActive: boolean;
   impersonatingActorId: string | null;
-
   editingMessageId: string | null;
   editContent: string;
   previewMediaAsset: GalleryAsset | null;
   pendingAssets: { assetId: string; filename: string }[];
-
   groupedMessages: GroupedMessage[];
   _observer: MutationObserver | null;
   _groupedKey: string;
@@ -78,14 +76,12 @@ export interface ChatCoreState extends AlpineMagicThis {
   _gmType: "llm" | "human" | "hybrid";
   _gmHumanActorId: string;
   _gmEscalationThreshold: number;
-  // GM LLM settings (multi-LLM story mode) — persisted to gm_config.llmConfig.
+  // GM LLM settings + per-actor overrides (multi-LLM story mode) — persisted to gm_config.
   _gmModel: string;
   _gmProvider: string;
   _gmTemperature: number;
   _gmMaxTokens: number;
-  // Per-actor model overrides (multi-LLM story mode) — persisted to gm_config.actorModels.
   _actorModels: Record<string, { model: string; provider: string }>;
-
   // VN (visual novel) mode settings — persisted to gm_config.
   _vnEnabled: boolean;
   _vnLayout: "overlay" | "below" | "split";
@@ -93,13 +89,11 @@ export interface ChatCoreState extends AlpineMagicThis {
   _vnTypewriterSpeed: number;
   _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   _vnAutoAdvance: boolean;
-
   // Prompt template preview
   _promptTemplate: PromptTemplateInfo | null;
   _promptLoading: boolean;
   _promptExpanded: boolean;
   loadPromptTemplate(): Promise<void>;
-
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
@@ -145,7 +139,6 @@ export interface ChatCoreState extends AlpineMagicThis {
   _mentionResults: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
   _showMentionAutocomplete: boolean;
   _chatParticipants: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
-
   init(): void;
   destroy(): void;
   loadUserInfo(): Promise<void>;
