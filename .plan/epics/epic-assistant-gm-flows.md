@@ -72,6 +72,154 @@ User request → Assistant processes → Generate content → Quality check → 
 - [ ] Generated content preview
 - [ ] GM-guided story creation — user as GM guiding LLM characters in chat/group-chat (`TASK-gm-guided-story-creation.md`)
 
+## AI Director / Narrative Pacing (Extension — Research-Driven)
+
+The Stanford Generative Agents paper demonstrates that narrative pacing emerges
+from NPC planning and interaction decisions. An AI Director system provides
+explicit control over story tension, pacing, and dramatic structure.
+
+### AI Director Concept
+
+Inspired by Left 4 Dead's AI Director, the system monitors story state and
+adjusts NPC behavior, event frequency, and tension to create a satisfying
+narrative arc.
+
+### Tension Management
+
+The AI Director tracks and manages story tension through:
+
+1. **Tension curve** — a dramatic arc (rising action → climax → resolution)
+2. **Event pacing** — control frequency and intensity of events
+3. **NPC behavior** — adjust NPC aggression, helpfulness, mystery
+4. **Resource scarcity** — control availability of items, information, allies
+
+```typescript
+interface TensionState {
+  current_tension: number;     // 0–100: current tension level
+  target_tension: number;      // 0–100: where tension should be
+  tension_curve: TensionPoint[]; // planned dramatic arc
+  pace_modifier: number;       // -100 to 100: slow down or speed up
+  last_event_time: Date;
+  events_since_last_rest: number;
+}
+
+interface TensionPoint {
+  timestamp: Date;
+  tension_level: number;       // 0–100
+  event_type: "rising" | "climax" | "falling" | "rest";
+  description: string;
+}
+```
+
+### Narrative Arc Templates
+
+Pre-defined story structures the AI Director can follow:
+
+```typescript
+interface NarrativeArc {
+  id: string;
+  name: string;
+  description: string;
+  phases: NarrativePhase[];
+}
+
+interface NarrativePhase {
+  name: string;
+  duration_minutes: number;
+  tension_range: [number, number]; // min–max tension
+  event_types: string[];           // allowed event types
+  npc_behavior: {
+    aggression: number;            // 0–100
+    helpfulness: number;           // 0–100
+    mystery: number;               // 0–100
+  };
+}
+```
+
+### Event Pacing
+
+The AI Director controls event frequency based on tension:
+
+1. **High tension** — frequent, intense events (combat, betrayal, crisis)
+2. **Medium tension** — moderate events (conversations, discoveries, choices)
+3. **Low tension** — rest events (shopping, exploration, character development)
+
+```typescript
+interface EventPacing {
+  tension_level: number;       // 0–100
+  event_frequency: number;     // events per hour
+  event_intensity: number;     // 0–100: how dramatic
+  rest_probability: number;    // 0–1: chance of rest event
+  npc_aggression_modifier: number; // -50 to 50
+  npc_helpfulness_modifier: number; // -50 to 50
+}
+```
+
+### Poignancy Scoring
+
+Events are scored for narrative importance (poignancy):
+
+```typescript
+interface PoignancyScore {
+  event_id: string;
+  score: number;               // 0–100: how memorable/impactful
+  factors: {
+    novelty: number;           // 0–100: how unexpected
+    emotional_impact: number;  // 0–100: how it affects characters
+    plot_significance: number; // 0–100: how it advances the story
+    character_development: number; // 0–100: how it changes characters
+  };
+}
+```
+
+### Dynamic Difficulty Adjustment
+
+The AI Director adjusts difficulty based on player performance:
+
+1. **Player struggling** — reduce event intensity, increase helpful NPCs
+2. **Player succeeding** — increase event intensity, add complications
+3. **Player bored** — introduce new mysteries, NPCs, or challenges
+
+```typescript
+interface DifficultyAdjustment {
+  player_performance: number;  // 0–100: how well they're doing
+  adjustment_type: "increase" | "decrease" | "maintain";
+  modifiers: {
+    event_intensity: number;   // -50 to 50
+    npc_aggression: number;    // -50 to 50
+    resource_scarcity: number; // -50 to 50
+    mystery_level: number;     // -50 to 50
+  };
+}
+```
+
+### Integration with GM System
+
+The AI Director works alongside the GM system:
+
+1. **GM override** — GM can manually adjust tension, pacing, difficulty
+2. **GM suggestions** — AI Director suggests events, NPC behaviors, story beats
+3. **GM collaboration** — AI Director and GM work together to create narrative
+
+### Tasks
+
+| Task | Description | Priority | Status |
+|------|-------------|----------|--------|
+| TASK-ai-director-tension | Tension tracking and management system | High | Not Started |
+| TASK-ai-director-arc | Narrative arc templates and pacing | Medium | Not Started |
+| TASK-ai-director-event | Event pacing and poignancy scoring | Medium | Not Started |
+| TASK-ai-director-difficulty | Dynamic difficulty adjustment | Medium | Not Started |
+| TASK-ai-director-gm | Integration with GM system | High | Not Started |
+| TASK-ai-director-tests | Tension, arc, event, difficulty tests | High | Not Started |
+
+### Open Questions
+
+1. Should the AI Director be visible to players, or operate invisibly?
+2. How should the AI Director handle player agency vs narrative control?
+3. Should the AI Director learn from player preferences over time?
+4. How should the AI Director handle multiple players with different preferences?
+5. Should the AI Director be able to override NPC autonomy for narrative purposes?
+
 ## Files
 
 - `src/assistant/commands/generate.ts` — generation commands
