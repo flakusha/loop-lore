@@ -5,56 +5,56 @@
 <div class="app-layout" x-data="chatState()">
   <!-- Story-mode layout: loads story state (turns/quests/world) + exposes it to all chat components -->
   <div class="story-layout" x-data="storyState()" x-init="init()">
-  <main class="main-content">
-    {{> chat/message-search-bar.html }} {{> chat/chat-list-panel.html }}
+    <main class="main-content">
+      {{> chat/message-search-bar.html }} {{> chat/chat-list-panel.html }}
 
-    <!-- Story mode: header bar + GM selection + quest banners (hidden for non-story chats) -->
-    {{> chat/story-view.html }}
+      <!-- Story mode: header bar + GM selection + quest banners (hidden for non-story chats) -->
+      {{> chat/story-view.html }}
 
-    <!-- Chat container (centered) — switches between VN and bubble layout -->
-    <div class="chat-container">
-      <!-- VN mode: scene renderer overlay -->
-      <div
-        x-show="_vnEnabled"
-        x-cloak
-        id="vn-container"
-        class="vn-container"
-        data-testid="vn-container"
-      >
-      </div>
-      <!-- VN mode: stop control, visible only while a generation is in flight -->
-      <div
-        x-show="_vnEnabled && isGenerating"
-        x-cloak
-        class="vn-stop"
-        data-testid="vn-stop"
-      >
-        <button
-          class="btn btn-ghost btn-cancel"
-          @click="cancelGeneration()"
-          x-bind:title="t('chat.cancelGeneration')"
+      <!-- Chat container (centered) — switches between VN and bubble layout -->
+      <div class="chat-container">
+        <!-- VN mode: scene renderer overlay -->
+        <div
+          x-show="_vnEnabled"
+          x-cloak
+          id="vn-container"
+          class="vn-container"
+          data-testid="vn-container"
         >
-          ⏹ {{{ t("common.cancel") }}}
-        </button>
+        </div>
+        <!-- VN mode: stop control, visible only while a generation is in flight -->
+        <div
+          x-show="_vnEnabled && isGenerating"
+          x-cloak
+          class="vn-stop"
+          data-testid="vn-stop"
+        >
+          <button
+            class="btn btn-ghost btn-cancel"
+            @click="cancelGeneration()"
+            x-bind:title="t('chat.cancelGeneration')"
+          >
+            ⏹ {{{ t("common.cancel") }}}
+          </button>
+        </div>
+        <!-- Bubble mode: standard message list -->
+        <div x-show="!_vnEnabled">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
       </div>
-      <!-- Bubble mode: standard message list -->
-      <div x-show="!_vnEnabled">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
-    </div>
 
-    {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/memory-panel.html }} {{>
-    chat/input-area.html }} {{> chat/sections-panel.html }} {{> chat/background-panel.html }} {{>
-    chat/location-panel.html }}
+      {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/memory-panel.html }} {{>
+      chat/input-area.html }} {{> chat/sections-panel.html }} {{> chat/background-panel.html }} {{>
+      chat/location-panel.html }}
 
-    <!-- GM Panel (shadow notes + whitenotes sidebar) -->
-    {{> chat/gm-panel.html }}
+      <!-- GM Panel (shadow notes + whitenotes sidebar) -->
+      {{> chat/gm-panel.html }}
 
-    <!-- Quest Log (story chats) -->
-    {{> chat/quest-log-panel.html }}
+      <!-- Quest Log (story chats) -->
+      {{> chat/quest-log-panel.html }}
 
-    <!-- Participant Panel (group-chat member management) -->
-    {{> chat/participant-panel.html }}
-  </main>
+      <!-- Participant Panel (group-chat member management) -->
+      {{> chat/participant-panel.html }}
+    </main>
 
-  {{> chat/chat-settings-modal.html }} {{> chat/rename-chat-modal.html }} {{> modals/settings.html }}
+    {{> chat/chat-settings-modal.html }} {{> chat/rename-chat-modal.html }} {{> modals/settings.html }}
   </div>
 </div>
