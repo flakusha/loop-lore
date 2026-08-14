@@ -15,7 +15,7 @@ import { checkWorldOwnership, handleInstance, handleInstances, handleTransfer, }
 
 export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-items-instances", },)
-    .post(prefix + "/worlds/:worldId/item-instances", async (ctx: any,) => {
+    .post(`${prefix}/worlds/:worldId/item-instances`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;
@@ -55,7 +55,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
         tags: ["Story Items",],
       },
     },)
-    .get(prefix + "/worlds/:worldId/item-instances", async (ctx: any,) => {
+    .get(`${prefix}/worlds/:worldId/item-instances`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;
@@ -84,7 +84,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
         tags: ["Story Items",],
       },
     },)
-    .get(prefix + "/worlds/:worldId/items/:itemId/instances", async (ctx: any,) => {
+    .get(`${prefix}/worlds/:worldId/items/:itemId/instances`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, itemId, } = ctx.params;
@@ -102,7 +102,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
         tags: ["Story Items",],
       },
     },)
-    .post(prefix + "/worlds/:worldId/item-instances/:instanceId/transfer", async (ctx: any,) => {
+    .post(`${prefix}/worlds/:worldId/item-instances/:instanceId/transfer`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, instanceId, } = ctx.params;
@@ -127,7 +127,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
         tags: ["Story Items",],
       },
     },)
-    .delete(prefix + "/worlds/:worldId/item-instances/:instanceId", async (ctx: any,) => {
+    .delete(`${prefix}/worlds/:worldId/item-instances/:instanceId`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, instanceId, } = ctx.params;

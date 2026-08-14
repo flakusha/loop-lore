@@ -42,6 +42,6 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(chatsRoutes(opts, prefix,),)
       .use(templatesRoutes(opts, prefix,),)
       .use(auditRoutes(opts, prefix,),)
-      .use(keyRotationRoutes(opts, prefix,),) as unknown as Elysia
+      .use(keyRotationRoutes(opts, prefix,),)
   );
 }

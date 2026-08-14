@@ -12,7 +12,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
     new Elysia({ name: "admin-templates-update", },)
       // ── Update template text for a profile ────────────────
       .put(
-        prefix + "/admin/templates/:id",
+        `${prefix}/admin/templates/:id`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -61,7 +61,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
       )
       // ── Update model defaults for a profile ───────────────
       .put(
-        prefix + "/admin/templates/:id/defaults",
+        `${prefix}/admin/templates/:id/defaults`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -40,7 +40,7 @@ describe("Creation flows E2E", () => {
         await page.click("[data-testid='create-character']",);
         await page.locator("[data-testid='create-character-form']",).waitFor({ state: "visible", timeout: 8000, },);
 
-        const name = "Browser-Created-" + Date.now();
+        const name = `Browser-Created-${Date.now()}`;
         await page.fill("#char-name", name,);
         await page.fill("#char-desc", "Created via browser e2e",);
         await page.click("[data-testid='create-character-form'] button[type='submit']",);
@@ -73,7 +73,7 @@ describe("Creation flows E2E", () => {
         await page.click("[data-testid='create-world']",);
         await page.locator("[data-testid='create-world-form']",).waitFor({ state: "visible", timeout: 8000, },);
 
-        const name = "Browser-World-" + Date.now();
+        const name = `Browser-World-${Date.now()}`;
         await page.fill("#world-name", name,);
         await page.fill("#world-description", "Created via browser e2e",);
         await page.click("[data-testid='create-world-form'] button[type='submit']",);
@@ -105,7 +105,7 @@ describe("Creation flows E2E", () => {
         await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 8000, },);
         await page.click("[data-testid='create-world']",);
         await page.locator("[data-testid='create-world-form']",).waitFor({ state: "visible", timeout: 8000, },);
-        const worldName = "LocWorld-" + Date.now();
+        const worldName = `LocWorld-${Date.now()}`;
         await page.fill("#world-name", worldName,);
         await page.click("[data-testid='create-world-form'] button[type='submit']",);
         const worldRow = await ctx.db
@@ -134,7 +134,7 @@ describe("Creation flows E2E", () => {
         },);
         await page.locator("#loc-name",).waitFor({ state: "visible", timeout: 8000, },);
 
-        const locName = "Browser-Loc-" + Date.now();
+        const locName = `Browser-Loc-${Date.now()}`;
         await page.fill("#loc-name", locName,);
         await page.waitForTimeout(200,);
         await page.evaluate(() => {

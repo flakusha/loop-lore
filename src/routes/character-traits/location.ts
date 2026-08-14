@@ -23,7 +23,7 @@ export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-traits-location", },)
-      .get(prefix + "/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/traits/location/:locationId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -43,7 +43,7 @@ export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
           404: ErrorResponse,
         },
       },)
-      .get(prefix + "/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -64,7 +64,7 @@ export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
           404: ErrorResponse,
         },
       },)
-      .post(prefix + "/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/traits/location/:locationId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -96,7 +96,7 @@ export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
           404: ErrorResponse,
         },
       },)
-      .put(prefix + "/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
+      .put(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -125,7 +125,7 @@ export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
           404: ErrorResponse,
         },
       },)
-      .delete(prefix + "/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
+      .delete(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;

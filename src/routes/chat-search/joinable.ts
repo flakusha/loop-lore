@@ -10,7 +10,7 @@ export function joinableRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-search-joinable", },)
       // ── Discover joinable chats ───────────────────────────────
       .get(
-        prefix + "/chats/joinable",
+        `${prefix}/chats/joinable`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

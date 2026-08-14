@@ -13,10 +13,12 @@ export type EquipSlot = (typeof EQUIP_SLOTS)[number];
 /** Slot an ItemCategory occupies when equipped. */
 export function slotForCategory(category: ItemCategory,): EquipSlot | null {
   switch (category) {
-    case "weapon":
+    case "weapon": {
       return "weapon";
-    case "armor":
+    }
+    case "armor": {
       return "armor";
+    }
     case "consumable":
     case "key_item":
     case "quest_item":
@@ -27,8 +29,9 @@ export function slotForCategory(category: ItemCategory,): EquipSlot | null {
     case "book":
     case "artifact":
     case "misc":
-    case "other":
+    case "other": {
       return "accessory";
+    }
   }
 }
 

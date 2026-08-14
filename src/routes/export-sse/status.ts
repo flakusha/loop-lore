@@ -7,7 +7,7 @@ import type { HandlerOpts, } from "./types";
 export function statusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia()
     // GET /api/export/status/:jobId — Get job status
-    .get(prefix + "/export/status/:jobId", (ctx: any,) => {
+    .get(`${prefix}/export/status/:jobId`, (ctx: any,) => {
       const jobId = ctx.params.jobId;
       const job = jobs.get(jobId,);
 
@@ -40,5 +40,5 @@ export function statusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
         description: "Get the current status and progress of an export job.",
         tags: ["Export",],
       },
-    },) as unknown as Elysia;
+    },);
 }

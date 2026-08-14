@@ -10,7 +10,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-worlds", },)
       // ── World management ───────────────────────────────────
       .get(
-        prefix + "/admin/worlds",
+        `${prefix}/admin/worlds`,
         async (ctx: any,) => {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -56,7 +56,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/admin/worlds/:id",
+        `${prefix}/admin/worlds/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -94,7 +94,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         { params: WorldIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .delete(
-        prefix + "/admin/worlds/:id",
+        `${prefix}/admin/worlds/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {

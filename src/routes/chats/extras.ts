@@ -24,7 +24,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats-extras", },)
       .put(
-        prefix + "/chats/:id/location",
+        `${prefix}/chats/:id/location`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -84,7 +84,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
         { body: ChatLocationUpdateBody, params: ChatIdParams, },
       )
       .put(
-        prefix + "/chats/:id/persona",
+        `${prefix}/chats/:id/persona`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -112,7 +112,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
         { body: ChatPersonaUpdateBody, params: ChatIdParams, },
       )
       .put(
-        prefix + "/chats/:id/impersonate",
+        `${prefix}/chats/:id/impersonate`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -141,7 +141,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
         { body: ChatImpersonateBody, params: ChatIdParams, },
       )
       .put(
-        prefix + "/chats/:id/mark-read",
+        `${prefix}/chats/:id/mark-read`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

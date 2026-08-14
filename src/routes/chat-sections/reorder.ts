@@ -12,7 +12,7 @@ export function reorderRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-sections-reorder", },)
       // ── Reorder sections ──────────────────────────────────
       .post(
-        prefix + "/chats/:id/sections/reorder",
+        `${prefix}/chats/:id/sections/reorder`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
