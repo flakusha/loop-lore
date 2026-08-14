@@ -7,7 +7,6 @@
  * @see docs/spec/api-versioning.md
  */
 
-
 /**
  * Create a redirect handler that sends 308 Permanent Redirect from
  * `/api/{path}` to `/api/v1/{path}`, preserving method and body.
@@ -19,7 +18,8 @@
 export function versionRedirect(targetVersion: string,) {
   return (ctx: { request: Request },) => {
     const url = new URL(ctx.request.url,);
-    const newPath = url.pathname.replace(/^\/api\//, `/api/${targetVersion}/`,);
+    // Slice off "/api/" (5 chars) and prepend versioned prefix
+    const newPath = `/api/${targetVersion}/${url.pathname.slice(5,)}`;
     const newUrl = `${newPath}${url.search}`;
 
     return new Response(null, {
