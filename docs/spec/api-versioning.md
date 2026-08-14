@@ -1,6 +1,6 @@
 # API Versioning Strategy
 
-Status: Planned (EPIC-2026-32 → [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md)). No versioning exists today — all routes at `/api/{resource}`.
+Status: In Progress (EPIC-2026-32 → [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md)). Phase 0 complete (`meta.api_version` in all responses). Phase 1 in progress (v1 prefix routing).
 
 ---
 

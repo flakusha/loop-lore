@@ -118,7 +118,6 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 | [`spec/character-spec.md`](./spec/character-spec.md) | Character & persona system: import/export, impersonation |
 | [`spec/rpg-mechanics.md`](./spec/rpg-mechanics.md)   | Stats, combat, equipment, dice, skills, XP, loot         |
 | [`spec/memory-system.md`](./spec/memory-system.md)   | Three-tier memory: episodic, semantic, procedural        |
-| [`spec/personas.md`](./spec/personas.md)             | Persona CRUD, switching, defaults                        |
 
 ### Assets & Storage
 
@@ -143,7 +142,7 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 
 | Document                                                     | Topics                                           |
 | ------------------------------------------------------------ | ------------------------------------------------ |
-| [`spec/tui.md`](./spec/tui.md)                               | Blessed TUI: components, keyboard map, data flow |
+| [`spec/terminal-ui.md`](./spec/terminal-ui.md)               | Blessed TUI: components, keyboard map, data flow |
 | [`spec/plugin-system.md`](./spec/plugin-system.md)           | Plugin architecture: types, lifecycle, security  |
 | [`spec/api-routes.md`](./spec/api-routes.md)                 | REST API contract: all endpoints, conventions    |
 | [`spec/assistant-commands.md`](./spec/assistant-commands.md) | Assistant command parser and command spec        |
