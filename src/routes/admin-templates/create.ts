@@ -13,7 +13,7 @@ export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
     new Elysia({ name: "admin-templates-create", },)
       // ── Create custom profile ─────────────────────────────
       .post(
-        prefix + "/admin/templates",
+        `${prefix}/admin/templates`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

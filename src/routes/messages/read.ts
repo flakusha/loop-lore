@@ -23,7 +23,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "messages-read", },)
     .get(
-      prefix + "/chats/:id/messages",
+      `${prefix}/chats/:id/messages`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -89,7 +89,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .get(
-      prefix + "/messages/:id",
+      `${prefix}/messages/:id`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -117,7 +117,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       { params: MessageIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .get(
-      prefix + "/messages/:id/variants",
+      `${prefix}/messages/:id/variants`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -165,7 +165,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       { params: MessageIdParams, response: { 200: t.Array(t.Any(),), 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .put(
-      prefix + "/messages/:id/variant",
+      `${prefix}/messages/:id/variant`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

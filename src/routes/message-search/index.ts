@@ -40,7 +40,7 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "message-search", },)
       .get(
-        prefix + "/messages/search",
+        `${prefix}/messages/search`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

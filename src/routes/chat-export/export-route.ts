@@ -10,7 +10,7 @@ import type { HandlerOpts, MessageData, } from "./types";
 
 export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
   return new Elysia().get(
-    prefix + "/chats/:id/export",
+    `${prefix}/chats/:id/export`,
     async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }

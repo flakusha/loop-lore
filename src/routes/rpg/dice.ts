@@ -13,7 +13,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "rpg-dice", },)
       // ── Dice: Roll ────────────────────────────────────────
       .post(
-        prefix + "/rpg/dice/roll",
+        `${prefix}/rpg/dice/roll`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -69,7 +69,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/rpg/dice/notation",
+        `${prefix}/rpg/dice/notation`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -99,7 +99,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/rpg/dice/advantage",
+        `${prefix}/rpg/dice/advantage`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

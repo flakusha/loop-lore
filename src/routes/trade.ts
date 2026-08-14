@@ -55,7 +55,7 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
   const svc = () => new TradeService(database,);
   return (
     new Elysia({ name: "trade", },)
-      .get(prefix + "/worlds/:worldId/trade/balance", async (ctx: any,) => {
+      .get(`${prefix}/worlds/:worldId/trade/balance`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const actorId = ctx.query.actorId as string | undefined;
@@ -80,7 +80,7 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
           tags: ["Trade",],
         },
       },)
-      .post(prefix + "/worlds/:worldId/trade/execute", async (ctx: any,) => {
+      .post(`${prefix}/worlds/:worldId/trade/execute`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const body = ctx.body as {
@@ -127,7 +127,10 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
         }
         if (code === "VALIDATION") {
           set.status = 400;
-          return { error: String(error,), };
+          const message = error instanceof Error
+            ? error.message
+            : (typeof error === "string" ? error : "Validation failed");
+          return { error: message, };
         }
       },)
   ) as unknown as Elysia;

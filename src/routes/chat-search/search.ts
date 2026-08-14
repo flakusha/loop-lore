@@ -10,7 +10,7 @@ export function searchRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-search-search", },)
       // ── Search user's chats ──────────────────────────────────
       .get(
-        prefix + "/chats/search",
+        `${prefix}/chats/search`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

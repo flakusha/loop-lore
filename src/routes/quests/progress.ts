@@ -12,7 +12,7 @@ import { handleProgress, } from "./handlers";
 
 export function questProgressRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-progress", },)
-    .post(prefix + "/quests/:id/progress", async (ctx: any,) => {
+    .post(`${prefix}/quests/:id/progress`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleProgress(
@@ -37,7 +37,7 @@ export function questProgressRoutes({ database, }: { database: Kysely<DB> }, pre
         tags: ["Quests",],
       },
     },)
-    .get(prefix + "/quests/:id/progress/:chatId", async (ctx: any,) => {
+    .get(`${prefix}/quests/:id/progress/:chatId`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleProgress(

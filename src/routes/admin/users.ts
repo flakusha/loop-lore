@@ -18,7 +18,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-users", },)
       // ── User management ────────────────────────────────────
       .get(
-        prefix + "/admin/users",
+        `${prefix}/admin/users`,
         async (ctx: any,) => {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -82,7 +82,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/admin/users/:id",
+        `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -134,7 +134,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .patch(
-        prefix + "/admin/users/:id/role",
+        `${prefix}/admin/users/:id/role`,
         async (ctx: any,) => {
           const { params: p, body, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -158,7 +158,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .delete(
-        prefix + "/admin/users/:id",
+        `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {

@@ -11,7 +11,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-body", },)
       .get(
-        prefix + "/nsfw/body/:actorId",
+        `${prefix}/nsfw/body/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -25,7 +25,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/nsfw/body/:actorId",
+        `${prefix}/nsfw/body/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }

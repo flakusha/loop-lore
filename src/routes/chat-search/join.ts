@@ -12,7 +12,7 @@ export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-search-join", },)
       // ── Join a chat ──────────────────────────────────────────
       .post(
-        prefix + "/chats/:id/join",
+        `${prefix}/chats/:id/join`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
