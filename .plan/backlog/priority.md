@@ -191,7 +191,7 @@ tracking: `epic-release-010.md`.
 - [x] **Size-strict debt** — ✅ closed 2026-08-12 (0 files over 250L).
 - [x] **e2e browser stabilization** — ✅ closed 2026-08-14 (`e2e-stabilization` worktree) — timeout budgets raised + `ctx?.close()` guard; `test:e2e:browser` **19/19 ×2**.
 - [ ] **Unwired/leftover close-out (A8)** — wire/drop LoRA routes, RPG services phase-3 (see `epic-rpg-wiring-phase3.md`); SSE refactor ✅ committed (`082c20cf`; row W4 resolved in `../open.md`).
-- [ ] **Release artifacts (A9)** — `docs/meta/release-process.md`, signed tag `v0.1.0`, changelog/release notes, **push `dev`→`origin/dev`** (75 commits; row W3 in `../open.md`).
+- [~] **Release artifacts (A9)** — `docs/meta/release-process.md` ✅, signed tag `v0.1.0` ✅ (ed2c6c5c), changelog/release notes ✅ (`CHANGELOG.md`); **push `dev`→`origin/dev` ⏳ HUMAN** (93 commits ahead; pre-push hook blocks agent).
 
 ### Hardening (before tagging, non-blocking)
 
