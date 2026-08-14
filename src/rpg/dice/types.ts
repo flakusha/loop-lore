@@ -12,7 +12,7 @@
 export type DiceSides = 4 | 6 | 8 | 10 | 12 | 20 | 100;
 
 /** Advantage mode for d20 rolls */
-export const AdvantageMode = { Normal: "normal", Advantage: "advantage", Disadvantage: "disadvantage" } as const;
+export const AdvantageMode = { Normal: "normal", Advantage: "advantage", Disadvantage: "disadvantage", } as const;
 export type AdvantageMode = (typeof AdvantageMode)[keyof typeof AdvantageMode];
 export const ADVANTAGE_NOTATION: Record<string, AdvantageMode> = {
   adv: AdvantageMode.Advantage,

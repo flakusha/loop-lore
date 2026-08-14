@@ -8,8 +8,8 @@ import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { EquipState, } from "../db/enums";
-import { createEntityRoutes, } from "./entity-routes";
 import { actorItemsGameplayRoutes, } from "./actor-items/service";
+import { createEntityRoutes, } from "./entity-routes";
 
 export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysia {
   const crud = createEntityRoutes(

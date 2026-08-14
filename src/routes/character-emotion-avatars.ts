@@ -23,7 +23,7 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const emotionAvatarService = new EmotionAvatarService(database,);
 

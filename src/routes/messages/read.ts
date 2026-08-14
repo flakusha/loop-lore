@@ -18,7 +18,7 @@ import {
 } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
-export function readRoutes(opts: HandlerOpts, prefix = "/api") {
+export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
 
   return new Elysia({ name: "messages-read", },)

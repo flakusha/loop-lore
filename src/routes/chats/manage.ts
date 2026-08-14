@@ -15,7 +15,7 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function manageRoutes(opts: HandlerOpts, prefix = "/api") {
+export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

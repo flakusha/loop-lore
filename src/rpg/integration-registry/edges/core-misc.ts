@@ -4,7 +4,7 @@
  * RPG ↔ Character Core, Weather ↔ Exploration, Magic ↔ Resolution, Blog, and
  * World-Location Traits edges. Migrated verbatim from the former `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Remaining cross-system integration edges not owned by a dedicated domain file. */
 export const CORE_MISC_EDGES: IntegrationEdge[] = [

@@ -4,7 +4,7 @@
  * Cross-system edges involving Faction. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges involving the Faction system. */
 export const FACTION_EDGES: IntegrationEdge[] = [

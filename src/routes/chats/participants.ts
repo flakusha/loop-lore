@@ -19,7 +19,7 @@ function log(): Logger {
   return getLogger().child({ module: "chats", },);
 }
 
-export function participantRoutes(opts: HandlerOpts, prefix = "/api") {
+export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

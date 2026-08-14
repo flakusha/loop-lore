@@ -29,7 +29,7 @@ function log(): Logger {
   return getLogger().child({ module: "key-management", },);
 }
 
-export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "key-management", },)
     // ── List actor keys ────────────────────────────────────────
     .get(prefix + "/keys", async (ctx: any,) => {
