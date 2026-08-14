@@ -38,6 +38,16 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _vnTypewriterSpeed: 30,
   _vnTransition: "fade" as "fade" | "cut" | "dissolve" | "slide" | "wipe",
   _vnAutoAdvance: false,
+  // Prompt template preview
+  _promptTemplate: null as {
+    purpose: string;
+    prompt: string;
+    source: string;
+    characterName: string | null;
+    registryDefault: string;
+  } | null,
+  _promptLoading: false,
+  _promptExpanded: false,
 
   toggleDebugView() {
     this._debugView = !this._debugView;
@@ -62,6 +72,23 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       this._vnAutoAdvance = config.vnAutoAdvance ?? false;
     }
     Alpine.store("ui",).showChatSettings = true;
+    this.loadPromptTemplate();
+  },
+
+  async loadPromptTemplate() {
+    if (!this.activeChat) { return; }
+    this._promptLoading = true;
+    this._promptTemplate = null;
+    try {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/prompt-template`,);
+      if (res.ok) {
+        this._promptTemplate = await res.json();
+      }
+    } catch {
+      /* non-critical */
+    } finally {
+      this._promptLoading = false;
+    }
   },
 
   /**
