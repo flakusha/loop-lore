@@ -4,7 +4,7 @@
  * RPG ↔ Character Core, Weather ↔ Exploration, Magic ↔ Resolution, Blog, and
  * World-Location Traits edges. Migrated verbatim from the former `buildEdges()`.
  */
-import type { IntegrationEdge, } from "../types";
+import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
 
 /** Remaining cross-system integration edges not owned by a dedicated domain file. */
 export const CORE_MISC_EDGES: IntegrationEdge[] = [
@@ -12,19 +12,19 @@ export const CORE_MISC_EDGES: IntegrationEdge[] = [
   {
     source: "rpg_mechanics",
     target: "character_core",
-    direction: "bidirectional",
+    direction: EdgeDirection.Bidirectional,
     interfaces: ["CharacterStats", "PlayerState", "Relationship",],
     events: [
       {
         id: "player.state_changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "character_core",
         target: "rpg_mechanics",
         notes: "Player state changes affect mechanics",
       },
       {
         id: "rpg.stat_changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "rpg_mechanics",
         target: "character_core",
         notes: "Stat changes affect mood/capability",
@@ -37,19 +37,19 @@ export const CORE_MISC_EDGES: IntegrationEdge[] = [
   {
     source: "weather",
     target: "exploration",
-    direction: "bidirectional",
+    direction: EdgeDirection.Bidirectional,
     interfaces: ["PlayerState", "WorldLocation",],
     events: [
       {
         id: "weather.changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "weather",
         target: "exploration",
         notes: "Weather affects travel speed and hazards",
       },
       {
         id: "exploration.zone_entered",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "exploration",
         target: "weather",
         notes: "Location climate defines base weather",
@@ -61,12 +61,12 @@ export const CORE_MISC_EDGES: IntegrationEdge[] = [
   {
     source: "magic",
     target: "resolution",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["DiceRoll",],
     events: [
       {
         id: "resolution.roll",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "resolution",
         target: "magic",
         notes: "Spell casting checks, counterspelling",
@@ -77,19 +77,19 @@ export const CORE_MISC_EDGES: IntegrationEdge[] = [
   {
     source: "blog",
     target: "social",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["Notification",],
     events: [
       {
         id: "blog.post_created",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "blog",
         target: "social",
         notes: "New blog post triggers social notifications",
       },
       {
         id: "blog.comment_added",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "blog",
         target: "social",
         notes: "New comment triggers social notifications",
@@ -101,19 +101,19 @@ export const CORE_MISC_EDGES: IntegrationEdge[] = [
   {
     source: "world_location_traits",
     target: "character_core",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["WorldTraitRow", "LocationTraitRow",],
     events: [
       {
         id: "traits.world_trait_changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "world_location_traits",
         target: "character_core",
         notes: "World trait change affects character state",
       },
       {
         id: "traits.location_trait_changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "world_location_traits",
         target: "character_core",
         notes: "Location trait change affects character state",

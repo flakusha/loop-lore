@@ -4,19 +4,19 @@
  * Cross-system edges involving NSFW. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import type { IntegrationEdge, } from "../types";
+import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
 
 /** Integration edges involving the NSFW system. */
 export const NSFW_EDGES: IntegrationEdge[] = [
   {
     source: "nsfw",
     target: "housing",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["PlayerState",],
     events: [
       {
         id: "housing.nsfw_encounter",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "housing",
         target: "nsfw",
         notes: "Housing provides private spaces with comfort bonuses",
@@ -26,12 +26,12 @@ export const NSFW_EDGES: IntegrationEdge[] = [
   {
     source: "nsfw",
     target: "weather",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["PlayerState",],
     events: [
       {
         id: "weather.changed",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "weather",
         target: "nsfw",
         notes: "Weather affects encounter mood and location availability",
@@ -41,12 +41,12 @@ export const NSFW_EDGES: IntegrationEdge[] = [
   {
     source: "nsfw",
     target: "social",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["ReputationScore", "Relationship",],
     events: [
       {
         id: "nsfw.reputation_changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "nsfw",
         target: "social",
         notes: "NSFW reputation feeds social standing",

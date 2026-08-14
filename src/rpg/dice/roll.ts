@@ -1,5 +1,5 @@
 import {
-  type AdvantageMode,
+  AdvantageMode,
   type DiceRollResult,
   type DiceSides,
   type DieResult,
@@ -56,14 +56,14 @@ export function rollMultiple(count: number, sides: DiceSides,): number[] {
  * Disadvantage: roll 2d20, take the lower result.
  * Natural 20/1 are only flagged on the *kept* die.
  */
-export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
+export function rollD20WithAdvantage(mode: AdvantageMode = AdvantageMode.Normal,): {
   value: number;
   natural20: boolean;
   natural1: boolean;
   advantageMode: AdvantageMode;
   rawRolls: [number, number,] | [number,];
 } {
-  if (mode === "normal") {
+  if (mode === AdvantageMode.Normal) {
     const value = rollDie(20,);
     return {
       value,
@@ -76,7 +76,7 @@ export function rollD20WithAdvantage(mode: AdvantageMode = "normal",): {
 
   const roll1 = rollDie(20,);
   const roll2 = rollDie(20,);
-  const kept = mode === "advantage"
+  const kept = mode === AdvantageMode.Advantage
     ? Math.max(roll1, roll2,)
     : Math.min(roll1, roll2,);
 
@@ -108,12 +108,12 @@ export function rollDice(
   sides: DiceSides,
   count = 1,
   modifier = 0,
-  advantage: AdvantageMode = "normal",
+  advantage: AdvantageMode = AdvantageMode.Normal,
   exploding = false,
 ): DiceRollResult {
   const dice: DieResult[] = [];
 
-  if (sides === 20 && advantage !== "normal") {
+  if (sides === 20 && advantage !== AdvantageMode.Normal) {
     const { value, natural20, natural1, advantageMode, rawRolls, } = rollD20WithAdvantage(advantage,);
 
     dice.push({ sides: 20, value: rawRolls[0], exploded: false, },);
@@ -164,7 +164,7 @@ export function rollDice(
     rawTotal,
     modifier,
     total,
-    advantageMode: "normal",
+    advantageMode: AdvantageMode.Normal,
     natural20: hasNat20,
     natural1: sides === 20 && dice.length === 1 && dice[0]!.value === 1,
   };
