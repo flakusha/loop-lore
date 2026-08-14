@@ -1,0 +1,91 @@
+<!-- Participant Panel — group-chat member management (C1) -->
+<div
+  x-show="$store.ui.showParticipants && isGroupChat"
+  x-cloak
+  class="participant-panel"
+  @keydown.escape.window="$store.ui.showParticipants = false"
+  data-testid="participant-panel"
+>
+  <div class="participant-panel-header">
+    <h3>{{{ t("participants.title") }}}</h3>
+    <button class="btn-icon" @click="$store.ui.showParticipants = false" aria-label="Close Participant Panel">&times;</button>
+  </div>
+
+  <div class="participant-panel-body">
+    <!-- Member list -->
+    <div class="participant-count"><span x-text="_participants.length"></span> {{{ t("participants.members") }}}</div>
+
+    <template x-for="p in _participants" :key="p.actor_id">
+      <div class="participant-card" data-testid="participant-card">
+        <div class="participant-card-top">
+          <span class="participant-name" x-text="p.display_name"></span>
+          <span class="participant-role" x-text="p.role_in_chat"></span>
+          <button
+            class="btn-icon-sm participant-remove"
+            :title="t('participants.remove')"
+            @click="removeParticipant(p.actor_id)"
+            x-show="!_participantsBusy"
+            data-testid="participant-remove"
+          >✕</button>
+        </div>
+        <div class="participant-card-controls">
+          <label class="participant-field">
+            <span class="participant-field-label">{{{ t("participants.talkativity") }}} <span x-text="p.talkativity"></span></span>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              :value="p.talkativity"
+              @change="updateParticipantTalkativity(p.actor_id, Number($event.target.value))"
+              data-testid="participant-talkativity"
+            />
+          </label>
+          <label class="participant-field">
+            <span class="participant-field-label">{{{ t("participants.initiative") }}}</span>
+            <input
+              type="number"
+              class="participant-initiative"
+              :value="p.initiative"
+              @change="updateParticipantInitiative(p.actor_id, Number($event.target.value))"
+              data-testid="participant-initiative"
+            />
+          </label>
+        </div>
+      </div>
+    </template>
+
+    <!-- Add participant -->
+    <div class="participant-add">
+      <h4>{{{ t("participants.addTitle") }}}</h4>
+      <input
+        type="text"
+        class="form-input participant-search"
+        :placeholder="t('participants.searchActors')"
+        x-model="_participantQuery"
+        data-testid="participant-search"
+      />
+      <select class="form-input" x-model="_selectedAddRole" data-testid="participant-role-select">
+        <option value="member">member</option>
+        <option value="moderator">moderator</option>
+        <option value="gm">gm</option>
+      </select>
+      <div class="participant-add-list">
+        <template x-for="a in filteredAvailableActors" :key="a.id">
+          <div class="participant-add-row" data-testid="participant-add-option">
+            <span class="participant-name" x-text="a.display_name"></span>
+            <span class="participant-role" x-text="a.actor_type"></span>
+            <button
+              class="btn btn-sm btn-primary"
+              @click="addParticipant(a.id, _selectedAddRole)"
+              :disabled="_participantsBusy"
+              data-testid="participant-add-btn"
+            >+</button>
+          </div>
+        </template>
+        <div class="participant-add-empty" x-show="filteredAvailableActors.length === 0">
+          {{{ t("participants.noActors") }}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
