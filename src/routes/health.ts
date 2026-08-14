@@ -14,7 +14,7 @@ import { jsonResponse, } from "./http-utils";
 const startTime = Date.now();
 
 export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
-  return new Elysia().get(prefix + "/health", () => {
+  return new Elysia().get(`${prefix}/health`, () => {
     const providers = getHealthCache();
     const degraded = hasUnhealthyProviders();
     const uptime = Math.floor((Date.now() - startTime) / 1000,);
@@ -36,5 +36,5 @@ export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "
       description: "Returns server health status including provider connectivity. No authentication required.",
       tags: ["Health",],
     },
-  },) as unknown as Elysia;
+  },);
 }

@@ -16,7 +16,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
 
   return new Elysia({ name: "worlds-crud", },)
     .get(
-      prefix + "/worlds",
+      `${prefix}/worlds`,
       async (ctx: any,) => {
         const { userId, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
@@ -36,7 +36,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/worlds",
+      `${prefix}/worlds`,
       async (ctx: any,) => {
         const { userId, } = extractAuth(ctx,);
         return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId,);
@@ -55,7 +55,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .get(
-      prefix + "/worlds/:worldId",
+      `${prefix}/worlds/:worldId`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
@@ -74,7 +74,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .put(
-      prefix + "/worlds/:worldId",
+      `${prefix}/worlds/:worldId`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateWorld(
@@ -100,7 +100,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .delete(
-      prefix + "/worlds/:worldId",
+      `${prefix}/worlds/:worldId`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
@@ -119,7 +119,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/worlds/:worldId/initialize-states",
+      `${prefix}/worlds/:worldId/initialize-states`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);

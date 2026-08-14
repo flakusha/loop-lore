@@ -38,7 +38,7 @@ describe("Settings flow E2E", () => {
       try {
         await gotoSettings(page,);
 
-        const displayName = "Browser-User-" + Date.now();
+        const displayName = `Browser-User-${Date.now()}`;
         await page.fill("#displayName", displayName,);
         await page.click("[data-testid='save-general']",);
         await page.waitForTimeout(800,);

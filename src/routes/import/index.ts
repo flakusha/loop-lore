@@ -18,7 +18,7 @@ export function importRoutes(
 ): Elysia {
   const uploadDir = config.assets?.uploadDir;
 
-  return new Elysia({ name: "import", },).post(prefix + "/actors/import", async (ctx: any,) => {
+  return new Elysia({ name: "import", },).post(`${prefix}/actors/import`, async (ctx: any,) => {
     // authenticate directly before .derive()
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
     if (authResult instanceof Response) { return authResult; }
@@ -34,5 +34,5 @@ export function importRoutes(
         "Import a character card from a file upload. Supports CHARX, PNG, and JSON formats with auto-detection and asset import.",
       tags: ["Import",],
     },
-  },) as unknown as Elysia;
+  },);
 }

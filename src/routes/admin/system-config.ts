@@ -9,7 +9,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-system-config", },)
       // ── System configuration ───────────────────────────────
-      .get(prefix + "/admin/system-config", async (ctx: any,) => {
+      .get(`${prefix}/admin/system-config`, async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -27,7 +27,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       },)
       .patch(
-        prefix + "/admin/system-config",
+        `${prefix}/admin/system-config`,
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -43,7 +43,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
         { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
       )
-      .delete(prefix + "/admin/system-config/:key", async (ctx: any,) => {
+      .delete(`${prefix}/admin/system-config/:key`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

@@ -79,7 +79,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
   test("create recipe with materials returns id", async () => {
     const app = authedApp();
     const res = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/recipes", {
+      new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
@@ -100,8 +100,8 @@ describe("crafting recipe CRUD (auth-gated)", () => {
 
   test("get recipe returns materials", async () => {
     const app = authedApp();
-    const createRes = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/recipes", {
+    const created = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
@@ -114,7 +114,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
-    const id = readId(await json(createRes,),);
+    const id = readId(await json(created,),);
 
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
@@ -142,8 +142,8 @@ describe("crafting recipe CRUD (auth-gated)", () => {
 
   test("update recipe and replace materials", async () => {
     const app = authedApp();
-    const createRes = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/recipes", {
+    const created = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
@@ -156,7 +156,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
-    const id = readId(await json(createRes,),);
+    const id = readId(await json(created,),);
 
     const upRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`, {
@@ -176,10 +176,10 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     );
     expect(matRes.status,).toBe(200,);
 
-    const getRes = await app.handle(
+    const fetched = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
-    const body = await json(getRes,);
+    const body = await json(fetched,);
     if (typeof body !== "object" || body === null || !("tier" in body) || !("materials" in body)) {
       throw new Error("recipe response missing fields",);
     }
@@ -194,8 +194,8 @@ describe("crafting recipe CRUD (auth-gated)", () => {
 
   test("delete recipe removes it", async () => {
     const app = authedApp();
-    const createRes = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/recipes", {
+    const created = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
@@ -207,24 +207,24 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
-    const id = readId(await json(createRes,),);
+    const id = readId(await json(created,),);
 
     const delRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`, { method: "DELETE", },),
     );
     expect(delRes.status,).toBe(200,);
 
-    const getRes = await app.handle(
+    const fetched = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
-    expect(getRes.status,).toBe(404,);
+    expect(fetched.status,).toBe(404,);
   });
 
   test("rejects non-owner with 403", async () => {
     const otherUserId = uid();
     const app = authedApp(otherUserId,);
     const res = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/recipes",),
+      new Request(`http://localhost/api/worlds/${worldId}/recipes`,),
     );
     expect(res.status,).toBe(403,);
   });

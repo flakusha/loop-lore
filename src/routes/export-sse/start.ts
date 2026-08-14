@@ -9,7 +9,7 @@ import type { ExportJob, HandlerOpts, } from "./types";
 export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia()
     // POST /api/export/progress — Start export and return SSE stream
-    .post(prefix + "/export/progress", async (ctx: any,) => {
+    .post(`${prefix}/export/progress`, async (ctx: any,) => {
       const userId = await resolveUserIdFromRequest(ctx.request, database, "solo",);
       if (!userId) {
         return jsonError({
@@ -115,5 +115,5 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
         description: "Start a character export job and receive real-time progress via Server-Sent Events.",
         tags: ["Export",],
       },
-    },) as unknown as Elysia;
+    },);
 }

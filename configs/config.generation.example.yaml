@@ -7,5 +7,5 @@ generation:
   defaultModels: {} # { openaiCompatible: "gpt-4" }
   providers:
     openaiCompatible: [] # list of { name, baseUrl, apiKey, models }
-    # sd: [] # stable diffusion providers
-    # llamaSwap: { url: "http://localhost:8080" }
+# sd: [] # stable diffusion providers
+# llamaSwap: { url: "http://localhost:8080" }

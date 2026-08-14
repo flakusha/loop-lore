@@ -31,7 +31,7 @@ const VALID_PREFERENCES = ["better", "worse", "same",] as const;
 export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "model-comparisons", },)
     // ── POST /api/analytics/comparisons ────────────────────────
-    .post(prefix + "/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
+    .post(`${prefix}/analytics/comparisons`, async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
         return unauthorizedResponse((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",);
@@ -109,7 +109,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
       },
     },)
     // ── GET /api/analytics/comparisons/leaderboard ─────────────
-    .get(prefix + "/analytics/comparisons/leaderboard", async (ctx: Record<string, unknown>,) => {
+    .get(`${prefix}/analytics/comparisons/leaderboard`, async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
         return unauthorizedResponse((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",);
@@ -152,7 +152,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
       },
     },)
     // ── GET /api/analytics/comparisons ─────────────────────────
-    .get(prefix + "/analytics/comparisons", async (ctx: Record<string, unknown>,) => {
+    .get(`${prefix}/analytics/comparisons`, async (ctx: Record<string, unknown>,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
         return unauthorizedResponse((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",);
@@ -179,5 +179,5 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
         description: "Retrieve recent model comparisons for the authenticated user, ordered by creation date.",
         tags: ["Analytics", "Comparisons",],
       },
-    },) as unknown as Elysia;
+    },);
 }

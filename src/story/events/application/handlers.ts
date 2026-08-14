@@ -12,7 +12,6 @@ import type { WorldEvent, } from "../../types";
 import { promoteEventToLore, } from "../promote-lore";
 import { applyItemTransfer, } from "./item-transfer";
 import type { AppliedEvent, } from "./types";
-export { applyItemTransfer, };
 
 export async function applySingleEvent(
   database: Kysely<DB>,
@@ -187,3 +186,5 @@ export async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent,): Prom
     }
   }
 }
+
+export { applyItemTransfer, } from "./item-transfer";

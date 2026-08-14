@@ -16,7 +16,7 @@ import type { HandlerOpts, } from "./types";
 export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-social", },)
     .post(
-      prefix + "/battle/social/intimidate",
+      `${prefix}/battle/social/intimidate`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -47,7 +47,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/social/taunt",
+      `${prefix}/battle/social/taunt`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -76,7 +76,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/social/surrender",
+      `${prefix}/battle/social/surrender`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -105,7 +105,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/social/rally",
+      `${prefix}/battle/social/rally`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -134,7 +134,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/social/inspire",
+      `${prefix}/battle/social/inspire`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -163,7 +163,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/social/demoralize",
+      `${prefix}/battle/social/demoralize`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {

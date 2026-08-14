@@ -79,7 +79,7 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats-list", },)
       .get(
-        prefix + "/chats",
+        `${prefix}/chats`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

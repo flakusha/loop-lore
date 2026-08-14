@@ -20,7 +20,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-model-roles", },)
       // ── Model role overrides ───────────────────────────────
-      .get(prefix + "/admin/model-roles", async (ctx: any,) => {
+      .get(`${prefix}/admin/model-roles`, async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -40,7 +40,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           403: ErrorResponse,
         },
       },)
-      .get(prefix + "/admin/model-roles/:role", async (ctx: any,) => {
+      .get(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -70,7 +70,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       },)
       .put(
-        prefix + "/admin/model-roles/:role",
+        `${prefix}/admin/model-roles/:role`,
         async (ctx: any,) => {
           const { params: p, body, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -108,7 +108,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, },
         },
       )
-      .delete(prefix + "/admin/model-roles/:role", async (ctx: any,) => {
+      .delete(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

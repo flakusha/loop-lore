@@ -11,10 +11,8 @@ import { storyWorldStateRoutes, } from "./worldStates";
  * `elysia-app.ts` wiring is unchanged.
  */
 export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Elysia {
-  return (
-    new Elysia({ name: "story-states", },)
-      .use(storyNpcStateRoutes({ database, },),)
-      .use(storyLocationStateRoutes({ database, },),)
-      .use(storyWorldStateRoutes({ database, },),)
-  ) as unknown as Elysia;
+  return new Elysia({ name: "story-states", },)
+    .use(storyNpcStateRoutes({ database, },),)
+    .use(storyLocationStateRoutes({ database, },),)
+    .use(storyWorldStateRoutes({ database, },),);
 }

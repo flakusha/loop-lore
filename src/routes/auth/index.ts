@@ -28,7 +28,7 @@ export { resetLoginRateLimiter, resetRegisterRateLimiter, } from "./shared";
 export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-public", },)
     .post(
-      prefix + "/auth/login",
+      `${prefix}/auth/login`,
       async ({ request, ...rest },) =>
         handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
@@ -43,7 +43,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
       },
     )
     .post(
-      prefix + "/demo-login",
+      `${prefix}/demo-login`,
       async ({ request, ...rest },) =>
         handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
@@ -58,7 +58,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
       },
     )
     .post(
-      prefix + "/auth/register",
+      `${prefix}/auth/register`,
       async ({ request, ...rest },) =>
         handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
@@ -71,7 +71,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
           tags: ["Auth",],
         },
       },
-    ) as unknown as Elysia;
+    );
 }
 
 // ── Protected routes: require auth ───────────────────────────
@@ -79,7 +79,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
 export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-protected", },)
     .post(
-      prefix + "/auth/logout",
+      `${prefix}/auth/logout`,
       async ({ request, },) => handleLogout(request, database,),
       {
         response: {
@@ -94,7 +94,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
       },
     )
     .get(
-      prefix + "/auth/me",
+      `${prefix}/auth/me`,
       async ({ request, ...rest },) => handleMe(request, database, (rest as any).userId as string | null | undefined,),
       {
         response: {
@@ -107,5 +107,5 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
           tags: ["Auth",],
         },
       },
-    ) as unknown as Elysia;
+    );
 }

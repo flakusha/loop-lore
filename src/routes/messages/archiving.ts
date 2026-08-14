@@ -9,7 +9,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "messages-archiving", },)
     .post(
-      prefix + "/messages/:id/archive",
+      `${prefix}/messages/:id/archive`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -39,7 +39,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
       { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .post(
-      prefix + "/messages/:id/restore",
+      `${prefix}/messages/:id/restore`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -69,7 +69,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
       { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .post(
-      prefix + "/chats/:id/messages/purge",
+      `${prefix}/chats/:id/messages/purge`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

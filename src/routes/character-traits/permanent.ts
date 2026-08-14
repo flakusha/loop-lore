@@ -25,7 +25,7 @@ export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-traits-permanent", },)
       .get(
-        prefix + "/actors/:actorId/traits/permanent",
+        `${prefix}/actors/:actorId/traits/permanent`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -54,7 +54,7 @@ export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/actors/:actorId/traits/permanent/:traitName",
+        `${prefix}/actors/:actorId/traits/permanent/:traitName`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -84,7 +84,7 @@ export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/actors/:actorId/traits/permanent",
+        `${prefix}/actors/:actorId/traits/permanent`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -121,7 +121,7 @@ export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/actors/:actorId/traits/permanent/:traitName",
+        `${prefix}/actors/:actorId/traits/permanent/:traitName`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -156,7 +156,7 @@ export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .delete(
-        prefix + "/actors/:actorId/traits/permanent/:traitName",
+        `${prefix}/actors/:actorId/traits/permanent/:traitName`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

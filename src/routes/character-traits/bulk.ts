@@ -19,7 +19,7 @@ export function bulkTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-traits-bulk", },)
-      .get(prefix + "/actors/:actorId/traits", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/traits`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

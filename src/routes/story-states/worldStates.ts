@@ -21,7 +21,7 @@ const worldStatesListResponse = t.Object({
 
 export function storyWorldStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-world", },)
-    .get(prefix + "/worlds/:worldId/states", async (ctx: any,) => {
+    .get(`${prefix}/worlds/:worldId/states`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;
@@ -48,7 +48,7 @@ export function storyWorldStateRoutes({ database, }: { database: Kysely<DB> }, p
         tags: ["Story States",],
       },
     },)
-    .post(prefix + "/worlds/:worldId/states", async (ctx: any,) => {
+    .post(`${prefix}/worlds/:worldId/states`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;

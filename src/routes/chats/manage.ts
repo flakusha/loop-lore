@@ -23,7 +23,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats-manage", },)
       .post(
-        prefix + "/chats/:id/migrate",
+        `${prefix}/chats/:id/migrate`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -51,7 +51,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
         { body: ChatMigrateBody, params: ChatIdParams, },
       )
       .get(
-        prefix + "/chats/:id",
+        `${prefix}/chats/:id`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -68,7 +68,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
         { params: ChatIdParams, },
       )
       .put(
-        prefix + "/chats/:id",
+        `${prefix}/chats/:id`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -115,7 +115,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
         { body: ChatUpdateBody, params: ChatIdParams, },
       )
       .post(
-        prefix + "/chats/:id/rename",
+        `${prefix}/chats/:id/rename`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -162,7 +162,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
         { body: ChatRenameBody, params: ChatIdParams, },
       )
       .delete(
-        prefix + "/chats/:id",
+        `${prefix}/chats/:id`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -178,7 +178,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
         { params: ChatIdParams, },
       )
       .get(
-        prefix + "/chats/:id/prompt-template",
+        `${prefix}/chats/:id/prompt-template`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

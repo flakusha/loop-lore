@@ -112,7 +112,7 @@ describe("trade routes (auth-gated)", () => {
   test("execute trades items and gold atomically", async () => {
     const app = authedApp();
     const res = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/trade/execute", {
+      new Request(`http://localhost/api/worlds/${worldId}/trade/execute`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
@@ -137,7 +137,7 @@ describe("trade routes (auth-gated)", () => {
   test("execute rejects insufficient funds with 400", async () => {
     const app = authedApp();
     const res = await app.handle(
-      new Request("http://localhost/api/worlds/" + worldId + "/trade/execute", {
+      new Request(`http://localhost/api/worlds/${worldId}/trade/execute`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({

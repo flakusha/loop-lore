@@ -30,7 +30,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats-templates", },)
       .get(
-        prefix + "/chat-setup-templates",
+        `${prefix}/chat-setup-templates`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -51,7 +51,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
         { response: { 200: t.Array(ChatSetupTemplateSchema,), }, },
       )
       .post(
-        prefix + "/chat-setup-templates",
+        `${prefix}/chat-setup-templates`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -83,7 +83,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/chat-setup-templates/:templateId",
+        `${prefix}/chat-setup-templates/:templateId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -113,7 +113,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .delete(
-        prefix + "/chat-setup-templates/:templateId",
+        `${prefix}/chat-setup-templates/:templateId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

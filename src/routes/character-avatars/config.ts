@@ -22,7 +22,7 @@ export function configRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-avatars-config", },)
-      .get(prefix + "/actors/:actorId/avatars/config", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/avatars/config`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -49,7 +49,7 @@ export function configRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .put(prefix + "/actors/:actorId/avatars/config", async (ctx: any,) => {
+      .put(`${prefix}/actors/:actorId/avatars/config`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -84,7 +84,7 @@ export function configRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .get(prefix + "/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
+      .get(`${prefix}/worlds/:worldId/avatars/config/:actorId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -112,7 +112,7 @@ export function configRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .put(prefix + "/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
+      .put(`${prefix}/worlds/:worldId/avatars/config/:actorId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
