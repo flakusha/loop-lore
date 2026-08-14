@@ -30,8 +30,7 @@ request through the LLM queue (`epic-llm-queue.md`).
 
 - `src/assistant/commands/image.ts` — `/image` command returns a frontend action dispatch
   (`action: "generate-image"`, 832 bytes), no backend adapter wiring.
-- `src/assistant/sd.ts` — `SDRequest` / `generateImage` / `getAssetKind` / `buildEntityPrompt`
-  are dead stubs (no provider wiring).
+- `src/assistant/sd.ts` — ~~dead stubs~~ REMOVED 2026-08-14 (zero imports; reimplement from scratch when provider is ready).
 - No third-party API dispatch route exists. No `configs/templates/workflows/` directory.
 - Model family presets (tags vs natural vs JSON vs edit-instruction) are not implemented.
 

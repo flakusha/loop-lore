@@ -250,7 +250,7 @@ interface TouchGesture {
 
 ### Phase 2: Mobile Support 🟡 Partial
 
-- Touch gesture system (`src/frontend/touch.ts` — swipe/tap/long-press)
+- Touch gesture system (`src/frontend/touch.ts` — ~~swipe/tap/long-press~~ REMOVED 2026-08-14, dead code; reimplement when mobile support is prioritized)
 - Responsive breakpoints (partial)
 - Mobile-specific patterns
 - Touch target sizing (44px CSS in `app.css`)

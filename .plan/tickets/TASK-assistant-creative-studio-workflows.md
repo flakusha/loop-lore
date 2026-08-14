@@ -28,8 +28,8 @@ merge: `replace` | `extend` | `override`) and the `AssistantIntent` taxonomy
 | `INTENT_PATTERNS`             | ✅ Shipped            | `src/regex/intent.ts:17-97`        |
 | `classifyIntent` (LLM)        | ⚠️ Partial             | `src/generation/auto-gen.ts:74`    |
 | Slash command parser          | ✅ Shipped            | `src/assistant/command-parser.ts`  |
-| `SDRequest` / `generateImage` | 🟡 Dead stub          | `src/assistant/sd.ts`              |
-| `ScenarioSource`              | 🟡 Dead stub          | `src/assistant/scenario-source.ts` |
+| `SDRequest` / `generateImage` | ✅ Removed 2026-08-14 | deleted (dead stub, zero imports; reimplement from scratch) |
+| `ScenarioSource`              | ✅ Removed 2026-08-14 | deleted (dead stub, zero imports; reimplement from scratch) |
 | `/image` command              | 🟡 Action dispatch    | `src/assistant/commands/image.ts`  |
 | `detectIntent()`              | ✅ Removed 2026-08-07 | see `.plan/backlog/open.md` row 4  |
 
@@ -113,8 +113,8 @@ User message
   - `confirmAndDispatch()` — final confirmation → NSFW check → dispatch
 - [ ] Implement model family formatter engine (reads `model-families.yaml` presets)
 - [ ] Create `src/assistant/workflow-runner.test.ts`
-- [ ] Activate `src/assistant/sd.ts` stubs (`generateImage`, entity→asset mapping)
-- [ ] Activate `src/assistant/scenario-source.ts` stubs (DB table + reuse in generation)
+- [x] ~~Activate `src/assistant/sd.ts` stubs~~ — DELETED 2026-08-14 (dead code cleanup; reimplement from scratch when provider is ready)
+- [x] ~~Activate `src/assistant/scenario-source.ts` stubs~~ — DELETED 2026-08-14 (dead code cleanup; reimplement from scratch when DB table exists)
 
 - [ ] Wire dispatch to `POST /api/generation/video` + existing generation pipelines
 - [ ] Wire third-party API dispatch to `TASK-assistant-third-party-api-integration.md`
@@ -149,8 +149,8 @@ User message
 | `src/regex/intent.ts`                             | modify                           |
 | `src/assistant/workflow-runner.ts`                | new                              |
 | `src/assistant/workflow-runner.test.ts`           | new                              |
-| `src/assistant/sd.ts`                             | activate                         |
-| `src/assistant/scenario-source.ts`                | activate                         |
+| `src/assistant/sd.ts`                             | reimplement (deleted 2026-08-14)  |
+| `src/assistant/scenario-source.ts`                | reimplement (deleted 2026-08-14)  |
 | `src/routes/generation/video.ts`                  | new                              |
 | `src/routes/generation/third-party.ts`            | new (third-party API dispatch)   |
 | `src/frontend/creative-studio/workflow.ts`        | new                              |

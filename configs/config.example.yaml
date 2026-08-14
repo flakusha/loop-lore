@@ -230,7 +230,7 @@ headers:
   # crossOriginEmbedderPolicy: null    # require-corp | null  (keep null until wasm/SAB ready)
   crossOriginResourcePolicy: cross-origin # same-origin | cross-origin
   immutableHashedAssets: true
-  linkPreload: ["/vendor.js", "/app.js", "/css/app.css"]
+  linkPreload: ["/alpine-init.js", "/pages.js", "/css/app.css"]
   # acceptClientHints: ["Device-Memory", "RTT"]   # needs HTTPS; opt-in client hints
   # saveData: false
   earlyHints:

@@ -281,7 +281,7 @@ upgradeInsecureRequests = true
 # crossOriginEmbedderPolicy = ""      # require-corp | "" (omit; keep off until wasm/SAB ready)
 crossOriginResourcePolicy = "cross-origin"
 immutableHashedAssets = true
-linkPreload = ["/vendor.js", "/app.js", "/css/app.css"]
+linkPreload = ["/alpine-init.js", "/pages.js", "/css/app.css"]
 # acceptClientHints = ["Device-Memory", "RTT"]
 earlyHints = { enabled = false }
 # nel = '{ "report_to": "default", "max_age": 31536000 }'
