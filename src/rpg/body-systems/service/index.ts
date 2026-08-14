@@ -16,6 +16,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { HeatPhase, } from "../../../db/enums";
+import { Species, } from "../enums";
 import type { DB, } from "../../../db/schema";
 import {
   calculateArousalModifier as calculateArousalModifierDispatch,
@@ -97,7 +98,7 @@ export class BodySystemService {
    */
   async getHeatCycle(
     actorId: string,
-    species = "human",
+    species: string = Species.Human,
   ): Promise<HeatCycleState> {
     return getHeatCycleDispatch(this.db, actorId, species,);
   }
