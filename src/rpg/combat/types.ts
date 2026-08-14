@@ -38,21 +38,23 @@ export interface Combatant {
 }
 
 /** Action types in combat */
-export type ActionType =
-  | "attack"
-  | "cast_spell"
-  | "use_item"
-  | "dash"
-  | "disengage"
-  | "dodge"
-  | "help"
-  | "hide"
-  | "ready"
-  | "grapple"
-  | "shove"
-  | "bonus_action"
-  | "reaction"
-  | "free_action";
+export const ActionType = {
+  Attack: "attack",
+  CastSpell: "cast_spell",
+  UseItem: "use_item",
+  Dash: "dash",
+  Disengage: "disengage",
+  Dodge: "dodge",
+  Help: "help",
+  Hide: "hide",
+  Ready: "ready",
+  Grapple: "grapple",
+  Shove: "shove",
+  BonusAction: "bonus_action",
+  Reaction: "reaction",
+  FreeAction: "free_action",
+} as const;
+export type ActionType = (typeof ActionType)[keyof typeof ActionType];
 
 /** Result of an attack roll */
 export interface AttackResult {
@@ -106,10 +108,17 @@ export type DamageType =
   | "healing";
 
 /** Damage resistance/vulnerability */
+export const DamageModifier = {
+  Resistant: "resistant",
+  Vulnerable: "vulnerable",
+  Immune: "immune",
+} as const;
+export type DamageModifier = (typeof DamageModifier)[keyof typeof DamageModifier];
+
 export interface DamageResistance {
   type: DamageType;
   /** "resistant" = half damage, "vulnerable" = double, "immune" = zero */
-  modifier: "resistant" | "vulnerable" | "immune";
+  modifier: DamageModifier;
 }
 
 /** Initiative roll result */

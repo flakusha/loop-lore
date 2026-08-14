@@ -8,15 +8,16 @@
  * factory in `index.ts`. Bodies migrated verbatim.
  */
 import { edgeKey, } from "./edge-key";
-import type {
-  CrossSystemEvent,
+import {
+  type CrossSystemEvent,
+  EdgeDirection,
   EventDirection,
-  GapStatus,
-  IntegrationEdge,
-  IntegrationRegistryContext,
-  InterfaceContract,
-  PlayerStateLayer,
-  SystemId,
+  type GapStatus,
+  type IntegrationEdge,
+  type IntegrationRegistryContext,
+  type InterfaceContract,
+  type PlayerStateLayer,
+  type SystemId,
 } from "./types";
 
 export interface GetContractArgs {
@@ -38,7 +39,7 @@ export interface GetDependenciesArgs {
 export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
-    if (e.source === systemId && (e.direction === "depends_on" || e.direction === "bidirectional")) {
+    if (e.source === systemId && (e.direction === EdgeDirection.DependsOn || e.direction === EdgeDirection.Bidirectional)) {
       out.push(e,);
     }
   }
@@ -54,7 +55,7 @@ export interface GetDependentsArgs {
 export function getDependents({ thisL, systemId, }: GetDependentsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
-    if (e.target === systemId && (e.direction === "depended_by" || e.direction === "bidirectional")) {
+    if (e.target === systemId && (e.direction === EdgeDirection.DependedBy || e.direction === EdgeDirection.Bidirectional)) {
       out.push(e,);
     }
   }
@@ -117,7 +118,7 @@ export function getEvents(
     for (const ev of e.events) {
       if (
         (ev.source === systemId || ev.target === systemId) &&
-        (!direction || ev.direction === direction || ev.direction === "both")
+        (!direction || ev.direction === direction || ev.direction === EventDirection.Both)
       ) {
         out.push(ev,);
       }
@@ -180,7 +181,7 @@ export function getGraph({ thisL, }: GetGraphArgs,): Map<SystemId, SystemId[]> {
     if (!adj.has(edge.source,)) { adj.set(edge.source, [],); }
     if (!adj.has(edge.target,)) { adj.set(edge.target, [],); }
     adj.get(edge.source,)!.push(edge.target,);
-    if (edge.direction === "bidirectional") {
+    if (edge.direction === EdgeDirection.Bidirectional) {
       adj.get(edge.target,)!.push(edge.source,);
     }
   }

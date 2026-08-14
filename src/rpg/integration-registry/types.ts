@@ -30,7 +30,12 @@ export type SystemId =
   | "world_location_traits";
 
 /** Direction of a dependency or integration edge. */
-export type EdgeDirection = "depends_on" | "depended_by" | "bidirectional";
+export const EdgeDirection = {
+  DependsOn: "depends_on",
+  DependedBy: "depended_by",
+  Bidirectional: "bidirectional",
+} as const;
+export type EdgeDirection = (typeof EdgeDirection)[keyof typeof EdgeDirection];
 
 /** Severity when an integration edge is missing or broken. */
 export type GapSeverity = "high" | "medium" | "low";
@@ -43,7 +48,12 @@ export type InterfaceKind =
   | "loader_hook" // Loader pipeline (skill/spell affected by items)
   | "config_shared"; // Shared config structure
 
-export type EventDirection = "emits" | "subscribes" | "both";
+export const EventDirection = {
+  Emits: "emits",
+  Subscribes: "subscribes",
+  Both: "both",
+} as const;
+export type EventDirection = (typeof EventDirection)[keyof typeof EventDirection];
 export type StateLayerClassification = "exclusive" | "stackable";
 
 // ── Integration Edge ──────────────────────────────────────────
