@@ -20,7 +20,12 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
       Alpine.store("ui",).showCharacterInfo = true;
     };
     this._toggleMemoryPanelHandler = () => {
-      Alpine.store("ui",).showMemoryPanel = !Alpine.store("ui",).showMemoryPanel;
+      const ui = Alpine.store("ui",);
+      ui.showMemoryPanel = !ui.showMemoryPanel;
+      // Load memories when the panel opens so the list is populated.
+      if (ui.showMemoryPanel) {
+        void this.loadMemories();
+      }
     };
     document.addEventListener("toggle-chat-list", this._toggleChatListHandler,);
     document.addEventListener("toggle-gallery", this._toggleGalleryHandler,);

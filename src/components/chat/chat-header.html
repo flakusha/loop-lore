@@ -33,6 +33,16 @@
     </button>
     <button
       class="btn-icon"
+      x-bind:title="t('chats.memories')"
+      x-bind:aria-label="t('chats.memories')"
+      @click="$store.ui.showMemoryPanel = !$store.ui.showMemoryPanel"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-memory-panel"
+    >
+      {{icon:brain}}
+    </button>
+    <button
+      class="btn-icon"
       title="Sections"
       aria-label="Sections"
       @click="$store.ui.showSectionsPanel = !$store.ui.showSectionsPanel"
