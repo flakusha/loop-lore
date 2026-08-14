@@ -30,7 +30,7 @@ wiring + docs reconciliation **merged 2026-08-14**) · Regex ✅ · P3–P5 → 
 | A7  | e2e browser stabilization (auth redirect-loop)                                          | `../priority.md` "Open → close"              | ▲ now                           |                       |
 | A8  | Unwired-code close-out (LoRA wire/drop + remaining RPG services)                        | `../priority.md` P5 + `epic-rpg-wiring-phase3.md` | ▲ now                     |                       |
 | A9  | Release artifacts (release-process, tag `v0.1.0`, changelog) + push `dev`→`origin/dev`  | `../priority.md` "Open → close"              | ▲ now                           |                       |
-| B8  | Memory selection UI (mid-chat, pinning) + prompt-template UX                           | `../priority.md` P4                          | ▲ now                           |                       |
+| B8  | Memory selection UI (mid-chat, pinning) + prompt-template UX                           | `../priority.md` P4                          | ▲ now                           | 🟡 partial (prompt-template read-only preview shipped 2026-08-14; memory-selection UI open) |
 | B10 | Fine-tuning UX (provider health, fine-tune UI)                                         | `../priority.md` P4                          | ▲ now                           |                       |
 | C1  | Chat-type matrix UI remainder (group-chat UI, unified GM↔assistant view)               | `../priority.md` P2-D                        | ▲ now                           |                       |
 | C2  | NSFW 5-tier character rating runtime enforcement                                       | `../priority.md` P4                          | ▲ now                           |                       |
@@ -53,7 +53,7 @@ wiring + docs reconciliation **merged 2026-08-14**) · Regex ✅ · P3–P5 → 
 linking) · G4 (authoring ownership indicators) — these sit in § Hardening / deferred
 clusters below. Rows removed here: all shipped since last refresh — **B1** (register
 frontend page ✅ 2026-08-12), **B7** (prompt-template registry `src/prompts/registry.ts` ✅
-2026-08-12), **A6** (size-strict ✅ closed 2026-08-12 — 0 files over 250L), **F2** (M5
+2026-08-12), **A6** (size-strict ✅ closed 2026-08-14 — re-cleared: chat-settings, chat-types/core, crafting/recipes split), **F2** (M5
 ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved), **W1** (worktree
 `rpg-wire-routes` ✅ merged 2026-08-14), **W2** (worktree `docs-reconcile` ✅ merged
 2026-08-14), **W4** (SSE refactor ✅ committed `082c20cf`), and MFA (deferred P6+).
