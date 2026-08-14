@@ -27,6 +27,86 @@ A "wise, patient" character who is sad will express wisdom more quietly and pati
 | 61-80  | Happy     | More enthusiastic, cooperative                |
 | 81-100 | Joyful    | Exuberant, takes risks, shares freely         |
 
+### Emotional Multi-Dimensionality (Extension)
+
+The single happiness axis is a simplification. Real emotional states are
+multi-dimensional. Three established models from psychology provide the
+foundation:
+
+**Plutchik's Wheel** — 8 primary emotions in opposing pairs:
+joy/sadness, trust/disgust, fear/anger, surprise/anticipation.
+Emotions combine into dyads (e.g. joy + trust = love).
+
+**OCC Model** (Ortony, Clore, Collins) — 22 emotional states based on
+appraisal of events, agents, and objects. Focuses on _why_ an emotion
+occurs (approval, reproach, gratitude, pity, etc.).
+
+**PAD Model** (Mehrabein & Russell) — 3 continuous axes:
+- **Pleasure** (0–100): displeasure ↔ pleasure (maps to current happiness)
+- **Arousal** (0–100): calm ↔ excited (energy level)
+- **Dominance** (0–100): submissive ↔ dominant (control feeling)
+
+**Proposed extension:** Add `arousal` and `dominance` axes alongside
+existing `happiness` (which maps to Pleasure). This enables emotional
+states the single axis cannot express:
+
+| State         | P  | A  | D  | Current label |
+| ------------- | -- | -- | -- | ------------- |
+| Calm content  | 70 | 20 | 50 | "happy"       |
+| Excited joy   | 80 | 90 | 60 | "joyful"      |
+| Angry defiance| 20 | 85 | 80 | "angry"       |
+| Depressed     | 10 | 15 | 20 | "depressed"   |
+| Anxious fear  | 25 | 80 | 15 | "anxious"     |
+| Smug superiority | 60 | 30 | 90 | "content"  |
+
+```typescript
+interface EmotionalState {
+  pleasure: number;   // 0–100 (maps to current happiness)
+  arousal: number;    // 0–100 (calm ↔ excited)
+  dominance: number;  // 0–100 (submissive ↔ dominant)
+}
+```
+
+The existing `MoodLabel` enum derives from PAD coordinates via
+threshold rules. The `MoodExpressionModifier` extends with arousal and
+dominance effects on verbosity, risk-taking, and cooperation.
+
+### Emotional Contagion (Extension)
+
+Characters in proximity influence each other's emotional states.
+This is not personality change — it is _mood transfer_ through
+social interaction.
+
+**Contagion rules:**
+1. **Proximity** — only characters in the same location/chat affect
+   each other. Distance attenuates the effect.
+2. **Relationship strength** — high `strength` relationships amplify
+   contagion (a trusted ally's mood transfers more than a stranger's).
+3. **Dominance axis** — high-dominance characters impose mood on
+   low-dominance characters more than the reverse.
+4. **Resistance** — `mood_stability` acts as resistance to contagion.
+   A character with stability 90 is nearly immune.
+
+```typescript
+interface ContagionConfig {
+  enabled: boolean;
+  base_rate: number;           // 0.0–1.0: how much mood transfers per turn
+  proximity_weight: number;    // multiplier for same-location
+  relationship_weight: number; // multiplier per relationship tier
+  dominance_weight: number;    // multiplier for dominance differential
+  stability_resistance: number; // how much stability reduces contagion
+}
+```
+
+**Prompt integration:** When contagion is active, the prompt section
+emits the group's aggregate mood and any significant mood shifts:
+_"The group's mood has shifted toward anxiety (avg pleasure: 35).
+[Character A] is particularly affected by [Character B]'s distress."_
+
+**Anti-spiral:** Contagion has a floor (pleasure cannot drop below 0)
+and a recovery mechanism (baseline_happiness pulls mood back over time).
+This prevents infinite negative spirals.
+
 ### Mood State
 
 ```typescript
