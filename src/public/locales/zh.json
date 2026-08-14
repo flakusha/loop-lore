@@ -1113,7 +1113,9 @@
     "roleUpdatedFor": "{role}角色已更新",
     "roleClearedFor": "{role}角色已清除",
     "failedSave": "保存失败",
-    "failedCreate": "创建失败"
+    "failedCreate": "创建失败",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance"
   },
   "status": {
     "characterResponding": "角色正在回复……",

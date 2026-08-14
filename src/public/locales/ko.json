@@ -1113,7 +1113,9 @@
     "roleUpdatedFor": "{role} 역할이 업데이트되었습니다",
     "roleClearedFor": "{role} 역할이 해제되었습니다",
     "failedSave": "저장에 실패했습니다",
-    "failedCreate": "생성에 실패했습니다"
+    "failedCreate": "생성에 실패했습니다",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",

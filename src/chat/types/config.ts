@@ -71,9 +71,25 @@ export function resolveFeatureFlags(
  * `GameMasterConfig` from `src/story/types.ts`. Story mode uses the richer
  * `GameMasterConfig` with LLM settings, human GM, escalation thresholds.
  */
+/** Narrative guidance a human Game Master applies to a story chat. */
+export interface GmGuidance {
+  /** Free-form narrative constraints for the next turn (in-character, topic, tone). */
+  constraints: string[];
+  /** Character the GM wants to respond next. */
+  targetCharacter?: string;
+  /** Scene description broadcast to all participants. */
+  sceneDescription?: string;
+  /** Per-participant turn priority for the next round. */
+  turnPriority: Record<string, "high" | "medium" | "low">;
+}
+
 export interface GmConfig {
   /** Assistant's role in this chat: off, helper, gm, or moderator */
   assistantRole?: "off" | "helper" | "gm" | "moderator";
   /** Visual novel mode (image-heavy, sequential panel display) */
   visualNovel?: boolean;
+  /** Story-mode flag enabling the human-GM guided-story UX. */
+  storyMode?: boolean;
+  /** Active human-GM narrative guidance (persisted, mutable at runtime). */
+  gmGuidance?: GmGuidance;
 }

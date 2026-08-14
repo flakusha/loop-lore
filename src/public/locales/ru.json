@@ -1113,7 +1113,9 @@
     "roleUpdatedFor": "Роль {role} обновлена",
     "roleClearedFor": "Роль {role} снята",
     "failedSave": "Не удалось сохранить",
-    "failedCreate": "Не удалось создать"
+    "failedCreate": "Не удалось создать",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",

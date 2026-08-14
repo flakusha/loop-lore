@@ -34,6 +34,7 @@ export const uiStoreDefinition: Record<string, unknown> = {
   hasActiveChat: false,
   showGmPanel: false,
   showParticipants: false,
+  showGmGuidance: false,
 
   // ── Active entity refs ───────────────────────────────
   activePersona: null,
