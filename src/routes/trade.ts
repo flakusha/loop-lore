@@ -14,6 +14,7 @@ import type { Kysely, } from "kysely";
 import type { Db, } from "../db";
 import type { DB, } from "../db/schema";
 import { TradeService, } from "../services/trade";
+import { safeJsonStringify, } from "../utils/safe-json";
 import { ErrorResponse, Id, } from "../validation/schemas";
 import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "./http-utils";
 import { requireUserId, } from "./http-utils/responses";
@@ -127,10 +128,10 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
         }
         if (code === "VALIDATION") {
           set.status = 400;
-          const message = error instanceof Error
-            ? error.message
-            : (typeof error === "string" ? error : "Validation failed");
-          return { error: message, };
+          const result = safeJsonStringify(error,);
+          const serialized = result.ok ? result.value : "Validation error";
+          const errorText = error instanceof Error ? error.message : (typeof error === "string" ? error : serialized);
+          return { error: errorText, };
         }
       },)
   ) as unknown as Elysia;

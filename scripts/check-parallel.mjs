@@ -36,6 +36,9 @@ const checks = {
   // Dead-code analysis (knip)
   "dead - code (knip)": "bun run dead:code",
 
+  // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
+  "wiring - check": "bun run scripts/check-wiring.ts",
+
   // DB schema staleness (regenerates into temp dir, diffs vs committed)
   "db - schema gate": "bun run scripts/check-db-schemas.ts",
 
