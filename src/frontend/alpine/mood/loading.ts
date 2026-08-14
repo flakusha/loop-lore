@@ -11,7 +11,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     this._moodLoading = true;
     try {
       // Get the character (NPC) in this chat
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (!res.ok) { return; }
       const participants = await res.json();
       const npc = Array.isArray(participants,)
@@ -23,7 +23,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       // (falls back to the global mood when the chat has no world).
       this._activeChatWorldId = null;
       try {
-        const chatRes = await apiFetch(`/api/chats/${this.activeChat}`,);
+        const chatRes = await apiFetch(`/api/v1/chats/${this.activeChat}`,);
         if (chatRes.ok) {
           const activeChat = await chatRes.json();
           this._activeChatWorldId = activeChat.world_id ?? null;
@@ -64,7 +64,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     if (!this._mood || !this.activeChat) { return; }
     try {
       // Get the character (NPC) in this chat
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (!res.ok) { return; }
       const participants = await res.json();
       const npc = Array.isArray(participants,)
@@ -93,7 +93,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
   async applyMoodDelta(delta: number,) {
     if (!this._mood || !this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (!res.ok) { return; }
       const participants = await res.json();
       const npc = Array.isArray(participants,)
