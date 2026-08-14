@@ -7766,7 +7766,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-PLAN-E2E-STABILIZATION.md"
+    "source": ".plan/tickets/TASK-PLAN-E2E-STABILIZATION.md",
+    "status": "done"
   },
   "TASK-PLAN-LINT-TS-DEBT": {
     "hash": "cbb3073",
@@ -7777,7 +7778,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-PLAN-LINT-TS-DEBT.md"
+    "source": ".plan/tickets/TASK-PLAN-LINT-TS-DEBT.md",
+    "status": "done"
   },
   "TASK-PLAN-MEMORY-SELECTION-UI": {
     "hash": "05c03f1",
