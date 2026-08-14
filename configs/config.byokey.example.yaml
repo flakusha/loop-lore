@@ -1,0 +1,9 @@
+# BYO Key configuration example (YAML)
+# Domain: byokey — bring-your-own API key
+# Twin of config.byokey.example.toml
+
+byoKey:
+  enabled: true
+
+  # Optional: server-side encryption key for stored keys
+  # encryptionKey: "base64-encoded-32-byte-key"
