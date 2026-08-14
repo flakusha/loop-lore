@@ -13,7 +13,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "characters-create", },)
     .post(
-      prefix + "/actors",
+      `${prefix}/actors`,
       async (ctx: any,) => {
         const {
           displayName,

@@ -12,7 +12,7 @@ import { handleDefinition, handleDefinitions, handleDeleteDefinition, } from "./
 
 export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-items-definitions", },)
-    .get(prefix + "/worlds/:worldId/items/:itemId", async (ctx: any,) => {
+    .get(`${prefix}/worlds/:worldId/items/:itemId`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, itemId, } = ctx.params;
@@ -30,7 +30,7 @@ export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB>
         tags: ["Story Items",],
       },
     },)
-    .put(prefix + "/worlds/:worldId/items/:itemId", async (ctx: any,) => {
+    .put(`${prefix}/worlds/:worldId/items/:itemId`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, itemId, } = ctx.params;
@@ -48,7 +48,7 @@ export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB>
         tags: ["Story Items",],
       },
     },)
-    .delete(prefix + "/worlds/:worldId/items/:itemId", async (ctx: any,) => {
+    .delete(`${prefix}/worlds/:worldId/items/:itemId`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, itemId, } = ctx.params;
@@ -66,7 +66,7 @@ export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB>
         tags: ["Story Items",],
       },
     },)
-    .get(prefix + "/worlds/:worldId/items", async (ctx: any,) => {
+    .get(`${prefix}/worlds/:worldId/items`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;
@@ -94,7 +94,7 @@ export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB>
         tags: ["Story Items",],
       },
     },)
-    .post(prefix + "/worlds/:worldId/items", async (ctx: any,) => {
+    .post(`${prefix}/worlds/:worldId/items`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;

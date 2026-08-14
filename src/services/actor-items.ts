@@ -62,23 +62,24 @@ export class ActorItemsService {
       .select(["weight", "quantity",],)
       .where("actor_id", "=", actorId,)
       .execute();
-    return rows.reduce((sum, r,) => sum + (r.weight ?? 0) * r.quantity, 0,);
+    let carried = 0;
+    for (const r of rows) { carried += (r.weight ?? 0) * r.quantity; }
+    return carried;
   }
 
   /** Current load vs capacity + encumbrance level. */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
-    const [carried, capacity,] = await Promise.all([
-      this.getCarriedWeight(actorId,),
-      this.capacityFor(actorId,),
-    ],);
+    const carried = await this.getCarriedWeight(actorId,);
+    const capacity = await this.capacityFor(actorId,);
     const ratio = capacity > 0 ? carried / capacity : 1;
     const encumbrance: Encumbrance = ratio < 0.8
       ? ENCUMBRANCE.Light
-      : ratio <= 1
-      ? ENCUMBRANCE.Medium
-      : ENCUMBRANCE.Overloaded;
-    let threshold = capacity;
-    if (encumbrance === ENCUMBRANCE.Light) { threshold = Math.floor(capacity * 0.8,); }
+      : (ratio <= 1
+        ? ENCUMBRANCE.Medium
+        : ENCUMBRANCE.Overloaded);
+    const threshold = encumbrance === ENCUMBRANCE.Light
+      ? Math.floor(capacity * 0.8,)
+      : capacity;
     return {
       carried,
       capacity,

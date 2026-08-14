@@ -12,7 +12,7 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-sections-list", },)
       // ── List sections for a chat (ordered) ────────────────
       .get(
-        prefix + "/chats/:id/sections",
+        `${prefix}/chats/:id/sections`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

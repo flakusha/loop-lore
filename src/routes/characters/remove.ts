@@ -11,7 +11,7 @@ export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "characters-remove", },)
     .delete(
-      prefix + "/actors/:actorId",
+      `${prefix}/actors/:actorId`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

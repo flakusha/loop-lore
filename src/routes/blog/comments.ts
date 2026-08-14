@@ -17,7 +17,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-comments", },)
-    .post(prefix + "/blog/posts/:id/comments", async (ctx: any,) => {
+    .post(`${prefix}/blog/posts/:id/comments`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const t = ctx.t as TranslatorFn | undefined;
@@ -48,7 +48,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog",],
       },
     },)
-    .get(prefix + "/blog/posts/:id/comments", async (ctx: any,) => {
+    .get(`${prefix}/blog/posts/:id/comments`, async (ctx: any,) => {
       const comments = await svc.listComments(ctx.params.id, {
         limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,

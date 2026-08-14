@@ -10,7 +10,7 @@ export function statsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-stats", },)
       // ── Stats ──────────────────────────────────────────────
-      .get(prefix + "/admin/stats", async (ctx: any,) => {
+      .get(`${prefix}/admin/stats`, async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

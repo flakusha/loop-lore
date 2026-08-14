@@ -38,7 +38,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "vn-choices", },)
       // List available choices for a scene
       .get(
-        prefix + "/chats/:id/vn-choices",
+        `${prefix}/chats/:id/vn-choices`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -72,7 +72,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // Create a new choice
       .post(
-        prefix + "/chats/:id/vn-choices",
+        `${prefix}/chats/:id/vn-choices`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -127,7 +127,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // Select a choice
       .post(
-        prefix + "/chats/:id/vn-choices/:choiceId/select",
+        `${prefix}/chats/:id/vn-choices/:choiceId/select`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -189,7 +189,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // Get choice history (all selected choices)
       .get(
-        prefix + "/chats/:id/vn-choices/history",
+        `${prefix}/chats/:id/vn-choices/history`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

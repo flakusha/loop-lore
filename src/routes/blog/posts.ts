@@ -18,7 +18,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-posts", },)
-    .post(prefix + "/blog/posts", async (ctx: any,) => {
+    .post(`${prefix}/blog/posts`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -49,7 +49,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog",],
       },
     },)
-    .get(prefix + "/blog/posts/:id", async (ctx: any,) => {
+    .get(`${prefix}/blog/posts/:id`, async (ctx: any,) => {
       const t = ctx.t as TranslatorFn | undefined;
       const post = await svc.getPost(ctx.params.id,);
       if (!post) {
@@ -68,7 +68,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog",],
       },
     },)
-    .get(prefix + "/blog/posts", async (ctx: any,) => {
+    .get(`${prefix}/blog/posts`, async (ctx: any,) => {
       const query = ctx.query as Record<string, string>;
       const posts = await svc.listPosts({
         author_id: query.author_id,
@@ -90,7 +90,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog",],
       },
     },)
-    .patch(prefix + "/blog/posts/:id", async (ctx: any,) => {
+    .patch(`${prefix}/blog/posts/:id`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
@@ -129,7 +129,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog",],
       },
     },)
-    .delete(prefix + "/blog/posts/:id", async (ctx: any,) => {
+    .delete(`${prefix}/blog/posts/:id`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
