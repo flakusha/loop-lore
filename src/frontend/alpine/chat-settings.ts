@@ -225,4 +225,5 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     }
     await this.loadPersonas();
   },
+
 };
