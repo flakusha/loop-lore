@@ -130,7 +130,7 @@ Postgres handles:
 
 ## Environment Configuration
 
-See [`docs/configuration.md`](./configuration.md) for full env reference.
+See [`docs/spec/config-file-separation.md`](./config-file-separation.md) for full env reference.
 
 ## Documentation Hosting
 
