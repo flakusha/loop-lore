@@ -1,6 +1,6 @@
 # TASK-PLAN-REGISTER-PAGE: Build registration frontend page
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**:
 **Assignee**:

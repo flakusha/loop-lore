@@ -1,6 +1,6 @@
 # TASK-PLAN-SIZE-STRICT-DEBT: Close size-strict debt (10 files) -> check 17/17
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**:
 **Assignee**:

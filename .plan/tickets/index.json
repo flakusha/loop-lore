@@ -2752,7 +2752,8 @@
     "priority": "P2 — Medium",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-actor-item-service.md"
+    "source": ".plan/tickets/TASK-actor-item-service.md",
+    "status": "done"
   },
   "TASK-ACTOR-LICENSING-FRONTEND": {
     "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
@@ -4309,7 +4310,8 @@
     "priority": "P2 — Medium",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-clean-transfer-orphans.md"
+    "source": ".plan/tickets/TASK-clean-transfer-orphans.md",
+    "status": "done"
   },
   "TASK-CLI-IMPORT-EXPORT": {
     "epic": "epic-import-export-io\\",
@@ -5715,7 +5717,8 @@
     "priority": "P3 — Low",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    "source": ".plan/tickets/TASK-fix-actor-item-value-type.md",
+    "status": "done"
   },
   "TASK-FIX-CRYPTO-ISOLATION": {
     "epic": "",
@@ -6320,7 +6323,8 @@
     "priority": "P2 — Medium",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-implement-item-transfer-event.md"
+    "source": ".plan/tickets/TASK-implement-item-transfer-event.md",
+    "status": "done"
   },
   "TASK-IMPLEMENT-MEMORY-DECAY-LOGIC": {
     "hash": "ab3dad5",
@@ -6658,7 +6662,8 @@
     "priority": "P0 — Critical",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-link-npc-inventory.md"
+    "source": ".plan/tickets/TASK-link-npc-inventory.md",
+    "status": "done"
   },
   "TASK-LIVING-WORLD-PERSISTENCE": {
     "hash": "pending",
@@ -6822,7 +6827,8 @@
     "priority": "P2 — Medium",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-map-battle-equipment.md"
+    "source": ".plan/tickets/TASK-map-battle-equipment.md",
+    "status": "done"
   },
   "TASK-MATRIX-INTEGRATION": {
     "epic": "epic-communications-integrations.md",
@@ -7726,7 +7732,8 @@
     "priority": "P1 — High",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-persist-loot-drops.md"
+    "source": ".plan/tickets/TASK-persist-loot-drops.md",
+    "status": "done"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
     "hash": "5fb353d",
@@ -7781,7 +7788,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-PLAN-PROMPT-REGISTRY.md"
+    "source": ".plan/tickets/TASK-PLAN-PROMPT-REGISTRY.md",
+    "status": "done"
   },
   "TASK-PLAN-REGISTER-PAGE": {
     "hash": "2c14237",
@@ -7792,7 +7800,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-PLAN-REGISTER-PAGE.md"
+    "source": ".plan/tickets/TASK-PLAN-REGISTER-PAGE.md",
+    "status": "done"
   },
   "TASK-PLAN-RELEASE-V010": {
     "hash": "e95b520",
@@ -7814,7 +7823,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-PLAN-SIZE-STRICT-DEBT.md"
+    "source": ".plan/tickets/TASK-PLAN-SIZE-STRICT-DEBT.md",
+    "status": "done"
   },
   "TASK-PLAN-UNWIRED-CODEOUT": {
     "hash": "fea7fe2",
@@ -9605,7 +9615,8 @@
     "priority": "P0 — Critical",
     "epic": "epic-item-systems-unification",
     "tags": [],
-    "source": ".plan/tickets/TASK-unify-item-types.md"
+    "source": ".plan/tickets/TASK-unify-item-types.md",
+    "status": "done"
   },
   "TASK-UNIFY-LOGGING-OUTPUT-TO-CANONICAL-JSONL": {
     "hash": "2850cf8",

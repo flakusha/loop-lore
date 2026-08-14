@@ -1,6 +1,6 @@
 # TASK-PLAN-PROMPT-REGISTRY: Implement prompt-template registry
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**:
 **Assignee**:
