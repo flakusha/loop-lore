@@ -38,6 +38,12 @@ export interface GameMasterConfig {
     temperature: number;
     maxTokens: number;
   };
+  /**
+   * Per-actor model overrides for multi-LLM story mode. Keyed by actor id;
+   * when present, `llmDecision` uses the actor's model/provider instead of the
+   * GM `llmConfig`. Falls back to `llmConfig` when an actor is absent.
+   */
+  actorModels?: Record<string, { model: string; provider: string }>;
   humanGM?: {
     actorId: string;
     notifications: boolean;
