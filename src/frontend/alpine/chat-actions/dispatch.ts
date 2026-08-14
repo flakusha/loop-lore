@@ -65,7 +65,7 @@ async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId
   }
   try {
     // Fetch chat to get world_id (backend requires /api/worlds/:worldId/quests)
-    const chatRes = await apiFetch(`/api/chats/${chatId}`,);
+    const chatRes = await apiFetch(`/api/v1/chats/${chatId}`,);
     if (!chatRes.ok) {
       ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadChatForQuest",), },);
       return;
@@ -158,7 +158,7 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
     if (action === "impersonate-toggle") {
       const mode = (payload?.mode as string) ?? "toggle";
       if (mode === "off") {
-        await apiFetch(`/api/chats/${chatId}/impersonate`, {
+        await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: null, },),
@@ -176,7 +176,7 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
       const characterName = (payload?.characterName as string) ?? "";
       if (!characterName) { return; }
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/participants`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/participants`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) { return; }
@@ -193,7 +193,7 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
           },);
           return;
         }
-        const putRes = await apiFetch(`/api/chats/${chatId}/impersonate`, {
+        const putRes = await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: target.actor_id, },),
