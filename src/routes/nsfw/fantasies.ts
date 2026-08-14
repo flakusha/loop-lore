@@ -11,7 +11,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-fantasies", },)
       .get(
-        prefix + "/nsfw/fantasies/:actorId",
+        `${prefix}/nsfw/fantasies/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -25,7 +25,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/fantasies",
+        `${prefix}/nsfw/fantasies`,
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -47,7 +47,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/fantasies/discover",
+        `${prefix}/nsfw/fantasies/discover`,
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -66,7 +66,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/fantasies/:id/explore",
+        `${prefix}/nsfw/fantasies/:id/explore`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

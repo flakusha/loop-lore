@@ -72,7 +72,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "invites", },)
       // ── Create ─────────────────────────────────────────────
       .post(
-        prefix + "/chats/:id/invites",
+        `${prefix}/chats/:id/invites`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -104,7 +104,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── List ───────────────────────────────────────────────
       .get(
-        prefix + "/chats/:id/invites",
+        `${prefix}/chats/:id/invites`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -122,7 +122,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── Revoke ─────────────────────────────────────────────
       .delete(
-        prefix + "/chats/:id/invites/:inviteId",
+        `${prefix}/chats/:id/invites/:inviteId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -144,7 +144,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── Join ───────────────────────────────────────────────
       .post(
-        prefix + "/invites/:code/join",
+        `${prefix}/invites/:code/join`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

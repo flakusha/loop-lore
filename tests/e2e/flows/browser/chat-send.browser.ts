@@ -64,7 +64,7 @@ describe("Chat send round-trip (plaintext)", () => {
     try {
       await openAndSelectChat(page,);
 
-      const sent = "round-trip-" + Date.now();
+      const sent = `round-trip-${Date.now()}`;
       await page.fill("[data-testid='message-input']", sent,);
       await page.click("[data-testid='send-button']",);
 
@@ -167,7 +167,7 @@ describe("Chat encryption flow (SMK configured)", () => {
         10_000,
       );
 
-      const secret = "encrypted-secret-" + Date.now();
+      const secret = `encrypted-secret-${Date.now()}`;
       await page.fill("[data-testid='message-input']", secret,);
       await page.click("[data-testid='send-button']",);
 

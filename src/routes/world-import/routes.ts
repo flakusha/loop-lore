@@ -8,7 +8,7 @@ import { rowOf, } from "./rows";
 import type { HandlerOpts, } from "./types";
 
 export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "/api",): Elysia {
-  return new Elysia({ name: "world-import", },).post(prefix + "/import/world", async (ctx: any,) => {
+  return new Elysia({ name: "world-import", },).post(`${prefix}/import/world`, async (ctx: any,) => {
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
     if (authResult instanceof Response) { return authResult; }
     const userId = authResult.context.userId;
@@ -49,5 +49,5 @@ export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "
         "Create a new world plus its locations and story state from a single WorldBundle JSON (as produced by the story export).",
       tags: ["Import",],
     },
-  },) as unknown as Elysia;
+  },);
 }

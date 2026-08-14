@@ -11,10 +11,8 @@ import { questWorldRoutes, } from "./world";
  * `elysia-app.ts` wiring is unchanged.
  */
 export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
-  return (
-    new Elysia({ name: "quests", },)
-      .use(questWorldRoutes({ database, },),)
-      .use(questCrudRoutes({ database, },),)
-      .use(questProgressRoutes({ database, },),)
-  ) as unknown as Elysia;
+  return new Elysia({ name: "quests", },)
+    .use(questWorldRoutes({ database, },),)
+    .use(questCrudRoutes({ database, },),)
+    .use(questProgressRoutes({ database, },),);
 }

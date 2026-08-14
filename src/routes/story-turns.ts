@@ -29,7 +29,7 @@ async function checkChatOwnership(
 
 export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia({ name: "story-turns", },)
-    .get(prefix + "/chats/:id/story-turns", async (ctx: any,) => {
+    .get(`${prefix}/chats/:id/story-turns`, async (ctx: any,) => {
       const { params, userId, userRole, error, request, } = ctx;
       const chatId = params.id as string;
 
@@ -78,7 +78,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
         tags: ["Story Turns",],
       },
     },)
-    .get(prefix + "/chats/:id/story-turns/:turnId", async (ctx: any,) => {
+    .get(`${prefix}/chats/:id/story-turns/:turnId`, async (ctx: any,) => {
       const { params, userId, userRole, error, } = ctx;
       const chatId = params.id as string;
       const turnId = params.turnId as string;
@@ -117,5 +117,5 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
         description: "Returns a single story turn by ID within a chat. Requires chat ownership or admin/solo role.",
         tags: ["Story Turns",],
       },
-    },) as unknown as Elysia;
+    },);
 }

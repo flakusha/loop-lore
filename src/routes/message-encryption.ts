@@ -29,7 +29,7 @@ function log(): Logger {
 
 export function messageEncryptionRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia()
-    .get(prefix + "/chats/:id/encryption-key", async (req,) => {
+    .get(`${prefix}/chats/:id/encryption-key`, async (req,) => {
       const userId = requireUserId(req,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(req,);
@@ -82,7 +82,7 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config }, 
         tags: ["Messages", "Encryption",],
       },
     },)
-    .get(prefix + "/encryption/status", async () => {
+    .get(`${prefix}/encryption/status`, async () => {
       return jsonResponse({
         encryptionEnabled: isEncryptionEnabled(),
         anonymousMode: isAnonymousModeEnabled(),
@@ -96,5 +96,5 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config }, 
         description: "Check whether encryption and anonymous mode are enabled on the server.",
         tags: ["Messages", "Encryption",],
       },
-    },) as unknown as Elysia;
+    },);
 }

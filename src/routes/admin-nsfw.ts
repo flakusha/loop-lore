@@ -33,7 +33,7 @@ interface NsfwAdminConfig {
 export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "admin-nsfw", },)
     // ── Get NSFW config ───────────────────────────────────
-    .get(prefix + "/admin/nsfw", async (ctx: any,) => {
+    .get(`${prefix}/admin/nsfw`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
@@ -60,7 +60,7 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
     },)
     // ── Update NSFW config ────────────────────────────────
     .put(
-      prefix + "/admin/nsfw",
+      `${prefix}/admin/nsfw`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -101,7 +101,7 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
       },
     )
     // ── List character NSFW policies ──────────────────────
-    .get(prefix + "/admin/nsfw/policy", async (ctx: any,) => {
+    .get(`${prefix}/admin/nsfw/policy`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;

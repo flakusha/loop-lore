@@ -26,7 +26,7 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-io-import", },)
       // ── Import Systems Data ─────────────────────────────────
-      .post(prefix + "/actors/:actorId/systems/import", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/systems/import`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -74,7 +74,7 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Import Systems Data from URL ────────────────────────
-      .post(prefix + "/actors/:actorId/systems/import/url", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/systems/import/url`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

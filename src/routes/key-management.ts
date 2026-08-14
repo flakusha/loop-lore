@@ -32,7 +32,7 @@ function log(): Logger {
 export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "key-management", },)
     // ── List actor keys ────────────────────────────────────────
-    .get(prefix + "/keys", async (ctx: any,) => {
+    .get(`${prefix}/keys`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -59,7 +59,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
     },)
     // ── Generate new named key ─────────────────────────────────
     .post(
-      prefix + "/keys",
+      `${prefix}/keys`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -117,7 +117,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
       },
     )
     // ── Rotate primary key ─────────────────────────────────────
-    .post(prefix + "/keys/rotate", async (ctx: any,) => {
+    .post(`${prefix}/keys/rotate`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -164,7 +164,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
     },)
     // ── Revoke key (irreversible) ──────────────────────────────
     .delete(
-      prefix + "/keys/:id",
+      `${prefix}/keys/:id`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

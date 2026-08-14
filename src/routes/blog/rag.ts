@@ -15,7 +15,7 @@ export function blogRagRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-rag", },)
-    .get(prefix + "/blog/posts/:id/sources", async (ctx: any,) => {
+    .get(`${prefix}/blog/posts/:id/sources`, async (ctx: any,) => {
       const sources = await svc.getRAGSources(ctx.params.id,);
       return jsonResponse({ success: true, sources, count: sources.length, },);
     }, {
@@ -28,7 +28,7 @@ export function blogRagRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog",],
       },
     },)
-    .post(prefix + "/blog/posts/:id/sources", async (ctx: any,) => {
+    .post(`${prefix}/blog/posts/:id/sources`, async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {

@@ -11,6 +11,7 @@ import {
   toEquipmentItem,
 } from "../../battle";
 import { ItemsService, } from "../../story/items";
+import { jsonParseOr, } from "../../utils";
 import { SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
@@ -20,7 +21,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   return new Elysia({ name: "battle-equipment", },)
     .post(
-      prefix + "/battle/equipment/calculate",
+      `${prefix}/battle/equipment/calculate`,
       (ctx: any,) => {
         try {
           const body = ctx.body as { items: EquipmentItem[] };
@@ -41,7 +42,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/equipment/calculate-from-items",
+      `${prefix}/battle/equipment/calculate-from-items`,
       async (ctx: any,) => {
         try {
           const body = ctx.body as { itemIds: string[]; equipped?: Record<string, boolean> };
@@ -53,27 +54,23 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select(["id", "name", "description", "category", "rarity", "properties",],)
             .where("id", "in", body.itemIds,)
             .execute();
-          const byId = new Map(rows.map(r => [r.id, r,]),);
-          const equipment: EquipmentItem[] = Array.from(body.itemIds, (id,) => {
+          const byId = new Map<string, (typeof rows)[number]>();
+          for (const r of rows) { byId.set(r.id, r,); }
+          const equipment: EquipmentItem[] = [];
+          for (const id of body.itemIds) {
             const row = byId.get(id,);
-            if (!row) { return null; }
+            if (!row) { continue; }
             const item = toEquipmentItem({
               id: row.id,
               name: row.name,
               description: row.description ?? "",
               category: row.category,
               rarity: row.rarity,
-              properties: (() => {
-                try {
-                  return JSON.parse(row.properties,);
-                } catch {
-                  return {};
-                }
-              })(),
+              properties: jsonParseOr<Record<string, unknown>>(row.properties ?? "{}", {},),
             },);
             if (body.equipped?.[id]) { item.equipped = true; }
-            return item;
-          },).filter((i,): i is EquipmentItem => i !== null);
+            equipment.push(item,);
+          }
           return jsonResponse(calculateEquipmentModifiers(equipment,),);
         } catch (error) {
           log().error("Failed to calculate modifiers from item IDs", error instanceof Error ? error : undefined,);
@@ -90,7 +87,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/equipment/can-equip",
+      `${prefix}/battle/equipment/can-equip`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -115,7 +112,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/equipment/durability",
+      `${prefix}/battle/equipment/durability`,
       (ctx: any,) => {
         try {
           const body = ctx.body as { item: EquipmentItem; damage: number };
@@ -136,7 +133,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/equipment/repair",
+      `${prefix}/battle/equipment/repair`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -161,7 +158,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/equipment/loot",
+      `${prefix}/battle/equipment/loot`,
       async (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -185,7 +182,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
               : await items.placeInLocation(drop.itemId, locationId!, worldId, drop.quantity,);
             worldItemIds.push(id,);
           }
-          return jsonResponse({ ...loot, worldItemIds, },);
+          return jsonResponse({ loot, worldItemIds, },);
         } catch (error) {
           log().error("Failed to generate loot", error instanceof Error ? error : undefined,);
           return jsonError("Internal server error", 500,);

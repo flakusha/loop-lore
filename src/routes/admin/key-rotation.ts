@@ -8,7 +8,7 @@ export function keyRotationRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-key-rotation", },)
       // ── Manual key rotation trigger ─────────────────────────
-      .post(prefix + "/admin/rotate-expired-keys", async (ctx: any,) => {
+      .post(`${prefix}/admin/rotate-expired-keys`, async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

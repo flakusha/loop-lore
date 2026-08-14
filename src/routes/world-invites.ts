@@ -65,7 +65,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "world-invites", },)
       // ── Create ─────────────────────────────────────────────
       .post(
-        prefix + "/worlds/:worldId/invites",
+        `${prefix}/worlds/:worldId/invites`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -97,7 +97,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── List ───────────────────────────────────────────────
       .get(
-        prefix + "/worlds/:worldId/invites",
+        `${prefix}/worlds/:worldId/invites`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -118,7 +118,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── Revoke ─────────────────────────────────────────────
       .delete(
-        prefix + "/worlds/:worldId/invites/:inviteId",
+        `${prefix}/worlds/:worldId/invites/:inviteId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -143,7 +143,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── Join ───────────────────────────────────────────────
       .post(
-        prefix + "/world-invites/:code/join",
+        `${prefix}/world-invites/:code/join`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

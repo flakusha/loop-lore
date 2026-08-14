@@ -33,7 +33,7 @@ export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
 
   return new Elysia({ name: "chat-context", },)
     .get(
-      prefix + "/chats/:id/context",
+      `${prefix}/chats/:id/context`,
       async (ctx,) => {
         const { id: chatId, } = ctx.params;
         const auth = ctx as unknown as AuthContext;
@@ -49,7 +49,7 @@ export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
       },
     )
     .post(
-      prefix + "/messages/regenerate",
+      `${prefix}/messages/regenerate`,
       async (ctx,) => {
         const body = ctx.body as unknown;
         const input = validateRegenerateBody(body,);
@@ -74,5 +74,5 @@ export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
           404: ErrorResponse,
         },
       },
-    ) as unknown as Elysia;
+    );
 }

@@ -114,7 +114,7 @@ export async function computeActivity(
 }
 
 export function activityRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
-  return new Elysia({ name: "activity", },).get(prefix + "/chats/activity", async (ctx,) => {
+  return new Elysia({ name: "activity", },).get(`${prefix}/chats/activity`, async (ctx,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
     const chats = await computeActivity(database, userId,);

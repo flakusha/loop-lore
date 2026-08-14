@@ -11,7 +11,7 @@ export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-search-transfer", },)
       // ── Transfer chat to new location ────────────────────────
       .post(
-        prefix + "/chats/:id/transfer",
+        `${prefix}/chats/:id/transfer`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

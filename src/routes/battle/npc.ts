@@ -14,7 +14,7 @@ import type { HandlerOpts, } from "./types";
 export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-npc", },)
     .post(
-      prefix + "/battle/npc/decision",
+      `${prefix}/battle/npc/decision`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -49,7 +49,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/npc/memory",
+      `${prefix}/battle/npc/memory`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -82,7 +82,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/npc/surrender",
+      `${prefix}/battle/npc/surrender`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {

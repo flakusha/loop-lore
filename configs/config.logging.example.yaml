@@ -5,21 +5,21 @@
 logging:
   level: debug # trace | debug | info | warn | error | fatal
 
-  # Optional file-based JSONL logging
-  # jsonlPath: "../loop-lore-data/logs/app.jsonl"
-  # jsonlMaxBytes: 104857600 # 100 MB per file
-  # jsonlMaxFiles: 5 # rotate after N files
+# Optional file-based JSONL logging
+# jsonlPath: "../loop-lore-data/logs/app.jsonl"
+# jsonlMaxBytes: 104857600 # 100 MB per file
+# jsonlMaxFiles: 5 # rotate after N files
 
-  # Optional database log sink
-  # dbEnabled: false
+# Optional database log sink
+# dbEnabled: false
 
-  # Field redaction (PII/sensitive data)
-  # censorEnabled: false
-  # censorFields: ["password", "token", "secret"]
+# Field redaction (PII/sensitive data)
+# censorEnabled: false
+# censorFields: ["password", "token", "secret"]
 
-  # Queue and size limits
-  # queueMaxSize: 1000
-  # maxMessageBytes: 65536
-  # maxMetaBytes: 1024
-  # maxMetaDepth: 3
-  # maxStackBytes: 4096
+# Queue and size limits
+# queueMaxSize: 1000
+# maxMessageBytes: 65536
+# maxMetaBytes: 1024
+# maxMetaDepth: 3
+# maxStackBytes: 4096

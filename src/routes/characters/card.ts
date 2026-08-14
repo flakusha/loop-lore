@@ -12,7 +12,7 @@ export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "characters-card", },)
     .get(
-      prefix + "/actors/:actorId/card",
+      `${prefix}/actors/:actorId/card`,
       async (ctx: any,) => {
         const actor = await database
           .selectFrom("actors",)

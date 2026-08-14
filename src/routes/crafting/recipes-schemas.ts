@@ -17,7 +17,7 @@ export const recipeMaterialSchema = t.Object({
   sortOrder: t.Optional(t.Integer(),),
 },);
 
-export const createRecipeBody = t.Object({
+export const recipeCreateBody = t.Object({
   name: t.String({ minLength: 1, },),
   description: t.Optional(t.String(),),
   discipline: t.Enum(CraftingDiscipline,),
@@ -37,7 +37,7 @@ export const createRecipeBody = t.Object({
 },);
 
 export const updateRecipeBody = t.Partial(
-  t.Omit(createRecipeBody, ["name", "materials",],),
+  t.Omit(recipeCreateBody, ["name", "materials",],),
 );
 
 export const recipeResponse = t.Object({
