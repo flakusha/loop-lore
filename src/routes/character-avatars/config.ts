@@ -16,13 +16,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Avatar config sub-plugin — actor and world avatar-selection configuration.
  */
-export function configRoutes(opts: HandlerOpts,) {
+export function configRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);
 
   return (
     new Elysia({ name: "character-avatars-config", },)
-      .get("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/avatars/config", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -49,7 +49,7 @@ export function configRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .put("/api/actors/:actorId/avatars/config", async (ctx: any,) => {
+      .put(prefix + "/actors/:actorId/avatars/config", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -84,7 +84,7 @@ export function configRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .get("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
+      .get(prefix + "/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -112,7 +112,7 @@ export function configRoutes(opts: HandlerOpts,) {
           tags: ["Avatars",],
         },
       },)
-      .put("/api/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
+      .put(prefix + "/worlds/:worldId/avatars/config/:actorId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

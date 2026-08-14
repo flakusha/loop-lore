@@ -10,12 +10,12 @@ import {
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils.js";
 
-export function blogRagRoutes(opts: HandlerOpts,) {
+export function blogRagRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-rag", },)
-    .get("/api/blog/posts/:id/sources", async (ctx: any,) => {
+    .get(prefix + "/blog/posts/:id/sources", async (ctx: any,) => {
       const sources = await svc.getRAGSources(ctx.params.id,);
       return jsonResponse({ success: true, sources, count: sources.length, },);
     }, {
@@ -28,7 +28,7 @@ export function blogRagRoutes(opts: HandlerOpts,) {
         tags: ["Blog",],
       },
     },)
-    .post("/api/blog/posts/:id/sources", async (ctx: any,) => {
+    .post(prefix + "/blog/posts/:id/sources", async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {

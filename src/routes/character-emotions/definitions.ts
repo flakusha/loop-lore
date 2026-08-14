@@ -24,13 +24,13 @@ const EmotionDefinitionListResponse = ListResponse(t.Object({
 /**
  * Emotion definitions sub-plugin — list/create global emotion definitions.
  */
-export function definitionRoutes(opts: HandlerOpts,) {
+export function definitionRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "character-emotions-definitions", },)
       // ── List all emotion definitions ───────────────────────────
-      .get("/api/emotions", async (ctx: any,) => {
+      .get(prefix + "/emotions", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -52,7 +52,7 @@ export function definitionRoutes(opts: HandlerOpts,) {
         },
       },)
       // ── Create a new emotion definition ────────────────────────
-      .post("/api/emotions", async (ctx: any,) => {
+      .post(prefix + "/emotions", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

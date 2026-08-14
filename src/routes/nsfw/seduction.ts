@@ -4,14 +4,14 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, requireActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function seductionRoutes(opts: HandlerOpts,) {
+export function seductionRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const seductionService = new SeductionService(database,);
 
   return (
     new Elysia({ name: "nsfw-seduction", },)
       .get(
-        "/api/nsfw/desire/:actorId",
+        prefix + "/nsfw/desire/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -25,7 +25,7 @@ export function seductionRoutes(opts: HandlerOpts,) {
         },
       )
       .put(
-        "/api/nsfw/desire/:actorId",
+        prefix + "/nsfw/desire/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -43,7 +43,7 @@ export function seductionRoutes(opts: HandlerOpts,) {
         },
       )
       .get(
-        "/api/nsfw/skills/:actorId",
+        prefix + "/nsfw/skills/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -57,7 +57,7 @@ export function seductionRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/seduction/attempt",
+        prefix + "/nsfw/seduction/attempt",
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -79,7 +79,7 @@ export function seductionRoutes(opts: HandlerOpts,) {
         },
       )
       .get(
-        "/api/nsfw/arousal/:actorId",
+        prefix + "/nsfw/arousal/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -94,7 +94,7 @@ export function seductionRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/arousal/:actorId",
+        prefix + "/nsfw/arousal/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }

@@ -10,12 +10,12 @@ import { ActorIdParams, AvailabilityBody, ErrorResponse, SuccessResponse, } from
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
-export function characterAvailabilityRoutes(opts: HandlerOpts,) {
+export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "character-availability", },)
     // ── Get availability for an actor ──────────────────────────
-    .get("/api/actors/:actorId/availability", async (ctx: any,) => {
+    .get(prefix + "/actors/:actorId/availability", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
@@ -56,7 +56,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Create or update availability ──────────────────────────
-    .post("/api/actors/:actorId/availability", async (ctx: any,) => {
+    .post(prefix + "/actors/:actorId/availability", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
@@ -128,7 +128,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Delete availability ────────────────────────────────────
-    .delete("/api/actors/:actorId/availability", async (ctx: any,) => {
+    .delete(prefix + "/actors/:actorId/availability", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 

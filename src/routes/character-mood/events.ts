@@ -26,13 +26,13 @@ const MoodEventsListResponse = t.Array(t.Object({
 /**
  * Mood events sub-plugin — log and list actor mood events.
  */
-export function eventsRoutes(opts: HandlerOpts,) {
+export function eventsRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const moodService = MoodService(database,);
 
   return (
     new Elysia({ name: "character-mood-events", },)
-      .post("/api/actors/:actorId/mood/events", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/mood/events", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -85,7 +85,7 @@ export function eventsRoutes(opts: HandlerOpts,) {
           tags: ["Character Mood",],
         },
       },)
-      .get("/api/actors/:actorId/mood/events", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/mood/events", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 

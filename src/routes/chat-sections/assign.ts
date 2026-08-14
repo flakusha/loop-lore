@@ -5,14 +5,14 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { type HandlerOpts, MessageSectionAssignBody, MessageSectionAssignResponse, } from "./types";
 
-export function assignRoutes(opts: HandlerOpts,) {
+export function assignRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-sections-assign", },)
       // ── Assign a message to a section ─────────────────────
       .post(
-        "/api/chats/:id/messages/:messageId/section",
+        prefix + "/chats/:id/messages/:messageId/section",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

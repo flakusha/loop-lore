@@ -11,12 +11,12 @@ import {
   handleUpdateWorld,
 } from "./worlds";
 
-export function worldRoutes(opts: HandleOpts,) {
+export function worldRoutes(opts: HandleOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "worlds-crud", },)
     .get(
-      "/api/worlds",
+      prefix + "/worlds",
       async (ctx: any,) => {
         const { userId, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
@@ -36,7 +36,7 @@ export function worldRoutes(opts: HandleOpts,) {
       },
     )
     .post(
-      "/api/worlds",
+      prefix + "/worlds",
       async (ctx: any,) => {
         const { userId, } = extractAuth(ctx,);
         return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId,);
@@ -55,7 +55,7 @@ export function worldRoutes(opts: HandleOpts,) {
       },
     )
     .get(
-      "/api/worlds/:worldId",
+      prefix + "/worlds/:worldId",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
@@ -74,7 +74,7 @@ export function worldRoutes(opts: HandleOpts,) {
       },
     )
     .put(
-      "/api/worlds/:worldId",
+      prefix + "/worlds/:worldId",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateWorld(
@@ -100,7 +100,7 @@ export function worldRoutes(opts: HandleOpts,) {
       },
     )
     .delete(
-      "/api/worlds/:worldId",
+      prefix + "/worlds/:worldId",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
@@ -119,7 +119,7 @@ export function worldRoutes(opts: HandleOpts,) {
       },
     )
     .post(
-      "/api/worlds/:worldId/initialize-states",
+      prefix + "/worlds/:worldId/initialize-states",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);

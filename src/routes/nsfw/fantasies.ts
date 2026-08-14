@@ -4,14 +4,14 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, requireActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function fantasyRoutes(opts: HandlerOpts,) {
+export function fantasyRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const fantasyService = new FantasyService(database,);
 
   return (
     new Elysia({ name: "nsfw-fantasies", },)
       .get(
-        "/api/nsfw/fantasies/:actorId",
+        prefix + "/nsfw/fantasies/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -25,7 +25,7 @@ export function fantasyRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/fantasies",
+        prefix + "/nsfw/fantasies",
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -47,7 +47,7 @@ export function fantasyRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/fantasies/discover",
+        prefix + "/nsfw/fantasies/discover",
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -66,7 +66,7 @@ export function fantasyRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/fantasies/:id/explore",
+        prefix + "/nsfw/fantasies/:id/explore",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

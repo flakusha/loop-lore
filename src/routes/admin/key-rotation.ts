@@ -4,11 +4,11 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function keyRotationRoutes(opts: AdminRouteOpts,) {
+export function keyRotationRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-key-rotation", },)
       // ── Manual key rotation trigger ─────────────────────────
-      .post("/api/admin/rotate-expired-keys", async (ctx: any,) => {
+      .post(prefix + "/admin/rotate-expired-keys", async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

@@ -53,12 +53,12 @@ async function handleListWorldChats(
   return jsonResponse({ data: chats, },);
 }
 
-export function chatsRoutes(opts: HandleOpts,) {
+export function chatsRoutes(opts: HandleOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "worlds-chats", },)
     .get(
-      "/api/worlds/:worldId/chats",
+      prefix + "/worlds/:worldId/chats",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const locationId = (ctx.query?.locationId as string | undefined) ?? null;
