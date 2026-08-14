@@ -201,6 +201,28 @@ async function runNonBlockingChecks() {
   } catch (error) {
     console.log(`⚠ Markdown stale-link check skipped (${error.message})`,);
   }
+
+  // License compliance check (scancode + fossa — non-blocking, requires external tools)
+  try {
+    const licenseProc = Bun.spawn(["bash", "-c", "bun run license:check",], {
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    },);
+    await licenseProc.exited;
+    const [stdout, stderr,] = await Promise.all([
+      new Response(licenseProc.stdout,).text(),
+      new Response(licenseProc.stderr,).text(),
+    ],);
+    const licenseText = stdout + stderr;
+    const lines = licenseText.trim().split("\n",);
+    // Show license check output (already prefixed with [license])
+    for (const line of lines) {
+      if (line.startsWith("[license]",)) { console.log(`  ${line}`,); }
+    }
+  } catch (error) {
+    console.log(`⚠ License compliance check skipped (${error.message})`,);
+  }
 }
 
 // ── Main ────────────────────────────────────────────────────────
