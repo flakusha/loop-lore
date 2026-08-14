@@ -986,6 +986,8 @@
     "chatDeleted": "Chat deleted",
     "chatRenamed": "Chat renamed",
     "chatSettingsSaved": "Chat settings saved",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance",
     "chatTransferred": "Chat transferred",
     "chatAlreadyInLocation": "Chat is already in this location",
     "locationUpdated": "Location updated",
