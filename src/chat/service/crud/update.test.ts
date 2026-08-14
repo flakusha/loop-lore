@@ -84,4 +84,29 @@ describe("updateChat gmConfig GM execution fields", () => {
     expect(parsed?.type,).toBe("human",);
     expect((parsed?.humanGM as { actorId: string }).actorId,).toBe("user-gm",);
   },);
+
+  it("persists GM llmConfig (multi-LLM model/provider/temperature/maxTokens)", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: {
+        type: "llm",
+        llmConfig: {
+          model: "claude-3.5-sonnet",
+          provider: "anthropic",
+          systemPrompt: "",
+          temperature: 0.8,
+          maxTokens: 1500,
+        },
+      },
+    },);
+    expect(res,).toEqual({ ok: true, });
+    const parsed = await gmConfigOf();
+    expect(parsed?.type,).toBe("llm",);
+    const llm = parsed?.llmConfig as {
+      model: string; provider: string; systemPrompt: string; temperature: number; maxTokens: number;
+    };
+    expect(llm.model,).toBe("claude-3.5-sonnet",);
+    expect(llm.provider,).toBe("anthropic",);
+    expect(llm.temperature,).toBe(0.8,);
+    expect(llm.maxTokens,).toBe(1500,);
+  },);
 },);
