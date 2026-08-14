@@ -1,6 +1,6 @@
 # TASK: Pre-Compiled Hot Binary Modules
 
-**Status:** 🟡 In Progress — sample shipped (branch `native-blake3`, 2026-08-15); hot-reload + packaging open
+**Status:** 🟡 In Progress — BLAKE3 + zstd samples shipped (branch `native-blake3`, 2026-08-15); hot-reload + packaging open
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-precompiled-hot-binaries
@@ -8,6 +8,11 @@
 ## Summary
 
 Pre-compiled hot binary modules — native modules, FFI bindings, hot-reload support, and binary distribution. Covers native module compilation, hot-reload mechanism, and platform-specific binary packaging. Sample scope shipped: Rust cdylib (BLAKE3) + bun:ffi loader + pure-TS fallback + core-plugin health route + benchmark (53× native speedup).
+
+## ## Shipped Samples
+
+- **BLAKE3 (Phase 2 crypto sample):** Rust cdylib + bun:ffi + @noble/hashes fallback + core plugin health route; 53× vs pure-TS.
+- **zstd (Phase 4 compression sample):** Rust `zstd` crate C ABI (compress/decompress/decompress_bound) + Bun built-in fallback; cross-validated against Bun decoder; deterministic fixed-level frames (memory-compression property). Bun native zstd faster — documented in bench.
 
 ## Acceptance Criteria
 
