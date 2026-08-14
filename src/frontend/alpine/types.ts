@@ -47,6 +47,15 @@ export interface GalleryAsset {
   caption?: string;
 }
 
+/** Resolved system-prompt preview returned by the prompt-template endpoint. */
+export interface PromptTemplateInfo {
+  purpose: string;
+  prompt: string;
+  source: string;
+  characterName: string | null;
+  registryDefault: string;
+}
+
 export interface PreviewAsset {
   id: string;
   filename?: string;
