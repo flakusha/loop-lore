@@ -284,6 +284,62 @@ physically leave the group when stressed. A "seek_comfort" coper with "social"
 autonomy will cling harder. The combination creates distinct behavioral
 signatures.
 
+### D10. Voice & speech patterns — how the character talks
+
+Personality defines _who_ the character is. Voice defines _how they speak_.
+A "wise, patient" character might speak formally with measured pauses; the
+same personality might speak in clipped sentences with dry humor. Voice is
+the behavioral signature of speech — the bridge between personality and
+dialogue.
+
+Voice is distinct from personality (immutable) and mood (reactive state).
+It is the _style_ of expression — the linguistic fingerprint that makes
+a character instantly recognizable.
+
+```typescript
+interface VoiceProfile {
+  // Speech style
+  formality: "formal" | "informal" | "mixed";
+  verbosity: "terse" | "normal" | "verbose";
+  pace: "slow" | "normal" | "fast";
+  
+  // Linguistic quirks
+  accent?: string;              // e.g. "southern", "british", "none"
+  dialect?: string;             // e.g. "pirate", "medieval", "modern"
+  catchphrases?: string[];      // e.g. ["indeed", "by the gods"]
+  verbal_tics?: string[];       // e.g. ["um", "you see", "I reckon"]
+  
+  // Emotional expression
+  emotional_range: "stoic" | "moderate" | "expressive";
+  humor_style?: "dry" | "sarcastic" | "playful" | "none";
+  
+  // Language preferences
+  vocabulary_level: "simple" | "moderate" | "advanced" | "archaic";
+  sentence_structure: "simple" | "complex" | "mixed";
+  
+  visibility: TraitVisibility;
+}
+```
+
+**Prompt integration:** The voice profile is injected into the prompt as a
+directive: _"This character speaks formally with a dry wit. They use moderate
+vocabulary and prefer complex sentences. They have a catchphrase: 'Indeed.'
+Do not have them speak informally or use slang."_
+
+**Integration with mood:** Mood modifies voice expression. A "formal" character
+under stress (low happiness) might become curt and terse. A "playful" character
+in a serious moment might suppress their humor. The voice profile defines the
+baseline; mood defines the deviation.
+
+**Integration with personality:** Voice is the _expression_ of personality.
+A "wise" character with "formal" voice speaks differently than a "wise"
+character with "informal" voice. Both are wise — but one sounds like a
+professor, the other like a sage farmer.
+
+**Anti-collapse directive:** When voice is defined, the prompt must explicitly
+enforce it: _"This character has a distinct voice. Do not default to generic
+helpful-AI speech patterns. Maintain their voice throughout the conversation."_
+
 ---
 
 ## Schema (proposed)
@@ -355,12 +411,28 @@ export interface AutonomyProfile {
   reunion_triggers?: string[];
   visibility: TraitVisibility;
 }
+
+export interface VoiceProfile {
+  formality: "formal" | "informal" | "mixed";
+  verbosity: "terse" | "normal" | "verbose";
+  pace: "slow" | "normal" | "fast";
+  accent?: string;
+  dialect?: string;
+  catchphrases?: string[];
+  verbal_tics?: string[];
+  emotional_range: "stoic" | "moderate" | "expressive";
+  humor_style?: "dry" | "sarcastic" | "playful" | "none";
+  vocabulary_level: "simple" | "moderate" | "advanced" | "archaic";
+  sentence_structure: "simple" | "complex" | "mixed";
+  visibility: TraitVisibility;
+}
 ```
 
 Storage: extend `CanonicalCharacter` with
 `internal_traits?: InternalTrait[]`, `aspirations?: Aspiration[]`,
 `moral_disposition?: MoralDisposition`, `coping?: CopingProfile`,
-`approach?: ApproachProfile`, `autonomy?: AutonomyProfile`.
+`approach?: ApproachProfile`, `autonomy?: AutonomyProfile`,
+`voice?: VoiceProfile`.
 Persist hidden state so it is **not** exposed
 through `data_json` on player-facing reads — see D1 redaction.
 
@@ -379,6 +451,9 @@ through `data_json` on player-facing reads — see D1 redaction.
 - **Autonomy (D9):** always emitted when set. Includes preference, initiative
   score, and separation/reunion triggers. Integration with aspirations and
   relationships referenced in the directive.
+- **Voice (D10):** always emitted when set. Includes formality, verbosity,
+  pace, accent, dialect, catchphrases, and verbal tics. Anti-collapse directive
+  prevents default AI speech patterns.
 
 ## Frontend / UI Visibility
 
@@ -392,27 +467,27 @@ This epic introduces two view tiers (per D6):
 
 1. **Player view** — `characters.html`, `character-edit.html` _read_ mode, and
    `detail-modal.html` render only `visible` traits / `open` disposition /
-   `visible` coping/approach/autonomy. Hidden fields are absent — no counts,
+   `visible` coping/approach/autonomy/voice. Hidden fields are absent — no counts,
    no empty placeholders, no affordance that they exist.
 2. **Author/GM view** — the edit form (`serveCharacterEditForm`) gains a
    "hidden from players" badge + visibility toggle per internal trait / aspiration /
-   method / coping profile / approach profile / autonomy profile, and per-disposition
-   openness. Access is role-gated (author/owner/GM only) so a player who reaches
-   the editor still cannot read others' hidden state.
+   method / coping profile / approach profile / autonomy profile / voice profile,
+   and per-disposition openness. Access is role-gated (author/owner/GM only) so
+   a player who reaches the editor still cannot read others' hidden state.
 
 The redaction must live in a **shared `toPublicCard()` transform** (per Open Q5) reused
 by both the player API read and the player UI render, so the API and the UI can never
-drift apart and leak. The transform must handle all 6 hidden dimensions: internal traits,
-aspirations, disposition, coping, approach, and autonomy.
+drift apart and leak. The transform must handle all 7 hidden dimensions: internal traits,
+aspirations, disposition, coping, approach, autonomy, and voice.
 
 ## API Surface
 
 - `GET /api/actors/:actorId` — **redacts** hidden internal traits, hidden aspirations,
   `deceptive`/`hidden` disposition openness, hidden coping profiles, hidden approach
-  profiles, and hidden autonomy profiles for non-author/GM/owner callers.
+  profiles, hidden autonomy profiles, and hidden voice profiles for non-author/GM/owner callers.
 - `PUT /api/actors/:actorId` + dedicated endpoints
   (`internal-traits`, `aspirations`, `moral-disposition`, `coping`,
-  `approach`, `autonomy`) — author/owner/GM only.
+  `approach`, `autonomy`, `voice`) — author/owner/GM only.
 - Role enforcement aligned with `epic-character-spec.md` review workflow (Admin/Moderator/
   User/GM). A player must never read another character's hidden state.
 
@@ -427,25 +502,26 @@ aspirations, disposition, coping, approach, and autonomy.
 - Confirm prompt-section budget/drop behavior in `prompt-assembler.ts` so the internal
   section is never silently dropped as low-priority (it is behavior-critical).
 - Confirm personality `integrity.ts` immutable-list should treat disposition as immutable.
-- Confirm coping/approach/autonomy are expression-layer (mutable by GM/event) not
+- Confirm coping/approach/autonomy/voice are expression-layer (mutable by GM/event) not
   personality-layer (immutable) — recommend: expression-layer, like mood.
 - Confirm mood service exposes happiness threshold for coping activation.
 - Confirm relationship service exposes strength data for autonomy/coping integration.
+- Confirm voice profile does not conflict with personality traits (e.g. "wise" + "informal" voice).
 
 ## Tasks
 
 | Task                          | Description                                                                             | Priority | Status      |
 | ----------------------------- | --------------------------------------------------------------------------------------- | -------- | ----------- |
-| TASK-char-internal-schema     | Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachProfile`/`AutonomyProfile` types + `CanonicalCharacter` fields | High     | Not Started |
-| TASK-char-internal-db         | Migration: internal-traits + aspirations + coping + approach + autonomy tables; `db:sync-types`/`db:sync-manifest`     | High     | Not Started |
+| TASK-char-internal-schema     | Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachProfile`/`AutonomyProfile`/`VoiceProfile` types + `CanonicalCharacter` fields | High     | Not Started |
+| TASK-char-internal-db         | Migration: internal-traits + aspirations + coping + approach + autonomy + voice tables; `db:sync-types`/`db:sync-manifest`     | High     | Not Started |
 | TASK-char-internal-validation | Extend `validator/fields.ts` + strict/relaxed modes for new fields                      | High     | Not Started |
 | TASK-char-internal-redaction  | Visibility-based redaction on read routes (author/GM/owner vs player)                   | High     | Not Started |
-| TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive + coping/approach/autonomy directives | High     | Not Started |
-| TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition / coping / approach / autonomy | Medium   | Not Started |
+| TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive + coping/approach/autonomy/voice directives | High     | Not Started |
+| TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition / coping / approach / autonomy / voice | Medium   | Not Started |
 | TASK-char-internal-frontend   | Player card + settings redaction via `toPublicCard()`; author/GM editor visibility badge + toggle | High     | Not Started |
 | TASK-char-internal-migration  | Character spec version bump + auto-fill for new fields                                  | Medium   | Not Started |
 | TASK-char-internal-export     | Include/exclude hidden state in export formats per visibility                           | Medium   | Not Started |
-| TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests (all 6 behavioral dimensions)          | High     | Not Started |
+| TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests (all 7 behavioral dimensions)          | High     | Not Started |
 
 ## Open Questions
 
@@ -477,6 +553,13 @@ aspirations, disposition, coping, approach, and autonomy.
 11. **Relationship-dependent autonomy** — should `group_comfort` be computed from
     relationship data (dynamic), or authored independently (static)? Recommend:
     authored baseline + relationship modifier for v1.
+12. **Voice vs personality conflict** — what happens when voice style contradicts
+    personality traits (e.g. "wise" personality + "informal" voice)? Recommend:
+    voice wins for expression, personality wins for content.
+13. **Voice evolution** — should voice change over time (e.g. character becomes
+    more formal after a promotion), or remain immutable author input?
+14. **Voice and mood interaction** — how should mood modify voice? Should a
+    "formal" character under stress become curt, or maintain formality?
 
 ## Testing
 
