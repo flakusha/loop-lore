@@ -419,7 +419,7 @@ interface FollowerTierConfig {
 - `src/blog/profile.ts` — reader profile + visibility
 - `src/blog/creative.ts` — creative generation (worlds, items, scenarios)
 - `src/blog/promotion.ts` — promote generated content to game world
-- `src/assistant/scenario-source.ts` — consume generated-world seeds
+- `src/assistant/scenario-source.ts` — ~~consume generated-world seeds~~ REMOVED 2026-08-14 (dead stub; reimplement when blog system is active)
 - `src/db/schema.ts` — blog_post, blog_comment, blog_follow, blog_follow_tier, creative_generation tables
 - `src/routes/blog.ts` — blog API routes
 - `src/views/blog/` — blog frontend templates
