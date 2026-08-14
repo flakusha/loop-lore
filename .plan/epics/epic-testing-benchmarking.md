@@ -232,6 +232,12 @@ Measures the performance delta between native FFI, WASM, and pure-JS fallbacks.
   p95, cold dlopen time. **Result: native 8.8 GB/s vs TS 170 MB/s → 53×**
   (module target delta 10×), cold load ~9 ms (< 50 ms target). Performance
   proof for the hot-binary epic is now bound to this suite.
+- **Second benchmark (2026-08-15):** `tests/benchmarks/zstd.bench.ts` —
+  Rust cdylib vs Bun built-in zstd on 1 MiB (compress + decompress).
+  Result: Bun native zstd faster (~0.6× compress / ~0.4× decompress) — no
+  pure-TS zstd exists; the Rust sample proves FFI integration +
+  deterministic level control, and the fallback chain keeps the fastest
+  codec in the loop.
 
 ### Module Comparison Targets
 
@@ -261,6 +267,7 @@ Measures the performance delta between native FFI, WASM, and pure-JS fallbacks.
 ### Module Benchmarking Tasks
 
 - [x] Benchmark BLAKE3: native FFI vs pure-JS — ✅ 53× (2026-08-15, `tests/benchmarks/blake3.bench.ts`)
+- [x] Benchmark gzip/brotli/zstd: native FFI vs WASM vs pure-JS (fflate) — 🟡 zstd only: Rust FFI vs Bun native (2026-08-15); Bun faster, documented
 - [ ] Benchmark SHA-256: native FFI vs WASM vs pure-JS (Web Crypto)
 - [ ] Benchmark AES-256-GCM: native FFI vs WASM vs pure-JS
 - [ ] Benchmark gzip/brotli/zstd: native FFI vs WASM vs pure-JS (fflate)
