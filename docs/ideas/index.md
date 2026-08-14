@@ -48,6 +48,15 @@ matrix: `.plan/tickets/TASK-cross-tool-data-portability-review.md`.
 - **3D worlds & navigation** — Adjacent only: ST Live2D/VRM + EmulatorJS; no 3D nav.
   → loop-lore idea unmet by peers.
 
+> **Emergent-platform sweep (2026-08-14)** — the above refreshed against the reviewed
+> open-source set. For the **ad-visible commercial RPG / agentic / creative platforms**
+> (Inworld AI, Convai, generative-agents, Kindroid, Nomi, AI Dungeon, DreamGen, AI-GM
+> tools, Luma/Runway asset consistency) — treated as **inspiration sources**, not
+> competitors — see:
+> **[emergent-platform-landscape-2026.md](./emergent-platform-landscape-2026.md)** —
+> Bucket A/B/C feature lists + loop-lore gap synthesis (E1–E8) mapped to existing epics.
+> Feed it into `../.plan/epics/epic-platform-research.md` and `../.plan/backlog/priority.md`.
+
 ## Themes
 
 | Theme                             | Doc                                                      | Ideas |
