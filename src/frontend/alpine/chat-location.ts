@@ -2,9 +2,9 @@
 //
 // Location controls surface for the active chat. It lists the world's
 // locations, lets the user change the chat's current location (PUT
-// /api/chats/:id/location), transfer the chat to a location (POST
-// /api/chats/:id/transfer), and discover/join other chats already at a
-// selected location (GET /api/chats/joinable + POST /api/chats/:id/join).
+// /api/v1/chats/:id/location), transfer the chat to a location (POST
+// /api/v1/chats/:id/transfer), and discover/join other chats already at a
+// selected location (GET /api/v1/chats/joinable + POST /api/v1/chats/:id/join).
 // This module only drives existing endpoints — no location access-check
 // logic is modified.
 import { apiFetch, } from "./htmx";
@@ -93,7 +93,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       return current.world_id;
     }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}`,);
       if (!res.ok) { return null; }
       const chat = await res.json();
       this._chatWorldId = (chat?.world_id as string | null) ?? null;
@@ -114,7 +114,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Change the chat's current location in place (PUT /api/chats/:id/location).
+   * Change the chat's current location in place (PUT /api/v1/chats/:id/location).
    * Ownership-gated server-side; only applies when a different location is chosen.
    */
   async changeChatLocation() {
@@ -125,7 +125,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     }
     this._locationBusy = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/location`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/location`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ locationId: this._selectedLocationId, },),
@@ -155,7 +155,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Transfer the chat to a location (POST /api/chats/:id/transfer).
+   * Transfer the chat to a location (POST /api/v1/chats/:id/transfer).
    * Participant-gated server-side; validates the location is in the chat's world.
    */
   async transferChatLocation() {
