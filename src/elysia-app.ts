@@ -64,8 +64,10 @@ export function createApp(deps: AppDeps,): Elysia {
 
   // ── V1 versioned routes ────────────────────────────────────────
   (app as any).use(v1Routes({ database, config, },),);
-  (app as any).all("/api/:resource", versionRedirect("v1",),);
-  (app as any).all("/api/:resource/*", versionRedirect("v1",),);
+  // NOTE: unversioned /api/* redirect to /api/v1/* happens in the
+  // catch-all below (NOT via Elysia catch-all routes) — registering
+  // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
+  // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
   // ── Asset upload (standalone route) ──────────────────────────
   // WORKAROUND: Elysia 1.4.x body consumption bug. When a child plugin
@@ -105,6 +107,12 @@ export function createApp(deps: AppDeps,): Elysia {
     const url = new URL(request.url,);
 
     if (url.pathname.startsWith("/api/",)) {
+      // Redirect unversioned /api/{resource} → /api/v1/{resource}.
+      // Already-versioned /api/v1/* must NOT be redirected (would
+      // double-prefix); they fall through to legacy dispatch below.
+      if (!url.pathname.startsWith("/api/v1/",)) {
+        return versionRedirect("v1",)({ request, },);
+      }
       return handleApiRequest({ request, database, config, },);
     }
 

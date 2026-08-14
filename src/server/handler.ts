@@ -54,7 +54,19 @@ export interface HandleApiRequestOpts {
  * All other API routes are handled by Elysia plugins.
  */
 export async function handleApiRequest({ request, }: HandleApiRequestOpts,): Promise<Response> {
-  const pluginResult = await dispatchPluginRoute(request,);
+  let pluginResult = await dispatchPluginRoute(request,);
   if (pluginResult) { return pluginResult; }
+
+  // Versioned fallback: the v1 barrel doesn't cover every route module yet.
+  // Strip the /api/v1 prefix so legacy plugin routes still serve versioned
+  // requests during the migration ("breaking changes never break clients").
+  const url = new URL(request.url,);
+  if (url.pathname.startsWith("/api/v1/",)) {
+    const strippedUrl = new URL(url.pathname.slice("/api/v1".length,) + url.search, url,);
+    const strippedRequest = new Request(strippedUrl, request,);
+    pluginResult = await dispatchPluginRoute(strippedRequest,);
+    if (pluginResult) { return pluginResult; }
+  }
+
   return new Response("Not found", { status: 404, },);
 }
