@@ -5,6 +5,7 @@
  * result building. Threaded with an explicit `state` handle.
  */
 import { GameMasterType, } from "../../db/enums";
+import type { GmGuidance, } from "../../chat/types/config";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { GM_DECISIONS, } from "../gm/decisions/registry";
 import type { GameMasterDecision, StoryContext, } from "../types";
@@ -20,7 +21,16 @@ export async function getGmDecision(
     chatMode: "story" as const,
     isPaused: state.turnManager.isPaused,
   };
-  const actorId = debugActorId ?? (await state.turnManager.selectNextActor(undefined, turnContext,));
+
+  // Human-GM guidance can pin the next speaker or bias selection.
+  const guidance = state.gmGuidance;
+  let actorId: string | null = debugActorId ?? null;
+  if (!actorId && guidance) {
+    actorId = resolveGuidedActor(guidance, context, state.turnManager.state?.currentActorId ?? null,);
+  }
+  if (!actorId) {
+    actorId = await state.turnManager.selectNextActor(undefined, turnContext,);
+  }
 
   if (!actorId) {
     throw new Error("No available actors for next turn",);
@@ -35,10 +45,44 @@ export async function getGmDecision(
       db: state.db,
       chatId: state.chatId,
       systemPromptDefault: state.systemPromptDefault,
+      gmGuidance: state.gmGuidance,
     },
     context,
     actorId,
   );
+}
+
+/**
+ * Resolve a guided actor from human-GM narrative guidance.
+ *
+ * `targetCharacter` is a hard override (matched by actor id or display name).
+ * `turnPriority` is a soft bias: pick the highest-priority eligible actor that
+ * is not the actor who just spoke. Returns null when guidance yields nothing,
+ * so the caller falls back to normal turn selection.
+ */
+function resolveGuidedActor(
+  guidance: GmGuidance,
+  context: StoryContext,
+  lastActorId: string | null,
+): string | null {
+  if (guidance.targetCharacter) {
+    const match = context.actors.find(
+      (a,) => a.id === guidance.targetCharacter || a.displayName === guidance.targetCharacter,
+    );
+    if (match) { return match.id; }
+  }
+
+  const priority = guidance.turnPriority;
+  if (priority && Object.keys(priority).length > 0) {
+    const weight: Record<string, number> = { high: 3, medium: 2, low: 1 };
+    const ranked = Object.entries(priority)
+      .filter(([id,],) => context.actors.some((a,) => a.id === id,))
+      .sort((a, b,) => (weight[b[1]] ?? 0) - (weight[a[1]] ?? 0),);
+    const top = ranked[0]?.[0];
+    if (top && top !== lastActorId) { return top; }
+  }
+
+  return null;
 }
 
 /** Persist a pending GM turn row */
