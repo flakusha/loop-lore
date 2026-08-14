@@ -145,7 +145,6 @@ globalThis.chatState = function() {
     _statsOpen: {},
     _impersonationLoaded: false,
     _unseenCounts: {},
-    _activityEventSource: null as EventSource | null,
     _chatFilter: "",
     _searchResults: [] as {
       chatId: string;
