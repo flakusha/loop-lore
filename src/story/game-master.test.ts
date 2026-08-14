@@ -17,6 +17,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { NSFW_POLICY_LEVELS_PROMPT, } from "../prompts";
 import { GameMasterService, type GenerateTextFn, } from "./game-master";
+import type { GmGuidance, } from "../chat/types/config";
 import type { GameMasterConfig, QualityThresholds, } from "./types";
 
 // ── Test DB factory ───────────────────────────────────────────
@@ -712,6 +713,40 @@ describe("GameMasterService — executeTurn", () => {
     expect(result.prompt,).toBeDefined();
     // Hardcoded prompt includes actor name
     expect(result.prompt,).toContain("Hero",);
+  });
+
+  test("gmGuidance: targetCharacter override + constraints/scene in prompt", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, {
+      world_id: worldId,
+      current_location_id: locId,
+    },);
+    const heroId = await seedActor(testDb, { display_name: "Hero", },);
+    const villainId = await seedActor(testDb, { display_name: "Villain", },);
+    await seedParticipant(testDb, chatId, heroId,);
+    await seedParticipant(testDb, chatId, villainId,);
+
+    const gmGuidance: GmGuidance = {
+      constraints: ["Keep it tense — no easy answers"],
+      targetCharacter: villainId,
+      sceneDescription: "A storm rages outside the tavern",
+      turnPriority: {},
+    };
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeHumanConfig(),
+      gmGuidance,
+      generateText: () => Promise.resolve("unused",),
+    },);
+    await gm.initialize();
+
+    const result = await gm.executeTurn();
+    expect(result.actorId,).toBe(villainId,);
+    expect(result.prompt,).toContain("[Human GM]",);
+    expect(result.prompt,).toContain("Keep it tense — no easy answers",);
+    expect(result.prompt,).toContain("A storm rages outside the tavern",);
   });
 });
 
