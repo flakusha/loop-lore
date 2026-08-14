@@ -51,6 +51,9 @@ export const GmConfigSchema = t.Object({
   visualNovel: t.Optional(t.Boolean(),),
   storyMode: t.Optional(t.Boolean(),),
   gmGuidance: t.Optional(GmGuidanceSchema,),
+  type: t.Optional(t.UnionEnum(["llm", "human", "hybrid",],),),
+  humanGM: t.Optional(t.Object({ actorId: t.String(), notifications: t.Boolean(), },),),
+  escalationThreshold: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),
 },);
 
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);

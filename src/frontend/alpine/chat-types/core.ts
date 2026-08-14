@@ -75,6 +75,9 @@ export interface ChatCoreState extends AlpineMagicThis {
   _selectedPersonaId: string | null;
   _impersonatingActorId: string | null;
   _assistantRole: "off" | "helper" | "gm" | "moderator";
+  _gmType: "llm" | "human" | "hybrid";
+  _gmHumanActorId: string;
+  _gmEscalationThreshold: number;
 
   // VN (visual novel) mode settings — persisted to gm_config.
   _vnEnabled: boolean;
@@ -162,6 +165,7 @@ export interface ChatCoreState extends AlpineMagicThis {
   selectCommand(name: string,): void;
   dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,): Promise<void>;
   loadImpersonationState(): Promise<void>;
+  loadChatParticipants(): Promise<void>;
   loadPersonas(): Promise<void>;
   setPersona(): Promise<void>;
   toggleImpersonation(): Promise<void>;
@@ -202,7 +206,7 @@ export interface ChatCoreState extends AlpineMagicThis {
   openMediaPreview(asset: any,): void;
   removePendingAsset(assetId: string,): void;
   openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string },): void;
-  openChatSettings(): void;
+  openChatSettings(): Promise<void>;
   updateVnMode(): void;
   openContextMenu(event: MouseEvent, msgId: string,): void;
   closeContextMenu(): void;
