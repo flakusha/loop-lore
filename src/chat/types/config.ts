@@ -103,4 +103,16 @@ export interface GmConfig {
   humanGM?: { actorId: string; notifications: boolean };
   /** Hybrid GM: escalation threshold (0–1) for auto-fallback to LLM. */
   escalationThreshold?: number;
+  /**
+   * Story-mode GM LLM settings. Consumed by `story-mode.ts` →
+   * `GameMasterConfig.llmConfig` → `llmDecision` (model/provider/temperature/
+   * maxTokens). Omitted → story mode uses the chat's resolved model.
+   */
+  llmConfig?: {
+    model: string;
+    provider: string;
+    systemPrompt: string;
+    temperature: number;
+    maxTokens: number;
+  };
 }

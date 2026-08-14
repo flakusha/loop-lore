@@ -70,6 +70,21 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   if (!ctx.searchInput || !ctx.resultsEl || !ctx.selectedEl || !ctx.chatType || !ctx.form) { return; }
 
+  // ── GM-guided story toggle ───────────────────────────────
+  const gmGuidedGroup = $<HTMLElement>("#gm-guided-group",);
+  const gmGuidedToggle = $<HTMLInputElement>("#gm-guided-toggle",);
+  const modeSelect = $<HTMLSelectElement>("#chat-mode",);
+  const syncGmGuidedVisibility = () => {
+    if (gmGuidedGroup && modeSelect) {
+      gmGuidedGroup.style.display = modeSelect.value === "story" ? "block" : "none";
+    }
+  };
+  modeSelect?.addEventListener("change", syncGmGuidedVisibility,);
+  syncGmGuidedVisibility();
+  gmGuidedToggle?.addEventListener("change", function() {
+    if (this.checked && modeSelect) { modeSelect.value = "story"; }
+  },);
+
   ctx.impersonateGroup = $<HTMLElement>("#impersonate-group",);
   ctx.impersonateToggle = $<HTMLInputElement>("#impersonate-toggle",);
   ctx.memoryCarryGroup = $<HTMLElement>("#memory-carry-group",);
