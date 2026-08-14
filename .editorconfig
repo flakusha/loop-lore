@@ -1,0 +1,32 @@
+# EditorConfig — editor defaults consistent with the repo formatters:
+# dprint (indentWidth: 2, lineWidth: 120) for TS/HTML/CSS, rustfmt
+# (tab_spaces: 2) for the native crate. Formatters remain authoritative;
+# this file only aligns editors that don't run them on save.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120
+
+# Markdown: trailing whitespace is a valid hard line-break — leave editors
+# alone; dprint (lint:md) is the authority for md formatting.
+[*.md]
+trim_trailing_whitespace = false
+
+# Makefiles require tabs regardless of repo indent style.
+[Makefile]
+indent_style = tab
+
+# Rust is formatted by rustfmt (tab_spaces: 2) — hint editors accordingly.
+[*.rs]
+indent_size = 2
+
+# Shell scripts conventionally use 2-space (not configured by dprint).
+[*.sh]
+indent_size = 2
