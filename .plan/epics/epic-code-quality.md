@@ -34,3 +34,4 @@ ESLint improvements, good practices and patterns enforcement. Continuously impro
 | TASK-frontend-bundle-analysis   | Analyze frontend bundle composition                | High     | Not Started      |
 | TASK-promote-size-check-to-ci   | Promote check-file-size.ts from warn to CI gate    | Medium   | Not Started      |
 | TASK-codemod-fetch-json-utils   | fetch→apiFetch + JSON._→safeJson_ conversion       | Low      | Manual pass done |
+| TASK-license-compliance-gate    | scancode + fossa license gate in bun check          | High     | ✅ Done          |
