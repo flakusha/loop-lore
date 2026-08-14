@@ -3301,6 +3301,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-assistant-nsfw-api-prefiltering.md"
   },
+  "TASK-ASSISTANT-SCENARIO-SOURCE": {
+    "hash": "915842dc",
+    "extid": "TASK-ASSISTANT-SCENARIO-SOURCE",
+    "type": "TASK",
+    "title": "Assistant scenario-source store — real implementation (DB + service + blog bridge)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-assistant-generation-extensions (Phase 4), epic-blog-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-scenario-source.md"
+  },
   "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION": {
     "hash": "pending",
     "extid": "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION",
@@ -5925,6 +5936,17 @@
     "tags": [],
     "title": "Frontend Story Mode UI",
     "type": "TASK"
+  },
+  "TASK-FRONTEND-TOUCH-GESTURES": {
+    "hash": "915842dc",
+    "extid": "TASK-FRONTEND-TOUCH-GESTURES",
+    "type": "TASK",
+    "title": "Frontend touch gesture system — wire recovered utility into mobile UI",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-accessibility-input (Phase 2 Mobile Support, 🟡)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
   },
   "TASK-GALLERY-MINIMAL-IMAGE-ASSET-VIEWER": {
     "epic": "epic-asset-support-expansion",
