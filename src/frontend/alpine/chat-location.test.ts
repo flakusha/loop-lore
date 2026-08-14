@@ -118,7 +118,7 @@ describe("chatLocation", () => {
       await chatLocation.changeChatLocation!.call(state,);
 
       expect(fetchCalls.length,).toBe(1,);
-      expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/location",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/location",);
       expect(fetchCalls[0]?.opts.method,).toBe("PUT",);
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ locationId: "loc-2", },);
       expect(state._chatCurrentLocationId,).toBe("loc-2",);
