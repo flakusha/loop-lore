@@ -4,19 +4,19 @@
  * Cross-system edges involving Housing. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import type { IntegrationEdge, } from "../types";
+import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
 
 /** Integration edges involving the Housing system. */
 export const HOUSING_EDGES: IntegrationEdge[] = [
   {
     source: "housing",
     target: "crafting",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["CraftingStation", "Recipe",],
     events: [
       {
         id: "housing.crafted",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "housing",
         target: "crafting",
         notes: "Crafting in home stations",
@@ -26,12 +26,12 @@ export const HOUSING_EDGES: IntegrationEdge[] = [
   {
     source: "housing",
     target: "crime",
-    direction: "depended_by",
+    direction: EdgeDirection.DependedBy,
     interfaces: ["PlayerState",],
     events: [
       {
         id: "housing.burglary",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "crime",
         target: "housing",
         notes: "Crime targets housing security",
@@ -41,12 +41,12 @@ export const HOUSING_EDGES: IntegrationEdge[] = [
   {
     source: "housing",
     target: "companion",
-    direction: "depended_by",
+    direction: EdgeDirection.DependedBy,
     interfaces: ["PlayerState",],
     events: [
       {
         id: "companion.housed",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "companion",
         target: "housing",
         notes: "Companion housing assigns stable/room",

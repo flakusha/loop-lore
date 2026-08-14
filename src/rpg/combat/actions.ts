@@ -1,5 +1,5 @@
 import { abilityModifier, type StatBlock, } from "../stats.js";
-import { type ActionType, type Combatant, } from "./types.js";
+import { ActionType, type Combatant, } from "./types.js";
 
 // ── Action Economy ──────────────────────────────────────
 
@@ -48,13 +48,13 @@ export function canTakeAction(combatant: Combatant, type: ActionType,): boolean 
   }
 
   switch (type) {
-    case "reaction": {
+    case ActionType.Reaction: {
       return combatant.reactions > 0;
     }
-    case "bonus_action": {
+    case ActionType.BonusAction: {
       return combatant.bonusActions > 0;
     }
-    case "free_action": {
+    case ActionType.FreeAction: {
       return true;
     }
     default: {
@@ -70,15 +70,15 @@ export function consumeAction(combatant: Combatant, type: ActionType,): Combatan
   const updated = { ...combatant, };
 
   switch (type) {
-    case "reaction": {
+    case ActionType.Reaction: {
       updated.reactions = Math.max(0, updated.reactions - 1,);
       break;
     }
-    case "bonus_action": {
+    case ActionType.BonusAction: {
       updated.bonusActions = Math.max(0, updated.bonusActions - 1,);
       break;
     }
-    case "free_action": {
+    case ActionType.FreeAction: {
       break;
     }
     default: {
