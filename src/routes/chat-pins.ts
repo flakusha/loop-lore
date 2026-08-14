@@ -23,7 +23,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-pins", },)
       // List pinned messages for a chat
       .get(
-        prefix + "/chats/:id/pins",
+        `${prefix}/chats/:id/pins`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -68,7 +68,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // Pin a message
       .post(
-        prefix + "/chats/:id/pins",
+        `${prefix}/chats/:id/pins`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -123,7 +123,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // Unpin a message
       .delete(
-        prefix + "/chats/:id/pins/:pinId",
+        `${prefix}/chats/:id/pins/:pinId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

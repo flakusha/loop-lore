@@ -11,7 +11,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-intimacy", },)
       .get(
-        prefix + "/nsfw/intimacy/:actorId/:targetId",
+        `${prefix}/nsfw/intimacy/:actorId/:targetId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -30,7 +30,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/nsfw/intimacy/:actorId",
+        `${prefix}/nsfw/intimacy/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -48,7 +48,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/intimacy/action",
+        `${prefix}/nsfw/intimacy/action`,
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;

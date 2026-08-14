@@ -24,7 +24,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
   const relationshipsService = RelationshipsService(database,);
 
   return new Elysia({ name: "character-relationships", },)
-    .get(prefix + "/actors/:actorId/relationships", async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/relationships`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -53,7 +53,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         tags: ["Character Relationships",],
       },
     },)
-    .get(prefix + "/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/relationships/:targetActorId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -88,7 +88,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         tags: ["Character Relationships",],
       },
     },)
-    .post(prefix + "/actors/:actorId/relationships", async (ctx: any,) => {
+    .post(`${prefix}/actors/:actorId/relationships`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -136,7 +136,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         tags: ["Character Relationships",],
       },
     },)
-    .put(prefix + "/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
+    .put(`${prefix}/actors/:actorId/relationships/:targetActorId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -172,7 +172,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         tags: ["Character Relationships",],
       },
     },)
-    .delete(prefix + "/actors/:actorId/relationships/:targetActorId", async (ctx: any,) => {
+    .delete(`${prefix}/actors/:actorId/relationships/:targetActorId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -201,7 +201,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         tags: ["Character Relationships",],
       },
     },)
-    .post(prefix + "/actors/:actorId/relationships/events", async (ctx: any,) => {
+    .post(`${prefix}/actors/:actorId/relationships/events`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 

@@ -15,7 +15,7 @@ import type { HandlerOpts, } from "./types";
 export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-weather", },)
     .post(
-      prefix + "/battle/weather/modifiers",
+      `${prefix}/battle/weather/modifiers`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -40,7 +40,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/weather/visibility",
+      `${prefix}/battle/weather/visibility`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -64,7 +64,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/weather/hazard",
+      `${prefix}/battle/weather/hazard`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {

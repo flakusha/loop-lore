@@ -56,16 +56,15 @@ export async function applyItemTransfer(
   }
 
   // Find a source instance owned by fromActorId in this world.
-  let source = null;
-  if (fromActorId) {
-    source = await db
+  let source = fromActorId
+    ? await db
       .selectFrom("world_items",)
       .select(["id", "quantity",],)
       .where("world_id", "=", worldId,)
       .where("item_id", "=", def.id,)
       .where("owner_actor_id", "=", fromActorId,)
-      .executeTakeFirst();
-  }
+      .executeTakeFirst()
+    : null;
   if (!source && event.locationId) {
     source = await db
       .selectFrom("world_items",)

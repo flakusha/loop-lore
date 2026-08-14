@@ -15,7 +15,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
 
   return new Elysia({ name: "worlds-locations", },)
     .get(
-      prefix + "/worlds/:worldId/locations",
+      `${prefix}/worlds/:worldId/locations`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
@@ -36,7 +36,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/worlds/:worldId/locations",
+      `${prefix}/worlds/:worldId/locations`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleCreateLocation(
@@ -62,7 +62,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .get(
-      prefix + "/worlds/:worldId/locations/:locId",
+      `${prefix}/worlds/:worldId/locations/:locId`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetLocation(
@@ -87,7 +87,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .put(
-      prefix + "/worlds/:worldId/locations/:locId",
+      `${prefix}/worlds/:worldId/locations/:locId`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateLocation(
@@ -114,7 +114,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     )
     .delete(
-      prefix + "/worlds/:worldId/locations/:locId",
+      `${prefix}/worlds/:worldId/locations/:locId`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteLocation(

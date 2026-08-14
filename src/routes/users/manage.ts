@@ -17,7 +17,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "users-manage", },)
       .get(
-        prefix + "/users/:id",
+        `${prefix}/users/:id`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -54,7 +54,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/users/:id",
+        `${prefix}/users/:id`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -106,7 +106,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/users/:id/settings",
+        `${prefix}/users/:id/settings`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -156,7 +156,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
         },
       )
       .delete(
-        prefix + "/users/:id",
+        `${prefix}/users/:id`,
         async (ctx,) => {
           const userRole = (ctx as any).userRole as string | null;
           const targetId = (ctx as any).params.id as string;

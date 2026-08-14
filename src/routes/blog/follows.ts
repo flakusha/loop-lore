@@ -14,7 +14,7 @@ export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-follows", },)
-    .post(prefix + "/blog/follow/:authorId", async (ctx: any,) => {
+    .post(`${prefix}/blog/follow/:authorId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -31,7 +31,7 @@ export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog", "Follows",],
       },
     },)
-    .delete(prefix + "/blog/follow/:authorId", async (ctx: any,) => {
+    .delete(`${prefix}/blog/follow/:authorId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -48,7 +48,7 @@ export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog", "Follows",],
       },
     },)
-    .get(prefix + "/blog/follow/:authorId/status", async (ctx: any,) => {
+    .get(`${prefix}/blog/follow/:authorId/status`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -65,7 +65,7 @@ export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog", "Follows",],
       },
     },)
-    .get(prefix + "/blog/authors/:authorId/followers", async (ctx: any,) => {
+    .get(`${prefix}/blog/authors/:authorId/followers`, async (ctx: any,) => {
       const followers = await svc.getFollowers(ctx.params.authorId,);
       return jsonResponse({ success: true, followers, count: followers.length, },);
     }, {

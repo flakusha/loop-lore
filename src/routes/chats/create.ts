@@ -25,7 +25,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats-create", },)
       .post(
-        prefix + "/chats",
+        `${prefix}/chats`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

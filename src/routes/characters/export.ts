@@ -19,7 +19,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-export", },)
-    .get(prefix + "/actors/:actorId/export", async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/export`, async (ctx: any,) => {
       const format = ctx.query.format ?? "json";
 
       const actor = await database

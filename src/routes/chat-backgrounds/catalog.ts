@@ -14,7 +14,7 @@ export function catalogRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chat-backgrounds-catalog", },)
       .get(
-        prefix + "/backgrounds",
+        `${prefix}/backgrounds`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -35,7 +35,7 @@ export function catalogRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/backgrounds",
+        `${prefix}/backgrounds`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

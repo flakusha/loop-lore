@@ -11,7 +11,7 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-location", },)
       .get(
-        prefix + "/nsfw/location/:locationId",
+        `${prefix}/nsfw/location/:locationId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -25,7 +25,7 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/nsfw/location/:locationId",
+        `${prefix}/nsfw/location/:locationId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -10,9 +10,7 @@ import { storyItemInstanceRoutes, } from "./instances";
  * `elysia-app.ts` wiring is unchanged.
  */
 export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
-  return (
-    new Elysia({ name: "story-items", },)
-      .use(storyItemInstanceRoutes({ database, },),)
-      .use(storyItemDefinitionsRoutes({ database, },),)
-  ) as unknown as Elysia;
+  return new Elysia({ name: "story-items", },)
+    .use(storyItemInstanceRoutes({ database, },),)
+    .use(storyItemDefinitionsRoutes({ database, },),);
 }

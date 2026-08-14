@@ -11,7 +11,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-seduction", },)
       .get(
-        prefix + "/nsfw/desire/:actorId",
+        `${prefix}/nsfw/desire/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -25,7 +25,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/nsfw/desire/:actorId",
+        `${prefix}/nsfw/desire/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -43,7 +43,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/nsfw/skills/:actorId",
+        `${prefix}/nsfw/skills/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -57,7 +57,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/seduction/attempt",
+        `${prefix}/nsfw/seduction/attempt`,
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -79,7 +79,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/nsfw/arousal/:actorId",
+        `${prefix}/nsfw/arousal/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -94,7 +94,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/arousal/:actorId",
+        `${prefix}/nsfw/arousal/:actorId`,
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }

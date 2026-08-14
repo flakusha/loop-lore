@@ -8,7 +8,9 @@
 >
   <div class="participant-panel-header">
     <h3>{{{ t("participants.title") }}}</h3>
-    <button class="btn-icon" @click="$store.ui.showParticipants = false" aria-label="Close Participant Panel">&times;</button>
+    <button class="btn-icon" @click="$store.ui.showParticipants = false" aria-label="Close Participant Panel">
+      &times;
+    </button>
   </div>
 
   <div class="participant-panel-body">
@@ -26,11 +28,15 @@
             @click="removeParticipant(p.actor_id)"
             x-show="!_participantsBusy"
             data-testid="participant-remove"
-          >✕</button>
+          >
+            ✕
+          </button>
         </div>
         <div class="participant-card-controls">
           <label class="participant-field">
-            <span class="participant-field-label">{{{ t("participants.talkativity") }}} <span x-text="p.talkativity"></span></span>
+            <span class="participant-field-label">{{{ t("participants.talkativity") }}} <span
+                x-text="p.talkativity"
+              ></span></span>
             <input
               type="range"
               min="1"
@@ -79,7 +85,9 @@
               @click="addParticipant(a.id, _selectedAddRole)"
               :disabled="_participantsBusy"
               data-testid="participant-add-btn"
-            >+</button>
+            >
+              +
+            </button>
           </div>
         </template>
         <div class="participant-add-empty" x-show="filteredAvailableActors.length === 0">
