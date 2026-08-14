@@ -47,14 +47,14 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
       if (res.ok) {
         const d = await res.json();
         if (personaId) {
-          feFetch(`/api/chats/${d.id}/persona`, {
+          feFetch(`/api/v1/chats/${d.id}/persona`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ personaId, },),
           },);
         }
         if (impersonateId) {
-          feFetch(`/api/chats/${d.id}/impersonate`, {
+          feFetch(`/api/v1/chats/${d.id}/impersonate`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ impersonateActorId: impersonateId, },),

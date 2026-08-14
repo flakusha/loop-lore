@@ -11,7 +11,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this._emotionAvatarsLoading = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (!res.ok) { return; }
       const participants = await res.json();
       const npc = Array.isArray(participants,)
@@ -49,7 +49,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
   async generateEmotionAvatars() {
     if (!this.activeChat || this._emotionGenRunning) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (!res.ok) { return; }
       const participants = await res.json();
       const npc = Array.isArray(participants,)

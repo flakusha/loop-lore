@@ -90,7 +90,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     if (!activeChat) { return; }
     this.currentCharacter = null;
     try {
-      const res = await apiFetch(`/api/chats/${activeChat}`,);
+      const res = await apiFetch(`/api/v1/chats/${activeChat}`,);
       if (res.ok) {
         const chat = await res.json();
         if (chat.character_id) {
