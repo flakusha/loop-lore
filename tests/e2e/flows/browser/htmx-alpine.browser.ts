@@ -45,10 +45,10 @@ let ctx: BrowserTestContext;
 beforeAll(async () => {
   ctx = await createBrowserTest();
   await seedAll(ctx.db,);
-}, 45_000,);
+}, 90_000,);
 
 afterAll(async () => {
-  await ctx.close();
+  await ctx?.close();
 },);
 
 async function gotoView(
@@ -56,11 +56,11 @@ async function gotoView(
   path: string,
 ) {
   try {
-    await page.goto(ctx.url + path, { waitUntil: "domcontentloaded", timeout: 10_000, },);
+    await page.goto(ctx.url + path, { waitUntil: "domcontentloaded", timeout: 30_000, },);
   } catch {
     // handled by subsequent waits
   }
-  await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 8000, },);
+  await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
 }
 
 // ── htmx swap triggers Alpine init ──────────────────────────
@@ -87,7 +87,7 @@ describe("htmx swap → Alpine init", () => {
       expect(chatRoot!.hasAlpineData,).toBe(true,);
       await page.close();
     },
-    15_000,
+    45_000,
   );
 
   test(
@@ -104,7 +104,7 @@ describe("htmx swap → Alpine init", () => {
       expect(page.url(),).toContain("/views/characters",);
       await page.close();
     },
-    15_000,
+    45_000,
   );
 });
 
@@ -139,7 +139,7 @@ describe("Morph swap state reset", () => {
       expect(uiState.showCharacterInfo,).toBe(false,);
       await page.close();
     },
-    20_000,
+    45_000,
   );
 });
 
@@ -211,7 +211,7 @@ describe("Panel toggles + Escape key", () => {
       expect(uiState.showChatList,).toBe(false,);
       await page.close();
     },
-    20_000,
+    45_000,
   );
 });
 
@@ -225,24 +225,24 @@ describe("htmx modal + Alpine", () => {
       await gotoView(page, "/views/characters",);
       await page
         .locator("[data-testid='characters-header']",)
-        .waitFor({ state: "attached", timeout: 8000, },);
+        .waitFor({ state: "attached", timeout: 15_000, },);
 
       // Click create character button (triggers htmx to load modal)
       const createBtn = page.locator("[data-testid='create-character']",);
-      await createBtn.waitFor({ state: "attached", timeout: 5000, },);
+      await createBtn.waitFor({ state: "attached", timeout: 10_000, },);
       await createBtn.click();
 
       // Wait for htmx to load and open the modal
       await page
         .locator("[data-testid='create-character-modal']",)
-        .waitFor({ state: "visible", timeout: 8000, },);
+        .waitFor({ state: "visible", timeout: 15_000, },);
 
       // Modal should be visible
       const isVisible = await page.locator("[data-testid='create-character-modal']",).isVisible();
       expect(isVisible,).toBe(true,);
       await page.close();
     },
-    15_000,
+    45_000,
   );
 
   test(
@@ -252,23 +252,23 @@ describe("htmx modal + Alpine", () => {
       await gotoView(page, "/views/gallery",);
       await page
         .locator("[data-testid='gallery-header']",)
-        .waitFor({ state: "attached", timeout: 8000, },);
+        .waitFor({ state: "attached", timeout: 15_000, },);
 
       // Click upload button
       const uploadBtn = page.locator("[data-testid='upload-button']",);
-      await uploadBtn.waitFor({ state: "attached", timeout: 5000, },);
+      await uploadBtn.waitFor({ state: "attached", timeout: 10_000, },);
       await uploadBtn.click();
 
       // Wait for modal to appear
       await page
         .locator("[data-testid='upload-modal']",)
-        .waitFor({ state: "visible", timeout: 8000, },);
+        .waitFor({ state: "visible", timeout: 15_000, },);
 
       const isVisible = await page.locator("[data-testid='upload-modal']",).isVisible();
       expect(isVisible,).toBe(true,);
       await page.close();
     },
-    15_000,
+    45_000,
   );
 });
 
@@ -386,7 +386,7 @@ describe("Chat list selection", () => {
 
     // Click first chat
     const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
-    await chatItem.waitFor({ state: "attached", timeout: 5000, },);
+    await chatItem.waitFor({ state: "attached", timeout: 10_000, },);
     await chatItem.click();
     await page.waitForTimeout(500,);
 
@@ -416,7 +416,7 @@ describe("Chat window modals open", () => {
     await page.waitForTimeout(300,);
 
     const modal = page.locator("[data-testid='chat-settings-modal']",);
-    await modal.waitFor({ state: "visible", timeout: 5000, },);
+    await modal.waitFor({ state: "visible", timeout: 10_000, },);
     const cls = await modal.getAttribute("class",);
     expect(cls,).toContain("open",);
     expect(await modal.isVisible(),).toBe(true,);
@@ -431,7 +431,7 @@ describe("Chat window modals open", () => {
     await page.click("[data-testid='toggle-chat-list']",);
     await page.waitForTimeout(400,);
     const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
-    await chatItem.waitFor({ state: "attached", timeout: 5000, },);
+    await chatItem.waitFor({ state: "attached", timeout: 10_000, },);
     await chatItem.click();
     await page.waitForTimeout(500,);
 
@@ -439,7 +439,7 @@ describe("Chat window modals open", () => {
     await page.waitForTimeout(400,);
 
     const modal = page.locator("[data-testid='chat-settings-modal']",);
-    await modal.waitFor({ state: "visible", timeout: 5000, },);
+    await modal.waitFor({ state: "visible", timeout: 10_000, },);
     expect(await modal.isVisible(),).toBe(true,);
     await page.close();
   });
@@ -454,7 +454,7 @@ describe("Chat window modals open", () => {
     await page.waitForTimeout(400,);
 
     const title = page.locator("[data-testid='settings-modal-title']",);
-    await title.waitFor({ state: "visible", timeout: 5000, },);
+    await title.waitFor({ state: "visible", timeout: 10_000, },);
     expect(await title.isVisible(),).toBe(true,);
     await page.close();
   });

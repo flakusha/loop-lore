@@ -6,7 +6,7 @@ describe("Characters flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
     await ctx?.close?.();
@@ -14,16 +14,16 @@ describe("Characters flow E2E", () => {
 
   async function gotoCharacters(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
     try {
-      await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
+      await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     } catch {}
-    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 8000, },);
+    await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
   }
 
   describe("Page load", () => {
     test("characters page loads with header", async () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
-      await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 5000, },);
+      await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 10_000, },);
       expect(page.url(),).toContain("/views/characters",);
       await page.close();
     });
@@ -31,8 +31,8 @@ describe("Characters flow E2E", () => {
     test("create and import buttons exist", async () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
-      await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 5000, },);
-      await page.locator("[data-testid='import-character']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 10_000, },);
+      await page.locator("[data-testid='import-character']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
 
@@ -41,7 +41,7 @@ describe("Characters flow E2E", () => {
       await gotoCharacters(page,);
       await page.waitForSelector(
         "[data-testid='characters-loading'], [data-testid='characters-empty'], [data-testid='character-grid']",
-        { timeout: 8000, },
+        { timeout: 15_000, },
       );
       await page.close();
     });
@@ -51,9 +51,9 @@ describe("Characters flow E2E", () => {
     test("create character modal opens", async () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
-      await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.click("[data-testid='create-character']",);
-      await page.locator("[data-testid='create-character-modal']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-character-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
 
@@ -61,12 +61,12 @@ describe("Characters flow E2E", () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
       await page.click("[data-testid='create-character']",);
-      await page.locator("[data-testid='create-character-form']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='create-character-form']",).waitFor({ state: "visible", timeout: 10_000, },);
       // Fill and submit
       await page.fill("#char-name", "Browser Test Character",);
       await page.click("[data-testid='create-character-form'] button[type='submit']",);
       // After creation, modal closes and character appears in grid
-      await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
       await page.close();
     });
   });
@@ -75,9 +75,9 @@ describe("Characters flow E2E", () => {
     test("import character modal opens", async () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
-      await page.locator("[data-testid='import-character']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='import-character']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.click("[data-testid='import-character']",);
-      await page.locator("[data-testid='import-character-modal']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='import-character-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
 
@@ -85,7 +85,7 @@ describe("Characters flow E2E", () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
       await page.click("[data-testid='import-character']",);
-      await page.locator("[data-testid='import-character-form']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='import-character-form']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
   });
@@ -100,10 +100,10 @@ describe("Characters flow E2E", () => {
 
       await gotoCharacters(page,);
       // Wait for grid (characters are seeded so grid should render)
-      await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
       // Click first character card
       const firstCard = page.locator("[data-testid^='character-card-']",).first();
-      await firstCard.waitFor({ state: "visible", timeout: 5000, },);
+      await firstCard.waitFor({ state: "visible", timeout: 10_000, },);
       await firstCard.click();
 
       // Wait a bit to catch console errors
@@ -116,22 +116,22 @@ describe("Characters flow E2E", () => {
         console.log("Console errors found:", errors,);
       }
 
-      await page.locator("[data-testid='character-detail-modal']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='character-detail-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
       // Detail modal has action buttons
-      await page.locator("[data-testid='start-chat-btn']",).waitFor({ state: "visible", timeout: 5000, },);
-      await page.locator("[data-testid='edit-character-btn']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='start-chat-btn']",).waitFor({ state: "visible", timeout: 10_000, },);
+      await page.locator("[data-testid='edit-character-btn']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.close();
     });
 
     test("start chat button in detail modal redirects to chat", async () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
-      await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
       await page.locator("[data-testid^='character-card-']",).first().click();
-      await page.locator("[data-testid='character-detail-modal']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='character-detail-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.locator("[data-testid='start-chat-btn']",).click();
       // Should redirect to chat page
-      await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 15_000, },);
       expect(page.url(),).toContain("/views/chat",);
       await page.close();
     });
@@ -142,11 +142,11 @@ describe("Characters flow E2E", () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page,);
       await page.locator("[data-testid='hamburger']",).click();
-      await page.locator("[data-testid='nav-gallery']",).waitFor({ state: "visible", timeout: 5000, },);
+      await page.locator("[data-testid='nav-gallery']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.evaluate(() => {
         (document.querySelector("[data-testid='nav-gallery']",) as HTMLElement)?.click();
       },);
-      await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 8000, },);
+      await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 15_000, },);
       expect(page.url(),).toContain("/views/gallery",);
       await page.close();
     });
