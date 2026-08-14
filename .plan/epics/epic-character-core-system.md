@@ -66,6 +66,8 @@ The unified character API is **implemented and wired** — no `TBD` remains in `
 - `epic-rpg-mechanics.md` — stat system integration
 - `epic-character-spec.md` — spec details
 - `epic-achievements.md` — stat-based achievements depend on character stats
+- `epic-memory-knowledge-systems.md` — G24: shares `MemoryEmotionImpact` contract
+  (mood/coping weight episodic memories; see Memory Architecture section below)
 
 ## Tickets
 
