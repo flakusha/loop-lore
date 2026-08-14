@@ -4,8 +4,8 @@
  * Story turn record, build-result options, and GM turn result types.
  */
 import type { Kysely, } from "kysely";
-import type { Config, } from "../../config/schema";
 import type { GmGuidance, } from "../../chat/types/config";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerateTextFn, } from "../gm/decisions/types";
 import type { QualityEvaluator, } from "../quality-evaluator";

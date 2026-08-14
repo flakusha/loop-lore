@@ -37,7 +37,7 @@ describe("storyControl", () => {
       expect(fetchCalls.length,).toBe(1,);
       expect(fetchCalls[0]?.url,).toBe(`/api/chats/chat-1/story/${action}`,);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
-    },);
+    });
   }
 
   test("includes an optional JSON body", async () => {
@@ -45,20 +45,20 @@ describe("storyControl", () => {
     await storyControl("chat-1", "narration", { text: "The door creaks.", },);
     expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/story/narration",);
     expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ text: "The door creaks.", },);
-  },);
+  });
 
   test("omits the body when none is given", async () => {
     mockFetch(200, { ok: true, },);
     await storyControl("chat-1", "step",);
     expect(fetchCalls[0]?.opts.body,).toBeUndefined();
-  },);
+  });
 
   test("returns ok:false with the server message on non-OK response", async () => {
     mockFetch(404, { message: "story engine wiring pending", },);
     const result = await storyControl("chat-1", "step",);
     expect(result.ok,).toBe(false,);
     expect(result.message,).toBe("story engine wiring pending",);
-  },);
+  });
 
   test("falls back to a default message when the error body has none", async () => {
     mockFetch(500, {},);
@@ -66,12 +66,12 @@ describe("storyControl", () => {
     expect(result.ok,).toBe(false,);
     expect(result.message,).toContain("step",);
     expect(result.message,).toContain("500",);
-  },);
+  });
 
   test("returns a graceful failure on network error", async () => {
     fetchError = new Error("network",);
     const result = await storyControl("chat-1", "escalate",);
     expect(result.ok,).toBe(false,);
     expect(result.message,).toContain("unavailable",);
-  },);
+  });
 });

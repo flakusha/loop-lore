@@ -6,8 +6,12 @@
     <span class="gm-running-dot" :class="running ? 'is-running' : 'is-idle'" aria-hidden="true"></span>
     <span x-show="running" class="gm-status-text">{{{t("story.running")}}}</span>
     <span x-show="!running" class="gm-status-text">{{{t("story.idle")}}}</span>
-    <span class="gm-turn-number" x-show="turnNumber != null">{{{t("story.turn")}}} <span x-text="turnNumber"></span></span>
-    <span class="gm-next-actor" x-show="nextActorName">{{{t("story.nextActor")}}}: <strong x-text="nextActorName"></strong></span>
+    <span class="gm-turn-number" x-show="turnNumber != null">{{{t("story.turn")}}} <span
+        x-text="turnNumber"
+      ></span></span>
+    <span class="gm-next-actor" x-show="nextActorName">{{{t("story.nextActor")}}}: <strong
+        x-text="nextActorName"
+      ></strong></span>
   </div>
 
   <!-- Turn order -->
@@ -42,14 +46,17 @@
               :title="t('story.deleteQuest')"
               @click="deleteQuest(quest.id)"
               data-testid="delete-quest"
-            >&times;</button>
+            >
+              &times;
+            </button>
           </div>
           <div class="gm-quest-bar">
             <div
               class="gm-quest-bar-fill"
               :style="'width: ' + questProgressPct(quest) + '%'"
               :class="quest.status === 'completed' ? 'is-complete' : ''"
-            ></div>
+            >
+            </div>
           </div>
         </div>
       </template>
@@ -62,7 +69,11 @@
         :placeholder="t('story.newQuestPlaceholder')"
         data-testid="new-quest-input"
       />
-      <button class="btn btn-primary btn-sm" @click="createQuest($refs.newQuestName.value); $refs.newQuestName.value = ''" data-testid="new-quest-submit">
+      <button
+        class="btn btn-primary btn-sm"
+        @click="createQuest($refs.newQuestName.value); $refs.newQuestName.value = ''"
+        data-testid="new-quest-submit"
+      >
         {{{t("story.newQuest")}}}
       </button>
     </div>
@@ -97,14 +108,23 @@
   <div class="gm-section">
     <h4 class="gm-section-title">{{{t("story.controls")}}}</h4>
     <div class="gm-controls">
-      <button class="btn btn-sm" :class="running ? 'btn-ghost' : 'btn-primary'" @click="togglePause()" data-testid="gm-pause">
+      <button
+        class="btn btn-sm"
+        :class="running ? 'btn-ghost' : 'btn-primary'"
+        @click="togglePause()"
+        data-testid="gm-pause"
+      >
         <span x-show="running">{{icon:player-pause}}</span>
         <span x-show="!running">{{icon:player-play}}</span>
         <span x-text="running ? t('story.pause') : t('story.resume')"></span>
       </button>
       <button class="btn btn-sm btn-ghost" @click="stepTurn()" data-testid="gm-step">{{{t("story.step")}}}</button>
-      <button class="btn btn-sm btn-ghost" @click="escalateToMe()" data-testid="gm-escalate">{{{t("story.escalateToMe")}}}</button>
-      <button class="btn btn-sm btn-ghost" @click="injectNarration()" data-testid="gm-inject">{{{t("story.injectNarration")}}}</button>
+      <button class="btn btn-sm btn-ghost" @click="escalateToMe()" data-testid="gm-escalate">
+        {{{t("story.escalateToMe")}}}
+      </button>
+      <button class="btn btn-sm btn-ghost" @click="injectNarration()" data-testid="gm-inject">
+        {{{t("story.injectNarration")}}}
+      </button>
     </div>
     <p class="gm-section-hint">{{{t("story.controlsHint")}}}</p>
   </div>
