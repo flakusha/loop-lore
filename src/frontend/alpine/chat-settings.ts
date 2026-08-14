@@ -29,6 +29,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _selectedPersonaId: null as string | null,
   _impersonatingActorId: null as string | null,
   _assistantRole: "off",
+  _gmType: "llm" as "llm" | "human" | "hybrid",
+  _gmHumanActorId: "",
+  _gmEscalationThreshold: 0.5,
+  _chatParticipants: [] as { actor_id: string; name: string; display_name?: string }[],
   _personas: [] as any[],
   _debugView: false,
   // VN mode settings
@@ -43,7 +47,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._debugView = !this._debugView;
   },
 
-  openChatSettings() {
+  async openChatSettings() {
     const chats = this.chats;
     const chat = chats.find((c,) => c.id === this.activeChat);
     this._chatSettingsName = chat?.name ?? "";
@@ -60,8 +64,25 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       this._vnTypewriterSpeed = config.vnTypewriterSpeed ?? 30;
       this._vnTransition = config.vnTransition ?? "fade";
       this._vnAutoAdvance = config.vnAutoAdvance ?? false;
+      this._gmType = config.type ?? "llm";
+      this._gmHumanActorId = config.humanGM?.actorId ?? "";
+      this._gmEscalationThreshold = config.escalationThreshold ?? 0.5;
     }
+    await this.loadChatParticipants();
     Alpine.store("ui",).showChatSettings = true;
+  },
+
+  /** Load chat participants for the human-GM actor selector. */
+  async loadChatParticipants() {
+    if (!this.activeChat) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
+      if (res.ok) {
+        this._chatParticipants = await res.json() as { actor_id: string; name: string; display_name?: string }[];
+      }
+    } catch {
+      /* ignore */
+    }
   },
 
   /**
@@ -95,7 +116,12 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     log.info("saveChatSettings", { chatId: this.activeChat, },);
     if (!this.activeChat || !this._chatSettingsName.trim()) { return; }
     try {
-      const gmConfig = {
+      const activeChatObj = this.chats.find((c,) => c.id === this.activeChat,);
+      const existing = activeChatObj?.gm_config
+        ? jsonParseOr<GmConfig>(activeChatObj.gm_config, {},)
+        : {};
+      const gmConfig: Record<string, unknown> = {
+        ...existing,
         assistantRole: this._assistantRole,
         visualNovel: this._vnEnabled,
         vnLayout: this._vnLayout,
@@ -103,7 +129,18 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         vnTypewriterSpeed: this._vnTypewriterSpeed,
         vnTransition: this._vnTransition,
         vnAutoAdvance: this._vnAutoAdvance,
+        type: this._gmType,
       };
+      if (this._gmType === "human" || this._gmType === "hybrid") {
+        gmConfig.humanGM = { actorId: this._gmHumanActorId, notifications: true, };
+      } else {
+        delete gmConfig.humanGM;
+      }
+      if (this._gmType === "hybrid") {
+        gmConfig.escalationThreshold = this._gmEscalationThreshold;
+      } else {
+        delete gmConfig.escalationThreshold;
+      }
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),
         isPaused: this._groupPaused,
