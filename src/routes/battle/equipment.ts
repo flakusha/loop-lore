@@ -11,7 +11,7 @@ import {
   toEquipmentItem,
 } from "../../battle";
 import { ItemsService, } from "../../story/items";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, } from "../../utils/safe-json";
 import { SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
@@ -55,7 +55,9 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "in", body.itemIds,)
             .execute();
           const byId = new Map<string, (typeof rows)[number]>();
-          for (const r of rows) { byId.set(r.id, r,); }
+          for (const row of rows) {
+            byId.set(row.id, row,);
+          }
           const equipment: EquipmentItem[] = [];
           for (const id of body.itemIds) {
             const row = byId.get(id,);
@@ -66,7 +68,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
               description: row.description ?? "",
               category: row.category,
               rarity: row.rarity,
-              properties: jsonParseOr<Record<string, unknown>>(row.properties ?? "{}", {},),
+              properties: jsonParseOr<Record<string, unknown>>(row.properties, {},),
             },);
             if (body.equipped?.[id]) { item.equipped = true; }
             equipment.push(item,);

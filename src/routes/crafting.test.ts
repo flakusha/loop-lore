@@ -100,7 +100,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
 
   test("get recipe returns materials", async () => {
     const app = authedApp();
-    const created = await app.handle(
+    const createResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
@@ -114,7 +114,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
-    const id = readId(await json(created,),);
+    const id = readId(await json(createResponse,),);
 
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
@@ -142,7 +142,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
 
   test("update recipe and replace materials", async () => {
     const app = authedApp();
-    const created = await app.handle(
+    const createResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
@@ -156,7 +156,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
-    const id = readId(await json(created,),);
+    const id = readId(await json(createResponse,),);
 
     const upRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`, {
@@ -176,10 +176,10 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     );
     expect(matRes.status,).toBe(200,);
 
-    const fetched = await app.handle(
+    const getResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
-    const body = await json(fetched,);
+    const body = await json(getResponse,);
     if (typeof body !== "object" || body === null || !("tier" in body) || !("materials" in body)) {
       throw new Error("recipe response missing fields",);
     }
@@ -194,7 +194,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
 
   test("delete recipe removes it", async () => {
     const app = authedApp();
-    const created = await app.handle(
+    const createResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
@@ -207,17 +207,17 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
-    const id = readId(await json(created,),);
+    const id = readId(await json(createResponse,),);
 
     const delRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`, { method: "DELETE", },),
     );
     expect(delRes.status,).toBe(200,);
 
-    const fetched = await app.handle(
+    const getResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
-    expect(fetched.status,).toBe(404,);
+    expect(getResponse.status,).toBe(404,);
   });
 
   test("rejects non-owner with 403", async () => {
