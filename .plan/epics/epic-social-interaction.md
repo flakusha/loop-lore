@@ -47,6 +47,130 @@ interface SocialModifier {
 }
 ```
 
+## NPC-to-NPC Social Simulation (Extension — Research-Driven)
+
+The Stanford Generative Agents paper (Park et al., 2023) demonstrates that
+NPC-to-NPC autonomous interactions create emergent social dynamics. The key
+insight: NPCs decide whether to initiate conversations, generate dialogue
+based on context and memory, and update relationships from interaction outcomes.
+
+### Decision to Interact
+
+NPCs evaluate whether to initiate or react to social interactions based on:
+
+1. **Proximity** — are the NPCs in the same location?
+2. **Current activity** — are they sleeping, chatting, or busy?
+3. **Relationship state** — how do they feel about each other?
+4. **Last interaction** — when did they last talk? What about?
+5. **Current mood** — are they in a social mood?
+
+```typescript
+interface InteractionDecision {
+  initiator_id: string;
+  target_id: string;
+  should_interact: boolean;
+  reason: string;           // why they decided to talk (or not)
+  context: {
+    last_chat_time?: Date;
+    last_chat_topic?: string;
+    current_activities: string[];
+    relationship_strength: number;
+    mood_factor: number;
+  };
+}
+```
+
+### Conversation Generation
+
+When two NPCs decide to interact, the system generates dialogue:
+
+1. **Context retrieval** — pull relevant memories and relationship data
+2. **Topic selection** — decide what to discuss based on current thoughts
+3. **Utterance generation** — generate dialogue for each participant
+4. **Summary creation** — summarize the conversation for memory storage
+
+```typescript
+interface NPCConversation {
+  id: string;
+  participants: string[];
+  start_time: Date;
+  end_time?: Date;
+  location: string;
+  topic: string;
+  utterances: NPCUtterance[];
+  summary?: string;
+  relationship_impact: number; // -100 to 100: how it affected the relationship
+}
+
+interface NPCUtterance {
+  speaker_id: string;
+  content: string;
+  emotional_tone: string;
+  timestamp: Date;
+}
+```
+
+### Emergent Social Dynamics
+
+NPC-to-NPC interactions create emergent behaviors:
+
+1. **Relationship evolution** — repeated positive interactions strengthen bonds;
+   negative interactions weaken them
+2. **Information propagation** — NPCs share knowledge through conversation
+   (gossip, rumors, secrets)
+3. **Social clustering** — NPCs with similar interests form groups
+4. **Conflict emergence** — disagreements escalate into feuds
+5. **Alliance formation** — NPCs cooperate against common threats
+
+### Memory Integration
+
+Conversations are stored in episodic memory and influence future interactions:
+
+```typescript
+interface SocialMemory {
+  id: string;
+  conversation_id: string;
+  participants: string[];
+  summary: string;
+  emotional_valence: number; // -100 to 100
+  importance: number;        // 0–100
+  key_points: string[];      // what was discussed
+  relationship_changes: Array<{
+    target_id: string;
+    strength_change: number;
+    opinion_change: number;
+  }>;
+}
+```
+
+### Prompt Assembly
+
+When generating NPC-to-NPC dialogue, the prompt includes:
+1. **Relationship context** — how do they feel about each other?
+2. **Recent interactions** — what did they last discuss?
+3. **Current thoughts** — what's on their mind?
+4. **Personality traits** — how do they express themselves?
+5. **Mood state** — how are they feeling right now?
+
+### Tasks
+
+| Task | Description | Priority | Status |
+|------|-------------|----------|--------|
+| TASK-npc-social-decision | Implement `should_interact` logic for NPCs | High | Not Started |
+| TASK-npc-social-conversation | NPC dialogue generation system | High | Not Started |
+| TASK-npc-social-memory | Store and retrieve NPC conversation history | Medium | Not Started |
+| TASK-npc-social-dynamics | Emergent social behavior system | Medium | Not Started |
+| TASK-npc-social-prompt | Prompt assembly for NPC conversations | High | Not Started |
+| TASK-npc-social-tests | Decision, conversation, memory, dynamics tests | High | Not Started |
+
+### Open Questions
+
+1. Should NPC-to-NPC conversations be visible to players, or only summarized?
+2. How should NPCs handle sensitive information (secrets, betrayals)?
+3. Should NPCs be able to lie to each other (deception mechanics)?
+4. How should NPC social dynamics scale with world size?
+5. Should NPCs be able to form groups/cliques, or only pairwise relationships?
+
 ## Persuasion System
 
 ### Persuasion Attempts
