@@ -214,11 +214,14 @@ export function sha256(data: Buffer,): Buffer {
   compiles when cargo exists, skips with notice when absent → TS becomes
   default. Wired into `bun run build`. **No binaries are committed** —
   `native/loop-lore-native/target/` is gitignored.
-- **Benchmarks bound (performance proof):** `tests/benchmarks/blake3.bench.ts`
-  + runner `scripts/run-benchmarks.ts` (`bun run bench` / `bench:native` /
-  `bench:ci`). Measured: native **8.8 GB/s vs 170 MB/s TS → 53× speedup**
-  (epic Module Comparison target: 10×), cold dlopen 9 ms (< 50 ms target).
-  See `epic-testing-benchmarking.md` Native Module section.
+- **Benchmarks bound (performance proof):** `tests/benchmarks/` (blake3 +
+  zstd) + runner `scripts/run-benchmarks.ts` (`bun run bench` /
+  `bench:native` / `bench zstd` / `bench:ci`). Measured: BLAKE3 native
+  **8.8 GB/s vs 170 MB/s TS → 53× speedup** (target 10×), cold dlopen 9 ms
+  (< 50 ms). zstd: **Bun built-in native is faster than the Rust FFI path**
+  (~0.6× compress / ~0.4× decompress) — honest finding; Rust sample proves
+  integration mechanics + deterministic level control, fallback chain keeps
+  the fastest codec in the loop. See `epic-testing-benchmarking.md`.
 
 ### Phase 1 — Module Infrastructure
 
@@ -244,9 +247,9 @@ export function sha256(data: Buffer,): Buffer {
 
 ### Phase 4 — Compression Module
 
-- [ ] Implement gzip + brotli + zstd
-- [ ] Add pure-JS fallback (fflate, fzstd)
-- [ ] Add tests for compression ratio + speed
+- [x] Implement gzip + brotli + zstd — ✅ zstd shipped (Rust `zstd` crate, C ABI: compress/decompress/decompress_bound)
+- [ ] Add pure-JS fallback (fflate, fzstd) — ⚠️ deliberately skipped for zstd: no sound pure-TS zstd exists; fallback = Bun built-in native zstd
+- [x] Add tests for compression ratio + speed — ✅ 17 TS tests (roundtrip/determinism/cross-validation vs Bun decoder) + 10 Rust tests; bench bound
 
 ### Phase 5 — ML Inference Module (Optional)
 

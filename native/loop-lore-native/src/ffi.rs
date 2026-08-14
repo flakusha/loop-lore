@@ -114,7 +114,7 @@ mod tests {
 
   #[test]
   fn version_is_packed() {
-    assert_eq!(ll_version(), 256); // 0.1.0 → (0 << 16) | (1 << 8) | 0
+    assert_eq!(ll_version(), 512); // 0.2.0 → (0 << 16) | (2 << 8) | 0
   }
 
   #[test]
