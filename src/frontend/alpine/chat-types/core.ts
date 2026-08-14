@@ -1,4 +1,4 @@
-import type { AlpineMagicThis, GalleryAsset, } from "../types";
+import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, } from "../types";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
 import type { WorldChannelChat, } from "./world";
 
@@ -85,13 +85,7 @@ export interface ChatCoreState extends AlpineMagicThis {
   _vnAutoAdvance: boolean;
 
   // Prompt template preview
-  _promptTemplate: {
-    purpose: string;
-    prompt: string;
-    source: string;
-    characterName: string | null;
-    registryDefault: string;
-  } | null;
+  _promptTemplate: PromptTemplateInfo | null;
   _promptLoading: boolean;
   _promptExpanded: boolean;
   loadPromptTemplate(): Promise<void>;
