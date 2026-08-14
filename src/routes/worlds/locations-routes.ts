@@ -10,7 +10,7 @@ import {
 } from "./locations";
 import type { HandleOpts, } from "./types";
 
-export function locationRoutes(opts: HandleOpts, prefix = "/api") {
+export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "worlds-locations", },)

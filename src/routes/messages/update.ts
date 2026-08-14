@@ -20,7 +20,7 @@ import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, requireU
 import { isServiceError, log, serviceErrorToResponse, } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
-export function updateRoutes(opts: HandlerOpts, prefix = "/api") {
+export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
 
   return new Elysia({ name: "messages-update", },)

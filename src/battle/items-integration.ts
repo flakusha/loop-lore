@@ -3,20 +3,20 @@
  *
  * Equipment stats, durability, loot drops, and inventory management.
  */
+import type { ItemRarity, } from "../db/enums";
 import type {
   CombatStats,
   EquipmentModifier,
   EquipmentSlot,
 } from "./integration-schemas";
-import type { ItemRarity, } from "../db/enums";
 import { type EquipmentItem, } from "./item-mapping";
 
 export {
+  categoryToSlot,
+  categoryToType,
   type EquipmentItem,
   type EquipmentSource,
   type ItemType,
-  categoryToSlot,
-  categoryToType,
   toEquipmentItem,
 } from "./item-mapping";
 

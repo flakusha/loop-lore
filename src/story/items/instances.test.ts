@@ -10,7 +10,13 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertItems, insertLocations, insertUsers, insertWorlds, insertWorldItems, } from "../../test-utils/insert-helpers";
+import {
+  insertItems,
+  insertLocations,
+  insertUsers,
+  insertWorldItems,
+  insertWorlds,
+} from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { ItemsService, } from "./index";
 
@@ -33,11 +39,11 @@ beforeAll(async () => {
   await insertLocations(db, worldId, "B", { id: locationB, } as never,);
   itemId = uid();
   await insertItems(db, worldId, "Rations", "consumable", { id: itemId, } as never,);
-});
+},);
 
 afterAll(async () => {
   await db.destroy();
-});
+},);
 
 describe("ItemsService.transfer", () => {
   test("full transfer deletes the source row (no orphan)", async () => {
@@ -55,13 +61,13 @@ describe("ItemsService.transfer", () => {
     expect(res.toQuantity,).toBe(5,);
 
     // Source deleted.
-    const source = await db.selectFrom("world_items").select("quantity").where("id", "=", wId,).executeTakeFirst();
+    const source = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
     expect(source,).toBeUndefined();
 
     // Destination holds the transferred quantity.
     const dest = await db
-      .selectFrom("world_items")
-      .select("quantity")
+      .selectFrom("world_items",)
+      .select("quantity",)
       .where("item_id", "=", item,)
       .where("location_id", "=", destLoc,)
       .executeTakeFirst();
@@ -82,12 +88,12 @@ describe("ItemsService.transfer", () => {
     expect(res.fromRemaining,).toBe(3,);
     expect(res.toQuantity,).toBe(2,);
 
-    const source = await db.selectFrom("world_items").select("quantity").where("id", "=", wId,).executeTakeFirst();
+    const source = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
     expect(source?.quantity,).toBe(3,);
 
     const dest = await db
-      .selectFrom("world_items")
-      .select("quantity")
+      .selectFrom("world_items",)
+      .select("quantity",)
       .where("item_id", "=", item,)
       .where("location_id", "=", destLoc,)
       .executeTakeFirst();
@@ -109,7 +115,7 @@ describe("ItemsService.destroy", () => {
     const svc = new ItemsService(db,);
     const ok = await svc.destroy(wId,);
     expect(ok,).toBe(true,);
-    const row = await db.selectFrom("world_items").select("id").where("id", "=", wId,).executeTakeFirst();
+    const row = await db.selectFrom("world_items",).select("id",).where("id", "=", wId,).executeTakeFirst();
     expect(row,).toBeUndefined();
   });
 
@@ -119,7 +125,7 @@ describe("ItemsService.destroy", () => {
     const svc = new ItemsService(db,);
     const ok = await svc.destroy(wId, 3,);
     expect(ok,).toBe(true,);
-    const row = await db.selectFrom("world_items").select("id").where("id", "=", wId,).executeTakeFirst();
+    const row = await db.selectFrom("world_items",).select("id",).where("id", "=", wId,).executeTakeFirst();
     expect(row,).toBeUndefined();
   });
 
@@ -129,7 +135,7 @@ describe("ItemsService.destroy", () => {
     const svc = new ItemsService(db,);
     const ok = await svc.destroy(wId, 1,);
     expect(ok,).toBe(true,);
-    const row = await db.selectFrom("world_items").select("quantity").where("id", "=", wId,).executeTakeFirst();
+    const row = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
     expect(row?.quantity,).toBe(2,);
   });
 });

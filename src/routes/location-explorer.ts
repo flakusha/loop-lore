@@ -42,7 +42,7 @@ async function requireWorldAccess(
   return notFound("World not found",);
 }
 
-export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api") {
+export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

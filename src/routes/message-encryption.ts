@@ -27,13 +27,13 @@ function log(): Logger {
   return getLogger().child({ module: "routes:message-encryption", },);
 }
 
-export function messageEncryptionRoutes(opts: { database: Db; config: Config }, prefix = "/api"): Elysia {
+export function messageEncryptionRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia()
     .get(prefix + "/chats/:id/encryption-key", async (req,) => {
       const userId = requireUserId(req,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(req,);
-      const { params, ...rest } = req;
+      const { params, ...rest } = req as unknown as { params: { id: string } };
       const chatId = params.id;
 
       const access = await checkChatAccess(opts.database, chatId, userId, userRole,);

@@ -5,7 +5,7 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import type { HandlerOpts, } from "./types";
 
-export function removeRoutes(opts: HandlerOpts, prefix = "/api") {
+export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

@@ -10,7 +10,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function moraleRoutes(_opts: HandlerOpts, prefix = "/api") {
+export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-morale", },)
     .post(
       prefix + "/battle/morale/compute",

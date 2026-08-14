@@ -21,6 +21,7 @@ Extends `epic-world-locations.md` with between-session simulation.
 ## Implementation
 
 ### World-Time Simulation
+
 ```typescript
 interface WorldTimeSimulation {
   world_id: string;
@@ -43,6 +44,7 @@ interface WorldEvent {
 ```
 
 ### Between-Session Processing
+
 On session start:
 1. Calculate elapsed real time since last session
 2. Convert to game-time (configurable speed)
@@ -52,6 +54,7 @@ On session start:
 6. Generate "catch-up" summary for player
 
 ### Catch-Up Summary
+
 ```typescript
 interface WorldCatchUp {
   elapsed_game_days: number;
@@ -66,6 +69,7 @@ interface WorldCatchUp {
 ```
 
 ## Integration Points
+
 - **epic-world-locations.md** — World state persistence
 - **epic-agency-story-points.md** — NPC daily plans advance between sessions
 - **TASK-npc-bdi-planning.md** — BDI loop runs between sessions
@@ -75,6 +79,7 @@ interface WorldCatchUp {
 - **Timeline system** — World-time tracks simulation elapsed time
 
 ## Acceptance Criteria
+
 - [ ] World-time simulation advances between sessions
 - [ ] NPCs complete daily plans between sessions
 - [ ] World events occur between sessions
@@ -85,6 +90,7 @@ interface WorldCatchUp {
 - [ ] No data loss from between-session simulation
 
 ## Open Questions
+
 1. What's the right simulation speed? (1 real-minute = 1 game-hour? 1 game-day?)
 2. Should simulation be deterministic or include random events?
 3. How detailed should the catch-up summary be?

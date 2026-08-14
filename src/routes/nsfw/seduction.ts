@@ -4,7 +4,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, requireActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function seductionRoutes(opts: HandlerOpts, prefix = "/api") {
+export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const seductionService = new SeductionService(database,);
 

@@ -16,7 +16,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function equipmentRoutes(opts: HandlerOpts, prefix = "/api") {
+export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   return new Elysia({ name: "battle-equipment", },)
     .post(
@@ -49,11 +49,11 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api") {
             return jsonError("itemIds must be a non-empty array", 400,);
           }
           const rows = await database
-            .selectFrom("items")
-            .select(["id", "name", "description", "category", "rarity", "properties",])
+            .selectFrom("items",)
+            .select(["id", "name", "description", "category", "rarity", "properties",],)
             .where("id", "in", body.itemIds,)
             .execute();
-          const byId = new Map(rows.map(r => [r.id, r,],));
+          const byId = new Map(rows.map(r => [r.id, r,]),);
           const equipment: EquipmentItem[] = Array.from(body.itemIds, (id,) => {
             const row = byId.get(id,);
             if (!row) { return null; }
@@ -64,12 +64,16 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api") {
               category: row.category,
               rarity: row.rarity,
               properties: (() => {
-                try { return JSON.parse(row.properties,); } catch { return {}; }
+                try {
+                  return JSON.parse(row.properties,);
+                } catch {
+                  return {};
+                }
               })(),
             },);
             if (body.equipped?.[id]) { item.equipped = true; }
             return item;
-          },).filter((i): i is EquipmentItem => i !== null,);
+          },).filter((i,): i is EquipmentItem => i !== null);
           return jsonResponse(calculateEquipmentModifiers(equipment,),);
         } catch (error) {
           log().error("Failed to calculate modifiers from item IDs", error instanceof Error ? error : undefined,);
@@ -191,7 +195,8 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api") {
         response: { 200: SuccessResponse, },
         detail: {
           summary: "Generate loot from table",
-          description: "Roll loot drops based on monster level and loot table; persists instances when worldId + destination given.",
+          description:
+            "Roll loot drops based on monster level and loot table; persists instances when worldId + destination given.",
           tags: ["Battle",],
         },
       },

@@ -31,14 +31,25 @@ beforeAll(async () => {
   await insertLocations(db, worldId, "Cavern", { id: locationId, } as never,);
   actorId = uid();
   await insertActors(db, "Bandit", { id: actorId, user_id: userId, owner_id: userId, } as never,);
-});
+},);
 
 afterAll(async () => {
   await db.destroy();
-});
+},);
 
 const TABLE = [
-  { name: "Health Potion", description: "Heals.", type: "consumable", rarity: "common", weight: 50, minQuantity: 1, maxQuantity: 3, minLevel: 1, goldValue: 5, metadata: {}, },
+  {
+    name: "Health Potion",
+    description: "Heals.",
+    type: "consumable",
+    rarity: "common",
+    weight: 50,
+    minQuantity: 1,
+    maxQuantity: 3,
+    minLevel: 1,
+    goldValue: 5,
+    metadata: {},
+  },
 ] as const;
 
 describe("persistLoot", () => {
@@ -52,8 +63,8 @@ describe("persistLoot", () => {
     // Every returned id must be a real world_items row at the location.
     for (const wId of persisted.worldItemIds) {
       const row = await db
-        .selectFrom("world_items")
-        .select(["id", "location_id",])
+        .selectFrom("world_items",)
+        .select(["id", "location_id",],)
         .where("id", "=", wId,)
         .executeTakeFirst();
       expect(row,).toBeDefined();
@@ -68,8 +79,8 @@ describe("persistLoot", () => {
 
     for (const wId of persisted.worldItemIds) {
       const row = await db
-        .selectFrom("world_items")
-        .select("owner_actor_id")
+        .selectFrom("world_items",)
+        .select("owner_actor_id",)
         .where("id", "=", wId,)
         .executeTakeFirst();
       expect(row?.owner_actor_id,).toBe(actorId,);
@@ -81,10 +92,10 @@ describe("persistLoot", () => {
     await persistLoot(db, result, { worldId, locationId, },);
     // Definitions must exist for the created instances.
     const rows = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .innerJoin("items", "items.id", "world_items.item_id",)
       .where("world_items.id", "in", result.worldItemIds,)
-      .select(["items.name", "items.category", "items.rarity",])
+      .select(["items.name", "items.category", "items.rarity",],)
       .execute();
     expect(rows.length,).toBe(result.worldItemIds.length,);
     for (const r of rows) {

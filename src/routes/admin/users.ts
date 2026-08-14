@@ -11,7 +11,7 @@ import { AdminPaginatedEnvelope, AdminUserRow, } from "../../validation/schemas/
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function usersRoutes(opts: AdminRouteOpts, prefix = "/api") {
+export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;
 
   return (

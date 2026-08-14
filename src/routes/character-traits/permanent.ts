@@ -18,7 +18,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * Permanent Traits (Layer 0) sub-plugin — CRUD for actor permanent traits.
  */
-export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 

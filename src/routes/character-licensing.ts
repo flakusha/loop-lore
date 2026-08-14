@@ -14,7 +14,7 @@ function booleanToInt(value: boolean | undefined, fallback: number,): number {
   return value === undefined ? fallback : (value ? 1 : 0);
 }
 
-export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api") {
+export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "character-licensing", },)

@@ -53,7 +53,7 @@ async function handleListWorldChats(
   return jsonResponse({ data: chats, },);
 }
 
-export function chatsRoutes(opts: HandleOpts, prefix = "/api") {
+export function chatsRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "worlds-chats", },)

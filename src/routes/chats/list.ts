@@ -73,7 +73,7 @@ function orderChatList<T,>(
   }
 }
 
-export function listRoutes(opts: HandlerOpts, prefix = "/api") {
+export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
