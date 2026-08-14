@@ -9,7 +9,7 @@ import {
 } from "../../validation/schemas";
 import { handleCreateQuest, handleListQuests, } from "./handlers";
 
-export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-world", },)
     .get(prefix + "/worlds/:worldId/quests", async (ctx: any,) => {
       const userId = ctx.userId as string | null;

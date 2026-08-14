@@ -66,6 +66,9 @@ configs/templates/*.yml
 .omp
 .serena
 
+# Session harvest artifacts (HTML dumps in repo root break the dprint gate)
+omp-session-*.html
+
 # MCPs
 .playwright-mcp/
 

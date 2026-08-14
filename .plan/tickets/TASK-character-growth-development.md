@@ -21,6 +21,7 @@ Extends `epic-character-core-system.md` with growth mechanics.
 ## Implementation
 
 ### Skill Progression
+
 ```typescript
 interface SkillProgression {
   skill_id: string;
@@ -36,6 +37,7 @@ interface SkillProgression {
 ```
 
 ### Personality Maturation
+
 ```typescript
 interface PersonalityGrowthEvent {
   character_id: string;
@@ -55,6 +57,7 @@ Character personality traits shift through significant story events:
 - Failure can build resilience or cause retreat
 
 ### Narrative Milestones
+
 ```typescript
 interface NarrativeMilestone {
   id: string;
@@ -74,6 +77,7 @@ interface NarrativeMilestone {
 ```
 
 ### Character Arc Templates
+
 Pre-defined arc patterns that guide character growth:
 - **Hero's Journey** — call → threshold → trials → transformation → return
 - **Fall from Grace** — power → corruption → redemption (or not)
@@ -82,6 +86,7 @@ Pre-defined arc patterns that guide character growth:
 - **Tragic Hero** — greatness → flaw → downfall
 
 ## Integration Points
+
 - **epic-character-core-system.md** — Growth is core character lifecycle
 - **TASK-character-mood-happiness.md** — Significant events affect mood and growth
 - **TASK-character-relationships.md** — Relationships drive relational milestones
@@ -90,6 +95,7 @@ Pre-defined arc patterns that guide character growth:
 - **epic-agency-story-points.md** — Growth events trigger aspiration updates
 
 ## Acceptance Criteria
+
 - [ ] Skill progression tracks experience and levels
 - [ ] Skills decay when unused (slow, not punitive)
 - [ ] Personality traits shift through significant story events
@@ -101,6 +107,7 @@ Pre-defined arc patterns that guide character growth:
 - [ ] Growth integrates with mood and relationship systems
 
 ## Open Questions
+
 1. Should personality maturation be gradual or event-driven?
 2. How fast should skills decay when unused?
 3. Should character arcs be player-chosen or emergent from gameplay?

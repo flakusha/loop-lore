@@ -20,7 +20,7 @@ function log() {
   return getLogger().child({ module: "plugins", },);
 }
 
-export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "plugins", },)
     .get(
       prefix + "/plugins",

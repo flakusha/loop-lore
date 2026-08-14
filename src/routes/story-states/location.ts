@@ -10,7 +10,7 @@ const locationStateResponse = t.Object({
   state: t.Record(t.String(), t.Any(),),
 },);
 
-export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-location", },)
     .get(prefix + "/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;

@@ -20,7 +20,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * Import sub-plugin — import character systems data from body or remote URL.
  */
-export function importRoutes(opts: HandlerOpts, prefix = "/api") {
+export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

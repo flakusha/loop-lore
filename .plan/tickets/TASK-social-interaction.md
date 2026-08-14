@@ -61,6 +61,7 @@ Social interaction mechanics — persuasion, intimidation, deception, barter, le
 Research on social simulation (generative-agents, Inworld AI) identified NPC-to-NPC extension:
 
 ### NPC-to-NPC Autonomous Social
+
 This ticket covers player-facing social skills. NPCs should also interact with each other:
 - Decision-to-interact based on proximity, activity, relationship, mood
 - Conversation generation with topics from shared context
@@ -70,12 +71,14 @@ This ticket covers player-facing social skills. NPCs should also interact with e
 **See:** `TASK-npc-to-npc-social.md` for full NPC-to-NPC social simulation.
 
 ### Shared Social Infrastructure
+
 Both player-facing and NPC-to-NPC social systems share:
 - Reputation system (faction standing affects all social interactions)
 - Relationship tracking (relationship strength drives NPC behavior)
 - Social skill checks (same mechanics for player and NPC actions)
 
 ### Cross-References
+
 - `TASK-npc-to-npc-social.md` — NPC-to-NPC autonomous social simulation
 - `TASK-character-relationships.md` — Dynamic relationship evolution
 - `TASK-character-mood-happiness.md` — Mood affects social willingness

@@ -10,7 +10,7 @@ import {
 } from "../../validation/schemas";
 import { handleAbandonQuest, handleQuest, } from "./handlers";
 
-export function questCrudRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function questCrudRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-crud", },)
     .get(prefix + "/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;

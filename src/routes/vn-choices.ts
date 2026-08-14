@@ -31,7 +31,7 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api") {
+export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

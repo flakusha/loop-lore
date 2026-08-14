@@ -97,7 +97,7 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
   },);
 }
 
-export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "settings", },)
     .get(
       prefix + "/settings",

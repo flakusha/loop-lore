@@ -4,7 +4,7 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function statsRoutes(opts: AdminRouteOpts, prefix = "/api") {
+export function statsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;
 
   return (

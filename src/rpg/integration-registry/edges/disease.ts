@@ -4,7 +4,7 @@
  * Cross-system edges involving Disease. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges involving the Disease system. */
 export const DISEASE_EDGES: IntegrationEdge[] = [

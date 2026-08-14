@@ -11,9 +11,9 @@
  * @see docs/spec/api-versioning.md
  */
 import { Elysia, } from "elysia";
-import { versionResolver, } from "../middleware/version-resolver";
-import { healthRoutes, } from "../health";
 import { chatsRoutes, } from "../chats";
+import { healthRoutes, } from "../health";
+import { versionResolver, } from "../middleware/version-resolver";
 import { usersRoutes, } from "../users";
 
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";

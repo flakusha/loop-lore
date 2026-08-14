@@ -22,7 +22,7 @@ interface HandleOpts {
   database: Kysely<DB>;
 }
 
-export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api"): Elysia {
+export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "telemetry", },)
     .post(prefix + "/telemetry/event", async (ctx: any,) => {
       if (!isFrontendTelemetryEnabled()) {

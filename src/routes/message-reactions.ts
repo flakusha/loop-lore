@@ -66,7 +66,7 @@ async function resolveMessageAccess(
   return msg.chat_id;
 }
 
-export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

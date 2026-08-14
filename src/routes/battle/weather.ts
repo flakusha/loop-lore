@@ -12,7 +12,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function weatherRoutes(_opts: HandlerOpts, prefix = "/api") {
+export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-weather", },)
     .post(
       prefix + "/battle/weather/modifiers",

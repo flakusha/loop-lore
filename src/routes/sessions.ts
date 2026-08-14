@@ -50,7 +50,7 @@ function sanitizeSession(
   };
 }
 
-export function sessionsRoutes(opts: HandleOpts, prefix = "/api"): Elysia {
+export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
   const { database, } = opts;
 
   return (

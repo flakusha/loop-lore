@@ -58,7 +58,7 @@ async function isWorldOwner(
   return Boolean(world,) && (world!.owner_id === userId || userRole === "admin" || userRole === "solo");
 }
 
-export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api") {
+export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

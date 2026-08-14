@@ -22,7 +22,7 @@ export interface I18nRoutesOpts {
  * GET /api/i18n/locales — List supported locales with metadata
  * PATCH /api/i18n/locale — Set user's preferred locale
  */
-export function i18nRoutes({ database, }: I18nRoutesOpts, prefix = "/api") {
+export function i18nRoutes({ database, }: I18nRoutesOpts, prefix = "/api",) {
   return new Elysia({ name: "i18n", },)
     .get(prefix + "/i18n/locales", () => {
       const supported = getSupportedLocales();

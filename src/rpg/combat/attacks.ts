@@ -1,9 +1,9 @@
 import { type AdvantageMode, type DiceSides, rollDice, } from "../dice.js";
 import { abilityModifier, proficiencyBonus, } from "../stats.js";
 import {
-  DamageModifier,
   type AttackResult,
   type Combatant,
+  DamageModifier,
   type DamageResistance,
   type DamageType,
 } from "./types.js";

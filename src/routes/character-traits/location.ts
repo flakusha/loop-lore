@@ -17,7 +17,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * Location Traits (Layer 3) sub-plugin — CRUD for actor location-specific traits.
  */
-export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 

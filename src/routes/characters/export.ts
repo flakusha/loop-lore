@@ -15,7 +15,7 @@ import {
 import { HttpStatus, jsonError, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function exportRoutes(opts: HandlerOpts, prefix = "/api") {
+export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-export", },)

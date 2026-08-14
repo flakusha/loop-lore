@@ -6,7 +6,7 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { ChatSectionCreateBody, type HandlerOpts, } from "./types";
 
-export function createRoutes(opts: HandlerOpts, prefix = "/api") {
+export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

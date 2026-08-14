@@ -6,7 +6,7 @@ import {
 import { HttpStatus, jsonError, jsonNoContent, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function removeRoutes(opts: HandlerOpts, prefix = "/api") {
+export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-remove", },)

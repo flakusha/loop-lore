@@ -13,7 +13,7 @@ import {
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
 import { checkWorldOwnership, handleInstance, handleInstances, handleTransfer, } from "./handlers";
 
-export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-items-instances", },)
     .post(prefix + "/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;

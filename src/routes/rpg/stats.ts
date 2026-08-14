@@ -14,7 +14,7 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { type HandlerOpts, StatsBody, StatsGenerateBody, } from "./types";
 
-export function statsRoutes(_opts: HandlerOpts, prefix = "/api") {
+export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "rpg-stats", },)
       // ── Stats: Calculate ──────────────────────────────────

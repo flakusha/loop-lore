@@ -20,7 +20,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * Export sub-plugin — export character systems data as JSON (GET + filtered POST).
  */
-export function exportRoutes(opts: HandlerOpts, prefix = "/api") {
+export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
