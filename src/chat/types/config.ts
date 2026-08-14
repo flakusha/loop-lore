@@ -1,4 +1,4 @@
-import type { GameMasterType } from "../../db/enums-config";
+import type { GameMasterType, } from "../../db/enums-config";
 
 /** Chat modes from the DB enum */
 export type ChatMode = "direct" | "group" | "story";

@@ -38,7 +38,7 @@ describe("updateChat gmConfig GM execution fields", () => {
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
-    return row?.gm_config ? JSON.parse(row.gm_config as string) : null;
+    return row?.gm_config ? JSON.parse(row.gm_config as string,) : null;
   }
 
   it("persists GM execution type / humanGM / escalationThreshold", async () => {
@@ -49,21 +49,21 @@ describe("updateChat gmConfig GM execution fields", () => {
         escalationThreshold: 0.5,
       },
     },);
-    expect(res,).toEqual({ ok: true, });
+    expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("hybrid",);
     expect((parsed?.humanGM as { actorId: string }).actorId,).toBe("user-gm",);
     expect(parsed?.escalationThreshold,).toBe(0.5,);
-  },);
+  });
 
   it("round-trips a human GM config", async () => {
     const res = await updateChat(db, chatId, {
       gmConfig: { type: "human", humanGM: { actorId: "user-gm", notifications: true, }, },
     },);
-    expect(res,).toEqual({ ok: true, });
+    expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("human",);
-  },);
+  });
 
   it("persists a fully-merged gm_config blob (assistantRole + type + humanGM)", async () => {
     // The client merges existing keys (assistantRole/storyMode) with the new
@@ -77,13 +77,13 @@ describe("updateChat gmConfig GM execution fields", () => {
         humanGM: { actorId: "user-gm", notifications: true, },
       },
     },);
-    expect(res,).toEqual({ ok: true, });
+    expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.assistantRole,).toBe("gm",);
     expect(parsed?.storyMode,).toBe(true,);
     expect(parsed?.type,).toBe("human",);
     expect((parsed?.humanGM as { actorId: string }).actorId,).toBe("user-gm",);
-  },);
+  });
 
   it("persists GM llmConfig (multi-LLM model/provider/temperature/maxTokens)", async () => {
     const res = await updateChat(db, chatId, {
@@ -98,33 +98,37 @@ describe("updateChat gmConfig GM execution fields", () => {
         },
       },
     },);
-    expect(res,).toEqual({ ok: true, });
+    expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("llm",);
     const llm = parsed?.llmConfig as {
-      model: string; provider: string; systemPrompt: string; temperature: number; maxTokens: number;
+      model: string;
+      provider: string;
+      systemPrompt: string;
+      temperature: number;
+      maxTokens: number;
     };
     expect(llm.model,).toBe("claude-3.5-sonnet",);
     expect(llm.provider,).toBe("anthropic",);
     expect(llm.temperature,).toBe(0.8,);
     expect(llm.maxTokens,).toBe(1500,);
-  },);
+  });
 
   it("persists per-actor model overrides (actorModels)", async () => {
     const res = await updateChat(db, chatId, {
       gmConfig: {
         type: "llm",
         actorModels: {
-          "user-gm": { model: "claude-3.5-sonnet", provider: "anthropic" },
-          "actor-2": { model: "gpt-4o", provider: "openai" },
+          "user-gm": { model: "claude-3.5-sonnet", provider: "anthropic", },
+          "actor-2": { model: "gpt-4o", provider: "openai", },
         },
       },
     },);
-    expect(res,).toEqual({ ok: true, });
+    expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("llm",);
     const am = parsed?.actorModels as Record<string, { model: string; provider: string }>;
-    expect(am["user-gm"].model,).toBe("claude-3.5-sonnet",);
-    expect(am["actor-2"].provider,).toBe("openai",);
-  },);
-},);
+    expect(am["user-gm"]!.model,).toBe("claude-3.5-sonnet",);
+    expect(am["actor-2"]!.provider,).toBe("openai",);
+  });
+});

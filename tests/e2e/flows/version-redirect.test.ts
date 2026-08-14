@@ -24,12 +24,12 @@ describe("API versioning redirects", () => {
   test("GET /api/chats is served (legacy route still registered)", async () => {
     const res = await fetch(`${server.url}/api/chats`, { redirect: "manual", },);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("GET /api/v1/chats is served by the v1 barrel", async () => {
     const res = await fetch(`${server.url}/api/v1/chats`, { redirect: "manual", },);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("unversioned unknown /api/{resource} → 308 with single v1 prefix", async () => {
     const res = await fetch(`${server.url}/api/no-such-endpoint-xyz`, {
@@ -38,7 +38,7 @@ describe("API versioning redirects", () => {
     },);
     expect(res.status,).toBe(308,);
     expect(res.headers.get("location",),).toBe("/api/v1/no-such-endpoint-xyz",);
-  },);
+  });
 
   test("already-versioned /api/v1/{resource} is NOT redirected (no double prefix)", async () => {
     const res = await fetch(`${server.url}/api/v1/no-such-endpoint-xyz`, {
@@ -48,7 +48,7 @@ describe("API versioning redirects", () => {
     // Must not 308 → /api/v1/v1/... — falls through to legacy dispatch → 404
     expect(res.status,).not.toBe(308,);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("unversioned /api/{resource} redirect terminates at the v1 path", async () => {
     const first = await fetch(`${server.url}/api/no-such-endpoint-xyz`, {
@@ -64,5 +64,5 @@ describe("API versioning redirects", () => {
     // Second hop must not redirect again (previously: /api/v1/v1/... → 404 loop)
     expect(second.status,).not.toBe(308,);
     expect(second.headers.get("location",),).toBeNull();
-  },);
+  });
 });

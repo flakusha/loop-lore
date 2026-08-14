@@ -4,8 +4,8 @@
  * Actor selection, GM decision production, turn recording, and
  * result building. Threaded with an explicit `state` handle.
  */
-import { GameMasterType, } from "../../db/enums";
 import type { GmGuidance, } from "../../chat/types/config";
+import { GameMasterType, } from "../../db/enums";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { GM_DECISIONS, } from "../gm/decisions/registry";
 import type { GameMasterDecision, StoryContext, } from "../types";
@@ -73,11 +73,11 @@ function resolveGuidedActor(
   }
 
   const priority = guidance.turnPriority;
-  if (priority && Object.keys(priority).length > 0) {
-    const weight: Record<string, number> = { high: 3, medium: 2, low: 1 };
-    const ranked = Object.entries(priority)
-      .filter(([id,],) => context.actors.some((a,) => a.id === id,))
-      .sort((a, b,) => (weight[b[1]] ?? 0) - (weight[a[1]] ?? 0),);
+  if (priority && Object.keys(priority,).length > 0) {
+    const weight: Record<string, number> = { high: 3, medium: 2, low: 1, };
+    const ranked = Object.entries(priority,)
+      .filter(([id,],) => context.actors.some((a,) => a.id === id))
+      .sort((a, b,) => (weight[b[1]] ?? 0) - (weight[a[1]] ?? 0));
     const top = ranked[0]?.[0];
     if (top && top !== lastActorId) { return top; }
   }

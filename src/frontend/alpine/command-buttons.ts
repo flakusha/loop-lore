@@ -41,7 +41,7 @@ const COMMAND_BUTTONS: CommandButton[] = [
       // constraints far better than free text.
       if (cmd === "guide" || cmd === "scene") {
         const store = (globalThis as { Alpine?: { store: (name: string,) => Record<string, unknown> } }).Alpine;
-        const ui = store?.store("ui") as Record<string, unknown> | undefined;
+        const ui = store?.store("ui",) as Record<string, unknown> | undefined;
         if (ui) {
           ui.showGmGuidance = true;
           ui.showChatSettings = true;
