@@ -1,3 +1,5 @@
+import type { GameMasterType } from "../../db/enums-config";
+
 /** Chat modes from the DB enum */
 export type ChatMode = "direct" | "group" | "story";
 
@@ -92,4 +94,13 @@ export interface GmConfig {
   storyMode?: boolean;
   /** Active human-GM narrative guidance (persisted, mutable at runtime). */
   gmGuidance?: GmGuidance;
+  /**
+   * Story-mode GM execution type. Omitted → story mode defaults to LLM.
+   * Mirrors `GameMasterType` from `src/db/enums-config`.
+   */
+  type?: GameMasterType;
+  /** Human/hybrid GM: the actor acting as the human Game Master. */
+  humanGM?: { actorId: string; notifications: boolean };
+  /** Hybrid GM: escalation threshold (0–1) for auto-fallback to LLM. */
+  escalationThreshold?: number;
 }
