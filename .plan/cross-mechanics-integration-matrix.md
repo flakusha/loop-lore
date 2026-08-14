@@ -237,3 +237,31 @@ section). G18–G20 are P6+ cross-enhancements with deferred siblings.
 | Character Growth & Development        | E1                 | G35, G36, G37      | TASK-character-growth-development.md         |
 | Living-World Between-Session          | E3                 | G32, G33           | TASK-living-world-persistence.md             |
 | AI Director / Narrative Pacing        | E1                 | (in epic-assistant-gm-flows.md) | N/A (deferred)                  |
+| Proactive Messaging (Nomi.ai)         | E7                 | G38, G39           | TASK-proactive-messaging.md                |
+| Keyphrase-Triggered Recall (Kindroid) | E7                 | G40                | TASK-keyphrase-recall.md                   |
+| Quiet Hours & Anti-Spam (Nomi.ai)     | E7                 | G39                | TASK-quiet-hours.md                        |
+| Inner Monologue (Convai)              | E10                | G41                | TASK-inner-monologue.md                    |
+| Tool-Calling / MCP Agents (Convai)    | E8                 | G42                | TASK-tool-calling-agents.md                |
+| Emotional Pattern Tracking (Kindroid) | E2                 | G31                | TASK-memory-happiness-patterns.md          |
+| Reflection Synthesis (Stanford)       | E2                 | G19, G31           | TASK-agent-memory-scoring.md               |
+
+> **0.1.0 note for G38–G42:** All five agentic integration gaps are **P6+ deferred** under the 0.1.0 alignment — they depend on completed memory/assistant architecture. G42 (tool-calling) has the broadest impact (touches all systems) and should be revisited first when P6+ agentic work begins.
+
+| #  | System A                    | System B                    | Current State                                                                                                    | Recommended Action                                                                                              | Severity |
+| -- | --------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------- |
+| G38 | **Proactive Messaging**     | **Memory**                  | Proactive messaging (`TASK-proactive-messaging.md`) needs memory for topic selection, relevance scoring; memory system has no proactive integration. | Proactive selects topics from high-importance recent memories; memory salience drives proactive trigger. Bidirectional cross-ref needed. | 🟡 Medium |
+| G39 | **Proactive Messaging**     | **Time Scale**              | Proactive messaging needs game-time for quiet hours, world-event awareness; time scale has no proactive integration. | Game-time drives quiet hours (night = low frequency); world events as proactive triggers. Cross-ref needed. | 🟡 Medium |
+| G40 | **Keyphrase Recall**        | **Chat**                    | Keyphrase-triggered recall (`TASK-keyphrase-recall.md`) needs chat context for trigger detection; chat has no keyphrase integration. | Chat service emits token stream for keyphrase matching; matched keyphrases inject journal memories into context. Cross-ref needed. | 🟡 Medium |
+| G41 | **Inner Monologue**         | **Narrative** × **Memory**  | Inner monologue (`TASK-inner-monologue.md`) needs episodic memory for reflection and narrative voice for tone; neither system has inner-monologue integration. | Inner monologue reflects on recent episodic memories; narrative voice modulates internal narration. Cross-ref needed. | 🟠 Low |
+| G42 | **Tool-Calling / MCP**      | **All RPG Systems**         | Tool-calling agents (`TASK-tool-calling-agents.md`) need structured access to inventory, combat, quest, social; no MCP/tool schema exists. | Define tool schemas for each RPG subsystem; tool-calling agent invokes RPG actions via structured interface. Broadest integration gap — touches entire matrix. | 🔴 High (future) |
+
+### Research Cross-Reference Map (Agentic Features Addendum)
+
+| Feature | Source Platform(s) | Priority | Maps to Gap(s) | Related Tickets |
+| --- | --- | --- | --- | --- |
+| Proactive messaging (4 freq levels + quiet hours) | Nomi.ai | Quick win (0.1.0) | G38, G39 | TASK-proactive-messaging.md, TASK-quiet-hours.md |
+| Keyphrase-triggered journal recall | Kindroid | Quick win (0.1.0) | G40 | TASK-keyphrase-recall.md |
+| Reflection / memory synthesis | Stanford generative-agents, RisuAI | P6+ | G19, G31 | TASK-agent-memory-scoring.md |
+| Emotional pattern tracking | Kindroid | Medium | G31 | TASK-memory-happiness-patterns.md |
+| Inner monologue (dual-mind) | Convai | P6+ | G41 | TASK-inner-monologue.md |
+| Tool-calling via MCP connectors | Convai | P6+ | G42 | TASK-tool-calling-agents.md |
