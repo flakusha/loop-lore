@@ -47,6 +47,8 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       const actorId = this._getCharacterActorId();
       if (!actorId) {
         this.memoryPanel.characterMemories = [];
+        this.memoryPanel.assistantMemories = [];
+        this.memoryPanel.worldMemories = [];
         return;
       }
 
@@ -62,22 +64,44 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
           keywords: string | string[];
           source_chat_id?: string;
           pinned?: boolean;
+          scope?: string;
           created_at: string;
         }>;
       };
 
-      this.memoryPanel.characterMemories = Array.from(data.items ?? [], (m,) => ({
-        id: m.id,
-        content: m.content,
-        type: m.memory_type as MemoryEntry["type"],
-        confidence: m.confidence,
-        importance: m.importance,
-        keywords: typeof m.keywords === "string" ? jsonParseOr<string[]>(m.keywords || "[]", [],) : (m.keywords ?? []),
-        pinned: !!m.pinned,
-        createdAt: m.created_at,
-        tokenCount: estimateTokens(m.content,),
-      }),);
+      const characterMemories: MemoryEntry[] = [];
+      const assistantMemories: MemoryEntry[] = [];
+      const worldMemories: MemoryEntry[] = [];
 
+      const items = data.items ?? [];
+      for (const m of items) {
+        const entry: MemoryEntry = {
+          id: m.id,
+          content: m.content,
+          type: m.memory_type as MemoryEntry["type"],
+          confidence: m.confidence,
+          importance: m.importance,
+          keywords: typeof m.keywords === "string"
+            ? jsonParseOr<string[]>(m.keywords || "[]", [],)
+            : (m.keywords ?? []),
+          pinned: !!m.pinned,
+          createdAt: m.created_at,
+          tokenCount: estimateTokens(m.content,),
+          scope: (m.scope as MemoryEntry["scope"]) ?? "character",
+        };
+        const scope = entry.scope ?? "character";
+        if (scope === "assistant") {
+          assistantMemories.push(entry,);
+        } else if (scope === "world") {
+          worldMemories.push(entry,);
+        } else {
+          characterMemories.push(entry,);
+        }
+      }
+
+      this.memoryPanel.characterMemories = characterMemories;
+      this.memoryPanel.assistantMemories = assistantMemories;
+      this.memoryPanel.worldMemories = worldMemories;
       this._updateTokenCount();
     } catch {
       // Silently fail — memories are non-critical
@@ -159,6 +183,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
           confidence: 1,
           importance: 5,
           keywords: [],
+          scope: this.memoryPanel.activeTab,
         },),
       },);
       if (!res.ok) { return; }
@@ -169,6 +194,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         confidence: number;
         importance: number;
         keywords: string | string[];
+        scope?: string;
         created_at: string;
       };
 
@@ -183,6 +209,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
           : (created.keywords ?? []),
         createdAt: created.created_at,
         tokenCount: estimateTokens(created.content,),
+        scope: (created.scope as MemoryEntry["scope"]) ?? this.memoryPanel.activeTab,
       };
 
       this.getCurrentMemoryList().unshift(newMemory,);
