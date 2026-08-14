@@ -1,12 +1,23 @@
 // ── Types ────────────────────────────────────────────────
-export type BlogPostVisibility = "public" | "followers" | "private";
-export type BlogPostStatus =
-  | "draft"
-  | "published"
-  | "hidden"
-  | "disabled"
-  | "scheduled";
-export type BlogAuthorType = "human" | "llm";
+export const BlogPostVisibility = {
+  Public: "public",
+  Followers: "followers",
+  Private: "private",
+} as const;
+export type BlogPostVisibility = (typeof BlogPostVisibility)[keyof typeof BlogPostVisibility];
+export const BlogPostStatus = {
+  Draft: "draft",
+  Published: "published",
+  Hidden: "hidden",
+  Disabled: "disabled",
+  Scheduled: "scheduled",
+} as const;
+export type BlogPostStatus = (typeof BlogPostStatus)[keyof typeof BlogPostStatus];
+export const BlogAuthorType = {
+  Human: "human",
+  Llm: "llm",
+} as const;
+export type BlogAuthorType = (typeof BlogAuthorType)[keyof typeof BlogAuthorType];
 export type BlogCommentStatus = "visible" | "hidden" | "deleted";
 export type BlogRAGSourceType =
   | "internal_rag"
