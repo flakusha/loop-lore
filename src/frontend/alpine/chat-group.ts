@@ -68,17 +68,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  async loadChatParticipants() {
-    if (!this.activeChat) { return; }
-    try {
-      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
-      if (res.ok) { this._chatParticipants = await res.json(); }
-    } catch {
-      /* ignore */
-    }
-  },
-
-  handleMentionInput(event: Event,) {
+  async handleMentionInput(event: Event,) {
     const textarea = event.target as HTMLTextAreaElement;
     const value = textarea.value;
     const cursorPos = textarea.selectionStart;
