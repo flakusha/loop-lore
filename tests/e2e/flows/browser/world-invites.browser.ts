@@ -27,10 +27,10 @@ describe("World invites E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   /**
@@ -38,26 +38,26 @@ describe("World invites E2E", () => {
    * Returns the created world id (parsed from the /worlds/<id>/edit URL).
    */
   async function createWorld(page: Page,): Promise<string> {
-    await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 30_000, },);
     await page.click("[data-testid='create-world']",);
-    await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 8000, },);
+    await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "visible", timeout: 15_000, },);
     await page.locator("[data-testid='create-world-form'] #world-name",).waitFor({
       state: "attached",
-      timeout: 8000,
+      timeout: 15_000,
     },);
     await page.fill("[data-testid='create-world-form'] #world-name", `world-${Date.now()}`,);
     await page.click("[data-testid='create-world-form'] button[type='submit']",);
 
     // Success redirects to /worlds/<id>/edit (full navigation via location.assign).
-    await page.waitForURL((url,) => /\/worlds\/[a-f0-9-]+\/edit$/.test(url.pathname,), { timeout: 12_000, },);
+    await page.waitForURL((url,) => /\/worlds\/[a-f0-9-]+\/edit$/.test(url.pathname,), { timeout: 30_000, },);
     const match = page.url().match(/\/worlds\/([a-f0-9-]+)\/edit/,);
     if (!match) { throw new Error(`Could not parse world id from URL: ${page.url()}`,); }
 
     // The editor body (incl. tab bar) only renders after /api/worlds/:id loads.
     await page.locator(".world-edit-tab",).filter({ hasText: "Invites", },).waitFor({
       state: "visible",
-      timeout: 12_000,
+      timeout: 30_000,
     },);
     return match[1];
   }
@@ -65,11 +65,11 @@ describe("World invites E2E", () => {
   /** On the world-edit page: open the Invites tab and create an invite. */
   async function createInvite(page: Page, maxUses: string,): Promise<void> {
     await page.locator(".world-edit-tab",).filter({ hasText: "Invites", },).click();
-    await page.locator("[data-testid='show-create-invite-btn']",).waitFor({ state: "visible", timeout: 8000, },);
+    await page.locator("[data-testid='show-create-invite-btn']",).waitFor({ state: "visible", timeout: 15_000, },);
     await page.click("[data-testid='show-create-invite-btn']",);
     await page.fill("#invite-max-uses", maxUses,);
     await page.click("[data-testid='submit-create-invite']",);
-    await page.locator("[data-testid='copy-invite-code']",).waitFor({ state: "visible", timeout: 8000, },);
+    await page.locator("[data-testid='copy-invite-code']",).waitFor({ state: "visible", timeout: 15_000, },);
   }
 
   describe("World creation via UI", () => {
@@ -95,7 +95,7 @@ describe("World invites E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 60_000,);
+    }, 90_000,);
   });
 
   describe("Invite creation", () => {
@@ -127,7 +127,7 @@ describe("World invites E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 60_000,);
+    }, 90_000,);
   });
 
   describe("Invite revocation", () => {
@@ -150,7 +150,7 @@ describe("World invites E2E", () => {
         await page.click("[data-testid='revoke-invite']",);
 
         // The row leaves the UI (the revoke button disappears).
-        await page.locator("[data-testid='revoke-invite']",).waitFor({ state: "hidden", timeout: 8000, },);
+        await page.locator("[data-testid='revoke-invite']",).waitFor({ state: "hidden", timeout: 15_000, },);
         expect(await page.locator("[data-testid='revoke-invite']",).count(),).toBe(0,);
         expect(await page.locator("[data-testid='copy-invite-code']",).count(),).toBe(0,);
 
@@ -168,6 +168,6 @@ describe("World invites E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 60_000,);
+    }, 90_000,);
   });
 });

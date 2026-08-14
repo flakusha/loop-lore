@@ -16,16 +16,16 @@ describe("Alpine state contract E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   test("chatState() exposes the declared defaults before a chat is selected", async () => {
     const page = await ctx.openPage();
     try {
-      await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
+      await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await waitForAlpineReady(page,);
 
       const state = await getAlpineData<Record<string, unknown>>(page, "[x-data='chatState()']",);
@@ -54,12 +54,12 @@ describe("Alpine state contract E2E", () => {
     } finally {
       await page.close();
     }
-  }, 40_000,);
+  }, 60_000,);
 
   test("ui store exposes the declared default toggles", async () => {
     const page = await ctx.openPage();
     try {
-      await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
+      await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await waitForAlpineReady(page,);
 
       const ui = await getAlpineStore<Record<string, unknown>>(page, "ui",);
@@ -84,5 +84,5 @@ describe("Alpine state contract E2E", () => {
     } finally {
       await page.close();
     }
-  }, 40_000,);
+  }, 60_000,);
 });

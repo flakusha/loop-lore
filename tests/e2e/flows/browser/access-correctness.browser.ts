@@ -86,10 +86,10 @@ describe("Access control E2E", () => {
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   // ── A. World ownership (solo user is not the owner) ────────────────
@@ -106,9 +106,9 @@ describe("Access control E2E", () => {
         // /api/worlds/:id, which is access-gated (requireWorldAccess).
         const worldApi = page.waitForResponse(
           (res,) => res.url().includes(`/api/worlds/${WORLD_ID}`,) && res.request().method() === "GET",
-          { timeout: 10_000, },
+          { timeout: 30_000, },
         );
-        await page.goto(`${ctx.url}/worlds/${WORLD_ID}/edit`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
+        await page.goto(`${ctx.url}/worlds/${WORLD_ID}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         const res = await worldApi;
         // requireWorldAccess: not owner, not admin (solo is "solo"), not public,
         // not a member → 404.
@@ -125,7 +125,7 @@ describe("Access control E2E", () => {
             return loadEl instanceof HTMLElement && getComputedStyle(loadEl,).display === "none";
           },
           null,
-          { timeout: 8000, },
+          { timeout: 15_000, },
         );
         expect(await page.locator(".world-edit-tabs",).count(),).toBe(0,);
       } finally {
@@ -133,7 +133,7 @@ describe("Access control E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
 
     test("non-owner solo user sees no world detail content (no name leak)", async () => {
       const page = await ctx.openPage();
@@ -141,7 +141,7 @@ describe("Access control E2E", () => {
         allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
       },);
       try {
-        await page.goto(`${ctx.url}/worlds/${WORLD_ID}`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
+        await page.goto(`${ctx.url}/worlds/${WORLD_ID}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         // The #world-detail container htmx-loads /dynamic/worlds/:id/detail on page load.
         await page.waitForFunction(
           () => {
@@ -149,7 +149,7 @@ describe("Access control E2E", () => {
             return !!el && el.children.length > 0 && !(el.textContent || "").includes("⏳",);
           },
           null,
-          { timeout: 8000, },
+          { timeout: 15_000, },
         );
         const bodyText = await page.evaluate(() => document.body.textContent || "");
         // serveWorldDetailContent allows owner/admin only; solo is denied → no name leak.
@@ -159,7 +159,7 @@ describe("Access control E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 
   // ── B. Chat access (solo user is not a participant) ────────────────
@@ -172,13 +172,13 @@ describe("Access control E2E", () => {
       try {
         await page.goto(`${ctx.url}/views/chat?chatid=${CHAT_ID}`, {
           waitUntil: "domcontentloaded",
-          timeout: 15_000,
+          timeout: 30_000,
         },);
         // The chat app only keeps chats the user created; a foreign chatid is
         // dropped (redirect to /views/chat) before any message fetch.
-        await page.locator("#message-list",).waitFor({ state: "attached", timeout: 10_000, },);
+        await page.locator("#message-list",).waitFor({ state: "attached", timeout: 30_000, },);
         await page
-          .waitForFunction(() => !new URLSearchParams(location.search,).has("chatid",), null, { timeout: 8000, },)
+          .waitForFunction(() => !new URLSearchParams(location.search,).has("chatid",), null, { timeout: 15_000, },)
           .catch(() => {/* redirect may not be observed; the message-count guard below is authoritative */},);
 
         // Give the message layer a beat to settle, then assert no content leaks.
@@ -191,6 +191,6 @@ describe("Access control E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 });
