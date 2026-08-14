@@ -57,9 +57,6 @@ export {
 
 export {
   checkChatAccess,
-  getChatContext,
-  getFeatureFlags,
   getMessageWithAccess,
-  getResponseLength,
   type ServiceError,
 } from "./service";

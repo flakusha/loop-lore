@@ -62,7 +62,6 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     this.loadWorldChannels();
     this.loadJoinableChats();
     this.loadUserInfo();
-    this.connectActivitySSE();
 
     const params = new URLSearchParams(location.search,);
     const chatId = params.get("chatid",);
@@ -84,7 +83,6 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     destroyVnRenderer();
 
     this._cleanupSSE?.();
-    this.disconnectActivitySSE();
 
     if (this._storageHandler) {
       removeEventListener("storage", this._storageHandler,);
