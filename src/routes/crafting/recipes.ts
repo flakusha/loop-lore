@@ -24,7 +24,7 @@ import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "
 import { requireUserId, } from "../http-utils/responses";
 import {
   listResponse,
-  recipeCreateBody,
+  recipeBody,
   recipeMaterialSchema,
   recipeResponse,
   updateRecipeBody,
@@ -104,7 +104,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db }, prefix = "
       return jsonResponse({ id, }, 201,);
     }, {
       params: t.Object({ worldId: Id, },),
-      body: recipeCreateBody,
+      body: recipeBody,
       response: {
         201: t.Object({ id: Id, },),
         400: ErrorResponse,
