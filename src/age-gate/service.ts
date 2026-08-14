@@ -89,7 +89,7 @@ export function getStatus(
 export function validateAge(birthDate: string, minimumAge: number,): void {
   const parsed = Date.parse(birthDate,);
   if (Number.isNaN(parsed,)) {
-    throw new AgeGateError(`Invalid birth date: "${birthDate}". Expected YYYY-MM-DD format.`,);
+    throw new AgeGateError("Invalid birth date. Expected YYYY-MM-DD format.",);
   }
 
   const birth = new Date(parsed,);

@@ -79,6 +79,22 @@ export class NotificationsManager {
     this.state.activeChatId = chatId;
   }
 
+  /** Read unseen count for a specific chat. */
+  getUnseenCount(chatId: string,): number {
+    return this.state.unseen[chatId] ?? 0;
+  }
+
+  /** Read all unseen counts (for components that need the full map). */
+  getAllUnseen(): Record<string, number> {
+    return { ...this.state.unseen, };
+  }
+
+  /** Clear unseen count for a chat locally (without POST). */
+  clearUnseen(chatId: string,): void {
+    this.state.unseen[chatId] = 0;
+    this.renderBadge(chatId,);
+  }
+
   private openStream(): void {
     if (typeof EventSource === "undefined") { return; }
     try {
