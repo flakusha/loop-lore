@@ -29,6 +29,15 @@
       >
         Whitenotes
       </button>
+      <button
+        class="btn btn-sm"
+        :class="activeTab === 'story' ? 'btn-primary' : 'btn-ghost'"
+        @click="activeTab = 'story'"
+        x-show="isStoryMode"
+        data-testid="gm-story-tab"
+      >
+        Story
+      </button>
     </div>
 
     <!-- Shadow Notes Tab -->
@@ -110,6 +119,11 @@
           <button class="btn btn-ghost btn-sm gm-danger" @click="deleteWhiteneote(note.id)">Delete</button>
         </div>
       </template>
+    </div>
+
+    <!-- Story Control Tab (story chats only) -->
+    <div x-show="activeTab === 'story'">
+      {{> chat/gm-story-panel.html }}
     </div>
   </div>
 </div>
