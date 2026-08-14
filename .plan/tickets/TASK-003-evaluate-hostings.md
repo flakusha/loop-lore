@@ -7,11 +7,13 @@
 **Assignee**: Platform Team
 
 ## Research Focus
+
 - RunPod CPU instances for Makein server with serverless requests to customized llama-swap/llama.cpp pods
 - Network sharing between pods
 - Alternative providers with GPU compute options
 
 ## Key Evaluation Criteria
+
 1. **Pricing Model**
    - Hourly rate for CPU instances
    - Serverless function pricing (if applicable)
@@ -35,6 +37,7 @@
    - Provisioning time
 
 ## Target Providers
+
 - RunPod (primary focus)
 - Lambda Labs
 - Vast.ai
@@ -45,12 +48,14 @@
 - DigitalOcean (for comparison)
 
 ## Required Deliverables
+
 - Hosting comparison matrix
 - Latency benchmark results
 - Cost analysis for P3-P5 instances
 - Recommendation report
 
 ## Current Findings (Preliminary)
+
 - RunPod offers serverless functions with GPU support
 - Lambda Labs has strong GPU instances but higher costs
 - Vast.ai provides GPU marketplace with varying quality
@@ -58,6 +63,7 @@
 - AWS/GCP may be overkill for our needs but good for benchmarking
 
 ## Next Steps
+
 1. Benchmark RunPod CPU instances with llama.cpp workload
 2. Test network sharing between pods on RunPod
 3. Compare GPU instance pricing across providers
