@@ -1,6 +1,6 @@
 # EPIC: Testing, Benchmarking & Performance
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`); broader framework tasks open
 **Priority:** High
 **Effort:** Very High
 **Type:** Infrastructure Epic
@@ -220,6 +220,19 @@ Bun's GC is generational. Track GC pauses per execution mode:
 Benchmarks for the native module system (`epic-precompiled-hot-binaries`).
 Measures the performance delta between native FFI, WASM, and pure-JS fallbacks.
 
+### Shipped (2026-08-15, branch `native-blake3`)
+
+- **Suite structure:** `tests/benchmarks/` dir + discovery runner
+  `scripts/run-benchmarks.ts` — `bun run bench` (all), `bench:native`
+  (blake3), `bench:ci` (epic CI-compatible). Per-bench process isolation
+  (fresh native load), sequential execution, non-zero exit on failure.
+  Kept out of the `bun test` unit gate (perf ≠ correctness).
+- **First benchmark:** `tests/benchmarks/blake3.bench.ts` — native Rust
+  cdylib vs @noble/hashes pure-TS on 1 MiB × 200 rounds, avg/min/max/stddev/
+  p95, cold dlopen time. **Result: native 8.8 GB/s vs TS 170 MB/s → 53×**
+  (module target delta 10×), cold load ~9 ms (< 50 ms target). Performance
+  proof for the hot-binary epic is now bound to this suite.
+
 ### Module Comparison Targets
 
 | Module             | Native (FFI) | WASM    | Pure-JS Fallback | Target Delta   |
@@ -247,6 +260,7 @@ Measures the performance delta between native FFI, WASM, and pure-JS fallbacks.
 
 ### Module Benchmarking Tasks
 
+- [x] Benchmark BLAKE3: native FFI vs pure-JS — ✅ 53× (2026-08-15, `tests/benchmarks/blake3.bench.ts`)
 - [ ] Benchmark SHA-256: native FFI vs WASM vs pure-JS (Web Crypto)
 - [ ] Benchmark AES-256-GCM: native FFI vs WASM vs pure-JS
 - [ ] Benchmark gzip/brotli/zstd: native FFI vs WASM vs pure-JS (fflate)
@@ -526,7 +540,7 @@ interface PerfRegressionConfig {
 
 ### Implementation Tasks
 
-- [ ] Define benchmark suite structure (`tests/benchmarks/`)
+- [x] Define benchmark suite structure (`tests/benchmarks/`) — ✅ first entry + discovery runner shipped 2026-08-15
 - [ ] Implement benchmark runner with baseline comparison
 - [ ] Add API latency benchmarks (p50/p95/p99)
 - [ ] Add message throughput benchmarks

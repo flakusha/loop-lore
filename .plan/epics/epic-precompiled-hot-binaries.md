@@ -1,6 +1,6 @@
 # EPIC: Pre-Compiled Hot Binary Modules
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — Phase 1 infra + Phase 2 BLAKE3 sample shipped (2026-08-15, branch `native-blake3`); native-vs-TS benchmark 53× bound to bench suite
 **Priority:** Medium
 **Effort:** High
 **Type:** Infrastructure Epic
@@ -191,6 +191,35 @@ export function sha256(data: Buffer,): Buffer {
 
 ## Implementation Phases
 
+> **2026-08-15 status:** Phase 1 (loader infra) and the Phase 2 crypto sample
+> are shipped as **BLAKE3** in branch `native-blake3` — Rust cdylib (official
+> `blake3` crate, C ABI) instead of the C/CMake sketch below; build-stage
+> model with **binaries never committed** (gitignored `target/`). See
+> "Shipped Sample" section. Phases 2–5 (AES-GCM, image, compression, ML)
+> remain.
+
+### Shipped Sample (2026-08-15)
+
+- `native/loop-lore-native/` — Rust cdylib crate (`#[no_mangle]` C ABI:
+  `ll_version` packed i32, `ll_blake3` caller-buffer). rustfmt (2-space, 120)
+  + clippy `-D warnings` + 9 tests (7 unit incl. official vectors + 2
+  integration) green.
+- `src/native/` — TS layer: `loader.ts` (bun:ffi dlopen, platform/arch binary
+  resolution, ABI version gate, cached, failure-tolerant), `blake3.ts`
+  (native-first wrapper), `fallback/blake3.ts` (@noble/hashes, pure-TS),
+  `index.ts` barrel.
+- `plugins/core/native-blake3/` — core-plugin integration sample:
+  `GET /api/native/blake3/health` reports active implementation.
+- **Build stage:** `bun run build:native` (`scripts/build-native.ts`)
+  compiles when cargo exists, skips with notice when absent → TS becomes
+  default. Wired into `bun run build`. **No binaries are committed** —
+  `native/loop-lore-native/target/` is gitignored.
+- **Benchmarks bound (performance proof):** `tests/benchmarks/blake3.bench.ts`
+  + runner `scripts/run-benchmarks.ts` (`bun run bench` / `bench:native` /
+  `bench:ci`). Measured: native **8.8 GB/s vs 170 MB/s TS → 53× speedup**
+  (epic Module Comparison target: 10×), cold dlopen 9 ms (< 50 ms target).
+  See `epic-testing-benchmarking.md` Native Module section.
+
 ### Phase 1 — Module Infrastructure
 
 - [ ] Define `NativeModule` interface and loader framework
@@ -201,10 +230,10 @@ export function sha256(data: Buffer,): Buffer {
 
 ### Phase 2 — Crypto Module
 
-- [ ] Implement SHA-256 (BLAKE3 preferred) native module
+- [x] Implement SHA-256 (BLAKE3 preferred) native module — ✅ BLAKE3 shipped (Rust `blake3` crate, C ABI)
 - [ ] Implement encryption/decryption (AES-256-GCM)
-- [ ] Add pure-JS fallback (Web Crypto API)
-- [ ] Add tests for correctness (native vs fallback parity)
+- [x] Add pure-JS fallback (Web Crypto API) — ✅ @noble/hashes
+- [x] Add tests for correctness (native vs fallback parity) — ✅ 15 TS tests (vectors + parity) + 9 Rust tests
 
 ### Phase 3 — Image Processing Module
 
@@ -227,33 +256,33 @@ export function sha256(data: Buffer,): Buffer {
 
 ## Files (proposed)
 
-- `src/native/loader.ts` — module loader + FFI binding
+- `src/native/loader.ts` — module loader + FFI binding ✅
 - `src/native/hot-reload.ts` — development hot-reload
 - `src/native/security.ts` — binary verification + capability checking
-- `src/native/modules/crypto.ts` — crypto native module
+- `src/native/modules/crypto.ts` — crypto native module (✅ BLAKE3 sample in `blake3.ts`; AES-GCM pending)
 - `src/native/modules/image.ts` — image processing module
 - `src/native/modules/compression.ts` — compression module
 - `src/native/modules/ml.ts` — ML inference module
-- `src/native/fallback/` — pure-JS fallbacks
-- `scripts/download-binaries.ts` — postinstall binary download
-- `scripts/build-binaries.ts` — build from source
-- `native/` — C/C++ source for native modules
+- `src/native/fallback/` — pure-JS fallbacks (✅ `fallback/blake3.ts` via @noble/hashes)
+- `scripts/download-binaries.ts` — postinstall binary download (**superseded:** build-stage model, no download)
+- `scripts/build-binaries.ts` — build from source (✅ `scripts/build-native.ts` — conditional cargo build)
+- `native/` — native source (✅ `native/loop-lore-native/` Rust crate; C/CMake sketch superseded)
 - `docs/native-modules.md` — documentation
 
 ## Open Questions
 
-1. **FFI library:** Bun FFI vs `node:ffi-napi` vs N-API? Recommend Bun FFI (native to runtime).
-2. **Build system:** CMake vs Make vs Zig? Recommend CMake for cross-platform.
-3. **Distribution:** npm package with binaries vs separate binary package? Recommend single package with platform detection.
+1. **FFI library:** Bun FFI vs `node:ffi-napi` vs N-API? ✅ Resolved — Bun FFI (`bun:ffi` dlopen), native to runtime.
+2. **Build system:** CMake vs Make vs Zig? ✅ Resolved for sample — Rust cargo (cdylib), pin `rust-toolchain.toml` 1.97.1; per-platform prebuilt distribution still open.
+3. **Distribution:** npm package with binaries vs separate binary package? **Resolved for sample** — build-stage compile only, binaries gitignored/never committed; per-platform prebuilt matrix stays future work.
 4. **ML inference:** ONNX Runtime vs TensorFlow Lite vs WebLLM? Recommend ONNX Runtime for broad model support.
 5. **Security audit:** How often to audit native code? Recommend quarterly + CI scan.
 
 ## Dependencies
 
-- Present: Bun runtime (FFI support), TypeScript
-- New: C/C++ compiler toolchain (for building from source)
-- New: CMake (build system)
-- New: GPG (binary signature verification)
+- Present: Bun runtime (FFI support), TypeScript, Rust toolchain (cargo/rustup — optional at build, graceful skip)
+- New: ~~C/C++ compiler toolchain~~ → Rust toolchain (pinned via `rust-toolchain.toml`; absent → TS default)
+- New: ~~CMake~~ → cargo (build system)
+- New: GPG (binary signature verification) — pending
 - Optional: ONNX Runtime (ML module)
 
 ## Testing Strategy

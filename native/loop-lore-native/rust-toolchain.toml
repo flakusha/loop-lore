@@ -1,0 +1,10 @@
+# Pin the Rust toolchain + components for reproducible builds, linting and
+# LSP. rustup auto-installs this exact toolchain; `bun run build:native`
+# degrades to the TS implementation when rustup/cargo is absent.
+#
+# Components mirror the repo's strict TS hygiene: rustfmt (format gate),
+# clippy (-D warnings), rust-analyzer (LSP for .rs files).
+[toolchain]
+channel = "1.97.1"
+components = ["clippy", "rustfmt", "rust-analyzer"]
+profile = "minimal"
