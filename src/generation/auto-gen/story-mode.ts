@@ -62,6 +62,9 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     ...(gmConfigRaw.llmConfig
       ? { llmConfig: gmConfigRaw.llmConfig as GameMasterConfig["llmConfig"], }
       : {}),
+    ...(gmConfigRaw.actorModels
+      ? { actorModels: gmConfigRaw.actorModels as GameMasterConfig["actorModels"], }
+      : {}),
     ...(gmConfigRaw.humanGM ? { humanGM: gmConfigRaw.humanGM as GameMasterConfig["humanGM"], } : {}),
     ...(typeof gmConfigRaw.escalationThreshold === "number"
       ? { escalationThreshold: gmConfigRaw.escalationThreshold, }

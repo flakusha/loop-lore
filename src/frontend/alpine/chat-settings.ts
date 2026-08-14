@@ -36,6 +36,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _gmProvider: "",
   _gmTemperature: 0.7,
   _gmMaxTokens: 2000,
+  _actorModels: {} as Record<string, { model: string; provider: string }>,
   _chatParticipants: [] as { actor_id: string; name: string; display_name?: string }[],
   _personas: [] as any[],
   _debugView: false,
@@ -59,24 +60,29 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
     this._chatOnline = Array.isArray(this.messages,) && this.messages.some((m,) => m.status === "confirmed");
     this._groupPaused = this.isChatPaused(chat,);
-    if (chat?.gm_config) {
-      const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
-      this._assistantRole = config.assistantRole ?? "off";
-      this._vnEnabled = config.visualNovel ?? false;
-      this._vnLayout = config.vnLayout ?? "overlay";
-      this._vnTypewriter = config.vnTypewriter ?? true;
-      this._vnTypewriterSpeed = config.vnTypewriterSpeed ?? 30;
-      this._vnTransition = config.vnTransition ?? "fade";
-      this._vnAutoAdvance = config.vnAutoAdvance ?? false;
-      this._gmType = config.type ?? "llm";
-      this._gmHumanActorId = config.humanGM?.actorId ?? "";
-      this._gmEscalationThreshold = config.escalationThreshold ?? 0.5;
-      this._gmModel = config.llmConfig?.model ?? "";
-      this._gmProvider = config.llmConfig?.provider ?? "";
-      this._gmTemperature = config.llmConfig?.temperature ?? 0.7;
-      this._gmMaxTokens = config.llmConfig?.maxTokens ?? 2000;
-    }
     await this.loadChatParticipants();
+    const config = chat?.gm_config ? jsonParseOr<GmConfig>(chat.gm_config, {},) : {};
+    this._assistantRole = config.assistantRole ?? "off";
+    this._vnEnabled = config.visualNovel ?? false;
+    this._vnLayout = config.vnLayout ?? "overlay";
+    this._vnTypewriter = config.vnTypewriter ?? true;
+    this._vnTypewriterSpeed = config.vnTypewriterSpeed ?? 30;
+    this._vnTransition = config.vnTransition ?? "fade";
+    this._vnAutoAdvance = config.vnAutoAdvance ?? false;
+    this._gmType = config.type ?? "llm";
+    this._gmHumanActorId = config.humanGM?.actorId ?? "";
+    this._gmEscalationThreshold = config.escalationThreshold ?? 0.5;
+    this._gmModel = config.llmConfig?.model ?? "";
+    this._gmProvider = config.llmConfig?.provider ?? "";
+    this._gmTemperature = config.llmConfig?.temperature ?? 0.7;
+    this._gmMaxTokens = config.llmConfig?.maxTokens ?? 2000;
+    // Seed per-actor model overrides from saved config (or empty defaults)
+    // so the modal bindings have a stable object per participant.
+    const actorModels: Record<string, { model: string; provider: string }> = {};
+    for (const p of this._chatParticipants) {
+      actorModels[p.actor_id] = config.actorModels?.[p.actor_id] ?? { model: "", provider: "" };
+    }
+    this._actorModels = actorModels;
     Alpine.store("ui",).showChatSettings = true;
   },
 
@@ -149,6 +155,17 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         };
       } else {
         delete gmConfig.llmConfig;
+      }
+      const actorModels: Record<string, { model: string; provider: string }> = {};
+      for (const [actorId, m, ] of Object.entries(this._actorModels)) {
+        if (m.model?.trim()) {
+          actorModels[actorId] = { model: m.model.trim(), provider: m.provider?.trim() ?? "" };
+        }
+      }
+      if (Object.keys(actorModels,).length > 0) {
+        gmConfig.actorModels = actorModels;
+      } else {
+        delete gmConfig.actorModels;
       }
       if (this._gmType === "human" || this._gmType === "hybrid") {
         gmConfig.humanGM = { actorId: this._gmHumanActorId, notifications: true, };
