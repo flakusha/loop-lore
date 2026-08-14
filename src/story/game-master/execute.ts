@@ -23,6 +23,11 @@ export async function executeTurn(state: GmState, debugActorId?: string,): Promi
     await injectNarration(state, context.world.id, gmDecision.narration,);
   }
 
+  // Human-GM scene direction is broadcast to all participants as narration.
+  if (state.gmGuidance?.sceneDescription) {
+    await injectNarration(state, context.world.id, state.gmGuidance.sceneDescription,);
+  }
+
   await recordGmTurn(state, context, turnId, turnNumber, gmDecision,);
 
   return {

@@ -37,8 +37,15 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       ? [`Previous turn: "${context.recentTurns.at(-1,)?.response?.slice(0, 200,) ?? "none"}"`,]
       : []),
     `Keep response 50-300 words, in-character, use *action descriptions*.`,
-  ].join("\n",);
-  assembled.messages.push({ role: "user", content: instructions, },);
+  ];
+  const guidance = deps.gmGuidance;
+  if (guidance?.constraints?.length) {
+    instructions.push(`GM guidance — narrative constraints:\n- ${guidance.constraints.join("\n- ",)}`,);
+  }
+  if (guidance?.sceneDescription) {
+    instructions.push(`GM scene direction: ${guidance.sceneDescription}`,);
+  }
+  assembled.messages.push({ role: "user", content: instructions.join("\n",), },);
 
   let responseText: string;
   try {
