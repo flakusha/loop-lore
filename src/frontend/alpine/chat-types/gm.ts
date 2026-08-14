@@ -51,4 +51,13 @@ export interface GmConfig {
   storyMode?: boolean;
   /** Active human-GM narrative guidance (persisted, mutable at runtime). */
   gmGuidance?: GmGuidance;
+  /**
+   * Story-mode GM execution type. Omitted → story mode defaults to LLM.
+   * Mirrors `GameMasterType` ("llm" | "human" | "hybrid").
+   */
+  type?: "llm" | "human" | "hybrid";
+  /** Human/hybrid GM: the actor acting as the human Game Master. */
+  humanGM?: { actorId: string; notifications: boolean };
+  /** Hybrid GM: escalation threshold (0–1) for auto-fallback to LLM. */
+  escalationThreshold?: number;
 }

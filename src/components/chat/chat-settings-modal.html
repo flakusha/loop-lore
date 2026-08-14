@@ -100,6 +100,56 @@
         </select>
       </div>
 
+      <div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+        <label class="form-label" for="settings-gm-type">GM Execution</label>
+        <select
+          class="form-input"
+          id="settings-gm-type"
+          x-model="_gmType"
+          data-testid="settings-gm-type"
+        >
+          <option value="llm">LLM (AI Game Master)</option>
+          <option value="human">Human GM</option>
+          <option value="hybrid">Hybrid (Human + LLM escalation)</option>
+        </select>
+        <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+          Choose who runs the story. Human/Hybrid require selecting the GM actor below.
+        </small>
+      </div>
+
+      <div class="form-group" x-show="(currentChat?.mode === 'story' && !_chatOnline) && _gmType !== 'llm'">
+        <label class="form-label" for="settings-gm-actor">Human GM Actor</label>
+        <select
+          class="form-input"
+          id="settings-gm-actor"
+          x-model="_gmHumanActorId"
+          data-testid="settings-gm-actor"
+        >
+          <option value="">— Select actor —</option>
+          <template x-for="p in _chatParticipants" :key="p.actor_id">
+            <option :value="p.actor_id" x-text="p.display_name || p.name"></option>
+          </template>
+        </select>
+      </div>
+
+      <div class="form-group" x-show="(currentChat?.mode === 'story' && !_chatOnline) && _gmType === 'hybrid'">
+        <label class="form-label" for="settings-gm-escalation">
+          Escalation Threshold (<span x-text="_gmEscalationThreshold"></span>)
+        </label>
+        <input
+          type="range"
+          id="settings-gm-escalation"
+          min="0"
+          max="1"
+          step="0.05"
+          x-model.number="_gmEscalationThreshold"
+          data-testid="settings-gm-escalation"
+        />
+        <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+          Hybrid: LLM takes over when GM inactivity exceeds this threshold.
+        </small>
+      </div>
+
       <!-- Mood Editing (GM/Admin only) -->
       <template x-if="_moodCanEdit">
         <div class="form-group">
