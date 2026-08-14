@@ -1,22 +1,26 @@
 /**
  * Chat Service Layer barrel.
  *
- * Re-exports the full public surface of the split chat service modules.
+ * Re-exports the public surface of the split chat service modules.
  * Routes, generation, and the chat module index import from `../chat/service`;
  * this barrel keeps that import path stable.
  *
  * Business logic between routes and database. Routes call these functions;
  * these modules call Kysely. No HTTP concerns — no Request/Response, no
  * Elysia context. Errors are thrown as ServiceError objects; routes map to HTTP.
+ *
+ * Removed 2026-08-14 (dead — routes implement inline, no external consumers):
+ * participants.ts (addParticipant, markChatRead, removeParticipant,
+ *   updateChatLocation, updateParticipant, updateUserPersona),
+ * context.ts (getChatContext, getFeatureFlags, getResponseLength),
+ * write.ts (selectVariant, deleteMessage, editMessage),
+ * visibility.ts (updateMessageStatus),
+ * access.ts barrel (isChatOnline, KEY_MECHANIC_PARAMS, KeyMechanicParam —
+ *   still used internally by crud/update.ts, not exported).
  */
 
-// ── Access / online state ─────────────────────────────────────
-export {
-  checkChatAccess,
-  isChatOnline,
-  KEY_MECHANIC_PARAMS,
-} from "./access";
-export type { KeyMechanicParam, } from "./access";
+// ── Access ────────────────────────────────────────────────────
+export { checkChatAccess, } from "./access";
 
 // ── Chat CRUD ─────────────────────────────────────────────────
 export {
@@ -43,33 +47,19 @@ export {
 // ── Transitions ───────────────────────────────────────────────
 export { migrateChat, } from "./transitions";
 
-// ── Chat participants ─────────────────────────────────────────
-export {
-  addParticipant,
-  markChatRead,
-  removeParticipant,
-  updateChatLocation,
-  updateImpersonation,
-  updateParticipant,
-  updateUserPersona,
-} from "./participants";
+// ── Participants ──────────────────────────────────────────────
+export { updateImpersonation, } from "./participants";
 
 // ── Messages ──────────────────────────────────────────────────
 export {
-  deleteMessage,
-  editMessage,
   getMessageVariants,
   getMessageWithAccess,
   listMessages,
-  regenerateMessageVariant,
-  selectVariant,
-} from "./messages";
+} from "./read";
+export { regenerateMessageVariant, } from "./write";
 
-// ── Message visibility / status ───────────────────────────────
-export { updateMessageStatus, updateMessageVisibility, } from "./visibility";
-
-// ── Read-only chat config ─────────────────────────────────────
-export { getChatContext, getFeatureFlags, getResponseLength, } from "./context";
+// ── Message visibility ────────────────────────────────────────
+export { updateMessageVisibility, } from "./visibility";
 
 // ── Shared schema + error/result types ────────────────────────
 export type {
