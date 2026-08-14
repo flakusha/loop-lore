@@ -1113,7 +1113,9 @@
     "roleUpdatedFor": "تم تحديث دور {role}",
     "roleClearedFor": "تم مسح دور {role}",
     "failedSave": "فشل الحفظ",
-    "failedCreate": "فشل الإنشاء"
+    "failedCreate": "فشل الإنشاء",
+    "gmGuidanceApplied": "GM guidance applied",
+    "gmGuidanceFailed": "Failed to apply GM guidance"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",

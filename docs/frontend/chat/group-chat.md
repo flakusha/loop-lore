@@ -173,6 +173,63 @@ Add `assistant_role` column or use existing `role_in_chat` with assistant-specif
 
 ---
 
+---
+
+## GM-Guided Story Creation
+
+A variant of group/story chat where the **human user acts as Game Master**, directly
+steering LLM characters to collaboratively build a story. Unlike automated GM flows
+(`epic-assistant-gm-flows`), the human GM has explicit narrative control.
+
+### Participant Model
+
+| Participant  | Role  | Control Level                                                  |
+| ------------ | ----- | -------------------------------------------------------------- |
+| Human User   | **GM** | Full narrative control — directs characters, sets constraints  |
+| LLM Character| **Player** | Responds in-character based on GM guidance                  |
+| Assistant (GM role) | **Co-GM** | Optional — auto-generates scene details, NPC voices |
+
+The `gm` role is modeled on the chat `GmConfig.assistantRole` (`"gm"`) plus the
+frontend `GmParticipant` type (`src/frontend/alpine/chat-types/gm.ts`).
+
+### GM Guidance Panel
+
+Open via **Chat Settings → GM-Guided Story Mode** (auto-shown in story chats), or the
+`🎭 Guide` / `🎬 Scene` command buttons. The panel writes to
+`PUT /api/v1/chats/:id/gm-guidance` (runtime-patchable even on online chats — guidance is
+narrative state, not a locked key mechanic).
+
+| Field             | Effect                                                          |
+| ----------------- | --------------------------------------------------------------- |
+| Scene Description | Broadcast to all participants for the next turn                |
+| Target Character  | Direct the next response to a specific participant             |
+| Constraints       | Free-form narrative constraints (in-character, topic, tone)    |
+| Turn Priority     | Per-participant `high` / `medium` / `low` for the next round    |
+
+Persisted on the chat as `gm_config.storyMode` + `gm_config.gmGuidance`.
+
+### Guidance Commands
+
+| Command            | Equivalent Panel Action                              |
+| ------------------ | ---------------------------------------------------- |
+| `/guide <direction>` | Open panel, set narrative direction               |
+| `/scene <desc>`      | Open panel, set scene description                  |
+| `/target <char>`     | Set `targetCharacter`                              |
+| `/constraint <rule>` | Add a constraint                                   |
+| `/skip <char>`       | (orchestration) skip a character's turn            |
+| `/priority <char> <level>` | Set turn priority                          |
+
+### Key Files
+
+| File                                         | Role                                          |
+| -------------------------------------------- | --------------------------------------------- |
+| `src/frontend/alpine/chat-settings.ts`       | GM guidance state + `applyGmGuidance()`       |
+| `src/frontend/alpine/chat-types/gm.ts`       | `GmConfig`, `GmGuidance`, `GmParticipant`      |
+| `src/frontend/alpine/command-buttons.ts`     | `guide` / `scene` buttons open the panel       |
+| `src/components/chat/chat-settings-modal.html` | GM Guidance panel markup                     |
+| `src/routes/chats/manage.ts`                 | `PUT /api/v1/chats/:id/gm-guidance`            |
+| `src/chat/service/crud/gm-guidance.ts`       | `updateGmGuidance()` (no online lock)          |
+
 ## Reference: Key Files
 
 | File                                           | Role                                              |

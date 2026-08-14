@@ -10,6 +10,7 @@ import "./i18n";
 import "./app";
 import "./chat";
 import "./gm-panel";
+import "./gm-guidance";
 import "./htmx";
 import "./notifications";
 import "./user-notifications";
