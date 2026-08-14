@@ -13,7 +13,7 @@
 ## Status header
 
 P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 0.1.0 value tiers
-(§ P3–P5 below) · P6+ → `../open.md` · Gate C core ✅ (GM-guided story P2-Da greenfield).
+(§ P3–P5 below) · P6 → § P6 (below); finer debt → `../open.md` · Gate C core ✅ (GM-guided story P2-Da greenfield).
 
 ## P0 — Critical Path (Blocking)
 
@@ -27,8 +27,8 @@ P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 
 
 | Epic               | Item                                                               | Effort | Status                      |
 | ------------------ | ------------------------------------------------------------------ | ------ | --------------------------- |
-| NSFW Integration   | Gaps — Housing, Weather, Social, Disease                           | Medium | ✅ Complete                 |
-| Battle Integration | Gaps — Items, Social, NPC, Weather, Resolution                     | High   | ✅ Complete (`src/battle/`) |
+| NSFW Integration   | Gaps — Housing, Weather, Social, Disease (G6–G9)                  | Medium | ⬜ Deferred → P6 (epic ⬜ Not Started; matrix P6+ deferred) |
+| Battle Integration | Gaps — Items, Social, NPC, Weather, Resolution (G1–G5)           | High   | ⬜ Deferred → P6 (epic ⬜ Not Started; matrix P6+ deferred) |
 | Data Integrity     | Phase 2 — `data_version` optimistic concurrency, `409` on mismatch | Medium | ✅ Complete                 |
 
 ## P1.5 — Accessibility
@@ -137,6 +137,29 @@ inheritance, `bun test src/story/` verification.
 - [ ] Frontend wiring — all menus/modals/side-menus/documentation linkage; in-chat asset preview + linkage; assistant panel; message actions UI (see P4/P2 tiers)
 - [ ] **Implemented → wired** — wire/drop LoRA routes (P2-G); SSE refactor ✅ (merged `082c20cf`, row W4 resolved in `../open.md`); remaining RPG services → `epic-rpg-wiring-phase3.md`; ~~dead `detectIntent`~~ ✅ removed (see `../open.md`)
 
+## P6 — Post-0.1.0 Systems (RPG, Memory, Agentic — deferred, non-blocking for 0.1.0)
+
+> All gaps below are **P6+ deferred** under the 2026-08-05 0.1.0 alignment
+> (matrix § 0.1.0 Alignment). None block P0–P5 / 0.1.0. G12–G17 are RESOLVED
+> (excluded). G21–G23 are 0.1.0 Quick Wins (excluded). Two agentic TASK tickets
+> are missing and flagged "needs ticket": character-internal-traits, memory-happiness-patterns.
+
+| Wave | Topic | Gaps | Epic / Ticket | Status | Depends on |
+| ---- | ----- | ---- | ------------- | ------ | ---------- |
+| P6-0 | Resolution layer + Memory cross-system | G5, G24, G25, G26 | `epic-resolution-system.md` ⬜; matrix NEW (G24–G26, needs epic) | ⬜ Not Started | foundational |
+| P6-A | Battle hub integration | G1 Items, G2 Social, G3 NPC/Actor, G4 Weather | `epic-battle-integration-gaps.md` ⬜ | ⬜ Not Started | P6-0 |
+| P6-B | NSFW cross-links | G6 Housing, G7 Weather, G8 Social, G9 Disease | `epic-nsfw-integration-gaps.md` ⬜ | ⬜ Not Started | P6-0 |
+| P6-C | Remaining RPG gaps | G10 Housing↔Companion, G11 Crafting↔Magic | `epic-housing.md` / `epic-crafting-professions.md` | ⬜ | P6-0 |
+| P6-D | Character / Agentic core | G27,G28,G29,G30,G31,G32,G33,G34,G35,G36,G37 | `TASK-npc-bdi-planning`, `TASK-character-mood-happiness`, `TASK-npc-to-npc-social`, `TASK-character-relationships`, `TASK-memory-emotion-impact`, `TASK-agent-memory-scoring`, `TASK-living-world-persistence`, `TASK-character-voice-profile`, `TASK-character-growth-development` (all ✅ tickets); internal-traits **needs ticket** | ⬜ | P6-0 + char epics |
+| P6-E | Agentic features addendum | G38 Proactive↔Memory, G39 Proactive↔TimeScale, G40 Keyphrase↔Chat, G41 InnerMonologue, G42 Tool-Calling↔All | `TASK-proactive-messaging`, `TASK-quiet-hours`, `TASK-keyphrase-recall`, `TASK-inner-monologue`, `TASK-tool-calling-agents` (all ✅); G42 last (broadest) | ⬜ | P6-D + memory/assistant |
+| P6-F | Emergent cross-cutting (candidates 13–15) | G18 Agentic-NPC autonomy, G19 Agent-memory scoring, G20 Living-world persistence | fold into actor/npc + memory + world epics (no new epic) | ⬜ | P6-D / P6-0 |
+| P6-G | Integration-template standardization | (rec #4) all 17 RPG epics use standardized `## Integration Points` template | — | ⬜ hygiene | any P6 wave |
+
+**P6 sequencing rationale (severity → ROI):**
+- 🔴 High first: G5 Resolution (foundational dice layer) + G1–G4 Battle hub (matrix rec #1, touches most systems) + G42 Tool-Calling (broadest, sequence last in P6-E once subsystems expose tool schemas).
+- 🟡 Medium: P6-B NSFW cross-links, P6-C, P6-D character/agentic, P6-F emergent.
+- 🟠 Low: G35 Voice↔Growth, G41 InnerMonologue.
+- G18–G20 (candidates 13–15) fold into existing actor/npc/memory/world epics — no new epic per `epic-platform-research.md` Open Q5.
 ## Post-P3 — Road to Happy 0.1.0
 
 `package.json` already declares `version: 0.1.0`. "Happy 0.1.0" = Gate C **and** the
@@ -184,10 +207,10 @@ tracking: `epic-release-010.md`.
 | -- | ---------- | --------- | ------ | ------------ | ---------- |
 | 1 | **Quick-Reply / event-driven automation** — button sets + auto-execute on startup/user/ai events (SillyTavern QR, RisuAI dynamic-* inspiration) | Slash-command parser + 21 handlers (`messages.ts:543`), regex pipeline | Med | None — pure frontend + thin route | G22 |
 | 2 | **Dynamic memory writes via tool-call** — assistant emits durable memory note mid-response (RisuAI dynamic-memory inspiration) | Tool-call SSE (`messages.tool_calls`, migration 037), memorySection | Med | Memory selection UI (item 5) for UX | G23 |
-| 3 | **Emotion-reactive portraits** — extend existing emotion avatars with `<Emotion>` tag + per-emotion sprite swap (RisuAI/SillyTavern inspiration) | Emotion avatars (shipped), assets polymorphic linking, `status_effects` | Low–Med | Per-character emotion images in gallery | G21 (partial) |
+| 3 | **Emotion-reactive portraits** — extend existing emotion avatars with `<Emotion>` tag + per-emotion sprite swap (RisuAI/SillyTavern inspiration) | Emotion avatars (shipped), `avatarForMessage()` wired in `message-list.html:51`, assets polymorphic linking | **Done** — per-message emotion-avatar resolution complete | Per-character emotion images in gallery | G21 (partial) |
 | 4 | **Regex output-transform phase split** — extend regex pipeline from single-phase to 4-phase (editinput/output/process/display) (RisuAI 4-phase inspiration) | Regex extraction pipeline (`src/regex/`) | Low–Med | None — pure logic + frontend toggle | G22 (partial) |
 | 5 | **Memory selection UI — mid-chat pinning** — select/memory-pin/purge UI in chat sidebar (emergent ambient-memory trend: Kindroid, Nomi, Zhumu) | MemorySection, cross-chat memory (shipped), B8 in-flight | Low–Med | B8 already in-flight — this is the UX layer | G23 (partial) |
-| 6 | **Template injection UX** — registry impl shipped (`src/prompts/registry.ts`) → slider/select UI for prompt templates in chat settings | Prompt registry (P3 #13, shipped 2026-08-12), chat-settings modal | Low | None — frontend only | — |
+| 6 | **Template injection UX** — registry impl shipped → read-only prompt preview in chat settings modal (2026-08-14). Open: inline override per-chat | Prompt registry, `GET /api/v1/chats/:id/prompt-template`, chat-settings modal | **Partial** — preview complete. Override needs `prompt_override` column | None — frontend only | — |
 | 7 | **In-chat asset preview + linkage side panel** — gallery assets viewable/linkable without leaving chat (P4/P5 row) | Gallery + assetRoutes (shipped), chat-side-panel UI | Med | Signed URLs (C6 in-flight) | G21 (partial) |
 | 8 | **Creation wizards (assistant)** — character/world/location/item creation wizard flows via assistant (P2-C/P4 in-flight) | Assistant tool-call UI, creation-wizard prompts, assistant commands | Med | Assistant commands extension (C3 in-flight) | — |
 | 9 | **GM-guided story (P2-Da)** — the one Gate-C remainder: participant type, `/guide` command, guidance panel, turn-order wiring | GM panels + quest log (shipped), slash-command parser | Med–High | None — greenfield | — |
