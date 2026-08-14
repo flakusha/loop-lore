@@ -11,6 +11,7 @@ import { chatLocation, } from "../chat-location";
 import { chatManagement, } from "../chat-management";
 import { chatMessages, } from "../chat-messages";
 import { chatPanels, } from "../chat-panels";
+import { chatPromptTemplate, } from "../chat-prompt-template";
 import { chatSections, } from "../chat-sections";
 import { chatSettings, } from "../chat-settings";
 import { chatUtils, } from "../chat-utils";
@@ -196,6 +197,7 @@ globalThis.chatState = function() {
     ...chatKeys,
     ...chatGroup,
     ...chatSettings,
+    ...chatPromptTemplate,
     ...chatPanels,
 
     // ── Lifecycle (init / destroy / user + chat list load) ──
