@@ -130,6 +130,55 @@
           </small>
         </div>
       </template>
+
+      <!-- Prompt Template Preview -->
+      <div class="form-group" style="margin-top: var(--space-3)">
+        <button
+          class="btn btn-ghost btn-sm"
+          style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center"
+          @click="_promptExpanded = !_promptExpanded"
+        >
+          <span class="form-label" style="margin: 0">Prompt Template</span>
+          <span x-text="_promptExpanded ? '▲' : '▼'" style="font-size: 11px; color: var(--text-secondary)"></span>
+        </button>
+        <div x-show="_promptExpanded" style="margin-top: var(--space-2)">
+          <template x-if="_promptLoading">
+            <div style="color: var(--text-secondary); font-size: var(--fs-sm)">Loading…</div>
+          </template>
+          <template x-if="!_promptLoading && _promptTemplate">
+            <div>
+              <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); font-size: var(--fs-sm)">
+                <span style="color: var(--text-secondary)">Purpose:</span>
+                <code x-text="_promptTemplate.purpose" style="font-size: var(--fs-xs)"></code>
+                <span
+                  x-show="_promptTemplate.source === 'character'"
+                  style="color: var(--text-accent); font-size: var(--fs-xs)"
+                >
+                  (from <span x-text="_promptTemplate.characterName || 'character'"></span>)
+                </span>
+                <span
+                  x-show="_promptTemplate.source === 'registry'"
+                  style="color: var(--text-secondary); font-size: var(--fs-xs)"
+                >
+                  (default)
+                </span>
+              </div>
+              <textarea
+                class="form-input form-textarea"
+                rows="6"
+                readonly
+                x-text="_promptTemplate.prompt"
+                style="font-size: var(--fs-xs); font-family: var(--font-mono, monospace); opacity: 0.9; resize: vertical"
+                data-testid="prompt-template-preview"
+              ></textarea>
+              <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+                Edit in character settings to customize per-character. Config overrides via
+                <code>configs/templates/llm.yaml</code>.
+              </small>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">Cancel</button>
