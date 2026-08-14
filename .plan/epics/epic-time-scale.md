@@ -59,6 +59,38 @@ Time scale system — manage game time progression, day/night cycles, seasons, a
 - [ ] GM time advance controls
 - [ ] Unit tests for time progression logic
 
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System  | What It Provides                           | How Used                                        |
+| ------- | ------------------------------------------ | ----------------------------------------------- |
+| Memory  | Episodic-memory timestamps (real-time)     | Convert to game-time for decay/recall (G25)     |
+
+### Systems That Depend On This Epic
+
+| System              | What It Consumes                        | How Used                                                                  |
+| ------------------- | --------------------------------------- | ------------------------------------------------------------------------- |
+| Memory              | Game-time progression + calendar        | Decay memory salience per game-day; permanent memories survive compression (G25) |
+| Timeline System     | Time flow + calendar                    | Branch timelines from game-date points                                     |
+| Weather Environment | Day/night + seasonal periods            | Drive weather patterns by game season                                      |
+
+### Shared Data Contracts
+
+| Contract        | Shared With                | Purpose                                       |
+| --------------- | -------------------------- | --------------------------------------------- |
+| Game date       | Memory, Timeline           | Game-time timestamp for memory decay + branching |
+
+### Cross-System Events
+
+| Event        | Direction | Purpose                                    |
+| ------------ | --------- | ------------------------------------------ |
+| time.advanced | emits    | Notify Memory/Timeline of game-time change |
+
+> **G25 (Memory × Time Scale, from `cross-mechanics-integration-matrix.md`):** convert
+> memory timestamps to game-time, decay per game-day, and let permanent memories survive
+> compression. Both cross-refs live here and in `epic-memory-knowledge-systems.md`.
+
 ## Dependencies
 
 - None (foundational epic)

@@ -170,6 +170,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 ### Platform-by-Platform Findings
 
 #### 1. Inworld AI — Character Engine
+
 - **Personality Builder**: define backstory, goals, knowledge boundaries, emotional profile in no-code Studio
 - **Persistent NPC Memory**: remembers player history across sessions, reacts differently per player
 - **Goal-Driven Behavior**: NPCs pursue autonomous goals, not just respond to prompts
@@ -180,6 +181,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `assistant` already has rules/commands but lacks goal-driven autonomy and emotional reasoning. **Map to**: assistant epic + character-core-system (mood/emotion integration)
 
 #### 2. Convai — Agentic Architecture
+
 - **Dual-Mind Architecture**: reactive mind (instant responses) + reasoning mind (chain-of-thought planning)
 - **Always Listening/Seeing**: agents perceive continuously, decide when to respond proactively
 - **Long-Term Memory + Inner Monologue**: agents "think" even when silent, maintain persistent memory
@@ -190,6 +192,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `assistant` lacks proactive behavior, inner monologue, and tool-calling integration. **Map to**: assistant epic (proactive mode) + turn orchestration (inner monologue) + plugin system (tool-calling)
 
 #### 3. Kindroid — Five-Tier Cascaded Memory
+
 - **Cascaded Memory** (patented): (1) stored diary, (2) key memories, (3) conversation summaries, (4) emotional pattern tracking, (5) cascaded combined layer
 - **Learned Context**: growth & relationship tracking, important facts, ongoing context
 - **Journal Entries**: keyphrase-triggered retrievable memory (up to 8 keyphrases, 3 recalled per message)
@@ -200,6 +203,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `memory` has three-tier but lacks emotional pattern tracking and keyphrase-triggered recall. **Map to**: memory epic (emotional pattern tracking, keyphrase recall) + character-core-system (Learned Context)
 
 #### 4. RisuAI — Dynamic Automation
+
 - **HypaMemory V2/V3**: vector-based memory with recency×importance scoring
 - **SuperMemory**: LLM-summarized chat compression for context management
 - **Hanurai Memory**: alternative memory system with different retrieval
@@ -211,6 +215,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `memory` lacks vector-based scoring (HypaMemory pattern). **Map to**: memory epic (agent-memory-scoring ticket) + regex/assistant (scripting parity)
 
 #### 5. Nomi.ai — Proactive Messaging
+
 - **Three-Tier Memory**: short/mid/long-term with 1,000+ message retention
 - **Proactive Messaging**: 4 frequency levels (Very Frequent ~1hr → Infrequent ~4 days), per-character customization
 - **Quiet Hours**: configurable do-not-disturb (10PM-8AM default)
@@ -220,6 +225,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `assistant`/`chat` lacks proactive messaging and quiet hours. **Map to**: notifications epic (proactive messaging) + assistant (quiet hours) + group-chat (inter-character dialogue)
 
 #### 6. AI Dungeon — Narrative-First
+
 - **Dynamic Adventure**: ongoing story generation with world-state tracking
 - **Memory System**: context-window-based with pinning and summarization
 - **World Persistence**: world continues between sessions
@@ -227,6 +233,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: loop-lore's structured RPG state (items/combat/quests) is a differentiator over prompt-driven approach. **Map to**: existing RPG epics (validate structured-state approach)
 
 #### 7. Generative Agents (Stanford Smallville) — Reference Architecture
+
 - **Memory Stream**: timestamped log of all observations with importance scores (1-10)
 - **Retrieval Scoring Function**: `score = recency_decay + importance/10 + embedding_similarity` (roughly equal weights)
 - **Reflection**: periodic synthesis of observations into higher-level conclusions; reflections stored back in stream
@@ -237,6 +244,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `memory` lacks reflection mechanism and importance-based scoring. **Map to**: memory epic (reflection system, importance scoring) + agent-memory-scoring ticket
 
 #### 8. Character.AI — Memory UI
+
 - **Memory UI**: visual memory management with pinning and custom facts
 - **Facts System**: user-curated facts persisted across chats (c.ai+ feature)
 - **Memory Usage Visualization**: shows what's filling up context
@@ -246,6 +254,7 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 - **Loop-lore gap**: `memory` lacks visual memory management UI. **Map to**: memory selection UI ticket (already exists) + character-core-system (facts system)
 
 #### 9. SillyTavern — Automation Power-User
+
 - **Quick Reply System**: event-triggered slash-command automation (startup, user message, AI message)
 - **Tool Calling**: LLM invokes external functions during generation
 - **Regex Pipeline**: pattern detection and text manipulation
