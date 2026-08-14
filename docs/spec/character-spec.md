@@ -91,6 +91,13 @@ game-rule system to attach structured data without schema changes. The core
 spec only defines the flat fields above; everything else lives in
 `extensions`.
 
+**Behavioral dimensions** (coping, approach, autonomy) are **not** extensions —
+they are first-class fields on `CanonicalCharacter` defined in
+`epic-character-internal-traits.md` (D7–D9). They use the same visibility model
+as internal traits and aspirations (`visible | hidden`) and are injected into
+the LLM prompt via `actorInternalSection`. See the epic for full schema,
+prompt assembly rules, and integration with mood/relationships.
+
 ---
 
 ## 2. NSFW Content Rating

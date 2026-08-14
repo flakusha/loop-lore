@@ -22,7 +22,7 @@ All endpoints prefixed with `/api/`.
 
 `GET /api/users/:userId`
 
-## Authentication
+## Authentication Endpoints
 
 ### Login
 
