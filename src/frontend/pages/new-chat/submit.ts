@@ -29,19 +29,22 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
         ? Array.from(ctx.selectedMemoryIds,)
         : undefined;
       const templateId = $<HTMLSelectElement>("#chat-template",)?.value || undefined;
+      const mode = $<HTMLSelectElement>("#chat-mode",)?.value ?? "direct";
+      const gmGuided = $<HTMLInputElement>("#gm-guided-toggle",)?.checked ?? false;
       const res = await feFetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
           name,
           type: ctx.chatType!.value,
-          mode: $<HTMLSelectElement>("#chat-mode",)?.value,
+          mode: gmGuided ? "story" : mode,
           participantIds: Array.from(ctx.selected, (a: any,) => a.id,),
           personaId,
           impersonateActorId: impersonateId,
           memoryCarry: memoryCarryMode,
           memoryCarryIds,
           templateId,
+          ...(gmGuided ? { gmConfig: { assistantRole: "gm", storyMode: true } } : {}),
         },),
       },);
       if (res.ok) {
@@ -60,7 +63,7 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
             body: jsonBody({ impersonateActorId: impersonateId, },),
           },);
         }
-        location.assign(`/views/chat?chatid=${encodeURIComponent(d.id,)}`,);
+        location.assign(`/views/chat?chatid=${encodeURIComponent(d.id,)}${gmGuided ? "&openSettings=1" : ""}`,);
       } else {
         showToast("error", await getErrorMessage(res, "Failed to create chat",),);
         if (btn) {

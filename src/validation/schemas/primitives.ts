@@ -54,6 +54,15 @@ export const GmConfigSchema = t.Object({
   type: t.Optional(t.UnionEnum(["llm", "human", "hybrid",],),),
   humanGM: t.Optional(t.Object({ actorId: t.String(), notifications: t.Boolean(), },),),
   escalationThreshold: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),
+  llmConfig: t.Optional(
+    t.Object({
+      model: t.String(),
+      provider: t.String(),
+      systemPrompt: t.String(),
+      temperature: t.Number(),
+      maxTokens: t.Number(),
+    },),
+  ),
 },);
 
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
