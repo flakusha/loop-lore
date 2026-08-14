@@ -104,7 +104,6 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     },);
     return response.content;
   };
-
   // Create GameMasterService
   const gm = new GameMasterService({
     db: database,
@@ -121,7 +120,6 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // Execute turn — calls generateText internally to get GM decision
   const turnResult = await gm.executeTurn();
 
-  // ── Hallucination guard ────────────────────────────────────────
   // Check generated content against known world entities before storing
   const hallucinationAnalysis = await detectHallucinations({
     db: database,

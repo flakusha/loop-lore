@@ -44,7 +44,7 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
           memoryCarry: memoryCarryMode,
           memoryCarryIds,
           templateId,
-          ...(gmGuided ? { gmConfig: { assistantRole: "gm", storyMode: true } } : {}),
+          ...(gmGuided ? { gmConfig: { assistantRole: "gm", storyMode: true, }, } : {}),
         },),
       },);
       if (res.ok) {

@@ -7,8 +7,8 @@
  * registry line — no switch to edit.
  */
 import type { Kysely, } from "kysely";
-import type { Config, } from "../../../config/schema";
 import type { GmGuidance, } from "../../../chat/types/config";
+import type { Config, } from "../../../config/schema";
 import type { DB, } from "../../../db/schema";
 import type { GenerationMessage, } from "../../../generation/types";
 import type { GameMasterConfig, GameMasterDecision, StoryContext, } from "../../types";

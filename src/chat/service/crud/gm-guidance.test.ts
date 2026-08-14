@@ -38,32 +38,32 @@ describe("updateGmGuidance", () => {
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
-    return row?.gm_config ? JSON.parse(row.gm_config as string) : null;
+    return row?.gm_config ? JSON.parse(row.gm_config as string,) : null;
   }
 
   it("merges guidance into gm_config", async () => {
     const res = await updateGmGuidance(db, chatId, {
       storyMode: true,
-      gmGuidance: { constraints: ["stay in character"], turnPriority: { "a1": "high", }, },
+      gmGuidance: { constraints: ["stay in character",], turnPriority: { "a1": "high", }, },
     },);
-    expect(res,).toEqual({ ok: true, });
+    expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.storyMode,).toBe(true,);
-    expect((parsed?.gmGuidance as { constraints: string[] }).constraints,).toEqual(["stay in character"],);
-  },);
+    expect((parsed?.gmGuidance as { constraints: string[] }).constraints,).toEqual(["stay in character",],);
+  });
 
   it("returns not_found for a missing chat", async () => {
-    const res = await updateGmGuidance(db, "does-not-exist", { storyMode: true },);
+    const res = await updateGmGuidance(db, "does-not-exist", { storyMode: true, },);
     expect(res,).toEqual({ code: "not_found", message: "Chat not found", },);
-  },);
+  });
 
   it("merges over existing gm_config without clobbering sibling keys", async () => {
     await updateGmGuidance(db, chatId, {
-      gmGuidance: { constraints: ["a"], turnPriority: {}, },
+      gmGuidance: { constraints: ["a",], turnPriority: {}, },
     },);
-    await updateGmGuidance(db, chatId, { storyMode: true },);
+    await updateGmGuidance(db, chatId, { storyMode: true, },);
     const parsed = await gmConfigOf();
-    expect((parsed?.gmGuidance as { constraints: string[] }).constraints,).toEqual(["a"],);
+    expect((parsed?.gmGuidance as { constraints: string[] }).constraints,).toEqual(["a",],);
     expect(parsed?.storyMode,).toBe(true,);
-  },);
-},);
+  });
+});
