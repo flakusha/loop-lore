@@ -200,10 +200,10 @@ interface ScenarioSource {
 ## Files
 
 - `src/assistant/commands/image.ts` — /image command with subcommands (TODO: create)
-- `src/assistant/sd.ts` — Image generation adapter (ComfyUI + sd.cpp) (TODO: create)
+- `src/assistant/sd.ts` — ~~Image generation adapter~~ REMOVED 2026-08-14 (dead stub, zero imports; reimplement from scratch)
 - `src/assistant/intent.ts` — intent detection + routing (TODO: create)
 - `src/assistant/tools.ts` — approved tool execution (TODO: create)
-- `src/assistant/scenario-source.ts` — scenario store (shared w/ blog) (TODO: create)
+- `src/assistant/scenario-source.ts` — ~~scenario store~~ REMOVED 2026-08-14 (dead stub, zero imports; reimplement from scratch)
 - `src/assistant/commands/generate.ts` — extends existing generation commands (TODO: create)
 
 ## Current Implementation Status
