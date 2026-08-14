@@ -19,7 +19,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   // ── Chat setup templates: load + pre-fill key mechanics ─────
   try {
-    const res = await feFetch("/api/chat-setup-templates",);
+    const res = await feFetch("/api/v1/chat-setup-templates",);
     if (res.ok) {
       ctx.templates = (await res.json()) as typeof ctx.templates;
     }
