@@ -1,6 +1,6 @@
 # TASK-PLAN-LINT-TS-DEBT: Close lint-ts debt → `check` lint gate green
 
-**Status**: open
+**Status**: done
 **Priority**: high (release-blocking — last red gate)
 **Labels**: lint, quality, release-closeout
 **Assignee**:
@@ -41,13 +41,16 @@ rename, error handling).
 ## Execution plan
 
 ### Phase 1 — auto-fix (clears ~44 errors)
+
 ```bash
 bun run lint:fix
 bun run lint   # re-count: expect ~20 errors remaining
 ```
+
 Covers: `no-unnecessary-type-assertion`, `switch-case-braces`, `prefer-export-from`.
 
 ### Phase 2 — manual, by rule cluster (20 errors)
+
 1. **`max-nested-calls` (9)** — extract deeply nested call chains in the flagged
    route/service files into private helpers; keep behavior identical.
 2. **`no-non-function-verb-prefix` (6)** — rename non-function vars that start with
@@ -60,6 +63,7 @@ Covers: `no-unnecessary-type-assertion`, `switch-case-braces`, `prefer-export-fr
    no-base-to-string: one-off fixes, read the flagged line and context.
 
 ### Phase 3 — verify no regression
+
 ```bash
 bun run lint            # 0 errors expected (warnings may remain — non-blocking)
 bun test src/           # unit tests still pass
@@ -67,12 +71,49 @@ bun run check           # full gate
 ```
 
 ## Acceptance criteria
-- [ ] `bun run lint` exits 0 (0 errors; warnings OK to remain as tracked debt)
-- [ ] No behavior change: `bun test src/` green
-- [ ] Per-error-type remediation documented above, or adjusted with rationale if a
+
+- [x] `bun run lint` exits 0 (0 errors; warnings OK to remain as tracked debt)
+- [x] No behavior change: `bun test src/` green
+- [x] Per-error-type remediation documented above, or adjusted with rationale if a
       rule is better disabled (state the case — do not blanket-disable)
 
+## Resolution (2026-08-14)
+
+- Baseline at worktree start: **665 problems (68 errors, 597 warnings)** — dev grew 4
+  errors since ticket was written (C1 matrix + memory merges).
+- Phase 1 `lint:fix`: 68 → 27 errors (41 auto-fixed; 404 warnings also auto-fixed).
+- Phase 2 manual (27): all fixed in `tree/lint-ts-debt`:
+  - `no-restricted-syntax` (6): equipment.ts map→for-of + `jsonParseOr` for JSON.parse;
+    actor-items.ts reduce→for-of, Promise.all→sequential awaits; hardcoded.ts
+    `.map`→`Array.from(iterable, fn)` (satisfies both no-restricted-syntax and
+    prefer-array-from-map).
+  - `no-misused-spread` (1): equipment.ts `{ ...loot, worldItemIds }` spread array into
+    object (index keys) — **latent bug**; now `{ loot, worldItemIds }`.
+  - `no-non-function-verb-prefix` (7): `createRes`→`created`, `getRes`→`fetched`
+    (crafting.test.ts), `createRecipeBody`→`recipeCreateBody` (recipes-schemas.ts +
+    recipes.ts).
+  - `max-nested-calls` (9): **config override** — added recipes.ts, recipes-schemas.ts,
+    trade.ts to the existing TypeBox schema-nesting exemption block in eslint.config.mjs
+    (precedent: character-emotions.ts, vn-*.ts, etc.). TypeBox DSL nesting is
+    declarative composition, not call logic; per-ticket policy allows rationale'd
+    disable.
+  - `no-base-to-string` (1): trade.ts onError `String(error)` → instance-safe message
+    extraction.
+  - `prefer-ternary` (2): actor-items.ts threshold const-ternary; item-transfer.ts
+    `fromActorId ? await … : null`.
+  - `no-nested-ternary` (1) + `no-nested-template-literals` (1): parenthesized ternary
+    (trade.ts), extracted errorSuffix var (tests/e2e/helpers/htmx-alpine.ts).
+- Result: `bun run lint` **EXIT 0 — 0 errors**, 193 warnings remain (non-blocking debt).
+- **Bonus fix**: `chat-participants.test.ts` leaked a process-global
+  `mock.module("./i18n", () => ({ t: key => key }))` that made sibling
+  `world-channels.test.ts` assertions receive raw i18n keys whenever the two files
+  shared a worker (deterministic when run together; reproduced on clean dev too —
+  pre-existing hazard). Replaced with real `i18n.test-helper` import. `bun test src/`
+  now 3496 pass / 0 fail.
+- Lint gate: **17/17 green once check gate confirms** (lint-ts was the last red gate).
+
 ## Scope / risks
+
 - **Semantic rules are NOT safe to `--fix` blindly** — `no-restricted-syntax` and
   `no-misused-spread`/`no-base-to-string` need per-site review; auto-fix only the
   44 mechanical ones.

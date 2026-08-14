@@ -15,7 +15,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-moderation", },)
-    .patch(prefix + "/blog/comments/:id/moderate", async (ctx: any,) => {
+    .patch(`${prefix}/blog/comments/:id/moderate`, async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {
@@ -50,7 +50,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags: ["Blog", "Moderation",],
       },
     },)
-    .patch(prefix + "/blog/posts/:id/moderate", async (ctx: any,) => {
+    .patch(`${prefix}/blog/posts/:id/moderate`, async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {

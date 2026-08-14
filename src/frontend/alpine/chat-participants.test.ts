@@ -1,8 +1,13 @@
+import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { chatParticipants, } from "./chat-participants";
 import type { ChatState, } from "./types";
 
-// ── Mock apiFetch + i18n (chat-participants imports both) ──
+// ── Mock apiFetch (chat-participants imports htmx + i18n) ──
+// i18n uses the REAL module via i18n.test-helper above — do NOT mock.module
+// "./i18n" here: mock.module is process-global, so a t:key => key stub leaks
+// into sibling test files (e.g. world-channels.test.ts) sharing the worker,
+// making their toast assertions receive raw keys instead of resolved strings.
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
@@ -12,10 +17,6 @@ mock.module("./htmx", () => ({
     if (!fetchHandler) { return new Response("{}", { status: 200, },); }
     return fetchHandler(url, opts ?? {},);
   },
-}),);
-
-mock.module("./i18n", () => ({
-  t: (key: string,) => key,
 }),);
 
 function mockFetch(status: number, body: unknown = {},) {

@@ -15,7 +15,7 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-templates-list", },)
       // ── List all profiles (builtin + custom) ───────────────
-      .get(prefix + "/admin/templates", async (ctx: any,) => {
+      .get(`${prefix}/admin/templates`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -57,7 +57,7 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         }
       },)
       // ── Get full registry (all profiles with templates) ────
-      .get(prefix + "/admin/templates/registry", async (ctx: any,) => {
+      .get(`${prefix}/admin/templates/registry`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -87,7 +87,7 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         }
       },)
       // ── Get one profile ───────────────────────────────────
-      .get(prefix + "/admin/templates/:id", async (ctx: any,) => {
+      .get(`${prefix}/admin/templates/:id`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

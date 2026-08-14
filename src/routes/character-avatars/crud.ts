@@ -23,7 +23,7 @@ export function crudRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-avatars-crud", },)
-      .get(prefix + "/actors/:actorId/avatars", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/avatars`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -50,7 +50,7 @@ export function crudRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .get(prefix + "/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/avatars/:avatarId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -84,7 +84,7 @@ export function crudRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .post(prefix + "/actors/:actorId/avatars", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/avatars`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -122,7 +122,7 @@ export function crudRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .put(prefix + "/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+      .put(`${prefix}/actors/:actorId/avatars/:avatarId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -158,7 +158,7 @@ export function crudRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Avatars",],
         },
       },)
-      .delete(prefix + "/actors/:actorId/avatars/:avatarId", async (ctx: any,) => {
+      .delete(`${prefix}/actors/:actorId/avatars/:avatarId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

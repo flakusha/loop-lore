@@ -26,7 +26,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-io-export", },)
       // ── Export Systems Data ─────────────────────────────────
-      .get(prefix + "/actors/:actorId/systems/export", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/systems/export`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -63,7 +63,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Export Systems Data (POST for complex queries) ──────
-      .post(prefix + "/actors/:actorId/systems/export", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/systems/export`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

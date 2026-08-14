@@ -12,7 +12,7 @@ export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-sections-remove", },)
       // ── Delete a section ──────────────────────────────────
       .delete(
-        prefix + "/chats/:id/sections/:sectionId",
+        `${prefix}/chats/:id/sections/:sectionId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

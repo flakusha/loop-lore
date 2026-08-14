@@ -12,7 +12,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-sections-update", },)
       // ── Update a section ──────────────────────────────────
       .patch(
-        prefix + "/chats/:id/sections/:sectionId",
+        `${prefix}/chats/:id/sections/:sectionId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

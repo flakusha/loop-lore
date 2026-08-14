@@ -15,7 +15,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
 
   return new Elysia({ name: "character-availability", },)
     // ── Get availability for an actor ──────────────────────────
-    .get(prefix + "/actors/:actorId/availability", async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
@@ -56,7 +56,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
       },
     },)
     // ── Create or update availability ──────────────────────────
-    .post(prefix + "/actors/:actorId/availability", async (ctx: any,) => {
+    .post(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 
@@ -128,7 +128,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
       },
     },)
     // ── Delete availability ────────────────────────────────────
-    .delete(prefix + "/actors/:actorId/availability", async (ctx: any,) => {
+    .delete(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (userId instanceof Response) { return userId; }
 

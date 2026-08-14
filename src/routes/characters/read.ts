@@ -11,7 +11,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "characters-read", },)
     .get(
-      prefix + "/actors/:actorId",
+      `${prefix}/actors/:actorId`,
       async (ctx: any,) => {
         const actor = await database
           .selectFrom("actors",)
