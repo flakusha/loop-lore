@@ -530,6 +530,9 @@ export default tseslint.config(
       "no-empty": "off",
       "@typescript-eslint/no-empty-function": "off",
       "no-restricted-globals": "off",
+      // Test helpers often name response mocks with verb prefixes (createRes,
+      // getResponse) without being functions — intentional in test code.
+      "unicorn/no-non-function-verb-prefix": "off",
     },
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────
