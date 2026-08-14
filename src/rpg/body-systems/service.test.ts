@@ -4,6 +4,8 @@ import { Kysely, } from "kysely";
 import { createSqliteDialect, } from "../../db/index";
 import { createLogger, } from "../../logger";
 import { BodySystemService, } from "./service";
+import { HeatPhase, } from "../../db/enums";
+import { Species, } from "./enums";
 
 // Initialize logger for tests (error only to suppress noise)
 createLogger({ level: "error", },);
@@ -149,11 +151,11 @@ describe("BodySystemService", () => {
       const db = createTestDb();
       const service = new BodySystemService(db,);
 
-      const cycle = await service.getHeatCycle("actor-1", "human",);
+      const cycle = await service.getHeatCycle("actor-1", Species.Human,);
 
-      expect(cycle.species,).toBe("human",);
+      expect(cycle.species,).toBe(Species.Human,);
       expect(cycle.cycleLengthDays,).toBe(0,);
-      expect(cycle.currentPhase,).toBe("normal",);
+      expect(cycle.currentPhase,).toBe(HeatPhase.Normal,);
     });
 
     test("getHeatCycle creates default for non-human", async () => {

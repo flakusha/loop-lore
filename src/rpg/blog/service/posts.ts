@@ -3,13 +3,14 @@ import { sql, } from "kysely";
 import { notifyBlogPost, } from "../../../notifications/service";
 import { jsonStringifyOr, uid, } from "../../../utils.js";
 import { addTags, clearTags, getTags, } from "./tags";
-import type {
-  BlogPostRow,
+import {
+  BlogAuthorType,
   BlogPostStatus,
   BlogPostVisibility,
-  BlogPostWithTags,
-  CreateBlogPostInput,
-  UpdateBlogPostInput,
+  type BlogPostRow,
+  type BlogPostWithTags,
+  type CreateBlogPostInput,
+  type UpdateBlogPostInput,
 } from "./types";
 
 // ── Posts ────────────────────────────────────────────
@@ -24,11 +25,11 @@ export async function createPost(
     author_id: input.author_id,
     title: input.title,
     body: input.body,
-    visibility: input.visibility ?? ("public" as const),
-    author_type: input.author_type ?? ("human" as const),
+    visibility: input.visibility ?? BlogPostVisibility.Public,
+    author_type: input.author_type ?? BlogAuthorType.Human,
     status: input.scheduled_at
-      ? ("scheduled" as const)
-      : ("draft" as const),
+      ? BlogPostStatus.Scheduled
+      : BlogPostStatus.Draft,
     category: input.category ?? null,
     world_id: input.world_id ?? null,
     character_id: input.character_id ?? null,
@@ -42,7 +43,7 @@ export async function createPost(
 
   await db.insertInto("blog_posts",).values(post,).execute();
   // Notify followers of new post
-  if (post.visibility === "public" || post.visibility === "followers") {
+  if (post.visibility === BlogPostVisibility.Public || post.visibility === BlogPostVisibility.Followers) {
     const followers = await db
       .selectFrom("blog_follows",)
       .select("follower_id",)
@@ -154,7 +155,7 @@ export async function updatePost(
   if (input.visibility !== undefined) { updates.visibility = input.visibility; }
   if (input.status !== undefined) {
     updates.status = input.status;
-    if (input.status === "published") {
+    if (input.status === BlogPostStatus.Published) {
       updates.published_at = new Date().toISOString();
     }
   }

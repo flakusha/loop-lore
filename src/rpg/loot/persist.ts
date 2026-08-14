@@ -25,46 +25,34 @@ export interface LootDestination {
   defaultCategory?: ItemCategory;
 }
 
+/** Map loose loot `type` strings onto canonical `ItemCategory` values. */
+const LOOSE_TYPE_TO_CATEGORY: Record<string, ItemCategory> = {
+  weapon: ItemCategory.Weapon,
+  armor: ItemCategory.Armor,
+  helmet: ItemCategory.Armor,
+  boots: ItemCategory.Armor,
+  gloves: ItemCategory.Armor,
+  shield: ItemCategory.Armor,
+  consumable: ItemCategory.Consumable,
+  potion: ItemCategory.Consumable,
+  material: ItemCategory.Material,
+  ingredient: ItemCategory.Material,
+  key: ItemCategory.KeyItem,
+  key_item: ItemCategory.KeyItem,
+  quest: ItemCategory.QuestItem,
+  quest_item: ItemCategory.QuestItem,
+  tool: ItemCategory.Tool,
+  treasure: ItemCategory.Treasure,
+  gold: ItemCategory.Treasure,
+  book: ItemCategory.Book,
+  artifact: ItemCategory.Artifact,
+  misc: ItemCategory.Misc,
+} as const;
+
 /** Map a loose loot `type` string to a unified `ItemCategory`. */
 function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
   const value = type.toLowerCase().trim();
-  const known = Object.values(ItemCategory,);
-  // Map common battle-style names onto canonical categories.
-  switch (value) {
-    case "weapon":
-      return ItemCategory.Weapon;
-    case "armor":
-    case "helmet":
-    case "boots":
-    case "gloves":
-    case "shield":
-      return ItemCategory.Armor;
-    case "consumable":
-    case "potion":
-      return ItemCategory.Consumable;
-    case "material":
-    case "ingredient":
-      return ItemCategory.Material;
-    case "key":
-    case "key_item":
-      return ItemCategory.KeyItem;
-    case "quest":
-    case "quest_item":
-      return ItemCategory.QuestItem;
-    case "tool":
-      return ItemCategory.Tool;
-    case "treasure":
-    case "gold":
-      return ItemCategory.Treasure;
-    case "book":
-      return ItemCategory.Book;
-    case "artifact":
-      return ItemCategory.Artifact;
-    case "misc":
-      return ItemCategory.Misc;
-    default:
-      return known.includes(value as ItemCategory) ? (value as ItemCategory) : fallback;
-  }
+  return LOOSE_TYPE_TO_CATEGORY[value] ?? (Object.values(ItemCategory,).includes(value as ItemCategory) ? (value as ItemCategory) : fallback);
 }
 
 /**

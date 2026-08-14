@@ -1,6 +1,7 @@
 import { rollDice, } from "./roll.js";
 import {
-  type AdvantageMode,
+  AdvantageMode,
+  ADVANTAGE_NOTATION,
   type DiceRollResult,
   type DiceSides,
   type ParsedDice,
@@ -36,12 +37,7 @@ export function parseDiceNotation(notation: string,): ParsedDice | null {
   }
 
   const modifier = match[3] ? parseInt(match[3], 10,) : 0;
-  let advantage: AdvantageMode = "normal";
-  if (match[4] === "adv") {
-    advantage = "advantage";
-  } else if (match[4] === "dis") {
-    advantage = "disadvantage";
-  }
+  const advantage: AdvantageMode = ADVANTAGE_NOTATION[match[4] ?? ""] ?? AdvantageMode.Normal;
 
   return { count, sides, modifier, advantage, };
 }
