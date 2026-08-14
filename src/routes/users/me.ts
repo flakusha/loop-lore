@@ -13,7 +13,7 @@ import { ErrorResponse, SuccessResponse, UserProfileUpdateBody, } from "../../va
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
-export function meRoutes(opts: UsersRoutesOpts, prefix = "/api") {
+export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "users-me", },)
       .get(

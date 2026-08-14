@@ -4,7 +4,7 @@
  * Social (poll-driven) and Crafting ↔ Magic edges. Migrated verbatim from the
  * former `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges rooted at Social (polls) and Crafting. */
 export const SOCIAL_CRAFTING_EDGES: IntegrationEdge[] = [

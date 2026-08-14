@@ -9,7 +9,7 @@ import { getChatBackground, setChatBackground, } from "./service";
 import { chatAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function assignmentRoutes(opts: HandlerOpts, prefix = "/api") {
+export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

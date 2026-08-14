@@ -21,6 +21,7 @@ Extends `FEAT-memory-systems-three-tier.md` with scored retrieval and reflection
 ## Implementation
 
 ### Memory Scoring
+
 ```typescript
 interface MemoryScore {
   memory_id: string;
@@ -34,6 +35,7 @@ interface MemoryScore {
 ```
 
 ### Reflection System
+
 Periodically (e.g., every N interactions or when episodic memory hits threshold):
 1. Retrieve top-scoring recent memories
 2. Synthesize into higher-level insights (e.g., "Player seems to prefer diplomatic solutions")
@@ -52,6 +54,7 @@ interface MemoryReflection {
 ```
 
 ### Scored Retrieval
+
 When injecting memories into context:
 1. Compute relevance to current situation
 2. Score all candidate memories: `composite = recency × importance × relevance`
@@ -59,6 +62,7 @@ When injecting memories into context:
 4. Update access timestamps for selected memories
 
 ## Integration Points
+
 - **FEAT-memory-systems-three-tier.md** — Extends three-tier with scoring layer
 - **TASK-memory-decay-logic.md** — Scoring replaces simple decay
 - **TASK-memory-emotion-impact.md** — Emotional memories get importance boost
@@ -67,6 +71,7 @@ When injecting memories into context:
 - **TASK-npc-memory.md** — NPC memory uses same scoring model
 
 ## Acceptance Criteria
+
 - [ ] Memory scoring model computes recency × importance × relevance
 - [ ] Composite scores update on memory access
 - [ ] Reflection system generates semantic insights from episodic memories
@@ -77,6 +82,7 @@ When injecting memories into context:
 - [ ] Performance: scoring runs efficiently for 1000+ memories
 
 ## Open Questions
+
 1. How often should reflection trigger? (every N turns? on significant event?)
 2. What's the right weight balance for recency vs importance vs relevance?
 3. Should reflections be player-visible or system-only?

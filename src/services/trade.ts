@@ -47,7 +47,7 @@ async function ensureBalanceRow(
   currency: string,
 ): Promise<number> {
   const existing = await db
-    .selectFrom("actor_currencies")
+    .selectFrom("actor_currencies",)
     .select("balance",)
     .where("actor_id", "=", actorId,)
     .where("world_id", "=", worldId,)
@@ -83,7 +83,7 @@ export class TradeService {
     currency: string = DEFAULT_CURRENCY,
   ): Promise<number> {
     const row = await this.db
-      .selectFrom("actor_currencies")
+      .selectFrom("actor_currencies",)
       .select("balance",)
       .where("actor_id", "=", actorId,)
       .where("world_id", "=", worldId,)
@@ -100,7 +100,7 @@ export class TradeService {
     currency: string = DEFAULT_CURRENCY,
     trx?: Kysely<DB> | Transaction<DB>,
   ): Promise<number> {
-    if (amount < 0) { throw new Error("credit amount must be non-negative"); }
+    if (amount < 0) { throw new Error("credit amount must be non-negative",); }
     const db = trx ?? this.db;
     const current = await ensureBalanceRow(db, actorId, worldId, currency,);
     const next = current + amount;
@@ -122,7 +122,7 @@ export class TradeService {
     currency: string = DEFAULT_CURRENCY,
     trx?: Kysely<DB> | Transaction<DB>,
   ): Promise<boolean> {
-    if (amount < 0) { throw new Error("debit amount must be non-negative"); }
+    if (amount < 0) { throw new Error("debit amount must be non-negative",); }
     const db = trx ?? this.db;
     const current = await ensureBalanceRow(db, actorId, worldId, currency,);
     if (current < amount) { return false; }
@@ -178,10 +178,10 @@ export class TradeService {
     }
 
     // Validate every offered line is owned and sufficiently stocked.
-    const validateLines = async (db: Kysely<DB>, actorId: string, lines: TradeLine[]): Promise<string | null> => {
+    const validateLines = async (db: Kysely<DB>, actorId: string, lines: TradeLine[],): Promise<string | null> => {
       for (const line of lines) {
         const row = await db
-          .selectFrom("world_items")
+          .selectFrom("world_items",)
           .select(["owner_actor_id", "quantity",],)
           .where("id", "=", line.worldItemId,)
           .executeTakeFirst();
@@ -192,9 +192,8 @@ export class TradeService {
       return null;
     };
 
-    const preErr =
-      (await validateLines(this.db, buyerActorId, buyerItems,))
-      ?? (await validateLines(this.db, sellerActorId, sellerItems,));
+    const preErr = (await validateLines(this.db, buyerActorId, buyerItems,)) ??
+      (await validateLines(this.db, sellerActorId, sellerItems,));
     if (preErr) { return { success: false, reason: preErr, }; }
 
     let success = false;
@@ -205,22 +204,31 @@ export class TradeService {
     };
     let reason: string | undefined;
 
-    await this.db.transaction().execute(async (trx) => {
+    await this.db.transaction().execute(async (trx,) => {
       // Currency: buyer pays seller.
       const paid = await this.debit(buyerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
-      if (!paid) { reason = "buyer has insufficient currency"; return; }
+      if (!paid) {
+        reason = "buyer has insufficient currency";
+        return;
+      }
       await this.credit(sellerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
       moved.pricePaid = price;
 
       // Items: buyer's → seller; seller's → buyer.
       for (const line of buyerItems) {
         const res = await this.items.transfer(line.worldItemId, line.quantity, undefined, sellerActorId, trx,);
-        if (!res.success) { reason = "buyer item transfer failed"; return; }
+        if (!res.success) {
+          reason = "buyer item transfer failed";
+          return;
+        }
         moved.itemsOffered.push(line.worldItemId,);
       }
       for (const line of sellerItems) {
         const res = await this.items.transfer(line.worldItemId, line.quantity, undefined, buyerActorId, trx,);
-        if (!res.success) { reason = "seller item transfer failed"; return; }
+        if (!res.success) {
+          reason = "seller item transfer failed";
+          return;
+        }
         moved.itemsRequested.push(line.worldItemId,);
       }
       success = true;

@@ -19,7 +19,7 @@ import { maybeAutoReply, } from "./reply";
 import { autoRenameChat, handleSceneTransitions, } from "./transitions";
 import type { HandlerOpts, } from "./types";
 
-export function createRoutes(opts: HandlerOpts, prefix = "/api") {
+export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
 
   return new Elysia({ name: "messages-create", },)
