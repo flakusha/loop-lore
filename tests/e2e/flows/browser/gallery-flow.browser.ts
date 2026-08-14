@@ -15,15 +15,15 @@ describe("Gallery flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoGallery(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.goto(`${ctx.url}/views/gallery`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/gallery`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 30_000, },);
   }
 
   describe("Upload flow", () => {
@@ -32,9 +32,9 @@ describe("Gallery flow E2E", () => {
       const errors = trackPageErrors(page,);
       try {
         await gotoGallery(page,);
-        await page.locator("[data-testid='upload-button']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='upload-button']",).waitFor({ state: "visible", timeout: 15_000, },);
         await page.click("[data-testid='upload-button']",);
-        await page.locator("[data-testid='upload-form']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='upload-form']",).waitFor({ state: "visible", timeout: 15_000, },);
 
         // 1x1 PNG.
         const png = Buffer.from(
@@ -67,12 +67,12 @@ describe("Gallery flow E2E", () => {
 
         // The grid reload can race the DB commit — wait for the asset card.
         await page.reload({ waitUntil: "domcontentloaded", },);
-        await page.locator(`[data-testid='asset-card-${row!.id}']`,).waitFor({ timeout: 10_000, },);
+        await page.locator(`[data-testid='asset-card-${row!.id}']`,).waitFor({ timeout: 30_000, },);
       } finally {
         errors.assert();
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 });

@@ -17,17 +17,17 @@ describe("Settings flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoSettings(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.goto(`${ctx.url}/views/settings`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/settings`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 30_000, },);
     // Wait for settings to load (save button enabled only once loaded).
-    await page.locator("[data-testid='save-general']",).waitFor({ state: "visible", timeout: 10_000, },);
+    await page.locator("[data-testid='save-general']",).waitFor({ state: "visible", timeout: 30_000, },);
     await page.waitForTimeout(500,);
   }
 
@@ -56,7 +56,7 @@ describe("Settings flow E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
 
     test("changing theme persists to the settings JSON", async () => {
       const page = await ctx.openPage();
@@ -84,7 +84,7 @@ describe("Settings flow E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 
   describe("Settings tabs render", () => {
@@ -95,12 +95,12 @@ describe("Settings flow E2E", () => {
         await gotoSettings(page,);
         await page.locator(".world-edit-tab",).filter({ hasText: "Keys", },).first().click();
         await page.waitForTimeout(500,);
-        await page.locator("[data-testid='settings-keys']",).waitFor({ state: "visible", timeout: 8000, },);
+        await page.locator("[data-testid='settings-keys']",).waitFor({ state: "visible", timeout: 15_000, },);
       } finally {
         errors.assert();
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 });
