@@ -71,4 +71,9 @@ export interface GmConfig {
     temperature: number;
     maxTokens: number;
   };
+  /**
+   * Per-actor model overrides for multi-LLM story mode. Keyed by actor id.
+   * Mirrors `GameMasterConfig.actorModels` from `src/story/types.ts`.
+   */
+  actorModels?: Record<string, { model: string; provider: string }>;
 }

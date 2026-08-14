@@ -63,6 +63,9 @@ export const GmConfigSchema = t.Object({
       maxTokens: t.Number(),
     },),
   ),
+  actorModels: t.Optional(
+    t.Record(t.String(), t.Object({ model: t.String(), provider: t.String(), },),),
+  ),
 },);
 
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
