@@ -115,7 +115,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         body.turnStrategy = this._chatSettingsTurnStrategy;
         body.gmConfig = jsonBody(gmConfig,);
       }
-      const res = await apiFetch(`/api/chats/${this.activeChat}`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
@@ -173,7 +173,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   async setPersona() {
     if (!this.activeChat) { return; }
     try {
-      await apiFetch(`/api/chats/${this.activeChat}/persona`, {
+      await apiFetch(`/api/v1/chats/${this.activeChat}/persona`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ personaId: this._selectedPersonaId, },),
@@ -188,13 +188,13 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     const actorId = this._impersonatingActorId;
     try {
       if (this.impersonationActive && actorId) {
-        await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+        await apiFetch(`/api/v1/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: actorId, },),
         },);
       } else {
-        await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+        await apiFetch(`/api/v1/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: null, },),
@@ -209,7 +209,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat || this._impersonationLoaded) { return; }
     this._impersonationLoaded = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (res.ok) {
         const participants = await res.json();
         const me = Array.isArray(participants,)
