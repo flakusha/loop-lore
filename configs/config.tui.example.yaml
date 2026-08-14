@@ -1,0 +1,6 @@
+# TUI configuration example (YAML)
+# Domain: tui — terminal UI (blessed)
+# Twin of config.tui.example.toml
+
+tui:
+  enabled: true

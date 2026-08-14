@@ -1,0 +1,11 @@
+# Generation configuration example (YAML)
+# Domain: generation — LLM provider settings
+# Twin of config.generation.example.toml
+
+generation:
+  defaultProvider: "" # e.g. "openaiCompatible"
+  defaultModels: {} # { openaiCompatible: "gpt-4" }
+  providers:
+    openaiCompatible: [] # list of { name, baseUrl, apiKey, models }
+    # sd: [] # stable diffusion providers
+    # llamaSwap: { url: "http://localhost:8080" }
