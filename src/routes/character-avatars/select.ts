@@ -13,13 +13,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Avatar selection sub-plugin — context-aware avatar selection.
  */
-export function selectRoutes(opts: HandlerOpts,) {
+export function selectRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);
 
   return (
     new Elysia({ name: "character-avatars-select", },)
-      .post("/api/actors/:actorId/avatars/select", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/avatars/select", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

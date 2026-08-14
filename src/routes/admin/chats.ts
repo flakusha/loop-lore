@@ -11,12 +11,12 @@ import { AdminChatRow, AdminPaginatedEnvelope, } from "../../validation/schemas/
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function chatsRoutes(opts: AdminRouteOpts,) {
+export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-chats", },)
       // ── Chat management ────────────────────────────────────
       .get(
-        "/api/admin/chats",
+        prefix + "/admin/chats",
         async (ctx: any,) => {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -67,7 +67,7 @@ export function chatsRoutes(opts: AdminRouteOpts,) {
         },
       )
       .get(
-        "/api/admin/chats/:id",
+        prefix + "/admin/chats/:id",
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -112,7 +112,7 @@ export function chatsRoutes(opts: AdminRouteOpts,) {
         { params: ChatIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .patch(
-        "/api/admin/chats/:id",
+        prefix + "/admin/chats/:id",
         async (ctx: any,) => {
           const { params: p, userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -147,7 +147,7 @@ export function chatsRoutes(opts: AdminRouteOpts,) {
         },
       )
       .delete(
-        "/api/admin/chats/:id",
+        prefix + "/admin/chats/:id",
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {

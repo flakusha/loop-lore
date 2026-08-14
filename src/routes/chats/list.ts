@@ -73,13 +73,13 @@ function orderChatList<T,>(
   }
 }
 
-export function listRoutes(opts: HandlerOpts,) {
+export function listRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chats-list", },)
       .get(
-        "/api/chats",
+        prefix + "/chats",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

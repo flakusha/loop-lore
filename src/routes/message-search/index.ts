@@ -34,13 +34,13 @@ import type { HandlerOpts, } from "./types";
 
 export type { HandlerOpts, } from "./types";
 
-export function messageSearchRoutes(opts: HandlerOpts,) {
+export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "message-search", },)
       .get(
-        "/api/messages/search",
+        prefix + "/messages/search",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

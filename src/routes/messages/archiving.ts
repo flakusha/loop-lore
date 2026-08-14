@@ -4,12 +4,12 @@ import { ChatIdParams, ErrorResponse, MessageIdParams, SuccessResponse, } from "
 import { jsonResponse, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function archivingRoutes(opts: HandlerOpts,) {
+export function archivingRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "messages-archiving", },)
     .post(
-      "/api/messages/:id/archive",
+      prefix + "/messages/:id/archive",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -39,7 +39,7 @@ export function archivingRoutes(opts: HandlerOpts,) {
       { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .post(
-      "/api/messages/:id/restore",
+      prefix + "/messages/:id/restore",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -69,7 +69,7 @@ export function archivingRoutes(opts: HandlerOpts,) {
       { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .post(
-      "/api/chats/:id/messages/purge",
+      prefix + "/chats/:id/messages/purge",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

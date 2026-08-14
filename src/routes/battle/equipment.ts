@@ -16,11 +16,11 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function equipmentRoutes(opts: HandlerOpts,) {
+export function equipmentRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   return new Elysia({ name: "battle-equipment", },)
     .post(
-      "/api/battle/equipment/calculate",
+      prefix + "/battle/equipment/calculate",
       (ctx: any,) => {
         try {
           const body = ctx.body as { items: EquipmentItem[] };
@@ -41,7 +41,7 @@ export function equipmentRoutes(opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/equipment/calculate-from-items",
+      prefix + "/battle/equipment/calculate-from-items",
       async (ctx: any,) => {
         try {
           const body = ctx.body as { itemIds: string[]; equipped?: Record<string, boolean> };
@@ -86,7 +86,7 @@ export function equipmentRoutes(opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/equipment/can-equip",
+      prefix + "/battle/equipment/can-equip",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -111,7 +111,7 @@ export function equipmentRoutes(opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/equipment/durability",
+      prefix + "/battle/equipment/durability",
       (ctx: any,) => {
         try {
           const body = ctx.body as { item: EquipmentItem; damage: number };
@@ -132,7 +132,7 @@ export function equipmentRoutes(opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/equipment/repair",
+      prefix + "/battle/equipment/repair",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -157,7 +157,7 @@ export function equipmentRoutes(opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/equipment/loot",
+      prefix + "/battle/equipment/loot",
       async (ctx: any,) => {
         try {
           const body = ctx.body as {

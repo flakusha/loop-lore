@@ -29,10 +29,10 @@ function log(): Logger {
   return getLogger().child({ module: "key-management", },);
 }
 
-export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
+export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "key-management", },)
     // ── List actor keys ────────────────────────────────────────
-    .get("/api/keys", async (ctx: any,) => {
+    .get(prefix + "/keys", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -59,7 +59,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     },)
     // ── Generate new named key ─────────────────────────────────
     .post(
-      "/api/keys",
+      prefix + "/keys",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -117,7 +117,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     // ── Rotate primary key ─────────────────────────────────────
-    .post("/api/keys/rotate", async (ctx: any,) => {
+    .post(prefix + "/keys/rotate", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -164,7 +164,7 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> },) {
     },)
     // ── Revoke key (irreversible) ──────────────────────────────
     .delete(
-      "/api/keys/:id",
+      prefix + "/keys/:id",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

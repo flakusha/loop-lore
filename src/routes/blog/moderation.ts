@@ -10,12 +10,12 @@ import {
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils.js";
 
-export function blogModerationRoutes(opts: HandlerOpts,) {
+export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const svc = new BlogService(database,);
 
   return new Elysia({ name: "blog-moderation", },)
-    .patch("/api/blog/comments/:id/moderate", async (ctx: any,) => {
+    .patch(prefix + "/blog/comments/:id/moderate", async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {
@@ -50,7 +50,7 @@ export function blogModerationRoutes(opts: HandlerOpts,) {
         tags: ["Blog", "Moderation",],
       },
     },)
-    .patch("/api/blog/posts/:id/moderate", async (ctx: any,) => {
+    .patch(prefix + "/blog/posts/:id/moderate", async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
       if (userRole !== "admin") {

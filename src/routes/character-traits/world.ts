@@ -17,14 +17,14 @@ import type { HandlerOpts, } from "./types";
 /**
  * World Traits (Layer 2) sub-plugin — CRUD for actor world-specific traits.
  */
-export function worldTraitsRoutes(opts: HandlerOpts,) {
+export function worldTraitsRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 
   return (
     new Elysia({ name: "character-traits-world", },)
       .get(
-        "/api/actors/:actorId/traits/world/:worldId",
+        prefix + "/actors/:actorId/traits/world/:worldId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -53,7 +53,7 @@ export function worldTraitsRoutes(opts: HandlerOpts,) {
         },
       )
       .get(
-        "/api/actors/:actorId/traits/world/:worldId/:traitName",
+        prefix + "/actors/:actorId/traits/world/:worldId/:traitName",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -83,7 +83,7 @@ export function worldTraitsRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/actors/:actorId/traits/world/:worldId",
+        prefix + "/actors/:actorId/traits/world/:worldId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -121,7 +121,7 @@ export function worldTraitsRoutes(opts: HandlerOpts,) {
         },
       )
       .put(
-        "/api/actors/:actorId/traits/world/:worldId/:traitName",
+        prefix + "/actors/:actorId/traits/world/:worldId/:traitName",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -156,7 +156,7 @@ export function worldTraitsRoutes(opts: HandlerOpts,) {
         },
       )
       .delete(
-        "/api/actors/:actorId/traits/world/:worldId/:traitName",
+        prefix + "/actors/:actorId/traits/world/:worldId/:traitName",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

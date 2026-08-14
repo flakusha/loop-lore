@@ -16,9 +16,9 @@ const npcsAtLocationResponse = t.Array(t.Object({
   displayName: t.String(),
 },),);
 
-export function storyNpcStateRoutes({ database, }: { database: Kysely<DB> },) {
+export function storyNpcStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "story-states-npc", },)
-    .get("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
+    .get(prefix + "/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, actorId, } = ctx.params;
@@ -36,7 +36,7 @@ export function storyNpcStateRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Story States",],
       },
     },)
-    .put("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
+    .put(prefix + "/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, actorId, } = ctx.params;
@@ -55,7 +55,7 @@ export function storyNpcStateRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Story States",],
       },
     },)
-    .get("/api/worlds/:worldId/npcs-at/:locationId", async (ctx: any,) => {
+    .get(prefix + "/worlds/:worldId/npcs-at/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, locationId, } = ctx.params;

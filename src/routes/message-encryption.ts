@@ -27,9 +27,9 @@ function log(): Logger {
   return getLogger().child({ module: "routes:message-encryption", },);
 }
 
-export function messageEncryptionRoutes(opts: { database: Db; config: Config },): Elysia {
+export function messageEncryptionRoutes(opts: { database: Db; config: Config }, prefix = "/api"): Elysia {
   return new Elysia()
-    .get("/api/chats/:id/encryption-key", async (req,) => {
+    .get(prefix + "/chats/:id/encryption-key", async (req,) => {
       const userId = requireUserId(req,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(req,);
@@ -82,7 +82,7 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config },)
         tags: ["Messages", "Encryption",],
       },
     },)
-    .get("/api/encryption/status", async () => {
+    .get(prefix + "/encryption/status", async () => {
       return jsonResponse({
         encryptionEnabled: isEncryptionEnabled(),
         anonymousMode: isAnonymousModeEnabled(),

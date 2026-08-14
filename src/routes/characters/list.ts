@@ -6,12 +6,12 @@ import {
 import { jsonPaginated, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function listRoutes(opts: HandlerOpts,) {
+export function listRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-list", },)
     .get(
-      "/api/actors",
+      prefix + "/actors",
       async (ctx: any,) => {
         const { page, pageSize, type, } = ctx.query;
         const offset = (page - 1) * pageSize;

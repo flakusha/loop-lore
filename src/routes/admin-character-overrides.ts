@@ -15,12 +15,12 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
+export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "admin-character-overrides", },)
     // ── List all overrides (admin only) ──────────────────────
-    .get("/api/admin/character-overrides", async (ctx: any,) => {
+    .get(prefix + "/admin/character-overrides", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
@@ -49,7 +49,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── List overrides for a specific actor ────────────────────
-    .get("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
+    .get(prefix + "/admin/actors/:actorId/overrides", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
@@ -81,7 +81,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Create a new override ──────────────────────────────────
-    .post("/api/admin/actors/:actorId/overrides", async (ctx: any,) => {
+    .post(prefix + "/admin/actors/:actorId/overrides", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
@@ -127,7 +127,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Delete an override ─────────────────────────────────────
-    .delete("/api/admin/character-overrides/:overrideId", async (ctx: any,) => {
+    .delete(prefix + "/admin/character-overrides/:overrideId", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;

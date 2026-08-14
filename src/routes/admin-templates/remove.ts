@@ -5,14 +5,14 @@ import { BUILTIN_PROFILES, } from "../../generation/prompt-templates";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, saveStoredTemplates, } from "./shared";
 
-export function removeRoutes(opts: { database: Kysely<DB> },) {
+export function removeRoutes(opts: { database: Kysely<DB> }, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "admin-templates-remove", },)
       // ── Delete custom profile ─────────────────────────────
       .delete(
-        "/api/admin/templates/:id",
+        prefix + "/admin/templates/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

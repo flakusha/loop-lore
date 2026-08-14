@@ -14,7 +14,7 @@ import type { HandlerOpts, } from "./types";
  * sub-plugins. Registration point/name (`chats`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
  */
-export function chatsRoutes(opts: HandlerOpts,) {
+export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats", },)
       // Capture raw request body text so handlers can distinguish fields the
@@ -30,12 +30,12 @@ export function chatsRoutes(opts: HandlerOpts,) {
         if (!parsed.ok) { throw parsed.error; }
         return parsed.value;
       },)
-      .use(listRoutes(opts,),)
-      .use(createRoutes(opts,),)
-      .use(templatesRoutes(opts,),)
-      .use(batchRoutes(opts,),)
-      .use(manageRoutes(opts,),)
-      .use(participantRoutes(opts,),)
-      .use(extrasRoutes(opts,),)
+      .use(listRoutes(opts, prefix,),)
+      .use(createRoutes(opts, prefix,),)
+      .use(templatesRoutes(opts, prefix,),)
+      .use(batchRoutes(opts, prefix,),)
+      .use(manageRoutes(opts, prefix,),)
+      .use(participantRoutes(opts, prefix,),)
+      .use(extrasRoutes(opts, prefix,),)
   );
 }

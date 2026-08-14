@@ -34,13 +34,13 @@ const ActorEmotionResponse = t.Object({
 /**
  * Actor emotions sub-plugin — CRUD for an actor's active emotions.
  */
-export function actorRoutes(opts: HandlerOpts,) {
+export function actorRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "character-emotions-actor", },)
       // ── List emotions for an actor ─────────────────────────────
-      .get("/api/actors/:actorId/emotions", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/emotions", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -74,7 +74,7 @@ export function actorRoutes(opts: HandlerOpts,) {
         },
       },)
       // ── Get a specific emotion ─────────────────────────────────
-      .get("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -114,7 +114,7 @@ export function actorRoutes(opts: HandlerOpts,) {
         },
       },)
       // ── Set/update an emotion for an actor ─────────────────────
-      .post("/api/actors/:actorId/emotions", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/emotions", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -182,7 +182,7 @@ export function actorRoutes(opts: HandlerOpts,) {
         },
       },)
       // ── Delete an emotion ──────────────────────────────────────
-      .delete("/api/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
+      .delete(prefix + "/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

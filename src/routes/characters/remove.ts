@@ -6,12 +6,12 @@ import {
 import { HttpStatus, jsonError, jsonNoContent, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function removeRoutes(opts: HandlerOpts,) {
+export function removeRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-remove", },)
     .delete(
-      "/api/actors/:actorId",
+      prefix + "/actors/:actorId",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

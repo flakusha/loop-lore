@@ -19,13 +19,13 @@ import {
 import { NoteIdParams, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
-export function shadowRoutes(opts: HandlerOpts,) {
+export function shadowRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "gm-notes-shadow", },)
       .get(
-        "/api/chats/:id/shadow-notes",
+        prefix + "/chats/:id/shadow-notes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -64,7 +64,7 @@ export function shadowRoutes(opts: HandlerOpts,) {
         { params: ChatIdParams, query: PaginationQuery, },
       )
       .post(
-        "/api/chats/:id/shadow-notes",
+        prefix + "/chats/:id/shadow-notes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -95,7 +95,7 @@ export function shadowRoutes(opts: HandlerOpts,) {
         { params: ChatIdParams, body: ShadowNoteBody, },
       )
       .post(
-        "/api/chats/:id/shadow-notes/:noteId/reveal",
+        prefix + "/chats/:id/shadow-notes/:noteId/reveal",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -121,7 +121,7 @@ export function shadowRoutes(opts: HandlerOpts,) {
         { params: NoteIdParams, },
       )
       .delete(
-        "/api/chats/:id/shadow-notes/:noteId",
+        prefix + "/chats/:id/shadow-notes/:noteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

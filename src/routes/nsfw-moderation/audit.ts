@@ -8,12 +8,12 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { auditQuery, requireAdmin, userIdParam, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function auditRoutes(opts: HandlerOpts,) {
+export function auditRoutes(opts: HandlerOpts, prefix = "/api") {
   const svc = new NsfwModerationService(opts.database,);
 
   return (
     new Elysia({ name: "nsfw-moderation-audit", },)
-      .get("/api/nsfw/moderation/audit/:userId", async (ctx: any,) => {
+      .get(prefix + "/nsfw/moderation/audit/:userId", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -25,7 +25,7 @@ export function auditRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { params: userIdParam, query: auditQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .get("/api/nsfw/moderation/export/:userId", async (ctx: any,) => {
+      .get(prefix + "/nsfw/moderation/export/:userId", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -35,7 +35,7 @@ export function auditRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .delete("/api/nsfw/moderation/export/:userId", async (ctx: any,) => {
+      .delete(prefix + "/nsfw/moderation/export/:userId", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {

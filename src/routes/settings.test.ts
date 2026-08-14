@@ -88,7 +88,8 @@ describe("GET /api/settings", () => {
     const res = await app.handle(new Request("http://localhost/api/settings",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
-    expect(Object.keys(body,),).toHaveLength(0,);
+    expect(body,).toHaveProperty("meta",);
+    expect(body.meta,).toEqual({ api_version: "1", },);
   });
 
   test("unknown route returns 404", async () => {

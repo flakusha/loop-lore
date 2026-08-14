@@ -4,10 +4,10 @@ import { HttpStatus, jsonError, } from "../http-utils";
 import { jobs, } from "./jobs";
 import type { HandlerOpts, } from "./types";
 
-export function statusRoutes(_opts: HandlerOpts,): Elysia {
+export function statusRoutes(_opts: HandlerOpts, prefix = "/api"): Elysia {
   return new Elysia()
     // GET /api/export/status/:jobId — Get job status
-    .get("/api/export/status/:jobId", (ctx: any,) => {
+    .get(prefix + "/export/status/:jobId", (ctx: any,) => {
       const jobId = ctx.params.jobId;
       const job = jobs.get(jobId,);
 

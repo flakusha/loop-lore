@@ -19,12 +19,12 @@ import { maybeAutoReply, } from "./reply";
 import { autoRenameChat, handleSceneTransitions, } from "./transitions";
 import type { HandlerOpts, } from "./types";
 
-export function createRoutes(opts: HandlerOpts,) {
+export function createRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, config, } = opts;
 
   return new Elysia({ name: "messages-create", },)
     .post(
-      "/api/chats/:id/messages",
+      prefix + "/chats/:id/messages",
       async (ctx: any,) => {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }

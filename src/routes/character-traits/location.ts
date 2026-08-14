@@ -17,13 +17,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Location Traits (Layer 3) sub-plugin — CRUD for actor location-specific traits.
  */
-export function locationTraitsRoutes(opts: HandlerOpts,) {
+export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 
   return (
     new Elysia({ name: "character-traits-location", },)
-      .get("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -43,7 +43,7 @@ export function locationTraitsRoutes(opts: HandlerOpts,) {
           404: ErrorResponse,
         },
       },)
-      .get("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -64,7 +64,7 @@ export function locationTraitsRoutes(opts: HandlerOpts,) {
           404: ErrorResponse,
         },
       },)
-      .post("/api/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/traits/location/:locationId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -96,7 +96,7 @@ export function locationTraitsRoutes(opts: HandlerOpts,) {
           404: ErrorResponse,
         },
       },)
-      .put("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
+      .put(prefix + "/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;
@@ -125,7 +125,7 @@ export function locationTraitsRoutes(opts: HandlerOpts,) {
           404: ErrorResponse,
         },
       },)
-      .delete("/api/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
+      .delete(prefix + "/actors/:actorId/traits/location/:locationId/:traitName", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const t = ctx.t as TranslatorFn | undefined;

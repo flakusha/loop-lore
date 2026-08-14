@@ -16,11 +16,11 @@ import {
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function modelRolesRoutes(opts: AdminRouteOpts,) {
+export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-model-roles", },)
       // ── Model role overrides ───────────────────────────────
-      .get("/api/admin/model-roles", async (ctx: any,) => {
+      .get(prefix + "/admin/model-roles", async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -40,7 +40,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts,) {
           403: ErrorResponse,
         },
       },)
-      .get("/api/admin/model-roles/:role", async (ctx: any,) => {
+      .get(prefix + "/admin/model-roles/:role", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -70,7 +70,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts,) {
         },
       },)
       .put(
-        "/api/admin/model-roles/:role",
+        prefix + "/admin/model-roles/:role",
         async (ctx: any,) => {
           const { params: p, body, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -108,7 +108,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts,) {
           response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, },
         },
       )
-      .delete("/api/admin/model-roles/:role", async (ctx: any,) => {
+      .delete(prefix + "/admin/model-roles/:role", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

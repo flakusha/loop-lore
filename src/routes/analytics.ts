@@ -21,9 +21,9 @@ interface HandleOpts {
 /** Rough cost estimate: $0.002 per 1K tokens (blended average across providers) */
 const COST_PER_1K_TOKENS = 0.002;
 
-export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
+export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api"): Elysia {
   return new Elysia({ name: "analytics", },)
-    .get("/api/analytics/chat/:chatId", async (ctx: any,) => {
+    .get(prefix + "/analytics/chat/:chatId", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -70,7 +70,7 @@ export function analyticsRoutes({ database, }: HandleOpts,): Elysia {
         tags: ["Analytics",],
       },
     },)
-    .get("/api/analytics/overview", async (ctx: any,) => {
+    .get(prefix + "/analytics/overview", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
