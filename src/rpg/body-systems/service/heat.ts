@@ -1,5 +1,6 @@
 import type { Kysely, } from "kysely";
-import type { HeatPhase, } from "../../../db/enums";
+import { HeatPhase, } from "../../../db/enums";
+import { Species, } from "../enums";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../../utils";
@@ -36,7 +37,7 @@ export function rowToHeatCycle(row: {
 export async function getHeatCycle(
   db: Kysely<DB>,
   actorId: string,
-  species = "human",
+  species: string = Species.Human,
 ): Promise<HeatCycleState> {
   const row = await db
     .selectFrom("character_heat_cycle",)
@@ -51,7 +52,7 @@ export async function getHeatCycle(
   // Create default cycle (no heat for humans)
   const now = new Date().toISOString();
   const id = uid();
-  const isHuman = species.toLowerCase() === "human";
+  const isHuman = species.toLowerCase() === Species.Human;
 
   const defaultEffects: HeatEffects = {
     arousalMultiplier: 1,
@@ -69,7 +70,7 @@ export async function getHeatCycle(
       actor_id: actorId,
       species,
       cycle_length_days: isHuman ? 0 : 30,
-      current_phase: "normal",
+      current_phase: HeatPhase.Normal,
       days_until_next_heat: isHuman ? 0 : 30,
       effects: jsonStringifyOr(defaultEffects,),
       created_at: now,
@@ -82,7 +83,7 @@ export async function getHeatCycle(
     actorId,
     species,
     cycleLengthDays: isHuman ? 0 : 30,
-    currentPhase: "normal",
+    currentPhase: HeatPhase.Normal,
     daysUntilNextHeat: isHuman ? 0 : 30,
     effects: defaultEffects,
     createdAt: now,
@@ -100,7 +101,7 @@ export async function advanceHeatCycle(
 ): Promise<{ newPhase: HeatPhase; daysUntilNext: number }> {
   const cycle = await getHeatCycle(db, actorId,);
   if (cycle.cycleLengthDays === 0) {
-    return { newPhase: "normal", daysUntilNext: 0, };
+    return { newPhase: HeatPhase.Normal, daysUntilNext: 0, };
   }
 
   let remaining = cycle.daysUntilNextHeat - days;
@@ -109,13 +110,13 @@ export async function advanceHeatCycle(
   // Phase transitions
   if (remaining <= 0) {
     // Cycle completes — advance phase
-    const phaseOrder: HeatPhase[] = ["normal", "pre_heat", "heat", "post_heat",];
+    const phaseOrder: HeatPhase[] = [HeatPhase.Normal, HeatPhase.PreHeat, HeatPhase.Heat, HeatPhase.PostHeat,];
     const currentIdx = phaseOrder.indexOf(cycle.currentPhase,);
     const nextIdx = (currentIdx + 1) % phaseOrder.length;
     newPhase = phaseOrder[nextIdx]!;
 
     // Reset remaining days for new phase
-    remaining = newPhase === "heat"
+    remaining = newPhase === HeatPhase.Heat
       ? Math.floor(cycle.cycleLengthDays * 0.25,)
       : Math.floor(cycle.cycleLengthDays * 0.25,);
   }
@@ -146,7 +147,7 @@ export async function getHeatEffects(
   actorId: string,
 ): Promise<HeatEffects> {
   const cycle = await getHeatCycle(db, actorId,);
-  if (cycle.currentPhase !== "heat") {
+  if (cycle.currentPhase !== HeatPhase.Heat) {
     return {
       arousalMultiplier: 1,
       seductionResistance: 1,

@@ -1,6 +1,7 @@
 import { type AdvantageMode, type DiceSides, rollDice, } from "../dice.js";
 import { abilityModifier, proficiencyBonus, } from "../stats.js";
 import {
+  DamageModifier,
   type AttackResult,
   type Combatant,
   type DamageResistance,
@@ -71,15 +72,15 @@ export function makeAttackRoll(
   for (const res of resistances) {
     if (res.type === damageType) {
       switch (res.modifier) {
-        case "resistant": {
+        case DamageModifier.Resistant: {
           finalDamage = Math.floor(finalDamage / 2,);
           break;
         }
-        case "vulnerable": {
+        case DamageModifier.Vulnerable: {
           finalDamage *= 2;
           break;
         }
-        case "immune": {
+        case DamageModifier.Immune: {
           finalDamage = 0;
           break;
         }

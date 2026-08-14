@@ -4,26 +4,26 @@
  * Cross-system edges involving Disease. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import type { IntegrationEdge, } from "../types";
+import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
 
 /** Integration edges involving the Disease system. */
 export const DISEASE_EDGES: IntegrationEdge[] = [
   {
     source: "disease",
     target: "weather",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["PlayerState",],
     events: [
       {
         id: "weather.changed",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "weather",
         target: "disease",
         notes: "Rain spreads waterborne disease; cold weakens immunity",
       },
       {
         id: "disease.plague_zone",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "disease",
         target: "weather",
         notes: "Active plague affects weather (pestilence fog)",
@@ -33,19 +33,19 @@ export const DISEASE_EDGES: IntegrationEdge[] = [
   {
     source: "disease",
     target: "nsfw",
-    direction: "depended_by",
+    direction: EdgeDirection.DependedBy,
     interfaces: ["StatusEffect", "PlayerState",],
     events: [
       {
         id: "disease.reproductive_health",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "nsfw",
         target: "disease",
         notes: "STDs, pregnancy complications",
       },
       {
         id: "nsfw.encounter_completed",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "nsfw",
         target: "disease",
         notes: "Triggers health check after intimate encounter",

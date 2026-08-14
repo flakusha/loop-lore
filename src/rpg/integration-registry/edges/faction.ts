@@ -4,33 +4,33 @@
  * Cross-system edges involving Faction. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import type { IntegrationEdge, } from "../types";
+import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
 
 /** Integration edges involving the Faction system. */
 export const FACTION_EDGES: IntegrationEdge[] = [
   {
     source: "faction",
     target: "social",
-    direction: "bidirectional",
+    direction: EdgeDirection.Bidirectional,
     interfaces: ["ReputationScore",],
     events: [
       {
         id: "faction.standing_changed",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "faction",
         target: "social",
         notes: "Faction standing affects social interactions",
       },
       {
         id: "social.reputation_updated",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "social",
         target: "faction",
         notes: "Social reputation affects faction relationships",
       },
       {
         id: "poll.resolved",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "social",
         target: "faction",
         notes: "Faction leadership/election polls drive faction state changes",
