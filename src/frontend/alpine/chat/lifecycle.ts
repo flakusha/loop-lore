@@ -128,7 +128,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
 
   async loadChats() {
     try {
-      const res = await apiFetch(`/api/chats?${this._filterParams?.() ?? "pageSize=200"}`,);
+      const res = await apiFetch(`/api/v1/chats?${this._filterParams?.() ?? "pageSize=200"}`,);
       if (!res.ok) {
         this.$dispatch("show-toast", { type: "error", message: t("toasts.failedLoadChats",), },);
         return;
