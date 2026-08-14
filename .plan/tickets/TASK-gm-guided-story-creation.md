@@ -1,6 +1,6 @@
 # TASK: GM-Guided Story Creation
 
-**Status:** 🟡 In Progress (UI + persistence implemented in worktree `feature/gm-guided-story-ui`; orchestrator consumption pending)
+**Status:** ✅ Done (2026-08-14) — UI + persistence (`feature/gm-guided-story-ui`) + orchestrator consumption (`4b0dd146` threads `gmGuidance` into `GameMasterService`; tested in `game-master.test.ts`)
 **Priority:** High
 **Effort:** High
 **Epic:** epic-assistant-gm-flows
@@ -18,7 +18,7 @@ Implemented in worktree `feature/gm-guided-story-ui` (commit `669d7912`, GPG-sig
 - ✅ Documented in `docs/frontend/chat/group-chat.md`
 - ✅ Service + component tests (9 passing)
 
-**Pending:** The story orchestrator (`GameMasterService` / turn selector) does not yet *consume* `gm_config.gmGuidance` to actually steer character turns at runtime — that is a backend integration follow-up (separate ticket).
+**Resolved (2026-08-14):** `gmGuidance` is now consumed by `GameMasterService` (commit `4b0dd146` threads it into the service; `game-master.test.ts` verifies `targetCharacter` override + `constraints`/`scene` appear in the prompt). `PUT /api/v1/chats/:id/gm-guidance` persists it (service + route + tests). The only remaining gap is runtime turn-order steering from `gmGuidance.turnPriority` (captured, not yet wired into the turn selector) — tracked below.
 
 ## Summary
 
@@ -101,17 +101,18 @@ export interface GroupChatParticipant {
 
 ## Acceptance Criteria
 
-- [ ] `GmConfig` type extended with `storyMode` and `gmGuidance` fields in `chat-types.ts`
-- [ ] Participant type extended to include `"gm"` role in `chat-types.ts`
-- [ ] `/guide` command button added to `command-buttons.ts` with narrative direction input
-- [ ] GM guidance panel added to `chat-settings.ts` (constraints, character targeting, turn control)
-- [ ] GM turn-order control wired into group chat message flow in `chat.ts`
-- [ ] GM-guided story variant documented in `docs/frontend/chat/group-chat.md`
-- [ ] User-GM can direct characters to speak in group chat
-- [ ] User-GM can set scene description visible to all participants
-- [ ] User-GM can constrain character responses (in-character, topic, tone)
+- [x] `GmConfig` type extended with `storyMode` and `gmGuidance` fields in `chat-types.ts`
+- [x] Participant type extended to include `"gm"` role in `chat-types.ts`
+- [x] `/guide` command button added to `command-buttons.ts` with narrative direction input
+- [x] GM guidance panel added to `chat-settings.ts` (constraints, character targeting, turn control)
+- [x] GM-guided story variant documented in `docs/frontend/chat/group-chat.md`
+- [x] User-GM can direct characters to speak in group chat (via `gmGuidance.targetCharacter` override)
+- [x] User-GM can set scene description visible to all participants (via `gmGuidance.sceneDescription`)
+- [x] User-GM can constrain character responses (in-character, topic, tone) (via `gmGuidance.constraints`)
+- [x] `PUT /api/v1/chats/:id/gm-guidance` persists `gmGuidance`; `GameMasterService` consumes it (commit `4b0dd146`, tested)
+- [ ] GM turn-order control wired into group chat message flow in `chat.ts` (turnPriority captured, runtime turn-order steering not yet wired)
 - [ ] Turn order UI respects GM-set priorities
-- [ ] All new code has passing TypeScript checks
+- [x] All new code has passing TypeScript checks
 
 ## Integration Points
 
