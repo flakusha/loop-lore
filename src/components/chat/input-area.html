@@ -114,7 +114,7 @@
         @input="autoResize($el); handleMentionInput($event); handleCommandInput($event)"
         @keydown.escape="hideMentionAutocomplete()"
         required
-        :disabled="!activeChat"
+        :disabled="!activeChat || (isStoryMode && running)"
         data-testid="message-input"
       ></textarea>
       <!-- Character counter -->
@@ -132,6 +132,21 @@
       </button>
     </div>
     <div class="input-toolbar">
+      <!-- Story-mode footer controls: GM Panel + Quest Log -->
+      <div class="story-footer-controls" x-show="isStoryMode" data-testid="story-footer-controls">
+        <button
+          class="btn btn-sm btn-ghost"
+          @click="$store.ui.showGmPanel = !$store.ui.showGmPanel"
+          :class="$store.ui.showGmPanel ? 'gm-toggle-active' : ''"
+          data-testid="story-footer-gm"
+        >🎭 {{{t("story.gmPanel")}}}</button>
+        <button
+          class="btn btn-sm btn-ghost"
+          @click="$store.ui.showQuestLog = !$store.ui.showQuestLog"
+          :class="$store.ui.showQuestLog ? 'gm-toggle-active' : ''"
+          data-testid="story-footer-quests"
+        >📜 {{{t("story.questLog")}}}</button>
+      </div>
       <template x-if="pendingAssets.length > 0">
         <div class="pending-assets">
           <template x-for="(pa, paIdx) in pendingAssets" :key="pa.assetId">

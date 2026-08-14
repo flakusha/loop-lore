@@ -124,6 +124,17 @@
     </button>
     <button
       class="btn-icon"
+      :class="$store.ui.showQuestLog ? 'gm-toggle-active' : ''"
+      @click="$store.ui.showQuestLog = !$store.ui.showQuestLog"
+      x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.mode === 'story'"
+      title="Quest Log"
+      aria-label="Toggle Quest Log"
+      data-testid="quest-log-toggle"
+    >
+      📜
+    </button>
+    <button
+      class="btn-icon"
       :class="$store.ui.showParticipants ? 'gm-toggle-active' : ''"
       @click="$store.ui.showParticipants = !$store.ui.showParticipants"
       x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"

@@ -3,8 +3,13 @@
 {{> chat/chat-header.html }}
 
 <div class="app-layout" x-data="chatState()">
+  <!-- Story-mode layout: loads story state (turns/quests/world) + exposes it to all chat components -->
+  <div class="story-layout" x-data="storyState()" x-init="init()">
   <main class="main-content">
     {{> chat/message-search-bar.html }} {{> chat/chat-list-panel.html }}
+
+    <!-- Story mode: header bar + GM selection + quest banners (hidden for non-story chats) -->
+    {{> chat/story-view.html }}
 
     <!-- Chat container (centered) — switches between VN and bubble layout -->
     <div class="chat-container">
@@ -43,9 +48,13 @@
     <!-- GM Panel (shadow notes + whitenotes sidebar) -->
     {{> chat/gm-panel.html }}
 
+    <!-- Quest Log (story chats) -->
+    {{> chat/quest-log-panel.html }}
+
     <!-- Participant Panel (group-chat member management) -->
     {{> chat/participant-panel.html }}
   </main>
 
   {{> chat/chat-settings-modal.html }} {{> chat/rename-chat-modal.html }} {{> modals/settings.html }}
+  </div>
 </div>

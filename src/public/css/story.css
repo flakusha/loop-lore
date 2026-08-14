@@ -1,0 +1,443 @@
+/* Story Mode Chat View — header bar, GM selection, quest banners, quality badges, GM story control */
+
+/* ── Story view wrapper ─────────────────────────────────────────── */
+.story-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  margin: 0 0 var(--space-2, 8px);
+  border-bottom: 1px solid var(--border-default, #333);
+  background: var(--bg-secondary, #16213e);
+  border-radius: 8px;
+}
+
+/* ── Header bar ─────────────────────────────────────────────────── */
+.story-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 12px);
+  flex-wrap: wrap;
+}
+
+.story-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.story-world-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.story-world-icon {
+  font-size: 14px;
+}
+
+.story-quest-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.story-quest-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary, #888);
+}
+
+.story-quest-chip {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  color: var(--text-primary, #e0e0e0);
+  white-space: nowrap;
+}
+
+.story-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── GM selection strip ─────────────────────────────────────────── */
+.story-gm-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  font-size: 13px;
+  padding: var(--space-1, 4px) var(--space-2, 8px);
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px dashed var(--border-default, #333);
+  border-radius: 6px;
+}
+
+.story-gm-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary, #888);
+  white-space: nowrap;
+}
+
+.story-next-actor {
+  font-weight: 600;
+  color: var(--accent-primary, #4ec9b0);
+  white-space: nowrap;
+}
+
+.story-prompt-preview {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-tertiary, #888);
+  font-style: italic;
+}
+
+/* ── Quest update banners ───────────────────────────────────────── */
+.story-banners {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.story-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--accent-primary-12, rgba(78, 201, 176, 0.12));
+  border: 1px solid var(--accent-primary, #4ec9b0);
+  color: var(--text-primary, #e0e0e0);
+}
+
+.story-banner-progress {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--accent-primary, #4ec9b0);
+}
+
+/* ── Quality score badge on story bubbles ───────────────────────── */
+.story-quality-badge {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default, #333);
+  cursor: help;
+}
+
+.story-quality-badge.is-good {
+  color: var(--success, #4caf50);
+  border-color: var(--success, #4caf50);
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.story-quality-badge.is-mid {
+  color: var(--warning, #f59e0b);
+  border-color: var(--warning, #f59e0b);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.story-quality-badge.is-low {
+  color: var(--accent-red, #f44336);
+  border-color: var(--accent-red, #f44336);
+  background: rgba(244, 67, 54, 0.1);
+}
+
+/* ── GM Story Control panel ─────────────────────────────────────── */
+.gm-story-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.gm-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  flex-wrap: wrap;
+}
+
+.gm-running-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gm-running-dot.is-running {
+  background: var(--success, #4caf50);
+  animation: story-pulse 1.2s ease-in-out infinite;
+}
+
+.gm-running-dot.is-idle {
+  background: var(--text-tertiary, #888);
+}
+
+@keyframes story-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.gm-status-text {
+  color: var(--text-tertiary, #888);
+}
+
+.gm-turn-number,
+.gm-next-actor {
+  color: var(--text-primary, #e0e0e0);
+}
+
+.gm-next-actor strong {
+  color: var(--accent-primary, #4ec9b0);
+}
+
+.gm-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gm-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary, #888);
+  margin: 0;
+}
+
+.gm-section-hint {
+  font-size: 12px;
+  color: var(--text-tertiary, #888);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Turn order */
+.gm-turn-order {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gm-turn-actor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+}
+
+.gm-turn-index {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-secondary, #16213e);
+  color: var(--text-tertiary, #888);
+}
+
+.gm-turn-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.gm-turn-role {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-secondary, #16213e);
+  color: var(--text-tertiary, #888);
+  text-transform: capitalize;
+}
+
+.gm-turn-status {
+  font-size: 11px;
+}
+
+.gm-turn-status.is-ready {
+  color: var(--success, #4caf50);
+}
+
+.gm-turn-status.is-waiting {
+  color: var(--text-tertiary, #888);
+}
+
+/* Quests */
+.gm-quest-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gm-quest-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.gm-quest-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.gm-quest-pct {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-primary, #4ec9b0);
+}
+
+.gm-quest-delete {
+  font-size: 14px;
+  color: var(--accent-red, #f44336);
+  padding: 0 2px;
+}
+
+.gm-quest-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  overflow: hidden;
+}
+
+.gm-quest-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent-primary, #4ec9b0);
+  transition: width 0.3s ease;
+}
+
+.gm-quest-bar-fill.is-complete {
+  background: var(--success, #4caf50);
+}
+
+.gm-new-quest {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.gm-new-quest .form-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* World state */
+.gm-world-state {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gm-world-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  color: var(--text-primary, #e0e0e0);
+  align-self: flex-start;
+}
+
+.gm-chip-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary, #888);
+}
+
+.gm-world-npcs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.gm-npc-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  color: var(--text-primary, #e0e0e0);
+}
+
+/* Controls */
+.gm-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ── Quest Log panel ────────────────────────────────────────────── */
+.quest-log-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 320px;
+  max-width: 90vw;
+  background: var(--bg-secondary, #16213e);
+  border-left: 1px solid var(--border-default, #333);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.quest-log-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--space-3, 12px);
+}
+
+/* ── Story footer controls (input toolbar) ──────────────────────── */
+.story-footer-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
