@@ -2893,6 +2893,17 @@
     "type": "TASK",
     "hash": "bdb93de"
   },
+  "TASK-AGENT-MEMORY-SCORING": {
+    "hash": "pending",
+    "extid": "TASK-AGENT-MEMORY-SCORING",
+    "type": "TASK",
+    "title": "Agent Memory Scoring Model",
+    "label": "task",
+    "priority": "Medium (P6+ deferred)",
+    "epic": "epic-memory-knowledge-systems, epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-agent-memory-scoring.md"
+  },
   "TASK-AGENTIC-WORKSPACE-MODE": {
     "epic": "",
     "extid": "TASK-AGENTIC-WORKSPACE-MODE",
@@ -3751,6 +3762,17 @@
     "title": "Character Creator Prerogative & Availability",
     "type": "TASK"
   },
+  "TASK-CHARACTER-GROWTH-DEVELOPMENT": {
+    "hash": "pending",
+    "extid": "TASK-CHARACTER-GROWTH-DEVELOPMENT",
+    "type": "TASK",
+    "title": "Character Growth & Development System",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-growth-development.md"
+  },
   "TASK-CHARACTER-LEGACY-HEIR": {
     "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-LEGACY-HEIR",
@@ -3945,6 +3967,17 @@
     "title": "TASK character template seeding",
     "type": "TASK",
     "hash": "e9ac22b"
+  },
+  "TASK-CHARACTER-VOICE-PROFILE": {
+    "hash": "pending",
+    "extid": "TASK-CHARACTER-VOICE-PROFILE",
+    "type": "TASK",
+    "title": "Character Voice & Speech Profile System",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-character-internal-traits (D10)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-voice-profile.md"
   },
   "TASK-CHARACTER-WORLD-DATA-SEPARATION": {
     "epic": "Character Core System",
@@ -6380,6 +6413,17 @@
     "title": "Info Bubbles Help Tooltips",
     "type": "TASK"
   },
+  "TASK-INNER-MONOLOGUE": {
+    "hash": "pending",
+    "extid": "TASK-INNER-MONOLOGUE",
+    "type": "TASK",
+    "title": "Inner Monologue / Silent Thinking",
+    "label": "task",
+    "priority": "P6+ (Deferred)",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-inner-monologue.md"
+  },
   "TASK-INSERT-LOG-FATAL-AND-LOG-TRACE-CALLS-AT-KEY-SITES": {
     "hash": "da82d1c",
     "extid": "TASK-INSERT-LOG-FATAL-AND-LOG-TRACE-CALLS-AT-KEY-SITES",
@@ -6572,6 +6616,28 @@
     "title": "Keyboard Navigation System",
     "type": "TASK"
   },
+  "TASK-KEYPHRASE-RECALL": {
+    "hash": "pending",
+    "extid": "TASK-KEYPHRASE-RECALL",
+    "type": "TASK",
+    "title": "Keyphrase-Triggered Memory Recall",
+    "label": "task",
+    "priority": "Low-Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-keyphrase-recall.md"
+  },
+  "TASK-LICENSE-COMPLIANCE-GATE": {
+    "hash": "pending",
+    "extid": "TASK-LICENSE-COMPLIANCE-GATE",
+    "type": "TASK",
+    "title": "License compliance gate — scancode + fossa in bun check",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-code-quality.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-license-compliance-gate.md"
+  },
   "TASK-LICENSING": {
     "epic": "epic-licensing",
     "extid": "TASK-LICENSING",
@@ -6593,6 +6659,17 @@
     "epic": "epic-item-systems-unification",
     "tags": [],
     "source": ".plan/tickets/TASK-link-npc-inventory.md"
+  },
+  "TASK-LIVING-WORLD-PERSISTENCE": {
+    "hash": "pending",
+    "extid": "TASK-LIVING-WORLD-PERSISTENCE",
+    "type": "TASK",
+    "title": "Living-World Between-Session Persistence",
+    "label": "task",
+    "priority": "Medium (P6+ deferred)",
+    "epic": "epic-world-locations, epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-living-world-persistence.md"
   },
   "TASK-LLM-QUEUE": {
     "epic": "",
@@ -6758,6 +6835,17 @@
     "title": "Matrix Integration",
     "type": "TASK"
   },
+  "TASK-MEMORY-CHARACTER-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-MEMORY-CHARACTER-INTEGRATION",
+    "type": "TASK",
+    "title": "Memory → Character Emotion Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-057)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-character-integration.md"
+  },
   "TASK-MEMORY-DECAY-LOGIC": {
     "closed_issue": "TASK-008: Implement memory decay logic",
     "epic": "EPIC-2026-37",
@@ -6786,6 +6874,17 @@
     "title": "Memory Distillation & Dream System",
     "type": "TASK",
     "hash": "1a50571"
+  },
+  "TASK-MEMORY-EMOTION-IMPACT": {
+    "hash": "pending",
+    "extid": "TASK-MEMORY-EMOTION-IMPACT",
+    "type": "TASK",
+    "title": "Memory Emotion-Impact Fields",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-056)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-emotion-impact.md"
   },
   "TASK-MEMORY-PROMOTION-PIPELINE": {
     "closed_issue": "TASK-007: Implement memory promotion pipeline",
@@ -6835,6 +6934,17 @@
     "status": "done",
     "title": "Memory Selection UI",
     "type": "TASK"
+  },
+  "TASK-MEMORY-TIMESCAPE": {
+    "hash": "pending",
+    "extid": "TASK-MEMORY-TIMESCAPE",
+    "type": "TASK",
+    "title": "Timescape-Aware Memory",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-058)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-timescape.md"
   },
   "TASK-MEMORY-TRUST-MODIFIER-WIRING": {
     "epic": "",
@@ -7091,6 +7201,17 @@
     "title": "NPC Alpine.js Logic",
     "type": "TASK"
   },
+  "TASK-NPC-BDI-PLANNING": {
+    "hash": "pending",
+    "extid": "TASK-NPC-BDI-PLANNING",
+    "type": "TASK",
+    "title": "NPC BDI Planning Loop",
+    "label": "task",
+    "priority": "Medium (P6+ deferred)",
+    "epic": "epic-agency-story-points, NPC/Actor System",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-bdi-planning.md"
+  },
   "TASK-NPC-BEHAVIOR": {
     "epic": "NPC/Actor System, NPC Navigation",
     "extid": "TASK-NPC-BEHAVIOR",
@@ -7145,6 +7266,17 @@
     "tags": [],
     "title": "NPC Navigation System",
     "type": "TASK"
+  },
+  "TASK-NPC-TO-NPC-SOCIAL": {
+    "hash": "pending",
+    "extid": "TASK-NPC-TO-NPC-SOCIAL",
+    "type": "TASK",
+    "title": "NPC-to-NPC Autonomous Social Simulation",
+    "label": "task",
+    "priority": "Medium (P6+ deferred)",
+    "epic": "epic-social-interaction, NPC/Actor System",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-to-npc-social.md"
   },
   "TASK-NPC-VIEWER": {
     "epic": "epic-npc-management-ui.md",
@@ -7892,6 +8024,17 @@
     "title": "Pre-Compiled Hot Binary Modules",
     "type": "TASK"
   },
+  "TASK-PROACTIVE-MESSAGING": {
+    "hash": "pending",
+    "extid": "TASK-PROACTIVE-MESSAGING",
+    "type": "TASK",
+    "title": "Proactive Messaging",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-proactive-messaging.md"
+  },
   "TASK-PROFESSIONS-FRONTEND": {
     "hash": "pending",
     "extid": "TASK-PROFESSIONS-FRONTEND",
@@ -8012,6 +8155,17 @@
     ],
     "title": "Quick-regen button (FEAT-070)",
     "type": "TASK"
+  },
+  "TASK-QUIET-HOURS": {
+    "hash": "pending",
+    "extid": "TASK-QUIET-HOURS",
+    "type": "TASK",
+    "title": "Quiet Hours / Do-Not-Disturb",
+    "label": "task",
+    "priority": "Low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-quiet-hours.md"
   },
   "TASK-RAG-ALPINE": {
     "epic": "epic-rag-ui.md",
@@ -9247,6 +9401,17 @@
     "epic": "`epic-timeline-system.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-timeline-selection-api.md"
+  },
+  "TASK-TOOL-CALLING-AGENTS": {
+    "hash": "pending",
+    "extid": "TASK-TOOL-CALLING-AGENTS",
+    "type": "TASK",
+    "title": "Tool-Calling Agent Integration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tool-calling-agents.md"
   },
   "TASK-TOOLING-IMPROVEMENT": {
     "epic": "epic-tooling-improvement",
