@@ -19,10 +19,10 @@ import { forbidden, notFound, } from "../validation/middleware";
 import { ApiKeyCreateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
-export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config },) {
+export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config }, prefix = "/api") {
   const config = cfg;
   return new Elysia({ name: "api-keys", },)
-    .get("/api/user-api-keys", async (ctx,) => {
+    .get(prefix + "/user-api-keys", async (ctx,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -49,7 +49,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         tags: ["Admin", "API Keys",],
       },
     },)
-    .post("/api/user-api-keys", async (ctx,) => {
+    .post(prefix + "/user-api-keys", async (ctx,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -130,7 +130,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         tags: ["Admin", "API Keys",],
       },
     },)
-    .delete("/api/user-api-keys/:provider", async (ctx,) => {
+    .delete(prefix + "/user-api-keys/:provider", async (ctx,) => {
       const params = (ctx as any).params as { provider: string };
       const provider = params.provider;
       const userId = requireUserId(ctx,);

@@ -14,12 +14,12 @@ function booleanToInt(value: boolean | undefined, fallback: number,): number {
   return value === undefined ? fallback : (value ? 1 : 0);
 }
 
-export function characterLicensingRoutes(opts: HandlerOpts,) {
+export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "character-licensing", },)
     // ── Get licensing for an actor ─────────────────────────────
-    .get("/api/actors/:actorId/licensing", async (ctx: any,) => {
+    .get(prefix + "/actors/:actorId/licensing", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -59,7 +59,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Create or update licensing ─────────────────────────────
-    .post("/api/actors/:actorId/licensing", async (ctx: any,) => {
+    .post(prefix + "/actors/:actorId/licensing", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -131,7 +131,7 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Delete licensing ───────────────────────────────────────
-    .delete("/api/actors/:actorId/licensing", async (ctx: any,) => {
+    .delete(prefix + "/actors/:actorId/licensing", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 

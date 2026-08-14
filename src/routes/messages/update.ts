@@ -20,12 +20,12 @@ import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, requireU
 import { isServiceError, log, serviceErrorToResponse, } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
-export function updateRoutes(opts: HandlerOpts,) {
+export function updateRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, config, } = opts;
 
   return new Elysia({ name: "messages-update", },)
     .delete(
-      "/api/messages/:id",
+      prefix + "/messages/:id",
       async (ctx: any,) => {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }
@@ -52,7 +52,7 @@ export function updateRoutes(opts: HandlerOpts,) {
     )
     // ── Edit message content (user messages only) ─────────────
     .patch(
-      "/api/messages/:id",
+      prefix + "/messages/:id",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -146,7 +146,7 @@ export function updateRoutes(opts: HandlerOpts,) {
       },
     )
     .put(
-      "/api/messages/:id/visibility",
+      prefix + "/messages/:id/visibility",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -173,7 +173,7 @@ export function updateRoutes(opts: HandlerOpts,) {
       },
     )
     .put(
-      "/api/messages/:id/status",
+      prefix + "/messages/:id/status",
       async (ctx: any,) => {
         const userRole = ctx.userRole as string | null;
         if (userRole !== "admin") { return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",); }

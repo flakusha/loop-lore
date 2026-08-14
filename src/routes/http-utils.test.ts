@@ -47,7 +47,7 @@ describe("jsonResponse", () => {
   test("returns 200 with JSON body", async () => {
     const res = jsonResponse({ ok: true, id: "abc", },);
     expect(res.status,).toBe(200,);
-    expect(await res.json(),).toEqual({ ok: true, id: "abc", },);
+    expect(await res.json(),).toEqual({ ok: true, id: "abc", meta: { api_version: "1", }, },);
   });
 
   test("accepts custom status code", () => {
@@ -78,7 +78,7 @@ describe("jsonError", () => {
   test("returns 400 with error message by default", async () => {
     const res = jsonError({ message: "Bad input", },);
     expect(res.status,).toBe(400,);
-    expect(await res.json(),).toEqual({ error: "Bad input", code: "BAD_REQUEST", },);
+    expect(await res.json(),).toEqual({ error: "Bad input", code: "BAD_REQUEST", meta: { api_version: "1", }, },);
   });
 
   test("accepts custom status code", () => {
@@ -93,7 +93,7 @@ describe("jsonError", () => {
       code: "UNAUTHORIZED",
     },);
     expect(res.status,).toBe(401,);
-    expect(await res.json(),).toEqual({ error: "Expired token", code: "UNAUTHORIZED", },);
+    expect(await res.json(),).toEqual({ error: "Expired token", code: "UNAUTHORIZED", meta: { api_version: "1", }, },);
   });
 
   test("includes code derived from status code", async () => {
@@ -120,6 +120,7 @@ describe("jsonValidationError", () => {
       error: "Validation failed",
       code: "VALIDATION_ERROR",
       details: errors,
+      meta: { api_version: "1", },
     },);
   });
 
@@ -201,7 +202,7 @@ describe("jsonCreated", () => {
     const res = jsonCreated({ id: "new-entity", },);
     expect(res.status,).toBe(201,);
     expect(res.headers.get("content-type",),).toBe("application/json",);
-    expect(await res.json(),).toEqual({ id: "new-entity", },);
+    expect(await res.json(),).toEqual({ id: "new-entity", meta: { api_version: "1", }, },);
   });
 
   test("returns 201 with null body when no data", async () => {

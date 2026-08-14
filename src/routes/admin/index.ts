@@ -29,19 +29,19 @@ import { worldsRoutes, } from "./worlds";
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
  */
-export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
+export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return (
     new Elysia({ name: "admin", },)
-      .use(usersRoutes(opts,),)
-      .use(statsRoutes(opts,),)
-      .use(providersRoutes(),)
-      .use(modelRolesRoutes(opts,),)
-      .use(sdStatusRoutes(opts,),)
-      .use(systemConfigRoutes(opts,),)
-      .use(worldsRoutes(opts,),)
-      .use(chatsRoutes(opts,),)
-      .use(templatesRoutes(opts,),)
-      .use(auditRoutes(opts,),)
-      .use(keyRotationRoutes(opts,),) as unknown as Elysia
+      .use(usersRoutes(opts, prefix,),)
+      .use(statsRoutes(opts, prefix,),)
+      .use(providersRoutes(prefix,),)
+      .use(modelRolesRoutes(opts, prefix,),)
+      .use(sdStatusRoutes(opts, prefix,),)
+      .use(systemConfigRoutes(opts, prefix,),)
+      .use(worldsRoutes(opts, prefix,),)
+      .use(chatsRoutes(opts, prefix,),)
+      .use(templatesRoutes(opts, prefix,),)
+      .use(auditRoutes(opts, prefix,),)
+      .use(keyRotationRoutes(opts, prefix,),) as unknown as Elysia
   );
 }

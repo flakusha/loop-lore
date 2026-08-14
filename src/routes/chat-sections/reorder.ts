@@ -5,14 +5,14 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { ChatSectionReorderBody, type HandlerOpts, } from "./types";
 
-export function reorderRoutes(opts: HandlerOpts,) {
+export function reorderRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-sections-reorder", },)
       // ── Reorder sections ──────────────────────────────────
       .post(
-        "/api/chats/:id/sections/reorder",
+        prefix + "/chats/:id/sections/reorder",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

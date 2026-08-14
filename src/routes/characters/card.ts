@@ -7,12 +7,12 @@ import {
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function cardRoutes(opts: HandlerOpts,) {
+export function cardRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-card", },)
     .get(
-      "/api/actors/:actorId/card",
+      prefix + "/actors/:actorId/card",
       async (ctx: any,) => {
         const actor = await database
           .selectFrom("actors",)

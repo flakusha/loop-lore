@@ -94,11 +94,11 @@ async function resolveWorldOwner(
   return null;
 }
 
-export function craftingRecipeRoutes({ database, }: { database: Db },): Elysia {
+export function craftingRecipeRoutes({ database, }: { database: Db }, prefix = "/api"): Elysia {
   const svc = () => new RecipesService(database,);
   return (
     new Elysia({ name: "crafting-recipes", },)
-    .get("/api/worlds/:worldId/recipes", async (ctx: any) => {
+    .get(prefix + "/worlds/:worldId/recipes", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
@@ -121,7 +121,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db },): Elysia {
       response: { 200: listResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "List crafting recipes", description: "List recipes for a world, optionally filtered by discipline/tier.", tags: ["Crafting",], },
     },)
-    .post("/api/worlds/:worldId/recipes", async (ctx: any) => {
+    .post(prefix + "/worlds/:worldId/recipes", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
@@ -153,7 +153,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db },): Elysia {
       response: { 201: t.Object({ id: Id, }), 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Create crafting recipe", description: "Create a recipe with its material requirements.", tags: ["Crafting",], },
     },)
-    .get("/api/worlds/:worldId/recipes/:recipeId", async (ctx: any) => {
+    .get(prefix + "/worlds/:worldId/recipes/:recipeId", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
@@ -166,7 +166,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db },): Elysia {
       response: { 200: recipeResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Get crafting recipe", description: "Get a single recipe with its materials.", tags: ["Crafting",], },
     },)
-    .put("/api/worlds/:worldId/recipes/:recipeId", async (ctx: any) => {
+    .put(prefix + "/worlds/:worldId/recipes/:recipeId", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
@@ -181,7 +181,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db },): Elysia {
       response: { 200: t.Object({ ok: t.Boolean(), }), 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Update crafting recipe", description: "Update a recipe's base properties.", tags: ["Crafting",], },
     },)
-    .delete("/api/worlds/:worldId/recipes/:recipeId", async (ctx: any) => {
+    .delete(prefix + "/worlds/:worldId/recipes/:recipeId", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
@@ -194,7 +194,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db },): Elysia {
       response: { 200: t.Object({ ok: t.Boolean(), }), 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Delete crafting recipe", description: "Delete a recipe and its materials.", tags: ["Crafting",], },
     },)
-    .put("/api/worlds/:worldId/recipes/:recipeId/materials", async (ctx: any) => {
+    .put(prefix + "/worlds/:worldId/recipes/:recipeId/materials", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);

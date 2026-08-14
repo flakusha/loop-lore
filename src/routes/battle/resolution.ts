@@ -11,10 +11,10 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function resolutionRoutes(_opts: HandlerOpts,) {
+export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api") {
   return new Elysia({ name: "battle-resolution", },)
     .post(
-      "/api/battle/resolution/damage",
+      prefix + "/battle/resolution/damage",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -40,7 +40,7 @@ export function resolutionRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/resolution/attack",
+      prefix + "/battle/resolution/attack",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -69,7 +69,7 @@ export function resolutionRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/resolution/defense",
+      prefix + "/battle/resolution/defense",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -99,7 +99,7 @@ export function resolutionRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/resolution/round",
+      prefix + "/battle/resolution/round",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
