@@ -59,13 +59,17 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   const gmGuidance = gmConfigRaw.gmGuidance as GmGuidance | undefined;
   const gameMasterConfig: GameMasterConfig = {
     type: (gmConfigRaw.type as GameMasterType | undefined) ?? GameMasterType.Llm,
+    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
     ...(gmConfigRaw.llmConfig
       ? { llmConfig: gmConfigRaw.llmConfig as GameMasterConfig["llmConfig"], }
       : {}),
+    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
     ...(gmConfigRaw.actorModels
       ? { actorModels: gmConfigRaw.actorModels as GameMasterConfig["actorModels"], }
       : {}),
+    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
     ...(gmConfigRaw.humanGM ? { humanGM: gmConfigRaw.humanGM as GameMasterConfig["humanGM"], } : {}),
+    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
     ...(typeof gmConfigRaw.escalationThreshold === "number"
       ? { escalationThreshold: gmConfigRaw.escalationThreshold, }
       : {}),
