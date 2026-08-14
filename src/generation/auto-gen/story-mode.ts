@@ -71,15 +71,32 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       : {}),
   };
 
-  // Resolve provider
-  const resolved = await deps.resolveProvider({ userId, config, db: database, },);
+  // Resolve the chat's default provider once, to seed the metadata stored on
+  // the generated message when no per-actor override is applied (e.g. Human
+  // mode, or an actor with no actorModels entry).
+  const defaultResolved = await deps.resolveProvider({ userId, config, db: database, },);
+  let usedProviderName = defaultResolved.resolvedProviderName;
+  let usedModel = defaultResolved.resolvedModel;
 
-  // Create generateText callback that calls the provider
+  // Create generateText callback that calls the provider. The GM service may
+  // request a per-actor provider/model (params.provider / params.model sourced
+  // from GameMasterConfig.actorModels); resolve that provider per-call so each
+  // actor generates through its own LLM provider rather than the chat default.
   const generateText: GenerateTextFn = async (params,) => {
-    const response = await resolved.provider.complete({
-      model: params.model ?? resolved.resolvedModel,
+    const callResolved = await deps.resolveProvider({
+      userId,
+      config,
+      db: database,
+      provider: params.provider || undefined,
+      model: params.model || undefined,
+    },);
+    usedProviderName = callResolved.resolvedProviderName;
+    usedModel = callResolved.resolvedModel;
+
+    const response = await callResolved.provider.complete({
+      model: callResolved.resolvedModel,
       messages: params.messages,
-      apiKey: resolved.resolvedApiKey,
+      apiKey: callResolved.resolvedApiKey,
       params: {
         temperature: params.temperature ?? 0.9,
         maxTokens: params.maxTokens ?? 2048,
@@ -211,8 +228,8 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       content_type: MessageContentType.Text,
       content_format: MessageContentFormat.Markdown,
       content_encoding: contentEncoding,
-      model_id: resolved.resolvedModel,
-      provider: resolved.resolvedProviderName,
+      model_id: usedModel,
+      provider: usedProviderName,
       status: MessageStatus.Confirmed,
       visibility: MessageVisibility.Visible,
       swipe_index: swipeIndex,
