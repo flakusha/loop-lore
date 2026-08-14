@@ -6,6 +6,7 @@
       "name": "loop-lore",
       "dependencies": {
         "@elysia/openapi": "^1.4.15",
+        "@noble/hashes": "^2.3.0",
         "@sinclair/typebox": "^0.34.52",
         "blessed": "^0.1.81",
         "blessed-contrib": "^4.11.0",
@@ -317,6 +318,8 @@
     "@markuplint/types": ["@markuplint/types@4.18.0", "", { "dependencies": { "@markuplint/shared": "4.18.0", "@types/css-tree": "2.3.11", "@types/debug": "4.1.13", "@types/whatwg-mimetype": "5.0.0", "bcp-47": "2.1.0", "css-tree": "3.2.1", "debug": "4.4.3", "leven": "4.1.0", "type-fest": "5.6.0", "whatwg-mimetype": "5.0.0" } }, "sha512-ew3PEm0rmwS0dMn4WbUQTP11drb39OfXBbklbYMoq1XpZhtx/9WBZ8yUr/j5unl8SO6s+PXQzto0ZW4TiXUicA=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.2", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || ^2.0.0-alpha.3", "@emnapi/runtime": "^1.7.1 || ^2.0.0-alpha.3" } }, "sha512-JfB4kuJQjaoHuCTseIINHtHWeJnvgEcxjwA5t/Y00ZgaOO1Crz3fjT/p8kT28zA/Caz7oiUMn3d6H2yOVCVwuw=="],
+
+    "@noble/hashes": ["@noble/hashes@2.3.0", "", {}, "sha512-oN+QwyX7VSHotibwubG3kpzbwKrfnyR6OOO+3Nk/53ADL7FmgHHz4TgrbaYKvvOw09u6QTx0oiH1cNCIOuN0CQ=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 

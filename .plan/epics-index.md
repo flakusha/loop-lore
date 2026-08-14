@@ -88,7 +88,7 @@
 | ⬜ Not Started | Player Agency — Story Points | Medium | Medium | 0 | [epic-agency-story-points.md](/.plan/epics/epic-agency-story-points.md) |
 | ⬜ Not Started | Plugin Management UI | P2 — Medium | Medium | 15 | [epic-plugin-management-ui.md](/.plan/epics/epic-plugin-management-ui.md) |
 | ⬜ Not Started | Plugin System & Extensibility | High | Very High | 16 | [epic-plugin-system.md](/.plan/epics/epic-plugin-system.md) |
-| ⬜ Not Started | Pre-Compiled Hot Binary Modules | Medium | High | 19 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
+| 🟡 In Progress | Pre-Compiled Hot Binary Modules | Medium | High | 19 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
 | ⬜ Not Started | Prompt & Output Control | Medium | Unknown | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | ⬜ Not Started | RAG & Document Processing | High | High | 89 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
 | ⬜ Not Started | RAG & Document UI | P2 — Medium | Medium | 17 | [epic-rag-ui.md](/.plan/epics/epic-rag-ui.md) |
@@ -98,7 +98,7 @@
 | ⬜ Not Started | Social Interaction Systems | Medium | High | 0 | [epic-social-interaction.md](/.plan/epics/epic-social-interaction.md) |
 | ⬜ Not Started | Stealth & Crime Systems | Medium | High | 0 | [epic-stealth-crime.md](/.plan/epics/epic-stealth-crime.md) |
 | ⬜ Not Started | Terminal UI (TUI) | Low | Unknown | 0 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
-| ⬜ Not Started | Testing, Benchmarking & Performance | High | Very High | 89 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
+| 🟡 In Progress | Testing, Benchmarking & Performance | High | Very High | 89 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | ⬜ Not Started | Transport Layer Expansion | Low | Unknown | 0 | [epic-transport-layer-expansion.md](/.plan/epics/epic-transport-layer-expansion.md) |
 | ⬜ Not Started | Two-Factor / Multi-Factor Authentication | Medium | Medium | 10 | [epic-two-factor-auth.md](/.plan/epics/epic-two-factor-auth.md) |
 | ⬜ Not Started | UI Components Library | Medium | Unknown | 0 | [epic-frontend-components.md](/.plan/epics/epic-frontend-components.md) |
@@ -936,7 +936,7 @@ Comprehensive magic and spellcasting system — spell schools, elemental magic, 
 
 ### Pre-Compiled Hot Binary Modules
 
-- **Status:** ⬜ Not Started
+- **Status:** 🟡 In Progress — Phase 1 infra + BLAKE3 sample shipped (2026-08-15); benchmark 53× bound to bench suite
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** Infrastructure Epic
@@ -1027,7 +1027,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 
 ### Testing, Benchmarking & Performance
 
-- **Status:** ⬜ Not Started
+- **Status:** 🟡 In Progress — bench suite structure + first benchmark shipped (2026-08-15); framework tasks open
 - **Priority:** High
 - **Effort:** Very High
 - **Type:** Infrastructure Epic
