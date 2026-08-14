@@ -1,0 +1,10 @@
+# Database configuration example (YAML)
+# Domain: database — SQLite or PostgreSQL
+# Twin of config.database.example.toml
+
+db:
+  type: sqlite # "sqlite" or "postgres"
+  sqliteFilename: "../loop-lore-data/loop-lore.db"
+  # For Postgres:
+  # type: postgres
+  # url: "postgres://user:pass@localhost:5432/loop-lore"

@@ -218,7 +218,7 @@ function enforceE2eSafeguard(config: Config,): void {
     const msg = [
       "[E2E_SAFEGUARD] Refusing to run: test config would touch real data.",
       ...issues.map((i,) => `  - ${i}`),
-      "Use config.e2e.yaml (db.sqliteFilename: ':memory:') or set E2E_SAFEGUARD=0 to bypass.",
+      "Set E2E_SAFEGUARD=0 to bypass (or use the in-memory test config from createTestServer).",
     ].join("\n",);
     throw new Error(msg,);
   }

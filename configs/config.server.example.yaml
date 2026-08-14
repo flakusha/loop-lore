@@ -1,0 +1,11 @@
+# Server configuration example (YAML)
+# Domain: server — HTTP server settings
+# All options shown with defaults; uncomment to override
+# Twin of config.server.example.toml
+
+server:
+  port: 3000
+  host: "localhost"
+  tls:
+    key: "../loop-lore-data/certs/key.pem"
+    cert: "../loop-lore-data/certs/cert.pem"
