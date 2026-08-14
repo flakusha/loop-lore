@@ -35,8 +35,8 @@ describe("combat resolution (auth-gated)", () => {
       .use(combatRoutes({ database: mockDb, } as any,),) as any;
   }
 
-  async function json(res: Response,) {
-    return res.json() as unknown;
+  async function json<T,>(res: Response,): Promise<T> {
+    return res.json() as T;
   }
 
   const stats = { str: 16, dex: 14, con: 14, int: 10, wis: 10, cha: 8, };
@@ -85,9 +85,9 @@ describe("combat resolution (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ combatants: { initiative: number }[] }>(res,);
     expect(body.combatants,).toHaveLength(2,);
-    expect(body.combatants[0].initiative,).toBeGreaterThanOrEqual(0,);
+    expect(body.combatants[0]!.initiative,).toBeGreaterThanOrEqual(0,);
   });
 
   test("resolves an attack", async () => {
@@ -107,7 +107,7 @@ describe("combat resolution (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ hit: boolean }>(res,);
     expect(typeof body.hit,).toBe("boolean",);
   });
 
@@ -121,7 +121,7 @@ describe("combat resolution (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ success: boolean }>(res,);
     expect(typeof body.success,).toBe("boolean",);
   });
 
@@ -135,7 +135,7 @@ describe("combat resolution (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ updated: { hp: number }; defeated: boolean }>(res,);
     expect(body.updated.hp,).toBe(0,);
     expect(body.defeated,).toBe(true,);
   });
@@ -150,7 +150,7 @@ describe("combat resolution (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ updated: { hp: number } }>(res,);
     expect(body.updated.hp,).toBe(target.maxHp,);
   });
 
@@ -164,7 +164,7 @@ describe("combat resolution (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res,);
+    const body = await json<{ combatOver: { over: boolean; winner: string | null } }>(res,);
     expect(body.combatOver.over,).toBe(true,);
     expect(body.combatOver.winner,).toBe("player",);
   });
