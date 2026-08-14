@@ -112,6 +112,17 @@
     >
       🎭
     </button>
+    <button
+      class="btn-icon"
+      :class="$store.ui.showParticipants ? 'gm-toggle-active' : ''"
+      @click="$store.ui.showParticipants = !$store.ui.showParticipants"
+      x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"
+      title="Participants"
+      aria-label="Toggle Participant Panel"
+      data-testid="participant-toggle"
+    >
+      👥
+    </button>
     <div class="notif-bell" x-data="notificationsBell()" x-init="init()" x-show="unreadCount > 0">
       <button
         class="btn-icon"

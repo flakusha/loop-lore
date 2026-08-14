@@ -218,7 +218,6 @@ export interface ChatCoreState extends AlpineMagicThis {
     gm_config?: string;
   } | null;
   toggleGroupPause(): Promise<void>;
-  loadChatParticipants(): Promise<void>;
   handleMentionInput(event: Event,): void;
   selectMention(participant: { actor_id: string; name: string },): void;
   hideMentionAutocomplete(): void;
