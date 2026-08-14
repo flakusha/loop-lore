@@ -179,8 +179,6 @@ export interface ChatCoreState extends AlpineMagicThis {
   renderStreamContainer(): void;
   _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;
-  connectActivitySSE(): void;
-  disconnectActivitySSE(): void;
   markChatAsRead(chatId: string,): Promise<void>;
   getUnseenCount(chatId: string,): number;
   regenerateResponse(): Promise<void>;
