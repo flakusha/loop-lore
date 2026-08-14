@@ -17,7 +17,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     event.stopImmediatePropagation();
     const button = event.currentTarget as HTMLElement | null;
     try {
-      const res = await apiFetch(`/api/chats/${chatId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/chats/${chatId}`, { method: "DELETE", },);
       if (res.ok) {
         const filtered: typeof this.chats = [];
         for (const c of this.chats) { if (c.id !== chatId) { filtered.push(c,); } }
@@ -57,7 +57,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/chats/${this._renameChatId}`, {
+      const res = await apiFetch(`/api/v1/chats/${this._renameChatId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ name, },),
@@ -90,7 +90,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     if (!chat) { return; }
     const pinned = !chat.isPinned;
     try {
-      const res = await apiFetch(`/api/chats/${chatId}`, {
+      const res = await apiFetch(`/api/v1/chats/${chatId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ isPinned: pinned, },),
@@ -119,7 +119,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     const ids = this.selectedChats;
     if (ids.length === 0) { return; }
     try {
-      const res = await apiFetch("/api/chats/batch/archive", {
+      const res = await apiFetch("/api/v1/chats/batch/archive", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ids, },),
@@ -147,7 +147,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     if (ids.length === 0) { return; }
     if (!confirm(t("modals.deleteChatsCount", { count: String(ids.length,), },),)) { return; }
     try {
-      const res = await apiFetch("/api/chats/batch/delete", {
+      const res = await apiFetch("/api/v1/chats/batch/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ids, },),
@@ -180,7 +180,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     const ids = this.selectedChats;
     if (ids.length === 0) { return; }
     try {
-      const res = await apiFetch("/api/chats/batch/export", {
+      const res = await apiFetch("/api/v1/chats/batch/export", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ids, },),
