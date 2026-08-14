@@ -5,12 +5,12 @@ import { AdminAuditRow, AdminPaginatedEnvelope, } from "../../validation/schemas
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function auditRoutes(opts: AdminRouteOpts,) {
+export function auditRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-audit", },)
       // ── Audit log ──────────────────────────────────────────
       .get(
-        "/api/admin/audit",
+        prefix + "/admin/audit",
         async (ctx: any,) => {
           const { userRole, request, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -80,7 +80,7 @@ export function auditRoutes(opts: AdminRouteOpts,) {
           },
         },
       )
-      .get("/api/admin/audit/:id", async (ctx: any,) => {
+      .get(prefix + "/admin/audit/:id", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

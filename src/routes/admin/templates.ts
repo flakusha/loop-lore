@@ -5,11 +5,11 @@ import { AdminTemplateCreateBody, AdminTemplateUpdateBody, ErrorResponse, } from
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function templatesRoutes(opts: AdminRouteOpts,) {
+export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-templates", },)
       // ── Template management ─────────────────────────────────
-      .get("/api/admin/templates", async (ctx: any,) => {
+      .get(prefix + "/admin/templates", async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -32,7 +32,7 @@ export function templatesRoutes(opts: AdminRouteOpts,) {
         },
       },)
       .put(
-        "/api/admin/templates/:id",
+        prefix + "/admin/templates/:id",
         async (ctx: any,) => {
           const { params: p, userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -77,7 +77,7 @@ export function templatesRoutes(opts: AdminRouteOpts,) {
         { body: AdminTemplateUpdateBody, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .post(
-        "/api/admin/templates",
+        prefix + "/admin/templates",
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -121,7 +121,7 @@ export function templatesRoutes(opts: AdminRouteOpts,) {
         },
         { body: AdminTemplateCreateBody, response: { 200: t.Any(), 400: ErrorResponse, 403: ErrorResponse, }, },
       )
-      .delete("/api/admin/templates/:id", async (ctx: any,) => {
+      .delete(prefix + "/admin/templates/:id", async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

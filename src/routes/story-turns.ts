@@ -27,9 +27,9 @@ async function checkChatOwnership(
   return !!chat && (chat.created_by === userId || userRole === "admin" || userRole === "solo");
 }
 
-export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysia {
+export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix = "/api"): Elysia {
   return new Elysia({ name: "story-turns", },)
-    .get("/api/chats/:id/story-turns", async (ctx: any,) => {
+    .get(prefix + "/chats/:id/story-turns", async (ctx: any,) => {
       const { params, userId, userRole, error, request, } = ctx;
       const chatId = params.id as string;
 
@@ -78,7 +78,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config },): Elysi
         tags: ["Story Turns",],
       },
     },)
-    .get("/api/chats/:id/story-turns/:turnId", async (ctx: any,) => {
+    .get(prefix + "/chats/:id/story-turns/:turnId", async (ctx: any,) => {
       const { params, userId, userRole, error, } = ctx;
       const chatId = params.id as string;
       const turnId = params.turnId as string;

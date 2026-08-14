@@ -58,14 +58,14 @@ async function isWorldOwner(
   return Boolean(world,) && (world!.owner_id === userId || userRole === "admin" || userRole === "solo");
 }
 
-export function worldInvitesRoutes(opts: HandlerOpts,) {
+export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "world-invites", },)
       // ── Create ─────────────────────────────────────────────
       .post(
-        "/api/worlds/:worldId/invites",
+        prefix + "/worlds/:worldId/invites",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -97,7 +97,7 @@ export function worldInvitesRoutes(opts: HandlerOpts,) {
       )
       // ── List ───────────────────────────────────────────────
       .get(
-        "/api/worlds/:worldId/invites",
+        prefix + "/worlds/:worldId/invites",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -118,7 +118,7 @@ export function worldInvitesRoutes(opts: HandlerOpts,) {
       )
       // ── Revoke ─────────────────────────────────────────────
       .delete(
-        "/api/worlds/:worldId/invites/:inviteId",
+        prefix + "/worlds/:worldId/invites/:inviteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -143,7 +143,7 @@ export function worldInvitesRoutes(opts: HandlerOpts,) {
       )
       // ── Join ───────────────────────────────────────────────
       .post(
-        "/api/world-invites/:code/join",
+        prefix + "/world-invites/:code/join",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

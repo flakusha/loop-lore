@@ -3,14 +3,14 @@ import { jsonPaginated, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { ChatSearchQuery, type HandlerOpts, } from "./types";
 
-export function searchRoutes(opts: HandlerOpts,) {
+export function searchRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-search-search", },)
       // ── Search user's chats ──────────────────────────────────
       .get(
-        "/api/chats/search",
+        prefix + "/chats/search",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

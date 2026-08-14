@@ -8,12 +8,12 @@ import {
 import { jsonCreated, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function createRoutes(opts: HandlerOpts,) {
+export function createRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-create", },)
     .post(
-      "/api/actors",
+      prefix + "/actors",
       async (ctx: any,) => {
         const {
           displayName,

@@ -66,14 +66,14 @@ async function resolveMessageAccess(
   return msg.chat_id;
 }
 
-export function messageReactionsRoutes(opts: HandlerOpts,) {
+export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "message-reactions", },)
       // GET /api/messages/:id/reactions — grouped reactions
       .get(
-        "/api/messages/:id/reactions",
+        prefix + "/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -121,7 +121,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
         },
       )
       // GET /api/messages/quick-emojis — available emoji list
-      .get("/api/messages/quick-emojis", () => jsonResponse(QUICK_EMOJIS,), {
+      .get(prefix + "/messages/quick-emojis", () => jsonResponse(QUICK_EMOJIS,), {
         response: {
           200: t.Array(t.String(),),
           401: ErrorResponse,
@@ -134,7 +134,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
       },)
       // POST /api/messages/:id/reactions — toggle reaction
       .post(
-        "/api/messages/:id/reactions",
+        prefix + "/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -203,7 +203,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
       )
       // DELETE /api/messages/:id/reactions — remove user's all reactions
       .delete(
-        "/api/messages/:id/reactions",
+        prefix + "/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

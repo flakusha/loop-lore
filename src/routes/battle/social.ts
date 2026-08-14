@@ -13,10 +13,10 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function socialRoutes(_opts: HandlerOpts,) {
+export function socialRoutes(_opts: HandlerOpts, prefix = "/api") {
   return new Elysia({ name: "battle-social", },)
     .post(
-      "/api/battle/social/intimidate",
+      prefix + "/battle/social/intimidate",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -47,7 +47,7 @@ export function socialRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/social/taunt",
+      prefix + "/battle/social/taunt",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -76,7 +76,7 @@ export function socialRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/social/surrender",
+      prefix + "/battle/social/surrender",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -105,7 +105,7 @@ export function socialRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/social/rally",
+      prefix + "/battle/social/rally",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -134,7 +134,7 @@ export function socialRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/social/inspire",
+      prefix + "/battle/social/inspire",
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -163,7 +163,7 @@ export function socialRoutes(_opts: HandlerOpts,) {
       },
     )
     .post(
-      "/api/battle/social/demoralize",
+      prefix + "/battle/social/demoralize",
       (ctx: any,) => {
         try {
           const body = ctx.body as {

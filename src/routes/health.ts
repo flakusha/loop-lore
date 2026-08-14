@@ -13,8 +13,8 @@ import { jsonResponse, } from "./http-utils";
 
 const startTime = Date.now();
 
-export function healthRoutes(_opts: { database: Db; config: Config },): Elysia {
-  return new Elysia().get("/api/health", () => {
+export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "/api"): Elysia {
+  return new Elysia().get(prefix + "/health", () => {
     const providers = getHealthCache();
     const degraded = hasUnhealthyProviders();
     const uptime = Math.floor((Date.now() - startTime) / 1000,);
