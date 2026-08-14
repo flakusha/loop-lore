@@ -56,3 +56,28 @@ Three-tier memory system: episodic (recent events), semantic (facts/knowledge), 
 - Open gap: verify group-chat injection passes a per-viewer actor into
   `evaluateShareability`/`shouldInjectMemory` so knowledge isolation (e.g. dark-elves know,
   humans don't) holds per-message. See `IDEA-memory-knowledge-isolation-and-world-timeline.md`.
+
+## Research Extensions (2026-08-14)
+
+Research on agent memory architectures (generative-agents, RisuAI) identified upgrades:
+
+### Working Memory Tier
+Add fourth tier: **Working memory** (current context window, active attention).
+- Four-tier model: Working → Episodic → Semantic → Procedural
+- Working memory is the active context; other tiers feed into it
+
+### Scored Retrieval Layer
+Replace simple decay with recency × importance × relevance scoring:
+- Composite score determines which memories enter context
+- Reflection system synthesizes episodic → semantic insights
+- **See:** `TASK-agent-memory-scoring.md`
+
+### Emotional Weighting
+Memories with emotional valence get importance boost:
+- **See:** `TASK-memory-emotion-impact.md`
+
+### Cross-References
+- `TASK-agent-memory-scoring.md` — Scored retrieval + reflection
+- `TASK-memory-emotion-impact.md` — Emotional valence on memories
+- `TASK-memory-decay-logic.md` — Decay logic (replaced by scoring)
+- `epic-character-core-system.md` — Four-tier memory architecture spec
