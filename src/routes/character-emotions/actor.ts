@@ -40,7 +40,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-emotions-actor", },)
       // ── List emotions for an actor ─────────────────────────────
-      .get(prefix + "/actors/:actorId/emotions", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/emotions`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -74,7 +74,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Get a specific emotion ─────────────────────────────────
-      .get(prefix + "/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/emotions/:emotionId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -114,7 +114,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Set/update an emotion for an actor ─────────────────────
-      .post(prefix + "/actors/:actorId/emotions", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/emotions`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -182,7 +182,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Delete an emotion ──────────────────────────────────────
-      .delete(prefix + "/actors/:actorId/emotions/:emotionId", async (ctx: any,) => {
+      .delete(`${prefix}/actors/:actorId/emotions/:emotionId`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

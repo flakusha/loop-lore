@@ -13,7 +13,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-sections-create", },)
       // ── Create a section ──────────────────────────────────
       .post(
-        prefix + "/chats/:id/sections",
+        `${prefix}/chats/:id/sections`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

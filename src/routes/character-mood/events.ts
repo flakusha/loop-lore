@@ -32,7 +32,7 @@ export function eventsRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-mood-events", },)
-      .post(prefix + "/actors/:actorId/mood/events", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/mood/events`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -85,7 +85,7 @@ export function eventsRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Character Mood",],
         },
       },)
-      .get(prefix + "/actors/:actorId/mood/events", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/mood/events`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 

@@ -25,7 +25,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats-participants", },)
       .get(
-        prefix + "/chats/:id/participants",
+        `${prefix}/chats/:id/participants`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -60,7 +60,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
         { params: ChatIdParams, },
       )
       .post(
-        prefix + "/chats/:id/participants",
+        `${prefix}/chats/:id/participants`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -128,7 +128,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/chats/:id/participants/:actorId",
+        `${prefix}/chats/:id/participants/:actorId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -166,7 +166,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
         { params: ChatParticipantParams, body: ChatParticipantUpdateBody, },
       )
       .delete(
-        prefix + "/chats/:id/participants/:actorId",
+        `${prefix}/chats/:id/participants/:actorId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

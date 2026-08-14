@@ -13,7 +13,7 @@ import type { HandlerOpts, } from "./types";
 export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-morale", },)
     .post(
-      prefix + "/battle/morale/compute",
+      `${prefix}/battle/morale/compute`,
       (ctx: any,) => {
         try {
           const body = ctx.body as { value: number };
@@ -34,7 +34,7 @@ export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/morale/apply",
+      `${prefix}/battle/morale/apply`,
       (ctx: any,) => {
         try {
           const body = ctx.body as {
@@ -58,7 +58,7 @@ export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .post(
-      prefix + "/battle/morale/break",
+      `${prefix}/battle/morale/break`,
       (ctx: any,) => {
         try {
           const body = ctx.body as { state: MoraleState };

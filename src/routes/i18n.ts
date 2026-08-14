@@ -24,7 +24,7 @@ export interface I18nRoutesOpts {
  */
 export function i18nRoutes({ database, }: I18nRoutesOpts, prefix = "/api",) {
   return new Elysia({ name: "i18n", },)
-    .get(prefix + "/i18n/locales", () => {
+    .get(`${prefix}/i18n/locales`, () => {
       const supported = getSupportedLocales();
       const locales = [];
       for (const id of supported) {
@@ -52,7 +52,7 @@ export function i18nRoutes({ database, }: I18nRoutesOpts, prefix = "/api",) {
       },
     },)
     .patch(
-      prefix + "/i18n/locale",
+      `${prefix}/i18n/locale`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

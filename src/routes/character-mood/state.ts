@@ -22,7 +22,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-mood-state", },)
-      .get(prefix + "/actors/:actorId/mood", async (ctx: any,) => {
+      .get(`${prefix}/actors/:actorId/mood`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -57,7 +57,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Character Mood",],
         },
       },)
-      .post(prefix + "/actors/:actorId/mood", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/mood`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -93,7 +93,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Character Mood",],
         },
       },)
-      .put(prefix + "/actors/:actorId/mood", async (ctx: any,) => {
+      .put(`${prefix}/actors/:actorId/mood`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -134,7 +134,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
           tags: ["Character Mood",],
         },
       },)
-      .post(prefix + "/actors/:actorId/mood/delta", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/mood/delta`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 

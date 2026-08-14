@@ -29,7 +29,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
 
   return new Elysia({ name: "character-emotion-avatars", },)
     // ── List batch generation jobs ────────────────────────────────
-    .get(prefix + "/actors/:actorId/emotion-avatars/jobs", async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/emotion-avatars/jobs`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -41,7 +41,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       return jsonResponse(jobs,);
     },)
     // ── Get specific job status ───────────────────────────────────
-    .get(prefix + "/actors/:actorId/emotion-avatars/jobs/:jobId", async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -55,7 +55,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       return jsonResponse(job,);
     },)
     // ── Cancel a running job ──────────────────────────────────────
-    .post(prefix + "/actors/:actorId/emotion-avatars/jobs/:jobId/cancel", async (ctx: any,) => {
+    .post(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId/cancel`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -71,7 +71,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       return jsonResponse({ ok: true, cancelled: true, },);
     },)
     // ── Start batch generation ───────────────────────────────────
-    .post(prefix + "/actors/:actorId/emotion-avatars", async (ctx: any,) => {
+    .post(`${prefix}/actors/:actorId/emotion-avatars`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -118,7 +118,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       }
     },)
     // ── Get emotion prompt modifier ──────────────────────────────
-    .get(prefix + "/emotions/prompt-modifier/:emotion", async (ctx: any,) => {
+    .get(`${prefix}/emotions/prompt-modifier/:emotion`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -131,7 +131,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       return jsonResponse({ emotion, modifier, },);
     },)
     // ── List available emotion types ───────────────────────────
-    .get(prefix + "/emotions/types", async (ctx: any,) => {
+    .get(`${prefix}/emotions/types`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 

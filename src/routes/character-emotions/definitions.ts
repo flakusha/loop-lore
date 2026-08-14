@@ -30,7 +30,7 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-emotions-definitions", },)
       // ── List all emotion definitions ───────────────────────────
-      .get(prefix + "/emotions", async (ctx: any,) => {
+      .get(`${prefix}/emotions`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -52,7 +52,7 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Create a new emotion definition ────────────────────────
-      .post(prefix + "/emotions", async (ctx: any,) => {
+      .post(`${prefix}/emotions`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

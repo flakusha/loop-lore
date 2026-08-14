@@ -12,7 +12,7 @@ export function removeRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
     new Elysia({ name: "admin-templates-remove", },)
       // ── Delete custom profile ─────────────────────────────
       .delete(
-        prefix + "/admin/templates/:id",
+        `${prefix}/admin/templates/:id`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

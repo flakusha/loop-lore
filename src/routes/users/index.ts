@@ -21,5 +21,5 @@ export type { UsersRoutesOpts, } from "./types";
 export function usersRoutes(opts: UsersRoutesOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "users", },)
     .use(meRoutes(opts, prefix,),)
-    .use(manageRoutes(opts, prefix,),) as unknown as Elysia;
+    .use(manageRoutes(opts, prefix,),);
 }

@@ -19,7 +19,7 @@ export function selectRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "character-avatars-select", },)
-      .post(prefix + "/actors/:actorId/avatars/select", async (ctx: any,) => {
+      .post(`${prefix}/actors/:actorId/avatars/select`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

@@ -11,7 +11,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-encounters", },)
       .post(
-        prefix + "/nsfw/encounters",
+        `${prefix}/nsfw/encounters`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -34,7 +34,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/nsfw/encounters/:id",
+        `${prefix}/nsfw/encounters/:id`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -51,7 +51,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .post(
-        prefix + "/nsfw/encounters/:id/advance",
+        `${prefix}/nsfw/encounters/:id/advance`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -65,7 +65,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       )
       .get(
-        prefix + "/nsfw/encounters/world/:worldId",
+        `${prefix}/nsfw/encounters/world/:worldId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -13,7 +13,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "nsfw-moderation-audit", },)
-      .get(prefix + "/nsfw/moderation/audit/:userId", async (ctx: any,) => {
+      .get(`${prefix}/nsfw/moderation/audit/:userId`, async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -25,7 +25,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { params: userIdParam, query: auditQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .get(prefix + "/nsfw/moderation/export/:userId", async (ctx: any,) => {
+      .get(`${prefix}/nsfw/moderation/export/:userId`, async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -35,7 +35,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .delete(prefix + "/nsfw/moderation/export/:userId", async (ctx: any,) => {
+      .delete(`${prefix}/nsfw/moderation/export/:userId`, async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {

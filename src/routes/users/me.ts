@@ -17,7 +17,7 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "users-me", },)
       .get(
-        prefix + "/users/me",
+        `${prefix}/users/me`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -45,7 +45,7 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
         },
       )
       .put(
-        prefix + "/users/me",
+        `${prefix}/users/me`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -92,7 +92,7 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
         },
       )
       .patch(
-        prefix + "/users/me/settings",
+        `${prefix}/users/me/settings`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

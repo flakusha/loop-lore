@@ -50,5 +50,5 @@ export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysi
     },
     opts,
   );
-  return crud.use(actorItemsGameplayRoutes(opts,),) as unknown as Elysia;
+  return crud.use(actorItemsGameplayRoutes(opts,),);
 }

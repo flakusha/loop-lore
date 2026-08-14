@@ -25,7 +25,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "gm-notes-whitenotes", },)
       .get(
-        prefix + "/chats/:id/whitenotes",
+        `${prefix}/chats/:id/whitenotes`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -61,7 +61,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
         { params: ChatIdParams, query: PaginationQuery, },
       )
       .post(
-        prefix + "/chats/:id/whitenotes",
+        `${prefix}/chats/:id/whitenotes`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -94,7 +94,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
         { params: ChatIdParams, body: WhiteneoteBody, },
       )
       .delete(
-        prefix + "/chats/:id/whitenotes/:noteId",
+        `${prefix}/chats/:id/whitenotes/:noteId`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

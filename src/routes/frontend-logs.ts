@@ -32,7 +32,7 @@ interface LogBatch {
 }
 
 export function frontendLogsRoutes(prefix = "/api",) {
-  return new Elysia({ name: "frontend-logs", },).post(prefix + "/frontend/logs", async ({ request, ...rest },) => {
+  return new Elysia({ name: "frontend-logs", },).post(`${prefix}/frontend/logs`, async ({ request, ...rest },) => {
     let body: LogBatch;
     try {
       body = (await request.json()) as LogBatch;

@@ -25,7 +25,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "messages-update", },)
     .delete(
-      prefix + "/messages/:id",
+      `${prefix}/messages/:id`,
       async (ctx: any,) => {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }
@@ -52,7 +52,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
     )
     // ── Edit message content (user messages only) ─────────────
     .patch(
-      prefix + "/messages/:id",
+      `${prefix}/messages/:id`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -146,7 +146,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .put(
-      prefix + "/messages/:id/visibility",
+      `${prefix}/messages/:id/visibility`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -173,7 +173,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .put(
-      prefix + "/messages/:id/status",
+      `${prefix}/messages/:id/status`,
       async (ctx: any,) => {
         const userRole = ctx.userRole as string | null;
         if (userRole !== "admin") { return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",); }

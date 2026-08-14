@@ -5,7 +5,7 @@
  * see git history for prior implementation.
  */
 import type { Kysely, } from "kysely";
-import { MessageVisibility, } from "../../db/enums";
+import type { MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 
 /**

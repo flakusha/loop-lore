@@ -12,7 +12,7 @@ export function assignRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chat-sections-assign", },)
       // ── Assign a message to a section ─────────────────────
       .post(
-        prefix + "/chats/:id/messages/:messageId/section",
+        `${prefix}/chats/:id/messages/:messageId/section`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

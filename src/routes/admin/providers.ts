@@ -9,7 +9,7 @@ export function providersRoutes(prefix = "/api",) {
   return (
     new Elysia({ name: "admin-providers", },)
       // ── Provider management ────────────────────────────────
-      .get(prefix + "/admin/providers", (ctx: any,) => {
+      .get(`${prefix}/admin/providers`, (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -41,7 +41,7 @@ export function providersRoutes(prefix = "/api",) {
           403: ErrorResponse,
         },
       },)
-      .get(prefix + "/admin/providers/:name/models", (ctx: any,) => {
+      .get(`${prefix}/admin/providers/:name/models`, (ctx: any,) => {
         const { params, userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({
@@ -73,7 +73,7 @@ export function providersRoutes(prefix = "/api",) {
           404: ErrorResponse,
         },
       },)
-      .post(prefix + "/admin/providers/rescan", async (ctx: any,) => {
+      .post(`${prefix}/admin/providers/rescan`, async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

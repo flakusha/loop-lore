@@ -49,7 +49,7 @@ export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "location-explorer", },)
       // ── Explore tree (all locations + states, no paging) ─
       .get(
-        prefix + "/worlds/:worldId/location-explorer",
+        `${prefix}/worlds/:worldId/location-explorer`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -88,7 +88,7 @@ export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       // ── Location detail (resolved connections + states) ──
       .get(
-        prefix + "/worlds/:worldId/locations/:locId/details",
+        `${prefix}/worlds/:worldId/locations/:locId/details`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

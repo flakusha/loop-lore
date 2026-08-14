@@ -11,7 +11,7 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "characters-list", },)
     .get(
-      prefix + "/actors",
+      `${prefix}/actors`,
       async (ctx: any,) => {
         const { page, pageSize, type, } = ctx.query;
         const offset = (page - 1) * pageSize;

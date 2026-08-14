@@ -15,7 +15,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "characters-update", },)
     .put(
-      prefix + "/actors/:actorId",
+      `${prefix}/actors/:actorId`,
       async (ctx: any,) => {
         const {
           displayName,

@@ -13,7 +13,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "nsfw-moderation-flags", },)
-      .post(prefix + "/nsfw/moderation/flags", async (ctx: any,) => {
+      .post(`${prefix}/nsfw/moderation/flags`, async (ctx: any,) => {
         const auth = requireUserId(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -23,7 +23,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: flagBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .get(prefix + "/nsfw/moderation/flags", async (ctx: any,) => {
+      .get(`${prefix}/nsfw/moderation/flags`, async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -36,7 +36,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { query: flagQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .put(prefix + "/nsfw/moderation/flags/:id", async (ctx: any,) => {
+      .put(`${prefix}/nsfw/moderation/flags/:id`, async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {

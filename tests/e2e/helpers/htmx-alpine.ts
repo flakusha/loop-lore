@@ -227,10 +227,10 @@ export async function waitForAlpineState<T = Record<string, unknown>,>(
       lastError = error;
     }
     if (Date.now() - start > timeoutMs) {
+      const errorSuffix = lastError ? ` Last error: ${String(lastError,)}` : "";
       throw new Error(
         `waitForAlpineState timed out after ${timeoutMs}ms for '${selector}'. ` +
-          `Last state: ${JSON.stringify(lastState,)}` +
-          (lastError ? ` Last error: ${String(lastError,)}` : ""),
+          `Last state: ${JSON.stringify(lastState,)}${errorSuffix}`,
       );
     }
     await page.waitForTimeout(100,);
