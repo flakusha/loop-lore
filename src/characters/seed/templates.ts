@@ -9,6 +9,7 @@ import { getLogger, } from "../../logger";
 import { safeJsonStringify, uid, } from "../../utils";
 import { AvatarService, } from "../services/avatar-service";
 import { TraitsService, } from "../services/traits-service";
+import { ContentRating, } from "../spec";
 import { ensureSystemUser, normalizeSpecies, resolveTemplateAvatar, } from "./avatar";
 
 interface SeedResult {
@@ -89,7 +90,7 @@ export async function seedCharacterTemplates(
           mes_example: template.mes_example ?? null,
           creator: template.creator ?? null,
           visibility: template.visibility ?? "public",
-          content_rating: template.content_rating ?? "sfw",
+          content_rating: template.content_rating ?? ContentRating.Sfw,
           settings,
           import_spec: "template",
           data_source_format: "json",

@@ -1,6 +1,8 @@
 /**
  * Core character card data fields (everything except `extensions`).
  */
+import { ContentRating, } from "../../characters/spec";
+
 export const dataProperties = {
   name: {
     type: "string",
@@ -88,13 +90,13 @@ export const dataProperties = {
   content_rating: {
     type: "string",
     enum: [
-      "sfw",
-      "nsfw_mild",
-      "nsfw_moderate",
-      "nsfw_intense",
-      "nsfw_extreme",
+      ContentRating.Sfw,
+      ContentRating.NsfwMild,
+      ContentRating.NsfwModerate,
+      ContentRating.NsfwIntense,
+      ContentRating.NsfwExtreme,
     ],
-    default: "sfw",
+    default: ContentRating.Sfw,
     description: "Content classification",
   },
   nsfw_categories: {
