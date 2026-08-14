@@ -14,6 +14,7 @@ export const EntityCreateBody = t.Object({
   title: t.Optional(t.String(),),
   content: t.Optional(t.String(),),
   data: t.Optional(t.Any(),),
+  pinned: t.Optional(t.Boolean(),),
 },);
 
 export const EntityUpdateBody = t.Object({
@@ -21,4 +22,5 @@ export const EntityUpdateBody = t.Object({
   content: t.Optional(t.String(),),
   type: t.Optional(t.String(),),
   data: t.Optional(t.Any(),),
+  pinned: t.Optional(t.Boolean(),),
 },);
