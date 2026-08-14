@@ -1,0 +1,11 @@
+# NSFW configuration example (YAML)
+# Domain: nsfw — NSFW content gating
+# Twin of config.nsfw.example.toml
+
+nsfw:
+  allowNsfw: true
+  nsfwMinAge: 18
+  defaultNsfwScope: "none" # none | user | session | global
+  consentRequired: true
+  auditLogging: false
+  useLlmClassifier: false
