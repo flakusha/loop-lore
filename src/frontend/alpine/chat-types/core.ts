@@ -107,7 +107,6 @@ export interface ChatCoreState extends AlpineMagicThis {
   _unseenCounts: Record<string, number>;
   _isScrolledUp: boolean;
   _scrollHandler: (() => void) | null;
-  _activityEventSource: EventSource | null;
   _debugView: boolean;
   _showCommandPalette: boolean;
   _activeCommand: string;
