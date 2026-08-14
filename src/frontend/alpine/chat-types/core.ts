@@ -78,6 +78,11 @@ export interface ChatCoreState extends AlpineMagicThis {
   _gmType: "llm" | "human" | "hybrid";
   _gmHumanActorId: string;
   _gmEscalationThreshold: number;
+  // GM LLM settings (multi-LLM story mode) — persisted to gm_config.llmConfig.
+  _gmModel: string;
+  _gmProvider: string;
+  _gmTemperature: number;
+  _gmMaxTokens: number;
 
   // VN (visual novel) mode settings — persisted to gm_config.
   _vnEnabled: boolean;
