@@ -23,40 +23,40 @@ describe("gmGuidance state", () => {
     (s.addGmConstraint as () => void).call(s,);
     expect((s._gmGuidance as { constraints: string[] }).constraints,).toContain("stay in character",);
     expect(s._gmNewConstraint,).toBe("",);
-  },);
+  });
 
   it("ignores duplicate constraints", () => {
     const s = freshState();
-    s._gmGuidance = { constraints: ["x"], turnPriority: {}, };
+    s._gmGuidance = { constraints: ["x",], turnPriority: {}, };
     s._gmNewConstraint = "x";
     (s.addGmConstraint as () => void).call(s,);
-    const count = (s._gmGuidance as { constraints: string[] }).constraints.filter((c,) => c === "x",).length;
+    const count = (s._gmGuidance as { constraints: string[] }).constraints.filter((c,) => c === "x").length;
     expect(count,).toBe(1,);
-  },);
+  });
 
   it("ignores blank constraints", () => {
     const s = freshState();
     s._gmNewConstraint = "   ";
     (s.addGmConstraint as () => void).call(s,);
     expect((s._gmGuidance as { constraints: string[] }).constraints.length,).toBe(0,);
-  },);
+  });
 
   it("removes a constraint", () => {
     const s = freshState();
-    s._gmGuidance = { constraints: ["a", "b"], turnPriority: {}, };
+    s._gmGuidance = { constraints: ["a", "b",], turnPriority: {}, };
     (s.removeGmConstraint as (c: string,) => void).call(s, "a",);
-    expect((s._gmGuidance as { constraints: string[] }).constraints,).toEqual(["b"],);
-  },);
+    expect((s._gmGuidance as { constraints: string[] }).constraints,).toEqual(["b",],);
+  });
 
   it("sets per-participant turn priority", () => {
     const s = freshState();
     (s.setGmTurnPriority as (id: string, l: string,) => void).call(s, "actor-1", "high",);
     expect((s._gmGuidance as { turnPriority: Record<string, string> }).turnPriority["actor-1"],).toBe("high",);
-  },);
+  });
 
   it("clearGmGuidance resets local state (apply is I/O)", async () => {
     const s = freshState();
-    s._gmGuidance = { constraints: ["a"], turnPriority: { "actor-1": "high", }, };
+    s._gmGuidance = { constraints: ["a",], turnPriority: { "actor-1": "high", }, };
     let applied = false;
     (s as { applyGmGuidance?: () => Promise<void> }).applyGmGuidance = async () => {
       applied = true;
@@ -65,5 +65,5 @@ describe("gmGuidance state", () => {
     expect((s._gmGuidance as { constraints: string[] }).constraints.length,).toBe(0,);
     expect((s._gmGuidance as { turnPriority: Record<string, string> }).turnPriority,).toEqual({},);
     expect(applied,).toBe(true,);
-  },);
-},);
+  });
+});

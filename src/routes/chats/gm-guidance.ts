@@ -1,12 +1,12 @@
 import { Elysia, } from "elysia";
 import { checkChatAccess, updateGmGuidance, } from "../../chat/service";
+import { ChatIdParams, GmGuidanceUpdateBody, } from "../../validation/schemas";
 import {
   forbiddenResponse as forbidden,
   jsonResponse,
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
-import { ChatIdParams, GmGuidanceUpdateBody, } from "../../validation/schemas";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -19,7 +19,7 @@ import type { HandlerOpts, } from "./types";
 export function gmGuidanceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
-  return new Elysia({ name: "chats-gm-guidance", })
+  return new Elysia({ name: "chats-gm-guidance", },)
     .put(
       `${prefix}/chats/:id/gm-guidance`,
       async (ctx: any,) => {
