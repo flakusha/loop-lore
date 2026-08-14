@@ -12,6 +12,8 @@ export interface MemoryEntry {
   expiresAt?: string;
   pinned?: boolean;
   tokenCount?: number;
+  /** Memory scope — which panel tab owns it (character/assistant/world). */
+  scope?: "character" | "assistant" | "world";
 }
 
 export interface MemoryPanelState {
