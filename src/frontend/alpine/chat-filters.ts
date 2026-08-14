@@ -1,7 +1,7 @@
 // ── Chat list filters (sidebar panel) ─────────────────────
 //
 // Holds the chat-list filter controls (type / status / sort) and turns them
-// into server-side query params for GET /api/chats. It deliberately does NOT
+// into server-side query params for GET /api/v1/chats. It deliberately does NOT
 // own the fetch — it exposes applyChatFilters() which reuses the existing
 // loadChats() on ChatState (merged query params via _filterParams()).
 //
@@ -14,7 +14,7 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   _chatStatus: "all",
   _chatSort: "recent",
 
-  /** Serialize the active filters (plus pagination) into /api/chats query params. */
+  /** Serialize the active filters (plus pagination) into /api/v1/chats query params. */
   _filterParams(): string {
     const params = new URLSearchParams();
     params.set("pageSize", "200",);

@@ -66,13 +66,13 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
             }
           }
         }
-        const res = await apiFetch("/api/users/me/settings", {
+        const res = await apiFetch("/api/v1/users/me/settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
           body: jsonBody(payload,),
         },);
         if (res.ok && payload.displayName) {
-          await apiFetch("/api/users/me", {
+          await apiFetch("/api/v1/users/me", {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ displayName: payload.displayName, },),

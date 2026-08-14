@@ -21,6 +21,10 @@ import { v1Routes, } from "./routes/v1";
 import { handleApiRequest, } from "./server";
 import { onValidationError, } from "./validation";
 
+/** 302 redirect helper (module scope — no closure capture). */
+const redirectTo = (location: string,): Response =>
+  new Response(null, { status: 302, headers: { Location: location, }, },);
+
 export interface AppDeps {
   database: Db;
   config: Config;
@@ -91,9 +95,6 @@ export function createApp(deps: AppDeps,): Elysia {
   },);
 
   // ── Convenience redirects ─────────────────────────────────────
-  const redirectTo = (location: string,): Response =>
-    new Response(null, { status: 302, headers: { Location: location, }, },);
-
   // Authenticated users land on the chat; everyone else on the login screen.
   app.get("/", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/login",),);
   app.get("/chat", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/login",),);

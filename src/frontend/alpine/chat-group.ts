@@ -32,7 +32,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     if (!chat || chat.type !== "group" || !this.activeChat) { return; }
     const newPaused = !this.isChatPaused(chat,);
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ isPaused: newPaused, },),
@@ -71,7 +71,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
   async loadChatParticipants() {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (res.ok) { this._chatParticipants = await res.json(); }
     } catch {
       /* ignore */
