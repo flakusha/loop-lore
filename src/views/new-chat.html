@@ -44,6 +44,16 @@
               <option value="story">{{{t("chats.roleplayStory")}}}</option>
             </select>
           </div>
+          <div class="form-group" id="gm-guided-group" style="display: none">
+            <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer">
+              <input type="checkbox" id="gm-guided-toggle" data-testid="gm-guided-toggle" />
+              <span class="form-label" style="margin: 0">🎲 Game Master guided story</span>
+            </label>
+            <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+              You run the story as Game Master. Creates a story chat with the GM role pre-enabled;
+              you can set the scene, constraints, and GM execution type after it opens.
+            </small>
+          </div>
           <div class="form-group">
             <label class="form-label" for="chat-template">{{{t("chats.setupTemplate")}}}</label>
             <select class="form-select" name="template" id="chat-template" data-testid="chat-template-select">
