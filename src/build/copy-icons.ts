@@ -18,6 +18,7 @@ const ICONS = [
   "messages",
   "info-circle",
   "settings",
+  "brain",
   "player-pause",
   "player-play",
 ] as const;

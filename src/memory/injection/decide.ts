@@ -44,6 +44,13 @@ export function shouldInjectMemory(
     return { inject: false, probability: 0, reason: privacyBlock, };
   }
 
+  // 1b. Pinned memories are explicitly pinned by the user for context and are
+  // always injected (bypasses the probabilistic roll + cooldown). Privacy above
+  // still applies, so a pinned memory a viewer is not allowed to see stays hidden.
+  if (memory.pinned) {
+    return { inject: true, probability: 1, reason: "pinned", };
+  }
+
   // 2. Cooldown check
   if (lastInjectedTurn >= 0 && (ctx.turnNumber - lastInjectedTurn) < config.cooldownTurns) {
     return {
