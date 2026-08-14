@@ -6,7 +6,7 @@ import { isAdminRole, } from "../../middleware/admin-gate";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, mergeProfiles, saveStoredTemplates, } from "./shared";
 
-export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api") {
+export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;
 
   return (

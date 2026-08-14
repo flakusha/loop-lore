@@ -9,7 +9,7 @@ import { isAdminRole, } from "../../middleware/admin-gate";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { countTemplates, loadStoredTemplates, log, mergeProfiles, } from "./shared";
 
-export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api") {
+export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;
 
   return (

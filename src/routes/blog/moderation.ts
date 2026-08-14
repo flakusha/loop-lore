@@ -10,7 +10,7 @@ import {
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils.js";
 
-export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api") {
+export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const svc = new BlogService(database,);
 

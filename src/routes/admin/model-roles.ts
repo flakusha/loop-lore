@@ -16,7 +16,7 @@ import {
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api") {
+export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-model-roles", },)
       // ── Model role overrides ───────────────────────────────

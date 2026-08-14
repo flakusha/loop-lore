@@ -8,7 +8,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { auditQuery, requireAdmin, userIdParam, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function auditRoutes(opts: HandlerOpts, prefix = "/api") {
+export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 
   return (

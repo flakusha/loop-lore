@@ -8,11 +8,18 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../../db/schema";
 import { WorldEventType, } from "../../../db/enums-story";
+import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
-import { insertActors, insertItems, insertLocations, insertUsers, insertWorlds, insertWorldItems, } from "../../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertItems,
+  insertLocations,
+  insertUsers,
+  insertWorldItems,
+  insertWorlds,
+} from "../../../test-utils/insert-helpers";
 import { uid, } from "../../../utils";
 import { ItemsService, } from "../../items";
 import type { WorldEvent, } from "../../types";
@@ -45,13 +52,13 @@ beforeAll(async () => {
   itemId = uid();
   await insertItems(db, worldId, "Iron Sword", "weapon", { id: itemId, } as never,);
   items = new ItemsService(db,);
-});
+},);
 
 afterAll(async () => {
   await db.destroy();
-});
+},);
 
-function transferEvent(overrides: Partial<WorldEvent["data"]> & { itemName: string; },): WorldEvent {
+function transferEvent(overrides: Partial<WorldEvent["data"]> & { itemName: string },): WorldEvent {
   return {
     type: WorldEventType.ItemTransfer,
     actorId: actorA,
@@ -66,17 +73,23 @@ describe("applyItemTransfer", () => {
   test("transfers owned item from giver to receiver", async () => {
     const wId = uid();
     await insertWorldItems(db, worldId, itemId, { id: wId, owner_actor_id: actorA, quantity: 5, } as never,);
-    const before = await db.selectFrom("world_items").select("quantity").where("id", "=", wId,).executeTakeFirst();
+    const before = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
 
-    await applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sword", quantity: 2, fromActorId: actorA, toActorId: actorB, }),);
+    await applyItemTransfer(
+      db,
+      items,
+      worldId,
+      transferEvent({ itemName: "Iron Sword", quantity: 2, fromActorId: actorA, toActorId: actorB, },),
+    );
 
     // Source reduced.
-    const after = await db.selectFrom("world_items").select(["quantity", "owner_actor_id",]).where("id", "=", wId,).executeTakeFirst();
+    const after = await db.selectFrom("world_items",).select(["quantity", "owner_actor_id",],).where("id", "=", wId,)
+      .executeTakeFirst();
     expect(after?.quantity,).toBe(before!.quantity - 2,);
 
     // Receiver gained the item.
     const dest = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .select("quantity",)
       .where("item_id", "=", itemId,)
       .where("owner_actor_id", "=", actorB,)
@@ -90,12 +103,17 @@ describe("applyItemTransfer", () => {
     await insertActors(db, "Receiver2", { id: receiver, } as never,);
     await insertWorldItems(db, worldId, itemId, { id: wId, location_id: locA, quantity: 3, } as never,);
 
-    await applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sword", quantity: 3, fromActorId: null, toActorId: receiver, }),);
+    await applyItemTransfer(
+      db,
+      items,
+      worldId,
+      transferEvent({ itemName: "Iron Sword", quantity: 3, fromActorId: null, toActorId: receiver, },),
+    );
 
-    const source = await db.selectFrom("world_items").select("id").where("id", "=", wId,).executeTakeFirst();
+    const source = await db.selectFrom("world_items",).select("id",).where("id", "=", wId,).executeTakeFirst();
     expect(source,).toBeUndefined();
     const dest = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .select("quantity",)
       .where("item_id", "=", itemId,)
       .where("owner_actor_id", "=", receiver,)
@@ -105,13 +123,13 @@ describe("applyItemTransfer", () => {
 
   test("skips unknown item names without error", async () => {
     await expect(
-      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Mythril Axe", }),),
+      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Mythril Axe", },),),
     ).resolves.toBeUndefined();
   });
 
   test("skips when source instance is missing", async () => {
     await expect(
-      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sword", fromActorId: actorB, }),),
+      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sword", fromActorId: actorB, },),),
     ).resolves.toBeUndefined();
   });
 
@@ -120,7 +138,7 @@ describe("applyItemTransfer", () => {
     const dupId = uid();
     await insertItems(db, worldId, "Iron Sword", "weapon", { id: dupId, } as never,);
     await expect(
-      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sw", }),),
+      applyItemTransfer(db, items, worldId, transferEvent({ itemName: "Iron Sw", },),),
     ).resolves.toBeUndefined();
   });
 });

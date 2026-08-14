@@ -19,7 +19,7 @@ import {
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
-export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const relationshipsService = RelationshipsService(database,);
 

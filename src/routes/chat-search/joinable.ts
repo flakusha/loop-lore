@@ -3,7 +3,7 @@ import { jsonPaginated, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { type HandlerOpts, JoinableQuery, } from "./types";
 
-export function joinableRoutes(opts: HandlerOpts, prefix = "/api") {
+export function joinableRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

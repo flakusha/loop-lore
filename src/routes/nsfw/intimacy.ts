@@ -4,7 +4,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, requireActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function intimacyRoutes(opts: HandlerOpts, prefix = "/api") {
+export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const intimacyService = new IntimacyService(database,);
 

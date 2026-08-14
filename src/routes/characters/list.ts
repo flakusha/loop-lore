@@ -6,7 +6,7 @@ import {
 import { jsonPaginated, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function listRoutes(opts: HandlerOpts, prefix = "/api") {
+export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-list", },)
