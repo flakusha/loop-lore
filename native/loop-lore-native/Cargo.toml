@@ -1,0 +1,37 @@
+[package]
+name = "loop-lore-native"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/loop-lore/loop-lore"
+description = "Native BLAKE3 module for loop-lore — pre-compiled hot binary sample (C ABI, loaded via bun:ffi)"
+
+[lib]
+name = "loop_lore_native"
+# cdylib = runtime artifact loaded via bun:ffi; rlib = lets cargo test /
+# integration tests link against the crate (cdylib alone cannot).
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+blake3 = "1.8.6"
+
+# ── Lints (mirror the repo's strict TS hygiene: clippy all+pedantic, docs) ──
+[lints.rust]
+missing_docs = "warn"
+unsafe_op_in_unsafe_fn = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# FFI exports have no caller to document panics/errors to — the ABI contract
+# is documented at the export site. Doc-only lints are intentionally relaxed.
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+# `ll_version` is an FFI probe; `must_use` adds no value across the boundary.
+must_use_candidate = "allow"
+
+# ── Release profile: the binary is loaded once per process — optimize hard ──
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
