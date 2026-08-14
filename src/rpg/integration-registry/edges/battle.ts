@@ -4,26 +4,26 @@
  * Cross-system edges where Battle is the source system. Migrated verbatim from
  * the former `buildEdges()`.
  */
-import type { IntegrationEdge, } from "../types";
+import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
 
 /** Integration edges rooted at the Battle system. */
 export const BATTLE_EDGES: IntegrationEdge[] = [
   {
     source: "battle",
     target: "items",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["Item", "StatusEffect",],
     events: [
       {
         id: "battle.loot_dropped",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "battle",
         target: "items",
         notes: "Loot drops feed inventory",
       },
       {
         id: "battle.item_used",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "battle",
         target: "items",
         notes: "Consumable consumed in combat",
@@ -33,19 +33,19 @@ export const BATTLE_EDGES: IntegrationEdge[] = [
   {
     source: "battle",
     target: "social",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["CharacterStats", "StatusEffect",],
     events: [
       {
         id: "battle.intimidate_check",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "social",
         target: "battle",
         notes: "Social skill during combat",
       },
       {
         id: "battle.surrender",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "battle",
         target: "social",
         notes: "Surrender resolves combat via social",
@@ -55,12 +55,12 @@ export const BATTLE_EDGES: IntegrationEdge[] = [
   {
     source: "battle",
     target: "weather",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["PlayerState",],
     events: [
       {
         id: "weather.changed",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "weather",
         target: "battle",
         notes: "Environmental modifiers applied",
@@ -70,19 +70,19 @@ export const BATTLE_EDGES: IntegrationEdge[] = [
   {
     source: "battle",
     target: "companion",
-    direction: "depended_by",
+    direction: EdgeDirection.DependedBy,
     interfaces: ["PlayerState", "CharacterStats",],
     events: [
       {
         id: "battle.companion_turn",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "companion",
         target: "battle",
         notes: "Companion participates in turn order",
       },
       {
         id: "companion.fainted",
-        direction: "emits",
+        direction: EventDirection.Emits,
         source: "companion",
         target: "battle",
         notes: "Companion removed from combat",
@@ -92,12 +92,12 @@ export const BATTLE_EDGES: IntegrationEdge[] = [
   {
     source: "battle",
     target: "resolution",
-    direction: "depends_on",
+    direction: EdgeDirection.DependsOn,
     interfaces: ["DiceRoll",],
     events: [
       {
         id: "resolution.roll",
-        direction: "subscribes",
+        direction: EventDirection.Subscribes,
         source: "resolution",
         target: "battle",
         notes: "Attack rolls, saving throws",
