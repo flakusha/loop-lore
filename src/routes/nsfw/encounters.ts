@@ -4,14 +4,14 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function encounterRoutes(opts: HandlerOpts,) {
+export function encounterRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const encounterService = new EncounterService(database,);
 
   return (
     new Elysia({ name: "nsfw-encounters", },)
       .post(
-        "/api/nsfw/encounters",
+        prefix + "/nsfw/encounters",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -34,7 +34,7 @@ export function encounterRoutes(opts: HandlerOpts,) {
         },
       )
       .get(
-        "/api/nsfw/encounters/:id",
+        prefix + "/nsfw/encounters/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -51,7 +51,7 @@ export function encounterRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/encounters/:id/advance",
+        prefix + "/nsfw/encounters/:id/advance",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -65,7 +65,7 @@ export function encounterRoutes(opts: HandlerOpts,) {
         },
       )
       .get(
-        "/api/nsfw/encounters/world/:worldId",
+        prefix + "/nsfw/encounters/world/:worldId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

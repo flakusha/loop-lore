@@ -4,14 +4,14 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, requireActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function intimacyRoutes(opts: HandlerOpts,) {
+export function intimacyRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const intimacyService = new IntimacyService(database,);
 
   return (
     new Elysia({ name: "nsfw-intimacy", },)
       .get(
-        "/api/nsfw/intimacy/:actorId/:targetId",
+        prefix + "/nsfw/intimacy/:actorId/:targetId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -30,7 +30,7 @@ export function intimacyRoutes(opts: HandlerOpts,) {
         },
       )
       .get(
-        "/api/nsfw/intimacy/:actorId",
+        prefix + "/nsfw/intimacy/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -48,7 +48,7 @@ export function intimacyRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/nsfw/intimacy/action",
+        prefix + "/nsfw/intimacy/action",
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;

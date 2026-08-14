@@ -5,14 +5,14 @@ import { BatchIdsBody, } from "../../validation/schemas";
 import { jsonResponse, notFoundResponse as notFound, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function batchRoutes(opts: HandlerOpts,) {
+export function batchRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chats-batch", },)
       // ── Batch chat operations ──────────────────────────────────
       .post(
-        "/api/chats/batch/archive",
+        prefix + "/chats/batch/archive",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -24,7 +24,7 @@ export function batchRoutes(opts: HandlerOpts,) {
         { body: BatchIdsBody, },
       )
       .post(
-        "/api/chats/batch/delete",
+        prefix + "/chats/batch/delete",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -36,7 +36,7 @@ export function batchRoutes(opts: HandlerOpts,) {
         { body: BatchIdsBody, },
       )
       .post(
-        "/api/chats/batch/export",
+        prefix + "/chats/batch/export",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

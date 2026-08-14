@@ -4,14 +4,14 @@ import { forbiddenResponse as forbidden, jsonError, jsonResponse, requireUserId,
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function transferRoutes(opts: HandlerOpts,) {
+export function transferRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-search-transfer", },)
       // ── Transfer chat to new location ────────────────────────
       .post(
-        "/api/chats/:id/transfer",
+        prefix + "/chats/:id/transfer",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

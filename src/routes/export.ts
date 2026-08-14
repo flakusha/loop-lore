@@ -26,8 +26,8 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function exportRoutes({ database, }: HandlerOpts,): Elysia {
-  return new Elysia({ name: "export", },).post("/api/export", async (ctx: any,) => {
+export function exportRoutes({ database, }: HandlerOpts, prefix = "/api"): Elysia {
+  return new Elysia({ name: "export", },).post(prefix + "/export", async (ctx: any,) => {
     const userId = await resolveUserIdFromRequest(ctx.request, database, "solo",);
     if (!userId) {
       return jsonError({

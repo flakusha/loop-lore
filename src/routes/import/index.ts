@@ -14,10 +14,11 @@ import { handleImport, } from "./handle";
 
 export function importRoutes(
   { database, config, }: { database: Kysely<DB>; config: { auth: AuthConfig; assets?: { uploadDir?: string } } },
+  prefix = "/api",
 ): Elysia {
   const uploadDir = config.assets?.uploadDir;
 
-  return new Elysia({ name: "import", },).post("/api/actors/import", async (ctx: any,) => {
+  return new Elysia({ name: "import", },).post(prefix + "/actors/import", async (ctx: any,) => {
     // authenticate directly before .derive()
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
     if (authResult instanceof Response) { return authResult; }

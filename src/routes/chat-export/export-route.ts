@@ -8,9 +8,9 @@ import { requireUserId, } from "../http-utils";
 import { formatHtml, formatJson, formatMarkdown, formatPlainText, } from "./format";
 import type { HandlerOpts, MessageData, } from "./types";
 
-export function exportChatRoute({ database, }: HandlerOpts,) {
+export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
   return new Elysia().get(
-    "/api/chats/:id/export",
+    prefix + "/chats/:id/export",
     async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }

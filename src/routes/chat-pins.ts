@@ -16,14 +16,14 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function chatPinRoutes(opts: HandlerOpts,) {
+export function chatPinRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-pins", },)
       // List pinned messages for a chat
       .get(
-        "/api/chats/:id/pins",
+        prefix + "/chats/:id/pins",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -68,7 +68,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
       )
       // Pin a message
       .post(
-        "/api/chats/:id/pins",
+        prefix + "/chats/:id/pins",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -123,7 +123,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
       )
       // Unpin a message
       .delete(
-        "/api/chats/:id/pins/:pinId",
+        prefix + "/chats/:id/pins/:pinId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

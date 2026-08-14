@@ -20,13 +20,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Import sub-plugin — import character systems data from body or remote URL.
  */
-export function importRoutes(opts: HandlerOpts,) {
+export function importRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "character-io-import", },)
       // ── Import Systems Data ─────────────────────────────────
-      .post("/api/actors/:actorId/systems/import", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/systems/import", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -74,7 +74,7 @@ export function importRoutes(opts: HandlerOpts,) {
         },
       },)
       // ── Import Systems Data from URL ────────────────────────
-      .post("/api/actors/:actorId/systems/import/url", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/systems/import/url", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

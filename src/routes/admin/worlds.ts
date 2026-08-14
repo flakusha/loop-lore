@@ -5,12 +5,12 @@ import { AdminPaginatedEnvelope, AdminWorldRow, } from "../../validation/schemas
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function worldsRoutes(opts: AdminRouteOpts,) {
+export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-worlds", },)
       // ── World management ───────────────────────────────────
       .get(
-        "/api/admin/worlds",
+        prefix + "/admin/worlds",
         async (ctx: any,) => {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -56,7 +56,7 @@ export function worldsRoutes(opts: AdminRouteOpts,) {
         },
       )
       .get(
-        "/api/admin/worlds/:id",
+        prefix + "/admin/worlds/:id",
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -94,7 +94,7 @@ export function worldsRoutes(opts: AdminRouteOpts,) {
         { params: WorldIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .delete(
-        "/api/admin/worlds/:id",
+        prefix + "/admin/worlds/:id",
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {

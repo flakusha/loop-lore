@@ -16,13 +16,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Mood state sub-plugin — get/create/update actor mood and apply happiness deltas.
  */
-export function stateRoutes(opts: HandlerOpts,) {
+export function stateRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const moodService = MoodService(database,);
 
   return (
     new Elysia({ name: "character-mood-state", },)
-      .get("/api/actors/:actorId/mood", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/mood", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -57,7 +57,7 @@ export function stateRoutes(opts: HandlerOpts,) {
           tags: ["Character Mood",],
         },
       },)
-      .post("/api/actors/:actorId/mood", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/mood", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -93,7 +93,7 @@ export function stateRoutes(opts: HandlerOpts,) {
           tags: ["Character Mood",],
         },
       },)
-      .put("/api/actors/:actorId/mood", async (ctx: any,) => {
+      .put(prefix + "/actors/:actorId/mood", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 
@@ -134,7 +134,7 @@ export function stateRoutes(opts: HandlerOpts,) {
           tags: ["Character Mood",],
         },
       },)
-      .post("/api/actors/:actorId/mood/delta", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/mood/delta", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (userId instanceof Response) { return userId; }
 

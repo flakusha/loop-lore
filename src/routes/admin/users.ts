@@ -11,14 +11,14 @@ import { AdminPaginatedEnvelope, AdminUserRow, } from "../../validation/schemas/
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function usersRoutes(opts: AdminRouteOpts,) {
+export function usersRoutes(opts: AdminRouteOpts, prefix = "/api") {
   const db = opts.database;
 
   return (
     new Elysia({ name: "admin-users", },)
       // ── User management ────────────────────────────────────
       .get(
-        "/api/admin/users",
+        prefix + "/admin/users",
         async (ctx: any,) => {
           const { userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -82,7 +82,7 @@ export function usersRoutes(opts: AdminRouteOpts,) {
         },
       )
       .get(
-        "/api/admin/users/:id",
+        prefix + "/admin/users/:id",
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -134,7 +134,7 @@ export function usersRoutes(opts: AdminRouteOpts,) {
         },
       )
       .patch(
-        "/api/admin/users/:id/role",
+        prefix + "/admin/users/:id/role",
         async (ctx: any,) => {
           const { params: p, body, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {
@@ -158,7 +158,7 @@ export function usersRoutes(opts: AdminRouteOpts,) {
         },
       )
       .delete(
-        "/api/admin/users/:id",
+        prefix + "/admin/users/:id",
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
           if (!isAdminRole(userRole,)) {

@@ -9,13 +9,13 @@ import { getChatBackground, setChatBackground, } from "./service";
 import { chatAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function assignmentRoutes(opts: HandlerOpts,) {
+export function assignmentRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-backgrounds-assignment", },)
       .get(
-        "/api/chats/:id/background",
+        prefix + "/chats/:id/background",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -41,7 +41,7 @@ export function assignmentRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/chats/:id/background",
+        prefix + "/chats/:id/background",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -78,7 +78,7 @@ export function assignmentRoutes(opts: HandlerOpts,) {
         },
       )
       .delete(
-        "/api/chats/:id/background",
+        prefix + "/chats/:id/background",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

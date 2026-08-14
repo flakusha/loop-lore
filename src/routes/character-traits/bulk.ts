@@ -13,13 +13,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Bulk Traits sub-plugin — aggregated trait lookup across all layers.
  */
-export function bulkTraitsRoutes(opts: HandlerOpts,) {
+export function bulkTraitsRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 
   return (
     new Elysia({ name: "character-traits-bulk", },)
-      .get("/api/actors/:actorId/traits", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/traits", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

@@ -3,14 +3,14 @@ import { jsonPaginated, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { type HandlerOpts, JoinableQuery, } from "./types";
 
-export function joinableRoutes(opts: HandlerOpts,) {
+export function joinableRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-search-joinable", },)
       // ── Discover joinable chats ───────────────────────────────
       .get(
-        "/api/chats/joinable",
+        prefix + "/chats/joinable",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

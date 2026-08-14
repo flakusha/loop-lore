@@ -10,12 +10,12 @@ import {
 } from "./locations";
 import type { HandleOpts, } from "./types";
 
-export function locationRoutes(opts: HandleOpts,) {
+export function locationRoutes(opts: HandleOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "worlds-locations", },)
     .get(
-      "/api/worlds/:worldId/locations",
+      prefix + "/worlds/:worldId/locations",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
@@ -36,7 +36,7 @@ export function locationRoutes(opts: HandleOpts,) {
       },
     )
     .post(
-      "/api/worlds/:worldId/locations",
+      prefix + "/worlds/:worldId/locations",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleCreateLocation(
@@ -62,7 +62,7 @@ export function locationRoutes(opts: HandleOpts,) {
       },
     )
     .get(
-      "/api/worlds/:worldId/locations/:locId",
+      prefix + "/worlds/:worldId/locations/:locId",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetLocation(
@@ -87,7 +87,7 @@ export function locationRoutes(opts: HandleOpts,) {
       },
     )
     .put(
-      "/api/worlds/:worldId/locations/:locId",
+      prefix + "/worlds/:worldId/locations/:locId",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateLocation(
@@ -114,7 +114,7 @@ export function locationRoutes(opts: HandleOpts,) {
       },
     )
     .delete(
-      "/api/worlds/:worldId/locations/:locId",
+      prefix + "/worlds/:worldId/locations/:locId",
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteLocation(

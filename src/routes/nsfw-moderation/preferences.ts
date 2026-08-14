@@ -13,12 +13,12 @@ import {
 } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function preferencesRoutes(opts: HandlerOpts,) {
+export function preferencesRoutes(opts: HandlerOpts, prefix = "/api") {
   const svc = new NsfwModerationService(opts.database,);
 
   return (
     new Elysia({ name: "nsfw-moderation-preferences", },)
-      .get("/api/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
+      .get(prefix + "/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
         const auth = requireOwnOrAdmin(ctx, ctx.params.userId,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -30,7 +30,7 @@ export function preferencesRoutes(opts: HandlerOpts,) {
           return jsonError(msg, 500,);
         }
       }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .put("/api/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
+      .put(prefix + "/nsfw/moderation/preferences/:userId", async (ctx: any,) => {
         const auth = requireOwnOrAdmin(ctx, ctx.params.userId,);
         if (typeof auth !== "string") { return auth; }
         try {

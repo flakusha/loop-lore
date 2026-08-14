@@ -18,8 +18,8 @@ import type { UsersRoutesOpts, } from "./types";
 
 export type { UsersRoutesOpts, } from "./types";
 
-export function usersRoutes(opts: UsersRoutesOpts,): Elysia {
+export function usersRoutes(opts: UsersRoutesOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "users", },)
-    .use(meRoutes(opts,),)
-    .use(manageRoutes(opts,),) as unknown as Elysia;
+    .use(meRoutes(opts, prefix,),)
+    .use(manageRoutes(opts, prefix,),) as unknown as Elysia;
 }

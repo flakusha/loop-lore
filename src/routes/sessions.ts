@@ -50,7 +50,7 @@ function sanitizeSession(
   };
 }
 
-export function sessionsRoutes(opts: HandleOpts,): Elysia {
+export function sessionsRoutes(opts: HandleOpts, prefix = "/api"): Elysia {
   const { database, } = opts;
 
   return (
@@ -62,7 +62,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
        * Admin users can see all sessions; regular users only see their own.
        * Query params: ?page=1&pageSize=50
        */
-      .get("/api/sessions", async (ctx,) => {
+      .get(prefix + "/sessions", async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const userRole = (ctx as any).userRole as string | null;
@@ -129,7 +129,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
        * Admin can view any session; regular users can only view their own.
        */
       .get(
-        "/api/sessions/:id",
+        prefix + "/sessions/:id",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -175,7 +175,7 @@ export function sessionsRoutes(opts: HandleOpts,): Elysia {
        * (use /api/auth/logout instead).
        */
       .delete(
-        "/api/sessions/:id",
+        prefix + "/sessions/:id",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

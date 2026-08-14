@@ -150,11 +150,13 @@ describe("messageReactionsRoutes access checks", () => {
 
     const add = await app.handle(toggle(`/api/messages/${messageId}/reactions`, "✨",),);
     const firstToggleBody = (await add.json()) as { toggled: boolean; emoji: string };
-    expect(firstToggleBody,).toEqual({ toggled: true, emoji: "✨", },);
+    expect(firstToggleBody.toggled,).toBe(true,);
+    expect(firstToggleBody.emoji,).toBe("✨",);
 
     const remove = await app.handle(toggle(`/api/messages/${messageId}/reactions`, "✨",),);
     const secondToggleBody = (await remove.json()) as { toggled: boolean; emoji: string };
-    expect(secondToggleBody,).toEqual({ toggled: false, emoji: "✨", },);
+    expect(secondToggleBody.toggled,).toBe(false,);
+    expect(secondToggleBody.emoji,).toBe("✨",);
   });
 
   test("POST rejects an empty emoji", async () => {

@@ -20,10 +20,10 @@ function log() {
   return getLogger().child({ module: "plugins", },);
 }
 
-export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
+export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "plugins", },)
     .get(
-      "/api/plugins",
+      prefix + "/plugins",
       async (ctx: any,) => {
         if (ctx.userRole !== "admin") {
           return forbidden("Admin access required",);
@@ -54,7 +54,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     .post(
-      "/api/plugins/:name/enable",
+      prefix + "/plugins/:name/enable",
       async ({ params, userRole, }: any,) => {
         if (userRole !== "admin") {
           return forbidden("Admin access required",);
@@ -104,7 +104,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     .post(
-      "/api/plugins/:name/disable",
+      prefix + "/plugins/:name/disable",
       async ({ params, userRole, }: any,) => {
         if (userRole !== "admin") {
           return forbidden("Admin access required",);

@@ -1,7 +1,16 @@
 import type { TranslatorFn, } from "../../i18n/types";
 import { safeJsonStringify, } from "../../utils";
 import { ErrorCode, HttpStatus, type HttpStatusCode, } from "./status";
-import type { ApiError, JsonErrorOptions, JsonPaginatedOptions, ValidationError, } from "./types";
+import type { ApiError, ApiResponseMeta, JsonErrorOptions, JsonPaginatedOptions, ValidationError, } from "./types";
+
+/**
+ * Current API version injected into every response envelope.
+ * Bump when introducing breaking changes and mounting a new `/api/vN/` surface.
+ */
+export const API_VERSION = "1" as const;
+
+/** Shared meta block for all API responses. */
+const API_META: ApiResponseMeta = { api_version: API_VERSION, };
 
 // ── Response helpers ──────────────────────────────────────────
 
@@ -13,7 +22,12 @@ import type { ApiError, JsonErrorOptions, JsonPaginatedOptions, ValidationError,
  *   jsonResponse(user, HttpStatus.Created)
  */
 export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.OK,): Response {
-  return Response.json(data, { status, },);
+  // Merge meta into object responses (backward-compatible for property access).
+  // Arrays and primitives pass through unchanged to preserve existing contracts.
+  const body = (data !== null && typeof data === "object" && !Array.isArray(data,))
+    ? { ...(data as Record<string, unknown>), meta: API_META, }
+    : data;
+  return Response.json(body, { status, },);
 }
 
 /**
@@ -51,7 +65,7 @@ export function jsonError(
   const message = opts.t ? opts.t(opts.message,) : opts.message;
   const resolvedStatus = opts.status ?? (typeof messageOrOptions === "string" ? status : HttpStatus.BadRequest);
   const resolvedCode = opts.code ?? STATUS_TO_CODE[resolvedStatus];
-  const body: ApiError = { error: message, code: resolvedCode, };
+  const body = { error: message, code: resolvedCode, meta: API_META, };
   return Response.json(body, { status: resolvedStatus, },);
 }
 
@@ -65,9 +79,9 @@ export function jsonError(
  */
 export function jsonValidationError(errors: ValidationError[], message = "Validation failed",): Response {
   return Response.json(
-    { error: message, code: "VALIDATION_ERROR", details: errors, } satisfies ApiError & {
+    { error: message, code: "VALIDATION_ERROR", details: errors, meta: API_META, } satisfies ApiError & {
       details: ValidationError[];
-    },
+    } & { meta: ApiResponseMeta },
     { status: HttpStatus.UnprocessableEntity, },
   );
 }
@@ -108,7 +122,7 @@ export function jsonPaginated(
         totalPages: pageSize && pageSize > 0 ? Math.ceil((total ?? 0) / pageSize,) : 0,
       },
     };
-  return Response.json({ data, pagination, }, { status: HttpStatus.OK, },);
+  return Response.json({ data, pagination, meta: API_META, }, { status: HttpStatus.OK, },);
 }
 
 /**
@@ -120,7 +134,10 @@ export function jsonPaginated(
  */
 export function jsonCreated(data?: unknown,): Response {
   if (data === undefined) { return new Response(null, { status: HttpStatus.Created, },); }
-  const result = safeJsonStringify(data,);
+  const envelope = (data !== null && typeof data === "object" && !Array.isArray(data,))
+    ? { ...(data as Record<string, unknown>), meta: API_META, }
+    : { data, meta: API_META, };
+  const result = safeJsonStringify(envelope,);
   if (!result.ok) {
     return jsonError({ message: "Failed to serialize response", status: HttpStatus.InternalServerError, },);
   }

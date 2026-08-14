@@ -6,12 +6,12 @@ import {
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function readRoutes(opts: HandlerOpts,) {
+export function readRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-read", },)
     .get(
-      "/api/actors/:actorId",
+      prefix + "/actors/:actorId",
       async (ctx: any,) => {
         const actor = await database
           .selectFrom("actors",)

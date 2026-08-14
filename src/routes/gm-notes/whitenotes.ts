@@ -19,13 +19,13 @@ import {
 import { NoteIdParams, WhiteneoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
-export function whitenoteRoutes(opts: HandlerOpts,) {
+export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "gm-notes-whitenotes", },)
       .get(
-        "/api/chats/:id/whitenotes",
+        prefix + "/chats/:id/whitenotes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -61,7 +61,7 @@ export function whitenoteRoutes(opts: HandlerOpts,) {
         { params: ChatIdParams, query: PaginationQuery, },
       )
       .post(
-        "/api/chats/:id/whitenotes",
+        prefix + "/chats/:id/whitenotes",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -94,7 +94,7 @@ export function whitenoteRoutes(opts: HandlerOpts,) {
         { params: ChatIdParams, body: WhiteneoteBody, },
       )
       .delete(
-        "/api/chats/:id/whitenotes/:noteId",
+        prefix + "/chats/:id/whitenotes/:noteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

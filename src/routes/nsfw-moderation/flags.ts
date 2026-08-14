@@ -8,12 +8,12 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { flagBody, flagQuery, requireAdmin, resolveFlagBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function flagsRoutes(opts: HandlerOpts,) {
+export function flagsRoutes(opts: HandlerOpts, prefix = "/api") {
   const svc = new NsfwModerationService(opts.database,);
 
   return (
     new Elysia({ name: "nsfw-moderation-flags", },)
-      .post("/api/nsfw/moderation/flags", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/flags", async (ctx: any,) => {
         const auth = requireUserId(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -23,7 +23,7 @@ export function flagsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: flagBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .get("/api/nsfw/moderation/flags", async (ctx: any,) => {
+      .get(prefix + "/nsfw/moderation/flags", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -36,7 +36,7 @@ export function flagsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { query: flagQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .put("/api/nsfw/moderation/flags/:id", async (ctx: any,) => {
+      .put(prefix + "/nsfw/moderation/flags/:id", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {

@@ -16,6 +16,8 @@ import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
+import { versionRedirect, } from "./routes/middleware/version-redirect";
+import { v1Routes, } from "./routes/v1";
 import { handleApiRequest, } from "./server";
 import { onValidationError, } from "./validation";
 
@@ -55,6 +57,11 @@ export function createApp(deps: AppDeps,): Elysia {
     },);
 
   registerPlugins(app as unknown as Elysia<any>, { database, config, },);
+
+  // ── V1 versioned routes ────────────────────────────────────────
+  (app as any).use(v1Routes({ database, config, },),);
+  (app as any).all("/api/:resource", versionRedirect("v1",),);
+  (app as any).all("/api/:resource/*", versionRedirect("v1",),);
 
   // ── Asset upload (standalone route) ──────────────────────────
   // WORKAROUND: Elysia 1.4.x body consumption bug. When a child plugin

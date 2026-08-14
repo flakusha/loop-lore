@@ -4,14 +4,14 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function locationRoutes(opts: HandlerOpts,) {
+export function locationRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const locationService = new LocationNsfwService(database,);
 
   return (
     new Elysia({ name: "nsfw-location", },)
       .get(
-        "/api/nsfw/location/:locationId",
+        prefix + "/nsfw/location/:locationId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -25,7 +25,7 @@ export function locationRoutes(opts: HandlerOpts,) {
         },
       )
       .put(
-        "/api/nsfw/location/:locationId",
+        prefix + "/nsfw/location/:locationId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

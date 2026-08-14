@@ -9,12 +9,12 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { blockBody, modBody, requireAdmin, unblockBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function actionsRoutes(opts: HandlerOpts,) {
+export function actionsRoutes(opts: HandlerOpts, prefix = "/api") {
   const svc = new NsfwModerationService(opts.database,);
 
   return (
     new Elysia({ name: "nsfw-moderation-actions", },)
-      .post("/api/nsfw/moderation/block", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/block", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -25,7 +25,7 @@ export function actionsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: blockBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .post("/api/nsfw/moderation/unblock", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/unblock", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -36,7 +36,7 @@ export function actionsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: unblockBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .post("/api/nsfw/moderation/ban", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/ban", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -47,7 +47,7 @@ export function actionsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .post("/api/nsfw/moderation/unban", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/unban", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -58,7 +58,7 @@ export function actionsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .post("/api/nsfw/moderation/shadow", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/shadow", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -69,7 +69,7 @@ export function actionsRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, { body: modBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
-      .post("/api/nsfw/moderation/unshadow", async (ctx: any,) => {
+      .post(prefix + "/nsfw/moderation/unshadow", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
