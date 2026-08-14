@@ -69,6 +69,16 @@
               ></span>
               <span class="edited-label" x-show="msg.edited_at" data-testid="edited-indicator"
               >{{{t("chats.edited")}}}</span>
+              <!-- Story mode: quality score badge from the matching story turn -->
+              <template x-if="isStoryMode && turnForMessage(msg.id)?.qualityScore != null">
+                <span
+                  class="story-quality-badge"
+                  :class="qualityClass(turnForMessage(msg.id).qualityScore ?? 0)"
+                  :title="t('story.qualityScore')"
+                  data-testid="story-quality-score"
+                  x-text="Math.round(turnForMessage(msg.id).qualityScore ?? 0) + '/100'"
+                ></span>
+              </template>
             </div>
             <!-- Thinking: Immersion = hidden, Basic = 💭 indicator, Detailed = collapsible -->
             <template x-if="msg.thinking && detailLevel === 'Basic'">
