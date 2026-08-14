@@ -274,11 +274,10 @@ interface DiseaseRisk {
 
 ## Related Resources
 
-- [NSFW System Design Doc](docs/spec/nsfw-design.md)
-- [Housing System Specs](docs/spec/housing.md)
-- [Weather System](docs/spec/weather.md)
-- [Social Interaction Design](docs/spec/social.md)
-- [Disease System](docs/spec/disease.md)
-- [Character Core System](docs/spec/character-core.md)
-- [Chat Lifecycle & Moderation](docs/spec/chat-lifecycle.md)
+- [NSFW System Design Doc](docs/spec/nsfw.md)
+- [Weather System](docs/spec/weather-environment.md)
+- [Social Interaction Design](docs/spec/social-interaction.md)
+- [Disease System](docs/spec/disease-poison.md)
+- [Character Core System](docs/spec/character-spec.md)
+- [Chat Lifecycle & Moderation](docs/spec/messages.md)
 - [Plugin System](docs/spec/plugin-system.md)
