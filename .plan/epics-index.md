@@ -12,7 +12,6 @@
 | 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Archival Workflow | Medium | Medium | 19 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
-| 📝 Draft | Epic: API Versioning (v1/v2+) | High | Medium | 5 | [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md) |
 | 📝 Draft | Epic: Assistant Creative Studio — Workflow Templates | High (MVP scoped, post-Gate C) | Large | 32 | [epic-assistant-creative-studio-workflows.md](/.plan/epics/epic-assistant-creative-studio-workflows.md) |
 | 📝 Draft | Epic: Chat Privacy | Medium | Medium | 4 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
@@ -128,7 +127,7 @@
 | 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review) | AUX LLM Enrichment Pipeline | P2-B | Medium | 11 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | 🟡 Partial (core CRUD + comments + follows + moderation built) | Blog System | Medium | High | 29 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
-| 🟡 Draft | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
+| 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy) | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | ✅ Complete (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`) | Chat Lifecycle, Transitions & Moderation | High | High | 8 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | 🟡 Partial — foundation exists (search, join, transfer endpoints) | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 20 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
 | 🟡 Permanently Ongoing | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
@@ -149,10 +148,11 @@
 | 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending) | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
 | 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
+| 🔧 In Progress | Epic: API Versioning (v1/v2+) | High | Medium | 4 | [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md) |
 | 🟡 Draft | Epic: Chat Context Optimization | High | High | 0 | [epic-chat-context-optimization.md](/.plan/epics/epic-chat-context-optimization.md) |
 | 📝 Draft — planning under `tree/chore-docs-reconcile` | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | Draft\ | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
-| 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built) | Epic: Memory & Knowledge Systems | High | High | 4 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
+| 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built) | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
 | Draft\ | Epic: Memory Propagation | High\ | Medium\ | 5 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
 | 🟢 Code+tests+schema done (migration 001/p07); UNWIRED | Epic: NPC Navigation | High | High | 0 | [epic-npc-navigation.md](/.plan/epics/epic-npc-navigation.md) |
 | 🟡 Implementation exists (rpg/quests + story/quest-engine); DUAL-SYSTEM + unwired | Epic: Quests & Encounters | High | High | 4 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
@@ -230,17 +230,6 @@
 - **File:** `.plan/epics/epic-analytics-observability.md`
 
 Conversation analytics and observability dashboard. Covers per-chat cost tracking, model comparison, and memory visualization.
-
-### Epic: API Versioning (v1/v2+)
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** api, versioning, routes, compatibility, deprecation, openapi
-- **File:** `.plan/epics/epic-api-versioning.md`
-
-Introduce explicit API versioning (`/api/v1/`, `/api/v2/`) so breaking changes
 
 ### Epic: Assistant Creative Studio — Workflow Templates
 
@@ -1306,11 +1295,11 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Character Internal Traits, Aspirations & Moral Disposition
 
-- **Status:** 🟡 Draft
+- **Status:** 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy)
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
-- **Tags:** characters, npc, internal-traits, aspirations, goals, moral-disposition, alignment, hidden-state, prompt-assembly
+- **Tags:** characters, npc, internal-traits, aspirations, goals, moral-disposition, alignment, hidden-state, prompt-assembly, coping, approach, autonomy, free-will
 - **File:** `.plan/epics/epic-character-internal-traits.md`
 
 ### Chat Lifecycle, Transitions & Moderation
@@ -1494,6 +1483,17 @@ Multi-system epic combining:
 
 Game mechanics for adult/NSFW content — intimacy systems, seduction, relationship progression, adult encounters, desires, fetishes, pregnancy/reproduction, body systems, pheromones, aphrodisiacs, heat/rut cycles, and mature narrative mechanics. This epic covers the **gameplay layer** of NSFW content, not the safety/consent infrastructure (that lives in `epic-logic-reconciliation.md` NSFW Support section and `docs/.nsfw/research.md`).
 
+### Epic: API Versioning (v1/v2+)
+
+- **Status:** 🔧 In Progress
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** api, versioning, routes, compatibility, deprecation, openapi
+- **File:** `.plan/epics/epic-api-versioning.md`
+
+Introduce explicit API versioning (`/api/v1/`, `/api/v2/`) so breaking changes
+
 ### Epic: Chat Context Optimization
 
 - **Status:** 🟡 Draft
@@ -1530,10 +1530,10 @@ Extends lore system to support timeline-specific knowledge propagation, secret l
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
-- **Tags:** memory, knowledge, three-tier, episodic, semantic, procedural
+- **Tags:** memory, knowledge, three-tier, episodic, semantic, procedural, emotion-impact, character-integration, timescape
 - **File:** `.plan/epics/epic-memory-knowledge-systems.md`
 
-Three-tier memory system — episodic, semantic, and procedural memory. Covers memory selection UI, lorebook activation, and cross-chat memory persistence.
+Three-tier memory system — episodic, semantic, and procedural memory. Covers memory selection UI, lorebook activation, and cross-chat memory persistence. Extended with emotion-impact fields for character behavior integration and timescape-aware memory management.
 
 ### Epic: Memory Propagation
 
