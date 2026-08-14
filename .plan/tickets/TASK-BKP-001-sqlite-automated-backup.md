@@ -1,25 +1,24 @@
 # TASK-BKP-001: SQLite Automated Backup System
 
-**Status**: completed  
+**Status**: drafted  
 **Priority**: high  
 **Labels**: backup, sqlite, automation, security, cron  
 **Epic**: epic-database-backup-recovery  
 **Assignee**: Platform Team  
 
 ## Description
-Implemented automated, encrypted backup system for loop-lore's SQLite database using internal cron scheduling followed by push to network shared storage.
+Drafted automated, encrypted backup system for loop-lore's SQLite database using internal cron scheduling followed by push to network shared storage.
 
-## Tasks Completed
-- [x] Designed backup strategy with WAL-aware copy
-- [x] Created backup script with GPG encryption (AES-256)
-- [x] Integrated with secure storage (network volumes)
-- [x] Added scheduling via cron (internal to app)
-- [x] Implemented retention policies (7-day default)
-- [x] Added verification (checksum + test restore hooks)
-- [x] Configured network push via rclone/rsync
-- [x] Documented all TODO items for finalization
+## Tasks
+- [x] Design backup strategy with WAL-aware copy
+- [x] Create backup script with GPG encryption (AES-256)
+- [x] Integrate with secure storage (network volumes)
+- [x] Add scheduling via cron (internal to app)
+- [x] Implement retention policies (7-day default)
+- [x] Add verification (checksum + test restore hooks)
+- [x] Configure network push via rclone/rsync
 
-## Acceptance Criteria Met
+## Acceptance Criteria
 - Backups run automatically via cron
 - All backups encrypted at rest (AES-256)
 - Backup integrity verified via SHA-256 checksum
@@ -36,10 +35,10 @@ Implemented automated, encrypted backup system for loop-lore's SQLite database u
 - Script marked with TODO: Finalize WAL handling & network push
 
 ## Related Files
-- Backup script: `scripts/backup-sqlite.sh` (completed)
-- Cron job: `configs/cron/sqlite-backup.cron` (completed)
+- Backup script: `scripts/backup-sqlite.sh` (drafted)
+- Cron job: `configs/cron/sqlite-backup.cron` (drafted)
 - Network mount config: `configs/backup-storage.yaml` (planned)
-- Verification script: `scripts/validate-backup-restore.sh` (completed)
+- Verification script: `scripts/validate-backup-restore.sh` (drafted)
 
 ## Notes
 - TODO items marked in script for finalization
