@@ -169,6 +169,42 @@ tracking: `epic-release-010.md`.
 - Frontend gaps in P2-B/C/D/E (music linking, party join/leave, unified GM↔assistant view, creation wizards, avatar-gallery visibility inheritance)
 - `.plan/open-items.md` — resolved: consolidated into `.plan/backlog/open.md` (2026-08-06)
 
+## 0.1.0 Quick Wins — Emergent-Platform Analysis (2026-08-14)
+
+> Features that **land in 0.1.0** (no P6+ blocker), drawn from the emergent-platform
+> sweep (inspiration: Kindroid, Nomi, SillyTavern QR, RisuAI dynamic-*, Inworld AI,
+> generative-agents, Luma/Runway). Mapped to existing epics, in-flight P2–P5 work,
+> and matrix gaps G18–G23. Full analysis: `docs/ideas/emergent-platform-landscape-2026.md`.
+>
+> These build on infrastructure **already shipped** — slash-command parser (21 handlers),
+> tool-call SSE (migration 037), memorySection (1024-token), regex extraction pipeline,
+> emotion avatars, prompt registry, VN mode, item-systems backend.
+
+| # | Capability | Builds on | Effort | Dependencies | Matrix gap |
+| -- | ---------- | --------- | ------ | ------------ | ---------- |
+| 1 | **Quick-Reply / event-driven automation** — button sets + auto-execute on startup/user/ai events (SillyTavern QR, RisuAI dynamic-* inspiration) | Slash-command parser + 21 handlers (`messages.ts:543`), regex pipeline | Med | None — pure frontend + thin route | G22 |
+| 2 | **Dynamic memory writes via tool-call** — assistant emits durable memory note mid-response (RisuAI dynamic-memory inspiration) | Tool-call SSE (`messages.tool_calls`, migration 037), memorySection | Med | Memory selection UI (item 5) for UX | G23 |
+| 3 | **Emotion-reactive portraits** — extend existing emotion avatars with `<Emotion>` tag + per-emotion sprite swap (RisuAI/SillyTavern inspiration) | Emotion avatars (shipped), assets polymorphic linking, `status_effects` | Low–Med | Per-character emotion images in gallery | G21 (partial) |
+| 4 | **Regex output-transform phase split** — extend regex pipeline from single-phase to 4-phase (editinput/output/process/display) (RisuAI 4-phase inspiration) | Regex extraction pipeline (`src/regex/`) | Low–Med | None — pure logic + frontend toggle | G22 (partial) |
+| 5 | **Memory selection UI — mid-chat pinning** — select/memory-pin/purge UI in chat sidebar (emergent ambient-memory trend: Kindroid, Nomi, Zhumu) | MemorySection, cross-chat memory (shipped), B8 in-flight | Low–Med | B8 already in-flight — this is the UX layer | G23 (partial) |
+| 6 | **Template injection UX** — registry impl shipped (`src/prompts/registry.ts`) → slider/select UI for prompt templates in chat settings | Prompt registry (P3 #13, shipped 2026-08-12), chat-settings modal | Low | None — frontend only | — |
+| 7 | **In-chat asset preview + linkage side panel** — gallery assets viewable/linkable without leaving chat (P4/P5 row) | Gallery + assetRoutes (shipped), chat-side-panel UI | Med | Signed URLs (C6 in-flight) | G21 (partial) |
+| 8 | **Creation wizards (assistant)** — character/world/location/item creation wizard flows via assistant (P2-C/P4 in-flight) | Assistant tool-call UI, creation-wizard prompts, assistant commands | Med | Assistant commands extension (C3 in-flight) | — |
+| 9 | **GM-guided story (P2-Da)** — the one Gate-C remainder: participant type, `/guide` command, guidance panel, turn-order wiring | GM panels + quest log (shipped), slash-command parser | Med–High | None — greenfield | — |
+| 10 | **Vector RAG / embeddings foundation** — first-class embeddings support for semantic memory recall (candidate #1, SillyTavern DataBank inspiration) | LLM providers (P3 #15 embeddings greenfield), memorySection | Med–High | Provider: OpenAI/local embedding endpoint | — |
+| 11 | **Asset-consistency reference conditioning** — keep character look across generated images via reference image (Luma/Runway/Krea inspiration) | Emotion avatars + text2img providers, asset system | Med–High | Provider: img2img with reference conditioning | G21 |
+| 12 | **Chat-type matrix UI remainder** — group-chat UI + unified GM↔assistant view (P2-B/P2-D in-flight) | GM panels (shipped), chat-types backend | Med | GM↔assistant reconciliation (E1 open) | — |
+
+**0.1.0 sequencing recommendation (by ROI):**
+- **First wave** (low effort, high delight): items 3, 4, 6 — pure logic/frontend, no new infra
+- **Second wave** (medium effort, high user-value): items 1, 2, 5 — extends shipped slash/automation infra
+- **Third wave** (medium effort, gate-critical): items 7, 8, 12 — frontend wiring to close P4/P5
+- **Must-land** (release-blocking): item 9 (GM-guided story, Gate-C remainder)
+- **P4 foundation** (medium-high, starts embeddings): item 10 — don't defer past 0.1.0 if feasible
+- **P6+ pull candidates** (if time permits): items 11, 12 — asset-consistency + chat matrix
+
+**Cross-ref:** matrix gaps G21 (asset-consistency), G22 (event-driven automation), G23 (dynamic memory) are the emergent-sweep quick wins with **no P6+ blocker** — all achievable in 0.1.0.
+
 ## Milestone Gates
 
 | Gate   | Trigger | Criteria                                                                                                       | Status |
