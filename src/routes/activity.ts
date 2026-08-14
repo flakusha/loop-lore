@@ -113,8 +113,8 @@ export async function computeActivity(
   return result;
 }
 
-export function activityRoutes({ database, }: { database: Kysely<DB> },) {
-  return new Elysia({ name: "activity", },).get("/api/chats/activity", async (ctx,) => {
+export function activityRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+  return new Elysia({ name: "activity", },).get(prefix + "/chats/activity", async (ctx,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
     const chats = await computeActivity(database, userId,);

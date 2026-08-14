@@ -4,11 +4,11 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-export function sdStatusRoutes(opts: AdminRouteOpts,) {
+export function sdStatusRoutes(opts: AdminRouteOpts, prefix = "/api") {
   return (
     new Elysia({ name: "admin-sd-status", },)
       // ── SD.CPP status ──────────────────────────────────────
-      .get("/api/admin/sd-status", async (ctx: any,) => {
+      .get(prefix + "/admin/sd-status", async (ctx: any,) => {
         const { userRole, } = ctx;
         if (!isAdminRole(userRole,)) {
           return jsonError({

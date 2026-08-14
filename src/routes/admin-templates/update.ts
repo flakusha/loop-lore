@@ -5,14 +5,14 @@ import { BUILTIN_PROFILES, type DetailLevel, type SdGenMode, } from "../../gener
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, mergeProfiles, saveStoredTemplates, } from "./shared";
 
-export function updateRoutes(opts: { database: Kysely<DB> },) {
+export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "admin-templates-update", },)
       // ── Update template text for a profile ────────────────
       .put(
-        "/api/admin/templates/:id",
+        prefix + "/admin/templates/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -61,7 +61,7 @@ export function updateRoutes(opts: { database: Kysely<DB> },) {
       )
       // ── Update model defaults for a profile ───────────────
       .put(
-        "/api/admin/templates/:id/defaults",
+        prefix + "/admin/templates/:id/defaults",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

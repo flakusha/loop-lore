@@ -5,14 +5,14 @@ import { forbiddenResponse as forbidden, jsonCreated, jsonError, requireUserId, 
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function joinRoutes(opts: HandlerOpts,) {
+export function joinRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-search-join", },)
       // ── Join a chat ──────────────────────────────────────────
       .post(
-        "/api/chats/:id/join",
+        prefix + "/chats/:id/join",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

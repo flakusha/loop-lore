@@ -14,13 +14,13 @@ const nsfwOverrideBody = t.Object({
   override: t.Union([t.Literal("enabled",), t.Literal("disabled",), t.Null(),],),
 },);
 
-export function overridesRoutes(opts: HandlerOpts,) {
+export function overridesRoutes(opts: HandlerOpts, prefix = "/api") {
   const svc = new NsfwModerationService(opts.database,);
   const database = opts.database;
 
   return (
     new Elysia({ name: "nsfw-moderation-overrides", },)
-      .get("/api/nsfw/moderation/effective/:chatId", async (ctx: any,) => {
+      .get(prefix + "/nsfw/moderation/effective/:chatId", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const access = await checkChatAccess(
@@ -40,7 +40,7 @@ export function overridesRoutes(opts: HandlerOpts,) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, { params: t.Object({ chatId: t.String(), },), response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
-      .put("/api/nsfw/moderation/chat/:chatId", async (ctx: any,) => {
+      .put(prefix + "/nsfw/moderation/chat/:chatId", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
@@ -55,7 +55,7 @@ export function overridesRoutes(opts: HandlerOpts,) {
         body: nsfwOverrideBody,
         response: { 200: SuccessResponse, 500: ErrorResponse, },
       },)
-      .put("/api/nsfw/moderation/world/:worldId", async (ctx: any,) => {
+      .put(prefix + "/nsfw/moderation/world/:worldId", async (ctx: any,) => {
         const auth = requireAdmin(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {

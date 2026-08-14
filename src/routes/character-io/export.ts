@@ -20,13 +20,13 @@ import type { HandlerOpts, } from "./types";
 /**
  * Export sub-plugin — export character systems data as JSON (GET + filtered POST).
  */
-export function exportRoutes(opts: HandlerOpts,) {
+export function exportRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "character-io-export", },)
       // ── Export Systems Data ─────────────────────────────────
-      .get("/api/actors/:actorId/systems/export", async (ctx: any,) => {
+      .get(prefix + "/actors/:actorId/systems/export", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -63,7 +63,7 @@ export function exportRoutes(opts: HandlerOpts,) {
         },
       },)
       // ── Export Systems Data (POST for complex queries) ──────
-      .post("/api/actors/:actorId/systems/export", async (ctx: any,) => {
+      .post(prefix + "/actors/:actorId/systems/export", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

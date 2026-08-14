@@ -10,9 +10,9 @@ import {
 } from "../../validation/schemas";
 import { handleAbandonQuest, handleQuest, } from "./handlers";
 
-export function questCrudRoutes({ database, }: { database: Kysely<DB> },) {
+export function questCrudRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "quests-crud", },)
-    .get("/api/quests/:id", async (ctx: any,) => {
+    .get(prefix + "/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleQuest(database, "GET", ctx.params.id, userId, userRole,);
@@ -29,7 +29,7 @@ export function questCrudRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Quests",],
       },
     },)
-    .put("/api/quests/:id", async (ctx: any,) => {
+    .put(prefix + "/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleQuest(
@@ -54,7 +54,7 @@ export function questCrudRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Quests",],
       },
     },)
-    .delete("/api/quests/:id", async (ctx: any,) => {
+    .delete(prefix + "/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleAbandonQuest(database, ctx.params.id, userId, userRole,);

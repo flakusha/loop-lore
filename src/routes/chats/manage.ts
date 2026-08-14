@@ -15,13 +15,13 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function manageRoutes(opts: HandlerOpts,) {
+export function manageRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chats-manage", },)
       .post(
-        "/api/chats/:id/migrate",
+        prefix + "/chats/:id/migrate",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -49,7 +49,7 @@ export function manageRoutes(opts: HandlerOpts,) {
         { body: ChatMigrateBody, params: ChatIdParams, },
       )
       .get(
-        "/api/chats/:id",
+        prefix + "/chats/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -66,7 +66,7 @@ export function manageRoutes(opts: HandlerOpts,) {
         { params: ChatIdParams, },
       )
       .put(
-        "/api/chats/:id",
+        prefix + "/chats/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -113,7 +113,7 @@ export function manageRoutes(opts: HandlerOpts,) {
         { body: ChatUpdateBody, params: ChatIdParams, },
       )
       .post(
-        "/api/chats/:id/rename",
+        prefix + "/chats/:id/rename",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -160,7 +160,7 @@ export function manageRoutes(opts: HandlerOpts,) {
         { body: ChatRenameBody, params: ChatIdParams, },
       )
       .delete(
-        "/api/chats/:id",
+        prefix + "/chats/:id",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -42,14 +42,14 @@ async function requireWorldAccess(
   return notFound("World not found",);
 }
 
-export function locationExplorerRoutes(opts: HandlerOpts,) {
+export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "location-explorer", },)
       // ── Explore tree (all locations + states, no paging) ─
       .get(
-        "/api/worlds/:worldId/location-explorer",
+        prefix + "/worlds/:worldId/location-explorer",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -88,7 +88,7 @@ export function locationExplorerRoutes(opts: HandlerOpts,) {
       )
       // ── Location detail (resolved connections + states) ──
       .get(
-        "/api/worlds/:worldId/locations/:locId/details",
+        prefix + "/worlds/:worldId/locations/:locId/details",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -97,10 +97,10 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
   },);
 }
 
-export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
+export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "settings", },)
     .get(
-      "/api/settings",
+      prefix + "/settings",
       async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -119,7 +119,7 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     .patch(
-      "/api/settings",
+      prefix + "/settings",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -141,7 +141,7 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     )
     .get(
-      "/api/settings/export",
+      prefix + "/settings/export",
       async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

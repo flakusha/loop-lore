@@ -8,13 +8,13 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { BACKGROUND_TYPES, ChatBackgroundCreateBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function catalogRoutes(opts: HandlerOpts,) {
+export function catalogRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "chat-backgrounds-catalog", },)
       .get(
-        "/api/backgrounds",
+        prefix + "/backgrounds",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -35,7 +35,7 @@ export function catalogRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/backgrounds",
+        prefix + "/backgrounds",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

@@ -4,14 +4,14 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, requireActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function bodyRoutes(opts: HandlerOpts,) {
+export function bodyRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
   const bodyService = new BodySystemService(database,);
 
   return (
     new Elysia({ name: "nsfw-body", },)
       .get(
-        "/api/nsfw/body/:actorId",
+        prefix + "/nsfw/body/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
@@ -25,7 +25,7 @@ export function bodyRoutes(opts: HandlerOpts,) {
         },
       )
       .put(
-        "/api/nsfw/body/:actorId",
+        prefix + "/nsfw/body/:actorId",
         async (ctx: any,) => {
           const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }

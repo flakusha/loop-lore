@@ -51,11 +51,11 @@ async function resolveActorAccess(
   return null;
 }
 
-export function tradeRoutes({ database, }: { database: Db },): Elysia {
+export function tradeRoutes({ database, }: { database: Db }, prefix = "/api"): Elysia {
   const svc = () => new TradeService(database,);
   return (
     new Elysia({ name: "trade", },)
-    .get("/api/worlds/:worldId/trade/balance", async (ctx: any) => {
+    .get(prefix + "/worlds/:worldId/trade/balance", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const actorId = ctx.query.actorId as string | undefined;
@@ -70,7 +70,7 @@ export function tradeRoutes({ database, }: { database: Db },): Elysia {
       response: { 200: t.Object({ actorId: Id, worldId: Id, balance: t.Integer(), }), 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Actor currency balance", description: "Read an actor's currency balance in a world.", tags: ["Trade",], },
     },)
-    .post("/api/worlds/:worldId/trade/execute", async (ctx: any) => {
+    .post(prefix + "/worlds/:worldId/trade/execute", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const body = ctx.body as { buyerActorId: string; sellerActorId: string; buyerItems: never[]; sellerItems: never[]; price: number };

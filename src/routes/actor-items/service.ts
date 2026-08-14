@@ -50,10 +50,10 @@ async function resolveActorOwner(
   return null;
 }
 
-export function actorItemsGameplayRoutes({ database, }: { database: Db },): Elysia {
+export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix = "/api"): Elysia {
   return (
     new Elysia({ name: "actor-items-gameplay", },)
-    .post("/api/actors/:actorId/items/:itemId/equip", async (ctx: any) => {
+    .post(prefix + "/actors/:actorId/items/:itemId/equip", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
@@ -66,7 +66,7 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db },): Elys
       response: { 200: actionResponse, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Equip actor item", description: "Equip an actor item, validating slot conflicts.", tags: ["Actor Items",], },
     },)
-    .post("/api/actors/:actorId/items/:itemId/unequip", async (ctx: any) => {
+    .post(prefix + "/actors/:actorId/items/:itemId/unequip", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
@@ -79,7 +79,7 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db },): Elys
       response: { 200: actionResponse, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Unequip actor item", description: "Unequip an actor item.", tags: ["Actor Items",], },
     },)
-    .get("/api/actors/:actorId/items/equipped", async (ctx: any) => {
+    .get(prefix + "/actors/:actorId/items/equipped", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
@@ -90,7 +90,7 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db },): Elys
       params: t.Object({ actorId: Id, },),
       detail: { summary: "List equipped items", description: "List all items currently equipped by an actor.", tags: ["Actor Items",], },
     },)
-    .get("/api/actors/:actorId/items/carry", async (ctx: any) => {
+    .get(prefix + "/actors/:actorId/items/carry", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
@@ -102,7 +102,7 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db },): Elys
       response: { 200: carryResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Actor carry status", description: "Current carried weight, capacity, and encumbrance for an actor.", tags: ["Actor Items",], },
     },)
-    .post("/api/actors/:actorId/items/:itemId/transfer", async (ctx: any) => {
+    .post(prefix + "/actors/:actorId/items/:itemId/transfer", async (ctx: any) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
