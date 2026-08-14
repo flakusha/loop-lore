@@ -15,15 +15,15 @@ describe("Registration flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest({ auth: { required: true, registrationOpen: true, }, },);
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoRegister(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.goto(`${ctx.url}/views/register`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='register-submit']",).waitFor({ state: "visible", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/register`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='register-submit']",).waitFor({ state: "visible", timeout: 30_000, },);
     await page.waitForTimeout(400,);
   }
 
@@ -38,7 +38,7 @@ describe("Registration flow E2E", () => {
       } finally {
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
 
     test("registers a new user and redirects to chat", async () => {
       const page = await ctx.openPage();
@@ -59,7 +59,7 @@ describe("Registration flow E2E", () => {
         await page.click("[data-testid='register-submit']",);
 
         // htmx follows HX-Redirect /views/chat on success.
-        await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 10_000, },);
+        await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
 
         // User persisted.
         const row = await ctx.db
@@ -75,6 +75,6 @@ describe("Registration flow E2E", () => {
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 });

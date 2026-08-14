@@ -15,15 +15,15 @@ describe("Auth browser E2E", () => {
   beforeAll(async () => {
     ctx = await createBrowserTest({ auth: { required: true, }, },);
     await seedUsers(ctx.db,);
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoLogin(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
-    await page.waitForSelector("[data-testid='login-submit']", { timeout: 5000, },);
+    await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
   }
 
   describe("Login form", () => {

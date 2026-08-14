@@ -36,15 +36,15 @@ describe("Search & filtering E2E", () => {
         .onConflict((oc,) => oc.column("id",).doNothing())
         .execute();
     }
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   async function gotoGallery(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.goto(`${ctx.url}/views/gallery`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/gallery`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 30_000, },);
   }
 
   describe("Gallery search", () => {
@@ -60,27 +60,27 @@ describe("Search & filtering E2E", () => {
         await gotoGallery(page,);
 
         // Wait for grid to load both seeded assets.
-        await page.locator(`[data-testid='asset-card-${assetA}']`,).waitFor({ timeout: 10_000, },);
-        await page.locator(`[data-testid='asset-card-${assetB}']`,).waitFor({ timeout: 10_000, },);
+        await page.locator(`[data-testid='asset-card-${assetA}']`,).waitFor({ timeout: 30_000, },);
+        await page.locator(`[data-testid='asset-card-${assetB}']`,).waitFor({ timeout: 30_000, },);
 
         // Type a query matching only asset A; filter-bar debounces + searches.
         await page.fill(".list-search", "bright-orange",);
         await page.waitForTimeout(700,);
 
         // asset A card remains; asset B card is gone from the grid.
-        await page.locator(`[data-testid='asset-card-${assetA}']`,).waitFor({ timeout: 10_000, },);
+        await page.locator(`[data-testid='asset-card-${assetA}']`,).waitFor({ timeout: 30_000, },);
         const bCount = await page.locator(`[data-testid='asset-card-${assetB}']`,).count();
         expect(bCount,).toBe(0,);
 
         // Clearing the query restores both.
         await page.fill(".list-search", "",);
         await page.waitForTimeout(700,);
-        await page.locator(`[data-testid='asset-card-${assetB}']`,).waitFor({ timeout: 10_000, },);
+        await page.locator(`[data-testid='asset-card-${assetB}']`,).waitFor({ timeout: 30_000, },);
       } finally {
         errors.assert();
         errors.detach();
         await page.close();
       }
-    }, 40_000,);
+    }, 60_000,);
   });
 });

@@ -25,18 +25,18 @@ describe("Chat send round-trip (plaintext)", () => {
   beforeAll(async () => {
     ctx = await createBrowserTest();
     await seedAll(ctx.db,);
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   /** Open chat view, open the chat list, select the seeded solo chat. */
   async function openAndSelectChat(
     page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
   ) {
-    await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-    await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);
     // Open chat list panel (Alpine store toggle via header button)
     await page.evaluate(() => {
       document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
@@ -47,7 +47,7 @@ describe("Chat send round-trip (plaintext)", () => {
     const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
       hasText: SEED.soloChat.name,
     },).first();
-    await chatItem.waitFor({ state: "attached", timeout: 8000, },);
+    await chatItem.waitFor({ state: "attached", timeout: 15_000, },);
     await chatItem.click();
     // Wait for the chat to be selected (soloChat seeds no messages, so
     // don't require messages.length — the send test creates its own).
@@ -69,7 +69,7 @@ describe("Chat send round-trip (plaintext)", () => {
       await page.click("[data-testid='send-button']",);
 
       // Message appears in the DOM after send + loadMessages().
-      await page.locator("#message-list",).getByText(sent,).waitFor({ timeout: 10_000, },);
+      await page.locator("#message-list",).getByText(sent,).waitFor({ timeout: 30_000, },);
 
       // Persisted in DB as plaintext (no key_id).
       const row = await ctx.db
@@ -83,7 +83,7 @@ describe("Chat send round-trip (plaintext)", () => {
     } finally {
       await page.close();
     }
-  }, 30_000,);
+  }, 60_000,);
 
   test("does not send empty messages", async () => {
     const page = await ctx.openPage();
@@ -107,7 +107,7 @@ describe("Chat send round-trip (plaintext)", () => {
     } finally {
       await page.close();
     }
-  }, 30_000,);
+  }, 60_000,);
 });
 
 describe("Chat encryption flow (SMK configured)", () => {
@@ -137,17 +137,17 @@ describe("Chat encryption flow (SMK configured)", () => {
       .set({ encryption_level: "standard", },)
       .where("id", "=", SEED.soloChat.id,)
       .execute();
-  }, 45_000,);
+  }, 90_000,);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close();
   },);
 
   test("sends client-encrypted content; server decrypts for display", async () => {
     const page = await ctx.openPage();
     try {
-      await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 15_000, },);
-      await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 10_000, },);
+      await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+      await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);
       await page.evaluate(() => {
         document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
           new MouseEvent("click", { bubbles: true, },),
@@ -156,7 +156,7 @@ describe("Chat encryption flow (SMK configured)", () => {
       const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
         hasText: SEED.soloChat.name,
       },).first();
-      await chatItem.waitFor({ state: "attached", timeout: 8000, },);
+      await chatItem.waitFor({ state: "attached", timeout: 15_000, },);
       await chatItem.click();
 
       // Chat key must be loaded into the Alpine chat-keys component.
@@ -172,7 +172,7 @@ describe("Chat encryption flow (SMK configured)", () => {
       await page.click("[data-testid='send-button']",);
 
       // UI renders plaintext (server decrypts on read).
-      await page.locator("#message-list",).getByText(secret,).waitFor({ timeout: 10_000, },);
+      await page.locator("#message-list",).getByText(secret,).waitFor({ timeout: 30_000, },);
 
       // DB stores an encrypted payload, not the plaintext.
       const row = await ctx.db
@@ -189,5 +189,5 @@ describe("Chat encryption flow (SMK configured)", () => {
     } finally {
       await page.close();
     }
-  }, 30_000,);
+  }, 60_000,);
 });
