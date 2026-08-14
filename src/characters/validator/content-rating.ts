@@ -2,10 +2,10 @@
 
 import type {
   CanonicalCharacter,
-  ContentRating,
   ValidationError,
   ValidationWarning,
 } from "../spec";
+import { ContentRating, } from "../spec";
 import { AGE_REQUIREMENTS, VALID_CONTENT_RATINGS, } from "./constants";
 
 export function validateContentRating(
@@ -51,7 +51,7 @@ export function filterAllowedRatings(
   ratings: ContentRating[],
   userAge: number | null,
 ): ContentRating[] {
-  if (userAge === null) { return ["sfw",]; }
+  if (userAge === null) { return [ContentRating.Sfw,]; }
   const allowed: ContentRating[] = [];
   for (const r of ratings) { if (isContentRatingAllowed(r, userAge,)) { allowed.push(r,); } }
   return allowed;

@@ -8,6 +8,7 @@ import { load as parseYaml, } from "js-yaml";
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import { parse as parseToml, } from "smol-toml";
+import type { ContentRating, } from "../characters/spec";
 import type { CharacterTemplateConfig, } from "./sections/templates";
 
 // ── Types ─────────────────────────────────────────────────────
@@ -25,7 +26,7 @@ interface CharacterFileData {
   creator?: string;
   id?: string;
   visibility?: "private" | "public";
-  content_rating?: "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme";
+  content_rating?: ContentRating;
   target_roles?: ("admin" | "user" | "viewer" | "solo")[];
   is_template?: boolean;
   is_default?: boolean;
