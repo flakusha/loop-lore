@@ -10,7 +10,7 @@
 
 Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations, etc. with API call integrations AND confirmation/quality gating. Also encompasses GM-guided story creation where the user acts as Game Master, guiding LLM characters in chat/group-chat to create a story together.
 
-## Current State (2026-08-01)
+## Current State (2026-08-14)
 
 ### Frontend: 🟡 Partial
 
@@ -18,7 +18,7 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - ✅ Command buttons expanded (guide, scene, summarize, rewrite, translate)
 - ✅ GmConfig extended (assistantRole, visualNovel); role dropdown in chat settings
 - ✅ Slash command parser + dispatch wired (`src/routes/messages.ts:543`, 21 handlers)
-- ❌ GM role switching has no runtime effect (assistantRole stored, never branched)
+- ✅ GM role switching has runtime effect (GM-guided creation flow: new-chat "Game Master guided story" toggle pre-sets `assistantRole:gm` + `mode:story` and auto-opens settings; story-mode generation runs `GameMasterService`)
 - ❌ Tool call display in chat bubbles
 
 ### Backend: 🟡 Partial
@@ -28,7 +28,7 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - 🟡 **System prompts config-driven** — assistant + gm prompts resolved via `resolveSystemPrompt()` (`src/prompts/registry.ts`, 12 purposes, `configs/templates/llm.yaml` override) shipped `9aefe593`; `.plan/epics/epic-config-templates.md` + `TASK-prompt-template-registry.md` harden typing/defaults/validation. **Inline strings in `/create` generation commands remain** (`src/assistant/prompt/templates/` still absent) — those are entity-gen prompt bodies, not system prompts; separate gap.
 - ❌ No quality validation pipeline
 - ❌ No confirmation gating
-- ❌ GmConfig shape gap: UI writes `{assistantRole, visualNovel}`; story expects `GameMasterConfig.type` → human/hybrid GM unreachable from UI
+- ✅ GmConfig shape gap CLOSED: chat settings author `GameMasterConfig.type` (llm/human/hybrid) + `llmConfig` (model/provider/temperature/maxTokens) + `actorModels` (per-actor model/provider); `story-mode.ts` resolves the per-actor provider per generation call (commit `022f9a82`)
 
 ## Reference
 
@@ -70,7 +70,7 @@ User request → Assistant processes → Generate content → Quality check → 
 - [ ] Confirmation dialog component
 - [ ] Quality validation pipeline
 - [ ] Generated content preview
-- [ ] GM-guided story creation — user as GM guiding LLM characters in chat/group-chat (`TASK-gm-guided-story-creation.md`)
+- [x] GM-guided creation flow shipped (new-chat toggle pre-sets GM role + auto-opens settings; story-mode orchestration via `GameMasterService`) — see `TASK-assistant-gm-flows-reconciliation.md`; full gmGuidance UX (scene/constraints/target) in `TASK-gm-guided-story-creation.md` (orchestrator consumption pending)
 
 ## AI Director / Narrative Pacing (Extension — Research-Driven)
 
