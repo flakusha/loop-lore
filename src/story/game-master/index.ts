@@ -15,6 +15,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
+import type { GmGuidance, } from "../../chat/types/config";
 import type { DB, } from "../../db/schema";
 import type { QualityEvaluator, } from "../quality-evaluator";
 import { createQualityEvaluator, } from "../quality-evaluator";
@@ -43,6 +44,7 @@ export class GameMasterService {
   private readonly evaluator: QualityEvaluator;
   private readonly config: GameMasterConfig;
   private readonly appConfig: Config | undefined;
+  private readonly gmGuidance: GmGuidance | undefined;
   private readonly chatId: string;
   private readonly generateText: GmState["generateText"];
   private readonly systemPromptDefault: string | undefined;
@@ -56,6 +58,7 @@ export class GameMasterService {
       evaluator: this.evaluator,
       config: this.config,
       appConfig: this.appConfig,
+      gmGuidance: this.gmGuidance,
       chatId: this.chatId,
       generateText: this.generateText,
       systemPromptDefault: this.systemPromptDefault,
@@ -71,12 +74,15 @@ export class GameMasterService {
       systemPromptDefault?: string;
       /** App-level config — enables config-driven prompt sections (e.g. NSFW policy). */
       appConfig?: Config;
+      /** Human-GM narrative guidance steering turns (from chat gm_config). */
+      gmGuidance?: GmGuidance;
     },
   ) {
     this.db = options.db;
     this.chatId = options.chatId;
     this.config = options.gmConfig;
     this.appConfig = options.appConfig;
+    this.gmGuidance = options.gmGuidance;
     this.generateText = options.generateText;
     this.systemPromptDefault = options.systemPromptDefault;
     this.turnManager = new TurnManager({ db: options.db, chatId: options.chatId, },);

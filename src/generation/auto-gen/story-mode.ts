@@ -1,8 +1,10 @@
 import type { Kysely, } from "kysely";
 import { detectHallucinations, } from "../../chat";
+import type { GmGuidance, } from "../../chat/types/config";
 import type { Config, } from "../../config/schema";
 import {
   ContentEncoding,
+  GameMasterType,
   MessageContentFormat,
   MessageContentType,
   MessageRole,
@@ -45,12 +47,26 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   const { database, config, chatId, parentMessageId, userId, gmConfig, worldId, deps, } = opts;
   const log = getLogger().child({ module: "auto-gen-story", },);
 
-  // Parse GM config from chat record
-  const gmConfigParsed = gmConfig ? jsonParseOr<GameMasterConfig | null>(gmConfig, null,) : null;
-  if (!gmConfigParsed) {
+  // Parse GM config from chat record. The chat's `gm_config` column stores the
+  // chat-level `GmConfig` (assistantRole / visualNovel / storyMode / gmGuidance)
+  // — a different shape from the story-domain `GameMasterConfig`. Extract the
+  // human-GM guidance and derive a `GameMasterConfig` for the service.
+  const gmConfigRaw = gmConfig ? jsonParseOr<Record<string, unknown> | null>(gmConfig, null,) : null;
+  if (!gmConfigRaw) {
     log.warn("Story mode chat has no valid GM config — skipping", { chatId, },);
     return;
   }
+  const gmGuidance = gmConfigRaw.gmGuidance as GmGuidance | undefined;
+  const gameMasterConfig: GameMasterConfig = {
+    type: (gmConfigRaw.type as GameMasterType | undefined) ?? GameMasterType.Llm,
+    ...(gmConfigRaw.llmConfig
+      ? { llmConfig: gmConfigRaw.llmConfig as GameMasterConfig["llmConfig"], }
+      : {}),
+    ...(gmConfigRaw.humanGM ? { humanGM: gmConfigRaw.humanGM as GameMasterConfig["humanGM"], } : {}),
+    ...(typeof gmConfigRaw.escalationThreshold === "number"
+      ? { escalationThreshold: gmConfigRaw.escalationThreshold, }
+      : {}),
+  };
 
   // Resolve provider
   const resolved = await deps.resolveProvider({ userId, config, db: database, },);
@@ -73,7 +89,8 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   const gm = new GameMasterService({
     db: database,
     chatId,
-    gmConfig: gmConfigParsed,
+    gmConfig: gameMasterConfig,
+    gmGuidance,
     generateText,
     systemPromptDefault: resolveSystemPrompt(config.templates.llm, "gm",),
     appConfig: config,
