@@ -5,6 +5,10 @@
 > Non-value work sits in `../open.md` unless it blocks these tiers.
 >
 > **Since 2026-08-14 refresh:** Gate C core shipped + verified on `dev` (2026-08-12) —
+> memory-selection UI + C1 participant panel + recovered-features merged to `dev`
+> (2026-08-14); **lint-ts + e2e gates closed 2026-08-14** (`lint-ts-debt` +
+> `e2e-stabilization` worktrees → `check` 18/18, browser e2e 19/19 ×2); GM-guided
+> story (P2-Da) in-flight in `feature/gm-guided-story-ui`.
 > tool-call UI, register page, prompt registry, GM panels, quest log, world/location
 > access; size-strict debt closed (only red gate left: lint-ts); **item-systems backend
 > wiring 10/15 + docs-reconciliation epic both merged to `dev` 2026-08-14**
@@ -13,7 +17,7 @@
 ## Status header
 
 P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 0.1.0 value tiers
-(§ P3–P5 below) · P6 → § P6 (below); finer debt → `../open.md` · Gate C core ✅ (GM-guided story P2-Da greenfield).
+(§ P3–P5 below) · P6 → § P6 (below); finer debt → `../open.md` · Gate C core ✅ (GM-guided story P2-Da in-flight — worktree `feature/gm-guided-story-ui`).
 
 ## P0 — Critical Path (Blocking)
 
@@ -160,6 +164,7 @@ inheritance, `bun test src/story/` verification.
 - 🟡 Medium: P6-B NSFW cross-links, P6-C, P6-D character/agentic, P6-F emergent.
 - 🟠 Low: G35 Voice↔Growth, G41 InnerMonologue.
 - G18–G20 (candidates 13–15) fold into existing actor/npc/memory/world epics — no new epic per `epic-platform-research.md` Open Q5.
+
 ## Post-P3 — Road to Happy 0.1.0
 
 `package.json` already declares `version: 0.1.0`. "Happy 0.1.0" = Gate C **and** the
@@ -171,18 +176,22 @@ tracking: `epic-release-010.md`.
 - **Gate C** — VN, chat, assistant+tool calling, GM flows, GM-guided story, auth/access,
   gallery usable. **Core shipped + verified 2026-08-12; remainder: GM-guided story (P2-Da)**.
 - **Gate D** — P3–P5 0.1.0 value tiers operational; P6+ non-blocking.
-- **`bun run check` 17/17 green** — 1 red gate remains (lint-ts; size-strict closed 2026-08-12).
-- **e2e browser suite stable** — today ~51/85; auth redirect-loop + page-load timeouts.
+- **`bun run check` 18/18 green (2026-08-14)** — lint-ts closed (0 errors, 193 warnings
+  tracked); dprint + md-lint also green (pre-existing YAML-twin + ticket-format issues
+  fixed in `lint-ts-debt` worktree).
+- **e2e browser suite stable ✅ (2026-08-14)** — `test:e2e:browser` 19/19 files green
+  ×2 consecutive runs (`e2e-stabilization` worktree: 45s→90s setup budgets, 30s page
+  loads, `ctx?.close()` guard).
 - **No committed-state-only gates** — GM role runtime effect ✅ committed on `dev`
   (2026-08-07+); no remaining "works locally" claims.
 
 ### Open → close (blocking release)
 
-- [ ] **Lint-ts debt** — ~196 warnings / 291 pre-existing files → `check` 16/17 (last red gate). Refactor tickets; gate → 17/17.
+- [x] **Lint-ts debt** — ✅ closed 2026-08-14 (`lint-ts-debt` worktree) — 68→0 errors; 193 warnings tracked; `bun run check` **18/18**. Last red gate gone.
 - [x] **Size-strict debt** — ✅ closed 2026-08-12 (0 files over 250L).
-- [ ] **e2e browser stabilization** — kill auth redirect-loop (`/views/login?redirect=<nested login>`), fix page-load timeouts.
-- [ ] **Unwired/leftover close-out** — wire/drop LoRA routes, RPG services phase-3 (see `epic-rpg-wiring-phase3.md`); SSE refactor ✅ committed (`082c20cf`; row W4 resolved in `../open.md`).
-- [ ] **Release artifacts** — `docs/meta/release-process.md`, signed tag `v0.1.0`, changelog/release notes, **push `dev`→`origin/dev`** (39 commits; row W3 in `../open.md`).
+- [x] **e2e browser stabilization** — ✅ closed 2026-08-14 (`e2e-stabilization` worktree) — timeout budgets raised + `ctx?.close()` guard; `test:e2e:browser` **19/19 ×2**.
+- [ ] **Unwired/leftover close-out (A8)** — wire/drop LoRA routes, RPG services phase-3 (see `epic-rpg-wiring-phase3.md`); SSE refactor ✅ committed (`082c20cf`; row W4 resolved in `../open.md`).
+- [ ] **Release artifacts (A9)** — `docs/meta/release-process.md`, signed tag `v0.1.0`, changelog/release notes, **push `dev`→`origin/dev`** (75 commits; row W3 in `../open.md`).
 
 ### Hardening (before tagging, non-blocking)
 
@@ -234,5 +243,5 @@ tracking: `epic-release-010.md`.
 | ------ | ------- | -------------------------------------------------------------------------------------------------------------- | ------ |
 | Gate A | Post-P0 | Observability + testing stable; Data Integrity 1; NSFW moderation live; shared schemas enforced                | ✅     |
 | Gate B | Post-P1 | Import/Export + Admin with encryption; NSFW + Battle integrations; Data Integrity 2; memory tiers + cross-chat | ✅     |
-| Gate C | Post-P2 | VN wired; chat functional; assistant + tool calling; GM flows; GM-guided story; auth/access; gallery usable    | 🟡 core ✅ 2026-08-12; **GM-guided story (P2-Da) greenfield** |
+| Gate C | Post-P2 | VN wired; chat functional; assistant + tool calling; GM flows; GM-guided story; auth/access; gallery usable    | 🟡 core ✅ 2026-08-12; **GM-guided story (P2-Da) in-flight** (worktree `feature/gm-guided-story-ui`) |
 | Gate D | Post-P3 | P3–P5 value tiers operational; P6+ non-blocking                                                                | ⬜     |
