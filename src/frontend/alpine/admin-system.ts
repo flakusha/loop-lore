@@ -129,7 +129,7 @@ export const adminSystem = {
   async loadHealth() {
     this.loadingHealth = true;
     try {
-      const res = await apiFetch("/api/health", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/health", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.healthStatus = data.status || "unknown";

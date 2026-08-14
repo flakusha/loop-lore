@@ -167,7 +167,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       if (this.confirmDeleteText !== "DELETE") { return; }
       if (!confirm("This will permanently delete ALL your data. Continue?",)) { return; }
       try {
-        const res = await apiFetch("/api/users/me", { method: "DELETE", },);
+        const res = await apiFetch("/api/v1/users/me", { method: "DELETE", },);
         if (!res.ok) { throw new Error("Delete failed",); }
       } catch (error) {
         log.warn("deleteAllData failed", { error: String(error,), },);

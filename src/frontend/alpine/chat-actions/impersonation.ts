@@ -12,7 +12,7 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
 
     try {
       if (this.impersonationActive) {
-        const res = await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+        const res = await apiFetch(`/api/v1/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: null, },),
@@ -29,7 +29,7 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
           },);
         }
       } else {
-        const res = await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+        const res = await apiFetch(`/api/v1/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: this.currentCharacter.id, },),
@@ -59,7 +59,7 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
   async loadImpersonationState() {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`,);
       if (!res.ok) { return; }
       const data = await res.json();
       const participants = data.data || [];

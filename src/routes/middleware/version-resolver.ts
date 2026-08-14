@@ -29,16 +29,16 @@ const ACCEPT_VERSION_RE = /application\/vnd\.loop-lore\.v(\d+)\+json/;
  * 2. Accept header: `application/vnd.loop-lore.v1+json` → `"1"`
  * 3. Default: `"1"`
  */
-export function resolveVersion(request: Request): ApiVersion {
+export function resolveVersion(request: Request,): ApiVersion {
   const url = new URL(request.url ?? "",);
-  const pathMatch = url.pathname.match(PATH_VERSION_RE,);
+  const pathMatch = PATH_VERSION_RE.exec(url.pathname,);
   if (pathMatch?.[1]) {
     const v = parseInt(pathMatch[1], 10,);
     if (v === 1) { return "1"; }
   }
 
   const accept = request.headers?.get("Accept",) ?? "";
-  const vndMatch = accept.match(ACCEPT_VERSION_RE,);
+  const vndMatch = ACCEPT_VERSION_RE.exec(accept,);
   if (vndMatch?.[1]) {
     const v = parseInt(vndMatch[1], 10,);
     if (v === 1) { return "1"; }
