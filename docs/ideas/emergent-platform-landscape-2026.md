@@ -18,7 +18,7 @@ signal for what users value.
 | **Nomi.ai** | **Three-tier memory** (short/mid/long-term, 1,000+ message retention); up to **10 Nomis** with independent personality/backstory/memory; **group chat** (multiple Nomis interact with each other); **9.4/10 EQ** rating; voice calls (latency optimized to 1–1.5s Jan 2026); AI selfie (real-time appearance/clothing/environment); **Proactive Messaging** (context-aware,4 frequency levels: Very Frequent ~1hr, Frequent ~3hr, Normal ~1/day, Infrequent ~4 days; quiet hours 10PM-8AM; per-character customization; paid only $15.99/mo) | Group-chat + voice call + **granular proactive messaging** with quiet hours + multi-character with independent memories | Med–High |
 | **Chai** | Mobile chat-first, message memory, personality customization, monetized chat | Mass-market chat UX; low novelty | Low |
 | **Zhumu / AI-tab** | Browser-sidekick memory + summarization of ongoing conversation, persisted context, proactive suggestions | **Proactive/ambient memory** — agent "remembers" and injects context over long sessions; overlaps #14 world-continues & dynamic-memory trend | Med |
-| **Talkie / Soul (SoulGate)** | Anime 3D/2D avatar chat, voice, relationship/affection meters, story/choose paths, gamified gacha | Relationship meters (#11 relationship-drift timeline) + gamified engagement | Low–Med |
+| **Talkie / Soul (SoulGate)** | **10M+ users**, 730K+ Google Play reviews (4.5★); **50K+ new user-created characters daily**; rich character library (romantic partners, historical figures, anime, game characters); **two-way voice interaction** with per-character unique voices; memory system (remembers name, preferences, shared experiences); advanced character creation guide (personality, reaction style, speaking patterns, behavior in scenarios); gamified character cards; cross-platform (iOS/Android/web); moved family-friendly in 2025-2026 (strict mature-theme limits); free tier + Talkie+ ($9.99-$24.99/mo) | **Massive community-driven character ecosystem** (50K+ daily new chars) + **two-way voice with per-character voices** — confirms voice+character variety as table-stakes demand; relationship/affection meters from earlier marketing not confirmed in verified reviews | Low–Med |
 
 **Cross-bucket trend A:** *persistent identity + memory across sessions + multi-modal (voice/image) output* is now table-stakes in consumer companion apps. Loop-lore's single-session memory budget is a gap.
 
@@ -92,7 +92,9 @@ approach validates loop-lore's existing RPG backend as a differentiator.
 - Inworld AI: primary blog + press (raised $50M @ $500M, character engine features).
 - **Generative agents (Park et al., 2023)**: https://arxiv.org/abs/2304.03442 (original paper) + https://www.subodhjena.com/blog/generative-agents-memory-stanford (2026-04-22, definitive code walkthrough with retrieval scoring + reflection code examples) — verified 3-pillar architecture, reflection threshold, ablation results.
 - **Luma** (Master Reference Asset pattern for character consistency): https://lumalabs.ai/learning-center/articles/character-and-object-consistency (2026-03-09) — verified from Luma Labs official learning center.
-- Chai, Zhumu, Talkie/Soul: commercial marketing surfaces (unverified, directional).
+- **Talkie/Soul**: weavai.app review (2026-04-17) — verified 10M+ users, two-way voice, memory system, 50K+ daily new characters, gamified cards. Relationship/affection meters from earlier marketing NOT confirmed in verified reviews.
+- **AI GM landscape**: storyroll.app comparison (2026-06-05) — verified Fables.gg (100K+ players, tactical 5e), StoryRoll (speed-to-play), AI Realm (8 models), RoleForge (maps+dice), LoreKeeper (prep assistant).
+- Chai, Zhumu: commercial marketing surfaces (unverified, directional).
 
 ## Open questions
 
