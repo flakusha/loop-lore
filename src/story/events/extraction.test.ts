@@ -17,8 +17,12 @@ const ACTOR = "actor-1";
 
 describe("extractEvents — item transfer direction", () => {
   test("give → actor is the source (gives away)", () => {
-    const events = extractEvents({ messageContent: "Sam gives the Iron Sword to Kara.", actorId: ACTOR, currentLocationId: LOC, },);
-    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer,);
+    const events = extractEvents({
+      messageContent: "Sam gives the Iron Sword to Kara.",
+      actorId: ACTOR,
+      currentLocationId: LOC,
+    },);
+    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBe(ACTOR,);
     expect(item!.data.toActorId,).toBeNull();
@@ -26,16 +30,24 @@ describe("extractEvents — item transfer direction", () => {
   });
 
   test("take → actor is the receiver", () => {
-    const events = extractEvents({ messageContent: "Sam picks up the Rusty Dagger.", actorId: ACTOR, currentLocationId: LOC, },);
-    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer,);
+    const events = extractEvents({
+      messageContent: "Sam picks up the Rusty Dagger.",
+      actorId: ACTOR,
+      currentLocationId: LOC,
+    },);
+    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBeNull();
     expect(item!.data.toActorId,).toBe(ACTOR,);
   });
 
   test("drop → actor is the source", () => {
-    const events = extractEvents({ messageContent: "Sam drops the Torch and walks on.", actorId: ACTOR, currentLocationId: LOC, },);
-    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer,);
+    const events = extractEvents({
+      messageContent: "Sam drops the Torch and walks on.",
+      actorId: ACTOR,
+      currentLocationId: LOC,
+    },);
+    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBe(ACTOR,);
     expect(item!.data.toActorId,).toBeNull();
@@ -43,8 +55,12 @@ describe("extractEvents — item transfer direction", () => {
   });
 
   test("leave behind → actor is the source", () => {
-    const events = extractEvents({ messageContent: "Sam leaves behind the Shield.", actorId: ACTOR, currentLocationId: LOC, },);
-    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer,);
+    const events = extractEvents({
+      messageContent: "Sam leaves behind the Shield.",
+      actorId: ACTOR,
+      currentLocationId: LOC,
+    },);
+    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBe(ACTOR,);
     expect(item!.data.toActorId,).toBeNull();

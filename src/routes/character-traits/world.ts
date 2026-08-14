@@ -17,7 +17,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * World Traits (Layer 2) sub-plugin — CRUD for actor world-specific traits.
  */
-export function worldTraitsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function worldTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 

@@ -5,7 +5,7 @@ import { BatchIdsBody, } from "../../validation/schemas";
 import { jsonResponse, notFoundResponse as notFound, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function batchRoutes(opts: HandlerOpts, prefix = "/api") {
+export function batchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

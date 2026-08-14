@@ -107,7 +107,7 @@ export class ActivityStreamer {
   }
 }
 
-export function activityStreamRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function activityStreamRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "activity-stream", },).get(prefix + "/activity/stream", async (ctx,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }

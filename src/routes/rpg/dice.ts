@@ -6,7 +6,7 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { DiceAdvantageBody, DiceNotationBody, DiceRollBody, type HandlerOpts, } from "./types";
 
-export function diceRoutes(opts: HandlerOpts, prefix = "/api") {
+export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

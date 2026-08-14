@@ -5,7 +5,7 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { ChatSectionReorderBody, type HandlerOpts, } from "./types";
 
-export function reorderRoutes(opts: HandlerOpts, prefix = "/api") {
+export function reorderRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

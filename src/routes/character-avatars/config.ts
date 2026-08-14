@@ -16,7 +16,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * Avatar config sub-plugin — actor and world avatar-selection configuration.
  */
-export function configRoutes(opts: HandlerOpts, prefix = "/api") {
+export function configRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);
 

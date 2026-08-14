@@ -10,13 +10,13 @@
  * `item_type` (ItemCategory): `weapon` → weapon slot, `armor` → body,
  * everything else → accessory.
  */
-import type { Kysely, Transaction } from "kysely";
-import { EquipState } from "../db/enums";
-import type { DB } from "../db/schema";
-import { jsonParseOr } from "../utils";
+import type { Kysely, Transaction, } from "kysely";
+import { EquipState, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { jsonParseOr, } from "../utils";
 import {
-  ENCUMBRANCE,
   type CarryStatus,
+  ENCUMBRANCE,
   type Encumbrance,
   type EquipResult,
   slotForCategory,
@@ -46,20 +46,20 @@ export class ActorItemsService {
   /** Base carry weight: 50 lb + STR×10 (STR defaults to 10). */
   private async capacityFor(actorId: string,): Promise<number> {
     const actor = await this.db
-      .selectFrom("actors")
-      .select("settings")
+      .selectFrom("actors",)
+      .select("settings",)
       .where("id", "=", actorId,)
       .executeTakeFirst();
-    const settings = jsonParseOr<{ strength?: number }>(actor?.settings ?? "{}", {});
-    const str = Math.max(1, Math.min(30, Number(settings.strength) || 10,),);
+    const settings = jsonParseOr<{ strength?: number }>(actor?.settings ?? "{}", {},);
+    const str = Math.max(1, Math.min(30, Number(settings.strength,) || 10,),);
     return 50 + str * 10;
   }
 
   /** Sum of weight × quantity carried. */
   async getCarriedWeight(actorId: string,): Promise<number> {
     const rows = await this.db
-      .selectFrom("actor_items")
-      .select(["weight", "quantity",])
+      .selectFrom("actor_items",)
+      .select(["weight", "quantity",],)
       .where("actor_id", "=", actorId,)
       .execute();
     return rows.reduce((sum, r,) => sum + (r.weight ?? 0) * r.quantity, 0,);
@@ -67,13 +67,16 @@ export class ActorItemsService {
 
   /** Current load vs capacity + encumbrance level. */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
-    const [carried, capacity] = await Promise.all([
+    const [carried, capacity,] = await Promise.all([
       this.getCarriedWeight(actorId,),
       this.capacityFor(actorId,),
-    ]);
+    ],);
     const ratio = capacity > 0 ? carried / capacity : 1;
-    const encumbrance: Encumbrance =
-      ratio < 0.8 ? ENCUMBRANCE.Light : ratio <= 1 ? ENCUMBRANCE.Medium : ENCUMBRANCE.Overloaded;
+    const encumbrance: Encumbrance = ratio < 0.8
+      ? ENCUMBRANCE.Light
+      : ratio <= 1
+      ? ENCUMBRANCE.Medium
+      : ENCUMBRANCE.Overloaded;
     let threshold = capacity;
     if (encumbrance === ENCUMBRANCE.Light) { threshold = Math.floor(capacity * 0.8,); }
     return {
@@ -88,7 +91,7 @@ export class ActorItemsService {
 
   private async getItem(actorId: string, itemId: string,) {
     return this.db
-      .selectFrom("actor_items")
+      .selectFrom("actor_items",)
       .selectAll()
       .where("actor_id", "=", actorId,)
       .where("id", "=", itemId,)
@@ -106,8 +109,8 @@ export class ActorItemsService {
     // Reject a second item in the same slot (allow multiple accessories
     // via a per-item accessory flag? No — keep one-per-slot for now).
     const conflict = await this.db
-      .selectFrom("actor_items")
-      .select("id")
+      .selectFrom("actor_items",)
+      .select("id",)
       .where("actor_id", "=", actorId,)
       .where("equipped", "=", EquipState.Equipped,)
       .where("id", "!=", itemId,)
@@ -118,8 +121,8 @@ export class ActorItemsService {
     }
 
     await this.db
-      .updateTable("actor_items")
-      .set({ equipped: EquipState.Equipped, })
+      .updateTable("actor_items",)
+      .set({ equipped: EquipState.Equipped, },)
       .where("id", "=", itemId,)
       .execute();
     return { ok: true, itemId, };
@@ -130,8 +133,8 @@ export class ActorItemsService {
     const item = await this.getItem(actorId, itemId,);
     if (!item) { return { ok: false, reason: "Item not found", }; }
     await this.db
-      .updateTable("actor_items")
-      .set({ equipped: EquipState.Unequipped, })
+      .updateTable("actor_items",)
+      .set({ equipped: EquipState.Unequipped, },)
       .where("id", "=", itemId,)
       .execute();
     return { ok: true, itemId, };
@@ -140,7 +143,7 @@ export class ActorItemsService {
   /** List all equipped items. */
   async getEquipped(actorId: string,) {
     return this.db
-      .selectFrom("actor_items")
+      .selectFrom("actor_items",)
       .selectAll()
       .where("actor_id", "=", actorId,)
       .where("equipped", "=", EquipState.Equipped,)
@@ -162,12 +165,25 @@ export class ActorItemsService {
     trx?: Transaction<DB>,
   ): Promise<{ ok: boolean; transferred?: number; reason?: string }> {
     if (fromActorId === toActorId) { return { ok: false, reason: "Source and target are the same", }; }
-    if (!Number.isInteger(quantity) || quantity <= 0) { return { ok: false, reason: "Quantity must be a positive integer", }; }
+    if (!Number.isInteger(quantity,) || quantity <= 0) {
+      return { ok: false, reason: "Quantity must be a positive integer", };
+    }
 
     const run = async (db: Kysely<DB>,): Promise<{ ok: boolean; transferred?: number; reason?: string }> => {
       const source = await db
-        .selectFrom("actor_items")
-        .select(["id", "quantity", "name", "description", "item_type", "value", "weight", "tags", "metadata", "sort_order",])
+        .selectFrom("actor_items",)
+        .select([
+          "id",
+          "quantity",
+          "name",
+          "description",
+          "item_type",
+          "value",
+          "weight",
+          "tags",
+          "metadata",
+          "sort_order",
+        ],)
         .where("actor_id", "=", fromActorId,)
         .where("id", "=", itemId,)
         .executeTakeFirst();
@@ -176,32 +192,32 @@ export class ActorItemsService {
 
       const remaining = source.quantity - quantity;
       if (remaining === 0) {
-        await db.deleteFrom("actor_items").where("id", "=", itemId,).execute();
+        await db.deleteFrom("actor_items",).where("id", "=", itemId,).execute();
       } else {
         await db
-          .updateTable("actor_items")
-          .set({ quantity: remaining, })
+          .updateTable("actor_items",)
+          .set({ quantity: remaining, },)
           .where("id", "=", itemId,)
           .execute();
       }
 
       // Stack onto an existing identical target item, else insert.
       const existing = await db
-        .selectFrom("actor_items")
-        .select("id")
+        .selectFrom("actor_items",)
+        .select("id",)
         .where("actor_id", "=", toActorId,)
         .where("name", "=", source.name,)
         .where("item_type", "=", source.item_type,)
         .executeTakeFirst();
       if (existing) {
         await db
-          .updateTable("actor_items")
+          .updateTable("actor_items",)
           .set((eb,) => ({ quantity: eb("quantity", "+", quantity,), }))
           .where("id", "=", existing.id,)
           .execute();
       } else {
         await db
-          .insertInto("actor_items")
+          .insertInto("actor_items",)
           .values({
             id: crypto.randomUUID(),
             actor_id: toActorId,

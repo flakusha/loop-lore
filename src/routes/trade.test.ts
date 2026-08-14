@@ -9,10 +9,10 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
-import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertItems, insertUsers, insertWorlds, insertWorldItems, } from "../test-utils/insert-helpers";
-import { uid, } from "../utils";
 import { TradeService, } from "../services/trade";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertActors, insertItems, insertUsers, insertWorldItems, insertWorlds, } from "../test-utils/insert-helpers";
+import { uid, } from "../utils";
 import { tradeRoutes, } from "./trade";
 
 const mockDb = {} as any;
@@ -43,7 +43,12 @@ describe("trade routes (auth-gated)", () => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
     userId = uid();
-    await insertUsers(db, `user-${userId}`, "Trade Owner", { id: userId, role: "solo", status: "active", settings: "{}", } as never,);
+    await insertUsers(
+      db,
+      `user-${userId}`,
+      "Trade Owner",
+      { id: userId, role: "solo", status: "active", settings: "{}", } as never,
+    );
     worldId = uid();
     await insertWorlds(db, userId, "Trade World", { id: worldId, } as never,);
     buyer = uid();
@@ -81,16 +86,22 @@ describe("trade routes (auth-gated)", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json();
     if (typeof body !== "object" || body === null || !("balance" in body)) {
-      throw new Error("balance response missing field");
+      throw new Error("balance response missing field",);
     }
     expect(body.balance,).toBe(100,);
   });
 
   test("balance rejected for foreign actor", async () => {
     const strangerUser = uid();
-    await insertUsers(db, `stranger-${strangerUser}`, "Stranger User", { id: strangerUser, role: "solo", status: "active", settings: "{}", } as never,);
+    await insertUsers(
+      db,
+      `stranger-${strangerUser}`,
+      "Stranger User",
+      { id: strangerUser, role: "solo", status: "active", settings: "{}", } as never,
+    );
     const stranger = uid();
-    await db.insertInto("actors",).values({ id: stranger, display_name: "Stranger", user_id: strangerUser, },).execute();
+    await db.insertInto("actors",).values({ id: stranger, display_name: "Stranger", user_id: strangerUser, },)
+      .execute();
     const app = authedApp();
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/trade/balance?actorId=${stranger}`,),
@@ -116,7 +127,7 @@ describe("trade routes (auth-gated)", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json();
     if (typeof body !== "object" || body === null || !("ok" in body)) {
-      throw new Error("execute response missing field");
+      throw new Error("execute response missing field",);
     }
     expect(body.ok,).toBe(true,);
     expect(await new TradeService(db,).getBalance(buyer, worldId,),).toBe(75,);

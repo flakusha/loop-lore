@@ -4,7 +4,7 @@
  * Cross-system edges involving Crime. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges involving the Crime system. */
 export const CRIME_EDGES: IntegrationEdge[] = [

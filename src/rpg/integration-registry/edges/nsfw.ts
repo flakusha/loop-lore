@@ -4,7 +4,7 @@
  * Cross-system edges involving NSFW. Migrated verbatim from the former
  * `buildEdges()`.
  */
-import { type IntegrationEdge, EdgeDirection, EventDirection, } from "../types";
+import { EdgeDirection, EventDirection, type IntegrationEdge, } from "../types";
 
 /** Integration edges involving the NSFW system. */
 export const NSFW_EDGES: IntegrationEdge[] = [

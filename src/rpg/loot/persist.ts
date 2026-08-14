@@ -52,7 +52,8 @@ const LOOSE_TYPE_TO_CATEGORY: Record<string, ItemCategory> = {
 /** Map a loose loot `type` string to a unified `ItemCategory`. */
 function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
   const value = type.toLowerCase().trim();
-  return LOOSE_TYPE_TO_CATEGORY[value] ?? (Object.values(ItemCategory,).includes(value as ItemCategory) ? (value as ItemCategory) : fallback);
+  return LOOSE_TYPE_TO_CATEGORY[value] ??
+    (Object.values(ItemCategory,).includes(value as ItemCategory,) ? (value as ItemCategory) : fallback);
 }
 
 /**

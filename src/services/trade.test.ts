@@ -6,7 +6,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertItems, insertUsers, insertWorlds, insertWorldItems, } from "../test-utils/insert-helpers";
+import { insertActors, insertItems, insertUsers, insertWorldItems, insertWorlds, } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { TradeService, } from "./trade";
 
@@ -44,11 +44,11 @@ beforeAll(async () => {
   itemB = wB;
 
   trade = new TradeService(db,);
-});
+},);
 
 afterAll(async () => {
   await db.destroy();
-});
+},);
 
 describe("currency ledger", () => {
   test("balance defaults to 0", async () => {
@@ -104,7 +104,7 @@ describe("two-sided trade", () => {
 
     // Buyer receives 1 sword (defB, itemB's def) — new row keyed by def.
     const bGot = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .select("quantity",)
       .where("item_id", "=", defB,)
       .where("owner_actor_id", "=", buyer,)
@@ -112,7 +112,7 @@ describe("two-sided trade", () => {
     expect(bGot?.quantity,).toBe(1,);
     // Seller receives 2 potions (defA, itemA's def).
     const sGot = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .select("quantity",)
       .where("item_id", "=", defA,)
       .where("owner_actor_id", "=", seller,)

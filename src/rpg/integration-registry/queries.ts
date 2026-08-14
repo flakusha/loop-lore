@@ -39,7 +39,9 @@ export interface GetDependenciesArgs {
 export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
-    if (e.source === systemId && (e.direction === EdgeDirection.DependsOn || e.direction === EdgeDirection.Bidirectional)) {
+    if (
+      e.source === systemId && (e.direction === EdgeDirection.DependsOn || e.direction === EdgeDirection.Bidirectional)
+    ) {
       out.push(e,);
     }
   }
@@ -55,7 +57,9 @@ export interface GetDependentsArgs {
 export function getDependents({ thisL, systemId, }: GetDependentsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
-    if (e.target === systemId && (e.direction === EdgeDirection.DependedBy || e.direction === EdgeDirection.Bidirectional)) {
+    if (
+      e.target === systemId && (e.direction === EdgeDirection.DependedBy || e.direction === EdgeDirection.Bidirectional)
+    ) {
       out.push(e,);
     }
   }

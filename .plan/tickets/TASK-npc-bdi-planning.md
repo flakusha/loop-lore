@@ -21,6 +21,7 @@ Extends `TASK-npc-behavior.md` (state machine) with structured goal pursuit.
 ## Implementation
 
 ### Daily Planning Loop
+
 1. Wake-up — determine wake time (personality-based)
 2. Daily plan — generate broad-stroke activities
 3. Hourly schedule — break into time blocks
@@ -30,6 +31,7 @@ Extends `TASK-npc-behavior.md` (state machine) with structured goal pursuit.
 7. Plan revision — update based on what happened
 
 ### Schema
+
 ```typescript
 interface DailyPlan {
   character_id: string;
@@ -62,6 +64,7 @@ interface ReactionDecision {
 ```
 
 ### Chat Buffer Management
+
 ```typescript
 interface ChatBuffer {
   character_id: string;
@@ -75,6 +78,7 @@ interface ChatBuffer {
 ```
 
 ## Integration Points
+
 - **TASK-npc-behavior.md** — BDI extends state machine with goal pursuit
 - **epic-character-internal-traits.md** — Aspirations drive daily planning
 - **TASK-character-mood-happiness.md** — Mood affects plan priorities and reaction mode
@@ -82,6 +86,7 @@ interface ChatBuffer {
 - **Memory system** — Episodic memory stores plan outcomes
 
 ## Acceptance Criteria
+
 - [ ] NPCs generate daily plans from aspirations
 - [ ] Plans decompose into hourly activities with subtasks
 - [ ] Perceived events trigger reaction decisions
@@ -92,6 +97,7 @@ interface ChatBuffer {
 - [ ] Integration with memory system stores plan outcomes
 
 ## Open Questions
+
 1. How often should NPCs replan? (hourly? on significant event?)
 2. Should plans persist across sessions or regenerate daily?
 3. How to handle NPC-to-NPC plan conflicts (both want same location)?

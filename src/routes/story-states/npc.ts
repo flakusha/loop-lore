@@ -16,7 +16,7 @@ const npcsAtLocationResponse = t.Array(t.Object({
   displayName: t.String(),
 },),);
 
-export function storyNpcStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
+export function storyNpcStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-npc", },)
     .get(prefix + "/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;

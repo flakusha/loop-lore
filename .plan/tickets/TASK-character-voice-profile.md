@@ -21,6 +21,7 @@ Adds D10 to `epic-character-internal-traits.md`.
 ## Implementation
 
 ### VoiceProfile Schema
+
 ```typescript
 interface VoiceProfile {
   formality: number;           // 0–100 (slang ↔ academic)
@@ -37,6 +38,7 @@ interface VoiceProfile {
 ```
 
 ### Mood Integration
+
 Voice modulates with mood state:
 - Low mood → shorter sentences, lower verbosity, slower pace
 - High mood → more expressive, higher verbosity, faster pace
@@ -44,9 +46,11 @@ Voice modulates with mood state:
 - Fearful → more verbal tics, shorter sentences
 
 ### Anti-Collapse Directive
+
 For non-default voice profiles, include explicit voice instructions in prompt assembly to prevent LLM default helpful voice from overriding character voice.
 
 ### Prompt Assembly
+
 ```typescript
 function buildVoicePrompt(voice: VoiceProfile, mood: MoodState): string {
   const parts: string[] = [];
@@ -64,12 +68,14 @@ function buildVoicePrompt(voice: VoiceProfile, mood: MoodState): string {
 ```
 
 ## Integration Points
+
 - **epic-character-internal-traits.md** — D10 on CanonicalCharacter
 - **TASK-character-mood-happiness.md** — Mood modulates voice parameters
 - **epic-character-core-system.md** — Voice persists across character lifecycle
 - **TTS integration (future)** — Voice parameters map to TTS settings
 
 ## Acceptance Criteria
+
 - [ ] VoiceProfile schema defined with all parameters
 - [ ] Voice integrates with CanonicalCharacter model
 - [ ] Mood state modulates voice parameters
@@ -80,6 +86,7 @@ function buildVoicePrompt(voice: VoiceProfile, mood: MoodState): string {
 - [ ] Voice parameters influence TTS settings (future)
 
 ## Open Questions
+
 1. Should voice profiles be character-specific or shared templates?
 2. How should voice interact with group chat (multiple characters speaking)?
 3. Should voice evolve over time based on character growth?

@@ -18,7 +18,7 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function extrasRoutes(opts: HandlerOpts, prefix = "/api") {
+export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

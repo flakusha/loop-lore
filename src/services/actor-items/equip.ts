@@ -45,7 +45,7 @@ export interface CarryStatus {
   carried: number;
   capacity: number;
   encumbrance: Encumbrance;
-  canCarry: (additionalWeight: number) => boolean;
+  canCarry: (additionalWeight: number,) => boolean;
 }
 
 /** Equip attempt result. */

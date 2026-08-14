@@ -10,7 +10,7 @@ import {
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function updateRoutes(opts: HandlerOpts, prefix = "/api") {
+export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-update", },)

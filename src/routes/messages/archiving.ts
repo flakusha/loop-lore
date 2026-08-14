@@ -4,7 +4,7 @@ import { ChatIdParams, ErrorResponse, MessageIdParams, SuccessResponse, } from "
 import { jsonResponse, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-export function archivingRoutes(opts: HandlerOpts, prefix = "/api") {
+export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "messages-archiving", },)

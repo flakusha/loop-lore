@@ -39,7 +39,12 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
     userId = uid();
-    await insertUsers(db, `user-${userId}`, "Crafter", { id: userId, role: "solo", status: "active", settings: "{}", } as never,);
+    await insertUsers(
+      db,
+      `user-${userId}`,
+      "Crafter",
+      { id: userId, role: "solo", status: "active", settings: "{}", } as never,
+    );
     worldId = uid();
     await insertWorlds(db, userId, "Craft World", { id: worldId, } as never,);
     outputItemId = uid();
@@ -59,16 +64,16 @@ describe("crafting recipe CRUD (auth-gated)", () => {
       .use(craftingRecipeRoutes({ database: db, },),) as any;
   }
 
-  async function json(res: Response) {
+  async function json(res: Response,) {
     return res.json() as unknown;
   }
 
   /** Read an id off a response body, narrowing via `in`. */
-  function readId(body: unknown): string {
+  function readId(body: unknown,): string {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
     }
-    throw new Error("response missing string id");
+    throw new Error("response missing string id",);
   }
 
   test("create recipe with materials returns id", async () => {
@@ -89,7 +94,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
       },),
     );
     expect(res.status,).toBe(201,);
-    const body = await json(res);
+    const body = await json(res,);
     expect(readId(body,),).toBeString();
   });
 
@@ -115,9 +120,9 @@ describe("crafting recipe CRUD (auth-gated)", () => {
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
     expect(res.status,).toBe(200,);
-    const body = await json(res);
+    const body = await json(res,);
     if (typeof body !== "object" || body === null || !("name" in body) || !("materials" in body)) {
-      throw new Error("recipe response missing fields");
+      throw new Error("recipe response missing fields",);
     }
     expect(body.name,).toBe("Forge Axe",);
     expect(Array.isArray(body.materials,),).toBe(true,);
@@ -174,16 +179,16 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     const getRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
-    const body = await json(getRes);
+    const body = await json(getRes,);
     if (typeof body !== "object" || body === null || !("tier" in body) || !("materials" in body)) {
-      throw new Error("recipe response missing fields");
+      throw new Error("recipe response missing fields",);
     }
     expect(body.tier,).toBe(3,);
     const mats = body.materials as unknown[];
     if (mats[0] && typeof mats[0] === "object" && "quantity" in mats[0]) {
       expect(mats[0].quantity,).toBe(4,);
     } else {
-      throw new Error("material missing quantity");
+      throw new Error("material missing quantity",);
     }
   });
 

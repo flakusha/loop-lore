@@ -5,7 +5,7 @@ import { forbiddenResponse as forbidden, jsonCreated, jsonError, requireUserId, 
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
-export function joinRoutes(opts: HandlerOpts, prefix = "/api") {
+export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (

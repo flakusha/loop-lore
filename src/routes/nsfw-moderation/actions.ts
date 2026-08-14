@@ -9,7 +9,7 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { blockBody, modBody, requireAdmin, unblockBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
-export function actionsRoutes(opts: HandlerOpts, prefix = "/api") {
+export function actionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 
   return (
