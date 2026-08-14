@@ -78,6 +78,17 @@
     "title": "# BUG-2026-001: GM Notes GET endpoints return 500 `near \"from\": syntax error`",
     "type": "BUG"
   },
+  "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
+    "hash": "82e8395",
+    "extid": "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-",
+    "type": "BUG",
+    "title": "RPG route authz gaps: XP award/ledger + world-trait IDOR + world tick",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-rpg-wiring-phase3",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md"
+  },
   "EPIC-027": {
     "hash": "821ab24",
     "extid": "EPIC-027",
@@ -1891,6 +1902,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-001.md"
   },
+  "TASK-001-DOCKERIZE-APPLICATION": {
+    "hash": "pending",
+    "extid": "TASK-001-DOCKERIZE-APPLICATION",
+    "type": "TASK",
+    "title": "# TASK-001: Dockerize the application",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-001-dockerize-application.md"
+  },
   "TASK-002": {
     "hash": "20c7472",
     "extid": "TASK-002",
@@ -1902,6 +1924,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-002.md"
   },
+  "TASK-002-BARE-METAL-DEPLOYMENT-GUIDE": {
+    "hash": "pending",
+    "extid": "TASK-002-BARE-METAL-DEPLOYMENT-GUIDE",
+    "type": "TASK",
+    "title": "# TASK-002: Bare metal deployment guide",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-002-bare-metal-deployment-guide.md"
+  },
   "TASK-003": {
     "hash": "b45761d",
     "extid": "TASK-003",
@@ -1912,6 +1945,50 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-003.md"
+  },
+  "TASK-003-EVALUATE-HOSTINGS": {
+    "hash": "pending",
+    "extid": "TASK-003-EVALUATE-HOSTINGS",
+    "type": "TASK",
+    "title": "# TASK-003: Evaluate hosting providers (Research)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-003-evaluate-hostings.md"
+  },
+  "TASK-003-GPU-REQUIREMENTS": {
+    "hash": "pending",
+    "extid": "TASK-003-GPU-REQUIREMENTS",
+    "type": "TASK",
+    "title": "# GPU Instance Recommendations for Loop-Lore Development",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-003-gpu-requirements.md"
+  },
+  "TASK-003-GPU-SEPARATION": {
+    "hash": "pending",
+    "extid": "TASK-003-GPU-SEPARATION",
+    "type": "TASK",
+    "title": "# GPU Compute Separation for Loop-Lore",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-003-gpu-separation.md"
+  },
+  "TASK-003-HOSTING-COMPARISON": {
+    "hash": "1787920943",
+    "extid": "TASK-003-HOSTING-COMPARISON",
+    "type": "TASK",
+    "title": "# Hosting Provider Comparison for Loop-Lore Deployment",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-003-hosting-comparison.md"
   },
   "TASK-004": {
     "hash": "bd70e0f",
@@ -3621,6 +3698,28 @@
     "tags": [],
     "title": "Battle Pre-Configured Action Templates",
     "type": "TASK"
+  },
+  "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP": {
+    "hash": "pending",
+    "extid": "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP",
+    "type": "TASK",
+    "title": "# TASK-BKP-001: SQLite Automated Backup System",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-BKP-001-sqlite-automated-backup.md"
+  },
+  "TASK-BKP-002-RECOVERY-VALIDATION": {
+    "hash": "pending",
+    "extid": "TASK-BKP-002-RECOVERY-VALIDATION",
+    "type": "TASK",
+    "title": "# TASK-BKP-002: Recovery Validation Framework",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-BKP-002-recovery-validation.md"
   },
   "TASK-BLOG-FRONTEND-AUTHORING": {
     "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
@@ -8511,6 +8610,17 @@
     "tags": [],
     "title": "Resolve dead playwright.config.ts",
     "type": "TASK"
+  },
+  "TASK-RESOLVE-WIRING-CLOSE-OUT-REVIEW-FOLLOW-UPS-TYPECHECK-RED-QUE": {
+    "hash": "db80bec9",
+    "extid": "TASK-RESOLVE-WIRING-CLOSE-OUT-REVIEW-FOLLOW-UPS-TYPECHECK-RED-QUE",
+    "type": "TASK",
+    "title": "Resolve wiring-close-out review follow-ups: typecheck red + quest test gap + gate caveats",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-rpg-wiring-phase3",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md"
   },
   "TASK-RESPONSE-LENGTH-CONTROL": {
     "epic": "EPIC-2026-51",
