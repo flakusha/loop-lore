@@ -109,4 +109,22 @@ describe("updateChat gmConfig GM execution fields", () => {
     expect(llm.temperature,).toBe(0.8,);
     expect(llm.maxTokens,).toBe(1500,);
   },);
+
+  it("persists per-actor model overrides (actorModels)", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: {
+        type: "llm",
+        actorModels: {
+          "user-gm": { model: "claude-3.5-sonnet", provider: "anthropic" },
+          "actor-2": { model: "gpt-4o", provider: "openai" },
+        },
+      },
+    },);
+    expect(res,).toEqual({ ok: true, });
+    const parsed = await gmConfigOf();
+    expect(parsed?.type,).toBe("llm",);
+    const am = parsed?.actorModels as Record<string, { model: string; provider: string }>;
+    expect(am["user-gm"].model,).toBe("claude-3.5-sonnet",);
+    expect(am["actor-2"].provider,).toBe("openai",);
+  },);
 },);

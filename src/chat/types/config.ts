@@ -115,4 +115,11 @@ export interface GmConfig {
     temperature: number;
     maxTokens: number;
   };
+  /**
+   * Per-actor model overrides for multi-LLM story mode. Keyed by actor id;
+   * consumed by `story-mode.ts` → `GameMasterConfig.actorModels` →
+   * `llmDecision` (per-actor model/provider). Omitted → every actor uses the
+   * GM `llmConfig` (or the chat's resolved model).
+   */
+  actorModels?: Record<string, { model: string; provider: string }>;
 }

@@ -10,13 +10,18 @@ import type { GmDecisionStrategy, } from "./types";
 
 export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) => {
   const llmConfig = deps.config.llmConfig;
+  // Per-actor model override (multi-LLM story mode). Falls back to the GM
+  // llmConfig when the actor has no explicit assignment.
+  const actorModel = deps.config.actorModels?.[actorId];
+  const resolvedModel = actorModel?.model ?? llmConfig?.model;
+  const resolvedProvider = actorModel?.provider ?? llmConfig?.provider;
   const systemPrompt = llmConfig?.systemPrompt ?? deps.systemPromptDefault ?? GM_SYSTEM_PROMPT;
 
   const assembler = new PromptAssembler(deps.db,);
   const assembled = await assembler.assemble({
     actorId,
     chatId: deps.chatId,
-    modelId: llmConfig?.model ?? "default",
+    modelId: resolvedModel ?? "default",
     systemPromptOverride: systemPrompt,
     includeStoryContext: true,
     includeExamples: false,
@@ -54,8 +59,8 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       systemPrompt: assembled.systemPrompt,
       temperature: llmConfig?.temperature,
       maxTokens: llmConfig?.maxTokens,
-      provider: llmConfig?.provider,
-      model: llmConfig?.model,
+      provider: resolvedProvider,
+      model: resolvedModel,
     },);
   } catch {
     return hardcodedDecision(deps, context, actorId,);
