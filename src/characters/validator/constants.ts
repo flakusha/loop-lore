@@ -1,6 +1,6 @@
 // src/characters/validator/constants.ts — Field constraints and content-rating tables
 
-import type { ContentRating, } from "../spec";
+import { ContentRating, } from "../spec";
 
 interface FieldConstraints {
   minLength?: number;
@@ -30,17 +30,17 @@ export const CONSTRAINTS: Record<string, FieldConstraints> = {
 };
 
 export const VALID_CONTENT_RATINGS: ContentRating[] = [
-  "sfw",
-  "nsfw_mild",
-  "nsfw_moderate",
-  "nsfw_intense",
-  "nsfw_extreme",
+  ContentRating.Sfw,
+  ContentRating.NsfwMild,
+  ContentRating.NsfwModerate,
+  ContentRating.NsfwIntense,
+  ContentRating.NsfwExtreme,
 ];
 
 export const AGE_REQUIREMENTS: Record<ContentRating, number | null> = {
-  sfw: null,
-  nsfw_mild: 13,
-  nsfw_moderate: 18,
-  nsfw_intense: 18,
-  nsfw_extreme: 18,
+  [ContentRating.Sfw]: null,
+  [ContentRating.NsfwMild]: 13,
+  [ContentRating.NsfwModerate]: 18,
+  [ContentRating.NsfwIntense]: 18,
+  [ContentRating.NsfwExtreme]: 18,
 };
