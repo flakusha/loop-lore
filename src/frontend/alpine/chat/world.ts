@@ -94,7 +94,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     await this.markChatAsRead(chatId,);
     await this.loadChatKey(chatId,);
     await this.loadImpersonationState();
-    await this.loadChatParticipants();
+    if (this.isGroupChat) {
+      await this.loadParticipants();
+      await this.loadAvailableActors();
+    }
     // Location-scoped features: reset per-chat state then load fresh.
     this._sections = [];
     this._activeSectionId = null;

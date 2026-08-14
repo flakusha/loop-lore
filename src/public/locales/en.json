@@ -831,6 +831,21 @@
     "untitledChat": "Chat",
     "welcomeTitle": "Welcome to loop-lore"
   },
+  "participants": {
+    "title": "Participants",
+    "members": "members",
+    "addTitle": "Add Participant",
+    "searchActors": "Search your actors...",
+    "noActors": "No more actors to add",
+    "talkativity": "Talkativity",
+    "initiative": "Initiative",
+    "remove": "Remove participant",
+    "added": "Participant added",
+    "removed": "Participant removed",
+    "failedAdd": "Failed to add participant",
+    "failedRemove": "Failed to remove participant",
+    "failedUpdate": "Failed to update participant"
+  },
   "personas": {
     "title": "Personas",
     "newPersona": "+ New Persona",
