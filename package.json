@@ -70,6 +70,7 @@
     "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*'",
     "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/migrations/*,**/*.test.ts'",
     "size:check": "bun run scripts/check-file-size.ts",
+    "wiring:check": "bun run scripts/check-wiring.ts",
     "dead:code": "knip",
     "dead:code:ci": "knip --ci",
     "i18n:check": "bun run scripts/i18n-reconcile.ts",

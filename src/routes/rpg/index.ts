@@ -1,7 +1,14 @@
 import { Elysia, } from "elysia";
+import { achievementsRoutes, } from "./achievements";
+import { combatRoutes, } from "./combat";
 import { diceRoutes, } from "./dice";
+import { npcNavigationRoutes, } from "./npc-navigation";
+import { replayabilityRoutes, } from "./replayability";
+import { skillsRoutes, } from "./skills";
 import { statsRoutes, } from "./stats";
 import type { HandlerOpts, } from "./types";
+import { worldLocationTraitsRoutes, } from "./world-location-traits";
+import { xpLootRoutes, } from "./xp-loot";
 
 /**
  * RPG Routes facade — barrel assembling the HTTP surface from domain
@@ -17,11 +24,41 @@ import type { HandlerOpts, } from "./types";
  *     POST /api/rpg/stats/calculate — compute modifiers from stat block
  *     POST /api/rpg/stats/validate — validate a stat block
  *     POST /api/rpg/stats/generate — generate stats (point-buy, 4d6-drop-lowest, standard)
+ *
+ *   Achievements:
+ *     GET/POST /api/rpg/achievements — list/create definitions
+ *     GET/PUT/DELETE /api/rpg/achievements/:id — definition CRUD
+ *     .../player/... — player progress & rewards
+ *
+ *   Replayability:
+ *     /api/rpg/replayability/playthroughs... — playthrough lifecycle
+ *     /api/rpg/replayability/new-game-plus — NG+ start
+ *     /api/rpg/replayability/players/:playerId/meta — meta-progression
+ *
+ *   Skills:
+ *     GET/POST /api/rpg/skills — list/create
+ *     GET/PUT/DELETE /api/rpg/skills/:id — skill CRUD
+ *     .../actors/:actorId/... — actor-scoped skills, XP, specialization
+ *
+ *   NPC Navigation:
+ *     /api/rpg/npc-navigation/actors/:actorId/... — state, pattern, move
+ *     /api/rpg/npc-navigation/worlds/:worldId/tick — movement tick
+ *
+ *   World & Location Traits:
+ *     /api/rpg/world-location-traits/worlds|locations/... — trait CRUD
+ *     /api/rpg/world-location-traits/actors/:actorId — aggregate
  */
 export function rpgRoutes(opts: HandlerOpts,) {
   return (
     new Elysia({ name: "rpg", },)
       .use(diceRoutes(opts,),)
       .use(statsRoutes(opts,),)
+      .use(achievementsRoutes(opts,),)
+      .use(replayabilityRoutes(opts,),)
+      .use(skillsRoutes(opts,),)
+      .use(npcNavigationRoutes(opts,),)
+      .use(worldLocationTraitsRoutes(opts,),)
+      .use(combatRoutes(opts,),)
+      .use(xpLootRoutes(opts,),)
   );
 }
