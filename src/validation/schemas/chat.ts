@@ -8,6 +8,7 @@ import {
   ChatParticipantRoleSchema,
   ChatTypeSchema,
   GmConfigSchema,
+  GmGuidanceSchema,
   Id,
   Name,
   NullableId,
@@ -117,6 +118,16 @@ export const ChatIdParams = t.Object({
 export const ChatRenameBody = t.Object({
   name: Name,
   name_source: t.Optional(t.String(),),
+},);
+
+/**
+ * Body for `PUT /api/v1/chats/:id/gm-guidance` — runtime human-GM narrative
+ * guidance. Unlike `gmConfig` on the main update route, this is NOT a key
+ * mechanic and can be patched on an online chat.
+ */
+export const GmGuidanceUpdateBody = t.Object({
+  storyMode: t.Optional(t.Boolean(),),
+  gmGuidance: t.Optional(GmGuidanceSchema,),
 },);
 
 export const ChatParticipantParams = t.Object({

@@ -131,6 +131,94 @@
         </div>
       </template>
 
+      <!-- GM Guidance (human Game Master narrative steering) -->
+      <template x-if="currentChat?.mode === 'story' || $store.ui.showGmGuidance">
+        <div class="form-group" style="margin-top: var(--space-3); border-top: 1px solid var(--border); padding-top: var(--space-3)" x-data="gmGuidance">
+          <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer">
+            <input type="checkbox" x-model="_storyMode" />
+            <span class="form-label" style="margin: 0">GM-Guided Story Mode</span>
+          </label>
+          <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+            You act as Game Master — direct characters, set the scene, and constrain responses.
+          </small>
+
+          <div style="margin-top: var(--space-2)">
+            <label class="form-label" for="gm-scene">Scene Description</label>
+            <textarea
+              class="form-input form-textarea"
+              id="gm-scene"
+              rows="2"
+              x-model="_gmGuidance.sceneDescription"
+              placeholder="Describe the current scene for all participants"
+              data-testid="gm-scene-description"
+            ></textarea>
+          </div>
+
+          <div style="margin-top: var(--space-2)">
+            <label class="form-label" for="gm-target">Target Character</label>
+            <select class="form-input" id="gm-target" x-model="_gmGuidance.targetCharacter" data-testid="gm-target-character">
+              <option value="">— Anyone —</option>
+              <template x-for="p in _gmParticipants" :key="p.actor_id">
+                <option :value="p.actor_id" x-text="p.display_name || p.name"></option>
+              </template>
+            </select>
+          </div>
+
+          <div style="margin-top: var(--space-2)">
+            <label class="form-label">Narrative Constraints</label>
+            <div style="display: flex; gap: var(--space-2)">
+              <input
+                class="form-input"
+                type="text"
+                x-model="_gmNewConstraint"
+                @keydown.enter.prevent="addGmConstraint()"
+                placeholder="e.g. stay in-character as a cautious elf"
+                data-testid="gm-new-constraint"
+              />
+              <button class="btn btn-ghost btn-sm" @click="addGmConstraint()" data-testid="gm-add-constraint">Add</button>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: var(--space-2) 0 0">
+              <template x-for="c in _gmGuidance.constraints" :key="c">
+                <li style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) 0">
+                  <span x-text="c"></span>
+                  <button class="btn-icon" @click="removeGmConstraint(c)" :aria-label="'Remove ' + c" data-testid="gm-remove-constraint">×</button>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div style="margin-top: var(--space-2)" x-show="_gmParticipants.length > 0">
+            <label class="form-label">Turn Priority</label>
+            <ul style="list-style: none; padding: 0; margin: 0">
+              <template x-for="p in _gmParticipants" :key="p.actor_id">
+                <li style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) 0">
+                  <span x-text="p.display_name || p.name"></span>
+                  <select
+                    class="form-input"
+                    style="width: auto"
+                    :value="_gmGuidance.turnPriority[p.actor_id] || 'medium'"
+                    @change="setGmTurnPriority(p.actor_id, $event.target.value)"
+                    :data-testid="'gm-turn-priority-' + p.actor_id"
+                  >
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3)">
+            <button class="btn btn-primary btn-sm" @click="applyGmGuidance()" :disabled="_gmGuidanceLoading" data-testid="gm-apply-guidance">
+              <span x-show="!_gmGuidanceLoading">Apply Guidance</span>
+              <span x-show="_gmGuidanceLoading">Applying…</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" @click="clearGmGuidance()" data-testid="gm-clear-guidance">Clear All</button>
+          </div>
+        </div>
+      </template>
+
       <!-- Prompt Template Preview -->
       <div class="form-group" style="margin-top: var(--space-3)">
         <button

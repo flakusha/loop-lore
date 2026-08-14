@@ -36,6 +36,18 @@ const COMMAND_BUTTONS: CommandButton[] = [
 
     /** Run a command by inserting it into the message input */
     runCommand(cmd: string,): void {
+      // GM guidance commands open the GM Guidance panel instead of typing a
+      // slash command — the panel captures narrative direction, scene, and
+      // constraints far better than free text.
+      if (cmd === "guide" || cmd === "scene") {
+        const store = (globalThis as { Alpine?: { store: (name: string,) => Record<string, unknown> } }).Alpine;
+        const ui = store?.store("ui") as Record<string, unknown> | undefined;
+        if (ui) {
+          ui.showGmGuidance = true;
+          ui.showChatSettings = true;
+        }
+        return;
+      }
       const input = document.querySelector("#message-input",) as HTMLTextAreaElement | null;
       if (input) {
         input.value = `/${cmd} `;

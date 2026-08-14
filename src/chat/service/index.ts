@@ -32,6 +32,7 @@ export {
   getChat,
   updateChat,
 } from "./chats";
+export { updateGmGuidance, } from "./crud";
 
 // ── Chat setup templates ──────────────────────────────────────
 export {
