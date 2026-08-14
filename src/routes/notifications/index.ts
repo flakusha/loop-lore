@@ -16,11 +16,11 @@ import { NotificationStreamer, } from "./stream";
 
 export { NotificationStreamer, } from "./stream";
 
-export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
+export function notificationsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   const idParams = t.Object({ id: t.String(), },);
   const markReadBody = t.Object({ read: t.Optional(t.Boolean(),), },);
   return new Elysia({ name: "notifications", },)
-    .get("/api/notifications", async (ctx: any,) => {
+    .get(prefix + "/notifications", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const unreadOnly = ctx.query?.unread === "true";
@@ -37,7 +37,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Notifications",],
       },
     },)
-    .get("/api/notifications/unread-count", async (ctx: any,) => {
+    .get(prefix + "/notifications/unread-count", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const count = await new NotificationService(database,).getUnreadCount(userId,);
@@ -54,7 +54,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     },)
     .patch(
-      "/api/notifications/:id",
+      prefix + "/notifications/:id",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -77,7 +77,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
         },
       },
     )
-    .patch("/api/notifications/read-all", async (ctx: any,) => {
+    .patch(prefix + "/notifications/read-all", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       await new NotificationService(database,).markAllRead(userId,);
@@ -93,7 +93,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Notifications",],
       },
     },)
-    .delete("/api/notifications/:id", async (ctx: any,) => {
+    .delete(prefix + "/notifications/:id", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       await new NotificationService(database,).delete(ctx.params.id, userId,);
@@ -110,7 +110,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
         tags: ["Notifications",],
       },
     },)
-    .get("/api/notifications/preferences", async (ctx: any,) => {
+    .get(prefix + "/notifications/preferences", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const prefs = await new NotificationService(database,).getPrefs(userId,);
@@ -127,7 +127,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
       },
     },)
     .patch(
-      "/api/notifications/preferences",
+      prefix + "/notifications/preferences",
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -150,7 +150,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
         },
       },
     )
-    .get("/api/notifications/stream", async (ctx: any,) => {
+    .get(prefix + "/notifications/stream", async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       return new NotificationStreamer(database, userId,).open();

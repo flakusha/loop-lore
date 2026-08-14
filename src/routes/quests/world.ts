@@ -9,9 +9,9 @@ import {
 } from "../../validation/schemas";
 import { handleCreateQuest, handleListQuests, } from "./handlers";
 
-export function questWorldRoutes({ database, }: { database: Kysely<DB> },) {
+export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "quests-world", },)
-    .get("/api/worlds/:worldId/quests", async (ctx: any,) => {
+    .get(prefix + "/worlds/:worldId/quests", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleListQuests(
@@ -35,7 +35,7 @@ export function questWorldRoutes({ database, }: { database: Kysely<DB> },) {
       },
     },)
     .post(
-      "/api/worlds/:worldId/quests",
+      prefix + "/worlds/:worldId/quests",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         const userRole = ctx.userRole as string | null;

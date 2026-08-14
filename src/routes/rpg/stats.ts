@@ -14,12 +14,12 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { type HandlerOpts, StatsBody, StatsGenerateBody, } from "./types";
 
-export function statsRoutes(_opts: HandlerOpts,) {
+export function statsRoutes(_opts: HandlerOpts, prefix = "/api") {
   return (
     new Elysia({ name: "rpg-stats", },)
       // ── Stats: Calculate ──────────────────────────────────
       .post(
-        "/api/rpg/stats/calculate",
+        prefix + "/rpg/stats/calculate",
         (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -46,7 +46,7 @@ export function statsRoutes(_opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/rpg/stats/validate",
+        prefix + "/rpg/stats/validate",
         (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -73,7 +73,7 @@ export function statsRoutes(_opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/rpg/stats/generate",
+        prefix + "/rpg/stats/generate",
         (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

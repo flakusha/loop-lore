@@ -6,14 +6,14 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { DiceAdvantageBody, DiceNotationBody, DiceRollBody, type HandlerOpts, } from "./types";
 
-export function diceRoutes(opts: HandlerOpts,) {
+export function diceRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "rpg-dice", },)
       // ── Dice: Roll ────────────────────────────────────────
       .post(
-        "/api/rpg/dice/roll",
+        prefix + "/rpg/dice/roll",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -69,7 +69,7 @@ export function diceRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/rpg/dice/notation",
+        prefix + "/rpg/dice/notation",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -99,7 +99,7 @@ export function diceRoutes(opts: HandlerOpts,) {
         },
       )
       .post(
-        "/api/rpg/dice/advantage",
+        prefix + "/rpg/dice/advantage",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

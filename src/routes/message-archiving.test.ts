@@ -10,35 +10,35 @@ const ROUTES_DIR = import.meta.dir;
 describe("message archiving routes", () => {
   test("messages/archiving.ts has archive endpoint", () => {
     const content = readFileSync(join(ROUTES_DIR, "messages", "archiving.ts",), "utf8",);
-    expect(content,).toContain("/api/messages/:id/archive",);
+    expect(content,).toContain("/messages/:id/archive",);
     expect(content,).toContain("archived_at",);
   });
 
   test("messages/archiving.ts has restore endpoint", () => {
     const content = readFileSync(join(ROUTES_DIR, "messages", "archiving.ts",), "utf8",);
-    expect(content,).toContain("/api/messages/:id/restore",);
+    expect(content,).toContain("/messages/:id/restore",);
   });
 
   test("messages/archiving.ts has purge endpoint", () => {
     const content = readFileSync(join(ROUTES_DIR, "messages", "archiving.ts",), "utf8",);
-    expect(content,).toContain("/api/chats/:id/messages/purge",);
+    expect(content,).toContain("/chats/:id/messages/purge",);
   });
 });
 
 describe("batch chat operations", () => {
   test("chats.ts has batch archive endpoint", () => {
     const content = readFileSync(join(ROUTES_DIR, "chats", "batch.ts",), "utf8",);
-    expect(content,).toContain("/api/chats/batch/archive",);
+    expect(content,).toContain("/chats/batch/archive",);
   });
 
   test("chats.ts has batch delete endpoint", () => {
     const content = readFileSync(join(ROUTES_DIR, "chats", "batch.ts",), "utf8",);
-    expect(content,).toContain("/api/chats/batch/delete",);
+    expect(content,).toContain("/chats/batch/delete",);
   });
 
   test("chats.ts has batch export endpoint", () => {
     const content = readFileSync(join(ROUTES_DIR, "chats", "batch.ts",), "utf8",);
-    expect(content,).toContain("/api/chats/batch/export",);
+    expect(content,).toContain("/chats/batch/export",);
   });
 });
 

@@ -10,9 +10,9 @@ const locationStateResponse = t.Object({
   state: t.Record(t.String(), t.Any(),),
 },);
 
-export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> },) {
+export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api") {
   return new Elysia({ name: "story-states-location", },)
-    .get("/api/locations/:id/state", async (ctx: any,) => {
+    .get(prefix + "/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleLocationState(database, "GET", ctx.params.id, userId, userRole,);
@@ -29,7 +29,7 @@ export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }
         tags: ["Story States",],
       },
     },)
-    .put("/api/locations/:id/state", async (ctx: any,) => {
+    .put(prefix + "/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleLocationState(

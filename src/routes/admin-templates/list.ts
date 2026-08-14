@@ -9,13 +9,13 @@ import { isAdminRole, } from "../../middleware/admin-gate";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { countTemplates, loadStoredTemplates, log, mergeProfiles, } from "./shared";
 
-export function listRoutes(opts: { database: Kysely<DB> },) {
+export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "admin-templates-list", },)
       // ── List all profiles (builtin + custom) ───────────────
-      .get("/api/admin/templates", async (ctx: any,) => {
+      .get(prefix + "/admin/templates", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -57,7 +57,7 @@ export function listRoutes(opts: { database: Kysely<DB> },) {
         }
       },)
       // ── Get full registry (all profiles with templates) ────
-      .get("/api/admin/templates/registry", async (ctx: any,) => {
+      .get(prefix + "/admin/templates/registry", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -87,7 +87,7 @@ export function listRoutes(opts: { database: Kysely<DB> },) {
         }
       },)
       // ── Get one profile ───────────────────────────────────
-      .get("/api/admin/templates/:id", async (ctx: any,) => {
+      .get(prefix + "/admin/templates/:id", async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

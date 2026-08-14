@@ -22,9 +22,9 @@ interface HandleOpts {
   database: Kysely<DB>;
 }
 
-export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
+export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api"): Elysia {
   return new Elysia({ name: "telemetry", },)
-    .post("/api/telemetry/event", async (ctx: any,) => {
+    .post(prefix + "/telemetry/event", async (ctx: any,) => {
       if (!isFrontendTelemetryEnabled()) {
         return jsonResponse({ ok: true, dropped: "frontend telemetry disabled", },);
       }
@@ -50,7 +50,7 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         tags: ["Telemetry",],
       },
     },)
-    .get("/api/telemetry/analytics/summary", async (ctx: any,) => {
+    .get(prefix + "/telemetry/analytics/summary", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -87,7 +87,7 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         tags: ["Telemetry", "Analytics",],
       },
     },)
-    .get("/api/telemetry/analytics/models", async (ctx: any,) => {
+    .get(prefix + "/telemetry/analytics/models", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -122,7 +122,7 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         tags: ["Telemetry", "Analytics",],
       },
     },)
-    .get("/api/telemetry/analytics/errors", async (ctx: any,) => {
+    .get(prefix + "/telemetry/analytics/errors", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -158,7 +158,7 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         tags: ["Telemetry", "Analytics",],
       },
     },)
-    .get("/api/telemetry/analytics/daily", async (ctx: any,) => {
+    .get(prefix + "/telemetry/analytics/daily", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
@@ -199,7 +199,7 @@ export function telemetryRoutes({ database, }: HandleOpts,): Elysia {
         tags: ["Telemetry", "Analytics",],
       },
     },)
-    .delete("/api/telemetry/analytics/purge", async (ctx: any,) => {
+    .delete(prefix + "/telemetry/analytics/purge", async (ctx: any,) => {
       if (ctx.userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",

@@ -65,14 +65,14 @@ async function isChatOwner(
   return Boolean(chat,) && (chat!.created_by === userId || userRole === "admin");
 }
 
-export function invitesRoutes(opts: HandlerOpts,) {
+export function invitesRoutes(opts: HandlerOpts, prefix = "/api") {
   const { database, } = opts;
 
   return (
     new Elysia({ name: "invites", },)
       // ── Create ─────────────────────────────────────────────
       .post(
-        "/api/chats/:id/invites",
+        prefix + "/chats/:id/invites",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -104,7 +104,7 @@ export function invitesRoutes(opts: HandlerOpts,) {
       )
       // ── List ───────────────────────────────────────────────
       .get(
-        "/api/chats/:id/invites",
+        prefix + "/chats/:id/invites",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -122,7 +122,7 @@ export function invitesRoutes(opts: HandlerOpts,) {
       )
       // ── Revoke ─────────────────────────────────────────────
       .delete(
-        "/api/chats/:id/invites/:inviteId",
+        prefix + "/chats/:id/invites/:inviteId",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -144,7 +144,7 @@ export function invitesRoutes(opts: HandlerOpts,) {
       )
       // ── Join ───────────────────────────────────────────────
       .post(
-        "/api/invites/:code/join",
+        prefix + "/invites/:code/join",
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

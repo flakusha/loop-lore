@@ -13,11 +13,11 @@ import { ErrorResponse, SuccessResponse, UserProfileUpdateBody, } from "../../va
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
-export function meRoutes(opts: UsersRoutesOpts,) {
+export function meRoutes(opts: UsersRoutesOpts, prefix = "/api") {
   return (
     new Elysia({ name: "users-me", },)
       .get(
-        "/api/users/me",
+        prefix + "/users/me",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -45,7 +45,7 @@ export function meRoutes(opts: UsersRoutesOpts,) {
         },
       )
       .put(
-        "/api/users/me",
+        prefix + "/users/me",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -92,7 +92,7 @@ export function meRoutes(opts: UsersRoutesOpts,) {
         },
       )
       .patch(
-        "/api/users/me/settings",
+        prefix + "/users/me/settings",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
