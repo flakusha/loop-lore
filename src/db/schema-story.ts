@@ -21,6 +21,8 @@ import type {
   PublicationStatus,
   WorldKind,
   WorldVisibility,
+  PinnedState,
+  QuestCategory,
 } from "./enums";
 
 /**
@@ -37,6 +39,39 @@ import type {
  *
 "40: @theirs\n41: @theirs\n42: @theirs"
 
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
+/**
+ * DB Schema — Story Domain Tables
+ *
+"40: @theirs\n41: @theirs\n42: @theirs"
 /**
  * DB Schema — Story Domain Tables
  *
@@ -113,6 +148,7 @@ export interface Quests {
   name: string;
   description: string | null;
   type: QuestType;
+  category: Generated<QuestCategory>;
   status: Generated<QuestStatus>;
   priority: Generated<number>;
   config: Generated<string>;
@@ -235,7 +271,7 @@ export interface ActorMemories {
   world_id: string | null;
   user_id: string | null;
   scope: Generated<string>;
-  pinned: Generated<number>;
+  pinned: Generated<PinnedState>;
   privacy: Generated<string>;
   shareability: string | null;
 }

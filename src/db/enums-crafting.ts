@@ -131,3 +131,11 @@ export const ProfessionBonusType = {
   ExperienceGain: "experience_gain",
 } as const;
 export type ProfessionBonusType = (typeof ProfessionBonusType)[keyof typeof ProfessionBonusType];
+
+// ── Gathering Node Instances ──────────────────────────────
+
+export const NodeInstanceState = {
+  Available: "available",
+  Depleted: "depleted",
+} as const;
+export type NodeInstanceState = (typeof NodeInstanceState)[keyof typeof NodeInstanceState];

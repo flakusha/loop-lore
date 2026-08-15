@@ -177,7 +177,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id",).onDelete("cascade",),)
     .addColumn("location_id", "text", (col,) => col.references("locations.id",).onDelete("set null",),)
     .addColumn("current_uses", "integer", (col,) => col.notNull(),)
-    .addColumn("is_depleted", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("state", "text", (col,) => col.notNull().defaultTo("available",),)
     .addColumn("respawn_at", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)

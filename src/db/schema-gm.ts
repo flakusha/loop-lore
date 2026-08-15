@@ -6,6 +6,7 @@
  */
 import type { Generated, } from "kysely";
 import type {
+  ShadowNoteStatus,
   ShadowNoteType,
   WhiteneoteScope,
   WhiteneoteType,
@@ -17,7 +18,7 @@ export interface ShadowNotes {
   chat_id: string;
   type: ShadowNoteType;
   content: string;
-  revealed: Generated<number>;
+  status: Generated<ShadowNoteStatus>;
   created_at: string;
 }
 

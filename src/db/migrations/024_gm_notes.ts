@@ -14,7 +14,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("chat_id", "text", (col,) => col.notNull().references("chats.id",).onDelete("cascade",),)
     .addColumn("type", "text", (col,) => col.notNull(),)
     .addColumn("content", "text", (col,) => col.notNull(),)
-    .addColumn("revealed", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("hidden",),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .execute();
 
