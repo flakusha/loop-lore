@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 190 epics
+**Total:** 192 epics
 
 ## Summary
 
@@ -11,6 +11,7 @@
 | ------ | ----- | -------- | ------ | ----- | ---- |
 | 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Archival Workflow | Medium | Medium | 19 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
+| 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | 📝 Draft | Epic: Assistant Creative Studio — Workflow Templates | High (MVP scoped, post-Gate C) | Large | 32 | [epic-assistant-creative-studio-workflows.md](/.plan/epics/epic-assistant-creative-studio-workflows.md) |
 | 📝 Draft | Epic: Chat Privacy | Medium | Medium | 4 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
@@ -24,6 +25,7 @@
 | 📝 Draft | Epic: Plugin Extension Points | Medium | Medium | 4 | [epic-plugin-extension-points.md](/.plan/epics/epic-plugin-extension-points.md) |
 | 📝 Draft | Epic: Relationships | High | High | 0 | [epic-relationships.md](/.plan/epics/epic-relationships.md) |
 | 📝 Draft | Epic: Time Scale | High | Medium | 8 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
+| 📝 Draft | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | ⬜ Not Started | Admin Panel & Dashboard | Medium | Unknown | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Unknown | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
@@ -222,6 +224,15 @@
 - **Tags:** archival, soft-delete, retention, purge, data-lifecycle
 - **File:** `.plan/epics/epic-archival-workflow.md`
 
+### Cross-Layer Reconciliation
+
+- **Status:** 📝 Draft
+- **Priority:** High
+- **Effort:** Large (permanently ongoing)
+- **Type:** Quality / Chore Epic
+- **Tags:** reconciliation, cross-check, fe-be-db, docs, specs, drift, warnings
+- **File:** `.plan/epics/epic-cross-layer-reconciliation.md`
+
 ### Epic: Analytics & Observability
 
 - **Status:** 📝 Draft
@@ -360,6 +371,15 @@ Character relationship system — romance, friendship, rivalry, loyalty, trust, 
 - **File:** `.plan/epics/epic-time-scale.md`
 
 Time scale system — manage game time progression, day/night cycles, seasons, and time-based events. Covers time flow control, time-gated content, and temporal mechanics. Required upstream for Timeline System epic.
+
+### Task Management Integration
+
+- **Status:** 📝 Draft
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Process / Tooling Epic
+- **Tags:** task-management, planning, workflow, tickets, integration, cli
+- **File:** `.plan/epics/epic-task-management-integration.md`
 
 ### 3D Asset Generation (Future)
 
