@@ -213,6 +213,14 @@
                 </button>
               </template>
               <button
+                class="btn-icon-action"
+                @click="pinMessage(msg.id)"
+                title="Pin message"
+                aria-label="Pin message"
+              >
+                📌
+              </button>
+              <button
                 class="btn-icon-action action-remove"
                 @click="removeMessage(msg.id, $event)"
                 x-bind:title="t('common.remove')"
@@ -329,6 +337,12 @@
                       💬 {{{t("chats.captionImages")}}}
                     </button>
                   </template>
+                  <button @click="pinMessage(msg.id); _hamburgerOpen[msg.id] = false">
+                    📌 Pin
+                  </button>
+                  <button @click="_archiveConfirmId = msg.id; _archiveConfirmOpen = true; _hamburgerOpen[msg.id] = false">
+                    📦 Archive
+                  </button>
                   <button
                     class="dropdown-danger"
                     @click="removeMessage(msg.id, $event); _hamburgerOpen[msg.id] = false"
@@ -384,7 +398,13 @@
     <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">
       🖼 {{{t("chats.generateImage")}}}
     </button>
+    <button @click="pinMessage(_contextMenu.messageId); closeContextMenu()">
+      📌 Pin
+    </button>
     <div class="context-menu-divider"></div>
+    <button @click="_archiveConfirmId = _contextMenu.messageId; _archiveConfirmOpen = true; closeContextMenu()">
+      📦 Archive
+    </button>
     <button
       class="dropdown-danger"
       @click="removeMessage(_contextMenu.messageId, $event); closeContextMenu()"
