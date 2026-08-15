@@ -2,7 +2,7 @@
 //
 // Central registry for LLM provider instances. Providers register at startup.
 // resolveProvider() handles resolution order: user BYO key → chat → server default.
-// See docs/spec/provider-system.md.
+// See .plan/epics/epic-provider-plugin-ecosystem.md.
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
