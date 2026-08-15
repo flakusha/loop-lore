@@ -59,7 +59,7 @@ export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
       const smk = getSmk();
       const messages: MessageData[] = [];
       for (const row of rows) {
-        const content = row.key_id && smk
+        const content = smk && row.key_id
           ? await decryptMessageContent(database, row, smk,)
           : row.content;
         messages.push({

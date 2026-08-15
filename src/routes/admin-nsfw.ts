@@ -33,7 +33,7 @@ interface NsfwAdminConfig {
 export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "admin-nsfw", },)
     // ── Get NSFW config ───────────────────────────────────
-    .get(`${prefix}/admin/nsfw`, async (ctx: any,) => {
+    .get(`${prefix}/admin/nsfw`, (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
