@@ -86,19 +86,19 @@ describe("cross-validation vs Bun independent zstd", () => {
     const frame = zstdCompress(input,);
     // zstd magic: 0x28 0xB5 0x2F 0xFD
     expect(frame[0],).toBe(0x28,);
-    expect(frame[1],).toBe(0xb5,);
-    expect(frame[2],).toBe(0x2f,);
-    expect(frame[3],).toBe(0xfd,);
+    expect(frame[1],).toBe(0xB5,);
+    expect(frame[2],).toBe(0x2F,);
+    expect(frame[3],).toBe(0xFD,);
   });
 });
 
 describe("zstd error paths", () => {
   test("corrupt frame throws", () => {
-    expect(() => zstdDecompress(new Uint8Array([0xde, 0xad, 0xbe, 0xef,],),)).toThrow();
+    expect(() => zstdDecompress(new Uint8Array([0xDE, 0xAD, 0xBE, 0xEF,],),)).toThrow();
   });
 
   test("unknown frame size throws (bound < 0)", () => {
-    expect(() => zstdDecompress(new Uint8Array([0x28, 0xb5, 0x2f, 0xfd, 0x00,],),)).toThrow();
+    expect(() => zstdDecompress(new Uint8Array([0x28, 0xB5, 0x2F, 0xFD, 0x00,],),)).toThrow();
   });
 
   test("decompress output is exact (no padding)", () => {

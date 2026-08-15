@@ -202,7 +202,7 @@ export function sha256(data: Buffer,): Buffer {
 
 - `native/loop-lore-native/` — Rust cdylib crate (`#[no_mangle]` C ABI:
   `ll_version` packed i32, `ll_blake3` caller-buffer). rustfmt (2-space, 120)
-  + clippy `-D warnings` + 9 tests (7 unit incl. official vectors + 2
+  - clippy `-D warnings` + 9 tests (7 unit incl. official vectors + 2
   integration) green.
 - `src/native/` — TS layer: `loader.ts` (bun:ffi dlopen, platform/arch binary
   resolution, ABI version gate, cached, failure-tolerant), `blake3.ts`
