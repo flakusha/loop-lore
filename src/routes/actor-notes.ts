@@ -36,10 +36,16 @@ export function actorNotesRoutes(opts: { database: Db; config: Config },): Elysi
       jsonFields: [],
       defaults: {
         category: "general",
-        pinned: 0,
+        pinned: "unpinned",
         sortOrder: 0,
       },
       createRequired: ["title", "content",],
+      valueTransforms: {
+        pinned: (value,) => (value === true || value === "pinned" ? "pinned" : "unpinned"),
+      },
+      responseTransforms: {
+        pinned: (value,) => value === "pinned",
+      },
     },
     opts,
   );

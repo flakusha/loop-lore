@@ -24,7 +24,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
   return new Elysia({ name: "plugins", },)
     .get(
       `${prefix}/plugins`,
-      async (ctx: any,) => {
+      (ctx: any,) => {
         if (ctx.userRole !== "admin") {
           return forbidden("Admin access required",);
         }
@@ -75,11 +75,11 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
         try {
           await database
             .insertInto("plugin_state",)
-            .values({ name, enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null, },)
+            .values({ name, status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
             .onConflict((oc,) =>
               oc
                 .column("name",)
-                .doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null, },)
+                .doUpdateSet({ status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
             )
             .execute();
         } catch {
@@ -125,9 +125,9 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
         try {
           await database
             .insertInto("plugin_state",)
-            .values({ name, enabled: 0, disabled_at: new Date().toISOString(), },)
+            .values({ name, status: "disabled", disabled_at: new Date().toISOString(), },)
             .onConflict((oc,) =>
-              oc.column("name",).doUpdateSet({ enabled: 0, disabled_at: new Date().toISOString(), },)
+              oc.column("name",).doUpdateSet({ status: "disabled", disabled_at: new Date().toISOString(), },)
             )
             .execute();
         } catch {

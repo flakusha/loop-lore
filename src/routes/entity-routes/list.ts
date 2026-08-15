@@ -4,6 +4,7 @@ import type { Db, } from "../../db";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonPaginated, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
+import { applyResponseTransforms, } from "./helpers";
 import type { EntityConfig, } from "./types";
 
 export function listRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
@@ -48,8 +49,9 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
         query = query.orderBy(ob.column, ob.dir,);
       }
       const entities = await query.limit(pageSize,).offset(offset,).execute();
+      const mapped = Array.from(entities, (e,) => applyResponseTransforms(config, e as Record<string, unknown>,),);
 
-      return jsonPaginated({ data: entities, total, page, pageSize, },);
+      return jsonPaginated({ data: mapped, total, page, pageSize, },);
     }, {
       response: {
         200: SuccessResponse,

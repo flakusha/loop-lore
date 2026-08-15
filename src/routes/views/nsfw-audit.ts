@@ -21,9 +21,8 @@ function renderNsfwConsent(prefs: NsfwUserPrefs,): string {
   const rows = [
     consentRow("NSFW enabled", status,),
     consentRow("Max rating", prefs.maxRating,),
-    consentRow("Blocked from NSFW", prefs.blockedFromNsfw ? "Yes" : "No",),
+    consentRow("Access status", prefs.accessStatus,),
     consentRow("Shadow NSFW", prefs.shadowNsfw ? "Yes" : "No",),
-    consentRow("Banned from NSFW", prefs.bannedFromNsfw ? "Yes" : "No",),
   ];
   if (prefs.blockReason) { rows.push(consentRow("Block reason", prefs.blockReason,),); }
   if (prefs.bannedBy) { rows.push(consentRow("Banned by", prefs.bannedBy,),); }

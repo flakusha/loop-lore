@@ -106,10 +106,10 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
           hostname === "localhost" ||
           hostname === "127.0.0.1" ||
           hostname === "::1" ||
+          hostname === "169.254.169.254" || // eslint-disable-line sonarjs/no-hardcoded-ip
           hostname.startsWith("10.",) ||
           hostname.startsWith("172.",) ||
           hostname.startsWith("192.168.",) ||
-          hostname === "169.254.169.254" || // eslint-disable-line sonarjs/no-hardcoded-ip
           hostname.startsWith("169.254.",)
         ) {
           return jsonError({

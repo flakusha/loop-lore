@@ -1,7 +1,9 @@
+import type { Kysely, } from "kysely";
 import { createAsset, detectAssetType, linkAsset, mimeFromExtension, } from "../../assets/service";
 import { AssetImportError, CharacterValidationError, } from "../../characters/errors";
 import { validateCharacter, } from "../../characters/parser";
 import { AssetLinkEntity, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import { safeJsonStringify, uid, } from "../../utils";
 import { jsonCreated, } from "../http-utils";
 import { importLorebook, } from "./lorebook";
@@ -55,54 +57,10 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
     .execute();
 
   // Import CHARX assets (avatars, audio, etc.)
-  if (charxAssets && charxAssets.length > 0 && uploadDir) {
-    let avatarImported = 0;
-    for (const asset of charxAssets) {
-      try {
-        const mime = mimeFromExtension(asset.name,);
-        const assetType = detectAssetType(mime,);
-
-        const { asset: assetRecord, } = await createAsset({
-          database,
-          input: {
-            ownerId: userId,
-            filename: asset.name,
-            mimeType: mime,
-            assetType,
-            sizeBytes: asset.data.length,
-            buffer: asset.data,
-            altText: `${character.name} - ${asset.type}`,
-          },
-          uploadDir,
-        },);
-
-        // Link asset to the imported character
-        const label = asset.type === "avatar" ? "avatar" : asset.type;
-        await linkAsset({
-          database,
-          assetId: assetRecord.id,
-          link: {
-            entityType: AssetLinkEntity.Actor,
-            entityId: id,
-            label,
-          },
-        },);
-
-        if (asset.type === "avatar") {
-          avatarImported++;
-        }
-      } catch (error) {
-        // Log but don't fail import for asset errors
-        const assetError = new AssetImportError(
-          asset.name,
-          error instanceof Error ? error.message : "unknown error",
-        );
-        warnings.push(assetError.message,);
-      }
-    }
-
-    if (avatarImported > 0) {
-      warnings.push(`Imported ${avatarImported} avatar(s) from CHARX`,);
+  if (uploadDir && charxAssets && charxAssets.length > 0) {
+    const avatarCount = await importCharxAssets(database, id, character.name, charxAssets, uploadDir, warnings,);
+    if (avatarCount > 0) {
+      warnings.push(`Imported ${avatarCount} avatar(s) from CHARX`,);
     }
   }
 
@@ -122,4 +80,66 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
     assets_imported: charxAssets?.length ?? 0,
     lore_entries_imported: character.lorebook?.entries.length ?? 0,
   },);
+}
+
+/**
+ * Import CHARX assets (avatars, audio, etc), linking each to the character.
+ *
+ * Asset failures are logged as warnings and never fail the import.
+ *
+ * @returns The number of avatar assets imported
+ */
+async function importCharxAssets(
+  database: Kysely<DB>,
+  actorId: string,
+  characterName: string,
+  charxAssets: { name: string; type: string; data: Buffer }[],
+  uploadDir: string,
+  warnings: string[],
+): Promise<number> {
+  let avatarImported = 0;
+  for (const asset of charxAssets) {
+    try {
+      const mime = mimeFromExtension(asset.name,);
+      const assetType = detectAssetType(mime,);
+
+      const { asset: assetRecord, } = await createAsset({
+        database,
+        input: {
+          ownerId: actorId,
+          filename: asset.name,
+          mimeType: mime,
+          assetType,
+          sizeBytes: asset.data.length,
+          buffer: asset.data,
+          altText: `${characterName} - ${asset.type}`,
+        },
+        uploadDir,
+      },);
+
+      // Link asset to the imported character
+      const label = asset.type === "avatar" ? "avatar" : asset.type;
+      await linkAsset({
+        database,
+        assetId: assetRecord.id,
+        link: {
+          entityType: AssetLinkEntity.Actor,
+          entityId: actorId,
+          label,
+        },
+      },);
+
+      if (asset.type === "avatar") {
+        avatarImported++;
+      }
+    } catch (error) {
+      // Log but don't fail import for asset errors
+      const assetError = new AssetImportError(
+        asset.name,
+        error instanceof Error ? error.message : "unknown error",
+      );
+      warnings.push(assetError.message,);
+    }
+  }
+  return avatarImported;
 }

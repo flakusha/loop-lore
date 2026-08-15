@@ -9,61 +9,12 @@ import { uid, } from "../../utils";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { errorHtml, getClientIp, registerLimiter, setTokenCookie, } from "./shared";
 
-async function handleRegister(
-  request: Request,
+/** Hash the password and insert the user row + mirror actor. */
+async function insertRegisteredUser(
   database: Kysely<DB>,
-  config: Config,
-  t?: TranslatorFn,
-): Promise<Response> {
-  // Gate: registration must be open
-  if (!config.auth.registrationOpen) {
-    return errorHtml(t ? t("auth.registrationClosed",) : "Registration is closed.",);
-  }
-
-  const ip = getClientIp(request,);
-  if (!registerLimiter.check(ip,)) {
-    return new Response(
-      `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many registration attempts. Try again later."}</p>`,
-      {
-        status: HttpStatus.TooManyRequests,
-        headers: { "Content-Type": "text/html; charset=utf-8", },
-      },
-    );
-  }
-
-  let formData: URLSearchParams;
-  try {
-    const text = await request.text();
-    formData = new URLSearchParams(text,);
-  } catch {
-    return errorHtml(t ? t("errors.badRequest",) : "Invalid request body",);
-  }
-
-  const username = formData.get("username",)?.trim();
-  const password = formData.get("password",);
-
-  if (!username || !password) {
-    return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
-  }
-
-  if (username.length < 3 || username.length > 32) {
-    return errorHtml(t ? t("auth.usernameLength",) : "Username must be 3–32 characters.",);
-  }
-
-  if (password.length < 6) {
-    return errorHtml(t ? t("auth.passwordLength",) : "Password must be at least 6 characters.",);
-  }
-
-  const existing = await database
-    .selectFrom("users",)
-    .select(["id",],)
-    .where("username", "=", username,)
-    .executeTakeFirst();
-
-  if (existing) {
-    return errorHtml(t ? t("auth.usernameTaken",) : "Username already taken.",);
-  }
-
+  username: string,
+  password: string,
+): Promise<string> {
   const passwordHash = await Bun.password.hash(password,);
   const userId = uid();
 
@@ -101,7 +52,90 @@ async function handleRegister(
     const smk = getSmk()!;
     await ensureActorKey({ database, actorId: userId, smk, },);
   }
+  return userId;
+}
 
+/** Enforce registration-open + rate-limit gates. */
+function checkRegisterGate(
+  config: Config,
+  ip: string,
+  t: TranslatorFn | undefined,
+): Response | null {
+  if (!config.auth.registrationOpen) {
+    return errorHtml(t ? t("auth.registrationClosed",) : "Registration is closed.",);
+  }
+  if (!registerLimiter.check(ip,)) {
+    return new Response(
+      `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many registration attempts. Try again later."}</p>`,
+      {
+        status: HttpStatus.TooManyRequests,
+        headers: { "Content-Type": "text/html; charset=utf-8", },
+      },
+    );
+  }
+  return null;
+}
+
+async function handleRegister(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  t?: TranslatorFn,
+): Promise<Response> {
+  const ip = getClientIp(request,);
+  const gateError = checkRegisterGate(config, ip, t,);
+  if (gateError) { return gateError; }
+
+  const formData = await parseCredentials(request,);
+  if (!formData) { return errorHtml(t ? t("errors.badRequest",) : "Invalid request body",); }
+
+  const username = formData.get("username",)?.trim();
+  const password = formData.get("password",);
+  if (!username || !password) {
+    return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
+  }
+  if (username.length < 3 || username.length > 32) {
+    return errorHtml(t ? t("auth.usernameLength",) : "Username must be 3–32 characters.",);
+  }
+  if (password.length < 6) {
+    return errorHtml(t ? t("auth.passwordLength",) : "Password must be at least 6 characters.",);
+  }
+
+  const existing = await database
+    .selectFrom("users",)
+    .select(["id",],)
+    .where("username", "=", username,)
+    .executeTakeFirst();
+
+  if (existing) {
+    return errorHtml(t ? t("auth.usernameTaken",) : "Username already taken.",);
+  }
+
+  const userId = await insertRegisteredUser(database, username, password,);
+  return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
+}
+
+/** Parse the registration/login form body, or null when malformed. */
+async function parseCredentials(
+  request: Request,
+): Promise<URLSearchParams | null> {
+  try {
+    return new URLSearchParams(await request.text(),);
+  } catch {
+    return null;
+  }
+}
+
+/** Create a session row, sign a JWT, and return the redirect response. */
+async function createSessionAndCookie(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  userId: string,
+  role: UserRole,
+  ip: string,
+  t: TranslatorFn | undefined,
+): Promise<Response> {
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
 
@@ -129,7 +163,7 @@ async function handleRegister(
   const token = await signJwt({
     secret: jwtSecret,
     userId,
-    role: UserRole.User,
+    role,
     sessionId,
     expiresInSeconds: jwtExpiresIn,
   },);

@@ -30,7 +30,7 @@ async function requireWorldAccess(
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world) { return notFound("World not found",); }
-  if (world.owner_id === userId || userRole === "admin") { return null; }
+  if (userRole === "admin" || world.owner_id === userId) { return null; }
   if (world.visibility === WorldVisibility.Public) { return null; }
   const member = await database
     .selectFrom("world_members",)

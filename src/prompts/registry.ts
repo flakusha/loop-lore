@@ -19,6 +19,7 @@ import {
 } from "../aux-pipeline/prompts";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
 import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
+import type { PromptPurpose, } from "./purposes";
 import { VN_CHOICES_PROMPT, VN_STORY_PROMPT, } from "./vn";
 
 /** Default GM system prompt (used when neither chat config nor template set). */
@@ -112,7 +113,7 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
  */
 export function resolveSystemPrompt(
   templates: LlmTemplateConfig | undefined,
-  purpose: string,
+  purpose: PromptPurpose | (string & {}),
 ): string {
   const configured = templates?.systemPrompts?.[purpose];
   if (configured !== undefined && configured !== "") {

@@ -15,10 +15,10 @@ export function buildCreateValues({
     [config.parentFk]: parentId,
   };
   for (const [camel, col,] of Object.entries(config.fieldMappings,)) {
-    const val = body[camel] ?? config.defaults[camel];
-    if (val != null) {
-      values[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(val,) : val;
-    }
+    const raw = body[camel] ?? config.defaults[camel];
+    if (raw == null) { continue; }
+    const val = config.valueTransforms?.[camel] ? config.valueTransforms[camel](raw,) : raw;
+    values[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(val,) : val;
   }
   return values;
 }
@@ -32,10 +32,35 @@ export function buildUpdateValues({
 },): Record<string, unknown> {
   const updates: Record<string, unknown> = {};
   for (const [camel, col,] of Object.entries(config.fieldMappings,)) {
-    if (body[camel] != null) {
-      updates[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(body[camel],) : body[camel];
+    if (body[camel] == null) {
+      continue;
     }
+
+    const val = config.valueTransforms?.[camel] ? config.valueTransforms[camel](body[camel],) : body[camel];
+    updates[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(val,) : val;
   }
   updates.updated_at = new Date().toISOString();
   return updates;
+}
+
+/** Map snake_case DB rows back to camelCase API shapes, applying responseTransforms. */
+export function applyResponseTransforms(
+  config: EntityConfig,
+  row: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [camel, col,] of Object.entries(config.fieldMappings,)) {
+    if (row[col] === undefined) {
+      continue;
+    }
+
+    const val = config.responseTransforms?.[camel] ? config.responseTransforms[camel](row[col],) : row[col];
+    out[camel] = config.jsonFields.includes(camel,) ? row[col] : val;
+  }
+  for (const [key, val,] of Object.entries(row,)) {
+    if (!(key in config.fieldMappings)) {
+      out[key] = val;
+    }
+  }
+  return out;
 }
