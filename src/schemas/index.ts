@@ -13,6 +13,8 @@ export {
   getReputationTier,
   clampReputation,
   createReputationScore,
+  applyReputationChange,
+  applyReputationDecay,
 } from "./reputation";
 
 export {

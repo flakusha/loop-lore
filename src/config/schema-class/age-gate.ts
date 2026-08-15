@@ -1,4 +1,4 @@
-// src/config/schema-class/ageGate.ts — age-gate section defaults
+// src/config/schema-class/age-gate.ts — age-gate section defaults
 import { AgeGateMode, } from "../../db/enums";
 import type { AgeGateConfig, } from "../schema";
 
