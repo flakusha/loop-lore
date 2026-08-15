@@ -128,4 +128,6 @@ export interface DB {
   meta_progression: import("./schema-core").MetaProgression;
   character_skills: import("./schema-core").CharacterSkills;
   chat_location_events: import("./schema-core").ChatLocationEvents;
+  proactive_messaging_config: import("./schema-core").ProactiveMessagingConfig;
+  character_internal_traits: import("./schema-core").CharacterInternalTraits;
 }

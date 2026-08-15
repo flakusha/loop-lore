@@ -494,6 +494,20 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     completed_at: col("text",),
   },)
+  .table("proactive_messaging_config", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    frequency: col("text", { notNull: true, hasDefault: true, },),
+    quiet_hours_start: col("text",),
+    quiet_hours_end: col("text",),
+    enabled: col("integer", { notNull: true, hasDefault: true, },),
+    last_proactive_at: col("text",),
+    backoff_count: col("integer", { notNull: true, hasDefault: true, },),
+    config_json: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("profession_specializations", {
     id: col("text", { primaryKey: true, },),
     profession_id: col("text", { notNull: true, },),
@@ -801,6 +815,19 @@ export const SCHEMA = new SchemaManifest()
     effects: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+  },)
+  .table("character_internal_traits", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    aspirations: col("text", { notNull: true, hasDefault: true, },),
+    moral_disposition: col("text", { notNull: true, hasDefault: true, },),
+    autonomy_preferences: col("text", { notNull: true, hasDefault: true, },),
+    coping_mechanisms: col("text", { notNull: true, hasDefault: true, },),
+    approach_tendencies: col("text", { notNull: true, hasDefault: true, },),
+    voice_patterns: col("text", { notNull: true, hasDefault: true, },),
+    visibility: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("character_intimacy", {
     id: col("text", { primaryKey: true, },),

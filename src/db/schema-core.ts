@@ -679,3 +679,34 @@ export interface ChatLocationEvents {
   source: string;
   created_at: Generated<string>;
 }
+
+// ── proactive_messaging_config ────────────────────────────────────────────
+export interface ProactiveMessagingConfig {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  frequency: Generated<string>;
+  quiet_hours_start: string | null;
+  quiet_hours_end: string | null;
+  enabled: Generated<number>;
+  last_proactive_at: string | null;
+  backoff_count: Generated<number>;
+  config_json: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── character_internal_traits ────────────────────────────────────────────
+export interface CharacterInternalTraits {
+  id: Generated<string>;
+  actor_id: string;
+  aspirations: Generated<string>;
+  moral_disposition: Generated<string>;
+  autonomy_preferences: Generated<string>;
+  coping_mechanisms: Generated<string>;
+  approach_tendencies: Generated<string>;
+  voice_patterns: Generated<string>;
+  visibility: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

@@ -12,6 +12,7 @@ import { eventSection, } from "./sections/events";
 import { examplesSection, } from "./sections/examples";
 import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
+import { internalTraitsSection, } from "./sections/internal-traits";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
@@ -33,6 +34,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   groupParticipantsSection,
   userPersonaSection,
   emotionAvatarSection,
+  internalTraitsSection,
   loreSection,
   memorySection,
   eventSection,
