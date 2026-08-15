@@ -177,9 +177,11 @@ describe("Access control E2E", () => {
         // The chat app only keeps chats the user created; a foreign chatid is
         // dropped (redirect to /views/chat) before any message fetch.
         await page.locator("#message-list",).waitFor({ state: "attached", timeout: 30_000, },);
-        await page
-          .waitForFunction(() => !new URLSearchParams(location.search,).has("chatid",), null, { timeout: 15_000, },)
-          .catch(() => {/* redirect may not be observed; the message-count guard below is authoritative */},);
+        try {
+          await page.waitForFunction(() => !new URLSearchParams(location.search,).has("chatid",), null, {
+            timeout: 15_000,
+          },);
+        } catch { /* redirect may not be observed; the message-count guard below is authoritative */ }
 
         // Give the message layer a beat to settle, then assert no content leaks.
         await page.waitForTimeout(600,);
