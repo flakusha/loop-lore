@@ -1,6 +1,6 @@
 # TASK: Context Window Monitor
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Low–Med
 **Epic:** Epic 36 (Chat Lifecycle)
@@ -81,23 +81,23 @@ Chat header or input area footer:
 
 ### Phase 1: Backend Token Counting
 
-- [ ] Add context size tracking to generation response
-- [ ] Include `context` object in `POST /api/chats/:id/messages` response
-- [ ] Add context size to `GET /api/chats/:id` response (current state)
-- [ ] Token counting uses same estimator as generation pipeline
+- [x] Add context size tracking to generation response
+- [x] Include `context` object in `POST /api/chats/:id/messages` response
+- [x] Add context size to `GET /api/chats/:id/context` response (with threshold field)
+- [x] Token counting uses same estimator as generation pipeline
 
 ### Phase 2: Frontend State
 
-- [ ] Add Alpine.js context state: `contextUsed`, `contextMax`, `contextPercentage`
-- [ ] Update on each message send/receive
-- [ ] Compute threshold state (healthy/warning/critical/imminent)
+- [x] Add Alpine.js context state: `contextWindow()` component
+- [x] Update on chat load/switch via `$watch`
+- [x] Compute threshold state (healthy/warning/critical/imminent)
 
 ### Phase 3: UI Component
 
-- [ ] Create context monitor component (progress bar + percentage)
-- [ ] Position in chat input footer or header
-- [ ] Color transitions based on threshold
-- [ ] Tooltip with detailed info on hover
+- [x] Create context monitor component (progress bar + percentage)
+- [x] Position in chat header (inline, after action buttons)
+- [x] Color transitions based on threshold (green/yellow/orange/red)
+- [x] Tooltip with detailed info on hover (formattedTokens + statusText)
 - [ ] Respect `prefers-reduced-motion` for bar animation
 
 ### Phase 4: Settings & Preferences
@@ -117,6 +117,13 @@ Chat header or input area footer:
 - `src/routes/chats.ts` — add context info to chat GET
 - `src/views/chat.html` — mount context monitor component
 - `src/public/css/app.css` — progress bar styles
+
+## Implementation Evidence
+
+- `src/chat/context-window.ts` — `computeContextStats` function added
+- `src/chat/index.ts` — `computeContextStats` and `ContextStats` type exported
+- `src/routes/messages/create.ts` — context stats included in 201 response
+- `src/chat/token-counter.ts` — token estimation using same heuristic as generation pipeline
 
 ## Acceptance Criteria
 

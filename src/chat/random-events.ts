@@ -11,6 +11,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
 import { uid, } from "../utils";
+import type { EventRef, } from "./types";
 
 // ── Types ───────────────────────────────────────────────────
 
@@ -215,4 +216,19 @@ function resolveTemplate(template: string,): string {
 
 function pickRandom<T,>(arr: readonly T[],): T {
   return arr[Math.floor(Math.random() * arr.length,)]!;
+}
+
+/**
+ * Convert a RandomEvent to an EventRef for context window injection.
+ *
+ * @param event - The random event to convert
+ * @returns EventRef compatible with injectEvents()
+ */
+export function randomEventToEventRef(event: RandomEvent,): EventRef {
+  return {
+    eventId: event.id,
+    type: "random",
+    content: event.content,
+    tokenCount: Math.ceil(event.content.length / 4,),
+  };
 }
