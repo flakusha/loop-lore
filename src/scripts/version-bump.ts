@@ -1,11 +1,16 @@
 /**
- * Version management - Git tags are the single source of truth.
- * package.json is updated ONLY during release (--bump), never during prediction.
+ * Version management - Git tags are the single source of truth (bare `x.y.z`,
+ * no `v` prefix). package.json is updated ONLY during release (--bump), never
+ * during prediction.
  *
  * Usage:
  *   bun run version:predict              # Show predicted next version (reads tags only)
- *   bun run version:bump --bump=minor    # Bump version, update package.json, create tag
+ *   bun run version:bump --bump=minor    # Bump + update package.json (NO tag)
+ *   bun run version:bump --bump=minor --tag   # + create annotated tag + push
  *   bun run version:sync                 # Sync package.json to latest tag (CI/CD)
+ *
+ * Tag creation requires the explicit `--tag` flag — tagging is a post-testing
+ * human decision; agents must never create tags.
  */
 
 import { execSync, } from "child_process";
@@ -38,9 +43,10 @@ function formatVersion(v: Version,): string {
 
 function getLatestTag(major?: number,): string | null {
   try {
-    const pattern = major === undefined ? "^v" : `^v${major}\\.`;
+    // Bare `x.y.z` tags (no `v` prefix). `dev-*` tags never match.
+    const pattern = major === undefined ? "^[0-9]" : `^${major}\\.`;
     const tag = execSync(
-      `git tag | grep "${pattern}" | sort -t. -k2 -k3 -n | tail -1`,
+      `git tag | grep "${pattern}" | sort -t. -k1 -k2 -k3 -n | tail -1`,
       { encoding: "utf-8", },
     ).trim();
     if (tag) { return tag; }
@@ -111,7 +117,7 @@ function setPackageJsonVersion(version: string,): void {
 function getTagVersion(): string {
   const latestTag = getLatestTag();
   if (latestTag) {
-    return latestTag.slice(1,); // remove 'v' prefix
+    return latestTag; // bare `x.y.z` — no prefix to strip
   }
   return "0.0.0";
 }
@@ -122,7 +128,7 @@ function predictVersion(): string {
   const commits = getCommitsSinceTag(latestTag || "",);
   const bump = determineBump(commits,);
 
-  const baseVersion = latestTag ? parseVersion(latestTag.slice(1,),) : { major: 0, minor: 0, patch: 0, };
+  const baseVersion = latestTag ? parseVersion(latestTag,) : { major: 0, minor: 0, patch: 0, };
   const branch = getCurrentBranch();
   const isMaster = branch === "master" || branch === "main";
   const releaseMatch = branch.match(/^release\/(\d+)/,);
@@ -146,7 +152,7 @@ function predictVersion(): string {
 
   // Find latest tag in target major series
   const latestInSeries = getLatestTag(targetMajor,);
-  const base = latestInSeries ? parseVersion(latestInSeries.slice(1,),) : { major: targetMajor, minor: 0, patch: 0, };
+  const base = latestInSeries ? parseVersion(latestInSeries,) : { major: targetMajor, minor: 0, patch: 0, };
 
   if (bump === "major") {
     return formatVersion({ major: base.major + 1, minor: 0, patch: 0, },);
@@ -157,10 +163,10 @@ function predictVersion(): string {
   return formatVersion({ ...base, patch: base.patch + 1, },);
 }
 
-// Bump version: update package.json, create tag, push
-function bumpVersion(bumpType: "major" | "minor" | "patch",): string {
+// Bump version: update package.json; create tag ONLY with explicit --tag flag
+function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,): string {
   const latestTag = getLatestTag();
-  const baseVersion = latestTag ? parseVersion(latestTag.slice(1,),) : { major: 0, minor: 0, patch: 0, };
+  const baseVersion = latestTag ? parseVersion(latestTag,) : { major: 0, minor: 0, patch: 0, };
 
   // Validate bump type matches prediction
   const actualBump = determineBump(getCommitsSinceTag(latestTag || "",),);
@@ -181,9 +187,15 @@ function bumpVersion(bumpType: "major" | "minor" | "patch",): string {
   console.log(`Bumping ${getTagVersion()} → ${next} (${bumpType})`,);
   setPackageJsonVersion(next,);
 
-  // Create annotated tag
-  execSync(`git tag -a "v${next}" -m "Release v${next}"`, { stdio: "inherit", },);
-  execSync(`git push origin "v${next}"`, { stdio: "inherit", },);
+  if (shouldTag) {
+    // Tagging is a post-testing human decision — only the explicit --tag flag
+    // may create one. Agents must never run with --tag.
+    console.log(`Creating tag: ${next}`,);
+    execSync(`git tag -a "${next}" -m "Release ${next}"`, { stdio: "inherit", },);
+    execSync(`git push origin "${next}"`, { stdio: "inherit", },);
+  } else {
+    console.log("package.json updated — tag NOT created (tagging = post-testing human decision; add --tag to tag)",);
+  }
 
   return next;
 }
@@ -214,10 +226,11 @@ function main(): void {
   if (command === "--bump") {
     const bumpType = args.find((a,) => a.startsWith("--bump=",))?.split("=",)[1] as "major" | "minor" | "patch";
     if (!bumpType || !["major", "minor", "patch",].includes(bumpType,)) {
-      console.error("Usage: version:bump --bump=major|minor|patch",);
+      console.error("Usage: version:bump --bump=major|minor|patch [--tag]",);
       process.exit(1,);
     }
-    bumpVersion(bumpType,);
+    const shouldTag = args.includes("--tag",);
+    bumpVersion(bumpType, shouldTag,);
     return;
   }
 

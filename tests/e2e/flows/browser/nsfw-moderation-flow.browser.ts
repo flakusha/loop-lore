@@ -9,7 +9,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
-import { seedUsers, SEED, } from "../../helpers/seed";
+import { SEED, seedUsers, } from "../../helpers/seed";
 
 describe("NSFW moderation view E2E", () => {
   let ctx: BrowserTestContext;
