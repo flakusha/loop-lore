@@ -111,10 +111,10 @@ describe("gmNotesRoutes", () => {
       new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`,),
     );
     expect(listed.status,).toBe(200,);
-    const list = await getJson<{ items: { id: string; revealed: number; content: string }[]; total: number }>(listed,);
+    const list = await getJson<{ items: { id: string; status: string; content: string }[]; total: number }>(listed,);
     expect(list.total,).toBe(1,);
     expect(list.items[0]!.content,).toBe("The king is a lich.",);
-    expect(list.items[0]!.revealed,).toBe(0,);
+    expect(list.items[0]!.status,).toBe("hidden",);
 
     // Reveal
     const revealed = await app.handle(
@@ -124,12 +124,12 @@ describe("gmNotesRoutes", () => {
     );
     expect(revealed.status,).toBe(204,);
 
-    const after = await getJson<{ items: { revealed: number }[] }>(
+    const after = await getJson<{ items: { status: string }[] }>(
       await app.handle(
         new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`,),
       ),
     );
-    expect(after.items[0]!.revealed,).toBe(1,);
+    expect(after.items[0]!.status,).toBe("revealed",);
 
     // Delete
     const del = await app.handle(

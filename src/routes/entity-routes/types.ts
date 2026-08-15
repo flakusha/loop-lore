@@ -15,6 +15,10 @@ export interface EntityConfig {
   jsonFields: string[];
   defaults: Record<string, unknown>;
   createRequired: string[];
+  /** Optional per-field value transforms applied on create/update (camel key → fn). */
+  valueTransforms?: Record<string, (value: unknown,) => unknown>;
+  /** Optional per-field transforms applied on read (camel key → fn) — inverse of valueTransforms. */
+  responseTransforms?: Record<string, (value: unknown,) => unknown>;
   checkOwnership?: (opts: {
     database: Db;
     parentId: string;

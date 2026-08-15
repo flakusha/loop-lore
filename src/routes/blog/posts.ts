@@ -100,7 +100,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!post) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      if (post.author_id !== userId && userRole !== "admin") {
+      if (userRole !== "admin" && post.author_id !== userId) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
@@ -139,7 +139,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!post) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      if (post.author_id !== userId && userRole !== "admin") {
+      if (userRole !== "admin" && post.author_id !== userId) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 

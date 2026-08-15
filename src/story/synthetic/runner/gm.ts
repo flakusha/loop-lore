@@ -3,6 +3,7 @@
  *
  * Heuristic escalation checks (or a deferred live-GM path).
  */
+import { QuestStatus, } from "../../../db/enums-story/quests";
 import { skippedResult, } from "../../shared/story-utils";
 import type { SyntheticCase, } from "../types";
 import type { RunnerState, SyntheticTestStatus, } from "./types";
@@ -23,7 +24,7 @@ export async function runGmEscalation(state: RunnerState, c: SyntheticCase,): Pr
     if (!quest) {
       return skippedResult(c.expected, `quest ${questId} not found`, { found: false, },);
     }
-    const escalated = quest.status === "active";
+    const escalated = quest.status === QuestStatus.Active;
     const expEsc = c.expected.escalated === true;
     const passed = escalated === expEsc;
     return {
