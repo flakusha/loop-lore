@@ -956,6 +956,19 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("character_world_setup", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    starting_inventory: col("text", { notNull: true, hasDefault: true, },),
+    lore_entries: col("text", { notNull: true, hasDefault: true, },),
+    backstory: col("text",),
+    scenario_override: col("text",),
+    system_prompt_override: col("text",),
+    initial_state: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("character_world_traits", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),

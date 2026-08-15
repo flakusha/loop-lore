@@ -1906,3 +1906,17 @@ export const CharacterInternalTraitsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── character_world_setup ────────────────────────────────────────────
+export const CharacterWorldSetupSchema = t.Object({
+  actor_id: t.String(),
+  world_id: t.String(),
+  starting_inventory: t.Optional(t.String(),),
+  lore_entries: t.Optional(t.String(),),
+  backstory: t.Optional(t.String(),),
+  scenario_override: t.Optional(t.String(),),
+  system_prompt_override: t.Optional(t.String(),),
+  initial_state: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);

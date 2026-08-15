@@ -283,6 +283,7 @@ const DOMAIN_MAP: Record<string, string> = {
   character_heat_cycle: "character",
   character_fantasies: "character",
   location_nsfw_config: "character",
+  character_world_setup: "character",
   // Crafting
   crafting_recipes: "crafting",
   crafting_recipe_materials: "crafting",
