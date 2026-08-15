@@ -63,6 +63,16 @@
     </button>
     <button
       class="btn-icon"
+      title="Pinned Messages"
+      aria-label="Pinned Messages"
+      @click="togglePinsPanel()"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-pins-panel"
+    >
+      📌
+    </button>
+    <button
+      class="btn-icon"
       title="Background"
       aria-label="Background"
       @click="$store.ui.showBackgroundPanel = !$store.ui.showBackgroundPanel"
