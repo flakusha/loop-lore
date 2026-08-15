@@ -59,7 +59,7 @@ describe("World invites E2E", () => {
       state: "visible",
       timeout: 30_000,
     },);
-    return match[1];
+    return match[1]!;
   }
 
   /** On the world-edit page: open the Invites tab and create an invite. */
@@ -109,13 +109,13 @@ describe("World invites E2E", () => {
         // Invite persisted in the DB with the expected cap and active state.
         const row = await ctx.db
           .selectFrom("world_invites",)
-          .select(["id", "world_id", "code", "max_uses", "revoked", "uses",],)
+          .select(["id", "world_id", "code", "max_uses", "status", "uses",],)
           .where("world_id", "=", worldId,)
           .executeTakeFirst();
         expect(row,).not.toBeNull();
         expect(row!.world_id,).toBe(worldId,);
         expect(row!.max_uses,).toBe(5,);
-        expect(row!.revoked,).toBe(0,);
+        expect(row!.status,).toBe("active",);
         expect(row!.uses,).toBe(0,);
         expect(row!.code,).toBeTruthy();
 
@@ -140,7 +140,7 @@ describe("World invites E2E", () => {
 
         const row = await ctx.db
           .selectFrom("world_invites",)
-          .select(["id", "revoked",],)
+          .select(["id", "status",],)
           .where("world_id", "=", worldId,)
           .executeTakeFirst();
         const inviteId = row!.id;
@@ -154,15 +154,15 @@ describe("World invites E2E", () => {
         expect(await page.locator("[data-testid='revoke-invite']",).count(),).toBe(0,);
         expect(await page.locator("[data-testid='copy-invite-code']",).count(),).toBe(0,);
 
-        // DB row still exists but is soft-revoked (revoked = 1).
+        // DB row still exists but is soft-revoked (status = revoked).
         const revoked = await ctx.db
           .selectFrom("world_invites",)
-          .select(["id", "revoked",],)
+          .select(["id", "status",],)
           .where("id", "=", inviteId,)
           .executeTakeFirst();
         expect(revoked,).not.toBeNull();
         expect(revoked!.id,).toBe(inviteId,);
-        expect(revoked!.revoked,).toBe(1,);
+        expect(revoked!.status,).toBe("revoked",);
       } finally {
         errors.assert();
         errors.detach();

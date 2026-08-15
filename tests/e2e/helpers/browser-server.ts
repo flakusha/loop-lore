@@ -158,7 +158,11 @@ export async function createBrowserTest(
       // Close in reverse order (newest first) to avoid detached-frame races.
       const pages = [...openPages,];
       pages.reverse();
-      await Promise.allSettled(pages.map((page,) => page.close().catch(() => {},)),);
+      await Promise.allSettled(pages.map(async (page,) => {
+        try {
+          await page.close();
+        } catch { /* already detached */ }
+      },),);
       openPages.clear();
     },
     close: async () => {
