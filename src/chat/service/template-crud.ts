@@ -1,0 +1,134 @@
+/**
+ * Chat setup template admin CRUD.
+ *
+ * Templates are snapshots: edits apply to future chats only, existing bound
+ * chats keep their recorded binding (chats.template_id is set null on delete
+ * via the FK `on delete set null`).
+ */
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
+import { jsonStringifyOr, } from "../../utils";
+import { getChatSetupTemplate, } from "./templates";
+import type { TemplateMutationResult, } from "./types";
+
+/**
+ * Create a chat setup template (admin).
+ */
+export async function createChatSetupTemplate(
+  database: Kysely<DB>,
+  params: {
+    slug: string;
+    name: string;
+    description?: string | null;
+    mode?: string | null;
+    turnStrategy?: string | null;
+    worldId?: string | null;
+    gmConfig?: Record<string, unknown> | null;
+    visualNovel?: boolean;
+    features?: string[] | null;
+    visibility?: string | null;
+  },
+): Promise<TemplateMutationResult> {
+  const slugExists = await database
+    .selectFrom("chat_setup_templates",)
+    .select("id",)
+    .where("slug", "=", params.slug,)
+    .executeTakeFirst();
+  if (slugExists) {
+    return { ok: false, code: "conflict", message: "Template slug already exists", };
+  }
+
+  const id = `template-${params.slug}`;
+  await database
+    .insertInto("chat_setup_templates",)
+    .values({
+      id,
+      slug: params.slug,
+      name: params.name,
+      description: params.description ?? null,
+      mode: params.mode ?? null,
+      turn_strategy: params.turnStrategy ?? null,
+      world_id: params.worldId ?? null,
+      gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null,
+      visual_novel: params.visualNovel ? 1 : 0,
+      features: params.features ? jsonStringifyOr(params.features, "[]",) : "[]",
+      visibility: params.visibility ?? null,
+    },)
+    .execute();
+  const created = await getChatSetupTemplate(database, id,);
+  if (!created) {
+    return { ok: false, code: "bad_request", message: "Failed to create template", };
+  }
+  return { ok: true, template: created, };
+}
+
+/**
+ * Update a chat setup template (admin). Existing bound chats keep their snapshot
+ * binding — templates are snapshots, edits apply to future chats only.
+ */
+export async function updateChatSetupTemplate(
+  database: Kysely<DB>,
+  templateId: string,
+  params: {
+    name?: string;
+    description?: string | null;
+    mode?: string | null;
+    turnStrategy?: string | null;
+    worldId?: string | null;
+    gmConfig?: Record<string, unknown> | null;
+    visualNovel?: boolean;
+    features?: string[] | null;
+    visibility?: string | null;
+  },
+): Promise<TemplateMutationResult> {
+  const existing = await getChatSetupTemplate(database, templateId,);
+  if (!existing) {
+    return { ok: false, code: "not_found", message: "Template not found", };
+  }
+
+  const updates: Record<string, unknown> = {};
+  if (params.name !== undefined) { updates.name = params.name; }
+  if (params.description !== undefined) { updates.description = params.description; }
+  if (params.mode !== undefined) { updates.mode = params.mode; }
+  if (params.turnStrategy !== undefined) { updates.turn_strategy = params.turnStrategy; }
+  if (params.worldId !== undefined) { updates.world_id = params.worldId; }
+  if (params.gmConfig !== undefined) {
+    updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null;
+  }
+  if (params.visualNovel !== undefined) { updates.visual_novel = params.visualNovel ? 1 : 0; }
+  if (params.features !== undefined) {
+    updates.features = params.features ? jsonStringifyOr(params.features, "[]",) : "[]";
+  }
+  if (params.visibility !== undefined) { updates.visibility = params.visibility; }
+  updates.updated_at = new Date().toISOString();
+
+  await database
+    .updateTable("chat_setup_templates",)
+    .set(updates,)
+    .where("id", "=", existing.id,)
+    .execute();
+  const updated = await getChatSetupTemplate(database, existing.id,);
+  if (!updated) {
+    return { ok: false, code: "bad_request", message: "Failed to update template", };
+  }
+  return { ok: true, template: updated, };
+}
+
+/**
+ * Delete a chat setup template (admin). Chats bound to it keep their snapshot
+ * (template_id set null via FK onDelete set null).
+ */
+export async function deleteChatSetupTemplate(
+  database: Kysely<DB>,
+  templateId: string,
+): Promise<TemplateMutationResult> {
+  const existing = await getChatSetupTemplate(database, templateId,);
+  if (!existing) {
+    return { ok: false, code: "not_found", message: "Template not found", };
+  }
+  await database
+    .deleteFrom("chat_setup_templates",)
+    .where("id", "=", existing.id,)
+    .execute();
+  return { ok: true, template: existing, };
+}
