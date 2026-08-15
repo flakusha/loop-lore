@@ -127,4 +127,5 @@ export interface DB {
   playthroughs: import("./schema-core").Playthroughs;
   meta_progression: import("./schema-core").MetaProgression;
   character_skills: import("./schema-core").CharacterSkills;
+  chat_location_events: import("./schema-core").ChatLocationEvents;
 }

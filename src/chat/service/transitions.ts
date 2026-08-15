@@ -11,6 +11,7 @@ import { carryParticipants, } from "./carry-participants";
 import { carryPins, } from "./carry-pins";
 import { carryState, } from "./carry-state";
 import { carryWorldState, } from "./carry-world-state";
+import { recordLocationChange, } from "./location-events";
 import { getChatSetupTemplate, } from "./templates";
 import type { MigrateChatParams, MigrateChatResult, } from "./types";
 
@@ -85,6 +86,14 @@ export async function migrateChat(
       template_id: template.id,
     },)
     .execute();
+
+  // Record migration event for the new chat's starting location.
+  await recordLocationChange(database, {
+    chatId: newChatId,
+    fromLocationId: null,
+    toLocationId: source.current_location_id,
+    source: "migration",
+  });
 
   // Carry participants
   if (params.carry?.participants !== false) {
