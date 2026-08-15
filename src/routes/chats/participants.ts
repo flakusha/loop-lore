@@ -73,7 +73,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
+          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
@@ -141,7 +141,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
+          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
@@ -178,7 +178,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
+          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 

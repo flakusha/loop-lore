@@ -146,6 +146,21 @@ export async function handleDeleteWorld(
     await database.deleteFrom("location_states",).where("location_id", "in", locIds,).execute();
   }
 
+  // Unlink chats bound to the world or any of its locations — chats survive
+  // but lose their world/location binding (nullable FK columns, no cascade).
+  if (locIds.length > 0) {
+    await database
+      .updateTable("chats",)
+      .set({ current_location_id: null, },)
+      .where("current_location_id", "in", locIds,)
+      .execute();
+  }
+  await database
+    .updateTable("chats",)
+    .set({ world_id: null, },)
+    .where("world_id", "=", worldId,)
+    .execute();
+
   await database.deleteFrom("npc_states",).where("world_id", "=", worldId,).execute();
   await database.deleteFrom("world_states",).where("world_id", "=", worldId,).execute();
   await database.deleteFrom("world_lore_entries",).where("world_id", "=", worldId,).execute();

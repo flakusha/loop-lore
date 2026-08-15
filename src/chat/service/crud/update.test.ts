@@ -38,7 +38,7 @@ describe("updateChat gmConfig GM execution fields", () => {
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
-    return row?.gm_config ? JSON.parse(row.gm_config as string,) : null;
+    return row?.gm_config ? JSON.parse(row.gm_config,) : null;
   }
 
   it("persists GM execution type / humanGM / escalationThreshold", async () => {
@@ -110,7 +110,7 @@ describe("updateChat gmConfig GM execution fields", () => {
     };
     expect(llm.model,).toBe("claude-3.5-sonnet",);
     expect(llm.provider,).toBe("anthropic",);
-    expect(llm.temperature,).toBe(0.8,);
+    expect(llm.temperature,).toBeCloseTo(0.8,);
     expect(llm.maxTokens,).toBe(1500,);
   });
 

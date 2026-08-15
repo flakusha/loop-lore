@@ -10,6 +10,7 @@ import {
   MessageContentFormat,
   MessageContentType,
   MessageRole,
+  MessageStatus,
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -99,7 +100,7 @@ export async function maybeAutoReply(
           content_type: MessageContentType.Text,
           content_format: MessageContentFormat.Markdown,
           content_encoding: replyEncoding as ContentEncoding,
-          status: "confirmed",
+          status: MessageStatus.Confirmed,
           visibility: "visible",
           swipe_index: (replySwipe?.max_idx ?? 0) + 1,
         },)

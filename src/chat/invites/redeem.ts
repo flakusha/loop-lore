@@ -1,4 +1,5 @@
 import type { Kysely, } from "kysely";
+import { InviteStatus, inviteStatusMachine, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { RedeemOutcome, } from "./types";
 
@@ -29,10 +30,24 @@ export async function redeemInvite(
   if (!invite) {
     return { ok: false, error: { code: "not_found", message: "Invalid invite code", }, };
   }
-  if (invite.revoked === 1) {
+  if (invite.status === InviteStatus.Revoked) {
     return { ok: false, error: { code: "revoked", message: "Invite has been revoked", }, };
   }
+  if (invite.status === InviteStatus.Expired) {
+    return { ok: false, error: { code: "expired", message: "Invite has expired", }, };
+  }
+  if (invite.status === InviteStatus.Exhausted) {
+    return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
+  }
   if (invite.expires_at && Date.parse(invite.expires_at,) < Date.now()) {
+    if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Expired,)) {
+      return { ok: false, error: { code: "expired", message: "Invite has expired", }, };
+    }
+    await database
+      .updateTable("chat_invites",)
+      .set({ status: InviteStatus.Expired, },)
+      .where("id", "=", invite.id,)
+      .execute();
     return { ok: false, error: { code: "expired", message: "Invite has expired", }, };
   }
 
@@ -50,6 +65,14 @@ export async function redeemInvite(
   }
 
   if (invite.max_uses !== null && invite.uses >= invite.max_uses) {
+    if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Exhausted,)) {
+      return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
+    }
+    await database
+      .updateTable("chat_invites",)
+      .set({ status: InviteStatus.Exhausted, },)
+      .where("id", "=", invite.id,)
+      .execute();
     return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
   }
 

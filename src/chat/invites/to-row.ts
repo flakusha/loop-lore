@@ -1,3 +1,4 @@
+import type { InviteStatus, } from "../../db/enums";
 import type { ChatInviteRow, } from "./types";
 
 export function toRow(row: {
@@ -9,7 +10,7 @@ export function toRow(row: {
   expires_at: string | null;
   max_uses: number | null;
   uses: number;
-  revoked: number;
+  status: InviteStatus;
 },): ChatInviteRow {
   return {
     id: row.id,
@@ -20,6 +21,6 @@ export function toRow(row: {
     expiresAt: row.expires_at,
     maxUses: row.max_uses,
     uses: row.uses,
-    revoked: row.revoked === 1,
+    status: row.status,
   };
 }

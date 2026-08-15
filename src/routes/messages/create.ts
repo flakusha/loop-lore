@@ -5,6 +5,7 @@ import {
   MessageContentFormat,
   MessageContentType,
   MessageRole,
+  MessageStatus,
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import { parseInitiativeFlag, } from "../../group-chat/mention-parser";
@@ -77,7 +78,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             content_type: body.contentType ?? MessageContentType.Text,
             content_format: MessageContentFormat.Markdown,
             content_encoding: contentEncoding as ContentEncoding,
-            status: "confirmed",
+            status: MessageStatus.Confirmed,
             visibility: "visible",
             idempotency_key: body.idempotencyKey ?? null,
             swipe_index: msgSwipeIndex,

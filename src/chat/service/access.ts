@@ -43,7 +43,7 @@ export async function checkChatAccess(
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
-  if (chat.created_by === userId || userRole === "admin" || userRole === "solo") {
+  if (userRole === "admin" || userRole === "solo" || chat.created_by === userId) {
     return { ok: true, };
   }
 

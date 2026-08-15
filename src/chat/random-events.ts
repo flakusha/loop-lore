@@ -157,9 +157,9 @@ const NPC_OPTIONS = [
  * @param opts - Event generation options
  * @returns A random event, or null if no event should fire
  */
-export async function generateRandomEvent(
+export function generateRandomEvent(
   opts: RandomEventOpts,
-): Promise<RandomEvent | null> {
+): RandomEvent | null {
   const { messageCount, messagesSinceLastEvent = 999, } = opts;
 
   // Filter eligible events (minMessages and cooldown checks)

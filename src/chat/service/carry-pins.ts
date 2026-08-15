@@ -53,7 +53,7 @@ export async function carryPins(
         relationship_impact: c.relationship_impact,
         mood_impact: c.mood_impact,
         unlock_conditions: c.unlock_conditions,
-        selected: c.selected,
+        status: c.status,
         selected_at: c.selected_at,
         created_at: c.created_at,
       },)

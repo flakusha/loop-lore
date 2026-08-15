@@ -1,3 +1,4 @@
+import type { InviteStatus, } from "../../db/enums";
 import type { InviteError, } from "../invites";
 
 export interface WorldInviteRow {
@@ -9,7 +10,7 @@ export interface WorldInviteRow {
   expiresAt: string | null;
   maxUses: number | null;
   uses: number;
-  revoked: boolean;
+  status: InviteStatus;
 }
 
 export interface CreateWorldInviteInput {

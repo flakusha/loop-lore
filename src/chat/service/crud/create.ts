@@ -28,6 +28,7 @@ export async function createChat(
       gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null,
       visual_novel: params.visualNovel ? 1 : 0,
       template_id: params.templateId ?? null,
+      visibility: params.visibility ?? "private",
     },)
     .execute();
 
