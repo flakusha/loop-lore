@@ -13,6 +13,7 @@ import type { DB, } from "../../db/schema";
 import type { StoryContext, } from "../types";
 import { buildContext as buildContextDispatch, } from "./context";
 import {
+  initializeCharacterWorldSetup as initializeCharacterWorldSetupDispatch,
   initializeLocationStates as initializeLocationStatesDispatch,
   initializeNpcStates as initializeNpcStatesDispatch,
 } from "./init";
@@ -50,6 +51,11 @@ export class WorldStateService {
   /** Initialize NPC dynamic states for all characters in a world */
   async initializeNpcStates(worldId: string,): Promise<number> {
     return initializeNpcStatesDispatch(this.state, worldId,);
+  }
+
+  /** Initialize per-world character setup rows for all characters in a world */
+  async initializeCharacterWorldSetup(worldId: string,): Promise<number> {
+    return initializeCharacterWorldSetupDispatch(this.state, worldId,);
   }
 
   /** Initialize location dynamic states for all locations in a world */

@@ -2943,3 +2943,28 @@ export async function insertCharacterInternalTraits(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a character_world_setup row. */
+export async function insertCharacterWorldSetup(
+  db: Db,
+  actor_id: string,
+  world_id: string,
+  opts?: {
+    id?: Generated<string>;
+    starting_inventory?: Generated<string>;
+    lore_entries?: Generated<string>;
+    backstory?: string | null;
+    scenario_override?: string | null;
+    system_prompt_override?: string | null;
+    initial_state?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("character_world_setup",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    world_id,
+    ...opts,
+  } as any,).execute();
+}

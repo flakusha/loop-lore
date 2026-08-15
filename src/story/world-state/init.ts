@@ -45,6 +45,45 @@ export async function initializeNpcStates(state: WorldState, worldId: string,): 
   return count;
 }
 
+/** Initialize per-world character setup rows for all characters in a world */
+export async function initializeCharacterWorldSetup(state: WorldState, worldId: string,): Promise<number> {
+  const characters = await state.db
+    .selectFrom("actors",)
+    .selectAll()
+    .where("actor_type", "in", ["character", "narrator",] as ("character" | "narrator")[],)
+    .where("agent_type", "in", ["ai", "npc",] as ("ai" | "npc")[],)
+    .execute();
+
+  let count = 0;
+  for (const character of characters) {
+    const existing = await state.db
+      .selectFrom("character_world_setup",)
+      .select("id",)
+      .where("actor_id", "=", character.id,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+
+    if (!existing) {
+      await state.db
+        .insertInto("character_world_setup",)
+        .values({
+          id: uid(),
+          actor_id: character.id,
+          world_id: worldId,
+          starting_inventory: "[]",
+          lore_entries: "[]",
+          backstory: null,
+          scenario_override: null,
+          system_prompt_override: null,
+          initial_state: "{}",
+        },)
+        .execute();
+      count++;
+    }
+  }
+  return count;
+}
+
 /** Initialize location dynamic states for all locations in a world */
 export async function initializeLocationStates(state: WorldState, worldId: string,): Promise<number> {
   const locations = await state.db

@@ -1433,6 +1433,17 @@
     "title": "Character Spec Inclusion of Race, Origin & Culture Identity",
     "type": "FEAT"
   },
+  "FEAT-CHARACTER-WORLD-SETUP": {
+    "hash": "pending",
+    "extid": "FEAT-CHARACTER-WORLD-SETUP",
+    "type": "FEAT",
+    "title": "Character World Setup Bundle (Per-World Overlay)",
+    "label": "feat",
+    "priority": "High",
+    "epic": "epic-character-world-setup",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-character-world-setup.md"
+  },
   "FEAT-CHAT-LIFECYCLE-MODERATION": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "FEAT-CHAT-LIFECYCLE-MODERATION",
