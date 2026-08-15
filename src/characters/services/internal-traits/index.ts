@@ -1,0 +1,247 @@
+/**
+ * Character Internal Traits Service
+ *
+ * Manages aspirations, moral disposition, autonomy preferences, coping
+ * mechanisms, approach tendencies, and voice patterns.
+ *
+ * See .plan/epics/epic-character-internal-traits.md
+ */
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../../db/schema";
+import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
+import type {
+  ApproachTendencies,
+  Aspiration,
+  AutonomyPreferences,
+  CharacterInternalTraits,
+  CharacterInternalTraitsInput,
+  CopingMechanisms,
+  MoralDisposition,
+  VoicePatterns,
+} from "./types";
+
+// ── Defaults ───────────────────────────────────────────────
+
+const DEFAULT_MORAL: MoralDisposition = { lawful_chaotic: 0, good_evil: 0, };
+const DEFAULT_AUTONOMY: AutonomyPreferences = {
+  group_comfort: 50,
+  solo_comfort: 50,
+  separation_triggers: [],
+  reunion_triggers: [],
+};
+const DEFAULT_COPING: CopingMechanisms = {
+  stress_response: "withdraws",
+  failure_response: "tries again",
+  conflict_style: "avoids",
+};
+const DEFAULT_APPROACH: ApproachTendencies = {
+  decision_style: "cautious",
+  risk_tolerance: 50,
+  initiative_level: 50,
+};
+const DEFAULT_VOICE: VoicePatterns = {
+  verbal_tics: [],
+  vocabulary_level: "average",
+  sentence_structure: "medium",
+  humor_style: "none",
+  emotional_range: 50,
+};
+
+// ── Row mapper ─────────────────────────────────────────────
+
+interface InternalTraitsRow {
+  id: string;
+  actor_id: string;
+  aspirations: string;
+  moral_disposition: string;
+  autonomy_preferences: string;
+  coping_mechanisms: string;
+  approach_tendencies: string;
+  voice_patterns: string;
+  visibility: string;
+  created_at: string;
+  updated_at: string;
+}
+
+function rowToTraits(row: InternalTraitsRow,): CharacterInternalTraits {
+  return {
+    id: row.id,
+    actorId: row.actor_id,
+    aspirations: jsonParseOr<Aspiration[]>(row.aspirations, [],),
+    moralDisposition: jsonParseOr<MoralDisposition>(row.moral_disposition, DEFAULT_MORAL,),
+    autonomyPreferences: jsonParseOr<AutonomyPreferences>(row.autonomy_preferences, DEFAULT_AUTONOMY,),
+    copingMechanisms: jsonParseOr<CopingMechanisms>(row.coping_mechanisms, DEFAULT_COPING,),
+    approachTendencies: jsonParseOr<ApproachTendencies>(row.approach_tendencies, DEFAULT_APPROACH,),
+    voicePatterns: jsonParseOr<VoicePatterns>(row.voice_patterns, DEFAULT_VOICE,),
+    visibility: jsonParseOr<string[]>(row.visibility, [],),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// ── Service ────────────────────────────────────────────────
+
+export class CharacterInternalTraitsService {
+  constructor(private readonly db: Kysely<DB>,) {}
+
+  /**
+   * Get internal traits for an actor.
+   */
+  async get(actorId: string,): Promise<CharacterInternalTraits | null> {
+    const row = await this.db
+      .selectFrom("character_internal_traits",)
+      .where("actor_id", "=", actorId,)
+      .selectAll()
+      .executeTakeFirst() as InternalTraitsRow | undefined;
+
+    return row ? rowToTraits(row,) : null;
+  }
+
+  /**
+   * Create or update internal traits for an actor.
+   */
+  async upsert(actorId: string, input: CharacterInternalTraitsInput,): Promise<CharacterInternalTraits> {
+    const existing = await this.get(actorId,);
+    const now = new Date().toISOString();
+
+    if (existing) {
+      await this.db
+        .updateTable("character_internal_traits",)
+        .set({
+          aspirations: input.aspirations ? jsonStringifyOr(input.aspirations,) : undefined,
+          moral_disposition: input.moralDisposition
+            ? jsonStringifyOr({ ...existing.moralDisposition, ...input.moralDisposition, },)
+            : undefined,
+          autonomy_preferences: input.autonomyPreferences
+            ? jsonStringifyOr({ ...existing.autonomyPreferences, ...input.autonomyPreferences, },)
+            : undefined,
+          coping_mechanisms: input.copingMechanisms
+            ? jsonStringifyOr({ ...existing.copingMechanisms, ...input.copingMechanisms, },)
+            : undefined,
+          approach_tendencies: input.approachTendencies
+            ? jsonStringifyOr({ ...existing.approachTendencies, ...input.approachTendencies, },)
+            : undefined,
+          voice_patterns: input.voicePatterns
+            ? jsonStringifyOr({ ...existing.voicePatterns, ...input.voicePatterns, },)
+            : undefined,
+          visibility: input.visibility ? jsonStringifyOr(input.visibility,) : undefined,
+          updated_at: now,
+        },)
+        .where("actor_id", "=", actorId,)
+        .execute();
+
+      const updated = await this.get(actorId,);
+      return updated!;
+    }
+
+    const id = crypto.randomUUID();
+    await this.db
+      .insertInto("character_internal_traits",)
+      .values({
+        id,
+        actor_id: actorId,
+        aspirations: jsonStringifyOr(input.aspirations ?? [],),
+        moral_disposition: jsonStringifyOr({ ...DEFAULT_MORAL, ...input.moralDisposition, },),
+        autonomy_preferences: jsonStringifyOr({ ...DEFAULT_AUTONOMY, ...input.autonomyPreferences, },),
+        coping_mechanisms: jsonStringifyOr({ ...DEFAULT_COPING, ...input.copingMechanisms, },),
+        approach_tendencies: jsonStringifyOr({ ...DEFAULT_APPROACH, ...input.approachTendencies, },),
+        voice_patterns: jsonStringifyOr({ ...DEFAULT_VOICE, ...input.voicePatterns, },),
+        visibility: jsonStringifyOr(input.visibility ?? [],),
+        created_at: now,
+        updated_at: now,
+      },)
+      .execute();
+
+    const created = await this.get(actorId,);
+    return created!;
+  }
+
+  /**
+   * Delete internal traits for an actor.
+   */
+  async delete(actorId: string,): Promise<boolean> {
+    const result = await this.db
+      .deleteFrom("character_internal_traits",)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst();
+
+    return result.numDeletedRows > 0;
+  }
+
+  /**
+   * Generate a prompt assembly section for the character's internal traits.
+   *
+   * Only includes fields the character is open about (per visibility config).
+   * Always includes hidden-state directives for the LLM to track internally.
+   *
+   * @param actorId - The character's actor ID
+   * @param includeHidden - If true, include ALL traits regardless of visibility (for GM/system use)
+   */
+  async buildPromptSection(actorId: string, includeHidden = false,): Promise<string | null> {
+    const traits = await this.get(actorId,);
+    if (!traits) { return null; }
+
+    const lines: string[] = [];
+    const vis = new Set(traits.visibility,);
+    const isVisible = (field: string,) => includeHidden || vis.has(field,) || vis.has("*",);
+
+    lines.push("## Internal Character State",);
+    lines.push("",);
+
+    // Hidden-state directive — the LLM should track these internally
+    lines.push(
+      "You have internal states that influence your behavior. Some you share openly, others you keep private. Track these naturally — do not announce them unless contextually appropriate.",
+    );
+    lines.push("",);
+
+    // Aspirations
+    if (traits.aspirations.length > 0) {
+      const visibleAspirations = traits.aspirations.filter(
+        (a,) => isVisible("aspirations",) || a.visibility === "open",
+      );
+      if (visibleAspirations.length > 0) {
+        lines.push("### Goals & Aspirations",);
+        for (const a of visibleAspirations) {
+          const progress = a.progress > 0 ? ` (${a.progress}% progress)` : "";
+          lines.push(`- [${a.priority}] ${a.goal}${progress}`,);
+          if (a.plans.length > 0) {
+            lines.push(`  Plans: ${a.plans.join("; ",)}`,);
+          }
+        }
+        lines.push("",);
+      }
+    }
+
+    // Moral disposition
+    if (isVisible("moralDisposition",)) {
+      const m = traits.moralDisposition;
+      const lawAxis = m.lawful_chaotic < -30 ? "lawful" : m.lawful_chaotic > 30 ? "chaotic" : "neutral";
+      const goodAxis = m.good_evil < -30 ? "good" : m.good_evil > 30 ? "evil" : "amoral";
+      lines.push(`### Moral Disposition: ${lawAxis}-${goodAxis}`,);
+      lines.push("",);
+    }
+
+    // Approach tendencies
+    if (isVisible("approachTendencies",)) {
+      const a = traits.approachTendencies;
+      lines.push(
+        `### Approach: ${a.decision_style} decision-maker, risk tolerance ${a.risk_tolerance}/100, initiative ${a.initiative_level}/100`,
+      );
+      lines.push("",);
+    }
+
+    // Voice patterns
+    if (isVisible("voicePatterns",)) {
+      const v = traits.voicePatterns;
+      lines.push("### Voice & Speech",);
+      lines.push(`- Vocabulary: ${v.vocabulary_level}`,);
+      lines.push(`- Sentences: ${v.sentence_structure}`,);
+      if (v.humor_style !== "none") { lines.push(`- Humor: ${v.humor_style}`,); }
+      if (v.verbal_tics.length > 0) { lines.push(`- Tics: ${v.verbal_tics.join(", ",)}`,); }
+      lines.push(`- Emotional range: ${v.emotional_range}/100`,);
+      lines.push("",);
+    }
+
+    return lines.length > 3 ? lines.join("\n",) : null;
+  }
+}
