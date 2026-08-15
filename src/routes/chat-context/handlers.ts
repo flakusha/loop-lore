@@ -93,13 +93,15 @@ export async function handleGetContext(
   }),);
 
   const result = computeContextWindow(messageRefs, maxTokens,);
+  const threshold = getThresholdState(result.usagePercentage,);
 
   return jsonResponse({
     chatId,
     currentTokens: result.totalTokens,
     maxTokens: result.maxTokens,
     percentage: result.usagePercentage,
-    status: getThresholdState(result.usagePercentage,),
+    status: threshold,
+    threshold,
     willTrim: result.willTrim,
   },);
 }

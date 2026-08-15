@@ -28,6 +28,8 @@ export type {
 
 export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
+export { computeContextStats, } from "./context-stats";
+export type { ContextStats, } from "./context-stats";
 export {
   computeContextWindow,
   getThresholdState,
@@ -74,3 +76,28 @@ export {
   type HallucinationCheckOpts,
   type HallucinationFlag,
 } from "./hallucination-guard";
+
+// ── Pruning ──────────────────────────────────────────────────
+export {
+  DEFAULT_PRUNING_CONFIG,
+  pruneMessages,
+  scoreMessage,
+  SCORING_WEIGHTS,
+  STRATEGY_CONFIGS,
+} from "./pruning";
+
+export type {
+  MessageScore as PruningMessageScore,
+  PruneResult,
+  PruningConfig,
+  PruningStrategy,
+  ScorableMessage,
+} from "./pruning";
+
+// ── Random Events ────────────────────────────────────────────
+export {
+  generateRandomEvent,
+  type RandomEvent,
+  type RandomEventOpts,
+  randomEventToEventRef,
+} from "./random-events";
