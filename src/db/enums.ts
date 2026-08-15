@@ -13,6 +13,7 @@
  *
  * Enum-to-table mappings (for validation):
  *   enums-core: UserRole, UserStatus, ChatType, ChatMode, ChatPurpose, TurnStrategy,
+ *               ChatVisibility,
  *               ActorType, AgentType, ChatParticipantRole, MessageRole, MessageContentType,
  *               MessageContentFormat, MessageStatus, MessageVisibility, ActorVisibility,
  *               PinnedState, DefaultState, EquipState, StackableState, KeyType, KeyStatus,

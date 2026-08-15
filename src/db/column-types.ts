@@ -23,6 +23,7 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   },
   "ActorMemories": {
     "memory_type": "MemoryType",
+    "pinned": "PinnedState",
   },
   "ActorNotes": {
     "category": "NoteCategory",
@@ -57,6 +58,9 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "CharacterRelationships": {
     "relationship_type": "RelationshipType",
   },
+  "CharacterSkills": {
+    "lock_state": "SkillLockState",
+  },
   "Characters": {
     "agent_type": "AgentType",
   },
@@ -65,6 +69,9 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   },
   "CharacterWorldTraits": {
     "trait_category": "WorldTraitCategory",
+  },
+  "ChatInvites": {
+    "status": "InviteStatus",
   },
   "ChatParticipants": {
     "role_in_chat": "ChatParticipantRole",
@@ -76,6 +83,9 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   },
   "CraftingAttempts": {
     "status": "CraftingAttemptStatus",
+  },
+  "GatheringNodeInstances": {
+    "state": "NodeInstanceState",
   },
   "CraftingOrders": {
     "max_quality": "QualityLevel",
@@ -120,13 +130,20 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
     "status": "MessageStatus",
     "visibility": "MessageVisibility",
   },
-  "ModelRoleOverrides": {
-    "role": "ModelRole",
+  "Notifications": {
+    "read": "NotificationStatus",
   },
   "NsfwEncounters": {
     "encounter_type": "NsfwEncounterType",
     "intensity": "ContentIntensity",
     "narrative_style": "NarrativeStyle",
+    "status": "NsfwEncounterStatus",
+  },
+  "NsfwUserPreferences": {
+    "access_status": "NsfwAccessStatus",
+  },
+  "ModelRoleOverrides": {
+    "role": "ModelRole",
   },
   "Professions": {
     "discipline": "CraftingDiscipline",
@@ -135,10 +152,20 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "ProfessionSpecializations": {
     "bonus_type": "ProfessionBonusType",
   },
+  "PlayerAchievements": {
+    "status": "PlayerAchievementStatus",
+  },
+  "Playthroughs": {
+    "status": "PlaythroughStatus",
+  },
+  "PluginState": {
+    "status": "PluginStatus",
+  },
   "QuestProgress": {
     "status": "QuestProgressStatus",
   },
   "Quests": {
+    "category": "QuestCategory",
     "status": "QuestStatus",
     "type": "QuestType",
   },
@@ -146,6 +173,7 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
     "discovery_method": "DiscoveryMethod",
   },
   "ShadowNotes": {
+    "status": "ShadowNoteStatus",
     "type": "ShadowNoteType",
   },
   "StoryTurns": {
@@ -166,6 +194,12 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   },
   "WorldAvatarConfig": {
     "selection_rule_override": "AvatarSelectionRule",
+  },
+  "VnChoices": {
+    "status": "VnChoiceStatus",
+  },
+  "WorldInvites": {
+    "status": "InviteStatus",
   },
   "WorldItems": {
     "visibility": "ItemVisibility",

@@ -27,7 +27,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("xp", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("proficiency", "text", (col,) => col.notNull().defaultTo("novice",),)
     .addColumn("specialization", "text",)
-    .addColumn("is_locked", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("lock_state", "text", (col,) => col.notNull().defaultTo("unlocked",),)
     .addColumn("prerequisites", "text", (col,) => col.notNull().defaultTo("[]",),)
     .addColumn("metadata", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)

@@ -19,7 +19,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("relationship_impact", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("mood_impact", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("unlock_conditions", "text", (col,) => col.notNull().defaultTo("{}",),)
-    .addColumn("selected", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("available",),)
     .addColumn("selected_at", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .execute();
