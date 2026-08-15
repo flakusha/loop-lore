@@ -1,5 +1,6 @@
 // src/config/load/safety.ts — Database safety guards
 
+import { getLogger, } from "../../logger";
 import type { Config, } from "../schema";
 import { isNetworkFilesystem, } from "./fs";
 
@@ -24,7 +25,7 @@ export function validateDatabaseSafety(config: Config,): void {
     );
   }
 
-  if (db.type === "sqlite" && unsafeMultiInstance) {
+  if (unsafeMultiInstance && db.type === "sqlite") {
     throw new Error(
       "DATABASE SAFETY: UNSAFE_SQLITE_MULTIINSTANCE=true is set but SQLite is configured. " +
         "This environment variable is a safety override that should only be used " +
@@ -34,8 +35,8 @@ export function validateDatabaseSafety(config: Config,): void {
 
   // ── Guard 2: Warn on network filesystem ──
   if (db.type === "sqlite" && db.sqliteFilename && isNetworkFilesystem(db.sqliteFilename,)) {
-    console.warn(
-      `DATABASE WARNING: SQLite WAL path "${db.sqliteFilename}" appears to be on a network filesystem. ` +
+    getLogger().child({ module: "config-safety", },).warn(
+      `SQLite WAL path "${db.sqliteFilename}" appears to be on a network filesystem. ` +
         "SQLite over NFS/EFS is unreliable and may cause data corruption. " +
         "Mitigations: (1) move DB to local storage, (2) switch to Postgres, " +
         "(3) set UNSAFE_SQLITE_MULTIINSTANCE=true to suppress.",

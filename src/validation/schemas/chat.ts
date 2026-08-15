@@ -7,6 +7,7 @@ import {
   ChatModeSchema,
   ChatParticipantRoleSchema,
   ChatTypeSchema,
+  ChatVisibilitySchema,
   GmConfigSchema,
   GmGuidanceSchema,
   Id,
@@ -28,6 +29,7 @@ export const ChatCreateBody = t.Object({
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  visibility: t.Optional(ChatVisibilitySchema,),
   templateId: t.Optional(t.String({ minLength: 1, },),),
   // Memory carry: seed the new chat with the participant character's
   // memories (full = all, selective = only memoryCarryIds, fresh = none).
@@ -66,6 +68,8 @@ export const ChatSetupTemplateSchema = t.Object({
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  features: t.Optional(t.Array(t.String(),),),
+  visibility: t.Optional(ChatVisibilitySchema,),
 },);
 
 /** Body for creating a chat setup template (admin). */
@@ -78,6 +82,8 @@ export const ChatSetupTemplateCreateBody = t.Object({
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  features: t.Optional(t.Array(t.String(),),),
+  visibility: t.Optional(ChatVisibilitySchema,),
 },);
 
 /** Body for updating a chat setup template (admin). */
@@ -89,6 +95,8 @@ export const ChatSetupTemplateUpdateBody = t.Object({
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  features: t.Optional(t.Array(t.String(),),),
+  visibility: t.Optional(ChatVisibilitySchema,),
 },);
 
 /** Carry options for chat migration. */
@@ -102,6 +110,8 @@ export const ChatMigrateCarrySchema = t.Object({
   pins: t.Optional(t.Boolean(),),
   /** Carry world/npc/location state snapshots for the party's world. */
   worldState: t.Optional(t.Boolean(),),
+  /** Carry location context: chat_sections + message section links. */
+  location: t.Optional(t.Boolean(),),
 },);
 
 /** Body for `POST /api/chats/:id/migrate` — fork to a new chat bound to a new template. */

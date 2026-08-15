@@ -3,4 +3,5 @@ import type { AssistantConfig, } from "../schema";
 
 export const ASSISTANT_DEFAULTS = {
   enabled: true,
+  travelPrompts: false,
 } satisfies AssistantConfig;

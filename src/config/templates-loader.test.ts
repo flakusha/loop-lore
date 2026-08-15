@@ -5,6 +5,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 import type {
   AvatarTemplateConfig,
+  CharacterTemplateConfig,
   ImageEditTemplateConfig,
   LlmTemplateConfig,
   SdTemplateConfig,
@@ -13,6 +14,7 @@ import {
   findTemplateFiles,
   loadTemplateConfig,
   mergeAvatarConfig,
+  mergeCharacterConfig,
   mergeImageEditConfig,
   mergeLlmConfig,
   mergeSdConfig,
@@ -39,7 +41,7 @@ function writeTemplateFile(name: string, content: string,) {
 // ── Merge Strategy Tests ────────────────────────────────────
 
 describe("mergeLlmConfig", () => {
-  test("extend adds new prompts, config wins on conflict", () => {
+  test("extend adds new prompts but keeps base values on conflict", () => {
     const base: LlmTemplateConfig = {
       merge: "extend",
       systemPrompts: {
@@ -54,16 +56,17 @@ describe("mergeLlmConfig", () => {
     const override: Partial<LlmTemplateConfig> = {
       systemPrompts: {
         chat: "override chat",
-        summarize: "base summarize",
-        imagePrompt: "base image",
-        ooc: "base ooc",
         custom: "new prompt",
       },
     };
 
     const result = mergeLlmConfig(base, override, "extend",);
-    expect(result.systemPrompts.chat,).toBe("override chat",);
+    // existing key keeps its base value (base wins)
+    expect(result.systemPrompts.chat,).toBe("base chat",);
+    // new key is added
     expect(result.systemPrompts.custom,).toBe("new prompt",);
+    // unrelated base keys survive
+    expect(result.systemPrompts.ooc,).toBe("base ooc",);
   });
 
   test("replace wipes all defaults", () => {
@@ -470,5 +473,107 @@ describe("findTemplateFiles", () => {
 
     const files = findTemplateFiles(TEST_DIR,);
     expect(files.size,).toBe(1,);
+  });
+});
+
+// ── Canonical merge semantics ───────────────────────────────
+//
+// replace: base discarded | override: override wins per key |
+// extend: base wins on conflict, new keys added
+
+describe("canonical merge semantics", () => {
+  test("llm extend keeps base prompt on conflict, adds new", () => {
+    const base: LlmTemplateConfig = {
+      merge: "extend",
+      systemPrompts: { chat: "base", gm: "base-gm", },
+      chatFormats: {},
+    };
+    const override: Partial<LlmTemplateConfig> = {
+      systemPrompts: { chat: "override", custom: "new", },
+    };
+
+    const result = mergeLlmConfig(base, override, "extend",);
+    expect(result.systemPrompts.chat,).toBe("base",);
+    expect(result.systemPrompts.custom,).toBe("new",);
+    expect(result.systemPrompts.gm,).toBe("base-gm",);
+    expect(result.merge,).toBe("extend",);
+  });
+
+  test("llm replace discards base entirely", () => {
+    const base: LlmTemplateConfig = {
+      merge: "extend",
+      systemPrompts: { chat: "base", gm: "base-gm", },
+      chatFormats: {},
+    };
+    const override: Partial<LlmTemplateConfig> = {
+      systemPrompts: { chat: "only", },
+    };
+
+    const result = mergeLlmConfig(base, override, "replace",);
+    expect(result.systemPrompts,).toEqual({ chat: "only", },);
+    expect(result.systemPrompts.gm,).toBeUndefined();
+  });
+
+  test("sd extend keeps base profile on conflict", () => {
+    const base: SdTemplateConfig = {
+      merge: "extend",
+      profiles: {
+        shared: {
+          id: "shared",
+          name: "Base",
+          families: ["x",],
+          promptFormat: "tags",
+          maxTokenHint: 75,
+          defaults: { cfgScale: 7, steps: 25, sampler: "euler", },
+        },
+      },
+      modelMatching: [],
+    };
+    const override: Partial<SdTemplateConfig> = {
+      profiles: {
+        shared: {
+          id: "shared",
+          name: "Override",
+          families: ["x",],
+          promptFormat: "tags",
+          maxTokenHint: 75,
+          defaults: { cfgScale: 7, steps: 25, sampler: "euler", },
+        },
+      },
+    };
+
+    const result = mergeSdConfig(base, override, "extend",);
+    expect(result.profiles.shared!.name,).toBe("Base",);
+  });
+
+  test("image-edit extend keeps base workflow on conflict", () => {
+    const base: ImageEditTemplateConfig = {
+      merge: "extend",
+      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", }, },
+    };
+    const override: Partial<ImageEditTemplateConfig> = {
+      workflows: { w: { id: "w", name: "override", category: "cat", backend: "comfy", description: "d", }, },
+    };
+
+    const result = mergeImageEditConfig(base, override, "extend",);
+    expect(result.workflows.w!.name,).toBe("base",);
+  });
+
+  test("character extend keeps base template on name conflict", () => {
+    const base: CharacterTemplateConfig = {
+      merge: "extend",
+      templates: [{ name: "Shared", description: "d", system_prompt: "base", },],
+    };
+    const override: Partial<CharacterTemplateConfig> = {
+      templates: [
+        { name: "Shared", description: "d", system_prompt: "override", },
+        { name: "New", description: "d", system_prompt: "new", },
+      ],
+    };
+
+    const result = mergeCharacterConfig(base, override, "extend",);
+    const shared = result.templates.find((t,) => t.name === "Shared");
+    expect(shared?.system_prompt,).toBe("base",);
+    expect(result.templates.some((t,) => t.name === "New"),).toBe(true,);
   });
 });

@@ -1,12 +1,12 @@
 // src/config/schema-class/json-schema/index.ts — assemble the full loop-lore config JSON Schema
-import { ageGate, } from "./ageGate";
+import { ageGate, } from "./age-gate";
 import { assets, } from "./assets";
 import { assistant, } from "./assistant";
 import { auth, } from "./auth";
-import { byoKey, } from "./byoKey";
+import { byoKey, } from "./byo-key";
 import { db, } from "./db";
 import { docs, } from "./docs";
-import { dynamicResponse, } from "./dynamicResponse";
+import { dynamicResponse, } from "./dynamic-response";
 import { generation, } from "./generation";
 import { headers, } from "./headers";
 import { hooks, } from "./hooks";

@@ -38,43 +38,40 @@ export function validateLlmConfig(
     );
   }
 
-  if (llm.systemPrompts !== undefined) {
-    if (typeof llm.systemPrompts !== "object" || llm.systemPrompts === null) {
-      throw new Error("systemPrompts must be an object mapping purpose -> string",);
-    }
-    for (
-      const [purpose, value,] of Object.entries(
-        llm.systemPrompts as Record<string, unknown>,
-      )
-    ) {
-      if (typeof value !== "string") {
-        throw new TypeError(
-          `systemPrompts.${purpose} must be a string, got ${typeof value}`,
-        );
-      }
-    }
-  }
-
-  if (llm.chatFormats !== undefined) {
-    if (typeof llm.chatFormats !== "object" || llm.chatFormats === null) {
-      throw new Error("chatFormats must be an object mapping name -> {system,user,assistant}",);
-    }
-    for (
-      const [name, value,] of Object.entries(
-        llm.chatFormats as Record<string, unknown>,
-      )
-    ) {
-      if (typeof value !== "object" || value === null) {
-        throw new Error(`chatFormats.${name} must be an object`,);
-      }
-      const fmt = value as Partial<ChatFormatTemplate>;
-      for (const role of ["system", "user", "assistant",] as const) {
-        if (typeof fmt[role] !== "string") {
-          throw new TypeError(`chatFormats.${name}.${role} must be a string`,);
-        }
-      }
-    }
-  }
+  validateSystemPrompts(llm.systemPrompts,);
+  validateChatFormats(llm.chatFormats,);
 
   return llm;
+}
+
+/** Validate the `systemPrompts` map (purpose -> string). */
+function validateSystemPrompts(systemPrompts: unknown,): void {
+  if (systemPrompts === undefined) { return; }
+  if (typeof systemPrompts !== "object" || systemPrompts === null) {
+    throw new Error("systemPrompts must be an object mapping purpose -> string",);
+  }
+  for (const [purpose, value,] of Object.entries(systemPrompts as Record<string, unknown>,)) {
+    if (typeof value !== "string") {
+      throw new TypeError(`systemPrompts.${purpose} must be a string, got ${typeof value}`,);
+    }
+  }
+}
+
+/** Validate the `chatFormats` map (name -> {system,user,assistant}). */
+function validateChatFormats(chatFormats: unknown,): void {
+  if (chatFormats === undefined) { return; }
+  if (typeof chatFormats !== "object" || chatFormats === null) {
+    throw new Error("chatFormats must be an object mapping name -> {system,user,assistant}",);
+  }
+  for (const [name, value,] of Object.entries(chatFormats as Record<string, unknown>,)) {
+    if (typeof value !== "object" || value === null) {
+      throw new Error(`chatFormats.${name} must be an object`,);
+    }
+    const fmt = value as Partial<ChatFormatTemplate>;
+    for (const role of ["system", "user", "assistant",] as const) {
+      if (typeof fmt[role] !== "string") {
+        throw new TypeError(`chatFormats.${name}.${role} must be a string`,);
+      }
+    }
+  }
 }

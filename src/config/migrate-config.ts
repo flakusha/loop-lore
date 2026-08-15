@@ -97,44 +97,46 @@ function extractDomainConfig(
 }
 
 function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",): string {
-  if (format === "yaml") {
-    // Simple YAML formatting
-    const lines: string[] = [];
-    for (const [key, value,] of Object.entries(config,)) {
-      if (typeof value === "object" && value !== null) {
-        lines.push(`${key}:`,);
-        for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
-          lines.push(`  ${subKey}: ${jsonStringifyOr(subValue, "undefined",)}`,);
-        }
-      } else {
-        lines.push(`${key}: ${jsonStringifyOr(value, "undefined",)}`,);
-      }
-    }
-    return `${lines.join("\n",)}\n`;
-  }
+  return format === "yaml" ? formatYaml(config,) : formatToml(config,);
+}
 
-  // TOML formatting
+/** Serialize a config object as simple YAML (one level of nesting). */
+function formatYaml(config: Record<string, unknown>,): string {
+  const lines: string[] = [];
+  for (const [key, value,] of Object.entries(config,)) {
+    if (typeof value === "object" && value !== null) {
+      lines.push(`${key}:`,);
+      for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
+        lines.push(`  ${subKey}: ${jsonStringifyOr(subValue, "undefined",)}`,);
+      }
+    } else {
+      lines.push(`${key}: ${jsonStringifyOr(value, "undefined",)}`,);
+    }
+  }
+  return `${lines.join("\n",)}\n`;
+}
+
+/** Serialize a config object as TOML (one level of nesting). */
+function formatToml(config: Record<string, unknown>,): string {
   const lines: string[] = [];
   for (const [key, value,] of Object.entries(config,)) {
     if (typeof value === "object" && value !== null) {
       lines.push(`[${key}]`,);
       for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
-        if (typeof subValue === "string") {
-          lines.push(`${subKey} = "${subValue}"`,);
-        } else {
-          lines.push(`${subKey} = ${jsonStringifyOr(subValue, "undefined",)}`,);
-        }
+        lines.push(`${subKey} = ${tomlValue(subValue,)}`,);
       }
       lines.push("",);
     } else {
-      if (typeof value === "string") {
-        lines.push(`${key} = "${value}"`,);
-      } else {
-        lines.push(`${key} = ${jsonStringifyOr(value, "undefined",)}`,);
-      }
+      lines.push(`${key} = ${tomlValue(value,)}`,);
     }
   }
   return lines.join("\n",);
+}
+
+/** Format a scalar as a TOML literal (strings quoted). */
+function tomlValue(value: unknown,): string {
+  if (typeof value === "string") { return `"${value}"`; }
+  return jsonStringifyOr(value, "undefined",);
 }
 
 function main() {
