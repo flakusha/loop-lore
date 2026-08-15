@@ -68,7 +68,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  async handleMentionInput(event: Event,) {
+  handleMentionInput(event: Event,) {
     const textarea = event.target as HTMLTextAreaElement;
     const value = textarea.value;
     const cursorPos = textarea.selectionStart;

@@ -56,7 +56,8 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       const characterMemories: MemoryEntry[] = [];
       const assistantMemories: MemoryEntry[] = [];
       const worldMemories: MemoryEntry[] = [];
-      for (const m of data.items ?? []) {
+      const items = data.items ?? [];
+      for (const m of items) {
         const entry = toMemoryEntry(m, "character",);
         if (entry.scope === "assistant") {
           assistantMemories.push(entry,);

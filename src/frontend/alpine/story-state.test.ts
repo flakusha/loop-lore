@@ -297,7 +297,7 @@ describe("storyState", () => {
       const s = makeState();
       s.chatId = "chat-1";
       (s as unknown as { _worldId: string | null })._worldId = "world-1";
-      await s.createQuest("   ",);
+      await s.createQuest(" ".repeat(3,),);
       expect(fetchCalls,).toEqual([],);
     });
 
@@ -347,21 +347,27 @@ describe("storyState", () => {
       fetchHandler = (_url, _opts,) => {
         call++;
         switch (call) {
-          case 1:
+          case 1: {
             return Response.json(
               { mode: "story", world_id: "world-1", current_location_id: "loc-1", gm_config: "{}", },
               { status: 200, },
             );
-          case 2:
+          }
+          case 2: {
             return Response.json({ name: "Eldoria", }, { status: 200, },);
-          case 3:
+          }
+          case 3: {
             return Response.json({ data: [], }, { status: 200, },);
-          case 4:
+          }
+          case 4: {
             return Response.json({ data: [], }, { status: 200, },);
-          case 5:
+          }
+          case 5: {
             return Response.json({ id: "loc-1", state: { time_of_day: null, }, }, { status: 200, },);
-          default:
+          }
+          default: {
             return Response.json([], { status: 200, },);
+          }
         }
       };
       await s.refresh();

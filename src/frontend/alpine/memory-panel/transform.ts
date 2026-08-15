@@ -59,7 +59,7 @@ export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["a
     case "world": {
       return panel.worldMemories;
     }
-    default: {
+    case "character": {
       return panel.characterMemories;
     }
   }

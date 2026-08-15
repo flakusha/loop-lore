@@ -71,7 +71,7 @@ export interface WorldEditState {
     expiresAt: string | null;
     maxUses: number | null;
     uses: number;
-    revoked: number;
+    status: string;
   }[];
   loadingInvites: boolean;
   invitesLoaded: boolean;
