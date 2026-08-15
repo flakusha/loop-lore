@@ -54,6 +54,19 @@ Key rules in this file:
 - **Async**: Always handle promises; no bare `.then()` chains
 - **JSDoc**: All public exports — @param, @returns, @throws, @example
 - **Imports**: Never import DB-specific modules in services (use Kysely types)
+- **Docs**: Avoid quantitative metrics in documents (commit counts, gate pass tallies, ticket counts, percentages) — they go stale fast and mislead. Use qualitative state ("push pending", "gate green") or recompute at write time; never paste a number captured earlier.
+- **Tags**: Never create git tags (incl. release tags like `v0.1.0`) — tag creation is a post-testing decision reserved for the human. Agents prepare release artifacts (changelog, release-process docs) but stop at tagging.
+- **Scratchpad**: Temporary artifacts (debug tests, research notes, API probes, throwaway scripts) go in `.tmp/` (repo root) or `worktree/.tmp/` — never in `src/`, `tests/`, `docs/`, or repo root. `.tmp/` is auto-ignored by git; delete before merge. Include `.tmp/` paths in `ctx_handoff(paths=[...])` so the next session can pick them up.
+
+## Scratchpad (`.tmp/`)
+
+Agents must not scatter temporary files across the repo (`src/`, `tests/`,
+`docs/`, repo root). All scratch material lives in `.tmp/`:
+
+- **Location**: `.tmp/` (repo root) or `worktree/.tmp/` (per-worktree)
+- **Use**: Debug test files, research notes, API specs, interim findings, probe scripts — anything not meant for the committed tree
+- **Rules**: Auto-ignored by git (no `.gitignore` edit needed); delete before finalize/merge; never import from `@/` aliases outside the repo root (module resolution breaks) — run debug scripts from inside `.tmp/` with relative imports or `bun --cwd`
+- **Handoff**: Include `.tmp/` paths in `ctx_handoff(paths=[...])`; cleanup after merge
 
 ## Project Overview
 
@@ -224,8 +237,8 @@ cd tree/feature-name
 ## Issue Tracking
 
 ```bash
-# Create ticket
-./scripts/worktree.sh ticket TASK 001 "Title" "Description"
+# Create ticket (filename = TYPE-slug from title, e.g. TASK-fix-login; also creates git issue)
+./scripts/worktree.sh ticket TASK "Title" "Description" -l label -p high
 
 # List/Search
 ./scripts/worktree.sh issues
@@ -256,6 +269,11 @@ bun run plan:sync:fix                 # apply fixes
 - **`.plan/backlog/`** — priority workstack and open/deferred items
 
 **`.plan/` is source of truth**; `docs/meta/` is reference only.
+
+`.plan/` docs follow the same no-volatile-metrics rule as all docs: capture
+state qualitatively ("wired", "push pending") and recompute numbers at write
+time. Do not paste commit counts, ahead/behind tallies, or pass tallies that
+were captured in an earlier session — they are stale by definition.
 
 ## Memory (Engram)
 

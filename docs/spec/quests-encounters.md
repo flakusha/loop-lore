@@ -23,18 +23,36 @@ These systems are **opt-in per world and per location** — worlds can enable/di
 
 ### 1.1 Quest Types
 
-| Type            | Description                                    | Example                              |
-| --------------- | ---------------------------------------------- | ------------------------------------ |
-| `main`          | Story-critical, advances world narrative       | Defeat the dark lord                 |
-| `side`          | Optional, explores lore or characters          | Help the blacksmith find ore         |
-| `daily`         | Repeatable on a timer                          | Gather herbs for the apothecary      |
-| `faction`       | Issued by a faction, advances faction standing | Spy on the rival guild               |
-| `bounty`        | Kill or capture a target                       | Slay the cave troll                  |
-| `escort`        | Protect an NPC during travel                   | Escort the merchant to the next town |
-| `delivery`      | Transport item from A to B                     | Deliver the letter to the castle     |
-| `investigation` | Solve a mystery or find information            | Discover who stole the artifact      |
-| `chain`         | Part of a multi-stage quest line               | Chapter 2 of the mage academy arc    |
-| `world_event`   | Triggered by world state changes               | Defend the town during the invasion  |
+Quests are classified along TWO orthogonal axes (see
+`.plan/epics/epic-quests-encounters.md` → Quest Type Taxonomy):
+
+**Axis 1 — Completion Mechanic (`type`, canonical, 7 values)**
+
+| `type`       | Progress measured by                     |
+| ------------ | ---------------------------------------- |
+| `time`       | in-game time elapsed                     |
+| `collection` | items / category gathered                |
+| `destruction`| targets eliminated                       |
+| `rescue`     | escort target to safe location           |
+| `discovery`  | locations / secrets / lore revealed      |
+| `social`     | disposition / interactions with an actor |
+| `composite`  | sub-quests (`all` / `any` / `sequence`)  |
+
+**Axis 2 — Narrative Category (`category`, default `side`)**
+
+| `category` | Meaning                                   |
+| ---------- | ----------------------------------------- |
+| `main`     | Story-critical, advances world narrative  |
+| `side`     | Optional, explores lore or characters     |
+| `bounty`   | Kill or capture a target                  |
+| `daily`    | Repeatable on a timer                     |
+
+The `type` axis drives progress calculation (`PROGRESS_CALCULATORS`,
+`QuestConfig` union); `category` is narrative weight + future reset
+behavior (`weekly` / `event` / `tutorial` are extension values). Narrative
+concepts from earlier spec revisions (`escort`, `delivery`, `investigation`,
+`chain`, `world_event`, `faction`) are represented by mechanic types +
+chains instead of being `type` values.
 
 ### 1.2 Quest Data Model
 
@@ -649,7 +667,8 @@ CREATE TABLE quests (
   world_id TEXT NOT NULL REFERENCES worlds(id),
   name TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
-  type TEXT NOT NULL DEFAULT 'side',
+  type TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'side',
   status TEXT NOT NULL DEFAULT 'available',
   priority INTEGER NOT NULL DEFAULT 50,
   chain_id TEXT,
@@ -881,11 +900,10 @@ Available quests: {available_quest_count}
 
 | File                          | Purpose                           |
 | ----------------------------- | --------------------------------- |
-| `src/quests/types.ts`         | Quest type definitions            |
-| `src/quests/service.ts`       | Quest CRUD and state management   |
-| `src/quests/objectives.ts`    | Objective tracking and completion |
-| `src/quests/chains.ts`        | Quest chain management            |
-| `src/quests/rewards.ts`       | Reward distribution               |
+| `src/story/quest-types.ts`    | Quest types, configs, rewards     |
+| `src/story/quests/registry.ts`| Progress calculators + registry   |
+| `src/story/quest-engine/`     | Quest CRUD, lifecycle, progress   |
+| `src/routes/quests/`          | Quest API routes + handlers       |
 | `src/encounters/types.ts`     | Encounter type definitions        |
 | `src/encounters/generator.ts` | Encounter generation engine       |
 | `src/encounters/tables.ts`    | Encounter table management        |
