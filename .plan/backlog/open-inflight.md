@@ -28,6 +28,7 @@
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority-p0-p2.md`                     | ▲ now                           | 🟡 partial (shipped: tool-call UI 2026-08-12) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |
 | E1  | Unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12)                      | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |
+| W5  | **Chat frontend wiring + search + navigation** — WT1 (pins/location/transfer/archive/response-length/route-extract) + WT2 (FTS5 message search + room filters) + WT3 (section navigation + VN wiring + state tests) | `TASK-chat-pins-frontend.md`, `TASK-chat-message-search.md`, `TASK-chat-room-filters.md`, `TASK-chat-flow-section-navigation.md`, `TASK-chat-visual-novel-mode.md` | ▲ now | 🟡 **in progress** — worktree `chat-ux-complete` |
 
 **Deferred (do not decide now):** F1 (9 AUX LLM enrichment tasks) · G3 (external music
 linking) · G4 (authoring ownership indicators) — these sit in § Hardening / deferred
