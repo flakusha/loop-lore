@@ -12,4 +12,3 @@ export { BLAKE3_DIGEST_LENGTH, blake3Hash, getBlake3Status, isNativeBlake3Availa
 export type { Blake3Implementation, } from "./blake3";
 export { getNativeStatus, isNativeAvailable, } from "./loader";
 export { DEFAULT_ZSTD_LEVEL, isNativeZstdAvailable, zstdCompress, zstdDecompress, } from "./zstd";
-export type { ZstdLevel, } from "./zstd";
