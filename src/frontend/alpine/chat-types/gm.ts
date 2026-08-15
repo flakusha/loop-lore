@@ -76,4 +76,8 @@ export interface GmConfig {
    * Mirrors `GameMasterConfig.actorModels` from `src/story/types.ts`.
    */
   actorModels?: Record<string, { model: string; provider: string }>;
+  /** Response length preset: short, medium, long, or custom. */
+  responseLengthPreset?: "short" | "medium" | "long" | "custom";
+  /** Custom token count when preset is "custom" (50–2000). */
+  responseLengthCustom?: number;
 }

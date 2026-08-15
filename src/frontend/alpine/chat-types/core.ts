@@ -89,7 +89,8 @@ export interface ChatCoreState extends AlpineMagicThis {
   _vnTypewriterSpeed: number;
   _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   _vnAutoAdvance: boolean;
-  // Prompt template preview
+  _responseLengthPreset: "short" | "medium" | "long" | "custom";
+  _responseLengthCustom: number;
   _promptTemplate: PromptTemplateInfo | null;
   _promptLoading: boolean;
   _promptExpanded: boolean;
