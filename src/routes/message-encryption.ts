@@ -82,7 +82,7 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config }, 
         tags: ["Messages", "Encryption",],
       },
     },)
-    .get(`${prefix}/encryption/status`, async () => {
+    .get(`${prefix}/encryption/status`, () => {
       return jsonResponse({
         encryptionEnabled: isEncryptionEnabled(),
         anonymousMode: isAnonymousModeEnabled(),

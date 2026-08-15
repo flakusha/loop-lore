@@ -1,7 +1,15 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, } from "../../utils";
+import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { escapeHtml, htmlResponse, } from "./layout";
+
+function parseFeaturesJson(raw: string | null,): string[] {
+  if (!raw) { return []; }
+  const parsed = safeJsonParse(raw,);
+  return parsed.ok && Array.isArray(parsed.value,)
+    ? Array.from(parsed.value, String,)
+    : [];
+}
 
 async function serveWorldsListDb(
   database: Kysely<DB>,
@@ -45,7 +53,7 @@ async function serveWorldDetailContent(
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
 
   // Mirror the API: only the owner (or admin) may view world details.
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) {
+  if (!world || (userRole !== "admin" && world.owner_id !== userId)) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">World not found</div>
@@ -63,18 +71,61 @@ async function serveWorldDetailContent(
     .orderBy("name", "asc",)
     .execute();
 
+  // Chat setup templates for the location-creation dropdown (default `world`).
+  const templates = await database
+    .selectFrom("chat_setup_templates",)
+    .select(["id", "slug", "name", "description", "features",],)
+    .orderBy("name", "asc",)
+    .execute();
+  const templatesJson = jsonStringifyOr(
+    Array.from(templates, (t,) => ({
+      id: t.id,
+      slug: t.slug,
+      name: t.name,
+      description: t.description,
+      features: parseFeaturesJson(t.features,),
+    }),),
+    "[]",
+  );
+
+  // Resolve each location's bound public chat template for the non-default
+  // badge. A location is "default" when its public chat binds `template-world`.
+  const worldChats = await database
+    .selectFrom("chats",)
+    .select(["current_location_id", "template_id",],)
+    .where("world_id", "=", worldId,)
+    .where("visibility", "=", "public",)
+    .execute();
+  const templateNames = new Map<string, string>(
+    Array.from(templates, (t,) => [t.id, t.name,],),
+  );
+  const locationTemplate = new Map<string, { name: string; isDefault: boolean }>();
+  for (const chat of worldChats) {
+    if (!chat.current_location_id) { continue; }
+    const isDefault = chat.template_id === "template-world";
+    const tid = chat.template_id && templateNames.has(chat.template_id,)
+      ? chat.template_id
+      : null;
+    locationTemplate.set(chat.current_location_id, {
+      name: tid ? templateNames.get(tid,)! : "custom",
+      isDefault,
+    },);
+  }
+
   const locationsJson = jsonStringifyOr(
     Array.from(locations, (l,) => ({
       id: l.id,
       name: l.name,
       description: l.description,
       world_id: l.world_id,
+      templateName: locationTemplate.get(l.id,)?.name ?? null,
+      templateIsDefault: locationTemplate.get(l.id,)?.isDefault ?? false,
     }),),
     "[]",
   );
 
   return htmlResponse(
-    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${worldId}', locations: ${locationsJson} })">
+    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${worldId}', locations: ${locationsJson}, templates: ${templatesJson} })">
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <h2>${name}</h2>
         <p class="description">${desc}</p>
@@ -95,6 +146,20 @@ async function serveWorldDetailContent(
           <div style="display: grid; gap: var(--space-2)">
             <input class="form-input" style="font-size: 13px" x-model="newLocationName" placeholder="Location name" />
             <input class="form-input" style="font-size: 13px" x-model="newLocationDesc" placeholder="Description (optional)" />
+            <label class="form-label" style="font-size: 12px; margin: 0">Chat template</label>
+            <select class="form-select" style="font-size: 13px" x-model="newLocationTemplateId" @change="onTemplateChange()">
+              <template x-for="t in templates" :key="t.id">
+                <option :value="t.id" x-text="t.name"></option>
+              </template>
+            </select>
+            <div x-show="newLocationTemplateFeatures.length > 0" style="font-size: 12px; color: var(--text-secondary)">
+              <div style="font-weight: 600; margin-bottom: 2px">Template features</div>
+              <ul style="margin: 0; padding-left: var(--space-4)">
+                <template x-for="f in newLocationTemplateFeatures" :key="f">
+                  <li x-text="f"></li>
+                </template>
+              </ul>
+            </div>
             <button class="btn btn-primary btn-xs" @click="createLocation()" style="justify-self: flex-start">Create</button>
           </div>
         </div>
@@ -106,6 +171,7 @@ async function serveWorldDetailContent(
                 <div style="display: flex; justify-content: space-between; align-items: center">
                   <div>
                     <strong style="font-size: 13px" x-text="loc.name"></strong>
+                    <span x-show="loc.templateName && !loc.templateIsDefault" class="tag" style="margin-left: 6px; font-size: 11px" title="Bound to a non-default chat template" x-text="'template: ' + loc.templateName"></span>
                     <span x-show="loc.description && expandedLoc !== loc.id" style="font-size: 12px; color: var(--text-secondary); margin-top: 2px; display: block" x-text="loc.description"></span>
                   </div>
                   <div style="display: flex; gap: 4px" @click.stop>

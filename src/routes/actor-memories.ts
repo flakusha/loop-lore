@@ -41,8 +41,15 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config },): El
         memoryType: "fact",
         confidence: 1,
         importance: 1,
+        pinned: "unpinned",
       },
       createRequired: ["content",],
+      valueTransforms: {
+        pinned: (value,) => (value === true || value === "pinned" ? "pinned" : "unpinned"),
+      },
+      responseTransforms: {
+        pinned: (value,) => value === "pinned",
+      },
     },
     opts,
   );

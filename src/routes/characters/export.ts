@@ -36,7 +36,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       // Solo role is admin-equivalent for own actors
       const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
-      if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
+      if (!isAdminOrSolo && actor.visibility !== "public" && actor.user_id !== ctx.userId) {
         return jsonError({
           message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
           status: HttpStatus.NotFound,
@@ -68,10 +68,10 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
       const rawSource = (actor as Record<string, unknown>).data_raw as string | undefined;
 
       if (
-        (format === "yaml" || format === "toml") &&
         sourceFormat &&
+        rawSource &&
         sourceFormat === format &&
-        rawSource
+        (format === "yaml" || format === "toml")
       ) {
         const contentType = format === "yaml" ? "text/yaml" : "text/plain";
         return new Response(rawSource, {
