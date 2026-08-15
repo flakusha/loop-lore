@@ -1,6 +1,6 @@
 # TASK: Wire Quests Routes
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-08-14, `51a7bc01`) — dual quest system consolidated (`src/rpg/quests/service/` removed) and wired to HTTP
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-quests-encounters
@@ -18,3 +18,10 @@ After the dual quest engines are consolidated (see TASK-consolidate-quest-engine
 ## Linked Epics
 
 - `epic-quests-encounters.md`
+
+## Residual Gap
+
+Wiring mounted the consolidated engine, but the create form still emits
+narrative-role values (`main|side|bounty|daily`) as `type`, while the backend
+`QuestType` enum is completion-mechanic (`time|collection|...`). This 422s on
+submit. Harmonized separately in TASK-harmonize-quest-type-taxonomy.
