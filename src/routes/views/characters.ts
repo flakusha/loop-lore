@@ -1,6 +1,7 @@
 import type { Kysely, } from "kysely";
 import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
 
 async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
@@ -68,59 +69,20 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
     ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>'
     : "";
 
-  return htmlResponse(`<div style="max-width:720px;margin:0 auto;width:100%">
-      <form id="char-edit-form" data-testid="character-edit-form">
-        <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
-          <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
-            <div id="avatar-preview">${avatarHtml}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
-            <label class="btn btn-secondary" style="cursor:pointer">
-              <span id="upload-avatar-label">Upload Avatar</span>
-              <input type="file" accept="image/*" style="display:none" id="avatar-input" onchange="uploadAvatar(this)" />
-            </label>
-            ${avatarRemoveBtn}
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-name">Display Name</label>
-          <input class="form-input" type="text" id="edit-name" value="${name}" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-desc">Description</label>
-          <textarea class="form-input form-textarea" id="edit-desc" rows="3">${desc}</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-system">System Prompt</label>
-          <textarea class="form-input form-textarea" id="edit-system" rows="6">${systemPrompt}</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-personality">Personality</label>
-          <textarea class="form-input form-textarea" id="edit-personality" rows="4">${personality}</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-greeting">Welcome Message</label>
-          <textarea class="form-input form-textarea" id="edit-greeting" rows="4">${welcome}</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-scenario">Scenario</label>
-          <textarea class="form-input form-textarea" id="edit-scenario" rows="3">${scenario}</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-example">Example Messages</label>
-          <textarea class="form-input form-textarea" id="edit-example" rows="5">${mesExample}</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="edit-post-history">Post-History Instructions</label>
-          <textarea class="form-input form-textarea" id="edit-post-history" rows="4">${postHistory}</textarea>
-        </div>
-        <input type="hidden" id="char-avatar-id" value="${avatarId}" />
-        <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
-          <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
-          <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${characterId}')" data-testid="save-character-btn">Save Character</button>
-        </div>
-      </form>
-    </div>`,);
+  return htmlResponse(buildEditFormHtml({
+    name,
+    desc,
+    systemPrompt,
+    personality,
+    welcome,
+    scenario,
+    mesExample,
+    postHistory,
+    avatarHtml,
+    avatarId,
+    avatarRemoveBtn,
+    characterId,
+  },),);
 }
 
 async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Promise<Response> {

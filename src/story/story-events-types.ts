@@ -24,6 +24,10 @@ export interface NpcState {
   relationships: Record<string, number>;
   inventory: ItemInstance[];
   schedule: Record<string, { action: string; locationId?: string }>;
+  /** NPC autonomous movement pattern (stationary, patrol, wander, follow, flee) */
+  movementPattern?: string;
+  /** Current movement target location (for follow/flee/patrol) */
+  movementTarget?: string | null;
 }
 
 export interface LocationState {

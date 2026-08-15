@@ -176,6 +176,11 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
       body,
     },);
     if (res.ok) {
+      // Save internal traits in parallel
+      const saveTraits = (globalThis as Record<string, unknown>).saveInternalTraits;
+      if (typeof saveTraits === "function") {
+        await saveTraits(characterId,);
+      }
       showToast("success", "Character saved",);
       location.assign("/views/characters",);
     } else {
@@ -226,3 +231,8 @@ globalThis.clearAvatar = function() {
   if (preview) { preview.innerHTML = "<span>👤</span>"; }
   showToast("info", "Avatar cleared — save to apply",);
 };
+
+// Initialize traits + proactive messaging module
+import { initTraitsAndProactive, } from "./characters-traits";
+
+initTraitsAndProactive(feFetch,);

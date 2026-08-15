@@ -54,6 +54,7 @@ export async function moveToLocation(
   if (!state) {
     return {
       success: false,
+      actorId,
       fromLocationId: null,
       toLocationId: targetLocationId,
       pattern: MovementPattern.Stationary,
@@ -73,6 +74,7 @@ export async function moveToLocation(
 
   return {
     success: true,
+    actorId,
     fromLocationId,
     toLocationId: targetLocationId,
     pattern: state.movementPattern,
