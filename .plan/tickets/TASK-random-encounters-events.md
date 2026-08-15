@@ -1,7 +1,7 @@
 # TASK: Random Encounters & Random Events Generation
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — basic generator wired into generation pipeline; encounter tables + event chains pending
 **Epic:** epic-world-event-system
 **Tags:** random, encounter, event, generation, ambient, dynamic
 

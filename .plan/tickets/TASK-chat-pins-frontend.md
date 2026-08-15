@@ -1,6 +1,6 @@
 # TASK: Chat Pins Frontend
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — backend routes exist (chat-pins.ts), Alpine component + panel HTML pending
 **Priority:** P2
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration

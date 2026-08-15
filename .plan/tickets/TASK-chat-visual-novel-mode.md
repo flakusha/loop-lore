@@ -1,6 +1,6 @@
 # TASK: Chat: Visual Novel Mode
 
-**Status:** 🟡 In Progress — Frontend Foundation Complete
+**Status:** 🟡 Partial — frontend VN renderer foundation complete (6 files in src/frontend/vn/), choice/branching UI + chat.html wiring pending
 **Priority:** medium
 **Effort:** Medium-High (frontend rendering)
 **Epic:** epic-immersion-presentation
