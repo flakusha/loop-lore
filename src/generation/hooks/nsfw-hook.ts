@@ -29,6 +29,7 @@ export class NsfwHook implements HookHandler {
     this.callAuxFn = deps?.callAux ?? callAux;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     if (!_context.nsfwConfig.allowNsfw) { return false; }
     return _content.length > 20;
@@ -182,6 +183,9 @@ export class NsfwHook implements HookHandler {
         }
         case "nsfw_extreme": {
           return "extreme";
+        }
+        case undefined: {
+          return "none"; // rating missing
         }
         default: {
           return "none"; // sfw or unparseable

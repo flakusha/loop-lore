@@ -102,6 +102,12 @@ function generateDecisionReasoning(
       if (personality.loyalty > 60) { return "Values relationships over violence"; }
       return "Seeks diplomatic solution";
     }
+    case "special": {
+      return "Deploys a special ability";
+    }
+    case "use_item": {
+      return "Uses an item from inventory";
+    }
     default: {
       return "Unknown decision";
     }
