@@ -1,0 +1,50 @@
+## P3 — Core Foundation (0.1.0 value tiers)
+
+> **0.1.0 scope = highest-value features.** P3→P5 follow this list; non-value work sits
+> in P6+ (`../open-inflight.md`) unless it blocks these tiers. "P4/P5" workstreams below carry the
+> **open remainder** of each P3 row (the status column is the summary; the P4/P5 sections
+> list what still needs doing to close the row).
+
+| #  | Value feature                                           | Status                 | Where / next                                                                                                                                |
+| -- | ------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | User registration                                       | 🟢 complete            | `POST /api/auth/register` ✅ + `/register` page ✅ (2026-08-12)                                                                             |
+| 2  | User authentication                                     | 🟡 partial             | login/logout/demo-login/`/me` ✅; `/api/sessions` pending; MFA deferred P6+                                                                 |
+| 3  | Correct access (chats/assets/worlds/locations)          | 🟢 core                | actor ownership; 401 guards unified; message/reaction checks ✅; **world/location access enforced ✅ (2026-08-12)**                          |
+| 4  | Encryption + compression flow                           | ✅ wired               | browser AES-256-GCM; `pipeline.ts` messages + asset encrypt/decrypt; per-chat key + 🔒 badge (2026-08-06)                                   |
+| 5  | Chats — all 9 types                                     | 🟡 P2-B                | autorenaming/sections/invites/filters/message-search/transfer ✅                                                                            |
+| 6  | NSFW features, prompting, opt-in, sfw/nsfw caps         | 🟢 core / 🟡 UI        | runtime config + enforcement ✅; audit-log UI + consent display ✅ (2026-08-06); character 5-tier rating UI open                            |
+| 7  | Metadata extraction + captioning                        | 🟢 done                | regex pipeline + caption-route                                                                                                              |
+| 8  | i18n                                                    | 🟢 done                | `ctx.t` + locales ✅; frontend strings + locale switcher ✅ (2026-08-06)                                                                    |
+| 9  | Visual novel mode                                       | ✅ complete            | `src/frontend/vn/` + `src/story/`; gallery-in-scene inheritance open                                                                        |
+| 10 | Gallery + (image) asset preview                         | 🟢 backend+frontend    | `gallery.ts` + `assetRoutes` ✅; signed URLs open (P4)                                                                                      |
+| 11 | User + admin panels, settings, fine-tuning              | 🟡 partial             | admin user mgmt ✅; fine-tuning UI / provider health pending                                                                                |
+| 12 | (Side panels) without leaving chat                      | 🟡 partial             | chat-settings modal ✅; in-chat asset preview + linkage panel pending                                                                       |
+| 13 | Chat settings menus — templates, tuning                 | 🟡 partial             | setup-template selector ✅; prompt-template registry `src/prompts/registry.ts` ✅ (2026-08-12); detailed tuning frontend open                |
+| 14 | Character/world/location flows                          | 🟡 partial             | character-io ✅; world/location creation + export/import menus pending                                                                      |
+| 15 | LLM support (chat/captioning/intent/embeddings)         | 🟢 chat/caption/intent | providers ✅; `classifyIntent` wired; embeddings greenfield                                                                                 |
+| 16 | Assistant creative tooling                              | 🟡 partial             | command buttons + parser ✅; **tool-call UI ✅ (2026-08-12)**; creation wizards pending                                                     |
+| 17 | Frontend fully wired                                    | 🟡 ongoing             | menus/modals/side-menus/docs — docs reconciliation **merged 2026-08-14** (`docs-reconcile`); 17 broken internal md links open (see `../open-inflight.md`)                            |
+| —  | IO: import/export (characters/worlds/locations/stories) | 🟡 partial             | JSON char import ✅; PNG/YAML/TOML/CHARX + world/loc/story export ✅ (2026-08-06)                                                           |
+| —  | Stop generation (chat/VN)                               | 🟢 shipped             | chat abort/cancel + VN in-scene stop overlay (2026-08-06)                                                                                   |
+| —  | Notifications + center                                  | 🟢 shipped             | SSE + unread badge + center UI + per-type mute (2026-08-06)                                                                                 |
+| —  | Filtering & search                                      | 🟡 partial             | chat room filters + message search ✅; world/location search pending                                                                        |
+| —  | Memory injection (high priority)                        | 🟢 per-viewer ✅       | `memorySection` 1024-token budget (2026-08-01); cross-actor test shipped                                                                    |
+| —  | Template injection (high priority)                      | 🟢 shipped             | `LLM_PROMPT_DEFAULTS` + `resolveSystemPrompt`; registry impl `src/prompts/registry.ts` ✅ (2026-08-12); UX pending (P4)                     |
+
+## P4 — Core Experience (open remainder of P3 rows)
+
+- [ ] Memory + template injection UX — memory selection UI (mid-chat, pinning); **template injection UX partial** (read-only prompt preview in chat settings modal 2026-08-14; open: inline override per-chat)
+- [ ] Character/world/location flows — multi-format import, creation + settings menus, mood & happiness meter (P3 #14)
+- [ ] Assistant tooling — creation wizards, `/commands` tiered access (tool-call display ✅ 2026-08-12) (P3 #16 / P2-C)
+- [ ] LLM providers — Anthropic/Ollama/Bedrock (embeddings foundation) (P3 #15)
+- [ ] Assets — signed URLs (compression flow ✅ 2026-08-12) (P3 #10)
+- [ ] Fine-tuning experience — provider health panel; fine-tuning UI for chat/persona/character (P3 #11)
+- [ ] NSFW — character 5-tier rating runtime enforcement (P3 #6)
+- [ ] Chat UI — group chat matrix UI, unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12) (P2-B/P2-D)
+
+## P5 — Wiring, Search & Polish (release-scoped)
+
+- [x] IO (export/import) ✅; Stop generation ✅; Notification center ✅; chat message search ✅; swipe-variant ✅ (implemented + tested); GM role runtime effect ✅ (committed on `dev`)
+- [ ] Frontend wiring — all menus/modals/side-menus/documentation linkage; in-chat asset preview + linkage; assistant panel; message actions UI (see P4/P2 tiers)
+- [ ] **Implemented → wired** — wire/drop LoRA routes (P2-G); SSE refactor ✅ (merged `082c20cf`, row W4 resolved in `../open-inflight.md`); remaining RPG services → `epic-rpg-wiring-phase3.md`; ~~dead `detectIntent`~~ ✅ removed (see `../open-inflight.md`)
+
