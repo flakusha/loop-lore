@@ -4,7 +4,7 @@ import type { Db, } from "../../db";
 import { EntityCreateBody, ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
-import { buildCreateValues, } from "./helpers";
+import { applyResponseTransforms, buildCreateValues, } from "./helpers";
 import type { EntityConfig, } from "./types";
 
 export function createRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
@@ -40,7 +40,7 @@ export function createRoutes(config: EntityConfig, opts: { database: Db; config:
           .where("id", "=", values.id,)
           .executeTakeFirst();
 
-        return jsonCreated(created,);
+        return jsonCreated(applyResponseTransforms(config, created,),);
       },
       {
         body: EntityCreateBody,

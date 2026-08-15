@@ -58,10 +58,10 @@ export async function run(
       }
     }
     if (
+      allPassed &&
       state.autoValidate &&
       (mode === SyntheticTestMode.Replay || mode === SyntheticTestMode.Regression) &&
-      rowResults.length > 0 &&
-      allPassed
+      rowResults.length > 0
     ) {
       await generator.transitionStatus(row.id, SyntheticDataStatus.Validated,);
     }

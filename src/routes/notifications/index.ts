@@ -150,7 +150,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         },
       },
     )
-    .get(`${prefix}/notifications/stream`, async (ctx: any,) => {
+    .get(`${prefix}/notifications/stream`, (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       return new NotificationStreamer(database, userId,).open();

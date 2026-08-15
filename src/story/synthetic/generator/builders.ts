@@ -4,6 +4,7 @@
  * Derive one SyntheticCase per target type from the gathered source.
  */
 import { SyntheticDataType, } from "../../../db/enums";
+import { QuestStatus, } from "../../../db/enums-story/quests";
 import { assertNever, } from "../../../utils";
 import type { SyntheticCase, SyntheticSource, } from "../types";
 import type { GeneratorState, } from "./types";
@@ -102,7 +103,7 @@ function buildRegenerationCase(state: GeneratorState, source: SyntheticSource,):
 function buildGmEscalation(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   const escalatable: SyntheticCase[] = [];
   for (const q of source.quests) {
-    if (q.status === "active" && escalatable.length < state.maxScenarios) {
+    if (q.status === QuestStatus.Active && escalatable.length < state.maxScenarios) {
       escalatable.push({
         id: state.idGenerator(),
         type: SyntheticDataType.GmEscalation,
