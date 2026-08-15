@@ -57,7 +57,17 @@ export function canTakeAction(combatant: Combatant, type: ActionType,): boolean 
     case ActionType.FreeAction: {
       return true;
     }
-    default: {
+    case ActionType.Attack:
+    case ActionType.CastSpell:
+    case ActionType.UseItem:
+    case ActionType.Dash:
+    case ActionType.Disengage:
+    case ActionType.Dodge:
+    case ActionType.Help:
+    case ActionType.Hide:
+    case ActionType.Ready:
+    case ActionType.Grapple:
+    case ActionType.Shove: {
       return combatant.actions > 0;
     }
   }
@@ -81,7 +91,17 @@ export function consumeAction(combatant: Combatant, type: ActionType,): Combatan
     case ActionType.FreeAction: {
       break;
     }
-    default: {
+    case ActionType.Attack:
+    case ActionType.CastSpell:
+    case ActionType.UseItem:
+    case ActionType.Dash:
+    case ActionType.Disengage:
+    case ActionType.Dodge:
+    case ActionType.Help:
+    case ActionType.Hide:
+    case ActionType.Ready:
+    case ActionType.Grapple:
+    case ActionType.Shove: {
       updated.actions = Math.max(0, updated.actions - 1,);
       updated.hasActed = true;
       break;

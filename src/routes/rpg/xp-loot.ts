@@ -19,106 +19,15 @@
  */
 import { Elysia, t, } from "elysia";
 import { generateLoot, type LootEntry, type LootResult, persistLoot, } from "../../rpg/loot";
-import { addLootEntry, createLootTable, rollLootTable, } from "../../rpg/service/loot-tables";
 import { getXpHistory, logXp, } from "../../rpg/service/xp";
 import { awardXp, levelFromXp, xpToNextLevel, } from "../../rpg/xp";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
+import { AwardBody, GenerateBody, LevelBody, NextBody, PersistBody, } from "./xp-loot-schemas";
 
 /* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
-const RaritySchema = t.Union([
-  t.Literal("common",),
-  t.Literal("uncommon",),
-  t.Literal("rare",),
-  t.Literal("epic",),
-  t.Literal("legendary",),
-  t.Literal("artifact",),
-],);
-
-const LootEntrySchema = t.Object({
-  name: t.String(),
-  description: t.String(),
-  type: t.String(),
-  rarity: RaritySchema,
-  itemId: t.Optional(t.String(),),
-  weight: t.Number(),
-  minQuantity: t.Number(),
-  maxQuantity: t.Number(),
-  minLevel: t.Number(),
-  goldValue: t.Number(),
-  metadata: t.Optional(t.Record(t.String(), t.Unknown(),),),
-},);
-
-const AwardBody = t.Object({
-  actorId: t.String(),
-  amount: t.Number(),
-  source: t.String(),
-  description: t.Optional(t.String(),),
-  referenceId: t.Optional(t.String(),),
-  chatId: t.Optional(t.String(),),
-  currentLevel: t.Optional(t.Number(),),
-  currentXp: t.Optional(t.Number(),),
-},);
-
-const LevelBody = t.Object({
-  xp: t.Number(),
-},);
-
-const NextBody = t.Object({
-  currentLevel: t.Number(),
-  currentXp: t.Number(),
-},);
-
-const GenerateBody = t.Object({
-  entries: t.Array(LootEntrySchema,),
-  level: t.Number(),
-  dropCount: t.Optional(t.Number(),),
-  luckModifier: t.Optional(t.Number(),),
-},);
-
-const PersistBody = t.Object({
-  result: t.Object({
-    drops: t.Array(t.Object({
-      name: t.String(),
-      description: t.String(),
-      type: t.String(),
-      rarity: RaritySchema,
-      itemId: t.Optional(t.String(),),
-      quantity: t.Number(),
-      goldValue: t.Number(),
-      totalGoldValue: t.Number(),
-      metadata: t.Optional(t.Record(t.String(), t.Unknown(),),),
-    },),),
-    totalGoldValue: t.Number(),
-    hasRareDrop: t.Boolean(),
-    worldItemIds: t.Array(t.String(),),
-  },),
-  worldId: t.String(),
-  actorId: t.Optional(t.String(),),
-  locationId: t.Optional(t.String(),),
-  defaultCategory: t.Optional(t.String(),),
-},);
-
-const CreateTableBody = t.Object({
-  name: t.String(),
-  sourceType: t.String(),
-  sourceId: t.Optional(t.String(),),
-},);
-
-const AddEntryBody = t.Object({
-  itemName: t.String(),
-  description: t.Optional(t.String(),),
-  itemType: t.String(),
-  rarity: t.String(),
-  weight: t.Number(),
-  minQuantity: t.Optional(t.Number(),),
-  maxQuantity: t.Optional(t.Number(),),
-  minLevel: t.Optional(t.Number(),),
-  metadata: t.Optional(t.Record(t.String(), t.Unknown(),),),
-},);
-
 export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const deps = { database: database, };
   const R = `${prefix}/rpg`;
@@ -286,95 +195,6 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         detail: {
           summary: "Persist loot",
           description: "Turn generated loot into world_items instances.",
-          tags: ["RPG", "Loot",],
-        },
-      },)
-      // ── Loot: create table ─────────────────────────────────
-      .post(`${R}/loot/tables`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const body = ctx.body as { name: string; sourceType: string; sourceId?: string };
-          const id = await createLootTable(deps, {
-            name: body.name,
-            sourceType: body.sourceType,
-            sourceId: body.sourceId,
-          },);
-          return jsonResponse({ id, },);
-        } catch (error) {
-          log().error("Failed to create loot table", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
-        body: CreateTableBody,
-        response: { 200: SuccessResponse, 401: ErrorResponse, },
-        detail: {
-          summary: "Create loot table",
-          description: "Create a loot table definition.",
-          tags: ["RPG", "Loot",],
-        },
-      },)
-      // ── Loot: add entry ────────────────────────────────────
-      .post(`${R}/loot/tables/:id/entries`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const body = ctx.body as {
-            itemName: string;
-            description?: string;
-            itemType: string;
-            rarity: string;
-            weight: number;
-            minQuantity?: number;
-            maxQuantity?: number;
-            minLevel?: number;
-            metadata?: Record<string, unknown>;
-          };
-          const id = await addLootEntry(deps, {
-            lootTableId: ctx.params.id,
-            itemName: body.itemName,
-            description: body.description,
-            itemType: body.itemType,
-            rarity: body.rarity,
-            weight: body.weight,
-            minQuantity: body.minQuantity,
-            maxQuantity: body.maxQuantity,
-            minLevel: body.minLevel,
-            metadata: body.metadata,
-          },);
-          return jsonResponse({ id, },);
-        } catch (error) {
-          log().error("Failed to add loot entry", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
-        params: t.Object({ id: t.String(), },),
-        body: AddEntryBody,
-        response: { 200: SuccessResponse, 401: ErrorResponse, },
-        detail: {
-          summary: "Add loot entry",
-          description: "Add a weighted entry to a loot table.",
-          tags: ["RPG", "Loot",],
-        },
-      },)
-      // ── Loot: roll table ───────────────────────────────────
-      .post(`${R}/loot/tables/:id/roll`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const result = await rollLootTable(deps, ctx.params.id,);
-          if (!result) { return notFoundResponse("Loot table",); }
-          return jsonResponse(result,);
-        } catch (error) {
-          log().error("Failed to roll loot table", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
-        params: t.Object({ id: t.String(), },),
-        response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Roll loot table",
-          description: "Weighted-randomly select an entry from a loot table.",
           tags: ["RPG", "Loot",],
         },
       },)

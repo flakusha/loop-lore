@@ -1,5 +1,6 @@
 import type { Kysely, Updateable, } from "kysely";
 import type { DB, } from "../../../db";
+import type { SkillLockState, } from "../../../db/enums";
 import { jsonStringifyOr, } from "../../../utils";
 import { getLog, rowToSkill, } from "./helpers";
 import type {
@@ -28,7 +29,7 @@ export async function createSkill(db: Kysely<DB>, input: CreateSkillInput,): Pro
     xp: 0,
     proficiency: ProficiencyLevel.Novice,
     specialization: null,
-    is_locked: 0,
+    lock_state: "unlocked" as SkillLockState,
     prerequisites: jsonStringifyOr(input.prerequisites ?? [],),
     metadata: jsonStringifyOr(input.metadata ?? {},),
     created_at: now,
