@@ -62,6 +62,48 @@
             <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1)">
               {{{t("chats.setupTemplateDescription")}}}
             </p>
+            <div id="template-features" style="display: none; margin-top: var(--space-2)">
+              <div class="form-label" style="margin-bottom: var(--space-1)">{{{t("chats.templateFeatures")}}}</div>
+              <ul
+                id="template-features-list"
+                aria-busy="true"
+                style="margin: 0; padding-left: var(--space-4); font-size: 12px; color: var(--text-secondary)"
+              >
+              </ul>
+            </div>
+          </div>
+          <div class="form-group" id="fine-tune-group" style="display: none">
+            <label class="form-label">{{{t("chats.fineTune")}}}</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+              <div>
+                <label class="form-label" for="chat-turn-strategy" style="font-size: 12px"
+                >{{{t("chats.turnStrategy")}}}</label>
+                <select class="form-select" id="chat-turn-strategy" data-testid="chat-turn-strategy">
+                  <option value="">{{{t("chats.useDefault")}}}</option>
+                  <option value="round_robin">{{{t("chats.roundRobin")}}}</option>
+                  <option value="scene_based">{{{t("chats.sceneBased")}}}</option>
+                  <option value="initiative">{{{t("chats.initiativeWeighted")}}}</option>
+                  <option value="quest_driven">{{{t("chats.questDriven")}}}</option>
+                  <option value="hybrid">{{{t("chats.hybrid")}}}</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" for="chat-visibility" style="font-size: 12px"
+                >{{{t("chats.visibility")}}}</label>
+                <select class="form-select" id="chat-visibility" data-testid="chat-visibility">
+                  <option value="">{{{t("chats.useDefault")}}}</option>
+                  <option value="private">{{{t("chats.visibilityPrivate")}}}</option>
+                  <option value="public">{{{t("chats.visibilityPublic")}}}</option>
+                  <option value="unlisted">{{{t("chats.visibilityUnlisted")}}}</option>
+                </select>
+              </div>
+            </div>
+            <label
+              style="display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); font-size: 13px; cursor: pointer"
+            >
+              <input type="checkbox" id="chat-visual-novel" data-testid="chat-visual-novel" />
+              {{{t("chats.visualNovelOverlay")}}}
+            </label>
           </div>
           <div class="form-group" id="participant-group">
             <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>

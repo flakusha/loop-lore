@@ -40,12 +40,12 @@ document.addEventListener(
     if (!sidebar) { return; }
     const isOpen = sidebar.classList.contains("open",);
 
-    if (dx > 60 && touchStartX < 40 && !isOpen) {
+    if (!isOpen && dx > 60 && touchStartX < 40) {
       globalThis.toggleSidebar();
       isTracking = false;
     }
 
-    if (dx < -60 && isOpen) {
+    if (isOpen && dx < -60) {
       globalThis.closeSidebar();
       isTracking = false;
     }

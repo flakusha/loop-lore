@@ -71,7 +71,10 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ baseAvatarId, },),
         },);
-        const genBody = await genRes.json().catch(() => ({}));
+        let genBody: { message?: string; jobId?: string | null } = {};
+        try {
+          genBody = (await genRes.json()) as { message?: string; jobId?: string | null };
+        } catch { /* non-JSON error body */ }
         if (!genRes.ok) {
           this._emotionGenStatus = genBody.message ?? t("status.generationFailedToStart",);
           return;

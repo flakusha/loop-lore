@@ -85,8 +85,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
             this.nsfwConsent = {
               nsfwEnabled: d.nsfwEnabled === true,
               maxRating: typeof d.maxRating === "string" ? d.maxRating : "",
-              blockedFromNsfw: d.blockedFromNsfw === true,
-              bannedFromNsfw: d.bannedFromNsfw === true,
+              accessStatus: typeof d.accessStatus === "string" ? d.accessStatus : "clear",
               shadowNsfw: d.shadowNsfw === true,
               blockReason: typeof d.blockReason === "string" ? d.blockReason : null,
             };
@@ -103,8 +102,8 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       const g = globalThis as { t?: (key: string,) => string };
       const t = g.t ?? ((key: string,) => key);
       const parts: string[] = [];
-      if (this.nsfwConsent.blockedFromNsfw) { parts.push(t("settings.nsfwBlocked",),); }
-      if (this.nsfwConsent.bannedFromNsfw) { parts.push(t("settings.nsfwBanned",),); }
+      if (this.nsfwConsent.accessStatus === "blocked") { parts.push(t("settings.nsfwBlocked",),); }
+      if (this.nsfwConsent.accessStatus === "banned") { parts.push(t("settings.nsfwBanned",),); }
       if (this.nsfwConsent.shadowNsfw) { parts.push(t("settings.nsfwShadow",),); }
       if (parts.length > 0) {
         const appended = this.nsfwConsent.blockReason ? ` — ${this.nsfwConsent.blockReason}` : "";
