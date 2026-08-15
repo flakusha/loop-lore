@@ -44,7 +44,7 @@ export async function createWorldInvite(
           expires_at: input.expiresAt ?? null,
           max_uses: input.maxUses ?? null,
           uses: 0,
-          revoked: 0,
+          status: "active",
         },)
         .execute();
       const row = await database

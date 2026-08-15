@@ -45,6 +45,8 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             worldId: tmpl.world_id,
             gmConfig: tmpl.gm_config ? jsonParseOr(tmpl.gm_config, {},) : null,
             visualNovel: tmpl.visual_novel === 1,
+            features: tmpl.features ?? [],
+            visibility: tmpl.visibility ?? null,
           }),);
           return jsonResponse(payload,);
         },
@@ -68,6 +70,8 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             worldId: body.worldId ?? null,
             gmConfig: body.gmConfig ?? null,
             visualNovel: body.visualNovel ?? false,
+            features: body.features ?? null,
+            visibility: body.visibility ?? null,
           },);
           if (!result.ok) {
             if (result.code === "conflict") {
@@ -99,6 +103,8 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             worldId: body?.worldId,
             gmConfig: body?.gmConfig,
             visualNovel: body?.visualNovel,
+            features: body?.features,
+            visibility: body?.visibility,
           },);
           if (!result.ok) {
             if (result.code === "not_found") { return notFound("Template not found",); }

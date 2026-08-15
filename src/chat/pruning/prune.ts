@@ -1,6 +1,6 @@
 import { DEFAULT_PRUNING_CONFIG, } from "./constants";
 import { scoreMessage, } from "./score";
-import type { PruneResult, PruningConfig, ScorableMessage, } from "./types";
+import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from "./types";
 
 /**
  * Prune messages to fit within a token budget using score-based removal.
@@ -16,23 +16,14 @@ import type { PruneResult, PruningConfig, ScorableMessage, } from "./types";
  * @param config - Pruning configuration
  * @returns Prune result with kept/promoted/pruned messages
  */
-export function pruneMessages(
+
+/** Choose which scored messages to prune to fit the token target. */
+function selectMessagesToPrune(
   messages: ScorableMessage[],
-  config: PruningConfig = DEFAULT_PRUNING_CONFIG,
-): PruneResult {
-  if (messages.length === 0) {
-    return { kept: [], promoted: [], pruned: [], tokensSaved: 0, };
-  }
-
-  // Score all messages
-  const scores = Array.from(messages, (msg,) => scoreMessage(msg,),);
-
-  // Sort by score ascending (lowest first = most likely to prune)
-  const sortedIndices = Array.from({ length: scores.length, }, (_, i,) => i,).sort(
-    (a, b,) => scores[a]!.combinedScore - scores[b]!.combinedScore,
-  );
-
-  // Determine which to prune
+  scores: MessageScore[],
+  sortedIndices: number[],
+  config: PruningConfig,
+): Set<number> {
   const toPrune = new Set<number>();
   let currentTokens = 0;
   for (const msg of messages) { currentTokens += Math.ceil(msg.content.length * 0.3,); }
@@ -45,7 +36,6 @@ export function pruneMessages(
     if (!score || !msg) { continue; }
 
     const msgTokens = Math.ceil(msg.content.length * 0.3,);
-
     // Never prune if it would drop below target
     if (currentTokens - msgTokens < config.targetTokens * 0.8) { break; }
 
@@ -53,8 +43,15 @@ export function pruneMessages(
     currentTokens -= msgTokens;
     score.shouldPrune = true;
   }
+  return toPrune;
+}
 
-  // Partition messages
+/** Partition messages into kept / promoted / pruned buckets. */
+function partitionMessages(
+  messages: ScorableMessage[],
+  scores: MessageScore[],
+  toPrune: Set<number>,
+): { kept: ScorableMessage[]; promoted: ScorableMessage[]; pruned: ScorableMessage[] } {
   const kept: ScorableMessage[] = [];
   const promoted: ScorableMessage[] = [];
   const pruned: ScorableMessage[] = [];
@@ -72,6 +69,27 @@ export function pruneMessages(
       kept.push(msg,);
     }
   }
+  return { kept, promoted, pruned, };
+}
+
+export function pruneMessages(
+  messages: ScorableMessage[],
+  config: PruningConfig = DEFAULT_PRUNING_CONFIG,
+): PruneResult {
+  if (messages.length === 0) {
+    return { kept: [], promoted: [], pruned: [], tokensSaved: 0, };
+  }
+
+  // Score all messages
+  const scores = Array.from(messages, (msg,) => scoreMessage(msg,),);
+
+  // Sort by score ascending (lowest first = most likely to prune)
+  const sortedIndices = Array.from({ length: scores.length, }, (_, i,) => i,).sort(
+    (a, b,) => scores[a]!.combinedScore - scores[b]!.combinedScore,
+  );
+
+  const toPrune = selectMessagesToPrune(messages, scores, sortedIndices, config,);
+  const { kept, promoted, pruned, } = partitionMessages(messages, scores, toPrune,);
 
   // Build summary message
   let summary: string | undefined;

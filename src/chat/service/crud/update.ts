@@ -25,7 +25,26 @@ export async function updateChat(
     return { code: "not_found", message: "Chat not found", };
   }
 
-  // Check panel freeze
+  const locked = await checkChatUpdateLock(database, chatId, params, fullChat,);
+  if (locked) { return locked; }
+
+  const updates = buildChatUpdates(fullChat, params,);
+  await database.updateTable("chats",).set(updates,).where("id", "=", chatId,).execute();
+  return { ok: true, };
+}
+
+/**
+ * Enforce chat-update locks: admin panel freeze and online key-mechanic immutability.
+ *
+ * @returns A conflict/forbidden result when an update is blocked, else null
+ */
+async function checkChatUpdateLock(
+  database: Kysely<DB>,
+  chatId: string,
+  params: UpdateChatParams,
+  fullChat: { story_state: string | null },
+): Promise<UpdateChatResult | null> {
+  // Panel freeze
   if (fullChat.story_state) {
     const storyState = safeJsonParse<Record<string, unknown>>(fullChat.story_state,);
     if (storyState.ok && storyState.value.isPanelFrozen && params.userRole !== "admin") {
@@ -33,7 +52,7 @@ export async function updateChat(
     }
   }
 
-  // Enforce key-mechanic immutability once online
+  // Key-mechanic immutability once online
   const attemptedMechanics: (typeof KEY_MECHANIC_PARAMS)[number][] = [];
   for (const field of KEY_MECHANIC_PARAMS) {
     if (params[field] !== undefined) { attemptedMechanics.push(field,); }
@@ -49,7 +68,29 @@ export async function updateChat(
       },
     };
   }
+  return null;
+}
 
+/** Merge a JSON patch into the chat's story_state column. */
+function patchStoryState(
+  fullChat: { story_state: string | null },
+  patch: Record<string, unknown>,
+): string | null {
+  if (!fullChat.story_state) {
+    const serialized = safeJsonStringify(patch,);
+    return serialized.ok ? serialized.value : null;
+  }
+  const current = safeJsonParse<Record<string, unknown>>(fullChat.story_state,);
+  const state = { ...(current.ok && current.value), ...patch, };
+  const serialized = safeJsonStringify(state,);
+  return serialized.ok ? serialized.value : fullChat.story_state;
+}
+
+/** Assemble the update column map from the validated params. */
+function buildChatUpdates(
+  fullChat: { story_state: string | null },
+  params: UpdateChatParams,
+): Record<string, unknown> {
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
   if (params.name) { updates.name = params.name; }
   if (params.mode) { updates.mode = params.mode; }
@@ -59,20 +100,10 @@ export async function updateChat(
     updates.is_pinned = params.isPinned ? PinnedState.Pinned : PinnedState.Unpinned;
   }
   if (typeof params.isPaused === "boolean") {
-    const current = fullChat.story_state
-      ? safeJsonParse<Record<string, unknown>>(fullChat.story_state,)
-      : null;
-    const state = { ...(current?.ok && current.value), isPaused: params.isPaused, };
-    const serialized = safeJsonStringify(state,);
-    updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
+    updates.story_state = patchStoryState(fullChat, { isPaused: params.isPaused, },);
   }
   if (typeof params.freezePanel === "boolean" && params.userRole === "admin") {
-    const current = fullChat.story_state
-      ? safeJsonParse<Record<string, unknown>>(fullChat.story_state,)
-      : null;
-    const state = { ...(current?.ok && current.value), isPanelFrozen: params.freezePanel, };
-    const serialized = safeJsonStringify(state,);
-    updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
+    updates.story_state = patchStoryState(fullChat, { isPanelFrozen: params.freezePanel, },);
   }
   if (params.gmConfig !== undefined) {
     updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null;
@@ -80,7 +111,5 @@ export async function updateChat(
   if (typeof params.visualNovel === "boolean") {
     updates.visual_novel = params.visualNovel ? 1 : 0;
   }
-
-  await database.updateTable("chats",).set(updates,).where("id", "=", chatId,).execute();
-  return { ok: true, };
+  return updates;
 }
