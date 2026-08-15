@@ -21,6 +21,7 @@
  */
 
 /** WASM asset URL (served from dist/public/wasm/). */
+import { feFetch, } from "./fe-fetch";
 const WASM_URL = "/wasm/loop_lore_native.wasm";
 
 /**
@@ -30,19 +31,19 @@ const WASM_URL = "/wasm/loop_lore_native.wasm";
 export interface WasmNativeModule {
   version: number;
   blake3: {
-    hash(data: Uint8Array): Uint8Array | null;
+    hash(data: Uint8Array,): Uint8Array | null;
   };
   zstd: {
-    compress(data: Uint8Array, level: number): Uint8Array | null;
-    decompress(data: Uint8Array, outCapacity: number): Uint8Array | null;
-    decompressBound(data: Uint8Array): number | null;
+    compress(data: Uint8Array, level: number,): Uint8Array | null;
+    decompress(data: Uint8Array, outCapacity: number,): Uint8Array | null;
+    decompressBound(data: Uint8Array,): number | null;
   };
 }
 
 let cachedModule: WasmNativeModule | null | undefined;
 
 /** Scratch buffer size for wasm data transfers (64 KiB). */
-const SCRATCH_SIZE = 65536;
+const SCRATCH_SIZE = 65_536;
 
 /**
  * Fetch and instantiate the wasm module. Cached after first success/failure.
@@ -50,21 +51,21 @@ const SCRATCH_SIZE = 65536;
  * @returns The wrapped module, or null on any failure.
  */
 export async function getWasmModule(): Promise<WasmNativeModule | null> {
-  if (cachedModule !== undefined) return cachedModule;
+  if (cachedModule !== undefined) { return cachedModule; }
 
   try {
-    const response = await fetch(WASM_URL);
+    const response = await feFetch(WASM_URL,);
     if (!response.ok) {
       cachedModule = null;
       return null;
     }
     const bytes = await response.arrayBuffer();
-    const mod = new WebAssembly.Module(bytes);
-    const instance = new WebAssembly.Instance(mod, {});
+    const mod = new WebAssembly.Module(bytes,);
+    const instance = new WebAssembly.Instance(mod, {},);
     const exports = instance.exports as Record<string, unknown>;
     const memory = exports.memory as WebAssembly.Memory;
 
-    cachedModule = buildWrapper(instance, memory as any);
+    cachedModule = buildWrapper(instance, memory as any,);
     return cachedModule;
   } catch {
     cachedModule = null;
@@ -75,7 +76,7 @@ export async function getWasmModule(): Promise<WasmNativeModule | null> {
 /**
  * Build a safe JS wrapper around the raw wasm C ABI functions.
  */
-function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory): WasmNativeModule {
+function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory,): WasmNativeModule {
   const {
     ll_version,
     ll_blake3,
@@ -84,10 +85,10 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
     ll_zstd_decompress_bound,
   } = instance.exports as unknown as {
     ll_version: () => number;
-    ll_blake3: (data: number, len: number, out: number, outLen: number) => number;
-    ll_zstd_compress: (data: number, len: number, out: number, outLen: number, level: number) => number;
-    ll_zstd_decompress: (data: number, len: number, out: number, outLen: number) => number;
-    ll_zstd_decompress_bound: (data: number, len: number) => number | bigint;
+    ll_blake3: (data: number, len: number, out: number, outLen: number,) => number;
+    ll_zstd_compress: (data: number, len: number, out: number, outLen: number, level: number,) => number;
+    ll_zstd_decompress: (data: number, len: number, out: number, outLen: number,) => number;
+    ll_zstd_decompress_bound: (data: number, len: number,) => number | bigint;
   };
 
   const version = ll_version();
@@ -95,48 +96,49 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
   return {
     version,
     blake3: {
-      hash(data: Uint8Array): Uint8Array | null {
+      hash(data: Uint8Array,): Uint8Array | null {
         const dataLen = data.length;
-        if (dataLen > SCRATCH_SIZE - 32) return null; // too large
-        const view = new Uint8Array(memory.buffer);
-        view.set(data, 0);
-        const status = ll_blake3(0, dataLen, SCRATCH_SIZE - 32, 32);
-        if (status !== 0) return null;
-        return new Uint8Array(view.slice(SCRATCH_SIZE - 32, SCRATCH_SIZE));
+        if (dataLen > SCRATCH_SIZE - 32) { return null; // too large
+         }
+        const view = new Uint8Array(memory.buffer,);
+        view.set(data, 0,);
+        const status = ll_blake3(0, dataLen, SCRATCH_SIZE - 32, 32,);
+        if (status !== 0) { return null; }
+        return new Uint8Array(view.slice(SCRATCH_SIZE - 32, SCRATCH_SIZE,),);
       },
     },
     zstd: {
-      compress(data: Uint8Array, level: number): Uint8Array | null {
+      compress(data: Uint8Array, level: number,): Uint8Array | null {
         const dataLen = data.length;
-        if (dataLen > SCRATCH_SIZE / 2) return null;
+        if (dataLen > SCRATCH_SIZE / 2) { return null; }
         const dstMax = SCRATCH_SIZE - dataLen - 1024;
-        if (dstMax < 64) return null;
-        const view = new Uint8Array(memory.buffer);
-        view.set(data, 0);
-        const result = ll_zstd_compress(0, dataLen, dataLen + 512, dstMax, level);
-        if (result < 0) return null;
-        return new Uint8Array(view.slice(dataLen + 512, dataLen + 512 + result));
+        if (dstMax < 64) { return null; }
+        const view = new Uint8Array(memory.buffer,);
+        view.set(data, 0,);
+        const result = ll_zstd_compress(0, dataLen, dataLen + 512, dstMax, level,);
+        if (result < 0) { return null; }
+        return new Uint8Array(view.slice(dataLen + 512, dataLen + 512 + result,),);
       },
-      decompress(data: Uint8Array, _outCapacity: number): Uint8Array | null {
+      decompress(data: Uint8Array, _outCapacity: number,): Uint8Array | null {
         const dataLen = data.length;
-        if (dataLen > SCRATCH_SIZE / 2) return null;
-        const view = new Uint8Array(memory.buffer);
-        view.set(data, 0);
+        if (dataLen > SCRATCH_SIZE / 2) { return null; }
+        const view = new Uint8Array(memory.buffer,);
+        view.set(data, 0,);
         // First probe decompress bound
-        const bound = ll_zstd_decompress_bound(0, dataLen);
-        const capacity = typeof bound === "bigint" ? Number(bound) : bound;
-        if (capacity < 0 || capacity > SCRATCH_SIZE - dataLen - 1024) return null;
-        const result = ll_zstd_decompress(0, dataLen, dataLen + 512, capacity);
-        if (result < 0) return null;
-        return new Uint8Array(view.slice(dataLen + 512, dataLen + 512 + result));
+        const bound = ll_zstd_decompress_bound(0, dataLen,);
+        const capacity = typeof bound === "bigint" ? Number(bound,) : bound;
+        if (capacity < 0 || capacity > SCRATCH_SIZE - dataLen - 1024) { return null; }
+        const result = ll_zstd_decompress(0, dataLen, dataLen + 512, capacity,);
+        if (result < 0) { return null; }
+        return new Uint8Array(view.slice(dataLen + 512, dataLen + 512 + result,),);
       },
-      decompressBound(data: Uint8Array): number | null {
+      decompressBound(data: Uint8Array,): number | null {
         const dataLen = data.length;
-        if (dataLen > SCRATCH_SIZE / 2) return null;
-        const view = new Uint8Array(memory.buffer);
-        view.set(data, 0);
-        const bound = ll_zstd_decompress_bound(0, dataLen);
-        const result = typeof bound === "bigint" ? Number(bound) : bound;
+        if (dataLen > SCRATCH_SIZE / 2) { return null; }
+        const view = new Uint8Array(memory.buffer,);
+        view.set(data, 0,);
+        const bound = ll_zstd_decompress_bound(0, dataLen,);
+        const result = typeof bound === "bigint" ? Number(bound,) : bound;
         return result < 0 ? null : result;
       },
     },
@@ -160,7 +162,7 @@ export async function isWasmAvailable(): Promise<boolean> {
 (function autoInit(): void {
   const g = globalThis as Record<string, unknown>;
   // Prevent double-init and preserve existing global.
-  if (g.__loopLoreWasm !== undefined) return;
+  if (g.__loopLoreWasm !== undefined) { return; }
 
   // Eager fetch — result stored on window once ready.
   // Wrap in try/catch; failure is non-fatal — callers check return value.

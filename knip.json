@@ -47,7 +47,10 @@
     "@types/html-minifier-terser",
     "@types/js-yaml",
     "@types/jszip",
-    "@types/terser"
+    "@types/terser",
+    // Native fallback: subpath import "@noble/hashes/blake3.js" (src/native/
+    // fallback/blake3.ts) not traced by knip; also used by benchmarks.
+    "@noble/hashes"
   ],
   "ignoreBinaries": [
     "sha256sum", // CI checksum step
@@ -55,7 +58,9 @@
     "pip", // scancode install (scripts/check-licenses.ts)
     "scancode", // license compliance gate (scripts/check-licenses.ts)
     "fossa", // license compliance gate (scripts/check-licenses.ts)
-    "tail" // changelog gate (scripts/check-changelog.ts git-tag query)
+    "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
+    "rustup", // Rust toolchain (scripts/build-native.ts) — external, not npm
+    "rustc" // native cdylib compile (scripts/build-native.ts) — external, not npm
   ],
   "ignore": [
     // ── Sample-plugin public API types ─────────────────────────────
@@ -79,6 +84,12 @@
     // ── Live CLI referenced via shell/docs (not import-reachable) ──
     // `gpg-unlock.mjs` is invoked by `worktree.sh` and documented in
     // `.agents/skills/agent-commit/SKILL.md` + `worktree-merge/SKILL.md`.
-    "scripts/gpg-unlock.mjs"
+    "scripts/gpg-unlock.mjs",
+
+    // ── Native benchmarks ─────────────────────────────────────────
+    // Standalone bench entrypoints (run directly, never imported) —
+    // same class as scripts/worktree leftovers above.
+    "tests/benchmarks/blake3.bench.ts",
+    "tests/benchmarks/zstd.bench.ts"
   ]
 }

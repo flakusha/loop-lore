@@ -45,19 +45,19 @@ FFI symbol definitions — must match the Rust ABI contract in lib.rs.
 const SYMBOLS = {
   ll_version: { args: [] as never[], returns: FFIType.i32, },
   ll_blake3: {
-    args: [FFIType.ptr, FFIType.usize, FFIType.ptr, FFIType.usize,],
+    args: [FFIType.ptr, FFIType.u64, FFIType.ptr, FFIType.u64,],
     returns: FFIType.i32,
   },
   ll_zstd_compress: {
-    args: [FFIType.ptr, FFIType.usize, FFIType.ptr, FFIType.usize, FFIType.i32,],
+    args: [FFIType.ptr, FFIType.u64, FFIType.ptr, FFIType.u64, FFIType.i32,],
     returns: FFIType.i32,
   },
   ll_zstd_decompress: {
-    args: [FFIType.ptr, FFIType.usize, FFIType.ptr, FFIType.usize,],
+    args: [FFIType.ptr, FFIType.u64, FFIType.ptr, FFIType.u64,],
     returns: FFIType.i32,
   },
   ll_zstd_decompress_bound: {
-    args: [FFIType.ptr, FFIType.usize,],
+    args: [FFIType.ptr, FFIType.u64,],
     returns: FFIType.i64,
   },
 } as const;
@@ -74,9 +74,9 @@ export interface NativeBlake3Symbols {
 }
 
 export interface NativeZstdSymbols {
-  ll_zstd_compress(data: Uint8Array, len: number, out: Uint8Array, outLen: number, level: number): number;
-  ll_zstd_decompress(data: Uint8Array, len: number, out: Uint8Array, outLen: number): number;
-  ll_zstd_decompress_bound(data: Uint8Array, len: number): number | bigint;
+  ll_zstd_compress(data: Uint8Array, len: number, out: Uint8Array, outLen: number, level: number,): number;
+  ll_zstd_decompress(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
+  ll_zstd_decompress_bound(data: Uint8Array, len: number,): number | bigint;
 }
 
 /**
