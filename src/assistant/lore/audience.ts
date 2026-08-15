@@ -100,6 +100,11 @@ export function isLoreVisibleTo(
         ? locationInScope(identity.locationId, scopeLoc,)
         : identity.locationId === scopeLoc;
     }
+    case "item":
+    case "faction": {
+      // Entity-scoped lore kinds — not modeled for audience visibility yet.
+      return false;
+    }
     default: {
       // Unknown / not-yet-defined subject — close by default.
       return false;

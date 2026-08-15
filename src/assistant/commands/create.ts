@@ -10,13 +10,12 @@
  * Uses the generation pipeline with entity-specific prompt templates.
  * Results are stored in the appropriate tables (actors, locations, worlds, items).
  */
-
+import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { safeJsonParse, uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
-
 const typeLabels: Record<string, string> = {
   char: "character",
   character: "character",
@@ -163,6 +162,29 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
             connections: "[]",
           },)
           .execute();
+
+        // Mirror the REST location creation: auto-create a public chat bound
+        // to the default `world` template so the location is immediately
+        // reachable and joinable.
+        const template = await getChatSetupTemplate(db, "template-world",);
+        if (template) {
+          const gmParsed = template.gm_config
+            ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
+            : null;
+          await createChat(db, {
+            name: entityData.name ?? "Unnamed Location",
+            type: "group",
+            mode: template.mode ?? "story",
+            createdBy: ctx.userId ?? "",
+            worldId,
+            currentLocationId: id,
+            turnStrategy: template.turn_strategy,
+            gmConfig: gmParsed?.ok ? gmParsed.value : null,
+            visualNovel: template.visual_novel === 1,
+            visibility: template.visibility ?? "private",
+            templateId: template.id,
+          },);
+        }
 
         return createEntityResult("Location", entityData, description, id, label,);
       }

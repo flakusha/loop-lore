@@ -37,10 +37,10 @@ export interface ScenarioSource {
  * @param source - Scenario source to store
  * @returns Stored scenario source ID
  */
-export async function storeScenarioSource(
+export function storeScenarioSource(
   _db: Kysely<DB>,
   _source: Omit<ScenarioSource, "id" | "created_at">,
-): Promise<string> {
+): string {
   // TODO: Insert into scenario_sources table (or reuse world_seeds table)
   // TODO: Index by tags for fast lookup
   // TODO: Track usage count for popularity ranking
@@ -56,11 +56,11 @@ export async function storeScenarioSource(
  * @param limit - Maximum results
  * @returns Matching scenario sources
  */
-export async function findScenarioSources(
+export function findScenarioSources(
   _db: Kysely<DB>,
   _query: string,
   _limit = 10,
-): Promise<ScenarioSource[]> {
+): ScenarioSource[] {
   // TODO: Query scenario_sources table with FTS
   // TODO: Match against world_sketch and tags
   // TODO: Sort by relevance and last_used_at
@@ -74,7 +74,7 @@ export async function findScenarioSources(
  * @param db - Database instance
  * @returns Random scenario source or null
  */
-export async function getRandomScenarioSource(_db: Kysely<DB>,): Promise<ScenarioSource | null> {
+export function getRandomScenarioSource(_db: Kysely<DB>,): ScenarioSource | null {
   // TODO: Select random reusable source from DB
   return null;
 }
@@ -87,11 +87,11 @@ export async function getRandomScenarioSource(_db: Kysely<DB>,): Promise<Scenari
  * @param blogPostId - Blog post to link
  * @returns Bridge record ID
  */
-export async function bridgeToBlog(
+export function bridgeToBlog(
   _db: Kysely<DB>,
   _scenarioId: string,
   _blogPostId: string,
-): Promise<string> {
+): string {
   // TODO: Insert into scenario_blog_bridges table
   // TODO: Link scenario source to blog world seed
   return `bridge-${Date.now()}`;

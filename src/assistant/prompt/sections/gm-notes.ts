@@ -68,7 +68,7 @@ async function fetchUnrevealedShadowNotes(
     .selectFrom("shadow_notes",)
     .select(["type", "content",],)
     .where("chat_id", "=", chatId,)
-    .where("revealed", "=", 0,)
+    .where("status", "=", "hidden",)
     .orderBy("created_at", "asc",)
     .limit(MAX_SHADOW_NOTES,)
     .execute();
