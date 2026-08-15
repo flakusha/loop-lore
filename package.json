@@ -107,6 +107,11 @@
     "plan:find": "bun run scripts/plan-code-map.ts --find",
     "deno:config": "bun run scripts/gen-deno-config.ts",
     "deno:config:check": "bun run scripts/gen-deno-config.ts --check",
+    "deno:audit": "bun run scripts/audit-runtime-compat.ts",
+    "deno:audit:shared": "bun run scripts/audit-runtime-compat.ts --shared",
+    "deno:audit:json": "bun run scripts/audit-runtime-compat.ts --json",
+    "deno:pkg:from-deno": "bun run scripts/gen-pkg-from-deno.ts",
+    "deno:pkg:from-deno:check": "bun run scripts/gen-pkg-from-deno.ts --check",
     "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
   },
   "dependencies": {
