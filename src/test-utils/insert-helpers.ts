@@ -2890,3 +2890,53 @@ export async function insertChatLocationEvents(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a proactive_messaging_config row. */
+export async function insertProactiveMessagingConfig(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  opts?: {
+    id?: Generated<string>;
+    frequency?: Generated<string>;
+    quiet_hours_start?: string | null;
+    quiet_hours_end?: string | null;
+    enabled?: Generated<number>;
+    last_proactive_at?: string | null;
+    backoff_count?: Generated<number>;
+    config_json?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("proactive_messaging_config",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    actor_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a character_internal_traits row. */
+export async function insertCharacterInternalTraits(
+  db: Db,
+  actor_id: string,
+  opts?: {
+    id?: Generated<string>;
+    aspirations?: Generated<string>;
+    moral_disposition?: Generated<string>;
+    autonomy_preferences?: Generated<string>;
+    coping_mechanisms?: Generated<string>;
+    approach_tendencies?: Generated<string>;
+    voice_patterns?: Generated<string>;
+    visibility?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("character_internal_traits",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    ...opts,
+  } as any,).execute();
+}

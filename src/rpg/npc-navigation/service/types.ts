@@ -28,6 +28,8 @@ export interface NpcMovementState {
 /** Movement result */
 export interface MovementResult {
   success: boolean;
+  /** Set by processMovementTick — individual movement fns may omit it */
+  actorId?: string;
   fromLocationId: string | null;
   toLocationId: string | null;
   pattern: MovementPattern;
