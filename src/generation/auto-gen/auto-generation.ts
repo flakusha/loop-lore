@@ -7,15 +7,13 @@
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import {
-  CancelReason,
-  CancelSource,
-} from "../../db/enums";
+import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import { callLlm, } from "./call-llm";
 import { runContentHooks, } from "./content-hooks";
+import { checkAndPruneContext, } from "./context-pruning";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 import { applyPostStoreEffects, } from "./post-store";
 import { prepareGeneration, } from "./prepare-generation";
@@ -112,6 +110,12 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     },);
     if (!actor) { return; }
     const { characterId, characterName, } = actor;
+
+    // ── Context pruning (critical/imminent threshold) ───────
+    // When the context window is critically full, prune low-value messages
+    // before assembling the prompt. High-importance messages are promoted
+    // to memory so their content survives removal.
+    await checkAndPruneContext(database, chatId, requestId,);
 
     const prepared = await prepareGeneration({
       d,
