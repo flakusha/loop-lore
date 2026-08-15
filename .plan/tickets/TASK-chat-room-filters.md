@@ -1,6 +1,6 @@
 # TASK: Chat Room Filters
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — frontend filter component exists (chat-filters.ts), server-side filter API pending
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)
