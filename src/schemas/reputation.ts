@@ -111,3 +111,67 @@ export function createReputationScore(params: {
     modifiers: [],
   };
 }
+
+/**
+ * Apply a reputation delta to a score, recording it as a modifier.
+ *
+ * @param current - Current reputation score
+ * @param delta - Signed change to apply
+ * @param reason - Human-readable reason for the change
+ * @param context - Optional context (encounter_id, chat_id, quest_id, etc.)
+ * @returns Updated reputation score with clamped value and recorded modifier
+ */
+export function applyReputationChange(
+  current: ReputationScore,
+  delta: number,
+  reason: string,
+  context?: Record<string, unknown>,
+): ReputationScore {
+  const value = clampReputation(current.value + delta,);
+  return {
+    ...current,
+    value,
+    tier: getReputationTier(value,),
+    last_modified: new Date(),
+    modifiers: [
+      ...current.modifiers,
+      {
+        source: reason,
+        amount: delta,
+        timestamp: new Date(),
+        reason,
+        context,
+      },
+    ],
+  };
+}
+
+/**
+ * Apply daily reputation decay toward neutral (0).
+ *
+ * @param reputation - Current reputation score
+ * @param daysPassed - Number of days since the last update
+ * @returns Updated reputation score after decay, value rounded to 1 decimal
+ */
+export function applyReputationDecay(
+  reputation: ReputationScore,
+  daysPassed: number,
+): ReputationScore {
+  const decay = reputation.decay_rate * daysPassed;
+  let newValue = reputation.value;
+
+  // Decay towards neutral (0)
+  if (newValue > 0) {
+    newValue = Math.max(0, newValue - decay,);
+  } else if (newValue < 0) {
+    newValue = Math.min(0, newValue + decay,);
+  }
+
+  const value = Math.round(newValue * 10,) / 10;
+  return {
+    ...reputation,
+    value,
+    tier: getReputationTier(value,),
+    last_modified: new Date(),
+  };
+}
