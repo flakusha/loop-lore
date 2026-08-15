@@ -72,7 +72,7 @@ export function checkModerationPermission(
 
     case "shadow":
     case "collapse": {
-      if (action.scope === "chat" && callerRole !== "owner" && callerRole !== "admin") {
+      if (callerRole !== "owner" && callerRole !== "admin" && action.scope === "chat") {
         return { allowed: false, reason: "Only chat owners can shadow/collapse messages", };
       }
       break;

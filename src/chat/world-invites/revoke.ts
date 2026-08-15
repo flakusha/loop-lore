@@ -1,4 +1,5 @@
 import type { Kysely, } from "kysely";
+import { InviteStatus, inviteStatusMachine, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { InviteResult, } from "../invites";
 
@@ -11,10 +12,10 @@ export async function revokeWorldInvite(
   database: Kysely<DB>,
   worldId: string,
   inviteId: string,
-): Promise<InviteResult<{ id: string; revoked: boolean }>> {
+): Promise<InviteResult<{ id: string; status: InviteStatus }>> {
   const existing = await database
     .selectFrom("world_invites",)
-    .select(["id", "world_id", "revoked",],)
+    .select(["id", "world_id", "status",],)
     .where("id", "=", inviteId,)
     .executeTakeFirst();
 
@@ -22,11 +23,18 @@ export async function revokeWorldInvite(
     return { ok: false, error: { code: "not_found", message: "Invite not found", }, };
   }
 
+  if (!inviteStatusMachine.canTransition(existing.status, InviteStatus.Revoked,)) {
+    if (existing.status === InviteStatus.Revoked) {
+      return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
+    }
+    return { ok: false, error: { code: "revoked", message: "Invite has been revoked", }, };
+  }
+
   await database
     .updateTable("world_invites",)
-    .set({ revoked: 1, },)
+    .set({ status: InviteStatus.Revoked, },)
     .where("id", "=", inviteId,)
     .execute();
 
-  return { ok: true, value: { id: inviteId, revoked: true, }, };
+  return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
 }

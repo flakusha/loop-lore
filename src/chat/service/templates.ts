@@ -1,22 +1,146 @@
 /**
  * Chat setup template CRUD + built-in starter templates.
+ *
+ * Templates are presets bound at chat creation: a chat records its
+ * `template_id` and key mechanics become immutable once the chat is online
+ * (see `crud/update.ts`). This module owns the defaults (code), the
+ * idempotent seeding (code defaults + config-file templates merged by slug),
+ * and admin CRUD.
  */
+import { load as parseYaml, } from "js-yaml";
 import type { Kysely, } from "kysely";
+import { existsSync, readFileSync, statSync, } from "node:fs";
+import path from "node:path";
+import { parse as parseToml, } from "smol-toml";
+import { findMainRepoRoot, } from "../../config/templates-loader/discovery";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, } from "../../utils";
-import type { ChatSetupTemplate, TemplateMutationResult, } from "./types";
+import { jsonStringifyOr, safeJsonParse, } from "../../utils";
+import { CHAT_SETUP_TEMPLATE_DEFAULTS, type ChatSetupTemplateDefault, } from "./template-defaults";
+import type { ChatSetupTemplate, } from "./types";
+
+/** Default chat setup template shape (code-defined). */
+/**
+ * Parse the features JSON column into a string array.
+ */
+function parseFeatures(raw: string | null,): string[] | null {
+  if (!raw) { return null; }
+  const parsed = safeJsonParse(raw,);
+  if (!parsed.ok || !Array.isArray(parsed.value,)) { return null; }
+  return Array.from(parsed.value, String,);
+}
 
 /**
- * List all chat setup templates.
+ * Load config-file chat setup templates from `configs/templates/chat-setup.yaml`
+ * (or `.yml` / `.toml`). YAML takes priority. Returns an empty array when no
+ * file exists or it declares no templates.
+ *
+ * Shape:
+ * ```yaml
+ * templates:
+ *   - slug: my-rpg
+ *     name: My RPG
+ *     description: ...
+ *     mode: story
+ *     turnStrategy: round_robin
+ *     visualNovel: false
+ *     worldId: null
+ *     gmConfig: null
+ *     features: [rpg mode, no assistant]
+ * ```
+ */
+export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDefault[] {
+  const base = cwd ?? process.cwd();
+  const candidates = findTemplateCandidates(base,);
+  if (candidates.length === 0) { return []; }
+
+  // YAML wins over TOML when both exist (templates-loader convention).
+  const chosen = candidates.find((c,) => c.kind === "yaml") ?? candidates[0]!;
+  const raw = readFileSync(chosen.path, "utf8",);
+  let parsed: unknown;
+  try {
+    parsed = chosen.kind === "toml" ? parseToml(raw,) : parseYaml(raw,);
+  } catch {
+    return [];
+  }
+
+  const list = (parsed as { templates?: unknown }).templates;
+  if (!Array.isArray(list,)) { return []; }
+
+  const templates: ChatSetupTemplateDefault[] = [];
+  for (const item of list) {
+    const t = toTemplateDefault(item,);
+    if (t) { templates.push(t,); }
+  }
+  return templates;
+}
+
+/** Collect chat-setup template files under the repo config dirs. */
+function findTemplateCandidates(
+  base: string,
+): { path: string; kind: "yaml" | "toml" }[] {
+  const roots: string[] = [];
+  for (const root of [base, findMainRepoRoot(base,),]) {
+    if (root) { roots.push(root,); }
+  }
+
+  const candidates: { path: string; kind: "yaml" | "toml" }[] = [];
+  for (const root of roots) {
+    const dir = path.join(root, "configs", "templates",);
+    if (!existsSync(dir,) || !statIsDir(dir,)) { continue; }
+    for (const file of ["chat-setup.yaml", "chat-setup.yml", "chat-setup.toml",]) {
+      const full = path.join(dir, file,);
+      if (existsSync(full,)) {
+        candidates.push({ path: full, kind: file.endsWith(".toml",) ? "toml" : "yaml", },);
+      }
+    }
+  }
+  return candidates;
+}
+
+/** Convert one raw config-file template entry into the default shape. */
+function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
+  const t = item as Record<string, unknown>;
+  const slug = typeof t.slug === "string" && t.slug ? t.slug : null;
+  const name = typeof t.name === "string" && t.name ? t.name : null;
+  if (!slug || !name) { return null; }
+  return {
+    id: `template-${slug}`,
+    slug,
+    name,
+    description: typeof t.description === "string" ? t.description : "",
+    mode: typeof t.mode === "string" ? t.mode : "direct",
+    turn_strategy: typeof t.turnStrategy === "string" ? t.turnStrategy : "round_robin",
+    visual_novel: t.visualNovel === true ? 1 : 0,
+    features: Array.isArray(t.features,)
+      ? Array.from(t.features, String,)
+      : [],
+    visibility: typeof t.visibility === "string" ? t.visibility : undefined,
+  };
+}
+
+function statIsDir(p: string,): boolean {
+  try {
+    return statSync(p,).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * List all chat setup templates, with parsed features.
  */
 export async function listChatSetupTemplates(
   database: Kysely<DB>,
 ): Promise<ChatSetupTemplate[]> {
-  return await database
+  const rows = await database
     .selectFrom("chat_setup_templates",)
     .selectAll()
     .orderBy("name", "asc",)
     .execute();
+  return Array.from(rows, (row,) => ({
+    ...(row as unknown as ChatSetupTemplate),
+    features: parseFeatures((row as { features?: string | null }).features ?? null,),
+  }),);
 }
 
 /**
@@ -31,85 +155,36 @@ export async function getChatSetupTemplate(
     .selectAll()
     .where((eb,) => eb.or([eb("id", "=", templateId,), eb("slug", "=", templateId,),],))
     .executeTakeFirst();
-  return (row as unknown as ChatSetupTemplate | undefined) ?? null;
+  if (!row) { return null; }
+  return {
+    ...(row as unknown as ChatSetupTemplate),
+    features: parseFeatures((row as { features?: string | null }).features ?? null,),
+  };
 }
 
 /**
- * Built-in starter templates, seeded only when the table is empty so existing
- * deployments (and any admin-created templates) are never clobbered.
- */
-export const CHAT_SETUP_TEMPLATE_DEFAULTS: {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
-  mode: string;
-  turn_strategy: string;
-  visual_novel: number;
-}[] = [
-  {
-    id: "template-simple-direct",
-    slug: "simple-direct",
-    name: "Simple 1:1 Chat",
-    description: "A lightweight direct chat with a single character, round-robin turns.",
-    mode: "direct",
-    turn_strategy: "round_robin",
-    visual_novel: 0,
-  },
-  {
-    id: "template-roleplay",
-    slug: "advanced-roleplay",
-    name: "Advanced 1:1 Roleplay",
-    description: "Story-driven 1:1 roleplay with scene-based narration.",
-    mode: "story",
-    turn_strategy: "scene_based",
-    visual_novel: 0,
-  },
-  {
-    id: "template-group-gm",
-    slug: "group-gm",
-    name: "Group + GM",
-    description: "A group chat with a game-master driver and round-robin turns.",
-    mode: "group",
-    turn_strategy: "round_robin",
-    visual_novel: 0,
-  },
-  {
-    id: "template-brainstorm",
-    slug: "brainstorm-assistant",
-    name: "Brainstorm Assistant",
-    description: "A direct chat for ideation and working through a topic.",
-    mode: "direct",
-    turn_strategy: "round_robin",
-    visual_novel: 0,
-  },
-  {
-    id: "template-visual-novel",
-    slug: "visual-novel",
-    name: "Visual Novel",
-    description: "Story mode with the visual-novel overlay enabled for choice cards.",
-    mode: "story",
-    turn_strategy: "scene_based",
-    visual_novel: 1,
-  },
-];
-
-/**
- * Seed built-in chat setup templates if none exist. Idempotent; never overwrites
- * or duplicates templates. Safe to call at server boot and in tests.
+ * Seed built-in + config-file chat setup templates. Idempotent upsert by slug:
+ * missing templates are inserted, existing rows are never touched (admin edits
+ * and admin-created templates survive; new code defaults backfill into old DBs).
+ * Safe to call at server boot and in tests.
  *
  * @returns The number of templates created.
  */
-export async function seedChatSetupTemplates(database: Kysely<DB>,): Promise<number> {
+export async function seedChatSetupTemplates(
+  database: Kysely<DB>,
+  cwd?: string,
+): Promise<number> {
+  const defaults = [...CHAT_SETUP_TEMPLATE_DEFAULTS, ...loadConfigChatSetupTemplates(cwd,),];
+
   const existing = await database
     .selectFrom("chat_setup_templates",)
-    .select("id",)
-    .limit(1,)
-    .executeTakeFirst();
-  if (existing) { return 0; }
+    .select(["id", "slug",],)
+    .execute();
+  const existingSlugs = new Set(Array.from(existing, (t,) => t.slug,),);
 
   let created = 0;
-  for (const t of CHAT_SETUP_TEMPLATE_DEFAULTS) {
+  for (const t of defaults) {
+    if (existingSlugs.has(t.slug,)) { continue; }
     await database
       .insertInto("chat_setup_templates",)
       .values({
@@ -120,6 +195,8 @@ export async function seedChatSetupTemplates(database: Kysely<DB>,): Promise<num
         mode: t.mode,
         turn_strategy: t.turn_strategy,
         visual_novel: t.visual_novel,
+        features: jsonStringifyOr(t.features, "[]",),
+        visibility: t.visibility ?? null,
       },)
       .execute();
     created++;
@@ -130,111 +207,7 @@ export async function seedChatSetupTemplates(database: Kysely<DB>,): Promise<num
 /**
  * Create a chat setup template (admin).
  */
-export async function createChatSetupTemplate(
-  database: Kysely<DB>,
-  params: {
-    slug: string;
-    name: string;
-    description?: string | null;
-    mode?: string | null;
-    turnStrategy?: string | null;
-    worldId?: string | null;
-    gmConfig?: Record<string, unknown> | null;
-    visualNovel?: boolean;
-  },
-): Promise<TemplateMutationResult> {
-  const slugExists = await database
-    .selectFrom("chat_setup_templates",)
-    .select("id",)
-    .where("slug", "=", params.slug,)
-    .executeTakeFirst();
-  if (slugExists) {
-    return { ok: false, code: "conflict", message: "Template slug already exists", };
-  }
 
-  const id = `template-${params.slug}`;
-  await database
-    .insertInto("chat_setup_templates",)
-    .values({
-      id,
-      slug: params.slug,
-      name: params.name,
-      description: params.description ?? null,
-      mode: params.mode ?? null,
-      turn_strategy: params.turnStrategy ?? null,
-      world_id: params.worldId ?? null,
-      gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null,
-      visual_novel: params.visualNovel ? 1 : 0,
-    },)
-    .execute();
-  const created = await getChatSetupTemplate(database, id,);
-  if (!created) {
-    return { ok: false, code: "bad_request", message: "Failed to create template", };
-  }
-  return { ok: true, template: created, };
-}
-
-/**
- * Update a chat setup template (admin). Existing bound chats keep their snapshot
- * binding — templates are snapshots, edits apply to future chats only.
- */
-export async function updateChatSetupTemplate(
-  database: Kysely<DB>,
-  templateId: string,
-  params: {
-    name?: string;
-    description?: string | null;
-    mode?: string | null;
-    turnStrategy?: string | null;
-    worldId?: string | null;
-    gmConfig?: Record<string, unknown> | null;
-    visualNovel?: boolean;
-  },
-): Promise<TemplateMutationResult> {
-  const existing = await getChatSetupTemplate(database, templateId,);
-  if (!existing) {
-    return { ok: false, code: "not_found", message: "Template not found", };
-  }
-
-  const updates: Record<string, unknown> = {};
-  if (params.name !== undefined) { updates.name = params.name; }
-  if (params.description !== undefined) { updates.description = params.description; }
-  if (params.mode !== undefined) { updates.mode = params.mode; }
-  if (params.turnStrategy !== undefined) { updates.turn_strategy = params.turnStrategy; }
-  if (params.worldId !== undefined) { updates.world_id = params.worldId; }
-  if (params.gmConfig !== undefined) {
-    updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null;
-  }
-  if (params.visualNovel !== undefined) { updates.visual_novel = params.visualNovel ? 1 : 0; }
-  updates.updated_at = new Date().toISOString();
-
-  await database
-    .updateTable("chat_setup_templates",)
-    .set(updates,)
-    .where("id", "=", existing.id,)
-    .execute();
-  const updated = await getChatSetupTemplate(database, existing.id,);
-  if (!updated) {
-    return { ok: false, code: "bad_request", message: "Failed to update template", };
-  }
-  return { ok: true, template: updated, };
-}
-
-/**
- * Delete a chat setup template (admin). Chats bound to it keep their snapshot
- * (template_id set null via FK onDelete set null).
- */
-export async function deleteChatSetupTemplate(
-  database: Kysely<DB>,
-  templateId: string,
-): Promise<TemplateMutationResult> {
-  const existing = await getChatSetupTemplate(database, templateId,);
-  if (!existing) {
-    return { ok: false, code: "not_found", message: "Template not found", };
-  }
-  await database
-    .deleteFrom("chat_setup_templates",)
-    .where("id", "=", existing.id,)
-    .execute();
-  return { ok: true, template: existing, };
-}
+// ── Re-exports (defaults + admin CRUD live in sibling modules) ─────
+export * from "./template-crud";
+export * from "./template-defaults";

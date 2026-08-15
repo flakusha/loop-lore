@@ -1,3 +1,5 @@
+import type { InviteStatus, } from "../../db/enums";
+
 /** Error codes surfaced by the invites service. */
 export type InviteErrorCode =
   | "not_found"
@@ -24,7 +26,7 @@ export interface ChatInviteRow {
   expiresAt: string | null;
   maxUses: number | null;
   uses: number;
-  revoked: boolean;
+  status: InviteStatus;
 }
 
 export interface CreateInviteInput {
