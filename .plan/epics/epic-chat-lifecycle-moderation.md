@@ -163,11 +163,19 @@ interface ModerationAction {
 ## Files
 
 - `src/chat/context-window.ts` — sliding window + promotion
+- `src/chat/context-stats.ts` — lightweight stats for API responses
+- `src/chat/pruning/` — score-based pruning pipeline (prune, score, constants)
+- `src/chat/random-events.ts` — ambient random event generator
 - `src/chat/transitions.ts` — transition handling
+- `src/generation/auto-gen/context-pruning.ts` — pruning integration in generation pipeline
+- `src/generation/auto-gen/post-store.ts` — random event injection after message storage
 - `src/generation/repetition.ts` — loop detection (existing)
 - `src/chat/moderation.ts` — blocks, bans, shadowing, flags
 - `src/middleware/nsfw-gate.ts` — NSFW toggle enforcement
 - `src/db/schema.ts` — moderation_action, block, flag tables
+- `src/components/chat/chat-header.html` — context window monitor widget
+- `src/frontend/alpine/context-window.ts` — Alpine.js context monitor component
+- `src/public/css/app.css` — context bar styles (green/yellow/orange/red)
 
 ## Linked Tasks
 
