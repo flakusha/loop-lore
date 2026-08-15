@@ -265,13 +265,43 @@ interface PoisonRecipe {
 
 ## Integration Points
 
-- **RPG Mechanics** — CON, WIS stats affect resistance
-- **Combat System** — Poison application on weapons
-- **Alchemy System** — Antidote/poison crafting
-- **NPC System** — NPC infection, symptoms
-- **World & Locations** — Plague zones, toxic areas
-- **Weather & Environment** — Weather affects disease transmission rates (rain spreads waterborne, cold weakens immunity)
-- **Healing System** — Treatment mechanics
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Stats (CON, WIS), status model | Resistance checks, disease/poison save DCs |
+| Battle & Action Systems | Combat status application | Poison application on weapons, DoT in combat |
+| Crafting & Professions | Alchemy mechanics | Antidote/poison crafting recipes |
+| NPC System | NPC health, behavior | NPC infection, symptom progression |
+| World & Locations | Hazard zones | Plague zones, toxic areas |
+| Weather & Environment | Transmission modifiers | Rain spreads waterborne disease; cold weakens immunity (G15) |
+| Magic & Spell Systems | Curse/disease spells | Magic-caused afflictions enter disease model |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Status effects | Disease/poison states feed stat penalties |
+| Weather & Environment | Transmission data | Weather reacts to plague zones |
+| Crafting & Professions | Treatment mechanics | Healing/antidote recipes depend on disease model |
+| NSFW Game Mechanics | Reproductive health | STDs from NSFW encounters (G9, P6+) |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `StatusEffect` | Battle, Magic, Social | Shared buff/debuff model for disease/poison ticks |
+| `CharacterStats` | RPG, Battle | CON/WIS feed resistance rolls |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `disease.infected` | emits → NPC, World | Infection spreads to NPCs, zone contamination |
+| `disease.cured` | emits → NPC, Crafting | Treatment applied, cure crafting consumed |
+| `weather.changed` | subscribes ← Weather | Transmission rate modifiers update (G15) |
+
+---
 
 ## Open Questions
 

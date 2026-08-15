@@ -26,33 +26,33 @@ Three shared schemas are needed across multiple epics but lack a unified definit
 
 ### 1. Unified ReputationScore Schema
 
-- [ ] Single `ReputationScore` interface used by Social, Faction, and NSFW
-- [ ] Range: -100 to +100 (hostile to devoted)
-- [ ] Tier mapping: Hostile (-100 to -51), Unfriendly (-50 to -21), Neutral (-20 to +20), Friendly (+21 to +50), Allied (+51 to +75), Devoted (+76 to +100)
-- [ ] Source tracking (which system modified the score)
-- [ ] Decay/refresh mechanics defined
-- [ ] Social epic updated to use shared schema
-- [ ] Faction epic updated to use shared schema
-- [ ] NSFW epic updated to use shared schema
+- [x] Single `ReputationScore` interface used by Social, Faction, and NSFW
+- [x] Range: -100 to +100 (hostile to devoted)
+- [x] Tier mapping: Hostile (-100 to -51), Unfriendly (-50 to -21), Neutral (-20 to +20), Friendly (+21 to +50), Allied (+51 to +75), Devoted (+76 to +100)
+- [x] Source tracking (which system modified the score)
+- [x] Decay/refresh mechanics defined
+- [x] Social epic updated to use shared schema
+- [x] Faction epic updated to use shared schema
+- [x] NSFW epic updated to use shared schema
 
 ### 2. Unified ConsentState Schema
 
-- [ ] `ConsentState` interface with `consent_required`, `consent_given`, `consent_aware` fields
-- [ ] Integration with Chat Lifecycle NSFW toggle (per-chat/user/world)
-- [ ] Integration with NSFW encounter mechanics (aphrodisiacs, intimacy actions)
-- [ ] Audit trail for consent decisions
-- [ ] Revocation mechanism
-- [ ] Emergency override (admin/moderation)
+- [x] `ConsentState` interface with `consent_required`, `consent_given`, `consent_aware` fields
+- [x] Integration with Chat Lifecycle NSFW toggle (per-chat/user/world)
+- [x] Integration with NSFW encounter mechanics (aphrodisiacs, intimacy actions)
+- [x] Audit trail for consent decisions
+- [x] Revocation mechanism
+- [x] Emergency override (admin/moderation)
 
 ### 3. NSFWContentRating Enforcement Contract
 
-- [ ] 5-tier rating enum: `sfw`, `nsfw_mild`, `nsfw_moderate`, `nsfw_intense`, `nsfw_extreme`
-- [ ] Runtime enforcement at generation boundary (LLM requests)
-- [ ] Content filtering based on rating
-- [ ] User preference override (with warnings)
-- [ ] Admin override capability
-- [ ] Integration with Chat Lifecycle NSFW toggle
-- [ ] Integration with Character Core character data model
+- [x] 5-tier rating enum: `sfw`, `nsfw_mild`, `nsfw_moderate`, `nsfw_intense`, `nsfw_extreme`
+- [x] Runtime enforcement at generation boundary (LLM requests)
+- [x] Content filtering based on rating
+- [x] User preference override (with warnings)
+- [x] Admin override capability
+- [x] Integration with Chat Lifecycle NSFW toggle
+- [x] Integration with Character Core character data model
 
 ## Shared Schemas
 

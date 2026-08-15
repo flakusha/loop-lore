@@ -321,12 +321,45 @@ interface MagicalEffect {
 
 ## Integration Points
 
-- **World & Locations** — Climate zones, terrain
-- **Combat System** — Environmental modifiers
-- **Magic System** — Magical weather, elemental effects
-- **Exploration System** — Travel, navigation
-- **NPC System** — NPC behavior affected by weather
-- **Crafting System** — Weather-dependent recipes
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| World & Locations | Climate zones, terrain | Weather derived from biome/climate data |
+| Battle & Action Systems | Environment modifiers | Combat affected by weather (visibility, footing) |
+| Magic & Spell Systems | Elemental effects | Magical weather, elemental reactions |
+| Exploration & Discovery | Travel, navigation | Weather gating of travel routes |
+| NPC System | NPC behavior | NPC reactions to weather (shelter, mood) |
+| Crafting & Professions | Weather-dependent recipes | Season/weather-gated crafting |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Battle & Action Systems | `weather.changed` event | Environmental combat modifiers (G4) |
+| Magic & Spell Systems | Weather conditions | Magical weather, elemental spell modifiers |
+| Exploration & Discovery | Travel conditions | Navigation difficulty, route gating |
+| Crafting & Professions | Season availability | Weather-gated recipe access |
+| Disease & Poison | Transmission modifiers | Rain/cold alter disease spread (G15) |
+| RPG Mechanics | Environment modifiers | Stat check modifiers from weather (G4/RPG hub) |
+| NSFW Game Mechanics | Encounter mood/location | Weather affects encounter availability (G7, P6+) |
+| Housing & Base Building | Comfort modifiers | Weather affects comfort in housing (G6, P6+) |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `WeatherState` | World, Exploration | Shared weather/terrain state model |
+| `EnvironmentModifier` | Battle, RPG | Unified environmental modifier application |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `weather.changed` | emits → Battle, Magic, Exploration, RPG, Disease | All systems update modifiers on weather change |
+| `magic.cast` | subscribes ← Magic | Elemental spells can alter weather |
+
+---
 
 ## Open Questions
 
