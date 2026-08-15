@@ -18,7 +18,7 @@ export function expandAvatarConfig(
 
   if (strategy === "replace") {
     return {
-      merge: "extend",
+      merge: base.merge,
       emotions: expansion.emotions ?? {},
       intentPatterns: expansion.intentPatterns ?? [],
     };
@@ -27,7 +27,7 @@ export function expandAvatarConfig(
   if (strategy === "override") {
     return {
       ...base,
-      merge: "extend",
+      merge: base.merge,
       emotions: { ...base.emotions, ...expansion.emotions, },
       intentPatterns: expansion.intentPatterns ?? base.intentPatterns,
     };
@@ -57,7 +57,7 @@ export function expandAvatarConfig(
   }
 
   return {
-    merge: "extend",
+    merge: base.merge,
     emotions: mergedEmotions,
     intentPatterns: mergedPatterns,
   };

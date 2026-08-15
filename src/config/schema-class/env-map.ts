@@ -1,12 +1,12 @@
 // src/config/schema-class/env-map.ts — flat ENV_VAR → dot.path mapping generation
-import { AGE_GATE_DEFAULTS, } from "./ageGate";
+import { AGE_GATE_DEFAULTS, } from "./age-gate";
 import { ASSETS_DEFAULTS, } from "./assets";
 import { ASSISTANT_DEFAULTS, } from "./assistant";
 import { AUTH_DEFAULTS, } from "./auth";
-import { BYO_KEY_DEFAULTS, } from "./byoKey";
+import { BYO_KEY_DEFAULTS, } from "./byo-key";
 import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
-import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamicResponse";
+import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
 import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";

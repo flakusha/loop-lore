@@ -1,4 +1,4 @@
-// src/config/schema-class/dynamicResponse.ts — dynamic-response section defaults
+// src/config/schema-class/dynamic-response.ts — dynamic-response section defaults
 import type { DynamicResponseConfig, } from "../schema";
 
 export const DYNAMIC_RESPONSE_DEFAULTS = {

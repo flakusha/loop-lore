@@ -26,6 +26,7 @@ export const PaginationQuery = t.Object({
 
 export const ChatTypeSchema = t.UnionEnum(["direct", "group",],);
 export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
+export const ChatVisibilitySchema = t.UnionEnum(["private", "public", "unlisted",],);
 export const TurnStrategySchema = t.UnionEnum([
   "round_robin",
   "scene_based",
@@ -132,6 +133,7 @@ export const QuestTypeSchema = t.UnionEnum([
   "composite",
 ],);
 export const QuestStatusSchema = t.UnionEnum(["active", "completed", "failed", "abandoned",],);
+export const QuestCategorySchema = t.UnionEnum(["main", "side", "bounty", "daily",],);
 export const TurnTypeSchema = t.UnionEnum([
   "character_action",
   "narration",

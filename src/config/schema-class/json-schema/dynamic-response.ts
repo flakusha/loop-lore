@@ -1,4 +1,4 @@
-// src/config/schema-class/json-schema/dynamicResponse.ts — dynamic-response JSON Schema section
+// src/config/schema-class/json-schema/dynamic-response.ts — dynamic-response JSON Schema section
 export const dynamicResponse = {
   type: "object",
   description: "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
