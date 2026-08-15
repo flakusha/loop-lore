@@ -86,29 +86,29 @@ describe("Quests flow E2E", () => {
     try {
       await gotoQuests(page, WORLD_ID,);
       await page.getByText(QUEST_NAME,).waitFor({ state: "visible", timeout: 20_000, },);
-      // Drive creation through the same endpoint the form posts to. The form's
-      // type <select> currently offers values ("main"/"side"/"bounty"/"daily")
-      // that are not in the API's QuestTypeSchema, so a UI submit returns 422 —
-      // that is a separate, tracked app bug. Send a schema-valid body here.
-      const status = await page.evaluate(async ({ name, worldId, }: { name: string; worldId: string },) => {
-        const res = await fetch(`/api/worlds/${worldId}/quests`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, description: "Created via e2e", type: "collection", priority: 5, }),
-        },);
-        return res.status;
-      }, { name: NEW_QUEST_NAME, worldId: WORLD_ID, },);
-      expect(status,).toBe(201,);
+      // Drive creation through the REAL create form: pick a completion
+      // mechanic + narrative category, submit, and assert persistence.
+      await page.getByText("+ New Quest",).click();
+      await page.locator("input[placeholder='Quest name']",).fill(NEW_QUEST_NAME,);
+      // Mechanic select: choose "collection" (schema-valid QuestType).
+      const typeSelect = page.locator("select[x-model='createType']",);
+      await typeSelect.selectOption("collection",);
+      // Category select: choose "bounty" (narrative axis).
+      const categorySelect = page.locator("select[x-model='createCategory']",);
+      await categorySelect.selectOption("bounty",);
+      await page.getByRole("button", { name: "Create", },).click();
       // Reload so the list re-fetches and renders the new quest.
       await gotoQuests(page, WORLD_ID,);
       await page.getByText(NEW_QUEST_NAME,).waitFor({ state: "visible", timeout: 20_000, },);
       const row = await ctx.db
         .selectFrom("quests",)
-        .select(["id",],)
+        .select(["id", "type", "category",],)
         .where("world_id", "=", WORLD_ID,)
         .where("name", "=", NEW_QUEST_NAME,)
         .executeTakeFirst();
       expect(row,).not.toBeNull();
+      expect(row?.type,).toBe("collection",);
+      expect(row?.category,).toBe("bounty",);
     } finally {
       errors.assert();
       errors.detach();

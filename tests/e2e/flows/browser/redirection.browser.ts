@@ -82,10 +82,11 @@ describe("Redirection E2E — auth required", () => {
       // Accept either resolution: the app bounces to /views/login, or it stays
       // put but never renders the chat message list. Either way chat content
       // must NOT be shown.
-      const redirected = await page
-        .waitForURL((url,) => url.pathname === ROUTES.login, { timeout: 15_000, },)
-        .then(() => true)
-        .catch(() => false);
+      let redirected = false;
+      try {
+        await page.waitForURL((url,) => url.pathname === ROUTES.login, { timeout: 15_000, },);
+        redirected = true;
+      } catch { /* stayed on the chat URL */ }
 
       if (redirected) {
         expect(new URL(page.url(),).pathname,).toBe(ROUTES.login,);
@@ -93,11 +94,11 @@ describe("Redirection E2E — auth required", () => {
       }
 
       // Not redirected: assert chat content never renders in a short window.
-      const messageListVisible = await page
-        .locator("[data-testid='message-list']",)
-        .waitFor({ state: "visible", timeout: 2000, },)
-        .then(() => true)
-        .catch(() => false);
+      let messageListVisible = false;
+      try {
+        await page.locator("[data-testid='message-list']",).waitFor({ state: "visible", timeout: 2000, },);
+        messageListVisible = true;
+      } catch { /* never became visible */ }
       expect(messageListVisible,).toBe(false,);
     } finally {
       await page.close();
