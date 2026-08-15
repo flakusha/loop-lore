@@ -1,25 +1,28 @@
 # Issue Template
 
-Replace TYPE with: BUG, FEAT, FIX, IDEA, EPIC, TASK, SOL (solution)
+Replace TYPE with: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA.
+Filename = `TYPE-<kebab-case-title>.md` (created by
+`./scripts/worktree.sh ticket <TYPE> "<title>"` — no numeric IDs).
 
-## TYPE-2025-XXX: <Title>
+## TYPE: <Title>
 
-**Status**: open
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**: (if applicable, link to Epic ID)
-**Related**: (linked issues/commits)
+**Status:** ⬜ Not Started
+**Priority:** Medium
+**Effort:** Medium
+**Epic:** (optional, e.g. epic-plugin-system)
+**Related:** (optional, linked tickets)
 
-### Description
+## Summary
 
-<Detailed description>
+<What this ticket does, one or two sentences>
 
-### Acceptance Criteria
+## Context
 
-- [ ] Criterion 1
-- [ ] Criterion 2
+<Why it matters: current behavior, files, references>
 
-### Notes
+## Acceptance Criteria
 
-<Additional context, code references, etc.>
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
+- [ ] `bun run check` green

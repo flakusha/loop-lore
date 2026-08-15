@@ -28,8 +28,8 @@ live in `refs/issues/<uuid>` as commit chains with trailers for metadata.
 ### Create Ticket
 
 ```bash
-./scripts/worktree.sh ticket BUG 001 "Fix login crash"
-# Creates issue BUG-2025-001 + worktree in tree/ticket-BUG-2025-001/
+./scripts/worktree.sh ticket BUG "Fix login crash" -l bug -p high
+# Creates .plan/tickets/BUG-fix-login-crash.md + git issue BUG-fix-login-crash
 ```
 
 ### Create Epic
