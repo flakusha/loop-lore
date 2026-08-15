@@ -339,3 +339,18 @@ export interface LocationNsfwConfig {
   created_at: string;
   updated_at: string;
 }
+
+// ── character_world_setup ────────────────────────────────────────────
+export interface CharacterWorldSetup {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string;
+  starting_inventory: Generated<string>;
+  lore_entries: Generated<string>;
+  backstory: string | null;
+  scenario_override: string | null;
+  system_prompt_override: string | null;
+  initial_state: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
