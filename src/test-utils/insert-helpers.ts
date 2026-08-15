@@ -2868,3 +2868,25 @@ export async function insertCharacterSkills(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a chat_location_events row. */
+export async function insertChatLocationEvents(
+  db: Db,
+  chat_id: string,
+  source: string,
+  opts?: {
+    id?: Generated<string>;
+    section_id?: string | null;
+    from_location_id?: string | null;
+    to_location_id?: string | null;
+    triggering_message_id?: string | null;
+    created_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("chat_location_events",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    source,
+    ...opts,
+  } as any,).execute();
+}

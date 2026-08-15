@@ -53,6 +53,7 @@ export async function carryHistory(
         edited_at: m.edited_at,
         attachments: m.attachments,
         archived_at: m.archived_at,
+        section_id: m.section_id,
       },)
       .execute();
     idRemap.set(m.id, newId,);

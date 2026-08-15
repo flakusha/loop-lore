@@ -667,3 +667,15 @@ export interface CharacterSkills {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── chat_location_events ────────────────────────────────────────────
+export interface ChatLocationEvents {
+  id: Generated<string>;
+  chat_id: string;
+  section_id: string | null;
+  from_location_id: string | null;
+  to_location_id: string | null;
+  triggering_message_id: string | null;
+  source: string;
+  created_at: Generated<string>;
+}
