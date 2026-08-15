@@ -391,6 +391,37 @@
         </div>
       </template>
 
+      <!-- Response Length -->
+      <div class="form-group">
+        <label class="form-label" for="settings-response-length">Response Length</label>
+        <select
+          class="form-input"
+          id="settings-response-length"
+          x-model="_responseLengthPreset"
+          data-testid="settings-response-length"
+        >
+          <option value="short">Short (~500 tokens)</option>
+          <option value="medium">Medium (~1000 tokens)</option>
+          <option value="long">Long (~1500 tokens)</option>
+          <option value="custom">Custom (50–2000)</option>
+        </select>
+        <div
+          x-show="_responseLengthPreset === 'custom'"
+          style="margin-top: var(--space-2)"
+        >
+          <input
+            type="number"
+            class="form-input"
+            x-model.number="_responseLengthCustom"
+            min="50"
+            max="2000"
+            step="50"
+            placeholder="50-2000 tokens"
+            data-testid="settings-response-length-custom"
+          />
+        </div>
+      </div>
+
       <!-- Prompt Template Preview -->
       <div class="form-group" style="margin-top: var(--space-3)">
         <button
