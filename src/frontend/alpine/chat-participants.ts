@@ -71,7 +71,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   },
 
   async addParticipant(actorId: string, role = "member",) {
-    if (!this.activeChat || !actorId) { return; }
+    if (!actorId || !this.activeChat) { return; }
     this._participantsBusy = true;
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants`, {
@@ -85,10 +85,14 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
         await this.loadParticipants();
         this.$dispatch?.("show-toast", { type: "success", message: t("participants.added",), },);
       } else {
-        const err = await res.json().catch(() => null);
+        let errorMessage: string | undefined;
+        try {
+          const body = (await res.json()) as { error?: string };
+          errorMessage = body.error;
+        } catch { /* non-JSON error body */ }
         this.$dispatch?.("show-toast", {
           type: "error",
-          message: err?.error || t("participants.failedAdd",),
+          message: errorMessage || t("participants.failedAdd",),
         },);
       }
     } catch {
@@ -99,7 +103,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   },
 
   async removeParticipant(actorId: string,) {
-    if (!this.activeChat || !actorId) { return; }
+    if (!actorId || !this.activeChat) { return; }
     this._participantsBusy = true;
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants/${actorId}`, {
@@ -119,7 +123,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   },
 
   async updateParticipantTalkativity(actorId: string, value: number,) {
-    if (!this.activeChat || !actorId) { return; }
+    if (!actorId || !this.activeChat) { return; }
     const clamped = Math.min(10, Math.max(1, Math.round(value,),),);
     const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants/${actorId}`, {
       method: "PUT",
@@ -135,7 +139,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   },
 
   async updateParticipantInitiative(actorId: string, value: number,) {
-    if (!this.activeChat || !actorId) { return; }
+    if (!actorId || !this.activeChat) { return; }
     const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants/${actorId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },

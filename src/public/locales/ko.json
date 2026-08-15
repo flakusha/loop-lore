@@ -857,7 +857,17 @@
     "filterChats": "Filter chats",
     "untitledChat": "채팅",
     "welcomeTitle": "loop-lore에 오신 것을 환영합니다",
-    "callTool": "Call tool"
+    "callTool": "Call tool",
+    "setupTemplate": "Setup template",
+    "noTemplate": "No template (manual setup)",
+    "setupTemplateDescription": "Templates pre-fill the chat's key mechanics. Fine-tune below after picking one.",
+    "templateFeatures": "Template features",
+    "fineTune": "Fine-tune (optional overrides)",
+    "visibility": "Visibility",
+    "visibilityPrivate": "Private",
+    "visibilityPublic": "Public",
+    "visibilityUnlisted": "Unlisted",
+    "visualNovelOverlay": "Visual novel overlay (choice cards)"
   },
   "personas": {
     "title": "Personas",
