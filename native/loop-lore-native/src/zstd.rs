@@ -228,7 +228,7 @@ mod tests {
   }
 
   #[test]
-  fn version_is_packed_020() {
-    assert_eq!(crate::VERSION, 512); // 0.2.0 → (0 << 16) | (2 << 8) | 0
+  fn version_is_packed_030() {
+    assert_eq!(crate::VERSION, 768); // 0.3.0 → (0 << 16) | (3 << 8) | 0
   }
 }

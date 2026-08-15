@@ -59,8 +59,32 @@ async function tryGzipDecompress(data: Uint8Array,): Promise<Uint8Array | null> 
   }
 }
 
-function tryZstdCompress(_data: Uint8Array,): Promise<Uint8Array | null> {
-  return Promise.resolve(null,);
+/** WASM module type (avoids cross-bundle import). */
+interface WasmZstdModule {
+  zstd: {
+    compress(data: Uint8Array, level: number): Uint8Array | null;
+    decompress(data: Uint8Array, outCapacity: number): Uint8Array | null;
+  };
+}
+
+/**
+ * Resolve WASM module from global (set by wasm-loader.ts).
+ * Returns null when unavailable or loading fails.
+ */
+async function getWasmZstd(): Promise<WasmZstdModule | null> {
+  const pending = (globalThis as Record<string, unknown>).__loopLoreWasm;
+  if (!pending) return null;
+  try {
+    return await (pending as Promise<WasmZstdModule | null>);
+  } catch {
+    return null;
+  }
+}
+
+async function tryZstdCompress(data: Uint8Array,): Promise<Uint8Array | null> {
+  const wasm = await getWasmZstd();
+  if (wasm === null) return null;
+  return wasm.zstd.compress(data, 3);
 }
 
 async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> {
@@ -90,8 +114,11 @@ async function tryBrotliDecompress(data: Uint8Array,): Promise<Uint8Array | null
   }
 }
 
-function tryZstdDecompress(_data: Uint8Array,): Promise<Uint8Array | null> {
-  return Promise.resolve(null,);
+async function tryZstdDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
+  const wasm = await getWasmZstd();
+  if (wasm === null) return null;
+  // Probe decompress bound first via try (wasm.decompressBound called internally).
+  return wasm.zstd.decompress(data, data.length * 16); // generous initial capacity
 }
 
 function getEncoderPriority(encoding: BrowserContentEncoding,): ("zstd" | "brotli" | "gzip")[] {
