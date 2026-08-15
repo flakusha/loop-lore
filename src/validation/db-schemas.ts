@@ -121,6 +121,7 @@ export const GenerationStatusSchema = t.UnionEnum([
   "failed",
   "cancelled",
 ],);
+export const InviteStatusSchema = t.UnionEnum(["active", "revoked", "expired", "exhausted",],);
 export const ItemCategorySchema = t.UnionEnum([
   "weapon",
   "armor",
@@ -188,7 +189,11 @@ export const ModelRoleSchema = t.UnionEnum([
   "summarization",
 ],);
 export const NarrativeStyleSchema = t.UnionEnum(["fade_to_black", "implied", "explicit", "literary",],);
+export const NodeInstanceStateSchema = t.UnionEnum(["available", "depleted",],);
 export const NoteCategorySchema = t.UnionEnum(["general", "world", "character", "story", "combat", "session",],);
+export const NotificationStatusSchema = t.UnionEnum(["unread", "read", "archived",],);
+export const NsfwAccessStatusSchema = t.UnionEnum(["clear", "blocked", "banned",],);
+export const NsfwEncounterStatusSchema = t.UnionEnum(["active", "completed",],);
 export const NsfwEncounterTypeSchema = t.UnionEnum([
   "romantic",
   "passionate",
@@ -221,6 +226,9 @@ export const NsfwLocationTypeSchema = t.UnionEnum([
   "workshop",
 ],);
 export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",],);
+export const PlayerAchievementStatusSchema = t.UnionEnum(["locked", "unlocked", "claimed",],);
+export const PlaythroughStatusSchema = t.UnionEnum(["active", "completed",],);
+export const PluginStatusSchema = t.UnionEnum(["active", "disabled", "error",],);
 export const ProfessionBonusTypeSchema = t.UnionEnum([
   "speed",
   "quality",
@@ -231,6 +239,7 @@ export const ProfessionBonusTypeSchema = t.UnionEnum([
 export const ProfessionTitleSchema = t.UnionEnum(["apprentice", "journeyman", "expert", "master", "grandmaster",],);
 export const PublicationStatusSchema = t.UnionEnum(["draft", "review", "published", "rejected", "archived",],);
 export const QualityLevelSchema = t.UnionEnum(["poor", "common", "uncommon", "rare", "epic", "legendary",],);
+export const QuestCategorySchema = t.UnionEnum(["main", "side", "bounty", "daily",],);
 export const QuestProgressStatusSchema = t.UnionEnum(["active", "completed", "failed", "ignored",],);
 export const QuestStatusSchema = t.UnionEnum(["active", "completed", "failed", "abandoned",],);
 export const QuestTypeSchema = t.UnionEnum([
@@ -266,6 +275,7 @@ export const SeductionSkillCategorySchema = t.UnionEnum([
   "aftercare",
   "communication",
 ],);
+export const ShadowNoteStatusSchema = t.UnionEnum(["hidden", "revealed",],);
 export const ShadowNoteTypeSchema = t.UnionEnum([
   "foreshadowing",
   "consequence",
@@ -274,6 +284,7 @@ export const ShadowNoteTypeSchema = t.UnionEnum([
   "world_secret",
   "narrative_hook",
 ],);
+export const SkillLockStateSchema = t.UnionEnum(["locked", "unlocked",],);
 export const StackableStateSchema = t.UnionEnum(["unique", "stackable",],);
 export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
 export const SyntheticDataStatusSchema = t.UnionEnum(["generated", "validated", "approved", "rejected", "archived",],);
@@ -313,6 +324,7 @@ export const TurnTypeSchema = t.UnionEnum([
 export const UserRoleSchema = t.UnionEnum(["admin", "user", "viewer", "solo",],);
 export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated",],);
 export const VisibilityOverrideSchema = t.UnionEnum(["none", "private", "unlisted", "public",],);
+export const VnChoiceStatusSchema = t.UnionEnum(["available", "selected",],);
 export const WhiteneoteScopeSchema = t.UnionEnum(["scene", "chapter", "session", "world",],);
 export const WhiteneoteTypeSchema = t.UnionEnum([
   "narrative_direction",
@@ -516,6 +528,7 @@ export const ChatsSchema = t.Object({
   nsfw_override: t.Optional(t.String(),),
   name_source: t.Optional(t.String(),),
   template_id: t.Optional(t.String(),),
+  visibility: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────
@@ -611,7 +624,7 @@ export const ActorMemoriesSchema = t.Object({
   world_id: t.Optional(t.String(),),
   user_id: t.Optional(t.String(),),
   scope: t.Optional(t.String(),),
-  pinned: t.Optional(t.Number(),),
+  pinned: t.Optional(PinnedStateSchema,),
   privacy: t.Optional(t.String(),),
   shareability: t.Optional(t.String(),),
 },);
@@ -708,7 +721,7 @@ export const LogEntriesSchema = t.Object({
 // ── plugin_state ────────────────────────────────────────────
 export const PluginStateSchema = t.Object({
   name: t.Optional(t.String(),),
-  enabled: t.Optional(t.Number(),),
+  status: t.Optional(PluginStatusSchema,),
   enabled_at: t.Optional(t.String(),),
   disabled_at: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
@@ -733,7 +746,7 @@ export const NotificationsSchema = t.Object({
   title: t.String(),
   body: t.Optional(t.String(),),
   link: t.Optional(t.String(),),
-  read: t.Optional(t.Number(),),
+  read: t.Optional(NotificationStatusSchema,),
   data: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
@@ -868,6 +881,7 @@ export const QuestsSchema = t.Object({
   type: QuestTypeSchema,
   target: t.Number(),
   description: t.Optional(t.String(),),
+  category: t.Optional(QuestCategorySchema,),
   status: t.Optional(QuestStatusSchema,),
   priority: t.Optional(t.Number(),),
   config: t.Optional(t.String(),),
@@ -1274,7 +1288,7 @@ export const GatheringNodeInstancesSchema = t.Object({
   created_at: t.String(),
   updated_at: t.String(),
   location_id: t.Optional(t.String(),),
-  is_depleted: t.Optional(t.Number(),),
+  state: t.Optional(NodeInstanceStateSchema,),
   respawn_at: t.Optional(t.String(),),
 },);
 
@@ -1376,7 +1390,7 @@ export const NsfwEncountersSchema = t.Object({
   current_phase: t.Optional(t.Number(),),
   outcomes: t.Optional(t.String(),),
   content_tags: t.Optional(t.String(),),
-  completed: t.Optional(t.Number(),),
+  status: t.Optional(NsfwEncounterStatusSchema,),
 },);
 
 // ── character_body_profile ────────────────────────────────────────────
@@ -1506,8 +1520,7 @@ export const NsfwUserPreferencesSchema = t.Object({
   user_id: t.String(),
   nsfw_enabled: t.Optional(t.Number(),),
   max_rating: t.Optional(t.String(),),
-  blocked_from_nsfw: t.Optional(t.Number(),),
-  banned_from_nsfw: t.Optional(t.Number(),),
+  access_status: t.Optional(NsfwAccessStatusSchema,),
   shadow_nsfw: t.Optional(t.Number(),),
   block_reason: t.Optional(t.String(),),
   banned_at: t.Optional(t.String(),),
@@ -1573,7 +1586,7 @@ export const ShadowNotesSchema = t.Object({
   type: ShadowNoteTypeSchema,
   content: t.String(),
   created_at: t.String(),
-  revealed: t.Optional(t.Number(),),
+  status: t.Optional(ShadowNoteStatusSchema,),
 },);
 
 // ── whitenotes ────────────────────────────────────────────
@@ -1598,7 +1611,7 @@ export const VnChoicesSchema = t.Object({
   relationship_impact: t.Optional(t.String(),),
   mood_impact: t.Optional(t.String(),),
   unlock_conditions: t.Optional(t.String(),),
-  selected: t.Optional(t.Number(),),
+  status: t.Optional(VnChoiceStatusSchema,),
   selected_at: t.Optional(t.String(),),
 },);
 
@@ -1695,6 +1708,8 @@ export const ChatSetupTemplatesSchema = t.Object({
   visual_novel: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  features: t.Optional(t.String(),),
+  visibility: t.Optional(t.String(),),
 },);
 
 // ── world_timeline_events ────────────────────────────────────────────
@@ -1748,7 +1763,7 @@ export const ChatInvitesSchema = t.Object({
   expires_at: t.Optional(t.String(),),
   max_uses: t.Optional(t.Number(),),
   uses: t.Optional(t.Number(),),
-  revoked: t.Optional(t.Number(),),
+  status: t.Optional(InviteStatusSchema,),
 },);
 
 // ── world_members ────────────────────────────────────────────
@@ -1766,7 +1781,7 @@ export const WorldInvitesSchema = t.Object({
   expires_at: t.Optional(t.String(),),
   max_uses: t.Optional(t.Number(),),
   uses: t.Optional(t.Number(),),
-  revoked: t.Optional(t.Number(),),
+  status: t.Optional(InviteStatusSchema,),
 },);
 
 // ── achievements ────────────────────────────────────────────
@@ -1791,7 +1806,7 @@ export const PlayerAchievementsSchema = t.Object({
   achievement_id: t.String(),
   progress: t.Optional(t.Number(),),
   max_progress: t.Optional(t.Number(),),
-  is_unlocked: t.Optional(t.Number(),),
+  status: t.Optional(PlayerAchievementStatusSchema,),
   unlocked_at: t.Optional(t.String(),),
   claimed_at: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),
@@ -1805,7 +1820,7 @@ export const PlaythroughsSchema = t.Object({
   world_id: t.String(),
   playthrough_number: t.Optional(t.Number(),),
   difficulty: t.Optional(t.String(),),
-  is_completed: t.Optional(t.Number(),),
+  status: t.Optional(PlaythroughStatusSchema,),
   ending_id: t.Optional(t.String(),),
   ending_type: t.Optional(t.String(),),
   completion_time: t.Optional(t.Number(),),
@@ -1842,7 +1857,7 @@ export const CharacterSkillsSchema = t.Object({
   xp: t.Optional(t.Number(),),
   proficiency: t.Optional(t.String(),),
   specialization: t.Optional(t.String(),),
-  is_locked: t.Optional(t.Number(),),
+  lock_state: t.Optional(SkillLockStateSchema,),
   prerequisites: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
