@@ -17,7 +17,8 @@ import { dispatchCommand, } from "./command";
 import { serviceErrorToResponse, } from "./helpers";
 import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
 import { maybeAutoReply, } from "./reply";
-import { autoRenameChat, handleSceneTransitions, } from "./transitions";
+import { autoRenameChat, } from "./transitions";
+import { handleSceneTransitions, } from "./handle-scene-transitions";
 import type { HandlerOpts, } from "./types";
 
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
@@ -117,7 +118,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           .where("id", "=", chatId,)
           .executeTakeFirst();
         await autoRenameChat(database, chatId, effectiveContent, chatRecord,);
-        await handleSceneTransitions(database, config, chatId, actorId, effectiveContent, chatRecord,);
+        await handleSceneTransitions(database, config, chatId, actorId, effectiveContent, chatRecord, id,);
 
         // ── Auto-generation / assistant reply ──────────────────────
         const reply = await maybeAutoReply(

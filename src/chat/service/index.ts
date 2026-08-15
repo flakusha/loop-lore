@@ -62,6 +62,9 @@ export { regenerateMessageVariant, } from "./write";
 // ── Message visibility ────────────────────────────────────────
 export { updateMessageVisibility, } from "./visibility";
 
+// ── Location events ───────────────────────────────────────────
+export { recordLocationChange, getLocationHistory, } from "./location-events";
+
 // ── Shared schema + error/result types ────────────────────────
 export type {
   ChatSetupTemplate,
