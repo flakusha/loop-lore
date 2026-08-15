@@ -4,7 +4,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("debug", async (): Promise<CommandResult> => {
+registerCommand("debug", (): CommandResult => {
   return {
     systemMessage: "Toggling prompt debug view...",
     action: "toggle-debug-view",

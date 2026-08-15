@@ -70,11 +70,11 @@ export interface SDProviderConfig {
  * @param config - Provider configuration
  * @returns Generated image asset reference
  */
-export async function generateImage(
+export function generateImage(
   _db: Kysely<DB>,
   request: SDRequest,
   _config: SDProviderConfig,
-): Promise<SDResponse> {
+): SDResponse {
   // TODO: Call SD provider API
   // TODO: Store generated asset in assets table
   // TODO: Link asset to entity via polymorphic linking

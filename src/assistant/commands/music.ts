@@ -9,7 +9,7 @@
 import { EXTERNAL_MUSIC_PATTERNS, } from "../../regex/music-urls";
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("music", async (args,): Promise<CommandResult> => {
+registerCommand("music", (args,): CommandResult => {
   const prompt = args.join(" ",).trim();
 
   if (!prompt) {
