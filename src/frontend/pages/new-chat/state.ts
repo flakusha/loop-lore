@@ -19,6 +19,10 @@ export interface ChatTemplateMeta {
   worldId: string | null;
   gmConfig: Record<string, unknown> | null;
   visualNovel: boolean;
+  /** Short display tags ("rpg mode", "vn mode", "no gm", ...). */
+  features: string[];
+  /** Chat visibility state the template seeds ("private" | "public" | "unlisted" | null). */
+  visibility: string | null;
 }
 
 /**
@@ -34,6 +38,12 @@ export interface NewChatCtx {
   selectedMemoryIds: Set<string>;
   templates: ChatTemplateMeta[];
   templateSelect: HTMLSelectElement | null;
+  templateFeaturesGroup: HTMLElement | null;
+  templateFeaturesList: HTMLElement | null;
+  fineTuneGroup: HTMLElement | null;
+  turnStrategySelect: HTMLSelectElement | null;
+  visibilitySelect: HTMLSelectElement | null;
+  visualNovelCheckbox: HTMLInputElement | null;
   searchInput: HTMLInputElement | null;
   resultsEl: HTMLElement | null;
   selectedEl: HTMLElement | null;
@@ -58,6 +68,12 @@ export function createCtx(): NewChatCtx {
     selectedMemoryIds: new Set(),
     templates: [],
     templateSelect: null,
+    templateFeaturesGroup: null,
+    templateFeaturesList: null,
+    fineTuneGroup: null,
+    turnStrategySelect: null,
+    visibilitySelect: null,
+    visualNovelCheckbox: null,
     searchInput: null,
     resultsEl: null,
     selectedEl: null,

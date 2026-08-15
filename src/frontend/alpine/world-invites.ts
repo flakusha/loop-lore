@@ -17,7 +17,7 @@ export interface WorldInviteRow {
   expiresAt: string | null;
   maxUses: number | null;
   uses: number;
-  revoked: number;
+  status: string;
 }
 
 export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = {
