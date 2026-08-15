@@ -1,7 +1,6 @@
 //! C ABI exports for the BLAKE3 sample module.
 //!
 //! ABI contract (keep in sync with `src/native/loader.ts`):
-//! - `ll_version() -> i32` — packed `(major << 16) | (minor << 8) | patch`.
 //! - `ll_blake3(data, len, out, out_len) -> i32` — writes 32 digest bytes
 //!   into a caller-provided buffer; returns 0 on success, -1 on bad args.
 //!
@@ -9,15 +8,7 @@
 //! Functions are non-panicking — FFI boundaries must never unwind.
 
 use crate::BLAKE3_LEN;
-use crate::VERSION;
 use std::ptr;
-
-/// Returns the ABI version. An `i32` (not a pointer) keeps C-string handling
-/// entirely out of the FFI contract.
-#[no_mangle]
-pub extern "C" fn ll_version() -> i32 {
-  VERSION
-}
 
 /// BLAKE3 hash of `data`, written into `out`.
 ///
@@ -114,7 +105,7 @@ mod tests {
 
   #[test]
   fn version_is_packed() {
-    assert_eq!(ll_version(), 512); // 0.2.0 → (0 << 16) | (2 << 8) | 0
+    assert_eq!(crate::ll_version(), 768); // 0.3.0 → (0 << 16) | (3 << 8) | 0
   }
 
   #[test]
