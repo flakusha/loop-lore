@@ -63,7 +63,7 @@ describe("chat invites service", () => {
       if (!res.ok) { return; }
       expect(res.value.code,).toHaveLength(8,);
       expect(res.value.chatId,).toBe(chatId,);
-      expect(res.value.revoked,).toBe(false,);
+      expect(res.value.status,).toBe("active",);
       expect(res.value.uses,).toBe(0,);
       expect(res.value.expiresAt,).toBeNull();
       expect(res.value.maxUses,).toBeNull();
@@ -116,7 +116,7 @@ describe("chat invites service", () => {
       const res = await revokeInvite(db, chatId, created.value.id,);
       expect(res.ok,).toBe(true,);
       const invites = await listInvites(db, chatId,);
-      expect(invites[0]!.revoked,).toBe(true,);
+      expect(invites[0]!.status,).toBe("revoked",);
     });
 
     it("returns not_found for an invite from another chat", async () => {
