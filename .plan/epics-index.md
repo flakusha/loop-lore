@@ -88,7 +88,6 @@
 | ⬜ Not Started | Player Agency — Story Points | Medium | Medium | 0 | [epic-agency-story-points.md](/.plan/epics/epic-agency-story-points.md) |
 | ⬜ Not Started | Plugin Management UI | P2 — Medium | Medium | 15 | [epic-plugin-management-ui.md](/.plan/epics/epic-plugin-management-ui.md) |
 | ⬜ Not Started | Plugin System & Extensibility | High | Very High | 16 | [epic-plugin-system.md](/.plan/epics/epic-plugin-system.md) |
-| 🟡 In Progress | Pre-Compiled Hot Binary Modules | Medium | High | 19 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
 | ⬜ Not Started | Prompt & Output Control | Medium | Unknown | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | ⬜ Not Started | RAG & Document Processing | High | High | 89 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
 | ⬜ Not Started | RAG & Document UI | P2 — Medium | Medium | 17 | [epic-rag-ui.md](/.plan/epics/epic-rag-ui.md) |
@@ -98,7 +97,6 @@
 | ⬜ Not Started | Social Interaction Systems | Medium | High | 0 | [epic-social-interaction.md](/.plan/epics/epic-social-interaction.md) |
 | ⬜ Not Started | Stealth & Crime Systems | Medium | High | 0 | [epic-stealth-crime.md](/.plan/epics/epic-stealth-crime.md) |
 | ⬜ Not Started | Terminal UI (TUI) | Low | Unknown | 0 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
-| 🟡 In Progress | Testing, Benchmarking & Performance | High | Very High | 89 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | ⬜ Not Started | Transport Layer Expansion | Low | Unknown | 0 | [epic-transport-layer-expansion.md](/.plan/epics/epic-transport-layer-expansion.md) |
 | ⬜ Not Started | Two-Factor / Multi-Factor Authentication | Medium | Medium | 10 | [epic-two-factor-auth.md](/.plan/epics/epic-two-factor-auth.md) |
 | ⬜ Not Started | UI Components Library | Medium | Unknown | 0 | [epic-frontend-components.md](/.plan/epics/epic-frontend-components.md) |
@@ -182,6 +180,7 @@
 | 🟦 Research | Non-Standard Browser Encryption | Medium | High | 7 | [epic-non-standard-browser-crypto.md](/.plan/epics/epic-non-standard-browser-crypto.md) |
 | ✅ Complete (merged epic-openapi-reference branch) | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
 | 🟡 Permanently Ongoing | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
+| 🟡 In Progress — Phase 1 infra + Phase 2 BLAKE3 sample shipped (2026-08-15, branch `native-blake3`); native-vs-TS benchmark 53× bound to bench suite | Pre-Compiled Hot Binary Modules | Medium | High | 14 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
 | 🟡 Partial (openai-compatible complete; native providers deferred) | Provider & Plugin Ecosystem | Medium | Large | 16 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
 | Not Started | RAG & Document Processing — Quick Reference | High | High | 0 | [epic-rag-document-processing-quickref.md](/.plan/epics/epic-rag-document-processing-quickref.md) |
 | 🟡 In Progress (Gate C complete 2026-08-14; release blockers: tag + push) | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
@@ -195,6 +194,7 @@
 | Not Started | Social Hub — Quick Reference | High | High | 0 | [epic-social-hub-quickref.md](/.plan/epics/epic-social-hub-quickref.md) |
 | 🟡 In Progress (2026-08-01 — GM notes panel done; world/NPC/event controls + quest log + turn order pending) | Story Mode UI | P1 — High | Medium | 14 | [epic-story-mode-ui.md](/.plan/epics/epic-story-mode-ui.md) |
 | 🟡 Permanently Ongoing | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
+| 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`); broader framework tasks open | Testing, Benchmarking & Performance | High | Very High | 88 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | 🟡 Permanently Ongoing | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 0 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
 | 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
 | 🟡 Permanently Ongoing | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
@@ -934,15 +934,6 @@ Comprehensive magic and spellcasting system — spell schools, elemental magic, 
 - **Tags:** plugin, extensibility, hooks, marketplace, sandboxing
 - **File:** `.plan/epics/epic-plugin-system.md`
 
-### Pre-Compiled Hot Binary Modules
-
-- **Status:** 🟡 In Progress — Phase 1 infra + BLAKE3 sample shipped (2026-08-15); benchmark 53× bound to bench suite
-- **Priority:** Medium
-- **Effort:** High
-- **Type:** Infrastructure Epic
-- **Tags:** native-modules, ffi, hot-reload, performance, binary-distribution
-- **File:** `.plan/epics/epic-precompiled-hot-binaries.md`
-
 ### Prompt & Output Control
 
 - **Status:** ⬜ Not Started
@@ -1024,17 +1015,6 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Effort:** Unknown
 - **Type:** Feature
 - **File:** `.plan/epics/epic-terminal-ui.md`
-
-### Testing, Benchmarking & Performance
-
-- **Status:** 🟡 In Progress — bench suite structure + first benchmark shipped (2026-08-15); framework tasks open
-- **Priority:** High
-- **Effort:** Very High
-- **Type:** Infrastructure Epic
-- **Tags:** testing, benchmarking, performance, load-testing, profiling
-- **File:** `.plan/epics/epic-testing-benchmarking.md`
-
-Systematic approach to generating diverse, malicious, and edge-case inputs for fuzzing all external interfaces.
 
 ### Transport Layer Expansion
 
@@ -1811,6 +1791,15 @@ Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
 - **Type:** Ongoing Epic
 - **File:** `.plan/epics/epic-platform-research.md`
 
+### Pre-Compiled Hot Binary Modules
+
+- **Status:** 🟡 In Progress — Phase 1 infra + Phase 2 BLAKE3 sample shipped (2026-08-15, branch `native-blake3`); native-vs-TS benchmark 53× bound to bench suite
+- **Priority:** Medium
+- **Effort:** High
+- **Type:** Infrastructure Epic
+- **Tags:** native-modules, ffi, hot-reload, performance, binary-distribution
+- **File:** `.plan/epics/epic-precompiled-hot-binaries.md`
+
 ### Provider & Plugin Ecosystem
 
 - **Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
@@ -1929,6 +1918,17 @@ Centralized hub for messengers, social networks, and email integration. Unified 
 - **Type:** Ongoing Epic
 - **Tags:** testing, quality-assurance, unit-tests, e2e, coverage
 - **File:** `.plan/epics/epic-testing-qa.md`
+
+### Testing, Benchmarking & Performance
+
+- **Status:** 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`); broader framework tasks open
+- **Priority:** High
+- **Effort:** Very High
+- **Type:** Infrastructure Epic
+- **Tags:** testing, benchmarking, performance, load-testing, profiling
+- **File:** `.plan/epics/epic-testing-benchmarking.md`
+
+Systematic approach to generating diverse, malicious, and edge-case inputs for fuzzing all external interfaces.
 
 ### Tooling Support & Improvement (Permanently Ongoing)
 
