@@ -1874,3 +1874,32 @@ export const ChatLocationEventsSchema = t.Object({
   triggering_message_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── proactive_messaging_config ────────────────────────────────────────────
+export const ProactiveMessagingConfigSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  frequency: t.Optional(t.String(),),
+  quiet_hours_start: t.Optional(t.String(),),
+  quiet_hours_end: t.Optional(t.String(),),
+  enabled: t.Optional(t.Number(),),
+  last_proactive_at: t.Optional(t.String(),),
+  backoff_count: t.Optional(t.Number(),),
+  config_json: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── character_internal_traits ────────────────────────────────────────────
+export const CharacterInternalTraitsSchema = t.Object({
+  actor_id: t.String(),
+  aspirations: t.Optional(t.String(),),
+  moral_disposition: t.Optional(t.String(),),
+  autonomy_preferences: t.Optional(t.String(),),
+  coping_mechanisms: t.Optional(t.String(),),
+  approach_tendencies: t.Optional(t.String(),),
+  voice_patterns: t.Optional(t.String(),),
+  visibility: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
