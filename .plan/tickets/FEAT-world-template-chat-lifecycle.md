@@ -106,27 +106,43 @@ Add to `CHAT_SETUP_TEMPLATE_DEFAULTS` (`src/chat/service/templates.ts`):
 
 ## Acceptance Criteria
 
-- [ ] `template-world` default exists (slug `world`, features `["rpg mode","no gm","no assistant"]`)
-- [ ] `chat_setup_templates.features` column + type + schema + CRUD round-trip
-- [ ] `chats.is_public` column; location creation auto-creates public chat bound to
-      `world` template (idempotent, owner = world owner)
-- [ ] Location create accepts `templateId` + fine-tune overrides; non-default binding persisted
-- [ ] Template `<select>` + dynamic feature-list on location creation UI and chat creation UI
-- [ ] new-chat form exposes `turnStrategy`/`worldId`/`visualNovel`/`gmConfig`; explicit overrides template
-- [ ] i18n keys present in all locales
-- [ ] Config-file templates (YAML) + example file; seeding idempotent upsert-by-slug
-- [ ] Frontend badge on chats/locations with non-default template binding
-- [ ] Tests: location→chat auto-creation, template seeding idempotency (incl. backfill),
-      feature round-trip, non-default marking data path, override precedence
+- [x] `template-world` default exists (slug `world`, features `["rpg mode","no gm","no assistant","public"]`)
+- [x] `chat_setup_templates.features` column + type + schema + CRUD round-trip
+- [x] `chats.visibility` TEXT STATE (private|public|unlisted — NOT a boolean flag; see
+      Decision below) + location creation auto-creates public chat bound to `world`
+      template (transactional, owner = world owner)
+- [x] Location create accepts `templateId` + fine-tune overrides; non-default binding persisted
+- [x] Template `<select>` + dynamic feature-list on location creation UI (world-detail)
+      and chat creation UI (new-chat)
+- [x] new-chat form exposes `turnStrategy`/`visibility`/`visualNovel` fine-tune; explicit
+      overrides template (`gmConfig` via gm-guided toggle)
+- [x] i18n keys present in all 10 locales
+- [x] Config-file templates loader (`configs/templates/chat-setup.yaml`) + example file
+      `configs/templates/chat-setup.example.yaml`; seeding idempotent upsert-by-slug
+- [x] Frontend badge on locations with non-default template binding (world-detail);
+      chat-list badge deferred (needs template payload on chat list)
+- [~] Tests written (world template, features/visibility round-trip, backfill idempotency,
+      location auto-chat, override precedence) — runtime verification gated on migrations 038/039
+      landing (DB refactor in progress in parallel session)
+
+## Decision (2026-08-15)
+
+Visibility is a **text state machine, not a boolean flag** (repo bans boolean flags —
+precedent: `PinnedState`, `WorldVisibility`): `chats.visibility` and
+`chat_setup_templates.visibility` use `ChatVisibility` enum values
+`private | public | unlisted`, seeded from the template at chat creation.
+Future levels (invite-only, world, friends) extend the enum without schema churn.
+This replaced the originally drafted `is_public` integer column.
 
 ## Files
 
-- `src/db/migrations/038_chat_setup_template_features.ts` — features column (new)
-- `src/db/migrations/039_chat_public_flag.ts` — `chats.is_public` (new)
-- `src/chat/service/templates.ts` — `world` template, features, upsert seeding
+- `src/db/migrations/038_chat_setup_template_features.ts` — features + visibility columns (new; in-flight with DB refactor)
+- `src/db/migrations/039_chat_public_flag.ts` — `chats.visibility` state (new; in-flight with DB refactor)
+- `src/chat/service/templates.ts` — `world` template, features + visibility, upsert-by-slug seeding, config-file merge (done)
+- `src/config/schema/assistant.ts` + `sections/assistant.ts` — no change here; visibility enum in `src/db/enums-core/users.ts` (done)
 - `src/chat/service/types.ts` — `ChatSetupTemplate.features`, `isPublic` on create params
 - `src/chat/service/crud/create.ts` — `is_public` insert
-- `src/validation/schemas/chat.ts` — features + public flags on template/chat schemas
+- `src/validation/schemas/chat.ts` — features + `ChatVisibilitySchema` on template/chat schemas
 - `src/routes/chats/templates.ts` — feature round-trip
 - `src/routes/worlds/locations.ts` — auto-chat on location create
 - `src/assistant/commands/create.ts` — location auto-chat
