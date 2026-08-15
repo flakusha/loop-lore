@@ -3,6 +3,7 @@
  */
 
 import { t, } from "elysia";
+import { QuestCategorySchema, } from "./primitives";
 
 // ── Quest schemas ─────────────────────────────────────────
 
@@ -21,6 +22,7 @@ export const QuestResponse = t.Object({
   id: t.String({ format: "uuid", },),
   name: t.String(),
   type: t.String(),
+  category: QuestCategorySchema,
   status: t.String(),
   progress: t.Number(),
   created_at: t.String(),
