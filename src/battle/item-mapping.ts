@@ -66,7 +66,18 @@ export function categoryToSlot(category: ItemCategory,): EquipmentSlot | undefin
     case "armor": {
       return "armor";
     }
-    default: {
+    case "consumable":
+    case "material":
+    case "key_item":
+    case "quest_item":
+    case "tool":
+    case "container":
+    case "treasure":
+    case "book":
+    case "artifact":
+    case "misc":
+    case "other": {
+      // Non-equippable categories — no slot.
       return undefined;
     }
   }

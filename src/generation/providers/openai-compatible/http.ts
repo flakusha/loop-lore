@@ -31,6 +31,31 @@ const STANDARD_KEYS = new Set([
   "reasoning_budget",
 ],);
 
+/** Copy OpenAI-standard sampling params into the request body. */
+function applyCommonParams(body: Record<string, unknown>, params: GenerateRequest["params"],): void {
+  if (params.temperature !== undefined) { body.temperature = params.temperature; }
+  if (params.maxTokens !== undefined) { body.max_tokens = params.maxTokens; }
+  if (params.topP !== undefined) { body.top_p = params.topP; }
+  if (params.stop !== undefined) { body.stop = params.stop; }
+  if (params.presencePenalty !== undefined) { body.presence_penalty = params.presencePenalty; }
+  if (params.frequencyPenalty !== undefined) { body.frequency_penalty = params.frequencyPenalty; }
+}
+
+/** Copy llama.cpp extended sampling params into the request body. */
+function applyLlamaParams(body: Record<string, unknown>, params: GenerateRequest["params"],): void {
+  if (params.minP !== undefined) { body.min_p = params.minP; }
+  if (params.topK !== undefined) { body.top_k = params.topK; }
+  if (params.typicalP !== undefined) { body.typical_p = params.typicalP; }
+  if (params.repeatPenalty !== undefined) { body.repeat_penalty = params.repeatPenalty; }
+  if (params.dryMultiplier !== undefined) { body.dry_multiplier = params.dryMultiplier; }
+  if (params.dryBase !== undefined) { body.dry_base = params.dryBase; }
+  if (params.dryAllowedLength !== undefined) { body.dry_allowed_length = params.dryAllowedLength; }
+  if (params.xtcProbability !== undefined) { body.xtc_probability = params.xtcProbability; }
+  if (params.dynatempRange !== undefined) { body.dynatemp_range = params.dynatempRange; }
+  if (params.dynatempExponent !== undefined) { body.dynatemp_exponent = params.dynatempExponent; }
+  if (params.reasoningBudget !== undefined) { body.reasoning_budget = params.reasoningBudget; }
+}
+
 export function buildBody(
   state: OpenAiCompatibleState,
   req: GenerateRequest,
@@ -46,25 +71,8 @@ export function buildBody(
     body.tools = req.tools;
   }
 
-  if (req.params.temperature !== undefined) { body.temperature = req.params.temperature; }
-  if (req.params.maxTokens !== undefined) { body.max_tokens = req.params.maxTokens; }
-  if (req.params.topP !== undefined) { body.top_p = req.params.topP; }
-  if (req.params.stop !== undefined) { body.stop = req.params.stop; }
-  if (req.params.presencePenalty !== undefined) { body.presence_penalty = req.params.presencePenalty; }
-  if (req.params.frequencyPenalty !== undefined) { body.frequency_penalty = req.params.frequencyPenalty; }
-
-  // llama.cpp extended params
-  if (req.params.minP !== undefined) { body.min_p = req.params.minP; }
-  if (req.params.topK !== undefined) { body.top_k = req.params.topK; }
-  if (req.params.typicalP !== undefined) { body.typical_p = req.params.typicalP; }
-  if (req.params.repeatPenalty !== undefined) { body.repeat_penalty = req.params.repeatPenalty; }
-  if (req.params.dryMultiplier !== undefined) { body.dry_multiplier = req.params.dryMultiplier; }
-  if (req.params.dryBase !== undefined) { body.dry_base = req.params.dryBase; }
-  if (req.params.dryAllowedLength !== undefined) { body.dry_allowed_length = req.params.dryAllowedLength; }
-  if (req.params.xtcProbability !== undefined) { body.xtc_probability = req.params.xtcProbability; }
-  if (req.params.dynatempRange !== undefined) { body.dynatemp_range = req.params.dynatempRange; }
-  if (req.params.dynatempExponent !== undefined) { body.dynatemp_exponent = req.params.dynatempExponent; }
-  if (req.params.reasoningBudget !== undefined) { body.reasoning_budget = req.params.reasoningBudget; }
+  applyCommonParams(body, req.params,);
+  applyLlamaParams(body, req.params,);
 
   // Provider-specific overrides
   for (const [key, value,] of Object.entries(req.params,)) {

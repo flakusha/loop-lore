@@ -13,10 +13,12 @@ export class MoodHook implements HookHandler {
   readonly name = "mood";
   readonly eventTypes: HookEventType[] = ["mood_shift",];
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     return _content.length > 10;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.execute interface requires Promise<HookResult>
   async execute(content: string, _context: HookContext,): Promise<HookResult> {
     const log = getLogger();
     log.debug("mood-hook: analyzing content for mood shifts", { contentLength: content.length, },);

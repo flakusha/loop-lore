@@ -56,7 +56,7 @@ export async function generateSDCPP(
   let jobDone = false;
   let jobImages: string[] = [];
 
-  while (Date.now() < deadline && !jobDone) {
+  while (!jobDone && Date.now() < deadline) {
     const jobUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/jobs/${jobId}`;
     const statusResp = await fetch(jobUrl, {
       signal: AbortSignal.timeout(10_000,),

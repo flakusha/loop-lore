@@ -70,7 +70,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   async healthCheck(): Promise<boolean> {
     try {
       const cfg = this.getConfig();
-      if (!this.baseUrl || !cfg) { return false; }
+      if (!cfg || !this.baseUrl) { return false; }
 
       const res = await fetch(this.baseUrl, {
         signal: AbortSignal.timeout(5000,),
@@ -81,6 +81,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- provider interface requires Promise<ImageEditCategory[]>
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const caps: ImageEditCategory[] = ["txt2img", "img2img",];
 
@@ -130,7 +131,8 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       case "upscale": {
         return executeUpscaleDispatch(this, request.params, onProgress,);
       }
-      default: {
+      case "inpaint":
+      case "controlnet": {
         throw new Error(`sd-server does not support category: ${template.category}`,);
       }
     }

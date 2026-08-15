@@ -4,6 +4,7 @@ import type { DB, } from "../../db/schema";
 import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
+import type { Logger, } from "../../logger/types";
 import { jsonParseOr, } from "../../utils";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 
@@ -39,6 +40,48 @@ export interface GroupCascadeOpts {
  * - No eligible AI participants remain
  * - An error occurs
  */
+
+/** Pick the next actor in the cascade: @mentions win, else auto-advance. */
+async function resolveNextCascadeActor(
+  aiParticipants: { actor_id: string; actor_type: string; display_name: string }[],
+  aiContent: string,
+  previousActorId: string,
+  autoAdvance: boolean,
+  database: Kysely<DB>,
+  chatId: string,
+  depth: number,
+  log: Logger,
+): Promise<string | null> {
+  // Check for @mentions in the AI response (excluding the actor who just spoke)
+  const mentionedIds = extractMentionedActorIds(
+    aiContent,
+    Array.from(aiParticipants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
+  );
+  const validMentions: string[] = [];
+  for (const id of mentionedIds) { if (id !== previousActorId) { validMentions.push(id,); } }
+  if (validMentions.length > 0) {
+    log.info("Cascade: @mention detected", { nextActorId: validMentions[0]!, mentioned: validMentions, depth, },);
+    return validMentions[0]!;
+  }
+
+  if (autoAdvance && aiParticipants.length > 1) {
+    let next = await selectNextGroupActor({
+      db: database,
+      chatId,
+      userMessage: undefined, // No user message — let strategy decide
+    },);
+    if (next === previousActorId) {
+      const others: (typeof aiParticipants)[number][] = [];
+      for (const p of aiParticipants) { if (p.actor_id !== previousActorId) { others.push(p,); } }
+      next = others.length > 0 ? others[0]!.actor_id : null;
+    }
+    if (next) {
+      log.info("Cascade: auto-advance selected next actor", { nextActorId: next, depth, },);
+    }
+    return next;
+  }
+  return null;
+}
 export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void> {
   const { database, config, chatId, userId, aiContent, previousActorId, depth, } = opts;
   const d = { ...createDefaultDeps(), ...opts.deps, };
@@ -85,50 +128,16 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   for (const p of participants) { if (p.actor_type !== "user") { aiParticipants.push(p,); } }
   if (aiParticipants.length === 0) { return; }
 
-  // Determine if cascade should continue
-  let nextActorId: string | null = null;
-
-  // Check for @mentions in the AI response
-  const mentionedIds = extractMentionedActorIds(
+  const nextActorId = await resolveNextCascadeActor(
+    aiParticipants,
     aiContent,
-    Array.from(aiParticipants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
+    previousActorId,
+    autoAdvance,
+    database,
+    chatId,
+    depth,
+    log,
   );
-
-  // Filter out the previous actor from mentions (can't mention yourself)
-  const validMentions: string[] = [];
-  for (const id of mentionedIds) { if (id !== previousActorId) { validMentions.push(id,); } }
-
-  if (validMentions.length > 0) {
-    // Pick the first mentioned actor
-    nextActorId = validMentions[0]!;
-    log.info("Cascade: @mention detected", {
-      nextActorId,
-      mentioned: validMentions,
-      depth,
-    },);
-  } else if (autoAdvance && aiParticipants.length > 1) {
-    // Auto-advance: select next actor excluding the one that just spoke
-    // Reuse the turn selector with the AI's content as context
-    nextActorId = await selectNextGroupActor({
-      db: database,
-      chatId,
-      userMessage: undefined, // No user message — let strategy decide
-    },);
-    // If the strategy selects the same actor, skip
-    if (nextActorId === previousActorId) {
-      // Try to find a different actor
-      const others: (typeof aiParticipants)[number][] = [];
-      for (const p of aiParticipants) { if (p.actor_id !== previousActorId) { others.push(p,); } }
-      nextActorId = others.length > 0 ? others[0]!.actor_id : null;
-    }
-    if (nextActorId) {
-      log.info("Cascade: auto-advance selected next actor", {
-        nextActorId,
-        depth,
-      },);
-    }
-  }
-
   if (!nextActorId) { return; }
 
   // Find the last message ID to use as parent for the next generation
