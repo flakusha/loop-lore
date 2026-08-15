@@ -17,23 +17,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
     .put(
       `${prefix}/actors/:actorId`,
       async (ctx: any,) => {
-        const {
-          displayName,
-          description,
-          systemPrompt,
-          agentRole,
-          avatarAssetId,
-          personality,
-          welcomeMessage,
-          mesExample,
-          scenario,
-          postHistoryInstructions,
-          creatorNotes,
-          creator,
-          characterVersion,
-          settings,
-          dataVersion,
-        } = ctx.body;
+        const { settings, dataVersion, } = ctx.body as { settings?: unknown; dataVersion?: number };
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -61,21 +45,8 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
-        const updates: Record<string, unknown> = {};
-        if (displayName) { updates.display_name = displayName; }
-        if (description) { updates.description = description; }
-        if (systemPrompt) { updates.system_prompt = systemPrompt; }
-        if (agentRole !== undefined) { updates.agent_role = agentRole; }
-        if (avatarAssetId !== undefined) { updates.avatar_asset_id = avatarAssetId; }
-        if (personality) { updates.personality = personality; }
-        if (welcomeMessage) { updates.welcome_message = welcomeMessage; }
-        if (mesExample) { updates.mes_example = mesExample; }
-        if (scenario) { updates.scenario = scenario; }
-        if (postHistoryInstructions) { updates.post_history_instructions = postHistoryInstructions; }
-        if (creatorNotes) { updates.creator_notes = creatorNotes; }
-        if (creator) { updates.creator = creator; }
-        if (characterVersion) { updates.character_version = characterVersion; }
-        if (settings) {
+        const updates = buildActorUpdates(ctx.body,);
+        if (settings !== undefined) {
           const settingsResult = safeJsonStringify(settings,);
           if (!settingsResult.ok) {
             return jsonError({
@@ -118,4 +89,40 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },
     );
+}
+
+/** Assemble the update column map from the request body (non-empty fields). */
+function buildActorUpdates(
+  body: Record<string, unknown>,
+): Record<string, unknown> {
+  const updates: Record<string, unknown> = {};
+  const {
+    displayName,
+    description,
+    systemPrompt,
+    agentRole,
+    avatarAssetId,
+    personality,
+    welcomeMessage,
+    mesExample,
+    scenario,
+    postHistoryInstructions,
+    creatorNotes,
+    creator,
+    characterVersion,
+  } = body;
+  if (displayName) { updates.display_name = displayName; }
+  if (description) { updates.description = description; }
+  if (systemPrompt) { updates.system_prompt = systemPrompt; }
+  if (agentRole !== undefined) { updates.agent_role = agentRole; }
+  if (avatarAssetId !== undefined) { updates.avatar_asset_id = avatarAssetId; }
+  if (personality) { updates.personality = personality; }
+  if (welcomeMessage) { updates.welcome_message = welcomeMessage; }
+  if (mesExample) { updates.mes_example = mesExample; }
+  if (scenario) { updates.scenario = scenario; }
+  if (postHistoryInstructions) { updates.post_history_instructions = postHistoryInstructions; }
+  if (creatorNotes) { updates.creator_notes = creatorNotes; }
+  if (creator) { updates.creator = creator; }
+  if (characterVersion) { updates.character_version = characterVersion; }
+  return updates;
 }
