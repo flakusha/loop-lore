@@ -93,7 +93,7 @@ export async function migrateChat(
     fromLocationId: null,
     toLocationId: source.current_location_id,
     source: "migration",
-  });
+  },);
 
   // Carry participants
   if (params.carry?.participants !== false) {
