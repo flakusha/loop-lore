@@ -1,4 +1,6 @@
 /** Achievement categories */
+import type { PlayerAchievementStatus, } from "../../../db/enums";
+
 export const AchievementCategory = {
   Story: "story",
   Combat: "combat",
@@ -61,6 +63,8 @@ export interface PlayerAchievement {
   achievementId: string;
   progress: number;
   maxProgress: number;
+  status: PlayerAchievementStatus;
+  /** Derived from status — true when unlocked or claimed. */
   isUnlocked: boolean;
   unlockedAt: string | null;
   claimedAt: string | null;
