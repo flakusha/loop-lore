@@ -105,6 +105,10 @@ const tsRules = {
   "unicorn/consistent-function-scoping": "warn",
   "unicorn/custom-error-definition": "off",
   "unicorn/throw-new-error": "error",
+  // Disabled: forces `/** x */` to 3-line form repo-wide, inflating near-limit
+  // files past the 250L size gate (see scripts/check-file-size.ts). Conflicts
+  // with the AGENTS.md <200L file-size convention.
+  "unicorn/single-line-block-comment-style": "off",
   "unicorn/no-await-expression-member": "error",
   "unicorn/switch-case-braces": ["error", "always",],
   "unicorn/no-unnecessary-await": "error",
