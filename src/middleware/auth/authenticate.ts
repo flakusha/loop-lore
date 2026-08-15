@@ -7,8 +7,10 @@
  *   3. No token + required → 401 Unauthorized
  *   4. Token presented + invalid + !required → solo/demo fallback
  */
+import type { Kysely, } from "kysely";
 import { verifyJwt, } from "../../auth/jwt";
 import { UserRole, UserStatus, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger/index";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { ErrorCode, HttpStatus, jsonError, } from "../../routes/http-utils";
@@ -27,6 +29,85 @@ function getLog() {
   }
 }
 
+/** Extract the raw JWT from the Authorization header or cookie. */
+function extractToken(request: Request,): string | null {
+  const authHeader = request.headers.get("Authorization",);
+  if (authHeader?.startsWith("Bearer ",)) {
+    return authHeader.slice("Bearer ".length,).trim();
+  }
+
+  const cookieHeader = request.headers.get("Cookie",);
+  if (cookieHeader) {
+    const match = LL_TOKEN.exec(cookieHeader,);
+    if (match) { return match[1]!; }
+  }
+  return null;
+}
+
+/**
+ * Verify a JWT against the session table and return the user context.
+ *
+ * @param database - App database
+ * @param rawToken - JWT from the request
+ * @param secret - JWT signing secret
+ * @returns Authenticated request context, or null when verification fails
+ */
+async function verifyTokenContext(
+  database: Kysely<DB>,
+  rawToken: string,
+  secret: string,
+): Promise<RequestContext | null> {
+  const result = await verifyJwt({ secret, token: rawToken, },);
+  if (!result.valid) {
+    getLog()?.debug("JWT verification failed", { error: result.error, },);
+    return null;
+  }
+
+  const { payload, } = result;
+
+  // Session must still exist (logout = delete session row) and be unexpired.
+  const session = await database
+    .selectFrom("sessions",)
+    .select(["id", "expires_at",],)
+    .where("id", "=", payload.sid,)
+    .executeTakeFirst();
+  const nowMs = Date.now();
+  const notExpired = session !== undefined &&
+    (session.expires_at === null ||
+      Date.parse(session.expires_at,) > nowMs);
+  if (!session || !notExpired) {
+    getLog()?.debug("JWT session not found (logged out?)", { sid: payload.sid, },);
+    return null;
+  }
+
+  // User must still exist and be active.
+  const user = await database
+    .selectFrom("users",)
+    .select(["role", "status",],)
+    .where("id", "=", payload.sub,)
+    .executeTakeFirst();
+  if (!user || user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
+    getLog()?.debug("JWT user not found or deactivated", { sub: payload.sub, },);
+    return null;
+  }
+
+  // Update last activity (non-blocking)
+  try {
+    await database
+      .updateTable("users",)
+      .set({ last_seen_at: new Date().toISOString(), },)
+      .where("id", "=", payload.sub,)
+      .execute();
+  } catch {
+    /* non-critical */
+  }
+
+  return createRequestContext({
+    userId: payload.sub,
+    userRole: user.role,
+    sessionId: payload.sid,
+  },);
+}
 /**
  * Attempt to authenticate the request.
  *
@@ -40,84 +121,16 @@ export async function authenticate({
   database,
   authConfig,
 }: AuthenticateOpts,): Promise<Response | { context: RequestContext }> {
-  // ── Extract token: Bearer header > cookie fallback ───────
-  let rawToken: string | null = null;
-
-  const authHeader = request.headers.get("Authorization",);
-  if (authHeader?.startsWith("Bearer ",)) {
-    rawToken = authHeader.slice("Bearer ".length,).trim();
-  }
-
-  // Cookie fallback (set by login/demo-login)
-  if (!rawToken) {
-    const cookieHeader = request.headers.get("Cookie",);
-    if (cookieHeader) {
-      const match = LL_TOKEN.exec(cookieHeader,);
-      if (match) { rawToken = match[1]!; }
-    }
-  }
+  const rawToken = extractToken(request,);
 
   // ── Try JWT auth first (if token presented) ──────────────
-  if (rawToken) {
-    const secret = authConfig.jwtSecret;
-    if (secret) {
-      const result = await verifyJwt({ secret, token: rawToken, },);
-
-      if (result.valid) {
-        const { payload, } = result;
-
-        // Check if session still exists (logout = delete session row) and has
-        // not expired (sessionTimeoutHours from login).
-        const session = await database
-          .selectFrom("sessions",)
-          .select(["id", "expires_at",],)
-          .where("id", "=", payload.sid,)
-          .executeTakeFirst();
-
-        const nowMs = Date.now();
-        const notExpired = session !== undefined &&
-          (session.expires_at === null ||
-            Date.parse(session.expires_at,) > nowMs);
-
-        if (session && notExpired) {
-          // Fetch user to verify they still exist and are active
-          const user = await database
-            .selectFrom("users",)
-            .select(["role", "status",],)
-            .where("id", "=", payload.sub,)
-            .executeTakeFirst();
-
-          if (user && user.status !== UserStatus.Disabled && user.status !== UserStatus.Deactivated) {
-            // Update last activity (non-blocking)
-            try {
-              await database
-                .updateTable("users",)
-                .set({ last_seen_at: new Date().toISOString(), },)
-                .where("id", "=", payload.sub,)
-                .execute();
-            } catch {
-              /* non-critical */
-            }
-
-            return {
-              context: createRequestContext({
-                userId: payload.sub,
-                userRole: user.role,
-                sessionId: payload.sid,
-              },),
-            };
-          }
-
-          getLog()?.debug("JWT user not found or deactivated", { sub: payload.sub, },);
-        } else {
-          getLog()?.debug("JWT session not found (logged out?)", { sid: payload.sid, },);
-        }
-      } else {
-        getLog()?.debug("JWT verification failed", { error: result.error, },);
-      }
-    } else {
-      getLog()?.warn("JWT secret not configured — falling back to solo mode",);
+  if (rawToken && authConfig.jwtSecret) {
+    const context = await verifyTokenContext(database, rawToken, authConfig.jwtSecret,);
+    if (context) {
+      return { context, };
     }
+  } else if (rawToken) {
+    getLog()?.warn("JWT secret not configured — falling back to solo mode",);
   }
 
   // ── Fallback: solo mode if auth not required ──────────────

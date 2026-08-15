@@ -63,6 +63,10 @@ export function calculateTauntEffect(
       targetResistance += 10;
       break;
     }
+    case "neutral": {
+      // Balanced disposition — baseline resistance.
+      break;
+    }
   }
 
   const margin = bonus - targetResistance;

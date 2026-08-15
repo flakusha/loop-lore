@@ -35,7 +35,7 @@ export async function createTestDb(): Promise<{ db: Kysely<DB>; sqlite: Database
  * Drop all non-migration tables from the test DB.
  * Useful for tests that need a clean slate without re-running migrations.
  */
-export async function resetTestDb(sqlite: Database,): Promise<void> {
+export function resetTestDb(sqlite: Database,): void {
   const tables = sqlite
     .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)
     .all() as { name: string }[];

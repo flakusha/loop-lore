@@ -70,7 +70,7 @@ async function seedMemory(
       last_accessed_at: lastAccessed,
       scope: "character",
       privacy: "shared",
-      pinned: 0,
+      pinned: "unpinned",
       created_at: "2024-01-01T00:00:00Z",
       updated_at: "2024-01-01T00:00:00Z",
     },)

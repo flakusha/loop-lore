@@ -58,6 +58,13 @@ export function getCombatTerrainModifiers(
       },);
       break;
     }
+    case "open":
+    case "desert":
+    case "urban":
+    case "dungeon": {
+      // Open ground / arid / built-up / enclosed — no combat modifiers modeled.
+      break;
+    }
     case "swamp": {
       modifiers.push({
         id: "swamp_speed",
