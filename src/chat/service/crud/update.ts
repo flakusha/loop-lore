@@ -111,5 +111,8 @@ function buildChatUpdates(
   if (typeof params.visualNovel === "boolean") {
     updates.visual_novel = params.visualNovel ? 1 : 0;
   }
+  if (params.thinkingVisibility) {
+    updates.thinking_visibility = params.thinkingVisibility;
+  }
   return updates;
 }
