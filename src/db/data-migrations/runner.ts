@@ -3,7 +3,7 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import type { DataMigration, } from "./types";
 
-async function isApplied(db: Kysely<any>, table: string, toVersion: number,): Promise<boolean> {
+async function isApplied(db: Kysely<DB>, table: string, toVersion: number,): Promise<boolean> {
   const row = await db
     .selectFrom("data_migrations",)
     .select("table_name",)
@@ -13,7 +13,7 @@ async function isApplied(db: Kysely<any>, table: string, toVersion: number,): Pr
   return row !== undefined;
 }
 
-async function markApplied(db: Kysely<any>, migration: DataMigration,): Promise<void> {
+async function markApplied(db: Kysely<DB>, migration: DataMigration,): Promise<void> {
   await db
     .insertInto("data_migrations",)
     .values({
@@ -53,28 +53,46 @@ async function discoverMigrations(): Promise<DataMigration[]> {
   return tasks;
 }
 
+/**
+ * Apply one data migration atomically.
+ *
+ * The check, transform, and record all run in a single transaction:
+ *   - a crash/failure mid-way rolls back both the transform and the record,
+ *     so the migration stays unapplied and re-runs safely;
+ *   - the isApplied re-check inside the same transaction closes the TOCTOU
+ *     window between concurrent runners (SQLite serializes writers; the
+ *     (table_name, to_version) PK rejects duplicate records).
+ *
+ * @returns true when the migration was applied, false when already applied
+ */
+export async function applyDataMigration(
+  db: Kysely<DB>,
+  migration: DataMigration,
+): Promise<boolean> {
+  return db.transaction().execute(async (trx,) => {
+    const alreadyDone = await isApplied(trx, migration.table, migration.toVersion,);
+    if (alreadyDone) { return false; }
+
+    await migration.up(trx,);
+    await markApplied(trx, migration,);
+    return true;
+  },);
+}
+
 export async function runDataMigrations(db: Kysely<DB>, logProgress = true,): Promise<void> {
   const log = getLogger().child({ module: "data-migrations", },);
-  const trackerDb = db as unknown as Kysely<any>;
 
   const migrations = await discoverMigrations();
 
   let applied = 0;
   for (const migration of migrations) {
-    const alreadyDone = await isApplied(trackerDb, migration.table, migration.toVersion,);
-    if (alreadyDone) { continue; }
+    const didApply = await applyDataMigration(db, migration,);
+    if (!didApply) { continue; }
 
     if (logProgress) {
-      log.info(`Data migration: ${migration.table} v${migration.fromVersion} → v${migration.toVersion}`, {
+      log.info(`Data migration applied: ${migration.table} v${migration.fromVersion} → v${migration.toVersion}`, {
         description: migration.description,
       },);
-    }
-
-    await migration.up(db,);
-    await markApplied(trackerDb, migration,);
-
-    if (logProgress) {
-      log.info(`Data migration complete: ${migration.table} v${migration.toVersion}`,);
     }
     applied++;
   }

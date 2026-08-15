@@ -14,7 +14,9 @@ import type {
   LoreEntryStatus,
   LorePosition,
   MemoryType,
+  PinnedState,
   PublicationStatus,
+  QuestCategory,
   QuestProgressStatus,
   QuestStatus,
   QuestType,
@@ -135,7 +137,7 @@ export interface ActorMemories {
   world_id: string | null;
   user_id: string | null;
   scope: Generated<string>;
-  pinned: Generated<number>;
+  pinned: Generated<PinnedState>;
   privacy: Generated<string>;
   shareability: string | null;
 }
@@ -194,6 +196,7 @@ export interface Quests {
   name: string;
   description: string | null;
   type: QuestType;
+  category: Generated<QuestCategory>;
   status: Generated<QuestStatus>;
   priority: Generated<number>;
   config: Generated<string>;

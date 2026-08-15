@@ -12,6 +12,7 @@ import type {
   DiscoveryMethod,
   GatheringNodeType,
   MaterialSlotType,
+  NodeInstanceState,
   ProfessionBonusType,
   ProfessionTitle,
   QualityLevel,
@@ -157,7 +158,7 @@ export interface GatheringNodeInstances {
   world_id: string;
   location_id: string | null;
   current_uses: number;
-  is_depleted: Generated<number>;
+  state: Generated<NodeInstanceState>;
   respawn_at: string | null;
   created_at: string;
   updated_at: string;
