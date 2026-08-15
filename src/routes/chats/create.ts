@@ -77,6 +77,9 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             visualNovel: hasExplicit("visualNovel",)
               ? body.visualNovel
               : (template ? template.visual_novel === 1 : undefined),
+            visibility: hasExplicit("visibility",)
+              ? body.visibility
+              : (template?.visibility ?? undefined),
             templateId: template?.id,
             memoryCarry: body.memoryCarry,
             memoryCarryIds: body.memoryCarryIds,

@@ -40,7 +40,12 @@ export function computeHallucinationConfidence(
 
       break;
     }
-      // No default
+    case "world": {
+      // Shared world facts — lower hallucination likelihood than characters.
+      confidence = 0.6;
+
+      break;
+    }
   }
 
   return confidence;

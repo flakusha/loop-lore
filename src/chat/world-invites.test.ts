@@ -43,7 +43,7 @@ describe("world invites service", () => {
       expect(row.expiresAt,).toBeNull();
       expect(row.maxUses,).toBeNull();
       expect(row.uses,).toBe(0,);
-      expect(row.revoked,).toBe(false,);
+      expect(row.status,).toBe("active",);
     });
 
     it("honors expiresAt and maxUses", async () => {
@@ -83,7 +83,7 @@ describe("world invites service", () => {
       const revoked = await revokeWorldInvite(db, worldId, created.value.id,);
       expect(revoked.ok,).toBe(true,);
       if (!revoked.ok) { return; }
-      expect(revoked.value.revoked,).toBe(true,);
+      expect(revoked.value.status,).toBe("revoked",);
     });
 
     it("rejects a missing or foreign invite", async () => {

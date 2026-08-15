@@ -1,4 +1,5 @@
 import type { Kysely, } from "kysely";
+import { InviteStatus, inviteStatusMachine, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { InviteResult, } from "./types";
 
@@ -11,10 +12,10 @@ export async function revokeInvite(
   database: Kysely<DB>,
   chatId: string,
   inviteId: string,
-): Promise<InviteResult<{ id: string; revoked: boolean }>> {
+): Promise<InviteResult<{ id: string; status: InviteStatus }>> {
   const existing = await database
     .selectFrom("chat_invites",)
-    .select(["id", "chat_id", "revoked",],)
+    .select(["id", "chat_id", "status",],)
     .where("id", "=", inviteId,)
     .executeTakeFirst();
 
@@ -22,11 +23,20 @@ export async function revokeInvite(
     return { ok: false, error: { code: "not_found", message: "Invite not found", }, };
   }
 
+  if (!inviteStatusMachine.canTransition(existing.status, InviteStatus.Revoked,)) {
+    // Idempotent no-op for an already-revoked invite; terminal states are a
+    // hard error (revoking an expired/exhausted invite is not allowed).
+    if (existing.status === InviteStatus.Revoked) {
+      return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
+    }
+    return { ok: false, error: { code: "revoked", message: "Invite has been revoked", }, };
+  }
+
   await database
     .updateTable("chat_invites",)
-    .set({ revoked: 1, },)
+    .set({ status: InviteStatus.Revoked, },)
     .where("id", "=", inviteId,)
     .execute();
 
-  return { ok: true, value: { id: inviteId, revoked: true, }, };
+  return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
 }
