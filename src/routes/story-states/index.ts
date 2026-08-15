@@ -3,7 +3,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { storyLocationStateRoutes, } from "./location";
 import { storyNpcStateRoutes, } from "./npc";
-import { storyWorldStateRoutes, } from "./worldStates";
+import { storyWorldStateRoutes, } from "./world-states";
 
 /**
  * Story State route module — barrel assembling the HTTP surface from domain

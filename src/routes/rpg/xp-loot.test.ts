@@ -13,6 +13,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { xpLootRoutes, } from "./xp-loot";
+import { xpLootTablesRoutes, } from "./xp-loot-tables";
 
 const mockDb = {} as any;
 
@@ -53,7 +54,8 @@ describe("XP & loot (auth-gated)", () => {
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-xp-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
-      .use(xpLootRoutes({ database: db, } as any,),) as any;
+      .use(xpLootRoutes({ database: db, } as any,),)
+      .use(xpLootTablesRoutes({ database: db, } as any,),) as any;
   }
 
   async function json<T,>(res: Response,): Promise<T> {
@@ -154,7 +156,8 @@ describe("XP & loot (auth-gated)", () => {
   test("rejects unauthenticated request", async () => {
     const app = new Elysia()
       .derive({ as: "scoped", }, () => ({ userId: null, userRole: null, }),)
-      .use(xpLootRoutes({ database: db, } as any,),) as any;
+      .use(xpLootRoutes({ database: db, } as any,),)
+      .use(xpLootTablesRoutes({ database: db, } as any,),) as any;
     const res = await app.handle(
       new Request("http://localhost/api/rpg/xp/level", {
         method: "POST",

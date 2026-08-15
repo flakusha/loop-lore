@@ -68,7 +68,7 @@ export function rowToSkill(row: Selectable<CharacterSkills>,): Skill {
     xp: row.xp,
     proficiency: row.proficiency as ProficiencyLevel,
     specialization: row.specialization,
-    isLocked: row.is_locked === 1,
+    isLocked: row.lock_state === "locked",
     prerequisites: parseJsonField<string[]>(row.prerequisites, [],),
     metadata: parseJsonField<Record<string, unknown>>(row.metadata, {},),
     createdAt: row.created_at,

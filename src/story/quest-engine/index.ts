@@ -10,7 +10,7 @@
  * is kept so the constructor-based public surface is unchanged.
  */
 import type { Kysely, } from "kysely";
-import type { QuestType as QT, } from "../../db/enums";
+import type { QuestCategory, QuestType as QT, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { ItemsService, } from "../items";
 import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
@@ -60,6 +60,7 @@ export class QuestEngine {
     name: string;
     description: string | null;
     type: QT;
+    category?: QuestCategory;
     config: QuestConfig;
     target: number;
     priority?: number;

@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { createLogger, } from "../../logger";
 import { combatRoutes, } from "./combat";
+import { combatStatusRoutes, } from "./combat-status";
 
 const mockDb = {} as any;
 
@@ -32,7 +33,8 @@ describe("combat resolution (auth-gated)", () => {
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-combat-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
-      .use(combatRoutes({ database: mockDb, } as any,),) as any;
+      .use(combatRoutes({ database: mockDb, } as any,),)
+      .use(combatStatusRoutes({ database: mockDb, } as any,),) as any;
   }
 
   async function json<T,>(res: Response,): Promise<T> {
