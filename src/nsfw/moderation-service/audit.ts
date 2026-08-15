@@ -37,9 +37,11 @@ export async function recordAction({ thisL, params, }: RecordActionArgs,): Promi
 
   // Notify the target user of the action (skip for system actions)
   if (params.performedBy !== "system") {
-    await notifyUser({ db: thisL.db, log: thisL.log, }, params.targetUserId, params.actionType, params.reason,).catch(
-      (err: unknown,) => thisL.log.warn("Failed to send moderation notification", { error: String(err,), },),
-    );
+    try {
+      await notifyUser({ db: thisL.db, log: thisL.log, }, params.targetUserId, params.actionType, params.reason,);
+    } catch (error) {
+      thisL.log.warn("Failed to send moderation notification", { error: String(error,), },);
+    }
   }
 
   return {

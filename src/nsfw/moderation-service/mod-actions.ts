@@ -3,7 +3,13 @@
  *
  * Applying/removing blocks, bans, and shadow restrictions. Each records the
  * action in the audit log (see `audit.ts`) via `thisL.recordAction`.
+ *
+ * Access state is a single-axis state machine (`nsfwAccessStatusMachine`):
+ * clear → blocked → banned (banned is a terminal escalation; unban returns to
+ * clear). `shadow_nsfw` stays an orthogonal boolean flag.
  */
+import type { NsfwAccessStatus, } from "../../db/enums";
+import { nsfwAccessStatusMachine, } from "../../db/enums";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 export interface BlockUserArgs {
@@ -17,9 +23,11 @@ export interface BlockUserArgs {
 export async function blockUser({ thisL, targetUserId, performedBy, reason, }: BlockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   const prefs = await thisL.getPreferences(targetUserId,);
-  if (prefs.bannedFromNsfw) { throw new Error("User is already banned from NSFW content.",); }
+  if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "blocked",)) {
+    throw new Error(`Cannot block user in state ${prefs.accessStatus}.`,);
+  }
   await thisL.db.updateTable("nsfw_user_preferences",).set({
-    blocked_from_nsfw: 1,
+    access_status: "blocked" as NsfwAccessStatus,
     block_reason: reason,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
@@ -45,7 +53,7 @@ export interface UnblockUserArgs {
 export async function unblockUser({ thisL, targetUserId, performedBy, reason, }: UnblockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   await thisL.db.updateTable("nsfw_user_preferences",).set({
-    blocked_from_nsfw: 0,
+    access_status: "clear" as NsfwAccessStatus,
     block_reason: null,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
@@ -70,11 +78,14 @@ export interface BanUserArgs {
 /** Ban a user from NSFW content (records a "ban" action). */
 export async function banUser({ thisL, targetUserId, performedBy, reason, }: BanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
+  const prefs = await thisL.getPreferences(targetUserId,);
+  if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "banned",)) {
+    throw new Error(`Cannot ban user in state ${prefs.accessStatus}.`,);
+  }
   await thisL.db.updateTable("nsfw_user_preferences",).set({
-    banned_from_nsfw: 1,
+    access_status: "banned" as NsfwAccessStatus,
     banned_at: now,
     banned_by: performedBy,
-    blocked_from_nsfw: 1,
     block_reason: reason,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
@@ -93,10 +104,9 @@ export interface UnbanUserArgs {
 export async function unbanUser({ thisL, targetUserId, performedBy, reason, }: UnbanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   await thisL.db.updateTable("nsfw_user_preferences",).set({
-    banned_from_nsfw: 0,
+    access_status: "clear" as NsfwAccessStatus,
     banned_at: null,
     banned_by: null,
-    blocked_from_nsfw: 0,
     block_reason: null,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
