@@ -1,4 +1,5 @@
 <!-- Quests Page (world-scoped) -->
+<div x-data="questsPage()" x-init="init()">
 <header id="header-slot" class="main-header" data-page="quests" data-testid="quests-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">{{{t("quests.title")}}}</span>
@@ -9,7 +10,7 @@
   </div>
 </header>
 
-<div class="app-layout" x-data="questsPage()" x-init="init()">
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
       <!-- World selector if no worldId -->
@@ -252,4 +253,5 @@
       </template>
     </div>
   </main>
+</div>
 </div>
