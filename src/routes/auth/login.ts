@@ -27,17 +27,13 @@ async function handleLogin(
     );
   }
 
-  let formData: URLSearchParams;
-  try {
-    const text = await request.text();
-    formData = new URLSearchParams(text,);
-  } catch {
+  const formData = await parseCredentials(request,);
+  if (!formData) {
     return jsonError({ message: "errors.badRequest", status: HttpStatus.BadRequest, t, },);
   }
 
   const username = formData.get("username",)?.trim();
   const password = formData.get("password",);
-
   if (!username || !password) {
     return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
   }
@@ -57,6 +53,35 @@ async function handleLogin(
   const passwordValid = await Bun.password.verify(password, user.password_hash,);
   if (!passwordValid) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
 
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    await ensureActorKey({ database, actorId: user.id, smk, },);
+  }
+
+  return createSessionAndCookie(request, database, config, user.id, user.role, ip, t,);
+}
+
+/** Parse the registration/login form body, or null when malformed. */
+async function parseCredentials(
+  request: Request,
+): Promise<URLSearchParams | null> {
+  try {
+    return new URLSearchParams(await request.text(),);
+  } catch {
+    return null;
+  }
+}
+
+/** Create a session row, sign a JWT, and return the redirect response. */
+async function createSessionAndCookie(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  userId: string,
+  role: UserRole,
+  ip: string,
+  t: TranslatorFn | undefined,
+): Promise<Response> {
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
 
@@ -64,18 +89,13 @@ async function handleLogin(
     .insertInto("sessions",)
     .values({
       id: sessionId,
-      user_id: user.id,
+      user_id: userId,
       token_hash: "",
       ip,
       user_agent: userAgent,
       expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
     },)
     .execute();
-
-  if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    await ensureActorKey({ database, actorId: user.id, smk, },);
-  }
 
   const jwtSecret = config.auth.jwtSecret;
   if (!jwtSecret) {
@@ -89,8 +109,8 @@ async function handleLogin(
   const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
   const token = await signJwt({
     secret: jwtSecret,
-    userId: user.id,
-    role: user.role,
+    userId,
+    role,
     sessionId,
     expiresInSeconds: jwtExpiresIn,
   },);

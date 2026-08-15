@@ -85,7 +85,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
               chat_id: id,
               type: body.type as never,
               content: body.content,
-              revealed: 0,
+              status: "hidden",
               created_at: now,
             },)
             .execute();
@@ -107,7 +107,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const result = await database
             .updateTable("shadow_notes",)
-            .set({ revealed: 1, },)
+            .set({ status: "revealed", },)
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();

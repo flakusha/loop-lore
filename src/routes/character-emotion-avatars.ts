@@ -118,7 +118,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       }
     },)
     // ── Get emotion prompt modifier ──────────────────────────────
-    .get(`${prefix}/emotions/prompt-modifier/:emotion`, async (ctx: any,) => {
+    .get(`${prefix}/emotions/prompt-modifier/:emotion`, (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
@@ -131,7 +131,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       return jsonResponse({ emotion, modifier, },);
     },)
     // ── List available emotion types ───────────────────────────
-    .get(`${prefix}/emotions/types`, async (ctx: any,) => {
+    .get(`${prefix}/emotions/types`, (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 

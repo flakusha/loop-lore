@@ -151,7 +151,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
             .executeTakeFirst();
 
           if (!choice) { return notFound("Choice not found",); }
-          if (choice.selected) {
+          if (choice.status === "selected") {
             return jsonError("Choice already selected", HttpStatus.Conflict,);
           }
 
@@ -160,7 +160,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
           await database
             .updateTable("vn_choices",)
             .set({
-              selected: 1,
+              status: "selected",
               selected_at: now,
             },)
             .where("id", "=", choiceId,)
@@ -171,7 +171,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonResponse({
             data: {
               ...choice,
-              selected: 1,
+              status: "selected",
               selected_at: now,
               consequences: jsonParseOr(choice.consequences, {},),
               relationship_impact: jsonParseOr(choice.relationship_impact, {},),
@@ -209,7 +209,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
             .selectFrom("vn_choices",)
             .selectAll()
             .where("chat_id", "=", chatId,)
-            .where("selected", "=", 1,)
+            .where("status", "=", "selected",)
             .orderBy("selected_at", "asc",)
             .execute();
 
