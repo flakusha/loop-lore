@@ -611,6 +611,15 @@ body {
   padding-left: var(--space-3);
   margin-top: var(--space-1);
 }
+.thinking-visible {
+  margin-bottom: var(--space-2);
+}
+.thinking-visible .thinking-content {
+  opacity: 1;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
 
 /* --- Tool-call blocks (function-calling display) --- */
 .tool-calls {
