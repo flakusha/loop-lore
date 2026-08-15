@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches: [master, release/**]
-    tags: [v*]
+    tags: ["*"]
 
 concurrency:
   group: release-${{ github.ref }}
@@ -12,16 +12,21 @@ concurrency:
 env:
   BUN_VERSION: "1.2.x"
 
+# Hybrid release model:
+#   - Branch push (master/release/*): verification gate only — full checks +
+#     build. CI NEVER creates tags; tagging is a post-testing human decision.
+#   - Tag push (bare `x.y.z`, e.g. `0.1.0`): build + artifacts + GitHub Release,
+#     notes derived from CHANGELOG.md (single source, never git log).
+#   - `dev-*` tags (dev-release workflow) are excluded — dev builds are not releases.
+
 jobs:
-  release:
-    name: Create Release
+  verify:
+    name: Verify (post-merge gate)
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/'))
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,228 +63,19 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Predict version and create tag
-        id: version
+      - name: Changelog gate
+        run: bun run changelog:check
+
+      - name: Ready to tag
         run: |
-          VERSION=$(bun run version:predict)
-          echo "predicted_version=$VERSION" >> $GITHUB_OUTPUT
-
-          if [[ "$VERSION" != *"No version bump"* ]]; then
-            TAG="v$VERSION"
-            echo "Creating tag: $TAG"
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git tag -a "$TAG" -m "Release $TAG"
-            git push origin "$TAG"
-            echo "tag=$TAG" >> $GITHUB_OUTPUT
-
-            # Sync package.json to new version
-            bun run version:sync
-            git add package.json
-            git commit -m "chore(release): sync package.json to $TAG"
-            git push origin HEAD
-          else
-            echo "No version bump needed"
-          fi
-
-      - name: Generate release artifacts and hashes
-        if: steps.version.outputs.tag != ''
-        id: artifacts
-        run: |
-          TAG="${{ steps.version.outputs.tag }}"
-          ARTIFACT_DIR="release-artifacts"
-          mkdir -p "$ARTIFACT_DIR"
-
-          # Copy build artifacts
-          cp -r dist "$ARTIFACT_DIR/" 2>/dev/null || true
-          cp -r src/public "$ARTIFACT_DIR/" 2>/dev/null || true
-
-          # Generate SHA256 hashes for all files
-          echo "Generating file hashes..."
-          cd "$ARTIFACT_DIR"
-          find . -type f -exec sha256sum {} \; | sort > SHA256SUMS.txt
-          cat SHA256SUMS.txt
-
-          # Also generate MD5 for compatibility
-          find . -type f -exec md5sum {} \; | sort > MD5SUMS.txt
-
-          cd ..
-          echo "artifact_dir=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
-
-      - name: Generate release notes with TLDR and changelog
-        if: steps.version.outputs.tag != ''
-        id: notes
-        run: |
-          TAG="${{ steps.version.outputs.tag }}"
-
-          # Find previous tag in same major series
-          MAJOR="${TAG#v}"
-          MAJOR="${MAJOR%%.*}"
-          PREV_TAG=$(git tag | grep "^v${MAJOR}\." | sort -V | tail -2 | head -1)
-          if [[ -z "$PREV_TAG" ]]; then
-            PREV_TAG=$(git tag | sort -V | tail -1)
-          fi
-
-          echo "Generating notes from $PREV_TAG to $TAG"
-
-          # Get all commits since last tag
-          COMMITS=$(git log --pretty=format:"%h|%s|%b" --no-merges ${PREV_TAG}..HEAD 2>/dev/null || git log --pretty=format:"%h|%s|%b" --no-merges)
-
-          # Parse commits by type
-          FEATS=""
-          FIXES=""
-          PERF=""
-          REFACTOR=""
-          DOCS=""
-          CHORE=""
-          BREAKING=""
-          OTHERS=""
-
-          COMMIT_COUNT=0
-          while IFS='|' read -r hash subject body; do
-            COMMIT_COUNT=$((COMMIT_COUNT + 1))
-            TYPE=$(echo "$subject" | sed -E 's/^(\w+)(\([^)]+\))?(!)?:\s.*/\1/')
-            SCOPE=$(echo "$subject" | sed -E 's/^\w+(\(([^)]+)\))?(!)?:\s.*/\2/')
-            BREAKING_MARK=$(echo "$subject" | sed -E 's/^\w+(\([^)]+\))?(!)?:\s.*/\3/')
-            MESSAGE=$(echo "$subject" | sed -E 's/^\w+(\([^)]+\))?(!)?:\s//')
-
-            # Format: - message (scope) [hash]
-            if [[ -n "$SCOPE" ]]; then
-              FORMATTED="- $MESSAGE ($SCOPE) [$hash]"
-            else
-              FORMATTED="- $MESSAGE [$hash]"
-            fi
-
-            if [[ "$BREAKING_MARK" == "!" ]] || [[ "$TYPE" == "feat!" ]] || [[ "$TYPE" == "refactor!" ]]; then
-              BREAKING="${BREAKING}${FORMATTED}\n"
-            elif [[ "$TYPE" == "feat" ]]; then
-              FEATS="${FEATS}${FORMATTED}\n"
-            elif [[ "$TYPE" == "fix" ]]; then
-              FIXES="${FIXES}${FORMATTED}\n"
-            elif [[ "$TYPE" == "perf" ]]; then
-              PERF="${PERF}${FORMATTED}\n"
-            elif [[ "$TYPE" == "refactor" ]]; then
-              REFACTOR="${REFACTOR}${FORMATTED}\n"
-            elif [[ "$TYPE" == "docs" ]]; then
-              DOCS="${DOCS}${FORMATTED}\n"
-            elif [[ "$TYPE" == "chore" ]] || [[ "$TYPE" == "build" ]] || [[ "$TYPE" == "ci" ]] || [[ "$TYPE" == "style" ]] || [[ "$TYPE" == "test" ]]; then
-              CHORE="${CHORE}${FORMATTED}\n"
-            else
-              OTHERS="${OTHERS}${FORMATTED}\n"
-            fi
-          done <<< "$COMMITS"
-
-          # Generate TLDR summary
-          TLDR_LINES=()
-          [[ -n "$FEATS" ]] && TLDR_LINES+=("✨ **$(echo -e "$FEATS" | grep -c "^-") new features**")
-          [[ -n "$FIXES" ]] && TLDR_LINES+=("🐛 **$(echo -e "$FIXES" | grep -c "^-") bug fixes**")
-          [[ -n "$PERF" ]] && TLDR_LINES+=("⚡ **$(echo -e "$PERF" | grep -c "^-") performance improvements**")
-          [[ -n "$REFACTOR" ]] && TLDR_LINES+=("♻️ **$(echo -e "$REFACTOR" | grep -c "^-") refactors**")
-          [[ -n "$BREAKING" ]] && TLDR_LINES+=("💥 **$(echo -e "$BREAKING" | grep -c "^-") breaking changes**")
-          [[ -n "$DOCS" ]] && TLDR_LINES+=("📚 **$(echo -e "$DOCS" | grep -c "^-") documentation updates**")
-          [[ -n "$CHORE" ]] && TLDR_LINES+=("🔧 **$(echo -e "$CHORE" | grep -c "^-") maintenance tasks**")
-
-          TLDR=$(IFS=$'\n'; echo "${TLDR_LINES[*]}")
-
-          # Read file hashes
-          HASHES=$(cat "${{ steps.artifacts.outputs.artifact_dir }}/SHA256SUMS.txt" 2>/dev/null || echo "No artifacts found")
-
-          # Build release notes
-          {
-            echo "release_notes<<EOF"
-            echo "# Release $TAG"
-            echo ""
-            echo "## 📋 TL;DR"
-            echo ""
-            if [[ -n "$TLDR" ]]; then
-              echo "$TLDR" | sed 's/^/- /'
-            else
-              echo "- No significant changes"
-            fi
-            echo ""
-            echo "---"
-            echo ""
-
-            # Changelog sections
-            if [[ -n "$BREAKING" ]]; then
-              echo "### 💥 Breaking Changes"
-              echo -e "$BREAKING"
-              echo ""
-            fi
-            if [[ -n "$FEATS" ]]; then
-              echo "### ✨ Features"
-              echo -e "$FEATS"
-              echo ""
-            fi
-            if [[ -n "$FIXES" ]]; then
-              echo "### 🐛 Bug Fixes"
-              echo -e "$FIXES"
-              echo ""
-            fi
-            if [[ -n "$PERF" ]]; then
-              echo "### ⚡ Performance"
-              echo -e "$PERF"
-              echo ""
-            fi
-            if [[ -n "$REFACTOR" ]]; then
-              echo "### ♻️ Refactors"
-              echo -e "$REFACTOR"
-              echo ""
-            fi
-            if [[ -n "$DOCS" ]]; then
-              echo "### 📚 Documentation"
-              echo -e "$DOCS"
-              echo ""
-            fi
-            if [[ -n "$CHORE" ]]; then
-              echo "### 🔧 Maintenance"
-              echo -e "$CHORE"
-              echo ""
-            fi
-            if [[ -n "$OTHERS" ]]; then
-              echo "### 📦 Other Changes"
-              echo -e "$OTHERS"
-              echo ""
-            fi
-
-            echo "---"
-            echo ""
-            echo "## 📦 Artifacts & Verification"
-            echo ""
-            echo "### SHA256 Checksums"
-            echo ""
-            echo "\`\`\`"
-            echo "$HASHES"
-            echo "\`\`\`"
-            echo ""
-            echo "*Verify downloads: \`sha256sum -c SHA256SUMS.txt\`*"
-            echo ""
-            echo "---"
-            echo ""
-            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release
-        if: steps.version.outputs.tag != ''
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: Release ${{ steps.version.outputs.tag }}
-          body: ${{ steps.notes.outputs.release_notes }}
-          draft: false
-          prerelease: false
-          files: |
-            ${{ steps.artifacts.outputs.artifact_dir }}/dist/**
-            ${{ steps.artifacts.outputs.artifact_dir }}/src/public/**
-            ${{ steps.artifacts.outputs.artifact_dir }}/SHA256SUMS.txt
-            ${{ steps.artifacts.outputs.artifact_dir }}/MD5SUMS.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Master merge verified green — tag decision is HUMAN (post-testing)."
+          echo "  git tag -s <version> -m \"loop-lore <version>\"   # then:"
+          echo "  git push origin <version>                        # triggers Release build"
 
   release-tag-push:
     name: Release from Tag Push
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    # Bare `x.y.z` tags (e.g. 0.1.0). `dev-*` tags are dev builds — excluded.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/dev-')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -316,7 +112,6 @@ jobs:
       - name: Generate release artifacts and hashes
         id: artifacts
         run: |
-          TAG="${{ github.ref_name }}"
           ARTIFACT_DIR="release-artifacts"
           mkdir -p "$ARTIFACT_DIR"
 
@@ -331,138 +126,34 @@ jobs:
 
           echo "artifact_dir=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
 
-      - name: Generate release notes for tag push
+      - name: Generate release notes from CHANGELOG.md
         id: notes
         run: |
           TAG="${{ github.ref_name }}"
-
-          # Find previous tag
-          MAJOR="${TAG#v}"
-          MAJOR="${MAJOR%%.*}"
-          PREV_TAG=$(git tag | grep "^v${MAJOR}\." | sort -V | tail -2 | head -1)
-          if [[ -z "$PREV_TAG" ]]; then
-            PREV_TAG=$(git tag | sort -V | tail -1)
-          fi
-
-          # If this is the only tag, show all commits
-          if [[ "$PREV_TAG" == "$TAG" ]]; then
-            PREV_TAG=""
-          fi
-
-          if [[ -n "$PREV_TAG" ]]; then
-            COMMITS=$(git log --pretty=format:"%h|%s|%b" --no-merges ${PREV_TAG}..HEAD 2>/dev/null || git log --pretty=format:"%h|%s|%b" --no-merges)
-          else
-            COMMITS=$(git log --pretty=format:"%h|%s|%b" --no-merges)
-          fi
-
-          FEATS=""
-          FIXES=""
-          PERF=""
-          REFACTOR=""
-          DOCS=""
-          CHORE=""
-          BREAKING=""
-          OTHERS=""
-
-          while IFS='|' read -r hash subject body; do
-            TYPE=$(echo "$subject" | sed -E 's/^(\w+)(\([^)]+\))?(!)?:\s.*/\1/')
-            SCOPE=$(echo "$subject" | sed -E 's/^\w+(\(([^)]+)\))?(!)?:\s.*/\2/')
-            BREAKING_MARK=$(echo "$subject" | sed -E 's/^\w+(\([^)]+\))?(!)?:\s.*/\3/')
-            MESSAGE=$(echo "$subject" | sed -E 's/^\w+(\([^)]+\))?(!)?:\s//')
-
-            if [[ -n "$SCOPE" ]]; then
-              FORMATTED="- $MESSAGE ($SCOPE) [$hash]"
-            else
-              FORMATTED="- $MESSAGE [$hash]"
-            fi
-
-            if [[ "$BREAKING_MARK" == "!" ]] || [[ "$TYPE" == "feat!" ]] || [[ "$TYPE" == "refactor!" ]]; then
-              BREAKING="${BREAKING}${FORMATTED}\n"
-            elif [[ "$TYPE" == "feat" ]]; then
-              FEATS="${FEATS}${FORMATTED}\n"
-            elif [[ "$TYPE" == "fix" ]]; then
-              FIXES="${FIXES}${FORMATTED}\n"
-            elif [[ "$TYPE" == "perf" ]]; then
-              PERF="${PERF}${FORMATTED}\n"
-            elif [[ "$TYPE" == "refactor" ]]; then
-              REFACTOR="${REFACTOR}${FORMATTED}\n"
-            elif [[ "$TYPE" == "docs" ]]; then
-              DOCS="${DOCS}${FORMATTED}\n"
-            elif [[ "$TYPE" == "chore" ]] || [[ "$TYPE" == "build" ]] || [[ "$TYPE" == "ci" ]] || [[ "$TYPE" == "style" ]] || [[ "$TYPE" == "test" ]]; then
-              CHORE="${CHORE}${FORMATTED}\n"
-            else
-              OTHERS="${OTHERS}${FORMATTED}\n"
-            fi
-          done <<< "$COMMITS"
-
-          TLDR_LINES=()
-          [[ -n "$FEATS" ]] && TLDR_LINES+=("✨ **$(echo -e "$FEATS" | grep -c "^-") new features**")
-          [[ -n "$FIXES" ]] && TLDR_LINES+=("🐛 **$(echo -e "$FIXES" | grep -c "^-") bug fixes**")
-          [[ -n "$PERF" ]] && TLDR_LINES+=("⚡ **$(echo -e "$PERF" | grep -c "^-") performance improvements**")
-          [[ -n "$REFACTOR" ]] && TLDR_LINES+=("♻️ **$(echo -e "$REFACTOR" | grep -c "^-") refactors**")
-          [[ -n "$BREAKING" ]] && TLDR_LINES+=("💥 **$(echo -e "$BREAKING" | grep -c "^-") breaking changes**")
-          [[ -n "$DOCS" ]] && TLDR_LINES+=("📚 **$(echo -e "$DOCS" | grep -c "^-") documentation updates**")
-          [[ -n "$CHORE" ]] && TLDR_LINES+=("🔧 **$(echo -e "$CHORE" | grep -c "^-") maintenance tasks**")
-
-          TLDR=$(IFS=$'\n'; echo "${TLDR_LINES[*]}")
           HASHES=$(cat "${{ steps.artifacts.outputs.artifact_dir }}/SHA256SUMS.txt" 2>/dev/null || echo "No artifacts found")
+
+          # Single source of truth: CHANGELOG.md (Keep a Changelog). Extract the
+          # `## [x.y.z] - date` section up to the next `## ` heading.
+          SECTION=$(awk -v ver="$TAG" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md)
+
+          if [[ -z "$SECTION" ]]; then
+            echo "::error::CHANGELOG.md has no section ## [$TAG] — update CHANGELOG.md, then re-tag"
+            exit 1
+          fi
+
+          # Previous tag (same or any major), excluding dev-* tags
+          PREV_TAG=$(git tag | grep -E '^[0-9]' | sort -V | grep -v '^dev-' | tail -2 | head -1)
 
           {
             echo "release_notes<<EOF"
             echo "# Release $TAG"
             echo ""
-            echo "## 📋 TL;DR"
+            echo "$SECTION"
             echo ""
-            if [[ -n "$TLDR" ]]; then
-              echo "$TLDR" | sed 's/^/- /'
-            else
-              echo "- No significant changes"
-            fi
-            echo ""
-            echo "---"
-            echo ""
-
-            if [[ -n "$BREAKING" ]]; then
-              echo "### 💥 Breaking Changes"
-              echo -e "$BREAKING"
-              echo ""
-            fi
-            if [[ -n "$FEATS" ]]; then
-              echo "### ✨ Features"
-              echo -e "$FEATS"
-              echo ""
-            fi
-            if [[ -n "$FIXES" ]]; then
-              echo "### 🐛 Bug Fixes"
-              echo -e "$FIXES"
-              echo ""
-            fi
-            if [[ -n "$PERF" ]]; then
-              echo "### ⚡ Performance"
-              echo -e "$PERF"
-              echo ""
-            fi
-            if [[ -n "$REFACTOR" ]]; then
-              echo "### ♻️ Refactors"
-              echo -e "$REFACTOR"
-              echo ""
-            fi
-            if [[ -n "$DOCS" ]]; then
-              echo "### 📚 Documentation"
-              echo -e "$DOCS"
-              echo ""
-            fi
-            if [[ -n "$CHORE" ]]; then
-              echo "### 🔧 Maintenance"
-              echo -e "$CHORE"
-              echo ""
-            fi
-            if [[ -n "$OTHERS" ]]; then
-              echo "### 📦 Other Changes"
-              echo -e "$OTHERS"
-              echo ""
-            fi
-
             echo "---"
             echo ""
             echo "## 📦 Artifacts & Verification"
@@ -475,16 +166,14 @@ jobs:
             echo ""
             echo "*Verify downloads: \`sha256sum -c SHA256SUMS.txt\`*"
             echo ""
-            echo "---"
-            echo ""
             if [[ -n "$PREV_TAG" && "$PREV_TAG" != "$TAG" ]]; then
-              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}"
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/blob/$TAG/CHANGELOG.md"
             fi
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release from tag
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}

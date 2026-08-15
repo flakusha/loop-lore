@@ -39,8 +39,14 @@ const checks = {
   // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
   "wiring - check": "bun run scripts/check-wiring.ts",
 
+  // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
+  "changelog - gate": "bun run scripts/check-changelog.ts",
+
   // DB schema staleness (regenerates into temp dir, diffs vs committed)
   "db - schema gate": "bun run scripts/check-db-schemas.ts",
+
+  // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
+  "backlog - index": "bun run plan:backlog:sync",
 
   // Size check
   "size - check": "bun run scripts/check-file-size.ts",
