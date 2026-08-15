@@ -1,0 +1,51 @@
+<!-- Chat Pins Panel (sidebar — lists pinned messages) -->
+<div
+  class="panel-backdrop"
+  x-show="_pinsOpen"
+  @click="_pinsOpen = false"
+  x-cloak
+>
+</div>
+<aside
+  class="right-panel"
+  :style="{ display: _pinsOpen ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="pins-panel"
+>
+  <button class="btn-icon" @click="_pinsOpen = false">&times;</button>
+  <div class="panel-content">
+    <div class="nav-section-title">Pinned Messages</div>
+    <div x-show="_pinsLoading" style="color: var(--text-secondary); font-size: 12px">
+      Loading…
+    </div>
+    <div x-show="!_pinsLoading && _pins.length === 0" style="color: var(--text-secondary); font-size: 12px">
+      No pinned messages. Right-click a message to pin it.
+    </div>
+    <template x-for="pin in _pins" :key="pin.id">
+      <div
+        class="pin-item"
+        @click="scrollToPinnedMessage(pin.message_id)"
+        style="cursor: pointer; padding: var(--space-2); border-bottom: 1px solid var(--border-subtle)"
+      >
+        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 2px">
+          <span x-text="pin.display_name || pin.role"></span>
+          <span style="float: right">
+            <button
+              class="btn-icon btn-xs"
+              @click.stop="unpinMessage(pin.id)"
+              title="Unpin"
+              aria-label="Unpin message"
+            >
+              &times;
+            </button>
+          </span>
+        </div>
+        <div
+          style="font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-height: 40px"
+          x-text="pin.content?.slice(0, 120)"
+        >
+        </div>
+      </div>
+    </template>
+  </div>
+</aside>

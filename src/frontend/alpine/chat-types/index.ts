@@ -1,3 +1,4 @@
+export type { ChatArchiveState, } from "./archive-state";
 export type { ChatState, } from "./chat-state";
 export type { ChatCoreState, } from "./core";
 export type { GmConfig, GmGuidance, GmParticipant, GmTurnPriority, } from "./gm";
@@ -12,6 +13,8 @@ export type {
   MessageAttachment,
 } from "./messages";
 export type { ChatMoodState, } from "./mood-state";
+export type { ChatParticipantsState, } from "./participants-state";
+export type { ChatPinRow, ChatPinsState, } from "./pins-state";
 export type { EquipmentSlot, RpgStatBlock, RpgStats, StatusEffect, } from "./rpg";
 export type { ChatRpgState, } from "./rpg-state";
 export type { WorldChannelChat, } from "./world";

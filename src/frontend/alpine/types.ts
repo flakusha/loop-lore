@@ -2,6 +2,7 @@ import type { ChatState, } from "./chat-types";
 import type { WorldEditState, } from "./world-types";
 
 export type {
+  ChatPinRow,
   ChatState,
   GenerationDetail,
   GmConfig,
