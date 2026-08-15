@@ -1,4 +1,4 @@
-import { NotificationType, } from "../../db/enums-core";
+import { type NotificationStatus, NotificationType, } from "../../db/enums-core";
 
 /** A single notification as returned to clients. */
 export interface NotificationRecord {
@@ -8,7 +8,7 @@ export interface NotificationRecord {
   title: string;
   body: string | null;
   link: string | null;
-  read: number;
+  read: NotificationStatus;
   data: string | null;
   createdAt: string;
 }
@@ -55,7 +55,7 @@ export interface NotificationRow {
   title: string;
   body: string | null;
   link: string | null;
-  read: number;
+  read: NotificationStatus;
   data: string | null;
   created_at: string;
 }

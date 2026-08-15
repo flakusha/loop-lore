@@ -36,6 +36,11 @@ export function getCombatWeatherModifiers(
   const modifiers: EnvironmentalModifier[] = [];
 
   switch (weather) {
+    case "clear":
+    case "snow": {
+      // Clear skies / snowfall — no combat modifiers modeled.
+      break;
+    }
     case "rain": {
       modifiers.push({
         id: "rain_accuracy",

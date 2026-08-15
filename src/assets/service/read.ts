@@ -187,8 +187,8 @@ export async function canAccessAsset(
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
   if (!asset) { return false; }
   if (asset.owner_id === actorId) { return true; }
-  if (asset.visibility === AssetVisibility.Public && actorId) { return true; }
-  if (asset.visibility === AssetVisibility.Shared && actorId) {
+  if (actorId && asset.visibility === AssetVisibility.Public) { return true; }
+  if (actorId && asset.visibility === AssetVisibility.Shared) {
     const share = await database
       .selectFrom("asset_shares",)
       .select("id",)
