@@ -1,8 +1,8 @@
 [package]
 name = "loop-lore-native"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
-description = "Native BLAKE3 + zstd modules for loop-lore — pre-compiled hot binary samples (C ABI, loaded via bun:ffi)"
+description = "Native BLAKE3 + zstd modules for loop-lore — pre-compiled hot binary samples (C ABI, loaded via bun:ffi or WASM)"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/loop-lore/loop-lore"
 
@@ -13,8 +13,14 @@ name = "loop_lore_native"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-blake3 = "1.8.6"
-zstd = "0.13"
+blake3 = { version = "1.8.6", optional = true }
+zstd = { version = "0.13", optional = true }
+
+# ── Features ─────────────────────────────────────────────────────
+[features]
+default = ["blake3", "zstd"]
+blake3 = ["dep:blake3"]
+zstd = ["dep:zstd"]
 
 # ── Lints (mirror the repo's strict TS hygiene: clippy all+pedantic, docs) ──
 [lints.rust]

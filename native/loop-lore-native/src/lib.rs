@@ -21,22 +21,35 @@ pub const BLAKE3_LEN: usize = 32;
 
 /// Library ABI version — packed `(major << 16) | (minor << 8) | patch`.
 ///
-/// Bumped 0.1.0 → 0.2.0 when the zstd symbol family was added; the loader
-/// rejects a binary whose version differs from its own
+/// Bumped 0.2.0 → 0.3.0 when feature-gated WASM split builds were added;
+/// the loader rejects a binary whose version differs from its own
 /// `REQUIRED_ABI_VERSION`, degrading to the TS fallback instead of
 /// misbehaving silently across an ABI boundary.
 // clippy: identity_op — the expanded form mirrors the TS loader's
 // `REQUIRED_ABI_VERSION` expression exactly; keep the two in lockstep.
 #[allow(clippy::identity_op)]
-pub const VERSION: i32 = (0 << 16) | (2 << 8) | 0;
+pub const VERSION: i32 = (0 << 16) | (3 << 8) | 0;
 
-/// C ABI exports — [`ffi`] (BLAKE3) and [`zstd`] (compression).
+/// Returns the ABI version. Defined at lib-level so it's available in every
+/// build configuration (native cdylib, WASM blake3-only, WASM zstd-only).
+#[no_mangle]
+pub extern "C" fn ll_version() -> i32 {
+  VERSION
+}
+
+/// C ABI exports — [`ffi`] (BLAKE3, gated by `blake3` feature) and [`zstd`]
+/// (compression, gated by `zstd` feature).
 ///
 /// Every symbol uses caller-provided buffers; no allocation crosses the FFI
-/// boundary.
+/// boundary. Feature flags let the wasm build produce separate
+/// `blake3.wasm` and `zstd.wasm` binaries for the frontend — only the
+/// requested module is compiled, keeping download sizes small.
+#[cfg(feature = "blake3")]
 pub mod ffi;
+#[cfg(feature = "zstd")]
 pub mod zstd;
 
+#[cfg(feature = "blake3")]
 pub use ffi::ll_blake3;
-pub use ffi::ll_version;
+#[cfg(feature = "zstd")]
 pub use zstd::{ll_zstd_compress, ll_zstd_decompress, ll_zstd_decompress_bound};
