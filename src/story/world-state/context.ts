@@ -111,6 +111,7 @@ export async function buildContext(
 
     let npcState: NpcState | undefined;
     if (npcRow) {
+      const scheduleData = jsonParseOr<Record<string, unknown>>(npcRow.schedule, {},);
       npcState = {
         health: npcRow.health,
         mental_state: npcRow.mental_state,
@@ -118,6 +119,8 @@ export async function buildContext(
         relationships: jsonParseOr(npcRow.relationships, {},),
         inventory: await items.getNpcInventory(p.id,),
         schedule: jsonParseOr(npcRow.schedule, {},),
+        movementPattern: (scheduleData.movementPattern as string) ?? "stationary",
+        movementTarget: (scheduleData.targetLocationId as string) ?? (scheduleData.followTargetId as string) ?? null,
       };
     }
 

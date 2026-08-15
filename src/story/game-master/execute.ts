@@ -4,6 +4,8 @@
  * executeTurn: select an actor, produce a decision, record the turn.
  */
 import { randomUUID, } from "node:crypto";
+import { WorldEventType, } from "../../db/enums";
+import { processMovementTick, } from "../../rpg/npc-navigation/service/processing";
 import { getGmDecision, recordGmTurn, } from "./decisions";
 import { injectNarration, } from "./narration";
 import type { GmState, GmTurnResult, } from "./types";
@@ -30,6 +32,26 @@ export async function executeTurn(state: GmState, debugActorId?: string,): Promi
 
   await recordGmTurn(state, context, turnId, turnNumber, gmDecision,);
 
+  // ── NPC autonomous movement tick ──────────────────────────
+  // Advance NPCs based on their movement patterns (patrol, wander, follow, flee).
+  // Movement results become world events the GM can reference in narration.
+  const movementResults = await processMovementTick(state.db, context.world.id,);
+
+  const movementEvents: import("../story-events-types").WorldEvent[] = movementResults
+    .filter((r,) => r.success && r.toLocationId)
+    .map((r,) => ({
+      type: WorldEventType.LocationChange,
+      actorId: r.actorId ?? undefined,
+      locationId: r.toLocationId ?? undefined,
+      timestamp: new Date().toISOString(),
+      data: {
+        fromLocationId: r.fromLocationId,
+        toLocationId: r.toLocationId,
+        pattern: r.pattern,
+      },
+      description: `NPC moved (${r.pattern}): ${r.fromLocationId} → ${r.toLocationId}`,
+    }));
+
   return {
     turnId,
     turnNumber,
@@ -37,7 +59,7 @@ export async function executeTurn(state: GmState, debugActorId?: string,): Promi
     prompt: gmDecision.turnPrompt,
     response: null,
     qualityEvaluation: null,
-    worldEvents: [],
+    worldEvents: [...movementEvents,],
     gmDecision,
     accepted: false,
     escalated: false,

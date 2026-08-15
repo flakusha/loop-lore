@@ -38,7 +38,10 @@ export async function processMovementTick(
       schedule,
     );
 
-    if (result) { results.push(result,); }
+    if (result) {
+      result.actorId = npc.actor_id;
+      results.push(result,);
+    }
   }
 
   return results;
