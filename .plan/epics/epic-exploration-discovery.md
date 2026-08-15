@@ -333,12 +333,46 @@ interface TravelEncounter {
 
 ## Integration Points
 
-- **World & Locations** — Map tiles, terrain, locations
-- **RPG Mechanics** — Skills, stats, XP
-- **Inventory System** — Maps, compasses, tools
-- **Quest System** — Discovery objectives
-- **Combat System** — Travel encounters
-- **Crafting System** — Map making, tools
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| World & Locations | Map tiles, terrain, locations | Exploration operates over world map |
+| RPG Mechanics | Skills, stats, XP | Perception/navigation skill checks, discovery XP |
+| Inventory System | Maps, compasses, tools | Exploration equipment slots |
+| Quest System | Discovery objectives | Explore-the-map quest objectives |
+| Battle & Action Systems | Travel encounters | Random/placed encounters during travel |
+| Crafting & Professions | Map making, tools | Crafted tools aid exploration |
+| Weather & Environment | Travel conditions | Weather gates routes, navigation difficulty |
+| Companion & Mount | Travel speed, terrain access | Mounts enable fast travel, terrain traversal |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Discovery XP, skill checks | Exploration feeds progression |
+| Battle & Action Systems | Travel encounters, terrain cover | Encounter placement, cover from terrain (G4) |
+| Magic & Spell Systems | Magical locations | Magic sites discovered via exploration |
+| Crafting & Professions | Map-making materials | Explored regions unlock crafting materials |
+| Companion & Mount | Spawn/wild areas | Wild pet spawns located in explored regions |
+| Weather & Environment | Biome/terrain data | Climate zones derived from explored terrain |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `SkillCheck` | Resolution, RPG, Social | Navigation/perception rolls use unified model |
+| `Location` | World, Quest | Shared location/discovery state |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `exploration.location_discovered` | emits → World, Quest | New location unlocks quests/map state |
+| `exploration.encounter_triggered` | emits → Battle | Travel encounter starts combat |
+| `weather.changed` | subscribes ← Weather | Route gating updates with weather |
+
+---
 
 ## Open Questions
 

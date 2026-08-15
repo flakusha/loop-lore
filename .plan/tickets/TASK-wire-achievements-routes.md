@@ -1,6 +1,6 @@
 # TASK: Wire Achievements Routes
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-08-14, `51a7bc01`) — wired under `/api/rpg/achievements` (`src/routes/rpg/achievements.ts` + schemas + tests)
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-achievements

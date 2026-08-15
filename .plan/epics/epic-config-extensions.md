@@ -1,6 +1,6 @@
 # Epic: Configuration Extensions — Extensible Enumerations
 
-**Status:** 📝 Draft — planning under `tree/chore-docs-reconcile`
+**Status:** 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14)
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic / Cross-cutting Framework

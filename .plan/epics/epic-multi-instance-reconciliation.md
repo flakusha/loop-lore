@@ -1,6 +1,6 @@
 # Epic 26: Multi-Instance Reconciliation — Implementation Plan
 
-**Status:** Draft — description under `tree/chore-docs-reconcile` (docs chore)\
+**Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 **Proposed Epic Branch:** `epic/26`\
 **Owner:** TBD\
 **Blocks:** Epic 25 (Deployment Topologies), Epic 27 depends on its config guards
