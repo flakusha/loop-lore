@@ -18,6 +18,30 @@ import type {
   SyntheticTestRunSummary,
 } from "./types";
 
+/** Execute all cases for one synthetic row, collecting quality scores. */
+async function executeRowCases(
+  state: RunnerState,
+  row: RowShape,
+  cases: SyntheticCase[],
+  mode: SyntheticTestMode,
+  mutationParams: { temperatureVariance?: number; promptVariations?: number } | undefined,
+  qualityScores: number[],
+): Promise<SyntheticTestCaseResult[]> {
+  const rowResults: SyntheticTestCaseResult[] = [];
+  for (const c of cases) {
+    const r = await executeCase(state, row, c, mode, mutationParams,);
+    rowResults.push(r,);
+    if (
+      row.type === SyntheticDataType.QualityEvaluation &&
+      r.status !== "skipped" &&
+      typeof r.actual.score === "number"
+    ) {
+      qualityScores.push(r.actual.score,);
+    }
+  }
+  return rowResults;
+}
+
 export async function run(
   state: RunnerState,
   generator: SyntheticGenerator,
@@ -36,18 +60,7 @@ export async function run(
     const cases = jsonParseOr<SyntheticCase[]>(row.generated_cases, [],);
     if (!Array.isArray(cases,) || cases.length === 0) { continue; }
 
-    const rowResults: SyntheticTestCaseResult[] = [];
-    for (const c of cases) {
-      const r = await executeCase(state, row, c, mode, mutationParams,);
-      rowResults.push(r,);
-      if (
-        row.type === SyntheticDataType.QualityEvaluation &&
-        r.status !== "skipped" &&
-        typeof r.actual.score === "number"
-      ) {
-        qualityScores.push(r.actual.score,);
-      }
-    }
+    const rowResults = await executeRowCases(state, row, cases, mode, mutationParams, qualityScores,);
     results.push(...rowResults,);
 
     let allPassed = true;
