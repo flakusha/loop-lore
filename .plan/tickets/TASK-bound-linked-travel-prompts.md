@@ -51,12 +51,23 @@ zero travel/migration references in `src/assistant/`, `src/prompts/`, `src/turni
 
 ## Acceptance Criteria
 
-- [ ] Location-change transition shows user suggestion card (3 travel modes)
-- [ ] Assistant travel prompt section + structured travel intent → `location_change`
-      transition (bound/linked mode, gated by config toggle)
-- [ ] Prompt only references known world locations
-- [ ] `migrateChat` `carry.location` copies sections/location markers
-- [ ] Tests: transition→suggestion data path, travel intent extraction, carry.location
+- [ ] Location-change transition shows user suggestion card (3 travel modes) — in-chat
+      location change + transfer + join already exist in `location-panel.html`; the
+      transition-detected suggestion card is still pending
+- [x] Assistant travel prompt section (`src/assistant/prompt/sections/travel.ts`, wired in
+      `registry.ts`) — bound/linked mode gated by `assistant.travelPrompts` config toggle
+      (default off)
+- [x] Prompt only references known world locations (fetches from `locations` table, capped)
+- [x] `migrateChat` `carry.location` copies chat_sections + re-points message section links
+      (`src/chat/service/carry-location.ts`, wired in `transitions.ts`)
+- [ ] Tests: travel intent extraction → `location_change` transition regex is pending;
+      carry.location unit test pending (migration-gated runtime)
+
+## Progress (2026-08-15)
+
+- Shipped: travel prompt section + config toggle, `carry.location` on migrate.
+- Pending: transition→suggestion UI card, travel-intent regex pattern in `src/regex/`,
+  migration carries `carry.location` end-to-end test.
 
 ## Files
 

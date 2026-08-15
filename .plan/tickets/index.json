@@ -3051,6 +3051,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-character-overrides-frontend.md"
   },
+  "TASK-ADOPT-STATE-MACHINE-FRAMEWORK-IN-RUNTIME-STATUS-WRITES": {
+    "hash": "e900191",
+    "extid": "TASK-ADOPT-STATE-MACHINE-FRAMEWORK-IN-RUNTIME-STATUS-WRITES",
+    "type": "TASK",
+    "title": "Adopt state machine framework in runtime status writes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
+  },
   "TASK-AGENCY-STORY-POINTS": {
     "epic": "epic-agency-story-points",
     "extid": "TASK-AGENCY-STORY-POINTS",
@@ -4789,6 +4800,17 @@
     "type": "TASK",
     "hash": "9c13c3c"
   },
+  "TASK-CHAT-LOCATION-CHANGE-EVENT-LOG": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-LOCATION-CHANGE-EVENT-LOG",
+    "type": "TASK",
+    "title": "Chat location-change event log + section-linkage fixes",
+    "label": "task",
+    "priority": "P2-B",
+    "epic": "epic-chat-transfer-location",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-location-change-event-log.md"
+  },
   "TASK-CHAT-LOCATION-FRONTEND": {
     "epic": "EPIC-FRONTEND-BACKEND-INTEGRATION",
     "extid": "TASK-CHAT-LOCATION-FRONTEND",
@@ -5020,6 +5042,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-clean-transfer-orphans.md",
     "status": "done"
+  },
+  "TASK-CLEANUP-BANNED-TYPES-CONSOLE-LOGGING-MAGIC-STRINGS": {
+    "hash": "71425df",
+    "extid": "TASK-CLEANUP-BANNED-TYPES-CONSOLE-LOGGING-MAGIC-STRINGS",
+    "type": "TASK",
+    "title": "Cleanup banned types console logging magic strings",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
   },
   "TASK-CLI-IMPORT-EXPORT": {
     "epic": "epic-import-export-io\\",
@@ -5741,6 +5774,17 @@
     ],
     "title": "Data migration transitivity tracking",
     "type": "TASK"
+  },
+  "TASK-DATA-MIGRATIONS-ATOMICITY-AND-CONCURRENCY-GUARD": {
+    "hash": "cc1706e",
+    "extid": "TASK-DATA-MIGRATIONS-ATOMICITY-AND-CONCURRENCY-GUARD",
+    "type": "TASK",
+    "title": "Data migrations atomicity and concurrency guard",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-data-migrations-atomicity-and-concurrency-guard.md"
   },
   "TASK-DB-CONTENT-VERSIONING": {
     "epic": "epic-db-content-versioning",
@@ -9451,6 +9495,17 @@
     "type": "TASK",
     "hash": "66dda71"
   },
+  "TASK-QUEST-STATUS-TRANSITIONS-BYPASS-STATE-MACHINE": {
+    "hash": "208ef9b",
+    "extid": "TASK-QUEST-STATUS-TRANSITIONS-BYPASS-STATE-MACHINE",
+    "type": "TASK",
+    "title": "Quest status transitions bypass state machine",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-quest-status-transitions-bypass-state-machine.md"
+  },
   "TASK-QUEST-SYSTEM": {
     "epic": "RPG Mechanics & Extensible Game Systems",
     "extid": "TASK-QUEST-SYSTEM",
@@ -10268,6 +10323,17 @@
     "title": "Runtime Abstraction Layer",
     "type": "TASK"
   },
+  "TASK-RUNTIME-MIGRATION-STALENESS-GUARD": {
+    "hash": "a78a2a4f",
+    "extid": "TASK-RUNTIME-MIGRATION-STALENESS-GUARD",
+    "type": "TASK",
+    "title": "Runtime migration staleness guard",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md"
+  },
   "TASK-SCHEMA": {
     "epic": "epic-schema",
     "extid": "TASK-SCHEMA",
@@ -10675,6 +10741,17 @@
     "tags": [],
     "title": "Story World State Display",
     "type": "TASK"
+  },
+  "TASK-TEMPLATES-LOADER-MERGE-STRATEGY-CONSISTENCY": {
+    "hash": "d27888e",
+    "extid": "TASK-TEMPLATES-LOADER-MERGE-STRATEGY-CONSISTENCY",
+    "type": "TASK",
+    "title": "Templates loader merge strategy consistency",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
   },
   "TASK-TEST-AUTH-MODULE": {
     "epic": "EPIC-2026-28",
