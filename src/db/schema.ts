@@ -130,4 +130,5 @@ export interface DB {
   chat_location_events: import("./schema-core").ChatLocationEvents;
   proactive_messaging_config: import("./schema-core").ProactiveMessagingConfig;
   character_internal_traits: import("./schema-core").CharacterInternalTraits;
+  character_world_setup: import("./schema-character").CharacterWorldSetup;
 }

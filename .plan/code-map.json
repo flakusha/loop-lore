@@ -2283,6 +2283,30 @@
       "source": ".plan/tickets/TASK-character-world-data-separation.md"
     }
   ],
+  "src/characters/world-setup/crud.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    }
+  ],
+  "src/characters/world-setup/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    }
+  ],
+  "src/characters/world-setup/resolve.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    }
+  ],
+  "src/characters/world-setup/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    }
+  ],
   "src/characters/world-traits.ts": [
     {
       "kind": "ticket",
@@ -4867,6 +4891,16 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
+  "src/db/migrations/042_character_world_setup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-character-world-setup.md"
+    }
+  ],
   "src/db/migrations/0XX_audio_templates.ts": [
     {
       "kind": "ticket",
@@ -5114,6 +5148,14 @@
     }
   ],
   "src/db/schema-character.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-mood-classification.md"
@@ -15519,6 +15561,16 @@
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
     }
   ],
+  "src/story/world-state/init.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-character-world-setup.md"
+    }
+  ],
   "src/telemetry": [
     {
       "kind": "ticket",
@@ -15542,6 +15594,14 @@
     }
   ],
   "src/test-utils/insert-helpers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consolidate-quest-engines.md"

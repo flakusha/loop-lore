@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 192 epics
+**Total:** 193 epics
 
 ## Summary
 
@@ -181,6 +181,7 @@
 | Unknown | Mini-Games: UI Components & API Contracts | Unknown | Unknown | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
 | 🟦 Research | Non-Standard Browser Encryption | Medium | High | 7 | [epic-non-standard-browser-crypto.md](/.plan/epics/epic-non-standard-browser-crypto.md) |
 | ✅ Complete (merged epic-openapi-reference branch) | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
+| 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending) | Per-World Character Setup & Overlay | High | Medium | 5 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | 🟡 Permanently Ongoing | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
 | 🟡 In Progress — Phase 1 infra + Phase 2 BLAKE3 sample shipped (2026-08-15, branch `native-blake3`); native-vs-TS benchmark 53× bound to bench suite | Pre-Compiled Hot Binary Modules | Medium | High | 14 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
 | 🟡 Partial (openai-compatible complete; native providers deferred) | Provider & Plugin Ecosystem | Medium | Large | 16 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
@@ -1802,6 +1803,17 @@ LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual 
 - **File:** `.plan/epics/epic-openapi-reference.md`
 
 Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
+
+### Per-World Character Setup & Overlay
+
+- **Status:** 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending)
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** characters, worlds, setup, inventory, lore, backstory, overlay, world-scoping
+- **File:** `.plan/epics/epic-character-world-setup.md`
+
+A character has one base **setup** (personality, description, scenario, system
 
 ### Platform Research & Feature Adoption (Permanently Ongoing)
 
