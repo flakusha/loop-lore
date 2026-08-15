@@ -50,3 +50,13 @@ export const ChatVisibility = {
   Unlisted: "unlisted",
 } as const;
 export type ChatVisibility = (typeof ChatVisibility)[keyof typeof ChatVisibility];
+
+export const ThinkingVisibility = {
+  /** Thinking block not rendered at all (default — no context spoiling) */
+  Hidden: "hidden",
+  /** Thinking block rendered inside <details> collapsed */
+  Collapsed: "collapsed",
+  /** Thinking block rendered expanded (debugging mode) */
+  Visible: "visible",
+} as const;
+export type ThinkingVisibility = (typeof ThinkingVisibility)[keyof typeof ThinkingVisibility];

@@ -1221,6 +1221,7 @@ export const SCHEMA = new SchemaManifest()
     name_source: col("text",),
     template_id: col("text",),
     visibility: col("text", { notNull: true, hasDefault: true, },),
+    thinking_visibility: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -1256,6 +1257,7 @@ export const SCHEMA = new SchemaManifest()
     format_version: col("integer", { notNull: true, hasDefault: true, },),
     section_id: col("text",),
     tool_calls: col("text",),
+    thinking: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {

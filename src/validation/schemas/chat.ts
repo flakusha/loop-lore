@@ -51,6 +51,11 @@ export const ChatUpdateBody = t.Object({
   freezePanel: t.Optional(t.Boolean(),),
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  thinkingVisibility: t.Optional(t.Union([
+    t.Literal("hidden",),
+    t.Literal("collapsed",),
+    t.Literal("visible",),
+  ],),),
 },);
 
 /**

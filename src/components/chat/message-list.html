@@ -80,21 +80,17 @@
                 ></span>
               </template>
             </div>
-            <!-- Thinking: Immersion = hidden, Basic = 💭 indicator, Detailed = collapsible -->
-            <template x-if="msg.thinking && detailLevel === 'Basic'">
-              <div
-                class="thinking-indicator"
-                @click="$dispatch('toggle-thinking', { msgId: msg.id })"
-                data-testid="thinking-indicator"
-              >
-                💭 {{{t("chats.thinking")}}}
-              </div>
-            </template>
-            <template x-if="msg.thinking && detailLevel === 'Detailed'">
+            <!-- Thinking: per-chat visibility control -->
+            <template x-if="msg.thinking && thinkingVisibility === 'collapsed'">
               <details class="thinking-block" data-testid="thinking-block">
                 <summary>{{{t("chats.thinkingProcess")}}}</summary>
                 <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
               </details>
+            </template>
+            <template x-if="msg.thinking && thinkingVisibility === 'visible'">
+              <div class="thinking-block thinking-visible" data-testid="thinking-block-visible">
+                <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
+              </div>
             </template>
             <!-- Tool calls the assistant invoked (function-calling display) -->
             <template x-if="msg.tool_calls && msg.tool_calls.length > 0">

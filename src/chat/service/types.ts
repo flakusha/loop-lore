@@ -96,6 +96,7 @@ export interface UpdateChatParams {
   userRole?: string | null;
   gmConfig?: Record<string, unknown> | null;
   visualNovel?: boolean;
+  thinkingVisibility?: string;
 }
 
 export interface ListMessagesParams {

@@ -1,7 +1,6 @@
 import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, } from "../types";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
 import type { WorldChannelChat, } from "./world";
-
 /** Chat page core state and methods (messages, lists, editing, VN, filters). */
 export interface ChatCoreState extends AlpineMagicThis {
   isGenerating: boolean;
@@ -23,6 +22,7 @@ export interface ChatCoreState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
+    thinking_visibility?: string;
   }[];
   activeChat: string | null;
   messages: Message[];
@@ -220,6 +220,7 @@ export interface ChatCoreState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
+    thinking_visibility?: string;
   } | null;
   toggleGroupPause(): Promise<void>;
   handleMentionInput(event: Event,): void;
