@@ -114,6 +114,7 @@ export const PRIORITY = {
   groupParticipants: 0,
   userPersona: 0,
   emotionAvatar: 0,
+  internalTraits: 1,
   pluginAgentRole: 0,
   chatHistory: 0,
   storyContext: 1,
