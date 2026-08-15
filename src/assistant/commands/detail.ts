@@ -4,7 +4,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("detail", async (args,): Promise<CommandResult> => {
+registerCommand("detail", (args,): CommandResult => {
   const level = (args[0] || "").toLowerCase();
   const validLevels = ["immersion", "basic", "detailed",];
   if (!validLevels.includes(level,)) {

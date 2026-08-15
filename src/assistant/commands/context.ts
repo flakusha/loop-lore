@@ -4,7 +4,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("context", async (_args, ctx,): Promise<CommandResult> => {
+registerCommand("context", (_args, ctx,): CommandResult => {
   const msgCount = ctx.messages?.length ?? 0;
   const chatName = ctx.activeChat?.id ?? "unknown";
   const charName = ctx.currentCharacter?.display_name || ctx.currentCharacter?.name || "none";

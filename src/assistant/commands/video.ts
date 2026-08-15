@@ -6,7 +6,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("video", async (args,): Promise<CommandResult> => {
+registerCommand("video", (args,): CommandResult => {
   const prompt = args.join(" ",).trim();
 
   if (!prompt) {

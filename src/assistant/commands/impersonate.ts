@@ -32,13 +32,13 @@ function buildImpersonateResult(args: string[], usageMsg: string,): CommandResul
   };
 }
 
-registerCommand("impersonate", async (args,): Promise<CommandResult> => {
+registerCommand("impersonate", (args,): CommandResult => {
   return buildImpersonateResult(
     args,
     "Usage: /impersonate <character_name> — play as a character. /impersonate off — stop impersonating.",
   );
 },);
 
-registerCommand("char", async (args,): Promise<CommandResult> => {
+registerCommand("char", (args,): CommandResult => {
   return buildImpersonateResult(args, "Usage: /char <character_name> — alias for /impersonate. /char off — stop.",);
 },);
