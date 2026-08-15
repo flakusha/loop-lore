@@ -204,3 +204,7 @@ linked to this epic:
       route-test coverage assertion.
 - [ ] `TASK-generation-mock-scenario-provider` — full-surface mock + fake ComfyUI server.
 - [ ] `TASK-generation-cassette-replay` — record/replay harness + first fixtures.
+- [ ] `TASK-BROWSER-E2E-UI-SURFACE-GAPS` — remaining untested UI surfaces (quests,
+      personas, notifications, nsfw-moderation, character-edit, world-detail, VN scene,
+      battle, chat reactions/pins/sections, group-chat, story, i18n/export/error/responsive)
+      + weak-spot hardening. Extends TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.

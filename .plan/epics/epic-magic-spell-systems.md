@@ -194,11 +194,45 @@ interface SpellMastery {
 
 ## Integration Points
 
-- **RPG Mechanics** — Stats (INT, WIS) affect spell power, mana pool, success chance
-- **Combat System** — Spells are combat actions, initiative affects casting
-- **Crafting System** — Enchanting uses crafting mechanics
-- **Plugin System** — Schools/elements are plugin-extensible
-- **World & Locations** — Magic zones, magical weather, ley lines
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Stats (INT, WIS), mana pool model | Spell power, success chance scale from caster stats |
+| Battle & Action Systems | Initiative, combat actions | Spells are combat actions; casting order follows initiative |
+| Crafting & Professions | Recipe/skill mechanics | Enchanting uses crafting mechanics (G11 cross-system feature) |
+| Resolution System | Unified dice/action resolution | Casting checks, saves, spell effects roll through resolver |
+| World & Locations | Magic zones, ley lines, environment | Magical weather, location-based magic availability |
+| Disease & Poison | Curse/disease mechanics | Magic-caused curses and afflictions flow into disease system |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Spell power from caster stats | Stat model feeds spell scaling (INT, WIS) |
+| Battle & Action Systems | Spells as combat actions | Enemy caster AI, damage/heal spells in encounters |
+| Weather & Environment | Magical weather, elemental effects | Elemental magic alters environment; weather reacts to magic |
+| Plugin System | Schools/elements extension hooks | Schools/elements are plugin-extensible |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `CharacterStats` | RPG, Battle, Magic | INT/WIS feed spell power, mana pool, save DCs |
+| `DiceRoll` | Resolution, Battle | Casting checks use unified NdS±M model |
+| `StatusEffect` | Battle, Disease, Magic | Buffs/debuffs, elemental effects, charm/curse shared model |
+| `Spell` | Plugin System | School/element definitions plugin-extensible |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `magic.cast` | emits → Battle, World | Casting intent affects combat/environment |
+| `magic.enchantment_applied` | emits → Crafting | Enchanting result feeds crafted items (G11) |
+| `resolution.roll` | subscribes ← Resolution | All casting checks flow through unified resolver |
+| `weather.changed` | subscribes ← Weather | Magical weather conditions update spell modifiers |
+
+---
 
 ## Open Questions
 

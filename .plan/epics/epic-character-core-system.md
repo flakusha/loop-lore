@@ -59,6 +59,51 @@ The unified character API is **implemented and wired** — no `TBD` remains in `
 - [x] Character API serves full character data
 - [x] Tests passing
 
+## Integration Points
+
+> Added 2026-08-15 (matrix P6-G standardization — last of the 17 RPG sub-system epics
+> to gain a formal section; was missing entirely).
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Actor System | Identity, actor semantics | Characters are actors with role-specific fields |
+| RPG Mechanics | Stat model, growth data | Stat/trait definitions feed character sheets |
+| Memory / Knowledge Systems | Episodic/semantic storage | `MemoryEmotionImpact` contract — mood/coping weight episodic memories (G24) |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Stats, traits, growth data | Stat model feeds dice/stats checks; traits feed skills |
+| Battle & Action Systems | Character stats | Combat stat calculation from character sheets |
+| Companion, Pet & Mount | Traits, relationship state | Companion bonding ties to character traits |
+| Social Interaction | Relationship state | NPC/player relationship model |
+| Faction & Reputation | Faction affinity | Character allegiance feeds faction standing |
+| NSFW Game Mechanics | Relationship, consent state | Encounter gating from character relationship |
+| Emergent Narrative Design | Consequence persistence | Character state persists narrative stakes |
+| Achievements | Stat-based progress | Stat-based achievement triggers |
+| Assistant GM Flows | Character generation targets | GM flows generate characters through this system |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `CharacterStats` | RPG, Battle, Social, Companion | STR/DEX/CON/WIS/INT/CHA shared across systems |
+| `Relationship` | Social, Companion, NSFW | NPC/player relationship state |
+| `MemoryEmotionImpact` | Memory / Knowledge Systems | Mood/coping weight on episodic memories (G24) |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `character.stats_changed` | emits → RPG, Battle, Achievements | Stat changes propagate to systems reading stats |
+| `character.relationship_changed` | emits → Social, Companion, Faction | Relationship shifts update dependent systems |
+| `memory.emotion_applied` | subscribes ← Memory | Emotional weight applied to character memory (G24) |
+
+---
+
 ## Related Epics
 
 - `epic-actors.md` — characters are actors; this epic focuses on character-specific fields

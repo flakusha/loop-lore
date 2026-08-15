@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 188 epics
+**Total:** 190 epics
 
 ## Summary
 
@@ -109,12 +109,11 @@
 | ⬜ Not Started | World Shaping & Divine Intervention | Low | Unknown | 0 | [epic-world-shaping-divine.md](/.plan/epics/epic-world-shaping-divine.md) |
 | ⬜ Not Started | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 7 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
 | 🟡 In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
-| 🟡 In Progress | Assistant/GM Flows Reconciliation | High | High | 14 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
+| 🟡 In Progress | Assistant/GM Flows Reconciliation | High | High | 13 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | 🟡 In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | 🟡 In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 8 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
 | 🟡 In Progress | Documentation Reconciliation & UX | Medium | Medium | 4 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
 | 🟡 In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
-| 🟡 In Progress | Shared Schemas — Reputation, Consent, NSFW Content Rating | High | Medium | 7 | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md) |
 | 🟡 In Progress | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 34 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
 | 🟡 In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 0 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
@@ -136,26 +135,28 @@
 | 📝 Draft → 🟡 In Progress (MVP scoped) | Creative Studio | High (MVP), Medium (full) | High | 0 | [epic-creative-studio.md](/.plan/epics/epic-creative-studio.md) |
 | 🔵 Research | DB & Asset Snapshot Recovery | High | High | 7 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | 🟡 Draft — analysis complete, tickets scoped | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 7 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
-| 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 6 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
+| 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 7 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
 | 🟡 In Progress (migration + schema done) | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | 🟡 Partial | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | 🟡 Core Built, Integration Pending | Encryption Workflow | Medium | Unknown | 27 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
 | ✅ Implemented (updated 2026-07-30 — code audit) | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Unknown | Epic 16: Observability | Unknown | Unknown | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
-| Draft — description under `tree/chore-docs-reconcile` (docs chore)\ | Epic 25: Deployment Topologies & Packaging — Implementation Plan | Unknown | Unknown | 0 | [epic-deployment-topologies.md](/.plan/epics/epic-deployment-topologies.md) |
-| Draft — description under `tree/chore-docs-reconcile` (docs chore)\ | Epic 26: Multi-Instance Reconciliation — Implementation Plan | Unknown | Unknown | 0 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
-| Draft — description under `tree/chore-docs-reconcile` (docs chore)\ | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | Unknown | Unknown | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
+| Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 25: Deployment Topologies & Packaging — Implementation Plan | Unknown | Unknown | 0 | [epic-deployment-topologies.md](/.plan/epics/epic-deployment-topologies.md) |
+| Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 26: Multi-Instance Reconciliation — Implementation Plan | Unknown | Unknown | 0 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
+| Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | Unknown | Unknown | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending) | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
 | 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | 🔧 In Progress | Epic: API Versioning (v1/v2+) | High | Medium | 4 | [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md) |
 | 🟡 Draft | Epic: Chat Context Optimization | High | High | 0 | [epic-chat-context-optimization.md](/.plan/epics/epic-chat-context-optimization.md) |
-| 📝 Draft — planning under `tree/chore-docs-reconcile` | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
+| 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14) | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
+| Unknown | Epic: Database Backup & Recovery Infrastructure | Unknown | Unknown | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
+| Unknown | Epic: Deployment Infrastructure (Docker & Bare Metal) | Unknown | Unknown | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | Draft\ | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built) | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
 | Draft\ | Epic: Memory Propagation | High\ | Medium\ | 5 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
 | 🟢 Code+tests+schema done (migration 001/p07); UNWIRED | Epic: NPC Navigation | High | High | 0 | [epic-npc-navigation.md](/.plan/epics/epic-npc-navigation.md) |
-| 🟡 Implementation exists (rpg/quests + story/quest-engine); DUAL-SYSTEM + unwired | Epic: Quests & Encounters | High | High | 4 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
+| 🟡 Implementation exists (single consolidated engine, wired under /api/rpg/quests); quest type-taxonomy harmonization pending (see TASK-harmonize-quest-type-taxonomy) | Epic: Quests & Encounters | High | High | 6 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
 | Draft\ | Epic: Rarity Extensions | High\ | Medium\ | 6 | [epic-rarity-extensions.md](/.plan/epics/epic-rarity-extensions.md) |
 | 🟢 Code+tests+schema done (migration 035); UNWIRED | Epic: Replayability | Medium | Medium | 0 | [epic-replayability.md](/.plan/epics/epic-replayability.md) |
 | 🟢 Code+tests+schema done (migration 036); UNWIRED | Epic: Skills | High | High | 0 | [epic-skills.md](/.plan/epics/epic-skills.md) |
@@ -169,7 +170,7 @@
 | ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately. | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending) | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
-| 🟡 In Progress (backend 10/15 complete — 2026-08-12) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
+| 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | 🟡 Permanently Ongoing | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | 🟡 Phase 1 Complete, Phase 2 Partial | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
@@ -183,12 +184,13 @@
 | 🟡 Permanently Ongoing | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
 | 🟡 Partial (openai-compatible complete; native providers deferred) | Provider & Plugin Ecosystem | Medium | Large | 16 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
 | Not Started | RAG & Document Processing — Quick Reference | High | High | 0 | [epic-rag-document-processing-quickref.md](/.plan/epics/epic-rag-document-processing-quickref.md) |
-| 🟡 In Progress (Gate C core shipped 2026-08-12) | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
+| 🟡 In Progress (Gate C complete 2026-08-14; release blockers: tag + push) | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | 🟡 Partial — Phase 1 core (dice/stats/combat/xp/loot) code+tests+schema done but UNWIRED; combat has no DB schema (in-memory engine) | RPG Mechanics & Extensible Game Systems | Medium | Very High | 28 | [epic-rpg-mechanics.md](/.plan/epics/epic-rpg-mechanics.md) |
-| 🟡 In Progress (backend items/trade/crafting-recipes/loot landed 2026-08-12) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
+| 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade execution remaining) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
 | 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 2 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Unknown | Security & Sandboxing — Epic | Unknown | Unknown | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
+| 🟢 Complete (implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables) | Shared Schemas — Reputation, Consent, NSFW Content Rating | High | Medium | 1 | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md) |
 | Unknown | Social Hub — Epic | Unknown | Unknown | 19 | [epic-social-hub.md](/.plan/epics/epic-social-hub.md) |
 | Not Started | Social Hub — Quick Reference | High | High | 0 | [epic-social-hub-quickref.md](/.plan/epics/epic-social-hub-quickref.md) |
 | 🟡 In Progress (2026-08-01 — GM notes panel done; world/NPC/event controls + quest log + turn order pending) | Story Mode UI | P1 — High | Medium | 14 | [epic-story-mode-ui.md](/.plan/epics/epic-story-mode-ui.md) |
@@ -1167,17 +1169,6 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 - **Tags:** llm, sd, avatar, image-edit, templates, yaml, merge
 - **File:** `.plan/epics/epic-config-templates.md`
 
-### Shared Schemas — Reputation, Consent, NSFW Content Rating
-
-- **Status:** 🟡 In Progress
-- **Priority:** High
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
-- **File:** `.plan/epics/epic-shared-schemas.md`
-
-### Current State Assessment
-
 ### TASK: NSFW Moderation Safety Infrastructure — Priority Elevation
 
 - **Status:** 🟡 In Progress
@@ -1430,7 +1421,7 @@ ComfyUI is the primary integration target for image generation and editing.
 
 ### Epic 25: Deployment Topologies & Packaging — Implementation Plan
 
-- **Status:** Draft — description under `tree/chore-docs-reconcile` (docs chore)\
+- **Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 - **Priority:** Unknown
 - **Effort:** Unknown
 - **Type:** Feature
@@ -1438,7 +1429,7 @@ ComfyUI is the primary integration target for image generation and editing.
 
 ### Epic 26: Multi-Instance Reconciliation — Implementation Plan
 
-- **Status:** Draft — description under `tree/chore-docs-reconcile` (docs chore)\
+- **Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 - **Priority:** Unknown
 - **Effort:** Unknown
 - **Type:** Feature
@@ -1446,7 +1437,7 @@ ComfyUI is the primary integration target for image generation and editing.
 
 ### Epic 27: Data Integrity & ACID Guarantees — Implementation Plan
 
-- **Status:** Draft — description under `tree/chore-docs-reconcile` (docs chore)\
+- **Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 - **Priority:** Unknown
 - **Effort:** Unknown
 - **Type:** Feature
@@ -1507,11 +1498,31 @@ Optimize how loop-lore assembles, budgets, and compresses the LLM context window
 
 ### Epic: Configuration Extensions — Extensible Enumerations
 
-- **Status:** 📝 Draft — planning under `tree/chore-docs-reconcile`
+- **Status:** 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14)
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic / Cross-cutting Framework
 - **File:** `.plan/epics/epic-config-extensions.md`
+
+### Epic: Database Backup & Recovery Infrastructure
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-database-backup-recovery.md`
+
+Drafted framework for automated, encrypted backup and recovery of loop-lore's SQLite database. All core components implemented with TODO markers for finalization.
+
+### Epic: Deployment Infrastructure (Docker & Bare Metal)
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-deployment-infrastructure.md`
+
+Containerize the loop-lore application and establish deployment strategies for both containerized environments (Docker) and bare-metal servers. Evaluate cost-effective hosting options that support storage and GPU compute for LLM inference workloads.
 
 ### Epic: Lore Knowledge System
 
@@ -1559,7 +1570,7 @@ NPC navigation system — autonomous movement, pathfinding, and location-based b
 
 ### Epic: Quests & Encounters
 
-- **Status:** 🟡 Implementation exists (rpg/quests + story/quest-engine); DUAL-SYSTEM + unwired
+- **Status:** 🟡 Implementation exists (single consolidated engine, wired under /api/rpg/quests); quest type-taxonomy harmonization pending (see TASK-harmonize-quest-type-taxonomy)
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1696,7 +1707,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Item Systems Unification & Gap Closure
 
-- **Status:** 🟡 In Progress (backend 10/15 complete — 2026-08-12)
+- **Status:** 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain)
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1820,7 +1831,7 @@ Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
 
 ### Release 0.1.0
 
-- **Status:** 🟡 In Progress (Gate C core shipped 2026-08-12)
+- **Status:** 🟡 In Progress (Gate C complete 2026-08-14; release blockers: tag + push)
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Release Epic
@@ -1837,7 +1848,7 @@ Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
 
 ### RPG Wiring Completion — Phase 3
 
-- **Status:** 🟡 In Progress (backend items/trade/crafting-recipes/loot landed 2026-08-12)
+- **Status:** 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade execution remaining)
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1870,6 +1881,17 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Infrastructure Epic
 - **Tags:** security, sandboxing, llm, prompt-injection, testing
 - **File:** `.plan/epics/epic-security-sandboxing-quickref.md`
+
+### Shared Schemas — Reputation, Consent, NSFW Content Rating
+
+- **Status:** 🟢 Complete (implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables)
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
+- **File:** `.plan/epics/epic-shared-schemas.md`
+
+### Current State Assessment
 
 ### Social Hub — Epic
 
