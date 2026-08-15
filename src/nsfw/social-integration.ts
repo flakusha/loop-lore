@@ -2,16 +2,35 @@
  * Social Integration for NSFW Encounters
  *
  * Shared reputation model and skill prerequisites for seduction.
+ * Uses the canonical `ReputationScore` contract from `src/schemas/`.
  */
-import type {
-  NSFWReputationChange,
-  ReputationScore,
-  ReputationSource,
-  ReputationTier,
-  SeductionPrerequisite,
-  SocialSkillForNSFW,
-} from "./integration-schemas";
-import { computeReputationTier, } from "./integration-schemas";
+import {
+  applyReputationChange as applyCanonicalReputationChange,
+  applyReputationDecay as applyCanonicalReputationDecay,
+  createReputationScore as createCanonicalScore,
+  getReputationTier,
+  type ReputationScore,
+  type ReputationSource,
+  type ReputationTier,
+} from "../schemas";
+
+// ── NSFW-Specific Types ───────────────────────────────────────
+
+/** NSFW reputation change from encounter */
+export interface NSFWReputationChange {
+  /** Encounter ID */
+  encounterId: string;
+  /** Character involved */
+  characterId: string;
+  /** Reputation value change */
+  reputationChange: number;
+  /** Reason for change */
+  reason: string;
+  /** Social context of encounter */
+  socialContext: "public" | "private" | "group";
+}
+
+// ── Encounter Reputation ──────────────────────────────────────
 
 /**
  * Calculate reputation change from NSFW encounter.
@@ -67,147 +86,41 @@ export function calculateEncounterReputationChange(
   };
 }
 
+// ── Seduction Prerequisites ───────────────────────────────────
+
 /**
- * Get seduction prerequisites based on target's reputation tier.
- *
- * @param targetTier - Target's reputation tier
- * @returns List of prerequisites
+ * Seduction skill prerequisites, tier-gated by target reputation.
+ * See `seduction-prerequisites.ts` for the full model.
  */
-export function getSeductionPrerequisites(
-  targetTier: ReputationTier,
-): SeductionPrerequisite[] {
-  const prerequisites: SeductionPrerequisite[] = [];
+export { checkPrerequisites, getSeductionPrerequisites, } from "./seduction-prerequisites";
+export type { SeductionPrerequisite, SocialSkillForNSFW, } from "./seduction-prerequisites";
 
-  switch (targetTier) {
-    case "hostile": {
-      // Hostile targets require high intimidation or deception
-      prerequisites.push(
-        { skill: "intimidation", minLevel: 70, required: true, },
-        { skill: "deception", minLevel: 80, required: true, },
-      );
-      break;
-    }
-    case "unfriendly": {
-      // Unfriendly targets require persuasion or empathy
-      prerequisites.push(
-        { skill: "persuasion", minLevel: 60, required: true, },
-        { skill: "empathy", minLevel: 50, required: false, },
-      );
-      break;
-    }
-    case "neutral": {
-      // Neutral targets require basic charisma
-      prerequisites.push(
-        { skill: "charisma", minLevel: 40, required: true, },
-        { skill: "seduction", minLevel: 30, required: false, },
-      );
-      break;
-    }
-    case "friendly": {
-      // Friendly targets require less
-      prerequisites.push(
-        { skill: "charisma", minLevel: 20, required: true, },
-        { skill: "seduction", minLevel: 20, required: false, },
-      );
-      break;
-    }
-    case "allied": {
-      // Allied targets are easier
-      prerequisites.push(
-        { skill: "seduction", minLevel: 10, required: false, },
-      );
-      break;
-    }
-    case "devoted": {
-      // Devoted targets have no prerequisites
-      break;
-    }
-  }
-
-  return prerequisites;
-}
+// ── Canonical Reputation Adapters ─────────────────────────────
 
 /**
- * Check if prerequisites are met.
+ * Apply a NSFW reputation change to a reputation score.
  *
- * @param prerequisites - Required prerequisites
- * @param skillLevels - Character's skill levels
- * @returns Whether prerequisites are met
- */
-export function checkPrerequisites(
-  prerequisites: SeductionPrerequisite[],
-  skillLevels: Record<SocialSkillForNSFW, number>,
-): { met: boolean; missing: SeductionPrerequisite[] } {
-  const missing: SeductionPrerequisite[] = [];
-
-  for (const prereq of prerequisites) {
-    const level = skillLevels[prereq.skill] ?? 0;
-    if (level < prereq.minLevel && prereq.required) {
-      missing.push(prereq,);
-    }
-  }
-
-  return {
-    met: missing.length === 0,
-    missing,
-  };
-}
-
-/**
- * Apply reputation change to a reputation score.
+ * Uses the canonical `applyReputationChange`; the change's context
+ * (encounter ID, character ID, social context) is recorded as modifier context.
  *
  * @param current - Current reputation score
- * @param change - Reputation change to apply
+ * @param change - NSFW reputation change to apply
  * @returns Updated reputation score
  */
 export function applyReputationChange(
   current: ReputationScore,
   change: NSFWReputationChange,
 ): ReputationScore {
-  const newValue = Math.max(-100, Math.min(100, current.value + change.reputationChange,),);
-  const newTier = computeReputationTier(newValue,);
-
-  return {
-    ...current,
-    value: newValue,
-    tier: newTier,
-    lastModified: new Date().toISOString(),
-    modifiers: [
-      ...current.modifiers,
-      {
-        reason: change.reason,
-        value: change.reputationChange,
-        appliedAt: new Date().toISOString(),
-      },
-    ],
-  };
-}
-
-/**
- * Create a new reputation score.
- *
- * @param actorId - Target actor ID
- * @param viewerId - Viewer actor ID
- * @param source - Primary source
- * @param initialValue - Initial value (default 0)
- * @returns New reputation score
- */
-export function createReputationScore(
-  actorId: string,
-  viewerId: string,
-  source: ReputationSource = "combined",
-  initialValue = 0,
-): ReputationScore {
-  return {
-    actorId,
-    viewerId,
-    value: Math.max(-100, Math.min(100, initialValue,),),
-    tier: computeReputationTier(initialValue,),
-    source,
-    lastModified: new Date().toISOString(),
-    decayRate: 0.1, // 0.1 per day
-    modifiers: [],
-  };
+  return applyCanonicalReputationChange(
+    current,
+    change.reputationChange,
+    change.reason,
+    {
+      encounter_id: change.encounterId,
+      character_id: change.characterId,
+      social_context: change.socialContext,
+    },
+  );
 }
 
 /**
@@ -221,20 +134,31 @@ export function applyReputationDecay(
   reputation: ReputationScore,
   daysPassed: number,
 ): ReputationScore {
-  const decay = reputation.decayRate * daysPassed;
-  let newValue = reputation.value;
+  return applyCanonicalReputationDecay(reputation, daysPassed,);
+}
 
-  // Decay towards neutral (0)
-  if (newValue > 0) {
-    newValue = Math.max(0, newValue - decay,);
-  } else if (newValue < 0) {
-    newValue = Math.min(0, newValue + decay,);
-  }
+/**
+ * Create a new reputation score (canonical shape).
+ *
+ * @param source - Primary source
+ * @param initialValue - Initial value (default 0)
+ * @param decayRate - Daily decay rate (default 0.1)
+ * @returns New reputation score
+ */
+export function createReputationScore(
+  source: ReputationSource = "combined",
+  initialValue = 0,
+  decayRate = 0.1,
+): ReputationScore {
+  return createCanonicalScore({ source, initial_value: initialValue, decay_rate: decayRate, },);
+}
 
-  return {
-    ...reputation,
-    value: Math.round(newValue * 10,) / 10,
-    tier: computeReputationTier(newValue,),
-    lastModified: new Date().toISOString(),
-  };
+/**
+ * Compute the reputation tier for a value.
+ *
+ * @param value - Reputation value (-100 to +100)
+ * @returns The corresponding tier
+ */
+export function computeReputationTier(value: number,): ReputationTier {
+  return getReputationTier(value,);
 }
