@@ -1,7 +1,7 @@
 // src/generation/providers/types.ts — Provider interface + shared types
 //
 // Every LLM provider implements LLMProvider. Register via registry.
-// See docs/spec/provider-system.md for architecture.
+// See .plan/epics/epic-provider-plugin-ecosystem.md for architecture.
 
 import type { GenerationMessage, } from "../gen-types-options";
 

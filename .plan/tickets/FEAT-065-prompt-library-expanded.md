@@ -113,7 +113,7 @@ Unified **prompt template system** for all generation modalities — LLM text, i
 - `docs/spec/integrations/llm-serving.md` — LLM presets, prompt template structure
 - `docs/frontend/chat/prompt-creation.md` — Prompt assembly pipeline design
 - `docs/ideas/prompt-output-control.md` — #9 Prompt-template & lorebook marketplace
-- `docs/spec/provider-system.md` — Provider architecture
+- `.plan/epics/epic-provider-plugin-ecosystem.md` — Provider architecture
 
 ---
 

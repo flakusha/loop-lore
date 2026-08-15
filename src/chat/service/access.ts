@@ -10,7 +10,7 @@ import type { ServiceError, } from "./types";
  * online. Changing these requires migrating to a new chat bound to a different
  * template (see `migrateChat`).
  *
- * Mirrors .plan/design/chat-template-config-lifecycle.md §3.1.
+ * Mirrors .plan/epics/epic-config-templates.md §3.1.
  */
 export const KEY_MECHANIC_PARAMS = [
   "mode",

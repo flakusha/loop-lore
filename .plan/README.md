@@ -98,3 +98,22 @@ Issue: TASK-023
 Epic: EPIC-26
 Status: done
 ```
+
+## Plan ↔ Code Discovery
+
+Two tools reconcile `.plan/` + `docs/` with `src/` so you can jump either
+direction without grepping prose:
+
+| Tool | Direction | Command |
+| ---- | --------- | ------- |
+| `check-md-links.ts` | `src/` comments → `.plan/` + `docs/` (stale-citation guard) | `bun run md:links` |
+| `plan-code-map.ts` | `.plan/` + `docs/` → `src/` (reverse index) | `bun run plan:map` |
+
+- **Reverse index** (`.plan/code-map.json`, generated): maps every `src/…` path
+  referenced in plan/spec prose to the tickets/epics/specs that own it.
+  `bun run plan:find src/rpg/quests/service` lists owners (exact or directory
+  prefix match). Regenerate with `bun run plan:map`; freshness is gated in
+  `bun run check` (`code-map - freshness`).
+- **Source-comment guard**: `md:links` now also scans TypeScript comment text
+  for `.plan/…` and `docs/…` citations and flags ones whose target no longer
+  resolves (catches rot when specs/epics are renamed or merged).
