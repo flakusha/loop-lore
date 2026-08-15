@@ -4,7 +4,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("ooc", async (args,): Promise<CommandResult> => {
+registerCommand("ooc", (args,): CommandResult => {
   if (args.length === 0) {
     return {
       systemMessage: "Usage: /ooc <text> — send an out-of-character message.",

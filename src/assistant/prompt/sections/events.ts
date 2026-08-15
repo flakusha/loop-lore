@@ -55,27 +55,39 @@ async function fetchWorldEvents(
       .execute();
 
     for (const loc of locStates) {
-      const parts: string[] = [];
-      if (loc.description_override) { parts.push(loc.description_override,); }
-      if (loc.atmosphere) { parts.push(`Atmosphere: ${loc.atmosphere}`,); }
-      if (loc.weather) { parts.push(`Weather: ${loc.weather}`,); }
-
-      const npcs = safeJsonParse<string[]>(loc.npcs_present ?? "[]",);
-      if (npcs.ok && npcs.value.length > 0) {
-        parts.push(`Present: ${npcs.value.join(", ",)}`,);
-      }
-
-      if (parts.length > 0) {
-        events.push({
-          type: "location",
-          content: parts.join(". ",),
-          importance: 0.7,
-        },);
-      }
+      const event = locationStateToEvent(loc,);
+      if (event) { events.push(event,); }
     }
   }
 
   return events;
+}
+
+/** Convert the latest location state row into a chat event, if any detail. */
+function locationStateToEvent(
+  loc: {
+    description_override: string | null;
+    atmosphere: string | null;
+    weather: string | null;
+    npcs_present: string | null;
+  },
+): ChatEvent | null {
+  const parts: string[] = [];
+  if (loc.description_override) { parts.push(loc.description_override,); }
+  if (loc.atmosphere) { parts.push(`Atmosphere: ${loc.atmosphere}`,); }
+  if (loc.weather) { parts.push(`Weather: ${loc.weather}`,); }
+
+  const npcs = safeJsonParse<string[]>(loc.npcs_present ?? "[]",);
+  if (npcs.ok && npcs.value.length > 0) {
+    parts.push(`Present: ${npcs.value.join(", ",)}`,);
+  }
+
+  if (parts.length === 0) { return null; }
+  return {
+    type: "location",
+    content: parts.join(". ",),
+    importance: 0.7,
+  };
 }
 
 /**
