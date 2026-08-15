@@ -137,7 +137,7 @@ describe("Chat Invite & Join E2E", () => {
   },);
 
   test("owner creates an invite for the chat", async () => {
-    const res = await owner.post<{ id: string; code: string; chatId: string; uses: number; revoked: boolean }>(
+    const res = await owner.post<{ id: string; code: string; chatId: string; uses: number; status: string }>(
       `/api/chats/${SEED.chat.id}/invites`,
       {},
     );
@@ -146,7 +146,7 @@ describe("Chat Invite & Join E2E", () => {
     expect(res.data!.code,).toHaveLength(8,);
     expect(res.data!.chatId,).toBe(SEED.chat.id,);
     expect(res.data!.uses,).toBe(0,);
-    expect(res.data!.revoked,).toBe(false,);
+    expect(res.data!.status,).toBe("active",);
     // Store for later tests
     inviteCode = res.data!.code;
   });
