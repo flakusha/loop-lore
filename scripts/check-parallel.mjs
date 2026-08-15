@@ -48,6 +48,9 @@ const checks = {
   // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
   "backlog - index": "bun run plan:backlog:sync",
 
+  // Reverse code→plan index freshness (code-map.json matches a fresh rebuild)
+  "code-map - freshness": "bun run plan:map:check",
+
   // Size check
   "size - check": "bun run scripts/check-file-size.ts",
   "size - strict": "bun run scripts/check-file-size.ts --strict",

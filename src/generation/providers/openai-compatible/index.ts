@@ -2,7 +2,7 @@
 //
 // OpenAI-compatible provider — covers llama.cpp, vLLM, Ollama (OpenAI mode),
 // LM Studio, tabbyAPI, SGLang, OpenRouter, Together AI, Groq, Fireworks AI.
-// See docs/spec/provider-system.md for full API mapping.
+// See .plan/epics/epic-provider-plugin-ecosystem.md for full API mapping.
 //
 // `OpenAiCompatibleProvider` stays a class so its methods remain on the
 // prototype; the method bodies live in sibling dispatcher modules, each
