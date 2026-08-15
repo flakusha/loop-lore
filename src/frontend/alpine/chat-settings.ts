@@ -124,6 +124,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),
         isPaused: this._groupPaused,
+        thinkingVisibility: this.chats.find((c,) => c.id === this.activeChat)?.thinking_visibility ?? "hidden",
       };
       // Key mechanics are immutable once the chat is online — the backend rejects
       // them with 409, so only send them for draft (offline) chats.
