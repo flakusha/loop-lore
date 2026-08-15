@@ -44,14 +44,19 @@ describe("location events", () => {
       name: "Test World",
       owner_id: userId,
     },).execute();
-    await insertLocations(db, worldId, "Location A", { id: locationA } as never);
-    await insertLocations(db, worldId, "Location B", { id: locationB } as never);
-    await insertChats(db, "Test Chat", userId, { id: chatId, current_location_id: locationA, world_id: worldId } as never);
-  });
+    await insertLocations(db, worldId, "Location A", { id: locationA, } as never,);
+    await insertLocations(db, worldId, "Location B", { id: locationB, } as never,);
+    await insertChats(
+      db,
+      "Test Chat",
+      userId,
+      { id: chatId, current_location_id: locationA, world_id: worldId, } as never,
+    );
+  },);
 
   afterAll(async () => {
     await db.destroy();
-  });
+  },);
 
   test("recordLocationChange inserts an event row", async () => {
     const eventId = await recordLocationChange(db, {
@@ -59,9 +64,9 @@ describe("location events", () => {
       fromLocationId: locationA,
       toLocationId: locationB,
       source: "manual",
-    });
+    },);
 
-    expect(eventId).toBeTruthy();
+    expect(eventId,).toBeTruthy();
 
     const row = await db
       .selectFrom("chat_location_events",)
@@ -69,12 +74,12 @@ describe("location events", () => {
       .where("id", "=", eventId,)
       .executeTakeFirst();
 
-    expect(row).toBeTruthy();
-    expect(row!.chat_id).toBe(chatId);
-    expect(row!.from_location_id).toBe(locationA);
-    expect(row!.to_location_id).toBe(locationB);
-    expect(row!.source).toBe("manual");
-    expect(row!.created_at).toBeTruthy();
+    expect(row,).toBeTruthy();
+    expect(row!.chat_id,).toBe(chatId,);
+    expect(row!.from_location_id,).toBe(locationA,);
+    expect(row!.to_location_id,).toBe(locationB,);
+    expect(row!.source,).toBe("manual",);
+    expect(row!.created_at,).toBeTruthy();
   });
 
   test("events are ordered by created_at", async () => {
@@ -84,24 +89,24 @@ describe("location events", () => {
       fromLocationId: null,
       toLocationId: locationA,
       source: "manual",
-    });
+    },);
 
     await recordLocationChange(db, {
       chatId,
       fromLocationId: locationA,
       toLocationId: locationB,
       source: "manual",
-    });
+    },);
 
-    const history = await getLocationHistory(db, chatId);
-    expect(history.length).toBeGreaterThanOrEqual(1);
+    const history = await getLocationHistory(db, chatId,);
+    expect(history.length,).toBeGreaterThanOrEqual(1,);
 
     // Verify chronological order
     for (let i = 1; i < history.length; i++) {
       const prev = history[i - 1];
       const curr = history[i];
       if (prev && curr) {
-        expect(prev.createdAt.localeCompare(curr.createdAt,),).toBeLessThanOrEqual(0);
+        expect(prev.createdAt.localeCompare(curr.createdAt,),).toBeLessThanOrEqual(0,);
       }
     }
   });
@@ -115,13 +120,13 @@ describe("location events", () => {
       fromLocationId: null,
       toLocationId: locationA,
       source: "migration",
-    });
+    },);
 
-    const history = await getLocationHistory(db, chatId2);
-    expect(history).toHaveLength(1);
+    const history = await getLocationHistory(db, chatId2,);
+    expect(history,).toHaveLength(1,);
     const event = history[0]!;
-    expect(event.toLocationId).toBe(locationA);
-    expect(event.source).toBe("migration");
+    expect(event.toLocationId,).toBe(locationA,);
+    expect(event.source,).toBe("migration",);
   });
 
   test("events survive cascading chat delete", async () => {
@@ -133,7 +138,7 @@ describe("location events", () => {
       fromLocationId: null,
       toLocationId: locationA,
       source: "manual",
-    });
+    },);
 
     // Delete the chat — events should cascade
     await db.deleteFrom("chats",).where("id", "=", chatToDelete,).execute();
@@ -144,7 +149,7 @@ describe("location events", () => {
       .where("chat_id", "=", chatToDelete,)
       .execute();
 
-    expect(events).toHaveLength(0);
+    expect(events,).toHaveLength(0,);
   });
 
   test("triggering_message_id links to the message", async () => {
@@ -157,7 +162,7 @@ describe("location events", () => {
       toLocationId: locationB,
       source: "auto",
       triggeringMessageId: msgId,
-    });
+    },);
 
     const row = await db
       .selectFrom("chat_location_events",)
@@ -165,7 +170,7 @@ describe("location events", () => {
       .where("id", "=", eventId,)
       .executeTakeFirst();
 
-    expect(row!.triggering_message_id).toBe(msgId);
+    expect(row!.triggering_message_id,).toBe(msgId,);
   });
 });
 
@@ -191,9 +196,9 @@ describe("carryHistory section_id", () => {
       name: "Test World",
       owner_id: userId,
     },).execute();
-await insertLocations(db, worldId, "Loc Carry", { id: locationId } as never);
-    await insertChats(db, "Source", userId, { id: sourceChatId, world_id: worldId } as never);
-    await insertChats(db, "Migrated", userId, { id: newChatId, world_id: worldId } as never);
+    await insertLocations(db, worldId, "Loc Carry", { id: locationId, } as never,);
+    await insertChats(db, "Source", userId, { id: sourceChatId, world_id: worldId, } as never,);
+    await insertChats(db, "Migrated", userId, { id: newChatId, world_id: worldId, } as never,);
 
     // Create a section + message with section_id set
     await db.insertInto("chat_sections",).values({
@@ -207,11 +212,11 @@ await insertLocations(db, worldId, "Loc Carry", { id: locationId } as never);
       id: msgId,
       section_id: sectionId,
     } as never,);
-  });
+  },);
 
   afterAll(async () => {
     await db.destroy();
-  });
+  },);
 
   test("carryHistory copies section_id on messages", async () => {
     await carryHistory(db, sourceChatId, newChatId,);
@@ -219,13 +224,13 @@ await insertLocations(db, worldId, "Loc Carry", { id: locationId } as never);
     // Check the carried message has section_id set
     const carriedMsg = await db
       .selectFrom("messages",)
-      .select(["id", "section_id",])
+      .select(["id", "section_id",],)
       .where("chat_id", "=", newChatId,)
       .where("content", "=", "message with section",)
       .executeTakeFirst();
 
-    expect(carriedMsg).toBeTruthy();
-    expect(carriedMsg!.section_id).toBeTruthy();
+    expect(carriedMsg,).toBeTruthy();
+    expect(carriedMsg!.section_id,).toBeTruthy();
     // The section_id should point at a section in the new chat, not the source
     const sectionOwner = await db
       .selectFrom("chat_sections",)
@@ -235,7 +240,7 @@ await insertLocations(db, worldId, "Loc Carry", { id: locationId } as never);
     // Note: before carryLocation runs, the section still points at the copied
     // section (which has chat_id=sourceChatId initially). carryLocation copies
     // sections and remaps. This test only asserts the message carries section_id.
-    expect(sectionOwner).toBeTruthy();
+    expect(sectionOwner,).toBeTruthy();
   });
 
   test("carryLocation remap works after carryHistory carries section_id", async () => {
@@ -247,13 +252,13 @@ await insertLocations(db, worldId, "Loc Carry", { id: locationId } as never);
     // The carried message should now point at a section in newChatId
     const carriedMsg = await db
       .selectFrom("messages",)
-      .select(["id", "section_id",])
+      .select(["id", "section_id",],)
       .where("chat_id", "=", newChatId,)
       .where("content", "=", "message with section",)
       .executeTakeFirst();
 
-    expect(carriedMsg).toBeTruthy();
-    expect(carriedMsg!.section_id).toBeTruthy();
+    expect(carriedMsg,).toBeTruthy();
+    expect(carriedMsg!.section_id,).toBeTruthy();
 
     const section = await db
       .selectFrom("chat_sections",)
@@ -262,6 +267,6 @@ await insertLocations(db, worldId, "Loc Carry", { id: locationId } as never);
       .executeTakeFirst();
 
     // The section must belong to the new chat, not the source
-    expect(section!.chat_id).toBe(newChatId);
+    expect(section!.chat_id,).toBe(newChatId,);
   });
 });

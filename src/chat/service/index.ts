@@ -63,7 +63,7 @@ export { regenerateMessageVariant, } from "./write";
 export { updateMessageVisibility, } from "./visibility";
 
 // ── Location events ───────────────────────────────────────────
-export { recordLocationChange, getLocationHistory, } from "./location-events";
+export { getLocationHistory, recordLocationChange, } from "./location-events";
 
 // ── Shared schema + error/result types ────────────────────────
 export type {
