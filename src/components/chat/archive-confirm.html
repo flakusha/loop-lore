@@ -1,0 +1,27 @@
+<!-- Archive Message Confirmation Modal -->
+<div
+  x-show="_archiveConfirmOpen"
+  x-cloak
+  class="modal-overlay"
+  @click.self="cancelArchive()"
+  data-testid="archive-confirm-modal"
+>
+  <div class="modal" style="max-width: 360px">
+    <div class="modal-header">
+      <span class="title">Archive Message</span>
+      <button class="btn-icon" @click="cancelArchive()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size: 14px; color: var(--text-secondary)">
+        Are you sure you want to archive this message? It will be hidden from the chat but can be restored within 30
+        days.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" @click="cancelArchive()">Cancel</button>
+      <button class="btn btn-primary" @click="confirmArchive()" data-testid="archive-confirm-btn">
+        Archive
+      </button>
+    </div>
+  </div>
+</div>
