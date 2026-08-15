@@ -45,7 +45,7 @@ export function transitionScene(
   const duration = options.duration ?? DEFAULT_DURATION[type];
 
   // Cut or reduced motion → instant swap
-  if (type === "cut" || prefersReducedMotion() || duration === 0) {
+  if (type === "cut" || duration === 0 || prefersReducedMotion()) {
     if (outgoing) {
       outgoing.style.display = "none";
     }

@@ -11,9 +11,8 @@
  * Registered as `window.storyState`; used from `story-view.html`,
  * `gm-story-panel.html` and `message-list.html`.
  */
-
 import { apiFetch, } from "./htmx";
-import { jsonParseOr, } from "./json";
+import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import { storyControl, } from "./story-controls";
 import {
@@ -35,7 +34,6 @@ import {
   toast,
 } from "./story-state/derived";
 import type { QuestBanner, StoryQuest, StoryStateComponent, StoryTurnMeta, } from "./story-state/types";
-
 export type {
   QuestBanner,
   StoryParticipant,
@@ -142,7 +140,7 @@ const log = rootLog.child({ module: "story-state", },);
         const res = await apiFetch(`/api/worlds/${worldId}/quests`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ name: name.trim(), type: "composite", },),
+          body: jsonBody({ name: name.trim(), type: "composite", },),
         },);
         if (res.ok) {
           await this._loadQuests();
@@ -160,7 +158,11 @@ const log = rootLog.child({ module: "story-state", },);
       try {
         const res = await apiFetch(`/api/quests/${questId}`, { method: "DELETE", },);
         if (res.ok) {
-          this.quests = this.quests.filter((q,) => q.id !== questId);
+          const { quests, } = this;
+          for (let i = quests.length - 1; i >= 0; i--) {
+            const quest = quests[i];
+            if (quest?.id === questId) { quests.splice(i, 1,); }
+          }
           this.notify("Quest deleted",);
         } else {
           this.notify("Quest deletion failed", "error",);

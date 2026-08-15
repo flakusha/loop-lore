@@ -196,7 +196,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     const actorId = this._impersonatingActorId;
     try {
-      if (this.impersonationActive && actorId) {
+      if (actorId && this.impersonationActive) {
         await apiFetch(`/api/v1/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
