@@ -274,12 +274,44 @@ interface BattleAbility {
 
 ## Integration Points
 
-- **Actor System** — Companions use actor system for personality/memory
-- **RPG Mechanics** — Stats affect pet/mount performance
-- **Combat System** — Companions/pets in battle
-- **Inventory System** — Pet/mount equipment
-- **World & Locations** — Wild pet spawns, mount terrain
-- **Housing & Base Building** — Stables, pet rooms, mount housing from housing system
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Actor System | Personality, memory, behavior | Companions use actor system for personality/memory |
+| RPG Mechanics | Stats, progression | Stats affect pet/mount performance |
+| Battle & Action Systems | Combat participation rules | Companions/pets fight alongside player (G16 dependent) |
+| Inventory System | Equipment slots | Pet/mount equipment (armor, gear, saddles) |
+| World & Locations | Spawn areas, terrain | Wild pet spawns, mount terrain suitability |
+| Housing & Base Building | Stables, pet rooms | Mount housing, pet room bonuses (G10) |
+| Character Core | Traits, relationship state | Companion disposition, bonding (shared CharCore contract) |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Companion progression data | Stat growth, leveling sync with party |
+| Exploration & Discovery | Mounts, travel companions | Faster travel, terrain access via mounts |
+| Character Core | Companion personality/traits | Character/companion relationship modeling |
+| Battle & Action Systems | Companion combat stats | Pet/mount participation rules in encounters |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `CharacterStats` | RPG, Character Core | Pet/mount stats scale from shared model |
+| `ActorProfile` | Actor System, Character Core | Personality, memory, behavior shared |
+| `Relationship` | Social, Character Core | Companion bonding/affection state |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `companion.recruited` | emits → Actor, World | New companion joins party, spawn state updates |
+| `companion.state_changed` | emits → RPG, Battle | Bonding/status affects stat bonuses |
+| `weather.changed` | subscribes ← Weather | Terrain/weather affects mount suitability |
+
+---
 
 ## Open Questions
 

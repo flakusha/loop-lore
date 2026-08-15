@@ -55,24 +55,36 @@ Legend:
 
 ### 🔴 High — Missing bidirectional links between major systems
 
+> **Doc-level status 2026-08-15:** G1–G5 integration **sections** now exist in the target
+> epics (`epic-battle-action-systems.md`, `epic-resolution-system.md`). The remaining work
+> is **implementation** (runtime cross-links), tracked P6-A (battle hub) + P6-0 (resolution)
+> in `backlog/priority.md`. Rows below keep the original audit text for history.
+
 | #  | System A       | System B                    | Current State                                                                                                                                                               | Recommended Action                                                                                              |
 | -- | -------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| G1 | **Battle**     | **Items/Inventory**         | Battle uses "Use item" as action type but never references `epic-item-system-extensions` or inventory for loadout/equipment management. No loot-drop-to-inventory pipeline. | Add integration: equipment affects battle stats, loot drops feed inventory, item durability degrades in combat. |
-| G2 | **Battle**     | **Social Interaction**      | Social lists "Intimidation in combat" as integration; Battle never mentions social skills as combat options (taunt, negotiate, surrender).                                  | Add integration: social checks during combat for morale breaks, surrender, intimidation effects.                |
-| G3 | **Battle**     | **NPC/Actor System**        | Battle has NPC enemies but never references Actor system for personality-driven AI, morale, memory of past defeats.                                                         | Add integration: NPC actors drive enemy decisions, morale system from Social applies in combat.                 |
-| G4 | **Battle**     | **Weather/Terrain**         | Weather lists "Combat System" integration; Battle never references weather/terrain modifiers.                                                                               | Add integration: environmental combat modifiers from Weather system, terrain cover from Exploration.            |
-| G5 | **Resolution** | **All Combat/Social/Magic** | Resolution claims to unify dice resolution but has no integration section. Never references Battle, Social, Magic, or RPG.                                                  | Add integration section referencing all systems that use dice resolution.                                       |
+| G1 | **Battle**     | **Items/Inventory**         | ✅ doc-resolved (Battle Integration Points deps: Item + Inventory; loot pipeline + equipment stat effects spec'd). Runtime wiring open → P6-A. | Add integration: equipment affects battle stats, loot drops feed inventory, item durability degrades in combat. |
+| G2 | **Battle**     | **Social Interaction**      | ✅ doc-resolved (Battle deps: Social; negotiate/surrender/morale-break spec'd). Runtime wiring open → P6-A. | Add integration: social checks during combat for morale breaks, surrender, intimidation effects.                |
+| G3 | **Battle**     | **NPC/Actor System**        | ✅ doc-resolved (Battle dependents: NPC/Actor — enemy AI, morale, personality). Runtime wiring open → P6-A. | Add integration: NPC actors drive enemy decisions, morale system from Social applies in combat.                 |
+| G4 | **Battle**     | **Weather/Terrain**         | ✅ doc-resolved (Battle deps: Weather; `weather.changed` event subscribed). Runtime wiring open → P6-A. | Add integration: environmental combat modifiers from Weather system, terrain cover from Exploration.            |
+| G5 | **Resolution** | **All Combat/Social/Magic** | ✅ doc-resolved (Resolution Integration Points: deps RPG/Config, dependents Battle/Social/Crime/Exploration/Magic/Disease/NSFW, `DiceRoll` contract, `resolution.roll` event). Runtime unification open → P6-0. | Add integration section referencing all systems that use dice resolution.                                       |
 
 ### 🟡 Medium — One-way links or missing cross-references
 
+> **Doc-level status 2026-08-15:** G6–G9 integration sections now exist in
+> `epic-nsfw-game-mechanics.md` (deps: Housing/Weather/Social/Disease; contracts
+> `ReputationScore`/`Relationship`). G10 covered by Companion Integration Points (Housing).
+> G11 (Crafting↔Magic enchanting) doc-resolved 2026-08-15 — Crafting Integration Points
+> depend on Magic + subscribe `magic.enchantment_applied`. Remaining work is implementation,
+> tracked P6-B (NSFW) + P6-C (housing/crafting) in `backlog/priority.md`.
+
 | #   | System A     | System B      | Current State                                                                                                         | Recommended Action                                                                                           |
 | --- | ------------ | ------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| G6  | **NSFW**     | **Housing**   | NSFW defines NSFWLocation types (bedroom, bath); Housing provides private spaces. Neither references the other.       | Add integration: housing provides private spaces with comfort bonuses for NSFW encounters.                   |
-| G7  | **NSFW**     | **Weather**   | NSFW defines location modifiers; Weather defines environmental mood. Neither references the other.                    | Add integration: weather affects NSFW encounter mood and location availability.                              |
-| G8  | **NSFW**     | **Social**    | NSFW seduction/reputation overlap with Social's reputation and persuasion. Neither cross-references.                  | Add integration: social skills (persuasion, deception) are seduction prerequisites; shared reputation model. |
-| G9  | **NSFW**     | **Disease**   | Pregnancy/reproduction never references Disease for reproductive health ailments.                                     | Add integration: disease system covers reproductive health, STDs from NSFW encounters.                       |
-| G10 | **Housing**  | **Companion** | Housing has animal pens but never references Companion for stable mechanics, pet housing, mount stables.              | Add integration: companion housing, pet room bonuses, mount stable from Housing.                             |
-| G11 | **Crafting** | **Magic**     | Magic says "Enchanting uses crafting mechanics"; Crafting never mentions Magic for enchanted items.                   | Add integration: enchanting as cross-system feature between Crafting and Magic.                              |
+| G6  | **NSFW**     | **Housing**   | ✅ doc-resolved (NSFW deps: Housing — private spaces, comfort modifiers). Runtime open → P6-B. | Add integration: housing provides private spaces with comfort bonuses for NSFW encounters.                   |
+| G7  | **NSFW**     | **Weather**   | ✅ doc-resolved (NSFW deps: Weather — encounter mood/location availability). Runtime open → P6-B. | Add integration: weather affects NSFW encounter mood and location availability.                              |
+| G8  | **NSFW**     | **Social**    | ✅ doc-resolved (NSFW deps: Social; shared `ReputationScore` contract). Runtime open → P6-B. | Add integration: social skills (persuasion, deception) are seduction prerequisites; shared reputation model. |
+| G9  | **NSFW**     | **Disease**   | ✅ doc-resolved (NSFW deps: Disease — reproductive health, STDs). Runtime open → P6-B. | Add integration: disease system covers reproductive health, STDs from NSFW encounters.                       |
+| G10 | **Housing**  | **Companion** | ✅ doc-resolved (Companion Integration Points: Housing — stables, pet rooms, mount housing). Runtime open → P6-C. | Add integration: companion housing, pet room bonuses, mount stable from Housing.                             |
+| G11 | **Crafting** | **Magic**     | ✅ doc-resolved 2026-08-15 — Crafting Integration Points deps include Magic (enchanting recipes/materials); subscribes `magic.enchantment_applied` event. Runtime wiring open → P6-C. | Add integration: enchanting as cross-system feature between Crafting and Magic.                              |
 | G12 | **Crime**    | **Economy**   | Crime references Economy (bounties, black market); Economy now references Crime (black market pricing, stolen goods). | **RESOLVED** — bidirectional cross-refs added.                                                               |
 | G13 | **Crime**    | **Social**    | Both reference each other: Crime lists Social for reputation flow; Social lists Crime for skill overlap.              | **RESOLVED** — bidirectional cross-refs added.                                                               |
 
@@ -84,9 +96,9 @@ Legend:
 | G15 | **Disease**   | **Weather**  | Weather lists disease (plague zones); Disease now references Weather for transmission conditions.     | **RESOLVED** — Disease epic updated with weather transmission cross-ref.    |
 | G16 | **Companion** | **Battle**   | Companion references Battle; Battle now lists Companion in dependents table with participation rules. | **RESOLVED** — Battle epic dependents table includes Companion.             |
 | G17 | **RPG**       | **CharCore** | RPG now references Character Core in Related Epics with ownership clarification.                      | **RESOLVED** — RPG epic updated with CharCore cross-ref and ownership note. |
-| G24 | **Memory**    | **CharCore** | Memory has `emotional_valence` field but no structured emotion-impact; CharCore has coping/mood but no memory integration. | **NEW** — Add `MemoryEmotionImpact` to episodic memories; integrate with mood/coping/relationship services. |
-| G25 | **Memory**    | **Time Scale** | Memory has real-time timestamps; Time Scale has game-time progression but no memory integration.    | **NEW** — Convert memory timestamps to game-time; decay per game-day; permanent memories survive compression. |
-| G26 | **Memory**    | **Timeline** | Memory has no `timeline_id`; Timeline has timeline branching but no memory integration.              | **NEW** — Add `timeline_id` to memories; timeline-specific recall; cross-timeline propagation per memory scopes. |
+| G24 | **Memory**    | **CharCore** | Memory has `emotional_valence` field but no structured emotion-impact; CharCore has coping/mood but no memory integration. | 🟡 tracked — `TASK-memory-emotion-impact.md` (exists); P6-0 |
+| G25 | **Memory**    | **Time Scale** | Memory has real-time timestamps; Time Scale has game-time progression but no memory integration.    | 🟡 tracked — `TASK-memory-timescape.md` (exists); P6-0 |
+| G26 | **Memory**    | **Timeline** | Memory has no `timeline_id`; Timeline has timeline branching but no memory integration.              | 🟡 tracked — `TASK-timeline-id-world-timeline-events.md` + `TASK-timeline-memory-injection.md` (exist); P6-0 |
 
 ## Standardized Integration Template
 
@@ -131,27 +143,37 @@ Every epic file should have this section. Copy-paste and customize:
 
 ## Related Epics Without Formal Integration Sections
 
-These epics have `## Related Epics` but no `## Integration Points`:
+> **Updated 2026-08-15:** 4/5 epics below gained formal `## Integration Points` sections
+> (deps/dependents/contracts/events) since this table was written. Remaining gap: none —
+> `epic-emergent-narrative-design.md` got its section 2026-08-15. Table kept for audit trail;
+> the sections themselves are the source of truth now.
 
-| Epic                                | Related Epics Listed                                                     | Missing Integration                         |
-| ----------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------- |
-| `epic-battle-action-systems.md`     | RPG Mechanics, World & Locations                                         | Items/Inventory, Social, NPC/Actor, Weather |
-| `epic-nsfw-game-mechanics.md`       | RPG Mechanics, Battle, World, Logic Reconciliation, Plugin, Assistant/GM | Housing, Weather, Social, Disease           |
-| `epic-resolution-system.md`         | (none formal)                                                            | Battle, Social, Magic, RPG                  |
-| `epic-companion-pet-mount.md`       | RPG Mechanics, Battle, World, Actor                                      | Housing, Disease, NSFW                      |
-| `epic-emergent-narrative-design.md` | (minimal)                                                                | All systems (narrative touches everything)  |
+| Epic                                | Related Epics Listed                                                     | Missing Integration                         | Status |
+| ----------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------- | ------ |
+| `epic-battle-action-systems.md`     | RPG Mechanics, World & Locations                                         | Items/Inventory, Social, NPC/Actor, Weather | ✅ RESOLVED — full Integration Points (deps incl. Item/Inventory/Weather/Social/Resolution; dependents incl. NPC/Actor/Companion; contracts `StatusEffect`/`DiceRoll`; events `battle.victory`/`battle.defeat`) |
+| `epic-nsfw-game-mechanics.md`       | RPG Mechanics, Battle, World, Logic Reconciliation, Plugin, Assistant/GM | Housing, Weather, Social, Disease           | ✅ RESOLVED — full Integration Points (deps incl. Housing/Weather/Social/Disease; shared contracts `ReputationScore`/`Relationship`) |
+| `epic-resolution-system.md`         | (none formal)                                                            | Battle, Social, Magic, RPG                  | ✅ RESOLVED — full Integration Points (dependents Battle/Social/Crime/Exploration/Magic/Disease/NSFW; contracts `DiceRoll`/`SkillCheck`/`SaveType`; event `resolution.roll`) |
+| `epic-companion-pet-mount.md`       | RPG Mechanics, Battle, World, Actor                                      | Housing, Disease, NSFW                      | ✅ RESOLVED — Integration Points covers Actor/RPG/Combat/Inventory/World/Housing (Disease/NSFW intentionally out of scope; see P6-C) |
+| `epic-emergent-narrative-design.md` | (minimal)                                                                | All systems (narrative touches everything)  | ✅ RESOLVED — Integration Points added 2026-08-15 (deps RPG/Social/World/Memory/StoryPoints; contract `StoryPoint`; events `narrative.principle_check`) |
 
 ## Recommendations
 
-1. **Battle epic priority** — Most impactful gap. Battle is the hub that touches most systems but references few. Recommend adding full integration section before implementation begins.
+> **Status 2026-08-15:** recs 1–3 ✅ doc-resolved (Battle, NSFW, Resolution all gained
+> formal `## Integration Points` sections). Rec 4 (standardize templates) ✅ **17/17
+> full-template as of 2026-08-15** — the 9 bullet-style epics converted same day
+> (magic, companion, disease, social, weather, exploration, economy, stealth-crime,
+> faction-reputation) and charcore gained a section (was missing). Crafting was already
+> full-template (deps incl. Magic; `magic.enchantment_applied` event) — G11 doc-resolved.
 
-2. **NSFW epic** — Second priority. 848 lines of mechanics with no Housing, Weather, Social, or Disease cross-references. These affect encounter design.
+1. **Battle epic priority** — Most impactful gap. Battle is the hub that touches most systems but references few. ✅ RESOLVED — full Integration Points added (deps: Item/Inventory/Weather/Social/Resolution; dependents: NPC/Actor/Companion/Crime/Disease/NSFW; contracts `StatusEffect`/`DiceRoll`/`CharacterStats`; events `battle.victory`/`battle.defeat`).
 
-3. **Resolution System** — Foundational. If this is truly a unified resolution layer, it MUST reference every system that resolves actions (Battle, Social, Magic, Crime, Exploration).
+2. **NSFW epic** — Second priority. ✅ RESOLVED — full Integration Points added (deps: Housing/Weather/Social/Disease; contracts `ReputationScore`/`Relationship`).
 
-4. **Standardize templates** — All 17 RPG sub-system epics should use the template above. Current integration sections are bullet lists; the template adds contracts and events.
+3. **Resolution System** — Foundational. ✅ RESOLVED — full Integration Points added (dependents: Battle/Social/Crime/Exploration/Magic/Disease/NSFW; contracts `DiceRoll`/`SkillCheck`/`SaveType`; event `resolution.roll`).
 
-5. **Shared schemas** — Faction/Social reputation overlap needs resolution. Two systems defining `reputation` differently will cause conflicts at implementation time.
+4. **Standardize templates** — All 17 RPG sub-system epics should use the template above. ✅ 17/17 full — rpg-mechanics, battle, crafting, housing, nsfw, resolution, emergent-narrative converted 2026-08-15; remaining 9 bullet-style converted same day (magic, companion, disease, social, weather, exploration, economy, stealth-crime, faction-reputation); charcore added (was missing).
+
+5. **Shared schemas** — Faction/Social reputation overlap needs resolution. ✅ RESOLVED 2026-08-15 — canonical `ReputationScore` enforced in `src/schemas/reputation.ts`, consumed by Social (`src/nsfw/social-integration.ts`), Faction + NSFW (`src/rpg/integration-registry/edges/*`), and referenced in Faction/Social/Crime Integration Points; `ConsentState` + `NSFWContentRating` enforcement also live (`src/schemas/consent.ts`, `src/schemas/nsfw-rating.ts`). Tests added 2026-08-15: 49 tests across `src/schemas/*.test.ts` + `src/nsfw/social-integration.test.ts` + `src/middleware/nsfw-gate/consent.test.ts` (schema calc, consent transitions, rating enforcement, Social+NSFW reputation, DB-backed gate). Migration tests N/A — in-memory schemas (see epic-shared-schemas). Type dedup done 2026-08-15: divergent `src/nsfw/integration-schemas/` cluster + housing/weather/disease scaffolding deleted (zero importers, divergent shapes); `applyReputationChange`/`applyReputationDecay` moved to canonical schema; `social-integration.ts` now consumes canonical types only.
 
 ## Cross-Cutting Capabilities from Emergent Platforms (2026-08-14)
 
@@ -245,7 +267,15 @@ section). G18–G20 are P6+ cross-enhancements with deferred siblings.
 | Emotional Pattern Tracking (Kindroid) | E2                 | G31                | TASK-memory-happiness-patterns.md          |
 | Reflection Synthesis (Stanford)       | E2                 | G19, G31           | TASK-agent-memory-scoring.md               |
 
-> **0.1.0 note for G38–G42:** All five agentic integration gaps are **P6+ deferred** under the 0.1.0 alignment — they depend on completed memory/assistant architecture. G42 (tool-calling) has the broadest impact (touches all systems) and should be revisited first when P6+ agentic work begins.
+> **0.1.0 note for G38–G42:** **G38–G40 pulled forward to 0.1.0 Quick Wins (2026-08-15)**
+> per the agentic-features addendum below ("Quick win (0.1.0)") — proactive messaging,
+> quiet hours, keyphrase recall all have tickets and build on shipped memory/notification
+> infra; tracked in `backlog/priority.md` § 0.1.0 Quick Wins items 13–14. **G41 (inner
+> monologue) + G42 (tool-calling) remain P6+ deferred** — they depend on completed
+> memory/assistant architecture. G42 has the broadest impact (touches all systems) and
+> should be revisited first when P6+ agentic work begins. G31 emotional-pattern tracking
+> now has ticket `TASK-memory-happiness-patterns.md` (created 2026-08-15); G27/G36
+> internal-traits dep now has `TASK-character-internal-traits.md`.
 
 | #  | System A                    | System B                    | Current State                                                                                                    | Recommended Action                                                                                              | Severity |
 | -- | --------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------- |

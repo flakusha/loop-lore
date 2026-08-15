@@ -484,13 +484,48 @@ interface SocialEvent {
 
 ## Integration Points
 
-- **RPG Mechanics** — CHA, WIS, INT stats affect social skills
-- **NPC System** — NPC personality, memory, relationships
-- **Faction System** — Faction reputation, standing
-- **Economy System** — Barter, trading
-- **Quest System** — Social quest objectives
-- **Combat System** — Intimidation in combat
-- **Crime & Stealth** — Social skills aid crime (deception, disguise); criminal reputation feeds into social standing
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Stats (CHA, WIS, INT), skill checks | Social skill resolution via unified checks |
+| NPC System | Personality, memory, relationships | NPC social state, relationship tracking |
+| Faction & Reputation | Reputation, standing | Faction standing feeds social checks (G14) |
+| Economy & Trading | Barter, trade mechanics | Trade/barter resolution |
+| Quest System | Quest objectives | Social quest objectives (persuade, gossip, negotiate) |
+| Crime & Stealth | Social-skill overlap | Deception/disguise aid crime; criminal reputation feeds social standing (G13) |
+| Housing & Base Building | Social spaces | Guest interactions, party hosting |
+| Character Core | Relationship state | NPC/player relationship model |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Social skill checks | Persuasion/intimidation/deception resolution |
+| Faction & Reputation | Reputation standing | Faction relationships drive social gating (G14) |
+| Economy & Trading | Barter, relationship pricing | Reputation-gated prices, trade favors |
+| Battle & Action Systems | Intimidation, morale | Social checks in combat (G2) |
+| NSFW Game Mechanics | Seduction prerequisites | Social skills are seduction prerequisites (G8) |
+| Emergent Narrative Design | Consequence persistence | Social reputation persists narrative stakes |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `ReputationScore` | Faction, NSFW, Narrative | Unified reputation model (G14) — MUST match faction schema |
+| `Relationship` | Character Core, Companion, NSFW | NPC/player relationship state |
+| `SkillCheck` | Resolution, Battle, Social | Unified social check result model |
+| `CharacterStats` | RPG, Character Core | CHA/WIS/INT feed social rolls |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `social.relationship_changed` | emits → CharCore, NPC | Relationship shifts update NPC memory |
+| `social.reputation_changed` | emits → Faction, Crime | Standing changes propagate (G13/G14) |
+| `resolution.roll` | subscribes ← Resolution | Social checks flow through unified resolver |
+
+---
 
 ## Open Questions
 
