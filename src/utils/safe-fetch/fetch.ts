@@ -13,7 +13,7 @@ import type { JsonResult, } from "../safe-json";
 import { safeJsonParse, safeJsonStringify, } from "../safe-json";
 import { DEFAULT_MAX_SIZE, DEFAULT_TIMEOUT, } from "./constants";
 import { buildAuthHeaders, } from "./headers";
-import type { FetchResult, SafeFetchOptions, } from "./types";
+import type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
 
 /**
  * Fetch with safety guarantees: timeout, safe JSON, Result type, size limits.
@@ -28,6 +28,47 @@ import type { FetchResult, SafeFetchOptions, } from "./types";
  * @param options - Fetch options with safety extensions
  * @returns FetchResult with parsed data or error
  */
+
+/** Combine an external signal with an internal timeout signal. */
+function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortSignal,): AbortSignal {
+  if (!external) { return timeoutSignal; }
+  const combined = new AbortController();
+  if (external.aborted) { combined.abort(); }
+  else { external.addEventListener("abort", () => combined.abort(), { once: true, },); }
+  if (timeoutSignal.aborted) { combined.abort(); }
+  else { timeoutSignal.addEventListener("abort", () => combined.abort(), { once: true, },); }
+  return combined.signal;
+}
+
+/**
+ * Serialize a request body: strings pass through (avoids double-serialization),
+ * other values are JSON-stringified. Returns undefined for null bodies or
+ * when stringification fails.
+ */
+function serializeBody(body: unknown,): string | undefined {
+  if (body === undefined || body === null) { return undefined; }
+  if (typeof body === "string") { return body; }
+  const jsonResult = safeJsonStringify(body,);
+  return jsonResult.ok ? jsonResult.value : undefined;
+}
+
+/** Merge auth headers with caller headers and set Content-Type for JSON bodies. */
+function buildRequestHeaders(
+  provided: HeadersInit | undefined,
+  auth: FetchAuth | undefined,
+  serializedBody: string | undefined,
+): Headers {
+  const headers = new Headers(provided ?? {},);
+  const authHeaders = buildAuthHeaders(auth,);
+  for (const [key, value,] of Object.entries(authHeaders,)) {
+    headers.set(key, value,);
+  }
+  if (serializedBody && !headers.has("Content-Type",)) {
+    headers.set("Content-Type", "application/json",);
+  }
+  return headers;
+}
+
 export async function safeFetch<T = unknown,>(
   url: string,
   options: SafeFetchOptions = {},
@@ -47,43 +88,15 @@ export async function safeFetch<T = unknown,>(
   // Build AbortSignal with timeout
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout,);
-  const combinedSignal = externalSignal
-    ? (() => {
-      const combined = new AbortController();
-      if (externalSignal.aborted) { combined.abort(); }
-      else { externalSignal.addEventListener("abort", () => combined.abort(), { once: true, },); }
-      if (controller.signal.aborted) { combined.abort(); }
-      else { controller.signal.addEventListener("abort", () => combined.abort(), { once: true, },); }
-      return combined.signal;
-    })()
-    : controller.signal;
+  const combinedSignal = combineSignals(externalSignal, controller.signal,);
 
   try {
-    // Safely serialize body if provided.
-    // If body is already a string (e.g. from jsonBody()), use it as-is
-    // to avoid double-serialization.
-    let serializedBody: string | undefined;
-    if (body !== undefined && body !== null) {
-      if (typeof body === "string") {
-        serializedBody = body;
-      } else {
-        const jsonResult = safeJsonStringify(body,);
-        if (!jsonResult.ok) {
-          return { ok: false, error: jsonResult.error, };
-        }
-        serializedBody = jsonResult.value;
-      }
+    const serializedBody = serializeBody(body,);
+    if (body !== undefined && body !== null && serializedBody === undefined) {
+      return { ok: false, error: new Error("body serialization failed",), };
     }
 
-    // Merge auth headers with any provided headers
-    const authHeaders = buildAuthHeaders(auth,);
-    const headers = new Headers(fetchOptions.headers ?? {},);
-    for (const [key, value,] of Object.entries(authHeaders,)) {
-      headers.set(key, value,);
-    }
-    if (serializedBody && !headers.has("Content-Type",)) {
-      headers.set("Content-Type", "application/json",);
-    }
+    const headers = buildRequestHeaders(fetchOptions.headers, auth, serializedBody,);
 
     const response = await fetch(url, {
       ...fetchOptions,

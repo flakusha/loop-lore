@@ -17,9 +17,9 @@ export interface UndoEditArgs {
  * @param args.assetId - Asset ID to undo edit for
  * @returns Undo result with restored asset ID
  */
-export async function undoEdit(
+export function undoEdit(
   { assetId, }: UndoEditArgs,
-): Promise<UndoRedoResult> {
+): UndoRedoResult {
   const history = editHistories.get(assetId,);
   if (!history || history.currentEntryIndex < 0) {
     return { success: false, error: "No edits to undo", };
