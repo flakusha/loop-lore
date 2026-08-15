@@ -14,11 +14,11 @@ import { uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
 import { jsonCreated, requireUserId, } from "../http-utils";
 import { dispatchCommand, } from "./command";
+import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
 import { maybeAutoReply, } from "./reply";
 import { autoRenameChat, } from "./transitions";
-import { handleSceneTransitions, } from "./handle-scene-transitions";
 import type { HandlerOpts, } from "./types";
 
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
