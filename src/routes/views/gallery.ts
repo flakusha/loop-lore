@@ -47,7 +47,8 @@ async function serveGalleryGrid(database: Kysely<DB>, params?: URLSearchParams,)
       case "video": {
         return `<div class="file-icon">🎬</div>`;
       }
-      default: {
+      case "other":
+      case "memory": {
         return `<div class="file-icon">📄</div>`;
       }
     }

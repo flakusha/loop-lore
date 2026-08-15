@@ -731,7 +731,7 @@ describe("chatsRoutes", () => {
       relationship_impact: "[]",
       mood_impact: "[]",
       unlock_conditions: "[]",
-      selected: 0,
+      status: "available",
       created_at: new Date().toISOString(),
     },).execute();
 

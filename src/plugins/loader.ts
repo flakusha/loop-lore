@@ -64,7 +64,7 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   }
 
   for (const row of rawStates) {
-    registry.setEnabled(row.name, row.enabled === 1);
+    registry.setEnabled(row.name, row.status === "active");
   }
 
   for (const { origin, dir } of PLUGIN_DIRS) {
@@ -82,90 +82,74 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
     pluginDirs.sort((a, b) => a.localeCompare(b));
 
     for (const pluginName of pluginDirs) {
-      const pluginDir = join(fullDir, pluginName);
-      const pluginFile = join(pluginDir, "plugin.ts");
-
-      if (!existsSync(pluginFile)) continue;
-
-      try {
-        const mod = (await import(/* @vite-ignore */ pluginFile)) as Record<string, unknown>;
-        const manifest = mod.plugin as PluginManifest | undefined;
-
-        if (!manifest?.name) {
-          log.warn({ message: `Invalid plugin manifest`, pluginName });
-          continue;
-        }
-
-        registry.register({
-          manifest,
-          origin,
-          directory: pluginDir,
-        });
-
-        // Register static extension points from manifest
-        if (manifest.apiRoutes?.length) {
-          registry.addRoutes(manifest.name, manifest.apiRoutes);
-        }
-        if (manifest.tools?.length) {
-          registry.addTools(manifest.name, manifest.tools);
-        }
-        if (manifest.agentRoles?.length) {
-          registry.addAgentRoles(manifest.name, manifest.agentRoles);
-        }
-        if (manifest.uiComponents?.length) {
-          registry.addUIComponents(manifest.name, manifest.uiComponents);
-        }
-        if (manifest.eventHandlers?.length) {
-          registry.addEventHandlers(manifest.name, manifest.eventHandlers);
-        }
-        if (manifest.migrations?.length) {
-          registry.addMigrations(manifest.name, manifest.migrations);
-        }
-
-        // Call onLoad hook — allows dynamic registration
-        if (typeof manifest.onLoad === "function") {
-          await manifest.onLoad({
-            db,
-            logger: makeLogger(manifest.name),
-            registerTool: (def) => {
-              registry.addTools(manifest.name, [def]);
-            },
-            registerAgentRole: (def) => {
-              registry.addAgentRoles(manifest.name, [def]);
-            },
-            registerApiRoute: (def) => {
-              registry.addRoutes(manifest.name, [def]);
-            },
-            registerUiComponent: (def) => {
-              registry.addUIComponents(manifest.name, [def]);
-            },
-            registerEventHandler: (def) => {
-              registry.addEventHandlers(manifest.name, [def]);
-            },
-          });
-        }
-
-        loadOrder.push(manifest.name);
-        log.info({ message: `Loaded plugin`, plugin: manifest.name, origin });
-
-        // Persist new plugin to plugin_state if not already tracked
-        try {
-          await db
-            .insertInto("plugin_state")
-            .values({ name: manifest.name, enabled: 1, enabled_at: new Date().toISOString() })
-            .onConflict((oc) => oc.column("name").doNothing())
-            .execute();
-        } catch {
-          // Persisting plugin state is best-effort
-        }
-      } catch (error) {
-        log.error({
-          message: `Failed to load plugin`,
-          plugin: pluginName,
-          error: String(error),
-        });
-      }
+      await loadSinglePlugin(db, pluginName, join(fullDir, pluginName), origin,);
     }
+  }
+}
+
+/** Load a single plugin from its directory: manifest, hooks, and state. */
+async function loadSinglePlugin(
+  db: Kysely<DB>,
+  pluginName: string,
+  pluginDir: string,
+  origin: PluginOrigin,
+): Promise<void> {
+  const log = getLogger();
+  const pluginFile = join(pluginDir, "plugin.ts");
+  if (!existsSync(pluginFile)) { return; }
+
+  try {
+    const mod = (await import(/* @vite-ignore */ pluginFile)) as Record<string, unknown>;
+    const manifest = mod.plugin as PluginManifest | undefined;
+    if (!manifest?.name) {
+      log.warn({ message: `Invalid plugin manifest`, pluginName });
+      return;
+    }
+
+    registry.register({ manifest, origin, directory: pluginDir, });
+    registerManifestExtensions(manifest,);
+
+    // Call onLoad hook — allows dynamic registration
+    if (typeof manifest.onLoad === "function") {
+      await manifest.onLoad({
+        db,
+        logger: makeLogger(manifest.name,),
+        registerTool: (def) => { registry.addTools(manifest.name, [def,],); },
+        registerAgentRole: (def) => { registry.addAgentRoles(manifest.name, [def,],); },
+        registerApiRoute: (def) => { registry.addRoutes(manifest.name, [def,],); },
+        registerUiComponent: (def) => { registry.addUIComponents(manifest.name, [def,],); },
+        registerEventHandler: (def) => { registry.addEventHandlers(manifest.name, [def,],); },
+      });
+    }
+
+    loadOrder.push(manifest.name);
+    log.info({ message: `Loaded plugin`, plugin: manifest.name, origin });
+    await persistPluginState(db, manifest.name,);
+  } catch (error) {
+    log.error({ message: `Failed to load plugin`, plugin: pluginName, error: String(error,), });
+  }
+}
+
+/** Register static extension points declared in a plugin manifest. */
+function registerManifestExtensions(manifest: PluginManifest,): void {
+  if (manifest.apiRoutes?.length) { registry.addRoutes(manifest.name, manifest.apiRoutes,); }
+  if (manifest.tools?.length) { registry.addTools(manifest.name, manifest.tools,); }
+  if (manifest.agentRoles?.length) { registry.addAgentRoles(manifest.name, manifest.agentRoles,); }
+  if (manifest.uiComponents?.length) { registry.addUIComponents(manifest.name, manifest.uiComponents,); }
+  if (manifest.eventHandlers?.length) { registry.addEventHandlers(manifest.name, manifest.eventHandlers,); }
+  if (manifest.migrations?.length) { registry.addMigrations(manifest.name, manifest.migrations,); }
+}
+
+/** Persist a new plugin to plugin_state if not already tracked (best-effort). */
+async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> {
+  try {
+    await db
+      .insertInto("plugin_state")
+      .values({ name, status: "active", enabled_at: new Date().toISOString(), })
+      .onConflict((oc) => oc.column("name").doNothing(),)
+      .execute();
+  } catch {
+    // Persisting plugin state is best-effort
   }
 }
 

@@ -72,8 +72,8 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
       },),
     );
     expect(memCreateRes.status,).toBe(201,);
-    const created = (await memCreateRes.json()) as { id: string; pinned: number };
-    expect(created.pinned,).toBe(0,);
+    const created = (await memCreateRes.json()) as { id: string; pinned: boolean };
+    expect(created.pinned,).toBe(false,);
 
     const putRes = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/memories/${created.id}`, {
@@ -90,14 +90,14 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
       .select("pinned",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
-    expect(dbRow.pinned,).toBe(1,);
+    expect(dbRow.pinned,).toBe("pinned",);
 
     // And via GET response shape.
     const memGetRes = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/memories/${created.id}`,),
     );
-    const fetched = (await memGetRes.json()) as { pinned: number };
-    expect(fetched.pinned,).toBe(1,);
+    const fetched = (await memGetRes.json()) as { pinned: boolean };
+    expect(fetched.pinned,).toBe(true,);
   });
 
   test("POST {pinned:true} then PUT {pinned:false} clears the pin", async () => {
@@ -116,7 +116,7 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
       .select("pinned",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
-    expect(initialRow.pinned,).toBe(1,);
+    expect(initialRow.pinned,).toBe("pinned",);
 
     const putRes = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/memories/${created.id}`, {
@@ -132,6 +132,6 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
       .select("pinned",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
-    expect(clearedRow.pinned,).toBe(0,);
+    expect(clearedRow.pinned,).toBe("unpinned",);
   });
 });

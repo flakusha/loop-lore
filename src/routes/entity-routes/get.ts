@@ -5,6 +5,7 @@ import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonResponse, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
+import { applyResponseTransforms, } from "./helpers";
 import type { EntityConfig, } from "./types";
 
 export function getRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
@@ -31,7 +32,7 @@ export function getRoutes(config: EntityConfig, opts: { database: Db; config: Co
         .executeTakeFirst();
 
       if (!entity) { return notFound(`${config.entityName} not found`,); }
-      return jsonResponse(entity,);
+      return jsonResponse(applyResponseTransforms(config, entity,),);
     }, {
       response: {
         200: SuccessResponse,

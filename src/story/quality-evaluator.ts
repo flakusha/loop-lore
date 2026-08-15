@@ -96,7 +96,7 @@ export class QualityEvaluator {
     for (const d of Object.values(details,)) {
       if (d.score < lowest) { lowest = d.score; }
     }
-    if (lowest < thresholds.escalate && !escalationReason) {
+    if (!escalationReason && lowest < thresholds.escalate) {
       escalationReason = `Dimension score ${lowest} below escalation threshold`;
     }
 

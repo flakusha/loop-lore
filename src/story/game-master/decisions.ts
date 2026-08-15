@@ -6,6 +6,7 @@
  */
 import type { GmGuidance, } from "../../chat/types/config";
 import { GameMasterType, } from "../../db/enums";
+import { TurnStatus, } from "../../db/enums-story/turns";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { GM_DECISIONS, } from "../gm/decisions/registry";
 import type { GameMasterDecision, StoryContext, } from "../types";
@@ -15,7 +16,7 @@ import type { BuildResultOptions, GmState, GmTurnResult, } from "./types";
 export async function getGmDecision(
   state: GmState,
   context: StoryContext,
-  debugActorId?: string,
+  debugActorId: string | null = null,
 ): Promise<GameMasterDecision> {
   const turnContext = {
     chatMode: "story" as const,
@@ -24,7 +25,7 @@ export async function getGmDecision(
 
   // Human-GM guidance can pin the next speaker or bias selection.
   const guidance = state.gmGuidance;
-  let actorId: string | null = debugActorId ?? null;
+  let actorId: string | null = debugActorId;
   if (!actorId && guidance) {
     actorId = resolveGuidedActor(guidance, context, state.turnManager.state?.currentActorId ?? null,);
   }
@@ -75,9 +76,11 @@ function resolveGuidedActor(
   const priority = guidance.turnPriority;
   if (priority && Object.keys(priority,).length > 0) {
     const weight: Record<string, number> = { high: 3, medium: 2, low: 1, };
-    const ranked = Object.entries(priority,)
-      .filter(([id,],) => context.actors.some((a,) => a.id === id))
-      .sort((a, b,) => (weight[b[1]] ?? 0) - (weight[a[1]] ?? 0));
+    const ranked: [string, string,][] = [];
+    for (const [id, level,] of Object.entries(priority,)) {
+      if (context.actors.some((a,) => a.id === id)) { ranked.push([id, level,],); }
+    }
+    ranked.sort((a, b,) => (weight[b[1]] ?? 0) - (weight[a[1]] ?? 0));
     const top = ranked[0]?.[0];
     if (top && top !== lastActorId) { return top; }
   }
@@ -102,7 +105,7 @@ export async function recordGmTurn(
       actor_id: decision.nextActorId,
       turn_type: "character_action",
       prompt_sent: decision.turnPrompt,
-      status: "pending",
+      status: TurnStatus.Pending,
       regeneration_count: 0,
       world_events: "[]",
       quest_progress: "[]",

@@ -1,5 +1,5 @@
 import type { Kysely, } from "kysely";
-import type { QuestType as QuestTypeEnum, } from "../../db/enums";
+import type { QuestCategory as QuestCategoryEnum, QuestType as QuestTypeEnum, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { notifyQuestUpdate, } from "../../notifications/service";
 import { QuestEngine, } from "../../story/quest-engine";
@@ -25,7 +25,7 @@ export async function checkQuestAccess(
     .select(["owner_id",],)
     .where("id", "=", questRow.world_id,)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo")) { return null; }
+  if (!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId)) { return null; }
   return questRow;
 }
 
@@ -40,7 +40,7 @@ export async function checkWorldAccess(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  return !(!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin" && userRole !== "solo"));
+  return !(!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId));
 }
 
 export async function handleListQuests(
@@ -96,6 +96,7 @@ export async function handleCreateQuest(
     name: body.name as string,
     description: (body.description as string) ?? null,
     type: (body.type as QuestTypeEnum) ?? "collection",
+    category: (body.category as QuestCategoryEnum) ?? "side",
     config: (body.config || {}) as unknown as QuestConfig,
     target: Number(body.target,) || 10,
     priority: Number(body.priority,) || 0,

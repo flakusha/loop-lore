@@ -150,7 +150,7 @@ export function handleDocsRequest(
 
   // Path traversal guard: must be under DOCS_PATH with trailing separator
   const docsPathWithSlash = `${DOCS_PATH}/`;
-  if (!fullPath.startsWith(docsPathWithSlash,) && fullPath !== DOCS_PATH) {
+  if (fullPath !== DOCS_PATH && !fullPath.startsWith(docsPathWithSlash,)) {
     return new Response("Documentation not found", { status: 404, },);
   }
   if (existsSync(fullPath,)) {
@@ -168,6 +168,7 @@ export function handleDocsRequest(
 export function createNonApiHandler(
   docs: { public?: string[] },
 ): (request: Request,) => Promise<Response> {
+  // eslint-disable-next-line @typescript-eslint/require-await -- RequestHandler type requires Promise<Response>; async keeps signature honest
   return async (request: Request,): Promise<Response> => {
     const url = new URL(request.url,);
 
@@ -178,7 +179,7 @@ export function createNonApiHandler(
 
     // Path traversal guard: must be under PUBLIC_DIR
     const publicDirWithSlash = `${PUBLIC_DIR}/`;
-    if (publicPath.startsWith(publicDirWithSlash,) || publicPath === PUBLIC_DIR) {
+    if (publicPath === PUBLIC_DIR || publicPath.startsWith(publicDirWithSlash,)) {
       let fullPath = publicPath;
 
       if (!existsSync(fullPath,)) {
