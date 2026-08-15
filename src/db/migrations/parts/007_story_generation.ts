@@ -97,6 +97,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("name", "text", (col,) => col.notNull(),)
     .addColumn("description", "text",)
     .addColumn("type", "text", (col,) => col.notNull(),)
+    .addColumn("category", "text", (col,) => col.notNull().defaultTo("side",),)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
     .addColumn("priority", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("config", "text", (col,) => col.notNull().defaultTo("{}",),)

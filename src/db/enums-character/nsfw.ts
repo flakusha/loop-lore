@@ -1,4 +1,7 @@
 // ── NSFW Intimacy Levels ─────────────────────────────────
+// ── State Machine ──────────────────────────────────────────
+import { createMachine, type StateDef, } from "../state";
+
 export const IntimacyLevel = {
   Strangers: 0,
   Acquaintances: 10,
@@ -47,6 +50,24 @@ export const NsfwEncounterType = {
   Tender: "tender",
 } as const;
 export type NsfwEncounterType = (typeof NsfwEncounterType)[keyof typeof NsfwEncounterType];
+
+// ── NSFW Encounter Status ────────────────────────────────
+export const NsfwEncounterStatus = {
+  Active: "active",
+  Completed: "completed",
+} as const;
+export type NsfwEncounterStatus = (typeof NsfwEncounterStatus)[keyof typeof NsfwEncounterStatus];
+
+const nsfwEncounterStatusDef: StateDef<NsfwEncounterStatus> = {
+  values: ["active", "completed",] as const,
+  initial: "active",
+  transitions: {
+    active: ["completed",],
+    completed: [],
+  },
+  terminal: ["completed",],
+};
+export const nsfwEncounterStatusMachine = createMachine(nsfwEncounterStatusDef,);
 
 // ── NSFW Content Intensity ───────────────────────────────
 export const ContentIntensity = {
