@@ -1,6 +1,6 @@
 # TASK: Chat Message Search & Filter
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — backend routes + tests exist, FTS5 schema + search API + in-chat UI pending
 **Priority:** Medium
 **Effort:** Med–High
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)
