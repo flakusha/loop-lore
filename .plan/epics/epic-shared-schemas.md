@@ -1,6 +1,6 @@
 # EPIC: Shared Schemas — Reputation, Consent, NSFW Content Rating
 
-**Status:** 🟡 In Progress
+**Status:** 🟢 Complete (implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -216,42 +216,39 @@ const NSFW_RATING_HIERARCHY = [
 
 ### Integration (Medium Priority)
 
-- [ ] **Social Integration**
-  - Replace existing reputation schema
-  - Update reputation change mechanics
-  - Add decay/refresh mechanics
+- [x] **Social Integration** (verified 2026-08-15 — `src/nsfw/social-integration.ts` uses shared `ReputationScore` + decay)
+  - Replace existing reputation schema — ✅ unified `ReputationScore` in `src/schemas/reputation.ts`
+  - Update reputation change mechanics — ✅ `applyReputationChange` in canonical schema, NSFW adapter in social-integration
+  - Add decay/refresh mechanics — ✅ `decay_rate` field + `applyReputationDecay`
 
-- [ ] **Faction Integration**
-  - Replace `FactionStanding` with unified schema
-  - Update faction reputation mechanics
-  - Add faction-specific modifiers
+- [x] **Faction Integration** (verified 2026-08-15 — `src/rpg/integration-registry/edges/faction.ts` references `ReputationScore`)
+  - Replace `FactionStanding` with unified schema — ✅ contract in `src/rpg/integration-registry/contracts.ts`
+  - Update faction reputation mechanics — ✅
+  - Add faction-specific modifiers — ✅ `ReputationModifier` with `source` tracking
 
-- [ ] **NSFW Integration**
-  - Replace existing consent fields
-  - Add consent audit trail
-  - Integrate content rating enforcement
+- [x] **NSFW Integration** (verified 2026-08-15 — `src/middleware/nsfw-gate/consent.ts` uses shared `ConsentState`)
+  - Replace existing consent fields — ✅ unified `ConsentState` in `src/schemas/consent.ts`
+  - Add consent audit trail — ✅ `audit_trail: ConsentAuditEntry[]`
+  - Integrate content rating enforcement — ✅ `isRatingAllowed` + `createRatingEnforcement` in `src/schemas/nsfw-rating.ts` (canonical)
 
-- [ ] **Chat Lifecycle Integration**
-  - Add `ConsentState` to NSFW toggle
-  - Add content rating enforcement
-  - Add moderation audit trail
+- [x] **Chat Lifecycle Integration** (verified 2026-08-15 — nsfw-gate middleware consumes `ConsentState`)
+  - Add `ConsentState` to NSFW toggle — ✅
+  - Add content rating enforcement — ✅ rating enforced at generation boundary
+  - Add moderation audit trail — ✅ `recordConsentAction` audit
 
 ### Testing & Validation (Medium Priority)
 
-- [ ] **Schema Validation Tests**
-  - Test reputation score calculations
-  - Test consent state transitions
-  - Test rating enforcement logic
+- [x] **Schema Validation Tests** — ✅ complete 2026-08-15:
+  - `src/schemas/reputation.test.ts` — tier boundaries, clamping, factory (8 tests)
+  - `src/schemas/consent.test.ts` — state transitions, audit trail, scope checks (11 tests)
+  - `src/schemas/nsfw-rating.test.ts` — severity model, effective limit, enforcement (7 tests)
 
-- [ ] **Integration Tests**
-  - Test Social + NSFW reputation changes
-  - Test Chat Lifecycle + NSFW consent
-  - Test Character Core + NSFW rating enforcement
+- [x] **Integration Tests** — ✅ complete 2026-08-15:
+  - `src/nsfw/social-integration.test.ts` — Social+NSFW reputation changes, seduction prerequisites per tier, apply/decay lifecycle (16 tests)
+  - `src/middleware/nsfw-gate/consent.test.ts` — Chat Lifecycle consent + rating enforcement via DB-backed gate (7 tests)
+  - CharCore rating enforcement covered via `checkNsfwWithConsent` (actor `content_rating` → effective limit)
 
-- [ ] **Migration Tests**
-  - Test Social schema migration
-  - Test Faction schema migration
-  - Test NSFW schema migration
+- [ ] **Migration Tests** — N/A by design: schemas are in-memory TypeScript contracts (no DB tables/migrations exist for reputation/consent/rating). Schema adoption verified by integration tests above. If a future `consent_state` DB table lands (Phase 2 persistence), migration tests become applicable then.
 
 ## Implementation Notes
 
@@ -388,11 +385,11 @@ const NSFW_RATING_HIERARCHY = [
 
 ## Related Resources
 
-- [Character Core System](docs/spec/character-core.md)
-- [Chat Lifecycle & Moderation](docs/spec/chat-lifecycle.md)
-- [Social Interaction Design](docs/spec/social.md)
-- [Faction Reputation](docs/spec/faction.md)
-- [NSFW System Design](docs/spec/nsfw-design.md)
-- [Economy System](docs/spec/economy.md)
-- [Battle System](docs/spec/battle-design.md)
+- [Character Core System](docs/spec/character-spec.md)
+- [Chat Lifecycle & Moderation](docs/spec/chat-privacy.md)
+- [Social Interaction Design](docs/spec/social-interaction.md)
+- [Faction Reputation](docs/spec/faction-reputation.md)
+- [NSFW System Design](docs/spec/nsfw.md)
+- [Economy System](docs/spec/economy-trading.md)
+- [Battle System](docs/spec/battle.md)
 - [Plugin System](docs/spec/plugin-system.md)

@@ -301,15 +301,19 @@ interface DiseaseRisk {
 
 ## Files
 
-- `src/nsfw/housing-integration.ts` — Housing privacy and comfort
-- `src/nsfw/weather-integration.ts` — Weather mood and pheromones
-- `src/nsfw/social-integration.ts` — Reputation and skills
-- `src/nsfw/disease-integration.ts` — Reproductive health and STDs
-- `src/nsfw/consent.ts` — Consent state tracking
-- `src/nsfw/rating.ts` — Content rating enforcement
-- `src/db/schema-nsfw.ts` — NSFW database tables
+- `src/nsfw/social-integration.ts` — Reputation and skills (canonical `ReputationScore` from `src/schemas/`)
+- `src/middleware/nsfw-gate/consent.ts` — Consent state tracking (canonical `ConsentState` from `src/schemas/`)
+- `src/schemas/reputation.ts` — Canonical reputation contract (tiers, modifiers, apply/decay)
+- `src/schemas/consent.ts` — Canonical consent contract (audit trail, revocation)
+- `src/schemas/nsfw-rating.ts` — Canonical rating enforcement contract
 - `src/routes/nsfw.ts` — NSFW API endpoints
 - `docs/spec/nsfw-integration.md` — Integration documentation
+
+> **2026-08-15 dedup note**: housing/weather/disease integration scaffolding
+> (`src/nsfw/{housing,weather}-integration.ts`, `src/nsfw/disease-integration/`,
+> `src/nsfw/integration-schemas/`) was removed — zero production importers,
+> divergent type shapes (directed camelCase `ReputationScore` vs canonical
+> scalar snake_case). Build fresh against canonical schemas when wiring G6/G7/G9.
 
 ## Related Epics
 
@@ -416,11 +420,11 @@ interface DiseaseRisk {
 
 ## Related Resources
 
-- [NSFW System Design Doc](docs/spec/nsfw-design.md)
-- [Housing System Specs](docs/spec/housing.md)
-- [Weather System](docs/spec/weather.md)
-- [Social Interaction Design](docs/spec/social.md)
-- [Disease System](docs/spec/disease.md)
-- [Character Core System](docs/spec/character-core.md)
-- [Chat Lifecycle & Moderation](docs/spec/chat-lifecycle.md)
+- [NSFW System Design Doc](docs/spec/nsfw.md)
+- [Housing System Specs](docs/spec/nsfw-integration.md)
+- [Weather System](docs/spec/weather-environment.md)
+- [Social Interaction Design](docs/spec/social-interaction.md)
+- [Disease System](docs/spec/disease-poison.md)
+- [Character Core System](docs/spec/character-spec.md)
+- [Chat Lifecycle & Moderation](docs/spec/chat-privacy.md)
 - [Plugin System](docs/spec/plugin-system.md)

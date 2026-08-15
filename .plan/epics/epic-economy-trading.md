@@ -363,14 +363,50 @@ interface GuildTax {
 
 ## Integration Points
 
-- **RPG Mechanics** — CHA for barter, INT for trading
-- **Inventory System** — Item management
-- **World & Locations** — Markets, banks, auction houses
-- **Faction System** — Faction currency, reputation
-- **Crime & Stealth** — Black market operates on market mechanics with crime-specific pricing; stolen goods enter economy
-- **Crafting System** — Crafted item sales
-- **Guild System** — Guild banking, taxes
-- **Quest System** — Trading objectives
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | CHA for barter, INT for trading | Barter/trade skill resolution |
+| Inventory System | Item management | Item valuation, trading inventory |
+| World & Locations | Markets, banks, auction houses | Economic infrastructure locations |
+| Faction & Reputation | Faction currency, reputation | Reputation-gated prices, faction trade agreements |
+| Crime & Stealth | Black market mechanics | Black market pricing, stolen goods enter economy (G12) |
+| Crafting & Professions | Crafted item supply | Crafted item sales, supply chain |
+| Housing & Base Building | Storage, trading posts | Player housing as trade hub |
+| Quest System | Trading objectives | Trade/escort objectives |
+| Social Interaction | Barter relationships | Reputation-gated trade favors |
+| Guild System | Guild banking, taxes | Guild treasury, member trade taxes |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Currency ledger, item economics | XP-for-trade rewards, market-driven loot value |
+| Crafting & Professions | Item pricing, markets | Crafted item value, market sales |
+| Housing & Base Building | Trading posts | Housing-based trade infrastructure |
+| Social Interaction | Barter mechanics | Trade resolution, favor economy |
+| Faction & Reputation | Faction currency | Faction stores, trade agreements |
+| Crime & Stealth | Market mechanics | Black market operates on economy pricing (G12) |
+| Quest System | Trade objectives | Trade quest rewards/pricing |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `CurrencyLedger` | RPG, Housing, Faction | Shared currency/wealth model |
+| `TradeOffer` | Social, Quest, Crime | Unified trade/negotiation model |
+| `ReputationScore` | Faction, Social | Reputation-gated pricing consistency |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `economy.trade_completed` | emits → Social, Quest | Trade results update reputation/quest progress |
+| `economy.market_changed` | emits → Crime, Crafting | Market shifts affect black market pricing |
+| `rpg.loot_dropped` | subscribes ← RPG, Battle | Loot feeds inventory + economy (RPG hub) |
+
+---
 
 ## Open Questions
 
