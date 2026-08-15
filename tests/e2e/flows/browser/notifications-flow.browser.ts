@@ -27,7 +27,7 @@ describe("Notifications flow E2E", () => {
         type: "system",
         title: NOTIF_TITLE,
         body: "Seeded for e2e",
-        read: 0,
+        read: "unread",
       },)
       .execute();
   }, 90_000,);
@@ -50,7 +50,7 @@ describe("Notifications flow E2E", () => {
     try {
       await gotoNotifications(page,);
       const item = page.locator(`[data-testid='notification-${NOTIF_ID}']`,);
-      const cls = await item.getAttribute("class");
+      const cls = await item.getAttribute("class",);
       expect(cls,).toContain("unread",);
     } finally {
       errors.assert();
@@ -75,7 +75,7 @@ describe("Notifications flow E2E", () => {
         .where("id", "=", NOTIF_ID,)
         .executeTakeFirst();
       expect(row,).not.toBeNull();
-      expect(row!.read,).toBe(1,);
+      expect(row!.read,).toBe("read",);
     } finally {
       errors.assert();
       errors.detach();
