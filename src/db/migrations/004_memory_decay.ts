@@ -52,7 +52,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema
     .alterTable("actor_memories",)
-    .addColumn("pinned", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("pinned", "text", (col,) => col.notNull().defaultTo("unpinned",),)
     .execute();
   // ── Memory privacy and shareability ───────────────────────
   await database.schema

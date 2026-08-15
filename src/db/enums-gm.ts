@@ -5,6 +5,9 @@
  */
 
 // ── Shadow Note Types ──────────────────────────────────────
+// ── State Machine ──────────────────────────────────────────
+import { createMachine, type StateDef, } from "./state";
+
 export const ShadowNoteType = {
   Foreshadowing: "foreshadowing",
   Consequence: "consequence",
@@ -34,3 +37,21 @@ export const WhiteneoteScope = {
   World: "world",
 } as const;
 export type WhiteneoteScope = (typeof WhiteneoteScope)[keyof typeof WhiteneoteScope];
+
+// ── Shadow Note Reveal State ───────────────────────────────
+export const ShadowNoteStatus = {
+  Hidden: "hidden",
+  Revealed: "revealed",
+} as const;
+export type ShadowNoteStatus = (typeof ShadowNoteStatus)[keyof typeof ShadowNoteStatus];
+
+const shadowNoteStatusDef: StateDef<ShadowNoteStatus> = {
+  values: ["hidden", "revealed",] as const,
+  initial: "hidden",
+  transitions: {
+    hidden: ["revealed",],
+    revealed: [],
+  },
+  terminal: ["revealed",],
+};
+export const shadowNoteStatusMachine = createMachine(shadowNoteStatusDef,);

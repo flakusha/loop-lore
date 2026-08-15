@@ -4,7 +4,7 @@
  * Provides helper functions for implementing optimistic locking using
  * format_version columns. Prevents lost updates in concurrent scenarios.
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "./schema";
 
 /**
@@ -34,25 +34,16 @@ export interface OptimisticUpdateResult {
  */
 export async function updateWithVersionCheck(
   db: Kysely<DB>,
-  table: string,
+  table: keyof DB,
   id: string,
   currentVersion: number,
   updates: Record<string, unknown>,
 ): Promise<OptimisticUpdateResult> {
   const now = new Date().toISOString();
-
-  const result = await db
-    .updateTable(table as never,)
-    .set({
-      ...updates,
-      format_version: currentVersion + 1,
-      updated_at: now,
-    } as never,)
-    .where("id" as never, "=", id as never,)
-    .where("format_version" as never, "=", currentVersion as never,)
-    .executeTakeFirst();
-
-  const rowsAffected = Number(result.numUpdatedRows,);
+  const rowsAffected = await applyOptimisticUpdate(db, table, id, currentVersion, updates, {
+    bumpUpdatedAt: true,
+    now,
+  },);
 
   if (rowsAffected === 0) {
     return {
@@ -66,6 +57,43 @@ export async function updateWithVersionCheck(
     ok: true,
     rowsAffected,
   };
+}
+
+/**
+ * Build and execute the optimistic UPDATE via raw SQL.
+ *
+ * The table name and column set are dynamic (callers pass arbitrary tables
+ * and partial update objects), which Kysely's typed builder cannot express
+ * for a generic table — so the statement is composed with the `sql`
+ * template (ref/value interpolation, no string concatenation of values).
+ *
+ * @returns Number of rows affected by the UPDATE
+ */
+async function applyOptimisticUpdate(
+  db: Kysely<DB>,
+  table: keyof DB,
+  id: string,
+  currentVersion: number,
+  updates: Record<string, unknown>,
+  opts: { bumpUpdatedAt: boolean; now?: string },
+): Promise<number> {
+  const entries = Object.entries({
+    ...updates,
+    format_version: currentVersion + 1,
+    ...(opts.bumpUpdatedAt && { updated_at: opts.now!, }),
+  },);
+
+  const assignments: ReturnType<typeof sql.ref>[] = [];
+  for (const [column, value,] of entries) {
+    assignments.push(sql`${sql.ref(column,)} = ${sql.val(value,)}`,);
+  }
+  const result = await sql`
+    update ${sql.table(table,)}
+    set ${sql.join(assignments, sql`, `,)}
+    where ${sql.ref("id",)} = ${id} and ${sql.ref("format_version",)} = ${currentVersion}
+  `.execute(db,);
+
+  return Number(result.numAffectedRows,);
 }
 
 /**
@@ -83,22 +111,12 @@ export async function updateWithVersionCheck(
  */
 export async function updateWithVersionCheckRaw(
   db: Kysely<DB>,
-  table: string,
+  table: keyof DB,
   id: string,
   currentVersion: number,
   updates: Record<string, unknown>,
 ): Promise<OptimisticUpdateResult> {
-  const result = await db
-    .updateTable(table as never,)
-    .set({
-      ...updates,
-      format_version: currentVersion + 1,
-    } as never,)
-    .where("id" as never, "=", id as never,)
-    .where("format_version" as never, "=", currentVersion as never,)
-    .executeTakeFirst();
-
-  const rowsAffected = Number(result.numUpdatedRows,);
+  const rowsAffected = await applyOptimisticUpdate(db, table, id, currentVersion, updates, { bumpUpdatedAt: false, },);
 
   if (rowsAffected === 0) {
     return {

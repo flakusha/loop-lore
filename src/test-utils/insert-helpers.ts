@@ -33,6 +33,7 @@ import type {
   FantasyCategory,
   GatheringNodeType,
   GenerationStatus,
+  InviteStatus,
   ItemCategory,
   ItemRarity,
   ItemVisibility,
@@ -50,20 +51,30 @@ import type {
   MessageVisibility,
   ModelRole,
   NarrativeStyle,
+  NodeInstanceState,
   NoteCategory,
+  NotificationStatus,
+  NsfwAccessStatus,
+  NsfwEncounterStatus,
   NsfwEncounterType,
   NsfwLocationType,
   PinnedState,
+  PlayerAchievementStatus,
+  PlaythroughStatus,
+  PluginStatus,
   ProfessionBonusType,
   ProfessionTitle,
   PublicationStatus,
   QualityLevel,
+  QuestCategory,
   QuestProgressStatus,
   QuestStatus,
   QuestType,
   RelationshipType,
   SeductionSkillCategory,
+  ShadowNoteStatus,
   ShadowNoteType,
+  SkillLockState,
   StackableState,
   StorageBackend,
   SyntheticDataStatus,
@@ -75,6 +86,7 @@ import type {
   UserRole,
   UserStatus,
   VisibilityOverride,
+  VnChoiceStatus,
   WhiteneoteScope,
   WhiteneoteType,
   WorldKind,
@@ -401,6 +413,7 @@ export async function insertChats(
     nsfw_override?: string | null;
     name_source?: string | null;
     template_id?: string | null;
+    visibility?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({
@@ -548,7 +561,7 @@ export async function insertActorMemories(
     world_id?: string | null;
     user_id?: string | null;
     scope?: Generated<string>;
-    pinned?: Generated<number>;
+    pinned?: Generated<PinnedState>;
     privacy?: Generated<string>;
     shareability?: string | null;
   },
@@ -722,7 +735,7 @@ export async function insertPluginState(
   db: Db,
   opts?: {
     name?: Generated<string>;
-    enabled?: Generated<number>;
+    status?: Generated<PluginStatus>;
     enabled_at?: string | null;
     disabled_at?: string | null;
     created_at?: Generated<string>;
@@ -766,7 +779,7 @@ export async function insertNotifications(
     id?: Generated<string>;
     body?: string | null;
     link?: string | null;
-    read?: Generated<number>;
+    read?: Generated<NotificationStatus>;
     data?: string | null;
     created_at?: Generated<string>;
   },
@@ -985,6 +998,7 @@ export async function insertQuests(
   opts?: {
     id?: Generated<string>;
     description?: string | null;
+    category?: Generated<QuestCategory>;
     status?: Generated<QuestStatus>;
     priority?: Generated<number>;
     config?: Generated<string>;
@@ -1777,7 +1791,7 @@ export async function insertGatheringNodeInstances(
   opts?: {
     id?: Generated<string>;
     location_id?: string | null;
-    is_depleted?: Generated<number>;
+    state?: Generated<NodeInstanceState>;
     respawn_at?: string | null;
   },
 ): Promise<void> {
@@ -1968,7 +1982,7 @@ export async function insertNsfwEncounters(
     current_phase?: Generated<number>;
     outcomes?: Generated<string>;
     content_tags?: Generated<string>;
-    completed?: Generated<number>;
+    status?: Generated<NsfwEncounterStatus>;
   },
 ): Promise<void> {
   await db.insertInto("nsfw_encounters",).values({
@@ -2225,8 +2239,7 @@ export async function insertNsfwUserPreferences(
     id?: Generated<string>;
     nsfw_enabled?: Generated<number>;
     max_rating?: Generated<string>;
-    blocked_from_nsfw?: Generated<number>;
-    banned_from_nsfw?: Generated<number>;
+    access_status?: Generated<NsfwAccessStatus>;
     shadow_nsfw?: Generated<number>;
     block_reason?: string | null;
     banned_at?: string | null;
@@ -2349,7 +2362,7 @@ export async function insertShadowNotes(
   type: ShadowNoteType,
   content: string,
   created_at: string,
-  opts?: { id?: Generated<string>; revealed?: Generated<number> },
+  opts?: { id?: Generated<string>; status?: Generated<ShadowNoteStatus> },
 ): Promise<void> {
   await db.insertInto("shadow_notes",).values({
     id: crypto.randomUUID(),
@@ -2399,7 +2412,7 @@ export async function insertVnChoices(
     relationship_impact?: Generated<string>;
     mood_impact?: Generated<string>;
     unlock_conditions?: Generated<string>;
-    selected?: Generated<number>;
+    status?: Generated<VnChoiceStatus>;
     selected_at?: string | null;
   },
 ): Promise<void> {
@@ -2572,6 +2585,8 @@ export async function insertChatSetupTemplates(
     visual_novel?: Generated<number>;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    features?: string | null;
+    visibility?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("chat_setup_templates",).values({
@@ -2678,7 +2693,7 @@ export async function insertChatInvites(
     expires_at?: string | null;
     max_uses?: number | null;
     uses?: Generated<number>;
-    revoked?: Generated<number>;
+    status?: Generated<InviteStatus>;
   },
 ): Promise<void> {
   await db.insertInto("chat_invites",).values({
@@ -2709,7 +2724,7 @@ export async function insertWorldInvites(
     expires_at?: string | null;
     max_uses?: number | null;
     uses?: Generated<number>;
-    revoked?: Generated<number>;
+    status?: Generated<InviteStatus>;
   },
 ): Promise<void> {
   await db.insertInto("world_invites",).values({
@@ -2758,7 +2773,7 @@ export async function insertPlayerAchievements(
     id?: Generated<string>;
     progress?: Generated<number>;
     max_progress?: Generated<number>;
-    is_unlocked?: Generated<number>;
+    status?: Generated<PlayerAchievementStatus>;
     unlocked_at?: string | null;
     claimed_at?: string | null;
     metadata?: Generated<string>;
@@ -2783,7 +2798,7 @@ export async function insertPlaythroughs(
     id?: Generated<string>;
     playthrough_number?: Generated<number>;
     difficulty?: Generated<string>;
-    is_completed?: Generated<number>;
+    status?: Generated<PlaythroughStatus>;
     ending_id?: string | null;
     ending_type?: string | null;
     completion_time?: Generated<number>;
@@ -2838,7 +2853,7 @@ export async function insertCharacterSkills(
     xp?: Generated<number>;
     proficiency?: Generated<string>;
     specialization?: string | null;
-    is_locked?: Generated<number>;
+    lock_state?: Generated<SkillLockState>;
     prerequisites?: Generated<string>;
     metadata?: Generated<string>;
     created_at?: Generated<string>;

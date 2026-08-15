@@ -66,7 +66,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createTable("plugin_state",)
     .addColumn("name", "text", (col,) => col.primaryKey(),)
-    .addColumn("enabled", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
     .addColumn("enabled_at", "text",)
     .addColumn("disabled_at", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
@@ -107,7 +107,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("title", "text", (col,) => col.notNull(),)
     .addColumn("body", "text",)
     .addColumn("link", "text",)
-    .addColumn("read", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("read", "text", (col,) => col.notNull().defaultTo("unread",),)
     .addColumn("data", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();

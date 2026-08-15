@@ -2,9 +2,12 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { Migration, } from "kysely/migration";
+import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "./index";
+import { assertMigrationsNotStale, } from "./migrate";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -294,5 +297,55 @@ describe("migration consistency flags", () => {
 
     await kysely.destroy();
     db.close();
+  });
+});
+
+// ── Migration staleness guard ───────────────────────────────
+
+describe("migration staleness guard", () => {
+  let db: Database;
+  let kysely: Kysely<unknown>;
+  let migrations: Record<string, Migration>;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, kysely, } = createTestKysely());
+    migrations = await loadAllMigrations();
+    const migrator = new Migrator({
+      db: kysely,
+      provider: { getMigrations: async () => migrations, },
+    },);
+    const { error, } = await migrator.migrateToLatest();
+    expect(error,).toBeUndefined();
+  },);
+
+  afterAll(async () => {
+    await kysely.destroy();
+    db.close();
+  },);
+
+  test("passes when every applied migration still exists", async () => {
+    await expect(assertMigrationsNotStale(kysely, migrations,),).resolves.toBeUndefined();
+  });
+
+  test("throws when a shipped migration is missing from the provider", async () => {
+    const first = MIGRATION_NAMES[0]!;
+    const { [first]: _dropped, ...filtered } = migrations;
+    await expect(assertMigrationsNotStale(kysely, filtered,),).rejects.toThrow(
+      /no longer exist|append-only|Recovery/,
+    );
+  });
+
+  test("error message names the missing migration", async () => {
+    const first = MIGRATION_NAMES[0]!;
+    const { [first]: _dropped, ...filtered } = migrations;
+    await expect(assertMigrationsNotStale(kysely, filtered,),).rejects.toThrow(first,);
+  });
+
+  test("passes on a fresh database without a kysely_migration table", async () => {
+    const { db: freshDb, kysely: fresh, } = createTestKysely();
+    await expect(assertMigrationsNotStale(fresh, migrations,),).resolves.toBeUndefined();
+    await fresh.destroy();
+    freshDb.close();
   });
 });

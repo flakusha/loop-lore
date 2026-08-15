@@ -115,7 +115,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("current_phase", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("outcomes", "text", (col,) => col.notNull().defaultTo("[]",),) // JSON array
     .addColumn("content_tags", "text", (col,) => col.notNull().defaultTo("[]",),) // JSON array
-    .addColumn("completed", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
     .execute();

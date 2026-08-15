@@ -13,6 +13,7 @@ import type {
   ChatType,
   ContentEncoding,
   EquipState,
+  InviteStatus,
   ItemCategory,
   KeyStatus,
   KeyType,
@@ -23,10 +24,16 @@ import type {
   MessageVisibility,
   ModelRole,
   NoteCategory,
+  NotificationStatus,
   PinnedState,
+  PlayerAchievementStatus,
+  PlaythroughStatus,
+  PluginStatus,
+  SkillLockState,
   TurnStrategy,
   UserRole,
   UserStatus,
+  VnChoiceStatus,
 } from "./enums";
 
 // ── users ────────────────────────────────────────────
@@ -116,6 +123,7 @@ export interface Chats {
   nsfw_override: string | null;
   name_source: string | null;
   template_id: string | null;
+  visibility: Generated<string>;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -252,7 +260,7 @@ export interface LogEntries {
 // ── plugin_state ────────────────────────────────────────────
 export interface PluginState {
   name: Generated<string>;
-  enabled: Generated<number>;
+  status: Generated<PluginStatus>;
   enabled_at: string | null;
   disabled_at: string | null;
   created_at: Generated<string>;
@@ -267,7 +275,7 @@ export interface Notifications {
   title: string;
   body: string | null;
   link: string | null;
-  read: Generated<number>;
+  read: Generated<NotificationStatus>;
   data: string | null;
   created_at: Generated<string>;
 }
@@ -390,7 +398,7 @@ export interface VnChoices {
   relationship_impact: Generated<string>;
   mood_impact: Generated<string>;
   unlock_conditions: Generated<string>;
-  selected: Generated<number>;
+  status: Generated<VnChoiceStatus>;
   selected_at: string | null;
   created_at: string;
 }
@@ -494,6 +502,8 @@ export interface ChatSetupTemplates {
   visual_novel: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  features: string | null;
+  visibility: string | null;
 }
 
 // ── world_timeline_events ────────────────────────────────────────────
@@ -552,7 +562,7 @@ export interface ChatInvites {
   expires_at: string | null;
   max_uses: number | null;
   uses: Generated<number>;
-  revoked: Generated<number>;
+  status: Generated<InviteStatus>;
 }
 
 // ── world_members ────────────────────────────────────────────
@@ -571,7 +581,7 @@ export interface WorldInvites {
   expires_at: string | null;
   max_uses: number | null;
   uses: Generated<number>;
-  revoked: Generated<number>;
+  status: Generated<InviteStatus>;
 }
 
 // ── achievements ────────────────────────────────────────────
@@ -598,7 +608,7 @@ export interface PlayerAchievements {
   achievement_id: string;
   progress: Generated<number>;
   max_progress: Generated<number>;
-  is_unlocked: Generated<number>;
+  status: Generated<PlayerAchievementStatus>;
   unlocked_at: string | null;
   claimed_at: string | null;
   metadata: Generated<string>;
@@ -613,7 +623,7 @@ export interface Playthroughs {
   world_id: string;
   playthrough_number: Generated<number>;
   difficulty: Generated<string>;
-  is_completed: Generated<number>;
+  status: Generated<PlaythroughStatus>;
   ending_id: string | null;
   ending_type: string | null;
   completion_time: Generated<number>;
@@ -651,7 +661,7 @@ export interface CharacterSkills {
   xp: Generated<number>;
   proficiency: Generated<string>;
   specialization: string | null;
-  is_locked: Generated<number>;
+  lock_state: Generated<SkillLockState>;
   prerequisites: Generated<string>;
   metadata: Generated<string>;
   created_at: Generated<string>;
