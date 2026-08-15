@@ -2,9 +2,9 @@
 name = "loop-lore-native"
 version = "0.3.0"
 edition = "2021"
-description = "Native BLAKE3 + zstd modules for loop-lore — pre-compiled hot binary samples (C ABI, loaded via bun:ffi or WASM)"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/loop-lore/loop-lore"
+description = "Native BLAKE3 + zstd modules for loop-lore — pre-compiled hot binary samples (C ABI, loaded via bun:ffi or WASM)"
 
 [lib]
 name = "loop_lore_native"
