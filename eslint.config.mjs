@@ -130,6 +130,12 @@ const tsRules = {
   "unicorn/prefer-string-raw": "off",
 
   // ── SonarJS shared overrides ───────────────────────────────
+  // NOTE: `bun run lint` emits "Dependency X is defined in multiple manifests"
+  // (console.debug, stderr, non-failing) because the generated deno.json
+  // duplicates every package.json dep. SonarJS resolves BOTH manifests
+  // (deno.json first — MANIFEST_RESOLVERS order), and 5+ recommended rules
+  // share the resolver, so there is no single rule to disable. Harmless;
+  // deno.json + package.json are kept in sync by gen-deno-config.ts.
   ...sonarjs.configs.recommended.rules,
   "sonarjs/no-duplicate-string": "off",
   "sonarjs/todo-tag": "off",
