@@ -147,7 +147,7 @@ export function buildSubstitutionVars(params: {
 
   // Pass through any extra params
   for (const [key, value,] of Object.entries(params,)) {
-    if (!(key in vars) && typeof value !== "object") {
+    if (typeof value !== "object" && !(key in vars)) {
       vars[key] = value as string | number | boolean;
     }
   }

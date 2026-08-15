@@ -150,7 +150,8 @@ export async function applyEdit(
       resultImages = Array.from(data.data, (d,) => Buffer.from(d.b64_json, "base64",),);
       break;
     }
-    default: {
+    case "sdcpp":
+    case "comfyui": {
       throw new Error(
         `Image gen API family "${sdConfig.apiFamily}" not supported for img2img. Use "sdapi" or "openai".`,
       );

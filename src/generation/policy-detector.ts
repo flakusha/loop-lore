@@ -80,7 +80,7 @@ export async function detectPolicyMismatch(
   text: string,
   config: PolicyDetectionConfig,
 ): Promise<PolicyAnalysis> {
-  if (!config.enabled || !text) {
+  if (!text || !config.enabled) {
     return { detected: false, policy: config.expectedPolicy, confidence: 0, indicators: [], };
   }
 

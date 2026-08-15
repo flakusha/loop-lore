@@ -21,7 +21,6 @@ import {
   type EquipResult,
   slotForCategory,
 } from "./actor-items/equip";
-
 export {
   ENCUMBRANCE,
   EQUIP_SLOTS,
@@ -33,10 +32,8 @@ export type {
   EquipResult,
   EquipSlot,
 } from "./actor-items/equip";
-
 export class ActorItemsService {
   private readonly db: Kysely<DB>;
-
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }

@@ -26,96 +26,85 @@ export function validateExtensions(
   // Validate inventory items if present
   const inventory = extensions.inventory;
   if (inventory !== undefined && Array.isArray(inventory,)) {
-    for (const [i, item,] of inventory.entries()) {
-      if (!item || typeof item !== "object") {
-        errors.push({
-          field: `extensions.inventory[${i}]`,
-          code: "INVALID_TYPE",
-          message: "Each inventory item must be an object",
-          value: item,
-        },);
-        continue;
-      }
-      if (!item.name || typeof item.name !== "string") {
-        errors.push({
-          field: `extensions.inventory[${i}].name`,
-          code: "REQUIRED",
-          message: "Inventory item name is required",
-          value: item.name,
-        },);
-      }
-      if (typeof item.quantity !== "number" || item.quantity < 0) {
-        if (mode === "strict") {
-          errors.push({
-            field: `extensions.inventory[${i}].quantity`,
-            code: "INVALID_VALUE",
-            message: "Inventory item quantity must be a non-negative number",
-            value: item.quantity,
-          },);
-        } else {
-          warnings.push({
-            field: `extensions.inventory[${i}].quantity`,
-            code: "INVALID_VALUE",
-            message: "Inventory item quantity should be a non-negative number",
-            value: item.quantity,
-          },);
-        }
-      }
-    }
+    validateInventory(inventory, errors, warnings, mode,);
   }
 
   // Validate relationships if present
   const relationships = extensions.relationships;
   if (relationships !== undefined && Array.isArray(relationships,)) {
-    const validTypes = [
-      "friend",
-      "rival",
-      "ally",
-      "enemy",
-      "family",
-      "mentor",
-      "student",
-      "neutral",
-    ];
-    for (const [i, rel,] of relationships.entries()) {
-      if (!rel || typeof rel !== "object") {
-        errors.push({
-          field: `extensions.relationships[${i}]`,
-          code: "INVALID_TYPE",
-          message: "Each relationship must be an object",
-          value: rel,
-        },);
-        continue;
-      }
-      if (rel.type && !validTypes.includes(rel.type,)) {
-        errors.push({
-          field: `extensions.relationships[${i}].type`,
-          code: "INVALID_VALUE",
-          message: `Relationship type must be one of: ${validTypes.join(", ",)}`,
-          value: rel.type,
-        },);
-      }
-      if (
-        typeof rel.strength !== "number" ||
-        rel.strength < 0 ||
-        rel.strength > 100
-      ) {
-        if (mode === "strict") {
-          errors.push({
-            field: `extensions.relationships[${i}].strength`,
-            code: "INVALID_VALUE",
-            message: "Relationship strength must be a number between 0 and 100",
-            value: rel.strength,
-          },);
-        } else {
-          warnings.push({
-            field: `extensions.relationships[${i}].strength`,
-            code: "INVALID_VALUE",
-            message: "Relationship strength should be a number between 0 and 100",
-            value: rel.strength,
-          },);
-        }
-      }
+    validateRelationships(relationships, errors, warnings, mode,);
+  }
+}
+
+/** Validate inventory item entries. */
+function validateInventory(
+  inventory: unknown[],
+  errors: ValidationError[],
+  warnings: ValidationWarning[],
+  mode: ValidationMode,
+): void {
+  for (const [i, item,] of inventory.entries()) {
+    if (!item || typeof item !== "object") {
+      errors.push({
+        field: `extensions.inventory[${i}]`,
+        code: "INVALID_TYPE",
+        message: "Each inventory item must be an object",
+        value: item,
+      },);
+      continue;
+    }
+    const it = item as Record<string, unknown>;
+    if (!it.name || typeof it.name !== "string") {
+      errors.push({
+        field: `extensions.inventory[${i}].name`,
+        code: "REQUIRED",
+        message: "Inventory item name is required",
+        value: it.name,
+      },);
+    }
+    if (typeof it.quantity !== "number" || it.quantity < 0) {
+      const code = "INVALID_VALUE";
+      const message = `Inventory item quantity ${mode === "strict" ? "must" : "should"} be a non-negative number`;
+      const entry = { field: `extensions.inventory[${i}].quantity`, code, message, value: it.quantity, };
+      if (mode === "strict") { errors.push(entry,); }
+      else { warnings.push(entry,); }
+    }
+  }
+}
+
+/** Validate relationship entries. */
+function validateRelationships(
+  relationships: unknown[],
+  errors: ValidationError[],
+  warnings: ValidationWarning[],
+  mode: ValidationMode,
+): void {
+  const validTypes = ["friend", "rival", "ally", "enemy", "family", "mentor", "student", "neutral",];
+  for (const [i, rel,] of relationships.entries()) {
+    if (!rel || typeof rel !== "object") {
+      errors.push({
+        field: `extensions.relationships[${i}]`,
+        code: "INVALID_TYPE",
+        message: "Each relationship must be an object",
+        value: rel,
+      },);
+      continue;
+    }
+    const r = rel as Record<string, unknown>;
+    if (r.type && !validTypes.includes(r.type as string,)) {
+      errors.push({
+        field: `extensions.relationships[${i}].type`,
+        code: "INVALID_VALUE",
+        message: `Relationship type must be one of: ${validTypes.join(", ",)}`,
+        value: r.type,
+      },);
+    }
+    if (typeof r.strength !== "number" || r.strength < 0 || r.strength > 100) {
+      const code = "INVALID_VALUE";
+      const message = `Relationship strength ${mode === "strict" ? "must" : "should"} be a number between 0 and 100`;
+      const entry = { field: `extensions.relationships[${i}].strength`, code, message, value: r.strength, };
+      if (mode === "strict") { errors.push(entry,); }
+      else { warnings.push(entry,); }
     }
   }
 }

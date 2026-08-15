@@ -54,7 +54,7 @@ export interface UndoRedoResult {
  */
 export interface ImageEditService {
   editImage(request: EditImageRequest,): Promise<EditResult>;
-  undoEdit(assetId: string,): Promise<UndoRedoResult>;
+  undoEdit(assetId: string,): UndoRedoResult;
   redoEdit(assetId: string,): Promise<UndoRedoResult>;
   getEditHistory(assetId: string,): EditHistory | undefined;
   clearEditHistory(assetId: string,): void;

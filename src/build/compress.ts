@@ -4,6 +4,7 @@ import { compressFile, copyDirectory, walkDirectory, } from "../content/compress
 import { injectContentHashes, } from "../content/hash-injection";
 import { minifyCSS, minifyHTMLContent, } from "../content/minify";
 import { createLogger, } from "../logger";
+import type { Logger, } from "../logger/types";
 
 const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
 
@@ -43,50 +44,7 @@ async function main() {
     const content = readFileSync(file,);
     originalBytes += content.length;
 
-    const ext = extname(file,).toLowerCase();
-
-    if (ext === ".css") {
-      const original = content.toString("utf8",);
-      try {
-        const minified = minifyCSS(original,);
-        if (minified.length < original.length) {
-          writeFileSync(file, minified, "utf8",);
-        }
-      } catch (writeError) {
-        log.error(
-          `Failed to minify CSS at ${file}`,
-          writeError instanceof Error ? writeError : new Error(String(writeError,),),
-        );
-      }
-    }
-
-    if (ext === ".html" || ext === ".htm") {
-      const original = content.toString("utf8",);
-      try {
-        let processed = await minifyHTMLContent(original,);
-        if (STRIP_TEST_IDS) {
-          processed = stripTestIds(processed,);
-        }
-        if (processed.length < original.length) {
-          writeFileSync(file, processed, "utf8",);
-        }
-      } catch (writeError) {
-        log.error(
-          `Failed to minify HTML at ${file}`,
-          writeError instanceof Error ? writeError : new Error(String(writeError,),),
-        );
-      }
-    }
-
-    if (ext === ".svg") {
-      let processed = content.toString("utf8",);
-      if (STRIP_TEST_IDS) {
-        processed = stripTestIds(processed,);
-      }
-      if (processed.length < content.length) {
-        writeFileSync(file, processed, "utf8",);
-      }
-    }
+    await minifyByExtension(file, content, log,);
 
     try {
       await compressFile(file,);
@@ -112,6 +70,69 @@ async function main() {
   log.info(
     `Compressed sizes - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`,
   );
+}
+
+/**
+ * Minify a build artifact in place by extension (CSS / HTML / SVG).
+ *
+ * Writes the minified form only when it is strictly smaller than the source.
+ * Minification failures are logged and the original file is left untouched.
+ *
+ * @param file - Absolute path of the artifact
+ * @param content - Current file bytes
+ * @param log - Logger for minification failures
+ */
+async function minifyByExtension(file: string, content: Buffer, log: Logger,): Promise<void> {
+  const ext = extname(file,).toLowerCase();
+  if (ext === ".css") { minifyCss(file, content, log,); }
+  if (ext === ".html" || ext === ".htm") { await minifyHtml(file, content, log,); }
+  if (ext === ".svg") { stripSvgTestIds(file, content,); }
+}
+
+/** Minify a CSS artifact in place when the result is smaller. */
+function minifyCss(file: string, content: Buffer, log: Logger,): void {
+  const original = content.toString("utf8",);
+  try {
+    const minified = minifyCSS(original,);
+    if (minified.length < original.length) {
+      writeFileSync(file, minified, "utf8",);
+    }
+  } catch (writeError) {
+    log.error(
+      `Failed to minify CSS at ${file}`,
+      writeError instanceof Error ? writeError : new Error(String(writeError,),),
+    );
+  }
+}
+
+/** Minify an HTML artifact in place when the result is smaller. */
+async function minifyHtml(file: string, content: Buffer, log: Logger,): Promise<void> {
+  const original = content.toString("utf8",);
+  try {
+    let processed = await minifyHTMLContent(original,);
+    if (STRIP_TEST_IDS) {
+      processed = stripTestIds(processed,);
+    }
+    if (processed.length < original.length) {
+      writeFileSync(file, processed, "utf8",);
+    }
+  } catch (writeError) {
+    log.error(
+      `Failed to minify HTML at ${file}`,
+      writeError instanceof Error ? writeError : new Error(String(writeError,),),
+    );
+  }
+}
+
+/** Strip `data-testid` attributes from an SVG artifact in place when smaller. */
+function stripSvgTestIds(file: string, content: Buffer,): void {
+  let processed = content.toString("utf8",);
+  if (STRIP_TEST_IDS) {
+    processed = stripTestIds(processed,);
+  }
+  if (processed.length < content.length) {
+    writeFileSync(file, processed, "utf8",);
+  }
 }
 
 await main();

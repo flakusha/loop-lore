@@ -40,7 +40,7 @@ export async function createNotification(
       title: input.title,
       body: input.body ?? null,
       link: input.link ?? null,
-      read: 0,
+      read: "unread",
       data: data?.ok ? data.value : null,
       created_at: new Date().toISOString(),
     },)
@@ -54,7 +54,7 @@ export async function listNotifications(
   unreadOnly = false,
 ): Promise<NotificationRecord[]> {
   let query = db.selectFrom("notifications",).selectAll().where("user_id", "=", userId,);
-  if (unreadOnly) { query = query.where("read", "=", 0,); }
+  if (unreadOnly) { query = query.where("read", "=", "unread",); }
   const rows = await query.orderBy("created_at", "desc",).limit(50,).execute();
   return Array.from(rows, (row,) => mapRow(row,),);
 }
@@ -65,7 +65,7 @@ export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<n
     .selectFrom("notifications",)
     .select((eb,) => eb.fn.countAll<number>().as("count",))
     .where("user_id", "=", userId,)
-    .where("read", "=", 0,)
+    .where("read", "=", "unread",)
     .executeTakeFirst();
   return row?.count ?? 0;
 }
@@ -78,7 +78,7 @@ export async function markNotificationRead(
 ): Promise<void> {
   await db
     .updateTable("notifications",)
-    .set({ read: 1, },)
+    .set({ read: "read", },)
     .where("id", "=", id,)
     .where("user_id", "=", userId,)
     .execute();
@@ -91,9 +91,9 @@ export async function markAllNotificationsRead(
 ): Promise<void> {
   await db
     .updateTable("notifications",)
-    .set({ read: 1, },)
+    .set({ read: "read", },)
     .where("user_id", "=", userId,)
-    .where("read", "=", 0,)
+    .where("read", "=", "unread",)
     .execute();
 }
 
