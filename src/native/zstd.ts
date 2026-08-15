@@ -21,7 +21,6 @@
 import { getNativeModule, isNativeAvailable, } from "./loader";
 
 /** zstd compression levels accepted by the native module (1–22, 0 = default). */
-export type ZstdLevel = number;
 
 /** Default compression level — deterministic, good speed/ratio balance. */
 export const DEFAULT_ZSTD_LEVEL = 3;
@@ -31,8 +30,6 @@ const ZSTD_HEADROOM = 1024;
 
 /** Error codes mirrored from the Rust ABI (zstd.rs). */
 const ERR_ARGS = -1;
-const ERR_COMPRESS = -2;
-const ERR_DECOMPRESS = -3;
 const ERR_LEVEL = -4;
 
 /** Typed view of Bun's built-in zstd (avoids unsafe casts at call sites). */
