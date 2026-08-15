@@ -1,6 +1,6 @@
 # TASK: Context Window Monitor (FEAT-069)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Low–Med
 **Epic:** Epic 36 (Chat Lifecycle & Moderation)
