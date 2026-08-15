@@ -70,7 +70,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/dice/notation`,
-        async (ctx: any,) => {
+        (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
@@ -100,7 +100,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/dice/advantage`,
-        async (ctx: any,) => {
+        (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {

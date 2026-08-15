@@ -2,6 +2,7 @@ import type { Kysely, } from "kysely";
 import type {
   ContentIntensity,
   NarrativeStyle,
+  NsfwEncounterStatus,
   NsfwEncounterType,
 } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
@@ -52,6 +53,8 @@ export interface NsfwEncounter {
   currentPhase: number;
   outcomes: EncounterOutcome[];
   contentTags: string[];
+  status: NsfwEncounterStatus;
+  /** Derived from status — true when completed. */
   completed: boolean;
   createdAt: string;
   updatedAt: string;

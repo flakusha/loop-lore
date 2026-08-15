@@ -14,6 +14,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { achievementsRoutes, } from "./achievements";
+import { achievementsPlayerRoutes, } from "./achievements-player";
 
 const mockDb = {} as any;
 
@@ -52,7 +53,8 @@ describe("achievements CRUD + progress (auth-gated)", () => {
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-achievements-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
-      .use(achievementsRoutes({ database: db, config: {} as never, },),) as any;
+      .use(achievementsRoutes({ database: db, config: {} as never, },),)
+      .use(achievementsPlayerRoutes({ database: db, config: {} as never, },),) as any;
   }
 
   async function json(res: Response,): Promise<unknown> {
@@ -111,7 +113,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
 
   test("update achievement", async () => {
     const app = authedApp();
-    // eslint-disable-next-line unicorn/max-nested-calls -- request construction nesting is test infrastructure
+
     const req = new Request(`http://localhost/api/rpg/achievements/${achievementId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },
@@ -125,7 +127,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
 
   test("update progress on own player", async () => {
     const app = authedApp();
-    // eslint-disable-next-line unicorn/max-nested-calls -- request construction nesting is test infrastructure
+
     const req = new Request(`http://localhost/api/rpg/achievements/player/${userId}/${achievementId}/progress`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },

@@ -14,6 +14,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { skillsRoutes, } from "./skills";
+import { skillsProgressionRoutes, } from "./skills-progression";
 
 const mockDb = {} as any;
 
@@ -58,7 +59,8 @@ describe("skills CRUD + progression (auth-gated)", () => {
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-skills-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
-      .use(skillsRoutes({ database: db, config: {} as never, },),) as any;
+      .use(skillsRoutes({ database: db, config: {} as never, },),)
+      .use(skillsProgressionRoutes({ database: db, config: {} as never, },),) as any;
   }
 
   async function json(res: Response,): Promise<unknown> {

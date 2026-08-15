@@ -9,7 +9,7 @@ import { QuestStatus, } from "../../db/enums";
 import { jsonParseOr, } from "../../utils";
 import { applyEvents, } from "../events";
 import { PROGRESS_CALCULATORS, } from "../quests/registry";
-import { selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
+import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
 import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
 import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
 
@@ -101,6 +101,12 @@ async function applyProgress(
 ): Promise<QuestProgressEntry> {
   const newProgress = Math.min(quest.progress + delta, quest.target,);
   const completed = newProgress >= quest.target;
+
+  // Completion is a status transition — validate it against the machine so a
+  // quest in a terminal/abandoned state cannot silently flip to completed.
+  if (completed) {
+    await requireQuestTransition(state.db, quest.id, QuestStatus.Completed,);
+  }
 
   await state.db
     .updateTable("quests",)

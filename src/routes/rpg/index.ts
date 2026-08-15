@@ -1,14 +1,18 @@
 import { Elysia, } from "elysia";
 import { achievementsRoutes, } from "./achievements";
+import { achievementsPlayerRoutes, } from "./achievements-player";
 import { combatRoutes, } from "./combat";
+import { combatStatusRoutes, } from "./combat-status";
 import { diceRoutes, } from "./dice";
 import { npcNavigationRoutes, } from "./npc-navigation";
 import { replayabilityRoutes, } from "./replayability";
 import { skillsRoutes, } from "./skills";
+import { skillsProgressionRoutes, } from "./skills-progression";
 import { statsRoutes, } from "./stats";
 import type { HandlerOpts, } from "./types";
 import { worldLocationTraitsRoutes, } from "./world-location-traits";
 import { xpLootRoutes, } from "./xp-loot";
+import { xpLootTablesRoutes, } from "./xp-loot-tables";
 
 /**
  * RPG Routes facade — barrel assembling the HTTP surface from domain
@@ -54,11 +58,15 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .use(diceRoutes(opts,),)
       .use(statsRoutes(opts,),)
       .use(achievementsRoutes(opts,),)
+      .use(achievementsPlayerRoutes(opts,),)
       .use(replayabilityRoutes(opts,),)
       .use(skillsRoutes(opts,),)
+      .use(skillsProgressionRoutes(opts,),)
       .use(npcNavigationRoutes(opts,),)
       .use(worldLocationTraitsRoutes(opts,),)
       .use(combatRoutes(opts,),)
+      .use(combatStatusRoutes(opts,),)
       .use(xpLootRoutes(opts,),)
+      .use(xpLootTablesRoutes(opts,),)
   );
 }

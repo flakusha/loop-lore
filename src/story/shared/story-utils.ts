@@ -5,12 +5,19 @@
  * repeated patterns (Dedup Phase 11).
  */
 import type { Kysely, } from "kysely";
+import type {
+  QuestProgressStatus,
+} from "../../db/enums-story/quests";
+import {
+  questProgressValidator,
+  QuestStatus,
+  questStatusMachine,
+} from "../../db/enums-story/quests";
 import type { DB, } from "../../db/schema";
+import { TransitionError, } from "../../db/state";
 import { getLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
-
 // ── Synthetic Runner Types ───────────────────────────────────
-
 /** Common return shape for synthetic test case execution methods. */
 export interface CaseResult {
   status: "passed" | "failed" | "skipped";
@@ -18,7 +25,6 @@ export interface CaseResult {
   actual: Record<string, unknown>;
   reason?: string;
 }
-
 /** Build a skipped-case result with an optional actual payload. */
 export function skippedResult(
   expected: Record<string, unknown>,
@@ -118,23 +124,58 @@ export function serializeOrThrow(value: unknown, fieldName: string,): string {
 }
 
 /**
+ * Read a quest's current status and assert `to` is a legal machine transition.
+ *
+ * @returns The current status (pre-transition)
+ * @throws {Error} When the quest does not exist
+ * @throws {TransitionError} When the status change is not allowed by the machine
+ */
+export async function requireQuestTransition(
+  db: Kysely<DB>,
+  questId: string,
+  to: QuestStatus,
+): Promise<QuestStatus> {
+  const row = await db
+    .selectFrom("quests",)
+    .select("status",)
+    .where("id", "=", questId,)
+    .executeTakeFirst();
+  if (!row) {
+    throw new Error(`Quest not found: ${questId}`,);
+  }
+  if (!questStatusMachine.canTransition(row.status, to,)) {
+    throw new TransitionError(row.status, to,);
+  }
+  return row.status;
+}
+
+/**
  * Transition a quest's status and all its progress rows in one write.
+ *
+ * Validates the quest status move against {@link questStatusMachine} and the
+ * resulting (quest, progress) pair against {@link questProgressValidator}.
+ *
+ * @throws {Error} When the quest does not exist
+ * @throws {TransitionError} When the status change is not allowed
  */
 export async function transitionQuestStatus(
   db: Kysely<DB>,
   questId: string,
-  questStatus: string,
-  progressStatus: string,
+  questStatus: QuestStatus,
+  progressStatus: QuestProgressStatus,
 ): Promise<void> {
+  await requireQuestTransition(db, questId, questStatus,);
+  questProgressValidator.assertValid(questStatus, progressStatus,);
+
   await db
     .updateTable("quests",)
-    .set({ status: questStatus as never, },)
+    .set({ status: questStatus, },)
     .where("id", "=", questId,)
     .execute();
 
   await db
     .updateTable("quest_progress",)
-    .set({ status: progressStatus as never, },)
+    .set({ status: progressStatus, },)
     .where("quest_id", "=", questId,)
     .execute();
 }
@@ -150,7 +191,7 @@ export async function selectActiveQuests(
     .selectFrom("quests",)
     .selectAll()
     .where("world_id", "=", worldId,)
-    .where("status", "=", "active" as never,)
+    .where("status", "=", QuestStatus.Active,)
     .orderBy("priority", "desc",)
     .execute();
 }
