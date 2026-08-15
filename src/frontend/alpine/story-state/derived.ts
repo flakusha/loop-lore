@@ -102,13 +102,13 @@ export function summarizeTurns(turns: StoryTurnRow[],): TurnSummary {
 export function mapParticipants(
   participants: ParticipantRow[],
 ): { actors: StoryParticipant[]; nextActorName: string | null } {
-  const actors = participants.map((p, index,) => ({
+  const actors: StoryParticipant[] = Array.from(participants, (p, index,) => ({
     id: p.actor_id,
     name: p.display_name ?? p.name,
     type: p.actor_type ?? "character",
     role: p.actor_type === "assistant" ? "gm" : "player",
     isActive: index === 0,
     order: index,
-  }));
+  }),);
   return { actors, nextActorName: actors[0]?.name ?? null, };
 }

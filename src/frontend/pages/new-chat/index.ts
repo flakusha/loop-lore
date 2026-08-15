@@ -36,12 +36,51 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       if (t.description) { opt.title = t.description; }
       ctx.templateSelect.append(opt,);
     }
-    ctx.templateSelect.addEventListener("change", function() {
-      const t = ctx.templates.find((x,) => x.id === this.value);
+
+    ctx.templateFeaturesGroup = $<HTMLElement>("#template-features",);
+    ctx.templateFeaturesList = $<HTMLElement>("#template-features-list",);
+    ctx.fineTuneGroup = $<HTMLElement>("#fine-tune-group",);
+    ctx.turnStrategySelect = $<HTMLSelectElement>("#chat-turn-strategy",);
+    ctx.visibilitySelect = $<HTMLSelectElement>("#chat-visibility",);
+    ctx.visualNovelCheckbox = $<HTMLInputElement>("#chat-visual-novel",);
+
+    const renderTemplate = (id: string,) => {
+      const t = ctx.templates.find((x,) => x.id === id) ?? null;
       const modeSelect = $<HTMLSelectElement>("#chat-mode",);
-      if (modeSelect && t?.mode) {
-        modeSelect.value = t.mode;
+
+      // Pre-fill key mechanics from the template (fine-tune fields override).
+      if (modeSelect && t?.mode) { modeSelect.value = t.mode; }
+      if (ctx.turnStrategySelect) {
+        ctx.turnStrategySelect.value = t?.turnStrategy ?? "";
       }
+      if (ctx.visibilitySelect) {
+        ctx.visibilitySelect.value = t?.visibility ?? "";
+      }
+      if (ctx.visualNovelCheckbox) {
+        ctx.visualNovelCheckbox.checked = t?.visualNovel === true;
+      }
+
+      // Feature list: re-render tags on every selection change.
+      if (ctx.templateFeaturesList) {
+        ctx.templateFeaturesList.replaceChildren();
+        const features = t?.features ?? [];
+        for (const feature of features) {
+          const li = document.createElement("li",);
+          li.textContent = feature;
+          ctx.templateFeaturesList.append(li,);
+        }
+        ctx.templateFeaturesList.ariaBusy = "false";
+      }
+      if (ctx.templateFeaturesGroup) {
+        ctx.templateFeaturesGroup.style.display = t && t.features.length > 0 ? "block" : "none";
+      }
+      if (ctx.fineTuneGroup) {
+        ctx.fineTuneGroup.style.display = t ? "block" : "none";
+      }
+    };
+
+    ctx.templateSelect.addEventListener("change", function() {
+      renderTemplate(this.value,);
     },);
   }
 
@@ -82,7 +121,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   modeSelect?.addEventListener("change", syncGmGuidedVisibility,);
   syncGmGuidedVisibility();
   gmGuidedToggle?.addEventListener("change", function() {
-    if (this.checked && modeSelect) { modeSelect.value = "story"; }
+    if (modeSelect && this.checked) { modeSelect.value = "story"; }
   },);
 
   ctx.impersonateGroup = $<HTMLElement>("#impersonate-group",);

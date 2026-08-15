@@ -10,8 +10,7 @@ export type LocaleInfoArray = LocaleInfo[];
 export interface NsfwConsent {
   nsfwEnabled: boolean;
   maxRating: string;
-  blockedFromNsfw: boolean;
-  bannedFromNsfw: boolean;
+  accessStatus: string;
   shadowNsfw: boolean;
   blockReason: string | null;
 }

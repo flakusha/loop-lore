@@ -74,7 +74,7 @@ export function resolveVariables(
   for (const variable of template.variables) {
     const value = context[variable.name] ?? variable.default;
 
-    if (variable.required && value === undefined) {
+    if (value === undefined && variable.required) {
       throw new Error(`Required variable "${variable.name}" is missing`,);
     }
 
