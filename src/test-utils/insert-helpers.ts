@@ -414,6 +414,7 @@ export async function insertChats(
     name_source?: string | null;
     template_id?: string | null;
     visibility?: Generated<string>;
+    thinking_visibility?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({
@@ -848,6 +849,7 @@ export async function insertMessages(
     format_version?: Generated<number>;
     section_id?: string | null;
     tool_calls?: string | null;
+    thinking?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({

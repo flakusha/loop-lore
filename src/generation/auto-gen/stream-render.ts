@@ -31,7 +31,7 @@ export function renderStreamMessage(
 
   const thinkingBlock = opts?.thinking
     ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${
-      markedParse(opts.thinking,)
+      sanitizeHtml(markedParse(opts.thinking,),)
     }</div></details>`
     : "";
 

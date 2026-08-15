@@ -36,6 +36,8 @@ export interface StoreMessageOpts {
   };
   tokenUsage: { promptTokens: number; completionTokens: number; totalTokens: number };
   dominantEmotion: string | undefined;
+  /** LLM reasoning/thinking content (persisted, excluded from context). */
+  thinking: string | undefined;
 }
 
 export interface StoreMessageResult {
@@ -50,8 +52,19 @@ export interface StoreMessageResult {
  * @returns The new message ID and whether regex transforms were applied.
  */
 export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessageResult> {
-  const { d, database, config, chatId, actorId, parentMessageId, content, resolved, tokenUsage, dominantEmotion, } =
-    opts;
+  const {
+    d,
+    database,
+    config,
+    chatId,
+    actorId,
+    parentMessageId,
+    content,
+    resolved,
+    tokenUsage,
+    dominantEmotion,
+    thinking,
+  } = opts;
 
   // ── Regex Output Transforms ──────────────────────────────────
   // Apply user-configured regex transforms to LLM output before storage
@@ -125,6 +138,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
       visibility: MessageVisibility.Visible,
       swipe_index: swipeIndex,
       emotion: dominantEmotion ?? null,
+      thinking: thinking ?? null,
     },)
     .execute();
 
