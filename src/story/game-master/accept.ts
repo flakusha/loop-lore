@@ -5,6 +5,8 @@
  * or regeneration. humanOverride: apply a caller-provided decision.
  */
 import { GameMasterType, } from "../../db/enums";
+import { TurnStatus, turnStatusMachine, } from "../../db/enums-story/turns";
+import { TransitionError, } from "../../db/state";
 import { safeJsonStringify, } from "../../utils";
 import { applyEvents, extractEvents, validateEvents, } from "../events";
 import type { GameMasterDecision, } from "../types";
@@ -86,6 +88,9 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
 
   const accepted = !regenerationSuggested && !escalated;
   if (accepted) {
+    if (!turnStatusMachine.canTransition(turn.status, TurnStatus.Accepted,)) {
+      throw new TransitionError(turn.status, TurnStatus.Accepted,);
+    }
     await state.db
       .updateTable("story_turns",)
       .set({
@@ -95,7 +100,7 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
           const r = safeJsonStringify(qualityEval.details,);
           return r.ok ? r.value : "{}";
         })(),
-        status: "accepted",
+        status: TurnStatus.Accepted,
         completed_at: new Date().toISOString(),
         world_events: (() => {
           const r = safeJsonStringify(worldEvents,);
@@ -128,11 +133,22 @@ export async function humanOverride(
 ): Promise<void> {
   const gmSerialized = safeJsonStringify(decision,);
   if (!gmSerialized.ok) { return; }
+
+  const turn = await state.db
+    .selectFrom("story_turns",)
+    .select("status",)
+    .where("id", "=", turnId,)
+    .executeTakeFirst();
+  if (!turn) { throw new Error(`Turn ${turnId} not found`,); }
+  if (!turnStatusMachine.canTransition(turn.status, TurnStatus.Accepted,)) {
+    throw new TransitionError(turn.status, TurnStatus.Accepted,);
+  }
+
   await state.db
     .updateTable("story_turns",)
     .set({
       gm_decision: gmSerialized.value,
-      status: "accepted",
+      status: TurnStatus.Accepted,
       completed_at: new Date().toISOString(),
     },)
     .where("id", "=", turnId,)

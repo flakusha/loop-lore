@@ -7,7 +7,7 @@ import type { HandlerOpts, } from "./types";
 export function downloadRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia()
     // GET /api/export/download/:jobId — Download completed export
-    .get(`${prefix}/export/download/:jobId`, async (ctx: any,) => {
+    .get(`${prefix}/export/download/:jobId`, (ctx: any,) => {
       const jobId = ctx.params.jobId;
       const job = jobs.get(jobId,);
 

@@ -145,7 +145,7 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
 
           if (!session) { return notFound("Session not found",); }
 
-          if (session.user_id !== userId && userRole !== "admin") {
+          if (userRole !== "admin" && session.user_id !== userId) {
             return notFound("Session not found",);
           }
 
@@ -191,7 +191,7 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
 
           if (!session) { return notFound("Session not found",); }
 
-          if (session.user_id !== userId && userRole !== "admin") {
+          if (userRole !== "admin" && session.user_id !== userId) {
             return notFound("Session not found",);
           }
 
