@@ -3,6 +3,21 @@ import { jsonBody, } from "../json";
 import { log, } from "./shared";
 import type { ModelsState, } from "./types";
 
+/** Map one system-config key onto the SD/comfyui admin state. */
+function applySdConfigEntry(
+  state: ModelsState,
+  key: string,
+  value: string,
+): void {
+  if (key === "sd_server_port") { state.sdConfig.port = parseInt(value, 10,) || 9010; }
+  if (key === "sd_model_path") { state.sdConfig.modelPath = value; }
+  if (key === "sd_model_type") { state.sdConfig.modelType = value; }
+  if (key === "sd_llm_path") { state.sdConfig.llmPath = value; }
+  if (key === "sd_enabled") { state.sdConfig.enabled = value === "true"; }
+  if (key === "comfyui_url") { state.comfyuiConfig.url = value; }
+  if (key === "comfyui_enabled") { state.comfyuiConfig.enabled = value === "true"; }
+}
+
 export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
   sdStatus: "unknown" as "running" | "stopped" | "unknown",
   sdPort: 9010,
@@ -41,13 +56,7 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
       if (res.ok) {
         const entries = await res.json();
         for (const e of entries) {
-          if (e.key === "sd_server_port") { this.sdConfig.port = parseInt(e.value, 10,) || 9010; }
-          if (e.key === "sd_model_path") { this.sdConfig.modelPath = e.value; }
-          if (e.key === "sd_model_type") { this.sdConfig.modelType = e.value; }
-          if (e.key === "sd_llm_path") { this.sdConfig.llmPath = e.value; }
-          if (e.key === "sd_enabled") { this.sdConfig.enabled = e.value === "true"; }
-          if (e.key === "comfyui_url") { this.comfyuiConfig.url = e.value; }
-          if (e.key === "comfyui_enabled") { this.comfyuiConfig.enabled = e.value === "true"; }
+          applySdConfigEntry(this, e.key, e.value,);
         }
       }
     } catch {
