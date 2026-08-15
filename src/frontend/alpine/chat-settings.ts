@@ -34,6 +34,9 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _vnTypewriterSpeed: 30,
   _vnTransition: "fade" as "fade" | "cut" | "dissolve" | "slide" | "wipe",
   _vnAutoAdvance: false,
+  // Response length settings
+  _responseLengthPreset: "medium" as "short" | "medium" | "long" | "custom",
+  _responseLengthCustom: 1000,
 
   toggleDebugView() {
     this._debugView = !this._debugView;
@@ -64,6 +67,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._gmProvider = fields.gmProvider;
     this._gmTemperature = fields.gmTemperature;
     this._gmMaxTokens = fields.gmMaxTokens;
+    this._responseLengthPreset = fields.responseLengthPreset;
+    this._responseLengthCustom = fields.responseLengthCustom;
     // Seed per-actor model overrides from saved config (or empty defaults)
     // so the modal bindings have a stable object per participant.
     const actorModels: Record<string, { model: string; provider: string }> = {};
@@ -120,6 +125,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         gmProvider: this._gmProvider,
         gmTemperature: this._gmTemperature,
         gmMaxTokens: this._gmMaxTokens,
+        responseLengthPreset: this._responseLengthPreset,
+        responseLengthCustom: this._responseLengthCustom,
       }, this._actorModels,);
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),

@@ -26,6 +26,8 @@ export interface GmSettingsFields {
   gmProvider: string;
   gmTemperature: number;
   gmMaxTokens: number;
+  responseLengthPreset: "short" | "medium" | "long" | "custom";
+  responseLengthCustom: number;
 }
 
 /** Read the editable GM/VN settings out of a chat's persisted GmConfig. */
@@ -45,6 +47,8 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
     gmProvider: config.llmConfig?.provider ?? "",
     gmTemperature: config.llmConfig?.temperature ?? 0.7,
     gmMaxTokens: config.llmConfig?.maxTokens ?? 2000,
+    responseLengthPreset: config.responseLengthPreset ?? "medium",
+    responseLengthCustom: config.responseLengthCustom ?? 1000,
   };
 }
 
@@ -94,6 +98,12 @@ export function buildGmConfig(
     gmConfig.escalationThreshold = fields.gmEscalationThreshold;
   } else {
     delete gmConfig.escalationThreshold;
+  }
+  gmConfig.responseLengthPreset = fields.responseLengthPreset;
+  if (fields.responseLengthPreset === "custom") {
+    gmConfig.responseLengthCustom = fields.responseLengthCustom;
+  } else {
+    delete gmConfig.responseLengthCustom;
   }
   return gmConfig;
 }
