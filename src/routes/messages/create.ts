@@ -1,5 +1,6 @@
 import { Elysia, t, } from "elysia";
 import { getConfigValue, } from "../../admin/config";
+import { computeContextStats, } from "../../chat";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import {
   MessageContentFormat,
@@ -120,6 +121,17 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         await autoRenameChat(database, chatId, effectiveContent, chatRecord,);
         await handleSceneTransitions(database, config, chatId, actorId, effectiveContent, chatRecord, id,);
 
+        // ── Context window stats ─────────────────────────────────────
+        const tokenRow = await database
+          .selectFrom("messages",)
+          .select(database.fn.sum("token_count_total",).as("total_tokens",),)
+          .where("chat_id", "=", chatId,)
+          .executeTakeFirst();
+        const usedTokens = Number(tokenRow?.total_tokens ?? 0,);
+        const context = computeContextStats(
+          [{ content: "", tokenCount: usedTokens, },],
+        );
+
         // ── Auto-generation / assistant reply ──────────────────────
         const reply = await maybeAutoReply(
           database,
@@ -130,15 +142,30 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           effectiveContent,
           ctx.request as Request,
         );
-        if (reply.replied) { return reply.response; }
+        if (reply.replied) {
+          return jsonCreated({ ...((await reply.response?.json?.()) ?? {}), context, },);
+        }
 
-        return jsonCreated({ id, },);
+        return jsonCreated({ id, context, },);
       },
       {
         params: ChatIdParams,
         body: MessageCreateBody,
         response: {
-          201: t.Object({ id: t.String(), },),
+          201: t.Object({
+            id: t.Optional(t.String(),),
+            context: t.Object({
+              used_tokens: t.Number(),
+              max_tokens: t.Number(),
+              percentage: t.Number(),
+              will_trim: t.Boolean(),
+              threshold: t.String(),
+            },),
+            assistantMessage: t.Optional(t.Object({
+              id: t.String(),
+              content: t.String(),
+            },),),
+          },),
           401: ErrorResponse,
           403: ErrorResponse,
           404: ErrorResponse,

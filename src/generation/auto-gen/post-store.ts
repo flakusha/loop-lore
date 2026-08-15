@@ -7,7 +7,7 @@
  */
 import type { Kysely, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
-import { detectHallucinations, } from "../../chat";
+import { detectHallucinations, generateRandomEvent, randomEventToEventRef, } from "../../chat";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -151,6 +151,41 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     );
     buffer?.signalDone();
     d.scheduleBufferCleanup(chatId,);
+  }
+
+  // ── Random event injection ─────────────────────────────────
+  // After storing a message, probabilistically generate a random ambient
+  // event and inject it into the context window for the next generation.
+  // Events are low-stakes (weather, NPC, environmental) and non-disruptive.
+  if (worldId) {
+    try {
+      const msgCount = await database
+        .selectFrom("messages",)
+        .select(database.fn.count("id",).as("cnt",),)
+        .where("chat_id", "=", chatId,)
+        .executeTakeFirst();
+
+      const event = generateRandomEvent({
+        db: database,
+        worldId,
+        messageCount: Number(msgCount?.cnt ?? 0,),
+      },);
+
+      if (event) {
+        const eventRef = randomEventToEventRef(event,);
+        log.debug("random event generated", {
+          eventId: event.id,
+          category: event.category,
+          content: event.content.slice(0, 100,),
+        },);
+        // Store the event reference for the next generation's context window
+        // The PromptAssembler will pick it up via the events section.
+        // For now, log it — full DB event storage is a follow-up.
+        void eventRef;
+      }
+    } catch (error) {
+      log.warn("random event generation failed (non-fatal)", { err: error, },);
+    }
   }
 
   // ── Group chat cascade: trigger next AI turn if applicable ──

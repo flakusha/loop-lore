@@ -4,13 +4,14 @@
  * Alpine.js component for displaying real-time token usage
  * in the chat header with color-coded thresholds.
  */
+import { apiFetch, } from "./htmx";
 
 interface ContextWindowState {
   currentTokens: number;
   maxTokens: number;
   percentage: number;
-  status: "ok" | "warning" | "critical" | "danger";
-  threshold: number;
+  status: "healthy" | "warning" | "critical" | "imminent";
+  threshold: string;
   loading: boolean;
   chatId: string | null;
 }
@@ -20,25 +21,25 @@ interface ContextWindowState {
     currentTokens: 0,
     maxTokens: 32_000,
     percentage: 0,
-    status: "ok" as ContextWindowState["status"],
-    threshold: 0.85,
+    status: "healthy" as ContextWindowState["status"],
+    threshold: "healthy",
     loading: false,
     chatId: null as string | null,
 
     /** Status color class for the progress bar */
     get statusColor(): string {
       switch (this.status) {
-        case "ok": {
+        case "healthy": {
           return "bg-green-500";
         }
         case "warning": {
           return "bg-yellow-500";
         }
         case "critical": {
-          return "bg-red-500";
+          return "bg-orange-500";
         }
-        case "danger": {
-          return "bg-red-700";
+        case "imminent": {
+          return "bg-red-600";
         }
         default: {
           return "bg-green-500";
@@ -49,17 +50,17 @@ interface ContextWindowState {
     /** Status text for tooltip */
     get statusText(): string {
       switch (this.status) {
-        case "ok": {
+        case "healthy": {
           return "Plenty of room";
         }
         case "warning": {
           return "Approaching limit";
         }
         case "critical": {
-          return "Near limit, compaction triggered";
+          return "Near limit — pruning may trigger";
         }
-        case "danger": {
-          return "Danger, consider pruning/summarizing";
+        case "imminent": {
+          return "At capacity — pruning active";
         }
         default: {
           return "";
@@ -86,8 +87,8 @@ interface ContextWindowState {
           this.currentTokens = data.currentTokens;
           this.maxTokens = data.maxTokens;
           this.percentage = data.percentage;
-          this.status = data.status;
-          this.threshold = data.threshold;
+          this.status = data.status ?? data.threshold ?? "healthy";
+          this.threshold = data.threshold ?? data.status ?? "healthy";
         }
       } catch {
         /* ignore — keep last known state */
@@ -103,9 +104,9 @@ interface ContextWindowState {
       }
     },
 
-    /** Trigger a warning toast if at 75% threshold */
+    /** Trigger a warning toast if at warning threshold */
     checkWarning(): void {
-      if (!(this.percentage >= 75 && this.percentage < 85)) {
+      if (this.status !== "warning") {
         return;
       }
 
