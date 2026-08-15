@@ -1,4 +1,6 @@
 /** New game plus difficulty modifiers */
+import type { PlaythroughStatus, } from "../../../db/enums";
+
 export const PlusDifficulty = {
   Normal: "normal",
   Hard: "hard",
@@ -24,6 +26,8 @@ export interface Playthrough {
   worldId: string;
   playthroughNumber: number;
   difficulty: PlusDifficulty;
+  status: PlaythroughStatus;
+  /** Derived from status — true when completed. */
   isCompleted: boolean;
   endingId: string | null;
   endingType: EndingType | null;

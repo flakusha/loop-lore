@@ -3,7 +3,7 @@
  *
  * Quest configs, rewards, and creation/progress request types.
  */
-import type { QuestType as QT, } from "../db/enums";
+import type { QuestCategory, QuestType as QT, } from "../db/enums";
 import type { WorldEvent, } from "./story-events-types";
 
 // ─── Quest Configs ───────────────────────────────────────────────
@@ -95,6 +95,7 @@ export interface QuestCreateRequest {
   name: string;
   description: string | null;
   type: QT;
+  category?: QuestCategory;
   config: QuestConfig;
   target: number;
   deadline?: string;
