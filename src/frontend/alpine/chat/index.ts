@@ -78,7 +78,7 @@ globalThis.chatState = function() {
     _generationEventSource: null as EventSource | null,
     _streamToolCalls: [] as string[],
     _streamContent: "",
-    chats: [] as { id: string; name?: string }[],
+    chats: [] as { id: string; name?: string; thinking_visibility?: string }[],
     activeChat: null as string | null,
     messages: [] as {
       id: string;
@@ -141,6 +141,11 @@ globalThis.chatState = function() {
       attemptId?: string;
     } | null,
     detailLevel: "Immersion",
+    /** Per-chat thinking visibility: hidden | collapsed | visible */
+    get thinkingVisibility(): string {
+      const chat = this.chats.find((c: { id: string; thinking_visibility?: string },) => c.id === this.activeChat);
+      return chat?.thinking_visibility ?? "hidden";
+    },
     impersonationActive: false,
     impersonatingActorId: null as string | null,
     _hamburgerOpen: {},
@@ -181,7 +186,9 @@ globalThis.chatState = function() {
     },
 
     get currentChat() {
-      return this.chats.find((c: { id: string; name?: string },) => c.id === this.activeChat) ?? null;
+      return this.chats.find(
+        (c: { id: string; name?: string; thinking_visibility?: string },) => c.id === this.activeChat,
+      ) ?? null;
     },
 
     // ── RPG Stats State ──

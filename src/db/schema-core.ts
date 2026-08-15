@@ -128,6 +128,7 @@ export interface Chats {
   name_source: string | null;
   template_id: string | null;
   visibility: Generated<string>;
+  thinking_visibility: Generated<string>;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -274,6 +275,7 @@ export interface Messages {
   format_version: Generated<number>;
   section_id: string | null;
   tool_calls: string | null;
+  thinking: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────

@@ -99,6 +99,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             freezePanel: body.freezePanel,
             gmConfig: hasExplicit("gmConfig",) ? body.gmConfig : undefined,
             visualNovel: hasExplicit("visualNovel",) ? body.visualNovel : undefined,
+            thinkingVisibility: body.thinkingVisibility,
             userRole,
           },);
           if ("code" in result) {
