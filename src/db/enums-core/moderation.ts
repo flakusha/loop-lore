@@ -1,3 +1,26 @@
+// ── NSFW Access Status ─────────────────────────────────────
+// ── State Machine ──────────────────────────────────────────
+import { createMachine, type StateDef, } from "../state";
+
+export const NsfwAccessStatus = {
+  Clear: "clear",
+  Blocked: "blocked",
+  Banned: "banned",
+} as const;
+export type NsfwAccessStatus = (typeof NsfwAccessStatus)[keyof typeof NsfwAccessStatus];
+
+const nsfwAccessStatusDef: StateDef<NsfwAccessStatus> = {
+  values: ["clear", "blocked", "banned",] as const,
+  initial: "clear",
+  transitions: {
+    clear: ["blocked", "banned",],
+    blocked: ["clear", "banned",],
+    banned: ["clear",],
+  },
+  terminal: [],
+};
+export const nsfwAccessStatusMachine = createMachine(nsfwAccessStatusDef,);
+
 // ── Moderation ──────────────────────────────────────────────
 export const ModerationFlagStatus = {
   Pending: "pending",
