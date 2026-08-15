@@ -67,7 +67,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
                 fromLocationId: fullChat.current_location_id,
                 toLocationId: null,
                 source: "manual",
-              });
+              },);
             },);
             return jsonResponse({ ok: true, current_location_id: null, },);
           }
@@ -92,7 +92,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
               fromLocationId: fullChat.current_location_id,
               toLocationId: locationId,
               source: "manual",
-            });
+            },);
 
             // Location-scoped background auto-sync (additive; doesn't move the
             // single current_location_id link or any 401-guard logic).
