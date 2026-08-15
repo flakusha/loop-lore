@@ -35,7 +35,7 @@ export async function getMessageWithAccess(
     .where("id", "=", message.chat_id,)
     .executeTakeFirst();
 
-  if (!chat || (chat.created_by !== userId && userRole !== "admin" && userRole !== "solo")) {
+  if (!chat || (userRole !== "admin" && userRole !== "solo" && chat.created_by !== userId)) {
     return { code: "not_found", message: "Message not found", };
   }
 

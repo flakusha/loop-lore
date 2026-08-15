@@ -38,7 +38,7 @@ describe("updateGmGuidance", () => {
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
-    return row?.gm_config ? JSON.parse(row.gm_config as string,) : null;
+    return row?.gm_config ? JSON.parse(row.gm_config,) : null;
   }
 
   it("merges guidance into gm_config", async () => {

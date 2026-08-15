@@ -11,6 +11,7 @@ import {
   MessageContentFormat,
   MessageContentType,
   MessageRole,
+  MessageStatus,
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -109,7 +110,7 @@ export async function dispatchCommand(
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
         content_type: MessageContentType.Text as any,
         content_encoding: sysContentEncoding as ContentEncoding,
-        status: "confirmed",
+        status: MessageStatus.Confirmed,
         visibility: "visible",
       },)
       .execute();

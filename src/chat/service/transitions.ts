@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { carryHistory, } from "./carry-history";
+import { carryLocation, } from "./carry-location";
 import { carryMemory, } from "./carry-memory";
 import { carryParticipants, } from "./carry-participants";
 import { carryPins, } from "./carry-pins";
@@ -98,6 +99,12 @@ export async function migrateChat(
   // Carry full history (message tree, preserving swipes)
   if (params.carry?.history === "full") {
     await carryHistory(database, chatId, newChatId,);
+  }
+
+  // Carry location context (chat_sections + message section links). Runs
+  // after carryHistory so the section remap reaches carried messages.
+  if (params.carry?.location === true) {
+    await carryLocation(database, chatId, newChatId,);
   }
 
   // Carry party/game state: story_turns, quest_progress, group_initiatives.
