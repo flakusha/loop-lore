@@ -1,4 +1,4 @@
-// src/config/schema-class/json-schema/ageGate.ts — age-gate JSON Schema section
+// src/config/schema-class/json-schema/age-gate.ts — age-gate JSON Schema section
 export const ageGate = {
   type: "object",
   description: "Age verification configuration",
