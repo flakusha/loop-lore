@@ -1991,7 +1991,7 @@
     "source": ".plan/tickets/TASK-003-gpu-separation.md"
   },
   "TASK-003-HOSTING-COMPARISON": {
-    "hash": "1787920943",
+    "hash": "pending",
     "extid": "TASK-003-HOSTING-COMPARISON",
     "type": "TASK",
     "title": "# Hosting Provider Comparison for Loop-Lore Deployment",
@@ -3060,7 +3060,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
+    "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md",
+    "status": "done"
   },
   "TASK-AGENCY-STORY-POINTS": {
     "epic": "epic-agency-story-points",
@@ -5052,7 +5053,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
+    "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md",
+    "status": "done"
   },
   "TASK-CLI-IMPORT-EXPORT": {
     "epic": "epic-import-export-io\\",
@@ -5784,7 +5786,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-data-migrations-atomicity-and-concurrency-guard.md"
+    "source": ".plan/tickets/TASK-data-migrations-atomicity-and-concurrency-guard.md",
+    "status": "done"
   },
   "TASK-DB-CONTENT-VERSIONING": {
     "epic": "epic-db-content-versioning",
@@ -9504,7 +9507,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-quest-status-transitions-bypass-state-machine.md"
+    "source": ".plan/tickets/TASK-quest-status-transitions-bypass-state-machine.md",
+    "status": "done"
   },
   "TASK-QUEST-SYSTEM": {
     "epic": "RPG Mechanics & Extensible Game Systems",
@@ -10751,7 +10755,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
+    "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md",
+    "status": "done"
   },
   "TASK-TEST-AUTH-MODULE": {
     "epic": "EPIC-2026-28",
