@@ -8,7 +8,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { Generated, } from "kysely";
-import type { ChatMode, } from "../../../db/enums-core";
+import type { ChatMode, PinnedState, } from "../../../db/enums-core";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -23,7 +23,7 @@ import { memorySection, } from "./memories";
 
 const characterScope = "character" as unknown as Generated<string>;
 const publicPrivacy = "public" as unknown as Generated<string>;
-const pinnedFlag = 1 as unknown as Generated<number>;
+const pinnedFlag = "pinned" as unknown as Generated<PinnedState>;
 const storyMode = "story" as unknown as Generated<ChatMode>;
 
 describe("memorySection — pinned memory injection", () => {
