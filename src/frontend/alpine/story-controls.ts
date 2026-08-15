@@ -54,10 +54,13 @@ export async function storyControl(
     const res = await apiFetch(`/api/chats/${chatId}/story/${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
-      body: body !== undefined ? jsonBody(body,) : undefined,
+      body: body === undefined ? undefined : jsonBody(body,),
     },);
     if (res.ok) { return { ok: true, }; }
-    const data = await res.json().catch(() => null) as { message?: string } | null;
+    let data: { message?: string } | null = null;
+    try {
+      data = (await res.json()) as { message?: string };
+    } catch { /* non-JSON error body */ }
     return { ok: false, message: data?.message ?? `story control "${action}" failed (${res.status})`, };
   } catch (error) {
     log.warn("Story control request failed", { action, error, },);

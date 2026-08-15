@@ -12,6 +12,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   statusEffects: [],
   equipment: [],
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- ChatState.loadRpgStats is typed Promise<void>; replaces a future async API call
   async loadRpgStats() {
     // Phase 1: Mock data for UI development
     // TODO: Replace with actual API call when backend is ready

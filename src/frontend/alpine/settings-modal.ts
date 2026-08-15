@@ -30,17 +30,17 @@ import { jsonBody, } from "./json";
 
     async save(section: string,) {
       const payload: Record<string, unknown> = {};
-      if (this.tab === "theme" || section === "theme") {
+      if (section === "theme" || this.tab === "theme") {
         payload.theme = this.theme;
         await this.applyTheme();
       }
-      if (this.tab === "chat" || section === "chat") {
+      if (section === "chat" || this.tab === "chat") {
         payload.detailLevel = this.detailLevel;
         localStorage.setItem("chat-enter-to-send", this.enterToSend ? "1" : "0",);
         localStorage.setItem("chat-auto-scroll", this.autoScroll ? "1" : "0",);
         localStorage.setItem("chat-detail-level", this.detailLevel,);
       }
-      if (this.tab === "generation" || section === "api") {
+      if (section === "api" || this.tab === "generation") {
         payload.provider = this.provider;
         payload.model = this.model;
         payload.temperature = this.temperature;
