@@ -8,29 +8,41 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 | --------------------- | --------------------------------------------------------------------------------------------- | ----- |
 | `tickets/`            | Task specs (authoring, review, iteration)                                                     | ~761  |
 | `epics/`              | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) | ~174  |
-| `backlog/`            | **Status queue (consolidated: 2 docs)**                                                       | 2     |
-| `backlog/priority.md` | Full priority ladder (P0–P6+) + 0.1.0 value tiers                                             | 1     |
-| `backlog/open.md`     | In-flight, debt, unwired code, deferred (P6+)                                                 | 1     |
+| `backlog/`            | **Status queue (index + 8 tier files, split 2026-08-15)**                                     | 10    |
+| `backlog/priority.md` | Priority index — file map + status header + milestone gates                                   | 1     |
+| `backlog/open.md`     | Open index — file map + status header + next actions                                          | 1     |
 | `epics-index.md`      | Epic registry index (generated)                                                               | 1     |
 
 ## Backlog Categories (`backlog/`)
 
 The former monolithic `immediate.md` / `backlog.md` / `open-items.md` were split into
 small single-purpose files, then re-consolidated (2026-08-08) into **two** backlog files
-to cut duplication:
+to cut duplication, then **re-split by priority/phasing (2026-08-15)** into index + tier
+files. Indexes (`priority.md`, `open.md`) hold file maps + status; tier files hold detail.
 
-| File          | Holds                                                                                 | Reads-when                      |
-| ------------- | ------------------------------------------------------------------------------------- | ------------------------------- |
-| `priority.md` | Full priority ladder P0–P6+ (critical path → core → 0.1.0 value tiers → release gate) | Working on priority / release   |
-| `open.md`     | In-flight/decision queue, debt, unwired code, schema drift, deferred P6+              | Auditing what's open / deciding |
+| File                 | Holds                                                                                 | Reads-when                      |
+| -------------------- | ------------------------------------------------------------------------------------- | ------------------------------- |
+| `priority.md`        | **Index** — status header, file map, milestone gates                                  | Working on priority / release   |
+| `priority-p0-p2.md`  | P0–P2 — critical path, high priority, accessibility, core workstream + tier details   | Current work                    |
+| `priority-p3-p5.md`  | P3–P5 — 0.1.0 core foundation value tiers, experience, wiring/search/polish           | 0.1.0 value tiers               |
+| `priority-p6.md`     | P6+ — post-0.1.0 systems (RPG, Memory, Agentic), waves P6-0…P6-H, sequencing          | Deferred systems                |
+| `priority-release-010.md` | Post-P3 road to happy 0.1.0, release artifacts, hardening, 0.1.0 Quick Wins       | Release prep                    |
+| `open.md`            | **Index** — status header, file map, open/next actions, preserved notes               | Auditing what's open / deciding |
+| `open-inflight.md`   | In-flight / decision queue (rows needing finalize-vs-defer call) + next actions       | Current decisions               |
+| `open-debt.md`       | Dead/unwired code, schema drift / latent bugs, release hardening                       | Debt audit                      |
+| `open-deferred.md`   | Item-systems deferred follow-ups (IS1–IS7), hardening / deferred clusters             | Deferred work                   |
+| `open-closed.md`     | Closed (reference) — recent wiring log, security closed, resolved, preserved notes    | History / audit                 |
 
 **Rules:**
 
 - **One home per item.** Every item lives in exactly one backlog file; rows are moved
-  (not mirrored) between `priority.md` and `open.md` as they transition open → in-flight →
-  priority/high-value.
-- **Dedup:** `open.md` removes rows that mirror a `priority.md` tier; `priority.md` does
-  not restate `open.md` debt.
+  (not mirrored) between files as they transition open → in-flight → priority/high-value.
+- **Dedup:** `open-*.md` removes rows that mirror a `priority-*.md` tier; `priority-*.md`
+  does not restate `open-*.md` debt.
+- **Index integrity enforced by gate.** `bun run plan:backlog:sync` checks that every
+  tier file appears in exactly one index file map (no orphans, no phantoms, no outside
+  targets); `--fix` re-registers missing rows. Registered in `bun run check`
+  (`backlog - index` gate).
 - **Detail lives in `tickets/` + `epics/`**; category files are status views, not specs.
 - **Active items** referenced by git issues point at their `.plan/backlog/*.md` source.
 

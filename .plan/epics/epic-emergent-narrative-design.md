@@ -31,6 +31,41 @@ these principles keep it from collapsing.
 - Group-chat / multi-actor orchestration (`src/turning`)
 - Memory / lorebook injection (avoid over-determining the narrative)
 
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Simple consistent rules (stats, dice, faction) | Substrate for emergence — MDA loop needs rules to emerge from |
+| Social Interaction | Reputation, relationship state | Consequence persistence, narrative stakes |
+| World & Locations | Persistent world state | Consequences persist across scenes (Undertale principle) |
+| Memory / Lorebook | Narrative context injection | Avoid over-determining narrative; memory informs emergent events |
+| Agency Story Points | Player steering currency | Players earn/spend story points to steer (principle 4) |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| All mode-switch systems | Design lens (non-binary, anti-dominant-strategy) | `epic-worlds-extension.md`, `epic-rpg-mechanics.md` apply principles at mode boundaries |
+| Multi-actor orchestration | Emergence guardrails | `src/turning` group-chat orchestration avoids degenerate loops |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| StoryPoint | Agency Story Points, RPG | Player steering currency (principle 4) |
+| ReputationScore | Social, Faction | Consequence persistence model |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `narrative.principle_check` | subscribes → mode-switch | Mode design validates against emergence principles |
+| `storypoint.spent` | subscribes ← Agency Story Points | Player steering affects narrative direction |
+
+---
+
 ## Related
 
 `epic-rpg-mechanics.md`, `epic-worlds-extension.md`, `epic-social-interaction.md`,

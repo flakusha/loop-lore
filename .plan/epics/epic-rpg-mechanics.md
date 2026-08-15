@@ -161,6 +161,54 @@ interface WorldMechanicsConfig {
 - [ ] Admin/GM mechanics UI
 - [ ] Mechanics disable/enable per world
 
+## Integration Points
+
+> Added 2026-08-15 (matrix P6-G standardization — this hub epic was the last of the
+> 17 RPG sub-system epics without a formal section).
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Config Extensions | Per-world ruleset configuration | Mechanics registry + control levels (Admin/GM/World/Player) |
+| Character Core | Stats, traits, growth data | Stat model feeds dice/stats checks; traits feed skills |
+| Resolution System | Unified dice/action resolution | All skill checks, attack rolls, saving throws flow through resolver |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Battle & Action Systems | Stats, dice resolution, XP rewards | Damage calc, stat modifiers, level-up after combat |
+| Magic & Spell Systems | Mana, caster stats | Spell effects scale from stats; casting checks use dice |
+| Crafting & Professions | Skill checks, level gates | Recipe success/failure resolution |
+| Companion, Pet & Mount | Stats, progression | Pet/mount performance scales with stats |
+| Exploration & Discovery | Skill checks (perception, navigation) | Location discovery resolution |
+| Economy & Trading | Currency ledger, item economics | Trade/trading resolutions, shop pricing |
+| NSFW Game Mechanics | Stat checks (CHA/WIS/CON) | Seduction/resistance checks |
+| Social Interaction | Reputation, skill checks | Persuasion/intimidation/deception resolution |
+| Weather & Environment | Environment modifiers | Weather affects stat checks and combat |
+| Faction & Reputation | Reputation model | Reputation gates quest/social mechanics |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `DiceRoll` | Battle, Resolution, Social, Crime | Unified dice model (NdS±M) for all roll types |
+| `CharacterStats` | Battle, Character Core, Social | STR/DEX/CON/WIS/INT/CHA shared across systems |
+| `StatusEffect` | Battle, Magic, Disease, Social | Shared buff/debuff model |
+| `SkillCheck` | Resolution, Battle, Social, Magic | Unified skill check result model |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `rpg.xp_granted` | emits → Economy, Battle | XP rewards after combat/quests |
+| `rpg.loot_dropped` | emits → Inventory, Economy | Loot feeds inventory + economy |
+| `resolution.roll` | subscribes ← Resolution | All rolls flow through unified resolver |
+| `weather.changed` | subscribes ← Weather | Environment modifiers update mid-session |
+
+---
+
 ## Open Questions
 
 ### Quest System
