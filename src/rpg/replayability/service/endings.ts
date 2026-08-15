@@ -28,7 +28,7 @@ export async function completePlaythrough(
   await (db as any)
     .updateTable("playthroughs",)
     .set({
-      is_completed: true,
+      status: "completed",
       ending_id: endingId,
       ending_type: endingType,
       completion_time: completionTime,

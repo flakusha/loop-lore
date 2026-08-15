@@ -2,6 +2,7 @@ import type { Kysely, } from "kysely";
 import type {
   ContentIntensity,
   NarrativeStyle,
+  NsfwEncounterStatus,
   NsfwEncounterType,
 } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
@@ -27,7 +28,7 @@ function rowToEncounter(row: {
   current_phase: number;
   outcomes: string;
   content_tags: string;
-  completed: number;
+  status: NsfwEncounterStatus;
   created_at: string;
   updated_at: string;
 },): NsfwEncounter {
@@ -42,7 +43,8 @@ function rowToEncounter(row: {
     currentPhase: row.current_phase,
     outcomes: parseJsonField<EncounterOutcome[]>(row.outcomes, [],),
     contentTags: parseJsonField<string[]>(row.content_tags, [],),
-    completed: row.completed === 1,
+    status: row.status,
+    completed: row.status === "completed",
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -132,7 +134,7 @@ export async function createEncounter(
       current_phase: 0,
       outcomes: jsonStringifyOr(outcomes ?? defaultOutcomes,),
       content_tags: jsonStringifyOr(contentTags ?? [],),
-      completed: 0,
+      status: "active",
       created_at: now,
       updated_at: now,
     },)
@@ -152,7 +154,7 @@ export async function createEncounter(
     current_phase: 0,
     outcomes: jsonStringifyOr(outcomes ?? defaultOutcomes,),
     content_tags: jsonStringifyOr(contentTags ?? [],),
-    completed: 0,
+    status: "active",
     created_at: now,
     updated_at: now,
   },);
@@ -188,7 +190,7 @@ export async function listEncounters(
     .orderBy("created_at", "desc",);
 
   if (opts?.completed !== undefined) {
-    query = query.where("completed", "=", opts.completed ? 1 : 0,);
+    query = query.where("status", "=", opts.completed ? "completed" : "active",);
   }
   if (opts?.type) {
     query = query.where("encounter_type", "=", opts.type,);

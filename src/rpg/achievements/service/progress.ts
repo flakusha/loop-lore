@@ -66,7 +66,7 @@ export async function updateProgress(
       achievement_id: achievementId,
       progress: 0,
       max_progress: maxProgress,
-      is_unlocked: false,
+      status: "locked",
       unlocked_at: null,
       claimed_at: null,
       metadata: "{}",
@@ -96,7 +96,7 @@ export async function updateProgress(
     .updateTable("player_achievements",)
     .set({
       progress: newProgress,
-      is_unlocked: unlocked,
+      status: unlocked ? "unlocked" : "locked",
       unlocked_at: unlocked ? now : null,
       updated_at: now,
     },)
@@ -143,6 +143,7 @@ export async function claimRewards(
   await (db as any)
     .updateTable("player_achievements",)
     .set({
+      status: "claimed",
       claimed_at: now,
       updated_at: now,
     },)
