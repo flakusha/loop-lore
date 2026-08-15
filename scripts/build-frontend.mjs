@@ -43,6 +43,9 @@ async function buildBundles() {
   // Locale init (separate — loads before Alpine for SSR translations)
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/locale-init.ts`;
 
+  // WASM module loader (pre-compiled hot binary — fetches + exposes C ABI)
+  await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/wasm-loader.ts`;
+
   console.log("✓ JS bundles built",);
 }
 

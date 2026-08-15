@@ -19,7 +19,7 @@ import { join, } from "node:path";
 /**
 ABI version the loader requires (packed `(major<<16)|(minor<<8)|patch`).
 */
-const REQUIRED_ABI_VERSION = (0 << 16) | (2 << 8);
+const REQUIRED_ABI_VERSION = (0 << 16) | (3 << 8);
 
 /**
 Platform → shared-library filename, matching the Rust crate output name.
@@ -73,10 +73,16 @@ export interface NativeBlake3Symbols {
   ll_blake3(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
 }
 
+export interface NativeZstdSymbols {
+  ll_zstd_compress(data: Uint8Array, len: number, out: Uint8Array, outLen: number, level: number): number;
+  ll_zstd_decompress(data: Uint8Array, len: number, out: Uint8Array, outLen: number): number;
+  ll_zstd_decompress_bound(data: Uint8Array, len: number): number | bigint;
+}
+
 /**
 Resolved native module state (lazy, cached after first load attempt).
 */
-let cachedModule: { handle: NativeBlake3Symbols; version: number } | null | undefined;
+let cachedModule: { handle: NativeBlake3Symbols & NativeZstdSymbols; version: number } | null | undefined;
 
 /**
  * Locate the shared library for the current platform/arch.
@@ -133,7 +139,7 @@ export function getNativeModule(): { handle: NativeBlake3Symbols & NativeZstdSym
 
   try {
     const { symbols, } = dlopen(binaryPath, SYMBOLS as any,);
-    const handle = symbols as unknown as NativeBlake3Symbols;
+    const handle = symbols as unknown as NativeBlake3Symbols & NativeZstdSymbols;
     const version = handle.ll_version();
     if (version !== REQUIRED_ABI_VERSION) {
       // ABI drift — refuse the binary rather than misbehave silently.
