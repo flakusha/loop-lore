@@ -55,18 +55,9 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
       const dataStart = offset + 8;
       const dataEnd = dataStart + chunkLen;
       if (dataEnd <= buf.length) {
-        // Find null separator between key and value
-        let nullPos = dataStart;
-        while (nullPos < dataEnd && buf[nullPos] !== 0) { nullPos++; }
-        const key = new TextDecoder().decode(buf.slice(dataStart, nullPos,),);
-        const valStart = nullPos + 1;
-        if (valStart < dataEnd) {
-          const val = chunkType === ZTXTSIG && buf[valStart] === 0
-            ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd,),)
-            : new TextDecoder().decode(buf.slice(valStart, dataEnd,),);
-          if ((["Description", "Comment", "Title",] as const).includes(key as "Description",) && !caption) {
-            caption = val;
-          }
+        const text = decodeTextChunk(buf, chunkType, dataStart, dataEnd,);
+        if (text && !caption && (["Description", "Comment", "Title",] as const).includes(text.key as "Description",)) {
+          caption = text.value;
         }
       }
     }
@@ -77,6 +68,24 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
   return { width, height, caption, };
 }
 
+/** Decode a PNG tEXt/zTXt chunk into its key/value pair (null on empty value). */
+function decodeTextChunk(
+  buf: Uint8Array,
+  chunkType: number,
+  dataStart: number,
+  dataEnd: number,
+): { key: string; value: string } | null {
+  // Find null separator between key and value
+  let nullPos = dataStart;
+  while (nullPos < dataEnd && buf[nullPos] !== 0) { nullPos++; }
+  const key = new TextDecoder().decode(buf.slice(dataStart, nullPos,),);
+  const valStart = nullPos + 1;
+  if (valStart >= dataEnd) { return null; }
+  const value = chunkType === ZTXTSIG && buf[valStart] === 0
+    ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd,),)
+    : new TextDecoder().decode(buf.slice(valStart, dataEnd,),);
+  return { key, value, };
+}
 function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
   let offset = 2;
   let caption: string | undefined;
@@ -103,11 +112,11 @@ function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; c
 
     // SOF0-SOF15 markers (start of frame) — contains dimensions
     if (
-      marker >= 0xC0 &&
-      marker <= 0xCF &&
       marker !== 0xC4 &&
       marker !== 0xC8 &&
       marker !== 0xCC &&
+      marker >= 0xC0 &&
+      marker <= 0xCF &&
       offset + 11 <= buf.length
     ) {
       const height = readUint16BE(buf, offset + 5,);

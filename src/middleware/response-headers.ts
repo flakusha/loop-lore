@@ -132,40 +132,11 @@ export class ResponseHeaderPolicy {
 
     if (cfg.timingAllowOrigin) { headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin; }
 
-    switch (kind) {
-      case "html": {
-        if (cfg.csp.enabled) {
-          const headerName = cfg.csp.reportOnly
-            ? "Content-Security-Policy-Report-Only"
-            : "Content-Security-Policy";
-          headers[headerName] = this.buildCsp(request,);
-        }
-        if (cfg.crossOriginOpenerPolicy) { headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy; }
-        if (cfg.crossOriginEmbedderPolicy) {
-          headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
-        }
-        if (cfg.permissionsPolicy) { headers["Permissions-Policy"] = cfg.permissionsPolicy; }
-
-        // Timing-Allow-Origin for performance measurement on static assets
-        if (cfg.timingAllowOrigin) {
-          headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
-        }
-
-        const link = this.buildLinkHeader();
-        if (link) { headers.Link = link; }
-
-        if (cfg.acceptClientHints.length > 0) {
-          const hints = cfg.acceptClientHints.join(", ",);
-          headers["Accept-CH"] = hints;
-          headers["Critical-CH"] = hints;
-          if (cfg.saveData) { headers["Save-Data"] = "on"; }
-        }
-        break;
-      }
-      case "api": {
-        if (cfg.permissionsPolicy) { headers["Permissions-Policy"] = cfg.permissionsPolicy; }
-        break;
-      }
+    if (kind === "html") {
+      this.applyHtmlHeaders(headers, request,);
+    }
+    if (kind === "api" && cfg.permissionsPolicy) {
+      headers["Permissions-Policy"] = cfg.permissionsPolicy;
     }
 
     // Headers shared by html and api
@@ -179,6 +150,33 @@ export class ResponseHeaderPolicy {
   }
 
   /** Serialize the CSP directive set into a single header value. */
+  /** Apply document-specific security/policy headers (CSP, COOP, COEP, hints). */
+  private applyHtmlHeaders(headers: Record<string, string>, request: Request,): void {
+    const cfg = this.config;
+    if (cfg.csp.enabled) {
+      const headerName = cfg.csp.reportOnly
+        ? "Content-Security-Policy-Report-Only"
+        : "Content-Security-Policy";
+      headers[headerName] = this.buildCsp(request,);
+    }
+    if (cfg.crossOriginOpenerPolicy) { headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy; }
+    if (cfg.crossOriginEmbedderPolicy) {
+      headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
+    }
+    if (cfg.permissionsPolicy) { headers["Permissions-Policy"] = cfg.permissionsPolicy; }
+    if (cfg.timingAllowOrigin) {
+      headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
+    }
+    const link = this.buildLinkHeader();
+    if (link) { headers.Link = link; }
+    if (cfg.acceptClientHints.length > 0) {
+      const hints = cfg.acceptClientHints.join(", ",);
+      headers["Accept-CH"] = hints;
+      headers["Critical-CH"] = hints;
+      if (cfg.saveData) { headers["Save-Data"] = "on"; }
+    }
+  }
+
   private buildCsp(request: Request,): string {
     const c = this.config.csp;
     const nonce = getNonce(request,);

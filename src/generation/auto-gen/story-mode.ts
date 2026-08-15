@@ -20,7 +20,6 @@ import type { GenerateTextFn, } from "../../story/game-master";
 import { jsonParseOr, uid, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
 import type { GenDeps, } from "./deps";
-
 /**
  * Story mode generation using GameMasterService for full GM orchestration.
  *
@@ -42,11 +41,9 @@ interface StoryModeOpts {
   worldId: string | null;
   deps: GenDeps;
 }
-
 export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, gmConfig, worldId, deps, } = opts;
   const log = getLogger().child({ module: "auto-gen-story", },);
-
   // Parse GM config from chat record. The chat's `gm_config` column stores the
   // chat-level `GmConfig` (assistantRole / visualNovel / storyMode / gmGuidance)
   // — a different shape from the story-domain `GameMasterConfig`. Extract the
@@ -74,14 +71,12 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       ? { escalationThreshold: gmConfigRaw.escalationThreshold, }
       : {}),
   };
-
   // Resolve the chat's default provider once, to seed the metadata stored on
   // the generated message when no per-actor override is applied (e.g. Human
   // mode, or an actor with no actorModels entry).
   const defaultResolved = await deps.resolveProvider({ userId, config, db: database, },);
   let usedProviderName = defaultResolved.resolvedProviderName;
   let usedModel = defaultResolved.resolvedModel;
-
   // Create generateText callback that calls the provider. The GM service may
   // request a per-actor provider/model (params.provider / params.model sourced
   // from GameMasterConfig.actorModels); resolve that provider per-call so each

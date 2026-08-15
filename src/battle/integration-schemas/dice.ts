@@ -51,6 +51,17 @@ export const STANDARD_DC: Record<string, DifficultyClass> = {
   legendary: { name: "Legendary", value: 30, description: "Only legends succeed", },
 };
 
+/** Roll `count` dice with `sides` faces and sum them. */
+function rollSet(sides: number, count: number,): { rolls: number[]; total: number } {
+  const rolls: number[] = [];
+  for (let i = 0; i < count; i++) {
+    rolls.push(Math.floor(Math.random() * sides,) + 1,);
+  }
+  let total = 0;
+  for (const r of rolls) { total += r; }
+  return { rolls, total, };
+}
+
 /** Roll a dice */
 export function rollDice(
   type: DiceType,
@@ -58,14 +69,7 @@ export function rollDice(
   modifiers: RollModifier[] = [],
 ): DiceRoll {
   const sides = parseInt(type.slice(1,), 10,);
-  const results: number[] = [];
-
-  for (let i = 0; i < count; i++) {
-    results.push(Math.floor(Math.random() * sides,) + 1,);
-  }
-
-  let total = 0;
-  for (const r of results) { total += r; }
+  let { rolls: results, total, } = rollSet(sides, count,);
 
   // Apply modifiers
   for (const mod of modifiers) {
@@ -75,30 +79,19 @@ export function rollDice(
   }
 
   // Check for advantage/disadvantage (roll twice, take higher/lower)
-  const hasAdvantage = modifiers.some(m => m.type === "advantage");
-  const hasDisadvantage = modifiers.some(m => m.type === "disadvantage");
-
+  const hasAdvantage = modifiers.some((m,) => m.type === "advantage");
+  const hasDisadvantage = modifiers.some((m,) => m.type === "disadvantage");
   if (hasAdvantage && !hasDisadvantage) {
-    const advantageResults: number[] = [];
-    for (let i = 0; i < count; i++) {
-      advantageResults.push(Math.floor(Math.random() * sides,) + 1,);
-    }
-    let advTotal = 0;
-    for (const r of advantageResults) { advTotal += r; }
-    if (advTotal > total) {
-      total = advTotal;
-      results.push(...advantageResults,);
+    const advantage = rollSet(sides, count,);
+    if (advantage.total > total) {
+      total = advantage.total;
+      results = [...results, ...advantage.rolls,];
     }
   } else if (hasDisadvantage && !hasAdvantage) {
-    const disadvantageResults: number[] = [];
-    for (let i = 0; i < count; i++) {
-      disadvantageResults.push(Math.floor(Math.random() * sides,) + 1,);
-    }
-    let disTotal = 0;
-    for (const r of disadvantageResults) { disTotal += r; }
-    if (disTotal < total) {
-      total = disTotal;
-      results.push(...disadvantageResults,);
+    const disadvantage = rollSet(sides, count,);
+    if (disadvantage.total < total) {
+      total = disadvantage.total;
+      results = [...results, ...disadvantage.rolls,];
     }
   }
 
