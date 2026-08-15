@@ -49,26 +49,29 @@ const WASM_DIST = join(import.meta.dir, "..", "dist", "public", "wasm",);
 const WASM_TARGET = "wasm32-unknown-unknown";
 
 /** Platforms with a supported shared-library target (see loader BINARY_NAMES). */
-const SUPPORTED_PLATFORMS = new Set(["linux", "darwin", "win32",]);
+const SUPPORTED_PLATFORMS = new Set(["linux", "darwin", "win32",],);
 
 // ── Detection helpers ────────────────────────────────────────────
 
 function cargoAvailable(): boolean {
-  const probe = spawnSync("cargo", ["--version",], { stdio: "ignore", });
+  const probe = spawnSync("cargo", ["--version",], { stdio: "ignore", },);
   return probe.status === 0;
 }
 
 function rustupAvailable(): boolean {
-  const probe = spawnSync("rustup", ["--version",], { stdio: "ignore", });
+  const probe = spawnSync("rustup", ["--version",], { stdio: "ignore", },);
   return probe.status === 0;
 }
 
 /** Check if rust-src component is available (needed for build-std cross-compilation). */
 function rustSrcAvailable(): boolean {
-  const sysroot = spawnSync("rustc", ["--print", "sysroot",], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore",] });
-  if (sysroot.status !== 0) return false;
-  const rustlibSrc = join(sysroot.stdout.trim(), "lib", "rustlib", "src");
-  return existsSync(join(rustlibSrc, "rust", "library", "core"));
+  const sysroot = spawnSync("rustc", ["--print", "sysroot",], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "ignore",],
+  },);
+  if (sysroot.status !== 0) { return false; }
+  const rustlibSrc = join(sysroot.stdout.trim(), "lib", "rustlib", "src",);
+  return existsSync(join(rustlibSrc, "rust", "library", "core",),);
 }
 
 // ── Build stages ─────────────────────────────────────────────────
@@ -78,11 +81,11 @@ function rustSrcAvailable(): boolean {
  * Degrades gracefully — pure-TS fallback in src/native/fallback/.
  */
 function buildNativeCdylib(): void {
-  if (!SUPPORTED_PLATFORMS.has(process.platform)) {
+  if (!SUPPORTED_PLATFORMS.has(process.platform,)) {
     console.log("[build:native:cdylib] platform unsupported — TS fallback",);
     return;
   }
-  if (!existsSync(join(CRATE_DIR, "Cargo.toml"))) {
+  if (!existsSync(join(CRATE_DIR, "Cargo.toml",),)) {
     console.log("[build:native:cdylib] crate missing — TS fallback",);
     return;
   }
@@ -95,7 +98,7 @@ function buildNativeCdylib(): void {
   const result = spawnSync("cargo", ["build", "--release", "--target-dir", "target",], {
     cwd: CRATE_DIR,
     stdio: "inherit",
-  });
+  },);
   if (result.status !== 0) {
     console.error(`[build:native:cdylib] cargo build failed (status ${result.status}) — TS fallback`,);
     return;
@@ -123,10 +126,10 @@ function buildWasm(): void {
 
   if (rustupAvailable()) {
     useRustup = true;
-    console.log("[build:native:wasm] rustup detected — standard wasm target add");
+    console.log("[build:native:wasm] rustup detected — standard wasm target add",);
   } else if (rustSrcAvailable()) {
     useBuildStd = true;
-    console.log("[build:native:wasm] no rustup, rust-src found — build-std path");
+    console.log("[build:native:wasm] no rustup, rust-src found — build-std path",);
   } else {
     console.log("[build:native:wasm] no rust toolchain — skipping WASM",);
     return;
@@ -134,7 +137,7 @@ function buildWasm(): void {
 
   // ── Ensure wasm target is available ───────────────────────────
   if (useRustup) {
-    const targetAdd = spawnSync("rustup", ["target", "add", WASM_TARGET,], { stdio: "pipe", });
+    const targetAdd = spawnSync("rustup", ["target", "add", WASM_TARGET,], { stdio: "pipe", },);
     if (targetAdd.status !== 0) {
       const stderr = targetAdd.stderr?.toString() ?? "";
       console.error(`[build:native:wasm] rustup target add failed: ${stderr.trim()}`,);
@@ -144,54 +147,59 @@ function buildWasm(): void {
 
   // ── Build configurations (feature-split for smaller downloads) ──
   const builds: { features: string; outputName: string }[] = [
-    { features: "blake3", outputName: "blake3.wasm" },
-    { features: "zstd", outputName: "zstd.wasm" },
-    { features: "blake3,zstd", outputName: "loop_lore_native.wasm" },
+    { features: "blake3", outputName: "blake3.wasm", },
+    { features: "zstd", outputName: "zstd.wasm", },
+    { features: "blake3,zstd", outputName: "loop_lore_native.wasm", },
   ];
 
-  const env: Record<string, string | undefined> = { ...process.env };
+  const env: Record<string, string | undefined> = { ...process.env, };
   const baseArgs = [
-    "build", "--release", "--no-default-features",
-    "--target", WASM_TARGET, "--target-dir", "target",
+    "build",
+    "--release",
+    "--no-default-features",
+    "--target",
+    WASM_TARGET,
+    "--target-dir",
+    "target",
   ];
   if (useBuildStd) {
-    baseArgs.push("-Z", "build-std=std,panic_abort");
+    baseArgs.push("-Z", "build-std=std,panic_abort",);
     env.RUSTC_BOOTSTRAP = "1";
   }
 
-  for (const { features, outputName } of builds) {
-    const args = [...baseArgs, "--features", features];
+  for (const { features, outputName, } of builds) {
+    const args = [...baseArgs, "--features", features,];
     console.log(`[build:native:wasm] compiling ${outputName} (features: ${features})...`,);
     const result = spawnSync("cargo", args, {
       cwd: CRATE_DIR,
       env: env as { [key: string]: string },
       stdio: "inherit",
-    });
+    },);
     if (result.status !== 0) {
       console.error(`[build:native:wasm] ${outputName} failed (status ${result.status})`,);
       continue;
     }
 
-    const src = join(CRATE_DIR, "target", WASM_TARGET, "release", "loop_lore_native.wasm");
-    if (!existsSync(src)) {
+    const src = join(CRATE_DIR, "target", WASM_TARGET, "release", "loop_lore_native.wasm",);
+    if (!existsSync(src,)) {
       console.error(`[build:native:wasm] expected ${src} not found`,);
       continue;
     }
 
-    mkdirSync(WASM_DIST, { recursive: true });
-    const dest = join(WASM_DIST, outputName);
-    copyFileSync(src, dest);
-    const size = statSync(dest).size;
-    console.log(`[build:native:wasm] OK ${outputName} (${(size / 1024).toFixed(1)} KB)`);
+    mkdirSync(WASM_DIST, { recursive: true, },);
+    const dest = join(WASM_DIST, outputName,);
+    copyFileSync(src, dest,);
+    const size = statSync(dest,).size;
+    console.log(`[build:native:wasm] OK ${outputName} (${(size / 1024).toFixed(1,)} KB)`,);
   }
 
-  console.log(`[build:native:wasm] all modules ready at ${WASM_DIST}`);
+  console.log(`[build:native:wasm] all modules ready at ${WASM_DIST}`,);
 }
 
 // ── Main ─────────────────────────────────────────────────────────
 
 function main(): void {
-  console.log("=== build:native ===");
+  console.log("=== build:native ===",);
   buildNativeCdylib();
   buildWasm();
 }
