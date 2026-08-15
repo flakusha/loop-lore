@@ -36,7 +36,7 @@ export const chatHistorySection: SectionBuilder = {
     const out: GenerationMessage[] = [];
     for (const row of rows) {
       let content = row.content;
-      if (row.key_id && smk) {
+      if (smk && row.key_id) {
         try {
           content = await decryptMessageContent(ctx.db, { ...row, chat_id: chatId, }, smk,);
         } catch {

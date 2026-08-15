@@ -10,7 +10,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { ShadowNoteType, WhiteneoteType, } from "../../../db/enums";
+import { ShadowNoteStatus, ShadowNoteType, WhiteneoteType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -109,7 +109,7 @@ describe("gmNotesSection", () => {
       ShadowNoteType.Foreshadowing,
       "Hidden one.",
       "2026-08-01T00:00:00Z",
-      { revealed: 1, } as any,
+      { status: ShadowNoteStatus.Revealed, } as any,
     );
     await insertShadowNotes(
       db,
@@ -117,7 +117,7 @@ describe("gmNotesSection", () => {
       ShadowNoteType.Foreshadowing,
       "Hidden two.",
       "2026-08-01T00:00:00Z",
-      { revealed: 0, } as any,
+      { status: ShadowNoteStatus.Hidden, } as any,
     );
 
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);

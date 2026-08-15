@@ -21,6 +21,7 @@ import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
 import { systemSection, } from "./sections/system";
+import { travelSection, } from "./sections/travel";
 import { userPersonaSection, } from "./sections/user-persona";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
@@ -37,6 +38,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   eventSection,
   postHistorySection,
   storyContextSection,
+  travelSection,
   gmNotesSection,
   dynamicContextSection,
   recentEventsSection,
