@@ -71,8 +71,8 @@ describe("Personas flow E2E", () => {
       const created = await page.evaluate(async (name,) => {
         const res = await fetch("/api/personas", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, description: "created via api", title: "T" }),
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name, description: "created via api", title: "T", },),
         },);
         return res.status;
       }, NEW_PERSONA_NAME,);
@@ -88,9 +88,9 @@ describe("Personas flow E2E", () => {
       // API lists it for the solo user.
       const listed = await page.evaluate(async (name,) => {
         const res = await fetch("/api/personas", { headers: { Accept: "application/json", }, },);
-        if (!res.ok) return false;
+        if (!res.ok) { return false; }
         const data = await res.json() as Array<{ name: string }>;
-        return data.some((p,) => p.name === name,);
+        return data.some((p,) => p.name === name);
       }, NEW_PERSONA_NAME,);
       expect(listed,).toBe(true,);
     } finally {

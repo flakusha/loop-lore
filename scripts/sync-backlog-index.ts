@@ -39,8 +39,8 @@ const INDEX_FILES = ["priority.md", "open.md",]; // index docs that carry a file
 
 interface FileMapRow {
   line: number;
-  target: string;   // file path as written (e.g. "./priority-p0-p2.md" or "priority-p0-p2.md")
-  file: string;     // resolved basename
+  target: string; // file path as written (e.g. "./priority-p0-p2.md" or "priority-p0-p2.md")
+  file: string; // resolved basename
 }
 
 /**
@@ -53,9 +53,9 @@ function parseFileMap(filePath: string,): FileMapRow[] {
 
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i]!;
-    const m = l.match(/^\|\s*\[`([^`]+)`\]\((\.\/)?([^)]+\.md)\)\s*\|/);
+    const m = l.match(/^\|\s*\[`([^`]+)`\]\((\.\/)?([^)]+\.md)\)\s*\|/,);
     if (!m) { continue; }
-    rows.push({ line: i + 1, target: m[2] === "./" ? `./${m[3]}` : m[3]!, file: m[3]!, });
+    rows.push({ line: i + 1, target: m[2] === "./" ? `./${m[3]}` : m[3]!, file: m[3]!, },);
   }
   return rows;
 }
@@ -63,14 +63,14 @@ function parseFileMap(filePath: string,): FileMapRow[] {
 // ── Core reconciliation ────────────────────────────────────────
 
 interface SyncResult {
-  orphans: string[];                    // tier files not listed in any index
+  orphans: string[]; // tier files not listed in any index
   phantoms: Array<{ index: string; row: FileMapRow }>; // map rows with missing files
-  outside: Array<{ index: string; row: FileMapRow }>;  // map rows pointing outside backlog/
+  outside: Array<{ index: string; row: FileMapRow }>; // map rows pointing outside backlog/
   map: Map<string, Array<{ index: string; row: FileMapRow }>>; // file → index rows
 }
 
 function reconcile(): SyncResult {
-  const files = readdirSync(BACKLOG_DIR,).filter((f,) => f.endsWith(".md",),).sort();
+  const files = readdirSync(BACKLOG_DIR,).filter((f,) => f.endsWith(".md",)).sort();
   const map = new Map<string, Array<{ index: string; row: FileMapRow }>>();
   const phantoms: SyncResult["phantoms"] = [];
   const outside: SyncResult["outside"] = [];
@@ -79,8 +79,8 @@ function reconcile(): SyncResult {
     const indexPath = join(BACKLOG_DIR, idx,);
     if (!existsSync(indexPath,)) { continue; }
     for (const row of parseFileMap(indexPath,)) {
-      if (row.file.includes("/") || row.file === idx || row.file.startsWith("..",)) {
-        outside.push({ index: idx, row, });
+      if (row.file.includes("/",) || row.file === idx || row.file.startsWith("..",)) {
+        outside.push({ index: idx, row, },);
         continue;
       }
       const entry = { index: idx, row, };
@@ -88,13 +88,13 @@ function reconcile(): SyncResult {
       existing.push(entry,);
       map.set(row.file, existing,);
       if (!files.includes(row.file,)) {
-        phantoms.push({ index: idx, row, });
+        phantoms.push({ index: idx, row, },);
       }
     }
   }
 
   const listed = new Set(map.keys(),);
-  const orphans = files.filter((f,) => f !== "priority.md" && f !== "open.md" && !listed.has(f,),);
+  const orphans = files.filter((f,) => f !== "priority.md" && f !== "open.md" && !listed.has(f,));
 
   return { orphans, phantoms, outside, map, };
 }
@@ -103,57 +103,57 @@ function reconcile(): SyncResult {
 
 function report(result: SyncResult, verbose: boolean,): void {
   console.log("\n📊 Reconcile .plan/backlog indexes...\n",);
-  console.log(`   Backlog .md files:   ${readdirSync(BACKLOG_DIR,).filter((f,) => f.endsWith(".md",),).length}`);
-  console.log(`   Index files:         ${INDEX_FILES.join(", ",)}`);
+  console.log(`   Backlog .md files:   ${readdirSync(BACKLOG_DIR,).filter((f,) => f.endsWith(".md",)).length}`,);
+  console.log(`   Index files:         ${INDEX_FILES.join(", ",)}`,);
 
-  console.log("\n📋 Reconciliation Report\n" + "─".repeat(60),);
+  console.log("\n📋 Reconciliation Report\n" + "─".repeat(60,),);
 
   if (result.orphans.length > 0) {
-    console.log(`\n🔴 Orphan files (not in any index file map): ${result.orphans.length}`);
-    for (const f of result.orphans) { console.log(`   ${f}`); }
+    console.log(`\n🔴 Orphan files (not in any index file map): ${result.orphans.length}`,);
+    for (const f of result.orphans) { console.log(`   ${f}`,); }
   } else {
-    console.log("\n🟢 No orphan files");
+    console.log("\n🟢 No orphan files",);
   }
 
   if (result.phantoms.length > 0) {
-    console.log(`\n🔴 Phantom entries (index maps missing file): ${result.phantoms.length}`);
+    console.log(`\n🔴 Phantom entries (index maps missing file): ${result.phantoms.length}`,);
     for (const p of result.phantoms) {
-      console.log(`   ${p.index}:${p.row.line} → ${p.row.file} (missing)`);
+      console.log(`   ${p.index}:${p.row.line} → ${p.row.file} (missing)`,);
     }
   } else {
-    console.log("\n🟢 No phantom entries");
+    console.log("\n🟢 No phantom entries",);
   }
 
   if (result.outside.length > 0) {
-    console.log(`\n🟡 Non-backlog file-map targets: ${result.outside.length}`);
+    console.log(`\n🟡 Non-backlog file-map targets: ${result.outside.length}`,);
     for (const o of result.outside) {
-      console.log(`   ${o.index}:${o.row.line} → ${o.row.target}`);
+      console.log(`   ${o.index}:${o.row.line} → ${o.row.target}`,);
     }
   } else {
-    console.log("\n🟢 No outside targets");
+    console.log("\n🟢 No outside targets",);
   }
 
   if (verbose) {
-    console.log("\n🗂️  File map state:");
-    for (const [file, rows] of [...result.map.entries(),].sort()) {
-      const homes = rows.map((r,) => r.index,).join(", ",);
+    console.log("\n🗂️  File map state:",);
+    for (const [file, rows,] of [...result.map.entries(),].sort()) {
+      const homes = rows.map((r,) => r.index).join(", ",);
       const dup = rows.length > 1 ? " ⚠️ multiple homes" : "";
-      console.log(`   ${file.padEnd(28)} ← ${homes}${dup}`);
+      console.log(`   ${file.padEnd(28,)} ← ${homes}${dup}`,);
     }
-    const listed = [...result.map.keys(),].filter((f,) => !result.orphans.includes(f,),);
+    const listed = [...result.map.keys(),].filter((f,) => !result.orphans.includes(f,));
     const unlisted = result.orphans;
-    console.log(`\n   Listed: ${listed.length} · Unlisted (orphans): ${unlisted.length}`);
+    console.log(`\n   Listed: ${listed.length} · Unlisted (orphans): ${unlisted.length}`,);
   }
 
   const issues = result.orphans.length + result.phantoms.length + result.outside.length;
-  console.log("\n" + "═".repeat(60));
+  console.log("\n" + "═".repeat(60,),);
   if (issues === 0) {
-    console.log("✅ Backlog indexes are in sync");
-    process.exit(0);
+    console.log("✅ Backlog indexes are in sync",);
+    process.exit(0,);
   } else {
-    console.log(`⚠️  ${issues} actionable issue(s) found`);
-    console.log("Run with --fix to apply automatic fixes");
-    process.exit(1);
+    console.log(`⚠️  ${issues} actionable issue(s) found`,);
+    console.log("Run with --fix to apply automatic fixes",);
+    process.exit(1,);
   }
 }
 
@@ -173,10 +173,13 @@ function addMapRow(index: string, file: string,): boolean {
   let insertAt = -1;
 
   for (let i = 0; i < lines.length; i++) {
-    if (/^## File map/.test(lines[i]!)) { inMap = true; continue; }
-    if (inMap && /^## /.test(lines[i]!)) { break; }          // next section
-    if (inMap && /^\|/.test(lines[i]!) && !/^\| ---/.test(lines[i]!)) {
-      insertAt = i;                                          // last table row seen
+    if (/^## File map/.test(lines[i]!,)) {
+      inMap = true;
+      continue;
+    }
+    if (inMap && /^## /.test(lines[i]!,)) { break; } // next section
+    if (inMap && /^\|/.test(lines[i]!,) && !/^\| ---/.test(lines[i]!,)) {
+      insertAt = i; // last table row seen
     }
   }
   if (insertAt < 0) { return false; }
@@ -197,7 +200,7 @@ function dropPhantomRow(index: string, row: FileMapRow,): boolean {
   return true;
 }
 
-function applyFixes(result: SyncResult): void {
+function applyFixes(result: SyncResult,): void {
   console.log("\n🔧 Applying fixes...\n",);
   let changed = false;
 
@@ -206,27 +209,27 @@ function applyFixes(result: SyncResult): void {
     // priority-*.md → priority.md; fall back to priority.md.
     const targetIndex = f.startsWith("open-",) ? "open.md" : "priority.md";
     if (addMapRow(targetIndex, f,)) {
-      console.log(`   ${f}: added to ${targetIndex} file map`);
+      console.log(`   ${f}: added to ${targetIndex} file map`,);
       changed = true;
     }
   }
 
   for (const p of result.phantoms) {
     if (dropPhantomRow(p.index, p.row,)) {
-      console.log(`   ${p.index}:${p.row.line}: dropped phantom row (${p.row.file})`);
+      console.log(`   ${p.index}:${p.row.line}: dropped phantom row (${p.row.file})`,);
       changed = true;
     }
   }
 
   // Outside targets: report only (can't auto-fix — likely an intentional cross-doc link)
   for (const o of result.outside) {
-    console.log(`   ${o.index}:${o.row.line}: outside target ${o.row.target} — manual review`);
+    console.log(`   ${o.index}:${o.row.line}: outside target ${o.row.target} — manual review`,);
   }
 
   if (!changed) {
-    console.log("   Nothing to fix");
+    console.log("   Nothing to fix",);
   } else {
-    console.log("\n✅ Wrote index file(s). Re-run without --fix to verify.");
+    console.log("\n✅ Wrote index file(s). Re-run without --fix to verify.",);
   }
 }
 
@@ -239,7 +242,7 @@ const result = reconcile();
 if (fix) {
   applyFixes(result,);
   // Re-report to show residual issues after fixes
-  console.log("\nRe-running reconcile after fixes:");
+  console.log("\nRe-running reconcile after fixes:",);
   report(reconcile(), verbose,);
 } else {
   report(result, verbose,);
