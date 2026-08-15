@@ -10,7 +10,7 @@
  * the snapshot binding — editing a template does not retroactively change chats
  * that already bound to it.
  *
- * See .plan/design/chat-template-config-lifecycle.md.
+ * See .plan/epics/epic-config-templates.md.
  */
 import type { Kysely, } from "kysely";
 

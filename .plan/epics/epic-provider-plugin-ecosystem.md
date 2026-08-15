@@ -179,7 +179,7 @@ interface PluginOverride {
 
 ## References
 
-- `docs/spec/provider-system.md` — provider architecture spec
+- `src/generation/providers/types.ts` — provider architecture (LLMProvider interface)
 - `docs/spec/plugin-system.md` — plugin system spec
 - `src/generation/providers/types.ts` — LLMProvider interface
 

@@ -32,11 +32,14 @@
  */
 import { existsSync, readdirSync, statSync, } from "node:fs";
 import { dirname, join, resolve, } from "node:path";
+import { extractComments, extractDocRefs, } from "./lib/src-refs";
 
 const PROJECT_ROOT = import.meta.dir + "/..";
 const GLOBS = ["docs/**/*.md", ".plan/**/*.md",];
 // Bun's Glob does not traverse dot-directories (.plan/), so walk the tree.
 const SCAN_DIRS = ["docs", ".plan",];
+const SRC_DIR = "src";
+const SRC_EXTS = new Set([".ts", ".tsx",],);
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist", ".venv", "coverage", ".vitepress",],);
 
 /** Recursively collect *.md files (handles hidden dirs that Bun Glob misses). */
@@ -51,6 +54,22 @@ function collectMdFiles(rootDir: string,): string[] {
     }
   };
   walk(join(PROJECT_ROOT, rootDir,),);
+  return out;
+}
+
+/** Recursively collect TypeScript source files under src/. */
+function collectSrcFiles(): string[] {
+  const out: string[] = [];
+  const walk = (d: string,): void => {
+    for (const entry of readdirSync(d,)) {
+      if (SKIP_DIRS.has(entry,)) { continue; }
+      const p = join(d, entry,);
+      if (statSync(p,).isDirectory()) { walk(p,); }
+      else if (SRC_EXTS.has(p.slice(p.lastIndexOf(".",),),)) { out.push(p,); }
+    }
+  };
+  const srcRoot = join(PROJECT_ROOT, SRC_DIR,);
+  if (existsSync(srcRoot,)) { walk(srcRoot,); }
   return out;
 }
 
@@ -220,6 +239,29 @@ async function checkFile(file: string,): Promise<void> {
   }
 }
 
+// ── Source-comment citation check ───────────────────────────────
+
+/** Check a TS source file's comments for stale `.plan/` + `docs/` refs. */
+async function checkSrcComments(file: string,): Promise<void> {
+  const raw = await Bun.file(file,).text();
+  let comments: string[];
+  try {
+    comments = extractComments(raw,);
+  } catch {
+    return; // unparseable source — skip (not a link-rot signal)
+  }
+  for (const comment of comments) {
+    for (const { path, } of extractDocRefs(comment,)) {
+      const resolved = resolveTarget(path, file,);
+      if (!resolved) { continue; }
+      if (!existsSync(resolved,)) {
+        broken++;
+        console.error(`[md-links] ${file} → broken comment citation: ${path} (resolved ${resolved})`,);
+      }
+    }
+  }
+}
+
 async function main(): Promise<void> {
   const files = new Set<string>();
   for (const dir of SCAN_DIRS) {
@@ -227,6 +269,11 @@ async function main(): Promise<void> {
   }
 
   for (const file of files) { await checkFile(file,); }
+
+  // Source-comment citations: scan TS comments for stale `.plan/` + `docs/`
+  // references (not covered by the markdown scan above).
+  const srcFiles = collectSrcFiles();
+  for (const file of srcFiles) { await checkSrcComments(file,); }
 
   if (broken > 0 || orphanRefs > 0) {
     if (broken > 0) {
@@ -239,7 +286,9 @@ async function main(): Promise<void> {
     }
     process.exit(1,);
   }
-  console.log(`[md-links] OK — ${files.size} markdown file(s), all internal links resolve, TASK refs resolve.`,);
+  console.log(
+    `[md-links] OK — ${files.size} markdown file(s), ${srcFiles.length} source file(s); all internal links and comment citations resolve.`,
+  );
 }
 
 main().catch((err,) => {
