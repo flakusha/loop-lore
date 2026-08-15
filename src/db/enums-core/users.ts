@@ -43,3 +43,10 @@ export const TurnStrategy = {
   Hybrid: "hybrid",
 } as const;
 export type TurnStrategy = (typeof TurnStrategy)[keyof typeof TurnStrategy];
+
+export const ChatVisibility = {
+  Private: "private",
+  Public: "public",
+  Unlisted: "unlisted",
+} as const;
+export type ChatVisibility = (typeof ChatVisibility)[keyof typeof ChatVisibility];

@@ -5,6 +5,9 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
+import type {
+  NsfwAccessStatus,
+} from "./enums";
 
 // ── model_comparisons ────────────────────────────────────────────
 export interface ModelComparisons {
@@ -23,8 +26,7 @@ export interface NsfwUserPreferences {
   user_id: string;
   nsfw_enabled: Generated<number>;
   max_rating: Generated<string>;
-  blocked_from_nsfw: Generated<number>;
-  banned_from_nsfw: Generated<number>;
+  access_status: Generated<NsfwAccessStatus>;
   shadow_nsfw: Generated<number>;
   block_reason: string | null;
   banned_at: string | null;

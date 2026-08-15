@@ -28,7 +28,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("expires_at", "text",)
     .addColumn("max_uses", "integer",)
     .addColumn("uses", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("revoked", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
     .execute();
 
   await db.schema
@@ -58,7 +58,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("expires_at", "text",)
     .addColumn("max_uses", "integer",)
     .addColumn("uses", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("revoked", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
     .execute();
 
   await db.schema

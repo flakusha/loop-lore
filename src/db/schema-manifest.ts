@@ -311,7 +311,7 @@ export const SCHEMA = new SchemaManifest()
     world_id: col("text", { notNull: true, },),
     location_id: col("text",),
     current_uses: col("integer", { notNull: true, },),
-    is_depleted: col("integer", { notNull: true, hasDefault: true, },),
+    state: col("text", { notNull: true, hasDefault: true, },),
     respawn_at: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
@@ -469,7 +469,7 @@ export const SCHEMA = new SchemaManifest()
     achievement_id: col("text", { notNull: true, },),
     progress: col("integer", { notNull: true, hasDefault: true, },),
     max_progress: col("integer", { notNull: true, hasDefault: true, },),
-    is_unlocked: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
     unlocked_at: col("text",),
     claimed_at: col("text",),
     metadata: col("text", { notNull: true, hasDefault: true, },),
@@ -482,7 +482,7 @@ export const SCHEMA = new SchemaManifest()
     world_id: col("text", { notNull: true, },),
     playthrough_number: col("integer", { notNull: true, hasDefault: true, },),
     difficulty: col("text", { notNull: true, hasDefault: true, },),
-    is_completed: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
     ending_id: col("text",),
     ending_type: col("text",),
     completion_time: col("integer", { notNull: true, hasDefault: true, },),
@@ -531,7 +531,7 @@ export const SCHEMA = new SchemaManifest()
     chat_id: col("text", { notNull: true, },),
     type: col("text", { notNull: true, },),
     content: col("text", { notNull: true, },),
-    revealed: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
   .table("synthetic_data", {
@@ -574,7 +574,7 @@ export const SCHEMA = new SchemaManifest()
     relationship_impact: col("text", { notNull: true, hasDefault: true, },),
     mood_impact: col("text", { notNull: true, hasDefault: true, },),
     unlock_conditions: col("text", { notNull: true, hasDefault: true, },),
-    selected: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
     selected_at: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
@@ -677,7 +677,7 @@ export const SCHEMA = new SchemaManifest()
     world_id: col("text",),
     user_id: col("text",),
     scope: col("text", { notNull: true, hasDefault: true, },),
-    pinned: col("integer", { notNull: true, hasDefault: true, },),
+    pinned: col("text", { notNull: true, hasDefault: true, },),
     privacy: col("text", { notNull: true, hasDefault: true, },),
     shareability: col("text",),
   },)
@@ -897,7 +897,7 @@ export const SCHEMA = new SchemaManifest()
     xp: col("integer", { notNull: true, hasDefault: true, },),
     proficiency: col("text", { notNull: true, hasDefault: true, },),
     specialization: col("text",),
-    is_locked: col("integer", { notNull: true, hasDefault: true, },),
+    lock_state: col("text", { notNull: true, hasDefault: true, },),
     prerequisites: col("text", { notNull: true, hasDefault: true, },),
     metadata: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
@@ -1105,7 +1105,7 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text",),
     max_uses: col("integer",),
     uses: col("integer", { notNull: true, hasDefault: true, },),
-    revoked: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("chat_mentions", {
     id: col("text", { primaryKey: true, },),
@@ -1154,6 +1154,8 @@ export const SCHEMA = new SchemaManifest()
     visual_novel: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    features: col("text", { hasDefault: true, },),
+    visibility: col("text", { hasDefault: true, },),
   },)
   .table("chats", {
     id: col("text", { primaryKey: true, },),
@@ -1181,6 +1183,7 @@ export const SCHEMA = new SchemaManifest()
     nsfw_override: col("text",),
     name_source: col("text",),
     template_id: col("text",),
+    visibility: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -1267,7 +1270,7 @@ export const SCHEMA = new SchemaManifest()
     current_phase: col("integer", { notNull: true, hasDefault: true, },),
     outcomes: col("text", { notNull: true, hasDefault: true, },),
     content_tags: col("text", { notNull: true, hasDefault: true, },),
-    completed: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -1276,8 +1279,7 @@ export const SCHEMA = new SchemaManifest()
     user_id: col("text", { notNull: true, },),
     nsfw_enabled: col("integer", { notNull: true, hasDefault: true, },),
     max_rating: col("text", { notNull: true, hasDefault: true, },),
-    blocked_from_nsfw: col("integer", { notNull: true, hasDefault: true, },),
-    banned_from_nsfw: col("integer", { notNull: true, hasDefault: true, },),
+    access_status: col("text", { notNull: true, hasDefault: true, },),
     shadow_nsfw: col("integer", { notNull: true, hasDefault: true, },),
     block_reason: col("text",),
     banned_at: col("text",),
@@ -1357,6 +1359,7 @@ export const SCHEMA = new SchemaManifest()
     name: col("text", { notNull: true, },),
     description: col("text",),
     type: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, hasDefault: true, },),
     status: col("text", { notNull: true, hasDefault: true, },),
     priority: col("integer", { notNull: true, hasDefault: true, },),
     config: col("text", { notNull: true, hasDefault: true, },),
@@ -1389,7 +1392,7 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text",),
     max_uses: col("integer",),
     uses: col("integer", { notNull: true, hasDefault: true, },),
-    revoked: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_items", {
     id: col("text", { primaryKey: true, },),
@@ -1493,7 +1496,7 @@ export const SCHEMA = new SchemaManifest()
     title: col("text", { notNull: true, },),
     body: col("text",),
     link: col("text",),
-    read: col("integer", { notNull: true, hasDefault: true, },),
+    read: col("text", { notNull: true, hasDefault: true, },),
     data: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
@@ -1545,7 +1548,7 @@ export const SCHEMA = new SchemaManifest()
   // ── Plugin System ──────────────────────────────────────────────
   .table("plugin_state", {
     name: col("text", { primaryKey: true, },),
-    enabled: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
     enabled_at: col("text",),
     disabled_at: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),

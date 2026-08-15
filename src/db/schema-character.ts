@@ -12,6 +12,7 @@ import type {
   FantasyCategory,
   LicenseType,
   NarrativeStyle,
+  NsfwEncounterStatus,
   NsfwEncounterType,
   NsfwLocationType,
   RelationshipType,
@@ -270,7 +271,7 @@ export interface NsfwEncounters {
   current_phase: Generated<number>;
   outcomes: Generated<string>;
   content_tags: Generated<string>;
-  completed: Generated<number>;
+  status: Generated<NsfwEncounterStatus>;
   created_at: string;
   updated_at: string;
 }

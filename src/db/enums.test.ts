@@ -8,6 +8,11 @@
 import { describe, expect, test, } from "bun:test";
 import * as enums from "./enums";
 
+// ── State machine behavior ──────────────────────────────────
+
+import { questProgressStatusMachine, questProgressValidator, questStatusMachine, } from "./enums-story/quests";
+import { turnStatusMachine, } from "./enums-story/turns";
+
 // ── Expected enum exports per domain ────────────────────────
 const EXPECTED_ENUMS: Record<string, string[]> = {
   // enums-core
@@ -97,5 +102,71 @@ describe("enum barrel", () => {
     for (const name of expectedNames) {
       expect(actualNames,).toContain(name,);
     }
+  });
+});
+
+describe("questStatusMachine", () => {
+  test("initial state is active", () => {
+    expect(questStatusMachine.def.initial,).toBe("active",);
+  });
+
+  test("active transitions to all non-terminal states", () => {
+    for (const to of ["completed", "failed", "abandoned",] as const) {
+      expect(questStatusMachine.canTransition("active", to,),).toBe(true,);
+    }
+  });
+
+  test("terminal states reject re-transition", () => {
+    expect(questStatusMachine.canTransition("completed", "active",),).toBe(false,);
+    expect(questStatusMachine.canTransition("failed", "completed",),).toBe(false,);
+  });
+
+  test("abandoned quests can be re-activated", () => {
+    expect(questStatusMachine.canTransition("abandoned", "active",),).toBe(true,);
+  });
+});
+
+describe("questProgressValidator", () => {
+  test("accepts the legal quest/progress pairs", () => {
+    expect(questProgressValidator.isValid("active", "active",),).toBe(true,);
+    expect(questProgressValidator.isValid("abandoned", "ignored",),).toBe(true,);
+    expect(questProgressValidator.isValid("failed", "failed",),).toBe(true,);
+    expect(questProgressValidator.isValid("completed", "completed",),).toBe(true,);
+  });
+
+  test("rejects mismatched pairs", () => {
+    expect(questProgressValidator.isValid("active", "completed",),).toBe(false,);
+    expect(questProgressValidator.isValid("failed", "active",),).toBe(false,);
+  });
+});
+
+describe("questProgressStatusMachine", () => {
+  test("initial state is active", () => {
+    expect(questProgressStatusMachine.def.initial,).toBe("active",);
+  });
+
+  test("ignored progress can return to active", () => {
+    expect(questProgressStatusMachine.canTransition("ignored", "active",),).toBe(true,);
+  });
+});
+
+describe("turnStatusMachine", () => {
+  test("initial state is pending", () => {
+    expect(turnStatusMachine.def.initial,).toBe("pending",);
+  });
+
+  test("pending turns can be accepted directly", () => {
+    expect(turnStatusMachine.canTransition("pending", "accepted",),).toBe(true,);
+  });
+
+  test("generation flows through evaluating", () => {
+    expect(turnStatusMachine.canTransition("pending", "generating",),).toBe(true,);
+    expect(turnStatusMachine.canTransition("generating", "evaluating",),).toBe(true,);
+    expect(turnStatusMachine.canTransition("evaluating", "accepted",),).toBe(true,);
+  });
+
+  test("accepted and escalated are terminal", () => {
+    expect(turnStatusMachine.canTransition("accepted", "pending",),).toBe(false,);
+    expect(turnStatusMachine.canTransition("escalated", "accepted",),).toBe(false,);
   });
 });
