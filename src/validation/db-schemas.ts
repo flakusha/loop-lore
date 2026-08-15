@@ -1863,3 +1863,14 @@ export const CharacterSkillsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── chat_location_events ────────────────────────────────────────────
+export const ChatLocationEventsSchema = t.Object({
+  chat_id: t.String(),
+  source: t.String(),
+  section_id: t.Optional(t.String(),),
+  from_location_id: t.Optional(t.String(),),
+  to_location_id: t.Optional(t.String(),),
+  triggering_message_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
