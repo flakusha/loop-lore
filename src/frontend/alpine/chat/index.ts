@@ -12,6 +12,7 @@ import { chatManagement, } from "../chat-management";
 import { chatMessages, } from "../chat-messages";
 import { chatPanels, } from "../chat-panels";
 import { chatParticipants, } from "../chat-participants";
+import { chatPins, } from "../chat-pins";
 import { chatPromptTemplate, } from "../chat-prompt-template";
 import { chatSections, } from "../chat-sections";
 import { chatSettings, } from "../chat-settings";
@@ -20,6 +21,7 @@ import { chatVariants, } from "../chat-variants";
 import { t, } from "../i18n";
 import { jsonParseOr, } from "../json";
 import { memoryPanel, } from "../memory-panel";
+import { messageArchive, } from "../message-archive";
 import { messageSearch, } from "../message-search";
 import { moodState, } from "../mood";
 import { rpgStats, } from "../rpg-stats";
@@ -227,6 +229,8 @@ globalThis.chatState = function() {
     ...chatManagement,
     ...chatEditing,
     ...chatActions,
+    ...chatPins,
+    ...messageArchive,
     ...worldChannels,
   };
 
