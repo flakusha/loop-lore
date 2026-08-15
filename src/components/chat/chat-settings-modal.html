@@ -85,6 +85,22 @@
           <span x-text="currentCharacter?.display_name || currentCharacter?.name || 'character'"></span>
         </label>
       </div>
+      <div class="form-group">
+        <label class="form-label" for="settings-thinking-visibility">Thinking Visibility</label>
+        <select
+          class="form-input"
+          id="settings-thinking-visibility"
+          x-model="$store.chat.currentChat.thinking_visibility"
+          data-testid="settings-thinking-visibility"
+        >
+          <option value="hidden">Hidden (no spoilers)</option>
+          <option value="collapsed">Collapsed (click to expand)</option>
+          <option value="visible">Visible (always shown)</option>
+        </select>
+        <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+          Controls how LLM reasoning/thinking blocks are displayed. Hidden prevents context spoilers.
+        </small>
+      </div>
       <div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
         <label class="form-label" for="settings-assistant-role">Assistant Role</label>
         <select
