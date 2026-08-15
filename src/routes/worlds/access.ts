@@ -20,7 +20,7 @@ export async function requireWorldAccess(
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world) { return notFound("World not found",); }
-  if (world.owner_id === userId || userRole === "admin") { return null; }
+  if (userRole === "admin" || world.owner_id === userId) { return null; }
   if (!userId) { return notFound("World not found",); }
   // Public worlds are readable by any authenticated user.
   if (world.visibility === WorldVisibility.Public) { return null; }
@@ -52,6 +52,6 @@ export async function requireWorldOwner(
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world) { return notFound("World not found",); }
-  if (world.owner_id === userId || userRole === "admin" || userRole === "solo") { return null; }
+  if (userRole === "admin" || userRole === "solo" || world.owner_id === userId) { return null; }
   return forbidden("Forbidden",);
 }

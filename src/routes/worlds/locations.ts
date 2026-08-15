@@ -1,6 +1,7 @@
 import type { Kysely, } from "kysely";
 import { PublicationStatus, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { safeJsonStringify, uid, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import {
@@ -13,6 +14,7 @@ import {
   jsonResponse,
 } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
+import { createLocationChat, resolveLocationTemplate, } from "./location-chat";
 
 export async function handleListLocations(
   database: Kysely<DB>,
@@ -109,23 +111,54 @@ export async function handleCreateLocation(
   }
 
   const id = uid();
-  await database
-    .insertInto("locations",)
-    .values({
-      id,
-      world_id: worldId,
-      name,
-      description: (body.description as string | undefined) ?? null,
-      publication_status: PublicationStatus.Draft,
-      parent_location_id: (body.parentLocationId as string | undefined) ?? null,
-      connections: body.connections
-        ? (() => {
-          const r = safeJsonStringify(body.connections,);
-          return r.ok ? r.value : "[]";
-        })()
-        : "[]",
-    },)
-    .execute();
+
+  // Resolve the template BEFORE opening the transaction — bun:sqlite is
+  // single-connection, so a query on `database` inside the tx would deadlock.
+  const template = await resolveLocationTemplate(database, body,);
+  if (!template) {
+    return jsonError({ message: "Chat setup template not found", status: HttpStatus.BadRequest, },);
+  }
+
+  try {
+    await database.transaction().execute(async (tx,) => {
+      await tx
+        .insertInto("locations",)
+        .values({
+          id,
+          world_id: worldId,
+          name,
+          description: (body.description as string | undefined) ?? null,
+          publication_status: PublicationStatus.Draft,
+          parent_location_id: (body.parentLocationId as string | undefined) ?? null,
+          connections: body.connections
+            ? (() => {
+              const r = safeJsonStringify(body.connections,);
+              return r.ok ? r.value : "[]";
+            })()
+            : "[]",
+        },)
+        .execute();
+
+      await createLocationChat(tx, {
+        locationId: id,
+        worldId,
+        name,
+        body,
+        fallbackUserId: userId,
+      }, template,);
+    },);
+  } catch (error) {
+    const failure = error instanceof Error ? error : new Error(String(error,),);
+    getLogger().error(
+      "Location creation failed",
+      failure,
+      { worldId, locationId: id, },
+    );
+    return jsonError({
+      message: "Failed to create location with its public chat",
+      status: HttpStatus.InternalServerError,
+    },);
+  }
 
   return jsonCreated({ id, },);
 }
@@ -196,6 +229,15 @@ export async function handleDeleteLocation(
 ) {
   const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
+
+  // Unlink any chats bound to this location (auto-created public chat) — the
+  // chats survive but are no longer location-bound (chats.current_location_id
+  // and .world_id are nullable FK columns; no ON DELETE CASCADE exists).
+  await database
+    .updateTable("chats",)
+    .set({ current_location_id: null, },)
+    .where("current_location_id", "=", locId,)
+    .execute();
 
   await database.deleteFrom("locations",).where("id", "=", locId,).where("world_id", "=", worldId,).execute();
   return jsonNoContent();

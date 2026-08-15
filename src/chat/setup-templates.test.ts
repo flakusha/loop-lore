@@ -40,6 +40,60 @@ describe("chat setup templates", () => {
     expect(second.length,).toBe(first.length,);
   });
 
+  it("seeds the world template with public visibility and features", async () => {
+    await seedChatSetupTemplates(db,);
+
+    const world = (await listChatSetupTemplates(db,)).find((t,) => t.slug === "world");
+    expect(world,).toBeDefined();
+    expect(world?.visibility,).toBe("public",);
+    expect(world?.features,).toContain("rpg mode",);
+    expect(world?.features,).toContain("no gm",);
+
+    // Non-world defaults stay private.
+    const simple = (await listChatSetupTemplates(db,)).find((t,) => t.slug === "simple-direct");
+    expect(simple?.visibility,).toBe("private",);
+  });
+
+  it("round-trips features and visibility on create and update", async () => {
+    await seedChatSetupTemplates(db,);
+    const created = await createChatSetupTemplate(db, {
+      slug: "featured",
+      name: "Featured",
+      features: ["rpg mode", "no quests",],
+      visibility: "unlisted",
+    },);
+    expect(created.ok,).toBe(true,);
+    if (!created.ok) { return; }
+    expect(created.template.features,).toEqual(["rpg mode", "no quests",],);
+    expect(created.template.visibility,).toBe("unlisted",);
+
+    const updated = await updateChatSetupTemplate(db, "template-featured", {
+      features: ["vn mode",],
+      visibility: "public",
+    },);
+    expect(updated.ok,).toBe(true,);
+    if (!updated.ok) { return; }
+    expect(updated.template.features,).toEqual(["vn mode",],);
+    expect(updated.template.visibility,).toBe("public",);
+  });
+
+  it("backfills new defaults without touching existing rows (idempotent)", async () => {
+    // Pre-populate with one admin template — seeding must not clobber it,
+    // and must still add all missing code defaults (incl. the world template).
+    await createChatSetupTemplate(db, { slug: "admin-custom", name: "Admin Custom", },);
+    const first = await seedChatSetupTemplates(db,);
+    expect(first,).toBeGreaterThan(0,);
+
+    const afterFirst = await listChatSetupTemplates(db,);
+    expect(afterFirst.some((t,) => t.slug === "admin-custom"),).toBe(true,);
+    expect(afterFirst.some((t,) => t.slug === "world"),).toBe(true,);
+
+    // Second seed is a no-op — no duplicates.
+    const second = await seedChatSetupTemplates(db,);
+    expect(second,).toBe(0,);
+    expect((await listChatSetupTemplates(db,)).length,).toBe(afterFirst.length,);
+  });
+
   it("createChatSetupTemplate persists a template and rejects a duplicate slug", async () => {
     const r1 = await createChatSetupTemplate(db, {
       slug: "custom-roleplay",

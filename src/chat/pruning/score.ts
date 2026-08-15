@@ -7,6 +7,13 @@ import {
 } from "./constants";
 import type { MessageScore, ScorableMessage, } from "./types";
 
+/** Count how many of the given keywords appear in lowercased content. */
+function countKeywordMatches(lowerContent: string, keywords: readonly string[],): number {
+  let matches = 0;
+  for (const kw of keywords) { if (lowerContent.includes(kw,)) { matches++; } }
+  return matches;
+}
+
 /**
  * Score a single message based on multiple factors.
  *
@@ -26,17 +33,14 @@ export function scoreMessage(msg: ScorableMessage,): MessageScore {
 
   // Keywords: lore, decision, emotion, location (0.2 weight)
   const lowerContent = msg.content.toLowerCase();
-  let loreMatches = 0;
-  for (const kw of LORE_KEYWORDS) { if (lowerContent.includes(kw,)) { loreMatches++; } }
-  let decisionMatches = 0;
-  for (const kw of DECISION_KEYWORDS) { if (lowerContent.includes(kw,)) { decisionMatches++; } }
-  let emotionMatches = 0;
-  for (const kw of EMOTION_KEYWORDS) { if (lowerContent.includes(kw,)) { emotionMatches++; } }
-  let locationMatches = 0;
-  for (const kw of LORE_CONTENT_KEYWORDS) { if (lowerContent.includes(kw,)) { locationMatches++; } }
-  const keywordScore = Math.min(1, (loreMatches + decisionMatches + emotionMatches + locationMatches) / 4,);
+  const loreMatches = countKeywordMatches(lowerContent, LORE_KEYWORDS,);
+  const decisionMatches = countKeywordMatches(lowerContent, DECISION_KEYWORDS,);
+  const emotionMatches = countKeywordMatches(lowerContent, EMOTION_KEYWORDS,);
+  const locationMatches = countKeywordMatches(lowerContent, LORE_CONTENT_KEYWORDS,);
+  const totalMatches = loreMatches + decisionMatches + emotionMatches + locationMatches;
+  const keywordScore = Math.min(1, totalMatches / 4,);
   if (keywordScore > 0.3) {
-    reasons.push(`keywords(${loreMatches + decisionMatches + emotionMatches + locationMatches})`,);
+    reasons.push(`keywords(${totalMatches})`,);
   }
 
   // Memory links (0.15 weight)
