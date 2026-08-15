@@ -90,7 +90,7 @@ export class PromptAssembler {
         const tokens = defaultTokenCount(msg.content,);
         sections.push({ name: section.name, chars: msg.content.length, tokens, dropped: false, },);
         messages.push(msg,);
-        if (section.name === "system" && systemPrompt === undefined) { systemPrompt = msg.content; }
+        if (systemPrompt === undefined && section.name === "system") { systemPrompt = msg.content; }
       }
     }
 
@@ -98,46 +98,10 @@ export class PromptAssembler {
     for (const s of sections) { if (!s.dropped) { totalTokens += s.tokens; } }
 
     if (totalTokens > tokenBudget) {
-      // Drop sections in descending priority order (lowest priority first).
-      const ordered: (PromptSectionReport & { index: number })[] = [];
-      for (const [si, s,] of sections.entries()) {
-        if (s.dropped) { continue; }
-        if (PRIORITY[s.name as keyof typeof PRIORITY] > 0) {
-          ordered.push({ ...s, index: si, },);
-        }
-      }
-      ordered.sort(
-        (a, b,) =>
-          (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
-          (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
-      );
-
-      for (const section of ordered) {
-        if (totalTokens <= tokenBudget) { break; }
-        section.dropped = true;
-        sections[section.index]!.dropped = true;
-        totalTokens -= section.tokens;
-      }
+      totalTokens = dropOverBudgetSections(sections, tokenBudget, totalTokens,);
     }
 
-    // `sections` and `messages` are 1:1 lockstep (one section pushed per
-    // message), so dropping a section means dropping the message at the same
-    // index. Dropped sections are low-priority (lore/memories/examples) and
-    // sit at the front, so a tail splice would wrongly strip chat history.
-    //
-    // Jinja chat templates (vLLM, llama.cpp) require all system messages
-    // before any user/assistant message. Single pass: system msgs splice to
-    // front, everything else pushes to end.
-    const finalMessages: GenerationMessage[] = [];
-    let sysEnd = 0;
-    for (const [i, msg,] of messages.entries()) {
-      if (sections[i]?.dropped) { continue; }
-      if (msg.role === "system") {
-        finalMessages.splice(sysEnd++, 0, msg,);
-      } else {
-        finalMessages.push(msg,);
-      }
-    }
+    const finalMessages = reorderPromptMessages(messages, sections,);
 
     return {
       messages: finalMessages,
@@ -199,4 +163,63 @@ export async function compactPromptHistory(
   messages.length = 0;
   messages.push(...compacted,);
   return summary;
+}
+
+/**
+ * Drop lowest-priority sections until the assembled prompt fits the budget.
+ *
+ * Sections are dropped in descending priority order (lowest first); the
+ * updated total token count is returned.
+ */
+function dropOverBudgetSections(
+  sections: PromptSectionReport[],
+  tokenBudget: number,
+  totalTokens: number,
+): number {
+  const ordered: (PromptSectionReport & { index: number })[] = [];
+  for (const [si, s,] of sections.entries()) {
+    if (s.dropped) { continue; }
+    if (PRIORITY[s.name as keyof typeof PRIORITY] > 0) {
+      ordered.push({ ...s, index: si, },);
+    }
+  }
+  ordered.sort(
+    (a, b,) =>
+      (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
+      (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
+  );
+
+  let remaining = totalTokens;
+  for (const section of ordered) {
+    if (remaining <= tokenBudget) { break; }
+    section.dropped = true;
+    sections[section.index]!.dropped = true;
+    remaining -= section.tokens;
+  }
+  return remaining;
+}
+
+/**
+ * Reorder assembled messages: dropped sections removed, system messages
+ * spliced to the front (Jinja chat templates require all system messages
+ * before any user/assistant message).
+ *
+ * `sections` and `messages` are 1:1 lockstep, so a dropped section means the
+ * message at the same index is dropped too.
+ */
+function reorderPromptMessages(
+  messages: GenerationMessage[],
+  sections: PromptSectionReport[],
+): GenerationMessage[] {
+  const finalMessages: GenerationMessage[] = [];
+  let sysEnd = 0;
+  for (const [i, msg,] of messages.entries()) {
+    if (sections[i]?.dropped) { continue; }
+    if (msg.role === "system") {
+      finalMessages.splice(sysEnd++, 0, msg,);
+    } else {
+      finalMessages.push(msg,);
+    }
+  }
+  return finalMessages;
 }

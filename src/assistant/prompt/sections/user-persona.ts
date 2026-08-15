@@ -2,8 +2,9 @@
  * User persona section — when the human user is impersonating a character or
  * has selected a persona, inject that identity into the user slot.
  */
+import type { GenerationMessage, } from "../../../generation/gen-types-options";
 import { wrapSection, } from "../../xml-utils";
-import type { SectionBuilder, } from "../types";
+import type { AssembleContext, SectionBuilder, } from "../types";
 
 export const userPersonaSection: SectionBuilder = {
   name: "userPersona",
@@ -20,47 +21,59 @@ export const userPersonaSection: SectionBuilder = {
     if (!participant) { return []; }
 
     if (participant.impersonate_actor_id) {
-      const impersonatedActor = await ctx.db
-        .selectFrom("actors",)
-        .select(["display_name", "description", "personality",],)
-        .where("id", "=", participant.impersonate_actor_id,)
-        .executeTakeFirst();
-
-      if (impersonatedActor) {
-        const personaParts: string[] = [];
-        if (impersonatedActor.display_name) { personaParts.push(`Name: ${impersonatedActor.display_name}`,); }
-        if (impersonatedActor.description) {
-          personaParts.push(`\nDescription: ${impersonatedActor.description}`,);
-        }
-        if (impersonatedActor.personality) {
-          personaParts.push(`\nPersonality: ${impersonatedActor.personality}`,);
-        }
-
-        if (personaParts.length > 0) {
-          return [{ role: "system", content: wrapSection("user_persona", personaParts.join("",),), },];
-        }
-      }
-      return [];
+      return buildImpersonationSection(ctx, participant.impersonate_actor_id,);
     }
 
     if (participant.persona_id) {
-      const persona = await ctx.db
-        .selectFrom("personas",)
-        .select(["name", "description",],)
-        .where("id", "=", participant.persona_id,)
-        .executeTakeFirst();
-
-      if (persona) {
-        const personaParts: string[] = [];
-        if (persona.name) { personaParts.push(`Name: ${persona.name}`,); }
-        if (persona.description) { personaParts.push(`\nDescription: ${persona.description}`,); }
-
-        if (personaParts.length > 0) {
-          return [{ role: "system", content: wrapSection("user_persona", personaParts.join("",),), },];
-        }
-      }
+      return buildPersonaSection(ctx, participant.persona_id,);
     }
-
     return [];
   },
 };
+
+/** Build the user persona section from a stored persona. */
+async function buildPersonaSection(
+  ctx: AssembleContext,
+  personaId: string,
+): Promise<GenerationMessage[]> {
+  const persona = await ctx.db
+    .selectFrom("personas",)
+    .select(["name", "description",],)
+    .where("id", "=", personaId,)
+    .executeTakeFirst();
+
+  if (!persona) { return []; }
+
+  const personaParts: string[] = [];
+  if (persona.name) { personaParts.push(`Name: ${persona.name}`,); }
+  if (persona.description) { personaParts.push(`\nDescription: ${persona.description}`,); }
+
+  if (personaParts.length === 0) { return []; }
+  return [{ role: "system", content: wrapSection("user_persona", personaParts.join("",),), },];
+}
+
+/** Build the user persona section from an impersonated actor. */
+async function buildImpersonationSection(
+  ctx: AssembleContext,
+  impersonateActorId: string,
+): Promise<GenerationMessage[]> {
+  const impersonatedActor = await ctx.db
+    .selectFrom("actors",)
+    .select(["display_name", "description", "personality",],)
+    .where("id", "=", impersonateActorId,)
+    .executeTakeFirst();
+
+  if (!impersonatedActor) { return []; }
+
+  const personaParts: string[] = [];
+  if (impersonatedActor.display_name) { personaParts.push(`Name: ${impersonatedActor.display_name}`,); }
+  if (impersonatedActor.description) {
+    personaParts.push(`\nDescription: ${impersonatedActor.description}`,);
+  }
+  if (impersonatedActor.personality) {
+    personaParts.push(`\nPersonality: ${impersonatedActor.personality}`,);
+  }
+
+  if (personaParts.length === 0) { return []; }
+  return [{ role: "system", content: wrapSection("user_persona", personaParts.join("",),), },];
+}

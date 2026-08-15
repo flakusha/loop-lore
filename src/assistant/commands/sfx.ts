@@ -25,11 +25,11 @@ function handleSfx(args: string[],): CommandResult {
   };
 }
 
-registerCommand("sfx", async (args,): Promise<CommandResult> => {
+registerCommand("sfx", (args,): CommandResult => {
   return handleSfx(args,);
 },);
 
 // Alias: /sound → /sfx
-registerCommand("sound", async (args,): Promise<CommandResult> => {
+registerCommand("sound", (args,): CommandResult => {
   return handleSfx(args,);
 },);
