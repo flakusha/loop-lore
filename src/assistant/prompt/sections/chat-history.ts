@@ -17,6 +17,15 @@ export const chatHistorySection: SectionBuilder = {
     const maxMessages = Math.floor(ctx.tokenBudget / 4,);
     const rows = await ctx.db
       .selectFrom("messages",)
+      // NOTE: "thinking" column intentionally excluded — LLM reasoning is
+      // already distilled into the answer. Including raw thinking wastes
+      // context budget (2-5× answer length) with no proven benefit.
+      // If a use case emerges (e.g. chain-of-thought continuity), add a
+      // chat-level toggle and include "thinking" here conditionally:
+      //
+      //   .select(["role", "content", "content_encoding", "key_id", "actor_id",
+      //     ...(ctx.params.includeThinking ? ["thinking" as const] : [])])
+      //
       .select(["role", "content", "content_encoding", "key_id", "actor_id",],)
       .where("chat_id", "=", ctx.params.chatId,)
       .where("status", "=", MessageStatus.Confirmed,)
