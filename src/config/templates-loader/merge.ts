@@ -8,6 +8,13 @@ import type {
 } from "../sections/templates";
 
 // ── Merge Strategies ────────────────────────────────────────
+//
+// Canonical semantics (shared by every template domain):
+//   - replace:  base is discarded — only override values are kept
+//   - override: shallow merge per key — override wins on conflict,
+//               base fills gaps (maps merged per-entry)
+//   - extend:   additive — existing keys keep their base value,
+//               new keys from override are added (lists append with dedup)
 
 /** Apply merge strategy for LLM templates */
 export function mergeLlmConfig(
@@ -16,7 +23,11 @@ export function mergeLlmConfig(
   strategy: MergeStrategy,
 ): LlmTemplateConfig {
   if (strategy === "replace") {
-    return { ...base, ...override, merge: "extend", };
+    return {
+      merge: base.merge,
+      systemPrompts: override.systemPrompts ?? {},
+      chatFormats: override.chatFormats ?? {},
+    };
   }
 
   if (strategy === "override") {
@@ -29,13 +40,11 @@ export function mergeLlmConfig(
     };
   }
 
-  // extend: add new keys, config wins on conflict
+  // extend: existing prompts/formats keep base values, new ones are added
   return {
-    ...base,
-    ...override,
     merge: base.merge,
-    systemPrompts: { ...base.systemPrompts, ...override.systemPrompts, },
-    chatFormats: { ...base.chatFormats, ...override.chatFormats, },
+    systemPrompts: { ...override.systemPrompts, ...base.systemPrompts, },
+    chatFormats: { ...override.chatFormats, ...base.chatFormats, },
   };
 }
 
@@ -63,12 +72,11 @@ export function mergeSdConfig(
     };
   }
 
-  // extend: add new profiles/rules, config wins on conflict
+  // extend: existing profiles keep base values, new ones are added;
+  // model-matching rules accumulate (appended).
   return {
-    ...base,
-    ...override,
     merge: base.merge,
-    profiles: { ...base.profiles, ...override.profiles, },
+    profiles: { ...override.profiles, ...base.profiles, },
     modelMatching: [...base.modelMatching, ...(override.modelMatching ?? []),],
   };
 }
@@ -145,12 +153,10 @@ export function mergeImageEditConfig(
     };
   }
 
-  // extend: add new workflows, config wins on conflict
+  // extend: existing workflows keep base values, new ones are added
   return {
-    ...base,
-    ...override,
     merge: base.merge,
-    workflows: { ...base.workflows, ...override.workflows, },
+    workflows: { ...override.workflows, ...base.workflows, },
   };
 }
 
@@ -185,18 +191,19 @@ export function mergeCharacterConfig(
     };
   }
 
-  // extend: add new templates, user wins on name conflict
+  // extend: existing templates keep base versions; only new names are added
   const merged = new Map<string, CharacterTemplateConfig["templates"][number]>();
   for (const t of base.templates) {
     merged.set(t.name.toLowerCase(), t,);
   }
   const overrideTemplates = override.templates ?? [];
   for (const t of overrideTemplates) {
-    merged.set(t.name.toLowerCase(), t,);
+    const key = t.name.toLowerCase();
+    if (!merged.has(key,)) {
+      merged.set(key, t,);
+    }
   }
   return {
-    ...base,
-    ...override,
     merge: base.merge,
     templates: Array.from(merged.values(),),
   };

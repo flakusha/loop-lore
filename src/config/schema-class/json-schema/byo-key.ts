@@ -1,4 +1,4 @@
-// src/config/schema-class/json-schema/byoKey.ts — BYO key JSON Schema section
+// src/config/schema-class/json-schema/byo-key.ts — BYO key JSON Schema section
 export const byoKey = {
   type: "object",
   description: "BYO API Key configuration",

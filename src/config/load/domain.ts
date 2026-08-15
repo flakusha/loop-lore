@@ -50,44 +50,58 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
  * @param parsed - The parsed config object
  * @param filePath - The file path for error messages
  */
+
+/** Validate the server domain: port range. */
+function validateServerDomain(parsed: Record<string, unknown>, filePath: string,): void {
+  const server = parsed.server as Record<string, unknown> | undefined;
+  if (server?.port === undefined) { return; }
+  const port = Number(server.port,);
+  if (isNaN(port,) || port < 0 || port > 65_535) {
+    throw new Error(`Invalid server.port in ${filePath}: ${server.port as unknown as string}. Must be 0-65535`,);
+  }
+}
+
+/** Validate the database domain: type + postgres url requirement. */
+function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: string,): void {
+  const db = parsed.db as Record<string, unknown> | undefined;
+  if (!db) { return; }
+  if (db.type !== undefined && !["sqlite", "postgres",].includes(db.type as string,)) {
+    throw new Error(
+      `Invalid db.type in ${filePath}: "${db.type as unknown as string}". Must be "sqlite" or "postgres"`,
+    );
+  }
+  if (db.type === "postgres" && !db.url) {
+    throw new Error(`db.url is required when db.type is 'postgres' in ${filePath}`,);
+  }
+}
+
+/** Validate the logging domain: level enum. */
+function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string,): void {
+  const logging = parsed.logging as Record<string, unknown> | undefined;
+  if (
+    logging?.level !== undefined &&
+    !["trace", "debug", "info", "warn", "error", "fatal",].includes(logging.level as string,)
+  ) {
+    throw new Error(
+      `Invalid logging.level in ${filePath}: "${logging
+        .level as unknown as string}". Must be trace/debug/info/warn/error/fatal`,
+    );
+  }
+}
+
 export function validateDomainConfig(domain: string, parsed: Record<string, unknown>, filePath: string,): void {
   // Validate domain-specific constraints
   switch (domain) {
     case "server": {
-      const server = parsed.server as Record<string, unknown> | undefined;
-      if (server?.port !== undefined) {
-        const port = Number(server.port,);
-        if (isNaN(port,) || port < 0 || port > 65_535) {
-          throw new Error(`Invalid server.port in ${filePath}: ${server.port as unknown as string}. Must be 0-65535`,);
-        }
-      }
+      validateServerDomain(parsed, filePath,);
       break;
     }
     case "database": {
-      const db = parsed.db as Record<string, unknown> | undefined;
-      if (db) {
-        if (db.type !== undefined && !["sqlite", "postgres",].includes(db.type as string,)) {
-          throw new Error(
-            `Invalid db.type in ${filePath}: "${db.type as unknown as string}". Must be "sqlite" or "postgres"`,
-          );
-        }
-        if (db.type === "postgres" && !db.url) {
-          throw new Error(`db.url is required when db.type is 'postgres' in ${filePath}`,);
-        }
-      }
+      validateDatabaseDomain(parsed, filePath,);
       break;
     }
     case "logging": {
-      const logging = parsed.logging as Record<string, unknown> | undefined;
-      if (
-        logging?.level !== undefined &&
-        !["trace", "debug", "info", "warn", "error", "fatal",].includes(logging.level as string,)
-      ) {
-        throw new Error(
-          `Invalid logging.level in ${filePath}: "${logging
-            .level as unknown as string}". Must be trace/debug/info/warn/error/fatal`,
-        );
-      }
+      validateLoggingDomain(parsed, filePath,);
       break;
     }
     case "headers": {

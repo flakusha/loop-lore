@@ -63,6 +63,7 @@
     "build": "deno task build:frontend && deno task build:server",
     "build:frontend": "deno run scripts/build-frontend.mjs",
     "build:server": "bun build src/server/index.ts --outdir ./dist --target bun",
+    "changelog:check": "deno run scripts/check-changelog.ts",
     "check": "deno task check:parallel",
     "check:ci": "deno run scripts/check-parallel.mjs --ci",
     "check:fix": "deno run scripts/check-parallel.mjs --fix",
@@ -122,6 +123,8 @@
     "md:lint": "markdownlint-cli2 \"docs/**/*.md\" \".plan/**/*.md\"",
     "md:lint:fix": "markdownlint-cli2 --fix \"docs/**/*.md\" \".plan/**/*.md\"",
     "openapi": "deno run scripts/gen-openapi.ts",
+    "plan:backlog:sync": "deno run scripts/sync-backlog-index.ts",
+    "plan:backlog:sync:fix": "deno run scripts/sync-backlog-index.ts --fix",
     "plan:docs": "deno run scripts/gen-plan-docs.ts",
     "plan:sync": "deno run scripts/sync-ticket-index.ts",
     "plan:sync:fix": "deno run scripts/sync-ticket-index.ts --fix",
@@ -147,7 +150,8 @@
     "typecheck:frontend": "tsc --noEmit --project tsconfig.frontend.json",
     "version:bump": "deno run src/scripts/version-bump.ts --bump",
     "version:predict": "deno run src/scripts/version-bump.ts",
-    "version:sync": "deno run src/scripts/version-bump.ts --sync"
+    "version:sync": "deno run src/scripts/version-bump.ts --sync",
+    "wiring:check": "deno run scripts/check-wiring.ts"
   },
   "unstable": [
     "sloppy-imports"
