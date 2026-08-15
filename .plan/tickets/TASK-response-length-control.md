@@ -1,6 +1,6 @@
 # TASK: Response Length Control
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — backend complete (resolveResponseLength, presets, clampTokenCount), UI wiring pending
 **Priority:** Low
 **Effort:** Low
 **Epic:** Epic 51 (Output Control & Transforms)

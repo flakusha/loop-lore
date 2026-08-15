@@ -1,6 +1,6 @@
 # TASK: Smart Context Pruning
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 36 (Chat Lifecycle)
