@@ -12,6 +12,8 @@
  *   /review location      — Review the current location
  */
 
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
@@ -75,169 +77,15 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
   switch (target) {
     case "character":
     case "char": {
-      // Find the most recent character owned by the user
-      const actor = await db
-        .selectFrom("actors",)
-        .where("user_id", "=", ctx.userId ?? "",)
-        .orderBy("created_at", "desc",)
-        .select(["id",],)
-        .executeTakeFirst();
-
-      const actorId = actor?.id;
-
-      if (!actorId) {
-        return {
-          systemMessage: "No character found to review. Create a character first with /create char.",
-          handled: true,
-        };
-      }
-
-      const character = await db
-        .selectFrom("actors",)
-        .where("id", "=", actorId,)
-        .selectAll()
-        .executeTakeFirst();
-
-      if (!character) {
-        return {
-          systemMessage: "Character not found.",
-          handled: true,
-        };
-      }
-
-      const issues: ReviewIssue[] = [];
-
-      // Check required fields
-      if (!character.description) {
-        issues.push({ field: "description", issue: "Missing description", severity: "error", },);
-      }
-      if (!character.personality) {
-        issues.push({ field: "personality", issue: "Missing personality traits", severity: "warning", },);
-      }
-      if (!character.scenario) {
-        issues.push({ field: "scenario", issue: "Missing scenario context", severity: "warning", },);
-      }
-      if (!character.system_prompt) {
-        issues.push({ field: "system_prompt", issue: "No custom system prompt", severity: "info", },);
-      }
-      if (!character.mes_example) {
-        issues.push({ field: "mes_example", issue: "No example messages", severity: "info", },);
-      }
-      if (!character.welcome_message) {
-        issues.push({ field: "welcome_message", issue: "No welcome message", severity: "info", },);
-      }
-
-      // Check consistency
-      if (character.display_name.length < 2) {
-        issues.push({ field: "display_name", issue: "Name too short", severity: "warning", },);
-      }
-      if (character.description && character.description.length < 50) {
-        issues.push({ field: "description", issue: "Description is very brief (under 50 chars)", severity: "info", },);
-      }
-
-      const report = formatReviewReport("Character", character.display_name, issues,);
-
-      return {
-        systemMessage: report,
-        action: "review-entity",
-        actionPayload: { target: "character", issues, },
-        handled: true,
-      };
+      return reviewCharacter(db, ctx.userId ?? "",);
     }
-
     case "world": {
-      const world = await db
-        .selectFrom("worlds",)
-        .where("id", "=", worldId,)
-        .selectAll()
-        .executeTakeFirst();
-
-      if (!world) {
-        return {
-          systemMessage: "No world found. Create one first with /create world.",
-          handled: true,
-        };
-      }
-
-      const issues: ReviewIssue[] = [];
-
-      if (!world.description) {
-        issues.push({ field: "description", issue: "Missing world description", severity: "error", },);
-      }
-      if (!world.lore) {
-        issues.push({ field: "lore", issue: "Missing lore/backstory", severity: "warning", },);
-      }
-      if (world.description && world.description.length < 100) {
-        issues.push({ field: "description", issue: "Description is brief (under 100 chars)", severity: "info", },);
-      }
-
-      // Check for locations
-      const locationCount = await db
-        .selectFrom("locations",)
-        .where("world_id", "=", worldId,)
-        .select((eb,) => eb.fn.count("id",).as("count",))
-        .executeTakeFirst();
-
-      const count = Number(locationCount?.count ?? 0,);
-      if (count === 0) {
-        issues.push({ field: "locations", issue: "No locations defined", severity: "warning", },);
-      } else if (count < 3) {
-        issues.push({ field: "locations", issue: `Only ${count} location(s) defined`, severity: "info", },);
-      }
-
-      const report = formatReviewReport("World", world.name, issues,);
-
-      return {
-        systemMessage: report,
-        action: "review-entity",
-        actionPayload: { target: "world", issues, },
-        handled: true,
-      };
+      return reviewWorld(db, worldId,);
     }
-
     case "location":
     case "loc": {
-      // Find location from recent context or default
-      const location = await db
-        .selectFrom("locations",)
-        .where("world_id", "=", worldId,)
-        .orderBy("created_at", "desc",)
-        .selectAll()
-        .executeTakeFirst();
-
-      if (!location) {
-        return {
-          systemMessage: "No location found. Create one first with /create loc.",
-          handled: true,
-        };
-      }
-
-      const issues: ReviewIssue[] = [];
-
-      if (!location.description) {
-        issues.push({ field: "description", issue: "Missing location description", severity: "error", },);
-      }
-      if (location.description && location.description.length < 50) {
-        issues.push({ field: "description", issue: "Description is brief (under 50 chars)", severity: "info", },);
-      }
-
-      // Check connections
-      const connections = jsonParseOr(location.connections, [],);
-
-      if (connections.length === 0) {
-        issues.push({ field: "connections", issue: "No connections to other locations", severity: "warning", },);
-      }
-
-      const report = formatReviewReport("Location", location.name, issues,);
-
-      return {
-        systemMessage: report,
-        action: "review-entity",
-        actionPayload: { target: "location", issues, },
-        handled: true,
-      };
+      return reviewLocation(db, worldId,);
     }
-
     default: {
       return {
         systemMessage: "Usage: /review <character|world|location>",
@@ -246,3 +94,140 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
     }
   }
 },);
+
+/** Review the most recently created character owned by the user. */
+async function reviewCharacter(db: Kysely<DB>, userId: string,): Promise<CommandResult> {
+  const actor = await db
+    .selectFrom("actors",)
+    .where("user_id", "=", userId,)
+    .orderBy("created_at", "desc",)
+    .select(["id",],)
+    .executeTakeFirst();
+
+  if (!actor?.id) {
+    return {
+      systemMessage: "No character found to review. Create a character first with /create char.",
+      handled: true,
+    };
+  }
+
+  const character = await db
+    .selectFrom("actors",)
+    .where("id", "=", actor.id,)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!character) {
+    return { systemMessage: "Character not found.", handled: true, };
+  }
+
+  const issues: ReviewIssue[] = [];
+  if (!character.description) {
+    issues.push({ field: "description", issue: "Missing description", severity: "error", },);
+  }
+  if (!character.personality) {
+    issues.push({ field: "personality", issue: "Missing personality traits", severity: "warning", },);
+  }
+  if (!character.scenario) {
+    issues.push({ field: "scenario", issue: "Missing scenario context", severity: "warning", },);
+  }
+  if (!character.system_prompt) {
+    issues.push({ field: "system_prompt", issue: "No custom system prompt", severity: "info", },);
+  }
+  if (!character.mes_example) {
+    issues.push({ field: "mes_example", issue: "No example messages", severity: "info", },);
+  }
+  if (!character.welcome_message) {
+    issues.push({ field: "welcome_message", issue: "No welcome message", severity: "info", },);
+  }
+  if (character.display_name.length < 2) {
+    issues.push({ field: "display_name", issue: "Name too short", severity: "warning", },);
+  }
+  if (character.description && character.description.length < 50) {
+    issues.push({ field: "description", issue: "Description is very brief (under 50 chars)", severity: "info", },);
+  }
+
+  return {
+    systemMessage: formatReviewReport("Character", character.display_name, issues,),
+    action: "review-entity",
+    actionPayload: { target: "character", issues, },
+    handled: true,
+  };
+}
+
+/** Review the active world. */
+async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandResult> {
+  const world = await db
+    .selectFrom("worlds",)
+    .where("id", "=", worldId,)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!world) {
+    return { systemMessage: "No world found. Create one first with /create world.", handled: true, };
+  }
+
+  const issues: ReviewIssue[] = [];
+  if (!world.description) {
+    issues.push({ field: "description", issue: "Missing world description", severity: "error", },);
+  }
+  if (!world.lore) {
+    issues.push({ field: "lore", issue: "Missing lore/backstory", severity: "warning", },);
+  }
+  if (world.description && world.description.length < 100) {
+    issues.push({ field: "description", issue: "Description is brief (under 100 chars)", severity: "info", },);
+  }
+
+  const locationCount = await db
+    .selectFrom("locations",)
+    .where("world_id", "=", worldId,)
+    .select((eb,) => eb.fn.count("id",).as("count",))
+    .executeTakeFirst();
+  const count = Number(locationCount?.count ?? 0,);
+  if (count === 0) {
+    issues.push({ field: "locations", issue: "No locations defined", severity: "warning", },);
+  } else if (count < 3) {
+    issues.push({ field: "locations", issue: `Only ${count} location(s) defined`, severity: "info", },);
+  }
+
+  return {
+    systemMessage: formatReviewReport("World", world.name, issues,),
+    action: "review-entity",
+    actionPayload: { target: "world", issues, },
+    handled: true,
+  };
+}
+
+/** Review the most recent location in the active world. */
+async function reviewLocation(db: Kysely<DB>, worldId: string,): Promise<CommandResult> {
+  const location = await db
+    .selectFrom("locations",)
+    .where("world_id", "=", worldId,)
+    .orderBy("created_at", "desc",)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!location) {
+    return { systemMessage: "No location found. Create one first with /create loc.", handled: true, };
+  }
+
+  const issues: ReviewIssue[] = [];
+  if (!location.description) {
+    issues.push({ field: "description", issue: "Missing location description", severity: "error", },);
+  }
+  if (location.description && location.description.length < 50) {
+    issues.push({ field: "description", issue: "Description is brief (under 50 chars)", severity: "info", },);
+  }
+
+  const connections = jsonParseOr(location.connections, [],);
+  if (connections.length === 0) {
+    issues.push({ field: "connections", issue: "No connections to other locations", severity: "warning", },);
+  }
+
+  return {
+    systemMessage: formatReviewReport("Location", location.name, issues,),
+    action: "review-entity",
+    actionPayload: { target: "location", issues, },
+    handled: true,
+  };
+}

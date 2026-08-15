@@ -9,6 +9,7 @@
  */
 
 import { QuestStatus, QuestType, } from "../../db/enums-story";
+import { requireQuestTransition, } from "../../story/shared/story-utils";
 import { uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
@@ -151,6 +152,8 @@ registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
           handled: true,
         };
       }
+
+      await requireQuestTransition(db, quest.id, QuestStatus.Completed,);
 
       await db
         .updateTable("quests",)

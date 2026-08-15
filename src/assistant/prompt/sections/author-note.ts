@@ -16,6 +16,7 @@ export const authorNoteSection: SectionBuilder = {
     const note = ctx.actor.post_history_instructions;
     return !!note && note.trim().length > 0;
   },
+  // eslint-disable-next-line @typescript-eslint/require-await -- PromptSection.build is typed Promise<Message[]>
   build: async (ctx,) => {
     const note = ctx.actor.post_history_instructions!;
     const wrappedNote = wrapSection("author_note", note,);

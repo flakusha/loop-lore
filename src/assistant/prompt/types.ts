@@ -117,6 +117,7 @@ export const PRIORITY = {
   pluginAgentRole: 0,
   chatHistory: 0,
   storyContext: 1,
+  travelPrompts: 0,
   gmNotes: 0,
   lore: 2,
   memories: 3,

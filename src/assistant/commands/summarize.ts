@@ -31,10 +31,10 @@ function buildSummary(args: string[], ctx: { messages?: { role: string; content:
   return { systemMessage: lines.join("\n",), handled: true, };
 }
 
-registerCommand("summarize", async (args, ctx,): Promise<CommandResult> => {
+registerCommand("summarize", (args, ctx,): CommandResult => {
   return buildSummary(args, ctx,);
 },);
 
-registerCommand("sum", async (args, ctx,): Promise<CommandResult> => {
+registerCommand("sum", (args, ctx,): CommandResult => {
   return buildSummary(args, ctx,);
 },);

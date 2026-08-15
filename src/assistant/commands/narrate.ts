@@ -4,7 +4,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("narrate", async (args,): Promise<CommandResult> => {
+registerCommand("narrate", (args,): CommandResult => {
   if (args.length === 0) {
     return {
       systemMessage: "Usage: /narrate <text> — inject a narration as system message.",
