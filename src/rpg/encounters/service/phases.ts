@@ -16,10 +16,10 @@ function rollOutcomes(outcomes: EncounterOutcome[],): EncounterOutcome[] {
 }
 
 /** Apply outcome effects (placeholder — would modify mood/intimacy). */
-async function applyOutcomes(
+function applyOutcomes(
   encounter: NsfwEncounter,
   outcomes: EncounterOutcome[],
-): Promise<void> {
+): void {
   // Outcome effects would be applied to participants here
   // For now, just log them
   const log = getLogger().child({ module: "encounters", },);
@@ -61,7 +61,7 @@ export async function advancePhase(
     await db
       .updateTable("nsfw_encounters",)
       .set({
-        completed: 1,
+        status: "completed",
         current_phase: nextPhase,
         updated_at: now,
       },)

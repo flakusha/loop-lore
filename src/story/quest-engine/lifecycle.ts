@@ -5,7 +5,8 @@
  * deadline checks.
  */
 import { randomUUID, } from "node:crypto";
-import { QuestProgressStatus, QuestStatus, QuestType, } from "../../db/enums";
+import { QuestCategory, QuestProgressStatus, QuestStatus, QuestType, } from "../../db/enums";
+import { questStatusMachine, } from "../../db/enums-story/quests";
 import { serializeOrThrow, transitionQuestStatus, } from "../shared/story-utils";
 import type { QuestConfig, QuestReward, } from "../types";
 import type { QuestState, } from "./types";
@@ -19,6 +20,7 @@ export async function createQuest(
     name: string;
     description: string | null;
     type: QuestType;
+    category?: QuestCategory;
     config: QuestConfig;
     target: number;
     priority?: number;
@@ -37,7 +39,8 @@ export async function createQuest(
       name: params.name,
       description: params.description,
       type: params.type,
-      status: QuestStatus.Active,
+      category: params.category ?? QuestCategory.Side,
+      status: questStatusMachine.def.initial,
       priority: params.priority ?? 0,
       config: serializeOrThrow(params.config, "config",),
       progress: 0,
