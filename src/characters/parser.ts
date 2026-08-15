@@ -53,26 +53,14 @@ export async function parseCharacterCard(input: Buffer | string, _filename?: str
 
   // 1. Check magic bytes for PNG
   if (isPngMagic(data,)) {
-    const result = extractCharacterDataFromPng(data,);
-    if (result) {
-      const format: CharacterFormat = result.spec === "chara_card_v3" ? "png-v3" : "png-v2";
-      const character = format === "png-v3" ? normalizeCcV3(result.data,) : normalizeCcV2(result.data,);
-      warnings.push(`PNG ${format === "png-v3" ? "V3" : "V2"} card detected`,);
-      return { character, format, warnings, };
-    }
+    const pngResult = parsePngCard(data, warnings,);
+    if (pngResult) { return pngResult; }
   }
 
   // 2. Check magic bytes for ZIP (CHARX)
   if (isZipMagic(data,)) {
-    try {
-      const charxResult = await extractCharx(data,);
-      const character = normalizeCcV3(charxResult.card,);
-      character.assets = charxResult.assets;
-      warnings.push(`CHARX bundle with ${charxResult.assets.length} assets`,);
-      return { character, format: "charx", warnings, };
-    } catch (error) {
-      warnings.push(`CHARX extraction failed: ${error instanceof Error ? error.message : "unknown"}`,);
-    }
+    const charxResult = await parseCharxCard(data, warnings,);
+    if (charxResult) { return charxResult; }
   }
 
   // 3. Try text-based formats
@@ -95,6 +83,30 @@ export async function parseCharacterCard(input: Buffer | string, _filename?: str
   error.code = "FORMAT_NOT_DETECTED";
   error.suggestion = "Ensure file is JSON, YAML, TOML, PNG with embedded data, or CHARX bundle";
   throw error;
+}
+
+/** Parse a PNG card with embedded character data. */
+function parsePngCard(data: Buffer, warnings: string[],): ParseResult | null {
+  const result = extractCharacterDataFromPng(data,);
+  if (!result) { return null; }
+  const format: CharacterFormat = result.spec === "chara_card_v3" ? "png-v3" : "png-v2";
+  const character = format === "png-v3" ? normalizeCcV3(result.data,) : normalizeCcV2(result.data,);
+  warnings.push(`PNG ${format === "png-v3" ? "V3" : "V2"} card detected`,);
+  return { character, format, warnings, };
+}
+
+/** Parse a CHARX bundle (ZIP with embedded card.json + assets). */
+async function parseCharxCard(data: Buffer, warnings: string[],): Promise<ParseResult | null> {
+  try {
+    const charxResult = await extractCharx(data,);
+    const character = normalizeCcV3(charxResult.card,);
+    character.assets = charxResult.assets;
+    warnings.push(`CHARX bundle with ${charxResult.assets.length} assets`,);
+    return { character, format: "charx", warnings, };
+  } catch (error) {
+    warnings.push(`CHARX extraction failed: ${error instanceof Error ? error.message : "unknown"}`,);
+    return null;
+  }
 }
 
 function tryParseJson(text: string,): ParseResult | null {

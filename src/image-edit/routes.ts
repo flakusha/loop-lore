@@ -100,7 +100,7 @@ export async function handleRun(request: Request,): Promise<Response> {
  *   backend  — filter by backend (comfyui | sd-server)
  *   category — filter by category (txt2img | img2img | inpaint | upscale | controlnet)
  */
-export async function handleTemplates(request: Request,): Promise<Response> {
+export function handleTemplates(request: Request,): Response {
   const url = new URL(request.url,);
   const backend = url.searchParams.get("backend",) as ImageEditBackend | null;
   const category = url.searchParams.get("category",);

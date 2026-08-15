@@ -102,6 +102,7 @@ export class ModerationHook implements HookHandler {
     this.auditRecorderFactory = deps?.auditRecorder ?? ((db,) => new NsfwModerationService(db,));
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
   async canHandle(content: string, _context: HookContext,): Promise<boolean> {
     return content.length > 10;
   }

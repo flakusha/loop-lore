@@ -13,10 +13,12 @@ export class EmotionHook implements HookHandler {
   readonly name = "emotion";
   readonly eventTypes: HookEventType[] = ["emotion_change",];
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     return _content.length > 10;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.execute interface requires Promise<HookResult>
   async execute(content: string, _context: HookContext,): Promise<HookResult> {
     const log = getLogger();
     log.debug("emotion-hook: analyzing content for emotional indicators", { contentLength: content.length, },);

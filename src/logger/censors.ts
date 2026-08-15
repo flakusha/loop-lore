@@ -52,7 +52,7 @@ function matchRule(key: string, rules: CensorRule[],): CensorRule | undefined {
  * Recursively walk a value and censor matching fields.
  */
 function censorScalar(val: unknown, rule: CensorRule,): unknown {
-  if (rule.pattern && typeof val === "string") {
+  if (typeof val === "string" && rule.pattern) {
     return rule.pattern.test(val,) ? (rule.replacement ?? PLACEHOLDER) : val;
   }
   return rule.replacement ?? PLACEHOLDER;
@@ -85,7 +85,7 @@ function censorObject(
 }
 
 function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDepth: number,): unknown {
-  if (depth > maxDepth || value === null || value === undefined) { return value; }
+  if (value === null || value === undefined || depth > maxDepth) { return value; }
 
   if (Array.isArray(value,)) {
     return Array.from(value, (item: unknown,) => censorValue(item, rules, depth, maxDepth,),);
