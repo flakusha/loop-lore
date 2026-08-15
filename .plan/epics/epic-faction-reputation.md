@@ -40,13 +40,44 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 ## Integration Points
 
-- **Social Interaction** — Shared reputation schema; faction standing feeds into social checks
-- **RPG Mechanics** — Stats affect faction quest requirements
-- **Crime & Stealth** — Criminal factions, law enforcement reputation
-- **Economy System** — Faction currency, trade agreements
-- **World & Locations** — Territory control, faction territories
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Social Interaction | Reputation schema, relationship state | Faction standing feeds social checks (G14) |
+| RPG Mechanics | Stats, quest requirements | Stats affect faction quest requirements |
+| Crime & Stealth | Criminal factions, law enforcement | Criminal faction standing, law reputation |
+| Economy & Trading | Faction currency, trade agreements | Faction stores, trade pacts |
+| World & Locations | Territory control | Faction territories, influence zones |
+| Character Core | Relationship state | NPC-faction loyalty modeling |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Social Interaction | Faction standing | Reputation gates social checks (G14) |
+| Economy & Trading | Faction currency | Faction-priced goods, trade agreements |
+| Crime & Stealth | Law enforcement standing | Crime shifts faction alignment |
+| Character Core | Faction affinity | Character faction allegiance/relationships |
+| Emergent Narrative Design | Consequence persistence | Faction standing persists narrative stakes |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `ReputationScore` | Social, NSFW, Crime, Narrative | **Unified reputation type (G14)** — MUST match social schema exactly |
+| `FactionStanding` | Social, Crime | Faction-specific standing deltas |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `faction.standing_changed` | emits → Social, Crime, Economy | Standing shifts propagate to gating/pricing |
+| `faction.territory_changed` | emits → World | Territory control updates world state |
 
 > **Note (G14):** Faction standing and Social reputation MUST share a unified `ReputationScore` type. Two systems defining reputation differently will conflict at implementation. The `PlayerState` social layer accumulates conditions from both systems.
+
+---
 
 ## Related
 

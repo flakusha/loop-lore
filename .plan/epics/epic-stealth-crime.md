@@ -302,13 +302,45 @@ interface BlackMarketItem {
 
 ## Integration Points
 
-- **RPG Mechanics** — DEX, INT, WIS stats affect stealth/crime skills
-- **NPC System** — NPC awareness, reactions, memory
-- **World & Locations** — Restricted areas, guard patrols
-- **Economy System** — Bounties, fines, black market
-- **Social Interaction** — Criminal reputation feeds into social standing; social skills (deception, disguise) aid crime
-- **Faction System** — Law enforcement, criminal factions
-- **Combat System** — Stealth attacks, pursuit combat
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Stats (DEX, INT, WIS), skill checks | Stealth/crime skill resolution |
+| NPC System | Awareness, reactions, memory | Guard detection, NPC witness state |
+| World & Locations | Restricted areas, guard patrols | Crime scenes, restricted zones |
+| Economy & Trading | Bounties, fines, black market | Crime financial consequences (G12) |
+| Social Interaction | Reputation, deception skills | Criminal reputation feeds social standing; deception/disguise aid crime (G13) |
+| Faction & Reputation | Law enforcement, criminal factions | Faction-aligned crime, reputation impacts |
+| Battle & Action Systems | Stealth attacks, pursuit combat | Stealth engagement, escape combat |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| RPG Mechanics | Crime skill checks | Stealth rolls via unified skill model |
+| Economy & Trading | Stolen goods, black market | Stolen items enter economy (G12) |
+| Social Interaction | Criminal reputation | Reputation flows into social standing (G13) |
+| Faction & Reputation | Law enforcement standing | Crime lowers law reputation, raises criminal faction |
+| Battle & Action Systems | Stealth engagement rules | Ambush/pursuit mechanics |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `SkillCheck` | Resolution, RPG, Social | Stealth/deception rolls use unified model |
+| `Bounty` | Economy, Faction | Shared bounty/fine contract |
+| `ReputationScore` | Social, Faction | Criminal standing consistency (G13/G14) |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `crime.commit` | emits → Faction, Economy, Social | Crime affects faction standing, bounties, reputation |
+| `crime.witnessed` | emits → NPC, Faction | Witness awareness updates guard state |
+| `resolution.roll` | subscribes ← Resolution | Stealth checks flow through unified resolver |
+
+---
 
 ## Open Questions
 
