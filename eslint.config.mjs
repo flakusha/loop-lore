@@ -344,6 +344,47 @@ export default tseslint.config(
     files: ["src/validation/schemas/**",],
     rules: { "@typescript-eslint/consistent-type-definitions": "off", },
   },
+  // ── Shared modules: warn on Bun-only APIs (Deno compat gate) ──
+  // These paths must use runtime-agnostic code. Flag Bun-specific APIs
+  // so new code doesn't accidentally couple to Bun. Existing violations
+  // are tracked in the audit report (scripts/audit-runtime-compat.ts).
+  {
+    files: [
+      "src/utils/**",
+      "src/services/**",
+      "src/validation/**",
+      "src/rpg/**",
+      "src/characters/**",
+      "src/memory/**",
+      "src/i18n/**",
+      "src/group-chat/**",
+      "src/profanity/**",
+      "src/notifications/**",
+      "src/personas/**",
+    ],
+    rules: {
+      "no-restricted-properties": [
+        "warn",
+        ...[
+          "serve", "file", "password", "spawn", "spawnSync", "which",
+          "CryptoHasher", "zstdCompressSync", "zstdDecompressSync",
+        ].map((p,) => ({
+          object: "Bun",
+          property: p,
+          message: `Bun.${p} is runtime-specific. Use a cross-runtime abstraction or move to a non-shared module.`,
+        }),),
+      ],
+      "no-restricted-imports": [
+        "warn",
+        {
+          paths: [
+            { name: "bun:sqlite", message: "bun:sqlite is Bun-only. Use better-sqlite3 for cross-runtime DB access.", },
+            { name: "bun:ffi", message: "bun:ffi is Bun-only. Use Deno.dlopen or koffi for cross-runtime FFI.", },
+          ],
+        },
+      ],
+    },
+  },
   {
     files: ["src/routes/views/**", "src/routes/characters/**",],
     rules: { "@typescript-eslint/restrict-template-expressions": "off", },
