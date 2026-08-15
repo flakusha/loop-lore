@@ -1,5 +1,6 @@
 import { Elysia, } from "elysia";
 import { updateImpersonation, } from "../../chat/service";
+import { recordLocationChange, } from "../../chat/service/location-events";
 import {
   ChatIdParams,
   ChatImpersonateBody,
@@ -54,11 +55,20 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const locationId = body.locationId;
           if (locationId === null) {
-            await database
-              .updateTable("chats",)
-              .set({ current_location_id: null, updated_at: new Date().toISOString(), },)
-              .where("id", "=", id,)
-              .execute();
+            await database.transaction().execute(async (tx,) => {
+              await tx
+                .updateTable("chats",)
+                .set({ current_location_id: null, updated_at: new Date().toISOString(), },)
+                .where("id", "=", id,)
+                .execute();
+
+              await recordLocationChange(tx, {
+                chatId: id,
+                fromLocationId: fullChat.current_location_id,
+                toLocationId: null,
+                source: "manual",
+              });
+            },);
             return jsonResponse({ ok: true, current_location_id: null, },);
           }
 
@@ -70,15 +80,24 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .executeTakeFirst();
           if (!location) { return notFound("Location not found in this world",); }
 
-          await database
-            .updateTable("chats",)
-            .set({ current_location_id: locationId, updated_at: new Date().toISOString(), },)
-            .where("id", "=", id,)
-            .execute();
+          await database.transaction().execute(async (tx,) => {
+            await tx
+              .updateTable("chats",)
+              .set({ current_location_id: locationId, updated_at: new Date().toISOString(), },)
+              .where("id", "=", id,)
+              .execute();
 
-          // Location-scoped background auto-sync (additive; doesn't move the
-          // single current_location_id link or any 401-guard logic).
-          await autoSyncChatBackground(database, id, locationId,);
+            await recordLocationChange(tx, {
+              chatId: id,
+              fromLocationId: fullChat.current_location_id,
+              toLocationId: locationId,
+              source: "manual",
+            });
+
+            // Location-scoped background auto-sync (additive; doesn't move the
+            // single current_location_id link or any 401-guard logic).
+            await autoSyncChatBackground(tx, id, locationId,);
+          },);
           return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name, },);
         },
         { body: ChatLocationUpdateBody, params: ChatIdParams, },
