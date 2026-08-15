@@ -6,6 +6,7 @@
  * thisL dispatchers.
  */
 import { type Kysely, } from "kysely";
+import { type NsfwAccessStatus, } from "../../db/enums";
 import { type DB, } from "../../db/schema";
 import { type Logger, } from "../../logger";
 
@@ -15,8 +16,7 @@ export interface NsfwUserPrefs {
   userId: string;
   nsfwEnabled: boolean;
   maxRating: string;
-  blockedFromNsfw: boolean;
-  bannedFromNsfw: boolean;
+  accessStatus: NsfwAccessStatus;
   shadowNsfw: boolean;
   blockReason: string | null;
   bannedAt: string | null;

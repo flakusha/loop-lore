@@ -3,6 +3,7 @@
  *
  * Reading (with lazy default creation) and updating a user's NSFW prefs.
  */
+import type { NsfwAccessStatus, } from "../../db/enums";
 import type { NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
 
 export interface GetPreferencesArgs {
@@ -36,8 +37,7 @@ export async function getPreferences({ thisL, userId, }: GetPreferencesArgs,): P
       user_id: userId,
       nsfw_enabled: 1,
       max_rating: "nsfw_mild",
-      blocked_from_nsfw: 0,
-      banned_from_nsfw: 0,
+      access_status: "clear",
       shadow_nsfw: 0,
       created_at: now,
       updated_at: now,
@@ -49,8 +49,7 @@ export async function getPreferences({ thisL, userId, }: GetPreferencesArgs,): P
     userId,
     nsfwEnabled: true,
     maxRating: "nsfw_mild",
-    blockedFromNsfw: false,
-    bannedFromNsfw: false,
+    accessStatus: "clear",
     shadowNsfw: false,
     blockReason: null,
     bannedAt: null,
@@ -91,8 +90,7 @@ export function mapPrefs(
     user_id: string;
     nsfw_enabled: number;
     max_rating: string;
-    blocked_from_nsfw: number;
-    banned_from_nsfw: number;
+    access_status: NsfwAccessStatus;
     shadow_nsfw: number;
     block_reason: string | null;
     banned_at: string | null;
@@ -106,8 +104,7 @@ export function mapPrefs(
     userId: row.user_id,
     nsfwEnabled: row.nsfw_enabled === 1,
     maxRating: row.max_rating,
-    blockedFromNsfw: row.blocked_from_nsfw === 1,
-    bannedFromNsfw: row.banned_from_nsfw === 1,
+    accessStatus: row.access_status,
     shadowNsfw: row.shadow_nsfw === 1,
     blockReason: row.block_reason,
     bannedAt: row.banned_at,
