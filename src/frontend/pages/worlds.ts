@@ -60,16 +60,55 @@ globalThis.createWorld = async function(event: Event,) {
 };
 
 // ── World detail: location CRUD ─────────────────────────────
-globalThis.worldDetail = function(initial: { worldId: string; locations: LocationData[] },) {
+interface ChatTemplateMeta {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  features: string[];
+}
+
+globalThis.worldDetail = function(initial: {
+  worldId: string;
+  locations: LocationData[];
+  templates?: ChatTemplateMeta[];
+},) {
   return {
     worldId: initial.worldId,
     locations: initial.locations || [],
+    templates: initial.templates || [],
+    newLocationTemplateId: "template-world",
+    newLocationTemplateFeatures: [] as string[],
     showCreateLocation: false,
     newLocationName: "",
     newLocationDesc: "",
     expandedLoc: "",
     editLocName: "",
     editLocDesc: "",
+
+    async init() {
+      // Load chat setup templates (falls back to the seeded `world` default).
+      if (this.templates.length === 0) {
+        try {
+          const res = await feFetch("/api/v1/chat-setup-templates",);
+          if (res.ok) {
+            const list = (await res.json()) as ChatTemplateMeta[];
+            if (Array.isArray(list,)) { this.templates = list; }
+          }
+        } catch {
+          /* ignore — default template still works server-side */
+        }
+      }
+      this.newLocationTemplateId = this.templates.some((t,) => t.id === "template-world")
+        ? "template-world"
+        : (this.templates[0]?.id ?? "template-world");
+      this.onTemplateChange();
+    },
+
+    onTemplateChange() {
+      const t = this.templates.find((x,) => x.id === this.newLocationTemplateId);
+      this.newLocationTemplateFeatures = t?.features ?? [];
+    },
 
     get locationCount(): number {
       return this.locations.length;
@@ -124,6 +163,7 @@ globalThis.worldDetail = function(initial: { worldId: string; locations: Locatio
           body: jsonBody({
             name: this.newLocationName.trim(),
             description: this.newLocationDesc.trim() || null,
+            templateId: this.newLocationTemplateId,
           },),
         },);
         if (res.ok) {

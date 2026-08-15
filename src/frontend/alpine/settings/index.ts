@@ -27,8 +27,7 @@ import type { LocaleInfoArray, SettingsState, } from "./types";
     nsfwConsent: null as null | {
       nsfwEnabled: boolean;
       maxRating: string;
-      blockedFromNsfw: boolean;
-      bannedFromNsfw: boolean;
+      accessStatus: string;
       shadowNsfw: boolean;
       blockReason: string | null;
     },

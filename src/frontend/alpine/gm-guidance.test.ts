@@ -36,7 +36,7 @@ describe("gmGuidance state", () => {
 
   it("ignores blank constraints", () => {
     const s = freshState();
-    s._gmNewConstraint = "   ";
+    s._gmNewConstraint = " ".repeat(3,);
     (s.addGmConstraint as () => void).call(s,);
     expect((s._gmGuidance as { constraints: string[] }).constraints.length,).toBe(0,);
   });

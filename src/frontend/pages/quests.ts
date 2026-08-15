@@ -12,6 +12,7 @@ interface QuestRow {
   name: string;
   description: string | null;
   type: string;
+  category: string;
   status: string;
   priority: number;
   progress: number;
@@ -40,7 +41,8 @@ globalThis.questsPage = function() {
     showCreateForm: false,
     createName: "",
     createDescription: "",
-    createType: "side",
+    createType: "collection",
+    createCategory: "side",
     createPriority: 5,
 
     confirmDeleteQuest: "",
@@ -129,8 +131,9 @@ globalThis.questsPage = function() {
       try {
         const body: Record<string, unknown> = {
           name: this.createName.trim(),
-          description: this.createDescription.trim() || null,
+          description: this.createDescription.trim() || "",
           type: this.createType,
+          category: this.createCategory,
           priority: Number(this.createPriority,) || 5,
         };
         const res = await feFetch(`/api/worlds/${this.worldId}/quests`, {
