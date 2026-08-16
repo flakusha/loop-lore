@@ -80,6 +80,7 @@ Commands:
   agent-merge <branch>      Alias for finalize — merge worktree into current branch and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
+  report                    Aggregate check-report status across all worktrees
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
@@ -1062,7 +1063,7 @@ cmd_rebase() {
 
 cmd_finalize() {
   local branch="${1:-}"
-  local merge_strategy="rebase"  # default: rebase for linear history
+  local merge_strategy="rebase" # default: rebase for linear history
   local force=false
 
   # Parse flags
@@ -1313,6 +1314,34 @@ cmd_agent_commit() {
   bun run "${SCRIPT_DIR}/worktree/index.mjs" agent-commit "$branch" "$message"
 }
 
+report_freshness_warn() {
+  # Non-blocking staleness warning — mirrors .githooks/pre-commit Step 4.
+  # Reads the worktree's .tmp/check-report.json and warns when its gitHead
+  # no longer matches the current HEAD (report describes older code).
+  local repo_top report_file report_head current_head
+  repo_top="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+  report_file="$repo_top/.tmp/check-report.json"
+  if [[ -n "$repo_top" && -f "$report_file" ]]; then
+    report_head="$(grep -o '"gitHead"[[:space:]]*:[[:space:]]*"[^"]*"' "$report_file" | head -1 | sed 's/.*"gitHead"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
+    current_head="$(git rev-parse --short HEAD 2>/dev/null || true)"
+    if [[ -n "$report_head" ]]; then
+      if [[ "$report_head" != "$current_head" ]]; then
+        echo -e "${YELLOW}⚠ Check report stale: reports @ $report_head, current HEAD @ $current_head${NC}"
+        echo -e "${YELLOW}  Run 'bun run check' to refresh gate status${NC}"
+      fi
+    else
+      echo -e "${YELLOW}⚠ Check report has no gitHead (legacy) — run 'bun run check' to refresh${NC}"
+    fi
+  fi
+}
+
+cmd_report() {
+  # Aggregate check-report status across all worktrees
+  # (see check-parallel.mjs --report-ls)
+  echo -e "${CYAN}=== Check reports across worktrees ===${NC}"
+  (cd "$REPO_ROOT" && unset REPO_ROOT && bun run check:report-ls)
+}
+
 cmd_commit() {
   # Direct commit on current branch — for commits on master/main
   # Usage: ./scripts/worktree.sh commit <message>
@@ -1367,6 +1396,9 @@ cmd_commit() {
 
   local current_branch
   current_branch=$(git branch --show-current 2>/dev/null || echo "(detached)")
+
+  # Warn when the last check report is stale w.r.t. HEAD (non-blocking).
+  report_freshness_warn
 
   echo -e "${CYAN}Creating GPG-signed commit on '$current_branch'...${NC}"
   echo -e "  Author: $author_name <$author_email>"
@@ -1801,6 +1833,10 @@ case "${1:-}" in
   commit)
     shift
     cmd_commit "${1:-}"
+    ;;
+  report)
+    shift
+    cmd_report
     ;;
   ticket)
     shift
