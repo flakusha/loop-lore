@@ -112,6 +112,14 @@ export const loreSection: SectionBuilder = {
         ],)
         .where("actor_id", "=", actor.id,)
         .where("enabled", "=", "enabled",)
+        .where((eb,) =>
+          chat.world_id
+            ? eb.or([
+              eb("world_id", "is", null,),
+              eb("world_id", "=", chat.world_id,),
+            ],)
+            : eb("world_id", "is", null,)
+        )
         .orderBy("position", "asc",)
         .execute(),
       chat.world_id

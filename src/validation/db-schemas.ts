@@ -690,6 +690,7 @@ export const ActorLoreEntriesSchema = t.Object({
   cooldown_seconds: t.Optional(t.Number(),),
   last_activated: t.Optional(t.String(),),
   audience_scope: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
 },);
 
 // ── system_config ────────────────────────────────────────────
@@ -1366,6 +1367,7 @@ export const CharacterDesireProfileSchema = t.Object({
   current_desire: t.Optional(t.Number(),),
   desire_decay_rate: t.Optional(t.Number(),),
   desire_buildup_rate: t.Optional(t.Number(),),
+  world_id: t.Optional(t.String(),),
 },);
 
 // ── character_seduction_skills ────────────────────────────────────────────
@@ -1378,6 +1380,7 @@ export const CharacterSeductionSkillsSchema = t.Object({
   level: t.Optional(t.Number(),),
   xp: t.Optional(t.Number(),),
   xp_to_next: t.Optional(t.Number(),),
+  world_id: t.Optional(t.String(),),
 },);
 
 // ── nsfw_encounters ────────────────────────────────────────────
@@ -1412,6 +1415,7 @@ export const CharacterBodyProfileSchema = t.Object({
   style: t.Optional(t.Number(),),
   scent: t.Optional(t.String(),),
   modifications: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
 },);
 
 // ── character_heat_cycle ────────────────────────────────────────────

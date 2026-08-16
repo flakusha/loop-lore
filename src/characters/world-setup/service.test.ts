@@ -169,4 +169,62 @@ describe("CharacterWorldSetupService", () => {
       expect(new Set(actorIds,).size,).toBe(actorIds.length,);
     });
   });
+
+  describe("seedStartingInventory (world-state)", () => {
+    it("grants starting inventory as world_items on first join, idempotently", async () => {
+      // Item definition must exist in the world for the seed to resolve it.
+      await db
+        .insertInto("items",)
+        .values({
+          id: "item-sword",
+          world_id: worldId,
+          name: "Sword",
+          category: "weapon",
+        },)
+        .execute();
+
+      const { actorId: seeded, } = await createTestActors(db, "test-actor-004",);
+      await service.upsertWorldSetup({
+        actorId: seeded,
+        worldId,
+        startingInventory: [{ item_id: "item-sword", quantity: 2, },],
+      },);
+
+      const worldState = new WorldStateService(db,);
+      const granted = await worldState.seedStartingInventory(worldId,);
+      expect(granted,).toBe(1,);
+
+      const inventory = await db
+        .selectFrom("world_items",)
+        .select(["quantity",],)
+        .where("owner_actor_id", "=", seeded,)
+        .where("world_id", "=", worldId,)
+        .execute();
+      expect(inventory.length,).toBe(1,);
+      expect(inventory[0]?.quantity,).toBe(2,);
+
+      // Second run must not re-grant (actor already carries items).
+      expect(await worldState.seedStartingInventory(worldId,),).toBe(0,);
+    });
+
+    it("skips starting items whose definition does not exist", async () => {
+      const { actorId: ghost, } = await createTestActors(db, "test-actor-005",);
+      await service.upsertWorldSetup({
+        actorId: ghost,
+        worldId,
+        startingInventory: [{ item_id: "nonexistent-item", quantity: 1, },],
+      },);
+
+      const worldState = new WorldStateService(db,);
+      expect(await worldState.seedStartingInventory(worldId,),).toBe(0,);
+
+      const inventory = await db
+        .selectFrom("world_items",)
+        .select("id",)
+        .where("owner_actor_id", "=", ghost,)
+        .where("world_id", "=", worldId,)
+        .execute();
+      expect(inventory.length,).toBe(0,);
+    });
+  });
 });
