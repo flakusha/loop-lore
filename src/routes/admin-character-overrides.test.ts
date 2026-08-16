@@ -103,18 +103,24 @@ describe("admin-character-overrides routes", () => {
       new Request(`http://localhost/api/admin/actors/${ACTOR}/overrides`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ actor_id: ACTOR, action: "ban", },),
+        body: JSON.stringify({ action: "ban", },),
       },),
     );
     expect(res.status,).toBe(403,);
   });
 
-  test("POST create inserts override with admin id", async () => {
+  test("POST create inserts override with admin id, reason, expiration", async () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request(`http://localhost/api/admin/actors/${ACTOR2}/overrides`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ actor_id: ACTOR2, action: "approve", reason: "looks good", },),
+        body: JSON.stringify({
+          action: "approve",
+          reason: "looks good",
+          visibility_override: "public",
+          license_override: "cc0",
+          expires_at: "2027-01-01T00:00:00.000Z",
+        },),
       },),
     );
     expect(res.status,).toBe(201,);
@@ -122,13 +128,34 @@ describe("admin-character-overrides routes", () => {
 
     const row = await db
       .selectFrom("admin_character_overrides",)
-      .select(["actor_id", "admin_id", "action", "reason",],)
+      .select(["actor_id", "admin_id", "action", "reason", "visibility_override", "license_override", "expires_at",],)
       .where("actor_id", "=", ACTOR2,)
       .executeTakeFirst();
     expect(row?.admin_id,).toBe("admin",);
     expect(row?.action,).toBe("approve",);
-    // schema field is `notes`, route reads `reason` → reason stays null (documented mismatch)
-    expect(row?.reason,).toBeNull();
+    expect(row?.reason,).toBe("looks good",);
+    expect(row?.visibility_override,).toBe("public",);
+    expect(row?.license_override,).toBe("cc0",);
+    expect(row?.expires_at,).toBe("2027-01-01T00:00:00.000Z",);
+  });
+
+  test("POST create ignores actor_id in body (param wins)", async () => {
+    const res = await makeApp(db, "admin", "admin",).handle(
+      new Request(`http://localhost/api/admin/actors/${ACTOR}/overrides`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ actor_id: ACTOR2, action: "ban", },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    const row = await db
+      .selectFrom("admin_character_overrides",)
+      .select(["actor_id", "action",],)
+      .where("action", "=", "ban",)
+      .executeTakeFirst();
+    // actor_id comes from the URL param, not the (stripped) body field.
+    expect(row?.actor_id,).toBe(ACTOR,);
   });
 
   test("POST create rejects non-uuid actor param", async () => {
@@ -136,7 +163,7 @@ describe("admin-character-overrides routes", () => {
       new Request("http://localhost/api/admin/actors/not-a-uuid/overrides", {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ actor_id: ACTOR, action: "ban", },),
+        body: JSON.stringify({ action: "ban", },),
       },),
     );
     expect(res.status,).toBe(422,);

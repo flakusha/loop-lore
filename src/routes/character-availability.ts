@@ -61,7 +61,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
       if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
-      const { status, usagePolicy, activityRestrictions, contentPolicy, nsfwPolicy, } = ctx.body;
+      const { status, usage_policy, activity_restrictions, content_policy, nsfw_policy, } = ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -82,12 +82,12 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
           .updateTable("character_availability",)
           .set({
             status: status ?? existing.status,
-            usage_policy: usagePolicy ?? existing.usage_policy,
-            activity_restrictions: activityRestrictions
-              ? jsonStringifyOr(activityRestrictions,)
+            usage_policy: usage_policy ?? existing.usage_policy,
+            activity_restrictions: activity_restrictions
+              ? jsonStringifyOr(activity_restrictions,)
               : existing.activity_restrictions,
-            content_policy: contentPolicy ?? existing.content_policy,
-            nsfw_policy: nsfwPolicy ?? existing.nsfw_policy,
+            content_policy: content_policy ?? existing.content_policy,
+            nsfw_policy: nsfw_policy ?? existing.nsfw_policy,
             updated_at: new Date().toISOString(),
           },)
           .where("id", "=", existing.id,)
@@ -102,10 +102,10 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
           id,
           actor_id: actorId,
           status: status ?? "available",
-          usage_policy: usagePolicy ?? null,
-          activity_restrictions: activityRestrictions ? jsonStringifyOr(activityRestrictions,) : "[]",
-          content_policy: contentPolicy ?? null,
-          nsfw_policy: nsfwPolicy ?? null,
+          usage_policy: usage_policy ?? null,
+          activity_restrictions: activity_restrictions ? jsonStringifyOr(activity_restrictions,) : "[]",
+          content_policy: content_policy ?? null,
+          nsfw_policy: nsfw_policy ?? null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },)

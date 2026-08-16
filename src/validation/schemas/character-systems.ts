@@ -8,11 +8,11 @@ import { t, } from "elysia";
 // ── Character systems schemas ─────────────────────────────
 
 export const AdminOverrideCreateBody = t.Object({
-  actor_id: t.String({ format: "uuid", },),
   action: t.String(),
   visibility_override: t.Optional(t.String(),),
   license_override: t.Optional(t.String(),),
-  notes: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
 },);
 
 export const MoodCreateBody = t.Object({
@@ -125,28 +125,50 @@ export const TraitResponse = t.Object({
 export const RelationshipCreateBody = t.Object({
   target_actor_id: t.String({ format: "uuid", },),
   relationship_type: t.String(),
-  strength: t.Optional(t.Number(),),
+  world_id: t.Optional(t.String({ format: "uuid", },),),
+  standing: t.Optional(t.Number(),),
+  trust: t.Optional(t.Number(),),
+  familiarity: t.Optional(t.Number(),),
+  is_bidirectional: t.Optional(t.Boolean(),),
+  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
 },);
 
 export const RelationshipUpdateBody = t.Object({
+  world_id: t.Optional(t.String({ format: "uuid", },),),
   relationship_type: t.Optional(t.String(),),
-  strength: t.Optional(t.Number(),),
+  standing: t.Optional(t.Number(),),
+  trust: t.Optional(t.Number(),),
+  familiarity: t.Optional(t.Number(),),
+  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
 },);
 
 export const RelationshipEventBody = t.Object({
+  target_actor_id: t.String({ format: "uuid", },),
   event_type: t.String(),
-  delta: t.Optional(t.Number(),),
-  details: t.Optional(t.String(),),
+  world_id: t.Optional(t.String({ format: "uuid", },),),
+  standing_delta: t.Optional(t.Number(),),
+  trust_delta: t.Optional(t.Number(),),
+  familiarity_delta: t.Optional(t.Number(),),
+  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
 },);
 
+/**
+ * Relationship response — the service emits a camelCase object, so the
+ * declared schema mirrors the actual (untransformed) output shape.
+ */
 export const RelationshipResponse = t.Object({
-  id: t.String({ format: "uuid", },),
-  actor_id: t.String(),
-  target_actor_id: t.String(),
-  relationship_type: t.String(),
-  strength: t.Number(),
-  created_at: t.String(),
-  updated_at: t.String(),
+  id: t.String(),
+  actorId: t.String(),
+  targetActorId: t.String(),
+  worldId: t.Nullable(t.String(),),
+  relationshipType: t.String(),
+  standing: t.Number(),
+  trust: t.Number(),
+  familiarity: t.Number(),
+  isBidirectional: t.Boolean(),
+  metadata: t.Record(t.String(), t.Any(),),
+  createdAt: t.String(),
+  updatedAt: t.String(),
 },);
 
 export const ActorTargetParams = t.Object({
@@ -154,15 +176,29 @@ export const ActorTargetParams = t.Object({
   targetActorId: t.String({ format: "uuid", },),
 },);
 
+/**
+ * Availability upsert body — mirrors the `character_availability` columns
+ * (all optional: the endpoint upserts, keeping existing values for absent keys).
+ */
 export const AvailabilityBody = t.Object({
-  available: t.Boolean(),
-  reason: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  usage_policy: t.Optional(t.Nullable(t.String(),),),
+  activity_restrictions: t.Optional(t.Array(t.String(),),),
+  content_policy: t.Optional(t.Nullable(t.String(),),),
+  nsfw_policy: t.Optional(t.Nullable(t.String(),),),
 },);
 
+/**
+ * Licensing upsert body — mirrors the `character_licensing` columns
+ * (all optional: the endpoint upserts, keeping existing values for absent keys).
+ */
 export const LicensingBody = t.Object({
-  license_type: t.String(),
-  expires_at: t.Optional(t.String(),),
-  notes: t.Optional(t.String(),),
+  license_type: t.Optional(t.String(),),
+  custom_license_text: t.Optional(t.Nullable(t.String(),),),
+  attribution: t.Optional(t.Nullable(t.String(),),),
+  allow_derivatives: t.Optional(t.Boolean(),),
+  allow_commercial: t.Optional(t.Boolean(),),
+  share_alike: t.Optional(t.Boolean(),),
 },);
 
 export const AvatarCreateBody = t.Object({

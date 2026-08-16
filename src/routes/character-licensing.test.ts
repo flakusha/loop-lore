@@ -124,25 +124,65 @@ describe("character-licensing routes", () => {
     expect(res.status,).toBe(404,);
   });
 
-  test("POST creates licensing row with defaults", async () => {
+  test("POST creates licensing row with snake_case fields", async () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ license_type: "cc0", notes: "n", },),
+        body: JSON.stringify({
+          license_type: "custom",
+          custom_license_text: "Free for any use",
+          attribution: "Aria",
+          allow_derivatives: true,
+          allow_commercial: false,
+          share_alike: true,
+        },),
       },),
     );
     expect(res.status,).toBe(201,);
 
     const row = await db
       .selectFrom("character_licensing",)
-      .select(["actor_id", "license_type", "allow_derivatives", "allow_commercial", "share_alike",],)
+      .select([
+        "actor_id",
+        "license_type",
+        "custom_license_text",
+        "attribution",
+        "allow_derivatives",
+        "allow_commercial",
+        "share_alike",
+      ],)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
     expect(row?.actor_id,).toBe(MEMBER_ACTOR,);
-    expect(row?.license_type,).toBe("proprietary",);
+    expect(row?.license_type,).toBe("custom",);
+    expect(row?.custom_license_text,).toBe("Free for any use",);
+    expect(row?.attribution,).toBe("Aria",);
     expect(row?.allow_derivatives,).toBe(1,);
     expect(row?.allow_commercial,).toBe(0,);
+    expect(row?.share_alike,).toBe(1,);
+  });
+
+  test("POST creates licensing row with defaults when body minimal", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ license_type: "proprietary", },),
+      },),
+    );
+    expect(res.status,).toBe(200,); // upsert: row already existed (lic-1)
+    const body = await res.json() as LicensingBody;
+    expect(body.updated,).toBe(true,);
+
+    const row = await db
+      .selectFrom("character_licensing",)
+      .select(["license_type", "allow_derivatives", "allow_commercial", "share_alike",],)
+      .where("actor_id", "=", OWNER_ACTOR,)
+      .executeTakeFirst();
+    expect(row?.license_type,).toBe("proprietary",);
+    expect(row?.allow_derivatives,).toBe(1,);
+    expect(row?.allow_commercial,).toBe(1,); // preserved from seeded row
     expect(row?.share_alike,).toBe(0,);
   });
 
@@ -151,13 +191,22 @@ describe("character-licensing routes", () => {
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ license_type: "custom", },),
+        body: JSON.stringify({ license_type: "proprietary", allow_commercial: true, },),
       },),
     );
     expect(res.status,).toBe(200,);
     const body = await res.json() as LicensingBody;
     expect(body.updated,).toBe(true,);
     expect(body.id,).toBeDefined();
+
+    const row = await db
+      .selectFrom("character_licensing",)
+      .select(["license_type", "allow_commercial", "custom_license_text",],)
+      .where("actor_id", "=", MEMBER_ACTOR,)
+      .executeTakeFirst();
+    expect(row?.license_type,).toBe("proprietary",);
+    expect(row?.allow_commercial,).toBe(1,);
+    expect(row?.custom_license_text,).toBe("Free for any use",); // preserved
   });
 
   test("DELETE requires auth", async () => {

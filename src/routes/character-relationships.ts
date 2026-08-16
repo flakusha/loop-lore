@@ -100,25 +100,33 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
           status: HttpStatus.NotFound,
         },);
       }
-      const { targetActorId, worldId, relationshipType, standing, trust, familiarity, isBidirectional, metadata, } =
-        ctx.body;
+      const {
+        target_actor_id,
+        relationship_type,
+        world_id,
+        standing,
+        trust,
+        familiarity,
+        is_bidirectional,
+        metadata,
+      } = ctx.body;
 
-      if (!targetActorId || !relationshipType) {
+      if (!target_actor_id || !relationship_type) {
         return jsonError({
-          message: "targetActorId and relationshipType are required",
+          message: "target_actor_id and relationship_type are required",
           status: HttpStatus.BadRequest,
         },);
       }
 
       const relationshipId = await relationshipsService.createRelationship({
         actorId,
-        targetActorId,
-        worldId,
-        relationshipType,
+        targetActorId: target_actor_id,
+        worldId: world_id ?? ctx.query.worldId,
+        relationshipType: relationship_type,
         standing: standing ?? 0,
         trust: trust ?? 0,
         familiarity: familiarity ?? 50,
-        isBidirectional: isBidirectional ?? false,
+        isBidirectional: is_bidirectional ?? false,
         metadata,
       },);
       return jsonCreated({ id: relationshipId, },);
@@ -148,10 +156,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
           status: HttpStatus.NotFound,
         },);
       }
-      const { worldId, relationshipType, standing, trust, familiarity, metadata, } = ctx.body;
+      const { world_id, relationship_type, standing, trust, familiarity, metadata, } = ctx.body;
 
-      await relationshipsService.updateRelationship(actorId, targetActorId, worldId, {
-        relationshipType,
+      await relationshipsService.updateRelationship(actorId, targetActorId, world_id ?? ctx.query.worldId, {
+        relationshipType: relationship_type,
         standing,
         trust,
         familiarity,
@@ -213,20 +221,22 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
           status: HttpStatus.NotFound,
         },);
       }
-      const { targetActorId, worldId, eventType, standingDelta, trustDelta, familiarityDelta, } = ctx.body;
+      const { target_actor_id, event_type, world_id, standing_delta, trust_delta, familiarity_delta, metadata, } =
+        ctx.body;
 
-      if (!targetActorId || !eventType) {
-        return jsonError({ message: "targetActorId and eventType are required", status: HttpStatus.BadRequest, },);
+      if (!target_actor_id || !event_type) {
+        return jsonError({ message: "target_actor_id and event_type are required", status: HttpStatus.BadRequest, },);
       }
 
       await relationshipsService.logEvent({
         actorId,
-        targetActorId,
-        worldId,
-        eventType: eventType,
-        standingDelta: standingDelta ?? 0,
-        trustDelta: trustDelta ?? 0,
-        familiarityDelta: familiarityDelta ?? 0,
+        targetActorId: target_actor_id,
+        worldId: world_id ?? ctx.query.worldId,
+        eventType: event_type,
+        standingDelta: standing_delta ?? 0,
+        trustDelta: trust_delta ?? 0,
+        familiarityDelta: familiarity_delta ?? 0,
+        metadata,
       },);
       return jsonResponse({ ok: true, },);
     }, {
