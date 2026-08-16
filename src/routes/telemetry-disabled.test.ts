@@ -6,7 +6,7 @@
  * Requires `--isolate` (suite default) — the mock leaks to other files otherwise.
  */
 import type { Database, } from "bun:sqlite";
-import { mock,  afterAll, beforeAll, describe, expect, test} from "bun:test";
+import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
