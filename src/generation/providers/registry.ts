@@ -12,11 +12,11 @@ import type { Config, } from "../../config/schema";
 import { decryptValue, } from "../../crypto";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
+import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
+import { OllamaNativeProvider, } from "./ollama-native";
 import { OpenAiCompatibleProvider, } from "./openai-compatible";
 import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider, } from "./types";
-// TODO: register additional providers (Bedrock, Google, Anthropic, Ollama native)
-// when their implementations land.
 
 // ── Registry ──────────────────────────────────────────────
 
@@ -148,6 +148,14 @@ export function buildFailoverList(
         result.push({ name: instance.name, provider: registry.get(instance.name,)!, },);
       }
     }
+    const anthropic = config.generation.providers.anthropic;
+    if (anthropic && anthropic.name !== primaryName && registry.has(anthropic.name,)) {
+      result.push({ name: anthropic.name, provider: registry.get(anthropic.name,)!, },);
+    }
+    const ollama = config.generation.providers.ollamaNative;
+    if (ollama && ollama.name !== primaryName && registry.has(ollama.name,)) {
+      result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
+    }
   }
 
   return result;
@@ -165,13 +173,17 @@ export function initializeProviders(config: Config,): void {
     circuitBreaker.register(instance.name,);
   }
   if (config.generation.providers.anthropic && !getProvider(config.generation.providers.anthropic.name,)) {
-    // TODO: AnthropicProvider when implemented
+    const provider = new AnthropicProvider(config.generation.providers.anthropic,);
+    registerProvider(config.generation.providers.anthropic.name, provider,);
+    circuitBreaker.register(config.generation.providers.anthropic.name,);
   }
   if (
     config.generation.providers.ollamaNative &&
     !getProvider(config.generation.providers.ollamaNative.name,)
   ) {
-    // TODO: OllamaNativeProvider when implemented
+    const provider = new OllamaNativeProvider(config.generation.providers.ollamaNative,);
+    registerProvider(config.generation.providers.ollamaNative.name, provider,);
+    circuitBreaker.register(config.generation.providers.ollamaNative.name,);
   }
 }
 
