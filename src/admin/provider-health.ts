@@ -26,7 +26,7 @@ const state = { cache: [] as ProviderHealthStatus[], };
  * Returns updated health cache. When db is provided, auto-populates
  * the model capabilities registry with discovered models.
  */
-export async function scanAllProviders(db?: unknown): Promise<ProviderHealthStatus[]> {
+export async function scanAllProviders(db?: unknown,): Promise<ProviderHealthStatus[]> {
   const providers = listProviders();
   getLogger().child({ module: "provider-health", },).info("Scanning providers", { count: providers.length, },);
 

@@ -1,5 +1,5 @@
 import { MessageListResponse, } from "../../validation/schemas/responses";
-import { browserCompressThenEncrypt, } from "../browser";
+import { chatSendMethods, } from "./chat-send";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -8,47 +8,13 @@ import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "chat", },);
 
-/** Build request body for sendMessage (handles encryption + attachments). */
-async function buildSendBody(
-  ctx: any,
-  text: string,
-  msgs: Array<{ id: string }>,
-  pendingAssets: Array<{ assetId: string }>,
-) {
-  const body: Record<string, unknown> = {};
-  if (text) {
-    if (ctx._encryptionEnabled && ctx._chatKey && ctx._keyId) {
-      body.content = await browserCompressThenEncrypt(text, ctx._chatKey, ctx._keyId,);
-      log.debug("Message encrypted client-side before send",);
-    } else {
-      body.content = text;
-    }
-  }
-  const lastMsg = msgs.findLast((m,) => !m.id.startsWith("temp-",));
-  if (lastMsg) { body.parentId = lastMsg.id; }
-  if (pendingAssets.length > 0) {
-    body.attachments = Array.from(pendingAssets, (a, i,) => ({
-      assetId: a.assetId,
-      order: i,
-      label: "message-attachment",
-    }),);
-  }
-  return body;
-}
-
-/** Remove optimistic temp messages after send failure. */
-function removeTempMessages(ctx: ChatState, msgs: Array<{ id: string }>,) {
-  const filtered: Message[] = [];
-  for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m as Message,); } }
-  ctx.messages = filtered;
-}
-
 const EMPTY_MESSAGE_PAGE = {
   data: [],
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
 };
 
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
+  ...chatSendMethods,
   async loadMessages() {
     log.info("loadMessages", { chatId: this.activeChat, },);
     if (!this.activeChat) { return; }
@@ -158,60 +124,6 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   autoResize(el: HTMLTextAreaElement,) {
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 200,)}px`;
-  },
-
-  async sendMessage() {
-    log.info("sendMessage", { chatId: this.activeChat, },);
-    const input = this.$refs.messageInput as HTMLTextAreaElement;
-    const text = input.value.trim() ?? "";
-    const pendingAssets = this.pendingAssets ?? [];
-    if (!text && pendingAssets.length === 0) { return; }
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
-
-    const msgs = this.messages;
-    msgs.push({
-      id: `temp-${Date.now()}`,
-      role: "user",
-      content: text || "(attached media)",
-      created_at: new Date().toISOString(),
-    },);
-    input.value = "";
-    this.autoResize(input,);
-    this.$nextTick?.(() => this.scrollToBottom());
-
-    const body = await buildSendBody(this, text, msgs, pendingAssets,);
-
-    this.isGenerating = true;
-    try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody(body,),
-      },);
-      if (res.ok) {
-        this.pendingAssets = [];
-        const data = await res.json();
-        if (data.action) {
-          await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
-        } else {
-          this.connectGenerationSSE(this.activeChat,);
-        }
-        await this.loadMessages();
-        await this.loadChats();
-      } else {
-        this.isGenerating = false;
-        const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
-        removeTempMessages(this, msgs,);
-      }
-    } catch {
-      this.isGenerating = false;
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
-      removeTempMessages(this, msgs,);
-    }
   },
 
   async toggleReaction(msgId: string, emoji: string,) {
