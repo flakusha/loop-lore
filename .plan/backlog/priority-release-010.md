@@ -4,6 +4,11 @@
 release-hardening below all green, then a signed tag + release notes. Consolidated
 tracking: `epic-release-010.md`.
 
+> **2026-08-16 update:** Feature matrix items promoted to P4/P5/P6 tiers
+> (`priority-p3-p5.md`, `priority-p6.md`). Lint-ts + e2e closed (2026-08-14).
+> `dev` pushed to `origin/dev`; `work` pushed to `origin/work`.
+> Release blockers: A8 (unwired close-out) + A9 (artifacts + push + tag).
+
 ### Definition of "happy"
 
 - **Gate C** — VN, chat, assistant+tool calling, GM flows, GM-guided story, auth/access,
