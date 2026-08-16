@@ -1,6 +1,3 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
-
 # Epics Index
 
 > Auto-generated from `.plan/epics/`. Do not edit manually.
@@ -120,7 +117,7 @@
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
 | ✅ Complete | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | ✅ Complete | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
-| 🟡 Partial — backend routes + frontend shell shipped (11 tabs); Content Review queue + Revisions + spec gaps open | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
+| 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Unknown | API Governance — Epic | Unknown | Unknown | 36 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
@@ -1205,7 +1202,7 @@ Full internationalization of loop-lore UI. Infrastructure complete (custom i18n 
 
 ### Admin Panel & Dashboard
 
-- **Status:** 🟡 Partial — backend routes + frontend shell shipped (11 tabs); Content Review queue + Revisions + spec gaps open
+- **Status:** 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Frontend Epic

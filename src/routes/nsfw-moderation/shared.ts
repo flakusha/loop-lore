@@ -51,7 +51,6 @@ export const modBody = t.Object({
 },);
 export const unblockBody = t.Object({ targetUserId: t.String(), },);
 export const flagBody = t.Object({
-  reporterId: t.String(),
   contentType: t.String(),
   contentId: t.String(),
   chatId: t.Optional(t.String(),),
@@ -65,7 +64,6 @@ export const flagQuery = t.Object({
   offset: t.Optional(t.String(),),
 },);
 export const resolveFlagBody = t.Object({
-  resolvedBy: t.String(),
   resolution: t.String(),
   status: t.Union([t.Literal("resolved",), t.Literal("dismissed",), t.Literal("upheld",),],),
 },);
