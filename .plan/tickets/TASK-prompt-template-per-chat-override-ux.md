@@ -1,6 +1,6 @@
 # TASK: Prompt Template Per-Chat Override UX
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (bc78ca36, 2026-08-16)
 **Priority:** medium
 **Effort:** Medium
 
