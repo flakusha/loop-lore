@@ -33,7 +33,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
   async saveCapabilityOverride(providerId: string, modelId: string, fields: Record<string, unknown>,) {
     try {
       const res = await apiFetch(
-        `/api/admin/model-capabilities/${encodeURIComponent(providerId)}/${encodeURIComponent(modelId)}`,
+        `/api/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
@@ -54,7 +54,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
   async clearCapabilityOverride(providerId: string, modelId: string,) {
     try {
       const res = await apiFetch(
-        `/api/admin/model-capabilities/${encodeURIComponent(providerId)}/${encodeURIComponent(modelId)}`,
+        `/api/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
         { method: "DELETE", headers: { Accept: "application/json", }, },
       );
       if (res.ok) {
