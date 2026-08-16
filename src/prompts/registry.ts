@@ -13,6 +13,7 @@
  */
 
 import {
+  GM_TOOL_DETECTION_PROMPT,
   INTENT_CLASSIFIER_PROMPT,
   MEMORY_EXTRACTION_PROMPT,
   TRANSITION_CLASSIFIER_PROMPT,
@@ -99,6 +100,8 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   intent: INTENT_CLASSIFIER_PROMPT,
   /** Aux: memory extraction */
   memory: MEMORY_EXTRACTION_PROMPT,
+  /** Aux: GM tool request detection */
+  gmTool: GM_TOOL_DETECTION_PROMPT,
 };
 
 /**
