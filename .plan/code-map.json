@@ -600,6 +600,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-068.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-scene-context.md"
     },
     {
@@ -755,6 +759,12 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
+  "src/assistant/prompt/sections/lore.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-055.md"
+    }
+  ],
   "src/assistant/prompt/sections/lore.ts": [
     {
       "kind": "epic",
@@ -763,6 +773,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-timeline-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-055.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-066.md"
     },
     {
       "kind": "ticket",
@@ -797,6 +815,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-075.md"
     },
     {
       "kind": "ticket",
@@ -2164,6 +2186,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-055.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-066.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-internal-traits.md"
     }
   ],
@@ -2347,6 +2377,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-059.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-068.md"
     }
   ],
   "src/chat/context-window.ts": [
@@ -2763,6 +2805,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-068.md"
     },
     {
       "kind": "ticket",
@@ -3880,6 +3926,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
     },
     {
@@ -3959,6 +4009,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
+    }
+  ],
+  "src/config/templates/llm.yaml": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065.md"
     }
   ],
   "src/content/compress.test.ts": [
@@ -4831,6 +4887,12 @@
       "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
+  "src/db/migrations/017_lorebook_cooldowns.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-055.md"
+    }
+  ],
   "src/db/migrations/018_data_version_columns.ts": [
     {
       "kind": "spec",
@@ -4853,6 +4915,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-db-migrations.md"
+    }
+  ],
+  "src/db/migrations/025_vn_choices.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-045.md"
     }
   ],
   "src/db/migrations/026_crafting_professions.ts": [
@@ -5015,6 +5083,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-045.md"
     },
     {
       "kind": "ticket",
@@ -6525,6 +6597,12 @@
       "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
     }
   ],
+  "src/frontend/alpine/chat-branches.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-047.md"
+    }
+  ],
   "src/frontend/alpine/chat-filters.ts": [
     {
       "kind": "ticket",
@@ -6769,6 +6847,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-059.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-067.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-068.md"
     }
   ],
   "src/frontend/alpine/device-tier.ts": [
@@ -6969,6 +7063,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
+    }
+  ],
+  "src/frontend/alpine/memory-panel.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-068.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-075.md"
     }
   ],
   "src/frontend/alpine/mention-autocomplete.ts": [
@@ -9289,6 +9393,12 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     }
   ],
+  "src/generation/providers/openai-compatible/metadata.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-067.md"
+    }
+  ],
   "src/generation/providers/registry.ts": [
     {
       "kind": "epic",
@@ -9329,6 +9439,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-067.md"
+    }
+  ],
+  "src/generation/quality-metrics.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
     }
   ],
   "src/generation/repetition-detector.ts": [
@@ -10776,6 +10896,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
@@ -10801,6 +10925,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065.md"
     },
     {
       "kind": "ticket",
@@ -11938,6 +12066,10 @@
   "src/routes/chat-branches.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-046.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-conversation-branching.md"
     }
   ],
@@ -12073,6 +12205,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-046.md"
     },
     {
       "kind": "ticket",
@@ -12363,6 +12499,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-mini-games.md"
+    }
+  ],
+  "src/routes/generation/compare.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-060.md"
     }
   ],
   "src/routes/generation/third-party.ts": [
@@ -16275,6 +16417,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-047.md"
     },
     {
       "kind": "ticket",
