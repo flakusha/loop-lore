@@ -32,12 +32,10 @@
 
 ## Release hardening (mirrors `../priority-release-010.md`; kept here for the open queue)
 
-- 🟡 **Lint-ts debt** → **open — the only red gate** — `bun run lint` exits 1 (0 errors,
-  ~196 warnings; ESLint 10 flat config fails on warnings). Requires warning remediation
-  (see `TASK-PLAN-LINT-TS-DEBT`).
+- ✅ **Lint-ts debt** → **closed 2026-08-14** — `bun run lint` EXIT 0 (0 errors, 193 warnings tracked); `bun run check` 18/18 (worktree `lint-ts-debt`).
 - ✅ **Size-strict debt** → closed (`size:strict` reports 0 files over 250L, verified
   2026-08-12; gate stays non-blocking until `TASK-size-strict-debt.md` promotion AC lands).
-- 🟡 e2e browser auth-loop → `TASK-PLAN-E2E-STABILIZATION`.
+- ✅ **e2e browser stabilization** → closed 2026-08-14 — `test:e2e:browser` 19/19 files ×2 (worktree `e2e-stabilization`).
 - 🟡 release-process + tag `v0.1.0` + changelog + push `dev`→`origin/dev` →
   `TASK-PLAN-RELEASE-V010` + `epic-release-010.md`.
 
