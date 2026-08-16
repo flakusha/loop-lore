@@ -1924,3 +1924,22 @@ export const CharacterWorldSetupSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── model_capabilities ────────────────────────────────────────────
+export const ModelCapabilitiesSchema = t.Object({
+  provider_id: t.String(),
+  model_id: t.String(),
+  last_seen: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+  context_window: t.Optional(t.Number(),),
+  max_output: t.Optional(t.Number(),),
+  supports_tools: t.Optional(t.Number(),),
+  supports_vision: t.Optional(t.Number(),),
+  supports_thinking: t.Optional(t.Number(),),
+  modalities: t.Optional(t.String(),),
+  param_size: t.Optional(t.String(),),
+  owned_by: t.Optional(t.String(),),
+  user_override: t.Optional(t.Number(),),
+  notes: t.Optional(t.String(),),
+},);

@@ -131,4 +131,5 @@ export interface DB {
   proactive_messaging_config: import("./schema-core").ProactiveMessagingConfig;
   character_internal_traits: import("./schema-core").CharacterInternalTraits;
   character_world_setup: import("./schema-character").CharacterWorldSetup;
+  model_capabilities: import("./schema-core").ModelCapabilities;
 }
