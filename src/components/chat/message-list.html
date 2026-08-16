@@ -218,6 +218,30 @@
                 </template>
               </div>
             </template>
+            <!-- Emoji reactions: chips + quick-picker trigger -->
+            <div class="message-reactions" data-testid="reaction-bar">
+              <template x-if="msg.reactions && msg.reactions.length > 0">
+                <template x-for="r in msg.reactions" :key="r.emoji">
+                  <button
+                    class="reaction-badge"
+                    :class="{ 'reaction-active': r.userReacted }"
+                    @click="toggleReaction(msg.id, r.emoji)"
+                    data-testid="reaction-chip"
+                  >
+                    <span class="reaction-emoji" x-text="r.emoji"></span>
+                    <span class="reaction-count" x-text="r.count"></span>
+                  </button>
+                </template>
+              </template>
+              <button
+                class="reaction-add-btn"
+                @click="showReactionPicker(msg.id, $event)"
+                x-bind:title="t('chats.addReaction')"
+                data-testid="reaction-add"
+              >
+                🙂
+              </button>
+            </div>
             <!-- Detailed (nerd) mode: full button row + stats -->
             <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
               <button class="btn-icon-action" @click="copyMessage(msg.id, $event)" x-bind:title="t('chats.copy')">
@@ -477,6 +501,23 @@
     >
       🗑 {{{t("common.remove")}}}
     </button>
+  </div>
+
+  <!-- Reaction quick-picker popover -->
+  <div
+    class="dropdown-base reaction-picker"
+    x-show="_reactionPicker.visible"
+    :style="{ left: _reactionPicker.x + 'px', top: _reactionPicker.y + 'px' }"
+    @click.outside="closeReactionPicker()"
+    @keydown.escape.window="closeReactionPicker()"
+    data-testid="reaction-picker"
+    x-cloak
+  >
+    <template x-for="emoji in _quickEmojis" :key="emoji">
+      <button class="reaction-option" @click="toggleReaction(_reactionPicker.messageId, emoji); closeReactionPicker()">
+        <span x-text="emoji"></span>
+      </button>
+    </template>
   </div>
 
   <!-- Stream container for SSE streaming generation -->

@@ -805,6 +805,7 @@
     "impersonateAction": "Impersonate",
     "generateImage": "Generate Image",
     "captionImages": "Caption",
+    "addReaction": "Add reaction",
     "model": "Model",
     "provider": "Provider",
     "promptTokens": "Prompt tokens",
