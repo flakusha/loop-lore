@@ -97,3 +97,49 @@ describe("PromptAssembler emotion wiring", () => {
     expect(withoutUser.messages.some((m,) => m.content.includes("user_persona",)),).toBe(false,);
   });
 });
+
+describe("PromptAssembler per-chat prompt override", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let userId: string;
+  let actorId: string;
+  let chatId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+    userId = uid();
+    actorId = uid();
+    chatId = uid();
+    await insertUsers(db, "tester-ovr", "Tester", { id: userId, } as never,);
+    await insertActors(db, "Alice", { id: actorId, user_id: userId, } as never,);
+    await insertChats(db, "Override chat", userId, { id: chatId, } as never,);
+    await insertChatParticipants(db, chatId, actorId,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("uses chat prompt_override as the system prompt when set", async () => {
+    await db.updateTable("chats",).set({ prompt_override: "You are the Keeper of the Crimson Gate.", },).where(
+      "id",
+      "=",
+      chatId,
+    ).execute();
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
+    const systemMsg = assembled.messages.find((m,) => m.role === "system");
+    expect(systemMsg?.content,).toContain("Keeper of the Crimson Gate",);
+  });
+
+  test("falls back to the character system prompt when no override", async () => {
+    await db.updateTable("chats",).set({ prompt_override: null, },).where("id", "=", chatId,).execute();
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
+    const systemMsg = assembled.messages.find((m,) => m.role === "system");
+    // Alice has no explicit system_prompt; a default system section still exists.
+    expect(systemMsg,).toBeDefined();
+  });
+});

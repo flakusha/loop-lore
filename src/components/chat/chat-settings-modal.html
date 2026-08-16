@@ -466,6 +466,41 @@
                 Edit in character settings to customize per-character. Config overrides via
                 <code>configs/templates/llm.yaml</code>.
               </small>
+
+              <!-- Per-chat prompt override -->
+              <div style="margin-top: var(--space-3); border-top: 1px solid var(--border-color, #333); padding-top: var(--space-2)">
+                <span class="form-label" style="display: block">Per-Chat Override</span>
+                <textarea
+                  class="form-input form-textarea"
+                  rows="4"
+                  x-model="_promptOverrideDraft"
+                  placeholder="Leave empty to use the default above (character / world / registry)"
+                  style="font-size: var(--fs-xs); font-family: var(--font-mono, monospace); resize: vertical"
+                  data-testid="prompt-template-override"
+                ></textarea>
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2)">
+                  <button
+                    class="btn btn-primary btn-sm"
+                    @click="savePromptOverride()"
+                    :disabled="_promptOverrideSaving || _promptOverrideDraft.trim() === (_promptTemplate?.override ?? '')"
+                    data-testid="prompt-template-override-save"
+                  >
+                    <span x-show="!_promptOverrideSaving">Save Override</span>
+                    <span x-show="_promptOverrideSaving">Saving…</span>
+                  </button>
+                  <button
+                    class="btn btn-ghost btn-sm"
+                    x-show="_promptTemplate?.override"
+                    @click="_promptOverrideDraft = ''; savePromptOverride()"
+                    data-testid="prompt-template-override-clear"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+                  Overrides the character / world-setup / registry system prompt for this chat.
+                </small>
+              </div>
             </div>
           </template>
         </div>
