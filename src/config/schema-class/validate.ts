@@ -24,6 +24,12 @@ export const validate = (config: Config,): void => {
   if (config.generation.providers.anthropic && !config.generation.providers.anthropic.apiKey) {
     throw new Error("generation.providers.anthropic requires apiKey",);
   }
+  if (config.generation.providers.ollamaNative && !config.generation.providers.ollamaNative.baseUrl) {
+    throw new Error("generation.providers.ollamaNative requires baseUrl",);
+  }
+  if (config.generation.providers.ollamaNative && !config.generation.providers.ollamaNative.model) {
+    throw new Error("generation.providers.ollamaNative requires model",);
+  }
   if (
     config.headers.xFrameOptions !== null &&
     !["DENY", "SAMEORIGIN",].includes(config.headers.xFrameOptions,)
