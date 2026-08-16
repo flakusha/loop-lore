@@ -190,7 +190,7 @@ function buildReport({ exitCode, checks, nonBlocking, },) {
 function writeReport(report,) {
   mkdirSync(path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE,), { recursive: true, },);
   writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2,) + "\n", "utf8",);
-  console.log(`\n📄 Check report: ${REPORT_RELATIVE}`,);
+  console.log(`\n📄 Check report: ${REPORT_PATH}`,);
   return REPORT_PATH;
 }
 
