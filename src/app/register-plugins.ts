@@ -64,6 +64,7 @@ import { messageSearchRoutes, } from "../routes/message-search";
 import { messagesRoutes, } from "../routes/messages";
 import { modelComparisonsRoutes, } from "../routes/model-comparisons";
 import { notificationsRoutes, } from "../routes/notifications";
+import { npcMovementRoutes, } from "../routes/npc-movement";
 import { nsfwRoutes, } from "../routes/nsfw";
 import { nsfwModerationRoutes, } from "../routes/nsfw-moderation";
 import { pluginRoutes, } from "../routes/plugins";
@@ -130,6 +131,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(craftingRecipeRoutes(handleOpts,),);
   app.use(tradeRoutes(handleOpts,),);
   app.use(chatSectionsRoutes(handleOpts,),);
+  app.use(npcMovementRoutes(handleOpts,),);
   app.use(chatBackgroundsRoutes(handleOpts,),);
   app.use(locationExplorerRoutes(handleOpts,),);
   app.use(adminRoutes(handleOpts,),);
