@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { ChatParticipant, ChatParticipantsState, } from "./chat-types/participants-state";
+import type { ChatParticipant, ChatParticipantsState, GroupTurnOrder, } from "./chat-types/participants-state";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -22,6 +22,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   _participantsBusy: false,
   _selectedAddActorId: null as string | null,
   _selectedAddRole: "member",
+  _turnOrder: null as GroupTurnOrder | null,
 
   get isGroupChat(): boolean {
     return this.currentChat?.type === "group";
@@ -56,6 +57,18 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
           actor_type: p.actor_type,
         };
       },);
+    } catch {
+      /* ignore */
+    }
+  },
+
+  async loadTurnOrder() {
+    if (!this.activeChat || !this.isGroupChat) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/turn-order`,);
+      if (!res.ok) { return; }
+      const body = (await res.json()) as { turnOrder: GroupTurnOrder | null };
+      this._turnOrder = body.turnOrder;
     } catch {
       /* ignore */
     }

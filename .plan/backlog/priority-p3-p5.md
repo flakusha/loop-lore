@@ -43,7 +43,7 @@
 - [ ] Assets — signed URLs (compression flow ✅ 2026-08-12) (P3 #10)
 - [ ] Fine-tuning experience — provider health panel; fine-tuning UI for chat/persona/character (P3 #11)
 - [ ] NSFW — character 5-tier rating runtime enforcement (P3 #6)
-- [ ] Chat UI — group chat matrix UI, unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12) (P2-B/P2-D)
+- [ ] Chat UI — group chat matrix UI, unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12; participant panel ✅ 2026-08-14; **turn-order indicator + side-channels ✅ 2026-08-16**; unified GM↔assistant view = E1) (P2-B/P2-D)
 - [ ] **Lorebook activation conditions** (`FEAT-055`) — worldbook/lorebook entries auto-inject into context by keyword/token matching (SillyTavern World Info inspiration). Builds on memorySection + regex pipeline. |
 - [ ] **Prompt library expanded — generation templates** (`FEAT-065` + sub-tickets) — image/audio/video prompt templates with parameter substitution, persistence, and per-provider adapters. Sub-systems: (`FEAT-065-sub-image`), (`FEAT-065-sub-audio`), (`FEAT-065-sub-video`), (`FEAT-065-sub-llm`). Spec: `FEAT-065-template-system.md`. |
 - [ ] **Model capability registry** (`FEAT-067`) — per-model metadata (context length, function calling support, vision, pricing) auto-detected + editable. |

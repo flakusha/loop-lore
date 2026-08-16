@@ -37,6 +37,8 @@ export interface CreateChatParams {
   gmConfig?: Record<string, unknown> | null;
   visualNovel?: boolean;
   templateId?: string;
+  /** Parent chat id — links this chat as a side-channel (C1). */
+  parentChatId?: string;
   /** Discoverability state for the chat (private|public|unlisted). */
   visibility?: string;
   /** Seed the new chat with participant memories: "full" | "selective" | "fresh". */
