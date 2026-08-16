@@ -1,25 +1,28 @@
 # Priority — Workstack Index (P0–P6+)
 
-> **Last updated:** 2026-08-15. Index of the priority ladder, split by priority/phasing
-> into tier files (2026-08-15). Tier files hold the detail; this index holds the status
-> header, file map, and milestone gates.
+> **Last updated:** 2026-08-16 (.plan housekeeping refresh — backlog aligned to implemented
+> features, feature matrix items promoted into P4/P5/P6 tiers). Index of the priority
+> ladder, split by priority/phasing into tier files (2026-08-15). Tier files hold the
+> detail; this index holds the status header, file map, and milestone gates.
 >
-> **Since 2026-08-14 refresh:** Gate C core shipped + verified on `dev` (2026-08-12) —
+> **Since 2026-08-15 refresh:** Gate C core shipped + verified on `dev` (2026-08-12) —
 > memory-selection UI + C1 participant panel + recovered-features merged to `dev`
 > (2026-08-14); **lint-ts + e2e gates closed 2026-08-14** (`lint-ts-debt` +
 > `e2e-stabilization` worktrees → `check` 18/18, browser e2e 19/19 ×2); **GM-guided
-> story (P2-Da) done** — merged to `dev` (`480434d6`, `3f85b74b`, `4b0dd146`,
-> `68808486`); tool-call UI, register page, prompt registry, GM panels, quest log,
-> world/location access; size-strict debt closed; **item-systems backend
-> wiring 10/15 + docs-reconciliation epic both merged to `dev` 2026-08-14**
-> (worktrees `rpg-wire-routes` + `docs-reconcile`); **7 more RPG services wired
-> 2026-08-14 (`51a7bc01`)** — achievements, skills, npc-navigation, replayability,
-> world-location-traits, xp-loot, combat + quest-engine consolidation + wiring gate.
+> story (P2-Da) done**; item-systems backend wiring 10/15 + docs-reconciliation merged
+> 2026-08-14; **7 more RPG services wired 2026-08-14 (`51a7bc01`)** — achievements,
+> skills, npc-navigation, replayability, world-location-traits, xp-loot, combat +
+> quest-engine consolidation. **Release channels synced (`dev` pushed to `origin/dev`,
+> `work` pushed to `origin/work`)**. **Feature matrix items promoted to P4/P5/P6 tiers**
+> (2026-08-16) — conversation branching, lorebook activation, conversation analytics,
+> model comparison, generation quality metrics, lore-consistency, model capability
+> registry, token budget advisor, memory access audit, prompt library expansions.
 
 ## Status header
 
 P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 0.1.0 value tiers
-(§ P3–P5 below) · P6 → § P6 (below); finer debt → `../open.md` · Gate C ✅ (GM-guided story P2-Da done — merged to `dev`).
+(§ P3–P5 below) · P6 → § P6 (below); finer debt → `../open.md` · Gate C ✅ (GM-guided
+story P2-Da done — merged to `dev`). **Feature matrix items promoted 2026-08-16.**
 
 ## File map (split 2026-08-15)
 
