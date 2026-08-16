@@ -68,7 +68,7 @@ describe("provider-health", () => {
       const byName = new Map(results.map(r => [r.name, r,]),);
       expect(results,).toHaveLength(4,);
       expect(byName.get("healthy-prov",)!.status,).toBe("healthy",);
-      expect(byName.get("healthy-prov",)!.models,).toEqual(["m1" as never, "m2" as never,]);
+      expect(byName.get("healthy-prov",)!.models,).toEqual(["m1" as never, "m2" as never,],);
       expect(byName.get("healthy-prov",)!.latencyMs,).toBe(12,);
       expect(byName.get("sick-prov",)!.status,).toBe("unreachable",);
       expect(byName.get("sick-prov",)!.error,).toBe("boom",);

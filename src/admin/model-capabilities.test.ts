@@ -5,6 +5,7 @@ import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { ModelInfo, } from "../generation/providers/types";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   clearModelOverride,
@@ -14,7 +15,6 @@ import {
   setModelOverride,
   upsertModelCapabilities,
 } from "./model-capabilities";
-import type { ModelInfo, } from "../generation/providers/types";
 
 function makeModel(overrides: Partial<ModelInfo> = {},): ModelInfo {
   return {
@@ -55,7 +55,7 @@ describe("model-capabilities", () => {
       expect(caps!.supportsVision,).toBe(true,);
       expect(caps!.ownedBy,).toBe("openai",);
       expect(caps!.userOverride,).toBe(false,);
-    },);
+    });
 
     test("updates existing model", async () => {
       await upsertModelCapabilities(db, "openai", [makeModel(),],);
@@ -63,7 +63,7 @@ describe("model-capabilities", () => {
 
       const caps = await resolveModelCapabilities(db, "openai", "gpt-4o",);
       expect(caps!.contextWindow,).toBe(256_000,);
-    },);
+    });
 
     test("preserves user override on update", async () => {
       await upsertModelCapabilities(db, "openai", [makeModel(),],);
@@ -73,7 +73,7 @@ describe("model-capabilities", () => {
       const caps = await resolveModelCapabilities(db, "openai", "gpt-4o",);
       expect(caps!.contextWindow,).toBe(999_999,);
       expect(caps!.userOverride,).toBe(true,);
-    },);
+    });
 
     test("handles multiple models", async () => {
       await upsertModelCapabilities(db, "openai", [
@@ -83,29 +83,29 @@ describe("model-capabilities", () => {
 
       const all = await listModelCapabilities(db, "openai",);
       expect(all.length,).toBe(2,);
-    },);
-  },);
+    });
+  });
 
   describe("resolveModelCapabilities", () => {
     test("returns null for unknown model", async () => {
       const caps = await resolveModelCapabilities(db, "openai", "unknown-model",);
       expect(caps,).toBeNull();
-    },);
+    });
 
     test("marks stale models", async () => {
       await upsertModelCapabilities(db, "openai", [makeModel(),],);
 
       // Manually set last_seen to 31 days ago
       await db
-        .updateTable("model_capabilities")
+        .updateTable("model_capabilities",)
         .set({ last_seen: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000,).toISOString(), },)
         .where("model_id", "=", "gpt-4o",)
         .execute();
 
       const caps = await resolveModelCapabilities(db, "openai", "gpt-4o",);
       expect(caps!.isStale,).toBe(true,);
-    },);
-  },);
+    });
+  });
 
   describe("setModelOverride", () => {
     test("sets override fields", async () => {
@@ -123,13 +123,13 @@ describe("model-capabilities", () => {
       expect(caps!.userOverride,).toBe(true,);
       // Other fields preserved
       expect(caps!.supportsTools,).toBe(true,);
-    },);
+    });
 
     test("returns false for unknown model", async () => {
       const ok = await setModelOverride(db, "openai", "unknown", { contextWindow: 100, },);
       expect(ok,).toBe(false,);
-    },);
-  },);
+    });
+  });
 
   describe("clearModelOverride", () => {
     test("reverts to auto-detected", async () => {
@@ -144,8 +144,8 @@ describe("model-capabilities", () => {
       // After clearing override, the value stays as-is until next provider scan
       // overwrites it. The flag is cleared so future scans will update it.
       expect(caps!.contextWindow,).toBe(999_999,);
-    },);
-  },);
+    });
+  });
 
   describe("listModelCapabilities", () => {
     test("filters by provider", async () => {
@@ -158,8 +158,8 @@ describe("model-capabilities", () => {
 
       const all = await listModelCapabilities(db,);
       expect(all.length,).toBe(2,);
-    },);
-  },);
+    });
+  });
 
   describe("getContextWindowForModel", () => {
     test("returns context window from registry", async () => {
@@ -167,11 +167,11 @@ describe("model-capabilities", () => {
 
       const ctx = await getContextWindowForModel(db, "openai", "gpt-4o",);
       expect(ctx,).toBe(128_000,);
-    },);
+    });
 
     test("returns null for unknown model", async () => {
       const ctx = await getContextWindowForModel(db, "openai", "unknown",);
       expect(ctx,).toBeNull();
-    },);
-  },);
-},);
+    });
+  });
+});

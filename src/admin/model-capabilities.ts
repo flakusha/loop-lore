@@ -13,45 +13,10 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
-import { jsonStringifyOr, jsonParseOr, } from "../utils/safe-json";
+import { jsonParseOr, jsonStringifyOr, } from "../utils/safe-json";
+import type { ResolvedModelCapabilities, } from "./model-capabilities-types";
 
-/** Persisted model capability row. */
-export interface ModelCapabilityRow {
-  id: string;
-  provider_id: string;
-  model_id: string;
-  context_window: number | null;
-  max_output: number | null;
-  supports_tools: number; // 0/1 boolean
-  supports_vision: number;
-  supports_thinking: number;
-  modalities: string | null; // JSON array
-  param_size: string | null;
-  owned_by: string | null;
-  user_override: number; // 0/1 boolean
-  notes: string | null;
-  last_seen: string;
-  created_at: string;
-  updated_at: string;
-}
-
-/** Merged capability result (auto-detected + user overrides). */
-export interface ResolvedModelCapabilities {
-  providerId: string;
-  modelId: string;
-  contextWindow: number | null;
-  maxOutput: number | null;
-  supportsTools: boolean;
-  supportsVision: boolean;
-  supportsThinking: boolean;
-  modalities: string[];
-  paramSize: string | null;
-  ownedBy: string | null;
-  isStale: boolean;
-  lastSeen: string;
-  userOverride: boolean;
-  notes: string | null;
-}
+export type { ModelCapabilityRow, ResolvedModelCapabilities, } from "./model-capabilities-types";
 
 /** Staleness threshold: 30 days. */
 const STALE_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
@@ -68,7 +33,7 @@ export async function upsertModelCapabilities(
   const now = new Date().toISOString();
   for (const model of models) {
     const existing = await db
-      .selectFrom("model_capabilities")
+      .selectFrom("model_capabilities",)
       .where("provider_id", "=", providerId,)
       .where("model_id", "=", model.id,)
       .selectAll()
@@ -78,14 +43,14 @@ export async function upsertModelCapabilities(
       if (existing.user_override) {
         // User-overridden: only update last_seen
         await db
-          .updateTable("model_capabilities")
+          .updateTable("model_capabilities",)
           .set({ last_seen: now, updated_at: now, },)
           .where("id", "=", existing.id,)
           .execute();
       } else {
         // Auto-detected: update all fields
         await db
-          .updateTable("model_capabilities")
+          .updateTable("model_capabilities",)
           .set({
             context_window: model.contextWindow ?? null,
             max_output: model.maxOutput ?? null,
@@ -102,7 +67,7 @@ export async function upsertModelCapabilities(
       }
     } else {
       await db
-        .insertInto("model_capabilities")
+        .insertInto("model_capabilities",)
         .values({
           id: crypto.randomUUID(),
           provider_id: providerId,
@@ -140,7 +105,7 @@ export async function resolveModelCapabilities(
   modelId: string,
 ): Promise<ResolvedModelCapabilities | null> {
   const row = await db
-    .selectFrom("model_capabilities")
+    .selectFrom("model_capabilities",)
     .where("provider_id", "=", providerId,)
     .where("model_id", "=", modelId,)
     .selectAll()
@@ -181,7 +146,7 @@ export async function listModelCapabilities(
   }
   const rows = await query.orderBy("provider_id",).orderBy("model_id",).execute();
 
-  return Array.from(rows, (row): ResolvedModelCapabilities => ({
+  return Array.from(rows, (row,): ResolvedModelCapabilities => ({
     providerId: row.provider_id,
     modelId: row.model_id,
     contextWindow: row.context_window,
@@ -196,7 +161,7 @@ export async function listModelCapabilities(
     lastSeen: row.last_seen,
     userOverride: row.user_override === 1,
     notes: row.notes,
-  }));
+  }),);
 }
 
 /**
@@ -217,7 +182,7 @@ export async function setModelOverride(
   },
 ): Promise<boolean> {
   const existing = await db
-    .selectFrom("model_capabilities")
+    .selectFrom("model_capabilities",)
     .where("provider_id", "=", providerId,)
     .where("model_id", "=", modelId,)
     .selectAll()
@@ -239,7 +204,7 @@ export async function setModelOverride(
   if (override.notes !== undefined) { updates.notes = override.notes; }
 
   await db
-    .updateTable("model_capabilities")
+    .updateTable("model_capabilities",)
     .set(updates,)
     .where("id", "=", existing.id,)
     .execute();
@@ -256,7 +221,7 @@ export async function clearModelOverride(
   modelId: string,
 ): Promise<boolean> {
   const result = await db
-    .updateTable("model_capabilities")
+    .updateTable("model_capabilities",)
     .set({ user_override: 0, updated_at: new Date().toISOString(), },)
     .where("provider_id", "=", providerId,)
     .where("model_id", "=", modelId,)

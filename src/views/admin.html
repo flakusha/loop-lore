@@ -961,7 +961,10 @@
                 </div>
               </div>
               <div x-show="loadingCapabilities" style="font-size: 12px; color: var(--text-secondary)">Loading…</div>
-              <div x-show="!loadingCapabilities && modelCapabilities.length === 0" style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)">
+              <div
+                x-show="!loadingCapabilities && modelCapabilities.length === 0"
+                style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)"
+              >
                 No models registered yet. Models are auto-populated on provider rescan.
               </div>
               <div style="display: grid; gap: var(--space-2)">
@@ -972,7 +975,10 @@
                   >
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-1)">
                       <div style="display: flex; align-items: center; gap: var(--space-2)">
-                        <span style="font-size: 11px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px" x-text="cap.providerId"></span>
+                        <span
+                          style="font-size: 11px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px"
+                          x-text="cap.providerId"
+                        ></span>
                         <strong style="font-size: 13px" x-text="cap.modelId"></strong>
                         <span
                           x-show="cap.userOverride"
@@ -988,12 +994,15 @@
                           class="btn btn-secondary btn-xs"
                           @click="editingCapability = editingCapability === cap.providerId + '/' + cap.modelId ? null : cap.providerId + '/' + cap.modelId"
                           x-text="editingCapability === cap.providerId + '/' + cap.modelId ? 'Close' : 'Edit'"
-                        ></button>
+                        >
+                        </button>
                         <button
                           class="btn btn-secondary btn-xs"
                           x-show="cap.userOverride"
                           @click="clearCapabilityOverride(cap.providerId, cap.modelId)"
-                        >Clear Override</button>
+                        >
+                          Clear Override
+                        </button>
                       </div>
                     </div>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--text-secondary, #6c757d)">
@@ -1006,7 +1015,12 @@
                       <span x-show="cap.paramSize" x-text="cap.paramSize"></span>
                       <span x-show="cap.ownedBy" x-text="'by ' + cap.ownedBy"></span>
                     </div>
-                    <div x-show="cap.notes" style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-style: italic" x-text="cap.notes"></div>
+                    <div
+                      x-show="cap.notes"
+                      style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-style: italic"
+                      x-text="cap.notes"
+                    >
+                    </div>
                     <!-- Edit Override Panel -->
                     <div
                       x-show="editingCapability === cap.providerId + '/' + cap.modelId"
@@ -1017,15 +1031,33 @@
                       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2)">
                         <div>
                           <label style="font-size: 11px; color: var(--text-secondary)">Context Window</label>
-                          <input class="form-input" style="font-size: 12px; padding: 3px 6px" type="number" :placeholder="cap.contextWindow ?? 'auto'" x-ref="ctxWindow" />
+                          <input
+                            class="form-input"
+                            style="font-size: 12px; padding: 3px 6px"
+                            type="number"
+                            :placeholder="cap.contextWindow ?? 'auto'"
+                            x-ref="ctxWindow"
+                          />
                         </div>
                         <div>
                           <label style="font-size: 11px; color: var(--text-secondary)">Max Output</label>
-                          <input class="form-input" style="font-size: 12px; padding: 3px 6px" type="number" :placeholder="cap.maxOutput ?? 'auto'" x-ref="maxOutput" />
+                          <input
+                            class="form-input"
+                            style="font-size: 12px; padding: 3px 6px"
+                            type="number"
+                            :placeholder="cap.maxOutput ?? 'auto'"
+                            x-ref="maxOutput"
+                          />
                         </div>
                         <div>
                           <label style="font-size: 11px; color: var(--text-secondary)">Notes</label>
-                          <input class="form-input" style="font-size: 12px; padding: 3px 6px" type="text" :placeholder="cap.notes ?? ''" x-ref="capNotes" />
+                          <input
+                            class="form-input"
+                            style="font-size: 12px; padding: 3px 6px"
+                            type="text"
+                            :placeholder="cap.notes ?? ''"
+                            x-ref="capNotes"
+                          />
                         </div>
                       </div>
                       <div style="margin-top: var(--space-2)">
@@ -1036,7 +1068,9 @@
                             maxOutput: $refs.maxOutput.value ? Number($refs.maxOutput.value) : null,
                             notes: $refs.capNotes.value || null,
                           })"
-                        >Save Override</button>
+                        >
+                          Save Override
+                        </button>
                       </div>
                     </div>
                   </div>
