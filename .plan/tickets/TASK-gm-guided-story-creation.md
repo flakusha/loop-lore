@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: GM-Guided Story Creation
 
 **Status:** ✅ Done (2026-08-14) — UI + persistence (`feature/gm-guided-story-ui`) + orchestrator consumption (`4b0dd146` threads `gmGuidance` into `GameMasterService`; tested in `game-master.test.ts`)

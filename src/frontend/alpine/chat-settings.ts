@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { syncVnRenderer, } from "./chat-settings/vn";
 import { apiFetch, } from "./htmx";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/characters/services/emotion-avatar-service/emotions.ts — Emotion prompt tables + resolvers
 
 import type { EmotionEntry, } from "../../../config/sections/templates";

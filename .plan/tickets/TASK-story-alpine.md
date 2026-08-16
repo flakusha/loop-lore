@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Story Alpine.js Logic
 
 **Status:** 🟡 In Progress (2026-08-14 — story-state.ts + story-controls.ts built + tested in worktree story-chat-view)

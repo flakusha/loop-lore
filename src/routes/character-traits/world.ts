@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { Elysia, t, } from "elysia";
 import { TraitsService, } from "../../characters/services/traits-service";
 import type { TranslatorFn, } from "../../i18n/types";

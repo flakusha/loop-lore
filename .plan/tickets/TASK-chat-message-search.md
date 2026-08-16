@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Chat Message Search & Filter
 
 **Status:** ✅ Done — FTS5 migration 034 + `routes/message-search/` (scoped by chat, role/attachment/date filters, bm25 snippets) + in-chat search UI (`alpine/message-search.ts`, chat.html 🔍 toggle)

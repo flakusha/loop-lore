@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Internal Traits Visibility Tiers
 
 **Status:** 🟡 Partial — visibility field + `buildPromptSection(includeHidden)` shipped (`44e22069`); `toPublicCard()` redaction + role-based API access + frontend view tiers pending

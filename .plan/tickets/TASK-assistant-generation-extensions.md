@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: EPIC: Assistant Generation Extensions (Image Gen, Intent, Scenario Source)
 
 **Status:** 🟡 In Progress — `/image` command dispatch done, generation adapter pending (2026-08-01)

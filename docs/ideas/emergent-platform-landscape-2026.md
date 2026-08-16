@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Emergent Platform Landscape — RPG / Agentic / Creative AI (2026)
 
 **Created:** 2026-08-14

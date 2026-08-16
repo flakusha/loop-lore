@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/routes/chat-export.ts
 //
 // Chat export routes — export chat as Markdown, JSON, HTML, or plain text.

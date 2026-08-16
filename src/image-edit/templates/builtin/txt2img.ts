@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
 import type { WorkflowTemplate, } from "../../types";
 import { buildLoraNodes, parseLoraString, } from "./lora";

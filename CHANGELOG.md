@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Changelog
 
 All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions per [SemVer](https://semver.org/).

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Unify backend 401/Unauthorized guard helpers
 
 **Status:** 🟢 Done (2026-08-06) — remaining raw-401 route sites migrated in `c99704c1`; only deliberate exclusions remain (separate module families, handler-funneled files)

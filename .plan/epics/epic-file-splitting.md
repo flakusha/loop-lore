@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: File Splitting & God-Module Refactor
 
 **Status:** 🟢 Complete (core size-strict debt closed; `src/server/start.ts` remains documented follow-on)

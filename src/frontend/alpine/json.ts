@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Browser-safe JSON utilities — mirrors the server-side safe wrappers in src/utils.ts
  * but without Node.js dependencies so it can be bundled for the browser.

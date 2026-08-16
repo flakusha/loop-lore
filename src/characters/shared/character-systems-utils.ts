@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // Field mapping constants for character systems export/import
 // Eliminates 82 hardcoded field name pairs across exporter and importer
 

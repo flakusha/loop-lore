@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Platform & Reach
 
 Everywhere-layer ideas. Inspiration: community mobile/offline/backup requests.

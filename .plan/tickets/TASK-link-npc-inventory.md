@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Link NPC Inventory to World Items (Replace Denormalized JSON)
 
 **Status:** ✅ Complete (2026-08-12)

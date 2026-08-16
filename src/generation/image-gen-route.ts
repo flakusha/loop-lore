@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { extractImageMetadata, } from "../assets/metadata";
 import { createAsset, linkAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";

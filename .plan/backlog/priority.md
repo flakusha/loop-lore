@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Priority — Workstack Index (P0–P6+)
 
 > **Last updated:** 2026-08-16 (.plan housekeeping refresh — backlog aligned to implemented

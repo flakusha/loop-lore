@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema-class/server.ts — server section defaults
 import { DATA_DIR, } from "../constants";
 import type { ServerConfig, } from "../schema";

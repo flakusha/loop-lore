@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Group participants section — character cards for the other actors in a
  * group chat, so the generating actor knows who it is talking to.

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * RunNonStreaming — non-streaming (JSON) generation path for
  * POST /api/generation/generate. Extracted from generate-route.ts

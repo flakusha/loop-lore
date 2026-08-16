@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * System prompt section — the top-level instruction override, the config-
  * driven default, or the actor's own system prompt (in that priority order).

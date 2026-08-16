@@ -7,6 +7,9 @@ epic: epic-chat-context-optimization
 related: [FEAT-067, FEAT-055, FEAT-059]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT-068: Token budget advisor
 
 ## What

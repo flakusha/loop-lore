@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Sidebar user info — populates #user-display-name and #user-role in the
  * shared layout sidebar from GET /api/auth/me. Runs on every page; the layout

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Message Bubbles
 
 Visual spec for message rendering: bubble styling, layout, avatars, grouping,

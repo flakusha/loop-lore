@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/sections/server.ts — Server config section
 //
 // Interface + defaults + schema metadata for server configuration.

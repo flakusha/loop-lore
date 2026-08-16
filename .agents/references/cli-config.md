@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Development Commands & Configuration
 
 Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` for implementation guidance.

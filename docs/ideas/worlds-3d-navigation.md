@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # 3D Worlds & Navigation
 
 Browser-based 3D for worlds, characters, and navigation. Added per research review

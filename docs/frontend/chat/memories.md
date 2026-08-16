@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Memory System
 
 > ⚠️ **Implementation status:** Backend reads `actor_memories` for prompt assembly. Memory extraction, selection UI, mid-chat memory panel, pinning, and auto-extraction are NOT implemented. This spec is aspirational.

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Alpine init hydration errors abort chat subtree rendering
 
 **Status:** ✅ Resolved — verified stale (no code change required)

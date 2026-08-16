@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Gap-closure report — P1–P6 18-item workstream
 
 All 18 items complete and committed to `dev`, GPG-signed (agent key `E9DAF69C…`). Full `bun run typecheck` green.

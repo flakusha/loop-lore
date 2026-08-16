@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Codemod `fetch`→`apiFetch` + `JSON.*`→`safeJson*` (no eslint/biome autofix exists)
 
 **Status:** 🟡 Partially Complete — manual pass done 2026-08-06

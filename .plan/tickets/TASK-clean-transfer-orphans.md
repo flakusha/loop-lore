@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Clean Up Item Transfer Orphans (Zero-Quantity Rows)
 
 **Status:** ✅ Complete (2026-08-12)

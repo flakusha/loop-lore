@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── In-chat message search — highlight + keyboard navigation ──
 //
 // Adds a search toggle to the chat header (🔍). When opened, a search bar

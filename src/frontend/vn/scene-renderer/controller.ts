@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { destroyChoiceCards, } from "../choice-cards";
 import { createLoadingIndicator, } from "../image-preloader";
 import { getVnSettings, } from "../settings";

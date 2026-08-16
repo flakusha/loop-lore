@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/generate-toml-schema.ts — Generate TOML-optimized JSON Schema
 //
 // Usage: bun run src/config/generate-toml-schema.ts

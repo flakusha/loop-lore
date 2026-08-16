@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Fix message-reactions DELETE access check
 
 **Status:** ✅ Done (2026-08-05) — reaction access shipped: all reaction endpoints gated via `checkChatAccess`; POST toggle added; `message-reactions.test.ts` (8 tests)

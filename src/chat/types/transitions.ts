@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** Type of chat transition */
 export type TransitionType = "description" | "context_cut" | "location_change";
 

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: AUX LLM — Mood Classification
 
 **Status:** 🟡 Partial — MoodHook exists but keyword-based, no LLM, results unconsumed (2026-08-01)
