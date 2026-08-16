@@ -1529,6 +1529,24 @@ export const SCHEMA = new SchemaManifest()
     nsfw_override: col("text",),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
+  .table("model_capabilities", {
+    id: col("text", { primaryKey: true, notNull: true, },),
+    provider_id: col("text", { notNull: true, },),
+    model_id: col("text", { notNull: true, },),
+    context_window: col("integer",),
+    max_output: col("integer",),
+    supports_tools: col("integer", { hasDefault: true, },),
+    supports_vision: col("integer", { hasDefault: true, },),
+    supports_thinking: col("integer", { hasDefault: true, },),
+    modalities: col("text",),
+    param_size: col("text",),
+    owned_by: col("text",),
+    user_override: col("integer", { notNull: true, hasDefault: true, },),
+    notes: col("text",),
+    last_seen: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
   .table("model_comparisons", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),

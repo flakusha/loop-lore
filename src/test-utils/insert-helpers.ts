@@ -2977,3 +2977,36 @@ export async function insertCharacterWorldSetup(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a model_capabilities row. */
+export async function insertModelCapabilities(
+  db: Db,
+  provider_id: string,
+  model_id: string,
+  last_seen: string,
+  created_at: string,
+  updated_at: string,
+  opts?: {
+    id?: Generated<string>;
+    context_window?: number | null;
+    max_output?: number | null;
+    supports_tools?: number | null;
+    supports_vision?: number | null;
+    supports_thinking?: number | null;
+    modalities?: string | null;
+    param_size?: string | null;
+    owned_by?: string | null;
+    user_override?: Generated<number>;
+    notes?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("model_capabilities",).values({
+    id: crypto.randomUUID(),
+    provider_id,
+    model_id,
+    last_seen,
+    created_at,
+    updated_at,
+    ...opts,
+  } as any,).execute();
+}
