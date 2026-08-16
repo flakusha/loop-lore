@@ -15,6 +15,7 @@ import { chatParticipants, } from "../chat-participants";
 import { chatPins, } from "../chat-pins";
 import { chatPromptTemplate, } from "../chat-prompt-template";
 import { chatSections, } from "../chat-sections";
+import { chatSectionsNav, } from "../chat-sections-nav";
 import { chatSettings, } from "../chat-settings";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
@@ -219,7 +220,6 @@ globalThis.chatState = function() {
     ...chatFilters,
     ...chatGroup,
     ...chatSettings,
-    ...chatSections,
     ...chatBackgrounds,
     ...messageSearch,
     ...chatMessages,
@@ -234,11 +234,12 @@ globalThis.chatState = function() {
     ...worldChannels,
   };
 
-  // chatLocation + chatUtils declare `get` accessors (groupedMessages,
-  // selectedLocationName, currentLocationName). A plain spread would evaluate
-  // them once and freeze the result, so merge them descriptor-preserving.
+  // chatLocation + chatUtils + chatSections + chatSectionsNav declare `get`
+  // accessors — plain spread would evaluate them once and freeze the result.
   mergeReactiveSource(state, chatLocation,);
   mergeReactiveSource(state, chatUtils,);
+  mergeReactiveSource(state, chatSections,);
+  mergeReactiveSource(state, chatSectionsNav,);
   // chatParticipants declares getters (isGroupChat, filteredAvailableActors) —
   // a plain spread would freeze them, so merge descriptor-preserving.
   mergeReactiveSource(state, chatParticipants,);

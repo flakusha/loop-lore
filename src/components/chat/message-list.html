@@ -1,5 +1,5 @@
 <!-- Messages -->
-<div class="chat-area" id="message-list" x-ref="messageList" data-testid="message-list">
+<div class="chat-area" id="message-list" x-ref="messageList" data-testid="message-list" @scroll="trackCurrentSection()">
   <div x-ref="scrollSentinel" id="scroll-sentinel" style="height: 1px"></div>
   <div x-show="loadingOlder" class="loading-older">
     <span class="spinner"></span> {{{t("chats.loadingOlder")}}}
@@ -27,6 +27,37 @@
   <template x-if="activeChat && loadingError">
     <div class="error-banner" x-text="loadingError"></div>
   </template>
+
+  <!-- Sticky location header: current section while scrolling (Phase 3) -->
+  <div
+    class="location-header"
+    x-show="activeChat && _currentSectionId && !_vnEnabled"
+    x-cloak
+    data-testid="location-header"
+  >
+    <div class="location-header-label">
+      <span class="section-divider-icon" aria-hidden="true">📍</span>
+      <span x-text="currentSectionName"></span>
+      <span
+        class="location-header-count"
+        x-show="sectionMessageCounts().get(_currentSectionId)"
+        x-text="'(' + sectionMessageCounts().get(_currentSectionId) + ' msgs)'"
+      ></span>
+    </div>
+    <div class="location-header-actions">
+      <button class="btn-icon btn-xs" @click="toggleStoryMap()" title="Story map" data-testid="location-header-map">
+        🗺️
+      </button>
+      <button
+        class="btn-icon btn-xs"
+        @click="transferToSection(_currentSectionId)"
+        title="Transfer here"
+        data-testid="location-header-transfer"
+      >
+        ⤵
+      </button>
+    </div>
+  </div>
   <template x-for="(msg, i) in groupedMessages" :key="msg.id">
     <div
       class="message"
