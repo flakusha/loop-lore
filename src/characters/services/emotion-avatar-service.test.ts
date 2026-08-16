@@ -5,7 +5,6 @@
  * and batch job lifecycle for emotion avatar generation.
  */
 
-import type { Database, } from "bun:sqlite";
 import { afterEach, beforeAll, describe, expect, it, mock, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
@@ -45,7 +44,7 @@ function restoreFetch() {
 
 describe("EmotionAvatarService", () => {
   let db: Kysely<DB>;
-  let sqlite: Database;
+  let sqlite: { close(): void; run(sql: string,): void };
   let emotionService: EmotionAvatarService;
   let testActorId: string;
 
