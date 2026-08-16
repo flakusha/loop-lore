@@ -25,6 +25,7 @@ export const PROMPT_PURPOSES = [
   "transition",
   "intent",
   "memory", // aux classifiers
+  "gmTool", // aux classifier
 ] as const;
 
 /** Union of the known, typed prompt purposes. */
