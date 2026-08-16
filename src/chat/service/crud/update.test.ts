@@ -132,3 +132,60 @@ describe("updateChat gmConfig GM execution fields", () => {
     expect(am["actor-2"]!.provider,).toBe("openai",);
   });
 });
+
+describe("updateChat promptOverride (per-chat prompt override)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+
+  beforeEach(async () => {
+    const fresh = await createTestDb();
+    db = fresh.db;
+    await insertUsers(db, "override-creator", "Override Creator", { id: "user-ovr", } as never,);
+    await insertActors(
+      db,
+      "Override Creator",
+      { id: "user-ovr", user_id: "user-ovr", owner_id: "user-ovr", } as never,
+    );
+    chatId = await createChat(db, {
+      name: "Override Chat",
+      type: "direct",
+      mode: "story",
+      createdBy: "user-ovr",
+      participantIds: ["user-ovr",],
+    },);
+  },);
+
+  afterEach(async () => {
+    await db?.destroy();
+  },);
+
+  async function promptOverrideOf(): Promise<string | null> {
+    const row = await db
+      .selectFrom("chats",)
+      .select("prompt_override",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    return row?.prompt_override ?? null;
+  }
+
+  it("persists a prompt override", async () => {
+    const res = await updateChat(db, chatId, {
+      promptOverride: "You are the keeper of the Crimson Gate.",
+    },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(await promptOverrideOf(),).toBe("You are the keeper of the Crimson Gate.",);
+  });
+
+  it("clears a prompt override with null", async () => {
+    await updateChat(db, chatId, { promptOverride: "temp override", },);
+    const res = await updateChat(db, chatId, { promptOverride: null, },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(await promptOverrideOf(),).toBeNull();
+  });
+
+  it("leaves the override untouched when the field is omitted", async () => {
+    await updateChat(db, chatId, { promptOverride: "persistent override", },);
+    await updateChat(db, chatId, { name: "Renamed", },);
+    expect(await promptOverrideOf(),).toBe("persistent override",);
+  });
+});
