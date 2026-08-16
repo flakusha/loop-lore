@@ -231,12 +231,14 @@ export const ActorEmotionParams = t.Object({
 },);
 
 export const CharacterSystemsExportBody = t.Object({
+  worldId: t.Optional(t.String(),),
   includeTraits: t.Optional(t.Boolean(),),
   includeMood: t.Optional(t.Boolean(),),
   includeRelationships: t.Optional(t.Boolean(),),
   includeAvatars: t.Optional(t.Boolean(),),
   includeLicensing: t.Optional(t.Boolean(),),
   includeAvailability: t.Optional(t.Boolean(),),
+  includeWorldSetup: t.Optional(t.Boolean(),),
 },);
 
 export const CharacterSystemsImportUrlBody = t.Object({

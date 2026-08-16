@@ -14,6 +14,7 @@ import { importMood, } from "./mood";
 import { importRelationships, } from "./relationships";
 import { importTraits, } from "./traits";
 import type { CharacterSystemsImportResult, } from "./types";
+import { importWorldSetup, } from "./world-setup";
 
 export type { CharacterSystemsImportResult, } from "./types";
 
@@ -33,6 +34,7 @@ export async function importCharacterSystems(
     avatarsImported: 0,
     licensingImported: false,
     availabilityImported: false,
+    worldSetupImported: false,
     errors: [],
   };
 
@@ -42,6 +44,7 @@ export async function importCharacterSystems(
   await importAvatars(db, actorId, data.avatars, result,);
   await importLicensing(db, actorId, data.licensing, result,);
   await importAvailability(db, actorId, data.availability, result,);
+  await importWorldSetup(db, actorId, data.worldSetup, result, worldId,);
 
   return result;
 }

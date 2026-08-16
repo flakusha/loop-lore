@@ -148,7 +148,7 @@ phase 2.
 - [x] World-scope `character_desire_profile` / `character_seduction_skills`
 - [x] Prompt assembly consumes `scenario_override` / `system_prompt_override`
 - [x] Starting inventory seeds `world_items` on first join
-- [ ] Import/export carries `character_world_setup` rows
+- [x] Import/export carries `character_world_setup` rows
 
 ## Files
 
