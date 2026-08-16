@@ -24,6 +24,10 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     this.continuingMessageId = null;
     this._isScrolledUp = false;
     this._contextMenu = { visible: false, messageId: null, x: 0, y: 0, };
+    this._flagDialog = { open: false, contentType: "message", contentId: null, chatId: null, };
+    this._flagReason = "";
+    this._flagOther = "";
+    this._flagBusy = false;
     this._reactionPicker = { visible: false, messageId: "", x: 0, y: 0, };
     this._quickEmojis = [
       "👍",
