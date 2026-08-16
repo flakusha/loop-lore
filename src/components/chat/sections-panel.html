@@ -53,8 +53,10 @@
       <template x-for="(s, i) in _sections" :key="s.id">
         <div
           class="panel-item"
-          style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between"
+          style="display: flex; gap: var(--space-2); align-items: center; justify-content: space-between; cursor: pointer"
           :class="{ 'active-section': s.id === _activeSectionId }"
+          @click="jumpToSection(s.id)"
+          title="Jump to section"
         >
           <div style="display: grid; gap: 1px">
             <span style="font-weight: 600" x-text="s.label"></span>
@@ -65,18 +67,18 @@
             ></span>
           </div>
           <div style="display: flex; gap: var(--space-1)">
-            <button class="btn-icon btn-xs" @click="moveSection(s.id, -1)" :disabled="i === 0" title="Move up">
+            <button class="btn-icon btn-xs" @click.stop="moveSection(s.id, -1)" :disabled="i === 0" title="Move up">
               &uarr;
             </button>
             <button
               class="btn-icon btn-xs"
-              @click="moveSection(s.id, 1)"
+              @click.stop="moveSection(s.id, 1)"
               :disabled="i === _sections.length - 1"
               title="Move down"
             >
               &darr;
             </button>
-            <button class="btn-icon btn-xs" @click="deleteSection(s.id)" title="Delete">&times;</button>
+            <button class="btn-icon btn-xs" @click.stop="deleteSection(s.id)" title="Delete">&times;</button>
           </div>
         </div>
       </template>
