@@ -157,6 +157,62 @@
     >
       👥
     </button>
+    <!-- Side-channels dropdown (C1 — group-chat matrix UI remainder) -->
+    <div
+      class="side-channels-wrap"
+      x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"
+      data-testid="side-channels-wrap"
+    >
+      <button
+        class="btn-icon"
+        title="Side Channels"
+        aria-label="Side Channels"
+        @click="window.toggleSideChannels()"
+        data-testid="side-channels-toggle"
+      >
+        &#11035;
+      </button>
+      <div
+        class="side-channels-dropdown-menu"
+        x-show="$store.ui.showSideChannels"
+        x-cloak
+        @click.outside="$store.ui.showSideChannels = false"
+        data-testid="side-channels-menu"
+      >
+        <div class="side-channels-header">
+          <span>{{{t("sideChannels.title")}}}</span>
+        </div>
+        <template x-for="sc in $store.ui.sideChannels" :key="sc.id">
+          <div
+            class="side-channel-row"
+            @click="window.switchSideChannel(sc.id)"
+            :class="{ 'is-active': $store.chat?.currentChat?.id === sc.id }"
+            data-testid="side-channel-row"
+          >
+            <span class="side-channel-name" x-text="sc.name"></span>
+          </div>
+        </template>
+        <div class="side-channel-empty" x-show="$store.ui.sideChannels.length === 0" data-testid="side-channel-empty">
+          {{{t("sideChannels.none")}}}
+        </div>
+        <div class="side-channel-create">
+          <input
+            type="text"
+            class="form-input"
+            :placeholder="t('sideChannels.newPlaceholder')"
+            x-model="$store.ui.newSideChannelName"
+            data-testid="side-channel-name-input"
+          />
+          <button
+            class="btn btn-sm btn-primary"
+            @click="window.createSideChannel()"
+            data-testid="side-channel-create-btn"
+          >
+            {{{t("sideChannels.new")}}}
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- Context Window Monitor -->
     <div
       x-data="contextWindow()"
