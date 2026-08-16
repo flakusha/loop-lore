@@ -22,6 +22,7 @@ import { chatQuickReplies, } from "../chat-quick-replies";
 import { chatSections, } from "../chat-sections";
 import { chatSectionsNav, } from "../chat-sections-nav";
 import { chatSettings, } from "../chat-settings";
+import { chatSideChannels, } from "../chat-side-channels";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
 import { t, } from "../i18n";
@@ -250,6 +251,8 @@ globalThis.chatState = function() {
   // chatParticipants declares getters (isGroupChat, filteredAvailableActors) —
   // a plain spread would freeze them, so merge descriptor-preserving.
   mergeReactiveSource(state, chatParticipants,);
+  // chatSideChannels declares a getter (isGroupChat) — merge descriptor-preserving.
+  mergeReactiveSource(state, chatSideChannels,);
 
   return state as unknown as AlpineState<ChatState>;
 };
