@@ -6637,6 +6637,18 @@
       "source": ".plan/tickets/TASK-chat-pins-frontend.md"
     }
   ],
+  "src/frontend/alpine/chat-proactive.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-proactive-messaging.md"
+    }
+  ],
+  "src/frontend/alpine/chat-proactive.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-proactive-messaging.md"
+    }
+  ],
   "src/frontend/alpine/chat-search.ts": [
     {
       "kind": "frontend",
@@ -8109,6 +8121,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
+    }
+  ],
+  "src/frontend/pages/characters-proactive.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
   "src/frontend/pages/characters.ts": [
@@ -12907,6 +12925,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-window-monitor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
   "src/routes/messages/handle-scene-transitions.ts": [
@@ -13049,6 +13071,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    }
+  ],
+  "src/routes/proactive-messaging/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-proactive-messaging.md"
+    }
+  ],
+  "src/routes/proactive-messaging/proactive-messaging.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
   "src/routes/prompt-templates.ts": [
