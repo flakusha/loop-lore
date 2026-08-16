@@ -73,4 +73,27 @@ describe("PromptAssembler emotion wiring", () => {
     const emotionMsg = assembled.messages.find((m,) => hasEmotionContext(m.content,));
     expect(emotionMsg,).toBeUndefined();
   });
+
+  test("impersonation injects user_persona when userId is passed", async () => {
+    // The user must exist as an actor (register.ts creates id = userId) —
+    // chat_participants.actor_id references actors.id.
+    await insertActors(db, "Tester", { id: userId as never, user_id: userId, owner_id: userId, },);
+    const heroId = uid();
+    await insertActors(db, "Kaelen the Bold", {
+      id: heroId as never,
+      description: "A wandering swordsman.",
+      personality: "Brooding but honorable.",
+    },);
+    // The human user's participant row carries the impersonation target.
+    await insertChatParticipants(db, chatId, userId, { impersonate_actor_id: heroId, },);
+    const assembler = new PromptAssembler(db,);
+    const withUser = await assembler.assemble({ actorId, chatId, modelId: "mock", userId, },);
+    const personaMsg = withUser.messages.find((m,) => m.content.includes("user_persona",));
+    expect(personaMsg,).toBeDefined();
+    expect(String(personaMsg?.content,),).toContain("Name: Kaelen the Bold",);
+
+    // The same assemble without userId (legacy callers) must stay inert.
+    const withoutUser = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
+    expect(withoutUser.messages.some((m,) => m.content.includes("user_persona",)),).toBe(false,);
+  });
 });
