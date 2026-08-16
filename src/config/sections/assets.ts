@@ -11,6 +11,8 @@ export const ASSETS_DEFAULTS = {
   uploadDir: `${DATA_DIR}/uploads`,
   maxFileSize: 10_485_760,
   compression: true,
+  signedUrlSecret: "",
+  signedUrlExpirySeconds: 900,
 } satisfies AssetsConfig;
 
 export class AssetsSection implements AssetsConfig {
@@ -18,6 +20,8 @@ export class AssetsSection implements AssetsConfig {
   uploadDir = ASSETS_DEFAULTS.uploadDir;
   maxFileSize = ASSETS_DEFAULTS.maxFileSize;
   compression = ASSETS_DEFAULTS.compression;
+  signedUrlSecret = ASSETS_DEFAULTS.signedUrlSecret;
+  signedUrlExpirySeconds = ASSETS_DEFAULTS.signedUrlExpirySeconds;
 
   constructor(overrides?: Partial<AssetsConfig>,) {
     Object.assign(this, overrides,);
@@ -44,6 +48,18 @@ export const assetsMeta = {
       type: "boolean",
       default: ASSETS_DEFAULTS.compression,
       description: "Compress uploaded assets",
+    },
+    signedUrlSecret: {
+      type: "string",
+      default: ASSETS_DEFAULTS.signedUrlSecret,
+      description:
+        "HMAC-SHA256 secret for signed asset URLs. Env-only: ASSETS_SIGNED_URL_SECRET. Falls back to auth.jwtSecret.",
+    },
+    signedUrlExpirySeconds: {
+      type: "integer",
+      minimum: 1,
+      default: ASSETS_DEFAULTS.signedUrlExpirySeconds,
+      description: "Signed-URL lifetime in seconds (default: 900 = 15 min)",
     },
   },
   required: ["enabled", "uploadDir", "maxFileSize", "compression",] as const,
