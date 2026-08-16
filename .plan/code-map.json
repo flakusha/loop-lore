@@ -471,6 +471,12 @@
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
     }
   ],
+  "src/assistant/commands/stats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-commands-extension.md"
+    }
+  ],
   "src/assistant/commands/summarize.ts": [
     {
       "kind": "epic",
