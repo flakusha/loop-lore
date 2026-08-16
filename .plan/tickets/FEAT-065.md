@@ -7,6 +7,9 @@ epic: epic-config-templates
 related: [FEAT-065-IMG, FEAT-065-AUD, FEAT-065-VID, FEAT-065-LLM, FEAT-055]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT-065: Prompt library — expanded scope (generation templates)
 
 ## What

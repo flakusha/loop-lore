@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Consolidate duplicate message access checks
 
 **Status:** ✅ Done (2026-08-05) — no duplicate access-check helpers remain; cases use `chat/service.checkChatAccess`/`getMessageWithAccess`

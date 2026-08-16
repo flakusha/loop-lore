@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: RPG route authz gaps: XP award/ledger + world-trait IDOR + world tick
 
 **Status:** ⬜ Not Started

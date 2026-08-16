@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/routes/message-search/
 //
 // Full-text message search across one chat or all the user's chats, backed by

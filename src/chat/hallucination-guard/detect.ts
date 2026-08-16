@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { extractProperNouns, } from "./entities";
 import { computeHallucinationConfidence, extractContext, } from "./helpers";
 import { isKnownEntity, loadKnownEntities, } from "./known";

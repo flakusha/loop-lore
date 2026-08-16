@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Generation, Streaming & Error Handling
 
 This file covers: typing indicator, streaming behavior, generation status messages, thinking process logging during generation, and the 3-tier error handling system.

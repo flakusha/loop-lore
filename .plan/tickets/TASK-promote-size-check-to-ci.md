@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Promote `check-file-size.ts` from Warn to CI Gate
 
 **Status:** ⬜ Not Started

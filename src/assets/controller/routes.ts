@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Asset Controller — route factory.
  * Thin Elysia plugin wiring; handler logic lives in sibling modules.

@@ -9,6 +9,9 @@ Linked Epics: epic-io-formats.md, epic-platform-integrations.md
 Related: docs/ideas/index.md (gap summary refreshed 2026-08-12)
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Cross-Tool Data Portability Review (both directions)
 
 **Status:** Analysis complete (2026-08-12). Informs follow-up tickets; not an

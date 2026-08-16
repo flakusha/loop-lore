@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/character-loader.ts — Character file loader
 //
 // Loads character definitions from configs/characters/ directory.

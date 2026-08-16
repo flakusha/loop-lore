@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI
 
 **Status:** ⬜ Not Started

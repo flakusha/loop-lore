@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { Config, } from "../../config/schema";
 import { jsonError, jsonResponse, } from "../../routes/http-utils";
 import { getProvider, } from "../providers/registry";

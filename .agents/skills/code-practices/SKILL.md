@@ -15,6 +15,9 @@ metadata:
     related_skills: [loop-lore-context, loop-lore-db, loop-lore-tasks]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Code Practices — Agent Integration Map
 
 The 9 docs in `docs/meta/code-practices-improvements/` are **research**, not

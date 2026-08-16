@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Frontend: Age Gate
 
 **URL**: `/age-gate` (redirect target from login when age gate is enabled)

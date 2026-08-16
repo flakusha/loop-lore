@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Partials fetch helper ───────────────────────────────────
 // Partials routes require HX-Request header to prevent direct navigation
 

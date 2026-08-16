@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Wire Combat Routes
 
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — combat wired to HTTP (`src/routes/rpg/combat.ts` + tests); battle UI glue in `src/battle/` already shipped

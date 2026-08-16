@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Topic & Feature Review
 
 > **Purpose:** Review, extension, and clarification of docs/ and .plan/ for the 10 core topics.

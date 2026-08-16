@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Chat backgrounds — pure data helpers (assignment upsert, location auto-sync,
  * and background resolution). Shared between the route sub-plugins and external

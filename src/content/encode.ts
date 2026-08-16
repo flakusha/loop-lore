@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { safeCompress, safeFromString, safeToBase64, } from "../utils/safe-buffer";
 import type { ContentEncoding, EncodeResult, } from "./types";
 

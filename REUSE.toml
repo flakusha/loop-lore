@@ -4,6 +4,9 @@ version = 1
 path = [
   "src/**",
   "data/**",
+  "scripts/**",
+  "tests/**",
+  ".github/templates/**",
   "*.ts",
   "*.js",
   "*.mjs",
@@ -16,6 +19,9 @@ path = [
   ".prettierrc",
   "AGENTS.md",
   "README.md",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "SECURITY.md",
   "config.example.yaml",
 ]
 precedence = "aggregate"
@@ -29,7 +35,12 @@ SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
 SPDX-License-Identifier = "LGPL-3.0-or-later"
 
 [[annotations]]
-path = ["docs/**"]
+path = [
+  "docs/**",
+  ".plan/**",
+  ".github/ISSUE_TEMPLATE/**",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
 SPDX-License-Identifier = "Apache-2.0 OR MIT OR CC-BY-4.0"

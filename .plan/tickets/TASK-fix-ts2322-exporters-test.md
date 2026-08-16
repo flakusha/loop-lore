@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Fix TS2322 Type Error in exporters.test.ts
 
 **Status:** ⬜ Not Started

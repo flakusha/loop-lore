@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** Common English words that start with capital letters. */
 export const COMMON_WORDS = new Set([
   "The",

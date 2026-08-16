@@ -6,6 +6,9 @@ description: >
   Trigger: "git issue", "create ticket", "issue tracking", "native issue".
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Native Issue Tracking
 
 Loop-lore uses **git-native-issue** for distributed issue tracking. Issues

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Chat backgrounds (location sync) — panel ─────────────────
 //
 // Shows the chat's current background and lets the user pick from the

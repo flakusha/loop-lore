@@ -13,6 +13,9 @@ metadata:
     related_skills: [loop-lore-context, loop-lore-tasks, caveman-commit]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Commit Message Skill
 
 Generate crisp, conventional commit messages from `git diff` output.

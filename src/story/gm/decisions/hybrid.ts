@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Hybrid decision — LLM base, then nudges constraints when the scene is
  * crowded (many quests or actors).

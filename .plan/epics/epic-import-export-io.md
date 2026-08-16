@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Epic 14: Import/Export & Data Portability
 
 **Status:** ✅ Implemented (updated 2026-07-30 — code audit)

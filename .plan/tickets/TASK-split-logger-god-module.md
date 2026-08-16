@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Split `src/logger/index.ts` (God Module, ~59 importers)
 
 **Status:** ⬜ Not Started

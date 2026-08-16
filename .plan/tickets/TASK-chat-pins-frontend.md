@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Chat Pins Frontend
 
 **Status:** ✅ Done — pins panel + Alpine component wired (0395b7af)

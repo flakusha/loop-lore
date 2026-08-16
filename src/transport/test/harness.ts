@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/transport/test/harness.ts — Protocol validation test harness
 import type { CompressionAlgorithm, TransportProtocol, } from "../../db/enums";
 import type { ProtocolHandler, } from "../protocol.unified";
