@@ -101,6 +101,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             visualNovel: hasExplicit("visualNovel",) ? body.visualNovel : undefined,
             thinkingVisibility: body.thinkingVisibility,
             promptOverride: hasExplicit("promptOverride",) ? body.promptOverride : undefined,
+            quickReplies: hasExplicit("quickReplies",) ? body.quickReplies : undefined,
             userRole,
           },);
           if ("code" in result) {
