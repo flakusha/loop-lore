@@ -1240,6 +1240,7 @@ export const SCHEMA = new SchemaManifest()
     visibility: col("text", { notNull: true, hasDefault: true, },),
     thinking_visibility: col("text", { notNull: true, hasDefault: true, },),
     prompt_override: col("text",),
+    quick_replies: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
