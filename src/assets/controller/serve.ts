@@ -7,11 +7,56 @@
 import { existsSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../../config/constants";
 import { deriveChatKeyForChat, getSmk, } from "../../crypto";
-import { notFoundResponse, } from "../../routes/http-utils";
-import { getAssetData, getAssetFilePath, } from "../service";
+import { forbiddenResponse, notFoundResponse, } from "../../routes/http-utils";
+import { getAsset, getAssetData, getAssetFilePath, } from "../service";
+import type { AssetRecord, } from "../service";
 import { resolveAsset, } from "./access";
 import { serveFile, } from "./files";
+import { verifyAssetUrl, } from "./signed-url";
 import type { ServeCompressedOpts, ServeRawOpts, } from "./types";
+
+/**
+ * Resolve the actor-facing asset record for a serve request.
+ *
+ * When a signed-URL token is present, authentication is delegated to the token
+ * (the signed URL already encodes an authorized asset + action + expiry); the
+ * actor fields are ignored. Otherwise the caller must pass the actor-based
+ * access check via `resolveAsset`.
+ *
+ * Returns `{ asset, response? }` — `response` is non-null on failure.
+ */
+async function resolveForServe(
+  opts: ServeRawOpts,
+): Promise<{ asset: AssetRecord } | { response: Response }> {
+  if (opts.signedUrlToken) {
+    if (!opts.signedUrlSecret) {
+      return { response: forbiddenResponse("Signed URL unavailable",), };
+    }
+    if (!opts.signedUrlAction || !Number.isFinite(opts.signedUrlExpires ?? NaN,)) {
+      return { response: forbiddenResponse("Invalid signed URL",), };
+    }
+    const result = await verifyAssetUrl({
+      secret: opts.signedUrlSecret,
+      token: opts.signedUrlToken,
+      assetId: opts.assetId,
+      action: opts.signedUrlAction,
+      expiresAt: opts.signedUrlExpires!,
+    },);
+    if (!result.valid) {
+      return { response: forbiddenResponse("Invalid or expired signed URL",), };
+    }
+    // Token authorizes this asset — load it without the actor gate.
+    const asset = await getAsset(opts.database, opts.assetId,);
+    if (!asset) {
+      return { response: notFoundResponse("Asset not found",), };
+    }
+    return { asset, };
+  }
+
+  const resolved = await resolveAsset(opts.database, opts.assetId, opts.actorId, opts.actorRole,);
+  if (resolved instanceof Response) { return { response: resolved, }; }
+  return { asset: resolved.asset, };
+}
 
 export async function handleServeRaw({
   database,
@@ -20,10 +65,23 @@ export async function handleServeRaw({
   actorId,
   actorRole,
   chatId,
+  signedUrlSecret,
+  signedUrlToken,
+  signedUrlExpires,
+  signedUrlAction,
 }: ServeRawOpts & { chatId?: string },): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
-  if (resolved instanceof Response) { return resolved; }
-
+  const resolved = await resolveForServe({
+    database,
+    assetId,
+    uploadDir,
+    actorId,
+    actorRole,
+    signedUrlSecret,
+    signedUrlToken,
+    signedUrlExpires,
+    signedUrlAction,
+  },);
+  if ("response" in resolved) { return resolved.response; }
   const { asset, } = resolved;
 
   // If asset is encrypted, try to decrypt
@@ -64,9 +122,23 @@ export async function handleServeCompressed({
   variant,
   actorId,
   actorRole,
+  signedUrlSecret,
+  signedUrlToken,
+  signedUrlExpires,
+  signedUrlAction,
 }: ServeCompressedOpts,): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
-  if (resolved instanceof Response) { return resolved; }
+  const resolved = await resolveForServe({
+    database,
+    assetId,
+    uploadDir,
+    actorId,
+    actorRole,
+    signedUrlSecret,
+    signedUrlToken,
+    signedUrlExpires,
+    signedUrlAction,
+  },);
+  if ("response" in resolved) { return resolved.response; }
 
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const compressedPath = `compressed/${subDir}/${assetId}_${variant}.webp`;
@@ -86,9 +158,23 @@ export async function handleDownload({
   actorId,
   actorRole,
   chatId,
+  signedUrlSecret,
+  signedUrlToken,
+  signedUrlExpires,
+  signedUrlAction,
 }: ServeRawOpts & { chatId?: string },): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
-  if (resolved instanceof Response) { return resolved; }
+  const resolved = await resolveForServe({
+    database,
+    assetId,
+    uploadDir,
+    actorId,
+    actorRole,
+    signedUrlSecret,
+    signedUrlToken,
+    signedUrlExpires,
+    signedUrlAction,
+  },);
+  if ("response" in resolved) { return resolved.response; }
   const { asset, } = resolved;
   const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
 

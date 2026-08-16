@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { AssetRecord, } from "../service";
+import type { SignedUrlAction, } from "./signed-url";
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
@@ -28,6 +29,14 @@ export interface ServeRawOpts {
   uploadDir: string;
   actorId: string | null;
   actorRole: string | null;
+  /** HMAC secret for signed-URL verification (fail-closed when set and a token is present). */
+  signedUrlSecret?: string | null;
+  /** Signed-URL token (`sig` query param). When present, bypasses actor auth after verification. */
+  signedUrlToken?: string | null;
+  /** Signed-URL expiry (`expires` query param, epoch ms). */
+  signedUrlExpires?: number | null;
+  /** Signed-URL action this token must be bound to. */
+  signedUrlAction?: SignedUrlAction | null;
 }
 
 export interface ServeCompressedOpts {
@@ -37,6 +46,11 @@ export interface ServeCompressedOpts {
   variant: string;
   actorId: string | null;
   actorRole: string | null;
+  /** Optional signed-URL auth (same semantics as ServeRawOpts). */
+  signedUrlSecret?: string | null;
+  signedUrlToken?: string | null;
+  signedUrlExpires?: number | null;
+  signedUrlAction?: SignedUrlAction | null;
 }
 
 export interface ResolvedAsset {
