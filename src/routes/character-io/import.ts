@@ -57,6 +57,7 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
             avatars: result.avatarsImported,
             licensing: result.licensingImported,
             availability: result.availabilityImported,
+            worldSetup: result.worldSetupImported,
           },
           errors: result.errors,
         },);
@@ -140,6 +141,7 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
               avatars: result.avatarsImported,
               licensing: result.licensingImported,
               availability: result.availabilityImported,
+              worldSetup: result.worldSetupImported,
             },
             errors: result.errors,
           },);
