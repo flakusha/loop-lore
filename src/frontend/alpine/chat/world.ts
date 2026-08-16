@@ -86,6 +86,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     this.loadingOlder = false;
     const selectReload = await Promise.allSettled([
       this.loadMessages(),
+      this.loadSections(),
       this.loadGalleryAssets(),
       this.loadCharacterInfo(),
       this.loadMood(),
