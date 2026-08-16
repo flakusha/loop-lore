@@ -64,6 +64,7 @@
     "check:format": "bun run format:dprint && bun run md:lint",
     "check:ci": "bun run scripts/check-parallel.mjs --ci",
     "check:fix": "bun run scripts/check-parallel.mjs --fix",
+    "check:report-ls": "bun run scripts/check-parallel.mjs --report-ls",
     "check:full": "bun run build:frontend && bun run check",
     "test": "bun test --isolate",
     "test:watch": "bun test --watch",
