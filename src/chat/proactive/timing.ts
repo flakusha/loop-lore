@@ -19,8 +19,12 @@ export type ProactiveFrequency = keyof typeof PROACTIVE_FREQUENCY_MS;
 export function isInQuietHours(start: string | null, end: string | null, now: Date,): boolean {
   if (!start || !end) { return false; }
 
-  const [startH, startM,] = start.split(":",).map(Number,);
-  const [endH, endM,] = end.split(":",).map(Number,);
+  const [startHStr, startMStr,] = start.split(":", 2,);
+  const startH = Number(startHStr,);
+  const startM = Number(startMStr,);
+  const [endHStr, endMStr,] = end.split(":", 2,);
+  const endH = Number(endHStr,);
+  const endM = Number(endMStr,);
 
   if (startH === undefined || endH === undefined) { return false; }
 
@@ -46,7 +50,9 @@ export function backoffMs(baseMs: number, backoffCount: number,): number {
 /** Milliseconds until quiet hours end */
 export function msUntilQuietHoursEnd(end: string | null, now: Date,): number {
   if (!end) { return 0; }
-  const [endH, endM,] = end.split(":",).map(Number,);
+  const [endHStr, endMStr,] = end.split(":", 2,);
+  const endH = Number(endHStr,);
+  const endM = Number(endMStr,);
   if (endH === undefined) { return 0; }
 
   const target = new Date(now,);
