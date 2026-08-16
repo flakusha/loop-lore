@@ -86,6 +86,7 @@ export const MessageRow = Type.Object({
   status: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   emotion: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   pinned: Type.Optional(Type.Boolean(),),
+  section_id: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
 },);
 
 /** Body of GET /api/chats/:id/messages. */
