@@ -174,6 +174,40 @@ describe("ConfigSchema", () => {
     },).toThrow("apiKey",);
   });
 
+  test("validate throws for ollamaNative missing baseUrl", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.generation.providers.ollamaNative = {
+      name: "oll",
+      label: "Ollama",
+      model: "llama3.2",
+      baseUrl: "",
+      timeout: 30_000,
+      retries: 3,
+      allowUserApiKey: false,
+      models: {},
+    };
+    expect(() => {
+      validate(cfg,);
+    },).toThrow("baseUrl",);
+  });
+
+  test("validate accepts a fully-configured ollamaNative", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.generation.providers.ollamaNative = {
+      name: "oll",
+      label: "Ollama",
+      model: "llama3.2",
+      baseUrl: "http://localhost:11434",
+      timeout: 30_000,
+      retries: 3,
+      allowUserApiKey: false,
+      models: { "llama3.2": { contextLimit: 128_000, maxOutput: 4096, }, },
+    };
+    expect(() => {
+      validate(cfg,);
+    },).not.toThrow();
+  });
+
   // ── JSON Schema generation ──────────────────────────────
 
   test("jsonSchema produces valid structure", () => {
