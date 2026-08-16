@@ -14,6 +14,7 @@ import "./help";
 import "./improve";
 import "./image";
 import "./quest";
+import "./stats";
 import "./video";
 import "./sfx";
 import "./music";
