@@ -11,20 +11,23 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { notFoundResponse, } from "../../routes/http-utils";
 import {
-  handleCompressedRoute,
   handleCreateLink,
   handleCreateShare,
   handleDeleteAsset,
   handleDeleteLink,
   handleDeleteShare,
-  handleDownloadRoute,
   handleGetAsset,
   handleListAssets,
   handleListLinks,
   handleListShares,
   handlePatchAsset,
-  handleServeRawRoute,
 } from "./handlers";
+import {
+  handleCompressedRoute,
+  handleDownloadRoute,
+  handleServeRawRoute,
+  handleSignedUrlRoute,
+} from "./signed-url-routes";
 import type { RouteCtx, } from "./types";
 
 const PatchAssetBody = t.Object({ visibility: t.String(), },);
@@ -63,6 +66,8 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       .get("/api/assets/:id/download", withCtx(handleDownloadRoute,),)
       .get("/api/assets/:id/thumb", withCtx((d,) => handleCompressedRoute(d, "thumb",)),)
       .get("/api/assets/:id/compressed", withCtx((d,) => handleCompressedRoute(d, "compressed",)),)
+      // Signed-URL generation: POST /api/assets/:id/signed-url/:action
+      .post("/api/assets/:id/signed-url/:action", withCtx(handleSignedUrlRoute,),)
       // ── Links sub-routes ─────────────────────────────
       .get("/api/assets/:id/links", withCtx(handleListLinks,),)
       .post("/api/assets/:id/links", withCtx(handleCreateLink,), { body: CreateLinkBody, },)
