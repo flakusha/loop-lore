@@ -176,37 +176,39 @@ export function createNonApiHandler(
     if (docsResult) { return docsResult; }
 
     const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname,),);
-
-    // Path traversal guard: must be under PUBLIC_DIR
     const publicDirWithSlash = `${PUBLIC_DIR}/`;
-    if (publicPath === PUBLIC_DIR || publicPath.startsWith(publicDirWithSlash,)) {
-      let fullPath = publicPath;
-
-      if (!existsSync(fullPath,)) {
-        const htmlPath = `${fullPath}.html`;
-        if (existsSync(htmlPath,)) { fullPath = htmlPath; }
-      }
-
-      if (existsSync(fullPath,)) {
-        const ext = fullPath.split(".",).pop()?.toLowerCase();
-        if (ext === "html" || ext === "htm") {
-          // Redirects: /views/* paths should go to /views/ (handled by route)
-          if (url.pathname.startsWith("/views/",)) {
-            return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-          }
-          const head = readFileSync(fullPath, "utf8",).slice(0, 1024,).trimStart();
-          if (!head.startsWith("<!doctype",) && !head.startsWith("<!DOCTYPE",) && !head.startsWith("<html",)) {
-            return new Response("Not found", { status: 404, },);
-          }
-        }
-        const acceptEncoding = request.headers.get("accept-encoding",) ?? "";
-        const ifNoneMatch = request.headers.get("if-none-match",);
-        return respondWithFile(fullPath, acceptEncoding, ifNoneMatch,);
-      }
+    if (publicPath !== PUBLIC_DIR && !publicPath.startsWith(publicDirWithSlash,)) {
+      return new Response("Not found", { status: 404, },);
     }
 
-    return new Response("Not found", { status: 404, },);
+    const fullPath = resolveFilePath(publicPath,);
+    if (!fullPath) { return new Response("Not found", { status: 404, },); }
+
+    const ext = fullPath.split(".",).pop()?.toLowerCase();
+    if (ext === "html" || ext === "htm") {
+      if (url.pathname.startsWith("/views/",)) {
+        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
+      }
+      if (!isValidHtml(fullPath,)) { return new Response("Not found", { status: 404, },); }
+    }
+
+    const acceptEncoding = request.headers.get("accept-encoding",) ?? "";
+    const ifNoneMatch = request.headers.get("if-none-match",);
+    return respondWithFile(fullPath, acceptEncoding, ifNoneMatch,);
   };
+}
+
+/** Resolve file path, appending .html if needed. Returns null if not found. */
+function resolveFilePath(publicPath: string,): string | null {
+  if (existsSync(publicPath,)) { return publicPath; }
+  const htmlPath = `${publicPath}.html`;
+  return existsSync(htmlPath,) ? htmlPath : null;
+}
+
+/** Check if a file starts with valid HTML doctype/tag. */
+function isValidHtml(fullPath: string,): boolean {
+  const head = readFileSync(fullPath, "utf8",).slice(0, 1024,).trimStart();
+  return head.startsWith("<!doctype",) || head.startsWith("<!DOCTYPE",) || head.startsWith("<html",);
 }
 
 export { walkDirectorySync, };
