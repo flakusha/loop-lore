@@ -1,7 +1,6 @@
 /**
  * Skills Service Tests
  */
-import { type Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
@@ -11,7 +10,7 @@ import { ProficiencyLevel, SkillCategory, SkillsService, } from "./service";
 
 describe("SkillsService", () => {
   let db: Kysely<DB>;
-  let sqlite: Database;
+  let sqlite: { close(): void };
   let service: SkillsService;
   let actorId: string;
 
