@@ -206,43 +206,43 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       deps: opts.deps,
     },);
   } catch (error) {
-    if (attemptId) {
-      try {
-        await d.failGeneration({ attemptId, error: error as Error, db: database, },);
-      } catch {
-        // markFailure is best-effort; a failure here is already being handled.
-      }
-    }
-    // Record generation failure telemetry
-    if (isTelemetryEnabled()) {
-      void record(database, {
-        eventType: "generation.failed",
-        userId,
-        chatId,
-        data: {
-          error: (error as Error).message,
-          chatId,
-        },
-      },);
-    }
-    try {
-      const buf = d.getOrCreateBuffer(chatId,);
-      buf.signalError((error as Error).message,);
-      d.scheduleBufferCleanup(chatId,);
-    } catch {
-      // Buffer error signalling is best-effort; the error is already surfaced.
-    }
+    await handleGenerationError(error, database, d, chatId, userId, attemptId,);
+  }
+}
 
-    const err = error instanceof Error ? error : new Error(String(error,),);
-    const log = getLogger().child({ module: "auto-gen", },);
-    if (
-      err.name === "AbortError" ||
-      err.message === "Request cancelled" ||
-      err.message === "Request timed out"
-    ) {
-      log.warn("Auto-generation aborted", { reason: err.message, },);
-    } else {
-      log.error("Auto-generation failed", err,);
-    }
+/** Handle generation pipeline errors (telemetry + buffer + logging). */
+async function handleGenerationError(
+  error: unknown,
+  database: AutoGenOpts["database"],
+  d: ReturnType<typeof createDefaultDeps>,
+  chatId: string,
+  userId: string,
+  attemptId?: string,
+) {
+  if (attemptId) {
+    try {
+      await d.failGeneration({ attemptId, error: error as Error, db: database, },);
+    } catch { /* best-effort */ }
+  }
+  if (isTelemetryEnabled()) {
+    void record(database, {
+      eventType: "generation.failed",
+      userId,
+      chatId,
+      data: { error: (error as Error).message, chatId, },
+    },);
+  }
+  try {
+    const buf = d.getOrCreateBuffer(chatId,);
+    buf.signalError((error as Error).message,);
+    d.scheduleBufferCleanup(chatId,);
+  } catch { /* best-effort */ }
+
+  const err = error instanceof Error ? error : new Error(String(error,),);
+  const log = getLogger().child({ module: "auto-gen", },);
+  if (err.name === "AbortError" || err.message === "Request cancelled" || err.message === "Request timed out") {
+    log.warn("Auto-generation aborted", { reason: err.message, },);
+  } else {
+    log.error("Auto-generation failed", err,);
   }
 }

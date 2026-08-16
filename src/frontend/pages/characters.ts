@@ -25,21 +25,55 @@ globalThis.filterCharacters = function() {
   },);
 };
 
-globalThis.selectCharacterCard = async function(id: string,) {
-  let modal = document.querySelector<HTMLElement>("#character-detail-modal",);
+/** Lazy-init the character detail modal; returns null if unavailable. */
+async function ensureModal(): Promise<HTMLElement | null> {
+  const existing = document.querySelector<HTMLElement>("#character-detail-modal",);
+  if (existing) { return existing; }
 
-  if (!modal) {
-    const container = document.querySelector("#modal-container",);
-    if (!container) { return; }
-    const html = await fetchPartial("/partials/characters/detail-modal",);
-    if (!html) { return; }
-    container.innerHTML = html;
-    // Initialize Alpine on dynamically loaded modal
-    if (globalThis.Alpine) {
-      globalThis.Alpine.initTree(container as HTMLElement,);
-    }
-    modal = document.querySelector<HTMLElement>("#character-detail-modal",);
+  const container = document.querySelector("#modal-container",);
+  if (!container) { return null; }
+  const html = await fetchPartial("/partials/characters/detail-modal",);
+  if (!html) { return null; }
+  container.innerHTML = html;
+  if (globalThis.Alpine) { globalThis.Alpine.initTree(container as HTMLElement,); }
+  return document.querySelector<HTMLElement>("#character-detail-modal",);
+}
+
+/** Fill modal with character data and mood. */
+async function populateModal(modal: HTMLElement, char: Record<string, unknown>, id: string,): Promise<void> {
+  modal.querySelector("[data-field='name']",)!.textContent = (char.display_name || char.name || "") as string;
+  modal.querySelector("[data-field='description']",)!.textContent = (char.description || "No description") as string;
+  modal.querySelector("[data-field='system-prompt']",)!.textContent =
+    (char.system_prompt || "No system prompt") as string;
+  const avatarId = char.avatar_asset_id as string | undefined;
+  modal.querySelector("[data-field='avatar']",)!.innerHTML = avatarId
+    ? `<img src="/api/assets/${avatarId}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
+    : "<span>👤</span>";
+  modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
+  modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
+  modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
+  modal.classList.add("open",);
+
+  const moodSection = modal.querySelector<HTMLElement>("[data-field='mood-section']",);
+  if (!moodSection) { return; }
+  const mood = await fetchMood(id,);
+  if (!mood) { return; }
+  moodSection.style.display = "block";
+  const emojiEl = modal.querySelector<HTMLElement>("[data-field='mood-emoji']",);
+  const labelEl = modal.querySelector<HTMLElement>("[data-field='mood-label']",);
+  const barEl = modal.querySelector<HTMLElement>("[data-field='mood-bar']",);
+  const happinessEl = modal.querySelector<HTMLElement>("[data-field='mood-happiness']",);
+  if (emojiEl) { emojiEl.textContent = moodToEmoji(mood.currentMood,); }
+  if (labelEl) { labelEl.textContent = moodToLabel(mood.currentMood,); }
+  if (barEl) {
+    barEl.style.width = `${mood.happiness}%`;
+    barEl.style.backgroundColor = happinessColor(mood.happiness,);
   }
+  if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
+}
+
+globalThis.selectCharacterCard = async function(id: string,) {
+  const modal = await ensureModal();
   if (!modal) { return; }
 
   const resp = await feFetch(`/api/actors/${id}`,);
@@ -50,36 +84,7 @@ globalThis.selectCharacterCard = async function(id: string,) {
   const char = await resp.json();
 
   try {
-    modal.querySelector("[data-field='name']",)!.textContent = char.display_name || char.name || "";
-    modal.querySelector("[data-field='description']",)!.textContent = char.description || "No description";
-    modal.querySelector("[data-field='system-prompt']",)!.textContent = char.system_prompt || "No system prompt";
-    modal.querySelector("[data-field='avatar']",)!.innerHTML = char.avatar_asset_id
-      ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
-      : "<span>👤</span>";
-    modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
-    modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
-    modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
-    modal.classList.add("open",);
-
-    // Load mood data for this character
-    const moodSection = modal.querySelector<HTMLElement>("[data-field='mood-section']",);
-    if (moodSection) {
-      const mood = await fetchMood(id,);
-      if (mood) {
-        moodSection.style.display = "block";
-        const emojiEl = modal.querySelector<HTMLElement>("[data-field='mood-emoji']",);
-        const labelEl = modal.querySelector<HTMLElement>("[data-field='mood-label']",);
-        const barEl = modal.querySelector<HTMLElement>("[data-field='mood-bar']",);
-        const happinessEl = modal.querySelector<HTMLElement>("[data-field='mood-happiness']",);
-        if (emojiEl) { emojiEl.textContent = moodToEmoji(mood.currentMood,); }
-        if (labelEl) { labelEl.textContent = moodToLabel(mood.currentMood,); }
-        if (barEl) {
-          barEl.style.width = `${mood.happiness}%`;
-          barEl.style.backgroundColor = happinessColor(mood.happiness,);
-        }
-        if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
-      }
-    }
+    await populateModal(modal, char, id,);
   } catch {
     /* ignore */
   }
