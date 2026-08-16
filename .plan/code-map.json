@@ -8785,6 +8785,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups.md"
     }
   ],
   "src/generation/cancellation-actions.test.ts": [
@@ -12987,6 +12991,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups.md"
     }
   ],
   "src/routes/rpg/combat.ts": [
@@ -14423,6 +14431,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups.md"
     }
   ],
   "src/rpg/quests/service.ts": [

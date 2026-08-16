@@ -18,6 +18,53 @@
   <div class="panel-content">
     <div class="nav-section-title">Sections</div>
 
+    <!-- Story map: section timeline with message counts + actor presence (Phases 2/6) -->
+    <div x-show="_sections.length > 0" style="margin-bottom: var(--space-3)" data-testid="story-map">
+      <div class="form-label" style="display: flex; justify-content: space-between; align-items: center">
+        <span>Story map</span>
+        <span
+          x-show="partySplit"
+          class="party-split-badge"
+          title="Actors are in different locations"
+          data-testid="party-split-badge"
+        >
+          ⚔️ Split party
+        </span>
+      </div>
+      <div class="story-map-list">
+        <template x-for="(s, i) in _sections" :key="s.id">
+          <div
+            class="story-map-row"
+            :class="{
+              'is-current': s.id === _currentSectionId,
+              'is-active': s.id === _activeSectionId,
+            }"
+            @click="jumpToSection(s.id)"
+            :data-testid="'story-map-row-' + s.id"
+          >
+            <span class="story-map-marker" :class="s.id === _currentSectionId ? 'is-current' : ''">●</span>
+            <div class="story-map-info">
+              <span class="story-map-label" x-text="s.label"></span>
+              <span class="story-map-meta" x-text="(sectionMessageCounts().get(s.id) ?? 0) + ' msgs'"></span>
+            </div>
+            <span
+              class="story-map-actors"
+              x-show="sectionActors(s.id).length > 0"
+              x-text="sectionActors(s.id).join(', ')"
+            ></span>
+            <button
+              class="btn-icon btn-xs"
+              @click.stop="transferToSection(s.id)"
+              title="Transfer here"
+              data-testid="story-map-transfer"
+            >
+              ⤵
+            </button>
+          </div>
+        </template>
+      </div>
+    </div>
+
     <!-- Active section selector -->
     <div style="margin-bottom: var(--space-3)">
       <div class="form-label">Active section</div>
