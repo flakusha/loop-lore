@@ -11787,6 +11787,10 @@
   ],
   "src/routes/admin/danger-zone.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-danger-zone.md"
     }
@@ -11819,12 +11823,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
-    }
-  ],
-  "src/routes/admin/review-stats.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-admin-content-review-queue.md"
     }
   ],
   "src/routes/admin/sd-status.ts": [
