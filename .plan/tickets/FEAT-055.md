@@ -7,6 +7,9 @@ epic: epic-character-core-system
 related: [FEAT-065, TASK-wire-memory-injection]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT-055: Lorebook activation conditions
 
 ## What

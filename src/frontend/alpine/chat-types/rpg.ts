@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── RPG Stats Types (Phase 1 Foundation) ─────────────────────
 export interface RpgStatBlock {
   str: number;

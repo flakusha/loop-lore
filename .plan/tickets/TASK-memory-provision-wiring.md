@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Wire memory provision into prompt assembly
 
 **Issue:** 3bfb101c-e553-4879-b239-a817bc68a83f

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Feature Analysis — Latest Ideas vs. Ordinary Use
 
 Evaluates the 34 ideas in `docs/ideas/` (8 themes) + the agentic-workspace spec

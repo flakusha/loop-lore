@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Boolean Flags (replacing integer 0/1) ───────────────
 // ── State Machines ────────────────────────────────────────
 import { createMachine, type StateDef, } from "../state";

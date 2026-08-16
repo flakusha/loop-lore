@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/characters/services/personality-service/resolve.ts — Resolve character traits across layers
 
 import type { Kysely, } from "kysely";

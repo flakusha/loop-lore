@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: AUX LLM — GM Tool Detection
 
 **Status:** 🟡 Partial — detection module + prompt + types + tests shipped (worktree `assistant-intent-workflows`, `fac4c45d`); not yet wired into the command dispatch pipeline (2026-08-16)

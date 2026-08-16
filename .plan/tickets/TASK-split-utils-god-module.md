@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Split `src/utils.ts` (God Module, ~52 importers)
 
 **Status:** ⬜ Not Started

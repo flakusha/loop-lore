@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema-class/json-schema/dynamic-response.ts — dynamic-response JSON Schema section
 export const dynamicResponse = {
   type: "object",

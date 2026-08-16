@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # E2E Feasibility: htmx + Alpine.js Integration Testing
 
 **Date**: 2026-07-12

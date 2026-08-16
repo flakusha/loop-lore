@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../../regex/html-sanitize";
 
 function escapeHtml(str: string,): string {

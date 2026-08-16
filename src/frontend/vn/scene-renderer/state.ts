@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { LoadingIndicator, } from "../image-preloader";
 import type { VnSettings, } from "../settings";
 import type { VnScene, } from "./types";

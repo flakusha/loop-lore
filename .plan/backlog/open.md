@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Open — Index (In-Flight, Debt, Unwired Code & Deferred)
 
 > **Last updated:** 2026-08-16 (.plan housekeeping — sync-ticket tooling extended with

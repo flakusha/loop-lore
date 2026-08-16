@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema/logging.ts — Logging config type
 
 import type { LogLevel as LogLevelT, } from "../../db/enums";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/schemas/index.ts — Shared Schema Barrel Export
 //
 // Re-exports all shared schemas for cross-system use.

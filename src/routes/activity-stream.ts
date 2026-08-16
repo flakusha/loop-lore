@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/routes/activity-stream.ts
 //
 // Server-Sent Events stream of cross-chat activity. Coexists with the

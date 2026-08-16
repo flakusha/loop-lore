@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Assistant/GM Flows
 
 **Status:** 🟡 In Progress — GM panel + command buttons + GM-config authoring + story-mode frontend + GM-guided creation + per-actor multi-LLM + gmGuidance consumption shipped; entity-generation quality/confirmation gating + story chat view remaining

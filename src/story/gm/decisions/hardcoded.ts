@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Hardcoded fallback decision — no LLM call. Used when the LLM path throws
  * and as the no-provider baseline.

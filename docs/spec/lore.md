@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Lore Specification
 
 **Status:** Draft — lore model, audience scoping (§3), and per-viewer memory injection (§2.2) match the implementation; world timeline + event→lore promotion are aspirational

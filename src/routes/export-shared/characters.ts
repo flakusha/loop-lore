@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { exportToCcV3Json, } from "../../characters/exporters/ccv3";
 import { exportToPng, } from "../../characters/exporters/png";
 import { exportToYaml, } from "../../characters/exporters/yaml";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Generation Route barrel — re-exports the full public surface of the former
  * src/generation/generate-route.ts so all existing import sites keep working.

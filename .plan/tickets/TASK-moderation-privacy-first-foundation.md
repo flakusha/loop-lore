@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Moderation: Privacy-First Foundation
 
 **Status:** 🟡 Partial — moderation data model + NSFW gate exist; ModerationHook keyword-only, dead `Moderation` model role, destructive suppression (2026-08-01)

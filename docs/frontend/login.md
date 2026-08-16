@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Frontend: Login Page
 
 **URL**: `/views/login` (the bare `/` and `/chat` redirect here when the request is unauthenticated; `htmx.ts` also redirects to `/views/login?redirect=...` on 401).

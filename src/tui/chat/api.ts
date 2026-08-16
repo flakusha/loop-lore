@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { safeJsonStringify, } from "../../utils";
 import type { ChatHost, ChatMessage, } from "./types";
 
