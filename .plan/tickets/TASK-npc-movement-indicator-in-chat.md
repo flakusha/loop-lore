@@ -1,6 +1,6 @@
 # TASK: NPC Movement Indicator in Chat
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — service + route + message metadata column (migration 042) + frontend types shipped (`4809f056`, `c76b0ef5`); lint/typecheck cleanup `44e22069`
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ Persist NPC movement events in message metadata and render movement indicators i
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
