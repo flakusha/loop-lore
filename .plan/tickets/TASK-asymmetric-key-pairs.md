@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Encryption — Asymmetric Key Pairs (True E2E)
 
 **Status:** ⬜ Not Started

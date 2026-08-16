@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** A memory option surfaced for a selected actor. */
 export interface CharacterMemory {
   id: string;

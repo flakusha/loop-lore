@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Event injection section — injects active world events and random
  * ambient events into the chat context to keep scenes alive.

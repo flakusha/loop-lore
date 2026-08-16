@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { resolveProfile, } from "./resolution";
 import type { ResolveProfileOptions, } from "./resolution";
 import { resolveTemplate, } from "./templates";

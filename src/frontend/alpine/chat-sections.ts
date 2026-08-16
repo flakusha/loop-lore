@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Chat sections (multi-location sectioning) — manage panel ────
 //
 // Additive chat sectioning: sections divide a chat's message stream into

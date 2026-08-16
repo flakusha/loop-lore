@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK-size-strict-debt: Close size-strict debt and promote size guard to CI gate
 
 **Status**: ✅ split complete — 0 offenders; promotion-to-CI pending

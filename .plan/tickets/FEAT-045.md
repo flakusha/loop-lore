@@ -7,6 +7,9 @@ epic: epic-conversation-branching
 related: [FEAT-046, FEAT-047]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT-045: Branching data model
 
 ## What

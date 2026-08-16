@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * LLM-driven decision. Assembles a prompt via {@link PromptAssembler}, calls
  * the injected generateText, and falls back to the hardcoded decision on

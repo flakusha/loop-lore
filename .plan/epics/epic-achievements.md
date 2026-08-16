@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Epic: Achievements
 
 **Status:** 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Epic: NPC Navigation
 
 **Status:** 🟢 Code+tests+schema done (migration 001/p07); UNWIRED

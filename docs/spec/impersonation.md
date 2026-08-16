@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Impersonation & Persona Selection Spec
 
 > Status: Implemented (v1) — see epic `.plan/epics/epic-impersonation.md`

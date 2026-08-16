@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { ChatMode, ModeFeatureFlags, } from "./config";
 
 /** A message reference within the context window */

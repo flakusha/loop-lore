@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Messages ──────────────────────────────────────────────
 // ── Composite: MessageStatus × MessageVisibility ─────────
 // Non-terminal states (sending, partial) must be visible; terminal states

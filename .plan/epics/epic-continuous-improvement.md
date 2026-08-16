@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: Continuous Improvement — Lint, TypeCheck, Build, Coverage
 
 **Status:** 🟡 In Progress

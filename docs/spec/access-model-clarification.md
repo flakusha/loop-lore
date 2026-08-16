@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 > High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
 
 # Access Model Clarifications

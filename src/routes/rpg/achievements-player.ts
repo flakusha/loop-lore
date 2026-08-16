@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Achievements player-progress routes — own-player gated progress/stats/claim
  * endpoints. Split from `achievements.ts` to keep both files under the

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ../../node_modules/@vue/shared/dist/shared.esm-bundler.js
 function makeMap(str) {
   const map2 = /* @__PURE__ */ Object.create(null);

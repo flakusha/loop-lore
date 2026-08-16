@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## P0 — Critical Path (Blocking)
 
 | Area           | Item                                                                                                                                   | Effort | Status                                                                                                                                |

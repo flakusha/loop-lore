@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Chat Flow — Section Navigation & Story Spanning
 
 **Status:** 🟢 Complete — Phases 1-6 shipped (2026-08-16): inline dividers with message count + start time + jump + grouping breaks (c5270239, d726e108); story map with counts/current highlight/actor presence/split-party badge; sticky location header w/ scrollspy + map/transfer actions; transfer with transition-type picker (walk/teleport/narrative) + optional narrative insertion + fade fx + location/background sync (d726e108); bulk move-all assign (d726e108). Split into `chat-sections.ts` (manage) + `chat-sections-nav.ts` (navigation) for size gate.

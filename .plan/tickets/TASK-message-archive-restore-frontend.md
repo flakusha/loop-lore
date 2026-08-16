@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Message Archive/Restore Frontend
 
 **Status:** ✅ Done — archive/restore Alpine component + confirm modal wired (0395b7af)

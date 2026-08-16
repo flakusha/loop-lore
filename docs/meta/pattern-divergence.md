@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Pattern Divergence Audit
 
 Living document tracking where codebase diverges from documented patterns. Updated per audit sweep.

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # loop-lore
 
 [![EN](https://img.shields.io/badge/EN-blue)](../../README.md)

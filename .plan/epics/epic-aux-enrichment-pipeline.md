@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: AUX LLM Enrichment Pipeline
 
 **Status:** 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review)

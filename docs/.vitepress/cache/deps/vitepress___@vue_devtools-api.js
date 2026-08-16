@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ../../../../.bun/install/cache/links/@vue+devtools-shared@7.7.10-c8d728d69bead8f2/node_modules/@vue/devtools-shared/dist/index.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;

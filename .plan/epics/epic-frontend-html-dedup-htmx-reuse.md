@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: Frontend HTML Deduplication & HTMX AJAX Reuse
 
 **Status:** ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately.

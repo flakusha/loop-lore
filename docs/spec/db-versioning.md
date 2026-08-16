@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # DB Content Versioning & Migrations Reconciliation
 
 Status: Planned (EPIC-2026-33). Partially implemented — migration 018 added `data_version` columns.

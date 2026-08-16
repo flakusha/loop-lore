@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Response Length Control (FEAT-071)
 
 **Status:** 🟡 Partial — backend complete (resolveResponseLength, presets, clampTokenCount), UI wiring pending

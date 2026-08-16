@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK-epic17-encryption-e2e-expansion
 
 ## Epic: Encryption E2E Expansion (Epic 17)

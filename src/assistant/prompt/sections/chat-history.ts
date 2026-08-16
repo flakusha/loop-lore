@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Chat history section — recent confirmed, visible messages, sliced to the
  * token budget (approx 4 chars per token).
