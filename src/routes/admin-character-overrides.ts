@@ -93,7 +93,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api"
       }
 
       const { actorId, } = ctx.params;
-      const { action, visibilityOverride, licenseOverride, reason, expiresAt, } = ctx.body;
+      const { action, visibility_override, license_override, reason, expires_at, } = ctx.body;
 
       const id = crypto.randomUUID();
       await database
@@ -103,10 +103,10 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api"
           actor_id: actorId,
           admin_id: userId,
           action,
-          visibility_override: visibilityOverride ?? null,
-          license_override: licenseOverride ?? null,
+          visibility_override: visibility_override ?? null,
+          license_override: license_override ?? null,
           reason: reason ?? null,
-          expires_at: expiresAt ?? null,
+          expires_at: expires_at ?? null,
           created_at: new Date().toISOString(),
         },)
         .execute();
