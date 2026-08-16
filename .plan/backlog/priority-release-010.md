@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## Post-P3 — Road to Happy 0.1.0
 
 `package.json` already declares `version: 0.1.0`. "Happy 0.1.0" = Gate C **and** the
@@ -76,11 +79,15 @@ Shipped via worktree `quick-wins` (→ dev):
 - Item 2 — `write_memory_note` builtin tool (2k cap, dedupe, scope character, ctx {db,actorId,chatId}).
 - Item 6 — `prompt_override` column (migration 044), per-chat override + save/clear; assembler precedence per-chat > world-setup > character.
 
+Shipped 2026-08-16 (backlog review session, on `dev`):
+
+- **Item 1 remainder** — user/ai event triggers **shipped** with loop-guard in `chat-quick-replies.ts`: `fireAutoQuickReplies("user"|"ai")`, human-send discrimination via `_autoFired`, min-interval rate limit (3s), consecutive cap (5) that breaks the ai→send→ai feedback loop. Wired into `sendMessage` (user hook) + SSE `stream-done` (ai hook). Tests: `chat-quick-replies.test.ts` (9 cases).
+- **Item 4** — regex **4-phase split** shipped in `src/generation/transforms.ts` + `src/config/schema/generation.ts`: `RegexTransform.phase` (`edit-input|output|process|display`, default `output`), phase-grouped canonical ordering. Config-driven (no render hook / UI toggle — display and output both apply pre-persist). Tests: `transforms.test.ts` (3 new phase cases).
+- **Item 5** — memory selection / pin UI **verified already shipped** (backlog was stale): `src/frontend/alpine/memory-panel.ts` (load/split/create/delete/toggleMemoryPin/token-budget) + pin round-trip backend (`actor-memories-pin.test.ts`). No new code; unblocks item 13 topic-selection UX.
+
 Remaining (next session):
 
-- **Item 1 remainder** — user/ai event triggers (rate-limit/loop-guard design before auto-send).
-- **Item 5** — memory selection / pin UI in chat sidebar (blocks items 13 topic-selection UX).
-- **Items 4, 7, 8, 9, 12** — regex 4-phase split, in-chat asset preview, creation wizards, GM-guided story, chat-type matrix UI remainder.
+- **Items 7, 8, 9, 12** — in-chat asset preview, creation wizards, GM-guided story, chat-type matrix UI remainder.
 - **Items 10, 11, 13, 14, 15** — embeddings, asset-consistency conditioning, proactive messaging, keyphrase recall, encounter/bestiary gen.
 
 Finalize-blocking cleanup (quick-wins, deferred — `--force` merge approved):

@@ -105,4 +105,46 @@ describe("applyRegexTransforms", () => {
     expect(result.text,).toBe("hello",);
     expect(result.applied,).toHaveLength(0,);
   });
+
+  it("runs transforms phase-grouped in canonical order regardless of list position", () => {
+    const transforms: RegexTransform[] = [
+      { name: "early-display", pattern: "C", replacement: "D", enabled: true, phase: "display", },
+      { name: "late-output", pattern: "b", replacement: "C", enabled: true, phase: "output", },
+      { name: "first-edit-input", pattern: "a", replacement: "b", enabled: true, phase: "edit-input", },
+    ];
+    // Canonical order edit-input → output → display ⇒ a→b (edit-input), b→C (output), C→D (display)
+    const result = applyRegexTransforms("a", transforms,);
+    expect(result.text,).toBe("D",);
+    expect(result.applied.map((a,) => a.name),).toEqual([
+      "first-edit-input",
+      "late-output",
+      "early-display",
+    ],);
+  });
+
+  it("preserves list order within the same phase", () => {
+    const transforms: RegexTransform[] = [
+      { name: "step1", pattern: "foo", replacement: "bar", enabled: true, phase: "output", },
+      { name: "step2", pattern: "bar", replacement: "baz", enabled: true, phase: "output", },
+    ];
+    const result = applyRegexTransforms("foo foo", transforms,);
+    expect(result.text,).toBe("baz baz",);
+    expect(result.applied.map((a,) => a.name),).toEqual(["step1", "step2",],);
+  });
+
+  it("defaults missing phase to output (runs after edit-input, before display)", () => {
+    const transforms: RegexTransform[] = [
+      { name: "default-output", pattern: "b", replacement: "c", enabled: true, },
+      { name: "edit-phase", pattern: "a", replacement: "b", enabled: true, phase: "edit-input", },
+      { name: "display-phase", pattern: "c", replacement: "D", enabled: true, phase: "display", },
+    ];
+    // edit-input a→b, then default-output (output slot) b→c, then display c→D
+    const result = applyRegexTransforms("a", transforms,);
+    expect(result.text,).toBe("D",);
+    expect(result.applied.map((a,) => a.name),).toEqual([
+      "edit-phase",
+      "default-output",
+      "display-phase",
+    ],);
+  });
 });
