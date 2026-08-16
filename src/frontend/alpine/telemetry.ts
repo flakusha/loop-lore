@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Frontend Telemetry
  *
@@ -42,6 +45,7 @@ export function initTelemetry(): void {
   globalThis.addEventListener("error", (event: ErrorEvent,) => {
     try {
       getLogger().error("frontend.error", undefined, {
+        ...chatTelemetryMeta(),
         message: event.message,
         filename: event.filename,
         lineno: event.lineno,
@@ -55,6 +59,7 @@ export function initTelemetry(): void {
   globalThis.addEventListener("unhandledrejection", (event: PromiseRejectionEvent,) => {
     try {
       getLogger().error("frontend.error", undefined, {
+        ...chatTelemetryMeta(),
         message: event.reason?.message ?? String(event.reason,),
         type: "unhandledrejection",
       },);
@@ -83,6 +88,18 @@ export function trackTelemetry(event: string, data?: Record<string, unknown>,): 
   }
 }
 
+/**
+ * Resolve the active chat id for telemetry shipping. The chat page lives at
+ * `/views/chat?chatid=<id>`; derive it from the current query string so
+ * page_view / error events are stamped with the chat they occurred in.
+ * Returns `{}` (empty) when not on the chat page — the transport then ships
+ * `chatId: null` and the ingestion route persists NULL.
+ */
+function chatTelemetryMeta(): Record<string, unknown> {
+  const chatId = new URLSearchParams(location.search,).get("chatid",);
+  return chatId ? { chatId, } : {};
+}
+
 // ── page_view — deduped by pathname, debounced over HX swaps ──
 
 let lastPagePath: string | null = null;
@@ -98,7 +115,10 @@ function trackPageView(): void {
   pageViewTimer = setTimeout(() => {
     lastPagePath = path;
     try {
-      getLogger().info("frontend.page_view", { path, },);
+      getLogger().info("frontend.page_view", {
+        ...chatTelemetryMeta(),
+        path,
+      },);
     } catch {
       /* noop */
     }
