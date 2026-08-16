@@ -80,6 +80,7 @@ Commands:
   agent-merge <branch>      Alias for finalize — merge worktree into current branch and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
+  report                    Aggregate check-report status across all worktrees
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
@@ -1498,7 +1499,7 @@ cmd_rebase() {
 
 cmd_finalize() {
   local branch="${1:-}"
-  local merge_strategy="rebase"  # default: rebase for linear history
+  local merge_strategy="rebase" # default: rebase for linear history
   local force=false
 
   # Parse flags
@@ -1818,6 +1819,34 @@ cmd_agent_commit() {
   bun run "${SCRIPT_DIR}/worktree/index.mjs" agent-commit "$branch" "$message"
 }
 
+report_freshness_warn() {
+  # Non-blocking staleness warning — mirrors .githooks/pre-commit Step 4.
+  # Reads the worktree's .tmp/check-report.json and warns when its gitHead
+  # no longer matches the current HEAD (report describes older code).
+  local repo_top report_file report_head current_head
+  repo_top="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+  report_file="$repo_top/.tmp/check-report.json"
+  if [[ -n "$repo_top" && -f "$report_file" ]]; then
+    report_head="$(grep -o '"gitHead"[[:space:]]*:[[:space:]]*"[^"]*"' "$report_file" | head -1 | sed 's/.*"gitHead"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
+    current_head="$(git rev-parse --short HEAD 2>/dev/null || true)"
+    if [[ -n "$report_head" ]]; then
+      if [[ "$report_head" != "$current_head" ]]; then
+        echo -e "${YELLOW}⚠ Check report stale: reports @ $report_head, current HEAD @ $current_head${NC}"
+        echo -e "${YELLOW}  Run 'bun run check' to refresh gate status${NC}"
+      fi
+    else
+      echo -e "${YELLOW}⚠ Check report has no gitHead (legacy) — run 'bun run check' to refresh${NC}"
+    fi
+  fi
+}
+
+cmd_report() {
+  # Aggregate check-report status across all worktrees
+  # (see check-parallel.mjs --report-ls)
+  echo -e "${CYAN}=== Check reports across worktrees ===${NC}"
+  (cd "$REPO_ROOT" && unset REPO_ROOT && bun run check:report-ls)
+}
+
 cmd_commit() {
     # Direct commit on current branch — for commits on master/main
     # Usage: ./scripts/worktree.sh commit <message>
@@ -1873,10 +1902,13 @@ cmd_commit() {
     local current_branch
     current_branch=$(git branch --show-current 2>/dev/null || echo "(detached)")
 
-    echo -e "${CYAN}Creating GPG-signed commit on '$current_branch'...${NC}"
-    echo -e "  Author: $author_name <$author_email>"
-    echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
-    echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
+  # Warn when the last check report is stale w.r.t. HEAD (non-blocking).
+  report_freshness_warn
+
+  echo -e "${CYAN}Creating GPG-signed commit on '$current_branch'...${NC}"
+  echo -e "  Author: $author_name <$author_email>"
+  echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
+  echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
 
     # Execute commit with proper identity
     # --no-verify: agent MUST run checks separately before committing
@@ -2265,93 +2297,112 @@ cmd_status() {
 
 # Main
 case "${1:-}" in
-    create)
-        shift
-        cmd_create "${1:-}"
-        ;;
-    new)
-        shift
-        cmd_new "${1:-}" "${2:-}"
-        ;;
-    list)
-        cmd_list
-        ;;
-    cleanup)
-        cmd_cleanup
-        ;;
-    remove)
-        shift
-        cmd_remove "${1:-}"
-        ;;
-    sign)
-        shift
-        cmd_sign "${1:-}"
-        ;;
-    merge)
-        shift
-        cmd_merge "${1:-}" "${2:-}"
-        ;;
-    rebase)
-        shift
-        cmd_rebase "${1:-}" "${2:-}"
-        ;;
-    finalize|agent-merge)
-        shift
-        cmd_finalize "$@"
-        ;;
-    agent-commit)
-        shift
-        cmd_agent_commit "${1:-}" "${2:-}"
-        ;;
-    commit)
-        shift
-        cmd_commit "${1:-}"
-        ;;
-    ticket)
-        shift
-        cmd_ticket "$@"
-        ;;
-    issues)
-        shift
-        cmd_issues "$@"
-        ;;
-    show)
-        shift
-        cmd_show "${1:-}"
-        ;;
-    comment)
-        shift
-        cmd_comment "$@"
-        ;;
-    edit)
-        shift
-        cmd_edit "$@"
-        ;;
-    state)
-        shift
-        cmd_state "${1:-}" "${2:-}"
-        ;;
-    search)
-        shift
-        cmd_search "${1:-}"
-        ;;
-    attach)
-        shift
-        cmd_attach "${1:-}" "${2:-}"
-        ;;
-    attach-dir)
-        shift
-        cmd_attach_dir "${1:-}" "${2:-}"
-        ;;
-    gi)
-        shift
-        cmd_gi "$@"
-        ;;
-    prs)
-        cmd_prs
-        ;;
-    *)
-        usage
-        exit 1
-        ;;
+  create)
+    shift
+    cmd_create "${1:-}"
+    ;;
+  new)
+    shift
+    cmd_new "${1:-}" "${2:-}"
+    ;;
+  list)
+    cmd_list
+    ;;
+  cleanup)
+    cmd_cleanup
+    ;;
+  remove)
+    shift
+    cmd_remove "${1:-}"
+    ;;
+  sign)
+    shift
+    cmd_sign "${1:-}"
+    ;;
+  merge)
+    shift
+    cmd_merge "${1:-}" "${2:-}"
+    ;;
+  rebase)
+    shift
+    cmd_rebase "${1:-}" "${2:-}"
+    ;;
+  finalize | agent-merge)
+    shift
+    cmd_finalize "$@"
+    ;;
+  agent-commit)
+    shift
+    cmd_agent_commit "${1:-}" "${2:-}"
+    ;;
+  commit)
+    shift
+    cmd_commit "${1:-}"
+    ;;
+  report)
+    shift
+    cmd_report
+    ;;
+  ticket)
+    shift
+    cmd_ticket "$@"
+    ;;
+  issues)
+    shift
+    cmd_issues "$@"
+    ;;
+  show)
+    shift
+    cmd_show "${1:-}"
+    ;;
+  comment)
+    shift
+    cmd_comment "$@"
+    ;;
+  edit)
+    shift
+    cmd_edit "$@"
+    ;;
+  state)
+    shift
+    cmd_state "${1:-}" "${2:-}"
+    ;;
+  search)
+    shift
+    cmd_search "${1:-}"
+    ;;
+  attach)
+    shift
+    cmd_attach "${1:-}" "${2:-}"
+    ;;
+  attach-dir)
+    shift
+    cmd_attach_dir "${1:-}" "${2:-}"
+    ;;
+  gi)
+    shift
+    cmd_gi "$@"
+    ;;
+  prs)
+    cmd_prs
+    ;;
+  sync)
+    shift
+    cmd_sync "$@"
+    ;;
+  branches)
+    cmd_branches
+    ;;
+  diff)
+    shift
+    cmd_diff "${1:-}"
+    ;;
+  status)
+    shift
+    cmd_status "${1:-}"
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
 esac
