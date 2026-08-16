@@ -3,7 +3,7 @@
 
 # EPIC: Admin Panel & Dashboard
 
-**Status:** 🟡 Partial — backend routes + frontend shell shipped (11 tabs); Content Review queue + Revisions + spec gaps open
+**Status:** 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Frontend Epic
@@ -31,9 +31,9 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 | Character overrides    | ✅     | `src/routes/admin-character-overrides/` (open: frontend `TASK-admin-character-overrides-frontend`) |
 | NSFW admin             | ✅     | `src/routes/admin-nsfw/`                             |
 | Admin view shell       | ✅     | `src/views/admin.html` (11 tabs) + `src/frontend/alpine/admin.ts` |
-| Content Review queue   | ❌     | Spec `docs/frontend/admin.md` §Content Review — no tab, no route |
-| Revisions (diff/revert)| ❌     | Spec §Revision History — no tab, no route            |
-| Factory reset / danger zone | ❌ | Spec §Danger Zone — not implemented                  |
+| Content Review queue   | ✅ | Service `src/nsfw/moderation-service/` (flagContent/getFlagQueue/resolveFlag/mute/ban/shadow) + routes `src/routes/nsfw-moderation/{flags,actions,audit,overrides}.ts` + admin Review tab (`admin.html` + `admin-review.ts`) + `review-stats.ts` + **user Flag button/dialog** (message context menu + Detailed action row → `POST /api/nsfw/moderation/flags`; reporter identity session-derived, hardened `flags.routes.test.ts`) |
+| Revisions (diff/revert)| ❌ | Spec §Revision History — no tab, no route            |
+| Factory reset / danger zone | ✅ | `src/routes/admin/danger-zone.ts` (purge/reset/factory-reset) + `admin.html` §Danger Zone + `admin-system.ts` `runDangerAction` (confirmation-gated) |
 
 ## Scope (from `docs/frontend/admin.md`)
 
@@ -70,7 +70,7 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 - Log detail: target uuid, details, IP, session; restore/view/export actions
 - Retention: 90 days default, configurable; immutable for non-admins
 
-### Content Review (`/admin/review`) — ❌ not implemented
+### Content Review (`/admin/review`) — ✅ shipped (service+routes+tab+flag button); auto-mod rules optional follow-on
 
 - Flagged content queue (message/asset/note), flag dialog (reason presets + other)
 - Review queue: keep / add spoiler tag / delete / mute user / dismiss flag
@@ -94,10 +94,10 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 
 - `TASK-admin-character-overrides-frontend.md` — open: frontend for character overrides
 - `TASK-epic11-admin-settings-reconciliation.md` — ✅ complete (reconciliation)
-- Create: `TASK-admin-content-review-queue.md` — flagged-content queue + review actions + auto-moderation rules
-- Create: `TASK-admin-revisions-diff-revert.md` — entity revision tracking + diff view + revert
-- Create: `TASK-admin-danger-zone.md` — factory reset / purge / reset-settings (confirmation-gated)
-- Create: `TASK-admin-overview-dashboard.md` — summary cards + recent activity + auto-poll
+- `TASK-admin-content-review-queue.md` — ✅ done (review queue + **user Flag button/dialog** + reporter-identity hardening)
+- `TASK-admin-danger-zone.md` — ✅ done (danger-zone.ts + admin.html §Danger Zone + admin-system.ts)
+- `TASK-admin-overview-dashboard.md` — ✅ done (stats.ts deltas + admin.ts 30s poll + overview tab)
+- `TASK-admin-revisions-diff-revert.md` — ⬜ **open** (only remaining admin gap; entity revision tracking + diff + revert)
 
 ## Related Epics
 

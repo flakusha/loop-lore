@@ -311,6 +311,15 @@
                 📌
               </button>
               <button
+                class="btn-icon-action"
+                @click="openFlagDialog('message', msg.id, activeChat)"
+                x-bind:title="t('chats.flag')"
+                aria-label="Flag message"
+                data-testid="flag-message"
+              >
+                🚩
+              </button>
+              <button
                 class="btn-icon-action action-remove"
                 @click="removeMessage(msg.id, $event)"
                 x-bind:title="t('common.remove')"
@@ -491,6 +500,12 @@
     <button @click="pinMessage(_contextMenu.messageId); closeContextMenu()">
       📌 Pin
     </button>
+    <button
+      @click="openFlagDialog('message', _contextMenu.messageId, activeChat); closeContextMenu()"
+      data-testid="context-menu-flag"
+    >
+      🚩 {{{t("chats.flag")}}}
+    </button>
     <div class="context-menu-divider"></div>
     <button @click="_archiveConfirmId = _contextMenu.messageId; _archiveConfirmOpen = true; closeContextMenu()">
       📦 Archive
@@ -522,4 +537,56 @@
 
   <!-- Stream container for SSE streaming generation -->
   <div id="stream-container" x-show="isGenerating" x-cloak data-testid="stream-container"></div>
+
+  <!-- Flag Content dialog -->
+  <div
+    class="modal-overlay"
+    x-show="_flagDialog.open"
+    @click.self="closeFlagDialog()"
+    @keydown.escape.window="closeFlagDialog()"
+    x-cloak
+    data-testid="flag-dialog"
+  >
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Flag content">
+      <div class="modal-header">
+        <h3>{{{t("chats.flagTitle")}}}</h3>
+        <button class="btn-icon btn-xs" @click="closeFlagDialog()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-hint">{{{t("chats.flagHint")}}}</p>
+        <div class="flag-reasons">
+          <template x-for="r in ['inappropriate', 'spam', 'harassment', 'spoiler']" :key="r">
+            <label class="flag-reason-option">
+              <input type="radio" name="flagReason" :value="r" x-model="_flagReason" />
+              <span x-text="t('chats.flagReason.' + r)"></span>
+            </label>
+          </template>
+          <label class="flag-reason-option">
+            <input type="radio" name="flagReason" value="other" x-model="_flagReason" />
+            <span x-text="t('chats.flagReason.other')"></span>
+          </label>
+          <textarea
+            x-show="_flagReason === 'other'"
+            class="form-input"
+            x-model="_flagOther"
+            :placeholder="t('chats.flagOtherPlaceholder')"
+            rows="2"
+            x-cloak
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" @click="closeFlagDialog()">{{{t("common.cancel")}}}</button>
+        <button
+          class="btn btn-danger btn-sm"
+          @click="submitFlag()"
+          :disabled="_flagBusy || ((_flagReason !== 'other' ? !_flagReason : !_flagOther.trim()))"
+          data-testid="flag-submit"
+        >
+          <span x-show="!_flagBusy">{{{t("chats.flag")}}}</span>
+          <span x-show="_flagBusy">…</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -130,6 +130,18 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   _hamburgerOpen: Record<string, boolean>;
   _statsOpen: Record<string, boolean>;
   _contextMenu: { visible: boolean; messageId: string | null; x: number; y: number };
+  _flagDialog: {
+    open: boolean;
+    contentType: "message" | "asset";
+    contentId: string | null;
+    chatId: string | null;
+  };
+  _flagReason: string;
+  _flagOther: string;
+  _flagBusy: boolean;
+  openFlagDialog(contentType: "message" | "asset", contentId: string, chatId: string | null,): void;
+  closeFlagDialog(): void;
+  submitFlag(): Promise<void>;
   _impersonationLoaded: boolean;
   _storageHandler: ((e: StorageEvent,) => void) | null;
   _unseenCounts: Record<string, number>;
