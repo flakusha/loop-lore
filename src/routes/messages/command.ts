@@ -1,6 +1,11 @@
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
-import { type CommandContext, getCommand, } from "../../assistant/commands/registry";
+import {
+  type CommandContext,
+  getCommand,
+  getCommandRequirement,
+  satisfiesRole,
+} from "../../assistant/commands/registry";
 import type { Config, } from "../../config/schema";
 import {
   encryptMessageContent,
@@ -8,6 +13,7 @@ import {
   isEncryptionEnabled,
 } from "../../crypto";
 import {
+  ChatParticipantRole,
   MessageContentFormat,
   MessageContentType,
   MessageRole,
@@ -52,6 +58,29 @@ export async function dispatchCommand(
     .limit(50,)
     .execute();
 
+  // Resolve the calling participant's role for tiered command access.
+  const participant = await database
+    .selectFrom("chat_participants",)
+    .select("role_in_chat",)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", actorId,)
+    .executeTakeFirst();
+  const roleInChat: ChatParticipantRole = participant?.role_in_chat ?? ChatParticipantRole.Member;
+
+  // Tiered access: deny when the participant's role is below the command's minimum.
+  const requiredRole = getCommandRequirement(parsed.command,);
+  if (requiredRole && !satisfiesRole(roleInChat, requiredRole,)) {
+    return {
+      handled: true,
+      response: jsonResponse({
+        command: parsed.command,
+        systemMessage: `**Permission denied:** \`/${parsed.command}\` requires the "${requiredRole}" role.`,
+        action: null,
+        actionPayload: null,
+      },),
+    };
+  }
+
   const cmdCtx: CommandContext = {
     chatId,
     activeChat: chatRecord
@@ -63,6 +92,7 @@ export async function dispatchCommand(
       }
       : undefined,
     messages: recentMessages.reverse(),
+    roleInChat,
     db: database,
     config,
     userId: actorId,
