@@ -83,7 +83,7 @@ export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/ap
           },);
         }
 
-        const results = await scanAllProviders(opts.database);
+        const results = await scanAllProviders(opts.database,);
         return jsonResponse({
           providers: Array.from(results, (p,) => providerToSummary(p,),),
         },);

@@ -328,7 +328,7 @@ export function reconcile(
   }
 
   // 8. Orphan git issues: open git issues with no matching index entry by extid.
-  const indexExtids = new Set(Object.keys(index,).map(k => k.toUpperCase(),),);
+  const indexExtids = new Set(Object.keys(index,).map(k => k.toUpperCase()),);
 
   for (const [, issue,] of gitIssues) {
     if (issue.status !== "open") { continue; }
