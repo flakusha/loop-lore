@@ -19,6 +19,14 @@ export interface ChatLocationState {
   deleteSection(sectionId: string,): Promise<void>;
   moveSection(sectionId: string, dir: -1 | 1,): Promise<void>;
   sectionLabel(sectionId: string | null,): string;
+  sectionDividerFor(index: number, sectionId: string | null,): {
+    id: string;
+    label: string;
+    description: string | null;
+    location_id: string | null;
+    sort_index: number;
+  } | null;
+  jumpToSection(sectionId: string,): void;
   assignMessageToSection(messageId: string, sectionId: string | null,): Promise<void>;
 
   // ── Chat Backgrounds (location sync) ────────────────────

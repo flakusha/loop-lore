@@ -42,6 +42,8 @@ export interface Message {
   emotion?: string;
   reactions?: { emoji: string; count: number; userReacted: boolean }[];
   pinned?: boolean;
+  /** Chat section this message belongs to (multi-location sectioning). */
+  section_id?: string | null;
 }
 
 export interface GroupedMessage extends Message {
