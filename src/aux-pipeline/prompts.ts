@@ -36,6 +36,34 @@ export const INTENT_CLASSIFIER_PROMPT = "Classify the user message intent. Reply
   "shortReply=true for greetings, simple questions, short commands. " +
   "shortReply=false for roleplay, narrative, complex requests.";
 
+/** System prompt for GM tool detection (GM-mode tool request routing). */
+export const GM_TOOL_DETECTION_PROMPT = `You are a GM tool detector for a roleplay chat. The user may request
+the GM to execute a tool or action.
+
+Available GM tools:
+- "roll_dice": roll dice for an action
+- "check_stats": check character statistics
+- "generate_npc": create a new NPC
+- "generate_item": create a new item
+- "modify_world": change world state
+- "trigger_event": trigger a world event
+- "summarize": summarize recent events
+- "none": no tool requested
+
+Reply with ONLY a JSON object:
+{
+  "toolCall": {
+    "name": "tool_name|none",
+    "params": {},
+    "confidence": <0.0-1.0>
+  }
+}
+
+Rules:
+- name "none" means no GM tool requested
+- params should include relevant parameters (target, value, etc.)
+- confidence < 0.5 means uncertain`;
+
 /** System prompt for memory extraction (facts worth remembering). */
 export const MEMORY_EXTRACTION_PROMPT = `Extract key facts from this conversation. Return a JSON array of facts.
 Each fact should be:
