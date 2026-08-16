@@ -1,5 +1,12 @@
 <!-- Messages -->
-<div class="chat-area" id="message-list" x-ref="messageList" data-testid="message-list" @scroll="trackCurrentSection()">
+<div
+  class="chat-area"
+  id="message-list"
+  x-ref="messageList"
+  data-testid="message-list"
+  @scroll="trackCurrentSection()"
+  :class="{ 'section-transfer-fx': _transferFx }"
+>
   <div x-ref="scrollSentinel" id="scroll-sentinel" style="height: 1px"></div>
   <div x-show="loadingOlder" class="loading-older">
     <span class="spinner"></span> {{{t("chats.loadingOlder")}}}
@@ -76,6 +83,15 @@
           <div class="section-divider-label">
             <span class="section-divider-icon" aria-hidden="true">📍</span>
             <span x-text="sectionLabel(msg.section_id)"></span>
+            <span
+              class="section-divider-meta"
+              x-text="'— ' + sectionDividerMeta(msg.section_id).count + ' msgs'"
+            ></span>
+            <span
+              class="section-divider-meta"
+              x-show="sectionDividerMeta(msg.section_id).startTime"
+              x-text="'· ' + formatSectionTime(sectionDividerMeta(msg.section_id).startTime)"
+            ></span>
           </div>
           <div class="section-divider-line"></div>
         </div>
