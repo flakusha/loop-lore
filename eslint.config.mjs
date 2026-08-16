@@ -366,13 +366,20 @@ export default tseslint.config(
       "no-restricted-properties": [
         "warn",
         ...[
-          "serve", "file", "password", "spawn", "spawnSync", "which",
-          "CryptoHasher", "zstdCompressSync", "zstdDecompressSync",
+          "serve",
+          "file",
+          "password",
+          "spawn",
+          "spawnSync",
+          "which",
+          "CryptoHasher",
+          "zstdCompressSync",
+          "zstdDecompressSync",
         ].map((p,) => ({
           object: "Bun",
           property: p,
           message: `Bun.${p} is runtime-specific. Use a cross-runtime abstraction or move to a non-shared module.`,
-        }),),
+        })),
       ],
       "no-restricted-imports": [
         "warn",
