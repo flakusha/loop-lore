@@ -65,6 +65,13 @@ export interface PromptTemplateInfo {
   usingOverride: boolean;
 }
 
+/** A quick-reply button: label + slash command, optional trigger event. */
+export interface QuickReplyButton {
+  label: string;
+  command: string;
+  trigger?: "startup" | "user" | "ai";
+}
+
 export interface PreviewAsset {
   id: string;
   filename?: string;

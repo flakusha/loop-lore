@@ -416,6 +416,7 @@ export async function insertChats(
     visibility?: Generated<string>;
     thinking_visibility?: Generated<string>;
     prompt_override?: string | null;
+    quick_replies?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({

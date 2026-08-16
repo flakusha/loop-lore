@@ -48,6 +48,22 @@
       —
       <button class="btn-impersonation-cancel" @click="toggleImpersonate()">{{{ t("chat.stop") }}}</button>
     </div>
+    <!-- Quick-reply button set (0.1.0 Quick Win item 1, G22) -->
+    <div
+      x-show="_quickReplies.length > 0 && !isGenerating"
+      class="quick-replies-row"
+      data-testid="quick-replies-row"
+    >
+      <template x-for="qr in _quickReplies.filter(q => q.command && q.trigger !== 'startup')" :key="qr.label">
+        <button
+          class="btn btn-ghost btn-sm quick-reply-btn"
+          @click="executeQuickReply(qr.command)"
+          x-text="qr.label"
+          :title="qr.command"
+          :data-testid="'quick-reply-' + qr.label"
+        ></button>
+      </template>
+    </div>
     <div class="input-row" style="position: relative">
       <!-- Slash command palette -->
       <div
