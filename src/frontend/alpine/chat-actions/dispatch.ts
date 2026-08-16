@@ -112,39 +112,13 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
   async dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,) {
     log.info("dispatchCommandAction", { action, chatId, },);
 
-    if (action === "generate-image") {
-      await dispatchGenerationAction(
-        this,
-        "/api/generation/image",
-        {
-          prompt: (payload?.prompt as string) ?? "",
-          chatId,
-        },
-        "Image generation",
-        chatId,
-      );
+    const handler = actionHandlers[action];
+    if (handler) {
+      await handler(this, payload, chatId,);
       return;
     }
 
-    if (action === "generate-caption") {
-      const assetIds = (payload?.assetIds as string[]) ?? [];
-      if (assetIds.length === 0) {
-        this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noAssetsToCaption",), },);
-        return;
-      }
-      await dispatchGenerationAction(
-        this,
-        "/api/generation/caption",
-        {
-          chatId,
-          assetIds,
-        },
-        "Captioning",
-        chatId,
-      );
-      return;
-    }
-
+    // Check unimplemented generation actions
     if (["generate-music", "generate-sfx", "generate-video",].includes(action,)) {
       const label = action.replace("generate-", "",);
       this.$dispatch?.("show-toast", {
@@ -155,83 +129,110 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
-    if (action === "impersonate-toggle") {
-      const mode = (payload?.mode as string) ?? "toggle";
-      if (mode === "off") {
-        await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ impersonateActorId: null, },),
-        },);
-        this.impersonationActive = false;
-        this.impersonatingActorId = null;
-        this.$dispatch?.("show-toast", { type: "info", message: t("toasts.impersonationEnded",), },);
-      } else {
-        await this.toggleImpersonate();
-      }
-      return;
-    }
-
-    if (action === "impersonate-select") {
-      const characterName = (payload?.characterName as string) ?? "";
-      if (!characterName) { return; }
-      try {
-        const res = await apiFetch(`/api/v1/chats/${chatId}/participants`, {
-          headers: { Accept: "application/json", },
-        },);
-        if (!res.ok) { return; }
-        const participants = await res.json();
-        const target = participants.find(
-          (p: { display_name?: string; actor_type?: string },) =>
-            p.actor_type === "character" &&
-            p.display_name?.toLowerCase() === characterName.toLowerCase(),
-        );
-        if (!target) {
-          this.$dispatch?.("show-toast", {
-            type: "warning",
-            message: t("toasts.characterNotFound", { name: characterName, },),
-          },);
-          return;
-        }
-        const putRes = await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ impersonateActorId: target.actor_id, },),
-        },);
-        if (putRes.ok) {
-          this.impersonationActive = true;
-          this.impersonatingActorId = target.actor_id;
-          this.$dispatch?.("show-toast", {
-            type: "info",
-            message: t("toasts.playingAs", { name: target.display_name || characterName, },),
-          },);
-        } else {
-          const err = await putRes.json();
-          this.$dispatch?.("show-toast", {
-            type: "error",
-            message: err.error || t("toasts.failedStartImpersonation",),
-          },);
-        }
-      } catch {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorResolvingCharacter",), },);
-      }
-      return;
-    }
-
-    if (action === "create-quest") {
-      await dispatchQuestAction(this, (payload?.description as string) ?? "", chatId,);
-      return;
-    }
-
-    if (action === "review-entity") {
-      log.info("review-entity action — display only", { payload, },);
-      return;
-    }
-
     log.warn("Unknown command action", { action, },);
     this.$dispatch?.("show-toast", {
       type: "warning",
       message: t("toasts.unknownAction", { action, },),
     },);
+  },
+};
+
+// ── Action handlers (extracted for cognitive complexity) ──────
+
+type ActionHandler = (ctx: any, payload: Record<string, unknown> | null, chatId: string,) => Promise<void> | void;
+
+const actionHandlers: Record<string, ActionHandler> = {
+  "generate-image": async (ctx, payload, chatId,) => {
+    await dispatchGenerationAction(
+      ctx,
+      "/api/generation/image",
+      { prompt: (payload?.prompt as string) ?? "", chatId, },
+      "Image generation",
+      chatId,
+    );
+  },
+
+  "generate-caption": async (ctx, payload, chatId,) => {
+    const assetIds = (payload?.assetIds as string[]) ?? [];
+    if (assetIds.length === 0) {
+      ctx.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noAssetsToCaption",), },);
+      return;
+    }
+    await dispatchGenerationAction(
+      ctx,
+      "/api/generation/caption",
+      { chatId, assetIds, },
+      "Captioning",
+      chatId,
+    );
+  },
+
+  "impersonate-toggle": async (ctx, payload, chatId,) => {
+    const mode = (payload?.mode as string) ?? "toggle";
+    if (mode === "off") {
+      await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ impersonateActorId: null, },),
+      },);
+      ctx.impersonationActive = false;
+      ctx.impersonatingActorId = null;
+      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.impersonationEnded",), },);
+    } else {
+      await (ctx as { toggleImpersonate(): Promise<void> }).toggleImpersonate();
+    }
+  },
+
+  "impersonate-select": async (ctx, payload, chatId,) => {
+    const characterName = (payload?.characterName as string) ?? "";
+    if (!characterName) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/chats/${chatId}/participants`, {
+        headers: { Accept: "application/json", },
+      },);
+      if (!res.ok) { return; }
+      const participants = await res.json();
+      const target = participants.find(
+        (p: { display_name?: string; actor_type?: string },) =>
+          p.actor_type === "character" &&
+          p.display_name?.toLowerCase() === characterName.toLowerCase(),
+      );
+      if (!target) {
+        ctx.$dispatch?.("show-toast", {
+          type: "warning",
+          message: t("toasts.characterNotFound", { name: characterName, },),
+        },);
+        return;
+      }
+      const putRes = await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ impersonateActorId: target.actor_id, },),
+      },);
+      if (putRes.ok) {
+        ctx.impersonationActive = true;
+        ctx.impersonatingActorId = target.actor_id;
+        ctx.$dispatch?.("show-toast", {
+          type: "info",
+          message: t("toasts.playingAs", { name: target.display_name || characterName, },),
+        },);
+      } else {
+        const err = await putRes.json();
+        ctx.$dispatch?.("show-toast", {
+          type: "error",
+          message: err.error || t("toasts.failedStartImpersonation",),
+        },);
+      }
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorResolvingCharacter",), },);
+    }
+  },
+
+  "create-quest": async (ctx, payload, chatId,) => {
+    await dispatchQuestAction(ctx, (payload?.description as string) ?? "", chatId,);
+  },
+
+  "review-entity": (_ctx, payload,) => {
+    log.info("review-entity action — display only", { payload, },);
   },
 };
