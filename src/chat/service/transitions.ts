@@ -52,11 +52,14 @@ export async function migrateChat(
     return { code: "forbidden", message: "You do not own this chat", };
   }
 
-  // Idempotency: reject if this source already migrated
+  // Idempotency: reject if this source already migrated. Scoped to migrated
+  // children (`template_id IS NOT NULL`) so side-channels (which also carry
+  // `parent_chat_id` but no template) never block a legitimate migrate.
   const existing = await database
     .selectFrom("chats",)
     .select("id",)
     .where("parent_chat_id", "=", chatId,)
+    .where("template_id", "is not", null,)
     .executeTakeFirst();
   if (existing) {
     return { code: "bad_request", message: "This chat has already been migrated", };

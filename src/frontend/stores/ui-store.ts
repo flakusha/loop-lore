@@ -39,6 +39,19 @@ export const uiStoreDefinition: Record<string, unknown> = {
   showParticipants: false,
   showGmGuidance: false,
   showQuestLog: false,
+  showSideChannels: false,
+  // ── Side-channels (C1) ───────────────────────────────
+  sideChannels: [] as {
+    id: string;
+    name: string;
+    type: string;
+    mode: string;
+    created_by: string;
+    world_id: string | null;
+    created_at: string;
+    updated_at: string;
+  }[],
+  newSideChannelName: "",
 
   // ── Active entity refs ───────────────────────────────
   activePersona: null,

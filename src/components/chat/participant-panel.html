@@ -17,6 +17,30 @@
   </div>
 
   <div class="participant-panel-body">
+    <!-- Turn-order indicator (C1 — group-chat matrix UI remainder) -->
+    <div class="participant-turn-order" x-show="_turnOrder && _turnOrder.order.length > 0" data-testid="turn-order">
+      <div class="participant-turn-order-header">
+        <span>{{{ t("participants.turnOrder") }}}</span>
+        <span class="participant-strategy" x-text="_turnOrder.strategy || ''"></span>
+      </div>
+      <template x-for="slot in _turnOrder.order" :key="slot.actor_id">
+        <div
+          class="turn-order-slot"
+          :class="{ 'is-current': slot.isCurrent, 'is-next': slot.isNext }"
+          data-testid="turn-order-slot"
+        >
+          <span class="turn-order-name" x-text="slot.display_name"></span>
+          <span class="turn-order-badges">
+            <span class="badge badge-current" x-show="slot.isCurrent" x-text="t('participants.current')"></span>
+            <span class="badge badge-next" x-show="slot.isNext" x-text="t('participants.next')"></span>
+          </span>
+        </div>
+      </template>
+      <div class="turn-order-empty" x-show="!_turnOrder || _turnOrder.order.length === 0">
+        {{{ t("participants.noTurnOrder") }}}
+      </div>
+    </div>
+
     <!-- Member list -->
     <div class="participant-count"><span x-text="_participants.length"></span> {{{ t("participants.members") }}}</div>
 
