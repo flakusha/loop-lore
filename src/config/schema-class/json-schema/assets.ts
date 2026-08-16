@@ -21,6 +21,18 @@ export const assets = {
       description: "Max upload size in bytes (default 10 MB)",
     },
     compression: { type: "boolean", default: true, description: "Compress uploaded assets", },
+    signedUrlSecret: {
+      type: "string",
+      default: "",
+      description:
+        "HMAC-SHA256 secret for signed asset URLs. Env-only: ASSETS_SIGNED_URL_SECRET. Falls back to auth.jwtSecret.",
+    },
+    signedUrlExpirySeconds: {
+      type: "integer",
+      minimum: 1,
+      default: 900,
+      description: "Signed-URL lifetime in seconds (default: 900 = 15 min)",
+    },
   },
   required: ["enabled", "uploadDir", "maxFileSize", "compression",],
 };

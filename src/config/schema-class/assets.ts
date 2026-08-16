@@ -10,4 +10,6 @@ export const ASSETS_DEFAULTS = {
   uploadDir: `${DATA_DIR}/uploads`,
   maxFileSize: 10_485_760,
   compression: true,
+  signedUrlSecret: "",
+  signedUrlExpirySeconds: 900,
 } satisfies AssetsConfig;

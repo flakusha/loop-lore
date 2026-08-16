@@ -32,7 +32,6 @@ import {
   updateAssetVisibility,
 } from "../service";
 import { requireAssetOwner, resolveAsset, } from "./access";
-import { handleDownload, handleServeCompressed, handleServeRaw, } from "./serve";
 import type { RouteCtx, } from "./types";
 
 /** Shared route dependencies threaded into every handler. */
@@ -113,50 +112,6 @@ export async function handleDeleteAsset({ database, config, ctx, }: RouteDeps & 
     return notFoundResponse("Asset not found",);
   }
   return jsonNoContent();
-}
-
-export async function handleServeRawRoute(
-  { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
-): Promise<Response> {
-  const searchParams = new URL(ctx.request.url,).searchParams;
-  const chatId = searchParams.get("chatId",) ?? undefined;
-  return handleServeRaw({
-    database,
-    assetId: ctx.params.id!,
-    uploadDir: config.assets.uploadDir,
-    actorId: ctx.userId ?? null,
-    actorRole: ctx.userRole ?? null,
-    chatId,
-  },);
-}
-
-export async function handleDownloadRoute(
-  { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
-): Promise<Response> {
-  const searchParams = new URL(ctx.request.url,).searchParams;
-  const chatId = searchParams.get("chatId",) ?? undefined;
-  return handleDownload({
-    database,
-    assetId: ctx.params.id!,
-    uploadDir: config.assets.uploadDir,
-    actorId: ctx.userId ?? null,
-    actorRole: ctx.userRole ?? null,
-    chatId,
-  },);
-}
-
-export async function handleCompressedRoute(
-  { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
-  variant: string,
-): Promise<Response> {
-  return handleServeCompressed({
-    database,
-    assetId: ctx.params.id!,
-    uploadDir: config.assets.uploadDir,
-    variant,
-    actorId: ctx.userId ?? null,
-    actorRole: ctx.userRole ?? null,
-  },);
 }
 
 export async function handleListLinks({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {

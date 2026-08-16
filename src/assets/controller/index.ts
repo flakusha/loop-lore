@@ -14,6 +14,7 @@
  *   GET    /api/assets/:id/download — download file (attachment)
  *   GET    /api/assets/:id/thumb    — serve thumbnail
  *   GET    /api/assets/:id/compressed — serve compressed variant
+ *   POST   /api/assets/:id/signed-url/:action — generate signed URL (raw/download/thumb/compressed)
  *   DELETE /api/assets/:id          — delete asset
  *   POST   /api/assets/:id/links    — link to entity
  *   DELETE /api/assets/:id/links/:linkId — unlink from entity
