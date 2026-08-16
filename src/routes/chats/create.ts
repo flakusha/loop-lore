@@ -19,6 +19,79 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+// ── Helpers (extracted for cognitive complexity) ────────────
+
+async function checkAgeGate(database: HandlerOpts["database"], userId: string,): Promise<Response | null> {
+  const config = getRuntimeConfig();
+  if (!config.enabled || config.mode === "none") { return null; }
+  const user = await database
+    .selectFrom("users",)
+    .select(["birth_date", "age_gate_accepted_at",],)
+    .where("id", "=", userId,)
+    .executeTakeFirst();
+  const st = getStatus(config, user ?? null,);
+  return st.hasPassed ? null : forbidden("Age gate not passed",);
+}
+
+function parseRawBody(ctx: { rawBodyText?: string },): Record<string, unknown> {
+  const rawText = ctx.rawBodyText;
+  return rawText ? jsonParseOr(rawText, {},) : {};
+}
+
+async function resolveTemplate(
+  database: HandlerOpts["database"],
+  body: { templateId?: string },
+  rawBody: Record<string, unknown>,
+  hasExplicit: (key: string,) => boolean,
+) {
+  if (!body.templateId && !hasExplicit("templateId",)) { return null; }
+  const templateId = body.templateId ?? (rawBody.templateId as string | undefined);
+  return templateId ? await getChatSetupTemplate(database, templateId,) : null;
+}
+
+async function seedWelcomeMessages(
+  database: HandlerOpts["database"],
+  chatId: string,
+  body: { participantIds?: string[] },
+  opts: HandlerOpts,
+  userId: string,
+) {
+  const characterActors = await database
+    .selectFrom("chat_participants",)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select(["chat_participants.actor_id", "actors.welcome_message",],)
+    .where("chat_participants.chat_id", "=", chatId,)
+    .where("actors.welcome_message", "is not", null,)
+    .execute();
+
+  for (const actor of characterActors) {
+    await database
+      .insertInto("messages",)
+      .values({
+        id: uid(),
+        chat_id: chatId,
+        actor_id: actor.actor_id,
+        parent_id: null,
+        role: MessageRole.Character,
+        content: actor.welcome_message!,
+        key_id: null,
+        content_type: MessageContentType.Text,
+        content_format: MessageContentFormat.Markdown,
+        content_encoding: ContentEncoding.Identity,
+        status: "confirmed",
+        visibility: "visible",
+      },)
+      .execute();
+  }
+
+  if (characterActors.length === 0 && body.participantIds?.length) {
+    const { database: db, config, } = opts;
+    if (isLlmGenerationConfigured(config,)) {
+      void triggerAutoGeneration({ database: db, config, chatId, parentMessageId: null, userId, },);
+    }
+  }
+}
+
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
@@ -30,36 +103,16 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
 
-          const ageGateConfig = getRuntimeConfig();
-          if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
-            const user = await database
-              .selectFrom("users",)
-              .select(["birth_date", "age_gate_accepted_at",],)
-              .where("id", "=", userId,)
-              .executeTakeFirst();
-            const st = getStatus(ageGateConfig, user ?? null,);
-            if (!st.hasPassed) { return forbidden("Age gate not passed",); }
-          }
+          const ageError = await checkAgeGate(database, userId,);
+          if (ageError) { return ageError; }
 
           const body = ctx.body as typeof ChatCreateBody.static;
-
-          // Elysia applies defaults to optional enum fields (mode → "direct",
-          // type → "direct", turnStrategy → "round_robin"), so we can't tell from
-          // `body` alone which fields the client explicitly sent. Use the raw
-          // body captured by onParse so template seeding wins unless overridden.
-          let rawBody: Record<string, unknown> = {};
-          const rawText = (ctx as { rawBodyText?: string }).rawBodyText;
-          if (rawText) {
-            rawBody = jsonParseOr(rawText, {},);
-          }
+          const rawBody = parseRawBody(ctx,);
           const hasExplicit = (key: string,) => key in rawBody;
 
-          // Seed key mechanics from a template if provided (explicit fields override)
-          let template = null;
-          if (body.templateId || hasExplicit("templateId",)) {
-            const templateId = body.templateId ?? (rawBody.templateId as string | undefined);
-            template = templateId ? await getChatSetupTemplate(database, templateId,) : null;
-            if (!template) { return notFound("Chat setup template not found",); }
+          const template = await resolveTemplate(database, body, rawBody, hasExplicit,);
+          if (template === null && (body.templateId || hasExplicit("templateId",))) {
+            return notFound("Chat setup template not found",);
           }
 
           const newChatId = await createChat(database, {
@@ -85,48 +138,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             memoryCarryIds: body.memoryCarryIds,
           },);
 
-          const characterActors = await database
-            .selectFrom("chat_participants",)
-            .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
-            .select(["chat_participants.actor_id", "actors.welcome_message",],)
-            .where("chat_participants.chat_id", "=", newChatId,)
-            .where("actors.welcome_message", "is not", null,)
-            .execute();
-
-          for (const actor of characterActors) {
-            await database
-              .insertInto("messages",)
-              .values({
-                id: uid(),
-                chat_id: newChatId,
-                actor_id: actor.actor_id,
-                parent_id: null,
-                role: MessageRole.Character,
-                content: actor.welcome_message!,
-                key_id: null,
-                content_type: MessageContentType.Text,
-                content_format: MessageContentFormat.Markdown,
-                content_encoding: ContentEncoding.Identity,
-                status: "confirmed",
-                visibility: "visible",
-              },)
-              .execute();
-          }
-
-          // If no welcome message was created for any participant, trigger
-          // LLM auto-generation so the assistant sends an initial greeting.
-          if (characterActors.length === 0 && body.participantIds && body.participantIds.length > 0) {
-            const { database: db, config, } = opts;
-            if (isLlmGenerationConfigured(config,)) {
-              void triggerAutoGeneration({
-                database: db,
-                config,
-                chatId: newChatId,
-                parentMessageId: null,
-                userId,
-              },);
-            }
-          }
+          await seedWelcomeMessages(database, newChatId, body, opts, userId,);
 
           return jsonCreated({ id: newChatId, },);
         },
