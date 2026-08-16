@@ -88,7 +88,10 @@ bun test                   # Run tests
 bun test --coverage        # Coverage report
 ```
 
-**Always** run `bun run check` before finishing.
+**Always** run `bun run check` before finishing. It writes
+`.tmp/check-report.json` (provenance: branch, gitHead, mode, runId);
+`bun run check:report-ls` aggregates status across all worktrees. A report
+whose gitHead no longer matches HEAD is stale — rerun the check.
 
 ## 6. Commit
 
