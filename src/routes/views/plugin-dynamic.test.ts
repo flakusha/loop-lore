@@ -49,6 +49,27 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     expect(res.headers.get("location",),).toBe("/views/",);
   });
 
+  test("every dynamic endpoint redirects non-htmx requests", async () => {
+    const endpoints = [
+      "/dynamic/characters/grid",
+      "/dynamic/gallery/grid",
+      "/dynamic/worlds/list",
+      "/dynamic/gallery/search",
+      "/dynamic/characters/search",
+      "/dynamic/worlds/search",
+      "/dynamic/chats/list",
+      "/dynamic/chats/search",
+      "/dynamic/worlds/world-elm/detail",
+      "/dynamic/characters/actor-aria/edit-form",
+      "/dynamic/characters/actor-aria/chat-list",
+    ];
+    for (const path of endpoints) {
+      const res = await makeApp(db, "owner", "user",).handle(new Request(`http://localhost${path}`,),);
+      expect(res.status,).toBe(302,);
+      expect(res.headers.get("location",),).toBe("/views/",);
+    }
+  });
+
   test("characters grid renders with HX-Request", async () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/characters/grid", { headers: { "HX-Request": "true", }, },),
@@ -74,6 +95,29 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("world-elm",);
+  });
+
+  test("worlds list renders with HX-Request", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request("http://localhost/dynamic/worlds/list", { headers: { "HX-Request": "true", }, },),
+    );
+    expect(res.status,).toBe(200,);
+    expect(await res.text(),).toContain("world-elm",);
+  });
+
+  test("gallery search renders with HX-Request", async () => {
+    const res = await makeApp(db,).handle(
+      new Request("http://localhost/dynamic/gallery/search", { headers: { "HX-Request": "true", }, },),
+    );
+    expect(res.status,).toBe(200,);
+  });
+
+  test("characters search renders with HX-Request", async () => {
+    const res = await makeApp(db,).handle(
+      new Request("http://localhost/dynamic/characters/search?q=aria", { headers: { "HX-Request": "true", }, },),
+    );
+    expect(res.status,).toBe(200,);
+    expect(await res.text(),).toContain("actor-aria",);
   });
 
   test("chats list renders with HX-Request", async () => {
