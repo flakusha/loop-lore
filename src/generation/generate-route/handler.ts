@@ -100,6 +100,7 @@ export async function handleGenerate({
       database,
       resolvedModel: resolved.resolvedModel,
       cfg,
+      userId,
     },);
     messages = built.messages;
     systemPrompt = built.systemPrompt;
