@@ -28,6 +28,7 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null
   const candidates = BINARY_CANDIDATES[type];
   for (const name of candidates) {
     for (const actualName of getBinaryNameWithSuffix(name,)) {
+      // eslint-disable-next-line no-restricted-properties -- Bun-only utility; cross-runtime abstraction not needed
       const result = Bun.which(actualName,);
       if (result) { return result; }
     }
@@ -39,6 +40,7 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null
 
 export function isPortFree(port: number,): boolean {
   try {
+    // eslint-disable-next-line no-restricted-properties -- Bun-only utility; cross-runtime abstraction not needed
     const server = Bun.serve({ port, fetch: () => new Response("ok",), },);
     void (async () => {
       try {
