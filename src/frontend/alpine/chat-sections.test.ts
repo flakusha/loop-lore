@@ -2,10 +2,20 @@
  * Tests for chat section dividers — story-spanning navigation.
  */
 
-import { describe, expect, test, } from "bun:test";
+import { describe, expect, mock, test, } from "bun:test";
 import { chatSections, } from "./chat-sections";
 import { chatSectionsNav, } from "./chat-sections-nav";
 import { computeGroupedMessages, } from "./chat-utils/grouped";
+
+// ── Mock apiFetch (bulk-assign + narrative calls) ──────────────────────
+const fetchCalls: { url: string; opts: RequestInit }[] = [];
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    return new Response("{}", { status: 200, },);
+  },
+}),);
+const emptyNarrative = " ".repeat(3,);
 
 const section = (id: string, label: string,) => ({
   id,
@@ -281,5 +291,127 @@ describe("chatSectionsNav.trackCurrentSection", () => {
     (chatSectionsNav as any).trackCurrentSection.call(ctx,);
     expect(ctx._currentSectionId,).toBe("s1",);
     delete (globalThis as any).document;
+  });
+});
+
+describe("chatSections.sectionDividerMeta", () => {
+  test("counts messages and reports first message time", () => {
+    const ctx = Object.assign(Object.create(chatSections,), {
+      groupedMessages: [
+        msg("m1", "s1",),
+        { ...msg("m2", "s1",), created_at: "2024-01-01T12:30:00Z", },
+        msg("m3", "s2",),
+      ],
+    },);
+    const meta = (chatSections as any).sectionDividerMeta.call(ctx, "s1",);
+    expect(meta.count,).toBe(2,);
+    expect(meta.startTime,).toBe("2024-01-01T00:00:00Z",);
+  });
+
+  test("empty section has zero count and null start", () => {
+    const ctx = Object.assign(Object.create(chatSections,), { groupedMessages: [], },);
+    const meta = (chatSections as any).sectionDividerMeta.call(ctx, "s1",);
+    expect(meta,).toEqual({ count: 0, startTime: null, },);
+  });
+
+  test("formatSectionTime renders HH:MM", () => {
+    const ctx = Object.create(chatSections,);
+    expect((chatSections as any).formatSectionTime.call(ctx, "2024-01-01T14:32:00Z",),).toMatch(/\d{2}:\d{2}/,);
+    expect((chatSections as any).formatSectionTime.call(ctx, null,),).toBe("",);
+    expect((chatSections as any).formatSectionTime.call(ctx, "not-a-date",),).toBe("",);
+  });
+});
+
+describe("chatSectionsNav.bulkAssignToSection", () => {
+  test("posts assign-all and reloads stream + sections", async () => {
+    let loaded = 0;
+    const ctx = Object.assign(Object.create(chatSectionsNav,), {
+      activeChat: "chat-1",
+      loadMessages: async () => {
+        loaded += 1;
+      },
+      loadSections: async () => {
+        loaded += 1;
+      },
+    },);
+    await (chatSectionsNav as any).bulkAssignToSection.call(ctx, "s1",);
+    expect(fetchCalls.at(-1,)?.url,).toBe("/api/chats/chat-1/sections/s1/assign-all",);
+    expect(loaded,).toBe(2,);
+  });
+
+  test("no-op without active chat", async () => {
+    const calls = fetchCalls.length;
+    const ctx = Object.create(chatSectionsNav,);
+    await (chatSectionsNav as any).bulkAssignToSection.call(ctx, "s1",);
+    expect(fetchCalls.length,).toBe(calls,);
+  });
+});
+
+describe("chatSectionsNav.insertNarrative", () => {
+  test("posts narrative and reloads stream", async () => {
+    let loaded = 0;
+    const ctx = Object.assign(Object.create(chatSectionsNav,), {
+      activeChat: "chat-1",
+      loadMessages: async () => {
+        loaded += 1;
+      },
+    },);
+    await (chatSectionsNav as any).insertNarrative.call(ctx, "s1", "The party rides north.",);
+    expect(fetchCalls.at(-1,)?.url,).toBe("/api/chats/chat-1/sections/s1/narrative",);
+    expect(loaded,).toBe(1,);
+  });
+
+  test("no-op on empty text", async () => {
+    const calls = fetchCalls.length;
+    const ctx = Object.assign(Object.create(chatSectionsNav,), { activeChat: "chat-1", },);
+    await (chatSectionsNav as any).insertNarrative.call(ctx, "s1", emptyNarrative,);
+    expect(fetchCalls.length,).toBe(calls,);
+  });
+});
+
+describe("chatSectionsNav.transition + narrative transfer", () => {
+  test("setTransitionType stores the pick", () => {
+    const ctx = Object.create(chatSectionsNav,);
+    (chatSectionsNav as any).setTransitionType.call(ctx, "teleport",);
+    expect(ctx._transitionType,).toBe("teleport",);
+  });
+
+  test("transfer with narrative type inserts narrative and clears text", async () => {
+    const narratives: string[] = [];
+    const ctx = Object.assign(Object.create(chatSectionsNav,), {
+      activeChat: "chat-1",
+      _sections: [section("s1", "Forest",),],
+      _activeSectionId: null,
+      _transitionType: "narrative",
+      _narrativeText: "  Riders cross the bridge.  ",
+      _transferFx: false,
+      jumpToSection: () => {},
+      insertNarrative: async (sectionId: string, text: string,) => {
+        narratives.push(`${sectionId}:${text}`,);
+      },
+    },);
+    await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
+    expect(narratives,).toEqual(["s1:Riders cross the bridge.",],);
+    expect(ctx._narrativeText,).toBe("",);
+    expect(ctx._transferFx,).toBe(true,);
+    expect(ctx._activeSectionId,).toBe("s1",);
+  });
+
+  test("transfer without narrative text skips insertion", async () => {
+    let inserted = false;
+    const ctx = Object.assign(Object.create(chatSectionsNav,), {
+      activeChat: "chat-1",
+      _sections: [section("s1", "Forest",),],
+      _activeSectionId: null,
+      _transitionType: "narrative",
+      _narrativeText: "",
+      _transferFx: false,
+      jumpToSection: () => {},
+      insertNarrative: async () => {
+        inserted = true;
+      },
+    },);
+    await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
+    expect(inserted,).toBe(false,);
   });
 });
