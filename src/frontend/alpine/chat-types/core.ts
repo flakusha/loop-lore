@@ -117,6 +117,10 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   _chatType: "all" | "direct" | "group";
   _chatStatus: "all" | "active" | "archived";
   _chatSort: "recent" | "name" | "unread" | "pinned-first";
+  _chatWorld: string;
+  _chatMinMessages: string;
+  _chatMaxMessages: string;
+  _chatUpdatedSince: string;
   _filterParams(): string;
   applyChatFilters(): Promise<void>;
   _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];

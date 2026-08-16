@@ -13,6 +13,10 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   _chatType: "all",
   _chatStatus: "all",
   _chatSort: "recent",
+  _chatWorld: "",
+  _chatMinMessages: "",
+  _chatMaxMessages: "",
+  _chatUpdatedSince: "",
 
   /** Serialize the active filters (plus pagination) into /api/v1/chats query params. */
   _filterParams(): string {
@@ -22,6 +26,10 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     if (this._chatStatus === "active") { params.set("archived", "false",); }
     if (this._chatStatus === "archived") { params.set("archived", "true",); }
     if (this._chatSort && this._chatSort !== "recent") { params.set("sort", this._chatSort,); }
+    if (this._chatWorld) { params.set("world", this._chatWorld,); }
+    if (this._chatMinMessages) { params.set("minMessages", this._chatMinMessages,); }
+    if (this._chatMaxMessages) { params.set("maxMessages", this._chatMaxMessages,); }
+    if (this._chatUpdatedSince) { params.set("updatedSince", this._chatUpdatedSince,); }
     return params.toString();
   },
 

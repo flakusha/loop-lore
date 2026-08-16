@@ -28,6 +28,9 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'audit' }" @click="showTab('audit')">
           Audit
         </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'review' }" @click="showTab('review')">
+          Review
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'models' }" @click="showTab('models')">
           Models
         </button>
@@ -50,14 +53,28 @@
 
       <!-- Overview Tab -->
       <div x-show="activeTab === 'overview'">
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); padding: var(--space-6)">
-          <div class="admin-stat-card">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-4); padding: var(--space-6)">
+          <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('users')">
             <div class="admin-stat-value" x-text="stats.users">0</div>
             <div class="admin-stat-label">Users</div>
+            <div
+              class="admin-stat-delta"
+              x-text="'+' + stats.deltas.users + ' today'"
+              x-show="stats.deltas.users > 0"
+              style="font-size: 11px; color: var(--color-success, #28a745)"
+            >
+            </div>
           </div>
-          <div class="admin-stat-card">
+          <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('chats')">
             <div class="admin-stat-value" x-text="stats.chats">0</div>
             <div class="admin-stat-label">Chats</div>
+            <div
+              class="admin-stat-delta"
+              x-text="'+' + stats.deltas.chats + ' today'"
+              x-show="stats.deltas.chats > 0"
+              style="font-size: 11px; color: var(--color-success, #28a745)"
+            >
+            </div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.messages">0</div>
@@ -67,17 +84,56 @@
             <div class="admin-stat-value" x-text="stats.characters">0</div>
             <div class="admin-stat-label">Characters</div>
           </div>
-          <div class="admin-stat-card">
+          <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('chats')">
             <div class="admin-stat-value" x-text="stats.assets">0</div>
             <div class="admin-stat-label">Assets</div>
+            <div
+              class="admin-stat-delta"
+              x-text="'+' + stats.deltas.assets + ' today'"
+              x-show="stats.deltas.assets > 0"
+              style="font-size: 11px; color: var(--color-success, #28a745)"
+            >
+            </div>
           </div>
-          <div class="admin-stat-card">
+          <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('worlds')">
             <div class="admin-stat-value" x-text="stats.worlds">0</div>
             <div class="admin-stat-label">Worlds</div>
+            <div
+              class="admin-stat-delta"
+              x-text="'+' + stats.deltas.worlds + ' today'"
+              x-show="stats.deltas.worlds > 0"
+              style="font-size: 11px; color: var(--color-success, #28a745)"
+            >
+            </div>
           </div>
         </div>
-        <div style="padding: 0 var(--space-6) var(--space-6)" x-show="recentEntries.length > 0">
+        <div style="padding: 0 var(--space-6) var(--space-6)">
           <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Activity</h3>
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3)">
+            <input
+              class="form-input"
+              style="font-size: 12px; max-width: 240px"
+              placeholder="Filter by text…"
+              x-model="overviewActivityFilter"
+              @input.debounce.500ms="loadOverview()"
+            />
+            <select
+              class="form-input"
+              style="font-size: 12px; max-width: 180px"
+              x-model="overviewActivityType"
+              @change="loadOverview()"
+            >
+              <option value="">All event types</option>
+              <option value="auth">Auth</option>
+              <option value="chat">Chat</option>
+              <option value="admin">Admin</option>
+              <option value="nsfw">NSFW</option>
+              <option value="system">System</option>
+            </select>
+          </div>
+          <div x-show="recentEntries.length === 0" style="font-size: 13px; color: var(--text-secondary, #6c757d)">
+            No activity yet.
+          </div>
           <template x-for="e in recentEntries" :key="e.id">
             <div style="padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
               <span x-text="formatDate(e.created_at)"></span>
@@ -413,6 +469,90 @@
       </div>
 
       <!-- Audit Tab -->
+      <!-- Review Tab -->
+      <div x-show="activeTab === 'review'">
+        <div style="padding: var(--space-6)">
+          <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
+            <h3 style="font-size: 16px; font-weight: 600; margin-right: auto">Content Review</h3>
+            <select
+              class="form-input"
+              style="font-size: 12px; max-width: 160px"
+              x-model="reviewStatus"
+              @change="loadReview()"
+            >
+              <option value="pending">Pending</option>
+              <option value="under_review">Under review</option>
+              <option value="resolved">Resolved</option>
+              <option value="dismissed">Dismissed</option>
+              <option value="upheld">Upheld</option>
+            </select>
+            <button class="btn btn-primary btn-xs" @click="loadReview()" :disabled="loadingReview">Refresh</button>
+          </div>
+          <!-- Stats cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-4)">
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" x-text="reviewStats.pending">0</div>
+              <div class="admin-stat-label">Pending</div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" x-text="reviewStats.total">0</div>
+              <div class="admin-stat-label">Total flags</div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" x-text="reviewStats.falsePositiveRate + '%'">0</div>
+              <div class="admin-stat-label">False positive</div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" x-text="reviewStats.dismissed">0</div>
+              <div class="admin-stat-label">Dismissed</div>
+            </div>
+          </div>
+          <div x-show="loadingReview" class="empty-state" style="padding: var(--space-8)">
+            <div class="icon">⏳</div>
+            <div class="title">Loading review queue…</div>
+          </div>
+          <template x-if="!loadingReview">
+            <div>
+              <div
+                x-show="reviewFlags.length === 0"
+                style="font-size: 13px; color: var(--text-secondary, #6c757d); padding: var(--space-4)"
+              >
+                No flags in this queue.
+              </div>
+              <template x-for="f in reviewFlags" :key="f.id">
+                <div style="padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
+                  <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap">
+                    <span style="font-weight: 500" x-text="f.contentType + ' · ' + f.contentId.slice(0, 8)"></span>
+                    <span
+                      x-text="f.status"
+                      style="font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--bg-secondary, #f0f0f0)"
+                    ></span>
+                    <span style="color: var(--text-secondary, #6c757d)" x-text="f.flagReason"></span>
+                  </div>
+                  <div
+                    x-show="f.description"
+                    style="margin: 4px 0; color: var(--text-secondary, #6c757d)"
+                    x-text="f.description"
+                  >
+                  </div>
+                  <div style="display: flex; gap: var(--space-2); align-items: center; margin-top: 6px">
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; flex: 1; max-width: 280px"
+                      placeholder="Resolution note…"
+                      x-model="reviewResolution[f.id]"
+                    />
+                    <button class="btn btn-success btn-xs" @click="resolveFlag(f.id, 'resolved')">Keep</button>
+                    <button class="btn btn-warning btn-xs" @click="resolveFlag(f.id, 'upheld')">Upheld</button>
+                    <button class="btn btn-danger btn-xs" @click="resolveFlag(f.id, 'dismissed')">Dismiss</button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+
       <div x-show="activeTab === 'audit'">
         <div style="padding: var(--space-6)">
           <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap">
@@ -929,6 +1069,84 @@
                   </div>
                 </div>
                 <button class="btn btn-primary btn-xs" @click="saveNsfwConfig()">Save NSFW Policy</button>
+              </div>
+            </div>
+            <!-- Danger Zone Section -->
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3); color: var(--color-danger, #dc3545)">
+                Danger Zone
+              </h3>
+              <div style="display: grid; gap: var(--space-4)">
+                <!-- Purge audit log -->
+                <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                  <div style="font-size: 13px; font-weight: 500">Purge Audit Log</div>
+                  <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin: 2px 0 var(--space-2)">
+                    Permanently delete all audit log entries. Type <code>PURGE</code> to confirm.
+                  </div>
+                  <div style="display: flex; gap: var(--space-2); align-items: center">
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; max-width: 160px"
+                      placeholder="PURGE"
+                      x-model="dangerConfirm.purge"
+                    />
+                    <button
+                      class="btn btn-danger btn-xs"
+                      :disabled="dangerConfirm.purge !== 'PURGE' || dangerBusy.purge"
+                      @click="runDangerAction('purge')"
+                    >
+                      <span x-show="!dangerBusy.purge">Purge</span><span x-show="dangerBusy.purge">…</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Reset settings -->
+                <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                  <div style="font-size: 13px; font-weight: 500">Reset System Settings</div>
+                  <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin: 2px 0 var(--space-2)">
+                    Restore all system config keys to defaults. Type <code>RESET</code> to confirm.
+                  </div>
+                  <div style="display: flex; gap: var(--space-2); align-items: center">
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; max-width: 160px"
+                      placeholder="RESET"
+                      x-model="dangerConfirm.reset"
+                    />
+                    <button
+                      class="btn btn-danger btn-xs"
+                      :disabled="dangerConfirm.reset !== 'RESET' || dangerBusy.reset"
+                      @click="runDangerAction('reset')"
+                    >
+                      <span x-show="!dangerBusy.reset">Reset</span><span x-show="dangerBusy.reset">…</span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Factory reset -->
+                <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--color-danger, #dc3545)">
+                  <div style="font-size: 13px; font-weight: 500; color: var(--color-danger, #dc3545)">
+                    Factory Reset
+                  </div>
+                  <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin: 2px 0 var(--space-2)">
+                    Wipe ALL data (chats, messages, worlds, assets, users) and re-seed a minimal admin. Type <code
+                    >DELETE ALL</code> to confirm.
+                  </div>
+                  <div style="display: flex; gap: var(--space-2); align-items: center">
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; max-width: 200px"
+                      placeholder="DELETE ALL"
+                      x-model="dangerConfirm.factory"
+                    />
+                    <button
+                      class="btn btn-danger btn-xs"
+                      :disabled="dangerConfirm.factory !== 'DELETE ALL' || dangerBusy.factory"
+                      @click="runDangerAction('factory')"
+                    >
+                      <span x-show="!dangerBusy.factory">Factory Reset</span><span x-show="dangerBusy.factory"
+                      >…</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
