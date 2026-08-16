@@ -55,11 +55,25 @@ export interface PluginContext {
 
 // ── Extension Points ─────────────────────────────────────────
 
+/**
+ * Per-request context passed to tool handlers by the generation tool loop.
+ * Optional for plugin tools; builtin tools (e.g. memory writes) use it to
+ * reach the database and the generating actor/chat.
+ */
+export interface ToolExecutionContext {
+  db: Kysely<DB>;
+  actorId: string;
+  chatId: string;
+}
+
 export interface ToolDefinition {
   name: string;
   description: string;
   parameters: Record<string, unknown>; // JSON Schema
-  handler: (params: Record<string, unknown>) => Promise<ToolResult>;
+  handler: (
+    params: Record<string, unknown>,
+    ctx?: ToolExecutionContext,
+  ) => Promise<ToolResult>;
   permissions?: string[];
   timeoutMs?: number;
   sandboxed?: boolean;
