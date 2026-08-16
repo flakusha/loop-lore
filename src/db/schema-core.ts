@@ -713,3 +713,23 @@ export interface CharacterInternalTraits {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── model_capabilities ────────────────────────────────────────────
+export interface ModelCapabilities {
+  id: Generated<string>;
+  provider_id: string;
+  model_id: string;
+  context_window: number | null;
+  max_output: number | null;
+  supports_tools: number | null;
+  supports_vision: number | null;
+  supports_thinking: number | null;
+  modalities: string | null;
+  param_size: string | null;
+  owned_by: string | null;
+  user_override: Generated<number>;
+  notes: string | null;
+  last_seen: string;
+  created_at: string;
+  updated_at: string;
+}

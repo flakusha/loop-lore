@@ -5,6 +5,7 @@ import { auditRoutes, } from "./audit";
 import { chatsRoutes, } from "./chats";
 import { dangerZoneRoutes, } from "./danger-zone";
 import { keyRotationRoutes, } from "./key-rotation";
+import { modelCapabilitiesRoutes, } from "./model-capabilities";
 import { modelRolesRoutes, } from "./model-roles";
 import { providersRoutes, } from "./providers";
 import { reviewStatsRoutes, } from "./review-stats";
@@ -36,9 +37,10 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
     new Elysia({ name: "admin", },)
       .use(usersRoutes(opts, prefix,),)
       .use(statsRoutes(opts, prefix,),)
-      .use(providersRoutes(prefix,),)
+      .use(providersRoutes({ database: opts.database, }, prefix,),)
       .use(reviewStatsRoutes(opts, prefix,),)
       .use(modelRolesRoutes(opts, prefix,),)
+      .use(modelCapabilitiesRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
       .use(systemConfigRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
