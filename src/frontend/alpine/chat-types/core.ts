@@ -117,6 +117,13 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   fireStartupQuickReplies(): Promise<void>;
   fireAutoQuickReplies(trigger: "user" | "ai",): Promise<void>;
   saveQuickReplies(): Promise<void>;
+  // Proactive messaging scheduler (chat-proactive.ts) — polls for due messages.
+  _proactiveTimer: ReturnType<typeof setInterval> | null;
+  _proactiveInFlight: boolean;
+  _proactiveLastSendAt: number;
+  startProactiveScheduler(): void;
+  stopProactiveScheduler(): void;
+  tickProactive(): Promise<void>;
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;

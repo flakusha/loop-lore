@@ -193,6 +193,11 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
       if (typeof saveTraits === "function") {
         await saveTraits(characterId,);
       }
+      // Save proactive messaging config (when inside a chat context)
+      const saveProactive = (globalThis as Record<string, unknown>).saveProactiveConfig;
+      if (typeof saveProactive === "function") {
+        await saveProactive(characterId,);
+      }
       showToast("success", "Character saved",);
       location.assign("/views/characters",);
     } else {

@@ -7,6 +7,7 @@
  * Loaded by characters.ts page. Loads proactive messaging config
  * from the character edit form (frequency, quiet hours, enabled).
  */
+import { jsonBody, } from "../alpine/json";
 import type { feFetch, } from "../fe-fetch";
 
 // Shared feFetch — caller passes it in to avoid circular import
@@ -40,4 +41,40 @@ export function initProactive(fetchFn: typeof feFetch,) {
       if (qe && data.quietHoursEnd) { qe.value = data.quietHoursEnd; }
     }
   } catch { /* no config yet */ }
+};
+
+// ── Proactive Messaging: save on form submit ──────────────────
+
+(globalThis as Record<string, unknown>).saveProactiveConfig = async function(actorId: string,) {
+  const params = new URLSearchParams(location.search,);
+  const chatId = params.get("chatid",) || params.get("chatId",);
+  if (!chatId) { return false; }
+
+  const freq = document.querySelector<HTMLSelectElement>("#proactive-frequency",)?.value;
+  const enabled = document.querySelector<HTMLInputElement>("#proactive-enabled",)?.checked;
+  const qs = document.querySelector<HTMLInputElement>("#proactive-quiet-start",)?.value;
+  const qe = document.querySelector<HTMLInputElement>("#proactive-quiet-end",)?.value;
+
+  const status = document.querySelector<HTMLElement>("#proactive-status",);
+  try {
+    const res = await _feFetch(`/api/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({
+        frequency: freq ?? "normal",
+        enabled: enabled !== false,
+        quietHoursStart: qs || null,
+        quietHoursEnd: qe || null,
+      },),
+    },);
+    if (res.ok) {
+      if (status) { status.textContent = "Proactive messaging updated."; }
+      return true;
+    }
+    if (status) { status.textContent = "Failed to save proactive messaging."; }
+    return false;
+  } catch {
+    if (status) { status.textContent = "Failed to save proactive messaging."; }
+    return false;
+  }
 };
