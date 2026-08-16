@@ -945,6 +945,110 @@
                 </div>
               </div>
             </div>
+            <!-- Model Capabilities Registry -->
+            <div style="margin-top: var(--space-6)">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">Model Capabilities Registry</h3>
+                <div style="display: flex; gap: var(--space-2); align-items: center">
+                  <input
+                    class="form-input"
+                    style="font-size: 12px; max-width: 160px; padding: 3px 8px"
+                    placeholder="Filter by provider…"
+                    x-model="capabilityFilter"
+                    @input.debounce.500ms="loadModelCapabilities()"
+                  />
+                  <button
+                    class="btn btn-secondary btn-xs"
+                    @click="loadModelCapabilities()"
+                    :disabled="loadingCapabilities"
+                  >
+                    Refresh
+                  </button>
+                </div>
+              </div>
+              <div x-show="loadingCapabilities" style="font-size: 12px; color: var(--text-secondary)">Loading…</div>
+              <div x-show="!loadingCapabilities && modelCapabilities.length === 0" style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)">
+                No models registered yet. Models are auto-populated on provider rescan.
+              </div>
+              <div style="display: grid; gap: var(--space-2)">
+                <template x-for="cap in modelCapabilities" :key="cap.providerId + '/' + cap.modelId">
+                  <div
+                    style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)"
+                    :style="cap.isStale ? 'opacity: 0.6' : ''"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-1)">
+                      <div style="display: flex; align-items: center; gap: var(--space-2)">
+                        <span style="font-size: 11px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px" x-text="cap.providerId"></span>
+                        <strong style="font-size: 13px" x-text="cap.modelId"></strong>
+                        <span
+                          x-show="cap.userOverride"
+                          style="font-size: 10px; padding: 1px 5px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px; color: #856404"
+                        >override</span>
+                        <span
+                          x-show="cap.isStale"
+                          style="font-size: 10px; padding: 1px 5px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 10px; color: #721c24"
+                        >stale</span>
+                      </div>
+                      <div style="display: flex; gap: 4px">
+                        <button
+                          class="btn btn-secondary btn-xs"
+                          @click="editingCapability = editingCapability === cap.providerId + '/' + cap.modelId ? null : cap.providerId + '/' + cap.modelId"
+                          x-text="editingCapability === cap.providerId + '/' + cap.modelId ? 'Close' : 'Edit'"
+                        ></button>
+                        <button
+                          class="btn btn-secondary btn-xs"
+                          x-show="cap.userOverride"
+                          @click="clearCapabilityOverride(cap.providerId, cap.modelId)"
+                        >Clear Override</button>
+                      </div>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--text-secondary, #6c757d)">
+                      <span x-show="cap.contextWindow" x-text="'ctx: ' + formatCtxWindow(cap.contextWindow)"></span>
+                      <span x-show="cap.maxOutput" x-text="'max: ' + formatCtxWindow(cap.maxOutput)"></span>
+                      <span x-show="cap.supportsTools" style="color: var(--color-success, #28a745)">tools</span>
+                      <span x-show="cap.supportsVision" style="color: var(--color-success, #28a745)">vision</span>
+                      <span x-show="cap.supportsThinking" style="color: var(--color-success, #28a745)">thinking</span>
+                      <span x-show="cap.modalities && cap.modalities.length" x-text="cap.modalities.join(', ')"></span>
+                      <span x-show="cap.paramSize" x-text="cap.paramSize"></span>
+                      <span x-show="cap.ownedBy" x-text="'by ' + cap.ownedBy"></span>
+                    </div>
+                    <div x-show="cap.notes" style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-style: italic" x-text="cap.notes"></div>
+                    <!-- Edit Override Panel -->
+                    <div
+                      x-show="editingCapability === cap.providerId + '/' + cap.modelId"
+                      x-cloak
+                      style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
+                    >
+                      <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Set Override</div>
+                      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2)">
+                        <div>
+                          <label style="font-size: 11px; color: var(--text-secondary)">Context Window</label>
+                          <input class="form-input" style="font-size: 12px; padding: 3px 6px" type="number" :placeholder="cap.contextWindow ?? 'auto'" x-ref="ctxWindow" />
+                        </div>
+                        <div>
+                          <label style="font-size: 11px; color: var(--text-secondary)">Max Output</label>
+                          <input class="form-input" style="font-size: 12px; padding: 3px 6px" type="number" :placeholder="cap.maxOutput ?? 'auto'" x-ref="maxOutput" />
+                        </div>
+                        <div>
+                          <label style="font-size: 11px; color: var(--text-secondary)">Notes</label>
+                          <input class="form-input" style="font-size: 12px; padding: 3px 6px" type="text" :placeholder="cap.notes ?? ''" x-ref="capNotes" />
+                        </div>
+                      </div>
+                      <div style="margin-top: var(--space-2)">
+                        <button
+                          class="btn btn-primary btn-xs"
+                          @click="saveCapabilityOverride(cap.providerId, cap.modelId, {
+                            contextWindow: $refs.ctxWindow.value ? Number($refs.ctxWindow.value) : null,
+                            maxOutput: $refs.maxOutput.value ? Number($refs.maxOutput.value) : null,
+                            notes: $refs.capNotes.value || null,
+                          })"
+                        >Save Override</button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
           </div>
         </template>
       </div>
