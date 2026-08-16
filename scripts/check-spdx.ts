@@ -5,18 +5,22 @@
  * SPDX license header guard — reads REUSE.toml for per-directory rules.
  *
  * Parses [[annotations]] blocks from REUSE.toml, converts path globs to
- * regex matchers, and validates that each staged file's first-line
+ * regex matchers, and validates that each checked file's first-line
  * SPDX-License-Identifier matches the rule for its path.
  *
  * FileCopyrightText is also checked (must contain "Loop Lore Contributors").
  *
  * Modes:
- *   - Default (non-blocking): warns about missing/invalid headers, exits 0.
+ *   - Default (no args): scans the whole tracked tree (git ls-files).
+ *   - --staged: checks only staged files (pre-commit hook fast path).
+ *   - Explicit paths: checks exactly those files.
+ *   - Non-blocking: warns about missing/invalid headers, exits 0.
  *   - SPDX_CHECK=1 (blocking): exits 1 on any violation.
  *
  * Usage:
- *   bun run scripts/check-spdx.ts                   # staged files, warn-only
- *   SPDX_CHECK=1 bun run scripts/check-spdx.ts      # staged files, blocking
+ *   bun run scripts/check-spdx.ts                   # whole tree, warn-only
+ *   bun run scripts/check-spdx.ts --staged          # staged files, warn-only
+ *   SPDX_CHECK=1 bun run scripts/check-spdx.ts --staged  # staged, blocking
  *   bun run scripts/check-spdx.ts src/foo.ts docs/bar.md  # explicit files
  */
 import { $, } from "bun";
@@ -189,6 +193,16 @@ async function getStagedFiles(): Promise<string[]> {
     .filter((f,) => !isExcluded(f,));
 }
 
+/** List every tracked file (git ls-files) with a checkable extension. */
+async function getTrackedFiles(): Promise<string[]> {
+  const result = await $`git ls-files`.text();
+  return result
+    .split("\n",)
+    .filter((f,) => f.trim().length > 0)
+    .filter(hasCheckableExtension,)
+    .filter((f,) => !isExcluded(f,));
+}
+
 // ── Main ─────────────────────────────────────────────────────────
 
 const BLOCKING = process.env.SPDX_CHECK === "1";
@@ -211,10 +225,13 @@ async function main() {
   }
 
   // Collect files to check
-  const explicitFiles = process.argv.slice(2,);
+  const explicitFiles = process.argv.slice(2,).filter((a,) => a !== "--staged");
+  const useStaged = process.argv.includes("--staged",);
   const files = explicitFiles.length > 0
     ? explicitFiles.filter(hasCheckableExtension,).filter((f,) => !isExcluded(f,))
-    : await getStagedFiles();
+    : useStaged
+    ? await getStagedFiles()
+    : await getTrackedFiles();
 
   if (files.length === 0) {
     console.log("[spdx] No source files to check.",);
