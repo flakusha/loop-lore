@@ -1,6 +1,6 @@
 # EPIC: Chat/Group Chat Transfer & Location Change Mechanics
 
-**Status:** 🟡 Partial — foundation exists (search, join, transfer endpoints)
+**Status:** 🟡 Partial — foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open
 **Priority:** P2-B
 **Effort:** High
 **Type:** Feature Epic
@@ -28,7 +28,8 @@ Chat location change, party travel, and multi-location chat spanning. Covers:
 | `GET /api/chats/search`          | ✅ Search chats         | `routes/chat-search.ts`                                |
 | Transition detection             | ✅ Regex-based          | `chat/transitions.ts`                                  |
 | `ChatTransition.location_change` | ✅ Type exists          | `chat/types.ts`                                        |
-| Chat sections (multi-location)   | ❌ No DB table          | Design only (`TASK-chat-sectioning-multi-location.md`) |
+| Chat sections (multi-location)   | ✅ DB table + CRUD      | `routes/chat-sections/` (access/assign/create/list/remove/reorder/update) + `schema-core.ts` |
+| Location change event log        | ✅ Migration 040        | `routes/chat-search/log.ts` + migration `040_chat_location_events.ts` |
 | Party join/leave                 | ❌ No logic             | —                                                      |
 | VN-driven location transitions   | ❌ No integration       | —                                                      |
 

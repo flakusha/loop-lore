@@ -14,7 +14,6 @@
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | 📝 Draft | Epic: Assistant Creative Studio — Workflow Templates | High (MVP scoped, post-Gate C) | Large | 32 | [epic-assistant-creative-studio-workflows.md](/.plan/epics/epic-assistant-creative-studio-workflows.md) |
-| 📝 Draft | Epic: Chat Privacy | Medium | Medium | 4 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | 📝 Draft | Epic: DB as Cold Storage for Extreme-Performance API-Heavy Workloads | Low (speculative — "far-fetched" scenario, only justified by measured need) | Large | 0 | [epic-db-cold-storage-high-perf.md](/.plan/epics/epic-db-cold-storage-high-perf.md) |
 | 📝 Draft | Epic: DB Content Versioning & Migrations Reconciliation | High | Medium | 5 | [epic-db-content-versioning.md](/.plan/epics/epic-db-content-versioning.md) |
@@ -27,7 +26,6 @@
 | 📝 Draft | Epic: Time Scale | High | Medium | 8 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
 | 📝 Draft | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
-| ⬜ Not Started | Admin Panel & Dashboard | Medium | Unknown | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Unknown | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | ⬜ Not Started | API Routes | High | Medium | 0 | [epic-api-routes.md](/.plan/epics/epic-api-routes.md) |
 | ⬜ Not Started | API/Library Distribution Mode | High | High | 25 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
@@ -119,6 +117,7 @@
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
 | ✅ Complete | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | ✅ Complete | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
+| 🟡 Partial — backend routes + frontend shell shipped (11 tabs); Content Review queue + Revisions + spec gaps open | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Unknown | API Governance — Epic | Unknown | Unknown | 36 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
@@ -127,8 +126,8 @@
 | 🟡 Partial (core CRUD + comments + follows + moderation built) | Blog System | Medium | High | 29 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
 | 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy) | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
-| ✅ Complete (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`) | Chat Lifecycle, Transitions & Moderation | High | High | 8 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
-| 🟡 Partial — foundation exists (search, join, transfer endpoints) | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 20 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
+| 🟡 Core Complete — lifecycle/context/transitions shipped (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`); discovery + moderation remainder open (see task list) | Chat Lifecycle, Transitions & Moderation | High | High | 7 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
+| 🟡 Partial — foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 20 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
 | 🟡 Permanently Ongoing | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
 | 🟡 Partial — unified ComfyUI + sd-server image editing, node discovery (comfyui/http/sdserver), workflow templates + LoRA shipped; GGUF model loading pending | ComfyUI Plugin & Workflow Templates | High | High | 24 | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md) |
 | Not Started | Communications Integrations — Quick Reference | Medium | High | 0 | [epic-communications-integrations-quickref.md](/.plan/epics/epic-communications-integrations-quickref.md) |
@@ -149,6 +148,7 @@
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | 🔧 In Progress | Epic: API Versioning (v1/v2+) | High | Medium | 4 | [epic-api-versioning.md](/.plan/epics/epic-api-versioning.md) |
 | 🟡 Draft | Epic: Chat Context Optimization | High | High | 0 | [epic-chat-context-optimization.md](/.plan/epics/epic-chat-context-optimization.md) |
+| 📝 Draft — spec Final (`docs/spec/chat-privacy.md`); partial implementation (GM notes, chat `public` flag); privacy/purpose columns + steering-notes API not implemented | Epic: Chat Privacy | Medium | Medium | 9 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14) | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | Unknown | Epic: Database Backup & Recovery Infrastructure | Unknown | Unknown | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Unknown | Epic: Deployment Infrastructure (Docker & Bare Metal) | Unknown | Unknown | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
@@ -253,17 +253,6 @@ Conversation analytics and observability dashboard. Covers per-chat cost trackin
 - **Type:** Feature Epic / Configuration
 - **Tags:** assistant, creative-studio, workflows, templates, intent-detection, yaml, scenario-source
 - **File:** `.plan/epics/epic-assistant-creative-studio-workflows.md`
-
-### Epic: Chat Privacy
-
-- **Status:** 📝 Draft
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** chat, privacy, encryption, moderation, access-control
-- **File:** `.plan/epics/epic-chat-privacy.md`
-
-Chat privacy specification — covers message encryption, access control, privacy settings, and moderation hooks for chat interactions.
 
 ### Epic: Conversation Branching
 
@@ -392,14 +381,6 @@ Time scale system — manage game time progression, day/night cycles, seasons, a
 - **File:** `.plan/epics/epic-3d-generation.md`
 
 Long-horizon vision for 3D asset generation and rendering. This epic covers:
-
-### Admin Panel & Dashboard
-
-- **Status:** ⬜ Not Started
-- **Priority:** Medium
-- **Effort:** Unknown
-- **Type:** Feature
-- **File:** `.plan/epics/epic-frontend-admin.md`
 
 ### Age Gate & Content Warnings
 
@@ -1219,6 +1200,14 @@ Full internationalization of loop-lore UI. Infrastructure complete (custom i18n 
 - **Tags:** data, integrity, acid, backend, config, deployment
 - **File:** `.plan/epics/epic-data-integrity-phase1.md`
 
+### Admin Panel & Dashboard
+
+- **Status:** 🟡 Partial — backend routes + frontend shell shipped (11 tabs); Content Review queue + Revisions + spec gaps open
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Frontend Epic
+- **File:** `.plan/epics/epic-frontend-admin.md`
+
 ### Anonymity & Decentralization — Epic
 
 - **Status:** Unknown
@@ -1296,7 +1285,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Chat Lifecycle, Transitions & Moderation
 
-- **Status:** ✅ Complete (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`)
+- **Status:** 🟡 Core Complete — lifecycle/context/transitions shipped (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`); discovery + moderation remainder open (see task list)
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1307,7 +1296,7 @@ Covers the full chat lifecycle beyond raw message exchange: context management
 
 ### Chat/Group Chat Transfer & Location Change Mechanics
 
-- **Status:** 🟡 Partial — foundation exists (search, join, transfer endpoints)
+- **Status:** 🟡 Partial — foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open
 - **Priority:** P2-B
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1496,6 +1485,17 @@ Introduce explicit API versioning (`/api/v1/`, `/api/v2/`) so breaking changes
 - **File:** `.plan/epics/epic-chat-context-optimization.md`
 
 Optimize how loop-lore assembles, budgets, and compresses the LLM context window.
+
+### Epic: Chat Privacy
+
+- **Status:** 📝 Draft — spec Final (`docs/spec/chat-privacy.md`); partial implementation (GM notes, chat `public` flag); privacy/purpose columns + steering-notes API not implemented
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** chat, privacy, encryption, moderation, access-control
+- **File:** `.plan/epics/epic-chat-privacy.md`
+
+Chat privacy specification — covers message encryption, access control, privacy settings, and moderation hooks for chat interactions. Spec: `docs/spec/chat-privacy.md` (Final, authoritative).
 
 ### Epic: Configuration Extensions — Extensible Enumerations
 
