@@ -75,49 +75,72 @@ export function extractEvents({
 }: ExtractEventsOpts,): WorldEvent[] {
   const events: WorldEvent[] = [];
   const timestamp = new Date().toISOString();
-  const lower = messageContent.toLowerCase();
 
-  // Location change detection
+  const locationEvent = detectLocationChange(messageContent, actorId, currentLocationId ?? undefined, timestamp,);
+  if (locationEvent) { events.push(locationEvent,); }
+
+  const timeEvent = detectTimeAdvancement(messageContent, actorId, timestamp,);
+  if (timeEvent) { events.push(timeEvent,); }
+
+  const combatEvent = detectCombat(messageContent, actorId, timestamp,);
+  if (combatEvent) { events.push(combatEvent,); }
+
+  const npcEvent = detectNpcStateChange(messageContent, actorId, timestamp,);
+  if (npcEvent) { events.push(npcEvent,); }
+
+  const itemEvents = detectItemTransfers(messageContent, actorId, currentLocationId ?? undefined, timestamp,);
+  events.push(...itemEvents,);
+
+  const loreEvent = detectLoreUpdate(messageContent, actorId, timestamp,);
+  if (loreEvent) { events.push(loreEvent,); }
+
+  return events;
+}
+
+// ── Per-type detection helpers ──────────────────────────────
+
+function detectLocationChange(
+  content: string,
+  actorId: string,
+  currentLocationId: string | undefined,
+  timestamp: string,
+): WorldEvent | null {
   for (const pattern of locationPatterns) {
-    const match = pattern.exec(messageContent,);
+    const match = pattern.exec(content,);
     if (match?.[1]) {
-      events.push({
+      return {
         type: WorldEventType.LocationChange,
         actorId,
         locationId: currentLocationId ?? undefined,
         timestamp,
-        data: {
-          toLocationName: match[1].trim(),
-          fromLocationId: currentLocationId,
-          reason: "narrative",
-        },
+        data: { toLocationName: match[1].trim(), fromLocationId: currentLocationId, reason: "narrative", },
         description: `${actorId} moved to ${match[1].trim()}`,
-      },);
+      };
     }
   }
+  return null;
+}
 
-  // Time advancement detection
+function detectTimeAdvancement(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   for (const pattern of timePatterns) {
-    if (pattern.test(messageContent,)) {
-      events.push({
+    if (pattern.test(content,)) {
+      return {
         type: WorldEventType.TimeAdvancement,
         actorId,
         timestamp,
-        data: {
-          minutesAdvanced: 120, // ~2 hours default; refine with NLP later
-          newTimeOfDay: "unknown",
-          reason: "narrative time skip",
-        },
+        data: { minutesAdvanced: 120, newTimeOfDay: "unknown", reason: "narrative time skip", },
         description: "Time advanced in the narrative",
-      },);
-      break;
+      };
     }
   }
+  return null;
+}
 
-  // Combat detection
+function detectCombat(content: string, actorId: string, timestamp: string,): WorldEvent | null {
+  const lower = content.toLowerCase();
   for (const pattern of combatPatterns) {
-    if (pattern.test(messageContent,)) {
-      events.push({
+    if (pattern.test(content,)) {
+      return {
         type: WorldEventType.CombatEvent,
         actorId,
         timestamp,
@@ -130,35 +153,38 @@ export function extractEvents({
           defeated: lower.includes("defeated",) || lower.includes("killed",) || lower.includes("slain",),
         },
         description: "Combat occurred in the narrative",
-      },);
-      break;
+      };
     }
   }
+  return null;
+}
 
-  // NPC state change detection
+function detectNpcStateChange(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   for (const pattern of npcPatterns) {
-    if (pattern.test(messageContent,)) {
-      events.push({
+    if (pattern.test(content,)) {
+      return {
         type: WorldEventType.NpcStateChange,
         actorId,
         timestamp,
-        data: {
-          npcActorId: actorId,
-          changes: { mental_state: "changed", },
-        },
+        data: { npcActorId: actorId, changes: { mental_state: "changed", }, },
         description: "NPC state changed",
-      },);
-      break;
+      };
     }
   }
+  return null;
+}
 
-  // Item transfer detection
+function detectItemTransfers(
+  content: string,
+  actorId: string,
+  currentLocationId: string | undefined,
+  timestamp: string,
+): WorldEvent[] {
+  const events: WorldEvent[] = [];
   for (const pattern of itemPatterns) {
-    const match = pattern.exec(messageContent,);
+    const match = pattern.exec(content,);
     if (match?.[1]) {
       const direct = match[0].toLowerCase();
-      // The acting actor is the source when giving away or dropping an item;
-      // they are the receiver when taking/picking up/acquiring one.
       const isSource = /gives|hands|offers|passes|trades|drops|leaves|abandons|puts/.test(direct,);
       events.push({
         type: WorldEventType.ItemTransfer,
@@ -175,29 +201,23 @@ export function extractEvents({
       },);
     }
   }
+  return events;
+}
 
-  // Lore update detection (new facts about the world revealed)
+function detectLoreUpdate(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   for (const pattern of lorePatterns) {
-    if (pattern.test(messageContent,)) {
-      // Extract the sentence containing the lore
-      const sentences = messageContent.split(/[.!?]+/,);
-      const loreSentence = sentences.find((s,) => pattern.test(s,));
-      if (loreSentence) {
-        events.push({
-          type: WorldEventType.WorldLoreUpdate,
-          actorId,
-          timestamp,
-          data: {
-            newLoreEntry: loreSentence.trim(),
-            category: "narrative_revelation",
-            confidence: 0.5,
-          },
-          description: "New world lore revealed",
-        },);
-      }
-      break;
+    if (!pattern.test(content,)) { continue; }
+    const sentences = content.split(/[.!?]+/,);
+    const loreSentence = sentences.find((s,) => pattern.test(s,));
+    if (loreSentence) {
+      return {
+        type: WorldEventType.WorldLoreUpdate,
+        actorId,
+        timestamp,
+        data: { newLoreEntry: loreSentence.trim(), category: "narrative_revelation", confidence: 0.5, },
+        description: "New world lore revealed",
+      };
     }
   }
-
-  return events;
+  return null;
 }

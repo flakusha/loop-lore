@@ -94,52 +94,38 @@ export interface SceneImages {
   portraitUrl?: string;
 }
 
+/** Collect background + portrait URLs from current and next N scenes. */
+function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCount: number,): string[] {
+  const urls: string[] = [];
+  const indices = [currentIndex,];
+  for (let i = 1; i <= preloadCount; i++) {
+    if (currentIndex + i < scenes.length) { indices.push(currentIndex + i,); }
+  }
+  for (const idx of indices) {
+    const scene = scenes[idx];
+    if (scene?.backgroundUrl) { urls.push(scene.backgroundUrl,); }
+    if (scene?.portraitUrl) { urls.push(scene.portraitUrl,); }
+  }
+  return [...new Set(urls,),];
+}
+
 export async function preloadSceneImages(
   scenes: SceneImages[],
   currentIndex: number,
   preloadCount = 2,
 ): Promise<PreloadStats> {
-  const urlsToPreload: string[] = [];
+  const uniqueUrls = collectSceneUrls(scenes, currentIndex, preloadCount,);
 
-  // Current scene
-  const current = scenes[currentIndex];
-  if (current) {
-    if (current.backgroundUrl) { urlsToPreload.push(current.backgroundUrl,); }
-    if (current.portraitUrl) { urlsToPreload.push(current.portraitUrl,); }
-  }
-
-  // Next N scenes
-  for (let i = 1; i <= preloadCount; i++) {
-    const nextIndex = currentIndex + i;
-    if (nextIndex < scenes.length) {
-      const next = scenes[nextIndex];
-      if (next) {
-        if (next.backgroundUrl) { urlsToPreload.push(next.backgroundUrl,); }
-        if (next.portraitUrl) { urlsToPreload.push(next.portraitUrl,); }
-      }
-    }
-  }
-
-  // Deduplicate
-  const uniqueUrls = [...new Set(urlsToPreload,),];
-
-  // Filter out already cached
   const urlsToFetch: string[] = [];
   for (const url of uniqueUrls) {
     if (!imageCache.has(url,)) { urlsToFetch.push(url,); }
   }
 
   if (urlsToFetch.length === 0) {
-    return {
-      total: uniqueUrls.length,
-      loaded: 0,
-      failed: 0,
-      cached: uniqueUrls.length,
-    };
+    return { total: uniqueUrls.length, loaded: 0, failed: 0, cached: uniqueUrls.length, };
   }
 
   const results = await preloadImages(urlsToFetch,);
-
   let loadedCount = 0;
   let failedCount = 0;
   for (const r of results) {

@@ -116,6 +116,15 @@ export function updateSliderDisplays() {
 
 // ── Load internal traits into form ──────────────────────────
 
+/** Set slider/input values from a selector→value map. */
+function hydrateSliders(entries: Array<[string, string | number | boolean,]>, update = true,): void {
+  for (const [selector, val,] of entries) {
+    const el = document.querySelector<HTMLInputElement>(selector,);
+    if (el && val != null) { el.value = String(val,); }
+  }
+  if (update) { updateSliderDisplays(); }
+}
+
 (globalThis as Record<string, unknown>).loadInternalTraits = async function(actorId: string,) {
   try {
     const res = await _feFetch(`/api/character-internal-traits?actorId=${actorId}`,);
@@ -126,18 +135,16 @@ export function updateSliderDisplays() {
       renderAspirations();
     }
     if (data.moralDisposition) {
-      const lc = document.querySelector<HTMLInputElement>("#moral-lawful",);
-      const ge = document.querySelector<HTMLInputElement>("#moral-good",);
-      if (lc) { lc.value = String(data.moralDisposition.lawful_chaotic ?? 0,); }
-      if (ge) { ge.value = String(data.moralDisposition.good_evil ?? 0,); }
-      updateSliderDisplays();
+      hydrateSliders([
+        ["#moral-lawful", data.moralDisposition.lawful_chaotic ?? 0,],
+        ["#moral-good", data.moralDisposition.good_evil ?? 0,],
+      ],);
     }
     if (data.autonomyPreferences) {
-      const g = document.querySelector<HTMLInputElement>("#auto-group",);
-      const s = document.querySelector<HTMLInputElement>("#auto-solo",);
-      if (g) { g.value = String(data.autonomyPreferences.group_comfort ?? 0.5,); }
-      if (s) { s.value = String(data.autonomyPreferences.solo_comfort ?? 0.5,); }
-      updateSliderDisplays();
+      hydrateSliders([
+        ["#auto-group", data.autonomyPreferences.group_comfort ?? 0.5,],
+        ["#auto-solo", data.autonomyPreferences.solo_comfort ?? 0.5,],
+      ],);
     }
     if (data.copingMechanisms) {
       setVal("#cope-stress", data.copingMechanisms.stress_response,);
@@ -146,20 +153,19 @@ export function updateSliderDisplays() {
     }
     if (data.approachTendencies) {
       setVal("#approach-decision", data.approachTendencies.decision_style,);
-      const r = document.querySelector<HTMLInputElement>("#approach-risk",);
-      const ini = document.querySelector<HTMLInputElement>("#approach-initiative",);
-      if (r) { r.value = String(data.approachTendencies.risk_tolerance ?? 0.5,); }
-      if (ini) { ini.value = String(data.approachTendencies.initiative_level ?? 0.5,); }
-      updateSliderDisplays();
+      hydrateSliders([
+        ["#approach-risk", data.approachTendencies.risk_tolerance ?? 0.5,],
+        ["#approach-initiative", data.approachTendencies.initiative_level ?? 0.5,],
+      ],);
     }
     if (data.voicePatterns) {
       setVal("#voice-tics", (data.voicePatterns.verbal_tics ?? []).join(", ",),);
       setVal("#voice-vocab", data.voicePatterns.vocabulary_level,);
       setVal("#voice-structure", data.voicePatterns.sentence_structure,);
       setVal("#voice-humor", data.voicePatterns.humor_style,);
-      const em = document.querySelector<HTMLInputElement>("#voice-emotional",);
-      if (em) { em.value = String(data.voicePatterns.emotional_range ?? 0.5,); }
-      updateSliderDisplays();
+      hydrateSliders([
+        ["#voice-emotional", data.voicePatterns.emotional_range ?? 0.5,],
+      ],);
     }
   } catch { /* traits not yet created — use defaults */ }
 };
