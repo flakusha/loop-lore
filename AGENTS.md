@@ -192,9 +192,16 @@ See `.agents/references/recommendations.md` — use these:
 
 ```bash
 bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, size, context-weight, unit + e2e tests
+bun run check:report-ls  # aggregate check reports across all worktrees (flags stale)
 bun test src/        # unit tests
 E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 ```
+
+Each `bun run check` writes `.tmp/check-report.json` atomically with provenance
+(branch, gitHead, runId, mode). The pre-commit hook warns when the report is
+stale w.r.t. the tree's current HEAD; treat a stale or failed report as
+"unverified". `bun run check:report-ls` (or `./scripts/worktree.sh report`)
+aggregates report status across all worktrees.
 
 ### DB schema regeneration (required after any migration change)
 
