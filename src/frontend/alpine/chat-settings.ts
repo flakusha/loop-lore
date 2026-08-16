@@ -76,6 +76,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     }
     this._actorModels = actorModels;
     await this.loadPromptTemplate();
+    this.loadQuickReplies();
     Alpine.store("ui",).showChatSettings = true;
   },
 

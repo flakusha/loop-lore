@@ -1170,7 +1170,9 @@
     "roleUpdatedFor": "{role} role updated",
     "roleClearedFor": "{role} role cleared",
     "failedSave": "Failed to save",
-    "failedCreate": "Failed to create"
+    "failedCreate": "Failed to create",
+    "quickRepliesSaved": "Quick-reply buttons saved",
+    "quickRepliesSaveFailed": "Failed to save quick-reply buttons"
   },
   "status": {
     "characterResponding": "Character is responding...",
