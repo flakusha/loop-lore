@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema/generation.ts — Generation config type
 
 import type { AutoStartConfig, } from "./auto-start";
@@ -21,7 +24,17 @@ export interface RegexTransform {
   flags?: string;
   /** Whether this transform is active */
   enabled: boolean;
+  /**
+   * Pipeline phase this transform runs in. Phases execute in canonical order
+   * (edit-input → output → process → display) regardless of list position.
+   * Default `"output"` preserves the pre-split single-phase behavior (LLM
+   * output transformed before persistence/display).
+   */
+  phase?: RegexTransformPhase;
 }
+
+/** Pipeline phase for a regex transform. */
+export type RegexTransformPhase = "edit-input" | "output" | "process" | "display";
 
 export interface GenerationConfig {
   /** Provider configurations */
