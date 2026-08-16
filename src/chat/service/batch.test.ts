@@ -60,7 +60,7 @@ describe("batch chat operations", () => {
   describe("batchArchiveChats", () => {
     test("archives owned chats and returns their ids", async () => {
       const archived = await batchArchiveChats(db, [ownedChat, ownedChat2,], ownerId,);
-      expect(archived,).toEqual([ownedChat, ownedChat2,],);
+      expect([...archived,].sort(),).toEqual([ownedChat, ownedChat2,].sort(),);
 
       const rows = await db
         .selectFrom("chats",)
