@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Fix Unit Test Failures (7 fail, 1 error)
 
 **Status:** ⬜ Not Started

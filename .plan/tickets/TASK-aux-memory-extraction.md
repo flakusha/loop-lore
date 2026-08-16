@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: AUX LLM — Memory Extraction
 
 **Status:** 🟡 Partial — extraction implemented but wired to MAIN provider with `model: "default"` bug; not on auxiliary role (2026-08-01)

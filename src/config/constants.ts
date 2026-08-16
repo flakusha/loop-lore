@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** Centralized runtime paths. Single source of truth — import from here, not hardcoded. */
 import path from "node:path";
 import { fileURLToPath, } from "node:url";

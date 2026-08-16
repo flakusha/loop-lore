@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Gallery page: search, preview, actions ────────────────────
 import { log as rootLog, } from "../alpine/logger";
 import { feFetch, } from "../fe-fetch";

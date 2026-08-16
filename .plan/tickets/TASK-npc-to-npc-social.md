@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: NPC-to-NPC Autonomous Social Simulation
 
 **Epic:** epic-social-interaction, NPC/Actor System

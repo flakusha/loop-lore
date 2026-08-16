@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: World Chat Channels & Invite-Driven Membership
 
 **Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)

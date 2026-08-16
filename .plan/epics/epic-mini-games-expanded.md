@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics
 
 **Status:** Draft

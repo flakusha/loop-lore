@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Combat Stats (Shared: Character Core, Items, Battle) ─────
 
 /** Core combat statistics for a character/NPC */

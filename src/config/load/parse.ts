@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/load/parse.ts — Config parsing & object helpers
 
 import { load as parseYaml, } from "js-yaml";

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## Item-systems deferred follow-ups (from `epic-item-systems-unification` backend 10/15)
 
 > Backend wire-* work landed 2026-08-12 (10/10 tickets complete + review pass). The following

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Assistant: Command Execution & Intent Detection
 
 **Status:** 🟡 Partial — slash command parser + AUX `classifyIntent` exist; no timeout/apiKey on AUX path, `detectIntent` dead (2026-08-01)

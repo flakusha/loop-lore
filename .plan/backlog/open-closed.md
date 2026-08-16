@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## Recent wiring (reference)
 
 - **SSE refactor (merged `082c20cf`)** — `sse-utils.ts` extracted from

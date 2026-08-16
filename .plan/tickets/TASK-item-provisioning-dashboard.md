@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Item Provisioning Dashboard (World-Level Allocation View)
 
 **Status:** ⬜ Not Started

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Shared keyword / context-word helpers used by the lore and memory sections
  * for selective relevance filtering.

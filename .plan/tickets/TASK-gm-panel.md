@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: GM Panel
 
 **Status:** 🟡 In Progress — notes panel done, world/NPC/event/scene controls pending (2026-08-01)

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Issue Template
 
 Replace TYPE with: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA.

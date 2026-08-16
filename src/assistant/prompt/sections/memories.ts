@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Memory section — the actor's most important memories, provision-filtered
  * by scope, privacy, shareability, and token budget, then injection-filtered

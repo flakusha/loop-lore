@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Asset link/share JSON routes 500 "Body already used" — Elysia sucrose body inference
 
 **Status:** ✅ Resolved (2026-08-06)

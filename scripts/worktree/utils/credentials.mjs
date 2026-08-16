@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /* eslint-disable unicorn/name-replacements, unicorn/prefer-string-replace-all, unicorn/prefer-switch, unicorn/no-lonely-if, unicorn/import-style -- utility file, pedantic rules */
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors

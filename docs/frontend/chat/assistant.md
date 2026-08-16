@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Assistant (GM / Moderator)
 
 > **Implementation status:** The assistant today is a **global rule-based responder**

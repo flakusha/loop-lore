@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Code Review Rounds — Status Summary
 
 3 rounds (2026-07-05 through 2026-07-06). 139 findings total. Verification pass on 2026-07-10 confirmed majority resolved. Open items migrated to git issue tracker and `plan.md`.

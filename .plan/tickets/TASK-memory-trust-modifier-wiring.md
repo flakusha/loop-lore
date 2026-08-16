@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Wire trustModifier from Relationships into Memory Provision
 
 **Issue:** d1f2a3b4-c5e6-7890-abcd-ef1234567890

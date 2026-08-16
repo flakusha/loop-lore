@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: AUX LLM Fallback for Transition Intent Detection
 
 **Status:** ✅ Done — implemented in `src/chat/transition-classifier.ts` (2026-08-01)

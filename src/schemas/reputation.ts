@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/schemas/reputation.ts — Unified Reputation Schema
 //
 // Shared across Social, Faction, NSFW, Battle, and Economy systems.

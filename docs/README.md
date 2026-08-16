@@ -335,3 +335,6 @@ See the [build and deployment guide](./spec/build-deploy.md) for detailed setup 
 
 This project is licensed under the LGPL-3.0-or-later License (core code).
 Documentation is MIT. See [LICENSES/](../LICENSES/) for full texts.
+
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->

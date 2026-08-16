@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## P3 — Core Foundation (0.1.0 value tiers)
 
 > **0.1.0 scope = highest-value features.** P3→P5 follow this list; non-value work sits

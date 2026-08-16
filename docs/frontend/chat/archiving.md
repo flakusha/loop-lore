@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Message Deletion & Archiving
 
 > ⚠️ **Implementation status:** Cascade archiving, restore, and purge are NOT implemented.

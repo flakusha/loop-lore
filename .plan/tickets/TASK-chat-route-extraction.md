@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Extract chat business logic from routes
 
 **Issue:** db5a19ae-d4b9-4860-9905-96036be43286

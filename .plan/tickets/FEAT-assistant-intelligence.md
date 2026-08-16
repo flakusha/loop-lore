@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT: Assistant Intelligence
 
 **Status:** ✅ Done — emotion/intent detection, creative support, response length control, quick-regen all implemented (FEAT-070/071/072 + EmotionHook + command parser). Closed 2026-08-03.

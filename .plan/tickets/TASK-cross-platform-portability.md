@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Cross-Platform Portability — Windows & macOS (run from repo + single binary)
 
 **Status:** 🟡 Open

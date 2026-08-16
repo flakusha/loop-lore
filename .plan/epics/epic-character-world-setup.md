@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: Per-World Character Setup & Overlay
 
 **Status:** 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending)

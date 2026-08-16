@@ -13,6 +13,9 @@ metadata:
     related_skills: [loop-lore-db, loop-lore-tasks]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Loop-Lore Project Context
 
 LLM RPG Chat reimplementation inspired by SillyTavern, Odysseus, and Open WebUI. Built on TypeScript + Bun with dual TUI/Web UI.

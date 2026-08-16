@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { Elysia, t, } from "elysia";
 import { MoodService, } from "../../characters/services/mood-service";
 import {

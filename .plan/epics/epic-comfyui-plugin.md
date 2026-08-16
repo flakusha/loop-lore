@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: ComfyUI Plugin & Workflow Templates
 
 **Status:** 🟡 Partial — unified ComfyUI + sd-server image editing, node discovery (comfyui/http/sdserver), workflow templates + LoRA shipped; GGUF model loading pending

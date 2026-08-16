@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { GenerationStatus, generationStatusMachine, } from "../../db/enums";
 import type { getLogger, } from "../../logger";
 import type { ActiveGeneration, } from "./types";

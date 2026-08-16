@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema/dynamic-response.ts — Dynamic-response optimization config type
 
 import type { ResponseCompression, } from "../../db/enums";

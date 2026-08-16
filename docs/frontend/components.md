@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Frontend: Shared Components
 
 Toasts, modals, empty states, spinners, and other reusable UI patterns used across all pages.

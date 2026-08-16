@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/characters/spec/serde.ts — Serialization / import-export types
 
 import type { CanonicalCharacter, } from "./character";

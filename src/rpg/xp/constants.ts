@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** XP threshold for each level (XP needed to reach that level) */
 export const XP_BY_LEVEL: Record<number, number> = {
   1: 0,

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Trivia Routes — POST /api/trivia/start, POST /api/trivia/answer, GET /api/trivia/categories
  */

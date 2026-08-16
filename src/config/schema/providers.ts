@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema/providers.ts — LLM / image generation provider config types
 //
 // Enum types sourced from ../db/enums.

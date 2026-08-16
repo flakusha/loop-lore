@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { randomUUID, } from "node:crypto";
 import { CancelReason, GenerationStatus, } from "../../db/enums";
 import { getLogger, } from "../../logger";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── New Chat page: actor search, participant selection, form ──
 import { $, } from "../../dom";
 import { feFetch, } from "../../fe-fetch";

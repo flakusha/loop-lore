@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Author's Note section — injects persistent instruction from the actor's
  * `post_history_instructions` field into the prompt context.

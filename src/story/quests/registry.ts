@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { ProgressCalculator, } from "./types";
 import { QuestType, } from "../../db/enums";
 import { calculateCollectionProgress, } from "./calculators/collection";

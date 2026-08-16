@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Data Integrity Phase 1 — Config Guards & Backend Selection
 
 **Status:** ✅ Complete

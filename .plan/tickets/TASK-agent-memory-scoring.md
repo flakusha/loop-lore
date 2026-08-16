@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Agent Memory Scoring Model
 
 **Epic:** epic-memory-knowledge-systems, epic-character-core-system

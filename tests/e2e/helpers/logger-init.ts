@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { createLogger, setGlobalLogger, } from "@/logger";
 
 // Ensure a global logger exists before the app server module graph loads.

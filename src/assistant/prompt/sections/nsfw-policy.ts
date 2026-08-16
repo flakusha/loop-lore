@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * NSFW Policy section — injects the SFW/NSFW level taxonomy as a system
  * message so the model writes within the chat's maximum allowed rating.

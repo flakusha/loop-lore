@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Client-Side Encryption (AES-256-GCM)
 
 **Status:** ✅ Done (closed via git issue)

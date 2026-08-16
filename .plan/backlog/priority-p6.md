@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## P6 — Post-0.1.0 Systems (RPG, Memory, Agentic — deferred, non-blocking for 0.1.0)
 
 > All gaps below are **P6+ deferred** under the 2026-08-05 0.1.0 alignment

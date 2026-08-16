@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Analytics & Meta
 
 Insight-layer ideas. Inspiration: community requests, existing `model_comparisons`
