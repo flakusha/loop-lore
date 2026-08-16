@@ -15897,6 +15897,10 @@
   ],
   "src/validation/db-schemas.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cross-layer-reconciliation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-scenario-source.md"
     },
@@ -15917,6 +15921,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cross-layer-reconciliation.md"
     },
     {
       "kind": "epic",

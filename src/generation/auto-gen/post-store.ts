@@ -7,7 +7,7 @@
  */
 import type { Kysely, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
-import { detectHallucinations, generateRandomEvent, randomEventToEventRef, } from "../../chat";
+import { detectHallucinations, generateRandomEvent, } from "../../chat";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -172,7 +172,6 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
       },);
 
       if (event) {
-        const eventRef = randomEventToEventRef(event,);
         log.debug("random event generated", {
           eventId: event.id,
           category: event.category,
@@ -181,7 +180,6 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
         // Store the event reference for the next generation's context window
         // The PromptAssembler will pick it up via the events section.
         // For now, log it — full DB event storage is a follow-up.
-        void eventRef;
       }
     } catch (error) {
       log.warn("random event generation failed (non-fatal)", { err: error, },);

@@ -92,7 +92,7 @@ export class CharacterInternalTraitsService {
       .selectFrom("character_internal_traits",)
       .where("actor_id", "=", actorId,)
       .selectAll()
-      .executeTakeFirst() as InternalTraitsRow | undefined;
+      .executeTakeFirst();
 
     return row ? rowToTraits(row,) : null;
   }
@@ -131,7 +131,8 @@ export class CharacterInternalTraitsService {
         .execute();
 
       const updated = await this.get(actorId,);
-      return updated!;
+      if (!updated) { throw new Error("upsert: read-after-update returned null",); }
+      return updated;
     }
 
     const id = crypto.randomUUID();
@@ -153,7 +154,8 @@ export class CharacterInternalTraitsService {
       .execute();
 
     const created = await this.get(actorId,);
-    return created!;
+    if (!created) { throw new Error("upsert: read-after-insert returned null",); }
+    return created;
   }
 
   /**
@@ -185,20 +187,21 @@ export class CharacterInternalTraitsService {
     const vis = new Set(traits.visibility,);
     const isVisible = (field: string,) => includeHidden || vis.has(field,) || vis.has("*",);
 
-    lines.push("## Internal Character State",);
-    lines.push("",);
-
-    // Hidden-state directive — the LLM should track these internally
     lines.push(
+      "## Internal Character State",
+      "",
       "You have internal states that influence your behavior. Some you share openly, others you keep private. Track these naturally — do not announce them unless contextually appropriate.",
+      "",
     );
-    lines.push("",);
 
     // Aspirations
     if (traits.aspirations.length > 0) {
-      const visibleAspirations = traits.aspirations.filter(
-        (a,) => isVisible("aspirations",) || a.visibility === "open",
-      );
+      const visibleAspirations: Aspiration[] = [];
+      for (const a of traits.aspirations) {
+        if (isVisible("aspirations",) || a.visibility === "open") {
+          visibleAspirations.push(a,);
+        }
+      }
       if (visibleAspirations.length > 0) {
         lines.push("### Goals & Aspirations",);
         for (const a of visibleAspirations) {
@@ -215,10 +218,9 @@ export class CharacterInternalTraitsService {
     // Moral disposition
     if (isVisible("moralDisposition",)) {
       const m = traits.moralDisposition;
-      const lawAxis = m.lawful_chaotic < -30 ? "lawful" : m.lawful_chaotic > 30 ? "chaotic" : "neutral";
-      const goodAxis = m.good_evil < -30 ? "good" : m.good_evil > 30 ? "evil" : "amoral";
-      lines.push(`### Moral Disposition: ${lawAxis}-${goodAxis}`,);
-      lines.push("",);
+      const lawAxis = m.lawful_chaotic < -30 ? "lawful" : (m.lawful_chaotic > 30 ? "chaotic" : "neutral");
+      const goodAxis = m.good_evil < -30 ? "good" : (m.good_evil > 30 ? "evil" : "amoral");
+      lines.push(`### Moral Disposition: ${lawAxis}-${goodAxis}`, "",);
     }
 
     // Approach tendencies
@@ -226,20 +228,17 @@ export class CharacterInternalTraitsService {
       const a = traits.approachTendencies;
       lines.push(
         `### Approach: ${a.decision_style} decision-maker, risk tolerance ${a.risk_tolerance}/100, initiative ${a.initiative_level}/100`,
+        "",
       );
-      lines.push("",);
     }
 
     // Voice patterns
     if (isVisible("voicePatterns",)) {
       const v = traits.voicePatterns;
-      lines.push("### Voice & Speech",);
-      lines.push(`- Vocabulary: ${v.vocabulary_level}`,);
-      lines.push(`- Sentences: ${v.sentence_structure}`,);
+      lines.push("### Voice & Speech", `- Vocabulary: ${v.vocabulary_level}`, `- Sentences: ${v.sentence_structure}`,);
       if (v.humor_style !== "none") { lines.push(`- Humor: ${v.humor_style}`,); }
       if (v.verbal_tics.length > 0) { lines.push(`- Tics: ${v.verbal_tics.join(", ",)}`,); }
-      lines.push(`- Emotional range: ${v.emotional_range}/100`,);
-      lines.push("",);
+      lines.push(`- Emotional range: ${v.emotional_range}/100`, "",);
     }
 
     return lines.length > 3 ? lines.join("\n",) : null;
