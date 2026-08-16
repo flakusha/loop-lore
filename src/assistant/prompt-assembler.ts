@@ -13,6 +13,7 @@ import { ContextCompactor, } from "../generation/context-compactor";
 import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
+import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
 import { PRIORITY, } from "./prompt/types";
 import type {
@@ -79,7 +80,14 @@ export class PromptAssembler {
     }
 
     const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;
-    const tokenBudget = params.tokenBudget ?? 32_000;
+
+    // Resolve token budget: explicit param > model capability registry > default 32K
+    let tokenBudget = params.tokenBudget;
+    if (tokenBudget === undefined && params.providerId) {
+      const registryBudget = await getContextWindowForModel(this.db, params.providerId, params.modelId,);
+      if (registryBudget !== null) { tokenBudget = registryBudget; }
+    }
+    tokenBudget ??= 32_000;
 
     // Wire the emotion prompt-injection loop: the emotionAvatar section fires
     // only when params.emotion (or emotionAvatar) is set. Every generation
