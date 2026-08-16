@@ -1,6 +1,6 @@
 # EPIC: Chat Lifecycle, Transitions & Moderation
 
-**Status:** ✅ Complete (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`)
+**Status:** 🟡 Core Complete — lifecycle/context/transitions shipped (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`); discovery + moderation remainder open (see task list)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -148,9 +148,9 @@ interface ModerationAction {
 ### Chat Discovery (Medium Priority)
 
 - [x] Chat room search & join → TASK-chat-room-search-join (✅ done)
-- [ ] Chat room filters → TASK-chat-room-filters
-- [ ] Chat message search → TASK-chat-message-search
-- [ ] Chat external music linking → TASK-chat-external-music-linking
+- [ ] Chat room filters → TASK-chat-room-filters (🟡 partial — frontend `chat-filters.ts` shipped; server-side filter API pending)
+- [x] Chat message search → TASK-chat-message-search (✅ done — FTS5 migration 034 + `routes/message-search/` + `alpine/message-search.ts` wired)
+- [ ] Chat external music linking → TASK-chat-external-music-linking (⬜ not started)
 
 ### Moderation (Low Priority — Postpone)
 

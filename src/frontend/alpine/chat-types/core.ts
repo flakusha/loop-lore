@@ -1,8 +1,8 @@
 import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, } from "../types";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
-import type { WorldChannelChat, } from "./world";
+import type { ChatWorldChannelsState, } from "./world-channels";
 /** Chat page core state and methods (messages, lists, editing, VN, filters). */
-export interface ChatCoreState extends AlpineMagicThis {
+export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   isGenerating: boolean;
   generationLabel: string;
   activeAttemptId: string | null;
@@ -121,20 +121,6 @@ export interface ChatCoreState extends AlpineMagicThis {
   applyChatFilters(): Promise<void>;
   _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
   searchChats(q: string,): Promise<void>;
-  // World channels (chat-only worlds) — sidebar tree.
-  _worlds: { id: string; name: string }[];
-  _worldChats: Record<string, WorldChannelChat[]>;
-  _worldExpanded: Record<string, boolean>;
-  _worldsLoading: boolean;
-  worldJoinCode: string;
-  loadWorldChannels(): Promise<void>;
-  loadWorldChats(worldId: string,): Promise<void>;
-  toggleWorld(worldId: string,): void;
-  worldChatGroups(worldId: string,): { locationId: string; locationName: string; chats: WorldChannelChat[] }[];
-  joinWorldByCode(): Promise<void>;
-  _joinableChats: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
-  loadJoinableChats(): Promise<void>;
-  joinChat(chatId: string,): Promise<void>;
   selectedChats: string[];
   _mentionQuery: string;
   _mentionResults: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];

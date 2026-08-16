@@ -3062,6 +3062,50 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-character-overrides-frontend.md"
   },
+  "TASK-ADMIN-CONTENT-REVIEW-QUEUE": {
+    "hash": "pending",
+    "extid": "TASK-ADMIN-CONTENT-REVIEW-QUEUE",
+    "type": "TASK",
+    "title": "Admin Content Review Queue",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-content-review-queue.md"
+  },
+  "TASK-ADMIN-DANGER-ZONE": {
+    "hash": "pending",
+    "extid": "TASK-ADMIN-DANGER-ZONE",
+    "type": "TASK",
+    "title": "Admin Danger Zone — Factory Reset & Purge",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-admin",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-danger-zone.md"
+  },
+  "TASK-ADMIN-OVERVIEW-DASHBOARD": {
+    "hash": "pending",
+    "extid": "TASK-ADMIN-OVERVIEW-DASHBOARD",
+    "type": "TASK",
+    "title": "Admin Overview Dashboard",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-overview-dashboard.md"
+  },
+  "TASK-ADMIN-REVISIONS-DIFF-REVERT": {
+    "hash": "pending",
+    "extid": "TASK-ADMIN-REVISIONS-DIFF-REVERT",
+    "type": "TASK",
+    "title": "Admin Revisions — Diff & Revert",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-admin",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md"
+  },
   "TASK-ADOPT-STATE-MACHINE-FRAMEWORK-IN-RUNTIME-STATUS-WRITES": {
     "hash": "e900191",
     "extid": "TASK-ADOPT-STATE-MACHINE-FRAMEWORK-IN-RUNTIME-STATUS-WRITES",
@@ -7515,6 +7559,17 @@
     "title": "Internal & External Flagging",
     "type": "TASK"
   },
+  "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS": {
+    "hash": "44e22069",
+    "extid": "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS",
+    "type": "TASK",
+    "title": "Internal Traits Visibility Tiers",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-internal-traits-visibility-tiers.md"
+  },
   "TASK-INVENTORY": {
     "epic": "epic-inventory",
     "extid": "TASK-INVENTORY",
@@ -8358,6 +8413,17 @@
     "title": "NPC Behavior State Machine",
     "type": "TASK"
   },
+  "TASK-NPC-BEHAVIOR-STATE-MACHINE-FOUNDATION": {
+    "hash": "c4026dc",
+    "extid": "TASK-NPC-BEHAVIOR-STATE-MACHINE-FOUNDATION",
+    "type": "TASK",
+    "title": "NPC Behavior State Machine Foundation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-behavior-state-machine-foundation.md"
+  },
   "TASK-NPC-CHAT-BUFFER": {
     "hash": "pending",
     "extid": "TASK-NPC-CHAT-BUFFER",
@@ -8401,6 +8467,17 @@
     "tags": [],
     "title": "NPC Memory System",
     "type": "TASK"
+  },
+  "TASK-NPC-MOVEMENT-INDICATOR-IN-CHAT": {
+    "hash": "4809f056",
+    "extid": "TASK-NPC-MOVEMENT-INDICATOR-IN-CHAT",
+    "type": "TASK",
+    "title": "NPC Movement Indicator in Chat",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-movement-indicator-in-chat.md"
   },
   "TASK-NPC-NAVIGATION": {
     "epic": "epic-npc-navigation",
