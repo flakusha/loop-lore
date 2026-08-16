@@ -337,6 +337,7 @@ export default tseslint.config(
       "src/routes/crafting/recipes.ts",
       "src/routes/crafting/recipes-schemas.ts",
       "src/routes/trade.ts",
+      "src/routes/character-internal-traits/index.ts",
     ],
     rules: { "unicorn/max-nested-calls": "off", },
   },

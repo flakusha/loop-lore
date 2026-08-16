@@ -37,20 +37,23 @@ export async function executeTurn(state: GmState, debugActorId?: string,): Promi
   // Movement results become world events the GM can reference in narration.
   const movementResults = await processMovementTick(state.db, context.world.id,);
 
-  const movementEvents: import("../story-events-types").WorldEvent[] = movementResults
-    .filter((r,) => r.success && r.toLocationId)
-    .map((r,) => ({
-      type: WorldEventType.LocationChange,
-      actorId: r.actorId ?? undefined,
-      locationId: r.toLocationId ?? undefined,
-      timestamp: new Date().toISOString(),
-      data: {
-        fromLocationId: r.fromLocationId,
-        toLocationId: r.toLocationId,
-        pattern: r.pattern,
-      },
-      description: `NPC moved (${r.pattern}): ${r.fromLocationId} → ${r.toLocationId}`,
-    }));
+  const movementEvents: import("../story-events-types").WorldEvent[] = [];
+  for (const r of movementResults) {
+    if (r.success && r.toLocationId) {
+      movementEvents.push({
+        type: WorldEventType.LocationChange,
+        actorId: r.actorId ?? undefined,
+        locationId: r.toLocationId ?? undefined,
+        timestamp: new Date().toISOString(),
+        data: {
+          fromLocationId: r.fromLocationId,
+          toLocationId: r.toLocationId,
+          pattern: r.pattern,
+        },
+        description: `NPC moved (${r.pattern}): ${r.fromLocationId} → ${r.toLocationId}`,
+      },);
+    }
+  }
 
   return {
     turnId,

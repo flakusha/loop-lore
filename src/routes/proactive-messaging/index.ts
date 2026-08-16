@@ -4,8 +4,7 @@
  * CRUD + check/trigger endpoints for per-chat proactive messaging config.
  * See .plan/tickets/TASK-proactive-messaging.md
  */
-import { Elysia, } from "elysia";
-import { t, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import type { ProactiveConfigInput, } from "../../chat/proactive/types";
 import type { HandlerOpts, } from "../actor-auth";
@@ -20,12 +19,15 @@ const frequencyEnum = t.Union([
   t.Literal("infrequent",),
 ],);
 
+const nullableString = t.Union([t.String(), t.Null(),],);
+const stringUnknownRecord = t.Record(t.String(), t.Unknown(),);
+
 const configBody = t.Object({
   frequency: t.Optional(frequencyEnum,),
-  quietHoursStart: t.Optional(t.Union([t.String(), t.Null(),],),),
-  quietHoursEnd: t.Optional(t.Union([t.String(), t.Null(),],),),
+  quietHoursStart: t.Optional(nullableString,),
+  quietHoursEnd: t.Optional(nullableString,),
   enabled: t.Optional(t.Boolean(),),
-  configJson: t.Optional(t.Record(t.String(), t.Unknown(),),),
+  configJson: t.Optional(stringUnknownRecord,),
 },);
 
 const chatQuery = t.Object({ chatId: t.String(), },);
@@ -180,6 +182,5 @@ export function proactiveMessagingRoutes(opts: HandlerOpts,) {
 }
 
 function logErr(msg: string, err: unknown,): void {
-  // eslint-disable-next-line no-console
   console.error(`[proactive-messaging] ${msg}`, err,);
 }

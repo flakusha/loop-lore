@@ -38,6 +38,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/chats/${this.activeChat}/pins`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
+        // eslint-disable-next-line no-restricted-syntax
         body: JSON.stringify({ messageId, },),
       },);
       if (res.ok) { await this.loadPins(); }
