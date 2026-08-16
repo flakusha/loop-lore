@@ -35,10 +35,10 @@ export async function checkAndPruneContext(
 
   if (recentMessages.length === 0) { return false; }
 
-  const totalTokens = recentMessages.reduce(
-    (sum, m,) => sum + (m.token_count_total || estimateTokens(m.content,)),
-    0,
-  );
+  let totalTokens = 0;
+  for (const m of recentMessages) {
+    totalTokens += m.token_count_total || estimateTokens(m.content,);
+  }
   const threshold = getThresholdState(
     MAX_TOKENS > 0 ? Math.round((totalTokens / MAX_TOKENS) * 100,) : 0,
   );
@@ -46,14 +46,18 @@ export async function checkAndPruneContext(
   if (threshold !== "critical" && threshold !== "imminent") { return false; }
 
   log.info("context pruning triggered", { threshold, totalTokens, maxTokens: MAX_TOKENS, chatId, },);
-  const scorable: ScorableMessage[] = recentMessages.map((m, i,) => ({
-    id: m.id,
-    role: m.role as "user" | "assistant" | "system",
-    content: m.content,
-    tokenCount: m.token_count_total || estimateTokens(m.content,),
-    index: i,
-    total: recentMessages.length,
-  }));
+  const scorable: ScorableMessage[] = [];
+  for (let i = 0; i < recentMessages.length; i++) {
+    const m = recentMessages[i];
+    if (!m) { continue; }
+    scorable.push({
+      id: m.id,
+      role: m.role,
+      content: m.content,
+      index: i,
+      total: recentMessages.length,
+    },);
+  }
 
   const pruneResult = pruneMessages(scorable,);
   if (pruneResult.pruned.length > 0) {

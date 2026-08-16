@@ -6,8 +6,7 @@
  *
  * See .plan/epics/epic-character-internal-traits.md
  */
-import { Elysia, } from "elysia";
-import { t, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
 import type { HandlerOpts, } from "../actor-auth";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
@@ -23,35 +22,45 @@ const aspirationSchema = t.Object({
   progress: t.Number(),
 },);
 
+const moralDispositionSchema = t.Object({
+  lawful_chaotic: t.Optional(t.Number(),),
+  good_evil: t.Optional(t.Number(),),
+},);
+
+const autonomyPreferencesSchema = t.Object({
+  group_comfort: t.Optional(t.Number(),),
+  solo_comfort: t.Optional(t.Number(),),
+  separation_triggers: t.Optional(t.Array(t.String(),),),
+  reunion_triggers: t.Optional(t.Array(t.String(),),),
+},);
+
+const copingMechanismsSchema = t.Object({
+  stress_response: t.Optional(t.String(),),
+  failure_response: t.Optional(t.String(),),
+  conflict_style: t.Optional(t.String(),),
+},);
+
+const approachTendenciesSchema = t.Object({
+  decision_style: t.Optional(t.String(),),
+  risk_tolerance: t.Optional(t.Number(),),
+  initiative_level: t.Optional(t.Number(),),
+},);
+
+const voicePatternsSchema = t.Object({
+  verbal_tics: t.Optional(t.Array(t.String(),),),
+  vocabulary_level: t.Optional(t.String(),),
+  sentence_structure: t.Optional(t.String(),),
+  humor_style: t.Optional(t.String(),),
+  emotional_range: t.Optional(t.Number(),),
+},);
+
 const inputBody = t.Object({
   aspirations: t.Optional(t.Array(aspirationSchema,),),
-  moralDisposition: t.Optional(t.Object({
-    lawful_chaotic: t.Optional(t.Number(),),
-    good_evil: t.Optional(t.Number(),),
-  },),),
-  autonomyPreferences: t.Optional(t.Object({
-    group_comfort: t.Optional(t.Number(),),
-    solo_comfort: t.Optional(t.Number(),),
-    separation_triggers: t.Optional(t.Array(t.String(),),),
-    reunion_triggers: t.Optional(t.Array(t.String(),),),
-  },),),
-  copingMechanisms: t.Optional(t.Object({
-    stress_response: t.Optional(t.String(),),
-    failure_response: t.Optional(t.String(),),
-    conflict_style: t.Optional(t.String(),),
-  },),),
-  approachTendencies: t.Optional(t.Object({
-    decision_style: t.Optional(t.String(),),
-    risk_tolerance: t.Optional(t.Number(),),
-    initiative_level: t.Optional(t.Number(),),
-  },),),
-  voicePatterns: t.Optional(t.Object({
-    verbal_tics: t.Optional(t.Array(t.String(),),),
-    vocabulary_level: t.Optional(t.String(),),
-    sentence_structure: t.Optional(t.String(),),
-    humor_style: t.Optional(t.String(),),
-    emotional_range: t.Optional(t.Number(),),
-  },),),
+  moralDisposition: t.Optional(moralDispositionSchema,),
+  autonomyPreferences: t.Optional(autonomyPreferencesSchema,),
+  copingMechanisms: t.Optional(copingMechanismsSchema,),
+  approachTendencies: t.Optional(approachTendenciesSchema,),
+  voicePatterns: t.Optional(voicePatternsSchema,),
   visibility: t.Optional(t.Array(t.String(),),),
 },);
 
@@ -62,7 +71,7 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
 
   return new Elysia({ name: "character-internal-traits", },)
     // ── Get internal traits ──────────────────────────────
-    .get(`${R}`, async (ctx: any,) => {
+    .get(R, async (ctx: any,) => {
       const userId = await requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { actorId, } = ctx.query as { actorId: string };
@@ -82,13 +91,13 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Create/update internal traits ────────────────────
-    .put(`${R}`, async (ctx: any,) => {
+    .put(R, async (ctx: any,) => {
       const userId = await requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { actorId, } = ctx.query as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
       try {
-        const traits = await svc().upsert(actorId, body as never,);
+        const traits = await svc().upsert(actorId, body,);
         return jsonResponse(traits,);
       } catch (error) {
         logErr("Failed to upsert internal traits", error,);
@@ -105,7 +114,7 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
       },
     },)
     // ── Delete internal traits ────────────────────────────
-    .delete(`${R}`, async (ctx: any,) => {
+    .delete(R, async (ctx: any,) => {
       const userId = await requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { actorId, } = ctx.query as { actorId: string };
@@ -152,6 +161,5 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
 }
 
 function logErr(msg: string, err: unknown,): void {
-  // eslint-disable-next-line no-console
   console.error(`[character-internal-traits] ${msg}`, err,);
 }
