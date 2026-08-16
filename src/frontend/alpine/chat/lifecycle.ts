@@ -89,6 +89,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     destroyVnRenderer();
 
     this._cleanupSSE?.();
+    this.stopProactiveScheduler();
 
     if (this._storageHandler) {
       removeEventListener("storage", this._storageHandler,);
