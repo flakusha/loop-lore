@@ -16,7 +16,7 @@ import type { CharacterSystemsExport, } from "../characters/exporters/character-
 import { TraitsService, } from "../characters/services/traits-service";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertWorlds, } from "../test-utils/insert-helpers";
+import { insertCharacterWorldSetup, insertWorlds, } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { characterIoRoutes, } from "./character-io";
 
@@ -188,6 +188,53 @@ describe("characterIoRoutes", () => {
       );
       expect(res.status,).toBe(401,);
     });
+
+    test("exports worldSetup when a worldId is provided", async () => {
+      const worldId = uid();
+      await insertWorlds(db, ownerId, "Test World", { id: worldId, } as never,);
+      await insertCharacterWorldSetup(db, actorId, worldId, {
+        starting_inventory: JSON.stringify([{ item_id: "sword", quantity: 2, },],),
+        scenario_override: "In the Ashen Wastes",
+        system_prompt_override: "You are a wasteland guide",
+        backstory: "Born in the wastes",
+      } as never,);
+
+      const app = createIoApp(db, ownerId,);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${actorId}/systems/export`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ worldId, },),
+        },),
+      );
+      expect(res.status,).toBe(200,);
+      const body = (await res.json()) as CharacterSystemsExport;
+      expect(body.worldSetup,).toBeDefined();
+      expect(body.worldSetup?.scenarioOverride,).toBe("In the Ashen Wastes",);
+      expect(body.worldSetup?.systemPromptOverride,).toBe("You are a wasteland guide",);
+      expect(body.worldSetup?.backstory,).toBe("Born in the wastes",);
+      expect(body.worldSetup?.startingInventory,).toHaveLength(1,);
+    });
+
+    test("includeWorldSetup=false excludes the worldSetup section", async () => {
+      const worldId = uid();
+      await insertWorlds(db, ownerId, "Test World", { id: worldId, } as never,);
+      await insertCharacterWorldSetup(db, actorId, worldId, {
+        scenario_override: "In the Ashen Wastes",
+      },);
+
+      const app = createIoApp(db, ownerId,);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${actorId}/systems/export`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ worldId, includeWorldSetup: false, },),
+        },),
+      );
+      expect(res.status,).toBe(200,);
+      const body = (await res.json()) as CharacterSystemsExport;
+      expect(body.worldSetup,).toBeUndefined();
+    });
   });
 
   describe("POST /systems/import", () => {
@@ -266,6 +313,64 @@ describe("characterIoRoutes", () => {
       expect(body.imported.mood,).toBe(true,);
       expect(body.imported.relationships,).toBe(1,);
       expect(body.errors,).toHaveLength(0,);
+    });
+
+    test("imports worldSetup only when a worldId is provided", async () => {
+      const worldId = uid();
+      const targetActorId = uid();
+      await insertWorlds(db, ownerId, "Test World", { id: worldId, } as never,);
+      await seedUser(db, targetActorId,);
+      await seedActor(db, targetActorId, ownerId,);
+
+      const payload = {
+        version: "1.0",
+        exportedAt: new Date().toISOString(),
+        characterId: targetActorId,
+        worldSetup: {
+          startingInventory: [{ item_id: "sword", quantity: 2, },],
+          loreEntries: [],
+          backstory: "Wasteland wanderer",
+          scenarioOverride: "Ashen wastes",
+          systemPromptOverride: null,
+          initialState: {},
+        },
+      };
+
+      const app = createIoApp(db, ownerId,);
+
+      // Without worldId, world setup is skipped.
+      const noWorld = await app.handle(
+        new Request(`http://localhost/api/actors/${targetActorId}/systems/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify(payload,),
+        },),
+      );
+      expect(noWorld.status,).toBe(201,);
+      const noWorldBody = (await noWorld.json()) as { imported: Record<string, number | boolean> };
+      expect(noWorldBody.imported.worldSetup,).toBe(false,);
+
+      // With worldId, the bundle is imported.
+      const withWorld = await app.handle(
+        new Request(`http://localhost/api/actors/${targetActorId}/systems/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ ...payload, worldId, },),
+        },),
+      );
+      expect(withWorld.status,).toBe(201,);
+      const withWorldBody = (await withWorld.json()) as { imported: Record<string, number | boolean> };
+      expect(withWorldBody.imported.worldSetup,).toBe(true,);
+
+      const row = await db
+        .selectFrom("character_world_setup",)
+        .where("actor_id", "=", targetActorId,)
+        .where("world_id", "=", worldId,)
+        .selectAll()
+        .executeTakeFirst();
+      expect(row?.scenario_override,).toBe("Ashen wastes",);
+      expect(row?.system_prompt_override,).toBeNull();
+      expect(row?.backstory,).toBe("Wasteland wanderer",);
     });
 
     test("imports world-scoped traits only when a worldId is provided", async () => {
