@@ -674,6 +674,7 @@ export async function insertActorLoreEntries(
     cooldown_seconds?: Generated<number>;
     last_activated?: string | null;
     audience_scope?: string | null;
+    world_id?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("actor_lore_entries",).values({
@@ -1937,6 +1938,7 @@ export async function insertCharacterDesireProfile(
     current_desire?: Generated<number>;
     desire_decay_rate?: Generated<number>;
     desire_buildup_rate?: Generated<number>;
+    world_id?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("character_desire_profile",).values({
@@ -1956,7 +1958,13 @@ export async function insertCharacterSeductionSkills(
   skill_name: string,
   created_at: string,
   updated_at: string,
-  opts?: { id?: Generated<string>; level?: Generated<number>; xp?: Generated<number>; xp_to_next?: Generated<number> },
+  opts?: {
+    id?: Generated<string>;
+    level?: Generated<number>;
+    xp?: Generated<number>;
+    xp_to_next?: Generated<number>;
+    world_id?: string | null;
+  },
 ): Promise<void> {
   await db.insertInto("character_seduction_skills",).values({
     id: crypto.randomUUID(),
@@ -2017,6 +2025,7 @@ export async function insertCharacterBodyProfile(
     style?: Generated<number>;
     scent?: string | null;
     modifications?: Generated<string>;
+    world_id?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("character_body_profile",).values({

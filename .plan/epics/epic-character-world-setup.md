@@ -144,10 +144,10 @@ phase 2.
 
 ### Phase 2 — World-scope relational follow-ons
 
-- [ ] `actor_lore_entries.world_id` (nullable) — world-scoped character lore
-- [ ] World-scope `character_desire_profile` / `character_seduction_skills`
-- [ ] Prompt assembly consumes `scenario_override` / `system_prompt_override`
-- [ ] Starting inventory seeds `world_items` on first join
+- [x] `actor_lore_entries.world_id` (nullable) — world-scoped character lore
+- [x] World-scope `character_desire_profile` / `character_seduction_skills`
+- [x] Prompt assembly consumes `scenario_override` / `system_prompt_override`
+- [x] Starting inventory seeds `world_items` on first join
 - [ ] Import/export carries `character_world_setup` rows
 
 ## Files

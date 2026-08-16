@@ -16,6 +16,7 @@ import {
   initializeCharacterWorldSetup as initializeCharacterWorldSetupDispatch,
   initializeLocationStates as initializeLocationStatesDispatch,
   initializeNpcStates as initializeNpcStatesDispatch,
+  seedStartingInventory as seedStartingInventoryDispatch,
 } from "./init";
 import {
   getLocationState as getLocationStateDispatch,
@@ -56,6 +57,11 @@ export class WorldStateService {
   /** Initialize per-world character setup rows for all characters in a world */
   async initializeCharacterWorldSetup(worldId: string,): Promise<number> {
     return initializeCharacterWorldSetupDispatch(this.state, worldId,);
+  }
+
+  /** Seed world_items from each character's starting_inventory on first join */
+  async seedStartingInventory(worldId: string,): Promise<number> {
+    return seedStartingInventoryDispatch(this.state, worldId,);
   }
 
   /** Initialize location dynamic states for all locations in a world */
