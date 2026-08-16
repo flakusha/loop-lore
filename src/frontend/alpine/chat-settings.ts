@@ -76,6 +76,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       actorModels[p.actor_id] = config.actorModels?.[p.actor_id] ?? { model: "", provider: "", };
     }
     this._actorModels = actorModels;
+    await this.loadPromptTemplate();
     Alpine.store("ui",).showChatSettings = true;
   },
 

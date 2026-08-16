@@ -100,6 +100,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             gmConfig: hasExplicit("gmConfig",) ? body.gmConfig : undefined,
             visualNovel: hasExplicit("visualNovel",) ? body.visualNovel : undefined,
             thinkingVisibility: body.thinkingVisibility,
+            promptOverride: hasExplicit("promptOverride",) ? body.promptOverride : undefined,
             userRole,
           },);
           if ("code" in result) {
@@ -237,6 +238,8 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             source,
             characterName,
             registryDefault,
+            override: (chat as { prompt_override?: string | null }).prompt_override ?? null,
+            usingOverride: Boolean((chat as { prompt_override?: string | null }).prompt_override,),
           },);
         },
         { params: ChatIdParams, },
