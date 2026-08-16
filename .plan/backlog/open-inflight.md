@@ -3,6 +3,8 @@
 > When a row is decided: finalize → check off in its `../priority.md` (index — tier files below) tier; defer → keep
 > here in the Deferred section. Rows already shipped or explicitly deferred are removed.
 > Rows that mirror a `../priority.md` (index) tier or a section below are removed here.
+>
+> **2026-08-16 update:** Feature matrix items FEAT-055/059/060/062/065/066/067/068/075/045-047/048-051 promoted to P4/P5/P6 tiers. Lint-ts + e2e confirmed closed. 0.1.0 release-blocking: A8 (unwired close-out) + A9 (artifacts + push).
 
 | ID  | Item                                                                                    | Ticket / where                               | Recommend                       | Decision              |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
@@ -44,6 +46,18 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 
 ## Open / next actions (2026-08-15, after 51a7bc01 wiring + GM-guided merge)
 
+## Open / next actions (2026-08-16, feature matrix promotion)
+
+- **Feature matrix items promoted** — 10 FEAT tickets mapped to P4/P5/P6 tiers in
+  `priority-p3-p5.md` + `priority-p6.md`. New upcoming work:
+  - **P4**: Lorebook activation (FEAT-055), Prompt library expansions (FEAT-065),
+    Model capability registry (FEAT-067), Token budget advisor (FEAT-068),
+    Conversation branching (FEAT-045–047)
+  - **P5**: Conversation analytics (FEAT-059), Model comparison A/B (FEAT-060),
+    Gen quality metrics (FEAT-062), Lore-consistency checker (FEAT-066),
+    Memory access audit (FEAT-075), API versioning (FEAT-035–044)
+  - **P6**: Plugin system (FEAT-048–051 → P6-I), CI/CD pipeline (P6-J),
+    Knowledge graph vis (FEAT-061 → greenfield)
 - **W3: Push `dev` → `origin/dev`** — dev ahead (unreleased: Gate C, GM-guided story,
   item-systems + 7 wired RPG services, docs reconciliation, memory-selection UI, C1
   panel). Before release (row A9). Pre-push hook blocks agent commits — human push
