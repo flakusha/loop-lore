@@ -88,7 +88,7 @@ export function transformCommand(cmd: string,): string {
     .map((tok, i,) => {
       if (i % 2 === 1) { return tok; }
       return transformSegment(tok,);
-    })
+    },)
     .join("",);
 }
 

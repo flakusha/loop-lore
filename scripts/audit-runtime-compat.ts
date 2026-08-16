@@ -29,27 +29,27 @@ interface CompatEntry {
 }
 
 const BUN_API_COMPAT: Record<string, CompatEntry> = {
-  "Bun.serve":          { deno: "Deno.serve()",                   node: "node:http createServer",  status: "native", },
-  "Bun.file":           { deno: "Deno.open() / Deno.readFile()",  node: "node:fs readFile",        status: "native", },
-  "Bun.password.hash":  { deno: "node:crypto scrypt (via npm:)",  node: "node:crypto scrypt",      status: "shim",   },
-  "Bun.password.verify":{ deno: "node:crypto scrypt (via npm:)",  node: "node:crypto scrypt",      status: "shim",   },
-  "Bun.spawn":          { deno: "Deno.Command()",                 node: "node:child_process",      status: "native", },
-  "Bun.spawnSync":      { deno: "new Deno.Command().outputSync()",node: "node:child_process execSync", status: "native", },
-  "Bun.which":          { deno: "which (npm:which)",              node: "which (npm:which)",       status: "shim",   },
-  "Bun.CryptoHasher":   { deno: "node:crypto createHash",        node: "node:crypto createHash",  status: "native", },
-  "Bun.argv":           { deno: "Deno.args",                      node: "process.argv",            status: "native", },
-  "Bun.stdin":          { deno: "Deno.stdin",                     node: "process.stdin",           status: "native", },
-  "Bun.zstdCompressSync":   { deno: "npm:@aspect-build/zstd",    node: "npm:@aspect-build/zstd",  status: "shim",   },
-  "Bun.zstdDecompressSync": { deno: "npm:@aspect-build/zstd",    node: "npm:@aspect-build/zstd",  status: "shim",   },
-  "Bun.Buffer":         { deno: "Uint8Array / Buffer (node:)",    node: "node:buffer Buffer",      status: "native", },
+  "Bun.serve": { deno: "Deno.serve()", node: "node:http createServer", status: "native", },
+  "Bun.file": { deno: "Deno.open() / Deno.readFile()", node: "node:fs readFile", status: "native", },
+  "Bun.password.hash": { deno: "node:crypto scrypt (via npm:)", node: "node:crypto scrypt", status: "shim", },
+  "Bun.password.verify": { deno: "node:crypto scrypt (via npm:)", node: "node:crypto scrypt", status: "shim", },
+  "Bun.spawn": { deno: "Deno.Command()", node: "node:child_process", status: "native", },
+  "Bun.spawnSync": { deno: "new Deno.Command().outputSync()", node: "node:child_process execSync", status: "native", },
+  "Bun.which": { deno: "which (npm:which)", node: "which (npm:which)", status: "shim", },
+  "Bun.CryptoHasher": { deno: "node:crypto createHash", node: "node:crypto createHash", status: "native", },
+  "Bun.argv": { deno: "Deno.args", node: "process.argv", status: "native", },
+  "Bun.stdin": { deno: "Deno.stdin", node: "process.stdin", status: "native", },
+  "Bun.zstdCompressSync": { deno: "npm:@aspect-build/zstd", node: "npm:@aspect-build/zstd", status: "shim", },
+  "Bun.zstdDecompressSync": { deno: "npm:@aspect-build/zstd", node: "npm:@aspect-build/zstd", status: "shim", },
+  "Bun.Buffer": { deno: "Uint8Array / Buffer (node:)", node: "node:buffer Buffer", status: "native", },
 };
 
 const BUN_PROTO_COMPAT: Record<string, CompatEntry> = {
-  "bun:sqlite": { deno: "npm:better-sqlite3 / npm:libsql", node: "npm:better-sqlite3",  status: "shim", },
-  "bun:ffi":    { deno: "Deno.dlopen (unstable)",           node: "node:ffi / koffi",    status: "shim", },
-  "bun:js":     { deno: "no equivalent",                    node: "no equivalent",       status: "none", },
-  "bun:wrap":   { deno: "no equivalent",                    node: "no equivalent",       status: "none", },
-  "bun:globals":{ deno: "no equivalent",                    node: "no equivalent",       status: "none", },
+  "bun:sqlite": { deno: "npm:better-sqlite3 / npm:libsql", node: "npm:better-sqlite3", status: "shim", },
+  "bun:ffi": { deno: "Deno.dlopen (unstable)", node: "node:ffi / koffi", status: "shim", },
+  "bun:js": { deno: "no equivalent", node: "no equivalent", status: "none", },
+  "bun:wrap": { deno: "no equivalent", node: "no equivalent", status: "none", },
+  "bun:globals": { deno: "no equivalent", node: "no equivalent", status: "none", },
 };
 
 // ── Shared-module paths (no runtime-specific code allowed) ─────
@@ -98,15 +98,15 @@ function walkTsFiles(dir: string,): string[] {
 }
 
 function isSharedModule(filePath: string,): boolean {
-  const rel = relative(resolve("."), filePath,);
-  return SHARED_MODULE_GLOBS.some((g,) => rel.startsWith(g,),);
+  const rel = relative(resolve(".",), filePath,);
+  return SHARED_MODULE_GLOBS.some((g,) => rel.startsWith(g,));
 }
 
 function scanFile(filePath: string,): Finding[] {
   const findings: Finding[] = [];
   const content = readFileSync(filePath, "utf8",);
   const lines = content.split("\n",);
-  const relPath = relative(resolve("."), filePath,);
+  const relPath = relative(resolve(".",), filePath,);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
@@ -135,7 +135,7 @@ function scanFile(filePath: string,): Finding[] {
     }
 
     // Bun.* API calls (sorted longest-first for greedy match)
-    const apis = Object.keys(BUN_API_COMPAT,).sort((a, b,) => b.length - a.length,);
+    const apis = Object.keys(BUN_API_COMPAT,).sort((a, b,) => b.length - a.length);
     for (const api of apis) {
       const escaped = api.replace(".", "\\.",);
       const re = new RegExp(escaped, "g",);
@@ -193,7 +193,7 @@ function printTable(findings: Finding[],): void {
     process.stdout.write("\n",);
   }
 
-  const sharedCount = findings.filter((f,) => f.shared,).length;
+  const sharedCount = findings.filter((f,) => f.shared).length;
   if (sharedCount > 0) {
     process.stdout.write(`⚠ ${sharedCount} usage(s) in shared modules (need abstraction layer)\n`,);
   }
@@ -215,7 +215,7 @@ if (import.meta.main) {
   }
 
   if (sharedOnly) {
-    findings = findings.filter((f,) => f.shared,);
+    findings = findings.filter((f,) => f.shared);
   }
 
   if (json) {
