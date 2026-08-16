@@ -1,9 +1,10 @@
-import { Database, } from "bun:sqlite";
 import { describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import { HeatPhase, } from "../../db/enums";
-import { createSqliteDialect, } from "../../db/index";
+import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import { insertActors, } from "../../test-utils/insert-helpers";
 import { Species, } from "./enums";
 import { BodySystemService, } from "./service";
 
@@ -12,48 +13,10 @@ createLogger({ level: "error", },);
 
 // ── Helpers ──────────────────────────────────────────────────
 
-function createTestDb(): Kysely<any> {
-  const db = new Database(":memory:",);
-  const kysely = new Kysely({ dialect: createSqliteDialect(db,), },);
-
-  // Create minimal schema
-  db.run(`
-    CREATE TABLE actors (
-      id TEXT PRIMARY KEY,
-      content_rating TEXT NOT NULL DEFAULT 'sfw'
-    );
-    CREATE TABLE character_body_profile (
-      id TEXT PRIMARY KEY,
-      actor_id TEXT NOT NULL UNIQUE,
-      stamina INTEGER NOT NULL DEFAULT 50,
-      flexibility INTEGER NOT NULL DEFAULT 50,
-      sensitivity INTEGER NOT NULL DEFAULT 50,
-      endurance INTEGER NOT NULL DEFAULT 50,
-      size_category TEXT NOT NULL DEFAULT 'average',
-      build TEXT NOT NULL DEFAULT 'average',
-      beauty INTEGER NOT NULL DEFAULT 50,
-      charisma INTEGER NOT NULL DEFAULT 50,
-      style INTEGER NOT NULL DEFAULT 50,
-      scent TEXT,
-      modifications TEXT NOT NULL DEFAULT '[]',
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    CREATE TABLE character_heat_cycle (
-      id TEXT PRIMARY KEY,
-      actor_id TEXT NOT NULL UNIQUE,
-      species TEXT NOT NULL DEFAULT 'human',
-      cycle_length_days INTEGER NOT NULL DEFAULT 0,
-      current_phase TEXT NOT NULL DEFAULT 'normal',
-      days_until_next_heat INTEGER NOT NULL DEFAULT 0,
-      effects TEXT NOT NULL DEFAULT '{}',
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    INSERT INTO actors (id) VALUES ('actor-1');
-  `,);
-
-  return kysely;
+async function seedTestDb(): Promise<Kysely<DB>> {
+  const { db, } = await createTestDb();
+  await insertActors(db, "Actor 1", { id: "actor-1", } as never,);
+  return db;
 }
 
 // ── Tests ────────────────────────────────────────────────────
@@ -61,7 +24,7 @@ function createTestDb(): Kysely<any> {
 describe("BodySystemService", () => {
   describe("Body Profile", () => {
     test("getProfile creates default profile", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       const profile = await service.getProfile("actor-1",);
@@ -76,7 +39,7 @@ describe("BodySystemService", () => {
     });
 
     test("updateProfile updates fields", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       const success = await service.updateProfile("actor-1", {
@@ -94,7 +57,7 @@ describe("BodySystemService", () => {
     });
 
     test("updateProfile clamps values to 1-100", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       await service.updateProfile("actor-1", {
@@ -108,7 +71,7 @@ describe("BodySystemService", () => {
     });
 
     test("addModification adds to list", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       await service.addModification("actor-1", {
@@ -126,7 +89,7 @@ describe("BodySystemService", () => {
     });
 
     test("removeModification removes by index", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       await service.addModification("actor-1", {
@@ -148,7 +111,7 @@ describe("BodySystemService", () => {
 
   describe("Heat Cycle", () => {
     test("getHeatCycle creates default for human", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       const cycle = await service.getHeatCycle("actor-1", Species.Human,);
@@ -159,7 +122,7 @@ describe("BodySystemService", () => {
     });
 
     test("getHeatCycle creates default for non-human", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       const cycle = await service.getHeatCycle("actor-1", "catgirl",);
@@ -169,7 +132,7 @@ describe("BodySystemService", () => {
     });
 
     test("getHeatEffects returns null effects for non-heat phase", async () => {
-      const db = createTestDb();
+      const db = await seedTestDb();
       const service = new BodySystemService(db,);
 
       const effects = await service.getHeatEffects("actor-1",);
