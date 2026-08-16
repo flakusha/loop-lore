@@ -85,6 +85,13 @@ export type MigrateChatResult =
   | ServiceError
   | { ok: true; newChatId: string; sourceChatId: string };
 
+/** A quick-reply button: label + slash command, optional trigger event. */
+export interface QuickReplyButton {
+  label: string;
+  command: string;
+  trigger?: "startup" | "user" | "ai";
+}
+
 export interface UpdateChatParams {
   name?: string;
   mode?: string;
@@ -98,6 +105,7 @@ export interface UpdateChatParams {
   visualNovel?: boolean;
   thinkingVisibility?: string;
   promptOverride?: string | null;
+  quickReplies?: QuickReplyButton[] | null;
 }
 
 export interface ListMessagesParams {

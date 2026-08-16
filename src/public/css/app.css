@@ -1195,6 +1195,19 @@ body {
   align-items: stretch;
 }
 
+/* Quick-reply button set above the composer (quick win item 1, G22). */
+.quick-replies-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0 0 var(--space-2);
+}
+
+.quick-replies-row .quick-reply-btn {
+  font-size: var(--fs-sm);
+  border-color: var(--border-default);
+}
+
 .input-row textarea {
   flex: 1;
   background: var(--bg-tertiary);
