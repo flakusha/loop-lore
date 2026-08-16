@@ -6,6 +6,9 @@ import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { fetchPartial, filterCards, } from "./shared";
 
+// Initialize traits + proactive messaging module
+import { initTraitsAndProactive, } from "./characters-traits";
+
 const log = rootLog.child({ module: "characters-page", },);
 
 globalThis.filterCharacters = function() {
@@ -231,8 +234,5 @@ globalThis.clearAvatar = function() {
   if (preview) { preview.innerHTML = "<span>👤</span>"; }
   showToast("info", "Avatar cleared — save to apply",);
 };
-
-// Initialize traits + proactive messaging module
-import { initTraitsAndProactive, } from "./characters-traits";
 
 initTraitsAndProactive(feFetch,);

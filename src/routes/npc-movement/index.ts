@@ -3,8 +3,7 @@
  *
  * HTTP endpoints for querying and storing movement events in chat.
  */
-import { Elysia, } from "elysia";
-import { t, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { NpcMovementIndicatorService, } from "../../chat/npc-movement";
 import { checkChatAccess, } from "../../chat/service";
 import type { HandlerOpts, } from "../actor-auth";
@@ -114,13 +113,13 @@ export function npcMovementRoutes(opts: HandlerOpts,) {
 }
 
 // Type alias for the schema
-type MovementEvent = {
+interface MovementEvent {
   actorId: string;
   fromLocationId: string;
   toLocationId: string;
   pattern: string;
   timestamp: string;
-};
+}
 
 // Helper for logging errors
 function logErr(msg: string, err: unknown,) {
