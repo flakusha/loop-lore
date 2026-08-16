@@ -6454,6 +6454,18 @@
     "title": "Dynamic Avatars — Dota 2 Style Animated Mugshots",
     "type": "TASK"
   },
+  "TASK-DYNAMIC-MEMORY-WRITES-VIA-TOOL-CALL": {
+    "hash": "f768c0e",
+    "extid": "TASK-DYNAMIC-MEMORY-WRITES-VIA-TOOL-CALL",
+    "type": "TASK",
+    "title": "Dynamic Memory Writes via Tool-Call",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dynamic-memory-writes-via-tool-call.md",
+    "git_issue": "f768c0e"
+  },
   "TASK-E2E-ALPINE-STATE-HARNESS": {
     "epic": "epic-e2e-integration-testing",
     "extid": "TASK-E2E-ALPINE-STATE-HARNESS",
@@ -10050,6 +10062,17 @@
     "title": "Prompt Library — Reusable Prompt Templates",
     "type": "TASK"
   },
+  "TASK-PROMPT-TEMPLATE-PER-CHAT-OVERRIDE-UX": {
+    "hash": "139a2e4",
+    "extid": "TASK-PROMPT-TEMPLATE-PER-CHAT-OVERRIDE-UX",
+    "type": "TASK",
+    "title": "Prompt Template Per-Chat Override UX",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-template-per-chat-override-ux.md"
+  },
   "TASK-PROMPT-TEMPLATE-REGISTRY": {
     "epic": "epic-config-templates",
     "extid": "TASK-PROMPT-TEMPLATE-REGISTRY",
@@ -10140,6 +10163,18 @@
     ],
     "title": "Quick-regen button (FEAT-070)",
     "type": "TASK"
+  },
+  "TASK-QUICK-REPLY-EVENT-DRIVEN-AUTOMATION": {
+    "hash": "b9b0b5c",
+    "extid": "TASK-QUICK-REPLY-EVENT-DRIVEN-AUTOMATION",
+    "type": "TASK",
+    "title": "Quick-Reply / Event-Driven Automation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-quick-reply-event-driven-automation.md",
+    "git_issue": "b9b0b5c"
   },
   "TASK-QUIET-HOURS": {
     "epic": "",
