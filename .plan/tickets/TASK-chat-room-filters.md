@@ -1,6 +1,6 @@
 # TASK: Chat Room Filters
 
-**Status:** 🟡 Partial — frontend filter component shipped (`alpine/chat-filters.ts`, sidebar chips → query params) + server-side type/archived/sort filters on `GET /api/v1/chats` (`routes/chats/list.ts`); extended filters (world, tags, participant/message counts, activity date) pending
+**Status:** 🟡 Partial — frontend filter component shipped (`alpine/chat-filters.ts`, sidebar chips → query params) + server-side type/archived/sort filters on `GET /api/v1/chats` (`routes/chats/list.ts`); extended filters world / min-messages / max-messages / updated-since shipped (2026-08-16, BE `routes/chats/list.ts` + FE `chat-list-panel.html`); tags filter pending (no tags table in schema)
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)
