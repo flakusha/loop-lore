@@ -1,5 +1,5 @@
 // ── Batch chat operations ────────────────────────────────────
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 
 /**
@@ -17,6 +17,7 @@ export async function batchArchiveChats(
     .select("id",)
     .where("id", "in", chatIds,)
     .where("created_by", "=", userId,)
+    .orderBy(sql`rowid`,)
     .execute();
   const ownedIds = Array.from(owned, (c,) => c.id,);
   if (ownedIds.length === 0) { return []; }
@@ -72,9 +73,10 @@ export async function batchExportChats(
 ): Promise<Record<string, unknown>[] | null> {
   const owned = await database
     .selectFrom("chats",)
-    .selectAll()
+    .select("id",)
     .where("id", "in", chatIds,)
     .where("created_by", "=", userId,)
+    .orderBy(sql`rowid`,)
     .execute();
 
   if (owned.length === 0) { return null; }
