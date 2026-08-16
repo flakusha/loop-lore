@@ -114,7 +114,7 @@ describe("character-availability routes", () => {
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ available: true, },),
+        body: JSON.stringify({ status: "available", },),
       },),
     );
     expect(res.status,).toBe(401,);
@@ -125,44 +125,60 @@ describe("character-availability routes", () => {
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ available: true, },),
+        body: JSON.stringify({ status: "available", },),
       },),
     );
     expect(res.status,).toBe(404,);
   });
 
-  test("POST creates availability row with defaults", async () => {
+  test("POST creates availability row with snake_case fields", async () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/availability`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ available: true, reason: "test", },),
+        body: JSON.stringify({
+          status: "busy",
+          usage_policy: "personal",
+          activity_restrictions: ["weekdays", "evenings",],
+          content_policy: "sfw",
+          nsfw_policy: null,
+        },),
       },),
     );
     expect(res.status,).toBe(201,);
 
     const row = await db
       .selectFrom("character_availability",)
-      .select(["actor_id", "status", "activity_restrictions",],)
+      .select(["actor_id", "status", "usage_policy", "activity_restrictions", "content_policy",],)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
     expect(row?.actor_id,).toBe(MEMBER_ACTOR,);
-    expect(row?.status,).toBe("available",);
-    expect(row?.activity_restrictions,).toBe("[]",);
+    expect(row?.status,).toBe("busy",);
+    expect(row?.usage_policy,).toBe("personal",);
+    expect(JSON.parse(row?.activity_restrictions ?? "[]",),).toEqual(["weekdays", "evenings",],);
+    expect(row?.content_policy,).toBe("sfw",);
   });
 
-  test("POST updates existing availability", async () => {
+  test("POST updates existing availability keeping absent fields", async () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/availability`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ available: false, },),
+        body: JSON.stringify({ status: "offline", },),
       },),
     );
     expect(res.status,).toBe(200,);
     const body = await res.json() as AvailabilityBody;
     expect(body.updated,).toBe(true,);
     expect(body.id,).toBeDefined();
+
+    const row = await db
+      .selectFrom("character_availability",)
+      .select(["status", "usage_policy",],)
+      .where("actor_id", "=", MEMBER_ACTOR,)
+      .executeTakeFirst();
+    expect(row?.status,).toBe("offline",);
+    expect(row?.usage_policy,).toBe("personal",); // preserved from prior POST
   });
 
   test("DELETE requires auth", async () => {
