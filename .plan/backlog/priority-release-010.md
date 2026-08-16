@@ -52,10 +52,8 @@ tracking: `epic-release-010.md`.
 
 | # | Capability | Builds on | Effort | Dependencies | Matrix gap |
 | -- | ---------- | --------- | ------ | ------------ | ---------- |
-| 1 | **Quick-Reply / event-driven automation** — button sets + auto-execute on startup/user/ai events (SillyTavern QR, RisuAI dynamic-* inspiration) | Slash-command parser + 21 handlers (`messages.ts:543`), regex pipeline | Med | None — pure frontend + thin route | G22 |
-> **Status (2026-08-16): core shipped** — `quick_replies` column (migration 045), buttons row, modal editor, startup trigger (manual + startup work). Open: user/ai event triggers (rate-limit/loop-guard design first). Worktree quick-wins → merged to dev.
-| 2 | **Dynamic memory writes via tool-call** — assistant emits durable memory note mid-response (RisuAI dynamic-memory inspiration) | Tool-call SSE (`messages.tool_calls`, migration 037), memorySection | Med | Memory selection UI (item 5) for UX | G23 |
-> **Done (2026-08-16)** — `write_memory_note` builtin tool (2k cap, dedupe, scope character, ctx {db,actorId,chatId}); worktree quick-wins → merged to dev.
+| 1 | **Quick-Reply / event-driven automation** — button sets + auto-execute on startup/user/ai events (SillyTavern QR, RisuAI dynamic-* inspiration) | Slash-command parser + 21 handlers (`messages.ts:543`), regex pipeline | Med — **core shipped (2026-08-16)** | None — pure frontend + thin route | G22 |
+| 2 | **Dynamic memory writes via tool-call** — assistant emits durable memory note mid-response (RisuAI dynamic-memory inspiration) | Tool-call SSE (`messages.tool_calls`, migration 037), memorySection | **Done (2026-08-16)** | Memory selection UI (item 5) for UX | G23 |
 | 3 | **Emotion-reactive portraits** — extend existing emotion avatars with `<Emotion>` tag + per-emotion sprite swap (RisuAI/SillyTavern inspiration) | Emotion avatars (shipped), `avatarForMessage()` wired in `message-list.html:51`, assets polymorphic linking | **Done** — per-message emotion-avatar resolution complete | Per-character emotion images in gallery | G21 (partial) |
 | 4 | **Regex output-transform phase split** — extend regex pipeline from single-phase to 4-phase (editinput/output/process/display) (RisuAI 4-phase inspiration) | Regex extraction pipeline (`src/regex/`) | Low–Med | None — pure logic + frontend toggle | G22 (partial) |
 | 5 | **Memory selection UI — mid-chat pinning** — select/memory-pin/purge UI in chat sidebar (emergent ambient-memory trend: Kindroid, Nomi, Zhumu) | MemorySection, cross-chat memory (shipped), B8 in-flight | Low–Med | B8 already in-flight — this is the UX layer | G23 (partial) |
@@ -69,6 +67,26 @@ tracking: `epic-release-010.md`.
 | 13 | **Proactive messaging** — 4 frequency levels + quiet hours; memory-driven topic selection; game-time awareness (Nomi.ai inspiration; matrix agentic addendum) | memorySection (1024-token), cross-chat memory (shipped), notifications SSE + center (shipped) | Med | Memory selection UI (item 5) for topic UX; `TASK-proactive-messaging` + `TASK-quiet-hours` | G38, G39 |
 | 14 | **Keyphrase-triggered journal recall** — chat token stream matches keyphrases → inject journal memories (Kindroid inspiration; matrix agentic addendum) | chat SSE stream, memorySection, prompt registry | Med | None — chat-side matching + memory injection | G40 |
 | 15 | **Encounter + bestiary generation** — generative encounter/bestiary/world-state synopsis for battle + NPCs (AI-GM landscape: Fables.gg/StoryRoll/AI Realm; Bucket B of emergent sweep) | Battle + NPC systems, assistant tool-calling (shipped), generation hooks | Med | Encounter templates (`TASK-battle-encounter-template-system.md`); NPC services | — |
+
+### Status (2026-08-16)
+
+Shipped via worktree `quick-wins` (→ dev):
+
+- Item 1 **core** — `quick_replies` column (migration 045), buttons row, modal editor, startup trigger.
+- Item 2 — `write_memory_note` builtin tool (2k cap, dedupe, scope character, ctx {db,actorId,chatId}).
+- Item 6 — `prompt_override` column (migration 044), per-chat override + save/clear; assembler precedence per-chat > world-setup > character.
+
+Remaining (next session):
+
+- **Item 1 remainder** — user/ai event triggers (rate-limit/loop-guard design before auto-send).
+- **Item 5** — memory selection / pin UI in chat sidebar (blocks items 13 topic-selection UX).
+- **Items 4, 7, 8, 9, 12** — regex 4-phase split, in-chat asset preview, creation wizards, GM-guided story, chat-type matrix UI remainder.
+- **Items 10, 11, 13, 14, 15** — embeddings, asset-consistency conditioning, proactive messaging, keyphrase recall, encounter/bestiary gen.
+
+Finalize-blocking cleanup (quick-wins, deferred — `--force` merge approved):
+
+- `size - strict`: `src/routes/chats/manage.ts` (251L), `src/frontend/alpine/chat/index.ts` (251L), `src/frontend/alpine/chat-types/core.ts` (253L) — split past the 250L limit (see 04). Ignored for merge per instruction.
+- `lint - ts`: deno/package-json duplicate-manifest warnings (pre-existing, not from quick-wins).
 
 **0.1.0 sequencing recommendation (by ROI):**
 - **First wave** (low effort, high delight): items 3, 4, 6 — pure logic/frontend, no new infra
