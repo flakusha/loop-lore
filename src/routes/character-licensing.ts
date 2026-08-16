@@ -64,7 +64,8 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (typeof userId !== "string") { return userId; }
 
       const { actorId, } = ctx.params;
-      const { licenseType, customLicenseText, attribution, allowDerivatives, allowCommercial, shareAlike, } = ctx.body;
+      const { license_type, custom_license_text, attribution, allow_derivatives, allow_commercial, share_alike, } =
+        ctx.body;
 
       if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
         return jsonError({
@@ -84,12 +85,12 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         await database
           .updateTable("character_licensing",)
           .set({
-            license_type: licenseType ?? existing.license_type,
-            custom_license_text: customLicenseText ?? existing.custom_license_text,
+            license_type: license_type ?? existing.license_type,
+            custom_license_text: custom_license_text ?? existing.custom_license_text,
             attribution: attribution ?? existing.attribution,
-            allow_derivatives: booleanToInt(allowDerivatives, existing.allow_derivatives,),
-            allow_commercial: booleanToInt(allowCommercial, existing.allow_commercial,),
-            share_alike: booleanToInt(shareAlike, existing.share_alike,),
+            allow_derivatives: booleanToInt(allow_derivatives, existing.allow_derivatives,),
+            allow_commercial: booleanToInt(allow_commercial, existing.allow_commercial,),
+            share_alike: booleanToInt(share_alike, existing.share_alike,),
             updated_at: new Date().toISOString(),
           },)
           .where("id", "=", existing.id,)
@@ -103,12 +104,12 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         .values({
           id,
           actor_id: actorId,
-          license_type: licenseType ?? "proprietary",
-          custom_license_text: customLicenseText ?? null,
+          license_type: license_type ?? "proprietary",
+          custom_license_text: custom_license_text ?? null,
           attribution: attribution ?? null,
-          allow_derivatives: booleanToInt(allowDerivatives, 1,),
-          allow_commercial: booleanToInt(allowCommercial, 0,),
-          share_alike: booleanToInt(shareAlike, 0,),
+          allow_derivatives: booleanToInt(allow_derivatives, 1,),
+          allow_commercial: booleanToInt(allow_commercial, 0,),
+          share_alike: booleanToInt(share_alike, 0,),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },)
