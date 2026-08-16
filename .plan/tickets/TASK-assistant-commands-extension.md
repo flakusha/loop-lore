@@ -1,6 +1,6 @@
 # TASK: Assistant Commands Extension
 
-**Status:** 🟡 In Progress — parser + 21 handlers wired; tiered access pending (2026-08-01)
+**Status:** 🟡 In Progress — parser + 21 handlers wired; tiered access (owner-gated) shipped (worktree `assistant-intent-workflows`, `eb2d50b`); `/stats` `/attack` `/heal` handlers + `/create` singleton bug open (2026-08-16)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
@@ -11,7 +11,7 @@ Slash command system: parser (`src/assistant/command-parser.ts`), dispatch in `P
 
 ## Remaining
 
-- [ ] Tiered access control (all/member/GM) — not implemented; all commands run for any authenticated user
+- [x] Tiered access control — shipped: `registerCommand` takes optional `requiredRole` (`observer < member < owner` hierarchy); dispatch resolves `chat_participants.role_in_chat` and denies below-minimum. `/create` + `/debug` now `owner`-only. "GM" tier dropped — no such participant role exists (assistant role is a chat config, not a permission).
 - [ ] `/stats`, `/attack`, `/heal` not registered (in `BUILTIN_COMMANDS` spec list, no handler)
 - [ ] `/create` uses `loadConfig()`/`getDatabase()` singletons + `worldId = chat.type` bug — see TASK-assistant-gm-flows
 - [ ] Integration tests for slash dispatch → command result
