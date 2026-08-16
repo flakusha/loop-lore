@@ -137,8 +137,22 @@ describe("chatParticipants", () => {
           currentActorId: "a1",
           nextActorId: "a2",
           order: [
-            { actor_id: "a1", display_name: "Alice", actor_type: "character", talkativity: 5, isCurrent: true, isNext: false, },
-            { actor_id: "a2", display_name: "Bob", actor_type: "character", talkativity: 7, isCurrent: false, isNext: true, },
+            {
+              actor_id: "a1",
+              display_name: "Alice",
+              actor_type: "character",
+              talkativity: 5,
+              isCurrent: true,
+              isNext: false,
+            },
+            {
+              actor_id: "a2",
+              display_name: "Bob",
+              actor_type: "character",
+              talkativity: 7,
+              isCurrent: false,
+              isNext: true,
+            },
           ],
         },
       },);
