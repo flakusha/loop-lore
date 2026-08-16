@@ -4,96 +4,78 @@
  * Covers: generateForChat across all types, empty chat (no source),
  * status state-machine transitions (valid/invalid), per-type case shape.
  *
- * Uses in-memory SQLite + a minimal Kysely schema. No LLM, no route wiring.
+ * Uses in-memory SQLite + Kysely test DB. No LLM, no route wiring.
  */
-import { Database, } from "bun:sqlite";
-import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { SyntheticDataStatus, SyntheticDataType, } from "../../db/enums";
-import { createSqliteDialect, setTestDatabase, } from "../../db/index";
+import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
+import { createTestDb, } from "../../test-utils/create-test-db";
 import { jsonParseOr, } from "../../utils";
 import { SyntheticGenerator, } from "./generator";
 
-// Minimal schema: only the columns the generator reads/writes.
-interface MinimalDB {
-  chats: { id: string; name: string; world_id: string | null };
-  messages: { id: string; chat_id: string; actor_id: string; role: string; content: string };
-  quests: {
-    id: string;
-    world_id: string;
-    creator_id: string;
-    name: string;
-    type: string;
-    status: string;
-    config: string;
-  };
-  quest_progress: { id: string; quest_id: string; chat_id: string; progress: number; status: string };
-  world_states: { id: string; world_id: string; snapshot: string };
-  synthetic_data: {
-    id: string;
-    chat_id: string | null;
-    world_id: string | null;
-    type: string;
-    source_data: string;
-    generated_cases: string;
-    metadata: string;
-    status: string;
-    validated_at: string | null;
-    validated_by: string | null;
-  };
-}
+let testEnv: { db: Kysely<DB>; sqlite: import("bun:sqlite").Database };
 
-function createTestDb(): { sqlite: Database; db: Kysely<MinimalDB> } {
-  const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA foreign_keys = ON",);
-  const dialect = createSqliteDialect(sqlite,);
-  const db = new Kysely<MinimalDB>({ dialect, },);
-
-  sqlite.run(`CREATE TABLE chats (id TEXT PRIMARY KEY, name TEXT NOT NULL, world_id TEXT)`,);
-  sqlite.run(
-    `CREATE TABLE messages (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, actor_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL)`,
-  );
-  sqlite.run(
-    `CREATE TABLE quests (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, creator_id TEXT NOT NULL, name TEXT NOT NULL, type TEXT NOT NULL, status TEXT NOT NULL, config TEXT NOT NULL)`,
-  );
-  sqlite.run(
-    `CREATE TABLE quest_progress (id TEXT PRIMARY KEY, quest_id TEXT NOT NULL, chat_id TEXT NOT NULL, progress INTEGER NOT NULL, status TEXT NOT NULL)`,
-  );
-  sqlite.run(
-    `CREATE TABLE world_states (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, snapshot TEXT NOT NULL)`,
-  );
-  sqlite.run(
-    `CREATE TABLE synthetic_data (
-      id TEXT PRIMARY KEY, chat_id TEXT, world_id TEXT, type TEXT NOT NULL,
-      source_data TEXT NOT NULL, generated_cases TEXT NOT NULL, metadata TEXT NOT NULL,
-      status TEXT NOT NULL, validated_at TEXT, validated_by TEXT
-    )`,
-  );
-
-  return { sqlite, db, };
-}
-
-const testDb = createTestDb();
-setTestDatabase(testDb.db as unknown as Kysely<DB>,);
+beforeAll(async () => {
+  testEnv = await createTestDb();
+  // Disable FKs — original test used minimal schema without FK constraints
+  testEnv.sqlite.run("PRAGMA foreign_keys = OFF",);
+  setTestDatabase(testEnv.db,);
+},);
 
 afterAll(() => {
   setTestDatabase(null,);
-  testDb.sqlite.close();
+  testEnv.sqlite.close();
 },);
 
-async function seedChatWithData(db: Kysely<MinimalDB>,): Promise<{ chatId: string; worldId: string }> {
+async function seedChatWithData(db: Kysely<DB>,): Promise<{ chatId: string; worldId: string }> {
   const chatId = randomUUID();
   const worldId = randomUUID();
-  await db.insertInto("chats",).values({ id: chatId, name: "c", world_id: worldId, },).execute();
+
+  await db.insertInto("chats",).values({ id: chatId, name: "c", world_id: worldId, created_by: "user-1", },)
+    .execute();
 
   await db
     .insertInto("messages",)
     .values([
-      { id: randomUUID(), chat_id: chatId, actor_id: "a1", role: "user", content: "hello", },
-      { id: randomUUID(), chat_id: chatId, actor_id: "a2", role: "assistant", content: "hi", },
-      { id: randomUUID(), chat_id: chatId, actor_id: "a3", role: "system", content: "low quality", },
+      {
+        id: randomUUID(),
+        chat_id: chatId,
+        actor_id: "a1",
+        role: "user",
+        content: "hello",
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: "confirmed",
+        visibility: "visible",
+      } as never,
+      {
+        id: randomUUID(),
+        chat_id: chatId,
+        actor_id: "a2",
+        role: "assistant",
+        content: "hi",
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: "confirmed",
+        visibility: "visible",
+      } as never,
+      {
+        id: randomUUID(),
+        chat_id: chatId,
+        actor_id: "a3",
+        role: "system",
+        content: "low quality",
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: "confirmed",
+        visibility: "visible",
+      } as never,
     ],)
     .execute();
 
@@ -108,11 +90,12 @@ async function seedChatWithData(db: Kysely<MinimalDB>,): Promise<{ chatId: strin
       type: "collection",
       status: "active",
       config: "{}",
-    },)
+      target: 0,
+    } as never,)
     .execute();
   await db
     .insertInto("quest_progress",)
-    .values({ id: randomUUID(), quest_id: questId, chat_id: chatId, progress: 40, status: "active", },)
+    .values({ id: randomUUID(), quest_id: questId, chat_id: chatId, progress: 40, status: "active", } as never,)
     .execute();
   await db
     .insertInto("world_states",)
@@ -126,12 +109,12 @@ async function seedChatWithData(db: Kysely<MinimalDB>,): Promise<{ chatId: strin
 }
 
 describe("SyntheticGenerator", () => {
-  let db: Kysely<MinimalDB>;
+  let db: Kysely<DB>;
   let gen: SyntheticGenerator;
 
   beforeEach(() => {
-    db = testDb.db;
-    gen = new SyntheticGenerator({ db: db as unknown as Kysely<DB>, maxScenarios: 5, },);
+    db = testEnv.db;
+    gen = new SyntheticGenerator({ db, maxScenarios: 5, },);
   },);
 
   test("generates one SyntheticData row per requested type", async () => {

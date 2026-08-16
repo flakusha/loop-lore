@@ -36,10 +36,18 @@ export async function createTestDb(): Promise<{ db: Kysely<DB>; sqlite: Database
  * Useful for tests that need a clean slate without re-running migrations.
  */
 export function resetTestDb(sqlite: Database,): void {
+  // Temporarily disable FK constraints so we can delete in any order
+  sqlite.run("PRAGMA foreign_keys = OFF",);
   const tables = sqlite
-    .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)
+    .query(
+      `SELECT name FROM sqlite_master
+       WHERE type = 'table'
+         AND name NOT LIKE 'kysely_%'
+         AND name NOT LIKE '%_fts%'`,
+    )
     .all() as { name: string }[];
   for (const { name, } of tables) {
     sqlite.run(`DELETE FROM "${name}"`,);
   }
+  sqlite.run("PRAGMA foreign_keys = ON",);
 }
