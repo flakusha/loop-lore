@@ -6,7 +6,7 @@
  */
 
 import { registry, } from "../../plugins/registry";
-import type { ToolDefinition, } from "../../plugins/types";
+import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
@@ -44,8 +44,16 @@ interface ToolCallItem {
 /**
  * Execute tool calls and return tool result messages.
  * Looks up ToolDefinition from the plugin registry by name.
+ *
+ * @param toolCalls - Tool call items from the provider response
+ * @param ctx - Optional per-request execution context (db + actor + chat),
+ *   forwarded to tool handlers; builtin tools (e.g. write_memory_note) require it.
+ * @returns Tool-result messages to append to the conversation
  */
-export async function executeToolCalls(toolCalls: ToolCallItem[],): Promise<GenerationMessage[]> {
+export async function executeToolCalls(
+  toolCalls: ToolCallItem[],
+  ctx?: ToolExecutionContext,
+): Promise<GenerationMessage[]> {
   const toolDefs = registry.getAllTools();
   const results: GenerationMessage[] = [];
 
@@ -63,7 +71,7 @@ export async function executeToolCalls(toolCalls: ToolCallItem[],): Promise<Gene
     const params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {},);
 
     try {
-      const toolResult = await def.handler(params,);
+      const toolResult = await def.handler(params, ctx,);
       results.push({
         role: "tool",
         content: toolResult.content,

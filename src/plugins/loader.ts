@@ -14,6 +14,7 @@ import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { getLogger } from "../logger";
+import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 
 /** Ordered list of plugin names for shutdown (reverse) */
 const loadOrder: string[] = [];
@@ -85,6 +86,9 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
       await loadSinglePlugin(db, pluginName, join(fullDir, pluginName), origin,);
     }
   }
+
+  // Register builtin core tools (model-visible, executed with per-request ctx).
+  registry.addTools("core", [writeMemoryNoteTool,]);
 }
 
 /** Load a single plugin from its directory: manifest, hooks, and state. */
