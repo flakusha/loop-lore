@@ -25,12 +25,32 @@ export interface AvailableActor {
   actor_type: string;
 }
 
+/** One ordered slot in the group-chat turn-order indicator (GET /turn-order). */
+export interface TurnOrderSlot {
+  actor_id: string;
+  display_name: string;
+  actor_type: string;
+  talkativity: number;
+  isCurrent: boolean;
+  isNext: boolean;
+}
+
+/** Read-only turn-order view for the group-chat indicator. */
+export interface GroupTurnOrder {
+  strategy: string | null;
+  currentActorId: string | null;
+  nextActorId: string | null;
+  order: TurnOrderSlot[];
+}
+
 /**
  * Group-chat participant panel state (C1 — chat-type matrix UI remainder).
  *
  * Backed by the existing participants REST API (GET/POST/PUT/DELETE
  * /api/v1/chats/:id/participants). `loadParticipants()` also keeps
  * `_chatParticipants` in sync so @mention autocomplete keeps working.
+ * `loadTurnOrder()` fetches the read-only turn-order snapshot (separate
+ * endpoint) for the turn-order indicator.
  */
 export interface ChatParticipantsState extends AlpineMagicThis {
   /** Full participant rows (with talkativity/initiative) for the active group chat. */
@@ -45,6 +65,8 @@ export interface ChatParticipantsState extends AlpineMagicThis {
   _selectedAddActorId: string | null;
   /** Role selected in the add-participant picker. */
   _selectedAddRole: string;
+  /** Read-only turn-order snapshot for the indicator (null when not loaded/group). */
+  _turnOrder: GroupTurnOrder | null;
 
   /** True when the active chat is a group chat. */
   readonly isGroupChat: boolean;
@@ -55,6 +77,8 @@ export interface ChatParticipantsState extends AlpineMagicThis {
   loadParticipants(): Promise<void>;
   /** Load the current user's addable actors. */
   loadAvailableActors(): Promise<void>;
+  /** Load the group-chat turn-order snapshot for the turn-order indicator. */
+  loadTurnOrder(): Promise<void>;
   /** Add an actor to the group (POST /participants). */
   addParticipant(actorId: string, role?: string,): Promise<void>;
   /** Remove an actor from the group (DELETE /participants/:actorId). */

@@ -877,7 +877,19 @@
     "removed": "Participant removed",
     "failedAdd": "Failed to add participant",
     "failedRemove": "Failed to remove participant",
-    "failedUpdate": "Failed to update participant"
+    "failedUpdate": "Failed to update participant",
+    "turnOrder": "Turn Order",
+    "current": "current",
+    "next": "next",
+    "noTurnOrder": "No turn order yet"
+  },
+  "sideChannels": {
+    "title": "Side Channels",
+    "none": "No side channels yet",
+    "new": "New",
+    "newPlaceholder": "Channel name…",
+    "created": "Side channel created",
+    "failedCreate": "Failed to create side channel"
   },
   "personas": {
     "title": "Personas",
