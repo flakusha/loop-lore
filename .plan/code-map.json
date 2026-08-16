@@ -4607,6 +4607,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
   "src/db/enums-crafting.ts": [
@@ -5876,6 +5880,10 @@
     }
   ],
   "src/db/seed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
@@ -11609,6 +11617,12 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     }
   ],
+  "src/routes/admin/danger-zone.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-danger-zone.md"
+    }
+  ],
   "src/routes/admin/index.ts": [
     {
       "kind": "epic",
@@ -11637,6 +11651,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/review-stats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-content-review-queue.md"
     }
   ],
   "src/routes/admin/sd-status.ts": [

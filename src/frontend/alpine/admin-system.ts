@@ -12,6 +12,11 @@ interface ConfigEntry {
   updated_at: string;
 }
 
+/** Methods provided by the merged admin page state (admin.ts). */
+interface AdminPageState {
+  loadOverview(): Promise<void>;
+}
+
 export const adminSystem = {
   systemConfig: [] as ConfigEntry[],
   sysConfigDirty: {} as Record<string, string>,
@@ -185,6 +190,42 @@ export const adminSystem = {
       }
     } catch {
       showToast("error", t("toasts.networkError",),);
+    }
+  },
+
+  // ── Danger Zone ─────────────────────────────────────
+  dangerConfirm: { purge: "", reset: "", factory: "", },
+  dangerBusy: { purge: false, reset: false, factory: false, },
+
+  async runDangerAction(action: "purge" | "reset" | "factory",) {
+    const confirmMap = {
+      purge: { string: "PURGE", url: "/api/admin/audit/purge", },
+      reset: { string: "RESET", url: "/api/admin/settings/reset", },
+      factory: { string: "DELETE ALL", url: "/api/admin/factory-reset", },
+    } as const;
+    const cfg = confirmMap[action];
+    if (this.dangerConfirm[action] !== cfg.string) { return; }
+    this.dangerBusy[action] = true;
+    try {
+      const res = await apiFetch(cfg.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ confirmation: cfg.string, },),
+      },);
+      if (res.ok) {
+        showToast("success", t("toasts.dangerActionDone",),);
+        this.dangerConfirm[action] = "";
+        if (action === "purge") { await (this as unknown as AdminPageState).loadOverview(); }
+        if (action === "reset") { this.loadSystemConfig(); }
+        if (action === "factory") { globalThis.location.assign("/",); }
+      } else {
+        const err = await res.json();
+        showToast("error", err.message || t("toasts.failed",),);
+      }
+    } catch {
+      showToast("error", t("toasts.networkError",),);
+    } finally {
+      this.dangerBusy[action] = false;
     }
   },
 };
