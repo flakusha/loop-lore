@@ -16,13 +16,13 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("model_id", "text", (c,) => c.notNull(),)
     .addColumn("context_window", "integer",)
     .addColumn("max_output", "integer",)
-    .addColumn("supports_tools", "integer", (c,) => c.defaultTo(0,),)  // boolean: 0/1
+    .addColumn("supports_tools", "integer", (c,) => c.defaultTo(0,),) // boolean: 0/1
     .addColumn("supports_vision", "integer", (c,) => c.defaultTo(0,),)
     .addColumn("supports_thinking", "integer", (c,) => c.defaultTo(0,),)
-    .addColumn("modalities", "text",)  // JSON array
+    .addColumn("modalities", "text",) // JSON array
     .addColumn("param_size", "text",)
     .addColumn("owned_by", "text",)
-    .addColumn("user_override", "integer", (c,) => c.notNull().defaultTo(0,),)  // boolean: 0/1
+    .addColumn("user_override", "integer", (c,) => c.notNull().defaultTo(0,),) // boolean: 0/1
     .addColumn("notes", "text",)
     .addColumn("last_seen", "text", (c,) => c.notNull(),)
     .addColumn("created_at", "text", (c,) => c.notNull(),)
