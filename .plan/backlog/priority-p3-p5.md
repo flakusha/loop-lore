@@ -24,7 +24,7 @@
 | 12 | (Side panels) without leaving chat                      | 🟡 partial             | chat-settings modal ✅; in-chat asset preview + linkage panel pending                                                                       |
 | 13 | Chat settings menus — templates, tuning                 | 🟡 partial             | setup-template selector ✅; prompt-template registry `src/prompts/registry.ts` ✅ (2026-08-12); detailed tuning frontend open                |
 | 14 | Character/world/location flows                          | 🟡 partial             | character-io ✅; world/location creation + export/import menus pending                                                                      |
-| 15 | LLM support (chat/captioning/intent/embeddings)         | 🟢 chat/caption/intent | providers ✅; `classifyIntent` wired; embeddings greenfield                                                                                 |
+| 15 | LLM support (chat/captioning/intent/embeddings)         | 🟢 chat/caption/intent | providers ✅ (openai-compat + Anthropic + Ollama native 2026-08-17); `classifyIntent` wired; embeddings greenfield                                                                                 |
 | 16 | Assistant creative tooling                              | 🟡 partial             | command buttons + parser ✅; **tool-call UI ✅ (2026-08-12)**; creation wizards pending                                                     |
 | 17 | Frontend fully wired                                    | 🟡 ongoing             | menus/modals/side-menus/docs — docs reconciliation **merged 2026-08-14** (`docs-reconcile`); 17 broken internal md links open (see `../open-inflight.md`)                            |
 | —  | IO: import/export (characters/worlds/locations/stories) | 🟡 partial             | JSON char import ✅; PNG/YAML/TOML/CHARX + world/loc/story export ✅ (2026-08-06)                                                           |
@@ -39,7 +39,7 @@
 - [ ] Memory + template injection UX — memory selection UI (mid-chat, pinning); **template injection UX partial** (read-only prompt preview in chat settings modal 2026-08-14; open: inline override per-chat)
 - [ ] Character/world/location flows — multi-format import, creation + settings menus, mood & happiness meter (P3 #14)
 - [ ] Assistant tooling — creation wizards, `/commands` tiered access (tool-call display ✅ 2026-08-12) (P3 #16 / P2-C)
-- [ ] LLM providers — Anthropic/Ollama/Bedrock (embeddings foundation) (P3 #15)
+- [x] LLM providers — Anthropic + Ollama native ✅ 2026-08-17 (`chat-matrix-ui-remainder`); ~Bedrock deferred (SigV4 scope)~ (P3 #15)
 - [ ] Assets — signed URLs (compression flow ✅ 2026-08-12) (P3 #10)
 - [ ] Fine-tuning experience — provider health panel; fine-tuning UI for chat/persona/character (P3 #11)
 - [ ] NSFW — character 5-tier rating runtime enforcement (P3 #6)
