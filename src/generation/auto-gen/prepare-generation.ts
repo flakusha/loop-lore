@@ -92,6 +92,7 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     actorId,
     chatId,
     modelId: resolved.resolvedModel,
+    userId,
     groupParticipantIds,
     config,
     systemPromptOverride,
