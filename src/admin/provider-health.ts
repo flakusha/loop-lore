@@ -7,6 +7,7 @@
 import { getProvider, listProviders, } from "../generation/providers/registry";
 import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
+import { upsertModelCapabilities, } from "./model-capabilities";
 
 export interface ProviderHealthStatus {
   name: string;
@@ -22,9 +23,10 @@ const state = { cache: [] as ProviderHealthStatus[], };
 
 /**
  * Scan all registered providers for health and model discovery.
- * Returns updated health cache.
+ * Returns updated health cache. When db is provided, auto-populates
+ * the model capabilities registry with discovered models.
  */
-export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
+export async function scanAllProviders(db?: unknown): Promise<ProviderHealthStatus[]> {
   const providers = listProviders();
   getLogger().child({ module: "provider-health", },).info("Scanning providers", { count: providers.length, },);
 
@@ -79,6 +81,22 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
   }
 
   state.cache = updated;
+
+  // Auto-populate model capabilities registry
+  if (db) {
+    for (const p of updated) {
+      if (p.status === "healthy" && p.models.length > 0) {
+        try {
+          await upsertModelCapabilities(db as never, p.name, p.models,);
+        } catch (error) {
+          getLogger().child({ module: "provider-health", },).warn("Failed to upsert model capabilities", {
+            provider: p.name,
+            error: error instanceof Error ? error.message : String(error,),
+          },);
+        }
+      }
+    }
+  }
 
   let healthy = 0;
   for (const p of updated) { if (p.status === "healthy") { healthy++; } }
