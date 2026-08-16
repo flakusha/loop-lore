@@ -796,6 +796,7 @@ export const MessagesSchema = t.Object({
   section_id: t.Optional(t.String(),),
   tool_calls: t.Optional(t.String(),),
   thinking: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
