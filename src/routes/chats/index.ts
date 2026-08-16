@@ -9,7 +9,9 @@ import { extrasRoutes, } from "./extras";
 import { listRoutes, } from "./list";
 import { manageRoutes, } from "./manage";
 import { participantRoutes, } from "./participants";
+import { sideChannelRoutes, } from "./side-channels";
 import { templatesRoutes, } from "./templates";
+import { turnOrderRoutes, } from "./turn-order";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -39,6 +41,8 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(batchRoutes(opts, prefix,),)
       .use(manageRoutes(opts, prefix,),)
       .use(participantRoutes(opts, prefix,),)
+      .use(sideChannelRoutes(opts, prefix,),)
+      .use(turnOrderRoutes(opts, prefix,),)
       .use(extrasRoutes(opts, prefix,),)
   );
 }

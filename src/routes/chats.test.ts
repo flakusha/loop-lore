@@ -825,3 +825,218 @@ describe("chatsRoutes", () => {
     expect(turnCount?.n,).toBe(0,);
   });
 });
+
+describe("chatsRoutes — side-channels + turn-order (C1)", () => {
+  let db: Kysely<DB>;
+  const userId = uid();
+  const aiActorId = uid();
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `user-${userId}`,
+        display_name: "Side Test User",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    await db
+      .insertInto("actors",)
+      .values({
+        id: userId,
+        actor_type: "user",
+        display_name: "Side Test User",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    await db
+      .insertInto("actors",)
+      .values({
+        id: aiActorId,
+        actor_type: "character",
+        display_name: "Companion",
+        owner_id: userId,
+        agent_type: "ai",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  function createApp(db: Kysely<DB>, uid: string | null,): Elysia {
+    return new Elysia({ name: "test-chats-c1", },)
+      .derive(() => ({ userId: uid, }))
+      .use(chatsRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
+  }
+
+  async function makeGroupChat(app: Elysia,): Promise<string> {
+    const res = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "C1 Group", type: "group", mode: "group", },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+    // Add an AI companion so the group has a turn-order candidate.
+    await app.handle(
+      new Request(`http://localhost/api/chats/${id}/participants`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ actorId: aiActorId, },),
+      },),
+    );
+    return id;
+  }
+
+  test("POST /api/chats/:id/side creates a child chat (template_id null)", async () => {
+    const app = createApp(db, userId,);
+    const groupId = await makeGroupChat(app,);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${groupId}/side`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "OOC Chat", },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const { id: sideId, } = (await res.json()) as { id: string };
+
+    const side = await db.selectFrom("chats",).selectAll().where("id", "=", sideId,).executeTakeFirst();
+    expect(side?.parent_chat_id,).toBe(groupId,);
+    expect(side?.template_id,).toBeNull();
+    expect(side?.type,).toBe("group",);
+    expect(side?.created_by,).toBe(userId,);
+
+    // Inherited participants: owner (user) + companion.
+    const participants = await db.selectFrom("chat_participants",).select("actor_id",).where("chat_id", "=", sideId,)
+      .execute();
+    const ids = Array.from(participants, (p,) => p.actor_id,);
+    expect(ids,).toContain(userId,);
+    expect(ids,).toContain(aiActorId,);
+  });
+
+  test("GET /api/chats/:id/side lists only template-less children", async () => {
+    const app = createApp(db, userId,);
+    const groupId = await makeGroupChat(app,);
+
+    await app.handle(
+      new Request(`http://localhost/api/chats/${groupId}/side`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Side A", },),
+      },),
+    );
+    await app.handle(
+      new Request(`http://localhost/api/chats/${groupId}/side`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Side B", },),
+      },),
+    );
+
+    const res = await app.handle(new Request(`http://localhost/api/chats/${groupId}/side`,),);
+    expect(res.status,).toBe(200,);
+    const { sideChannels, } = (await res.json()) as { sideChannels: { name: string; template_id: null }[] };
+    expect(sideChannels,).toHaveLength(2,);
+    const names = Array.from(sideChannels, (s,) => s.name,).sort();
+    expect(names,).toEqual(["Side A", "Side B",],);
+  });
+
+  test("migrate idempotency is NOT blocked by an existing side-channel", async () => {
+    const app = createApp(db, userId,);
+    const groupId = await makeGroupChat(app,);
+    await insertChatSetupTemplates(db, "c1-migrate-target", "C1 Migrate Target", {},);
+
+    // Create a side-channel first — must not block a legitimate migrate.
+    await app.handle(
+      new Request(`http://localhost/api/chats/${groupId}/side`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Side", },),
+      },),
+    );
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${groupId}/migrate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ templateId: "c1-migrate-target", },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    // A second migrate on the same source is still rejected (idempotency).
+    const res2 = await app.handle(
+      new Request(`http://localhost/api/chats/${groupId}/migrate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ templateId: "c1-migrate-target", },),
+      },),
+    );
+    expect(res2.status,).toBe(400,);
+  });
+
+  test("GET /api/chats/:id/turn-order returns strategy + current/next for a group chat", async () => {
+    const app = createApp(db, userId,);
+    const groupId = await makeGroupChat(app,);
+    await db.updateTable("chats",).set({ turn_strategy: "round_robin", },).where("id", "=", groupId,).execute();
+
+    const res = await app.handle(new Request(`http://localhost/api/chats/${groupId}/turn-order`,),);
+    expect(res.status,).toBe(200,);
+    const { turnOrder, } = (await res.json()) as {
+      turnOrder: {
+        strategy: string | null;
+        currentActorId: string | null;
+        nextActorId: string | null;
+        order: { actor_id: string; display_name: string; isCurrent: boolean; isNext: boolean }[];
+      };
+    };
+    expect(turnOrder.strategy,).toBe("round_robin",);
+    expect(turnOrder.order.length,).toBeGreaterThan(0,);
+    // AI companion is in the order (non-user agent).
+    const hasCompanion = turnOrder.order.some((o,) => o.actor_id === aiActorId);
+    expect(hasCompanion,).toBe(true,);
+    // The strategy picks a next actor from the order.
+    expect(turnOrder.nextActorId,).toBeDefined();
+  });
+
+  test("GET /api/chats/:id/turn-order returns null turnOrder for a direct chat", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request("http://localhost/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Direct", type: "direct", mode: "direct", },),
+      },),
+    );
+    const { id, } = (await res.json()) as { id: string };
+
+    const to = await app.handle(new Request(`http://localhost/api/chats/${id}/turn-order`,),);
+    expect(to.status,).toBe(200,);
+    const { turnOrder, } = (await to.json()) as { turnOrder: unknown };
+    expect(turnOrder,).toBeNull();
+  });
+});

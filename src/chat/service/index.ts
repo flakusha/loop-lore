@@ -51,6 +51,10 @@ export {
 // ── Transitions ───────────────────────────────────────────────
 export { migrateChat, } from "./transitions";
 
+// ── Turn order (C1 — group-chat turn-order indicator) ────────
+export { resolveGroupTurnOrder, } from "./turn-order";
+export type { GroupTurnOrder, TurnOrderSlot, } from "./turn-order";
+
 // ── Participants ──────────────────────────────────────────────
 export { updateImpersonation, } from "./participants";
 
