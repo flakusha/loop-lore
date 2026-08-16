@@ -1,6 +1,6 @@
 # TASK: Chat Flow — Section Navigation & Story Spanning
 
-**Status:** 🟡 Partial — Phases 1-6 implemented (2026-08-16): inline dividers + jump + grouping breaks (c5270239); story map with message counts/current highlight/actor presence/split-party badge, sticky location header with scrollspy + map/transfer actions, section transfer syncing chat location, background sync on transfer. Remaining: bulk move-all transfer (Phase 6), narrative/transition-type transfer options (Phase 4), divider message-count/timestamp labels (Phase 1 polish). Split into `chat-sections.ts` (manage) + `chat-sections-nav.ts` (navigation) for size gate.
+**Status:** 🟢 Complete — Phases 1-6 shipped (2026-08-16): inline dividers with message count + start time + jump + grouping breaks (c5270239, d726e108); story map with counts/current highlight/actor presence/split-party badge; sticky location header w/ scrollspy + map/transfer actions; transfer with transition-type picker (walk/teleport/narrative) + optional narrative insertion + fade fx + location/background sync (d726e108); bulk move-all assign (d726e108). Split into `chat-sections.ts` (manage) + `chat-sections-nav.ts` (navigation) for size gate.
 **Priority:** Medium
 **Effort:** Med
 **Related:** TASK-chat-sectioning-multi-location, TASK-chat-backgrounds-location-sync
@@ -112,7 +112,7 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 - [x] Click to scroll to section start (`jumpToSection`)
 - [x] Smooth scroll animation
 - [x] Background change at divider point (CSS pill divider)
-- Note: message count + timestamp per divider deferred to Phase 3 (sticky header shows count)
+- [x] Divider meta: message count + section start time (`sectionDividerMeta` + `formatSectionTime`)
 
 ### Phase 2: Story Map Panel — 🟡 IN PROGRESS
 
@@ -122,7 +122,7 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 - [x] Collapsible panel (right-panel + `$store.ui.showSectionsPanel`)
 - [x] Highlight current section (scrollspy → `_currentSectionId`, distinct from user `_activeSectionId`)
 - [x] Visited vs future distinction — no future sections in data model (additive); show visited/current only
-- [ ] Mobile: panel is overlay already (panel-backdrop)
+- [x] Mobile: panel is overlay already (panel-backdrop)
 
 ### Phase 3: Location Header — 🟡 IN PROGRESS
 
@@ -135,7 +135,7 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 
 - [x] Location selector + Set/Transfer (existing `location-panel.html` + `transferChatLocation`)
 - [x] `transferToSection(sectionId)` — set active section + jump + sync chat location to section's location
-- [ ] Narrative text / transition type — deferred (background panel covers visual switch)
+- [x] Transition type picker (walk/teleport/narrative) + optional narrative text — narrative inserted as system narration bound to the section (POST /chats/:id/sections/:sectionId/narrative); visual fade fx on transfer
 
 ### Phase 5: Flow Integration — 🟡 IN PROGRESS
 
@@ -143,14 +143,14 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 - [x] Scrollspy: track `_currentSectionId` from scroll position (`trackCurrentSection` on message-list scroll)
 - [x] Sticky header bound to `_currentSectionId`
 - [x] Background sync on section change via `changeChatLocation` (server-side location→background resolution)
-- [ ] `loadSections()` on chat select (done)
+- [x] `loadSections()` on chat select
 
 ### Phase 6: Group Chat Support — 🟡 IN PROGRESS
 
 - [x] Per-character section map from `actor_name` + section_id of messages (`sectionActors`)
 - [x] Split indicator: actors in different sections (party-split badge)
 - [x] Reunite indicator: badge hidden when single section (`partySplit` false)
-- [ ] Transfer all vs individuals — deferred (per-message assign covers individual; bulk move out of scope)
+- [x] Bulk move-all (story-map "move all here" → POST /chats/:id/sections/:sectionId/assign-all, optional fromSectionId) + per-message assign covers individuals
 
 ## Files to Create
 
