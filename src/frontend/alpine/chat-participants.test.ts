@@ -42,6 +42,7 @@ function buildCtx(
     _participantsBusy: false,
     _selectedAddActorId: null,
     _selectedAddRole: "member",
+    _turnOrder: null,
     $dispatch(event: string, detail: Record<string, unknown>,) {
       if (event === "show-toast") {
         toasts.push({ type: detail.type as string, message: detail.message as string, },);
@@ -125,6 +126,35 @@ describe("chatParticipants", () => {
       await chatParticipants.loadAvailableActors!.call(state,);
       expect(fetchCalls[0]?.url,).toBe("/api/actors",);
       expect(state._availableActors.length,).toBe(1,);
+    });
+  });
+
+  describe("loadTurnOrder", () => {
+    test("fetches and stores the group-chat turn order", async () => {
+      mockFetch(200, {
+        turnOrder: {
+          strategy: "round_robin",
+          currentActorId: "a1",
+          nextActorId: "a2",
+          order: [
+            { actor_id: "a1", display_name: "Alice", actor_type: "character", talkativity: 5, isCurrent: true, isNext: false, },
+            { actor_id: "a2", display_name: "Bob", actor_type: "character", talkativity: 7, isCurrent: false, isNext: true, },
+          ],
+        },
+      },);
+      const state = buildCtx();
+      await chatParticipants.loadTurnOrder!.call(state,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/turn-order",);
+      expect(state._turnOrder?.strategy,).toBe("round_robin",);
+      expect(state._turnOrder?.nextActorId,).toBe("a2",);
+      expect(state._turnOrder?.order.length,).toBe(2,);
+      expect(state._turnOrder?.order[0]?.isCurrent,).toBe(true,);
+    });
+
+    test("no-ops for non-group chats", async () => {
+      const state = buildCtx({ chatType: "direct", },);
+      await chatParticipants.loadTurnOrder!.call(state,);
+      expect(fetchCalls,).toEqual([],);
     });
   });
 
