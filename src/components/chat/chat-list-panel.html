@@ -85,6 +85,46 @@
       <option value="unread">Unread</option>
       <option value="pinned-first">Pinned first</option>
     </select>
+    <select
+      class="form-input"
+      style="font-size: 12px; height: 26px; flex: 1; min-width: 0"
+      x-model="_chatWorld"
+      @change="applyChatFilters()"
+      aria-label="Filter by world"
+    >
+      <option value="">All worlds</option>
+      <template x-for="w in _worlds" :key="w.id">
+        <option :value="w.id" x-text="w.name"></option>
+      </template>
+    </select>
+    <input
+      class="form-input"
+      style="font-size: 12px; height: 26px; flex: 1; min-width: 0"
+      type="number"
+      min="0"
+      placeholder="Min msgs"
+      x-model="_chatMinMessages"
+      @change="applyChatFilters()"
+      aria-label="Minimum message count"
+    />
+    <input
+      class="form-input"
+      style="font-size: 12px; height: 26px; flex: 1; min-width: 0"
+      type="number"
+      min="0"
+      placeholder="Max msgs"
+      x-model="_chatMaxMessages"
+      @change="applyChatFilters()"
+      aria-label="Maximum message count"
+    />
+    <input
+      class="form-input"
+      style="font-size: 12px; height: 26px; flex: 1; min-width: 0"
+      type="date"
+      x-model="_chatUpdatedSince"
+      @change="applyChatFilters()"
+      aria-label="Updated since"
+    />
   </div>
   <div id="chat-list">
     <template x-if="chats.length === 0 && _searchResults.length === 0">
