@@ -1,41 +1,13 @@
 /**
  * Tests for memory decay and touch logic.
  */
-import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { Kysely, } from "kysely";
-import { createSqliteDialect, } from "../db";
+import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertActors, } from "../test-utils/insert-helpers";
 import { applyDecay, touchMemory, } from "./purge";
-
-function createTestDb(): Kysely<DB> {
-  const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA foreign_keys = OFF",);
-  const dialect = createSqliteDialect(sqlite,);
-  return new Kysely<DB>({ dialect, },);
-}
-
-function createTestSchema(db: Kysely<DB>,): void {
-  db.schema
-    .createTable("actor_memories",)
-    .addColumn("id", "text",)
-    .addColumn("actor_id", "text",)
-    .addColumn("content", "text",)
-    .addColumn("memory_type", "text",)
-    .addColumn("confidence", "real",)
-    .addColumn("importance", "integer",)
-    .addColumn("keywords", "text",)
-    .addColumn("strength", "real",)
-    .addColumn("decay_rate", "real",)
-    .addColumn("last_accessed_at", "text",)
-    .addColumn("scope", "text",)
-    .addColumn("privacy", "text",)
-    .addColumn("pinned", "integer",)
-    .addColumn("created_at", "text",)
-    .addColumn("updated_at", "text",)
-    .execute();
-}
 
 async function seedMemory(
   db: Kysely<DB>,
@@ -79,15 +51,18 @@ async function seedMemory(
 
 describe("applyDecay", () => {
   let db: Kysely<DB>;
+  let sqlite: { close(): void };
 
   beforeEach(async () => {
     createLogger({ level: "error", },);
-    db = createTestDb();
-    createTestSchema(db,);
+    const ctx = await createTestDb();
+    db = ctx.db;
+    sqlite = ctx.sqlite;
+    await insertActors(db, "Test Actor", { id: "actor-1", } as never,);
   },);
 
-  afterEach(async () => {
-    await db.destroy();
+  afterEach(() => {
+    sqlite.close();
   },);
 
   it("should decay strength based on decay_rate and elapsed time", async () => {
@@ -174,15 +149,18 @@ describe("applyDecay", () => {
 
 describe("touchMemory", () => {
   let db: Kysely<DB>;
+  let sqlite: { close(): void };
 
   beforeEach(async () => {
     createLogger({ level: "error", },);
-    db = createTestDb();
-    createTestSchema(db,);
+    const ctx = await createTestDb();
+    db = ctx.db;
+    sqlite = ctx.sqlite;
+    await insertActors(db, "Test Actor", { id: "actor-1", } as never,);
   },);
 
-  afterEach(async () => {
-    await db.destroy();
+  afterEach(() => {
+    sqlite.close();
   },);
 
   it("should update last_accessed_at and boost strength", async () => {
