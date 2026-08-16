@@ -109,6 +109,33 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     return this._sections.find((s,) => s.id === sectionId)?.label ?? "Unknown";
   },
 
+  /**
+   * Return the section row to display as a divider before the message at
+   * `index`, or null when no divider is needed. A divider renders when the
+   * message's section differs from the previous message's section (or the
+   * message is the first in the stream with an assigned section).
+   *
+   * @param index Index within the rendered (grouped) message list.
+   * @param sectionId Section of the message at that index.
+   */
+  sectionDividerFor(index: number, sectionId: string | null,): ChatSectionRow | null {
+    if (!sectionId) { return null; }
+    const section = this._sections.find((s,) => s.id === sectionId);
+    if (!section) { return null; }
+    if (index === 0) { return section; }
+    const prev = this.groupedMessages[index - 1];
+    if (!prev?.section_id || prev.section_id !== sectionId) { return section; }
+    return null;
+  },
+
+  /** Scroll the message list to the first message of a section. */
+  jumpToSection(sectionId: string,) {
+    const target = this.groupedMessages.find((m,) => m.section_id === sectionId);
+    if (!target) { return; }
+    const el = this.$el?.querySelector?.(`[data-message-id="${CSS.escape(target.id,)}"]`,);
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "start", },); }
+  },
+
   async assignMessageToSection(messageId: string, sectionId: string | null,) {
     if (!this.activeChat) { return; }
     try {

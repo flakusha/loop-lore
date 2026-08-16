@@ -1,6 +1,6 @@
 # TASK: Chat Flow — Section Navigation & Story Spanning
 
-**Status:** 🟡 Partial — sectioning backend + manage panel shipped (`routes/chat-sections/` CRUD + `alpine/chat-sections.ts` + chat.html panel); story-spanning navigation (jump between sections, per-section location context in stream) open
+**Status:** 🟡 Partial — sectioning backend + manage panel shipped (`routes/chat-sections/` CRUD + `alpine/chat-sections.ts` + chat.html panel); Phase 1 (inline section dividers) shipped 2026-08-16 — `section_id` now flows through `MessageRow` schema + FE `Message` type, `sectionDividerFor` renders a divider when a message starts a new section, `jumpToSection` scrolls to a section's first message, grouping breaks on section change, sections auto-load on chat select; Phases 2-6 (story map, location header, transfer dialog, flow integration, group chat) open
 **Priority:** Medium
 **Effort:** Med
 **Related:** TASK-chat-sectioning-multi-location, TASK-chat-backgrounds-location-sync
