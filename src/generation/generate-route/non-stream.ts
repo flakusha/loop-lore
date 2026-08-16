@@ -74,7 +74,11 @@ export async function runNonStreaming({
       ];
 
       // Execute tools and append results
-      const toolResults = await executeToolCalls(response.toolCalls,);
+      const toolResults = await executeToolCalls(response.toolCalls, {
+        db: database,
+        actorId: input.actorId,
+        chatId: input.chatId,
+      },);
       currentMessages = [...currentMessages, ...toolResults,];
     }
 
