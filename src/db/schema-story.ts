@@ -298,6 +298,7 @@ export interface ActorLoreEntries {
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
   audience_scope: string | null;
+  world_id: string | null;
 }
 export interface WorldLoreEntries {
   id: Generated<string>;

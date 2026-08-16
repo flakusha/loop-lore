@@ -3,7 +3,9 @@
  *
  * Seed dynamic state rows for NPCs and locations in a world.
  */
-import { uid, } from "../../utils";
+import type { WorldSetupInventoryItem, } from "../../characters/world-setup/types";
+import { ItemVisibility, } from "../../db/enums";
+import { jsonParseOr, uid, } from "../../utils";
 import type { WorldState, } from "./types";
 
 /** Initialize NPC dynamic states for all characters in a world */
@@ -84,8 +86,68 @@ export async function initializeCharacterWorldSetup(state: WorldState, worldId: 
   return count;
 }
 
-/** Initialize location dynamic states for all locations in a world */
-export async function initializeLocationStates(state: WorldState, worldId: string,): Promise<number> {
+/**
+ * Seed world_items from each character's `starting_inventory` on first join.
+ *
+ * Idempotent — only grants when the actor carries no items in this world yet
+ * (a character entering a world starts empty, then gets their starting gear).
+ * Items whose definition does not exist in `items` are skipped (the world
+ * author must create definitions before the seed resolves them).
+ */
+export async function seedStartingInventory(state: WorldState, worldId: string,): Promise<number> {
+  const setups = await state.db
+    .selectFrom("character_world_setup",)
+    .select(["actor_id", "starting_inventory",],)
+    .where("world_id", "=", worldId,)
+    .execute();
+
+  const itemDefs = await state.db
+    .selectFrom("items",)
+    .select("id",)
+    .where("world_id", "=", worldId,)
+    .execute();
+  const known = new Set<string>();
+  for (const item of itemDefs) { known.add(item.id,); }
+
+  let granted = 0;
+  for (const setup of setups) {
+    const starting = jsonParseOr<WorldSetupInventoryItem[]>(setup.starting_inventory, [],);
+    if (starting.length === 0) { continue; }
+
+    const existing = await state.db
+      .selectFrom("world_items",)
+      .select("id",)
+      .where("owner_actor_id", "=", setup.actor_id,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+    if (existing) { continue; }
+
+    for (const item of starting) {
+      if (!known.has(item.item_id,)) { continue; }
+      await state.db
+        .insertInto("world_items",)
+        .values({
+          id: uid(),
+          world_id: worldId,
+          item_id: item.item_id,
+          owner_actor_id: setup.actor_id,
+          location_id: null,
+          quantity: item.quantity > 0 ? item.quantity : 1,
+          visibility: ItemVisibility.Visible,
+          respawnable: 0,
+          spawn_condition: null,
+        },)
+        .execute();
+      granted++;
+    }
+  }
+  return granted;
+}
+
+/** Initialize location dynamic states for all locations in a world */ export async function initializeLocationStates(
+  state: WorldState,
+  worldId: string,
+): Promise<number> {
   const locations = await state.db
     .selectFrom("locations",)
     .select("id",)

@@ -58,6 +58,26 @@ export class PromptAssembler {
     const actor = actorResult.value;
     const chat = chatResult.value;
 
+    // Per-world setup overlay: apply scenario/system-prompt overrides for the
+    // chat's world (character_world_setup). Non-null overrides win over the
+    // base actor setup; the base value is untouched.
+    let effectiveActor = actor;
+    if (chat.world_id) {
+      const setup = await this.db
+        .selectFrom("character_world_setup",)
+        .select(["scenario_override", "system_prompt_override",],)
+        .where("actor_id", "=", params.actorId,)
+        .where("world_id", "=", chat.world_id,)
+        .executeTakeFirst();
+      if (setup && (setup.scenario_override !== null || setup.system_prompt_override !== null)) {
+        effectiveActor = {
+          ...actor,
+          scenario: setup.scenario_override ?? actor.scenario,
+          system_prompt: setup.system_prompt_override ?? actor.system_prompt,
+        };
+      }
+    }
+
     const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;
     const tokenBudget = params.tokenBudget ?? 32_000;
 
@@ -71,7 +91,7 @@ export class PromptAssembler {
 
     const ctx: AssembleContext = {
       db: this.db,
-      actor,
+      actor: effectiveActor,
       chat,
       params: efParams,
       isStory,
