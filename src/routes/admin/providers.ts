@@ -5,7 +5,7 @@ import { isAdminRole, } from "../../middleware/admin-gate";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 
-export function providersRoutes(prefix = "/api",) {
+export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-providers", },)
       // ── Provider management ────────────────────────────────
@@ -83,7 +83,7 @@ export function providersRoutes(prefix = "/api",) {
           },);
         }
 
-        const results = await scanAllProviders();
+        const results = await scanAllProviders(opts.database);
         return jsonResponse({
           providers: Array.from(results, (p,) => providerToSummary(p,),),
         },);
