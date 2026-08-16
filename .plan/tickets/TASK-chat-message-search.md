@@ -1,6 +1,6 @@
 # TASK: Chat Message Search & Filter
 
-**Status:** 🟡 Partial — backend routes + tests exist, FTS5 schema + search API + in-chat UI pending
+**Status:** ✅ Done — FTS5 migration 034 + `routes/message-search/` (scoped by chat, role/attachment/date filters, bm25 snippets) + in-chat search UI (`alpine/message-search.ts`, chat.html 🔍 toggle)
 **Priority:** Medium
 **Effort:** Med–High
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)
