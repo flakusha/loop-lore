@@ -326,6 +326,7 @@ export interface Messages {
   section_id: string | null;
   tool_calls: string | null;
   thinking: string | null;
+  metadata: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
