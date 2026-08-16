@@ -189,3 +189,66 @@ describe("updateChat promptOverride (per-chat prompt override)", () => {
     expect(await promptOverrideOf(),).toBe("persistent override",);
   });
 });
+
+describe("updateChat quickReplies (quick-reply button sets)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+
+  beforeEach(async () => {
+    const fresh = await createTestDb();
+    db = fresh.db;
+    await insertUsers(db, "qr-creator", "QR Creator", { id: "user-qr", } as never,);
+    await insertActors(
+      db,
+      "QR Creator",
+      { id: "user-qr", user_id: "user-qr", owner_id: "user-qr", } as never,
+    );
+    chatId = await createChat(db, {
+      name: "QR Chat",
+      type: "direct",
+      mode: "story",
+      createdBy: "user-qr",
+      participantIds: ["user-qr",],
+    },);
+  },);
+
+  afterEach(async () => {
+    await db?.destroy();
+  },);
+
+  async function quickRepliesOf(): Promise<unknown> {
+    const row = await db
+      .selectFrom("chats",)
+      .select("quick_replies",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    return row?.quick_replies ? JSON.parse(row.quick_replies,) : null;
+  }
+
+  it("persists a quick-reply button set", async () => {
+    const res = await updateChat(db, chatId, {
+      quickReplies: [
+        { label: "Roll", command: "/roll 1d20", },
+        { label: "Morning", command: "/time morning", trigger: "startup", },
+      ],
+    },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(await quickRepliesOf(),).toEqual([
+      { label: "Roll", command: "/roll 1d20", },
+      { label: "Morning", command: "/time morning", trigger: "startup", },
+    ],);
+  });
+
+  it("clears the button set with null", async () => {
+    await updateChat(db, chatId, { quickReplies: [{ label: "X", command: "/x", },], },);
+    const res = await updateChat(db, chatId, { quickReplies: null, },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(await quickRepliesOf(),).toBeNull();
+  });
+
+  it("leaves the set untouched when the field is omitted", async () => {
+    await updateChat(db, chatId, { quickReplies: [{ label: "Y", command: "/y", },], },);
+    await updateChat(db, chatId, { name: "Renamed again", },);
+    expect(await quickRepliesOf(),).toEqual([{ label: "Y", command: "/y", },],);
+  });
+});

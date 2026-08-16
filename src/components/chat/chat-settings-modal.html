@@ -505,6 +505,59 @@
           </template>
         </div>
       </div>
+
+      <!-- Quick-Reply Buttons -->
+      <div class="form-group" style="margin-top: var(--space-3)">
+        <span class="form-label" style="display: block">Quick-Reply Buttons</span>
+        <small style="color: var(--text-secondary); display: block; margin-bottom: var(--space-2)">
+          Buttons rendered above the input. Each runs a slash command (e.g. <code>/roll 1d20</code>). Trigger <code
+          >startup</code> runs once per chat open.
+        </small>
+        <template x-for="(qr, idx) in _quickReplies" :key="idx">
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); align-items: center">
+            <input
+              class="form-input"
+              style="flex: 1; font-size: var(--fs-sm)"
+              x-model="qr.label"
+              placeholder="Label"
+              data-testid="quick-reply-label"
+            />
+            <input
+              class="form-input"
+              style="flex: 2; font-size: var(--fs-sm)"
+              x-model="qr.command"
+              placeholder="/command"
+              data-testid="quick-reply-command"
+            />
+            <select class="form-input" style="flex: 1; font-size: var(--fs-sm)" x-model="qr.trigger">
+              <option value="">manual</option>
+              <option value="startup">startup</option>
+              <option value="user">user</option>
+              <option value="ai">ai</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" @click="_quickReplies.splice(idx, 1); _quickRepliesDirty = true">
+              ✕
+            </button>
+          </div>
+        </template>
+        <div style="display: flex; gap: var(--space-2)">
+          <button
+            class="btn btn-ghost btn-sm"
+            @click="_quickReplies.push({ label: '', command: '', trigger: undefined }); _quickRepliesDirty = true"
+            data-testid="quick-reply-add"
+          >
+            + Add Button
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            @click="saveQuickReplies()"
+            :disabled="!_quickRepliesDirty"
+            data-testid="quick-reply-save"
+          >
+            Save Buttons
+          </button>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">Cancel</button>

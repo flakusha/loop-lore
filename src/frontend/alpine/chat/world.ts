@@ -95,6 +95,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     await this.markChatAsRead(chatId,);
     await this.loadChatKey(chatId,);
     await this.loadImpersonationState();
+    // Quick-reply buttons + startup-triggered automation for this chat.
+    this.loadQuickReplies();
+    await this.fireStartupQuickReplies();
     if (this.isGroupChat) {
       await this.loadParticipants();
       await this.loadAvailableActors();

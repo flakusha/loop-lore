@@ -60,6 +60,18 @@ export const ChatUpdateBody = t.Object({
     t.String(),
     t.Null(),
   ],),),
+  quickReplies: t.Optional(t.Union([
+    t.Array(t.Object({
+      label: t.String(),
+      command: t.String(),
+      trigger: t.Optional(t.Union([
+        t.Literal("startup",),
+        t.Literal("user",),
+        t.Literal("ai",),
+      ],),),
+    },),),
+    t.Null(),
+  ],),),
 },);
 
 /**

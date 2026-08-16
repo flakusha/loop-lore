@@ -1,4 +1,4 @@
-import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, } from "../types";
+import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, QuickReplyButton, } from "../types";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
 import type { ChatWorldChannelsState, } from "./world-channels";
 /** Chat page core state and methods (messages, lists, editing, VN, filters). */
@@ -23,6 +23,8 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
     story_state?: string;
     gm_config?: string;
     thinking_visibility?: string;
+    prompt_override?: string | null;
+    quick_replies?: string | null;
   }[];
   activeChat: string | null;
   messages: Message[];
@@ -98,6 +100,13 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   _promptOverrideSaving: boolean;
   loadPromptTemplate(): Promise<void>;
   savePromptOverride(): Promise<void>;
+  _quickReplies: QuickReplyButton[];
+  _quickRepliesDirty: boolean;
+  _startupFiredChat: string | null;
+  loadQuickReplies(): void;
+  executeQuickReply(command: string,): Promise<void>;
+  fireStartupQuickReplies(): Promise<void>;
+  saveQuickReplies(): Promise<void>;
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
