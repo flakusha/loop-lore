@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/generate-domain-schemas.ts — Generate JSON Schema for each domain config
 //
 // Usage: bun run src/config/generate-domain-schemas.ts

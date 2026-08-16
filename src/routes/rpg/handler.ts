@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * RPG route handler helpers — eliminates the repeated auth + try/catch
  * boilerplate across route files.

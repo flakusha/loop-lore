@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK-file-split-routes: Split oversized route modules (views/messages/auto-gen/admin)
 
 **Status**: open

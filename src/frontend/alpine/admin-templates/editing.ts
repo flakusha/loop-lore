@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import type { AdminTemplates, EditingTemplate, } from "./types";

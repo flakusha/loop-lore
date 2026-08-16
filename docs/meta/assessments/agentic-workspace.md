@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Agentic Workspace — Deep Dive
 
 Expansion of `docs/spec/use-case-agentic-workspace.md` with orchestration

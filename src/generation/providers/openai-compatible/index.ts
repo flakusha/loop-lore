@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/generation/providers/openai-compatible/index.ts
 //
 // OpenAI-compatible provider — covers llama.cpp, vLLM, Ollama (OpenAI mode),

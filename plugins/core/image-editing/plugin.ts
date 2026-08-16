@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Image Editing Plugin — Core plugin for ComfyUI + sd-server image editing
  *

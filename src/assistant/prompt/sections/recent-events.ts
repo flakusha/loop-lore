@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Recent Events section — injects the user's recent notifications (mentions,
  * quest/GM updates) as a `[Recent Events]` block so the character stays aware

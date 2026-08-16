@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Social & Multiplayer
 
 Together-layer ideas. Inspiration: roadmap co-editing, deferred D.5.

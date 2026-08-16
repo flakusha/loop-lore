@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Banned Coding Patterns
 
 > **Current divergence state**: see `docs/meta/pattern-divergence.md` for

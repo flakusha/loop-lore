@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Chat Sectioning — Multi-Location Chat Spanning
 
 **Status:** ⬜ Research Needed

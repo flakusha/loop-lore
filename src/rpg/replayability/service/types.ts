@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** New game plus difficulty modifiers */
 import type { PlaythroughStatus, } from "../../../db/enums";
 

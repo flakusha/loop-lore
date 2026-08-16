@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Agentic / Business / Assistant Use — Assessment
 
 Deep research on how loop-lore serves **ordinary** (non-RPG) agentic, business, and

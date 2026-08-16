@@ -7,6 +7,9 @@ epic: epic-analytics-observability
 related: [FEAT-062, FEAT-060, FEAT-068]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT-059: Conversation analytics dashboard
 
 ## What

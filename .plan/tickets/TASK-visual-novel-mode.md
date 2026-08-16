@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Visual Novel Mode
 
 **Status:** 🟡 In Progress — Frontend Foundation Complete

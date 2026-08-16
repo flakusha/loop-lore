@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 > **Superseded by:** `TASK-3d-view-modes.md` — all content consolidated there.
 > Implement from the consolidated task. This file preserved for reference only.
 

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema-class/headers.ts — headers section defaults
 import type { HeadersConfig, } from "../schema";
 import { CSP_DEFAULTS, HEADERS_DEFAULTS, } from "../sections/headers";

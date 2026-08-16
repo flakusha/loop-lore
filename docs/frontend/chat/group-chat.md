@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Group Chat Spec (Draft)
 
 > **Implementation status:** Group chat is **partially implemented** with core

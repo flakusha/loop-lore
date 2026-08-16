@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Assistant Commands Extension
 
 **Status:** 🟡 In Progress — parser + 21 handlers wired; tiered access (owner-gated) shipped (worktree `assistant-intent-workflows`, `eb2d50b`); `/stats` `/attack` `/heal` handlers + `/create` singleton bug open (2026-08-16)

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { Elysia, } from "elysia";
 import { type AdvantageMode, type DiceSides, rollDice, rollFromNotation, } from "../../rpg/dice.js";
 import { logDiceRoll, } from "../../rpg/service";

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Admin Content Review Queue
 
 **Status:** ✅ Done — BE `src/routes/admin/review-stats.ts` (pending/total/dismissed/resolved/falsePositiveRate/daily/topContentTypes) reusing pre-existing `/api/nsfw/moderation/flags` backend; FE `admin-review.ts` + Review tab in `admin.html`

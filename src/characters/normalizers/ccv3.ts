@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/characters/normalizers/ccv3.ts
 //
 // CCv3 (Character Card V3) normalizer.

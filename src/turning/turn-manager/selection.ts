@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { TurnStrategy, } from "../../db/enums";
 import type { TurnStrategy as TurnStrategyType, } from "../../db/enums";
 import { STRATEGY_MAP, } from "../turn-strategies";

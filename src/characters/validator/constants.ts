@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/characters/validator/constants.ts — Field constraints and content-rating tables
 
 import { ContentRating, } from "../spec";

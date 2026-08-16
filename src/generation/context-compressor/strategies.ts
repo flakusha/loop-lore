@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { ContextMessage, ContextWindowConfig, SummarizeFn, TokenCountFn, } from "../context-window-config";
 import { calculateTotalTokens, tokensForMessage, } from "./tokens";
 import type { StrategyResult, } from "./types";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Card Battle Routes — POST /api/card-battle/start, POST /api/card-battle/play, GET /api/card-battle/actions
  */

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Multi-LLM Story Generation with Game Master
 
 > ⚠️ **Implementation status:** Backend story module (`src/story/`) partially implemented (turn manager, game master, quest engine, world state).

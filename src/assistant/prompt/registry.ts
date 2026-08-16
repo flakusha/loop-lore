@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Ordered registry of prompt sections — the single source of truth for prompt
  * assembly order. Add a section: create a builder under ./sections and add it

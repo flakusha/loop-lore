@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/migrate-config.ts — Migration tool to split monolithic config into domain files
 //
 // Usage: bun run src/config/migrate-config.ts --input configs/config.toml --dry-run

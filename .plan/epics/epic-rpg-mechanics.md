@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: RPG Mechanics & Extensible Game Systems
 
 **Status:** 🟡 Partial — Phase 1 core (dice/stats/combat/xp/loot) code+tests+schema done but UNWIRED; combat has no DB schema (in-memory engine)
