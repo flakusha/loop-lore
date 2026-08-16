@@ -1,6 +1,6 @@
 # TASK: Quick-Reply / Event-Driven Automation
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In progress — core shipped (ac5b2545, 2026-08-16): buttons + persistence + startup trigger; user/ai event triggers reserved (rate-limit design needed)
 **Priority:** medium
 **Effort:** Medium
 
