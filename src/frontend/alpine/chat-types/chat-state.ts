@@ -4,6 +4,7 @@ import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
 import type { ChatMoodState, } from "./mood-state";
+import type { ChatMovementState, } from "./movement-state";
 import type { ChatParticipantsState, } from "./participants-state";
 import type { ChatPinsState, } from "./pins-state";
 import type { ChatRpgState, } from "./rpg-state";
@@ -19,5 +20,6 @@ export interface ChatState
     ChatMessageSearchState,
     ChatParticipantsState,
     ChatPinsState,
-    ChatArchiveState
+    ChatArchiveState,
+    ChatMovementState
 {}
