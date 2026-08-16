@@ -19,6 +19,7 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 | `bun run format:dprint`      | dprint check                                                                                                                                                           |
 | `bun run format:dprint:fix`  | dprint fmt                                                                                                                                                             |
 | `bun run check`              | Parallel gate runner (`check-parallel.mjs`): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, size, context-weight, unit + e2e |
+| `bun run check:report-ls`    | Aggregate per-worktree check reports (`.tmp/check-report.json`); flags stale (head mismatch)                                                                           |
 | `bun run db:sync-types`      | Regenerate DB types from migrations                                                                                                                                    |
 | `bun run db:sync-manifest`   | Regenerate schema manifest                                                                                                                                             |
 | `bun run db:schemas:check`   | Verify generated schemas are current                                                                                                                                   |

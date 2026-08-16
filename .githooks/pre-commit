@@ -140,6 +140,28 @@ if [[ -n "$STAGED_SOURCE" ]]; then
   fi
 fi
 
+# ── Step 4: Check-report freshness (non-blocking) ─────────────
+echo ""
+echo "--- Step 4: Check-report freshness ---"
+REPO_TOP="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+REPORT_FILE="$REPO_TOP/.tmp/check-report.json"
+if [[ -n "$REPO_TOP" && -f "$REPORT_FILE" ]]; then
+  REPORT_HEAD="$(grep -o '"gitHead"[[:space:]]*:[[:space:]]*"[^"]*"' "$REPORT_FILE" | head -1 | sed 's/.*"gitHead"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')"
+  CURRENT_HEAD="$(git rev-parse --short HEAD 2>/dev/null || true)"
+  if [[ -n "$REPORT_HEAD" ]]; then
+    if [[ "$REPORT_HEAD" != "$CURRENT_HEAD" ]]; then
+      yellow "  ⚠ Check report stale: reports @ $REPORT_HEAD, current HEAD @ $CURRENT_HEAD"
+      yellow "    Run 'bun run check' to refresh gate status for this tree"
+    else
+      green "  ✓ Check report current ($CURRENT_HEAD)"
+    fi
+  else
+    yellow "  ⚠ Check report has no gitHead (legacy) — run 'bun run check' to refresh"
+  fi
+else
+  yellow "  ⚠ No check report found — run 'bun run check' to generate one"
+fi
+
 # ── Final result ──────────────────────────────────────────────
 echo ""
 if [ "$failures" -gt 0 ]; then

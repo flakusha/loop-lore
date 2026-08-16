@@ -1,23 +1,31 @@
 #!/usr/bin/env bun
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, unicorn/name-replacements, unicorn/consistent-boolean-name */
 
 /**
  * Parallel check runner for loop-lore
  * Runs independent checks in parallel and aggregates results
  *
  * Usage:
- *   bun run scripts/check-parallel.mjs [--fix] [--ci]
+ *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls]
  *
  * Writes a machine-readable report to .tmp/check-report.json after every run
  * (success: summary only; failure: summary + full failed-check output).
  * The report path is logged to stdout.
+ *
+ * The report is written atomically (temp file + rename) and carries provenance
+ * (branch, head commit, worktree, run id, mode), so concurrent runs across
+ * many worktrees never produce torn or ambiguous artifacts.
+ *
+ * --report-ls: no checks run; aggregates the latest report of every git
+ * worktree and flags reports stale w.r.t. that worktree's current HEAD.
  */
 
 // ── Imports ─────────────────────────────────────────────────────
 
-import { mkdirSync, writeFileSync, } from "node:fs";
+import { execFileSync, } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 
 // ── Parse args ──────────────────────────────────────────────────
@@ -74,7 +82,7 @@ const checks = {
 
 // ── Run checks in parallel ──────────────────────────────────────
 
-const PROJECT_ROOT = import.meta.dir + "/..";
+const PROJECT_ROOT = path.resolve(import.meta.dir, "..",);
 
 // Machine-readable report: written after every run, git-ignored (.tmp/).
 const REPORT_DIR_RELATIVE = ".tmp";
@@ -82,6 +90,18 @@ const REPORT_RELATIVE = ".tmp/check-report.json";
 const REPORT_PATH = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE, "check-report.json",);
 // Per-check output cap for the report (guards against multi-MB failure dumps).
 const MAX_OUTPUT_CHARS = 100_000;
+
+// Run identity: unique per invocation; embedded in the report and used to make
+// the on-disk write atomic (temp file → rename).
+const RUN_ID = `${process.pid}-${Date.now().toString(36,)}`;
+// Invocation mode — the runner is mode-agnostic; the label only records how the
+// check was invoked so fix/ci runs can't masquerade as plain ones.
+const MODE = (() => {
+  if (process.argv.includes("--ci",)) { return "ci"; }
+  if (process.argv.includes("--fix",)) { return "fix"; }
+  return "plain";
+})();
+const IS_REPORT_LS = process.argv.includes("--report-ls",);
 
 async function runCheck(name, command,) {
   const startedAt = performance.now();
@@ -161,10 +181,19 @@ function buildReport({ exitCode, checks, nonBlocking, },) {
   const durationMs = checks.reduce((sum, check,) => sum + (check.durationMs ?? 0), 0,);
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     runner: "bun run scripts/check-parallel.mjs",
     cwd: PROJECT_ROOT,
+    // Provenance: which tree/worktree/invocation produced this snapshot.
+    // Consumers compare gitHead against the worktree's current HEAD to detect
+    // staleness; runId disambiguates concurrent runs.
+    runId: RUN_ID,
+    mode: MODE,
+    worktreeName: path.basename(PROJECT_ROOT,),
+    branch: GIT_CONTEXT.branch,
+    gitHead: GIT_CONTEXT.gitHead,
+    gitDirty: GIT_CONTEXT.gitDirty,
     passed: failedCount === 0,
     exitCode,
     reportPath: REPORT_RELATIVE,
@@ -189,9 +218,115 @@ function buildReport({ exitCode, checks, nonBlocking, },) {
 
 function writeReport(report,) {
   mkdirSync(path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE,), { recursive: true, },);
-  writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2,) + "\n", "utf8",);
+  // Atomic write: temp file + rename, so concurrent readers never observe a
+  // partially-written report (last complete run wins).
+  const tmpPath = `${REPORT_PATH}.${RUN_ID}.tmp`;
+  writeFileSync(tmpPath, JSON.stringify(report, null, 2,) + "\n", "utf8",);
+  renameSync(tmpPath, REPORT_PATH,);
   console.log(`\n📄 Check report: ${REPORT_PATH}`,);
   return REPORT_PATH;
+}
+
+// ── Git provenance ─────────────────────────────────────────────
+
+// Resolve the git binary once: fixed path satisfies
+// sonarjs/no-os-command-from-path and avoids PATH-order surprises.
+const GIT_BIN = (() => {
+  const pathDirs = (process.env.PATH ?? "").split(path.delimiter,);
+  for (const dir of pathDirs) {
+    const candidate = path.join(dir, "git",);
+    if (existsSync(candidate,)) { return candidate; }
+  }
+  return "git";
+})();
+
+/**
+ * Run a git query synchronously; returns "" when git is unavailable.
+ */
+function gitSync(args,) {
+  try {
+    return execFileSync(GIT_BIN, args, { cwd: PROJECT_ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore",], },)
+      .trim();
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Snapshot of the tree this run happens in: branch, head commit, dirtiness.
+ */
+function getGitContext() {
+  const branch = gitSync(["branch", "--show-current",],) ||
+    gitSync(["symbolic-ref", "--short", "HEAD",],) ||
+    "(detached)";
+  const gitHead = gitSync(["rev-parse", "--short", "HEAD",],);
+  const status = gitSync(["status", "--porcelain",],);
+  return {
+    branch,
+    gitHead,
+    // Git unavailable → head is "" anyway; stale checks fall back to gitHead.
+    gitDirty: status.length > 0,
+  };
+}
+
+const GIT_CONTEXT = getGitContext();
+
+// ── Report aggregation (--report-ls) ────────────────────────────
+
+/**
+ * Aggregate the latest check report of every git worktree.
+ * Flags reports whose gitHead no longer matches that worktree's current HEAD,
+ * so a batch of concurrently-checked worktrees can be reviewed in one shot.
+ */
+function cmdReportLs() {
+  const out = execFileSync(GIT_BIN, ["worktree", "list", "--porcelain",], {
+    cwd: PROJECT_ROOT,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "ignore",],
+  },);
+
+  const worktrees = [];
+  let current = null;
+  for (const line of out.split("\n",)) {
+    if (line === "") {
+      current = null;
+      continue;
+    }
+    if (line.startsWith("worktree ",)) {
+      current = { path: line.slice("worktree ".length,), head: "", branch: "", };
+      worktrees.push(current,);
+    } else if (current !== null && line.startsWith("HEAD ",)) {
+      current.head = line.slice("HEAD ".length,);
+    } else if (current !== null && line.startsWith("branch ",)) {
+      current.branch = line.slice("branch ".length,).replace(/^refs\/heads\//, "",);
+    }
+  }
+
+  console.log("=== Check reports across worktrees ===",);
+  console.log(`${"worktree".padEnd(32,)} ${"branch".padEnd(28,)} ${"head".padEnd(8,)} ${"report".padEnd(8,)} status`,);
+  for (const wt of worktrees) {
+    const reportPath = path.join(wt.path, REPORT_DIR_RELATIVE, "check-report.json",);
+    let report = null;
+    let corrupt = false;
+    try {
+      report = JSON.parse(readFileSync(reportPath, "utf8",),);
+    } catch {
+      corrupt = existsSync(reportPath,);
+    }
+
+    const head = wt.head.slice(0, 7,);
+    let status;
+    if (corrupt) { status = "CORRUPT"; }
+    else if (report === null) { status = "no-report"; }
+    else if (report.gitHead && !wt.head.startsWith(report.gitHead,)) { status = "STALE"; }
+    else if (report.passed === true) { status = "pass"; }
+    else { status = "FAIL"; }
+
+    const reportHead = report?.gitHead ?? "-";
+    const name = path.basename(wt.path,).padEnd(32,);
+    const branch = (wt.branch || "(detached)").padEnd(28,);
+    console.log(`${name} ${branch} ${head.padEnd(8,)} ${reportHead.padEnd(8,)} ${status}`,);
+  }
 }
 
 // ── Non-blocking checks ─────────────────────────────────────────
@@ -329,6 +464,11 @@ async function runNonBlockingChecks(notes,) {
 // ── Main ────────────────────────────────────────────────────────
 
 async function main() {
+  if (IS_REPORT_LS) {
+    cmdReportLs();
+    return;
+  }
+
   const results = await runAllChecks();
   const failed = reportResults(results,);
 
@@ -351,6 +491,7 @@ async function main() {
 
 main().catch((error,) => {
   console.error("❌ Check runner failed:", error.message,);
+  if (IS_REPORT_LS) { process.exit(1,); }
   writeReport(buildReport({
     exitCode: 1,
     checks: [{
