@@ -78,6 +78,22 @@ describe("TelemetryTransport curated gate", () => {
     }
   });
 
+  it("flattens meta.chatId to top-level payload.chatId", async () => {
+    const entry = makeEntry(20, "frontend.page_view",);
+    entry.meta = { chatId: "chat-42", path: "/views/chat", };
+    await ship(entry,);
+    const payload = JSON.parse((await payloads())[0]!,);
+    expect(payload.chatId,).toBe("chat-42",);
+    expect(payload.data.chatId,).toBeUndefined();
+    expect(payload.data.path,).toBe("/views/chat",);
+  });
+
+  it("omits chatId key when meta lacks chatId", async () => {
+    await ship(makeEntry(20, "frontend.page_view",),);
+    const payload = JSON.parse((await payloads())[0]!,);
+    expect(payload.chatId,).toBeUndefined();
+  });
+
   it("caps events sent per session", async () => {
     const transport = new TelemetryTransport(SENT_URL,);
     for (let i = 0; i < MAX_EVENTS_PER_SESSION + 2; i++) {
