@@ -1,6 +1,6 @@
 # TASK: Internal Traits Visibility Tiers
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — visibility field + `buildPromptSection(includeHidden)` shipped (`44e22069`); `toPublicCard()` redaction + role-based API access + frontend view tiers pending
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,9 @@ Implement author vs player visibility model for character internal traits. Backe
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
+- [x] Visibility config on traits + prompt-section honoring it (backend)
+- [ ] `toPublicCard()` redaction for player view
+- [ ] Role-based API access (players get visible/hinted only)
+- [ ] Frontend view tiers + visibility toggle
 - [ ] Tests passing
 - [ ] Documentation updated

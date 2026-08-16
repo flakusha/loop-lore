@@ -1,8 +1,9 @@
 /**
- * Character Internal Traits & Proactive Messaging — Frontend Logic
+ * Character Internal Traits — Frontend Logic
  *
  * Loaded by characters.ts page. Handles loading/saving internal traits
- * and proactive messaging config from the character edit form.
+ * from the character edit form. Proactive messaging config lives in
+ * characters-proactive.ts.
  */
 import { jsonBody, } from "../alpine/json";
 import type { feFetch, } from "../fe-fetch";
@@ -10,7 +11,7 @@ import type { feFetch, } from "../fe-fetch";
 // Shared feFetch — caller passes it in to avoid circular import
 let _feFetch: typeof feFetch;
 
-export function initTraitsAndProactive(fetchFn: typeof feFetch,) {
+export function initTraits(fetchFn: typeof feFetch,) {
   _feFetch = fetchFn;
   // Wire slider display updates
   document.addEventListener("input", (e,) => {
@@ -230,30 +231,4 @@ function buildTraitsPayload() {
       status.style.color = "var(--color-error)";
     }
   }
-};
-
-// ── Proactive Messaging: load on form init ──────────────────
-
-(globalThis as Record<string, unknown>).loadProactiveConfig = async function(actorId: string,) {
-  const params = new URLSearchParams(location.search,);
-  const chatId = params.get("chatid",) || params.get("chatId",);
-  if (!chatId) {
-    const status = document.querySelector<HTMLElement>("#proactive-status",);
-    if (status) { status.textContent = "Configure from a chat session to set proactive messaging."; }
-    return;
-  }
-  try {
-    const res = await _feFetch(`/api/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`,);
-    if (res.ok) {
-      const data = await res.json();
-      const freq = document.querySelector<HTMLSelectElement>("#proactive-frequency",);
-      const enabled = document.querySelector<HTMLInputElement>("#proactive-enabled",);
-      const qs = document.querySelector<HTMLInputElement>("#proactive-quiet-start",);
-      const qe = document.querySelector<HTMLInputElement>("#proactive-quiet-end",);
-      if (freq) { freq.value = data.frequency || "normal"; }
-      if (enabled) { enabled.checked = data.enabled !== false; }
-      if (qs && data.quietHoursStart) { qs.value = data.quietHoursStart; }
-      if (qe && data.quietHoursEnd) { qe.value = data.quietHoursEnd; }
-    }
-  } catch { /* no config yet */ }
 };
