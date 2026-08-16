@@ -101,6 +101,7 @@ import { apiFetch, } from "./htmx";
           this.loadModelRoles();
           this.loadSdStatus();
           this.loadSdConfig();
+          this.loadModelCapabilities();
           break;
         }
         case "review": {

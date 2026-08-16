@@ -99,6 +99,7 @@ export async function handleGenerate({
       input,
       database,
       resolvedModel: resolved.resolvedModel,
+      resolvedProviderName: resolved.resolvedProviderName,
       cfg,
       userId,
     },);
