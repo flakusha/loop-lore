@@ -1258,6 +1258,7 @@ export const SCHEMA = new SchemaManifest()
     section_id: col("text",),
     tool_calls: col("text",),
     thinking: col("text",),
+    metadata: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {

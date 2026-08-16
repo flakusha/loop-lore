@@ -850,6 +850,7 @@ export async function insertMessages(
     section_id?: string | null;
     tool_calls?: string | null;
     thinking?: string | null;
+    metadata?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
