@@ -43,6 +43,7 @@ async function generateStoryDescription(
     chatId,
     actorId,
     modelId: "default",
+    userId,
     systemPromptOverride: resolveSystemPrompt(config.templates.llm, "vn",),
     includeStoryContext: true,
     includeExamples: false,
