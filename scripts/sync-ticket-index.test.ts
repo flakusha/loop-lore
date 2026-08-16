@@ -216,3 +216,195 @@ describe("reconcile hash provenance", () => {
     expect(report.hashMismatches,).toEqual([],);
   });
 });
+
+// ── reconcile: missing git_issue links ─────────────────────────
+
+describe("reconcile missing git_issue links", () => {
+  test("entry without git_issue but matching issue by extid is flagged", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("aaa1111", {
+      hash: "aaa1111",
+      status: "open",
+      title: "TASK-LINKED: Linked Task",
+      extid: "TASK-LINKED",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      { "TASK-LINKED": entry({ hash: "bbb2222", extid: "TASK-LINKED", },), },
+      false,
+      makeRoot(),
+    );
+    expect(report.missingGitIssueLinks,).toEqual([
+      {
+        extid: "TASK-LINKED",
+        suggestedGitIssue: "aaa1111",
+        gitTitle: "TASK-LINKED: Linked Task",
+      },
+    ],);
+  });
+
+  test("entry with existing git_issue is not flagged", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("aaa1111", {
+      hash: "aaa1111",
+      status: "open",
+      title: "TASK-LINKED: Linked Task",
+      extid: "TASK-LINKED",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      { "TASK-LINKED": entry({ hash: "bbb2222", git_issue: "aaa1111", extid: "TASK-LINKED", },), },
+      false,
+      makeRoot(),
+    );
+    expect(report.missingGitIssueLinks,).toEqual([],);
+  });
+});
+
+// ── reconcile: stale open git issues ───────────────────────────
+
+describe("reconcile stale open git issues", () => {
+  test("done entry with open git issue is flagged", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ccc3333", {
+      hash: "ccc3333",
+      status: "open",
+      title: "TASK-STALE: Stale Task",
+      extid: "TASK-STALE",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      { "TASK-STALE": entry({ git_issue: "ccc3333", status: "done", extid: "TASK-STALE", },), },
+      false,
+      makeRoot(),
+    );
+    expect(report.staleOpenGitIssues,).toEqual([
+      {
+        extid: "TASK-STALE",
+        gitIssueHash: "ccc3333",
+        indexStatus: "done",
+      },
+    ],);
+  });
+
+  test("done entry with closed git issue is not flagged", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ccc3333", {
+      hash: "ccc3333",
+      status: "closed",
+      title: "TASK-STALE: Stale Task",
+      extid: "TASK-STALE",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      { "TASK-STALE": entry({ git_issue: "ccc3333", status: "done", extid: "TASK-STALE", },), },
+      false,
+      makeRoot(),
+    );
+    expect(report.staleOpenGitIssues,).toEqual([],);
+  });
+
+  test("open entry with open git issue is not flagged", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ccc3333", {
+      hash: "ccc3333",
+      status: "open",
+      title: "TASK-ACTIVE: Active Task",
+      extid: "TASK-ACTIVE",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      { "TASK-ACTIVE": entry({ git_issue: "ccc3333", status: "open", extid: "TASK-ACTIVE", },), },
+      false,
+      makeRoot(),
+    );
+    expect(report.staleOpenGitIssues,).toEqual([],);
+  });
+});
+
+// ── reconcile: orphan git issues ───────────────────────────────
+
+describe("reconcile orphan git issues", () => {
+  test("open issue with no matching index entry is orphan", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ddd4444", {
+      hash: "ddd4444",
+      status: "open",
+      title: "TASK-ORPHAN: Orphan Issue",
+      extid: "TASK-ORPHAN",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      {}, // empty index
+      false,
+      makeRoot(),
+    );
+    expect(report.orphanGitIssues,).toEqual([
+      {
+        hash: "ddd4444",
+        extid: "TASK-ORPHAN",
+        title: "TASK-ORPHAN: Orphan Issue",
+      },
+    ],);
+  });
+
+  test("open issue with matching index entry is not orphan", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ddd4444", {
+      hash: "ddd4444",
+      status: "open",
+      title: "TASK-EXISTS: Existing Task",
+      extid: "TASK-EXISTS",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      { "TASK-EXISTS": entry({ extid: "TASK-EXISTS", },), },
+      false,
+      makeRoot(),
+    );
+    expect(report.orphanGitIssues,).toEqual([],);
+  });
+
+  test("closed issue with no index entry is not orphan", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ddd4444", {
+      hash: "ddd4444",
+      status: "closed",
+      title: "TASK-CLOSED: Closed Issue",
+      extid: "TASK-CLOSED",
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      {},
+      false,
+      makeRoot(),
+    );
+    expect(report.orphanGitIssues,).toEqual([],);
+  });
+
+  test("open issue without extid is not orphan", () => {
+    const issues = new Map<string, GitIssue>();
+    issues.set("ddd4444", {
+      hash: "ddd4444",
+      status: "open",
+      title: "Some random idea without prefix",
+      extid: null,
+    },);
+    const report = reconcile(
+      [],
+      issues,
+      {},
+      false,
+      makeRoot(),
+    );
+    expect(report.orphanGitIssues,).toEqual([],);
+  });
+});

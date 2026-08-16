@@ -76,6 +76,24 @@ export interface SyncReport {
     suggestedHash: string | null;
     suggestedTitle: string | null;
   }>;
+  /** Index entries missing `git_issue` field but a matching git issue exists. */
+  missingGitIssueLinks: Array<{
+    extid: string;
+    suggestedGitIssue: string;
+    gitTitle: string;
+  }>;
+  /** Index entries marked done but linked git issue still open. */
+  staleOpenGitIssues: Array<{
+    extid: string;
+    gitIssueHash: string;
+    indexStatus: string;
+  }>;
+  /** Open git issues with no matching index entry by extid. */
+  orphanGitIssues: Array<{
+    hash: string;
+    extid: string;
+    title: string;
+  }>;
   fixesApplied: string[];
 }
 
@@ -111,6 +129,9 @@ export function reconcile(
     hashMismatches: [],
     statusMismatches: [],
     missingHashes: [],
+    missingGitIssueLinks: [],
+    staleOpenGitIssues: [],
+    orphanGitIssues: [],
     fixesApplied: [],
   };
 
@@ -263,6 +284,61 @@ export function reconcile(
         },);
         break;
       }
+    }
+  }
+
+  // 6. Find missing git_issue links: index entries that have hash (commit) but
+  //    no git_issue field, where a matching open git issue exists by extid.
+  //    Build extid→issue lookup from git issues.
+  const issueByExtid = new Map<string, GitIssue>();
+  for (const [, issue,] of gitIssues) {
+    if (issue.extid && !issueByExtid.has(issue.extid,)) {
+      issueByExtid.set(issue.extid, issue,);
+    }
+  }
+
+  for (const [extid, entry,] of Object.entries(index,)) {
+    if (entry.git_issue) { continue; // already linked
+     }
+    const issue = issueByExtid.get(extid,);
+    if (issue) {
+      report.missingGitIssueLinks.push({
+        extid,
+        suggestedGitIssue: issue.hash,
+        gitTitle: issue.title,
+      },);
+    }
+  }
+
+  // 7. Stale open git issues: index entry is done/closed but linked git_issue
+  //    is still open.
+  for (const [extid, entry,] of Object.entries(index,)) {
+    if (!entry.git_issue) { continue; }
+    const indexStatus = normalizeStatus(entry.status ?? "",);
+    if (indexStatus !== "done") { continue; }
+
+    const issue = gitIssues.get(entry.git_issue,);
+    if (issue && issue.status === "open") {
+      report.staleOpenGitIssues.push({
+        extid,
+        gitIssueHash: entry.git_issue,
+        indexStatus,
+      },);
+    }
+  }
+
+  // 8. Orphan git issues: open git issues with no matching index entry by extid.
+  const indexExtids = new Set(Object.keys(index,).map(k => k.toUpperCase(),),);
+
+  for (const [, issue,] of gitIssues) {
+    if (issue.status !== "open") { continue; }
+    if (!issue.extid) { continue; }
+    if (!indexExtids.has(issue.extid,)) {
+      report.orphanGitIssues.push({
+        hash: issue.hash,
+        extid: issue.extid,
+        title: issue.title,
+      },);
     }
   }
 
