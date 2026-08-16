@@ -10,8 +10,19 @@
 import { Elysia, t, } from "elysia";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import type { ProactiveConfigInput, } from "../../chat/proactive/types";
+import type { Config, } from "../../config/schema";
+import { NotificationType, } from "../../db/enums-core";
+import { triggerAutoGeneration, } from "../../generation/auto-gen";
+import { getLogger, } from "../../logger";
+import { NotificationService, } from "../../notifications/service";
 import type { HandlerOpts, } from "../actor-auth";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+
+/** Route options — database handle plus resolved config for generation. */
+interface ProactiveRouteOpts {
+  database: HandlerOpts["database"];
+  config: Config;
+}
 
 const R = "/api/proactive-messaging";
 
@@ -36,8 +47,9 @@ const configBody = t.Object({
 const chatQuery = t.Object({ chatId: t.String(), },);
 const chatActorQuery = t.Object({ chatId: t.String(), actorId: t.String(), },);
 
-export function proactiveMessagingRoutes(opts: HandlerOpts,) {
+export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
   const svc = () => new ProactiveMessagingService(opts.database,);
+  const { database, config, } = opts;
 
   return new Elysia({ name: "proactive-messaging", },)
     // ── Get config for chat+actor ────────────────────────
@@ -162,6 +174,86 @@ export function proactiveMessagingRoutes(opts: HandlerOpts,) {
         tags: ["Proactive Messaging",],
       },
     },)
+    // ── Send a proactive message (trigger generation) ──────
+    .post(`${R}/send`, async (ctx: any,) => {
+      const userId = await requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+      try {
+        const result = await svc().checkShouldMessage(chatId, actorId,);
+        if (!result.shouldMessage) {
+          return jsonError({
+            message: result.reason,
+            status: HttpStatus.Conflict,
+          },);
+        }
+
+        // Anchor the proactive message in-thread to the most recent message so
+        // the character's check-in generates as a normal continuation.
+        const lastMsg = await database
+          .selectFrom("messages",)
+          .select("id",)
+          .where("chat_id", "=", chatId,)
+          .orderBy("created_at", "desc",)
+          .limit(1,)
+          .executeTakeFirst();
+
+        await triggerAutoGeneration({
+          database,
+          config,
+          chatId,
+          parentMessageId: lastMsg?.id ?? null,
+          userId,
+          _cascadeActorId: actorId,
+          requestId: ctx.request.headers.get("x-request-id",) ?? undefined,
+        },);
+
+        await svc().recordSent(chatId, actorId,);
+
+        // Notify the user a character reached out — surfaces via the existing
+        // notification SSE + center (email/push when user has them enabled).
+        new NotificationService(database,).emit({
+          userId,
+          type: NotificationType.System,
+          title: "Character reached out",
+          body: "A character messaged you while you were away.",
+          link: `/views/chat?chatid=${encodeURIComponent(chatId,)}`,
+          data: { chatId, actorId, },
+        },);
+
+        return jsonResponse({ triggered: true, },);
+      } catch (error) {
+        logErr("Failed to send proactive message", error,);
+        return jsonError("Internal server error", 500,);
+      }
+    }, {
+      query: chatActorQuery,
+      detail: {
+        summary: "Send a proactive message",
+        description: "Trigger a proactive message when one is due (respecting quiet hours, frequency, and backoff).",
+        tags: ["Proactive Messaging",],
+      },
+    },)
+    // ── Increment backoff (user did not respond) ─────────────
+    .post(`${R}/backoff`, async (ctx: any,) => {
+      const userId = await requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+      try {
+        await svc().incrementBackoff(chatId, actorId,);
+        return jsonResponse({ ok: true, },);
+      } catch (error) {
+        logErr("Failed to increment proactive backoff", error,);
+        return jsonError("Internal server error", 500,);
+      }
+    }, {
+      query: chatActorQuery,
+      detail: {
+        summary: "Increment proactive messaging backoff",
+        description: "Increment the anti-spam backoff counter (call when the user has not responded).",
+        tags: ["Proactive Messaging",],
+      },
+    },)
     // ── Delete config ─────────────────────────────────────
     .delete(`${R}/config`, async (ctx: any,) => {
       const userId = await requireUserId(ctx,);
@@ -185,5 +277,8 @@ export function proactiveMessagingRoutes(opts: HandlerOpts,) {
 }
 
 function logErr(msg: string, err: unknown,): void {
-  console.error(`[proactive-messaging] ${msg}`, err,);
+  getLogger().child({ module: "proactive-messaging", },).error(
+    msg,
+    err instanceof Error ? err : new Error(String(err,),),
+  );
 }
