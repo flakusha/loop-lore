@@ -50,7 +50,7 @@ export async function selectConfig(
     .where("chat_id", "=", chatId,)
     .where("actor_id", "=", actorId,)
     .selectAll()
-    .executeTakeFirst() as ProactiveRow | undefined;
+    .executeTakeFirst();
 
   return row ? rowToConfig(row,) : null;
 }
@@ -65,7 +65,7 @@ export async function selectChatConfigs(
     .selectAll()
     .execute() as ProactiveRow[];
 
-  return rows.map(rowToConfig,);
+  return Array.from(rows, (row,) => rowToConfig(row,),);
 }
 
 export async function insertConfig(
@@ -84,7 +84,7 @@ export async function insertConfig(
       frequency: input.frequency ?? "normal",
       quiet_hours_start: input.quietHoursStart ?? null,
       quiet_hours_end: input.quietHoursEnd ?? null,
-      enabled: input.enabled !== undefined ? (input.enabled ? 1 : 0) : 1,
+      enabled: (input.enabled === undefined) || input.enabled ? 1 : 0,
       config_json: jsonStringifyOr(input.configJson ?? {},),
       created_at: now,
       updated_at: now,
@@ -103,10 +103,10 @@ export async function updateConfig(
     .updateTable("proactive_messaging_config",)
     .set({
       frequency: input.frequency ?? existing.frequency,
-      quiet_hours_start: input.quietHoursStart !== undefined ? input.quietHoursStart : existing.quietHoursStart,
-      quiet_hours_end: input.quietHoursEnd !== undefined ? input.quietHoursEnd : existing.quietHoursEnd,
-      enabled: input.enabled !== undefined ? (input.enabled ? 1 : 0) : (existing.enabled ? 1 : 0),
-      config_json: input.configJson ? jsonStringifyOr(input.configJson,) : jsonStringifyOr(existing.configJson,),
+      quiet_hours_start: input.quietHoursStart === undefined ? existing.quietHoursStart : input.quietHoursStart,
+      quiet_hours_end: input.quietHoursEnd === undefined ? existing.quietHoursEnd : input.quietHoursEnd,
+      enabled: Number(input.enabled ?? existing.enabled,),
+      config_json: jsonStringifyOr(input.configJson ?? existing.configJson,),
       updated_at: new Date().toISOString(),
     },)
     .where("chat_id", "=", chatId,)

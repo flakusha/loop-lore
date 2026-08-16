@@ -54,7 +54,11 @@ export function renderAspirations() {
       '<p style="color:var(--text-secondary);font-size:var(--text-sm)">No aspirations defined yet.</p>';
     return;
   }
-  container.innerHTML = aspirationsData.map((a, i,) => `
+  const htmlParts: string[] = [];
+  let idx = 0;
+  for (const a of aspirationsData) {
+    const i = idx++;
+    htmlParts.push(`
     <div class="aspiration-row" style="display:flex;gap:var(--space-2);align-items:flex-start;margin-bottom:var(--space-2);padding:var(--space-2);background:var(--bg-secondary);border-radius:var(--radius-sm)">
       <input class="form-input" type="text" value="${a.goal}" placeholder="Goal" style="flex:1" onchange="aspirationsData[${i}].goal=this.value" />
       <select class="form-input" style="width:100px" onchange="aspirationsData[${i}].priority=this.value">
@@ -69,7 +73,9 @@ export function renderAspirations() {
       </select>
       <button type="button" class="btn btn-danger btn-sm" onclick="removeAspiration(${i})">✕</button>
     </div>
-  `).join("",);
+    `,);
+  }
+  container.innerHTML = htmlParts.join("",);
 }
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -160,8 +166,17 @@ export function updateSliderDisplays() {
 // ── Build payload + save ────────────────────────────────────
 
 function buildTraitsPayload() {
+  const activeAspirations: Aspiration[] = [];
+  for (const a of aspirationsData) {
+    if (a.goal.trim() !== "") { activeAspirations.push(a,); }
+  }
+  const voiceTics: string[] = [];
+  for (const s of textVal("voice-tics",).split(",",)) {
+    const trimmed = s.trim();
+    if (trimmed) { voiceTics.push(trimmed,); }
+  }
   return {
-    aspirations: aspirationsData.filter(a => a.goal.trim() !== ""),
+    aspirations: activeAspirations,
     moralDisposition: {
       lawful_chaotic: sliderVal("moral-lawful",),
       good_evil: sliderVal("moral-good",),
@@ -181,7 +196,7 @@ function buildTraitsPayload() {
       initiative_level: sliderVal("approach-initiative",),
     },
     voicePatterns: {
-      verbal_tics: textVal("voice-tics",).split(",",).map(s => s.trim()).filter(Boolean,),
+      verbal_tics: voiceTics,
       vocabulary_level: textVal("voice-vocab",) || undefined,
       sentence_structure: textVal("voice-structure",) || undefined,
       humor_style: textVal("voice-humor",) || undefined,

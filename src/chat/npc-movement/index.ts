@@ -110,7 +110,7 @@ export class NpcMovementIndicatorService {
    */
   async getRecentMovements(
     chatId: string,
-    limit: number = 20,
+    limit = 20,
   ): Promise<MovementEvent[]> {
     return this.getMovementEvents({ chatId, limit, },);
   }
