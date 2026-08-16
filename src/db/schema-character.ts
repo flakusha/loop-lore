@@ -244,6 +244,7 @@ export interface CharacterDesireProfile {
   desire_buildup_rate: Generated<number>;
   created_at: string;
   updated_at: string;
+  world_id: string | null;
 }
 
 // ── character_seduction_skills ────────────────────────────────────────────
@@ -257,6 +258,7 @@ export interface CharacterSeductionSkills {
   xp_to_next: Generated<number>;
   created_at: string;
   updated_at: string;
+  world_id: string | null;
 }
 
 // ── nsfw_encounters ────────────────────────────────────────────
@@ -293,6 +295,7 @@ export interface CharacterBodyProfile {
   modifications: Generated<string>;
   created_at: string;
   updated_at: string;
+  world_id: string | null;
 }
 
 // ── character_heat_cycle ────────────────────────────────────────────

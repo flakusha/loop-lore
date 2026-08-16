@@ -39,6 +39,7 @@ import { characterLicensingRoutes, } from "../routes/character-licensing";
 import { characterMoodRoutes, } from "../routes/character-mood";
 import { characterRelationshipsRoutes, } from "../routes/character-relationships";
 import { characterTraitsRoutes, } from "../routes/character-traits";
+import { characterWorldSetupRoutes, } from "../routes/character-world-setup";
 import { charactersRoutes, } from "../routes/characters";
 import { chatBackgroundsRoutes, } from "../routes/chat-backgrounds";
 import { chatContextRoutes, } from "../routes/chat-context";
@@ -142,6 +143,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(questsRoutes(handleOpts,),);
   app.use(charactersRoutes(handleOpts,),);
   app.use(characterTraitsRoutes(handleOpts,),);
+  app.use(characterWorldSetupRoutes(handleOpts,),);
   app.use(characterInternalTraitsRoutes(handleOpts,),);
   app.use(characterMoodRoutes(handleOpts,),);
   app.use(characterRelationshipsRoutes(handleOpts,),);
