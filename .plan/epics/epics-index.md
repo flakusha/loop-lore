@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 | Status  | Title              | Priority | Effort | Tasks | File                                                                  |
 | ------- | ------------------ | -------- | ------ | ----- | --------------------------------------------------------------------- |
 | ▉ Draft | Timeline System    | High     | High   | 17    | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md)       |

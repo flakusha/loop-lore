@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Admin Danger Zone — Factory Reset & Purge
 
 **Status:** ✅ Done — BE `src/routes/admin/danger-zone.ts` (audit purge / settings reset / factory reset, audit-logged, typed confirmations), FE `admin-system.ts` + `admin.html` Danger Zone section

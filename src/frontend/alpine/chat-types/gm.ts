@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * GM configuration persisted on a chat's `gm_config` JSON blob.
  * Mirrors the backend `src/chat/types/config.ts` `GmConfig` plus the VN display

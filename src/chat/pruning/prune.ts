@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { DEFAULT_PRUNING_CONFIG, } from "./constants";
 import { scoreMessage, } from "./score";
 import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from "./types";

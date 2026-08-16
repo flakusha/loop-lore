@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## In-flight / decision queue — rows needing a finalize-vs-defer call
 
 > When a row is decided: finalize → check off in its `../priority.md` (index — tier files below) tier; defer → keep

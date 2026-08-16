@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import type { ChatState, PromptTemplateInfo, } from "./types";

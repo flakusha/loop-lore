@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Wire Quests Routes
 
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — dual quest system consolidated (`src/rpg/quests/service/` removed) and wired to HTTP

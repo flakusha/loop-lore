@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { MAX_LEVEL, XP_BY_LEVEL, } from "./constants.js";
 
 // ── XP Calculation ───────────────────────────────────────

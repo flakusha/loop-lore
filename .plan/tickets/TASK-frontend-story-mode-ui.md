@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Frontend Story Mode UI
 
 **Status:** 🟡 In Progress (2026-08-14 — story view header, GM story panel, quest log, quality badges built in worktree story-chat-view; backend orchestration endpoints pending LLM-role-wiring workstream)

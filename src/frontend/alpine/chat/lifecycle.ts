@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { ChatListResponse, } from "../../../validation/schemas/responses";
 import { destroyVnRenderer, } from "../../vn";
 import { apiFetch, } from "../htmx";

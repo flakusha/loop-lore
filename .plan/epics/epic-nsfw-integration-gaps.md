@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: NSFW Integration Gaps — Housing, Weather, Social, Disease
 
 **Status:** ⬜ Not Started

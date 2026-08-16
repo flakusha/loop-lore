@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Combat Routes — stateless resolution endpoints backed by the pure combat
  * engine (src/rpg/combat). No DB persistence; every request resolves a

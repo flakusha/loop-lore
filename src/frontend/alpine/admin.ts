@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Admin Page component (admin.html) — orchestrator ──────────
 
 import { adminAudit, } from "./admin-audit";

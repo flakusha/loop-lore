@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Version management - Git tags are the single source of truth (bare `x.y.z`,
  * no `v` prefix). package.json is updated ONLY during release (--bump), never

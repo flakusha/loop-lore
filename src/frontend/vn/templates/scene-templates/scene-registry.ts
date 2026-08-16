@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { VnTemplate, } from "../template-engine";
 import { SCENE_TEMPLATES, } from "./scene-templates";
 

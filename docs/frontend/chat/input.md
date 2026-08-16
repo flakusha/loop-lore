@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Chat: Input Area
 
 Fixed at bottom of the chat area. Same width boundary as the message list — the input does NOT extend beyond the centered message column. Uses the `--bg-secondary` background with a `--border-default` top separator.

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Chat-only world channels (invite-driven membership)
 
 **Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)

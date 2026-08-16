@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema-class/env-map.ts — flat ENV_VAR → dot.path mapping generation
 import { AGE_GATE_DEFAULTS, } from "./age-gate";
 import { ASSETS_DEFAULTS, } from "./assets";

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Chat list filters (sidebar panel) ─────────────────────
 //
 // Holds the chat-list filter controls (type / status / sort) and turns them

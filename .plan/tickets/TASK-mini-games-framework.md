@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Mini-Games Framework + Tier 1
 
 **Epic:** Mini-Games & Interactive Mechanics

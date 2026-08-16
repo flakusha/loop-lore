@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG-2025-002: Client-side `ReferenceError: view is not defined` during characters flow
 
 **Status**: open
