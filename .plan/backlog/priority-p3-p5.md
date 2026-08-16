@@ -41,10 +41,21 @@
 - [ ] Fine-tuning experience — provider health panel; fine-tuning UI for chat/persona/character (P3 #11)
 - [ ] NSFW — character 5-tier rating runtime enforcement (P3 #6)
 - [ ] Chat UI — group chat matrix UI, unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12) (P2-B/P2-D)
+- [ ] **Lorebook activation conditions** (`FEAT-055`) — worldbook/lorebook entries auto-inject into context by keyword/token matching (SillyTavern World Info inspiration). Builds on memorySection + regex pipeline. |
+- [ ] **Prompt library expanded — generation templates** (`FEAT-065` + sub-tickets) — image/audio/video prompt templates with parameter substitution, persistence, and per-provider adapters. Sub-systems: (`FEAT-065-sub-image`), (`FEAT-065-sub-audio`), (`FEAT-065-sub-video`), (`FEAT-065-sub-llm`). Spec: `FEAT-065-template-system.md`. |
+- [ ] **Model capability registry** (`FEAT-067`) — per-model metadata (context length, function calling support, vision, pricing) auto-detected + editable. |
+- [ ] **Token budget advisor** (`FEAT-068`) — real-time context-window usage meter + warnings when approaching limit, suggest which sections to trim. |
+- [ ] **Conversation branching** (`FEAT-045`, `FEAT-046`, `FEAT-047`) — branching data model (tree-structured chat with fork points), branch navigation API, and branch UI controls (fork/resume/compare). Builds on existing chat tree with `parent_id`. |
 
 ## P5 — Wiring, Search & Polish (release-scoped)
 
 - [x] IO (export/import) ✅; Stop generation ✅; Notification center ✅; chat message search ✅; swipe-variant ✅ (implemented + tested); GM role runtime effect ✅ (committed on `dev`)
 - [ ] Frontend wiring — all menus/modals/side-menus/documentation linkage; in-chat asset preview + linkage; assistant panel; message actions UI (see P4/P2 tiers)
 - [ ] **Implemented → wired** — wire/drop LoRA routes (P2-G); SSE refactor ✅ (merged `082c20cf`, row W4 resolved in `../open-inflight.md`); remaining RPG services → `epic-rpg-wiring-phase3.md`; ~~dead `detectIntent`~~ ✅ removed (see `../open-inflight.md`)
+- [ ] **Conversation analytics dashboard** (`FEAT-059`) — message counts, token usage over time, conversation length histograms, role distribution visualization. |
+- [ ] **Model comparison A/B** (`FEAT-060`) — side-by-side comparison of model responses (multishot), quality rating, exportable comparison reports. |
+- [ ] **Generation quality metrics** (`FEAT-062`) — per-generation scoring (latency, token efficiency, repetition rate) with trend charts. |
+- [ ] **Lore-consistency checker** (`FEAT-066`) — AI-powered consistency validation across character descriptions, world lore, and memory entries. |
+- [ ] **Memory access audit log** (`FEAT-075`) — who-pinned-what, decay timeline, source attribution — audit trail for memory operations. |
+- [ ] **API versioning** (`FEAT-035`–`FEAT-044`) — version prefix routing, response envelope version, legacy redirect, deprecation headers, OpenAPI generation, schema versioning table, migration reconciliation, content versioning framework, migration testing + docs. (deferred from P6 — API governance epic; wire when API consumers stabilize) |
 
