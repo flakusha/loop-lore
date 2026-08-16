@@ -1239,6 +1239,7 @@ export const SCHEMA = new SchemaManifest()
     template_id: col("text",),
     visibility: col("text", { notNull: true, hasDefault: true, },),
     thinking_visibility: col("text", { notNull: true, hasDefault: true, },),
+    prompt_override: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),

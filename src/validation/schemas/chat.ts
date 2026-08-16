@@ -56,6 +56,10 @@ export const ChatUpdateBody = t.Object({
     t.Literal("collapsed",),
     t.Literal("visible",),
   ],),),
+  promptOverride: t.Optional(t.Union([
+    t.String(),
+    t.Null(),
+  ],),),
 },);
 
 /**
