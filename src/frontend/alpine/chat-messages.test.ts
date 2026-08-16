@@ -1,5 +1,36 @@
-import { describe, expect, test, } from "bun:test";
+import "./i18n.test-helper";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { chatMessages, } from "./chat-messages";
+import type { ChatState, Message, } from "./types";
+
+// ── Mock global apiFetch (chat-messages uses bare `apiFetch` = globalThis.apiFetch) ──
+// htmx.ts assigns globalThis.apiFetch at import; mocking the `./htmx` module export
+// would NOT intercept the global binding used here, so we stub globalThis directly.
+// i18n uses the REAL module via i18n.test-helper above.
+let fetchCalls: { url: string; opts: RequestInit }[] = [];
+let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
+
+type ApiFetch = (url: string, options?: RequestInit,) => Promise<Response>;
+const globalApiFetch = globalThis as typeof globalThis & { apiFetch?: ApiFetch };
+globalApiFetch.apiFetch = async (url: string, opts?: RequestInit,) => {
+  fetchCalls.push({ url, opts: opts ?? {}, },);
+  if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+  return fetchHandler(url, opts ?? {},);
+};
+
+function mockFetch(status: number, body: unknown = {},) {
+  fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
+}
+
+/** Test state whose `messages` is always defined (narrowed from Partial<ChatState>). */
+type ReactionState = Partial<ChatState> & { messages: Message[] };
+
+const mockMessage = (id: string, role = "user",): Message => ({
+  id,
+  role,
+  content: "hi",
+  created_at: new Date().toISOString(),
+});
 
 globalThis.document = {
   createElement: (tag: string,) => {
@@ -58,6 +89,78 @@ describe("chatMessages", () => {
       document.querySelector = () => null;
       expect(() => chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {}, },)).not
         .toThrow();
+    });
+  });
+
+  describe("toggleReaction", () => {
+    afterEach(() => {
+      fetchCalls = [];
+      fetchHandler = null;
+    },);
+
+    test("POSTs the emoji then reloads reactions for the message", async () => {
+      fetchHandler = (url, opts,) => {
+        if (url === "/api/messages/msg-1/reactions" && opts?.method === "POST") {
+          return Response.json({ toggled: true, emoji: "👍", },);
+        }
+        return Response.json([{ emoji: "👍", count: 1, userReacted: true, },], { status: 200, },);
+      };
+      const state: ReactionState = {
+        activeChat: "chat-1",
+        messages: [mockMessage("msg-1",),],
+        loadMessageReactions: chatMessages.loadMessageReactions,
+      };
+
+      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+
+      const post = fetchCalls.find((c,) => c.opts?.method === "POST");
+      expect(post?.url,).toBe("/api/messages/msg-1/reactions",);
+      const rawBody = post?.opts?.body;
+      const bodyStr = typeof rawBody === "string" ? rawBody : "";
+      const body = JSON.parse(bodyStr,) as { emoji: string };
+      expect(body.emoji,).toBe("👍",);
+      expect(state.messages[0]!.reactions,).toEqual([{ emoji: "👍", count: 1, userReacted: true, },],);
+    });
+
+    test("does nothing without an active chat", async () => {
+      const state: ReactionState = { activeChat: null, messages: [], };
+      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+      expect(fetchCalls,).toHaveLength(0,);
+    });
+
+    test("silently swallows API errors", async () => {
+      fetchHandler = () => new Response("{}", { status: 500, },);
+      const state: ReactionState = {
+        activeChat: "chat-1",
+        messages: [],
+        loadMessageReactions: chatMessages.loadMessageReactions,
+      };
+      await expect(chatMessages.toggleReaction!.call(state, "msg-1", "👍",),).resolves.toBeUndefined();
+    });
+  });
+
+  describe("loadMessageReactions", () => {
+    afterEach(() => {
+      fetchCalls = [];
+      fetchHandler = null;
+    },);
+
+    test("stores grouped reactions on the matching message", async () => {
+      mockFetch(200, [{ emoji: "❤️", count: 2, userReacted: false, },],);
+      const state: ReactionState = { messages: [mockMessage("msg-1",), mockMessage("msg-2",),], };
+
+      await chatMessages.loadMessageReactions!.call(state, "msg-2",);
+
+      expect(fetchCalls,).toHaveLength(1,);
+      expect(fetchCalls[0]!.url,).toBe("/api/messages/msg-2/reactions",);
+      expect(state.messages[1]!.reactions,).toEqual([{ emoji: "❤️", count: 2, userReacted: false, },],);
+    });
+
+    test("leaves messages untouched on error", async () => {
+      mockFetch(500, {},);
+      const state: ReactionState = { messages: [mockMessage("msg-1",),], };
+      await chatMessages.loadMessageReactions!.call(state, "msg-1",);
+      expect(state.messages[0]!.reactions,).toBeUndefined();
     });
   });
 });
