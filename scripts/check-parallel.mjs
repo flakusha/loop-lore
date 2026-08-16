@@ -9,7 +9,16 @@
  *
  * Usage:
  *   bun run scripts/check-parallel.mjs [--fix] [--ci]
+ *
+ * Writes a machine-readable report to .tmp/check-report.json after every run
+ * (success: summary only; failure: summary + full failed-check output).
+ * The report path is logged to stdout.
  */
+
+// ── Imports ─────────────────────────────────────────────────────
+
+import { mkdirSync, writeFileSync, } from "node:fs";
+import path from "node:path";
 
 // ── Parse args ──────────────────────────────────────────────────
 
@@ -67,7 +76,15 @@ const checks = {
 
 const PROJECT_ROOT = import.meta.dir + "/..";
 
+// Machine-readable report: written after every run, git-ignored (.tmp/).
+const REPORT_DIR_RELATIVE = ".tmp";
+const REPORT_RELATIVE = ".tmp/check-report.json";
+const REPORT_PATH = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE, "check-report.json",);
+// Per-check output cap for the report (guards against multi-MB failure dumps).
+const MAX_OUTPUT_CHARS = 100_000;
+
 async function runCheck(name, command,) {
+  const startedAt = performance.now();
   const commandParts = ["-c", command,];
   try {
     const proc = Bun.spawn(["bash", ...commandParts,], {
@@ -78,18 +95,25 @@ async function runCheck(name, command,) {
     const exitCode = await proc.exited;
     const stdout = await new Response(proc.stdout,).text();
     const stderr = await new Response(proc.stderr,).text();
+    const output = stdout || stderr;
     return {
       name,
+      command,
       passed: exitCode === 0,
-      output: stdout || stderr,
+      output,
       exitCode,
+      durationMs: Math.round(performance.now() - startedAt,),
+      truncated: output.length > MAX_OUTPUT_CHARS,
     };
   } catch (error) {
     return {
       name,
+      command,
       passed: false,
       output: error.message,
       exitCode: 1,
+      durationMs: Math.round(performance.now() - startedAt,),
+      truncated: false,
     };
   }
 }
@@ -125,9 +149,54 @@ function reportResults(results,) {
   return failed;
 }
 
+// ── Machine-readable report ─────────────────────────────────────
+
+/**
+ * Build the machine-readable report. Success → summary + per-check status;
+ * failure → same plus the full output of every failed check (capped).
+ */
+function buildReport({ exitCode, checks, nonBlocking, },) {
+  const passedCount = checks.filter((check,) => check.passed).length;
+  const failedCount = checks.length - passedCount;
+  const durationMs = checks.reduce((sum, check,) => sum + (check.durationMs ?? 0), 0,);
+
+  return {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    runner: "bun run scripts/check-parallel.mjs",
+    cwd: PROJECT_ROOT,
+    passed: failedCount === 0,
+    exitCode,
+    reportPath: REPORT_RELATIVE,
+    summary: {
+      total: checks.length,
+      passed: passedCount,
+      failed: failedCount,
+      durationMs,
+    },
+    checks: checks.map((check,) => ({
+      name: check.name,
+      command: check.command,
+      passed: check.passed,
+      exitCode: check.exitCode,
+      durationMs: check.durationMs ?? 0,
+      output: check.passed ? null : (check.output ?? "").slice(0, MAX_OUTPUT_CHARS,),
+      truncated: check.passed ? false : (check.output ?? "").length > MAX_OUTPUT_CHARS,
+    })),
+    nonBlocking,
+  };
+}
+
+function writeReport(report,) {
+  mkdirSync(path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE,), { recursive: true, },);
+  writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2,) + "\n", "utf8",);
+  console.log(`\n📄 Check report: ${REPORT_RELATIVE}`,);
+  return REPORT_PATH;
+}
+
 // ── Non-blocking checks ─────────────────────────────────────────
 
-async function runNonBlockingChecks() {
+async function runNonBlockingChecks(notes,) {
   console.log("\n=== Non-blocking checks ===",);
 
   // Version drift check
@@ -159,13 +228,20 @@ async function runNonBlockingChecks() {
       const tagVersion = latestTag.replace(/^v/, "",);
       if (tagVersion === packageVersion) {
         console.log(`✓ Version in sync: ${packageVersion}`,);
+        notes.push({ level: "ok", message: `Version in sync: ${packageVersion}`, },);
       } else {
         console.log(`⚠ Version drift: package.json=${packageVersion}, latest tag=${tagVersion}`,);
         console.log("  Run 'bun run version:sync' to reconcile",);
+        notes.push({
+          level: "warn",
+          message:
+            `Version drift: package.json=${packageVersion}, latest tag=${tagVersion}; run 'bun run version:sync'`,
+        },);
       }
     }
   } catch {
     console.log("⚠ Version check skipped",);
+    notes.push({ level: "skipped", message: "Version check skipped", },);
   }
 
   // Code duplication check
@@ -181,11 +257,14 @@ async function runNonBlockingChecks() {
       const cloneCount = (jscpdText.match(/Clone found/g,) ?? []).length;
       console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones`,);
       console.log("  Run 'bun run jscpd:full' for full report",);
+      notes.push({ level: "warn", message: `Code duplication (jscpd:full): ${cloneCount} clones`, },);
     } else {
       console.log("✓ No code duplication issues (jscpd:full)",);
+      notes.push({ level: "ok", message: "No code duplication issues (jscpd:full)", },);
     }
   } catch {
     console.log("✓ No code duplication issues (jscpd:full)",);
+    notes.push({ level: "ok", message: "No code duplication issues (jscpd:full)", },);
   }
 
   // Markdown stale-link check (non-blocking — reports broken internal links)
@@ -207,11 +286,14 @@ async function runNonBlockingChecks() {
         if (line.includes("broken target",)) { console.log(`  ${line}`,); }
       }
       console.log("  Fix target paths or defer to non-blocking (see scripts/check-md-links.ts)",);
+      notes.push({ level: "warn", message: "Markdown stale-link check found broken internal links", },);
     } else {
       console.log("✓ Markdown links OK",);
+      notes.push({ level: "ok", message: "Markdown links OK", },);
     }
   } catch (error) {
     console.log(`⚠ Markdown stale-link check skipped (${error.message})`,);
+    notes.push({ level: "skipped", message: `Markdown stale-link check skipped (${error.message})`, },);
   }
 
   // License compliance check (scancode + fossa — non-blocking, requires external tools)
@@ -229,11 +311,18 @@ async function runNonBlockingChecks() {
     const licenseText = stdout + stderr;
     const lines = licenseText.trim().split("\n",);
     // Show license check output (already prefixed with [license])
+    const licenseNotes = [];
     for (const line of lines) {
-      if (line.startsWith("[license]",)) { console.log(`  ${line}`,); }
+      if (!line.startsWith("[license]",)) { continue; }
+      console.log(`  ${line}`,);
+      licenseNotes.push(line,);
+    }
+    if (licenseNotes.length > 0) {
+      notes.push({ level: "info", message: licenseNotes.join("\n",), },);
     }
   } catch (error) {
     console.log(`⚠ License compliance check skipped (${error.message})`,);
+    notes.push({ level: "skipped", message: `License compliance check skipped (${error.message})`, },);
   }
 }
 
@@ -243,7 +332,14 @@ async function main() {
   const results = await runAllChecks();
   const failed = reportResults(results,);
 
-  await runNonBlockingChecks();
+  const nonBlocking = [];
+  await runNonBlockingChecks(nonBlocking,);
+
+  writeReport(buildReport({
+    exitCode: failed > 0 ? 1 : 0,
+    checks: results,
+    nonBlocking,
+  },),);
 
   if (failed > 0) {
     console.log(`\n=== ${failed} check(s) failed ===`,);
@@ -255,5 +351,18 @@ async function main() {
 
 main().catch((error,) => {
   console.error("❌ Check runner failed:", error.message,);
+  writeReport(buildReport({
+    exitCode: 1,
+    checks: [{
+      name: "check - runner",
+      command: "bun run scripts/check-parallel.mjs",
+      passed: false,
+      exitCode: 1,
+      durationMs: 0,
+      truncated: false,
+      output: error.message,
+    },],
+    nonBlocking: [],
+  },),);
   process.exit(1,);
 },);
