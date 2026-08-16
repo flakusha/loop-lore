@@ -159,12 +159,17 @@ export async function isWasmAvailable(): Promise<boolean> {
 // ── Script auto-init for Alpine.js / htmx environments ──────────
 // When loaded as a script tag, eagerly fetch the wasm module and expose
 // it on `window.__loopLoreWasm` for other IIFE bundles to use.
-(function autoInit(): void {
+// eslint-disable-next-line unicorn/prefer-top-level-await -- loaded as regular script tag, not module
+(async function autoInit(): Promise<void> {
   const g = globalThis as Record<string, unknown>;
   // Prevent double-init and preserve existing global.
   if (g.__loopLoreWasm !== undefined) { return; }
 
   // Eager fetch — result stored on window once ready.
-  // Wrap in try/catch; failure is non-fatal — callers check return value.
-  g.__loopLoreWasm = getWasmModule().catch(() => null);
+  // Failure is non-fatal — callers check return value.
+  try {
+    g.__loopLoreWasm = await getWasmModule();
+  } catch {
+    g.__loopLoreWasm = null;
+  }
 })();
