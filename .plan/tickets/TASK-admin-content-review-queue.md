@@ -3,7 +3,7 @@
 
 # TASK: Admin Content Review Queue
 
-**Status:** ✅ Done — BE `src/routes/admin/review-stats.ts` (pending/total/dismissed/resolved/falsePositiveRate/daily/topContentTypes) reusing pre-existing `/api/nsfw/moderation/flags` backend; FE `admin-review.ts` + Review tab in `admin.html`
+**Status:** ✅ Done — review queue shipped (service + routes + Review tab) AND user Flag button/dialog shipped (message context menu + Detailed action row → POST /api/nsfw/moderation/flags). Reporter identity hardened (session-derived, not body).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin

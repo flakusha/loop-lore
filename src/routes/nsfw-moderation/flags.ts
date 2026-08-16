@@ -17,10 +17,19 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-moderation-flags", },)
       .post(`${prefix}/nsfw/moderation/flags`, async (ctx: any,) => {
-        const auth = requireUserId(ctx,);
-        if (typeof auth !== "string") { return auth; }
+        const reporterId = requireUserId(ctx,);
+        if (typeof reporterId !== "string") { return reporterId; }
         try {
-          const flag = await svc.flagContent(ctx.body,);
+          const { contentType, contentId, chatId, worldId, flagReason, description, } = ctx.body;
+          const flag = await svc.flagContent({
+            reporterId,
+            contentType,
+            contentId,
+            chatId,
+            worldId,
+            flagReason,
+            description,
+          },);
           return jsonResponse({ ...SuccessResponse, data: flag, },);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
@@ -40,11 +49,11 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
       }, { query: flagQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
       .put(`${prefix}/nsfw/moderation/flags/:id`, async (ctx: any,) => {
-        const auth = requireAdmin(ctx,);
-        if (typeof auth !== "string") { return auth; }
+        const adminId = requireAdmin(ctx,);
+        if (typeof adminId !== "string") { return adminId; }
         try {
-          const { resolvedBy, resolution, status, } = ctx.body;
-          const flag = await svc.resolveFlag(ctx.params.id, resolvedBy, resolution, status,);
+          const { resolution, status, } = ctx.body;
+          const flag = await svc.resolveFlag(ctx.params.id, adminId, resolution, status,);
           return jsonResponse({ ...SuccessResponse, data: flag, },);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);

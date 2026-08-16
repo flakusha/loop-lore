@@ -717,7 +717,15 @@
     "name": "Name",
     "description": "Description",
     "advanceBy": "Advance by",
-    "advanceProgress": "Advance Progress"
+    "advanceProgress": "Advance Progress",
+    "typeTime": "Time",
+    "typeCollection": "Collection",
+    "typeDestruction": "Destruction",
+    "typeRescue": "Rescue",
+    "typeDiscovery": "Discovery",
+    "typeSocial": "Social",
+    "typeComposite": "Composite",
+    "categoryLabel": "Category"
   },
   "chats": {
     "title": "Chats",
@@ -868,7 +876,21 @@
     "visibilityPrivate": "Private",
     "visibilityPublic": "Public",
     "visibilityUnlisted": "Unlisted",
-    "visualNovelOverlay": "Visual novel overlay (choice cards)"
+    "visualNovelOverlay": "Visual novel overlay (choice cards)",
+    "flag": "Flag",
+    "flagTitle": "Flag Content",
+    "flagHint": "Report this content to moderators for review.",
+    "flagReason": {
+      "inappropriate": "Inappropriate content",
+      "spam": "Spam or advertising",
+      "harassment": "Harassment or bullying",
+      "spoiler": "Spoiler (not marked as spoiler)",
+      "other": "Other"
+    },
+    "flagOtherPlaceholder": "Describe the issue...",
+    "flagSubmitted": "Content flagged for review",
+    "flagFailed": "Failed to flag content.",
+    "flagReasonRequired": "Select a reason or describe the issue."
   },
   "personas": {
     "title": "Personas",
@@ -902,15 +924,37 @@
     "chatNotFound": "Chat not found"
   },
   "story": {
-    "itemNotFound": "Item not found",
-    "itemInstanceNotFound": "Item instance not found",
-    "npcStateNotFound": "NPC state not found",
-    "locationNotFound": "Location not found",
-    "worldNotFound": "World not found",
-    "storyTurnNotFound": "Story turn not found",
-    "nameRequired": "name is required",
-    "locationSelfConnect": "Location cannot connect to itself",
-    "invalidConnections": "Invalid connections data"
+    "world": "World",
+    "questProgress": "Quests:",
+    "pause": "Pause",
+    "resume": "Resume",
+    "step": "Step",
+    "gmPanel": "GM Panel",
+    "questLog": "Quest Log",
+    "gmSelection": "GM selection",
+    "running": "Running",
+    "idle": "Idle",
+    "turn": "Turn",
+    "nextActor": "Next",
+    "turnOrder": "Turn Order",
+    "ready": "Ready",
+    "waiting": "Waiting",
+    "noActors": "No participants loaded yet.",
+    "activeQuests": "Active Quests",
+    "noQuests": "No active quests.",
+    "newQuestPlaceholder": "Quest name…",
+    "newQuest": "New Quest",
+    "deleteQuest": "Delete quest",
+    "worldState": "World State",
+    "time": "Time",
+    "weather": "Weather",
+    "atmosphere": "Atmosphere",
+    "npcsPresent": "NPCs here",
+    "controls": "Controls",
+    "escalateToMe": "Escalate to Me",
+    "injectNarration": "Inject Narration",
+    "controlsHint": "Pause/step orchestration is wired to the story engine (LLM role wiring). Until then, controls report availability.",
+    "qualityScore": "Quality score from story engine evaluation"
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
@@ -1126,7 +1170,9 @@
     "failedSave": "保存に失敗しました",
     "failedCreate": "作成に失敗しました",
     "gmGuidanceApplied": "GM guidance applied",
-    "gmGuidanceFailed": "Failed to apply GM guidance"
+    "gmGuidanceFailed": "Failed to apply GM guidance",
+    "quickRepliesSaved": "Quick-reply buttons saved",
+    "quickRepliesSaveFailed": "Failed to save quick-reply buttons"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",
@@ -1165,5 +1211,20 @@
     "review": "エンティティデータの完全性を確認",
     "clear": "チャットをクリア",
     "stats": "チャットの統計を表示"
+  },
+  "participants": {
+    "title": "Participants",
+    "members": "members",
+    "addTitle": "Add Participant",
+    "searchActors": "Search your actors...",
+    "noActors": "No more actors to add",
+    "talkativity": "Talkativity",
+    "initiative": "Initiative",
+    "remove": "Remove participant",
+    "added": "Participant added",
+    "removed": "Participant removed",
+    "failedAdd": "Failed to add participant",
+    "failedRemove": "Failed to remove participant",
+    "failedUpdate": "Failed to update participant"
   }
 }
