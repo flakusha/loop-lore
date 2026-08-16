@@ -79,6 +79,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
           includeAvatars = true,
           includeLicensing = true,
           includeAvailability = true,
+          includeWorldSetup = true,
         } = ctx.body;
 
         const exportData = await exportCharacterSystems(database, actorId, worldId,);
@@ -92,6 +93,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
           avatars: includeAvatars ? exportData.avatars : undefined,
           licensing: includeLicensing ? exportData.licensing : undefined,
           availability: includeAvailability ? exportData.availability : undefined,
+          worldSetup: includeWorldSetup ? exportData.worldSetup : undefined,
         };
 
         return jsonResponse(filtered,);

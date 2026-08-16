@@ -18,6 +18,10 @@ import {
   mapTraitForExport,
   toExportFields,
 } from "../shared/character-systems-utils";
+import type {
+  WorldSetupInventoryItem,
+  WorldSetupLoreEntry,
+} from "../world-setup/types";
 
 /** Complete character systems export */
 export interface CharacterSystemsExport {
@@ -38,6 +42,14 @@ export interface CharacterSystemsExport {
   };
   licensing?: Record<string, unknown>;
   availability?: Record<string, unknown>;
+  worldSetup?: {
+    startingInventory: WorldSetupInventoryItem[];
+    loreEntries: WorldSetupLoreEntry[];
+    backstory: string | null;
+    scenarioOverride: string | null;
+    systemPromptOverride: string | null;
+    initialState: Record<string, unknown>;
+  };
 }
 
 /**
@@ -139,6 +151,27 @@ export async function exportCharacterSystems(
       contentPolicy: jsonParseOr(availability.content_policy ?? "{}", {},),
       nsfwPolicy: jsonParseOr(availability.nsfw_policy ?? "{}", {},),
     };
+  }
+
+  // Export world setup (per-world bundle; only when scoped to a world).
+  if (worldId) {
+    const setup = await db
+      .selectFrom("character_world_setup",)
+      .selectAll()
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+
+    if (setup) {
+      exportData.worldSetup = {
+        startingInventory: jsonParseOr(setup.starting_inventory, [] as WorldSetupInventoryItem[],),
+        loreEntries: jsonParseOr(setup.lore_entries, [] as WorldSetupLoreEntry[],),
+        backstory: setup.backstory,
+        scenarioOverride: setup.scenario_override,
+        systemPromptOverride: setup.system_prompt_override,
+        initialState: jsonParseOr(setup.initial_state, {},),
+      };
+    }
   }
 
   return exportData;
