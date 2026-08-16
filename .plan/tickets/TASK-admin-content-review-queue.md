@@ -1,6 +1,6 @@
 # TASK: Admin Content Review Queue
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — BE `src/routes/admin/review-stats.ts` (pending/total/dismissed/resolved/falsePositiveRate/daily/topContentTypes) reusing pre-existing `/api/nsfw/moderation/flags` backend; FE `admin-review.ts` + Review tab in `admin.html`
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin
