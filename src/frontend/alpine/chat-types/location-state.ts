@@ -11,14 +11,23 @@ export interface ChatLocationState {
   _sectionsLoading: boolean;
   _sectionsOpen: boolean;
   _activeSectionId: string | null;
+  _currentSectionId: string | null;
+  _storyMapOpen: boolean;
   _newSectionLabel: string;
   _newSectionDesc: string;
   toggleSectionsPanel(): void;
+  toggleStoryMap(): void;
   loadSections(): Promise<void>;
   createSection(): Promise<void>;
   deleteSection(sectionId: string,): Promise<void>;
   moveSection(sectionId: string, dir: -1 | 1,): Promise<void>;
   sectionLabel(sectionId: string | null,): string;
+  sectionMessageCounts(): Map<string, number>;
+  readonly currentSectionName: string | null;
+  sectionActors(sectionId: string,): string[];
+  readonly partySplit: boolean;
+  trackCurrentSection(): void;
+  transferToSection(sectionId: string,): Promise<void>;
   sectionDividerFor(index: number, sectionId: string | null,): {
     id: string;
     label: string;
