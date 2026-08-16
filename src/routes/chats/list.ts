@@ -25,6 +25,10 @@ const ChatListQuery = t.Object({
   type: t.Optional(t.Enum({ direct: "direct", group: "group", },),),
   archived: t.Optional(t.Union([archivedTrue, archivedFalse, archivedOne, archivedZero,],),),
   sort: t.Optional(t.UnionEnum(["recent", "name", "unread", "pinned-first",],),),
+  world: t.Optional(t.String(),),
+  minMessages: t.Optional(t.Numeric({ minimum: 0, },),),
+  maxMessages: t.Optional(t.Numeric({ minimum: 0, },),),
+  updatedSince: t.Optional(t.String(),),
 },);
 
 /**
@@ -89,6 +93,10 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
           const type = ctx.query.type as "direct" | "group" | undefined;
           const archived = ctx.query.archived as string | undefined;
           const sort = (ctx.query.sort as string | undefined) ?? "recent";
+          const world = ctx.query.world as string | undefined;
+          const minMessages = ctx.query.minMessages as number | undefined;
+          const maxMessages = ctx.query.maxMessages as number | undefined;
+          const updatedSince = ctx.query.updatedSince as string | undefined;
 
           // Shared filters. Archive state lives on chats.is_pinned
           // (PinnedState enum: unpinned | pinned | archived).
@@ -109,6 +117,29 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
             const isArchived = archived === "true" || archived === "1";
             countQuery = countQuery.where("is_pinned", isArchived ? "=" : "!=", "archived",);
             listQuery = listQuery.where("is_pinned", isArchived ? "=" : "!=", "archived",);
+          }
+          if (world) {
+            countQuery = countQuery.where("world_id", "=", world,);
+            listQuery = listQuery.where("world_id", "=", world,);
+          }
+          if (updatedSince) {
+            countQuery = countQuery.where("updated_at", ">=", updatedSince,);
+            listQuery = listQuery.where("updated_at", ">=", updatedSince,);
+          }
+          if (minMessages !== undefined || maxMessages !== undefined) {
+            const msgCount = sql<number>`
+              (
+                            SELECT COUNT(*) FROM messages m WHERE m.chat_id = chats.id AND m.visibility = 'visible'
+                          )
+            `;
+            if (minMessages !== undefined) {
+              countQuery = countQuery.where(msgCount, ">=", minMessages,);
+              listQuery = listQuery.where(msgCount, ">=", minMessages,);
+            }
+            if (maxMessages !== undefined) {
+              countQuery = countQuery.where(msgCount, "<=", maxMessages,);
+              listQuery = listQuery.where(msgCount, "<=", maxMessages,);
+            }
           }
 
           const countResult = await countQuery.executeTakeFirst();
