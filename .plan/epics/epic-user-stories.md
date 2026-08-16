@@ -22,7 +22,7 @@ New use cases and user story improvements. Continuously improve user experience 
 
 | Item | Ticket | Status |
 | ---- | ------ | ------ |
-| Chat flow section navigation (multi-location journey UI) | `TASK-chat-flow-section-navigation` | ⬜ Not Started — backend sectioning shipped (`routes/chat-sections/`), frontend navigation open |
+| Chat flow section navigation (multi-location journey UI) | `TASK-chat-flow-section-navigation` | 🟡 Partial — backend sectioning + manage panel shipped; Phase 1 inline dividers shipped (2026-08-16, commit c5270239); story map / location header / transfer dialog open |
 | Chat backgrounds location sync | `TASK-chat-backgrounds-location-sync` | ⬜ Not Started |
 | User story backlog grooming | `TASK-user-stories` | ⬜ Not Started — refine requirements, add acceptance criteria, align specs with user needs |
 | User seeding & role expansion (configurable test roles) | `TASK-user-seeding-role-expansion` | ⬜ Not Started — Epic: Logic Reconciliation |
