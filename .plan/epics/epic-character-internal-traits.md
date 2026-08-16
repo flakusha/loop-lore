@@ -585,6 +585,19 @@ aspirations, disposition, coping, approach, autonomy, and voice.
 - `TASK-character-relationships.md` — relationship graph (autonomy + coping reference relationship strength)
 - `TASK-character-personality-integrity.md` — immutable personality (behavioral dimensions are expression, not personality)
 
+## Task Management Note (2026-08-15)
+
+**Considered:** `task-management` skill (`.opencode/skills/task-management/`) for granular subtask tracking with JSON files in `.tmp/tasks/`.
+
+**Decision:** Use project-native approach instead — `./scripts/worktree.sh ticket TASK "Title" "Description"` for git-issue integration. The skill creates a parallel tracking system (`.tmp/tasks/` JSON) that conflicts with the established `.plan/tickets/` + `git issues` workflow.
+
+**Rationale:** Project already has mature task management via:
+- `.plan/tickets/` — ticket files
+- `git issues` via `worktree.sh` — distributed, Git-embedded issues
+- `.plan/backlog/` — priority tracking
+
+The task-management skill is better suited for projects without existing task infrastructure.
+
 ## Tickets
 
 - `.plan/tickets/TASK-char-internal-*.md` — one per task above (created on task start)
