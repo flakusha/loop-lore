@@ -3,7 +3,7 @@
 **Epic:** Logic Reconciliation
 **Priority:** High
 **Effort:** Medium
-**Status:** Not Started
+**Status:** ⬜ Not Started — design doc exists (roles, config schema, DB schema, task list); implementation pending. Code reality: `UserRole` = admin/user/viewer/solo (`src/db/enums-core/users.ts`), seeding = `seedDefaultActors` + bootstrap admin (`src/db/seed.ts`), no config-driven seeding, no `user_roles`/`seed_audit` tables
 
 ## Summary
 

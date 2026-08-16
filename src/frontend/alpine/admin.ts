@@ -3,10 +3,12 @@
 import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
 import { adminModels, } from "./admin-models";
+import { adminReview, } from "./admin-review";
 import { adminSystem, } from "./admin-system";
 import { adminTemplates, } from "./admin-templates";
 import { adminUsers, } from "./admin-users";
 import { adminWorlds, } from "./admin-worlds";
+import { apiFetch, } from "./htmx";
 
 // Fallback: expose showTab on globalThis so Alpine expressions don't
 // throw ReferenceError when initTree fails silently on HTMX swaps.
@@ -22,7 +24,15 @@ import { adminWorlds, } from "./admin-worlds";
     pageSize: 20,
 
     // Overview
-    stats: { users: 0, chats: 0, messages: 0, characters: 0, assets: 0, worlds: 0, },
+    stats: {
+      users: 0,
+      chats: 0,
+      messages: 0,
+      characters: 0,
+      assets: 0,
+      worlds: 0,
+      deltas: { users: 0, chats: 0, worlds: 0, assets: 0, },
+    },
     recentEntries: [] as {
       id: string;
       level: number;
@@ -33,6 +43,9 @@ import { adminWorlds, } from "./admin-worlds";
       entity_id: string | null;
       created_at: string;
     }[],
+    overviewActivityFilter: "",
+    overviewActivityType: "",
+    _overviewPollTimer: null as ReturnType<typeof setInterval> | null,
 
     // ── Tab state + methods ─────────────────────────────
     ...adminUsers,
@@ -40,12 +53,22 @@ import { adminWorlds, } from "./admin-worlds";
     ...adminChats,
     ...adminAudit,
     ...adminModels,
+    ...adminReview,
     ...adminSystem,
     ...adminTemplates,
 
     // ── Lifecycle ───────────────────────────────────────
     async init() {
       await this.loadOverview();
+      this._overviewPollTimer = setInterval(() => {
+        this.loadOverview();
+      }, 30_000,);
+    },
+
+    destroy() {
+      if (!this._overviewPollTimer) { return; }
+      clearInterval(this._overviewPollTimer,);
+      this._overviewPollTimer = null;
     },
 
     showTab(tab: string,) {
@@ -78,6 +101,10 @@ import { adminWorlds, } from "./admin-worlds";
           this.loadModelRoles();
           this.loadSdStatus();
           this.loadSdConfig();
+          break;
+        }
+        case "review": {
+          this.loadReview();
           break;
         }
         case "templates": {
@@ -116,9 +143,12 @@ import { adminWorlds, } from "./admin-worlds";
     // ── Overview ────────────────────────────────────────
     async loadOverview() {
       try {
+        const params = new URLSearchParams({ page: "1", pageSize: "20", },);
+        if (this.overviewActivityFilter) { params.set("q", this.overviewActivityFilter,); }
+        if (this.overviewActivityType) { params.set("event_type", this.overviewActivityType,); }
         const [statsRes, auditRes,] = await Promise.allSettled([
           apiFetch("/api/admin/stats", { headers: { Accept: "application/json", }, },),
-          apiFetch("/api/admin/audit?page=1&pageSize=10", { headers: { Accept: "application/json", }, },),
+          apiFetch(`/api/admin/audit?${params.toString()}`, { headers: { Accept: "application/json", }, },),
         ],);
         if (statsRes.status !== "fulfilled" || auditRes.status !== "fulfilled") {
           throw new Error("admin overview load failed",);
@@ -126,11 +156,15 @@ import { adminWorlds, } from "./admin-worlds";
         if (statsRes.value.ok) { this.stats = await statsRes.value.json(); }
         if (auditRes.value.ok) {
           const d = await auditRes.value.json();
-          this.recentEntries = (d.data || []).slice(0, 10,);
+          this.recentEntries = (d.data || []).slice(0, 20,);
         }
       } catch {
         /* ignore */
       }
+    },
+
+    goToSection(tab: string,) {
+      this.showTab(tab,);
     },
   };
 };
