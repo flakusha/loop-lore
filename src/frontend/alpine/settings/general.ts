@@ -53,16 +53,21 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
         const res = await apiFetch("/api/settings", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const settings = await res.json();
-          if (settings.displayName) { this.displayName = settings.displayName; }
-          if (settings.birthDate) { this.birthDate = settings.birthDate; }
-          if (settings.theme) { this.theme = settings.theme; }
-          if (settings.locale) { this.locale = settings.locale; }
-          if (settings.provider) { this.provider = settings.provider; }
-          if (settings.apiEndpoint) { this.apiEndpoint = settings.apiEndpoint; }
-          if (settings.model) { this.model = settings.model; }
-          if (settings.maxTokens) { this.maxTokens = settings.maxTokens; }
+          const fields = [
+            "displayName",
+            "birthDate",
+            "theme",
+            "locale",
+            "provider",
+            "apiEndpoint",
+            "model",
+            "maxTokens",
+            "detailLevel",
+          ] as const;
+          for (const key of fields) {
+            if (settings[key]) { (this as unknown as Record<string, unknown>)[key] = settings[key]; }
+          }
           if (typeof settings.temperature === "number") { this.temperature = settings.temperature; }
-          if (settings.detailLevel) { this.detailLevel = settings.detailLevel; }
         }
       } catch (error) {
         log.warn("loadSettings failed", { error: String(error,), },);

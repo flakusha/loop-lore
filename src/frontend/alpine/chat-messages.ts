@@ -8,6 +8,41 @@ import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "chat", },);
 
+/** Build request body for sendMessage (handles encryption + attachments). */
+async function buildSendBody(
+  ctx: any,
+  text: string,
+  msgs: Array<{ id: string }>,
+  pendingAssets: Array<{ assetId: string }>,
+) {
+  const body: Record<string, unknown> = {};
+  if (text) {
+    if (ctx._encryptionEnabled && ctx._chatKey && ctx._keyId) {
+      body.content = await browserCompressThenEncrypt(text, ctx._chatKey, ctx._keyId,);
+      log.debug("Message encrypted client-side before send",);
+    } else {
+      body.content = text;
+    }
+  }
+  const lastMsg = msgs.findLast((m,) => !m.id.startsWith("temp-",));
+  if (lastMsg) { body.parentId = lastMsg.id; }
+  if (pendingAssets.length > 0) {
+    body.attachments = Array.from(pendingAssets, (a, i,) => ({
+      assetId: a.assetId,
+      order: i,
+      label: "message-attachment",
+    }),);
+  }
+  return body;
+}
+
+/** Remove optimistic temp messages after send failure. */
+function removeTempMessages(ctx: ChatState, msgs: Array<{ id: string }>,) {
+  const filtered: Message[] = [];
+  for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m as Message,); } }
+  ctx.messages = filtered;
+}
+
 const EMPTY_MESSAGE_PAGE = {
   data: [],
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
@@ -147,24 +182,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.autoResize(input,);
     this.$nextTick?.(() => this.scrollToBottom());
 
-    const body: Record<string, unknown> = {};
-    if (text) {
-      if (this._encryptionEnabled && this._chatKey && this._keyId) {
-        body.content = await browserCompressThenEncrypt(text, this._chatKey, this._keyId,);
-        log.debug("Message encrypted client-side before send",);
-      } else {
-        body.content = text;
-      }
-    }
-    const lastMsg = msgs.findLast((m,) => !m.id.startsWith("temp-",));
-    if (lastMsg) { body.parentId = lastMsg.id; }
-    if (pendingAssets.length > 0) {
-      body.attachments = Array.from(pendingAssets, (a, i,) => ({
-        assetId: a.assetId,
-        order: i,
-        label: "message-attachment",
-      }),);
-    }
+    const body = await buildSendBody(this, text, msgs, pendingAssets,);
 
     this.isGenerating = true;
     try {
@@ -176,31 +194,23 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       if (res.ok) {
         this.pendingAssets = [];
         const data = await res.json();
-
-        // Dispatch command action if present (e.g. /image → POST /api/generation/image)
         if (data.action) {
           await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
         } else {
-          // Normal message — connect SSE for LLM streaming generation
           this.connectGenerationSSE(this.activeChat,);
         }
-
         await this.loadMessages();
         await this.loadChats();
       } else {
         this.isGenerating = false;
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
-        const filtered: typeof msgs = [];
-        for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m,); } }
-        this.messages = filtered;
+        removeTempMessages(this, msgs,);
       }
     } catch {
       this.isGenerating = false;
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
-      const filtered: typeof msgs = [];
-      for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m,); } }
-      this.messages = filtered;
+      removeTempMessages(this, msgs,);
     }
   },
 
