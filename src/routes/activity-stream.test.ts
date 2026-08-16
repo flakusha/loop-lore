@@ -168,6 +168,26 @@ describe("activity-stream routes", () => {
     reader.cancel();
   });
 
+  test("ActivityStreamer emits keepalive ping while idle", async () => {
+    const { db: freshDb, sqlite, } = await makeStreamDb();
+    const streamer = new ActivityStreamer(freshDb, "user1", 20,);
+    const reader = streamer.open().body!.getReader();
+
+    const initial = await readChunkWithTimeout(reader,);
+    expect(new TextDecoder().decode(initial.value,),).toContain("event: activity",);
+
+    // No DB change → the 8s keepalive is the next event on the wire.
+    const keepalive = await readChunkWithTimeout(reader, 8500,);
+    const chunk = new TextDecoder().decode(keepalive.value,);
+    expect(chunk,).toContain("event: ping",);
+    const dataLine = chunk.split("\n",).find((l,) => l.startsWith("data:",));
+    const payload = JSON.parse(dataLine!.slice(5,),) as { t: number };
+    expect(typeof payload.t,).toBe("number",);
+
+    reader.cancel();
+    sqlite.close();
+  }, 15_000,);
+
   test("ActivityStreamer send tolerates a closed controller", async () => {
     const { db: freshDb, sqlite, } = await makeStreamDb();
     const streamer = new ActivityStreamer(freshDb, "user1", 20,);
