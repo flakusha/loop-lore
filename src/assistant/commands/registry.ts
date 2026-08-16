@@ -4,6 +4,7 @@
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
+import type { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 
 /** Context provided to command handlers */
@@ -13,6 +14,8 @@ export interface CommandContext {
   activeChat?: { id: string; mode?: string; type?: string; worldId?: string };
   currentCharacter?: { id: string; name: string; display_name?: string };
   messages?: { id: string; role: string; content: string; created_at: string }[];
+  /** The calling participant's role in the chat (from `chat_participants`). */
+  roleInChat?: ChatParticipantRole;
   db?: Kysely<DB>;
   config?: Config;
   userId?: string;
@@ -32,16 +35,55 @@ export interface CommandResult {
 /** Command handler function signature */
 export type CommandHandler = (args: string[], ctx: CommandContext,) => CommandResult | Promise<CommandResult>;
 
-const handlers = new Map<string, CommandHandler>();
+/** Registration options for a command. */
+export interface CommandOptions {
+  /**
+   * Minimum participant role required to run the command.
+   *
+   * Hierarchy: `observer` < `member` < `owner`. Omitted = any participant
+   * who can message may run it (the historical default).
+   */
+  requiredRole?: ChatParticipantRole;
+}
+
+interface CommandRegistration {
+  handler: CommandHandler;
+  requiredRole?: ChatParticipantRole;
+}
+
+const handlers = new Map<string, CommandRegistration>();
+
+/** Role privilege ordering: higher number = more privilege. */
+const ROLE_PRIORITY: Record<ChatParticipantRole, number> = {
+  observer: 0,
+  member: 1,
+  owner: 2,
+};
+
+/**
+ * Check whether a participant's role satisfies a minimum required role.
+ *
+ * @param actual - The participant's actual role in the chat
+ * @param required - The minimum role required
+ * @returns true when `actual` is at least as privileged as `required`
+ */
+export function satisfiesRole(actual: ChatParticipantRole, required: ChatParticipantRole,): boolean {
+  return ROLE_PRIORITY[actual] >= ROLE_PRIORITY[required];
+}
 
 /**
  * Register a command handler.
  *
  * @param name - Command name (lowercased automatically)
  * @param handler - Handler function
+ * @param opts - Optional registration options (e.g. `requiredRole`)
  */
-export function registerCommand(name: string, handler: CommandHandler,): void {
-  handlers.set(name.toLowerCase(), handler,);
+export function registerCommand(
+  name: string,
+  handler: CommandHandler,
+  opts?: CommandOptions,
+): void {
+  handlers.set(name.toLowerCase(), { handler, requiredRole: opts?.requiredRole, },);
 }
 
 /**
@@ -51,7 +93,17 @@ export function registerCommand(name: string, handler: CommandHandler,): void {
  * @returns Handler function, or undefined if not registered
  */
 export function getCommand(name: string,): CommandHandler | undefined {
-  return handlers.get(name.toLowerCase(),);
+  return handlers.get(name.toLowerCase(),)?.handler;
+}
+
+/**
+ * Get the minimum role required to run a command, if any.
+ *
+ * @param name - Command name
+ * @returns Required role, or undefined when unrestricted
+ */
+export function getCommandRequirement(name: string,): ChatParticipantRole | undefined {
+  return handlers.get(name.toLowerCase(),)?.requiredRole;
 }
 
 /**

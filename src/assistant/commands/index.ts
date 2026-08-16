@@ -25,5 +25,5 @@ export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-pa
 export type { ParsedCommand, } from "../command-parser";
 export { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie, } from "./dice";
 export type { DiceResult, DieRoll, } from "./dice";
-export { getCommand, listCommands, registerCommand, } from "./registry";
-export type { CommandContext, CommandHandler, CommandResult, } from "./registry";
+export { getCommand, getCommandRequirement, listCommands, registerCommand, satisfiesRole, } from "./registry";
+export type { CommandContext, CommandHandler, CommandOptions, CommandResult, } from "./registry";
