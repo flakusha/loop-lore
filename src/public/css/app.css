@@ -421,6 +421,128 @@ body {
   font-size: 0.85rem;
 }
 
+/* --- Sticky Location Header (story-spanning navigation, Phase 3) --- */
+.location-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-3);
+  background: color-mix(in srgb, var(--bg-base, #14161a) 88%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid color-mix(in srgb, var(--text-secondary) 20%, transparent);
+  animation: headerFade 0.25s ease-out;
+}
+.location-header-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.location-header-count {
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+.location-header-actions {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+@keyframes headerFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Story Map (sections panel timeline, Phases 2/6) --- */
+.story-map-list {
+  display: grid;
+  gap: var(--space-1);
+  max-height: 260px;
+  overflow: auto;
+}
+.story-map-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.story-map-row:hover {
+  background: color-mix(in srgb, var(--text-secondary) 8%, transparent);
+}
+.story-map-row.is-current {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, transparent);
+}
+.story-map-row.is-active:not(.is-current) {
+  border-left: 2px solid var(--accent-primary);
+}
+.story-map-marker {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+.story-map-marker.is-current {
+  color: var(--accent-primary);
+}
+.story-map-info {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.story-map-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.story-map-meta {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+.story-map-actors {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.party-split-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent-yellow, #eab308);
+  padding: 1px var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--accent-yellow, #eab308) 40%, transparent);
+  border-radius: var(--radius-full, 999px);
+}
+
+@media (width <= 767px) {
+  .location-header {
+    padding: var(--space-2);
+    margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) var(--space-2);
+  }
+  .story-map-actors {
+    display: none;
+  }
+}
+
 /* --- Message Bubbles --- */
 .message {
   display: flex;
