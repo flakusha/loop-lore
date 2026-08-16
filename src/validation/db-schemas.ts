@@ -530,6 +530,7 @@ export const ChatsSchema = t.Object({
   template_id: t.Optional(t.String(),),
   visibility: t.Optional(t.String(),),
   thinking_visibility: t.Optional(t.String(),),
+  prompt_override: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────

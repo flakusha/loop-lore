@@ -125,6 +125,7 @@ export interface Chats {
   template_id: string | null;
   visibility: Generated<string>;
   thinking_visibility: Generated<string>;
+  prompt_override: string | null;
 }
 
 // ── actors ────────────────────────────────────────────
