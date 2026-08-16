@@ -48,7 +48,7 @@ export class PromptAssembler {
         .executeTakeFirstOrThrow(),
       this.db
         .selectFrom("chats",)
-        .select(["id", "mode", "world_id", "current_location_id",],)
+        .select(["id", "mode", "world_id", "current_location_id", "prompt_override",],)
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),
     ],);
@@ -77,6 +77,15 @@ export class PromptAssembler {
           system_prompt: setup.system_prompt_override ?? actor.system_prompt,
         };
       }
+    }
+
+    // Per-chat prompt override — highest precedence, above world-setup and
+    // character prompts (TASK-PROMPT-TEMPLATE-PER-CHAT-OVERRIDE-UX).
+    if (chat.prompt_override) {
+      effectiveActor = {
+        ...effectiveActor,
+        system_prompt: chat.prompt_override,
+      };
     }
 
     const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;

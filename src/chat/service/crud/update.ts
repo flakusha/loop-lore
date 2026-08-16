@@ -114,5 +114,8 @@ function buildChatUpdates(
   if (params.thinkingVisibility) {
     updates.thinking_visibility = params.thinkingVisibility;
   }
+  if (params.promptOverride !== undefined) {
+    updates.prompt_override = params.promptOverride;
+  }
   return updates;
 }
