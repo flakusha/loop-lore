@@ -39,6 +39,7 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config },):
         comment: "comment",
         sortOrder: "sort_order",
         audienceScope: "audience_scope",
+        worldId: "world_id",
       },
       jsonFields: ["keys", "secondary_keys", "audience_scope",],
       defaults: {
