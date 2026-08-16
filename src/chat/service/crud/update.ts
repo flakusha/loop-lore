@@ -117,5 +117,8 @@ function buildChatUpdates(
   if (params.promptOverride !== undefined) {
     updates.prompt_override = params.promptOverride;
   }
+  if (params.quickReplies !== undefined) {
+    updates.quick_replies = params.quickReplies ? jsonStringifyOr(params.quickReplies,) : null;
+  }
   return updates;
 }
