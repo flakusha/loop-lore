@@ -16,7 +16,11 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
         method: "POST",
       },);
       if (res.ok) {
-        this.messages = this.messages.filter((m,) => m.id !== messageId);
+        const filtered = [];
+        for (const m of this.messages) {
+          if (m.id !== messageId) { filtered.push(m,); }
+        }
+        this.messages = filtered;
         this.$dispatch?.("show-toast", { type: "success", message: "Message archived", },);
       } else {
         this.$dispatch?.("show-toast", { type: "error", message: "Failed to archive message", },);

@@ -29,7 +29,7 @@ export interface ContextStats {
  */
 export function computeContextStats(
   messages: { content: string; tokenCount?: number }[],
-  maxTokens: number = 32_000,
+  maxTokens = 32_000,
   thresholds?: ContextThresholds,
 ): ContextStats {
   let usedTokens = 0;
