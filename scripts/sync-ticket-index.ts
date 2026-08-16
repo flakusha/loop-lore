@@ -412,7 +412,9 @@ Options:
   // ── New: git_issue link + stale + orphan checks ──────────────
 
   if (report.missingGitIssueLinks.length > 0) {
-    console.log(`\n🟡 Missing git_issue links (index entry has no git_issue field): ${report.missingGitIssueLinks.length}`,);
+    console.log(
+      `\n🟡 Missing git_issue links (index entry has no git_issue field): ${report.missingGitIssueLinks.length}`,
+    );
     for (const m of report.missingGitIssueLinks) {
       console.log(`   ${m.extid}: → ${m.suggestedGitIssue} (git="${m.gitTitle}")`,);
     }

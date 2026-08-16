@@ -1,47 +1,12 @@
 import type { ChatState, Message, } from "./types";
 import { MessageListResponse, } from "../../validation/schemas/responses";
-import { browserCompressThenEncrypt, } from "../browser";
+import { chatSendMethods, } from "./chat-send";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import { parseOr, } from "./validation";
 import { t, } from "./i18n";
 
 const log = rootLog.child({ module: "chat", },);
-
-/** Build request body for sendMessage (handles encryption + attachments). */
-async function buildSendBody(
-  ctx: any,
-  text: string,
-  msgs: Array<{ id: string }>,
-  pendingAssets: Array<{ assetId: string }>,
-) {
-  const body: Record<string, unknown> = {};
-  if (text) {
-    if (ctx._encryptionEnabled && ctx._chatKey && ctx._keyId) {
-      body.content = await browserCompressThenEncrypt(text, ctx._chatKey, ctx._keyId,);
-      log.debug("Message encrypted client-side before send",);
-    } else {
-      body.content = text;
-    }
-  }
-  const lastMsg = msgs.findLast((m,) => !m.id.startsWith("temp-",));
-  if (lastMsg) { body.parentId = lastMsg.id; }
-  if (pendingAssets.length > 0) {
-    body.attachments = Array.from(pendingAssets, (a, i,) => ({
-      assetId: a.assetId,
-      order: i,
-      label: "message-attachment",
-    }),);
-  }
-  return body;
-}
-
-/** Remove optimistic temp messages after send failure. */
-function removeTempMessages(ctx: ChatState, msgs: Array<{ id: string }>,) {
-  const filtered: Message[] = [];
-  for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m as Message,); } }
-  ctx.messages = filtered;
-}
 const EMPTY_MESSAGE_PAGE = {
   data: [],
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
@@ -246,4 +211,6 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const ids = Array.from(this.messages, (m,) => m.id,);
     await Promise.allSettled(Array.from(ids, (id,) => this.loadMessageReactions(id,),),);
   },
+
+  ...chatSendMethods,
 };
