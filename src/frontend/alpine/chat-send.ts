@@ -64,6 +64,11 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
+    // A human-initiated send resets the automated-fire consecutive counter.
+    if (!this._autoFired) {
+      this._consecutiveAutoFires = 0;
+    }
+
     const msgs = this.messages;
     msgs.push({
       id: `temp-${Date.now()}`,
@@ -94,14 +99,26 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         }
         await this.loadMessages();
         await this.loadChats();
+        // Finalize an automated send: count it for the loop-guard cap and
+        // clear the in-flight flag now that the send has landed.
+        if (this._autoFired) {
+          this._consecutiveAutoFires += 1;
+        }
+        this._autoFired = false;
+        // A human send triggers `user`-triggered automation (auto sends do not).
+        if (!this._autoFired && this._consecutiveAutoFires === 0) {
+          await this.fireAutoQuickReplies("user",);
+        }
       } else {
         this.isGenerating = false;
+        this._autoFired = false;
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
         removeTempMessages(this, msgs,);
       }
     } catch {
       this.isGenerating = false;
+      this._autoFired = false;
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
       removeTempMessages(this, msgs,);
     }

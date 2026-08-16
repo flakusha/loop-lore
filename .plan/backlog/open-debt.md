@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 ## Dead / unwired code
 
 | #  | Item                                                                                                                                                              | Where                                                          | Status                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -28,7 +31,7 @@
 | 5 | `chat.html` broken Handlebars partial `{{> {{>`                                             | `src/views/chat.html:39-41`                           | ✅ Resolved 2026-08-12 — includes rewritten one-per-line; `views.test.ts` 65/65 green               |
 | 6 | `content/compress.ts` unguarded `.zst` read (latent crash)                                  | `src/content/compress.ts`                             | ✅ Resolved 2026-08-12 — `.zst` read guarded on `zstdFn`; `src/content/` 27/27 green                |
 | 7 | `age-gate/controller.ts` error message leak                                                  | `src/age-gate/service.ts:92`                          | ✅ Fixed 2026-08-14 — removed user input echo from error message; generic "Invalid birth date. Expected YYYY-MM-DD format." |
-| 8 | Telemetry `chatId` data loss                                                                | `src/frontend/`                                       | 🟡 Open                                                                                            |
+| 8 | Telemetry `chatId` data loss | `src/frontend/` | ✅ Resolved 2026-08-16 — `generation.completed` already carried chatId (transport flattens `meta.chatId`); **page_view + frontend.error/unhandledrejection now derive chatId from `?chatid=`** (`telemetry.ts` `chatTelemetryMeta`) and ship it top-level. Transport flatten contract tested (`telemetry.test.ts` +2 cases). |
 
 ## Release hardening (mirrors `../priority-release-010.md`; kept here for the open queue)
 
