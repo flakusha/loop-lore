@@ -417,6 +417,11 @@ body {
   border: 1px solid color-mix(in srgb, var(--text-secondary) 25%, transparent);
   border-radius: var(--radius-full, 999px);
 }
+.section-divider-meta {
+  font-weight: 400;
+  text-transform: none;
+  color: var(--text-secondary);
+}
 .section-divider-icon {
   font-size: 0.85rem;
 }
@@ -472,6 +477,27 @@ body {
   gap: var(--space-1);
   max-height: 260px;
   overflow: auto;
+}
+
+/* Transfer options (Phase 4) */
+.transition-picker {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+
+/* Transfer fade on the message stream (Phase 4) */
+.section-transfer-fx {
+  animation: transfer-fade 0.4s ease-in-out;
+}
+
+@keyframes transfer-fade {
+  0% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .story-map-row {
   display: flex;

@@ -22,7 +22,7 @@ New use cases and user story improvements. Continuously improve user experience 
 
 | Item | Ticket | Status |
 | ---- | ------ | ------ |
-| Chat flow section navigation (multi-location journey UI) | `TASK-chat-flow-section-navigation` | 🟡 Partial — Phases 1-6 implemented (commits c5270239, d726e108): inline dividers, jump, story map (counts/current highlight/actor presence/split-party badge), sticky location header w/ scrollspy, section transfer syncing chat location + background. Remaining: bulk move-all transfer, transition-type transfer options |
+| Chat flow section navigation (multi-location journey UI) | `TASK-chat-flow-section-navigation` | 🟢 Complete — Phases 1-6 shipped (commits c5270239, d726e108): inline dividers w/ count+time, jump, story map (counts/current highlight/actor presence/split-party badge), sticky location header w/ scrollspy, transfer w/ transition picker + narrative insertion + fade + location/background sync, bulk move-all |
 | Chat backgrounds location sync | `TASK-chat-backgrounds-location-sync` | ⬜ Not Started |
 | User story backlog grooming | `TASK-user-stories` | ⬜ Not Started — refine requirements, add acceptance criteria, align specs with user needs |
 | User seeding & role expansion (configurable test roles) | `TASK-user-seeding-role-expansion` | ⬜ Not Started — Epic: Logic Reconciliation |
