@@ -670,6 +670,7 @@ export const SCHEMA = new SchemaManifest()
     cooldown_seconds: col("integer", { notNull: true, hasDefault: true, },),
     last_activated: col("text",),
     audience_scope: col("text",),
+    world_id: col("text",),
   },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
@@ -765,6 +766,7 @@ export const SCHEMA = new SchemaManifest()
     modifications: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    world_id: col("text",),
   },)
   .table("character_desire_profile", {
     id: col("text", { primaryKey: true, },),
@@ -778,6 +780,7 @@ export const SCHEMA = new SchemaManifest()
     desire_buildup_rate: col("real", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    world_id: col("text",),
   },)
   .table("character_emotions", {
     id: col("text", { primaryKey: true, },),
@@ -912,6 +915,7 @@ export const SCHEMA = new SchemaManifest()
     xp_to_next: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    world_id: col("text",),
   },)
   .table("character_skills", {
     id: col("text", { primaryKey: true, hasDefault: true, },),

@@ -25,6 +25,7 @@ export * from "./blog";
 export * from "./character-systems";
 export * from "./story-items";
 export * from "./world-state";
+export * from "./world-setup";
 export * from "./api-keys";
 export * from "./notifications";
 export * from "./telemetry";
