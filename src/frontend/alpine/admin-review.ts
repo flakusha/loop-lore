@@ -67,7 +67,6 @@ export const adminReview = {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
-          resolvedBy: (globalThis as any).currentUserId || "admin",
           resolution: this.reviewResolution[flagId] || status,
           status,
         },),
