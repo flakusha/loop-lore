@@ -1,13 +1,28 @@
-import type { RegexTransform, } from "../config/schema";
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+import type { RegexTransform, RegexTransformPhase, } from "../config/schema";
 
 export interface TransformResult {
   text: string;
   applied: { name: string; pattern: string; matches: number }[];
 }
 
+/** Canonical phase execution order. Transforms run phase-grouped, in this order. */
+export const REGEX_TRANSFORM_PHASE_ORDER: RegexTransformPhase[] = [
+  "edit-input",
+  "output",
+  "process",
+  "display",
+];
+
+const DEFAULT_PHASE: RegexTransformPhase = "output";
+
 /**
  * Apply regex transforms to LLM output text.
- * Transforms are applied in order; each tracks match count.
+ * Transforms are grouped by `phase` and run phase-grouped in canonical order
+ * (edit-input → output → process → display); within a phase, list order is
+ * preserved. Each tracks match count.
  */
 export function applyRegexTransforms(
   text: string,
@@ -16,18 +31,30 @@ export function applyRegexTransforms(
   const applied: TransformResult["applied"] = [];
   let current = text;
 
+  const byPhase = new Map<RegexTransformPhase, RegexTransform[]>();
   for (const t of transforms) {
-    if (!t.enabled) { continue; }
-    try {
-      const regex = new RegExp(t.pattern, t.flags ?? "g",);
-      const matches = current.match(regex,);
-      if (matches && matches.length > 0) {
-        applied.push({ name: t.name, pattern: t.pattern, matches: matches.length, },);
-        // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- user-configured replacement strings are the feature
-        current = current.replace(regex, t.replacement,);
+    const phase = t.phase ?? DEFAULT_PHASE;
+    const bucket = byPhase.get(phase,);
+    if (bucket) { bucket.push(t,); }
+    else { byPhase.set(phase, [t,],); }
+  }
+
+  for (const phase of REGEX_TRANSFORM_PHASE_ORDER) {
+    const bucket = byPhase.get(phase,);
+    if (!bucket) { continue; }
+    for (const t of bucket) {
+      if (!t.enabled) { continue; }
+      try {
+        const regex = new RegExp(t.pattern, t.flags ?? "g",);
+        const matches = current.match(regex,);
+        if (matches && matches.length > 0) {
+          applied.push({ name: t.name, pattern: t.pattern, matches: matches.length, },);
+          // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- user-configured replacement strings are the feature
+          current = current.replace(regex, t.replacement,);
+        }
+      } catch {
+        // Skip invalid regex patterns
       }
-    } catch {
-      // Skip invalid regex patterns
     }
   }
 

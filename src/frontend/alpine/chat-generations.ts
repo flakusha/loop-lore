@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { ChatState, } from "./types";
 import { ErrorEvent, } from "../../validation/schemas/responses";
 import { apiFetch, } from "./htmx";
@@ -56,6 +58,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       void (async () => {
         try {
           await this.loadMessages();
+          await this.fireAutoQuickReplies("ai",);
         } catch {
           /* non-critical */
         }
