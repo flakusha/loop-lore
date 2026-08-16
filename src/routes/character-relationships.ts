@@ -16,8 +16,8 @@ import {
   RelationshipUpdateBody,
   SuccessResponse,
 } from "../validation/schemas";
-import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
+import { type HandlerOpts, requireActorAccess, } from "./actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 
 export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
@@ -25,17 +25,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
 
   return new Elysia({ name: "character-relationships", },)
     .get(`${prefix}/actors/:actorId/relationships`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
       const worldId = ctx.query.worldId;
 
       const relationships = await relationshipsService.getRelationships(actorId, worldId,);
@@ -54,17 +47,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
       },
     },)
     .get(`${prefix}/actors/:actorId/relationships/:targetActorId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, targetActorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
       const worldId = ctx.query.worldId;
 
       const relationship = await relationshipsService.getRelationship(actorId, targetActorId, worldId,);
@@ -89,17 +75,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
       },
     },)
     .post(`${prefix}/actors/:actorId/relationships`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
       const {
         target_actor_id,
         relationship_type,
@@ -145,17 +124,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
       },
     },)
     .put(`${prefix}/actors/:actorId/relationships/:targetActorId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, targetActorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
       const { world_id, relationship_type, standing, trust, familiarity, metadata, } = ctx.body;
 
       await relationshipsService.updateRelationship(actorId, targetActorId, world_id ?? ctx.query.worldId, {
@@ -181,17 +153,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
       },
     },)
     .delete(`${prefix}/actors/:actorId/relationships/:targetActorId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, targetActorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
       const worldId = ctx.query.worldId;
 
       await relationshipsService.deleteRelationship(actorId, targetActorId, worldId,);
@@ -210,17 +175,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
       },
     },)
     .post(`${prefix}/actors/:actorId/relationships/events`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
       const { actorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
       const { target_actor_id, event_type, world_id, standing_delta, trust_delta, familiarity_delta, metadata, } =
         ctx.body;
 
