@@ -1,6 +1,6 @@
 # TASK: Chat Flow — Section Navigation & Story Spanning
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — sectioning backend + manage panel shipped (`routes/chat-sections/` CRUD + `alpine/chat-sections.ts` + chat.html panel); story-spanning navigation (jump between sections, per-section location context in stream) open
 **Priority:** Medium
 **Effort:** Med
 **Related:** TASK-chat-sectioning-multi-location, TASK-chat-backgrounds-location-sync
