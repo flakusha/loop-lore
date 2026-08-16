@@ -8,5 +8,6 @@ export interface CharacterSystemsImportResult {
   avatarsImported: number;
   licensingImported: boolean;
   availabilityImported: boolean;
+  worldSetupImported: boolean;
   errors: string[];
 }
