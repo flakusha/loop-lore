@@ -7,7 +7,7 @@
 
 ## Summary
 
-New use cases and user story improvements. Continuously improve user experience based on feedback, analytics, and evolving needs.
+New use cases and user story improvements. Continuously improve user experience based on feedback, analytics, and evolving needs. This epic is a **holding bin** for UX/use-case refinements that don't belong to a feature epic — concrete items get their own tickets and move to their owning epic when one exists.
 
 ## Scope
 
@@ -18,12 +18,19 @@ New use cases and user story improvements. Continuously improve user experience 
 - Performance improvements
 - Mobile experience improvements
 
-## Linked Tasks
+## Current Items (2026-08-16)
 
-| Task                                | Title                          | Priority | Status      |
-| ----------------------------------- | ------------------------------ | -------- | ----------- |
-| TASK-chat-flow-section-navigation   | Chat flow section navigation   | Medium   | Not Started |
-| TASK-chat-backgrounds-location-sync | Chat backgrounds location sync | Medium   | Not Started |
+| Item | Ticket | Status |
+| ---- | ------ | ------ |
+| Chat flow section navigation (multi-location journey UI) | `TASK-chat-flow-section-navigation` | ⬜ Not Started — backend sectioning shipped (`routes/chat-sections/`), frontend navigation open |
+| Chat backgrounds location sync | `TASK-chat-backgrounds-location-sync` | ⬜ Not Started |
+| User story backlog grooming | `TASK-user-stories` | ⬜ Not Started — refine requirements, add acceptance criteria, align specs with user needs |
+| User seeding & role expansion (configurable test roles) | `TASK-user-seeding-role-expansion` | ⬜ Not Started — Epic: Logic Reconciliation |
+| User block/ban/shadow (moderation) | `TASK-user-block-ban-shadow` | ⬜ Not Started — Epic: Chat Lifecycle & Moderation (low priority, postponed) |
+
+## Triage Rule
+
+New UX ideas land here first. When an idea matures into a scoped feature, create a ticket under its owning epic (chat → `epic-chat-*`, auth → `epic-auth-access`, admin → `epic-frontend-admin`) and remove from this epic's linked list. This epic only keeps items with no better home.
 
 ## Files
 

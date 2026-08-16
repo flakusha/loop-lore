@@ -1,6 +1,6 @@
 # TASK: Chat Room Filters
 
-**Status:** 🟡 Partial — frontend filter component exists (chat-filters.ts), server-side filter API pending
+**Status:** 🟡 Partial — frontend filter component shipped (`alpine/chat-filters.ts`, sidebar chips → query params) + server-side type/archived/sort filters on `GET /api/v1/chats` (`routes/chats/list.ts`); extended filters (world, tags, participant/message counts, activity date) pending
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)

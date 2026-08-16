@@ -4879,6 +4879,12 @@
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
+  "src/db/migrations/038": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-privacy.md"
+    }
+  ],
   "src/db/migrations/038_chat_setup_template_features.ts": [
     {
       "kind": "ticket",
@@ -6385,7 +6391,23 @@
       "source": ".plan/tickets/TASK-plugin-management-api.md"
     }
   ],
+  "src/frontend/alpine/admin-review.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-content-review-queue.md"
+    }
+  ],
+  "src/frontend/alpine/admin-revisions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md"
+    }
+  ],
   "src/frontend/alpine/admin-system.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-danger-zone.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
@@ -6395,6 +6417,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-access.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
     },
     {
       "kind": "ticket",
@@ -6408,6 +6434,14 @@
     }
   ],
   "src/frontend/alpine/admin.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-overview-dashboard.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
@@ -10414,6 +10448,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-content-review-queue.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
     },
     {
@@ -11559,10 +11597,86 @@
       "source": ".plan/tickets/TASK-file-split-routes.md"
     }
   ],
+  "src/routes/admin/audit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/chats.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/key-rotation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
   "src/routes/admin/migrations.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-data-migration-transitivity.md"
+    }
+  ],
+  "src/routes/admin/model-roles.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/providers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/sd-status.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/stats.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-overview-dashboard.md"
+    }
+  ],
+  "src/routes/admin/system-config.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/templates.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/users.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/worlds.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
     }
   ],
   "src/routes/analytics.test.ts": [
@@ -16030,6 +16144,26 @@
     }
   ],
   "src/views/admin.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-content-review-queue.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-danger-zone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-overview-dashboard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
