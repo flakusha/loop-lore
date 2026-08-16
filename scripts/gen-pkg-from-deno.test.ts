@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { transformSegment, transformCommand, buildPkgScripts, } from "./gen-pkg-from-deno";
+import { buildPkgScripts, transformCommand, transformSegment, } from "./gen-pkg-from-deno";
 
 // ── gen-pkg-from-deno.ts — transformSegment ────────────────────
 
