@@ -1,8 +1,9 @@
-import { Database, } from "bun:sqlite";
 import { describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
-import { createSqliteDialect, } from "../../db/index";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import { insertActors, } from "../../test-utils/insert-helpers";
 import { INTIMACY_THRESHOLDS, IntimacyService, } from "./service";
 
 // Initialize logger for tests (error only to suppress noise)
@@ -10,53 +11,19 @@ createLogger({ level: "error", },);
 
 // ── Helpers ──────────────────────────────────────────────────
 
-function createTestDb(): Kysely<any> {
-  const db = new Database(":memory:",);
-  const kysely = new Kysely({ dialect: createSqliteDialect(db,), },);
-
-  // Create minimal schema
-  db.run(`
-    CREATE TABLE actors (
-      id TEXT PRIMARY KEY,
-      content_rating TEXT NOT NULL DEFAULT 'sfw'
-    );
-    CREATE TABLE character_intimacy (
-      id TEXT PRIMARY KEY,
-      actor_id TEXT NOT NULL,
-      target_actor_id TEXT NOT NULL,
-      world_id TEXT,
-      score INTEGER NOT NULL DEFAULT 0,
-      action_history TEXT NOT NULL DEFAULT '[]',
-      unlocked_thresholds TEXT NOT NULL DEFAULT '[]',
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL,
-      UNIQUE(actor_id, target_actor_id, world_id)
-    );
-    CREATE TABLE character_relationships (
-      id TEXT PRIMARY KEY,
-      actor_id TEXT NOT NULL,
-      target_actor_id TEXT NOT NULL,
-      world_id TEXT,
-      relationship_type TEXT NOT NULL,
-      standing INTEGER NOT NULL DEFAULT 0,
-      trust INTEGER NOT NULL DEFAULT 0,
-      familiarity INTEGER NOT NULL DEFAULT 0,
-      is_bidirectional INTEGER NOT NULL DEFAULT 0,
-      metadata TEXT DEFAULT '{}',
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    INSERT INTO actors (id) VALUES ('actor-1'), ('actor-2'), ('actor-3');
-  `,);
-
-  return kysely;
+async function seedTestDb(): Promise<Kysely<DB>> {
+  const { db, } = await createTestDb();
+  await insertActors(db, "Actor 1", { id: "actor-1", } as never,);
+  await insertActors(db, "Actor 2", { id: "actor-2", } as never,);
+  await insertActors(db, "Actor 3", { id: "actor-3", } as never,);
+  return db;
 }
 
 // ── Tests ────────────────────────────────────────────────────
 
 describe("IntimacyService", () => {
   test("getPair creates new pair with score 0", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     const pair = await service.getPair("actor-1", "actor-2",);
@@ -69,7 +36,7 @@ describe("IntimacyService", () => {
   });
 
   test("getPair returns existing pair", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     const pair1 = await service.getPair("actor-1", "actor-2",);
@@ -79,7 +46,7 @@ describe("IntimacyService", () => {
   });
 
   test("applyAction increases score", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     const result = await service.applyAction({
@@ -102,7 +69,7 @@ describe("IntimacyService", () => {
   });
 
   test("applyAction respects minIntimacy", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     const result = await service.applyAction({
@@ -124,7 +91,7 @@ describe("IntimacyService", () => {
   });
 
   test("applyAction respects relationship allowlist", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     // Create a friendship relationship
@@ -162,7 +129,7 @@ describe("IntimacyService", () => {
   });
 
   test("applyAction fires threshold events", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     // First get pair to create it
@@ -199,7 +166,7 @@ describe("IntimacyService", () => {
   });
 
   test("decayAll reduces scores", async () => {
-    const db = createTestDb();
+    const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
     // Create pair with score 10
