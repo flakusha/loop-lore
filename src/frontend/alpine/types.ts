@@ -59,6 +59,10 @@ export interface PromptTemplateInfo {
   source: string;
   characterName: string | null;
   registryDefault: string;
+  /** Per-chat prompt override (null = use default resolution). */
+  override: string | null;
+  /** True when an override is currently active for this chat. */
+  usingOverride: boolean;
 }
 
 export interface PreviewAsset {

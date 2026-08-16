@@ -94,7 +94,10 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   _promptTemplate: PromptTemplateInfo | null;
   _promptLoading: boolean;
   _promptExpanded: boolean;
+  _promptOverrideDraft: string;
+  _promptOverrideSaving: boolean;
   loadPromptTemplate(): Promise<void>;
+  savePromptOverride(): Promise<void>;
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
