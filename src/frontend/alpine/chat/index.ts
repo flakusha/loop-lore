@@ -16,6 +16,7 @@ import { chatMessages, } from "../chat-messages";
 import { chatPanels, } from "../chat-panels";
 import { chatParticipants, } from "../chat-participants";
 import { chatPins, } from "../chat-pins";
+import { chatProactive, } from "../chat-proactive";
 import { chatPromptTemplate, } from "../chat-prompt-template";
 import { chatQuickReplies, } from "../chat-quick-replies";
 import { chatSections, } from "../chat-sections";
@@ -215,6 +216,7 @@ globalThis.chatState = function() {
     ...chatPromptTemplate,
     ...chatQuickReplies,
     ...chatPanels,
+    ...chatProactive,
 
     // ── Lifecycle (init / destroy / user + chat list load) ──
     ...chatLifecycle,

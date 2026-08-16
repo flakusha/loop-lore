@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { getConfigValue, } from "../../admin/config";
 import { computeContextStats, } from "../../chat";
+import { ProactiveMessagingService, } from "../../chat/proactive";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import {
   MessageContentFormat,
@@ -44,6 +45,15 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
         if (!access.ok) { return serviceErrorToResponse(access.error,); }
+
+        // ── Proactive-messaging backoff reset ────────────────────────
+        // When the user responds, reset the anti-spam backoff for every
+        // character with proactive messaging enabled in this chat.
+        const proactive = new ProactiveMessagingService(database,);
+        const proactiveConfigs = await proactive.getChatConfigs(chatId,);
+        for (const pc of proactiveConfigs) {
+          if (pc.enabled) { await proactive.resetBackoff(chatId, pc.actorId,); }
+        }
 
         // ── Slash command dispatch ────────────────────────────────
         const commandOutcome = await dispatchCommand(database, config, actorId, chatId, effectiveContent,);

@@ -101,6 +101,8 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     // Quick-reply buttons + startup-triggered automation for this chat.
     this.loadQuickReplies();
     await this.fireStartupQuickReplies();
+    // Proactive messaging scheduler — poll for due character-initiated messages.
+    this.startProactiveScheduler();
     if (this.isGroupChat) {
       await this.loadParticipants();
       await this.loadAvailableActors();
