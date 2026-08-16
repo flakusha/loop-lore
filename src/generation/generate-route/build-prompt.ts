@@ -21,6 +21,8 @@ export interface BuildPromptOpts {
   database: Kysely<DB>;
   resolvedModel: string;
   cfg: Config;
+  /** Authenticated user ID — enables the userPersona prompt section (impersonation/persona). */
+  userId?: string;
 }
 
 export async function buildPrompt({
@@ -28,6 +30,7 @@ export async function buildPrompt({
   database,
   resolvedModel,
   cfg,
+  userId,
 }: BuildPromptOpts,): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined }> {
   if (input.prompt && input.prompt.length > 0) {
     return { messages: input.prompt, systemPrompt: input.systemPrompt, };
@@ -38,6 +41,7 @@ export async function buildPrompt({
     actorId: input.actorId,
     chatId: input.chatId,
     modelId: resolvedModel,
+    userId,
     systemPromptOverride: input.systemPrompt,
     systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant",),
     config: cfg,
