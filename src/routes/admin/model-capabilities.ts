@@ -45,7 +45,6 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
           403: ErrorResponse,
         },
       },)
-
       // ── Resolve one model ──────────────────────────────────
       .get(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
         const { userRole, params, } = ctx;
@@ -79,7 +78,6 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
           404: ErrorResponse,
         },
       },)
-
       // ── Set user override ──────────────────────────────────
       .patch(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
         const { userRole, params, body, } = ctx;
@@ -135,7 +133,6 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
           404: ErrorResponse,
         },
       },)
-
       // ── Clear user override ────────────────────────────────
       .delete(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
         const { userRole, params, } = ctx;
