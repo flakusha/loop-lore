@@ -253,6 +253,30 @@ function applyFixes(
     report.fixesApplied.push(`${extid}: added to index (from orphan file)`,);
   }
 
+  // Fix missing git_issue links
+  for (const m of report.missingGitIssueLinks) {
+    if (fixed[m.extid]) {
+      fixed[m.extid] = {
+        ...fixed[m.extid],
+        git_issue: m.suggestedGitIssue,
+      };
+      report.fixesApplied.push(`${m.extid}: added git_issue = ${m.suggestedGitIssue}`,);
+    }
+  }
+
+  // Close stale open git issues (index=done, git=open)
+  for (const m of report.staleOpenGitIssues) {
+    try {
+      execSync(
+        `git issue state ${m.gitIssueHash} --close -m 'Auto-closed: ticket ${m.extid} marked done in index.json'`,
+        { timeout: 10_000, },
+      );
+      report.fixesApplied.push(`${m.extid}: closed git issue ${m.gitIssueHash}`,);
+    } catch {
+      report.fixesApplied.push(`${m.extid}: FAILED to close git issue ${m.gitIssueHash}`,);
+    }
+  }
+
   return fixed;
 }
 
@@ -385,14 +409,47 @@ Options:
     console.log(`\n🟢 No missing hashes`,);
   }
 
-  // Summary — only *actionable* issues gate the result. Placeholder hashes
-  // and missing-hash suggestions are advisory (yellow), not failures.
+  // ── New: git_issue link + stale + orphan checks ──────────────
+
+  if (report.missingGitIssueLinks.length > 0) {
+    console.log(`\n🟡 Missing git_issue links (index entry has no git_issue field): ${report.missingGitIssueLinks.length}`,);
+    for (const m of report.missingGitIssueLinks) {
+      console.log(`   ${m.extid}: → ${m.suggestedGitIssue} (git="${m.gitTitle}")`,);
+    }
+  } else {
+    console.log(`\n🟢 No missing git_issue links`,);
+  }
+
+  if (report.staleOpenGitIssues.length > 0) {
+    console.log(`\n🔴 Stale open git issues (index=done, git=open): ${report.staleOpenGitIssues.length}`,);
+    for (const m of report.staleOpenGitIssues) {
+      console.log(`   ${m.extid}: git issue ${m.gitIssueHash} still open`,);
+    }
+  } else {
+    console.log(`\n🟢 No stale open git issues`,);
+  }
+
+  if (report.orphanGitIssues.length > 0) {
+    console.log(`\n🟡 Orphan git issues (open, no index entry): ${report.orphanGitIssues.length}`,);
+    for (const m of report.orphanGitIssues) {
+      console.log(`   ${m.hash} ${m.extid}: ${m.title.slice(0, 60,)}`,);
+    }
+  } else {
+    console.log(`\n🟢 No orphan git issues`,);
+  }
+
+  // Summary — only *actionable* issues gate the result. Placeholder hashes,
+  // missing-hash suggestions, missing git_issue links, and orphan git issues
+  // are advisory (yellow), not failures.  Stale open git issues are actionable.
   const totalIssues = report.orphanFiles.length +
     report.phantomEntries.length +
     report.hashMismatches.length +
-    report.statusMismatches.length;
+    report.statusMismatches.length +
+    report.staleOpenGitIssues.length;
   const advisoryCount = report.placeholderHashes.length +
-    report.missingHashes.length;
+    report.missingHashes.length +
+    report.missingGitIssueLinks.length +
+    report.orphanGitIssues.length;
 
   console.log(`\n${"═".repeat(60,)}`,);
   if (totalIssues === 0) {
