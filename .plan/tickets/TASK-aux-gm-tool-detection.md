@@ -1,6 +1,6 @@
 # TASK: AUX LLM — GM Tool Detection
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — detection module + prompt + types + tests shipped (worktree `assistant-intent-workflows`, `fac4c45d`); not yet wired into the command dispatch pipeline (2026-08-16)
 **Priority:** P2-C (deferred)
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline
