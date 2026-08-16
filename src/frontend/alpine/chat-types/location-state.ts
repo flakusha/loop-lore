@@ -28,6 +28,12 @@ export interface ChatLocationState {
   readonly partySplit: boolean;
   trackCurrentSection(): void;
   transferToSection(sectionId: string,): Promise<void>;
+  setTransitionType(type: "walk" | "teleport" | "narrative",): void;
+  bulkAssignToSection(sectionId: string, fromSectionId?: string | null,): Promise<void>;
+  insertNarrative(sectionId: string, text: string,): Promise<void>;
+  _transitionType: "walk" | "teleport" | "narrative";
+  _narrativeText: string;
+  _transferFx: boolean;
   sectionDividerFor(index: number, sectionId: string | null,): {
     id: string;
     label: string;
@@ -36,6 +42,8 @@ export interface ChatLocationState {
     sort_index: number;
   } | null;
   jumpToSection(sectionId: string,): void;
+  sectionDividerMeta(sectionId: string,): { count: number; startTime: string | null };
+  formatSectionTime(iso: string | null,): string;
   assignMessageToSection(messageId: string, sectionId: string | null,): Promise<void>;
 
   // ── Chat Backgrounds (location sync) ────────────────────

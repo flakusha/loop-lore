@@ -22,7 +22,7 @@ const USER_ROLE = "solo";
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-chat-sections", },)
     .derive(() => ({ userId, userRole: USER_ROLE, }))
-    .use(chatSectionsRoutes({ database: db, },),) as unknown as Elysia;
+    .use(chatSectionsRoutes({ database: db, config: {} as any, },),) as unknown as Elysia;
 }
 
 async function insertUser(db: Kysely<DB>, userId: string, username: string,): Promise<void> {
@@ -192,5 +192,124 @@ describe("chatSectionsRoutes", () => {
       },),
     );
     expect(res.status,).toBe(400,);
+  });
+
+  test("bulk assign-all moves every message onto the target section", async () => {
+    const app = createApp(db, userId,);
+    await insertMessages(db, chatId, userId, MessageRole.User, "second message", {},);
+    const created = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Bulk Target", },),
+      },),
+    );
+    expect(created.status,).toBe(201,);
+    const sectionId = (await created.json()).id as string;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections/${sectionId}/assign-all`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({},),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { ok: boolean; count: number };
+    expect(body.ok,).toBe(true,);
+    expect(body.count,).toBeGreaterThanOrEqual(2,);
+
+    const rows = await db.selectFrom("messages",).select("section_id",).where("chat_id", "=", chatId,).execute();
+    for (const row of rows) { expect(row.section_id,).toBe(sectionId,); }
+  });
+
+  test("bulk assign with fromSectionId narrows the move", async () => {
+    const app = createApp(db, userId,);
+    const srcRes = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Source", },),
+      },),
+    );
+    const dstRes = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Destination", },),
+      },),
+    );
+    const src = (await srcRes.json()) as { id: string };
+    const dst = (await dstRes.json()) as { id: string };
+
+    await db
+      .updateTable("messages",)
+      .set({ section_id: src.id, },)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections/${dst.id}/assign-all`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ fromSectionId: src.id, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+
+    const rows = await db.selectFrom("messages",).select("section_id",).where("chat_id", "=", chatId,).execute();
+    for (const row of rows) { expect(row.section_id,).toBe(dst.id,); }
+  });
+
+  test("bulk assign rejects a source section from another chat", async () => {
+    const app = createApp(db, userId,);
+    const other = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Other", },),
+      },),
+    );
+    const otherId = (await other.json()).id as string;
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections/${otherId}/assign-all`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ fromSectionId: "missing-section", },),
+      },),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("narrative inserts a system narration message bound to the section", async () => {
+    const app = createApp(db, userId,);
+    const created = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Narrative Target", },),
+      },),
+    );
+    expect(created.status,).toBe(201,);
+    const sectionId = (await created.json()).id as string;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections/${sectionId}/narrative`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ text: "The party rides north.", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { ok: boolean; id: string; section_id: string };
+    expect(body.ok,).toBe(true,);
+    expect(body.section_id,).toBe(sectionId,);
+
+    const row = await db.selectFrom("messages",).select(["role", "content_type", "content", "section_id",],)
+      .where("id", "=", body.id,).executeTakeFirst();
+    expect(row?.role,).toBe("system",);
+    expect(row?.content_type,).toBe("narration",);
+    expect(row?.content,).toBe("The party rides north.",);
+    expect(row?.section_id,).toBe(sectionId,);
   });
 });
