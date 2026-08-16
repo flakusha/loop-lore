@@ -2,6 +2,7 @@
 //
 // /debug — toggle prompt debug view.
 
+import { ChatParticipantRole, } from "../../db/enums";
 import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("debug", (): CommandResult => {
@@ -10,4 +11,4 @@ registerCommand("debug", (): CommandResult => {
     action: "toggle-debug-view",
     handled: true,
   };
-},);
+}, { requiredRole: ChatParticipantRole.Owner, },);
