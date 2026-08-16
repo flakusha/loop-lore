@@ -105,6 +105,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     this.startProactiveScheduler();
     if (this.isGroupChat) {
       await this.loadParticipants();
+      await this.loadTurnOrder();
       await this.loadAvailableActors();
     }
     // Location-scoped features: reset per-chat state then load fresh.
