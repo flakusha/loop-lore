@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/config/schema-class/json-schema/generation.ts — generation JSON Schema section
 export const generation = {
   type: "object",
@@ -211,6 +214,13 @@ export const generation = {
           replacement: { type: "string", description: "Replacement string", },
           flags: { type: "string", default: "g", description: "Regex flags", },
           enabled: { type: "boolean", description: "Whether this transform is active", },
+          phase: {
+            type: "string",
+            enum: ["edit-input", "output", "process", "display",],
+            default: "output",
+            description:
+              "Pipeline phase this transform runs in (edit-input → output → process → display canonical order)",
+          },
         },
         required: ["name", "pattern", "replacement", "enabled",],
       },

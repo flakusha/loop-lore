@@ -1,6 +1,9 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Quick-Reply / Event-Driven Automation
 
-**Status:** 🟡 In progress — core shipped (ac5b2545, 2026-08-16): buttons + persistence + startup trigger; user/ai event triggers reserved (rate-limit design needed)
+**Status:** ✅ Done 2026-08-16 — core (buttons + persistence + startup trigger, ac5b2545) **+ user/ai event triggers & loop-guard** (`chat-quick-replies.ts` `fireAutoQuickReplies`, `_autoFired` human-send discrimination, 3s min-interval, consecutive cap 5; wired into `sendMessage` + SSE `stream-done`). Tests green (`chat-quick-replies.test.ts` 9 cases).
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +13,6 @@
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
