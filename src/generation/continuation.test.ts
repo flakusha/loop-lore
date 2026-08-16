@@ -1,9 +1,10 @@
-import { Database, } from "bun:sqlite";
-import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
-import { createSqliteDialect, setTestDatabase, } from "../db/index";
+import type { Database, } from "bun:sqlite";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
+import { setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
 import {
   clearPartialContent,
   getAttemptForMessage,
@@ -13,124 +14,21 @@ import {
 } from "./continuation";
 import { handleContinueGeneration, handleRetryGeneration, } from "./generation-routes";
 
-// ── Test DB Factory ──────────────────────────────────────────
+// ── Test DB ──────────────────────────────────────────────────
 
-function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
-  const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA foreign_keys = ON",);
+let testDb: Kysely<DB>;
+let testSqlite: Database;
 
-  const dialect = createSqliteDialect(sqlite,);
-  const db = new Kysely<DB>({ dialect, },);
+beforeAll(async () => {
+  const env = await createTestDb();
+  testDb = env.db;
+  testSqlite = env.sqlite;
+},);
 
-  // Create schema tables
-  sqlite.run(`
-    CREATE TABLE users (
-      id TEXT PRIMARY KEY,
-      username TEXT NOT NULL UNIQUE,
-      display_name TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'user',
-      status TEXT NOT NULL DEFAULT 'active',
-      settings TEXT NOT NULL DEFAULT '{}',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    )
-  `,);
-  sqlite.run(`
-    CREATE TABLE chats (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      type TEXT NOT NULL DEFAULT 'direct',
-      mode TEXT NOT NULL DEFAULT 'direct',
-      created_by TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    )
-  `,);
-  sqlite.run(`
-    CREATE TABLE actors (
-      id TEXT PRIMARY KEY,
-      actor_type TEXT NOT NULL DEFAULT 'user',
-      display_name TEXT NOT NULL,
-      agent_type TEXT NOT NULL DEFAULT 'none',
-      settings TEXT NOT NULL DEFAULT '{}',
-      format_version INTEGER NOT NULL DEFAULT 0,
-      import_spec TEXT NOT NULL DEFAULT '{}',
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    )
-  `,);
-  sqlite.run(`
-    CREATE TABLE messages (
-      id TEXT PRIMARY KEY,
-      chat_id TEXT NOT NULL,
-      actor_id TEXT NOT NULL,
-      role TEXT NOT NULL,
-      content TEXT NOT NULL,
-      content_format TEXT NOT NULL DEFAULT 'markdown',
-      content_type TEXT NOT NULL DEFAULT 'text',
-      content_encoding TEXT NOT NULL DEFAULT 'identity',
-      status TEXT NOT NULL DEFAULT 'sending',
-      visibility TEXT NOT NULL DEFAULT 'visible',
-      continuation_index INTEGER,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    )
-  `,);
-  sqlite.run(`
-    CREATE TABLE generation_attempts (
-      id TEXT PRIMARY KEY,
-      chat_id TEXT NOT NULL,
-      parent_message_id TEXT NOT NULL,
-      actor_id TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL,
-      model_id TEXT NOT NULL,
-      provider TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'pending',
-      cancel_reason TEXT,
-      cancel_reason_detail TEXT,
-      cancel_source TEXT,
-      abort_signal_id TEXT,
-      started_at TEXT NOT NULL DEFAULT (datetime('now')),
-      completed_at TEXT,
-      prompt_tokens INTEGER,
-      completion_tokens INTEGER,
-      total_tokens INTEGER,
-      generation_time_ms INTEGER,
-      error_message TEXT,
-      streaming_chunks_received INTEGER,
-      streaming_chars_received INTEGER,
-      repetition_score REAL,
-      repetition_analysis TEXT,
-      policy_analysis TEXT,
-      response_count_in_turn INTEGER,
-      parent_attempt_id TEXT,
-      continuation_count INTEGER DEFAULT 0,
-      partial_content TEXT,
-      step_index INTEGER DEFAULT 0,
-      total_steps INTEGER DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    )
-  `,);
-
-  return { sqlite, db, };
-}
-
-const testEnv = createTestDb();
-const testSqlite = testEnv.sqlite;
-const testDb = testEnv.db;
-
-/** Clean all test tables between tests */
-async function cleanTables(): Promise<void> {
-  await testDb.deleteFrom("generation_attempts",).execute();
-  await testDb.deleteFrom("messages",).execute();
-  await testDb.deleteFrom("actors",).execute();
-  await testDb.deleteFrom("chats",).execute();
-  await testDb.deleteFrom("users",).execute();
-}
-
-beforeEach(async () => {
+beforeEach(() => {
   clearPartialContent();
   setTestDatabase(testDb,);
-  await cleanTables();
+  resetTestDb(testSqlite,);
 },);
 
 afterAll(() => {
@@ -169,6 +67,44 @@ describe("storePartialContent / getPartialContent (in-memory)", () => {
 
 describe("getPartialContent — DB fallback", () => {
   beforeEach(async () => {
+    // Seed parent rows for FK constraints
+    await testDb.insertInto("users",).values({
+      id: "user-1",
+      username: "test",
+      display_name: "Test",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+    await testDb.insertInto("chats",).values({
+      id: "chat-1",
+      name: "Test Chat",
+      type: "direct",
+      mode: "direct",
+      created_by: "user-1",
+    },).execute();
+    await testDb.insertInto("actors",).values({
+      id: "actor-1",
+      actor_type: "character",
+      display_name: "AI",
+      agent_type: "ai",
+      settings: "{}",
+      format_version: 0,
+      import_spec: "{}",
+    },).execute();
+    await testDb.insertInto("messages",).values({
+      id: "msg-1",
+      chat_id: "chat-1",
+      actor_id: "actor-1",
+      role: "assistant",
+      content: "",
+      content_type: "text",
+      content_format: "markdown",
+      content_encoding: "identity",
+      status: "confirmed",
+      visibility: "visible",
+    },).execute();
+
     await testDb
       .insertInto("generation_attempts",)
       .values({
@@ -446,6 +382,22 @@ describe("handleRetryGeneration", () => {
         import_spec: "{}",
       },)
       .execute();
+
+    await testDb
+      .insertInto("messages",)
+      .values({
+        id: "msg-1",
+        chat_id: "chat-1",
+        actor_id: "actor-1",
+        role: "assistant",
+        content: "",
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: "confirmed",
+        visibility: "visible",
+      },)
+      .execute();
   },);
 
   test("returns 400 when chatId missing", async () => {
@@ -542,6 +494,45 @@ describe("handleRetryGeneration", () => {
 describe("cancelGeneration captures partial content", () => {
   test("partial content from repetition detector is stored on cancel", async () => {
     createLogger({ level: "error", },);
+
+    // Seed parent rows for FK constraints
+    await testDb.insertInto("users",).values({
+      id: "user-1",
+      username: "test",
+      display_name: "Test",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+    await testDb.insertInto("chats",).values({
+      id: "chat-cancel-test",
+      name: "Cancel Test",
+      type: "direct",
+      mode: "direct",
+      created_by: "user-1",
+    },).execute();
+    await testDb.insertInto("actors",).values({
+      id: "actor-1",
+      actor_type: "character",
+      display_name: "AI",
+      agent_type: "ai",
+      settings: "{}",
+      format_version: 0,
+      import_spec: "{}",
+    },).execute();
+    await testDb.insertInto("messages",).values({
+      id: "msg-cancel-test",
+      chat_id: "chat-cancel-test",
+      actor_id: "actor-1",
+      role: "assistant",
+      content: "",
+      content_type: "text",
+      content_format: "markdown",
+      content_encoding: "identity",
+      status: "confirmed",
+      visibility: "visible",
+    },).execute();
+
     const { startGenerationTracking, cancelGeneration, processStreamingChunk, } = await import(
       "./cancellation-manager"
     );
