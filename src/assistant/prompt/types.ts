@@ -18,6 +18,8 @@ export interface PromptParams {
   chatId: string;
   /** Model ID for token budget lookup */
   modelId: string;
+  /** Provider ID for model capability registry lookup */
+  providerId?: string;
   /** Override token budget (default: model's contextLimit or 32000) */
   tokenBudget?: number;
   /** Override system prompt (uses actor.system_prompt if absent) */

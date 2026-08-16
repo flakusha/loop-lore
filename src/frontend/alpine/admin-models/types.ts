@@ -45,6 +45,23 @@ export interface ModelInfo {
   raw?: Record<string, unknown>;
 }
 
+export interface ModelCapabilityEntry {
+  providerId: string;
+  modelId: string;
+  contextWindow: number | null;
+  maxOutput: number | null;
+  supportsTools: boolean;
+  supportsVision: boolean;
+  supportsThinking: boolean;
+  modalities: string[];
+  paramSize: string | null;
+  ownedBy: string | null;
+  isStale: boolean;
+  lastSeen: string;
+  userOverride: boolean;
+  notes: string | null;
+}
+
 export interface ModelsState {
   providers: ProviderInfo[];
   providerModels: Record<string, ModelInfo[]>;
@@ -68,6 +85,10 @@ export interface ModelsState {
     preferredBackend: string;
   };
   comfyuiConfig: { url: string; enabled: boolean };
+  modelCapabilities: ModelCapabilityEntry[];
+  loadingCapabilities: boolean;
+  editingCapability: string | null;
+  capabilityFilter: string;
   loadModels(): Promise<void>;
   loadProviderModels(name: string,): Promise<void>;
   loadModelRoles(): Promise<void>;
@@ -85,4 +106,8 @@ export interface ModelsState {
   togglePlugin(name: string, enable: boolean,): Promise<void>;
   loadSdConfig(): Promise<void>;
   saveSdConfig(): Promise<void>;
+  loadModelCapabilities(): Promise<void>;
+  saveCapabilityOverride(providerId: string, modelId: string, fields: Record<string, unknown>,): Promise<void>;
+  clearCapabilityOverride(providerId: string, modelId: string,): Promise<void>;
+  formatCtxWindow(val: number | null,): string;
 }
