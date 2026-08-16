@@ -18,6 +18,10 @@ import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { getLogger } from "../logger";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
+import { characterCreationTool, } from "../generation/tools/create-character";
+import { worldCreationTool, } from "../generation/tools/create-world";
+import { locationCreationTool, } from "../generation/tools/create-location";
+import { itemCreationTool, } from "../generation/tools/create-item";
 
 /** Ordered list of plugin names for shutdown (reverse) */
 const loadOrder: string[] = [];
@@ -91,7 +95,13 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   }
 
   // Register builtin core tools (model-visible, executed with per-request ctx).
-  registry.addTools("core", [writeMemoryNoteTool,]);
+  registry.addTools("core", [
+    writeMemoryNoteTool,
+    characterCreationTool,
+    worldCreationTool,
+    locationCreationTool,
+    itemCreationTool,
+  ],);
 }
 
 /** Load a single plugin from its directory: manifest, hooks, and state. */
