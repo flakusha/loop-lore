@@ -12,6 +12,7 @@ export type {
   GroupedMessage,
   Message,
   MessageAttachment,
+  MovementEvent,
   WorldChannelChat,
 } from "./chat-types";
 export type { EquipmentSlot, MemoryEntry, MemoryPanelState, RpgStats, StatusEffect, } from "./chat-types";
