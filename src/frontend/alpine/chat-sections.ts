@@ -136,6 +136,34 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     if (el) { el.scrollIntoView({ behavior: "smooth", block: "start", },); }
   },
 
+  /**
+   * Divider meta: message count and start time for a section, shown next to
+   * the location label ("📍 The Dark Forest — 12 msgs · 14:32"). Both derive
+   * from the loaded message stream; count is the same figure the story map
+   * shows, time is the first message's `created_at`.
+   *
+   * @param sectionId Section to summarize.
+   * @returns `{ count, startTime }` (startTime `null` when the section is empty).
+   */
+  sectionDividerMeta(sectionId: string,): { count: number; startTime: string | null } {
+    let count = 0;
+    let startTime: string | null = null;
+    for (const msg of this.groupedMessages) {
+      if (msg.section_id !== sectionId) { continue; }
+      count += 1;
+      if (startTime === null) { startTime = msg.created_at ?? null; }
+    }
+    return { count, startTime, };
+  },
+
+  /** Format an ISO timestamp for divider display (HH:MM). */
+  formatSectionTime(iso: string | null,): string {
+    if (!iso) { return ""; }
+    const d = new Date(iso,);
+    if (Number.isNaN(d.getTime(),)) { return ""; }
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", },);
+  },
+
   async assignMessageToSection(messageId: string, sectionId: string | null,) {
     if (!this.activeChat) { return; }
     try {
