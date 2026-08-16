@@ -110,6 +110,21 @@ describe("character-relationships routes", () => {
     expect(rel?.world_id,).toBeNull();
   });
 
+  test("POST create rejects empty relationship_type", async () => {
+    // Empty string passes t.String() (minLength 0) but fails the handler's
+    // presence guard — exercises the BadRequest branch.
+    const res = await makeApp(db, "member", "user",).handle(
+      new Request(`http://localhost/api/actors/${B}/relationships`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ target_actor_id: C, relationship_type: "", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    const body = await res.json() as { error: string };
+    expect(body.error,).toContain("required",);
+  });
+
   test("POST create stores full fields incl. world, metadata, bidirectional", async () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships`, {
