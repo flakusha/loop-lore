@@ -181,6 +181,18 @@
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     }
   ],
+  "src/assets/controller/signed-url-routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
+    }
+  ],
+  "src/assets/controller/signed-url.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
+    }
+  ],
   "src/assets/emotion-portraits.ts": [
     {
       "kind": "epic",
@@ -1049,6 +1061,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
     }
   ],
   "src/auth/recovery.ts": [
