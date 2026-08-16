@@ -3,8 +3,17 @@
 **Epic:** Character Core System
 **Priority:** Medium
 **Effort:** Medium
-**Status:** 🟡 Partial — `emotions`/`character_emotions` tables + EmotionHook exist; detection keyword-only, no avatar/mood integration (2026-08-01)
+**Status:** 🟡 Partial — detection (keyword `EmotionHook`) + persistence (`messages.emotion`) done; emotion→avatar selection **deferred** (2026-08-16, see note below)
 **Related:** TASK-character-multi-avatar, TASK-character-mood-happiness
+
+> **2026-08-16 deferral note:** The remaining "emotion → avatar selection" item is
+> deferred. Detection and persistence are already wired (`store-message.ts` stores
+> `dominantEmotion` as `messages.emotion`), and emotion detection coverage is being
+> expanded by tests elsewhere. The avatar-selection wiring is blocked on a frontend
+> contract decision: `AvatarService.selectAvatar` is stateless (computed on demand)
+> and there is no existing SSE "avatar changed" channel to emit the result through —
+> wiring it means designing a new frontend event type. Revisit after the emotion
+> tests land.
 
 ## Summary
 

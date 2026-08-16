@@ -12,7 +12,9 @@ Slash command system: parser (`src/assistant/command-parser.ts`), dispatch in `P
 ## Remaining
 
 - [x] Tiered access control — shipped: `registerCommand` takes optional `requiredRole` (`observer < member < owner` hierarchy); dispatch resolves `chat_participants.role_in_chat` and denies below-minimum. `/create` + `/debug` now `owner`-only. "GM" tier dropped — no such participant role exists (assistant role is a chat config, not a permission).
-- [ ] `/stats`, `/attack`, `/heal` not registered (in `BUILTIN_COMMANDS` spec list, no handler)
+- [ ] `/stats`, `/attack`, `/heal` not registered — **`/stats` now shipped** (`b43b671`, `src/assistant/commands/stats.ts`); `/attack` `/heal` still open (need combat-encounter resolution)
+
+> `/stats` character-resolution model: impersonated character (`chat_participants.impersonate_actor_id`) first, else the first non-user participant (mirrors auto-gen `resolveActor` single-chat). Stats read via `getCharacterStats`; lazy-created rows surface a friendly "no stats yet" message.
 - [ ] `/create` uses `loadConfig()`/`getDatabase()` singletons + `worldId = chat.type` bug — see TASK-assistant-gm-flows
 - [ ] Integration tests for slash dispatch → command result
 - [ ] Docs: `docs/spec/assistant-commands.md` refresh
