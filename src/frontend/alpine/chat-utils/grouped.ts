@@ -17,8 +17,11 @@ export function computeGroupedMessages(this: ChatState,): GroupedMessage[] {
       const prev = msgs[i - 1];
       if (!prev) { continue; }
       const sameRole = msg.role === prev.role;
+      // Section change always starts a new group so section dividers
+      // align with the message stream.
+      const sameSection = msg.section_id === prev.section_id;
       const timeDiff = new Date(msg.created_at,).getTime() - new Date(prev.created_at,).getTime();
-      if (sameRole && timeDiff < 300_000) {
+      if (sameRole && sameSection && timeDiff < 300_000) {
         msg.group = true;
         const last = groups[groups.length - 1];
         if (last) { last.groupCount = ((last.groupCount as number) ?? 1) + 1; }

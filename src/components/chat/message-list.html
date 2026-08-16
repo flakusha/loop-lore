@@ -27,13 +27,29 @@
   <template x-if="activeChat && loadingError">
     <div class="error-banner" x-text="loadingError"></div>
   </template>
-  <template x-for="msg in groupedMessages" :key="msg.id">
+  <template x-for="(msg, i) in groupedMessages" :key="msg.id">
     <div
       class="message"
       :class="msg.role"
       :data-message-id="msg.id"
       @contextmenu="openContextMenu($event, msg.id)"
     >
+      <!-- Section divider: shown when this message starts a new section -->
+      <template x-if="sectionDividerFor(i, msg.section_id) !== null">
+        <div
+          class="section-divider"
+          :data-section-id="msg.section_id ?? ''"
+          data-testid="section-divider"
+        >
+          <div class="section-divider-line"></div>
+          <div class="section-divider-label">
+            <span class="section-divider-icon" aria-hidden="true">📍</span>
+            <span x-text="sectionLabel(msg.section_id)"></span>
+          </div>
+          <div class="section-divider-line"></div>
+        </div>
+      </template>
+
       <!-- System / narration: centered narrative line, no bubble, actions, or stats -->
       <template x-if="msg.role === 'system'">
         <div class="system-message" data-testid="system-message">
