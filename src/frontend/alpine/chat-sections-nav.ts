@@ -5,11 +5,19 @@
 // transfer. Split from chat-sections.ts to keep both files under the 250L
 // size ceiling. State is merged into ChatState via mergeReactiveSource (the
 // module declares `get` accessors), so no plain-spread composition.
+import { apiFetch, } from "./htmx";
+import { jsonBody, } from "./json";
+import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
+
+const log = rootLog.child({ module: "chat-sections-nav", },);
 
 export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
   _currentSectionId: null as string | null,
   _storyMapOpen: false,
+  _transitionType: "walk" as "walk" | "teleport" | "narrative",
+  _narrativeText: "",
+  _transferFx: false,
 
   toggleStoryMap() {
     this._storyMapOpen = !this._storyMapOpen;
@@ -90,9 +98,12 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Transfer the story position to a section: mark it active, jump to it, and
-   * (when the section is bound to a world location) sync the chat's current
-   * location so backgrounds follow the new scene.
+   * Transfer the story position to a section: mark it active, jump to it,
+   * and (when the section is bound to a world location) sync the chat's
+   * current location so backgrounds follow the new scene. A short fade
+   * (`_transferFx`) marks the visual transition; when the transition type is
+   * "narrative" and narrative text is pending, it is inserted as a
+   * system-role narration message bound to the section.
    *
    * @param sectionId Destination section.
    */
@@ -102,9 +113,74 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
     if (!section) { return; }
     this._activeSectionId = sectionId;
     this.jumpToSection(sectionId,);
+    this._transferFx = true;
+    globalThis.setTimeout(() => {
+      this._transferFx = false;
+    }, 400,);
+    if (this._transitionType === "narrative" && this._narrativeText.trim()) {
+      await this.insertNarrative(sectionId, this._narrativeText.trim(),);
+      this._narrativeText = "";
+    }
     if (section.location_id) {
       this._selectedLocationId = section.location_id;
       await this.changeChatLocation();
+    }
+  },
+
+  /** Pick the transfer transition (walk / teleport / narrative). */
+  setTransitionType(type: "walk" | "teleport" | "narrative",) {
+    this._transitionType = type;
+  },
+
+  /**
+   * Move every message — or every message currently in `fromSectionId` — onto
+   * the target section (story-map "move all here"). Reloads the stream and
+   * section list afterwards.
+   *
+   * @param sectionId Destination section.
+   * @param fromSectionId Optional source section to narrow the move.
+   */
+  async bulkAssignToSection(sectionId: string, fromSectionId?: string | null,) {
+    if (!this.activeChat) { return; }
+    try {
+      const res = await apiFetch(
+        `/api/chats/${this.activeChat}/sections/${sectionId}/assign-all`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ fromSectionId: fromSectionId ?? null, },),
+        },
+      );
+      if (res.ok) {
+        await this.loadMessages?.();
+        await this.loadSections();
+      }
+    } catch (error) {
+      log.warn("bulkAssignToSection failed", { error: String(error,), },);
+    }
+  },
+
+  /**
+   * Insert a system-role narration message bound to a section (transfer
+   * flourish, e.g. "the party rides north"). Reloads the stream afterwards.
+   *
+   * @param sectionId Section to bind the narration to.
+   * @param text Narrative content.
+   */
+  async insertNarrative(sectionId: string, text: string,) {
+    if (!this.activeChat || !text.trim()) { return; }
+    try {
+      const res = await apiFetch(
+        `/api/chats/${this.activeChat}/sections/${sectionId}/narrative`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ text, },),
+        },
+      );
+      if (res.ok) { await this.loadMessages?.(); }
+    } catch (error) {
+      log.warn("insertNarrative failed", { error: String(error,), },);
     }
   },
 };

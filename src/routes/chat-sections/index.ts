@@ -1,7 +1,9 @@
 import { Elysia, } from "elysia";
 import { assignRoutes, } from "./assign";
+import { bulkAssignRoutes, } from "./bulk";
 import { createRoutes, } from "./create";
 import { listRoutes, } from "./list";
+import { narrativeRoutes, } from "./narrative";
 import { removeRoutes, } from "./remove";
 import { reorderRoutes, } from "./reorder";
 import type { HandlerOpts, } from "./types";
@@ -21,5 +23,7 @@ export function chatSectionsRoutes(opts: HandlerOpts,) {
       .use(removeRoutes(opts,),)
       .use(reorderRoutes(opts,),)
       .use(assignRoutes(opts,),)
+      .use(bulkAssignRoutes(opts,),)
+      .use(narrativeRoutes(opts,),)
   );
 }

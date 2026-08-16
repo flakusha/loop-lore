@@ -32,6 +32,45 @@
         </span>
       </div>
       <div class="story-map-list">
+        <!-- Transfer options (Phase 4): transition type + optional narrative -->
+        <div class="transfer-options" style="margin-bottom: var(--space-2)">
+          <div class="form-label">Transfer transition</div>
+          <div class="transition-picker" data-testid="transition-picker">
+            <button
+              class="btn btn-xs"
+              :class="{ 'btn-primary': _transitionType === 'walk' }"
+              @click="setTransitionType('walk')"
+              title="Walk"
+            >
+              🚶 Walk
+            </button>
+            <button
+              class="btn btn-xs"
+              :class="{ 'btn-primary': _transitionType === 'teleport' }"
+              @click="setTransitionType('teleport')"
+              title="Teleport"
+            >
+              ⚡ Teleport
+            </button>
+            <button
+              class="btn btn-xs"
+              :class="{ 'btn-primary': _transitionType === 'narrative' }"
+              @click="setTransitionType('narrative')"
+              title="Narrative"
+            >
+              📖 Narrative
+            </button>
+          </div>
+          <input
+            class="form-input"
+            type="text"
+            x-model="_narrativeText"
+            x-show="_transitionType === 'narrative'"
+            x-cloak
+            placeholder="Narrative for the transfer (e.g. the party rides north…)"
+            data-testid="narrative-input"
+          />
+        </div>
         <template x-for="(s, i) in _sections" :key="s.id">
           <div
             class="story-map-row"
@@ -59,6 +98,14 @@
               data-testid="story-map-transfer"
             >
               ⤵
+            </button>
+            <button
+              class="btn-icon btn-xs"
+              @click.stop="confirm('Move all messages to this section?') && bulkAssignToSection(s.id)"
+              title="Move all messages here (bulk)"
+              data-testid="story-map-bulk"
+            >
+              ⤴
             </button>
           </div>
         </template>
