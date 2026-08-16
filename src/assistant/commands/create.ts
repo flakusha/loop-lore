@@ -11,6 +11,7 @@
  * Results are stored in the appropriate tables (actors, locations, worlds, items).
  */
 import { createChat, getChatSetupTemplate, } from "../../chat/service";
+import { ChatParticipantRole, } from "../../db/enums";
 import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
@@ -245,4 +246,4 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
-},);
+}, { requiredRole: ChatParticipantRole.Owner, },);
