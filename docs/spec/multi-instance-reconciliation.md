@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Multi-Instance Reconciliation Specification
 
 > ⚠️ **Status:** DRAFT — expanded from epic. Authoritative source is `src/` and AGENTS.md.

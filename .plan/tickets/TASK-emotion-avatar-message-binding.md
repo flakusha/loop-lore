@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Emotion-Avatar Message Binding (persist + render)
 
 **Status:** ✅ Done — migration + schema done, per-message avatar binding shipped (cbf8ec95). Closed 2026-08-03.

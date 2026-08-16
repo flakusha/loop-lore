@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── Chat location (change / transfer / join at location) — panel ─
 //
 // Location controls surface for the active chat. It lists the world's

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Dynamic Memory Writes via Tool-Call
 
 **Status:** ✅ Complete (23ed39fc, 2026-08-16)

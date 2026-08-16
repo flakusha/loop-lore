@@ -12,6 +12,9 @@ metadata:
     related_skills: [loop-lore-context, loop-lore-db]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Loop-Lore Task Workflow
 
 ## 1. Read Relevant Docs

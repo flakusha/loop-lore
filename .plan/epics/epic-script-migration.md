@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: Script Migration to Modular Architecture
 
 **Status:** 🟡 In Progress (tasks 1-2 complete)

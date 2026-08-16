@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { Elysia, t, } from "elysia";
 import { type SelectQueryBuilder, sql, } from "kysely";
 import type { DB, } from "../../db/schema";

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Implement memory decay logic
 
 **Issue:** d1b048b4-509a-43e8-b175-4798aa3c74fe

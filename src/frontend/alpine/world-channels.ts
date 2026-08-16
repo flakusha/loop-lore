@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ── World channels sidebar tree (chat-only worlds) ─────────
 //
 // Holds the sidebar tree logic for chat-only worlds: channels are grouped by

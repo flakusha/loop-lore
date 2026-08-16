@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # `.plan/` — In-Repository Planning
 
 Spec-driven planning system. Specs live in `.plan/`, active tracking via `git issue`.

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Tool execution — gate plugin tools by agent role and run provider tool calls
  * through the plugin registry.

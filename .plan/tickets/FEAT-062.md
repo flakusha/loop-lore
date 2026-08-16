@@ -7,6 +7,9 @@ epic: epic-analytics-observability
 related: [FEAT-059, FEAT-060, FEAT-066]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT-062: Generation quality metrics
 
 ## What

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Template System — Unified Architecture Spec
 
 **Status**: 🟡 In Progress — LLM-modality foundation shipped; DB-backed user templates + unified render future

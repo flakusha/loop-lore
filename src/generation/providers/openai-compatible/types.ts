@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // Internal state + response payload types for the OpenAI-compatible provider.
 //
 // These are package-internal: the public surface exported by the barrel is the

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * StreamToClient — streaming (SSE) generation path for
  * POST /api/generation/generate. Extracted from generate-route.ts

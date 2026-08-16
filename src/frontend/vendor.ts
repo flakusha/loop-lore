@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Vendor bundle — htmx, Alpine.js, morph plugin, htmx extensions.
  * Bundled by bun build --target browser into dist/public/vendor.js.

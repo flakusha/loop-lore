@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/generation/providers/types.ts — Provider interface + shared types
 //
 // Every LLM provider implements LLMProvider. Register via registry.

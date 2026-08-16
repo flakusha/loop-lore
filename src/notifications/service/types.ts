@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { type NotificationStatus, NotificationType, } from "../../db/enums-core";
 
 /** A single notification as returned to clients. */

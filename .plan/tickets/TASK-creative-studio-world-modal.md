@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Task: World/Location Detail Modal
 
 **Epic:** epic-creative-studio.md (MVP Tier 1)

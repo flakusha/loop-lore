@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Gallery: Minimal Image Asset Viewer
 
 **Status:** ✅ Done — images, audio, and video all supported in gallery grid + preview modal

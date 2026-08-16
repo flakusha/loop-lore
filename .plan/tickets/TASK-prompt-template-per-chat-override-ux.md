@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Prompt Template Per-Chat Override UX
 
 **Status:** ✅ Complete (bc78ca36, 2026-08-16)

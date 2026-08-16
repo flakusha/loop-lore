@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { type AdvantageMode, type DiceSides, rollDice, } from "../dice.js";
 import { abilityModifier, proficiencyBonus, } from "../stats.js";
 import {

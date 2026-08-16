@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/assistant/commands/dice.ts
 //
 // Dice rolling utility — parses standard NdS±M notation and rolls dice.

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Deduplicate SSE activity stream (two connections to /api/activity/stream)
 
 **Status:** 🟡 Open

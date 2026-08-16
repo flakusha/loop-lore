@@ -90,6 +90,7 @@
     "context:weight:json": "bun run scripts/check-context-weight.ts --json",
     "context:weight:strict": "bun run scripts/check-context-weight.ts --strict",
     "spdx:check": "bun run scripts/check-spdx.ts",
+    "spdx:fix": "bun run scripts/check-spdx.ts --fix",
     "license:check": "bun run scripts/check-licenses.ts",
     "license:check:strict": "LICENSE_CHECK=1 bun run scripts/check-licenses.ts --strict",
     "license:install:scancode": "pip install scancode-toolkit",

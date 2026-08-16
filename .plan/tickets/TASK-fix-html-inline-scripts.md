@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Extract Inline HTML Script Blocks to Frontend TS
 
 **Status:** ⬜ Not Started

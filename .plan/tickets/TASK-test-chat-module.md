@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Add unit tests for chat module (15 files, 0 tests)
 
 **Status:** ⬜ Not Started

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 > ⚠️ **Status:** Server-side crypto core built (`src/crypto/*` — 69 tests).
 > Client-side (`src/frontend/browser.ts`) has encrypt/decrypt/compress but message
 > route integration is NOT wired. Key management UI pending.

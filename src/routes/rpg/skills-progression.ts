@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Skills progression routes — actor-scoped skill tree, prerequisites, XP and
  * specialization. Split from `skills.ts` to keep both files under the 250-line
