@@ -3116,3 +3116,116 @@ html {
   color: #000;
   font-weight: 600;
 }
+
+/* ── Creation Wizard Panel ──────────────────────────── */
+.wizard-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.wizard-panel-inner {
+  background: var(--color-surface, #1a1a2e);
+  border-top: 2px solid var(--color-primary, #6366f1);
+  padding: 1rem;
+  box-shadow: 0 -4px 12px rgb(0 0 0 / 30%);
+}
+
+.wizard-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.wizard-panel-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--color-text, #e0e0e0);
+}
+
+.wizard-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.wizard-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.wizard-field-label {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary, #a0a0a0);
+  text-transform: capitalize;
+}
+
+.wizard-field-input {
+  background: var(--color-input-bg, #2a2a3e);
+  border: 1px solid var(--color-border, #3a3a4e);
+  color: var(--color-text, #e0e0e0);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.wizard-field-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #6366f1);
+  box-shadow: 0 0 0 2px rgb(99 102 241 / 20%);
+}
+
+.wizard-warnings {
+  background: rgb(234 179 8 / 10%);
+  border: 1px solid rgb(234 179 8 / 30%);
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.wizard-warning-item {
+  font-size: 0.85rem;
+  color: var(--color-warning, #eab308);
+}
+
+.wizard-panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.panel-enter {
+  animation: slide-up 0.2s ease-out;
+}
+.panel-leave {
+  animation: slide-down 0.15s ease-in;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
