@@ -28,7 +28,7 @@ beforeEach(async () => {
 describe("createCharacterStats", () => {
   it("creates stats with required fields", async () => {
     await insertUsers(db, "hero-owner", "Hero Owner", { id: "user-1" as never, },);
-    await insertActors(db, "Test Hero", { id: "actor-1" as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "Test Hero", { id: "actor-1" as never, owner_id: "user-1", },);
     const id = await createCharacterStats({ database: db, }, {
       actorId: "actor-1",
       hp: 20,
@@ -42,7 +42,7 @@ describe("createCharacterStats", () => {
 
   it("creates stats with all optional fields", async () => {
     await insertUsers(db, "wizard-owner", "Wizard Owner", { id: "user-1" as never, },);
-    await insertActors(db, "Wizard", { id: "actor-2" as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "Wizard", { id: "actor-2" as never, owner_id: "user-1", },);
     const id = await createCharacterStats({ database: db, }, {
       actorId: "actor-2",
       hp: 8,
@@ -86,7 +86,7 @@ describe("getCharacterStats", () => {
 
   it("returns stats after creation", async () => {
     await insertUsers(db, "fighter-owner", "Fighter Owner", { id: "user-1" as never, },);
-    await insertActors(db, "Fighter", { id: "actor-3" as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "Fighter", { id: "actor-3" as never, owner_id: "user-1", },);
     await createCharacterStats({ database: db, }, {
       actorId: "actor-3",
       hp: 30,
@@ -111,7 +111,7 @@ describe("getCharacterStats", () => {
 describe("updateCharacterStats", () => {
   it("updates hp and maxHp", async () => {
     await insertUsers(db, "rogue-owner", "Rogue Owner", { id: "user-1" as never, },);
-    await insertActors(db, "Rogue", { id: "actor-4" as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "Rogue", { id: "actor-4" as never, owner_id: "user-1", },);
     await createCharacterStats({ database: db, }, {
       actorId: "actor-4",
       hp: 20,
@@ -135,7 +135,7 @@ describe("updateCharacterStats", () => {
 
   it("updates cognition fields", async () => {
     await insertUsers(db, "npc-owner", "NPC Owner", { id: "user-1" as never, },);
-    await insertActors(db, "NPC", { id: "actor-5" as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "NPC", { id: "actor-5" as never, owner_id: "user-1", },);
     await createCharacterStats({ database: db, }, {
       actorId: "actor-5",
       hp: 10,
@@ -160,13 +160,13 @@ describe("updateCharacterStats", () => {
     expect(refreshed!.aggressionThreshold,).toBeCloseTo(0.9,);
     expect(refreshed!.characterState,).toBe("injured",);
 
-    const conditions = JSON.parse(refreshed!.conditions,) as Array<{ name: string }>;
+    const conditions = JSON.parse(refreshed!.conditions,) as { name: string }[];
     expect(conditions[0]!.name,).toBe("Poisoned",);
   });
 
   it("returns false when no fields provided", async () => {
     await insertUsers(db, "empty-owner", "Empty Owner", { id: "user-1" as never, },);
-    await insertActors(db, "Empty", { id: "actor-6" as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "Empty", { id: "actor-6" as never, owner_id: "user-1", },);
     await createCharacterStats({ database: db, }, {
       actorId: "actor-6",
       hp: 10,

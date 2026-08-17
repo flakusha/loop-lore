@@ -10,17 +10,13 @@
  * Split from transitions.ts to stay under the 250L file-size gate.
  */
 import type { Kysely, } from "kysely";
-import {
-  classifyTransitionMessage,
-  createTransition,
-  type MessageRef,
-  promoteMessagesToMemories,
-} from "../../chat";
+import { classifyTransitionMessage, } from "../../chat";
 import { recordLocationChange, } from "../../chat/service/location-events";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
 import { log, } from "./helpers";
+import { applyContextCut, } from "./scene-transition-context-cut";
 import type { ChatRecord, } from "./transitions";
 
 /** Derive a section label from a location id (fallback when name not available). */
@@ -178,75 +174,12 @@ export async function handleSceneTransitions(
   }
 
   if (classification.type === "context_cut") {
-    let promotedMemoryIds: string[] = [];
-    try {
-      const [
-        promotionCandidatesResult,
-        chatCtxResult,
-        participantsResult,
-      ] = await Promise.allSettled([
-        database
-          .selectFrom("messages",)
-          .select(["id", "role", "content", "created_at",],)
-          .where("chat_id", "=", chatId,)
-          .where("visibility", "=", "visible",)
-          .orderBy("created_at", "asc",)
-          .execute(),
-        database
-          .selectFrom("chats",)
-          .select(["context_max_tokens", "world_id",],)
-          .where("id", "=", chatId,)
-          .executeTakeFirst(),
-        database
-          .selectFrom("chat_participants",)
-          .select(["actor_id",],)
-          .where("chat_id", "=", chatId,)
-          .execute(),
-      ],);
-      if (promotionCandidatesResult.status !== "fulfilled") { throw promotionCandidatesResult.reason; }
-      if (chatCtxResult.status !== "fulfilled") { throw chatCtxResult.reason; }
-      if (participantsResult.status !== "fulfilled") { throw participantsResult.reason; }
-      const promotionCandidates = promotionCandidatesResult.value;
-      const chatCtx = chatCtxResult.value;
-      const participants = participantsResult.value;
-
-      const messageRefs: MessageRef[] = Array.from(promotionCandidates, (m,) => ({
-        messageId: m.id,
-        role: m.role,
-        content: m.content ?? "",
-        tokenCount: Math.ceil((m.content ?? "").length * 0.3,),
-        createdAt: m.created_at,
-      }),);
-
-      promotedMemoryIds = await promoteMessagesToMemories(database, {
-        messages: messageRefs,
-        maxTokens: chatCtx?.context_max_tokens ?? 4000,
-        actorId: actorId ?? "",
-        chatId,
-        worldId: chatCtx?.world_id ?? null,
-        participantIds: Array.from(participants, (p,) => p.actor_id,),
-      },);
-    } catch (error) {
-      log().warn("Context cut memory promotion failed", {
-        chatId,
-        actorId,
-        error: error instanceof Error ? error.message : String(error,),
-      },);
-    }
-
-    const transition = createTransition({
-      actorId,
-      narration: `Context cut: ${effectiveContent.slice(0, 100,)}`,
-      promotedMemoryIds,
-    },);
-
-    log().info("Context cut transition detected", {
+    await applyContextCut(
+      database,
       chatId,
       actorId,
-      transitionType: classification.type,
-      source: classification.source,
-      promotedMemoryCount: promotedMemoryIds.length,
-      transition,
-    },);
+      effectiveContent,
+      classification.source,
+    );
   }
 }

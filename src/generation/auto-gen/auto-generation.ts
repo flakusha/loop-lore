@@ -13,11 +13,11 @@ import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import { callLlm, } from "./call-llm";
 import { runContentHooks, } from "./content-hooks";
 import { checkAndPruneContext, } from "./context-pruning";
 import { createDefaultDeps, type GenDeps, } from "./deps";
+import { handleGenerationError, } from "./handle-generation-error";
 import { applyPostStoreEffects, } from "./post-store";
 import { prepareGeneration, } from "./prepare-generation";
 import { resolveActor, } from "./resolve-actor";
@@ -210,42 +210,5 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     },);
   } catch (error) {
     await handleGenerationError(error, database, d, chatId, userId, attemptId,);
-  }
-}
-
-/** Handle generation pipeline errors (telemetry + buffer + logging). */
-async function handleGenerationError(
-  error: unknown,
-  database: AutoGenOpts["database"],
-  d: ReturnType<typeof createDefaultDeps>,
-  chatId: string,
-  userId: string,
-  attemptId?: string,
-) {
-  if (attemptId) {
-    try {
-      await d.failGeneration({ attemptId, error: error as Error, db: database, },);
-    } catch { /* best-effort */ }
-  }
-  if (isTelemetryEnabled()) {
-    void record(database, {
-      eventType: "generation.failed",
-      userId,
-      chatId,
-      data: { error: (error as Error).message, chatId, },
-    },);
-  }
-  try {
-    const buf = d.getOrCreateBuffer(chatId,);
-    buf.signalError((error as Error).message,);
-    d.scheduleBufferCleanup(chatId,);
-  } catch { /* best-effort */ }
-
-  const err = error instanceof Error ? error : new Error(String(error,),);
-  const log = getLogger().child({ module: "auto-gen", },);
-  if (err.name === "AbortError" || err.message === "Request cancelled" || err.message === "Request timed out") {
-    log.warn("Auto-generation aborted", { reason: err.message, },);
-  } else {
-    log.error("Auto-generation failed", err,);
   }
 }

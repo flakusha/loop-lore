@@ -15,42 +15,39 @@
  * Commands are dispatched by sending slash commands through the chat's
  * existing message path (the `/attack`, `/heal`, `/battle` handlers), so the
  * panel needs no new server API.
+ *
+ * Split across:
+ * - `commands.ts` — pure types + `battleCommandFor` command mapping (tested)
+ * - `render.ts`   — DOM builders (header / roster / action bar)
  */
 
-export interface BattleCombatantView {
-  id: string;
-  name: string;
-  hp: number;
-  maxHp: number;
-  initiative: number;
-}
+import {
+  ACTIONS,
+  type BattleActionKind,
+  battleCommandFor,
+  type BattleFocusTarget,
+  type BattleView,
+} from "./commands.js";
 
-export interface BattleView {
-  id: string;
-  status: string;
-  round: number;
-  turnIndex: number;
-  combatants: BattleCombatantView[];
-}
+import {
+  type BattleRenderCallbacks,
+  renderActions,
+  renderHeader,
+  renderRoster,
+} from "./render.js";
 
-export type BattleActionKind = "attack" | "heal" | "end";
-
-/** A focusable element in the keyboard cycle: a combatant or an action. */
-type BattleFocusTarget =
-  | { type: "combatant"; id: string }
-  | { type: "action"; kind: BattleActionKind };
+export {
+  type BattleActionKind,
+  type BattleCombatantView,
+  battleCommandFor,
+  type BattleView,
+} from "./commands.js";
 
 /** Bridge the battle panel to the host chat component. */
 export interface BattlePanelContext {
   /** Send a slash command through the chat's message path. */
   sendCommand: (command: string,) => Promise<void>;
 }
-
-const ACTIONS: { kind: BattleActionKind; label: string }[] = [
-  { kind: "attack", label: "Attack", },
-  { kind: "heal", label: "Heal", },
-  { kind: "end", label: "End battle", },
-];
 
 let container: HTMLElement | null = null;
 let ctx: BattlePanelContext | null = null;
@@ -96,7 +93,7 @@ export function destroyBattlePanel(): void {
 /**
  * Render (or update) the battle from a command response payload.
  *
- * @param view - The battle state serialized by a `battle-*` command action
+ * @param view The battle state serialized by a `battle-*` command action
  */
 export function renderBattle(view: BattleView,): void {
   battle = view;
@@ -137,7 +134,21 @@ function render(): void {
   overlay.setAttribute("role", "group",);
   overlay.setAttribute("aria-label", "Battle controls",);
 
-  overlay.append(renderHeader(), renderRoster(), renderActions(),);
+  const callbacks: BattleRenderCallbacks = {
+    select: (id,) => {
+      selectedTargetId = selectedTargetId === id ? null : id;
+      rebuildFocus();
+      render();
+    },
+    execute: (kind,) => {
+      void executeAction(kind,);
+    },
+  };
+  overlay.append(
+    renderHeader(battle,),
+    renderRoster(battle, selectedTargetId, callbacks,),
+    renderActions(selectedTargetId, callbacks,),
+  );
 
   // Focus the current cycle target once mounted.
   const active = focusTargets[focusedIndex];
@@ -151,112 +162,7 @@ function render(): void {
   container.append(overlay,);
 }
 
-function renderHeader(): HTMLElement {
-  const h = document.createElement("div",);
-  h.className = "battle-panel-header";
-  h.innerHTML = `<strong>Round ${battle!.round}</strong> <span class="battle-panel-status">${
-    escapeHtml(battle!.status,)
-  }</span>`;
-  return h;
-}
-
-function renderRoster(): HTMLElement {
-  const list = document.createElement("div",);
-  list.className = "battle-roster";
-  list.setAttribute("role", "list",);
-
-  let i = 0;
-  for (const c of battle!.combatants) {
-    const acting = i === battle!.turnIndex;
-    const dead = c.hp <= 0;
-
-    const tile = document.createElement("button",);
-    tile.type = "button";
-    const classes = [acting ? "is-acting" : "", dead ? "is-dead" : "", selectedTargetId === c.id ? "is-selected" : "",];
-    const classNameParts = ["battle-combatant",];
-    for (const cls of classes) {
-      if (cls) { classNameParts.push(cls,); }
-    }
-    tile.className = classNameParts.join(" ",);
-    tile.dataset.battleId = c.id;
-    tile.setAttribute("role", "listitem",);
-    if (acting) { tile.setAttribute("aria-current", "true",); }
-    tile.disabled = dead;
-
-    const pct = hpPercent(c.hp, c.maxHp,);
-    tile.innerHTML = `
-      <span class="battle-combatant-name">${escapeHtml(c.name,)}${acting ? " ➤" : ""}</span>
-      <span class="battle-hp">${escapeHtml(String(Math.max(0, c.hp,),),)}/${escapeHtml(String(c.maxHp,),)}</span>
-      <span class="battle-hp-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" style="width:${pct}%"></span>
-    `;
-
-    tile.addEventListener("click", () => {
-      if (dead) { return; }
-      selectedTargetId = selectedTargetId === c.id ? null : c.id;
-      rebuildFocus();
-      render();
-    },);
-
-    list.append(tile,);
-    i++;
-  }
-  return list;
-}
-
-function renderActions(): HTMLElement {
-  const bar = document.createElement("div",);
-  bar.className = "battle-actions";
-  bar.setAttribute("role", "toolbar",);
-  bar.setAttribute("aria-label", "Battle actions",);
-
-  for (const action of ACTIONS) {
-    const btn = document.createElement("button",);
-    btn.type = "button";
-    btn.className = "battle-action";
-    btn.dataset.battleAction = action.kind;
-    btn.textContent = action.label;
-    btn.disabled = action.kind !== "end" && !selectedTargetId;
-
-    btn.addEventListener("click", () => {
-      void executeAction(action.kind,);
-    },);
-
-    bar.append(btn,);
-  }
-  return bar;
-}
-
 // ── Action execution ───────────────────────────────────
-
-/**
- * Build the slash command for a battle action against a selected target.
- *
- * Pure + exported for unit testing: this is the panel's observable contract
- * (a click or keyboard trigger maps to one slash command).
- *
- * @param kind - The battle action being executed
- * @param targetId - The currently selected target combatant id, if any
- * @param combatants - The battle roster (to resolve the target's name)
- * @returns The slash command to dispatch, or null when the action has no target
- */
-export function battleCommandFor(
-  kind: BattleActionKind,
-  targetId: string | null,
-  combatants: BattleCombatantView[],
-): string | null {
-  const target = targetId ? combatants.find((c,) => c.id === targetId) : null;
-  switch (kind) {
-    case "attack": {
-      return target ? `/attack ${quote(target.name,)}` : null;
-    }
-    case "heal": {
-      return target ? `/heal ${quote(target.name,)}` : null;
-    }
-    case "end": {
-      return "/battle end";
-    }
-  }
-}
 
 async function executeAction(kind: BattleActionKind,): Promise<void> {
   if (!ctx) { return; }
@@ -327,24 +233,4 @@ function rebuildFocus(): void {
   if (!prev) { return; }
   const idx = focusTargets.findIndex((t,) => sameTarget(t, prev,));
   if (idx !== -1) { focusedIndex = idx; }
-}
-
-// ── Utils ──────────────────────────────────────────────
-
-/** Clamp an HP fraction to a 0–100 percentage for the progress bar. */
-function hpPercent(hp: number, maxHp: number,): number {
-  const raw = (hp / Math.max(1, maxHp,)) * 100;
-  return Math.max(0, Math.min(100, Math.round(raw,),),);
-}
-
-function quote(name: string,): string {
-  return name.includes(" ",) ? `"${name}"` : name;
-}
-
-function escapeHtml(value: string,): string {
-  return value
-    .replaceAll("&", "&amp;",)
-    .replaceAll("<", "&lt;",)
-    .replaceAll(">", "&gt;",)
-    .replaceAll('"', "&quot;",);
 }

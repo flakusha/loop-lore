@@ -7,45 +7,15 @@
  * CRUD + check/trigger endpoints for per-chat proactive messaging config.
  * See .plan/tickets/TASK-proactive-messaging.md
  */
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import type { ProactiveConfigInput, } from "../../chat/proactive/types";
-import type { Config, } from "../../config/schema";
 import { NotificationType, } from "../../db/enums-core";
 import { triggerAutoGeneration, } from "../../generation/auto-gen";
-import { getLogger, } from "../../logger";
 import { NotificationService, } from "../../notifications/service";
-import type { HandlerOpts, } from "../actor-auth";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
-
-/** Route options — database handle plus resolved config for generation. */
-interface ProactiveRouteOpts {
-  database: HandlerOpts["database"];
-  config: Config;
-}
-
-const R = "/api/proactive-messaging";
-
-const frequencyEnum = t.Union([
-  t.Literal("very_frequent",),
-  t.Literal("frequent",),
-  t.Literal("normal",),
-  t.Literal("infrequent",),
-],);
-
-const nullableString = t.Union([t.String(), t.Null(),],);
-const stringUnknownRecord = t.Record(t.String(), t.Unknown(),);
-
-const configBody = t.Object({
-  frequency: t.Optional(frequencyEnum,),
-  quietHoursStart: t.Optional(nullableString,),
-  quietHoursEnd: t.Optional(nullableString,),
-  enabled: t.Optional(t.Boolean(),),
-  configJson: t.Optional(stringUnknownRecord,),
-},);
-
-const chatQuery = t.Object({ chatId: t.String(), },);
-const chatActorQuery = t.Object({ chatId: t.String(), actorId: t.String(), },);
+import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
+import type { ProactiveRouteOpts, } from "./schemas";
 
 export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
   const svc = () => new ProactiveMessagingService(opts.database,);
@@ -274,11 +244,4 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
         tags: ["Proactive Messaging",],
       },
     },);
-}
-
-function logErr(msg: string, err: unknown,): void {
-  getLogger().child({ module: "proactive-messaging", },).error(
-    msg,
-    err instanceof Error ? err : new Error(String(err,),),
-  );
 }
