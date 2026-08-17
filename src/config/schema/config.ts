@@ -25,6 +25,7 @@ import type { HooksConfig, } from "./hooks";
 import type { LoggingConfig, } from "./logging";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
+import type { SeedingConfig, } from "./seeding";
 import type { ServerConfig, } from "./server";
 import type { TestingConfig, } from "./testing";
 import type { TransportConfig, } from "./transport";
@@ -48,6 +49,7 @@ export interface Config {
   byoKey: ByoKeyConfig;
   encryption: EncryptionConfig;
   headers: HeadersConfig;
+  seeding: SeedingConfig;
   dynamicResponse: DynamicResponseConfig;
   templates: TemplatesConfig;
   characters: CharactersConfig;
