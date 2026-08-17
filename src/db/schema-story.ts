@@ -45,6 +45,7 @@ export interface Worlds {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   nsfw_override: string | null;
+  rpg_enabled: Generated<number>;
 }
 
 // ── locations ────────────────────────────────────────────

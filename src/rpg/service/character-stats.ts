@@ -19,6 +19,14 @@ export interface CreateCharacterStatsParams {
   int?: number;
   wis?: number;
   cha?: number;
+  /** Cognition: NPC behavior profile */
+  behaviorProfile?: string;
+  /** Cognition: likelihood to withhold info (0–1) */
+  evasiveness?: number;
+  /** Cognition: likelihood to assist (0–1) */
+  cooperativeness?: number;
+  /** Cognition: combat initiation threshold (0–1) */
+  aggressionThreshold?: number;
 }
 
 export async function createCharacterStats(
@@ -52,6 +60,13 @@ export async function createCharacterStats(
       death_save_failures: 0,
       xp: 0,
       xp_to_next: 0,
+      behavior_profile: params.behaviorProfile ?? null,
+      evasiveness: params.evasiveness ?? null,
+      cooperativeness: params.cooperativeness ?? null,
+      aggression_threshold: params.aggressionThreshold ?? null,
+      character_state: "active",
+      conditions: "[]",
+      active_effects: "[]",
     },)
     .execute();
 
@@ -81,6 +96,13 @@ export async function getCharacterStats(
     cha: number;
     xp: number;
     xpToNext: number;
+    behaviorProfile: string | null;
+    evasiveness: number | null;
+    cooperativeness: number | null;
+    aggressionThreshold: number | null;
+    characterState: string;
+    conditions: string;
+    activeEffects: string;
   } | null
 > {
   const { database, } = deps;
@@ -113,6 +135,13 @@ export async function getCharacterStats(
     cha: row.cha,
     xp: row.xp,
     xpToNext: row.xp_to_next,
+    behaviorProfile: row.behavior_profile,
+    evasiveness: row.evasiveness,
+    cooperativeness: row.cooperativeness,
+    aggressionThreshold: row.aggression_threshold,
+    characterState: row.character_state,
+    conditions: row.conditions,
+    activeEffects: row.active_effects,
   };
 }
 
@@ -133,6 +162,13 @@ export interface UpdateCharacterStatsParams {
   level?: number;
   xp?: number;
   xpToNext?: number;
+  behaviorProfile?: string;
+  evasiveness?: number;
+  cooperativeness?: number;
+  aggressionThreshold?: number;
+  characterState?: string;
+  conditions?: string;
+  activeEffects?: string;
 }
 
 export async function updateCharacterStats(
@@ -159,6 +195,13 @@ export async function updateCharacterStats(
   if (params.level !== undefined) { updates.level = params.level; }
   if (params.xp !== undefined) { updates.xp = params.xp; }
   if (params.xpToNext !== undefined) { updates.xp_to_next = params.xpToNext; }
+  if (params.behaviorProfile !== undefined) { updates.behavior_profile = params.behaviorProfile; }
+  if (params.evasiveness !== undefined) { updates.evasiveness = params.evasiveness; }
+  if (params.cooperativeness !== undefined) { updates.cooperativeness = params.cooperativeness; }
+  if (params.aggressionThreshold !== undefined) { updates.aggression_threshold = params.aggressionThreshold; }
+  if (params.characterState !== undefined) { updates.character_state = params.characterState; }
+  if (params.conditions !== undefined) { updates.conditions = params.conditions; }
+  if (params.activeEffects !== undefined) { updates.active_effects = params.activeEffects; }
 
   if (Object.keys(updates,).length === 0) {
     return false;
