@@ -5,6 +5,7 @@
 import { chatActions, } from "../chat-actions";
 import { chatActivity, } from "../chat-activity";
 import { chatBackgrounds, } from "../chat-backgrounds";
+import { chatBattle, } from "../chat-battle";
 import { chatEditing, } from "../chat-editing";
 import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
@@ -216,6 +217,7 @@ globalThis.chatState = function() {
     ...chatSettings,
     ...chatPromptTemplate,
     ...chatQuickReplies,
+    ...chatBattle,
     ...chatPanels,
     ...chatProactive,
 

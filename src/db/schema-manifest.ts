@@ -169,6 +169,20 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("battles", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    round: col("integer", { notNull: true, hasDefault: true, },),
+    turn_index: col("integer", { notNull: true, hasDefault: true, },),
+    combatants: col("text", { notNull: true, hasDefault: true, },),
+    log: col("text", { notNull: true, hasDefault: true, },),
+    created_by: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+    ended_at: col("text",),
+  },)
   .table("crafting_attempts", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),

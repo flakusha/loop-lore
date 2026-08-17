@@ -132,5 +132,6 @@ export interface DB {
   character_internal_traits: import("./schema-core").CharacterInternalTraits;
   character_world_setup: import("./schema-character").CharacterWorldSetup;
   model_capabilities: import("./schema-core").ModelCapabilities;
+  battles: import("./schema-core").Battles;
   seed_audit: import("./schema-core").SeedAudit;
 }
