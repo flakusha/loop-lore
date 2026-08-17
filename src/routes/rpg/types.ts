@@ -77,3 +77,37 @@ export const StatsGenerateBody = t.Object({
   allocation: t.Optional(t.Record(AbilityNameSchema, t.Number(),),),
   /* eslint-enable unicorn/max-nested-calls */
 },);
+
+// ── Actor stats route schemas ─────────────────────────────
+
+/** Create initial stats for an actor */
+export const StatsCreateBody = t.Object({
+  hp: t.Number({ minimum: 1, },),
+  maxHp: t.Number({ minimum: 1, },),
+  ac: t.Number({ minimum: 0, },),
+  stats: t.Optional(StatBlockSchema,),
+  level: t.Optional(t.Number({ minimum: 1, maximum: 20, },),),
+  mp: t.Optional(t.Number({ minimum: 0, },),),
+  maxMp: t.Optional(t.Number({ minimum: 0, },),),
+  speed: t.Optional(t.Number({ minimum: 0, },),),
+},);
+
+/** Update stats for an actor */
+export const StatsUpdateBody = t.Object({
+  hp: t.Optional(t.Number(),),
+  maxHp: t.Optional(t.Number(),),
+  tempHp: t.Optional(t.Number(),),
+  mp: t.Optional(t.Number(),),
+  maxMp: t.Optional(t.Number(),),
+  ac: t.Optional(t.Number(),),
+  speed: t.Optional(t.Number(),),
+  str: t.Optional(t.Number(),),
+  dex: t.Optional(t.Number(),),
+  con: t.Optional(t.Number(),),
+  int: t.Optional(t.Number(),),
+  wis: t.Optional(t.Number(),),
+  cha: t.Optional(t.Number(),),
+  level: t.Optional(t.Number(),),
+  xp: t.Optional(t.Number(),),
+  xpToNext: t.Optional(t.Number(),),
+},);
