@@ -1,8 +1,10 @@
 # TASK: NPC Viewer — list, details, schedule
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
+**Branch:** npc-management-ui
+**Commit:** dc19c9e
 
 ## Summary
 
@@ -10,6 +12,6 @@ Implement NPC list with search/filter and NPC details panel (stats, inventory, s
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing (unit + e2e gates green)
+- [x] Documentation updated (epic status updated)
