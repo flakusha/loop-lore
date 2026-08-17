@@ -4691,10 +4691,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
   "src/db/enums-crafting.ts": [
@@ -5981,10 +5977,6 @@
   ],
   "src/db/seed.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
     },
@@ -6741,6 +6733,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    }
+  ],
+  "src/frontend/alpine/chat-types/npc-state.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-npc-management-ui.md"
+    }
+  ],
+  "src/frontend/alpine/chat-types/npc.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-npc-management-ui.md"
     }
   ],
   "src/frontend/alpine/chat-utils/gallery.ts": [
@@ -8015,19 +8019,11 @@
   ],
   "src/frontend/npc/faction-relations.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-npc-management-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-relations.md"
     }
   ],
   "src/frontend/npc/karma-display.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-npc-management-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-karma-display.md"
@@ -8041,10 +8037,6 @@
   ],
   "src/frontend/npc/npc-viewer.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-npc-management-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-viewer.md"
     }
@@ -8056,10 +8048,6 @@
     }
   ],
   "src/frontend/npc/relationship-map.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-npc-management-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-relationship-map.md"
@@ -16810,6 +16798,10 @@
     }
   ],
   "src/views/world-edit.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-npc-management-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
