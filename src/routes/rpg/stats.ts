@@ -12,18 +12,43 @@ import {
   type StatBlock,
   validateStatBlock,
 } from "../../rpg/stats.js";
-import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  createCharacterStats,
+  getCharacterStats,
+  updateCharacterStats,
+} from "../../rpg/service/character-stats.js";
+import { requireActorAccess, } from "../actor-auth";
+import { jsonCreated, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
-import { type HandlerOpts, StatsBody, StatsGenerateBody, } from "./types";
+import { type HandlerOpts,
+  StatsBody,
+  StatsCreateBody,
+  StatsGenerateBody,
+  StatsUpdateBody,
+} from "./types";
 
-export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
+/** Elysia context for actor-scoped routes (has params.actorId + auth fields). */
+interface ActorCtx {
+  params: { actorId: string };
+  body: unknown;
+  userId?: string | null;
+  userRole?: string | null;
+  t?: (key: string, ...args: unknown[]) => string;
+}
+
+/**
+ * RPG Stats routes — calculate/validate/generate + per-actor CRUD.
+ */
+export function statsRoutes(opts: HandlerOpts, prefix = "/api",) {
+  const { database, } = opts;
+  const deps = { database, };
+
   return (
     new Elysia({ name: "rpg-stats", },)
       // ── Stats: Calculate ──────────────────────────────────
       .post(
         `${prefix}/rpg/stats/calculate`,
-        (ctx: any,) => {
+        (ctx: { body: unknown; userId?: string | null; t?: (k: string) => string },) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
@@ -37,10 +62,6 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
         },
         {
           body: StatsBody,
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-          },
           detail: {
             summary: "Compute ability modifiers",
             description: "Calculate modifier for each ability score using floor((stat-10)/2).",
@@ -50,7 +71,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/stats/validate`,
-        (ctx: any,) => {
+        (ctx: { body: unknown; userId?: string | null; t?: (k: string) => string },) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
@@ -64,10 +85,6 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
         },
         {
           body: StatsBody,
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-          },
           detail: {
             summary: "Validate a stat block",
             description: "Check all six ability scores are within [1, 30].",
@@ -77,7 +94,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/stats/generate`,
-        (ctx: any,) => {
+        (ctx: { body: unknown; userId?: string | null; t?: (k: string) => string },) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
@@ -120,13 +137,144 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
         },
         {
           body: StatsGenerateBody,
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-          },
           detail: {
             summary: "Generate stat block",
             description: "Generate stats using point-buy, 4d6-drop-lowest, or standard array.",
+            tags: ["RPG", "Stats",],
+          },
+        },
+      )
+      // ── Actor Stats: CRUD ─────────────────────────────────
+      .get(
+        `${prefix}/rpg/stats/:actorId`,
+        async (ctx: ActorCtx,) => {
+          const userId = await requireActorAccess(ctx, database,);
+          if (typeof userId !== "string") { return userId; }
+
+          try {
+            const stats = await getCharacterStats(deps, ctx.params.actorId,);
+            if (!stats) {
+              return notFoundResponse("Character stats not found",);
+            }
+            return jsonResponse(stats,);
+          } catch (error) {
+            log().error("Failed to get character stats", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },
+        {
+          detail: {
+            summary: "Get character stats",
+            description: "Retrieve RPG stats for an actor. Returns 404 if no stats exist.",
+            tags: ["RPG", "Stats",],
+          },
+        },
+      )
+      .post(
+        `${prefix}/rpg/stats/:actorId`,
+        async (ctx: ActorCtx,) => {
+          const userId = await requireActorAccess(ctx, database,);
+          if (typeof userId !== "string") { return userId; }
+
+          try {
+            const body = ctx.body as {
+              hp: number;
+              maxHp: number;
+              ac: number;
+              stats?: StatBlock;
+              level?: number;
+              mp?: number;
+              maxMp?: number;
+              speed?: number;
+            };
+
+            // Idempotency guard
+            const existing = await getCharacterStats(deps, ctx.params.actorId,);
+            if (existing) {
+              return jsonError("Character stats already exist — use PATCH to update", 409,);
+            }
+
+            const statsId = await createCharacterStats(deps, {
+              actorId: ctx.params.actorId,
+              hp: body.hp,
+              maxHp: body.maxHp,
+              ac: body.ac,
+              level: body.level,
+              mp: body.mp,
+              maxMp: body.maxMp,
+              speed: body.speed,
+              str: body.stats?.str,
+              dex: body.stats?.dex,
+              con: body.stats?.con,
+              int: body.stats?.int,
+              wis: body.stats?.wis,
+              cha: body.stats?.cha,
+            },);
+
+            return jsonCreated({ id: statsId, actorId: ctx.params.actorId, },);
+          } catch (error) {
+            log().error("Failed to create character stats", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },
+        {
+          body: StatsCreateBody,
+          detail: {
+            summary: "Create character stats",
+            description: "Initialize RPG stats for an actor. Returns 409 if stats already exist.",
+            tags: ["RPG", "Stats",],
+          },
+        },
+      )
+      .patch(
+        `${prefix}/rpg/stats/:actorId`,
+        async (ctx: ActorCtx,) => {
+          const userId = await requireActorAccess(ctx, database,);
+          if (typeof userId !== "string") { return userId; }
+
+          try {
+            const body = ctx.body as Record<string, number | undefined>;
+
+            const existing = await getCharacterStats(deps, ctx.params.actorId,);
+            if (!existing) {
+              return notFoundResponse("Character stats not found — use POST to create",);
+            }
+
+            const updated = await updateCharacterStats(deps, existing.id, {
+              hp: body.hp,
+              maxHp: body.maxHp,
+              tempHp: body.tempHp,
+              mp: body.mp,
+              maxMp: body.maxMp,
+              ac: body.ac,
+              speed: body.speed,
+              str: body.str,
+              dex: body.dex,
+              con: body.con,
+              int: body.int,
+              wis: body.wis,
+              cha: body.cha,
+              level: body.level,
+              xp: body.xp,
+              xpToNext: body.xpToNext,
+            },);
+
+            if (!updated) {
+              return jsonError("No fields to update", 400,);
+            }
+
+            const refreshed = await getCharacterStats(deps, ctx.params.actorId,);
+            return jsonResponse(refreshed,);
+          } catch (error) {
+            log().error("Failed to update character stats", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },
+        {
+          body: StatsUpdateBody,
+          detail: {
+            summary: "Update character stats",
+            description: "Partial update of RPG stats for an actor. Returns 404 if no stats exist.",
             tags: ["RPG", "Stats",],
           },
         },
