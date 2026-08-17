@@ -1343,6 +1343,7 @@ export const CraftingOrdersSchema = t.Object({
   offered_materials: t.Optional(t.String(),),
   status: t.Optional(t.String(),),
   deadline: t.Optional(t.String(),),
+  trade_type: t.Optional(t.String(),),
 },);
 
 // ── character_intimacy ────────────────────────────────────────────
