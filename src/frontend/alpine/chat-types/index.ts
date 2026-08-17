@@ -17,6 +17,22 @@ export type {
 } from "./messages";
 export type { ChatMoodState, } from "./mood-state";
 export type { ChatMovementState, MovementEvent, } from "./movement-state";
+export type {
+  NpcData,
+  NpcDisposition,
+  NpcFaction,
+  NpcFactionMember,
+  NpcFactionQuest,
+  NpcInventoryItem,
+  NpcKarma,
+  NpcKarmaCategory,
+  NpcRelationship,
+  NpcScheduleEntry,
+  NpcStat,
+  RelationshipType,
+  StandingTier,
+} from "./npc";
+export type { ChatNpcState, } from "./npc-state";
 export type { ChatParticipantsState, } from "./participants-state";
 export type { ChatPinRow, ChatPinsState, } from "./pins-state";
 export type { EquipmentSlot, RpgStatBlock, RpgStats, StatusEffect, } from "./rpg";
