@@ -540,6 +540,15 @@ export const SCHEMA = new SchemaManifest()
     discovered_at: col("text", { notNull: true, },),
     mastery_level: col("integer", { notNull: true, hasDefault: true, },),
   },)
+  .table("seed_audit", {
+    id: col("text", { primaryKey: true, },),
+    seed_type: col("text", { notNull: true, },),
+    seed_id: col("text", { notNull: true, },),
+    seeded_by: col("text", { notNull: true, },),
+    seeded_at: col("text", { notNull: true, },),
+    environment: col("text", { notNull: true, },),
+    metadata: col("text",),
+  },)
   .table("shadow_notes", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),

@@ -321,7 +321,19 @@ export const TurnTypeSchema = t.UnionEnum([
   "quest_update",
   "world_event",
 ],);
-export const UserRoleSchema = t.UnionEnum(["admin", "user", "viewer", "solo",],);
+export const UserRoleSchema = t.UnionEnum([
+  "admin",
+  "moderator",
+  "user",
+  "creator",
+  "player",
+  "viewer",
+  "guest",
+  "bot",
+  "tester",
+  "custom",
+  "solo",
+],);
 export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated",],);
 export const VisibilityOverrideSchema = t.UnionEnum(["none", "private", "unlisted", "public",],);
 export const VnChoiceStatusSchema = t.UnionEnum(["available", "selected",],);
@@ -1944,4 +1956,14 @@ export const ModelCapabilitiesSchema = t.Object({
   owned_by: t.Optional(t.String(),),
   user_override: t.Optional(t.Number(),),
   notes: t.Optional(t.String(),),
+},);
+
+// ── seed_audit ────────────────────────────────────────────
+export const SeedAuditSchema = t.Object({
+  seed_type: t.String(),
+  seed_id: t.String(),
+  seeded_by: t.String(),
+  seeded_at: t.String(),
+  environment: t.String(),
+  metadata: t.Optional(t.String(),),
 },);

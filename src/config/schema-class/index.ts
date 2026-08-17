@@ -28,6 +28,7 @@ import { HOOKS_DEFAULTS, } from "./hooks";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
+import { SEEDING_DEFAULTS, } from "./seeding";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
 import { TUI_DEFAULTS, } from "./tui";
@@ -72,6 +73,7 @@ export const createConfigSchema = () => {
     headers: deepClone(HEADERS_SECTION_DEFAULTS,),
     dynamicResponse: deepClone(DYNAMIC_RESPONSE_DEFAULTS,),
     frontend: deepClone(FRONTEND_DEFAULTS,),
+    seeding: deepClone(SEEDING_DEFAULTS,),
   };
 
   return {
@@ -97,6 +99,7 @@ export const createConfigSchema = () => {
         headers: sections.headers,
         dynamicResponse: sections.dynamicResponse,
         frontend: sections.frontend,
+        seeding: sections.seeding,
         templates: TEMPLATES_DEFAULTS,
         characters: CHARACTERS_DEFAULTS,
       };

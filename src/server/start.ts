@@ -17,6 +17,7 @@ import { initializeProviders, } from "../generation";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
 import { runMigrations, } from "../db/migrate";
+import { seedConfiguredUsers, } from "../seeding";
 import { seedDefaultActors, } from "../db/seed";
 import { serve, } from "bun";
 /**
@@ -112,6 +113,7 @@ export async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
   await seedDefaultActors(database, config,);
+  await seedConfiguredUsers(database, config,);
   const { seedChatSetupTemplates, } = await import("../chat/service");
   await seedChatSetupTemplates(database,);
 
