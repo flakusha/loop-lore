@@ -2500,6 +2500,7 @@ export async function insertCharacterStats(
     data_version?: Generated<number>;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    combat_alignment?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("character_stats",).values({
