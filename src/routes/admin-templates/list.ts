@@ -8,7 +8,7 @@ import {
   BUILTIN_PROFILES,
   DEFAULT_PROFILE_REGISTRY,
 } from "../../generation/prompt-templates";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { countTemplates, loadStoredTemplates, log, mergeProfiles, } from "./shared";
 
@@ -22,7 +22,7 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        if (!isAdminRole(ctx.userRole as string | null,)) {
+        if (!can(ctx.userRole as string | null, "admin.settings",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -64,7 +64,7 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        if (!isAdminRole(ctx.userRole as string | null,)) {
+        if (!can(ctx.userRole as string | null, "admin.settings",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -94,7 +94,7 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        if (!isAdminRole(ctx.userRole as string | null,)) {
+        if (!can(ctx.userRole as string | null, "admin.settings",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
