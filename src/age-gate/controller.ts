@@ -21,7 +21,7 @@ import type { AgeGateConfig, } from "../config/schema";
 import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { isAdminRole, } from "../middleware/admin-gate";
+import { can, } from "../users/permissions";
 import * as AgeGateService from "./service";
 
 import { jsonError, jsonResponse, } from "../routes/http-utils";
@@ -147,7 +147,7 @@ export async function handleAccept({ database, userId, body, }: HandleAcceptOpts
  * Returns the current runtime age gate config (admin-only).
  */
 export function handleAdminGetConfig(userRole: string | null | undefined,): Response {
-  if (!isAdminRole(userRole,)) {
+  if (!can(userRole, "admin.settings",)) {
     return jsonError("Forbidden", 403,);
   }
 
@@ -164,7 +164,7 @@ export function handleAdminGetConfig(userRole: string | null | undefined,): Resp
  *   { "enabled": true, "minimumAge": 18, "mode": "self-declaration" }
  */
 export function handleAdminUpdateConfig(userRole: string | null | undefined, body: unknown,): Response {
-  if (!isAdminRole(userRole,)) {
+  if (!can(userRole, "admin.settings",)) {
     return jsonError("Forbidden", 403,);
   }
 

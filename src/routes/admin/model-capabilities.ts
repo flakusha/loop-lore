@@ -8,7 +8,7 @@ import {
   resolveModelCapabilities,
   setModelOverride,
 } from "../../admin/model-capabilities";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
@@ -27,7 +27,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       // ── List all ───────────────────────────────────────────
       .get(`${prefix}/admin/model-capabilities`, async (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -48,7 +48,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       // ── Resolve one model ──────────────────────────────────
       .get(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
         const { userRole, params, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -81,7 +81,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       // ── Set user override ──────────────────────────────────
       .patch(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
         const { userRole, params, body, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -136,7 +136,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       // ── Clear user override ────────────────────────────────
       .delete(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
         const { userRole, params, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,

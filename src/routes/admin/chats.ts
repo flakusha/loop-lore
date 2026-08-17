@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import {
   AdminChatUpdateBody,
   ChatIdParams,
@@ -22,7 +22,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/chats`,
         async (ctx: any,) => {
           const { userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -73,7 +73,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/chats/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -118,7 +118,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/chats/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -153,7 +153,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/chats/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,

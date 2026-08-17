@@ -3,7 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { deleteConfig, getAllConfig, setConfig, } from "../../admin/config";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { AdminSystemConfigBody, ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
@@ -14,7 +14,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       // ── System configuration ───────────────────────────────
       .get(`${prefix}/admin/system-config`, async (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -33,7 +33,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/system-config`,
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -48,7 +48,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       )
       .delete(`${prefix}/admin/system-config/:key`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,

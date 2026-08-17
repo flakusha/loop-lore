@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import {
   EmotionDefinitionCreateBody,
   ErrorResponse,
@@ -59,7 +59,7 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        if (!isAdminRole(ctx.userRole as string | null,)) {
+        if (!can(ctx.userRole as string | null, "admin.settings",)) {
           return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, },);
         }
 
