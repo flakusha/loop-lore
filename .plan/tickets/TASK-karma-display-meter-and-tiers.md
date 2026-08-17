@@ -1,8 +1,10 @@
 # TASK: Karma Display — meter and tiers
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
+**Branch:** npc-management-ui
+**Commit:** dc19c9e
 
 ## Summary
 
@@ -10,6 +12,6 @@ Implement karma meter, standing tiers, category breakdown, and title display. Ph
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing (unit + e2e gates green)
+- [x] Documentation updated (epic status updated)
