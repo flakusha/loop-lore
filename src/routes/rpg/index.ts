@@ -12,6 +12,7 @@ import { replayabilityRoutes, } from "./replayability";
 import { skillsRoutes, } from "./skills";
 import { skillsProgressionRoutes, } from "./skills-progression";
 import { statsRoutes, } from "./stats";
+import { statsActorRoutes, } from "./stats-actor";
 import type { HandlerOpts, } from "./types";
 import { worldLocationTraitsRoutes, } from "./world-location-traits";
 import { xpLootRoutes, } from "./xp-loot";
@@ -60,6 +61,7 @@ export function rpgRoutes(opts: HandlerOpts,) {
     new Elysia({ name: "rpg", },)
       .use(diceRoutes(opts,),)
       .use(statsRoutes(opts,),)
+      .use(statsActorRoutes(opts,),)
       .use(achievementsRoutes(opts,),)
       .use(achievementsPlayerRoutes(opts,),)
       .use(replayabilityRoutes(opts,),)
