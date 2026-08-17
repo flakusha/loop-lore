@@ -62,6 +62,13 @@ export interface LlmTemplateConfig {
   merge: MergeStrategy;
   systemPrompts: LlmSystemPrompts;
   chatFormats: Record<string, ChatFormatTemplate>;
+  /**
+   * Per-entity-kind prompt templates for the `/create` assistant command.
+   * Keyed by canonical entity kind (`character | location | world | item`).
+   * Overrides the built-in default prompt for that kind; the value should
+   * contain a `{description}` placeholder.
+   */
+  entityGeneration?: Partial<Record<"character" | "location" | "world" | "item", string>>;
 }
 
 // ── SD Templates ────────────────────────────────────────────
