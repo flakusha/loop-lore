@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
@@ -24,7 +24,7 @@ export function statsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       // ── Stats ──────────────────────────────────────────────
       .get(`${prefix}/admin/stats`, async (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,

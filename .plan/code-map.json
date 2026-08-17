@@ -8050,18 +8050,10 @@
   "src/frontend/npc/faction-relations.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-faction-relations-list-and-standing.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-relations.md"
     }
   ],
   "src/frontend/npc/karma-display.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-karma-display-meter-and-tiers.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-karma-display.md"
@@ -8070,27 +8062,13 @@
   "src/frontend/npc/npc-details.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-npc-viewer-list-details-schedule.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-viewer.md"
     }
   ],
   "src/frontend/npc/npc-viewer.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-npc-viewer-list-details-schedule.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-viewer.md"
-    }
-  ],
-  "src/frontend/npc/relationship-map.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-relationship-map-visual-graph.md"
     }
   ],
   "src/frontend/npc/standing-bar.ts": [

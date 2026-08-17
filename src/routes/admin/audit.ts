@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, PaginationQuery, } from "../../validation/schemas";
 import { AdminAuditRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, parsePagination, } from "../http-utils";
@@ -16,7 +16,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/audit`,
         async (ctx: any,) => {
           const { userRole, request, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -85,7 +85,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       )
       .get(`${prefix}/admin/audit/:id`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
