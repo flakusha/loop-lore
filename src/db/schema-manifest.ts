@@ -214,6 +214,7 @@ export const SCHEMA = new SchemaManifest()
     deadline: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    trade_type: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("crafting_recipe_materials", {
     id: col("text", { primaryKey: true, },),
