@@ -18,7 +18,7 @@ import { rpgRoutes, } from "./index";
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-rpg-stats", },);
   if (userId) {
-    app.derive(() => ({ userId, userRole, }),);
+    app.derive(() => ({ userId, userRole, }));
   }
   return app.use(rpgRoutes({ database: db, config: {} as never, },),);
 }
@@ -34,32 +34,32 @@ describe("RPG stats routes", () => {
     ({ db, sqlite, } = await createTestDb());
     await insertUsers(db, "owner", "Owner", { id: "user-1" as never, },);
     await insertUsers(db, "other", "Other", { id: "user-2" as never, },);
-    await insertActors(db, "Hero", { id: ACTOR_ID as never as never, owner_id: "user-1" as never, },);
-    await insertActors(db, "Villain", { id: OTHER_ACTOR as never as never, owner_id: "user-2" as never, },);
+    await insertActors(db, "Hero", { id: ACTOR_ID as never, owner_id: "user-1" as never, },);
+    await insertActors(db, "Villain", { id: OTHER_ACTOR as never, owner_id: "user-2" as never, },);
   },);
 
-  afterAll(() => sqlite.close(),);
+  afterAll(() => sqlite.close());
 
   test("GET requires auth", async () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("GET returns 404 when no stats exist", async () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("GET returns 404 for another user's actor", async () => {
     const res = await makeApp(db, "user-2", "user",).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("POST creates stats and returns 201", async () => {
     const res = await makeApp(db, "user-1", "user",).handle(
@@ -78,7 +78,7 @@ describe("RPG stats routes", () => {
     const body = await res.json() as { id: string; actorId: string };
     expect(body.id,).toBeDefined();
     expect(body.actorId,).toBe(ACTOR_ID,);
-  },);
+  });
 
   test("GET returns stats after creation", async () => {
     const res = await makeApp(db, "user-1", "user",).handle(
@@ -89,7 +89,7 @@ describe("RPG stats routes", () => {
     expect(body.hp,).toBe(20,);
     expect(body.maxHp,).toBe(20,);
     expect(body.str,).toBe(16,);
-  },);
+  });
 
   test("POST returns 409 on duplicate", async () => {
     const res = await makeApp(db, "user-1", "user",).handle(
@@ -100,7 +100,7 @@ describe("RPG stats routes", () => {
       },),
     );
     expect(res.status,).toBe(409,);
-  },);
+  });
 
   test("PATCH updates stats", async () => {
     const res = await makeApp(db, "user-1", "user",).handle(
@@ -115,7 +115,7 @@ describe("RPG stats routes", () => {
     expect(body.hp,).toBe(15,);
     expect(body.str,).toBe(18,);
     expect(body.maxHp,).toBe(20,); // unchanged
-  },);
+  });
 
   test("PATCH returns 404 for missing stats", async () => {
     const res = await makeApp(db, "user-2", "user",).handle(
@@ -126,7 +126,7 @@ describe("RPG stats routes", () => {
       },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("admin can access any actor's stats", async () => {
     const res = await makeApp(db, "admin-user", "admin",).handle(
@@ -135,5 +135,5 @@ describe("RPG stats routes", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { hp: number };
     expect(body.hp,).toBe(15,); // updated from PATCH test
-  },);
-},);
+  });
+});
