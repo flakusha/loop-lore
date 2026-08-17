@@ -461,6 +461,7 @@ export const WorldsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   nsfw_override: t.Optional(t.String(),),
+  rpg_enabled: t.Optional(t.Number(),),
 },);
 
 // ── locations ────────────────────────────────────────────
@@ -1678,6 +1679,13 @@ export const CharacterStatsSchema = t.Object({
   data_version: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  behavior_profile: t.Optional(t.String(),),
+  evasiveness: t.Optional(t.Number(),),
+  cooperativeness: t.Optional(t.Number(),),
+  aggression_threshold: t.Optional(t.Number(),),
+  character_state: t.Optional(t.String(),),
+  conditions: t.Optional(t.String(),),
+  active_effects: t.Optional(t.String(),),
   combat_alignment: t.Optional(t.String(),),
 },);
 

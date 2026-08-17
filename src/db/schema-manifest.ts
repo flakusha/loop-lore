@@ -982,6 +982,13 @@ export const SCHEMA = new SchemaManifest()
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    behavior_profile: col("text", { hasDefault: true, },),
+    evasiveness: col("real", { hasDefault: true, },),
+    cooperativeness: col("real", { hasDefault: true, },),
+    aggression_threshold: col("real", { hasDefault: true, },),
+    character_state: col("text", { notNull: true, hasDefault: true, },),
+    conditions: col("text", { notNull: true, hasDefault: true, },),
+    active_effects: col("text", { notNull: true, hasDefault: true, },),
     combat_alignment: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("character_world_setup", {
@@ -1553,6 +1560,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     nsfw_override: col("text",),
+    rpg_enabled: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {
