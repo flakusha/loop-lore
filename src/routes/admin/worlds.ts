@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, PaginationQuery, WorldIdParams, } from "../../validation/schemas";
 import { AdminPaginatedEnvelope, AdminWorldRow, } from "../../validation/schemas/responses";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
@@ -16,7 +16,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/worlds`,
         async (ctx: any,) => {
           const { userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -62,7 +62,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/worlds/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -100,7 +100,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/worlds/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,

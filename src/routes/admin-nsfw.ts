@@ -18,6 +18,7 @@ import { setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { getRuntimeNsfwConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-config";
+import { can, } from "../users/permissions";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 function log(): Logger {
@@ -40,7 +41,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      if (!can(userRole, "admin.settings",)) {
+        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+      }
 
       try {
         const runtime = getRuntimeNsfwConfig();
@@ -68,7 +71,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const userRole = ctx.userRole as string | null;
-        if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+        if (!can(userRole, "admin.settings",)) {
+          return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+        }
 
         const body = ctx.body as {
           allowNsfw?: boolean;
@@ -108,7 +113,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
+      if (!can(userRole, "admin.settings",)) {
+        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+      }
 
       try {
         const policies = await database
