@@ -253,6 +253,49 @@ const actionHandlers: Record<string, ActionHandler> = {
   "battle-ended": (ctx,) => {
     (ctx as { renderBattlePanel(view: unknown,): void }).renderBattlePanel(null,);
   },
+  "create-entity-preview": async (ctx, payload, chatId,) => {
+    if (!payload || typeof payload !== "object") { return; }
+    const draft = payload as {
+      kind?: string;
+      data?: Record<string, unknown>;
+      description?: string;
+      worldId?: string | null;
+      userId?: string | null;
+    };
+    const name = (draft.data?.name as string) ?? "Unnamed";
+    const confirmed = globalThis.confirm(
+      t("toasts.confirmCreateEntity", { kind: draft.kind ?? "entity", name, },),
+    );
+    if (!confirmed) {
+      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.createEntityCancelled",), },);
+      return;
+    }
+    try {
+      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({
+          kind: draft.kind,
+          data: draft.data,
+          description: draft.description ?? "",
+          worldId: draft.worldId ?? null,
+          userId: draft.userId ?? null,
+        },),
+      },);
+      if (res.ok) {
+        ctx.$dispatch?.("show-toast", { type: "success", message: t("toasts.entityCreated", { name, },), },);
+        await (ctx as { loadMessages(): Promise<void> }).loadMessages();
+      } else {
+        const err = await res.json();
+        ctx.$dispatch?.("show-toast", {
+          type: "error",
+          message: err.error || t("toasts.failedCreateEntity",),
+        },);
+      }
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCreatingEntity",), },);
+    }
+  },
 };
 
 /** Render the battle panel from a `battle-*` command action payload. */
