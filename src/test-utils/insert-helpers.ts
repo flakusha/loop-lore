@@ -3012,3 +3012,24 @@ export async function insertModelCapabilities(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a seed_audit row. */
+export async function insertSeedAudit(
+  db: Db,
+  seed_type: string,
+  seed_id: string,
+  seeded_by: string,
+  seeded_at: string,
+  environment: string,
+  opts?: { id?: Generated<string>; metadata?: string | null },
+): Promise<void> {
+  await db.insertInto("seed_audit",).values({
+    id: crypto.randomUUID(),
+    seed_type,
+    seed_id,
+    seeded_by,
+    seeded_at,
+    environment,
+    ...opts,
+  } as any,).execute();
+}

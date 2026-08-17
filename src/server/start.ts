@@ -15,6 +15,7 @@ import { initDefaultHooks, } from "../generation/hooks";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
+import { seedConfiguredUsers, } from "../seeding";
 import { ServerExternalManager, } from "../services/server-external-manager";
 import { createRequestHandler, } from "./handler";
 import { initAssetCompression, } from "./init-asset-compression";
@@ -114,6 +115,7 @@ export async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
   await seedDefaultActors(database, config,);
+  await seedConfiguredUsers(database, config,);
   const { seedChatSetupTemplates, } = await import("../chat/service");
   await seedChatSetupTemplates(database,);
 
