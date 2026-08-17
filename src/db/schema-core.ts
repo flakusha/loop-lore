@@ -770,3 +770,17 @@ export interface SeedAudit {
   environment: string;
   metadata: string | null;
 }
+
+// ── trade_history ────────────────────────────────────────────
+export interface TradeHistory {
+  id: Generated<string>;
+  world_id: string;
+  buyer_actor_id: string;
+  seller_actor_id: string;
+  price: Generated<number>;
+  currency_type: Generated<string>;
+  items_offered: Generated<string>;
+  items_requested: Generated<string>;
+  trade_type: Generated<string>;
+  created_at: string;
+}
