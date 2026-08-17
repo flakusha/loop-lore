@@ -11,6 +11,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
+import { can, } from "../users/permissions";
 import { AdminOverrideCreateBody, ErrorResponse, Id, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
@@ -27,7 +28,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api"
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (userRole !== "admin") {
+      if (!can(userRole, "admin.settings",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -56,7 +57,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api"
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (userRole !== "admin") {
+      if (!can(userRole, "admin.settings",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -88,7 +89,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api"
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (userRole !== "admin") {
+      if (!can(userRole, "admin.settings",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -134,7 +135,7 @@ export function adminCharacterOverridesRoutes(opts: HandlerOpts, prefix = "/api"
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
-      if (userRole !== "admin") {
+      if (!can(userRole, "admin.settings",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,

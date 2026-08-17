@@ -10,7 +10,7 @@ import {
   setModelRoleOverride,
   VALID_ROLES,
 } from "../../admin/model-roles";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import {
   AdminModelRoleOverrideBody,
   ErrorResponse,
@@ -25,7 +25,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       // ── Model role overrides ───────────────────────────────
       .get(`${prefix}/admin/model-roles`, async (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -45,7 +45,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       .get(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -76,7 +76,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/model-roles/:role`,
         async (ctx: any,) => {
           const { params: p, body, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -113,7 +113,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       )
       .delete(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
