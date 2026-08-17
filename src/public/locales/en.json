@@ -1199,7 +1199,15 @@
     "failedSave": "Failed to save",
     "failedCreate": "Failed to create",
     "quickRepliesSaved": "Quick-reply buttons saved",
-    "quickRepliesSaveFailed": "Failed to save quick-reply buttons"
+    "quickRepliesSaveFailed": "Failed to save quick-reply buttons",
+    "wizardConfirmed": "Entity created from wizard",
+    "wizardConfirmFailed": "Failed to save entity from wizard"
+  },
+  "wizard": {
+    "previewTitle": "Create {type} — Preview",
+    "confirm": "Create",
+    "cancel": "Cancel",
+    "editHint": "Edit fields below, then confirm to save."
   },
   "status": {
     "characterResponding": "Character is responding...",

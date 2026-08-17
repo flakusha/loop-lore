@@ -278,4 +278,15 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   _quickEmojis: string[];
   showReactionPicker(msgId: string, event: Event,): void;
   closeReactionPicker(): void;
+  // Creation wizard state — preview panel for LLM-generated entity drafts
+  wizardDraft: {
+    wizardId: string;
+    entityType: string;
+    label: string;
+    fields: Record<string, string | undefined>;
+  } | null;
+  wizardPreviewOpen: boolean;
+  confirmWizard(wizardId: string,): Promise<void>;
+  cancelWizard(wizardId: string,): Promise<void>;
+  updateWizardField(field: string, value: string,): void;
 }
