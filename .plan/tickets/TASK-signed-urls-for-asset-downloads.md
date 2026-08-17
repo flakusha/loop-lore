@@ -39,7 +39,7 @@ Generate signed, time-limited URLs for secure asset downloads. Prevents direct f
 - [x] Permission checks before URL generation
 - [x] Asset ownership verification
 - [x] Download endpoints use signed URLs
-- [~] Frontend requests signed URLs for assets — mechanism shipped; frontend adoption (download flow + in-chat linkage) lands with Item 7 side panel
+- [x] Frontend requests signed URLs for assets — standalone gallery download/copy/preview now request signed URLs (`c6-signed-urls` worktree, 2026-08-17): `downloadAsset`, `copyAssetUrl`, and media preview `<img>/<audio>/<video>` go through `POST /api/assets/:id/signed-url/:action`. In-chat media preview linkage remains Item 7 (side panel).
 - [x] Unit tests for URL signing
 - [x] Integration tests for download workflow
 
@@ -58,6 +58,6 @@ Generate signed, time-limited URLs for secure asset downloads. Prevents direct f
 
 ## Notes
 
-- Frontend `feFetch`/`<img>` integration deferred to Item 7 (in-chat asset preview + linkage side panel), which builds on this mechanism.
+- Frontend adoption (download flow) shipped 2026-08-17 in `c6-signed-urls` worktree: `src/frontend/pages/gallery.ts` gains `requestSignedUrl()` + `ensurePreviewModal()` (lazy-mounts the gallery preview modal). `downloadAsset` POSTs `signed-url/download`, `copyAssetUrl`/media preview POST `signed-url/raw`; both fall back to the direct endpoint when generation/access is denied so unconfigured secrets and existing sessions keep working. In-chat asset linkage (Item 7 side panel) still builds on this mechanism separately.
 - `schemas:check` fails on dev baseline with a pre-existing `ConfigSchema`-as-value import bug in `scripts/check-schemas.ts` (type exported, imported as value) — not introduced here.
 - Consider CDN integration for asset delivery (future).
