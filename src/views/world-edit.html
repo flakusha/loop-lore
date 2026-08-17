@@ -63,6 +63,13 @@
               >
                 {{{t("worlds.tabInvites")}}}
               </button>
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeTab === 'npcs' }"
+                @click="activeTab = 'npcs'"
+              >
+                NPCs
+              </button>
             </div>
 
             <!-- General Tab -->
@@ -712,6 +719,438 @@
                     </button>
                   </div>
                 </template>
+              </div>
+            </div>
+
+            <!-- NPCs Tab -->
+            <div x-show="activeTab === 'npcs'" x-data="npcManagementState()">
+              <!-- Sub-tab bar -->
+              <div class="world-edit-tabs" style="margin-bottom: var(--space-4)">
+                <button
+                  class="world-edit-tab"
+                  :class="{ active: npcActivePanel === 'viewer' }"
+                  @click="npcActivePanel = 'viewer'"
+                >
+                  NPCs
+                </button>
+                <button
+                  class="world-edit-tab"
+                  :class="{ active: npcActivePanel === 'relationships' }"
+                  @click="npcActivePanel = 'relationships'"
+                >
+                  Relationships
+                </button>
+                <button
+                  class="world-edit-tab"
+                  :class="{ active: npcActivePanel === 'factions' }"
+                  @click="npcActivePanel = 'factions'"
+                >
+                  Factions
+                </button>
+                <button
+                  class="world-edit-tab"
+                  :class="{ active: npcActivePanel === 'karma' }"
+                  @click="npcActivePanel = 'karma'"
+                >
+                  Karma
+                </button>
+              </div>
+
+              <!-- NPC Viewer Panel -->
+              <div x-show="npcActivePanel === 'viewer'">
+                <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4)">
+                  <input
+                    class="form-input"
+                    type="text"
+                    x-model="npcSearch"
+                    placeholder="Search NPCs..."
+                    style="flex: 1"
+                  />
+                  <select class="form-input" x-model="npcFilter" style="width: auto">
+                    <option value="all">All</option>
+                    <option value="hostile">Hostile</option>
+                    <option value="unfriendly">Unfriendly</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="honored">Honored</option>
+                    <option value="revered">Revered</option>
+                    <option value="exalted">Exalted</option>
+                  </select>
+                </div>
+
+                <div x-show="loadingNpcs" class="empty-state" style="padding: var(--space-8)">
+                  <div class="icon">⏳</div>
+                  <div class="title">Loading NPCs...</div>
+                </div>
+
+                <div x-show="!loadingNpcs" style="display: grid; grid-template-columns: 240px 1fr; gap: var(--space-4)">
+                  <!-- NPC List -->
+                  <div style="border: 1px solid var(--border-default); border-radius: var(--radius-md); overflow: hidden">
+                    <template x-for="npc in filteredNpcs" :key="npc.id">
+                      <div
+                        style="padding: var(--space-3); cursor: pointer; border-bottom: 1px solid var(--border-default)"
+                        :style="{ background: selectedNpcId === npc.id ? 'var(--bg-elevated)' : '' }"
+                        @click="selectNpc(npc.id)"
+                      >
+                        <div style="display: flex; justify-content: space-between; align-items: center">
+                          <span style="font-weight: 600" x-text="npc.name"></span>
+                          <span
+                            style="font-size: var(--fs-sm); padding: 2px 8px; border-radius: var(--radius-sm)"
+                            :style="{ color: getDispositionColor(npc.disposition), border: '1px solid ' + getDispositionColor(npc.disposition) }"
+                            x-text="getDispositionLabel(npc.disposition)"
+                          ></span>
+                        </div>
+                        <div style="font-size: var(--fs-sm); color: var(--text-secondary)" x-text="npc.role"></div>
+                      </div>
+                    </template>
+                    <div
+                      x-show="filteredNpcs.length === 0"
+                      style="padding: var(--space-4); text-align: center; color: var(--text-muted)"
+                    >
+                      No NPCs found
+                    </div>
+                  </div>
+
+                  <!-- NPC Details -->
+                  <div
+                    x-show="selectedNpc"
+                    style="border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-4)"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+                      <h3 style="margin: 0" x-text="selectedNpc?.name"></h3>
+                      <span
+                        style="font-size: var(--fs-sm); padding: 2px 8px; border-radius: var(--radius-sm)"
+                        :style="{ color: getDispositionColor(selectedNpc?.disposition ?? ''), border: '1px solid ' + getDispositionColor(selectedNpc?.disposition ?? '') }"
+                        x-text="getDispositionLabel(selectedNpc?.disposition ?? '') + ' (' + (selectedNpc?.dispositionScore ?? 0) + ')'"
+                      ></span>
+                    </div>
+
+                    <div style="display: grid; gap: var(--space-3)">
+                      <div>
+                        <span style="font-weight: 600">Role:</span>
+                        <span x-text="selectedNpc?.role"></span>
+                      </div>
+                      <div>
+                        <span style="font-weight: 600">Location:</span>
+                        <span x-text="selectedNpc?.location"></span>
+                      </div>
+                      <div x-show="selectedNpc?.description">
+                        <span style="font-weight: 600">Description:</span>
+                        <span x-text="selectedNpc?.description"></span>
+                      </div>
+
+                      <!-- Stats -->
+                      <div x-show="selectedNpc?.stats && selectedNpc.stats.length > 0">
+                        <div style="font-weight: 600; margin-bottom: var(--space-2)">Stats</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-2)">
+                          <template x-for="stat in selectedNpc?.stats ?? []" :key="stat.name">
+                            <div style="padding: var(--space-2); background: var(--bg-elevated); border-radius: var(--radius-sm); text-align: center">
+                              <div style="font-size: var(--fs-sm); color: var(--text-secondary)" x-text="stat.name">
+                              </div>
+                              <div style="font-size: var(--fs-lg); font-weight: 700" x-text="stat.value"></div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+
+                      <!-- Inventory -->
+                      <div x-show="selectedNpc?.inventory && selectedNpc.inventory.length > 0">
+                        <div style="font-weight: 600; margin-bottom: var(--space-2)">Inventory</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--space-2)">
+                          <template x-for="item in selectedNpc?.inventory ?? []" :key="item.id">
+                            <span
+                              style="padding: var(--space-1) var(--space-2); background: var(--bg-elevated); border-radius: var(--radius-sm); font-size: var(--fs-sm)"
+                            >
+                              <span x-text="item.name"></span>
+                              <span
+                                x-show="item.quantity > 1"
+                                style="color: var(--text-secondary)"
+                                x-text="' ×' + item.quantity"
+                              ></span>
+                            </span>
+                          </template>
+                        </div>
+                      </div>
+
+                      <!-- Schedule -->
+                      <div x-show="selectedNpc?.schedule && selectedNpc.schedule.length > 0">
+                        <div style="font-weight: 600; margin-bottom: var(--space-2)">Schedule</div>
+                        <div style="display: grid; gap: var(--space-1)">
+                          <template
+                            x-for="entry in selectedNpc?.schedule ?? []"
+                            :key="entry.startTime + entry.activity"
+                          >
+                            <div style="display: flex; gap: var(--space-3); font-size: var(--fs-sm)">
+                              <span
+                                style="color: var(--text-secondary); min-width: 100px"
+                                x-text="entry.startTime + '–' + entry.endTime"
+                              ></span>
+                              <span x-text="entry.activity"></span>
+                              <span style="color: var(--text-muted)" x-text="'(' + entry.location + ')'"></span>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    x-show="!selectedNpc && !loadingNpcs"
+                    style="grid-column: 2; text-align: center; padding: var(--space-8); color: var(--text-muted)"
+                  >
+                    Select an NPC to view details
+                  </div>
+                </div>
+              </div>
+
+              <!-- Relationship Map Panel -->
+              <div x-show="npcActivePanel === 'relationships'">
+                <div x-show="loadingRelationships" class="empty-state" style="padding: var(--space-8)">
+                  <div class="icon">⏳</div>
+                  <div class="title">Loading relationships...</div>
+                </div>
+
+                <div x-show="!loadingRelationships">
+                  <h4 style="margin: 0 0 var(--space-3)">Player Relationships</h4>
+                  <div style="display: grid; gap: var(--space-3); margin-bottom: var(--space-6)">
+                    <template x-for="rel in playerRelationships()" :key="rel.id">
+                      <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md)">
+                        <div style="flex: 1">
+                          <span style="font-weight: 600">Player</span>
+                          <span style="color: var(--text-secondary)"> → </span>
+                          <span style="font-weight: 600" x-text="rel.toName"></span>
+                        </div>
+                        <span
+                          style="padding: 2px 8px; border-radius: var(--radius-sm); font-size: var(--fs-sm)"
+                          :style="{ color: getRelationshipColor(rel.type), border: '1px solid ' + getRelationshipColor(rel.type) }"
+                          x-text="rel.type"
+                        ></span>
+                        <span
+                          style="font-size: var(--fs-sm); color: var(--text-secondary)"
+                          x-text="getStrengthLabel(rel.strength) + ' (' + rel.strength + ')'"
+                        ></span>
+                      </div>
+                    </template>
+                  </div>
+
+                  <h4 style="margin: 0 0 var(--space-3)">NPC-to-NPC Relationships</h4>
+                  <div style="display: grid; gap: var(--space-3)">
+                    <template x-for="rel in npcRelationships()" :key="rel.id">
+                      <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md)">
+                        <div style="flex: 1">
+                          <span style="font-weight: 600" x-text="rel.fromName"></span>
+                          <span style="color: var(--text-secondary)"> → </span>
+                          <span style="font-weight: 600" x-text="rel.toName"></span>
+                        </div>
+                        <span
+                          style="padding: 2px 8px; border-radius: var(--radius-sm); font-size: var(--fs-sm)"
+                          :style="{ color: getRelationshipColor(rel.type), border: '1px solid ' + getRelationshipColor(rel.type) }"
+                          x-text="rel.type"
+                        ></span>
+                        <span
+                          style="font-size: var(--fs-sm); color: var(--text-secondary)"
+                          x-text="getStrengthLabel(rel.strength) + ' (' + rel.strength + ')'"
+                        ></span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Faction Relations Panel -->
+              <div x-show="npcActivePanel === 'factions'">
+                <div x-show="loadingFactions" class="empty-state" style="padding: var(--space-8)">
+                  <div class="icon">⏳</div>
+                  <div class="title">Loading factions...</div>
+                </div>
+
+                <div
+                  x-show="!loadingFactions"
+                  style="display: grid; grid-template-columns: 240px 1fr; gap: var(--space-4)"
+                >
+                  <!-- Faction List -->
+                  <div style="border: 1px solid var(--border-default); border-radius: var(--radius-md); overflow: hidden">
+                    <template x-for="faction in factions" :key="faction.id">
+                      <div
+                        style="padding: var(--space-3); cursor: pointer; border-bottom: 1px solid var(--border-default)"
+                        :style="{ background: selectedFactionId === faction.id ? 'var(--bg-elevated)' : '' }"
+                        @click="selectFaction(faction.id)"
+                      >
+                        <div style="display: flex; justify-content: space-between; align-items: center">
+                          <span>
+                            <span x-text="faction.icon"></span>
+                            <span style="font-weight: 600" x-text="faction.name"></span>
+                          </span>
+                          <span
+                            style="font-size: var(--fs-sm); padding: 2px 8px; border-radius: var(--radius-sm)"
+                            :style="{ color: getFactionStandingColor(faction.standing), border: '1px solid ' + getFactionStandingColor(faction.standing) }"
+                            x-text="getFactionTier(faction.standing) + ' (' + (faction.standing > 0 ? '+' : '') + faction.standing + ')'"
+                          ></span>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+
+                  <!-- Faction Details -->
+                  <div
+                    x-show="selectedFaction"
+                    style="border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-4)"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+                      <h3 style="margin: 0">
+                        <span x-text="selectedFaction?.icon"></span>
+                        <span x-text="selectedFaction?.name"></span>
+                      </h3>
+                      <span
+                        style="font-size: var(--fs-sm); padding: 2px 8px; border-radius: var(--radius-sm)"
+                        :style="{ color: getFactionStandingColor(selectedFaction?.standing ?? 0), border: '1px solid ' + getFactionStandingColor(selectedFaction?.standing ?? 0) }"
+                        x-text="getFactionTier(selectedFaction?.standing ?? 0) + ' (' + ((selectedFaction?.standing ?? 0) > 0 ? '+' : '') + (selectedFaction?.standing ?? 0) + ')'"
+                      ></span>
+                    </div>
+
+                    <div style="display: grid; gap: var(--space-3)">
+                      <div x-show="selectedFaction?.description">
+                        <span style="font-weight: 600">Description:</span>
+                        <span x-text="selectedFaction?.description"></span>
+                      </div>
+
+                      <!-- Benefits -->
+                      <div x-show="selectedFaction?.benefits && selectedFaction.benefits.length > 0">
+                        <div style="font-weight: 600; margin-bottom: var(--space-2)">Benefits</div>
+                        <div style="margin: 0; padding-left: var(--space-5)">
+                          <template x-for="benefit in selectedFaction?.benefits ?? []" :key="benefit">
+                            <div x-text="benefit"></div>
+                          </template>
+                        </div>
+                      </div>
+
+                      <!-- Quests -->
+                      <div x-show="selectedFaction?.quests && selectedFaction.quests.length > 0">
+                        <div style="font-weight: 600; margin-bottom: var(--space-2)">Quests</div>
+                        <div style="display: grid; gap: var(--space-2)">
+                          <template x-for="quest in selectedFaction?.quests ?? []" :key="quest.id">
+                            <div style="display: flex; align-items: center; gap: var(--space-2)">
+                              <span x-text="quest.completed ? '✅' : '⬜'"></span>
+                              <span
+                                :style="{ 'text-decoration': quest.completed ? 'line-through' : 'none', color: quest.completed ? 'var(--text-muted)' : 'inherit' }"
+                                x-text="quest.name"
+                              ></span>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+
+                      <!-- Members -->
+                      <div x-show="selectedFaction?.members && selectedFaction.members.length > 0">
+                        <div style="font-weight: 600; margin-bottom: var(--space-2)">Members</div>
+                        <div style="display: grid; gap: var(--space-2)">
+                          <template x-for="member in selectedFaction?.members ?? []" :key="member.id">
+                            <div style="display: flex; gap: var(--space-2)">
+                              <span style="font-weight: 600" x-text="member.name"></span>
+                              <span style="color: var(--text-secondary)" x-text="'(' + member.role + ')'"></span>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    x-show="!selectedFaction && !loadingFactions"
+                    style="grid-column: 2; text-align: center; padding: var(--space-8); color: var(--text-muted)"
+                  >
+                    Select a faction to view details
+                  </div>
+                </div>
+              </div>
+
+              <!-- Karma Panel -->
+              <div x-show="npcActivePanel === 'karma'">
+                <div x-show="loadingKarma" class="empty-state" style="padding: var(--space-8)">
+                  <div class="icon">⏳</div>
+                  <div class="title">Loading karma...</div>
+                </div>
+
+                <div x-show="!loadingKarma && karma" style="max-width: 600px">
+                  <!-- Overall Karma -->
+                  <div style="margin-bottom: var(--space-6)">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2)">
+                      <h4 style="margin: 0">Overall Karma</h4>
+                      <span
+                        :style="{ color: getKarmaColor(karma?.overall ?? 0) }"
+                        x-text="getKarmaLabel(karma?.overall ?? 0) + ' (' + ((karma?.overall ?? 0) > 0 ? '+' : '') + (karma?.overall ?? 0) + ')'"
+                      ></span>
+                    </div>
+                    <div style="height: 24px; background: var(--bg-elevated); border-radius: var(--radius-md); overflow: hidden">
+                      <div
+                        style="height: 100%; border-radius: var(--radius-md); transition: width 0.3s"
+                        :style="{ width: karmaPercent(karma?.overall ?? 0) + '%', background: getKarmaColor(karma?.overall ?? 0) }"
+                      >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Categories -->
+                  <div style="margin-bottom: var(--space-6)">
+                    <h4 style="margin: 0 0 var(--space-3)">Categories</h4>
+                    <div style="display: grid; gap: var(--space-3)">
+                      <template x-for="cat in karma?.categories ?? []" :key="cat.name">
+                        <div>
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-1)">
+                            <span style="text-transform: capitalize; font-weight: 600" x-text="cat.name"></span>
+                            <span
+                              style="font-size: var(--fs-sm)"
+                              :style="{ color: getKarmaColor(cat.value) }"
+                              x-text="cat.label + ' (' + (cat.value > 0 ? '+' : '') + cat.value + ')'"
+                            ></span>
+                          </div>
+                          <div style="height: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm); overflow: hidden">
+                            <div
+                              style="height: 100%; border-radius: var(--radius-sm); transition: width 0.3s"
+                              :style="{ width: karmaPercent(cat.value) + '%', background: getKarmaColor(cat.value) }"
+                            >
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Titles -->
+                  <div x-show="karma?.titles && karma.titles.length > 0">
+                    <h4 style="margin: 0 0 var(--space-3)">Titles</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2)">
+                      <template x-for="title in karma?.titles ?? []" :key="title">
+                        <span
+                          style="padding: var(--space-1) var(--space-3); background: var(--bg-elevated); border-radius: var(--radius-sm); font-size: var(--fs-sm); border: 1px solid var(--accent-gold)"
+                        >
+                          <span x-text="title"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Standing Tiers Legend -->
+                  <div style="margin-top: var(--space-6)">
+                    <h4 style="margin: 0 0 var(--space-3)">Standing Tiers</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-2)">
+                      <template x-for="tier in standingTiers" :key="tier.name">
+                        <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm)">
+                          <div
+                            style="width: 12px; height: 12px; border-radius: 50%"
+                            :style="{ background: tier.color }"
+                          >
+                          </div>
+                          <span x-text="tier.name"></span>
+                          <span
+                            style="color: var(--text-muted)"
+                            x-text="'(' + tier.min + ' to ' + tier.max + ')'"
+                          ></span>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
