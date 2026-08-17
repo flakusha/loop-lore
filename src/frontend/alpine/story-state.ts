@@ -15,27 +15,17 @@
  * `gm-story-panel.html` and `message-list.html`.
  */
 import { apiFetch, } from "./htmx";
-import { jsonBody, jsonParseOr, } from "./json";
+import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import { storyControl, } from "./story-controls";
 import {
-  fetchChatDetail,
-  fetchLocationState,
-  fetchNpcsAt,
-  fetchParticipants,
-  fetchQuests,
-  fetchStoryTurns,
-  fetchWorldName,
-} from "./story-state/api";
-import {
   activeChatId,
-  mapParticipants,
   parseQuestBanners,
   qualityClass as qualityClassTier,
   questProgressPct as questProgressPercent,
-  summarizeTurns,
   toast,
 } from "./story-state/derived";
+import { loaders, } from "./story-state/loaders";
 import type { QuestBanner, StoryQuest, StoryStateComponent, StoryTurnMeta, } from "./story-state/types";
 export type {
   QuestBanner,
@@ -66,6 +56,7 @@ const log = rootLog.child({ module: "story-state", },);
     error: null,
     _worldId: null,
     _locationId: null,
+    ...loaders,
 
     init(): Promise<void> {
       return this.refresh();
@@ -184,68 +175,8 @@ const log = rootLog.child({ module: "story-state", },);
       return activeChatId();
     },
 
-    async _loadChat(): Promise<void> {
-      const chatId = this.chatId;
-      if (!chatId) { return; }
-      const chat = await fetchChatDetail(chatId,);
-      if (!chat) { return; }
-      const gmConfig = jsonParseOr<{ storyMode?: boolean }>(chat.gm_config ?? "{}", {},);
-      this.isStoryMode = chat.mode === "story" || gmConfig.storyMode === true;
-      this._worldId = chat.world_id ?? null;
-      this._locationId = chat.current_location_id ?? null;
-      if (chat.world_id) {
-        this.worldName = await fetchWorldName(chat.world_id,);
-      }
-    },
-
-    async _loadTurns(): Promise<void> {
-      if (!this.chatId) { return; }
-      const summary = summarizeTurns(await fetchStoryTurns(this.chatId,),);
-      this.turnMeta = summary.turnMeta;
-      this.turnNumber = summary.turnNumber;
-      this.promptSent = summary.promptSent;
-      this.running = summary.running;
-      this.banners = summary.banners;
-    },
-
-    /** Parse quest_progress JSON from a turn into display banners. */
     _parseQuestBanners(raw: string,): QuestBanner[] {
       return parseQuestBanners(raw,);
-    },
-
-    async _loadQuests(): Promise<void> {
-      const worldId = this._worldId;
-      if (!worldId) { return; }
-      this.quests = await fetchQuests(worldId,);
-    },
-
-    async _loadWorldState(): Promise<void> {
-      const locationId = this._locationId;
-      const worldId = this._worldId;
-      if (!locationId) { return; }
-      // Location state (time/weather/atmosphere) — best-effort, tolerate shape drift.
-      const state = await fetchLocationState(locationId,);
-      if (state) {
-        this.worldState.timeOfDay = state.timeOfDay;
-        this.worldState.weather = state.weather;
-        this.worldState.atmosphere = state.atmosphere;
-        this.worldState.description = state.description;
-      }
-      // NPCs present at the current location.
-      if (worldId) {
-        const npcs = await fetchNpcsAt(worldId, locationId,);
-        if (npcs) { this.worldState.npcs = npcs; }
-      }
-    },
-
-    async _loadParticipants(): Promise<void> {
-      const chatId = this.chatId;
-      if (!chatId) { return; }
-      const participants = await fetchParticipants(chatId,);
-      if (!participants) { return; }
-      const mapped = mapParticipants(participants,);
-      this.actors = mapped.actors;
-      this.nextActorName = mapped.nextActorName;
     },
   };
   return component;

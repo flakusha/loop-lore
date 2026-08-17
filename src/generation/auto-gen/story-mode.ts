@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
 import { detectHallucinations, } from "../../chat";
 import type { GmGuidance, } from "../../chat/types/config";
-import type { Config, } from "../../config/schema";
 import {
   ContentEncoding,
   GameMasterType,
@@ -14,7 +12,6 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
-import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { getRuntimeNsfwConfig, } from "../../nsfw/runtime-config";
 import { resolveSystemPrompt, } from "../../prompts";
@@ -22,7 +19,8 @@ import { type GameMasterConfig, GameMasterService, } from "../../story";
 import type { GenerateTextFn, } from "../../story/game-master";
 import { jsonParseOr, uid, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
-import type { GenDeps, } from "./deps";
+import type { StoryModeOpts, } from "./story-mode-opts";
+export type { StoryModeOpts, } from "./story-mode-opts";
 /**
  * Story mode generation using GameMasterService for full GM orchestration.
  *
@@ -34,16 +32,6 @@ import type { GenDeps, } from "./deps";
  * - Quest tracking
  * - Escalation/regeneration handling
  */
-interface StoryModeOpts {
-  database: Kysely<DB>;
-  config: Config;
-  chatId: string;
-  parentMessageId: string | null;
-  userId: string;
-  gmConfig: string | null;
-  worldId: string | null;
-  deps: GenDeps;
-}
 export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, gmConfig, worldId, deps, } = opts;
   const log = getLogger().child({ module: "auto-gen-story", },);
