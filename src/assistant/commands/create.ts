@@ -2,82 +2,81 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /create — Create game entities from a description.
+ * /create — Create game entities from a description, with quality gating.
  *
  * Subcommands:
- *   /create char <desc>   — Create a character
- *   /create loc <desc>    — Create a location
- *   /create world <desc>  — Create a world
- *   /create item <desc>   — Create an item
- *
- * Uses the generation pipeline with entity-specific prompt templates.
- * Results are stored in the appropriate tables (actors, locations, worlds, items).
+ *   /create char <desc>   — Generate a character
+ *   /create loc <desc>    — Generate a location
+ *   /create world <desc>  — Generate a world
+ *   /create item <desc>   — Generate an item
+ * Flow: generate → quality gates (schema/duplicate/consistency) → return a
+ * `create-entity-preview` action carrying the validated draft. The entity is
+ * NOT persisted here; the user must confirm via the preview, which calls
+ * `POST /api/chats/:id/create-entity` (see `create-entity-confirm.ts`).
  */
-import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import { ChatParticipantRole, } from "../../db/enums";
-import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
-import { safeJsonParse, uid, } from "../../utils";
-import { type CommandResult, registerCommand, } from "./registry";
-const typeLabels: Record<string, string> = {
-  char: "character",
-  character: "character",
-  loc: "location",
-  location: "location",
-  world: "world",
-  item: "item",
+import { safeJsonParse, } from "../../utils";
+import {
+  ENTITY_KIND_ALIASES,
+  type EntityKind,
+  resolveEntityGenerationPrompt,
+  VALID_ENTITY_TOKENS,
+} from "../prompt/templates/entity-generation";
+import {
+  type GeneratedEntity,
+  normalizeEntity,
+  runQualityGates,
+} from "../quality/entity-creation";
+import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
+const KIND_LABELS: Record<EntityKind, string> = {
+  character: "Character",
+  location: "Location",
+  world: "World",
+  item: "Item",
 };
 
-const entityPrompts: Record<string, (desc: string,) => string> = {
-  char: (desc,) =>
-    `Generate a character profile from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), personality (string), scenario (string, 1 sentence). Description: ${desc}`,
-  character: (desc,) =>
-    `Generate a character profile from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), personality (string), scenario (string, 1 sentence). Description: ${desc}`,
-  loc: (desc,) =>
-    `Generate a location from this description. Return JSON with: name (string), description (string, 1-2 paragraphs). Description: ${desc}`,
-  location: (desc,) =>
-    `Generate a location from this description. Return JSON with: name (string), description (string, 1-2 paragraphs). Description: ${desc}`,
-  world: (desc,) =>
-    `Generate a world setting from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), lore (string, 1 paragraph). Description: ${desc}`,
-  item: (desc,) =>
-    `Generate an item from this description. Return JSON with: name (string), description (string, 1 paragraph). Description: ${desc}`,
-};
-
-/** Build the standard create-entity CommandResult. */
-function createEntityResult(
-  entityLabel: string,
-  entityData: Record<string, string | undefined>,
-  description: string,
-  id: string,
-  label: string,
-): CommandResult {
-  return {
-    systemMessage: `**${entityLabel} created:** ${entityData.name ?? "Unnamed"}\n\n${
-      entityData.description ?? description
-    }`,
-    action: "create-entity",
-    actionPayload: { entityType: label, id, name: entityData.name, },
-    handled: true,
-  };
+/*** Pull the active world context (name + description) if a world is scoped. */
+async function resolveWorldContext(
+  db: NonNullable<CommandContext["db"]>,
+  worldId?: string,
+): Promise<{ name: string; description?: string | null } | undefined> {
+  if (!worldId || worldId === "default") { return undefined; }
+  const row = await db
+    .selectFrom("worlds",)
+    .select(["name", "description",],)
+    .where("id", "=", worldId,)
+    .executeTakeFirst();
+  return row ? { name: row.name, description: row.description, } : undefined;
 }
 
-registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
-  const entityType = (args[0] || "").toLowerCase();
+/**
+ * Core `/create` logic: generate → quality gates → preview action.
+ *
+ * Extracted from the registered command so the LLM completion step is
+ * injectable (the command passes the resolved provider's `complete`; tests pass
+ * a stub). The entity is NEVER persisted here — the returned
+ * `create-entity-preview` action carries the draft for user confirmation.
+ */
+export async function runCreateGeneration(
+  args: string[],
+  ctx: CommandContext,
+  complete: (req: GenerateRequest,) => Promise<{ content: string }>,
+  model = "",
+): Promise<CommandResult> {
+  const token = (args[0] || "").toLowerCase();
   const description = args.slice(1,).join(" ",).trim();
 
-  const validTypes = ["char", "character", "loc", "location", "world", "item",];
-
-  if (!entityType || !validTypes.includes(entityType,)) {
+  if (!token || !VALID_ENTITY_TOKENS.includes(token,)) {
     return {
       systemMessage: "Usage: /create <char|loc|world|item> <description>",
       handled: true,
     };
   }
-
   if (!description) {
     return {
-      systemMessage: `Usage: /create ${entityType} <description>`,
+      systemMessage: `Usage: /create ${token} <description>`,
       handled: true,
     };
   }
@@ -90,33 +89,33 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
     };
   }
 
-  try {
-    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
+  const kind = ENTITY_KIND_ALIASES[token] as EntityKind;
 
+  try {
     const genReq: GenerateRequest = {
-      model: resolved.resolvedModel,
+      model,
       messages: [
         {
           role: "system",
           content:
             "You are a game master assistant. Generate structured entity data as valid JSON. Do not include markdown formatting or code blocks.",
         },
-        { role: "user", content: entityPrompts[entityType]!(description,), },
+        { role: "user", content: resolveEntityGenerationPrompt(config, kind, description,), },
       ],
       params: { maxTokens: 512, temperature: 0.7, },
     };
 
-    const result = await resolved.provider.complete(genReq,);
+    const result = await complete(genReq,);
     const content = result.content.trim();
 
-    // Parse JSON response
-    let entityData: Record<string, string | undefined>;
+    let raw: Record<string, unknown>;
     try {
-      // Remove markdown code fences if present
-      const cleaned = content.replace(/^```(?:json)?\s*\n?/, "",).replace(/\n?```\s*$/, "",);
-      const parsed = safeJsonParse<Record<string, string>>(cleaned,);
+      const cleaned = content
+        .replace(/^```(?:json)?\s*\n?/, "",)
+        .replace(/\n?```\s*$/, "",);
+      const parsed = safeJsonParse<Record<string, unknown>>(cleaned,);
       if (!parsed.ok) { throw parsed.error; }
-      entityData = parsed.value;
+      raw = parsed.value;
     } catch {
       return {
         systemMessage: `**Failed to parse entity data from LLM response.**\n\nRaw output:\n${content.slice(0, 500,)}`,
@@ -124,124 +123,54 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
       };
     }
 
-    const id = uid();
-    const label = typeLabels[entityType] ?? entityType;
+    const entity: GeneratedEntity = normalizeEntity(raw,);
 
-    switch (entityType) {
-      case "char":
-      case "character": {
-        await db
-          .insertInto("actors",)
-          .values({
-            id,
-            actor_type: "character",
-            display_name: entityData.name ?? "Unnamed Character",
-            user_id: ctx.userId ?? "",
-            owner_id: ctx.userId ?? "",
-            agent_type: "ai",
-            description: entityData.description ?? description,
-            system_prompt: null,
-            settings: "{}",
-            personality: entityData.personality ?? null,
-            scenario: entityData.scenario ?? null,
-            import_spec: "llm-generated",
-          },)
-          .execute();
+    const worldId = ctx.activeChat?.worldId;
+    const worldContext = await resolveWorldContext(db, worldId,);
 
-        return createEntityResult("Character", entityData, description, id, label,);
-      }
+    const report = await runQualityGates(
+      db,
+      kind,
+      entity,
+      { ownerId: ctx.userId ?? "", worldId, },
+      worldContext,
+    );
 
-      case "loc":
-      case "location": {
-        // Resolve world from the active chat (chat.world_id), not the chat type
-        const worldId = ctx.activeChat?.worldId ?? "default";
-
-        await db
-          .insertInto("locations",)
-          .values({
-            id,
-            world_id: worldId,
-            name: entityData.name ?? "Unnamed Location",
-            description: entityData.description ?? description,
-            connections: "[]",
-          },)
-          .execute();
-
-        // Mirror the REST location creation: auto-create a public chat bound
-        // to the default `world` template so the location is immediately
-        // reachable and joinable.
-        const template = await getChatSetupTemplate(db, "template-world",);
-        if (template) {
-          const gmParsed = template.gm_config
-            ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
-            : null;
-          await createChat(db, {
-            name: entityData.name ?? "Unnamed Location",
-            type: "group",
-            mode: template.mode ?? "story",
-            createdBy: ctx.userId ?? "",
-            worldId,
-            currentLocationId: id,
-            turnStrategy: template.turn_strategy,
-            gmConfig: gmParsed?.ok ? gmParsed.value : null,
-            visualNovel: template.visual_novel === 1,
-            visibility: template.visibility ?? "private",
-            templateId: template.id,
-          },);
-        }
-
-        return createEntityResult("Location", entityData, description, id, label,);
-      }
-
-      case "world": {
-        await db
-          .insertInto("worlds",)
-          .values({
-            id,
-            owner_id: ctx.userId ?? "",
-            name: entityData.name ?? "Unnamed World",
-            description: entityData.description ?? description,
-            lore: entityData.lore ?? null,
-            difficulty_modifier: 1,
-            difficulty_reroll: DifficultyReroll.None,
-            difficulty_state: DifficultyState.Normal,
-          },)
-          .execute();
-
-        return createEntityResult("World", entityData, description, id, label,);
-      }
-
-      case "item": {
-        // Items need a world context — resolve from active chat
-        const worldId = ctx.activeChat?.worldId ?? "default";
-
-        await db
-          .insertInto("items",)
-          .values({
-            id,
-            world_id: worldId,
-            name: entityData.name ?? "Unnamed Item",
-            description: entityData.description ?? description,
-            category: "other",
-            rarity: "common",
-            stackable: "unique",
-            max_stack: 1,
-            properties: "{}",
-            value: 0,
-            weight: 1,
-          },)
-          .execute();
-
-        return createEntityResult("Item", entityData, description, id, label,);
-      }
-
-      default: {
-        return {
-          systemMessage: `Unsupported entity type: ${entityType}`,
-          handled: true,
-        };
-      }
+    if (!report.schema.ok) {
+      return {
+        systemMessage: `**Generation rejected — invalid ${kind} data:** ${report.schema.message}`,
+        handled: true,
+      };
     }
+
+    // Schema passed: return a preview for user confirmation. The entity is not
+    // persisted until the user approves via the confirm endpoint.
+    const warnings = [
+      report.duplicate.found ? report.duplicate.message : null,
+      ...report.consistency.warnings,
+    ].filter((w,): w is string => Boolean(w,));
+
+    const summary = `**${KIND_LABELS[kind]} preview** — review before saving:\n\n` +
+      `**Name:** ${entity.name}\n` +
+      `${entity.description ? `**Description:** ${entity.description}\n` : ""}` +
+      `${entity.personality ? `**Personality:** ${entity.personality}\n` : ""}` +
+      `${entity.scenario ? `**Scenario:** ${entity.scenario}\n` : ""}` +
+      `${entity.lore ? `**Lore:** ${entity.lore}\n` : ""}` +
+      (warnings.length > 0 ? `\n⚠️ ${warnings.join(" ",)}` : "");
+
+    return {
+      systemMessage: summary,
+      action: "create-entity-preview",
+      actionPayload: {
+        kind,
+        data: entity,
+        description,
+        worldId: worldId ?? null,
+        userId: ctx.userId ?? null,
+        warnings,
+      },
+      handled: true,
+    };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     return {
@@ -249,4 +178,13 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
+}
+
+registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return runCreateGeneration(args, ctx, async () => ({ content: "", }), "",);
+  }
+  const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
+  return runCreateGeneration(args, ctx, (req,) => resolved.provider.complete(req,), resolved.resolvedModel,);
 }, { requiredRole: ChatParticipantRole.Owner, },);
