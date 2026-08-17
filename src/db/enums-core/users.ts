@@ -4,8 +4,15 @@
 // ── Users ─────────────────────────────────────────────────
 export const UserRole = {
   Admin: "admin",
+  Moderator: "moderator",
   User: "user",
+  Creator: "creator",
+  Player: "player",
   Viewer: "viewer",
+  Guest: "guest",
+  Bot: "bot",
+  Tester: "tester",
+  Custom: "custom",
   Solo: "solo",
 } as const;
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];

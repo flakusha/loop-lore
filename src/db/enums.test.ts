@@ -16,7 +16,19 @@ import { turnStatusMachine, } from "./enums-story/turns";
 // ── Expected enum exports per domain ────────────────────────
 const EXPECTED_ENUMS: Record<string, string[]> = {
   // enums-core
-  UserRole: ["admin", "user", "viewer", "solo",],
+  UserRole: [
+    "admin",
+    "moderator",
+    "user",
+    "creator",
+    "player",
+    "viewer",
+    "guest",
+    "bot",
+    "tester",
+    "custom",
+    "solo",
+  ],
   UserStatus: ["active", "disabled", "deactivated",],
   ChatType: ["direct", "group",],
   ChatMode: ["direct", "group", "story",],

@@ -3,6 +3,8 @@
 
 // src/config/schema/characters.ts — Characters (template seeding) config type
 
+import type { UserRole, } from "../../db/enums-core/users";
+
 export interface CharactersConfig {
   /** Enable character template seeding on app start. Default true. */
   enabled: boolean;
@@ -33,7 +35,7 @@ export interface CharactersConfig {
     /** Content rating. Default "sfw" */
     content_rating?: "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme";
     /** User roles that can see/use this character. Default ["user", "admin"] */
-    target_roles?: ("admin" | "user" | "viewer" | "solo")[];
+    target_roles?: UserRole[];
     /** Character can be used as template for user-created chars */
     is_template?: boolean;
     /** Auto-add to new users' character list */
