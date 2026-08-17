@@ -178,4 +178,20 @@ describe("battle commands via slash dispatch", () => {
     const active = await getActiveBattle({ database: db, }, chatId,);
     expect(active,).toBeNull();
   });
+
+  it("/battle align marks an enemy so the roster reaches the defeat check", async () => {
+    const alignRes = await dispatch(db, chatId, "/battle align Orc enemy",);
+    expect(await sysMsg(alignRes,),).toContain("enemy",);
+
+    // Rebuild the roster: Alice (player) + Orc (enemy).
+    const startRes = await dispatch(db, chatId, "/battle start",);
+    expect(await sysMsg(startRes,),).toContain("Battle started",);
+
+    const battle = await getActiveBattle({ database: db, }, chatId,);
+    expect(battle,).not.toBeNull();
+    const alice = battle!.combatants.find((c,) => c.id === ALICE_ACTOR_ID)!;
+    const orc = battle!.combatants.find((c,) => c.id === ORC_ACTOR_ID)!;
+    expect(alice.isNpc,).toBe(false,);
+    expect(orc.isNpc,).toBe(true,);
+  });
 });

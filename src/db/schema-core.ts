@@ -395,6 +395,7 @@ export interface CharacterStats {
   xp: Generated<number>;
   xp_to_next: Generated<number>;
   data_version: Generated<number>;
+  combat_alignment: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
