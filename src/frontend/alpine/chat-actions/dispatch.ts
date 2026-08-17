@@ -240,6 +240,43 @@ const actionHandlers: Record<string, ActionHandler> = {
     log.info("review-entity action — display only", { payload, },);
   },
 
+  // Creation wizard — show draft preview for user review
+  "wizard-preview": (ctx, payload,) => {
+    if (!payload) { return; }
+    const wizardId = payload.wizardId as string;
+    const entityType = payload.entityType as string;
+    const label = payload.label as string;
+    const fields = payload.fields as Record<string, string | undefined> | undefined;
+    if (!wizardId || !entityType || !fields) {
+      log.warn("wizard-preview: missing required payload fields", { payload, },);
+      return;
+    }
+    // Store wizard draft in Alpine state for the preview panel
+    ctx.wizardDraft = { wizardId, entityType, label, fields, };
+    ctx.wizardPreviewOpen = true;
+    log.info("wizard-preview: draft ready", { wizardId, entityType, },);
+  },
+
+  // Creation wizard — confirm and save entity from draft
+  "wizard-confirm": async (ctx, payload, _chatId,) => {
+    if (!payload) { return; }
+    const wizardId = payload.wizardId as string;
+    if (!wizardId) { return; }
+    // The confirm action sends the wizard ID; backend saves and returns create-entity
+    ctx.wizardPreviewOpen = false;
+    ctx.wizardDraft = null;
+    ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.wizardConfirmed",), },);
+  },
+
+  // Creation wizard — cancel draft
+  "wizard-cancel": (ctx, payload,) => {
+    if (!payload) { return; }
+    const wizardId = payload.wizardId as string;
+    ctx.wizardPreviewOpen = false;
+    ctx.wizardDraft = null;
+    log.info("wizard-cancel: draft discarded", { wizardId, },);
+  },
+
   // Battle commands render/update/clear the VN-style battle panel.
   "battle-started": (ctx, payload,) => {
     renderBattleFromPayload(ctx, payload,);
