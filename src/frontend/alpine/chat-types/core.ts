@@ -2,10 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, QuickReplyButton, } from "../types";
+import type * as filterState from "./filter-state";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
+import type * as uiState from "./ui-state";
 import type { ChatWorldChannelsState, } from "./world-channels";
+export type { ChatCoreFilterState, } from "./filter-state";
+export type { ChatCoreUiState, } from "./ui-state";
 /** Chat page core state and methods (messages, lists, editing, VN, filters). */
-export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
+export interface ChatCoreState
+  extends AlpineMagicThis, ChatWorldChannelsState, filterState.ChatCoreFilterState, uiState.ChatCoreUiState
+{
   isGenerating: boolean;
   generationLabel: string;
   activeAttemptId: string | null;
@@ -127,50 +133,6 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
-  _hamburgerOpen: Record<string, boolean>;
-  _statsOpen: Record<string, boolean>;
-  _contextMenu: { visible: boolean; messageId: string | null; x: number; y: number };
-  _flagDialog: {
-    open: boolean;
-    contentType: "message" | "asset";
-    contentId: string | null;
-    chatId: string | null;
-  };
-  _flagReason: string;
-  _flagOther: string;
-  _flagBusy: boolean;
-  openFlagDialog(contentType: "message" | "asset", contentId: string, chatId: string | null,): void;
-  closeFlagDialog(): void;
-  submitFlag(): Promise<void>;
-  _impersonationLoaded: boolean;
-  _storageHandler: ((e: StorageEvent,) => void) | null;
-  _unseenCounts: Record<string, number>;
-  _isScrolledUp: boolean;
-  _scrollHandler: (() => void) | null;
-  _debugView: boolean;
-  _showCommandPalette: boolean;
-  _activeCommand: string;
-  _commandList: { name: string; description: string }[];
-  _filteredCommands: { name: string; description: string }[];
-  _chatFilter: string;
-  readonly filteredChats: { id: string; name?: string }[];
-  // Chat-list filters (chat-filters.ts) — server-side query params for /api/chats.
-  _chatType: "all" | "direct" | "group";
-  _chatStatus: "all" | "active" | "archived";
-  _chatSort: "recent" | "name" | "unread" | "pinned-first";
-  _chatWorld: string;
-  _chatMinMessages: string;
-  _chatMaxMessages: string;
-  _chatUpdatedSince: string;
-  _filterParams(): string;
-  applyChatFilters(): Promise<void>;
-  _searchResults: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
-  searchChats(q: string,): Promise<void>;
-  selectedChats: string[];
-  _mentionQuery: string;
-  _mentionResults: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
-  _showMentionAutocomplete: boolean;
-  _chatParticipants: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
   init(): void;
   destroy(): void;
   loadUserInfo(): Promise<void>;
@@ -240,8 +202,6 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string },): void;
   openChatSettings(): Promise<void>;
   updateVnMode(): void;
-  openContextMenu(event: MouseEvent, msgId: string,): void;
-  closeContextMenu(): void;
   saveChatSettings(): Promise<void>;
   isChatPaused(chat: any,): boolean;
   readonly currentChat: {
@@ -255,9 +215,6 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
     thinking_visibility?: string;
   } | null;
   toggleGroupPause(): Promise<void>;
-  handleMentionInput(event: Event,): void;
-  selectMention(participant: { actor_id: string; name: string },): void;
-  hideMentionAutocomplete(): void;
   renameChat(chatId: string,): Promise<void>;
   openRenameModal(chatId: string,): void;
   confirmRenameChat(): Promise<void>;
@@ -271,13 +228,6 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
-  toggleReaction(msgId: string, emoji: string,): Promise<void>;
-  loadMessageReactions(msgId: string,): Promise<void>;
-  loadAllReactions(): Promise<void>;
-  _reactionPicker: { visible: boolean; messageId: string; x: number; y: number };
-  _quickEmojis: string[];
-  showReactionPicker(msgId: string, event: Event,): void;
-  closeReactionPicker(): void;
   // Creation wizard state — preview panel for LLM-generated entity drafts
   wizardDraft: {
     wizardId: string;

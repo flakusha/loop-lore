@@ -17,49 +17,19 @@ import type { NsfwLocationType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, } from "../../utils";
 import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
+import type {
+  LocationAtmosphere,
+  LocationNsfwConfig,
+  LocationRisks,
+  UpdateLocationNsfwOpts,
+} from "./types";
 
-// ── Types ──────────────────────────────────────────────────
-
-/** Atmosphere scores for a location. */
-export interface LocationAtmosphere {
-  romantic: number;
-  dangerous: number;
-  comfortable: number;
-  exotic: number;
-  seedy: number;
-}
-
-/** Risk factors for a location. */
-export interface LocationRisks {
-  discovery: number;
-  injury: number;
-  arrest: number;
-  reputation: number;
-}
-
-/** NSFW config for a location. */
-export interface LocationNsfwConfig {
-  id: string;
-  locationId: string;
-  locationType: NsfwLocationType;
-  privacyLevel: string;
-  discoveryChance: number;
-  atmosphere: LocationAtmosphere;
-  equipment: string[];
-  risks: LocationRisks;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/** Options for updating a location's NSFW config. */
-export interface UpdateLocationNsfwOpts {
-  locationType?: NsfwLocationType;
-  privacyLevel?: string;
-  discoveryChance?: number;
-  atmosphere?: Partial<LocationAtmosphere>;
-  equipment?: string[];
-  risks?: Partial<LocationRisks>;
-}
+export type {
+  LocationAtmosphere,
+  LocationNsfwConfig,
+  LocationRisks,
+  UpdateLocationNsfwOpts,
+} from "./types";
 
 // ── Service ────────────────────────────────────────────────
 
