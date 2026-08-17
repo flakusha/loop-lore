@@ -82,12 +82,12 @@ describe("write_memory_note tool", () => {
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
     expect(row.memory_type,).toBe(MemoryType.Semantic,);
-    expect(row.importance,).toBe(0.9,);
+    expect(row.importance,).toBeCloseTo(0.9, 10,);
     expect(JSON.parse(row.keywords as string,),).toEqual(["mirror", "rule",],);
   });
 
   test("rejects empty content", async () => {
-    const result = await writeMemoryNoteTool.handler({ content: "   ", }, { db, actorId, chatId, },);
+    const result = await writeMemoryNoteTool.handler({ content: " ".repeat(3,), }, { db, actorId, chatId, },);
     expect(result.isError,).toBe(true,);
     expect(await memoryRows(),).toHaveLength(0,);
   });
