@@ -3811,6 +3811,12 @@
       "source": ".plan/tickets/TASK-item-config-templates.md"
     }
   ],
+  "src/config/schema/seeding.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    }
+  ],
   "src/config/sections/characters.ts": [
     {
       "kind": "epic",
@@ -15271,7 +15277,17 @@
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
+  "src/seeding/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    }
+  ],
   "src/seeding/users.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
@@ -16227,13 +16243,33 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
+  "src/users/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    }
+  ],
+  "src/users/permissions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    }
+  ],
   "src/users/permissions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
   "src/users/roles.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
