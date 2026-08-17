@@ -291,6 +291,6 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
   } | null;
   wizardPreviewOpen: boolean;
   confirmWizard(wizardId: string,): Promise<void>;
-  cancelWizard(wizardId: string,): Promise<void>;
+  cancelWizard(wizardId: string,): void;
   updateWizardField(field: string, value: string,): void;
 }
