@@ -3,6 +3,10 @@
 
 export type {
   AbilityName,
+  ActiveEffect,
+  BehaviorProfile,
+  CharacterCondition,
+  CharacterState,
   SaveProficiency,
   SkillName,
   StatBlock,
@@ -12,8 +16,12 @@ export type {
 export {
   ABILITY_DISPLAY,
   ALL_ABILITIES,
+  ALL_BEHAVIOR_PROFILES,
+  ALL_CHARACTER_STATES,
+  computeCharacterState,
   PROFICIENCY_BY_LEVEL,
   SKILL_ABILITY,
+  STATE_SEVERITY,
 } from "./types.js";
 
 export {
