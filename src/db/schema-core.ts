@@ -736,6 +736,22 @@ export interface ModelCapabilities {
   updated_at: string;
 }
 
+// ── battles ────────────────────────────────────────────
+export interface Battles {
+  id: Generated<string>;
+  chat_id: string;
+  world_id: string | null;
+  status: Generated<string>;
+  round: Generated<number>;
+  turn_index: Generated<number>;
+  combatants: Generated<string>;
+  log: Generated<string>;
+  created_by: string;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  ended_at: string | null;
+}
+
 // ── seed_audit ────────────────────────────────────────────
 export interface SeedAudit {
   id: Generated<string>;
