@@ -1,0 +1,56 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Creation Wizard Preview Panel — shows LLM-generated entity draft for review -->
+<div
+  x-show="wizardPreviewOpen && wizardDraft"
+  x-cloak
+  class="wizard-panel"
+  data-testid="wizard-panel"
+  x-transition:enter="panel-enter"
+  x-transition:leave="panel-leave"
+>
+  <div class="wizard-panel-inner">
+    <div class="wizard-panel-header">
+      <h3>
+        <span x-text="wizardDraft?.label ? t('wizard.previewTitle', { type: wizardDraft.label }) : ''"></span>
+      </h3>
+      <button
+        class="btn btn-ghost btn-sm"
+        @click="cancelWizard(wizardDraft?.wizardId ?? '')"
+        x-bind:title="t('common.cancel')"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="wizard-panel-body" x-show="wizardDraft">
+      <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
+        <div class="wizard-field">
+          <label class="wizard-field-label" x-text="field"></label>
+          <input
+            type="text"
+            class="wizard-field-input"
+            :value="value ?? ''"
+            @input="updateWizardField(field, $event.target.value)"
+          />
+        </div>
+      </template>
+    </div>
+
+    <div class="wizard-panel-footer">
+      <button
+        class="btn btn-ghost"
+        @click="cancelWizard(wizardDraft?.wizardId ?? '')"
+      >
+        {{{ t("common.cancel") }}}
+      </button>
+      <button
+        class="btn btn-primary"
+        @click="confirmWizard(wizardDraft?.wizardId ?? '')"
+      >
+        {{{ t("wizard.confirm") }}}
+      </button>
+    </div>
+  </div>
+</div>
