@@ -60,7 +60,7 @@ export async function resolveGroupTurnOrder(
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  if (!chat || chat.type !== "group") { return null; }
+  if (chat?.type !== "group") { return null; }
 
   const strategy = chat.turn_strategy;
 
@@ -95,13 +95,13 @@ export async function resolveGroupTurnOrder(
   const currentActorId = lastMsg?.actor_id ?? null;
 
   // Turn strategy inputs (same shapes STRATEGY_MAP expects).
-  const turnParticipants = participants.map((p,) => ({
+  const turnParticipants = Array.from(participants, (p,) => ({
     actorId: p.actor_id,
     type: p.actor_type,
     agentType: p.agent_type,
     talkativity: p.talkativity ?? 5,
     initiativeScore: p.initiative,
-  }));
+  }),);
 
   // Display order: round-robin by role (narrator/ai/npc first), then name.
   const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2, };
@@ -117,17 +117,17 @@ export async function resolveGroupTurnOrder(
   const context: GroupTurnContext = { chatMode: "group", isPaused: false, };
   const selectFn = strategy ? STRATEGY_MAP[strategy] : null;
   const nextActorId = selectFn
-    ? selectFn(turnParticipants, currentActorId, 0, ordered.map((p,) => p.actorId), context,)
+    ? selectFn(turnParticipants, currentActorId, 0, Array.from(ordered, (p,) => p.actorId,), context,)
     : null;
 
-  const order: TurnOrderSlot[] = ordered.map((p,) => ({
+  const order: TurnOrderSlot[] = Array.from(ordered, (p,) => ({
     actor_id: p.actorId,
     display_name: participants.find((x,) => x.actor_id === p.actorId)?.display_name ?? p.actorId,
     actor_type: p.type,
     talkativity: p.talkativity,
     isCurrent: p.actorId === currentActorId,
     isNext: p.actorId === nextActorId,
-  }));
+  }),);
 
   return {
     strategy,

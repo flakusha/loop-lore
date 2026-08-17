@@ -9,6 +9,7 @@
  */
 
 import { apiFetch, } from "./htmx.js";
+import { jsonParseOr, } from "./json.js";
 import type { ChatState, EquipmentSlot, StatusEffect, } from "./types.js";
 
 export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
@@ -62,12 +63,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
         // Parse conditions and effects from JSON strings
         this.statusEffects = parseConditions(data.conditions,);
         this.equipment = parseEquipmentSlots(data.activeEffects,);
-      } else if (statsRes.status === 404) {
-        // No stats exist yet — use defaults
-        this.rpgStats = defaultRpgStats();
-        this.statusEffects = [];
-        this.equipment = defaultEquipmentSlots();
-      } else {
+        // No stats / non-200 — use defaults
         this.rpgStats = defaultRpgStats();
         this.statusEffects = [];
         this.equipment = defaultEquipmentSlots();
@@ -139,35 +135,29 @@ function defaultEquipmentSlots(): EquipmentSlot[] {
 /** Parse conditions JSON string into StatusEffect array */
 function parseConditions(raw: string,): StatusEffect[] {
   if (!raw || raw === "[]") { return []; }
-  try {
-    const parsed = JSON.parse(raw,) as Array<{ name: string; source?: string; duration_rounds?: number }>;
-    return parsed.map((c,) => ({
-      id: c.name.toLowerCase().replace(/\s+/gu, "_",),
-      name: c.name,
-      description: c.source ? `Source: ${c.source}` : "",
-      duration: c.duration_rounds ?? -1,
-      modifier: {},
-    }));
-  } catch {
-    return [];
-  }
+  const parsed = jsonParseOr(raw, null,) as Array<{ name: string; source?: string; duration_rounds?: number }> | null;
+  if (!parsed) { return []; }
+  return Array.from(parsed, (c,) => ({
+    id: c.name.toLowerCase().replaceAll(/\s+/gu, "_",),
+    name: c.name,
+    description: c.source ? `Source: ${c.source}` : "",
+    duration: c.duration_rounds ?? -1,
+    modifier: {},
+  }),);
 }
 
 /** Parse active effects JSON string into EquipmentSlot[] placeholder */
 function parseEquipmentSlots(raw: string,): EquipmentSlot[] {
   if (!raw || raw === "[]") { return defaultEquipmentSlots(); }
-  try {
-    const parsed = JSON.parse(raw,) as Array<{ name: string; type: string }>;
-    // Map effects to equipment-like display
-    const slots = defaultEquipmentSlots();
-    for (const effect of parsed) {
-      if (effect.type === "buff" || effect.type === "debuff") {
-        // Effects don't map to equipment slots — they're shown as status effects
-        // This is a placeholder for future equipment integration
-      }
+  const parsed = jsonParseOr(raw, null,) as Array<{ name: string; type: string }> | null;
+  if (!parsed) { return defaultEquipmentSlots(); }
+  // Map effects to equipment-like display
+  const slots = defaultEquipmentSlots();
+  for (const effect of parsed) {
+    if (effect.type === "buff" || effect.type === "debuff") {
+      // Effects don't map to equipment slots — they're shown as status effects
+      // This is a placeholder for future equipment integration
     }
-    return slots;
-  } catch {
-    return defaultEquipmentSlots();
   }
+  return slots;
 }
