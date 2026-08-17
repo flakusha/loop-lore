@@ -6,7 +6,7 @@
 **Epic:** Logic Reconciliation
 **Priority:** High
 **Effort:** Medium
-**Status:** ✅ Done (2026-08-17, worktree `user-seeding-role-expansion`) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`). Character/world/chat content seeding + environment overrides are follow-up work.
+**Status:** ✅ Done (2026-08-17) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`); character/world/chat content seeding + environment overrides shipped via worktree `content-seeding` → `dev` (fast-forward merge). Items/quests content seeding + chat `initial_messages` seeding remain deferred (optional per spec).
 
 **Done scope (2026-08-17):**
 - `UserRole` expanded 4→11 (adds moderator/creator/player/guest/bot/tester/custom)
