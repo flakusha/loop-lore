@@ -28,42 +28,42 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Confirm and save the wizard draft. Sends the wizard ID to the backend
-   * which persists the entity and returns a create-entity result.
+   * Confirm and save the wizard draft. Sends the edited entity data to the
+   * create-entity-confirm endpoint which persists the entity.
    */
   async confirmWizard(wizardId: string,): Promise<void> {
-    const draft = this.wizardDraft;
-    if (!draft || draft.wizardId !== wizardId) {
+    if (this.wizardDraft?.wizardId !== wizardId) {
       log.warn("confirmWizard: draft mismatch", { wizardId, },);
       return;
     }
+    const draft = this.wizardDraft;
     const chatId = this.activeChat;
     if (!chatId) { return; }
 
-    // Build field overrides from the (possibly edited) draft
-    const overrides: string[] = [];
-    for (const [key, value,] of Object.entries(draft.fields,)) {
-      if (value) { overrides.push(`${key}=${value}`,); }
-    }
-
     try {
-      const cmdArgs = ["confirm", wizardId, ...overrides,];
-      const res = await apiFetch(`/api/v1/chats/${chatId}/command`, {
+      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ command: "create", args: cmdArgs, },),
+        body: jsonBody({
+          kind: draft.entityType,
+          data: draft.fields,
+          description: draft.description ?? "",
+          worldId: draft.worldId ?? null,
+          userId: draft.userId ?? null,
+        },),
       },);
 
       if (res.ok) {
         this.wizardPreviewOpen = false;
         this.wizardDraft = null;
         this.$dispatch?.("show-toast", {
-          type: "info",
-          message: t("toasts.wizardConfirmed",),
+          type: "success",
+          message: t("toasts.entityCreated", { name: draft.fields.name ?? "Entity", },),
         },);
+        await this.loadMessages();
         log.info("wizard confirmed", { wizardId, entityType: draft.entityType, },);
       } else {
-        let errorMsg = t("toasts.wizardConfirmFailed",);
+        let errorMsg = t("toasts.failedCreateEntity",);
         try {
           const err = await res.json();
           if (err.error) { errorMsg = err.error; }
@@ -78,7 +78,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       this.$dispatch?.("show-toast", {
         type: "error",
-        message: t("toasts.networkError",),
+        message: t("toasts.networkErrorCreatingEntity",),
       },);
     }
   },

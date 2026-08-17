@@ -258,7 +258,7 @@ const actionHandlers: Record<string, ActionHandler> = {
   },
 
   // Creation wizard — confirm and save entity from draft
-  "wizard-confirm": async (ctx, payload, _chatId,) => {
+  "wizard-confirm": (ctx, payload, _chatId,) => {
     if (!payload) { return; }
     const wizardId = payload.wizardId as string;
     if (!wizardId) { return; }
@@ -290,7 +290,7 @@ const actionHandlers: Record<string, ActionHandler> = {
   "battle-ended": (ctx,) => {
     (ctx as { renderBattlePanel(view: unknown,): void }).renderBattlePanel(null,);
   },
-  "create-entity-preview": async (ctx, payload, chatId,) => {
+  "create-entity-preview": (ctx, payload,) => {
     if (!payload || typeof payload !== "object") { return; }
     const draft = payload as {
       kind?: string;
@@ -298,40 +298,26 @@ const actionHandlers: Record<string, ActionHandler> = {
       description?: string;
       worldId?: string | null;
       userId?: string | null;
+      warnings?: string[];
     };
-    const name = (draft.data?.name as string) ?? "Unnamed";
-    const confirmed = globalThis.confirm(
-      t("toasts.confirmCreateEntity", { kind: draft.kind ?? "entity", name, },),
-    );
-    if (!confirmed) {
-      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.createEntityCancelled",), },);
-      return;
+    const kind = draft.kind ?? "entity";
+    const data = draft.data ?? {};
+    const fields: Record<string, string | undefined> = {};
+    for (const [k, v,] of Object.entries(data,)) {
+      if (typeof v === "string") { fields[k] = v; }
     }
-    try {
-      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody({
-          kind: draft.kind,
-          data: draft.data,
-          description: draft.description ?? "",
-          worldId: draft.worldId ?? null,
-          userId: draft.userId ?? null,
-        },),
-      },);
-      if (res.ok) {
-        ctx.$dispatch?.("show-toast", { type: "success", message: t("toasts.entityCreated", { name, },), },);
-        await (ctx as { loadMessages(): Promise<void> }).loadMessages();
-      } else {
-        const err = await res.json();
-        ctx.$dispatch?.("show-toast", {
-          type: "error",
-          message: err.error || t("toasts.failedCreateEntity",),
-        },);
-      }
-    } catch {
-      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCreatingEntity",), },);
-    }
+    ctx.wizardDraft = {
+      wizardId: `preview_${kind}_${Date.now()}`,
+      entityType: kind,
+      label: kind.charAt(0,).toUpperCase() + kind.slice(1,),
+      fields,
+      worldId: draft.worldId ?? undefined,
+      userId: draft.userId ?? undefined,
+      description: draft.description,
+      warnings: draft.warnings,
+    };
+    ctx.wizardPreviewOpen = true;
+    log.info("create-entity-preview: draft ready", { kind, },);
   },
 };
 

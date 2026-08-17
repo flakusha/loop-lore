@@ -284,6 +284,10 @@ export interface ChatCoreState extends AlpineMagicThis, ChatWorldChannelsState {
     entityType: string;
     label: string;
     fields: Record<string, string | undefined>;
+    worldId?: string;
+    userId?: string;
+    description?: string;
+    warnings?: string[];
   } | null;
   wizardPreviewOpen: boolean;
   confirmWizard(wizardId: string,): Promise<void>;
