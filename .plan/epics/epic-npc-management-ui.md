@@ -273,11 +273,11 @@ Complete NPC management interface including NPC viewer, relationship map, factio
 
 | Task                      | Priority | Status         |
 | ------------------------- | -------- | -------------- |
-| TASK-npc-viewer.md        | P0       | ✅ Done        |
-| TASK-relationship-map.md  | P0       | ✅ Done        |
-| TASK-faction-relations.md | P0       | ✅ Done        |
-| TASK-karma-display.md     | P0       | ✅ Done        |
-| TASK-npc-alpine.md        | P0       | ✅ Done        |
+| TASK-npc-viewer-list-details-schedule.md        | P0       | ✅ Done        |
+| TASK-relationship-map-visual-graph.md           | P0       | ✅ Done        |
+| TASK-faction-relations-list-and-standing.md     | P0       | ✅ Done        |
+| TASK-karma-display-meter-and-tiers.md           | P0       | ✅ Done        |
+| TASK-npc-alpine-component-wire-into-app.md      | P0       | ✅ Done        |
 
 ## Files Created
 
