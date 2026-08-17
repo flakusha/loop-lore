@@ -1958,6 +1958,21 @@ export const ModelCapabilitiesSchema = t.Object({
   notes: t.Optional(t.String(),),
 },);
 
+// ── battles ────────────────────────────────────────────
+export const BattlesSchema = t.Object({
+  chat_id: t.String(),
+  created_by: t.String(),
+  world_id: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  round: t.Optional(t.Number(),),
+  turn_index: t.Optional(t.Number(),),
+  combatants: t.Optional(t.String(),),
+  log: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  ended_at: t.Optional(t.String(),),
+},);
+
 // ── seed_audit ────────────────────────────────────────────
 export const SeedAuditSchema = t.Object({
   seed_type: t.String(),
