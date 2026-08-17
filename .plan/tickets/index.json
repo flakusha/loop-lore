@@ -1746,7 +1746,8 @@
     "priority": "medium",
     "epic": "epic-asset-support-expansion",
     "tags": [],
-    "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
+    "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md",
+    "git_issue": "fef7e3b"
   },
   "FEAT-ITEM-SYSTEM-EXTENSIONS": {
     "epic": "epic-item-system-extensions",
@@ -5796,7 +5797,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
+    "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md",
+    "git_issue": "bd46b70"
   },
   "TASK-CREATIVE-STUDIO": {
     "epic": "",
@@ -10374,7 +10376,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md",
+    "git_issue": "8700aac"
   },
   "TASK-RECONCILIATION-PLAN": {
     "epic": "epic-logic-reconciliation",
