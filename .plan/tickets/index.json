@@ -5800,6 +5800,28 @@
     "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md",
     "git_issue": "bd46b70"
   },
+  "TASK-CREATION-WIZARD-BACKEND-DRAFT-CONFIRM-FLOW": {
+    "hash": "6f1e2f6",
+    "extid": "TASK-CREATION-WIZARD-BACKEND-DRAFT-CONFIRM-FLOW",
+    "type": "TASK",
+    "title": "Creation wizard backend — draft + confirm flow",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creation-wizard-backend-draft-confirm-flow.md"
+  },
+  "TASK-CREATION-WIZARD-FRONTEND-PREVIEW-EDIT-CONFIRM-UI": {
+    "hash": "5040cfd",
+    "extid": "TASK-CREATION-WIZARD-FRONTEND-PREVIEW-EDIT-CONFIRM-UI",
+    "type": "TASK",
+    "title": "Creation wizard frontend — preview + edit + confirm UI",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creation-wizard-frontend-preview-edit-confirm-ui.md"
+  },
   "TASK-CREATIVE-STUDIO": {
     "epic": "",
     "extid": "TASK-CREATIVE-STUDIO",
@@ -7020,18 +7042,6 @@
     "title": "Extract chat route business logic",
     "type": "TASK"
   },
-  "TASK-FACTION-RELATIONS": {
-    "epic": "epic-npc-management-ui.md",
-    "extid": "TASK-FACTION-RELATIONS",
-    "hash": "28fc9f2",
-    "label": "task",
-    "priority": "P2 — Medium",
-    "source": ".plan/tickets/TASK-faction-relations.md",
-    "tags": [],
-    "title": "Faction Relations",
-    "type": "TASK",
-    "git_issue": "28fc9f2"
-  },
   "TASK-FACTION-RELATIONS-LIST-AND-STANDING": {
     "hash": "aa72df8",
     "extid": "TASK-FACTION-RELATIONS-LIST-AND-STANDING",
@@ -8162,18 +8172,6 @@
     "type": "TASK",
     "git_issue": "801bcd0"
   },
-  "TASK-KARMA-DISPLAY": {
-    "epic": "epic-npc-management-ui.md",
-    "extid": "TASK-KARMA-DISPLAY",
-    "hash": "20ee6a4",
-    "label": "task",
-    "priority": "P2 — Medium",
-    "source": ".plan/tickets/TASK-karma-display.md",
-    "tags": [],
-    "title": "Karma Display",
-    "type": "TASK",
-    "git_issue": "20ee6a4"
-  },
   "TASK-KARMA-DISPLAY-METER-AND-TIERS": {
     "hash": "f0a0935",
     "extid": "TASK-KARMA-DISPLAY-METER-AND-TIERS",
@@ -8881,18 +8879,6 @@
     "title": "Notification System with Noise Filtering",
     "type": "TASK"
   },
-  "TASK-NPC-ALPINE": {
-    "epic": "epic-npc-management-ui.md",
-    "extid": "TASK-NPC-ALPINE",
-    "hash": "cc1a798",
-    "label": "task",
-    "priority": "P2 — Medium",
-    "source": ".plan/tickets/TASK-npc-alpine.md",
-    "tags": [],
-    "title": "NPC Alpine.js Logic",
-    "type": "TASK",
-    "git_issue": "cc1a798"
-  },
   "TASK-NPC-ALPINE-COMPONENT-WIRE-INTO-APP": {
     "hash": "ddbc8a8",
     "extid": "TASK-NPC-ALPINE-COMPONENT-WIRE-INTO-APP",
@@ -9141,18 +9127,6 @@
     "tags": [],
     "title": "NPC-to-NPC Autonomous Social Simulation",
     "type": "TASK"
-  },
-  "TASK-NPC-VIEWER": {
-    "epic": "epic-npc-management-ui.md",
-    "extid": "TASK-NPC-VIEWER",
-    "hash": "51391d8",
-    "label": "task",
-    "priority": "P2 — Medium",
-    "source": ".plan/tickets/TASK-npc-viewer.md",
-    "tags": [],
-    "title": "NPC Viewer",
-    "type": "TASK",
-    "git_issue": "51391d8"
   },
   "TASK-NPC-VIEWER-LIST-DETAILS-SCHEDULE": {
     "hash": "1b734cc",
@@ -10503,18 +10477,6 @@
     "tags": [],
     "title": "Relationship Events",
     "type": "TASK"
-  },
-  "TASK-RELATIONSHIP-MAP": {
-    "epic": "epic-npc-management-ui.md",
-    "extid": "TASK-RELATIONSHIP-MAP",
-    "hash": "7f667c8",
-    "label": "task",
-    "priority": "P2 — Medium",
-    "source": ".plan/tickets/TASK-relationship-map.md",
-    "tags": [],
-    "title": "Relationship Map",
-    "type": "TASK",
-    "git_issue": "7f667c8"
   },
   "TASK-RELATIONSHIP-MAP-VISUAL-GRAPH": {
     "hash": "5a2a0cd",
