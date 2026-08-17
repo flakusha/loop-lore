@@ -6,11 +6,11 @@
 **Epic:** Logic Reconciliation
 **Priority:** High
 **Effort:** Medium
-**Status:** ✅ Done (2026-08-17) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`); character/world/chat content seeding + environment overrides shipped via worktree `content-seeding` → `dev` (fast-forward merge). Items/quests content seeding + chat `initial_messages` seeding remain deferred (optional per spec).
+**Status:** ✅ Done (2026-08-17) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`); character/world/chat content seeding + environment overrides shipped via worktree `content-seeding` → `dev`; admin-surface RBAC route migration shipped via worktree `rbac-route-migration` → `dev`. Items/quests content seeding + chat `initial_messages` seeding remain deferred (optional per spec).
 
 **Done scope (2026-08-17):**
 - `UserRole` expanded 4→11 (adds moderator/creator/player/guest/bot/tester/custom)
-- RBAC matrix `src/users/permissions.ts` (+ `roles.ts` helpers) — advisory foundation; route migration to permission-based checks is a follow-up
+- RBAC matrix `src/users/permissions.ts` (+ `roles.ts` helpers) — foundation; admin-surface **route migration to permission-based checks shipped** (worktree `rbac-route-migration`): replaced `isAdminRole(userRole)` / raw `userRole !== "admin"` with `can(userRole, "admin.*")` across `src/routes/admin/*`, `admin-templates/*`, `admin-character-overrides.ts`, `admin-nsfw.ts`, `character-emotions/definitions.ts`, `nsfw-moderation/shared.ts`, `middleware/admin-gate.ts` (deleted now-unused `isAdminRole`), `age-gate/controller.ts`. Guards map to `admin.system` / `admin.settings` / `admin.users`; matrix governs — admin/solo/tester (`["*"]`) pass, others denied. **Backlog:** per-resource ownership bypass checks in non-admin routes (`checkActorOwnership`, `chatAccess`/`chatSections`, `created_by === userId || userRole === "admin"`, `quests/handlers`, `story-*`, `entity-routes`, `blog/*`, `plugins.ts`, `chats/templates.ts`, `sessions.ts`, `messages/update.ts`, `messages/search/semantics`, `chat-context/handlers`) remain inline role checks — a distinct access-control refactor, not landed here.
 - Migration `046_seed_audit` (audit table) + `047_user_role_expansion` (widens `users.role` CHECK to all roles)
 - `seeding` config section + `src/seeding/users.ts` config-driven user seeding (idempotent, `${ENV_VAR}` passwords, mirror actors, audit rows), wired into `server/start.ts`
 - Widened `CharactersConfig.templates[].target_roles` to `UserRole[]`

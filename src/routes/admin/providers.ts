@@ -4,7 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { getHealthCache, getProviderHealth, providerToSummary, scanAllProviders, } from "../../admin/provider-health";
 import { listProviders, } from "../../generation/providers/registry";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 
@@ -14,7 +14,7 @@ export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/ap
       // ── Provider management ────────────────────────────────
       .get(`${prefix}/admin/providers`, (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -46,7 +46,7 @@ export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/ap
       },)
       .get(`${prefix}/admin/providers/:name/models`, (ctx: any,) => {
         const { params, userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -78,7 +78,7 @@ export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/ap
       },)
       .post(`${prefix}/admin/providers/rescan`, async (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,

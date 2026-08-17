@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
@@ -49,7 +49,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/audit/purge`,
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -81,7 +81,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/settings/reset`,
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -115,7 +115,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/factory-reset`,
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
