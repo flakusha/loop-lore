@@ -26,6 +26,7 @@ import { chatSettings, } from "../chat-settings";
 import { chatSideChannels, } from "../chat-side-channels";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
+import { creationWizard, } from "../creation-wizard";
 import { t, } from "../i18n";
 import { jsonParseOr, } from "../json";
 import { memoryPanel, } from "../memory-panel";
@@ -220,6 +221,9 @@ globalThis.chatState = function() {
     ...chatBattle,
     ...chatPanels,
     ...chatProactive,
+
+    // ── Creation Wizard (draft preview panel) ──
+    ...creationWizard,
 
     // ── Lifecycle (init / destroy / user + chat list load) ──
     ...chatLifecycle,
