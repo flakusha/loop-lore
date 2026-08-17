@@ -128,3 +128,76 @@ export const PROFICIENCY_BY_LEVEL: Record<number, number> = {
   19: 6,
   20: 6,
 };
+
+// ── Character State Machine ──────────────────────────────
+
+/** Character vitality states — ordered by severity */
+export type CharacterState = "active" | "injured" | "unconscious" | "dead";
+
+/** All character states in severity order (least → most severe) */
+export const ALL_CHARACTER_STATES: CharacterState[] = [
+  "active",
+  "injured",
+  "unconscious",
+  "dead",
+];
+
+/** Severity index for comparison */
+export const STATE_SEVERITY: Record<CharacterState, number> = {
+  active: 0,
+  injured: 1,
+  unconscious: 2,
+  dead: 3,
+};
+
+/** A condition affecting a character (e.g. Poisoned, Stunned) */
+export interface CharacterCondition {
+  name: string;
+  source?: string;
+  duration_rounds?: number;
+  applied_at?: string;
+}
+
+/** An active effect (buff/debuff) on a character */
+export interface ActiveEffect {
+  name: string;
+  type: "buff" | "debuff";
+  stat_modifier?: Partial<StatBlock>;
+  duration_rounds?: number;
+  source?: string;
+}
+
+/**
+ * Compute character state from HP values.
+ *
+ * Rules:
+ * - hp <= 0 AND hp > -maxHp → unconscious
+ * - hp <= -maxHp → dead
+ * - hp < maxHp / 2 → injured
+ * - otherwise → active
+ */
+export function computeCharacterState(hp: number, maxHp: number,): CharacterState {
+  if (hp <= -maxHp) { return "dead"; }
+  if (hp <= 0) { return "unconscious"; }
+  if (hp < maxHp / 2) { return "injured"; }
+  return "active";
+}
+
+/** Behavior profiles for NPC cognition */
+export type BehaviorProfile =
+  | "quest_giver"
+  | "merchant"
+  | "suspect"
+  | "companion"
+  | "hostile"
+  | "neutral";
+
+/** All behavior profiles */
+export const ALL_BEHAVIOR_PROFILES: BehaviorProfile[] = [
+  "quest_giver",
+  "merchant",
+  "suspect",
+  "companion",
+  "hostile",
+  "neutral",
+];
