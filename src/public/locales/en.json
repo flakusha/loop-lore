@@ -1201,7 +1201,10 @@
     "quickRepliesSaved": "Quick-reply buttons saved",
     "quickRepliesSaveFailed": "Failed to save quick-reply buttons",
     "wizardConfirmed": "Entity created from wizard",
-    "wizardConfirmFailed": "Failed to save entity from wizard"
+    "wizardConfirmFailed": "Failed to save entity from wizard",
+    "entityCreated": "Entity \"{name}\" created successfully",
+    "failedCreateEntity": "Failed to create entity",
+    "networkErrorCreatingEntity": "Network error — could not create entity"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",
