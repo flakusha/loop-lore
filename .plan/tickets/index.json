@@ -1737,6 +1737,17 @@
     "title": "i18n & Accessibility Foundation",
     "type": "FEAT"
   },
+  "FEAT-IN-CHAT-ASSET-PREVIEW-LINKAGE-SIDE-PANEL": {
+    "hash": "8d5da034",
+    "extid": "FEAT-IN-CHAT-ASSET-PREVIEW-LINKAGE-SIDE-PANEL",
+    "type": "FEAT",
+    "title": "In-chat asset preview + linkage side panel",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-asset-support-expansion",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
+  },
   "FEAT-ITEM-SYSTEM-EXTENSIONS": {
     "epic": "epic-item-system-extensions",
     "extid": "FEAT-ITEM-SYSTEM-EXTENSIONS",
@@ -5775,6 +5786,17 @@
     "title": "Create Library Package",
     "type": "TASK",
     "git_issue": "a12dd85"
+  },
+  "TASK-CREATION-QUALITY-GATING-CONFIRMATION": {
+    "hash": "bd46b70",
+    "extid": "TASK-CREATION-QUALITY-GATING-CONFIRMATION",
+    "type": "TASK",
+    "title": "Creation quality gating + confirmation",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
   },
   "TASK-CREATIVE-STUDIO": {
     "epic": "",
@@ -10071,7 +10093,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-prompt-template-per-chat-override-ux.md"
+    "source": ".plan/tickets/TASK-prompt-template-per-chat-override-ux.md",
+    "git_issue": "139a2e4"
   },
   "TASK-PROMPT-TEMPLATE-REGISTRY": {
     "epic": "epic-config-templates",
