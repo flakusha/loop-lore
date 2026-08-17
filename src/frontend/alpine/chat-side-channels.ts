@@ -89,15 +89,17 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
   },
 
   toggleSideChannels() {
-    if (typeof Alpine !== "undefined") {
-      try {
-        Alpine.store("ui",).showSideChannels = !Alpine.store("ui",).showSideChannels;
-      } catch {
-        /* store not ready */
-        return;
-      }
-      if (Alpine.store("ui",).showSideChannels) { this.loadSideChannels(); }
+    if (typeof Alpine === "undefined") {
+      return;
     }
+
+    try {
+      Alpine.store("ui",).showSideChannels = !Alpine.store("ui",).showSideChannels;
+    } catch {
+      /* store not ready */
+      return;
+    }
+    if (Alpine.store("ui",).showSideChannels) { this.loadSideChannels(); }
   },
 };
 

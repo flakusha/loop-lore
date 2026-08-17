@@ -34,8 +34,8 @@ describe("RPG stats routes", () => {
     ({ db, sqlite, } = await createTestDb());
     await insertUsers(db, "owner", "Owner", { id: "user-1" as never, },);
     await insertUsers(db, "other", "Other", { id: "user-2" as never, },);
-    await insertActors(db, "Hero", { id: ACTOR_ID as never, owner_id: "user-1" as never, },);
-    await insertActors(db, "Villain", { id: OTHER_ACTOR as never, owner_id: "user-2" as never, },);
+    await insertActors(db, "Hero", { id: ACTOR_ID as never, owner_id: "user-1", },);
+    await insertActors(db, "Villain", { id: OTHER_ACTOR as never, owner_id: "user-2", },);
   },);
 
   afterAll(() => sqlite.close());
