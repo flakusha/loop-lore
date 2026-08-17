@@ -84,6 +84,21 @@ describe("Admin system-config", () => {
     );
     expect(res.status,).toBe(200,);
   });
+
+  test("GET /api/admin/system-config grants tester via permission matrix", async () => {
+    // Tester role holds ["*"] in DEFAULT_PERMISSIONS → the permission-based
+    // guard admits it, previously isAdminRole (admin|solo only) rejected it.
+    const app = createAdminApp(db, "tester",);
+    const res = await app.handle(new Request("http://localhost/api/admin/system-config",),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("GET /api/admin/system-config denies moderator (no admin.* permission)", async () => {
+    // Moderator has chat.*/moderation.* but no admin.* → permission-based guard denies.
+    const app = createAdminApp(db, "moderator",);
+    const res = await app.handle(new Request("http://localhost/api/admin/system-config",),);
+    expect(res.status,).toBe(403,);
+  });
 });
 
 describe("Admin worlds", () => {

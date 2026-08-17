@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import { AdminTemplateCreateBody, AdminTemplateUpdateBody, ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
@@ -14,7 +14,7 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       // ── Template management ─────────────────────────────────
       .get(`${prefix}/admin/templates`, async (ctx: any,) => {
         const { userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.settings",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,
@@ -38,7 +38,7 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/templates/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.settings",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -83,7 +83,7 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/templates`,
         async (ctx: any,) => {
           const { userRole, body, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.settings",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -126,7 +126,7 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       )
       .delete(`${prefix}/admin/templates/:id`, async (ctx: any,) => {
         const { params: p, userRole, } = ctx;
-        if (!isAdminRole(userRole,)) {
+        if (!can(userRole, "admin.settings",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
             status: HttpStatus.Forbidden,

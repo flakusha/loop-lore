@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import {
   AdminRoleUpdateBody,
   ErrorResponse,
@@ -24,7 +24,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/users`,
         async (ctx: any,) => {
           const { userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -88,7 +88,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -140,7 +140,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/users/:id/role`,
         async (ctx: any,) => {
           const { params: p, body, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
@@ -164,7 +164,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
           const { params: p, userRole, } = ctx;
-          if (!isAdminRole(userRole,)) {
+          if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
