@@ -198,4 +198,5 @@ export interface CraftingOrders {
   deadline: string | null;
   created_at: string;
   updated_at: string;
+  trade_type: Generated<string>;
 }
