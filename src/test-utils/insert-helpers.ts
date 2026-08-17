@@ -3068,3 +3068,29 @@ export async function insertSeedAudit(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a trade_history row. */
+export async function insertTradeHistory(
+  db: Db,
+  world_id: string,
+  buyer_actor_id: string,
+  seller_actor_id: string,
+  created_at: string,
+  opts?: {
+    id?: Generated<string>;
+    price?: Generated<number>;
+    currency_type?: Generated<string>;
+    items_offered?: Generated<string>;
+    items_requested?: Generated<string>;
+    trade_type?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("trade_history",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    buyer_actor_id,
+    seller_actor_id,
+    created_at,
+    ...opts,
+  } as any,).execute();
+}
