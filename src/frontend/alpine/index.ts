@@ -35,3 +35,4 @@ import "./memory-panel";
 import "./context-window";
 import "./response-length";
 import "./command-buttons";
+import "./npc";
