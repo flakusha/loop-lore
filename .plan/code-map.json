@@ -371,6 +371,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-character.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
     }
   ],
   "src/assistant/commands/dice.ts": [
@@ -883,6 +887,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    }
+  ],
+  "src/assistant/prompt/templates": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
     }
   ],
   "src/assistant/prompt/types.ts": [
@@ -5063,6 +5073,12 @@
       "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md"
     }
   ],
+  "src/db/migrations/XXXX-create-actor-stats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-rpg-stats.md"
+    }
+  ],
   "src/db/migrations/XXX_polls.ts": [
     {
       "kind": "epic",
@@ -6051,6 +6067,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-api-first-foundation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-rpg-stats.md"
     },
     {
       "kind": "ticket",
@@ -7182,6 +7202,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-npc-alpine-component-wire-into-app.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-alpine.md"
     }
   ],
@@ -7231,6 +7255,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-professions-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/qa-mode.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/frontend/alpine/rag-dashboard.ts": [
@@ -8020,10 +8050,18 @@
   "src/frontend/npc/faction-relations.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-faction-relations-list-and-standing.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-relations.md"
     }
   ],
   "src/frontend/npc/karma-display.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-karma-display-meter-and-tiers.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-karma-display.md"
@@ -8032,25 +8070,27 @@
   "src/frontend/npc/npc-details.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-npc-viewer-list-details-schedule.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-viewer.md"
     }
   ],
   "src/frontend/npc/npc-viewer.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-npc-viewer.md"
-    }
-  ],
-  "src/frontend/npc/relationship-graph.ts": [
+      "source": ".plan/tickets/TASK-npc-viewer-list-details-schedule.md"
+    },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-relationship-map.md"
+      "source": ".plan/tickets/TASK-npc-viewer.md"
     }
   ],
   "src/frontend/npc/relationship-map.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-relationship-map.md"
+      "source": ".plan/tickets/TASK-relationship-map-visual-graph.md"
     }
   ],
   "src/frontend/npc/standing-bar.ts": [
@@ -8513,6 +8553,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/vn/qa-mode.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/frontend/vn/scene-renderer.ts": [
@@ -11735,6 +11781,12 @@
       "source": "docs/spec/gm-shadow-notes.md"
     }
   ],
+  "src/routes/actor-stats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-rpg-stats.md"
+    }
+  ],
   "src/routes/actors": [
     {
       "kind": "ticket",
@@ -13545,6 +13597,18 @@
       "source": ".plan/tickets/BUG-e2e-test-infrastructure-fixes.md"
     }
   ],
+  "src/routes/vn-questions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/routes/vn.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
   "src/routes/weather.ts": [
     {
       "kind": "epic",
@@ -14943,6 +15007,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-species-mechanics.md"
+    }
+  ],
+  "src/rpg/stats-service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-rpg-stats.md"
     }
   ],
   "src/rpg/stats.test.ts": [
@@ -16373,6 +16443,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-response-schemas-remaining-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-rpg-stats.md"
     },
     {
       "kind": "ticket",
