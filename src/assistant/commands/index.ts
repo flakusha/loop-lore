@@ -24,6 +24,9 @@ import "./music";
 import "./caption";
 import "./create";
 import "./review";
+import "./attack";
+import "./battle";
+import "./heal";
 
 export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";

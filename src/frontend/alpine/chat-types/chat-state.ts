@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ChatArchiveState, } from "./archive-state";
+import type { ChatBattleState, } from "./battle-state";
 import type { ChatCoreState, } from "./core";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
@@ -17,6 +18,7 @@ import type { ChatSideChannelsState, } from "./side-channels-state";
 export interface ChatState
   extends
     ChatCoreState,
+    ChatBattleState,
     ChatRpgState,
     ChatMoodState,
     ChatMemoryState,

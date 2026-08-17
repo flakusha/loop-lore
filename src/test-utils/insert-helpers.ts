@@ -3013,6 +3013,32 @@ export async function insertModelCapabilities(
   } as any,).execute();
 }
 
+/** Insert a battles row. */
+export async function insertBattles(
+  db: Db,
+  chat_id: string,
+  created_by: string,
+  opts?: {
+    id?: Generated<string>;
+    world_id?: string | null;
+    status?: Generated<string>;
+    round?: Generated<number>;
+    turn_index?: Generated<number>;
+    combatants?: Generated<string>;
+    log?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+    ended_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("battles",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    created_by,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a seed_audit row. */
 export async function insertSeedAudit(
   db: Db,
