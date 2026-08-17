@@ -6,7 +6,7 @@
  *
  * Tests create/get/update operations against an in-memory SQLite DB.
  */
-import { describe, expect, it, beforeEach, } from "bun:test";
+import { beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -38,7 +38,7 @@ describe("createCharacterStats", () => {
 
     expect(id,).toBeDefined();
     expect(typeof id,).toBe("string",);
-  },);
+  });
 
   it("creates stats with all optional fields", async () => {
     await insertUsers(db, "wizard-owner", "Wizard Owner", { id: "user-1" as never, },);
@@ -75,14 +75,14 @@ describe("createCharacterStats", () => {
     expect(stats!.evasiveness,).toBeCloseTo(0.3,);
     expect(stats!.characterState,).toBe("active",);
     expect(stats!.conditions,).toBe("[]",);
-  },);
-},);
+  });
+});
 
 describe("getCharacterStats", () => {
   it("returns null when no stats exist", async () => {
     const stats = await getCharacterStats({ database: db, }, "nonexistent",);
     expect(stats,).toBeNull();
-  },);
+  });
 
   it("returns stats after creation", async () => {
     await insertUsers(db, "fighter-owner", "Fighter Owner", { id: "user-1" as never, },);
@@ -105,8 +105,8 @@ describe("getCharacterStats", () => {
     expect(stats!.str,).toBe(16,);
     expect(stats!.dex,).toBe(12,);
     expect(stats!.con,).toBe(14,);
-  },);
-},);
+  });
+});
 
 describe("updateCharacterStats", () => {
   it("updates hp and maxHp", async () => {
@@ -131,7 +131,7 @@ describe("updateCharacterStats", () => {
     expect(refreshed!.hp,).toBe(15,);
     expect(refreshed!.maxHp,).toBe(25,);
     expect(refreshed!.ac,).toBe(14,); // unchanged
-  },);
+  });
 
   it("updates cognition fields", async () => {
     await insertUsers(db, "npc-owner", "NPC Owner", { id: "user-1" as never, },);
@@ -150,7 +150,7 @@ describe("updateCharacterStats", () => {
       cooperativeness: 0.2,
       aggressionThreshold: 0.9,
       characterState: "injured",
-      conditions: JSON.stringify([{ name: "Poisoned", source: "snake bite", }],),
+      conditions: JSON.stringify([{ name: "Poisoned", source: "snake bite", },],),
     },);
 
     const refreshed = await getCharacterStats({ database: db, }, "actor-5",);
@@ -162,7 +162,7 @@ describe("updateCharacterStats", () => {
 
     const conditions = JSON.parse(refreshed!.conditions,) as Array<{ name: string }>;
     expect(conditions[0]!.name,).toBe("Poisoned",);
-  },);
+  });
 
   it("returns false when no fields provided", async () => {
     await insertUsers(db, "empty-owner", "Empty Owner", { id: "user-1" as never, },);
@@ -177,8 +177,8 @@ describe("updateCharacterStats", () => {
     const stats = await getCharacterStats({ database: db, }, "actor-6",);
     const updated = await updateCharacterStats({ database: db, }, stats!.id, {},);
     expect(updated,).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("checkRpgEnabled (world-gate)", () => {
   it("returns allowed=true when rpg_enabled=1", async () => {
@@ -186,7 +186,7 @@ describe("checkRpgEnabled (world-gate)", () => {
     await insertWorlds(db, "user-1", "RPG World", { id: "world-1" as never, rpg_enabled: 1 as never, },);
     const result = await checkRpgEnabled(db, "world-1",);
     expect(result.allowed,).toBe(true,);
-  },);
+  });
 
   it("returns allowed=false when rpg_enabled=0", async () => {
     await insertUsers(db, "owner2", "Owner Two", { id: "user-2" as never, },);
@@ -194,11 +194,11 @@ describe("checkRpgEnabled (world-gate)", () => {
     const result = await checkRpgEnabled(db, "world-2",);
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toContain("not enabled",);
-  },);
+  });
 
   it("returns allowed=false when world not found", async () => {
     const result = await checkRpgEnabled(db, "nonexistent",);
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toContain("not found",);
-  },);
-},);
+  });
+});

@@ -10,13 +10,13 @@
  */
 
 import { Elysia, } from "elysia";
-import type { StatBlock, } from "../../rpg/stats.js";
 import {
   createCharacterStats,
   getCharacterStats,
   updateCharacterStats,
 } from "../../rpg/service/character-stats.js";
 import { checkRpgEnabled, } from "../../rpg/service/world-gate.js";
+import type { StatBlock, } from "../../rpg/stats.js";
 import { requireActorAccess, } from "../actor-auth.js";
 import { jsonCreated, jsonError, jsonResponse, notFoundResponse, } from "../http-utils.js";
 import { log, } from "./log.js";
@@ -78,8 +78,14 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
               }
             }
             const body = ctx.body as {
-              hp: number; maxHp: number; ac: number; stats?: StatBlock;
-              level?: number; mp?: number; maxMp?: number; speed?: number;
+              hp: number;
+              maxHp: number;
+              ac: number;
+              stats?: StatBlock;
+              level?: number;
+              mp?: number;
+              maxMp?: number;
+              speed?: number;
             };
             const existing = await getCharacterStats(deps, ctx.params.actorId,);
             if (existing) {
@@ -87,10 +93,19 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
             }
             const statsId = await createCharacterStats(deps, {
               actorId: ctx.params.actorId,
-              hp: body.hp, maxHp: body.maxHp, ac: body.ac,
-              level: body.level, mp: body.mp, maxMp: body.maxMp, speed: body.speed,
-              str: body.stats?.str, dex: body.stats?.dex, con: body.stats?.con,
-              int: body.stats?.int, wis: body.stats?.wis, cha: body.stats?.cha,
+              hp: body.hp,
+              maxHp: body.maxHp,
+              ac: body.ac,
+              level: body.level,
+              mp: body.mp,
+              maxMp: body.maxMp,
+              speed: body.speed,
+              str: body.stats?.str,
+              dex: body.stats?.dex,
+              con: body.stats?.con,
+              int: body.stats?.int,
+              wis: body.stats?.wis,
+              cha: body.stats?.cha,
             },);
             return jsonCreated({ id: statsId, actorId: ctx.params.actorId, },);
           } catch (error) {
@@ -119,11 +134,22 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
               return notFoundResponse("Character stats not found — use POST to create",);
             }
             const updated = await updateCharacterStats(deps, existing.id, {
-              hp: body.hp, maxHp: body.maxHp, tempHp: body.tempHp,
-              mp: body.mp, maxMp: body.maxMp, ac: body.ac, speed: body.speed,
-              str: body.str, dex: body.dex, con: body.con,
-              int: body.int, wis: body.wis, cha: body.cha,
-              level: body.level, xp: body.xp, xpToNext: body.xpToNext,
+              hp: body.hp,
+              maxHp: body.maxHp,
+              tempHp: body.tempHp,
+              mp: body.mp,
+              maxMp: body.maxMp,
+              ac: body.ac,
+              speed: body.speed,
+              str: body.str,
+              dex: body.dex,
+              con: body.con,
+              int: body.int,
+              wis: body.wis,
+              cha: body.cha,
+              level: body.level,
+              xp: body.xp,
+              xpToNext: body.xpToNext,
             },);
             if (!updated) {
               return jsonError("No fields to update", 400,);
