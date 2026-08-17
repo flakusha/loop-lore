@@ -452,6 +452,7 @@ export interface CharacterStats {
   data_version: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  combat_alignment: Generated<string>;
 }
 
 // ── xp_ledger ────────────────────────────────────────────

@@ -982,6 +982,7 @@ export const SCHEMA = new SchemaManifest()
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    combat_alignment: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("character_world_setup", {
     id: col("text", { primaryKey: true, },),

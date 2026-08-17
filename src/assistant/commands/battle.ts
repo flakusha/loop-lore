@@ -7,12 +7,15 @@
  *   /battle             — show the active battle (roster, round, turn)
  *   /battle start       — start a battle from the chat's participants
  *   /battle status      — show the active battle state
+ *   /battle align <t> <player|enemy> — set a combatant's battle side
  *   /battle end         — end (abandon) the active battle
  *
  * Backed by the durable battles service (src/rpg/service/battles.ts); the
  * combat engine (src/rpg/combat) resolves each action.
  */
+import type { Kysely, } from "kysely";
 import { ChatParticipantRole, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import {
   BattleStatus,
   type BattleWithRoster,
@@ -20,7 +23,12 @@ import {
   getActiveBattle,
   startBattle,
 } from "../../rpg/service/battles";
-import { formatRosterNames, resolveBattleRoster, } from "./battle-utils";
+import {
+  CombatAlignment,
+  findCombatant,
+  formatRosterNames,
+  resolveBattleRoster,
+} from "./battle-utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
@@ -103,11 +111,62 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
     };
   }
 
+  // ── align ──────────────────────────────────────────────
+  if (sub === "align") {
+    return alignCombatant(db, ctx.chatId, userId, args[1] ?? "", args[2] ?? "",);
+  }
+
   return {
-    systemMessage: "Usage: `/battle [start|status|end]`",
+    systemMessage: "Usage: `/battle [start|status|align <target> <player|enemy>|end]`",
     handled: true,
   };
 }, { requiredRole: ChatParticipantRole.Owner, },);
+
+/**
+ * Set a roster combatant's battle side (`player` or `enemy`).
+ *
+ * @param db - Database handle
+ * @param chatId - Chat whose roster to inspect
+ * @param userId - The commanding actor (excluded from the roster)
+ * @param targetArg - Target combatant name/id
+ * @param side - Desired alignment (`player` or `enemy`)
+ * @returns A confirmation or error CommandResult
+ */
+async function alignCombatant(
+  db: Kysely<DB>,
+  chatId: string,
+  userId: string,
+  targetArg: string,
+  side: string,
+): Promise<CommandResult> {
+  const targetName = targetArg.trim();
+  if (
+    !targetName ||
+    (side !== CombatAlignment.Player && side !== CombatAlignment.Enemy)
+  ) {
+    return { systemMessage: "Usage: `/battle align <target> <player|enemy>`", handled: true, };
+  }
+
+  const roster = await resolveBattleRoster(db, chatId, userId,);
+  const target = findCombatant(Array.from(roster, (r,) => r.combatant,), targetName,);
+  if (!target) {
+    return {
+      systemMessage:
+        `**Battle:** target "${targetName}" not found among combatants. Align a character that has joined the chat.`,
+      handled: true,
+    };
+  }
+
+  await db
+    .updateTable("character_stats",)
+    .set({ combat_alignment: side, },)
+    .where("actor_id", "=", target.id,)
+    .execute();
+  return {
+    systemMessage: `**${target.name}** is now a **${side}** combatant. Run \`/battle start\` to rebuild the roster.`,
+    handled: true,
+  };
+}
 
 /** Render a battle as a readable markdown block. */
 export function formatBattle(battle: BattleWithRoster,): string {
