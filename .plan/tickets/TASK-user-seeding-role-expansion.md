@@ -6,7 +6,15 @@
 **Epic:** Logic Reconciliation
 **Priority:** High
 **Effort:** Medium
-**Status:** ⬜ Not Started — design doc exists (roles, config schema, DB schema, task list); implementation pending. Code reality: `UserRole` = admin/user/viewer/solo (`src/db/enums-core/users.ts`), seeding = `seedDefaultActors` + bootstrap admin (`src/db/seed.ts`), no config-driven seeding, no `user_roles`/`seed_audit` tables
+**Status:** ✅ Done (2026-08-17, worktree `user-seeding-role-expansion`) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`). Character/world/chat content seeding + environment overrides are follow-up work.
+
+**Done scope (2026-08-17):**
+- `UserRole` expanded 4→11 (adds moderator/creator/player/guest/bot/tester/custom)
+- RBAC matrix `src/users/permissions.ts` (+ `roles.ts` helpers) — advisory foundation; route migration to permission-based checks is a follow-up
+- Migration `046_seed_audit` (audit table) + `047_user_role_expansion` (widens `users.role` CHECK to all roles)
+- `seeding` config section + `src/seeding/users.ts` config-driven user seeding (idempotent, `${ENV_VAR}` passwords, mirror actors, audit rows), wired into `server/start.ts`
+- Widened `CharactersConfig.templates[].target_roles` to `UserRole[]`
+- Tests: permissions 22, seeding 8, enums 51, schema-sync 3 — all green; gate 20/22 (only pre-existing lint-ts manifest-dupe + size-strict)
 
 ## Summary
 
