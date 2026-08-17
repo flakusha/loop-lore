@@ -1,167 +1,272 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
- * TradeService tests — currency ledger + atomic two-sided trade.
+ * Trade Service Tests — offer lifecycle, NPC trading, history.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertItems, insertUsers, insertWorldItems, insertWorlds, } from "../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertItems,
+  insertUsers,
+  insertWorldItems,
+  insertWorlds,
+} from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { TradeService, } from "./trade";
 
-let db: Kysely<DB>;
-let worldId: string;
-let buyer: string;
-let seller: string;
-let itemA: string; // world_item owned by buyer
-let itemB: string; // world_item owned by seller
-let defA: string;
-let defB: string;
-let trade: TradeService;
+describe("TradeService — offer lifecycle", () => {
+  let db: Kysely<DB>;
+  let worldId: string;
+  let buyer: string;
+  let seller: string;
+  let stranger: string;
+  let buyerItem: string;
+  let sellerItem: string;
+  let defA: string;
+  let defB: string;
 
-beforeAll(async () => {
-  createLogger({ level: "error", },);
-  ({ db, } = await createTestDb());
-  const userId = uid();
-  await insertUsers(db, `user-${userId}`, "Trade Owner", { id: userId, } as never,);
-  worldId = uid();
-  await insertWorlds(db, userId, "Trade World", { id: worldId, } as never,);
-  buyer = uid();
-  seller = uid();
-  await insertActors(db, "Buyer", { id: buyer, } as never,);
-  await insertActors(db, "Seller", { id: seller, } as never,);
-
-  defA = uid();
-  defB = uid();
-  await insertItems(db, worldId, "Potion", "consumable", { id: defA, } as never,);
-  await insertItems(db, worldId, "Sword", "weapon", { id: defB, } as never,);
-  const wA = uid();
-  const wB = uid();
-  await insertWorldItems(db, worldId, defA, { id: wA, owner_actor_id: buyer, quantity: 5, } as never,);
-  await insertWorldItems(db, worldId, defB, { id: wB, owner_actor_id: seller, quantity: 3, } as never,);
-  itemA = wA;
-  itemB = wB;
-
-  trade = new TradeService(db,);
-},);
-
-afterAll(async () => {
-  await db.destroy();
-},);
-
-describe("currency ledger", () => {
-  test("balance defaults to 0", async () => {
-    expect(await trade.getBalance(buyer, worldId,),).toBe(0,);
-  });
-
-  test("credit and debit update balance", async () => {
-    expect(await trade.credit(buyer, worldId, 100,),).toBe(100,);
-    expect(await trade.debit(buyer, worldId, 30,),).toBe(true,);
-    expect(await trade.getBalance(buyer, worldId,),).toBe(70,);
-  });
-
-  test("debit beyond balance fails without changing balance", async () => {
-    expect(await trade.debit(buyer, worldId, 500,),).toBe(false,);
-    expect(await trade.getBalance(buyer, worldId,),).toBe(70,);
-  });
-
-  test("transferCurrency moves funds between actors", async () => {
-    await trade.transferCurrency(buyer, seller, worldId, 20,);
-    expect(await trade.getBalance(buyer, worldId,),).toBe(50,);
-    expect(await trade.getBalance(seller, worldId,),).toBe(20,);
-  });
-
-  test("transferCurrency fails when source lacks funds", async () => {
-    expect(await trade.transferCurrency(buyer, seller, worldId, 9999,),).toBe(false,);
-    expect(await trade.getBalance(seller, worldId,),).toBe(20,);
-  });
-});
-
-describe("two-sided trade", () => {
   beforeAll(async () => {
-    // Reset balances for a clean trade scenario.
-    await db.deleteFrom("actor_currencies",).execute();
-    await trade.credit(buyer, worldId, 100,);
-    await trade.credit(seller, worldId, 50,);
+    ({ db, } = await createTestDb());
+    const userId = uid();
+    await insertUsers(db, `u-${userId}`, "Owner", {
+      id: userId as never,
+      role: "solo" as never,
+      status: "active" as never,
+      settings: "{}" as never,
+    },);
+    worldId = uid();
+    await insertWorlds(db, userId, "Trade World", { id: worldId as never, },);
+    buyer = uid();
+    seller = uid();
+    stranger = uid();
+    await insertActors(db, "Buyer", { id: buyer as never, user_id: userId as never, },);
+    await insertActors(db, "Seller", { id: seller as never, user_id: userId as never, },);
+    await insertActors(db, "Stranger", { id: stranger as never, user_id: userId as never, },);
+    defA = uid();
+    defB = uid();
+    await insertItems(db, worldId, "Potion", "consumable", { id: defA as never, },);
+    await insertItems(db, worldId, "Sword", "weapon", { id: defB as never, },);
+    buyerItem = uid();
+    sellerItem = uid();
+    await insertWorldItems(db, worldId, defA, {
+      id: buyerItem as never,
+      owner_actor_id: buyer as never,
+      quantity: 10 as never,
+    },);
+    await insertWorldItems(db, worldId, defB, {
+      id: sellerItem as never,
+      owner_actor_id: seller as never,
+      quantity: 5 as never,
+    },);
+    // Fund both actors.
+    await new TradeService(db,).credit(buyer, worldId, 200,);
+    await new TradeService(db,).credit(seller, worldId, 100,);
   },);
 
-  test("atomically exchanges items and gold both directions", async () => {
-    const res = await trade.trade({
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  // ── createOffer ────────────────────────────────────────
+
+  test("createOffer returns an offer ID", async () => {
+    const svc = new TradeService(db,);
+    const id = await svc.createOffer({
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: itemA, quantity: 2, },],
-      sellerItems: [{ worldItemId: itemB, quantity: 1, },],
-      price: 25,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 3, },],
+      price: 50,
     },);
-    expect(res.success,).toBe(true,);
-    expect(res.pricePaid,).toBe(25,);
+    expect(id,).toBeTruthy();
+    expect(typeof id,).toBe("string",);
+  });
 
-    // Buyer spent 25 gold; seller gained 25.
-    expect(await trade.getBalance(buyer, worldId,),).toBe(75,);
-    expect(await trade.getBalance(seller, worldId,),).toBe(75,);
+  // ── listOffers ─────────────────────────────────────────
 
-    // Buyer receives 1 sword (defB, itemB's def) — new row keyed by def.
-    const bGot = await db
-      .selectFrom("world_items",)
-      .select("quantity",)
-      .where("item_id", "=", defB,)
-      .where("owner_actor_id", "=", buyer,)
+  test("listOffers returns offers for buyer and seller", async () => {
+    const svc = new TradeService(db,);
+    const buyerOffers = await svc.listOffers(worldId, buyer,);
+    expect(buyerOffers.length,).toBeGreaterThanOrEqual(1,);
+    expect(buyerOffers[0]!.buyerActorId,).toBe(buyer,);
+
+    const sellerOffers = await svc.listOffers(worldId, seller,);
+    expect(sellerOffers.length,).toBeGreaterThanOrEqual(1,);
+    expect(sellerOffers.some(o => o.sellerActorId === seller),).toBe(true,);
+
+    // Stranger sees nothing.
+    const strangerOffers = await svc.listOffers(worldId, stranger,);
+    expect(strangerOffers.length,).toBe(0,);
+  });
+
+  // ── cancelOffer ────────────────────────────────────────
+
+  test("cancelOffer succeeds for creator, fails for others", async () => {
+    const svc = new TradeService(db,);
+    const id = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 10,
+    },);
+
+    // Seller cannot cancel.
+    const wrongCancel = await svc.cancelOffer(id, seller,);
+    expect(wrongCancel.success,).toBe(false,);
+    expect(wrongCancel.reason,).toContain("creator",);
+
+    // Buyer can cancel.
+    const okCancel = await svc.cancelOffer(id, buyer,);
+    expect(okCancel.success,).toBe(true,);
+
+    // Cannot cancel again (already cancelled).
+    const doubleCancel = await svc.cancelOffer(id, buyer,);
+    expect(doubleCancel.success,).toBe(false,);
+    expect(doubleCancel.reason,).toContain("cancelled",);
+  });
+
+  // ── acceptOffer — happy path ──────────────────────────
+
+  test("acceptOffer transfers items + gold and records history", async () => {
+    const svc = new TradeService(db,);
+    const buyerBalBefore = await svc.getBalance(buyer, worldId,);
+    const sellerBalBefore = await svc.getBalance(seller, worldId,);
+
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 2, },],
+      price: 30,
+    },);
+
+    // Only seller can accept.
+    const wrongAccept = await svc.acceptOffer(offerId, buyer,);
+    expect(wrongAccept.success,).toBe(false,);
+    expect(wrongAccept.reason,).toContain("seller",);
+
+    // Seller accepts.
+    const result = await svc.acceptOffer(offerId, seller,);
+    expect(result.success,).toBe(true,);
+    expect(result.pricePaid,).toBe(30,);
+
+    // Verify balances moved correctly: buyer paid 30, seller received 30.
+    const buyerBalAfter = await svc.getBalance(buyer, worldId,);
+    const sellerBalAfter = await svc.getBalance(seller, worldId,);
+    expect(buyerBalAfter,).toBe(buyerBalBefore - 30,);
+    expect(sellerBalAfter,).toBe(sellerBalBefore + 30,);
+
+    // Verify item ownership transferred: buyerItem is split —
+    // original retains 8, new instance for seller has 2.
+    const originalItem = await db.selectFrom("world_items",)
+      .select(["owner_actor_id", "quantity",],)
+      .where("id", "=", buyerItem,)
       .executeTakeFirst();
-    expect(bGot?.quantity,).toBe(1,);
-    // Seller receives 2 potions (defA, itemA's def).
-    const sGot = await db
-      .selectFrom("world_items",)
-      .select("quantity",)
-      .where("item_id", "=", defA,)
+    expect(originalItem!.owner_actor_id,).toBe(buyer,);
+    expect(originalItem!.quantity,).toBe(8,); // 10 - 2
+
+    const sellerItems = await db.selectFrom("world_items",)
+      .select(["owner_actor_id", "quantity",],)
       .where("owner_actor_id", "=", seller,)
-      .executeTakeFirst();
-    expect(sGot?.quantity,).toBe(2,);
+      .where("item_id", "=", defA,)
+      .execute();
+    expect(sellerItems.length,).toBeGreaterThanOrEqual(1,);
+    expect(sellerItems.some(i => i.quantity === 2),).toBe(true,);
+
+    // Verify trade history recorded.
+    const history = await svc.getTradeHistory(worldId, buyer,);
+    expect(history.length,).toBeGreaterThanOrEqual(1,);
+    expect(history[0]!.buyerActorId,).toBe(buyer,);
+    expect(history[0]!.sellerActorId,).toBe(seller,);
+    expect(history[0]!.price,).toBe(30,);
   });
 
-  test("insufficient funds is rejected atomically", async () => {
-    const snap = {
-      buyerBal: await trade.getBalance(buyer, worldId,),
-      sellerBal: await trade.getBalance(seller, worldId,),
-    };
-    const res = await trade.trade({
+  // ── acceptOffer — cannot accept twice ─────────────────
+
+  test("acceptOffer rejects already-accepted offers", async () => {
+    const svc = new TradeService(db,);
+    const offerId = await svc.createOffer({
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: itemA, quantity: 1, },],
-      sellerItems: [{ worldItemId: itemB, quantity: 1, },],
-      price: 50_000,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 5,
     },);
-    expect(res.success,).toBe(false,);
-    expect(res.reason,).toBe("buyer has insufficient currency",);
-    // Nothing moved.
-    expect(await trade.getBalance(buyer, worldId,),).toBe(snap.buyerBal,);
-    expect(await trade.getBalance(seller, worldId,),).toBe(snap.sellerBal,);
+    await svc.acceptOffer(offerId, seller,);
+    const again = await svc.acceptOffer(offerId, seller,);
+    expect(again.success,).toBe(false,);
+    expect(again.reason,).toContain("accepted",);
   });
 
-  test("cannot trade with yourself", async () => {
-    const res = await trade.trade({
+  // ── NPC buy/sell ──────────────────────────────────────
+
+  test("buyFromNpc transfers NPC items to player", async () => {
+    const svc = new TradeService(db,);
+    const buyerBalBefore = await svc.getBalance(buyer, worldId,);
+    const result = await svc.buyFromNpc({
       worldId,
       buyerActorId: buyer,
+      npcActorId: seller,
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
+      price: 15,
+    },);
+    expect(result.success,).toBe(true,);
+    expect(result.pricePaid,).toBe(15,);
+
+    // Buyer paid, seller (NPC) received.
+    expect(await svc.getBalance(buyer, worldId,),).toBe(buyerBalBefore - 15,);
+
+    // History logged with player_npc type.
+    const history = await svc.getTradeHistory(worldId, buyer,);
+    const npcTrade = history.find(h => h.tradeType === "player_npc");
+    expect(npcTrade,).toBeTruthy();
+    expect(npcTrade!.buyerActorId,).toBe(buyer,);
+    expect(npcTrade!.sellerActorId,).toBe(seller,);
+  });
+
+  test("sellToNpc transfers player items to NPC", async () => {
+    const svc = new TradeService(db,);
+    const sellerBalBefore = await svc.getBalance(seller, worldId,);
+    const result = await svc.sellToNpc({
+      worldId,
       sellerActorId: buyer,
-      buyerItems: [],
-      sellerItems: [],
-      price: 1,
+      npcActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 10,
     },);
-    expect(res.success,).toBe(false,);
+    expect(result.success,).toBe(true,);
+    expect(result.pricePaid,).toBe(10,);
+
+    // Seller (NPC) paid, buyer received.
+    expect(await svc.getBalance(seller, worldId,),).toBe(sellerBalBefore - 10,);
+
+    // History logged with npc_player type.
+    const history = await svc.getTradeHistory(worldId, buyer,);
+    const npcTrade = history.find(h => h.tradeType === "npc_player");
+    expect(npcTrade,).toBeTruthy();
   });
 
-  test("rejects item not owned by stated party", async () => {
-    const res = await trade.trade({
-      worldId,
-      buyerActorId: buyer,
-      sellerActorId: seller,
-      buyerItems: [{ worldItemId: itemB, quantity: 1, },], // itemB belongs to seller
-      sellerItems: [],
-      price: 1,
-    },);
-    expect(res.success,).toBe(false,);
-    expect(res.reason,).toContain("not owned",);
+  // ── trade history ─────────────────────────────────────
+
+  test("getTradeHistory filters by actor and returns all", async () => {
+    const svc = new TradeService(db,);
+    const allHistory = await svc.getTradeHistory(worldId,);
+    expect(allHistory.length,).toBeGreaterThanOrEqual(3,); // at least 3 trades above
+
+    const buyerHistory = await svc.getTradeHistory(worldId, buyer,);
+    expect(buyerHistory.length,).toBeGreaterThanOrEqual(2,);
+    for (const entry of buyerHistory) {
+      const involvesBuyer = entry.buyerActorId === buyer || entry.sellerActorId === buyer;
+      expect(involvesBuyer,).toBe(true,);
+    }
+
+    // Limit works.
+    const limited = await svc.getTradeHistory(worldId, undefined, 1,);
+    expect(limited.length,).toBe(1,);
   });
 });

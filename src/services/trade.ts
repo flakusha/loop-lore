@@ -377,6 +377,7 @@ export class TradeService {
       return { success: false, reason: "cannot trade with yourself", };
     }
 
+    // Player buys from NPC: NPC sells items, player pays gold.
     const result = await this.trade({
       worldId,
       buyerActorId,
@@ -418,12 +419,13 @@ export class TradeService {
       return { success: false, reason: "cannot trade with yourself", };
     }
 
+    // Player sells to NPC: player sends items, NPC pays gold.
     const result = await this.trade({
       worldId,
       buyerActorId: npcActorId,
       sellerActorId,
-      buyerItems,
-      sellerItems: [],
+      buyerItems: [],
+      sellerItems: buyerItems,
       price,
     },);
 
@@ -462,6 +464,9 @@ export class TradeService {
     price: number;
     deadline?: string;
   },): Promise<string> {
+    // Ensure sentinel recipe exists (FK constraint on crafting_orders.recipe_id).
+    await this.ensureTradeSentinel(opts.worldId,);
+
     const id = uid();
     const now = new Date().toISOString();
     await this.db.insertInto("crafting_orders",).values({
@@ -591,5 +596,53 @@ export class TradeService {
       deadline: r.deadline,
       createdAt: r.created_at,
     }),);
+  }
+
+  /**
+   * Ensure the sentinel recipe exists for trade offers.
+   * The crafting_orders table has a FK on recipe_id → crafting_recipes.id,
+   * so we need a real row to reference for trade offers.
+   */
+  private async ensureTradeSentinel(worldId: string,): Promise<void> {
+    const existing = await this.db.selectFrom("crafting_recipes",)
+      .select("id",)
+      .where("id", "=", TradeService.TRADE_RECIPE_SENTINEL,)
+      .executeTakeFirst();
+    if (existing) { return; }
+
+    const now = new Date().toISOString();
+
+    // Sentinel item (FK: crafting_recipes.output_item_id → items.id).
+    await this.db.insertInto("items",).values({
+      id: TradeService.TRADE_RECIPE_SENTINEL,
+      world_id: worldId,
+      name: "__trade_offer__",
+      category: "misc",
+      description: "Sentinel item for trade offers — do not delete",
+      created_at: now,
+      updated_at: now,
+    },).execute();
+
+    // Sentinel recipe (FK: crafting_orders.recipe_id → crafting_recipes.id).
+    await this.db.insertInto("crafting_recipes",).values({
+      id: TradeService.TRADE_RECIPE_SENTINEL,
+      world_id: worldId,
+      name: "__trade_offer__",
+      description: "Sentinel recipe for trade offers — do not delete",
+      discipline: "smithing",
+      tier: 0,
+      level_required: 0,
+      output_item_id: TradeService.TRADE_RECIPE_SENTINEL,
+      output_quantity: 0,
+      crafting_time_seconds: 0,
+      base_success_chance: 0,
+      base_quality_min: 0,
+      base_quality_max: 0,
+      perfect_threshold: 0,
+      discovered_by_default: 0,
+      tags: "[]",
+      created_at: now,
+      updated_at: now,
+    },).execute();
   }
 }
