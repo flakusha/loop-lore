@@ -1,81 +1,120 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+# TASK: Character RPG Stats
 
-# TASK-2026-048: Character RPG Stats System
+**Status:** ⬜ Not Started
+**Priority:** P2-later — High
+**Effort:** High
+**Type:** Feature Task
+**Tags:** rpg, stats, character, combat, foundation
+**Epic:** epic-character-core-system.md
 
-**Status**: open
-**Priority**: medium
-**Labels**: feature, characters, rpg
-**Assignee**:
-**Epic**: EPIC-059 (Creative Studio)
+## Summary
 
-## Description
+Implement the RPG stat system: base stats (STR/DEX/CON/WIS/INT/CHA), modifiers, derived stats, and level-up mechanics. Foundation for battle/combat, skills, achievements, and all stat-dependent systems.
 
-Add optional RPG stats system to characters using state machines. Opt-in per world configuration. Supports ability scores, hit points, skills, equipment, and dynamic state.
+## Scope
 
-### RPG Stats Reference
+### Base Stats
 
-**Permanent Characteristics (Core identity)**
+| Stat | Full Name | Affects |
+|------|-----------|---------|
+| STR | Strength | Melee damage, carry weight, physical checks |
+| DEX | Dexterity | Ranged damage, initiative, dodge, stealth |
+| CON | Constitution | HP, poison resistance, stamina |
+| INT | Intelligence | Spell power, lore checks, crafting |
+| WIS | Wisdom | Perception, healing, willpower saves |
+| CHA | Charisma | Persuasion, intimidation, NPC disposition |
 
-```toml
-[permanent.identity]
-race = "High Elf"
-class = "Wizard"
-background = "Sage"
-alignment = "Chaotic Good"
+### Derived Stats
 
-[permanent.statistics]
-ability_scores = { strength = 8, dexterity = 14, constitution = 12, intelligence = 17, wisdom = 13, charisma = 10 }
-hit_dice = "1d6"
-proficiency_bonus = 2
-saving_throw_proficiencies = ["Intelligence", "Wisdom"]
-skill_proficiencies = ["Arcana", "History", "Investigation", "Insight"]
-```
+- HP = base + CON × level modifier
+- MP = base + INT × level modifier
+- Initiative = DEX + WIS modifier
+- Armor Class = DEX modifier + equipment
+- Carry Weight = STR × carry multiplier
+- Perception = WIS modifier + level
+- Social modifiers = CHA-based
 
-**Temporary Characteristics (Dynamic state)**
+### Stat Modifiers
 
-```toml
-[temporary.state]
-current_hit_points = 8
-temporary_hit_points = 0
-conditions = [] # ["Poisoned", "Stunned", "Invisible"]
-active_effects = []
+- Ability modifier = floor((stat - 10) / 2)
+- Applied to all rolls, derived calculations, and system interactions
+- Range: -5 to +10 (stat range 1-30)
 
-[temporary.resources]
-spell_slots = { level_1 = 3, level_2 = 2 }
-consumables = [{ name = "Health Potion", quantity = 2 }]
-```
+### Level-Up
 
-**Cognition Parameters (Behavior modulation)**
+- XP threshold table (configurable)
+- Stat increase allocation (point-buy or auto)
+- Derived stats recalculate on level change
+- Milestone abilities at certain levels (future: `TASK-character-growth-milestones.md`)
 
-```toml
-[permanent.cognition]
-behavior_profile = "suspect" # Options: quest_giver, merchant, suspect, companion
-evasiveness = 0.7 # Likelihood to withhold information
-cooperativeness = 0.3 # Likelihood to assist player
-aggression_threshold = 0.8 # Point at which combat is initiated
+### Validation
 
-[permanent.cognition.emotional_state]
-current = "anxious"
-transitions = [
-  { to = "defensive", trigger_keywords = ["accuse", "lie", "arrest"] },
-  { to = "remorseful", trigger_keywords = ["forgive", "understand", "help"] },
-]
-```
+- Stat range: 1-30 (enforced at API + DB)
+- Total stat points budget (optional, configurable per world)
+- Minimum/maximum per stat (configurable)
 
-### Acceptance Criteria
+## Backend
 
-- [ ] Add `stats` table to DB (optional, world-gated)
-- [ ] Add `cognition` settings to character (behavior profile, evasiveness, cooperativeness)
-- [ ] State machine for temporary character state (HP, conditions, effects)
-- [ ] Merge into mood system (opt-in per world)
+### Service
 
-### Notes
+- `src/rpg/stats-service.ts` — stat calculation, modifier lookup, derived stats
+- Export pure functions: `calcModifier(stat)`, `calcHP(stats, level)`, `calcMP(stats, level)`, `calcAC(stats, equipment)`
 
-State machine approach:
+### API
 
-- `CharacterStatState` enum: `active`, `injured`, `unconscious`, `dead`
-- `CharacterCondition` state machine with transitions
-- `CharacterResource` state machine for spell slots, consumables
+- `GET /api/actors/:id/stats` — read stats
+- `PUT /api/actors/:id/stats` — update base stats (validation + recalc derived)
+- `POST /api/actors/:id/stats/level-up` — apply level-up (XP spend → stat allocation)
 
-World-config determines if RPG mechanics are active.
+### DB
+
+- `actor_stats` table (if not exists): `actor_id`, `str`, `dex`, `con`, `int`, `wis`, `cha`, `level`, `xp`, `created_at`, `updated_at`
+- Migration needed if table doesn't exist in current schema
+
+### Validation Schemas
+
+- TypeBox schemas in `src/validation/schemas.ts` for stat ranges, level-up requests
+
+## Integration Points
+
+### Systems That Consume Stats
+
+| System | How It Uses Stats |
+|--------|-------------------|
+| Battle & Combat (`src/rpg/combat/`) | Damage calc, hit/miss, initiative order |
+| Skills & Professions | Skill check = stat modifier + skill rank |
+| Achievements | Stat-based thresholds trigger achievements |
+| Social Interaction | CHA-based persuasion/intimidation |
+| Crafting | INT-based quality, DEX-based precision |
+| Exploration | WIS perception, CON stamina |
+
+### Events
+
+- `character.stats_changed` — emitted on stat update, consumed by dependent systems
+- `character.level_up` — emitted on level change, consumed by achievements, milestones
+
+## Acceptance Criteria
+
+- [ ] Base stats (STR/DEX/CON/WIS/INT/CHA) stored per actor
+- [ ] Stat modifiers calculated correctly (floor((stat-10)/2))
+- [ ] Derived stats (HP, MP, initiative, AC, carry weight) calculate from base + level
+- [ ] Level-up endpoint applies XP and allows stat allocation
+- [ ] Stat validation: range 1-30 enforced at API and DB
+- [ ] Stats API returns complete stat block with modifiers and derived values
+- [ ] Unit tests: modifier calc, derived stat formulas, level-up mechanics, validation bounds
+- [ ] Integration: battle system reads stats for combat resolution
+
+## Files to Create/Modify
+
+- `src/rpg/stats-service.ts` — stat calculation service (create)
+- `src/routes/actor-stats.ts` — stat API routes (create)
+- `src/db/migrations/XXXX-create-actor-stats.ts` — migration (create if needed)
+- `src/validation/schemas.ts` — add stat validation schemas (modify)
+- `src/elysia-app.ts` — mount stat routes (modify)
+
+## Related Tickets
+
+- `TASK-rpg-mechanics-dice-stats.md` — dice/stat checks (complementary)
+- `TASK-rpg-mechanics-combat.md` — combat system (consumes stats)
+- `TASK-character-core-system.md` — character system (parent epic)
+- `TASK-char-growth-schema.md` — character growth (extends stats with progression)
