@@ -6,6 +6,8 @@ import { achievementsRoutes, } from "./achievements";
 import { achievementsPlayerRoutes, } from "./achievements-player";
 import { combatRoutes, } from "./combat";
 import { combatStatusRoutes, } from "./combat-status";
+import { craftingStationRoutes, } from "./crafting-stations";
+import { craftingExecutionRoutes, } from "./crafting-execution";
 import { diceRoutes, } from "./dice";
 import { npcNavigationRoutes, } from "./npc-navigation";
 import { replayabilityRoutes, } from "./replayability";
@@ -71,6 +73,8 @@ export function rpgRoutes(opts: HandlerOpts,) {
       .use(worldLocationTraitsRoutes(opts,),)
       .use(combatRoutes(opts,),)
       .use(combatStatusRoutes(opts,),)
+      .use(craftingStationRoutes(opts,),)
+      .use(craftingExecutionRoutes(opts,),)
       .use(xpLootRoutes(opts,),)
       .use(xpLootTablesRoutes(opts,),)
   );

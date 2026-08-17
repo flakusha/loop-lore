@@ -1991,3 +1991,16 @@ export const SeedAuditSchema = t.Object({
   environment: t.String(),
   metadata: t.Optional(t.String(),),
 },);
+
+// ── trade_history ────────────────────────────────────────────
+export const TradeHistorySchema = t.Object({
+  world_id: t.String(),
+  buyer_actor_id: t.String(),
+  seller_actor_id: t.String(),
+  created_at: t.String(),
+  price: t.Optional(t.Number(),),
+  currency_type: t.Optional(t.String(),),
+  items_offered: t.Optional(t.String(),),
+  items_requested: t.Optional(t.String(),),
+  trade_type: t.Optional(t.String(),),
+},);

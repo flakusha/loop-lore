@@ -134,4 +134,5 @@ export interface DB {
   model_capabilities: import("./schema-core").ModelCapabilities;
   battles: import("./schema-core").Battles;
   seed_audit: import("./schema-core").SeedAudit;
+  trade_history: import("./schema-core").TradeHistory;
 }
