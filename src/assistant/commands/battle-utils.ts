@@ -12,7 +12,6 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
 import type { Combatant, } from "../../rpg/combat.js";
-import { getCharacterStats, } from "../../rpg/service";
 import { buildCombatant, } from "../../rpg/service/battles.js";
 
 export interface ResolvedRosterItem {
@@ -21,12 +20,21 @@ export interface ResolvedRosterItem {
   name: string;
 }
 
+/** Place a character on the player or enemy side of a battle. */
+export const CombatAlignment = {
+  Player: "player",
+  Enemy: "enemy",
+} as const;
+export type CombatAlignment = (typeof CombatAlignment)[keyof typeof CombatAlignment];
+
 /**
  * Resolve the combatant roster for a chat.
  *
  * Returns one combatant per non-calling participant actor that has a
  * `character_stats` row, keyed by actor id. Participants without stats (e.g.
- * human users, narrators) are skipped.
+ * human users, narrators) are skipped. A character whose
+ * `character_stats.combat_alignment` is `enemy` becomes an NPC combatant, so
+ * the battle engine can reach its defeat check.
  *
  * @param db - Database handle
  * @param chatId - Chat whose participants to resolve
@@ -41,30 +49,39 @@ export async function resolveBattleRoster(
   const participants = await db
     .selectFrom("chat_participants",)
     .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .innerJoin("character_stats", "character_stats.actor_id", "actors.id",)
     .where("chat_participants.chat_id", "=", chatId,)
     .where("chat_participants.actor_id", "!=", callerActorId,)
-    .select(["actors.id", "actors.display_name",],)
+    .select([
+      "actors.id",
+      "actors.display_name",
+      "character_stats.level",
+      "character_stats.hp",
+      "character_stats.max_hp",
+      "character_stats.ac",
+      "character_stats.str",
+      "character_stats.dex",
+      "character_stats.con",
+      "character_stats.int",
+      "character_stats.wis",
+      "character_stats.cha",
+      "character_stats.combat_alignment",
+    ],)
     .execute();
 
-  const roster: ResolvedRosterItem[] = [];
-  for (const p of participants) {
-    const stats = await getCharacterStats({ database: db, }, p.id,);
-    if (!stats) { continue; }
-    roster.push({
-      actorId: p.id,
-      name: p.display_name,
-      combatant: buildCombatant(
-        p.id,
-        p.display_name,
-        { str: stats.str, dex: stats.dex, con: stats.con, int: stats.int, wis: stats.wis, cha: stats.cha, },
-        stats.level,
-        stats.hp,
-        stats.ac,
-        false,
-      ),
-    },);
-  }
-  return roster;
+  return Array.from(participants, (p,) => ({
+    actorId: p.id,
+    name: p.display_name,
+    combatant: buildCombatant(
+      p.id,
+      p.display_name,
+      { str: p.str, dex: p.dex, con: p.con, int: p.int, wis: p.wis, cha: p.cha, },
+      p.level,
+      p.hp,
+      p.ac,
+      p.combat_alignment === CombatAlignment.Enemy,
+    ),
+  }),);
 }
 
 /**
