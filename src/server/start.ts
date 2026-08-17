@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { ServerExternalManager, } from "../services/server-external-manager";
+import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { createApp, } from "../elysia-app";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
@@ -17,7 +18,6 @@ import { initializeProviders, } from "../generation";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
 import { runMigrations, } from "../db/migrate";
-import { seedConfiguredUsers, } from "../seeding";
 import { seedDefaultActors, } from "../db/seed";
 import { serve, } from "bun";
 /**
@@ -113,7 +113,9 @@ export async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
   await seedDefaultActors(database, config,);
-  await seedConfiguredUsers(database, config,);
+  const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
+  await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
+  await seedConfiguredContent(database, effectiveSeeding, Boolean(config.auth.required,),);
   const { seedChatSetupTemplates, } = await import("../chat/service");
   await seedChatSetupTemplates(database,);
 
