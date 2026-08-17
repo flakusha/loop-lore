@@ -7,6 +7,8 @@
 import { describe, expect, it, } from "bun:test";
 import {
   abilityModifier,
+  ALL_ABILITIES,
+  computeCharacterState,
   computeModifiers,
   defaultStatBlock,
   getModifier,
@@ -237,5 +239,34 @@ describe("constants", () => {
   it("SKILL_ABILITY maps all 18 skills", () => {
     const skills = Object.keys(SKILL_ABILITY,);
     expect(skills.length).toBe(18,);
+  });
+});
+
+describe("computeCharacterState", () => {
+  it("returns 'active' when hp >= maxHp / 2", () => {
+    expect(computeCharacterState(12, 12,),).toBe("active",);
+    expect(computeCharacterState(6, 12,),).toBe("active",);
+  });
+
+  it("returns 'injured' when hp < maxHp / 2 but > 0", () => {
+    expect(computeCharacterState(5, 12,),).toBe("injured",);
+    expect(computeCharacterState(1, 12,),).toBe("injured",);
+  });
+
+  it("returns 'unconscious' when hp <= 0 but > -maxHp", () => {
+    expect(computeCharacterState(0, 12,),).toBe("unconscious",);
+    expect(computeCharacterState(-5, 12,),).toBe("unconscious",);
+    expect(computeCharacterState(-11, 12,),).toBe("unconscious",);
+  });
+
+  it("returns 'dead' when hp <= -maxHp", () => {
+    expect(computeCharacterState(-12, 12,),).toBe("dead",);
+    expect(computeCharacterState(-20, 12,),).toBe("dead",);
+  });
+
+  it("handles edge case: maxHp of 1", () => {
+    expect(computeCharacterState(1, 1,),).toBe("active",);
+    expect(computeCharacterState(0, 1,),).toBe("unconscious",);
+    expect(computeCharacterState(-1, 1,),).toBe("dead",);
   });
 });
