@@ -5,7 +5,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { BUILTIN_PROFILES, type ImageModelProfile, } from "../../generation/prompt-templates";
-import { isAdminRole, } from "../../middleware/admin-gate";
+import { can, } from "../../users/permissions";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, mergeProfiles, saveStoredTemplates, } from "./shared";
 
@@ -21,7 +21,7 @@ export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
 
-          if (!isAdminRole(ctx.userRole as string | null,)) {
+          if (!can(ctx.userRole as string | null, "admin.settings",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,

@@ -7,6 +7,7 @@
  */
 import { t, } from "elysia";
 import { getLogger, type Logger, } from "../../logger";
+import { can, } from "../../users/permissions";
 import { forbiddenResponse, requireUserId, } from "../http-utils";
 
 export function log(): Logger {
@@ -17,7 +18,7 @@ export function log(): Logger {
 export function requireAdmin(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
-  if ((ctx.userRole as string | null) !== "admin") {
+  if (!can(ctx.userRole, "admin.system",)) {
     return forbiddenResponse();
   }
   return userId;
@@ -27,7 +28,7 @@ export function requireAdmin(ctx: any,): string | Response {
 export function requireOwnOrAdmin(ctx: any, targetUserId: string,): string | Response {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
-  if (targetUserId !== userId && (ctx.userRole as string | null) !== "admin") {
+  if (targetUserId !== userId && !can(ctx.userRole, "admin.system",)) {
     return forbiddenResponse();
   }
   return userId;
