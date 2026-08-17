@@ -1,43 +1,107 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+# TASK: VN Q&A Mode
 
-# TASK: Visual Novel Mode — Q&A (Question <-> Answer) Mode
+**Status:** ⬜ Not Started
+**Priority:** P2 — Medium
+**Effort:** Medium
+**Type:** Feature Task
+**Tags:** visual-novel, qa-mode, interactive-storytelling
+**Epic:** epic-visual-novel-mode.md
 
-**Priority:** Medium
-**Status:** ✅ Complete
-**Epic:** epic-visual-novel-mode
-**Tags:** visual-novel, qa-mode, interactive-story, branching, chat-mode
+## Summary
 
-## Description
+Question<->Answer interaction mode within VN scenes. Player asks questions, characters respond with emotion/expression changes. Answers drive scene branching and consequence tracking. Builds on existing VN rendering (✅ complete).
 
-Add a question<->answer mode to Visual Novel Mode that supports structured Q&A interactions within VN scenes. Players ask questions, characters respond with emotion/expression changes, and answers drive scene branching. Supports lore, relationship, combat, exploration, and social question types.
+## Scope
 
-## How It Extends Existing Work
+### Q&A Interaction Pattern
 
-Builds on `TASK-visual-novel-mode.md` (base VN rendering), `TASK-vn-branching-choices.md` (branching choices), and `TASK-vn-dynamic-generation.md` (dynamic generation). Adds Q&A interaction pattern on top of the existing VN infrastructure.
+- Scene triggers a question (from script or LLM-generated)
+- Question types: lore, relationship, combat, exploration, social
+- Each question has 2-4 answer options
+- Each option carries: text, emotion modifier, relationship modifier, next scene ID
+- Answer selection triggers: scene transition, mood shift, relationship change, item gain, location change
+
+### Data Model
+
+```typescript
+interface VNQuestion {
+  id: string;
+  scene_id: string;
+  question_type: "lore" | "relationship" | "combat" | "exploration" | "social";
+  question_text: string;
+  speaker_id?: string; // who asks
+  options: VNQuestionOption[];
+  next_scene_id: string;
+  consequences: VNConsequence[];
+}
+
+interface VNQuestionOption {
+  id: string;
+  text: string;
+  emotion_modifier: number; // -100 to 100
+  relationship_modifier: number; // -100 to 100
+  next_scene_id: string;
+  consequence?: VNConsequence;
+}
+
+interface VNConsequence {
+  type: "scene_change" | "mood_shift" | "relationship_change" | "item_gain" | "location_change";
+  target: string;
+  value: number;
+}
+```
+
+### Frontend
+
+- Question card overlay in VN scene (Alpine.js component)
+- Answer option buttons with hover preview (emotion/relation impact)
+- Transition animation on answer selection
+- Consequence notification (toast: "Relationship +10", "Item gained: Ancient Key")
+
+### Backend
+
+- `POST /api/chats/:id/vn/questions` — generate questions for current scene (LLM)
+- `POST /api/chats/:id/vn/questions/:qid/answer` — record answer, apply consequences
+- `GET /api/chats/:id/vn/questions` — list questions for current session
+- Question generation uses scene context + character personalities + world state
+
+### Combined Mode
+
+- VN scenes can have both dynamic generation AND Q&A interaction
+- Scene transitions triggered by Q&A outcomes
+- Dynamic images update based on Q&A choices
+
+## Backend Dependencies
+
+| System | How Used |
+|--------|----------|
+| VN scene renderer (`src/frontend/vn/`) | Display questions within scenes |
+| Character personality system | Generate character-appropriate questions/answers |
+| Relationship system | Apply relationship modifiers |
+| Mood system | Apply emotion modifiers |
+| Item system | Grant items from consequences |
 
 ## Acceptance Criteria
 
-- [ ] Q&A interaction pattern within VN scenes (question card UI)
-- [ ] Question types: lore, relationship, combat, exploration, social
-- [ ] Player questions trigger character responses with emotion/expression changes
-- [ ] Answer-driven scene branching (different answers → different scenes)
-- [ ] Q&A session persistence across chat turns
-- [ ] Question scoring and consequence tracking
-- [ ] Combined mode: VN scenes with both dynamic generation AND Q&A
-- [ ] Scene transitions triggered by Q&A outcomes
-- [ ] Dynamic images update based on Q&A choices
-- [ ] Story generation adapts to Q&A context
-- [ ] `POST /api/chat/:id/vn/question` — submit a question
-- [ ] `GET /api/chat/:id/vn/questions` — list available questions
-- [ ] Frontend Q&A card UI with question types and options
-- [ ] Frontend Q&A consequence tracker
-- [ ] Config: enable/disable Q&A mode per world/chat
+- [ ] Question card displays in VN scene with speaker + question text
+- [ ] Answer options show text + hover preview of impact
+- [ ] Selecting answer triggers scene transition
+- [ ] Mood shift applied and visible in character portrait
+- [ ] Relationship change applied and reflected in relationship system
+- [ ] Item gain notification shown
+- [ ] Q&A sessions persist across chat turns
+- [ ] LLM question generation produces contextually appropriate questions
+- [ ] Mobile responsive
+- [ ] Keyboard navigable (tab through options, enter to select)
 
-## Technical Notes
+## Files to Create
 
-- Questions stored as structured events in the chat message stream
-- Q&A consequences reference existing relationship, mood, and world state APIs
-- Scene transitions use the existing VN scene management system
-- Integrates with Chat Lifecycle & Moderation epic for choice validation
-- Integrates with Character Core System for relationship/mood impact
+- `src/frontend/vn/qa-mode.ts` — question card component
+- `src/frontend/alpine/qa-mode.ts` — Alpine.js Q&A logic
+- `src/routes/vn-questions.ts` — API routes (or extend `src/routes/vn.ts`)
+
+## Related Tickets
+
+- `TASK-vn-dynamic-generation.md` — dynamic image/story generation (complementary)
+- `TASK-vn-branching-choices.md` — branching choices (Q&A extends this)
+- `TASK-visual-novel-mode.md` — base VN rendering (dependency, ✅ complete)
