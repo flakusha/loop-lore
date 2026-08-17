@@ -32,7 +32,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "rpg-stats", },)
       .post(
         `${prefix}/rpg/stats/calculate`,
-        (ctx: { body: unknown; userId?: string | null; t?: (k: string) => string },) => {
+        (ctx: { body: unknown; userId?: string | null; t?: (k: string,) => string },) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
@@ -54,7 +54,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/stats/validate`,
-        (ctx: { body: unknown; userId?: string | null; t?: (k: string) => string },) => {
+        (ctx: { body: unknown; userId?: string | null; t?: (k: string,) => string },) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
@@ -76,7 +76,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/stats/generate`,
-        (ctx: { body: unknown; userId?: string | null; t?: (k: string) => string },) => {
+        (ctx: { body: unknown; userId?: string | null; t?: (k: string,) => string },) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {

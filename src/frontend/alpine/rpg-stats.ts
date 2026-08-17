@@ -8,8 +8,8 @@
  * Falls back to defaults if no stats exist yet.
  */
 
-import type { ChatState, EquipmentSlot, StatusEffect, } from "./types.js";
 import { apiFetch, } from "./htmx.js";
+import type { ChatState, EquipmentSlot, StatusEffect, } from "./types.js";
 
 export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   rpgStats: null,
@@ -48,7 +48,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
           mp: data.mp ?? 0,
           maxMp: data.maxMp ?? 0,
           ac: data.ac ?? 10,
-          initiative: data.speed ? Math.floor((data.speed - 10) / 2) : 0,
+          initiative: data.speed ? Math.floor((data.speed - 10) / 2,) : 0,
           xp: data.xp ?? 0,
           xpToNext: data.xpToNext ?? 100,
           str: data.str ?? 10,
@@ -147,7 +147,7 @@ function parseConditions(raw: string,): StatusEffect[] {
       description: c.source ? `Source: ${c.source}` : "",
       duration: c.duration_rounds ?? -1,
       modifier: {},
-    }),);
+    }));
   } catch {
     return [];
   }
