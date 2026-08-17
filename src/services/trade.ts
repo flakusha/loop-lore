@@ -20,9 +20,12 @@
 import type { Kysely, Transaction, } from "kysely";
 import type { DB, } from "../db/schema";
 import { ItemsService, } from "../story/items";
-import { uid, } from "../utils";
+import { jsonStringifyOr, uid, } from "../utils";
 
 export const DEFAULT_CURRENCY = "gold" as const;
+
+/** Type of trade — player↔player or player↔NPC. */
+export type TradeType = "player_player" | "player_npc" | "npc_player";
 
 export interface TradeResult {
   success: boolean;
@@ -37,6 +40,37 @@ export interface TradeResult {
 export interface TradeLine {
   worldItemId: string;
   quantity: number;
+}
+
+/** Pending trade offer stored in crafting_orders. */
+export interface TradeOffer {
+  id: string;
+  worldId: string;
+  requesterActorId: string;
+  crafterActorId: string | null;
+  recipeId: string;
+  quantity: number;
+  maxQuality: string | null;
+  offeredPayment: number;
+  offeredMaterials: string[];
+  status: string;
+  deadline: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** A row from trade_history. */
+export interface TradeHistoryEntry {
+  id: string;
+  worldId: string;
+  buyerActorId: string;
+  sellerActorId: string;
+  price: number;
+  currencyType: string;
+  itemsOffered: string[];
+  itemsRequested: string[];
+  tradeType: TradeType;
+  createdAt: string;
 }
 
 /**
@@ -235,8 +269,177 @@ export class TradeService {
         moved.itemsRequested.push(line.worldItemId,);
       }
       success = true;
+
+      // Record in trade_history within the same transaction.
+      if (success) {
+        await this.recordTrade({
+          worldId,
+          buyerActorId,
+          sellerActorId,
+          price,
+          currency: DEFAULT_CURRENCY,
+          itemsOffered: moved.itemsOffered,
+          itemsRequested: moved.itemsRequested,
+          tradeType: "player_player",
+          trx,
+        },);
+      }
     },);
 
     return success ? { success: true, ...moved, } : { success: false, reason, };
+  }
+
+  /**
+   * Record a completed trade in trade_history.
+   * Called internally after successful trades.
+   */
+  private async recordTrade(opts: {
+    worldId: string;
+    buyerActorId: string;
+    sellerActorId: string;
+    price: number;
+    currency: string;
+    itemsOffered: string[];
+    itemsRequested: string[];
+    tradeType: TradeType;
+    trx?: Kysely<DB> | Transaction<DB>;
+  },): Promise<void> {
+    const db = opts.trx ?? this.db;
+    await db
+      .insertInto("trade_history",)
+      .values({
+        id: uid(),
+        world_id: opts.worldId,
+        buyer_actor_id: opts.buyerActorId,
+        seller_actor_id: opts.sellerActorId,
+        price: opts.price,
+        currency_type: opts.currency,
+        items_offered: jsonStringifyOr(opts.itemsOffered, "[]",),
+        items_requested: jsonStringifyOr(opts.itemsRequested, "[]",),
+        trade_type: opts.tradeType,
+        created_at: new Date().toISOString(),
+      },)
+      .execute();
+  }
+
+  /**
+   * Query trade history for an actor (as buyer or seller) in a world.
+   * Returns most recent trades first.
+   */
+  async getTradeHistory(
+    worldId: string,
+    actorId?: string,
+    limit: number = 50,
+  ): Promise<TradeHistoryEntry[]> {
+    let query = this.db
+      .selectFrom("trade_history",)
+      .where("world_id", "=", worldId,)
+      .orderBy("created_at", "desc",)
+      .limit(limit,);
+
+    if (actorId) {
+      query = query.where((eb,) =>
+        eb.or([
+          eb("buyer_actor_id", "=", actorId,),
+          eb("seller_actor_id", "=", actorId,),
+        ],)
+      );
+    }
+
+    const rows = await query.selectAll().execute();
+    return Array.from(rows, (r,) => ({
+      id: r.id,
+      worldId: r.world_id,
+      buyerActorId: r.buyer_actor_id,
+      sellerActorId: r.seller_actor_id,
+      price: r.price,
+      currencyType: r.currency_type,
+      itemsOffered: JSON.parse(r.items_offered,) as string[],
+      itemsRequested: JSON.parse(r.items_requested,) as string[],
+      tradeType: r.trade_type as TradeType,
+      createdAt: r.created_at,
+    }),);
+  }
+
+  /**
+   * Player buys items from an NPC. The NPC sells `sellerItems` to the buyer
+   * for `price` gold. Items must be owned by the NPC.
+   */
+  async buyFromNpc(opts: {
+    worldId: string;
+    buyerActorId: string;
+    npcActorId: string;
+    sellerItems: TradeLine[];
+    price: number;
+  },): Promise<TradeResult> {
+    const { worldId, buyerActorId, npcActorId, sellerItems, price, } = opts;
+    if (buyerActorId === npcActorId) {
+      return { success: false, reason: "cannot trade with yourself", };
+    }
+
+    const result = await this.trade({
+      worldId,
+      buyerActorId,
+      sellerActorId: npcActorId,
+      buyerItems: [],
+      sellerItems,
+      price,
+    },);
+
+    if (result.success) {
+      await this.recordTrade({
+        worldId,
+        buyerActorId,
+        sellerActorId: npcActorId,
+        price,
+        currency: DEFAULT_CURRENCY,
+        itemsOffered: [],
+        itemsRequested: result.itemsRequested ?? [],
+        tradeType: "player_npc",
+      },);
+    }
+
+    return result;
+  }
+
+  /**
+   * Player sells items to an NPC. The NPC buys `buyerItems` from the seller
+   * for `price` gold. Items must be owned by the player.
+   */
+  async sellToNpc(opts: {
+    worldId: string;
+    sellerActorId: string;
+    npcActorId: string;
+    buyerItems: TradeLine[];
+    price: number;
+  },): Promise<TradeResult> {
+    const { worldId, sellerActorId, npcActorId, buyerItems, price, } = opts;
+    if (sellerActorId === npcActorId) {
+      return { success: false, reason: "cannot trade with yourself", };
+    }
+
+    const result = await this.trade({
+      worldId,
+      buyerActorId: npcActorId,
+      sellerActorId,
+      buyerItems,
+      sellerItems: [],
+      price,
+    },);
+
+    if (result.success) {
+      await this.recordTrade({
+        worldId,
+        buyerActorId: npcActorId,
+        sellerActorId,
+        price,
+        currency: DEFAULT_CURRENCY,
+        itemsOffered: result.itemsOffered ?? [],
+        itemsRequested: [],
+        tradeType: "npc_player",
+      },);
+    }
+
+    return result;
   }
 }
