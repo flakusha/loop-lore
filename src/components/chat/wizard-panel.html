@@ -25,6 +25,15 @@
     </div>
 
     <div class="wizard-panel-body" x-show="wizardDraft">
+      <!-- Quality gate warnings -->
+      <template x-if="wizardDraft?.warnings?.length > 0">
+        <div class="wizard-warnings">
+          <template x-for="warning in wizardDraft.warnings" :key="warning">
+            <div class="wizard-warning-item" x-text="'⚠️ ' + warning"></div>
+          </template>
+        </div>
+      </template>
+
       <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
         <div class="wizard-field">
           <label class="wizard-field-label" x-text="field"></label>
