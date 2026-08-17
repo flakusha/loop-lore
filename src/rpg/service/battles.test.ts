@@ -25,6 +25,7 @@ import {
   getBattle,
   performAttack,
   performHeal,
+  type ResolvedAttack,
   startBattle,
 } from "./battles.js";
 
@@ -214,6 +215,46 @@ describe("battles service", () => {
     expect(ended!.status,).toBe("abandoned",);
     expect(ended!.endedAt,).not.toBeNull();
 
+    const active = await getActiveBattle({ database: db, }, chatId,);
+    expect(active,).toBeNull();
+  });
+
+  it("attacking past an enemy's HP completes the battle with a player win", async () => {
+    const chatId = uid();
+    // Player (AC 16) vs enemy (AC 0) so the attack always hits.
+    const player = buildCombatant("alice", "Alice", stats, 5, 30, 16, false,);
+    const enemy = buildCombatant("orc", "Orc", stats, 5, 1, 0, true,);
+    const battle = await startBattle({ database: db, }, {
+      chatId,
+      createdBy,
+      combatants: [player, enemy,],
+    },);
+
+    // Retry on the rare natural-1 critical miss; a hit always kills the
+    // 1-HP enemy (d6 + 3 STR + 10 ≥ 14 damage vs AC 0). 5 retries makes a
+    // persistent miss effectively impossible (0.05^5).
+    let result: ResolvedAttack | null = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const r = await performAttack({ database: db, }, {
+        battleId: battle.id,
+        attackerId: "alice",
+        targetId: "orc",
+        attackAbility: "str",
+        damageDice: 1,
+        damageSides: 6,
+        extraDamage: 10,
+      },);
+      result = r;
+      if (r.over) { break; }
+    }
+
+    expect(result!.over,).toBe(true,);
+    expect(result!.winner,).toBe("player",);
+
+    // Battle persisted as completed (no longer active).
+    const reloaded = await getBattle({ database: db, }, battle.id,);
+    expect(reloaded!.status,).toBe("completed",);
+    expect(reloaded!.endedAt,).not.toBeNull();
     const active = await getActiveBattle({ database: db, }, chatId,);
     expect(active,).toBeNull();
   });
