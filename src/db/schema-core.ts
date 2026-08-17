@@ -395,9 +395,16 @@ export interface CharacterStats {
   xp: Generated<number>;
   xp_to_next: Generated<number>;
   data_version: Generated<number>;
-  combat_alignment: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  behavior_profile: string | null;
+  evasiveness: number | null;
+  cooperativeness: number | null;
+  aggression_threshold: number | null;
+  character_state: Generated<string>;
+  conditions: Generated<string>;
+  active_effects: Generated<string>;
+  combat_alignment: Generated<string>;
 }
 
 // ── xp_ledger ────────────────────────────────────────────
@@ -708,3 +715,4 @@ export interface SeedAudit {
   environment: string;
   metadata: string | null;
 }
+
