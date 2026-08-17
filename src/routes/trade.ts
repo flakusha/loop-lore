@@ -17,6 +17,7 @@ import type { Kysely, } from "kysely";
 import type { Db, } from "../db";
 import type { DB, } from "../db/schema";
 import { TradeService, } from "../services/trade";
+import type { TradeLine, } from "../services/trade";
 import { safeJsonStringify, } from "../utils/safe-json";
 import { ErrorResponse, Id, } from "../validation/schemas";
 import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "./http-utils";
@@ -121,6 +122,134 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
         detail: {
           summary: "Execute trade",
           description: "Atomically exchange items + gold between two actors.",
+          tags: ["Trade",],
+        },
+      },)
+      // ── NPC Buy (player buys from NPC) ──────────────────────
+      .post(`${prefix}/worlds/:worldId/trade/buy-from-npc`, async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const body = ctx.body as {
+          buyerActorId: string;
+          npcActorId: string;
+          sellerItems: TradeLine[];
+          price: number;
+        };
+        const denied = await resolveActorAccess(database, body.buyerActorId, userId,);
+        if (denied) { return denied; }
+        const res = await svc().buyFromNpc({
+          worldId: ctx.params.worldId,
+          buyerActorId: body.buyerActorId,
+          npcActorId: body.npcActorId,
+          sellerItems: body.sellerItems,
+          price: body.price,
+        },);
+        if (!res.success) { return badRequestResponse(res.reason ?? "Trade failed",); }
+        return jsonResponse({ ok: true, ...res, },);
+      }, {
+        params: t.Object({ worldId: Id, },),
+        body: t.Object({
+          buyerActorId: Id,
+          npcActorId: Id,
+          sellerItems: t.Array(tradeLineSchema,),
+          price: t.Integer({ minimum: 0, },),
+        },),
+        response: {
+          200: executeResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Buy from NPC",
+          description: "Player buys items from an NPC. Items owned by the NPC transfer to the player.",
+          tags: ["Trade",],
+        },
+      },)
+      // ── NPC Sell (player sells to NPC) ──────────────────────
+      .post(`${prefix}/worlds/:worldId/trade/sell-to-npc`, async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const body = ctx.body as {
+          sellerActorId: string;
+          npcActorId: string;
+          buyerItems: TradeLine[];
+          price: number;
+        };
+        const denied = await resolveActorAccess(database, body.sellerActorId, userId,);
+        if (denied) { return denied; }
+        const res = await svc().sellToNpc({
+          worldId: ctx.params.worldId,
+          sellerActorId: body.sellerActorId,
+          npcActorId: body.npcActorId,
+          buyerItems: body.buyerItems,
+          price: body.price,
+        },);
+        if (!res.success) { return badRequestResponse(res.reason ?? "Trade failed",); }
+        return jsonResponse({ ok: true, ...res, },);
+      }, {
+        params: t.Object({ worldId: Id, },),
+        body: t.Object({
+          sellerActorId: Id,
+          npcActorId: Id,
+          buyerItems: t.Array(tradeLineSchema,),
+          price: t.Integer({ minimum: 0, },),
+        },),
+        response: {
+          200: executeResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Sell to NPC",
+          description: "Player sells items to an NPC. Items owned by the player transfer to the NPC.",
+          tags: ["Trade",],
+        },
+      },)
+      // ── Trade History ───────────────────────────────────────
+      .get(`${prefix}/worlds/:worldId/trade/history`, async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const actorId = ctx.query.actorId as string | undefined;
+        const limit = ctx.query.limit ? Number(ctx.query.limit,) : 50;
+        if (actorId) {
+          const denied = await resolveActorAccess(database, actorId, userId,);
+          if (denied) { return denied; }
+        }
+        const history = await svc().getTradeHistory(ctx.params.worldId, actorId, limit,);
+        return jsonResponse({ history, },);
+      }, {
+        params: t.Object({ worldId: Id, },),
+        query: t.Object({
+          actorId: t.Optional(Id,),
+          limit: t.Optional(t.Integer({ minimum: 1, maximum: 200, },),),
+        },),
+        response: {
+          200: t.Object({
+            history: t.Array(
+              t.Object({
+                id: Id,
+                worldId: Id,
+                buyerActorId: Id,
+                sellerActorId: Id,
+                price: t.Integer(),
+                currencyType: t.String(),
+                itemsOffered: t.Array(t.String(),),
+                itemsRequested: t.Array(t.String(),),
+                tradeType: t.String(),
+                createdAt: t.String(),
+              },),
+            ),
+          },),
+          401: ErrorResponse,
+          403: ErrorResponse,
+        },
+        detail: {
+          summary: "Trade history",
+          description: "Query trade history for a world, optionally filtered by actor.",
           tags: ["Trade",],
         },
       },)

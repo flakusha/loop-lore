@@ -601,6 +601,18 @@ export const SCHEMA = new SchemaManifest()
     source: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("trade_history", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    buyer_actor_id: col("text", { notNull: true, },),
+    seller_actor_id: col("text", { notNull: true, },),
+    price: col("integer", { notNull: true, hasDefault: true, },),
+    currency_type: col("text", { notNull: true, hasDefault: true, },),
+    items_offered: col("text", { notNull: true, hasDefault: true, },),
+    items_requested: col("text", { notNull: true, hasDefault: true, },),
+    trade_type: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
   .table("vn_choices", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
