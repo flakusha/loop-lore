@@ -1862,6 +1862,7 @@ export async function insertCraftingOrders(
     offered_materials?: Generated<string>;
     status?: Generated<string>;
     deadline?: string | null;
+    trade_type?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("crafting_orders",).values({

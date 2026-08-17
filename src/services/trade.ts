@@ -442,4 +442,154 @@ export class TradeService {
 
     return result;
   }
+
+  // ── Trade Offer Lifecycle ─────────────────────────────
+
+  /** Sentinel recipe_id for trade offers (crafting_orders.recipe_id is NOT NULL). */
+  static readonly TRADE_RECIPE_SENTINEL = "__trade_offer__";
+
+  /**
+   * Create a pending trade offer. The offerer proposes to buy items from
+   * a counterparty for a price. Returns the offer ID.
+   *
+   * Uses `crafting_orders` with `trade_type = "trade"` and a sentinel `recipe_id`.
+   */
+  async createOffer(opts: {
+    worldId: string;
+    buyerActorId: string;
+    sellerActorId: string;
+    buyerItems: TradeLine[];
+    price: number;
+    deadline?: string;
+  },): Promise<string> {
+    const id = uid();
+    const now = new Date().toISOString();
+    await this.db.insertInto("crafting_orders",).values({
+      id,
+      world_id: opts.worldId,
+      requester_actor_id: opts.buyerActorId,
+      crafter_actor_id: opts.sellerActorId,
+      recipe_id: TradeService.TRADE_RECIPE_SENTINEL,
+      quantity: 1,
+      offered_payment: opts.price,
+      offered_materials: jsonStringifyOr(opts.buyerItems, "[]",),
+      status: "pending",
+      trade_type: "trade",
+      deadline: opts.deadline ?? null,
+      created_at: now,
+      updated_at: now,
+    },).execute();
+    return id;
+  }
+
+  /**
+   * Accept a pending trade offer. Validates the offer is still pending,
+   * then executes the trade atomically (items + gold transfer).
+   * Only the seller (crafter_actor_id) can accept.
+   */
+  async acceptOffer(
+    offerId: string,
+    acceptorActorId: string,
+  ): Promise<TradeResult> {
+    const offer = await this.db.selectFrom("crafting_orders",)
+      .where("id", "=", offerId,)
+      .selectAll()
+      .executeTakeFirst();
+
+    if (!offer) { return { success: false, reason: "offer not found", }; }
+    if (offer.status !== "pending") { return { success: false, reason: `offer is ${offer.status}`, }; }
+    if (offer.crafter_actor_id !== acceptorActorId) {
+      return { success: false, reason: "only the seller can accept", };
+    }
+
+    const buyerItems: TradeLine[] = JSON.parse(offer.offered_materials,) as TradeLine[];
+
+    // Execute the trade.
+    const result = await this.trade({
+      worldId: offer.world_id,
+      buyerActorId: offer.requester_actor_id,
+      sellerActorId: offer.crafter_actor_id!,
+      buyerItems,
+      sellerItems: [],
+      price: offer.offered_payment,
+    },);
+
+    // Mark offer as accepted or failed.
+    const newStatus = result.success ? "accepted" : "failed";
+    await this.db.updateTable("crafting_orders",)
+      .set({ status: newStatus, updated_at: new Date().toISOString(), },)
+      .where("id", "=", offerId,)
+      .execute();
+
+    return result;
+  }
+
+  /**
+   * Cancel a pending trade offer. Only the creator (requester_actor_id) can cancel.
+   */
+  async cancelOffer(
+    offerId: string,
+    cancellerActorId: string,
+  ): Promise<{ success: boolean; reason?: string }> {
+    const offer = await this.db.selectFrom("crafting_orders",)
+      .select(["id", "status", "requester_actor_id",],)
+      .where("id", "=", offerId,)
+      .executeTakeFirst();
+
+    if (!offer) { return { success: false, reason: "offer not found", }; }
+    if (offer.status !== "pending") { return { success: false, reason: `offer is ${offer.status}`, }; }
+    if (offer.requester_actor_id !== cancellerActorId) {
+      return { success: false, reason: "only the offer creator can cancel", };
+    }
+
+    await this.db.updateTable("crafting_orders",)
+      .set({ status: "cancelled", updated_at: new Date().toISOString(), },)
+      .where("id", "=", offerId,)
+      .execute();
+
+    return { success: true, };
+  }
+
+  /**
+   * List pending trade offers for an actor (as buyer or seller).
+   */
+  async listOffers(
+    worldId: string,
+    actorId: string,
+  ): Promise<
+    Array<{
+      id: string;
+      buyerActorId: string;
+      sellerActorId: string | null;
+      price: number;
+      items: TradeLine[];
+      status: string;
+      deadline: string | null;
+      createdAt: string;
+    }>
+  > {
+    const rows = await this.db.selectFrom("crafting_orders",)
+      .where("world_id", "=", worldId,)
+      .where("trade_type", "=", "trade",)
+      .where((eb,) =>
+        eb.or([
+          eb("requester_actor_id", "=", actorId,),
+          eb("crafter_actor_id", "=", actorId,),
+        ],)
+      )
+      .orderBy("created_at", "desc",)
+      .selectAll()
+      .execute();
+
+    return Array.from(rows, (r,) => ({
+      id: r.id,
+      buyerActorId: r.requester_actor_id,
+      sellerActorId: r.crafter_actor_id,
+      price: r.offered_payment,
+      items: JSON.parse(r.offered_materials,) as TradeLine[],
+      status: r.status,
+      deadline: r.deadline,
+      createdAt: r.created_at,
+    }),);
+  }
 }

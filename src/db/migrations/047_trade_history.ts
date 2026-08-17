@@ -36,6 +36,15 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .column("buyer_actor_id",)
     .execute();
 
+  // ── Make crafting_orders.recipe_id nullable for trade offers ──
+  // SQLite doesn't support ALTER COLUMN directly; we recreate.
+  // Since DB is reinit, we can just alter. But SQLite limitation means
+  // we add a trade_type column instead and use a sentinel for recipe_id.
+  await db.schema
+    .alterTable("crafting_orders",)
+    .addColumn("trade_type", "text", (c,) => c.notNull().defaultTo("crafting",),)
+    .execute();
+
   await db.schema
     .createIndex("trade_history_seller_idx",)
     .on("trade_history",)
