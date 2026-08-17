@@ -735,3 +735,14 @@ export interface ModelCapabilities {
   created_at: string;
   updated_at: string;
 }
+
+// ── seed_audit ────────────────────────────────────────────
+export interface SeedAudit {
+  id: Generated<string>;
+  seed_type: string;
+  seed_id: string;
+  seeded_by: string;
+  seeded_at: string;
+  environment: string;
+  metadata: string | null;
+}

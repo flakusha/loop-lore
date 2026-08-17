@@ -10365,6 +10365,17 @@
     "title": "Reconcile Achievement Unlock Sources",
     "type": "TASK"
   },
+  "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
+    "hash": "8700aac",
+    "extid": "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION",
+    "type": "TASK",
+    "title": "Reconcile ts import extensions (user-seeding session)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+  },
   "TASK-RECONCILIATION-PLAN": {
     "epic": "epic-logic-reconciliation",
     "extid": "TASK-reconciliation-plan",
