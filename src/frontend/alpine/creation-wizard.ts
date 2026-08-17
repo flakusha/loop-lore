@@ -84,24 +84,13 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Cancel and discard the wizard draft.
+   * Cancel and discard the wizard draft. No backend call needed — the draft
+   * lives only in Alpine state (the quality gate version doesn't use an
+   * in-memory wizard store).
    */
-  async cancelWizard(wizardId: string,): Promise<void> {
-    const chatId = this.activeChat;
-    if (chatId) {
-      // Fire-and-forget backend cancel (best-effort)
-      try {
-        await apiFetch(`/api/v1/chats/${chatId}/command`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ command: "create", args: ["cancel", wizardId,], },),
-        },);
-      } catch {
-        // Best-effort — draft expires in 30 min anyway
-      }
-    }
+  cancelWizard(_wizardId: string,): void {
     this.wizardPreviewOpen = false;
     this.wizardDraft = null;
-    log.info("wizard cancelled", { wizardId, },);
+    log.info("wizard cancelled", { wizardId: _wizardId, },);
   },
 };
