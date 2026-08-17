@@ -19,6 +19,7 @@ import { uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
 import { jsonCreated, requireUserId, } from "../http-utils";
 import { dispatchCommand, } from "./command";
+import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
@@ -184,5 +185,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           404: ErrorResponse,
         },
       },
-    );
+    )
+    .use(createEntityConfirmRoutes(opts, prefix,),);
 }
