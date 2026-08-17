@@ -67,6 +67,14 @@
         ></button>
       </template>
     </div>
+    <!-- Battle interaction panel (VN-style keyboard/mouse turn controls) -->
+    <div
+      x-ref="battlePanel"
+      class="battle-panel-slot"
+      x-show="_battleVisible && !isGenerating"
+      x-cloak
+      data-testid="battle-panel"
+    ></div>
     <div class="input-row" style="position: relative">
       <!-- Slash command palette -->
       <div
