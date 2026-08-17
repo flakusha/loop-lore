@@ -19,7 +19,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema
     .alterTable("character_stats",)
-    .addColumn("evasiveness", "real", (col,) => col.defaultTo(0.0,),)
+    .addColumn("evasiveness", "real", (col,) => col.defaultTo(0,),)
     .execute();
 
   await database.schema

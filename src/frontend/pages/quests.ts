@@ -6,28 +6,10 @@ import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
+import type { QuestRow, WorldOption, } from "./quests-parts";
 import { getErrorMessage, } from "./shared";
 
 const log = rootLog.child({ module: "quests", },);
-
-interface QuestRow {
-  id: string;
-  name: string;
-  description: string | null;
-  type: string;
-  category: string;
-  status: string;
-  priority: number;
-  progress: number;
-  target: number;
-  world_id: string;
-  created_at: string;
-}
-
-interface WorldOption {
-  id: string;
-  name: string;
-}
 
 globalThis.questsPage = function() {
   return {

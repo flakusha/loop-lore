@@ -20,6 +20,7 @@ import { getOrCreateBuffer, scheduleBufferCleanup, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
+import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
 import type { GenerateRequest, } from "./types";
 
@@ -103,13 +104,10 @@ export function streamToClient({
             break;
           }
 
-          // Emit tool_call events to client + record for persistence
+          // Record tool calls for persistence (single canonical mapping)
+          collectedToolCalls.push(...toGenerationToolCalls(response.toolCalls,),);
+          // Emit tool_call events to client + replay to the live stream consumer
           for (const tc of response.toolCalls) {
-            collectedToolCalls.push({
-              id: tc.id,
-              type: "function" as const,
-              function: { name: tc.function.name, arguments: tc.function.arguments, },
-            },);
             controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc, },),),);
             // Replay to the live stream consumer (GET /api/generation/stream/:chatId)
             buffer.append(
@@ -121,15 +119,7 @@ export function streamToClient({
           // Add assistant message with tool calls
           currentMessages = [
             ...currentMessages,
-            {
-              role: "assistant" as const,
-              content: roundContent || "",
-              tool_calls: Array.from(response.toolCalls, (tc,) => ({
-                id: tc.id,
-                type: "function" as const,
-                function: { name: tc.function.name, arguments: tc.function.arguments, },
-              }),),
-            },
+            buildToolCallAssistantMessage(roundContent, response.toolCalls,),
           ];
 
           // Execute tools and append results

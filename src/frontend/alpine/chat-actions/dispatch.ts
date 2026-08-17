@@ -1,106 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { BattleCombatantView, BattleView, } from "../../battle/panel";
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
+import { battleActionHandlers, } from "./battle";
+import { type DispatchCtx, dispatchGenerationAction, dispatchQuestAction, } from "./generation-helpers";
+import { wizardActionHandlers, } from "./wizard";
 
 const log = rootLog.child({ module: "chat-actions", },);
-
-/** Context shape needed by command action dispatch helpers. */
-interface DispatchCtx {
-  $dispatch?: (event: string, detail: Record<string, unknown>,) => void;
-  connectGenerationSSE: (chatId: string,) => void;
-}
-
-/** Handle 501 / error / success for generation-type command actions. */
-async function dispatchGenerationAction(
-  ctx: DispatchCtx,
-  endpoint: string,
-  body: Record<string, unknown>,
-  label: string,
-  chatId: string,
-) {
-  const prompt = (body.prompt as string) ?? "";
-  if (!prompt && !body.assetIds) {
-    ctx.$dispatch?.("show-toast", {
-      type: "warning",
-      message: t("toasts.actionNoInput", { action: label.toLowerCase(), },),
-    },);
-    return;
-  }
-  try {
-    const res = await apiFetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody(body,),
-    },);
-    if (res.ok) {
-      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.actionStarted", { action: label, },), },);
-      ctx.connectGenerationSSE(chatId,);
-    } else if (res.status === 501) {
-      ctx.$dispatch?.("show-toast", {
-        type: "info",
-        message: t("toasts.actionNotConfigured", { action: label, },),
-      },);
-    } else {
-      const err = await res.json();
-      ctx.$dispatch?.("show-toast", {
-        type: "error",
-        message: err.error || t("toasts.actionFailed", { action: label.toLowerCase(), },),
-      },);
-    }
-  } catch {
-    ctx.$dispatch?.("show-toast", {
-      type: "error",
-      message: t("toasts.actionNetworkError", { action: label.toLowerCase(), },),
-    },);
-  }
-}
-
-/** Dispatch create-quest command action. */
-async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId: string,) {
-  if (!description) {
-    ctx.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noQuestDescription",), },);
-    return;
-  }
-  try {
-    // Fetch chat to get world_id (backend requires /api/worlds/:worldId/quests)
-    const chatRes = await apiFetch(`/api/v1/chats/${chatId}`,);
-    if (!chatRes.ok) {
-      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadChatForQuest",), },);
-      return;
-    }
-    const chat = await chatRes.json();
-    const worldId = chat.world_id;
-    if (!worldId) {
-      ctx.$dispatch?.("show-toast", {
-        type: "warning",
-        message: t("toasts.questsRequireWorld",),
-      },);
-      return;
-    }
-    const res = await apiFetch(`/api/worlds/${worldId}/quests`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({ chatId, description, },),
-    },);
-    if (res.ok) {
-      ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.questCreated",), },);
-    } else {
-      const err = await res.json();
-      ctx.$dispatch?.("show-toast", {
-        type: "error",
-        message: err.error || t("toasts.failedCreateQuest",),
-      },);
-    }
-  } catch {
-    ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCreatingQuest",), },);
-  }
-}
 
 export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
   /**
@@ -143,9 +53,16 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
 
 // ── Action handlers (extracted for cognitive complexity) ──────
 
-type ActionHandler = (ctx: any, payload: Record<string, unknown> | null, chatId: string,) => Promise<void> | void;
+type ActionHandler = (
+  ctx: DispatchCtx & Partial<ChatState>,
+  payload: Record<string, unknown> | null,
+  chatId: string,
+) => Promise<void> | void;
 
 const actionHandlers: Record<string, ActionHandler> = {
+  ...battleActionHandlers,
+  ...wizardActionHandlers,
+
   "generate-image": async (ctx, payload, chatId,) => {
     await dispatchGenerationAction(
       ctx,
@@ -239,146 +156,4 @@ const actionHandlers: Record<string, ActionHandler> = {
   "review-entity": (_ctx, payload,) => {
     log.info("review-entity action — display only", { payload, },);
   },
-
-  // Creation wizard — show draft preview for user review
-  "wizard-preview": (ctx, payload,) => {
-    if (!payload) { return; }
-    const wizardId = payload.wizardId as string;
-    const entityType = payload.entityType as string;
-    const label = payload.label as string;
-    const fields = payload.fields as Record<string, string | undefined> | undefined;
-    if (!wizardId || !entityType || !fields) {
-      log.warn("wizard-preview: missing required payload fields", { payload, },);
-      return;
-    }
-    // Store wizard draft in Alpine state for the preview panel
-    ctx.wizardDraft = { wizardId, entityType, label, fields, };
-    ctx.wizardPreviewOpen = true;
-    log.info("wizard-preview: draft ready", { wizardId, entityType, },);
-  },
-
-  // Creation wizard — confirm and save entity from draft
-  "wizard-confirm": (ctx, payload, _chatId,) => {
-    if (!payload) { return; }
-    const wizardId = payload.wizardId as string;
-    if (!wizardId) { return; }
-    // The confirm action sends the wizard ID; backend saves and returns create-entity
-    ctx.wizardPreviewOpen = false;
-    ctx.wizardDraft = null;
-    ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.wizardConfirmed",), },);
-  },
-
-  // Creation wizard — cancel draft
-  "wizard-cancel": (ctx, payload,) => {
-    if (!payload) { return; }
-    const wizardId = payload.wizardId as string;
-    ctx.wizardPreviewOpen = false;
-    ctx.wizardDraft = null;
-    log.info("wizard-cancel: draft discarded", { wizardId, },);
-  },
-
-  // Battle commands render/update/clear the VN-style battle panel.
-  "battle-started": (ctx, payload,) => {
-    renderBattleFromPayload(ctx, payload,);
-  },
-  "battle-updated": (ctx, payload,) => {
-    renderBattleFromPayload(ctx, payload,);
-  },
-  "battle-status": (ctx, payload,) => {
-    renderBattleFromPayload(ctx, payload,);
-  },
-  "battle-ended": (ctx,) => {
-    (ctx as { renderBattlePanel(view: unknown,): void }).renderBattlePanel(null,);
-  },
-  "create-entity-preview": (ctx, payload,) => {
-    if (!payload || typeof payload !== "object") { return; }
-    const draft = payload as {
-      kind?: string;
-      data?: Record<string, unknown>;
-      description?: string;
-      worldId?: string | null;
-      userId?: string | null;
-      warnings?: string[];
-    };
-    const kind = draft.kind ?? "entity";
-    const data = draft.data ?? {};
-    const fields: Record<string, string | undefined> = {};
-    for (const [k, v,] of Object.entries(data,)) {
-      if (typeof v === "string") { fields[k] = v; }
-    }
-    ctx.wizardDraft = {
-      wizardId: `preview_${kind}_${Date.now()}`,
-      entityType: kind,
-      label: kind.charAt(0,).toUpperCase() + kind.slice(1,),
-      fields,
-      worldId: draft.worldId ?? undefined,
-      userId: draft.userId ?? undefined,
-      description: draft.description,
-      warnings: draft.warnings,
-    };
-    ctx.wizardPreviewOpen = true;
-    log.info("create-entity-preview: draft ready", { kind, },);
-  },
 };
-
-/** Render the battle panel from a `battle-*` command action payload. */
-function renderBattleFromPayload(
-  ctx: unknown,
-  payload: Record<string, unknown> | null,
-): void {
-  const raw = payload?.battle;
-  if (!isBattleViewShape(raw,)) { return; }
-  const combatants: BattleCombatantView[] = [];
-  for (const c of raw.combatants) {
-    if (!isCombatantShape(c,)) { continue; }
-    combatants.push({
-      id: c.id,
-      name: c.name,
-      hp: c.hp,
-      maxHp: c.maxHp,
-      initiative: c.initiative,
-    },);
-  }
-  const view: BattleView = {
-    id: raw.id,
-    status: raw.status,
-    round: raw.round,
-    turnIndex: raw.turnIndex,
-    combatants,
-  };
-  const panel = ctx as { renderBattlePanel(view: BattleView,): void } | null;
-  panel?.renderBattlePanel(view,);
-}
-
-/** @returns true when `value` has the shape of a battle view payload. */
-function isBattleViewShape(value: unknown,): value is {
-  id: string;
-  status: "active" | "completed" | "abandoned";
-  round: number;
-  turnIndex: number;
-  combatants: unknown[];
-} {
-  if (!value || typeof value !== "object") { return false; }
-  const v = value as Record<string, unknown>;
-  const validStatus = ["active", "completed", "abandoned",].includes(String(v.status,),);
-  return (
-    typeof v.id === "string" &&
-    validStatus &&
-    typeof v.round === "number" &&
-    typeof v.turnIndex === "number" &&
-    Array.isArray(v.combatants,)
-  );
-}
-
-/** @returns true when `value` has a combatant view shape. */
-function isCombatantShape(value: unknown,): value is BattleCombatantView {
-  if (!value || typeof value !== "object") { return false; }
-  const v = value as Record<string, unknown>;
-  return (
-    typeof v.id === "string" &&
-    typeof v.name === "string" &&
-    typeof v.hp === "number" &&
-    typeof v.maxHp === "number" &&
-    typeof v.initiative === "number"
-  );
-}
