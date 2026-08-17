@@ -289,6 +289,7 @@ export async function insertWorlds(
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
     nsfw_override?: string | null;
+    rpg_enabled?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("worlds",).values({
@@ -2500,6 +2501,13 @@ export async function insertCharacterStats(
     data_version?: Generated<number>;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    behavior_profile?: string | null;
+    evasiveness?: number | null;
+    cooperativeness?: number | null;
+    aggression_threshold?: number | null;
+    character_state?: Generated<string>;
+    conditions?: Generated<string>;
+    active_effects?: Generated<string>;
     combat_alignment?: Generated<string>;
   },
 ): Promise<void> {
