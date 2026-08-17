@@ -3,4 +3,5 @@
 
 // src/seeding/index.ts — config-driven seeding pipeline public API
 
+export { applyEnvironmentOverrides, seedConfiguredContent, } from "./content";
 export { resolvePasswordReference, seedConfiguredUsers, } from "./users";
