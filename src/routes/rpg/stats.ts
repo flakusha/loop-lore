@@ -17,6 +17,7 @@ import {
   getCharacterStats,
   updateCharacterStats,
 } from "../../rpg/service/character-stats.js";
+import { checkRpgEnabled, } from "../../rpg/service/world-gate.js";
 import { requireActorAccess, } from "../actor-auth";
 import { jsonCreated, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
@@ -172,11 +173,20 @@ export function statsRoutes(opts: HandlerOpts, prefix = "/api",) {
       )
       .post(
         `${prefix}/rpg/stats/:actorId`,
-        async (ctx: ActorCtx,) => {
+        async (ctx: ActorCtx & { query?: Record<string, string> },) => {
           const userId = await requireActorAccess(ctx, database,);
           if (typeof userId !== "string") { return userId; }
 
           try {
+            // World-gate: if worldId provided, check RPG is enabled
+            const worldId = ctx.query?.worldId;
+            if (worldId) {
+              const gate = await checkRpgEnabled(database, worldId,);
+              if (!gate.allowed) {
+                return jsonError(gate.reason ?? "RPG not enabled", 403,);
+              }
+            }
+
             const body = ctx.body as {
               hp: number;
               maxHp: number;
