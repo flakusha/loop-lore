@@ -1678,6 +1678,7 @@ export const CharacterStatsSchema = t.Object({
   data_version: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  combat_alignment: t.Optional(t.String(),),
 },);
 
 // ── xp_ledger ────────────────────────────────────────────
