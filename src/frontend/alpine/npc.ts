@@ -353,39 +353,49 @@ const MOCK_KARMA: NpcKarma = {
     },
 
     get filteredNpcs(): NpcData[] {
-      let result = this.npcs;
+      const result: NpcData[] = [];
       const q = this.npcSearch.trim().toLowerCase();
-      if (q) {
-        result = result.filter((n,) =>
-          n.name.toLowerCase().includes(q,) ||
-          n.role.toLowerCase().includes(q,) ||
-          n.location.toLowerCase().includes(q,)
-        );
-      }
-      if (this.npcFilter !== "all") {
-        result = result.filter((n,) => n.disposition === this.npcFilter);
+      for (const n of this.npcs) {
+        if (
+          q && !n.name.toLowerCase().includes(q,) && !n.role.toLowerCase().includes(q,) &&
+          !n.location.toLowerCase().includes(q,)
+        ) {
+          continue;
+        }
+        if (this.npcFilter !== "all" && n.disposition !== this.npcFilter) {
+          continue;
+        }
+        result.push(n,);
       }
       return result;
     },
 
     getDispositionColor(disposition: string,): string {
       switch (disposition) {
-        case "hostile":
+        case "hostile": {
           return "var(--accent-red)";
-        case "unfriendly":
+        }
+        case "unfriendly": {
           return "var(--accent-orange)";
-        case "neutral":
+        }
+        case "neutral": {
           return "var(--text-muted)";
-        case "friendly":
+        }
+        case "friendly": {
           return "var(--accent-green)";
-        case "honored":
+        }
+        case "honored": {
           return "var(--accent-blue)";
-        case "revered":
+        }
+        case "revered": {
           return "var(--accent-purple)";
-        case "exalted":
+        }
+        case "exalted": {
           return "var(--accent-gold)";
-        default:
+        }
+        default: {
           return "var(--text-muted)";
+        }
       }
     },
 
@@ -403,18 +413,24 @@ const MOCK_KARMA: NpcKarma = {
 
     getRelationshipColor(type: string,): string {
       switch (type) {
-        case "friend":
+        case "friend": {
           return "var(--accent-green)";
-        case "ally":
+        }
+        case "ally": {
           return "var(--accent-blue)";
-        case "rival":
+        }
+        case "rival": {
           return "var(--accent-orange)";
-        case "enemy":
+        }
+        case "enemy": {
           return "var(--accent-red)";
-        case "mentor":
+        }
+        case "mentor": {
           return "var(--accent-purple)";
-        default:
+        }
+        default: {
           return "var(--text-muted)";
+        }
       }
     },
 
@@ -427,11 +443,19 @@ const MOCK_KARMA: NpcKarma = {
     },
 
     playerRelationships(): NpcRelationship[] {
-      return this.relationships.filter((r,) => r.fromId === "player" || r.toId === "player");
+      const result: NpcRelationship[] = [];
+      for (const r of this.relationships) {
+        if (r.fromId === "player" || r.toId === "player") { result.push(r,); }
+      }
+      return result;
     },
 
     npcRelationships(): NpcRelationship[] {
-      return this.relationships.filter((r,) => r.fromId !== "player" && r.toId !== "player");
+      const result: NpcRelationship[] = [];
+      for (const r of this.relationships) {
+        if (r.fromId !== "player" && r.toId !== "player") { result.push(r,); }
+      }
+      return result;
     },
 
     // ── Factions ────────────────────────────────────────────
