@@ -8175,6 +8175,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
     }
   ],
   "src/frontend/pages/new-chat/index.ts": [
