@@ -3,11 +3,12 @@
 
 # EPIC: NPC & Social UI
 
-**Status:** ⬜ Not Started
+**Status:** 🟢 Implemented (mock data, UI shell)
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** npc, social, relationships, ui, frontend
+**Branch:** `npc-management-ui`
 
 ## Summary
 
@@ -272,19 +273,18 @@ Complete NPC management interface including NPC viewer, relationship map, factio
 
 | Task                      | Priority | Status         |
 | ------------------------- | -------- | -------------- |
-| TASK-npc-viewer.md        | P0       | ⬜ Not Started |
-| TASK-relationship-map.md  | P0       | ⬜ Not Started |
-| TASK-faction-relations.md | P0       | ⬜ Not Started |
-| TASK-karma-display.md     | P0       | ⬜ Not Started |
-| TASK-npc-alpine.md        | P0       | ⬜ Not Started |
+| TASK-npc-viewer.md        | P0       | ✅ Done        |
+| TASK-relationship-map.md  | P0       | ✅ Done        |
+| TASK-faction-relations.md | P0       | ✅ Done        |
+| TASK-karma-display.md     | P0       | ✅ Done        |
+| TASK-npc-alpine.md        | P0       | ✅ Done        |
 
-## Files to Create
+## Files Created
 
-- `src/frontend/npc/npc-viewer.ts` — NPC viewer
-- `src/frontend/npc/relationship-map.ts` — Relationship visualization
-- `src/frontend/npc/faction-relations.ts` — Faction display
-- `src/frontend/npc/karma-display.ts` — Karma/standing display
-- `src/frontend/alpine/npc.ts` — Alpine.js NPC logic
+- `src/frontend/alpine/chat-types/npc.ts` — NPC types (NpcData, NpcFaction, NpcKarma, etc.)
+- `src/frontend/alpine/chat-types/npc-state.ts` — ChatNpcState interface
+- `src/frontend/alpine/npc.ts` — Alpine.js NPC management component with mock data
+- `src/views/world-edit.html` — Added NPCs tab with sub-tab navigation
 
 ## Related Epics
 
