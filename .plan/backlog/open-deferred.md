@@ -21,7 +21,7 @@
 
 | # | Item                                                                                                                                                                         | Status                                                    |
 | - | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 1 | AUX M6 telemetry (tokens/latency per call)                                                                                                                                   | 🟡 Open (M1–M5 done)                                      |
+| 1 | AUX M6 telemetry (tokens/latency per call)                                                                                                                                   | ✅ Done (2026-08-18) — `aux.call` events + `GET /api/admin/telemetry/aux` + latencyMs fix |
 | 2 | World timeline §5.3 forward-event steering + §5.4 cross-story convergence                                                                                                    | 🟡 Greenfield (cluster B)                                 |
 | 3 | Avatar-gallery visibility inheritance                                                                                                                                        | 🟡 Open                                                   |
 | 4 | External music linking UI                                                                                                                                                    | 🟡 Open                                                   |

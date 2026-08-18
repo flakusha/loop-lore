@@ -49,7 +49,7 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
   required. Details: `open-inflight.md`.
 - **Remaining release blockers: A8** (crafting stations/execution + trade lifecycle; LoRA decision) **+ A9** (tag 0.1.0 + push) — `open-inflight.md`.
 - **Dead/unwired code**: transport module, LoRA routes, music/SFX/Video stubs — `open-debt.md`.
-- **Hardening / deferred clusters**: AUX M6 telemetry, world timeline steering, avatar-gallery inheritance, MFA — `open-deferred.md`.
+- **Hardening / deferred clusters**: world timeline steering, avatar-gallery inheritance, MFA — `open-deferred.md` (AUX M6 telemetry ✅ done 2026-08-18).
 
 ## Preserved note — concurrent author's claim (2026-08-06 → **landed on dev 2026-08-07**)
 

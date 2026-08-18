@@ -37,7 +37,7 @@ tracking: `epic-release-010.md`.
 ### Hardening (before tagging, non-blocking)
 
 - memorySection cross-actor integration test — ✅ shipped (`src/assistant/prompt/sections/memories.test.ts`)
-- AUX queue M5–M6 — M5 ModerationHook safety ✅ shipped (2026-08-06); M6 AUX telemetry open
+- AUX queue M5–M6 — M5 ModerationHook safety ✅ shipped (2026-08-06); M6 AUX telemetry ✅ done (2026-08-18)
 - World timeline §5.3 forward-event steering + §5.4 cross-story convergence (cluster B greenfield)
 - Frontend gaps in P2-B/C/D/E (music linking, party join/leave, unified GM↔assistant view, creation wizards, avatar-gallery visibility inheritance)
 - `.plan/open-items.md` — resolved: consolidated into `.plan/backlog/open.md` (2026-08-06)

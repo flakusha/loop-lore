@@ -54,7 +54,7 @@ already declares `version: 0.1.0`.
 
 ## Hardening (non-blocking before tag)
 
-- AUX M6 telemetry (`F3` in `../backlog/open.md`)
+- ~~AUX M6 telemetry~~ ✅ done 2026-08-18 (`F3` in `../backlog/open.md`)
 - World timeline §5.3/§5.4 (cluster B)
 - Frontend gaps: music linking, party join/leave, unified GM↔assistant view, creation wizards, avatar-gallery visibility inheritance
 
