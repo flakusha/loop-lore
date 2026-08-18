@@ -954,7 +954,15 @@
     "escalateToMe": "Escalate to Me",
     "injectNarration": "Inject Narration",
     "controlsHint": "Pause/step orchestration is wired to the story engine (LLM role wiring). Until then, controls report availability.",
-    "qualityScore": "Quality score from story engine evaluation"
+    "qualityScore": "Quality score from story engine evaluation",
+    "gmAssistant": "GM والمُساعد",
+    "guidance": "توجيه",
+    "participants": "المشاركون",
+    "assistantCommands": "أوامر المُساعد",
+    "toolCalls": "استدعاءات الأدوات الأخيرة",
+    "noCommands": "لا توجد أوامر متاحة",
+    "noToolCalls": "لا توجد استدعاءات بعد",
+    "assistant": "مُساعد"
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
