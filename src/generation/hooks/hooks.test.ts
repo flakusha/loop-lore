@@ -288,6 +288,71 @@ describe("NsfwHook", () => {
     expect(result.handled,).toBe(false,);
   });
 
+  test("keyword pass has no extreme tier (extreme content drops to intense)", async () => {
+    const ctx = makeContext({
+      content: "The graphic and explicit scene was brutal beyond belief.",
+      nsfwPolicy: "intense",
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+        useLlmClassifier: false,
+      },
+    },);
+    const result = await hook.execute("The graphic and explicit scene was brutal beyond belief.", ctx,);
+    // Graphic terms map to the intense tier, not a hard-named extreme keyword tier.
+    expect(result.handled,).toBe(true,);
+    expect(result.suppressContent,).toBeFalsy();
+    expect(result.data?.nsfwLevel,).toBe("intense",);
+    expect(result.data?.allowed,).toBe(true,);
+  });
+
+  test("contract enforcement: blocks content exceeding user max_rating", async () => {
+    const ctx = makeContext({
+      content: "The suggestive and provocative dance was steamy.",
+      actorContentRating: "nsfw_intense",
+      maxUserRating: "nsfw_mild",
+      chatNsfwOverride: "nsfw_intense",
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+        useLlmClassifier: false,
+      },
+    },);
+    const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
+    // moderate content > effective_limit(mild) → blocked
+    expect(result.handled,).toBe(true,);
+    expect(result.suppressContent,).toBe(true,);
+    expect(result.data?.blocked,).toBe(true,);
+  });
+
+  test("contract enforcement: allows content within all three limits", async () => {
+    const ctx = makeContext({
+      content: "The suggestive and provocative dance was steamy.",
+      actorContentRating: "nsfw_extreme",
+      maxUserRating: "nsfw_intense",
+      chatNsfwOverride: "nsfw_extreme",
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+        useLlmClassifier: false,
+      },
+    },);
+    const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
+    // moderate content <= effective_limit(min(extreme, intense, extreme)=intense) → allowed
+    expect(result.handled,).toBe(true,);
+    expect(result.suppressContent,).toBeFalsy();
+    expect(result.data?.allowed,).toBe(true,);
+  });
+
   describe("LLM classifier", () => {
     // The LLM tap is only reached for keyword-"none" content when
     // useLlmClassifier is true. Inject a mock runner so no real LLM call fires.
@@ -329,6 +394,38 @@ describe("NsfwHook", () => {
       expect(result.handled,).toBe(true,);
       expect(result.data?.nsfwLevel,).toBe("intense",);
       // intense > mild policy → blocked
+      expect(result.suppressContent,).toBe(true,);
+    });
+
+    test("LLM classifier can reach the extreme tier (keyword pass cannot)", async () => {
+      const aux = mock(async () => ({
+        content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
+      }));
+      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const ctx = llmLlContext("The scene escalated beyond the keyword pass.",);
+
+      const result = await llmHook.execute("The scene escalated beyond the keyword pass.", ctx,);
+      expect(aux,).toHaveBeenCalled();
+      expect(result.handled,).toBe(true,);
+      expect(result.data?.nsfwLevel,).toBe("extreme",);
+      // extreme > mild policy → blocked
+      expect(result.suppressContent,).toBe(true,);
+    });
+
+    test("LLM escalates keyword-intense content to extreme", async () => {
+      // Keyword pass classifies "graphic" as intense; the LLM must be able to
+      // escalate it to extreme so the filter actually censors extreme content
+      // that is phrased with intense-tier vocabulary.
+      const aux = mock(async () => ({
+        content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
+      }));
+      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const ctx = llmLlContext("The graphic and explicit scene escalated beyond belief.",);
+
+      const result = await llmHook.execute("The graphic and explicit scene escalated beyond belief.", ctx,);
+      expect(aux,).toHaveBeenCalled();
+      expect(result.handled,).toBe(true,);
+      expect(result.data?.nsfwLevel,).toBe("extreme",);
       expect(result.suppressContent,).toBe(true,);
     });
 

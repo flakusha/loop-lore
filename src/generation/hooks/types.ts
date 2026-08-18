@@ -26,6 +26,12 @@ export interface HookContext {
   userId: string;
   content: string;
   nsfwPolicy?: string;
+  /** Actor's canonical content_rating from actors table. */
+  actorContentRating?: string;
+  /** User's max allowed content rating from nsfw_user_preferences.max_rating. */
+  maxUserRating?: string;
+  /** Chat-level NSFW override from chats.nsfw_override. */
+  chatNsfwOverride?: string | null;
   privacyLevel?: string;
   /** Targeted event types — hooks not in this list are skipped. Omit to run all. */
   eventTypes?: HookEventType[];

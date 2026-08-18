@@ -12,6 +12,7 @@ import {
   MessageRole,
 } from "../../db/enums";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
+import { canAccessNsfw, getActorContentRating, isNsfwRating, } from "../../middleware/nsfw-gate";
 import { jsonParseOr, uid, } from "../../utils";
 import { ChatCreateBody, } from "../../validation/schemas";
 import {
@@ -95,6 +96,27 @@ async function seedWelcomeMessages(
   }
 }
 
+/**
+ * Check NSFW access for chat participants.
+ * Blocks creation if user cannot access NSFW and any participant is NSFW-rated.
+ */
+async function checkNsfwAccessForParticipants(
+  opts: HandlerOpts,
+  userId: string,
+  participantIds: string[] | undefined,
+): Promise<Response | null> {
+  if (!participantIds || participantIds.length === 0) { return null; }
+  const userAccess = await canAccessNsfw(opts.database, opts.config, userId,);
+  if (userAccess.allowed) { return null; }
+  for (const pid of participantIds) {
+    const rating = await getActorContentRating(opts.database, pid,);
+    if (isNsfwRating(rating,)) {
+      return forbidden(`NSFW access denied: ${userAccess.reason}`,);
+    }
+  }
+  return null;
+}
+
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
@@ -110,6 +132,10 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (ageError) { return ageError; }
 
           const body = ctx.body as typeof ChatCreateBody.static;
+
+          // ── NSFW access gate ─────────────────────────────────
+          const nsfwError = await checkNsfwAccessForParticipants(opts, userId, body.participantIds,);
+          if (nsfwError) { return nsfwError; }
           const rawBody = parseRawBody(ctx,);
           const hasExplicit = (key: string,) => key in rawBody;
 

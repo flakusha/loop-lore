@@ -32,7 +32,7 @@ Implement body/physical attribute systems: physique profiles (stamina, flexibili
 
 ### Body Modifications
 
-- Piercings: attractiveness/erogenous effects
+- Piercings: attractiveness effects
 - Tattoos: intimidation/fetish appeal
 - Scars: history/story effects
 - Implants: magical/technological enhancements
