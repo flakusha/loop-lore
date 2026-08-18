@@ -219,6 +219,8 @@ export interface ActorItems {
   sort_order: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  durability: Generated<number>;
+  max_durability: Generated<number>;
 }
 
 // ── actor_currencies ────────────────────────────────────────────
