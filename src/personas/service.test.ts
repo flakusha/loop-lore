@@ -148,4 +148,53 @@ describe("PersonasService", () => {
       expect(def,).toBeUndefined();
     });
   });
+
+  describe("tuning fields", () => {
+    test("creates persona with tuning fields", async () => {
+      const id = await service.create({
+        userId,
+        name: "Tuned Persona",
+        temperature: 0.8,
+        maxTokens: 4000,
+        model: "gpt-4o",
+      },);
+      const persona = await service.getById(id, userId,);
+      expect(persona,).toBeTruthy();
+      expect(persona!.temperature!,).toBeCloseTo(0.8,);
+      expect(persona!.max_tokens,).toBe(4000,);
+      expect(persona!.model,).toBe("gpt-4o",);
+    });
+
+    test("updates tuning fields", async () => {
+      const id = await service.create({ userId, name: "Tune Me", },);
+      await service.update(id, {
+        temperature: 1.2,
+        maxTokens: 8000,
+        model: "claude-3",
+      }, userId,);
+      const persona = await service.getById(id, userId,);
+      expect(persona!.temperature!,).toBeCloseTo(1.2,);
+      expect(persona!.max_tokens,).toBe(8000,);
+      expect(persona!.model,).toBe("claude-3",);
+    });
+
+    test("clears tuning fields to null", async () => {
+      const id = await service.create({
+        userId,
+        name: "Clear Me",
+        temperature: 0.5,
+        maxTokens: 2000,
+        model: "llama",
+      },);
+      await service.update(id, {
+        temperature: null,
+        maxTokens: null,
+        model: null,
+      }, userId,);
+      const persona = await service.getById(id, userId,);
+      expect(persona!.temperature,).toBeNull();
+      expect(persona!.max_tokens,).toBeNull();
+      expect(persona!.model,).toBeNull();
+    });
+  });
 });

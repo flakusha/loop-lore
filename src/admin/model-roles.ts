@@ -101,6 +101,7 @@ export async function setModelRoleOverride(
   provider: string,
   model: string,
   db: Kysely<DB>,
+  tuning?: { temperature?: number | null; maxTokens?: number | null },
 ): Promise<void> {
   if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}"`,);
@@ -113,11 +114,19 @@ export async function setModelRoleOverride(
 
   await db
     .insertInto("model_role_overrides",)
-    .values({ role, provider, model, },)
+    .values({
+      role,
+      provider,
+      model,
+      temperature: tuning?.temperature ?? null,
+      max_tokens: tuning?.maxTokens ?? null,
+    },)
     .onConflict((oc,) =>
       oc.column("role",).doUpdateSet({
         provider,
         model,
+        temperature: tuning?.temperature ?? null,
+        max_tokens: tuning?.maxTokens ?? null,
         updated_at: new Date().toISOString(),
       },)
     )
@@ -143,11 +152,19 @@ export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>,): 
  */
 export async function getModelRoleOverrides(
   db: Kysely<DB>,
-): Promise<Record<string, { provider: string; model: string }>> {
+): Promise<Record<string, { provider: string; model: string; temperature: number | null; maxTokens: number | null }>> {
   const rows = await db.selectFrom("model_role_overrides",).selectAll().execute();
-  const overrides: Record<string, { provider: string; model: string }> = {};
+  const overrides: Record<
+    string,
+    { provider: string; model: string; temperature: number | null; maxTokens: number | null }
+  > = {};
   for (const row of rows) {
-    overrides[row.role] = { provider: row.provider, model: row.model, };
+    overrides[row.role] = {
+      provider: row.provider,
+      model: row.model,
+      temperature: row.temperature,
+      maxTokens: row.max_tokens,
+    };
   }
   return overrides;
 }

@@ -425,6 +425,9 @@ export const PersonasSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   format_version: t.Optional(t.Number(),),
+  temperature: t.Optional(t.Number(),),
+  max_tokens: t.Optional(t.Number(),),
+  model: t.Optional(t.String(),),
 },);
 
 // ── group_initiatives ────────────────────────────────────────────
@@ -991,6 +994,8 @@ export const ModelRoleOverridesSchema = t.Object({
   role: t.Optional(ModelRoleSchema,),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  temperature: t.Optional(t.Number(),),
+  max_tokens: t.Optional(t.Number(),),
 },);
 
 // ── message_reactions ────────────────────────────────────────────
