@@ -8,7 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 import type { TradeLine, TradeResult, } from "./types";
 
 /** Sentinel recipe_id for trade offers (crafting_orders.recipe_id is NOT NULL). */
@@ -111,6 +111,7 @@ export async function loadOfferForAccept(
   offerId: string,
   acceptorActorId: string,
 ): Promise<
+  | TradeResult
   | {
     offer: {
       world_id: string;
@@ -121,7 +122,6 @@ export async function loadOfferForAccept(
     };
     buyerItems: TradeLine[];
   }
-  | TradeResult
 > {
   const offer = await db.selectFrom("crafting_orders",)
     .where("id", "=", offerId,)
@@ -134,7 +134,7 @@ export async function loadOfferForAccept(
     return { success: false, reason: "only the seller can accept", };
   }
 
-  const buyerItems: TradeLine[] = JSON.parse(offer.offered_materials,) as TradeLine[];
+  const buyerItems: TradeLine[] = jsonParseOr(offer.offered_materials, [] as TradeLine[],);
   return { offer, buyerItems, };
 }
 
@@ -184,18 +184,16 @@ export async function listOffers(
   db: Kysely<DB>,
   worldId: string,
   actorId: string,
-): Promise<
-  Array<{
-    id: string;
-    buyerActorId: string;
-    sellerActorId: string | null;
-    price: number;
-    items: TradeLine[];
-    status: string;
-    deadline: string | null;
-    createdAt: string;
-  }>
-> {
+): Promise<{
+  id: string;
+  buyerActorId: string;
+  sellerActorId: string | null;
+  price: number;
+  items: TradeLine[];
+  status: string;
+  deadline: string | null;
+  createdAt: string;
+}[]> {
   const rows = await db.selectFrom("crafting_orders",)
     .where("world_id", "=", worldId,)
     .where("trade_type", "=", "trade",)
@@ -214,7 +212,7 @@ export async function listOffers(
     buyerActorId: r.requester_actor_id,
     sellerActorId: r.crafter_actor_id,
     price: r.offered_payment,
-    items: JSON.parse(r.offered_materials,) as TradeLine[],
+    items: jsonParseOr(r.offered_materials, [] as TradeLine[],),
     status: r.status,
     deadline: r.deadline,
     createdAt: r.created_at,

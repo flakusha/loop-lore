@@ -18,15 +18,18 @@ import { HttpStatus, } from "../http-utils/status";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+const NullableId = t.Union([Id, t.Null(),],);
+const OptionalNullableId = t.Optional(NullableId,);
+
 const CreateStationInstanceBody = t.Object({
   stationDefId: Id,
   worldId: Id,
-  locationId: t.Optional(t.Union([Id, t.Null(),],),),
-  ownerActorId: t.Optional(t.Union([Id, t.Null(),],),),
+  locationId: OptionalNullableId,
+  ownerActorId: OptionalNullableId,
 },);
 const UpdateStationInstanceBody = t.Object({
-  locationId: t.Optional(t.Union([Id, t.Null(),],),),
-  ownerActorId: t.Optional(t.Union([Id, t.Null(),],),),
+  locationId: OptionalNullableId,
+  ownerActorId: OptionalNullableId,
   currentDurability: t.Optional(t.Number({ minimum: 0, },),),
   isActive: t.Optional(t.Boolean(),),
 },);
@@ -103,7 +106,7 @@ export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R
         const deny = await assertWorldOwner(opts.database, userId, existing.worldId,);
         if (deny) { return deny; }
         const body = ctx.body as Record<string, unknown>;
-        const ok = await svc.updateInstance(id, body as never,);
+        const ok = await svc.updateInstance(id, body,);
         if (!ok) { return jsonError("Update failed", HttpStatus.InternalServerError,); }
         const updated = await svc.getInstance(id,);
         return jsonResponse(updated,);
