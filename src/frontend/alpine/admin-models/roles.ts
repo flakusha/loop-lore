@@ -8,7 +8,11 @@ import type { ModelRolesResponse, ModelsState, } from "./types";
 
 export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
   modelRoleList: [] as { role: string; provider: string; model: string }[],
-  overrides: {} as Record<string, { provider: string; model: string }>,
+  overrides: {} as Record<
+    string,
+    { provider: string; model: string; temperature: number | null; maxTokens: number | null }
+  >,
+  roleTuning: {} as Record<string, { temperature: string; maxTokens: string }>,
 
   async loadModelRoles() {
     try {
@@ -23,6 +27,15 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
           const found = (data.roles || []).find((r,) => r.role === role);
           return { role, provider: found?.provider ?? "", model: found?.model ?? "", };
         },);
+        this.roleTuning = {};
+        for (const [role, override,] of Object.entries(this.overrides,)) {
+          const temp = override.temperature;
+          const maxTk = override.maxTokens;
+          this.roleTuning[role] = {
+            temperature: temp == null ? "" : String(temp,),
+            maxTokens: maxTk == null ? "" : String(maxTk,),
+          };
+        }
       }
     } catch {
       log.warn("Failed to load model roles",);
@@ -36,11 +49,16 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     if (!entry?.provider || !entry.model) { return; }
     const { provider, model, } = entry;
+    const tuning = this.roleTuning[role] || { temperature: "", maxTokens: "", };
     try {
+      const body: Record<string, unknown> = { provider, model, };
+      body.temperature = tuning.temperature === "" ? null : Number(tuning.temperature,);
+      body.maxTokens = tuning.maxTokens === "" ? null : Number(tuning.maxTokens,);
+
       const res = await apiFetch(`/api/admin/model-roles/${role}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ provider, model, },),
+        body: jsonBody(body,),
       },);
       if (res.ok) {
         showToast("success", t("toasts.roleUpdatedFor", { role, },),);

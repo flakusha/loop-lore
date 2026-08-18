@@ -19,6 +19,7 @@ import type { LocaleInfoArray, SettingsState, } from "./types";
     inlinePreview: true,
     detailLevel: "Immersion",
     provider: "OpenAI",
+    providerList: [] as { name: string; label: string; status: string }[],
     apiKey: "",
     apiEndpoint: "",
     model: "",

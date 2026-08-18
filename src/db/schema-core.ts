@@ -76,6 +76,9 @@ export interface Personas {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   format_version: Generated<number>;
+  temperature: number | null;
+  max_tokens: number | null;
+  model: string | null;
 }
 
 // ── group_initiatives ────────────────────────────────────────────
@@ -363,6 +366,8 @@ export interface ModelRoleOverrides {
   model: string;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  temperature: number | null;
+  max_tokens: number | null;
 }
 
 // ── message_reactions ────────────────────────────────────────────
