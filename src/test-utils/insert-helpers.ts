@@ -620,6 +620,8 @@ export async function insertActorItems(
     sort_order?: Generated<number>;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    durability?: Generated<number>;
+    max_durability?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("actor_items",).values({

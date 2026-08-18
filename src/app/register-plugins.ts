@@ -14,8 +14,7 @@ import { assetRoutes, } from "../assets/controller";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { generationRoutes, } from "../generation/controller";
-// TODO: Wire LoRA routes when feature is ready for production
-// import { loraRoutes, } from "../generation/lora/routes";
+import { loraRoutes, } from "../generation/lora/routes";
 import { personaRoutes, } from "../personas/controller";
 import { activityRoutes, } from "../routes/activity";
 import { activityStreamRoutes, } from "../routes/activity-stream";
@@ -52,6 +51,9 @@ import { chatSearchRoutes, } from "../routes/chat-search";
 import { chatSectionsRoutes, } from "../routes/chat-sections";
 import { chatsRoutes, } from "../routes/chats";
 import { craftingRecipeRoutes, } from "../routes/crafting";
+import { craftingAttemptRoutes, } from "../routes/crafting/attempt";
+import { craftingOrderRoutes, } from "../routes/crafting/orders";
+import { craftingStationRoutes, } from "../routes/crafting/stations";
 import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
 import { frontendLogsRoutes, } from "../routes/frontend-logs";
@@ -133,7 +135,9 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(worldLoreEntriesRoutes(handleOpts,),);
   app.use(worldsRoutes(handleOpts,),);
   app.use(craftingRecipeRoutes(handleOpts,),);
-  app.use(tradeRoutes(handleOpts,),);
+  app.use(craftingStationRoutes(handleOpts,),);
+  app.use(craftingAttemptRoutes(handleOpts,),);
+  app.use(craftingOrderRoutes(handleOpts,),);
   app.use(chatSectionsRoutes(handleOpts,),);
   app.use(npcMovementRoutes(handleOpts,),);
   app.use(chatBackgroundsRoutes(handleOpts,),);
@@ -175,13 +179,13 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(importRoutes(handleOpts,),);
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
-  // TODO: Enable when LoRA feature is ready for production
-  // app.use(loraRoutes({ config, }),);
+  app.use(loraRoutes({ config, },),);
   app.use(ageGateRoutes(handleOpts,),);
   app.use(nsfwRoutes(handleOpts,),);
   app.use(nsfwModerationRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(rpgRoutes(handleOpts,),);
+  app.use(tradeRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 
   // ── Analytics ────────────────────────────────────────────────────────────
