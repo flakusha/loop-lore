@@ -138,6 +138,9 @@ async function handleCreatePersona({ database, body, context, }: CreatePersonaOp
     avatarAssetId: body.avatarAssetId as string | null | undefined,
     description: body.description as string | null | undefined,
     title: body.title as string | null | undefined,
+    temperature: typeof body.temperature === "number" ? body.temperature : undefined,
+    maxTokens: typeof body.maxTokens === "number" ? body.maxTokens : undefined,
+    model: typeof body.model === "string" ? body.model : undefined,
   },);
 
   return jsonCreated({ id: personaId, },);
@@ -178,6 +181,11 @@ async function handleUpdatePersona({
 
   const service = new PersonasService(database,);
   try {
+    const tuningUpdates: Record<string, unknown> = {};
+    if ("temperature" in body) { tuningUpdates.temperature = body.temperature; }
+    if ("maxTokens" in body) { tuningUpdates.maxTokens = body.maxTokens; }
+    if ("model" in body) { tuningUpdates.model = body.model; }
+
     await service.update(
       personaId,
       {
@@ -186,6 +194,7 @@ async function handleUpdatePersona({
         description: body.description as string | null | undefined,
         title: body.title as string | null | undefined,
         isDefault: body.isDefault as boolean | undefined,
+        ...tuningUpdates,
       },
       userId,
     );

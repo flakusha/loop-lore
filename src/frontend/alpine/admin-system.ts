@@ -43,6 +43,7 @@ export const adminSystem = {
   loadingHealth: false,
   healthAutoRefresh: false,
   healthRefreshInterval: null as ReturnType<typeof setInterval> | null,
+  expandHealthProvider: "",
   nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
   loadingNsfw: false,
 
@@ -143,11 +144,40 @@ export const adminSystem = {
         this.healthStatus = data.status || "unknown";
         this.healthUptime = data.uptime || 0;
         this.healthTimestamp = data.timestamp || "";
-        this.healthProviders = data.providers || [];
+        const providers = data.providers || [];
+        // Enrich with model details per provider
+        for (const p of providers) {
+          try {
+            const modelsRes = await apiFetch(`/api/admin/providers/${p.name}/models`, {
+              headers: { Accept: "application/json", },
+            },);
+            if (modelsRes.ok) {
+              const modelsData = await modelsRes.json();
+              p.models = modelsData.models || [];
+            }
+          } catch {
+            /* keep summary only */
+          }
+        }
+        this.healthProviders = providers;
       }
     } catch {
       showToast("error", t("toasts.failedLoadHealth",),);
     } finally {
+      this.loadingHealth = false;
+    }
+  },
+
+  async refreshHealthWithRescan() {
+    this.loadingHealth = true;
+    try {
+      // Trigger a full rescan first
+      await apiFetch("/api/admin/providers/rescan", { method: "POST", },);
+      // Then load fresh health data
+      await this.loadHealth();
+      showToast("success", "Health data refreshed",);
+    } catch {
+      showToast("error", t("toasts.failedLoadHealth",),);
       this.loadingHealth = false;
     }
   },

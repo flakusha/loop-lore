@@ -912,7 +912,12 @@
     "setDefault": "Set as default persona",
     "saving": "Saving...",
     "update": "Update",
-    "create": "Create"
+    "create": "Create",
+    "modelOverride": "Model Override",
+    "modelPlaceholder": "Leave blank to inherit from chat defaults",
+    "maxTokensOverride": "Max Tokens Override",
+    "maxTokensPlaceholder": "Leave blank to inherit",
+    "temperatureOverride": "Temperature Override"
   },
   "messages": {
     "invalidVariantIndex": "Invalid variant index",

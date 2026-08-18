@@ -212,9 +212,9 @@
               x-model="provider"
               @change="onProviderChange(); saveApi()"
             >
-              <option value="OpenAI">{{{t("settings.openai")}}}</option>
-              <option value="Anthropic">{{{t("settings.anthropic")}}}</option>
-              <option value="OpenRouter">{{{t("settings.openrouter")}}}</option>
+              <template x-for="p in providerList" :key="p.name">
+                <option :value="p.name" x-text="p.label"></option>
+              </template>
               <option value="Custom">{{{t("settings.custom")}}}</option>
             </select>
           </div>

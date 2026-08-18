@@ -45,7 +45,7 @@ const mockConfig = {
 
 interface OverrideBody {
   roles?: { role: string; provider: string; model: string; source: string }[];
-  overrides?: Record<string, { provider: string; model: string }>;
+  overrides?: Record<string, { provider: string; model: string; temperature: number | null; maxTokens: number | null }>;
   validRoles?: string[];
   ok?: boolean;
   role?: string;
@@ -88,7 +88,9 @@ describe("admin model-roles routes", () => {
       const main = body.roles!.find(r => r.role === "main");
       expect(main!.provider,).toBe("fake-provider",);
       expect(main!.source,).toBe("db",);
-      expect(body.overrides,).toEqual({ main: { provider: "fake-provider", model: "m-main", }, },);
+      expect(body.overrides,).toEqual({
+        main: { provider: "fake-provider", model: "m-main", temperature: null, maxTokens: null, },
+      },);
       expect(body.validRoles,).toContain("main",);
     });
 
@@ -145,7 +147,12 @@ describe("admin model-roles routes", () => {
 
       const check = await app.handle(new Request("http://localhost/api/admin/model-roles",),);
       const checkBody = await check.json() as OverrideBody;
-      expect(checkBody.overrides!.main,).toEqual({ provider: "fake-provider", model: "updated-model", },);
+      expect(checkBody.overrides!.main,).toEqual({
+        provider: "fake-provider",
+        model: "updated-model",
+        temperature: null,
+        maxTokens: null,
+      },);
     });
 
     test("400 when provider not registered", async () => {

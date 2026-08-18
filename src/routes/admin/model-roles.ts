@@ -93,10 +93,18 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const { provider, model, } = body as { provider: string; model: string };
+          const { provider, model, temperature, maxTokens, } = body as {
+            provider: string;
+            model: string;
+            temperature?: number | null;
+            maxTokens?: number | null;
+          };
 
           try {
-            await setModelRoleOverride(role as ModelRole, provider, model, opts.database,);
+            await setModelRoleOverride(role as ModelRole, provider, model, opts.database, {
+              temperature,
+              maxTokens,
+            },);
             return jsonResponse({ ok: true, },);
           } catch (error) {
             return jsonError({

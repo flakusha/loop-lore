@@ -12,6 +12,9 @@ interface PersonaItem {
   description: string | null;
   title: string | null;
   is_default: string;
+  temperature: number | null;
+  max_tokens: number | null;
+  model: string | null;
 }
 
 globalThis.personasPage = function() {
@@ -25,9 +28,47 @@ globalThis.personasPage = function() {
     formTitle: "",
     formDescription: "",
     formIsDefault: false,
+    formModel: "",
+    formMaxTokens: "" as string | number,
+    formTemperature: "" as string | number,
+    personaAvailableModels: [] as string[],
 
     async init() {
       await this.loadPersonas();
+      await this.loadPersonaModels();
+    },
+
+    async loadPersonaModels() {
+      try {
+        const res = await apiFetch("/api/providers", { headers: { Accept: "application/json", }, },);
+        if (!res.ok) { return; }
+        const data = await res.json();
+        const models: string[] = [];
+        const providers = data.providers || [];
+        for (const p of providers) {
+          if (p.status !== "healthy") { continue; }
+          await this._collectModelsForProvider(p.name, models,);
+        }
+        this.personaAvailableModels = models;
+      } catch {
+        /* network error — keep empty */
+      }
+    },
+
+    async _collectModelsForProvider(providerName: string, models: string[],) {
+      try {
+        const modelsRes = await apiFetch(`/api/admin/providers/${providerName}/models`, {
+          headers: { Accept: "application/json", },
+        },);
+        if (!modelsRes.ok) { return; }
+        const modelsData = await modelsRes.json();
+        const discovered = modelsData.models || [];
+        for (const m of discovered) {
+          if (!models.includes(m.id,)) { models.push(m.id,); }
+        }
+      } catch {
+        /* skip provider */
+      }
     },
 
     async loadPersonas() {
@@ -52,7 +93,8 @@ globalThis.personasPage = function() {
         return;
       }
       const out: PersonaItem[] = [];
-      for (const p of this.personas) { if (p.name.toLowerCase().includes(q,)) { out.push(p,); } }
+      const personas = this.personas;
+      for (const p of personas) { if (p.name.toLowerCase().includes(q,)) { out.push(p,); } }
       this.filtered = out;
     },
 
@@ -64,6 +106,9 @@ globalThis.personasPage = function() {
       this.formTitle = p.title || "";
       this.formDescription = p.description || "";
       this.formIsDefault = p.is_default === "default";
+      this.formModel = p.model || "";
+      this.formMaxTokens = p.max_tokens ?? "";
+      this.formTemperature = p.temperature ?? "";
       ui.showPersonaForm = true;
     },
 
@@ -83,6 +128,10 @@ globalThis.personasPage = function() {
         if (this.formTitle) { body.title = this.formTitle; }
         if (this.formDescription) { body.description = this.formDescription; }
         if (active) { body.isDefault = this.formIsDefault; }
+        // Tuning fields: send null to clear, omit to leave unchanged on update
+        body.model = this.formModel.trim() || null;
+        body.maxTokens = this.formMaxTokens === "" ? null : Number(this.formMaxTokens,);
+        body.temperature = this.formTemperature === "" ? null : Number(this.formTemperature,);
 
         const res = await apiFetch(url, {
           method,
@@ -97,6 +146,9 @@ globalThis.personasPage = function() {
           this.formTitle = "";
           this.formDescription = "";
           this.formIsDefault = false;
+          this.formModel = "";
+          this.formMaxTokens = "";
+          this.formTemperature = "";
           await this.loadPersonas();
         }
       } catch (error) {

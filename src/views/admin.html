@@ -732,6 +732,57 @@
                 </template>
               </div>
             </div>
+            <!-- Per-Role Tuning Defaults -->
+            <div style="margin-bottom: var(--space-6)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
+                Tuning Defaults
+              </h3>
+              <p style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-3)">
+                Override default temperature and max tokens per role. Leave blank to inherit from chat/server defaults.
+              </p>
+              <div style="display: grid; gap: var(--space-3)">
+                <template x-for="r in modelRoleList" :key="'tuning-' + r.role">
+                  <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
+                    <div style="font-weight: 500; text-transform: capitalize; min-width: 100px" x-text="r.role"></div>
+                    <div style="display: flex; gap: var(--space-3); flex: 1; flex-wrap: wrap; align-items: center">
+                      <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px">
+                        Temp:
+                        <input
+                          type="number"
+                          class="form-input"
+                          style="width: 80px; font-size: 12px; padding: 2px 6px"
+                          x-model="roleTuning[r.role]?.temperature"
+                          min="0"
+                          max="2"
+                          step="0.1"
+                          placeholder="0.7"
+                        />
+                      </label>
+                      <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px">
+                        Max Tokens:
+                        <input
+                          type="number"
+                          class="form-input"
+                          style="width: 100px; font-size: 12px; padding: 2px 6px"
+                          x-model="roleTuning[r.role]?.maxTokens"
+                          min="256"
+                          max="128000"
+                          step="256"
+                          placeholder="2000"
+                        />
+                      </label>
+                      <button
+                        class="btn btn-primary btn-xs"
+                        @click="saveModelRole(r.role)"
+                        :disabled="!r.provider || !r.model"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
             <div>
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
               <div style="display: grid; gap: var(--space-3)">
@@ -1394,7 +1445,9 @@
                   x-text="healthStatus"
                 ></span>
               </div>
-              <button class="btn btn-secondary btn-xs" @click="loadHealth()">Refresh</button>
+              <button class="btn btn-primary btn-xs" @click="refreshHealthWithRescan()" :disabled="loadingHealth">
+                Rescan & Refresh
+              </button>
               <button
                 class="btn btn-secondary btn-xs"
                 @click="toggleHealthAutoRefresh()"
@@ -1436,33 +1489,67 @@
               Last checked: <span x-text="healthTimestamp"></span>
             </div>
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
+            <div style="font-size: 11px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+              Note: Image generation and Bedrock providers are not yet in the provider registry.
+            </div>
             <div style="display: grid; gap: var(--space-3)">
               <template x-for="p in healthProviders" :key="p.name">
-                <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); display: flex; align-items: center; gap: var(--space-3)">
-                  <span
-                    style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"
-                    :style="{background: p.status === 'healthy' ? '#28a745' : p.status === 'degraded' ? '#ffc107' : '#dc3545'}"
-                  ></span>
-                  <strong style="font-size: 14px" x-text="p.name"></strong>
-                  <span
-                    style="font-size: 11px; padding: 1px 6px; border-radius: 3px"
-                    :style="{background: p.status === 'healthy' ? '#28a74522' : '#dc354522', color: p.status === 'healthy' ? '#28a745' : '#dc3545'}"
-                    x-text="p.status"
-                  ></span>
-                  <span
-                    style="font-size: 12px; color: var(--text-secondary)"
-                    x-text="p.models?.length + ' model(s)'"
-                  ></span>
-                  <span
-                    x-show="p.latencyMs"
-                    style="font-size: 12px; color: var(--text-secondary)"
-                    x-text="p.latencyMs + 'ms'"
-                  ></span>
-                  <span
-                    x-show="p.error"
-                    style="font-size: 11px; color: #dc3545; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                    x-text="p.error"
-                  ></span>
+                <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                  <div
+                    style="display: flex; align-items: center; gap: var(--space-3); cursor: pointer"
+                    @click="expandHealthProvider = expandHealthProvider === p.name ? '' : p.name"
+                  >
+                    <span
+                      style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"
+                      :style="{background: p.status === 'healthy' ? '#28a745' : p.status === 'degraded' ? '#ffc107' : '#dc3545'}"
+                    ></span>
+                    <strong style="font-size: 14px" x-text="p.name"></strong>
+                    <span
+                      style="font-size: 11px; padding: 1px 6px; border-radius: 3px"
+                      :style="{background: p.status === 'healthy' ? '#28a74522' : '#dc354522', color: p.status === 'healthy' ? '#28a745' : '#dc3545'}"
+                      x-text="p.status"
+                    ></span>
+                    <span
+                      style="font-size: 12px; color: var(--text-secondary)"
+                      x-text="p.models?.length + ' model(s)'"
+                    ></span>
+                    <span
+                      x-show="p.latencyMs"
+                      style="font-size: 12px; color: var(--text-secondary)"
+                      x-text="p.latencyMs + 'ms'"
+                    ></span>
+                    <span
+                      x-show="p.error"
+                      style="font-size: 11px; color: #dc3545; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+                      x-text="p.error"
+                    ></span>
+                    <span
+                      style="font-size: 11px; color: var(--text-secondary); margin-left: auto"
+                      x-text="expandHealthProvider === p.name ? '▲' : '▼'"
+                    ></span>
+                  </div>
+                  <div
+                    x-show="expandHealthProvider === p.name"
+                    style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef)"
+                  >
+                    <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+                      Available Models:
+                    </div>
+                    <div
+                      x-show="!p.models || p.models.length === 0"
+                      style="font-size: 12px; color: var(--text-secondary)"
+                    >
+                      No models discovered
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                      <template x-for="m in p.models" :key="m">
+                        <span
+                          style="font-size: 11px; padding: 3px 8px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
+                          x-text="typeof m === 'string' ? m : m.id"
+                        ></span>
+                      </template>
+                    </div>
+                  </div>
                 </div>
               </template>
             </div>
