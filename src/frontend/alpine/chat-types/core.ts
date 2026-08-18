@@ -76,6 +76,7 @@ export interface ChatCoreState
   _chatSettingsName: string;
   _chatSettingsMode: string;
   _chatSettingsTurnStrategy: string;
+  _chatSettingsThinkingVisibility: "hidden" | "collapsed" | "visible";
   _chatOnline: boolean;
   _groupPaused: boolean;
   _renameChatId: string;
