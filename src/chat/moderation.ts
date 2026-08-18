@@ -8,6 +8,7 @@
  * This module defines the data structures and pure logic for moderation.
  * Database operations are in the service layer.
  */
+import { can, } from "../users/permissions";
 import type {
   ModerationAction,
   ModerationActionType,
@@ -67,7 +68,7 @@ export function checkModerationPermission(
 
   switch (action.type) {
     case "ban": {
-      if (callerRole !== "admin" && callerRole !== "owner") {
+      if (!can(callerRole, "admin.chat",) && callerRole !== "owner") {
         return { allowed: false, reason: "Only admins can ban users", };
       }
       break;
@@ -75,7 +76,7 @@ export function checkModerationPermission(
 
     case "shadow":
     case "collapse": {
-      if (callerRole !== "owner" && callerRole !== "admin" && action.scope === "chat") {
+      if (callerRole !== "owner" && !can(callerRole, "admin.chat",) && action.scope === "chat") {
         return { allowed: false, reason: "Only chat owners can shadow/collapse messages", };
       }
       break;

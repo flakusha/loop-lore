@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import { PinnedState, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { can, } from "../../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../../../utils";
 import { isChatOnline, KEY_MECHANIC_PARAMS, } from "../access";
 import type { UpdateChatParams, UpdateChatResult, } from "../types";
@@ -50,7 +51,7 @@ async function checkChatUpdateLock(
   // Panel freeze
   if (fullChat.story_state) {
     const storyState = safeJsonParse<Record<string, unknown>>(fullChat.story_state,);
-    if (storyState.ok && storyState.value.isPanelFrozen && params.userRole !== "admin") {
+    if (storyState.ok && storyState.value.isPanelFrozen && !can(params.userRole, "admin.chat",)) {
       return { code: "forbidden", message: "Chat settings are frozen by admin", };
     }
   }
@@ -105,7 +106,7 @@ function buildChatUpdates(
   if (typeof params.isPaused === "boolean") {
     updates.story_state = patchStoryState(fullChat, { isPaused: params.isPaused, },);
   }
-  if (typeof params.freezePanel === "boolean" && params.userRole === "admin") {
+  if (typeof params.freezePanel === "boolean" && can(params.userRole, "admin.chat",)) {
     updates.story_state = patchStoryState(fullChat, { isPanelFrozen: params.freezePanel, },);
   }
   if (params.gmConfig !== undefined) {

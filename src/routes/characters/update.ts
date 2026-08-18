@@ -3,6 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { updateWithVersionCheck, } from "../../db/optimistic-locking";
+import { can, } from "../../users/permissions";
 import { safeJsonStringify, } from "../../utils";
 import {
   ActorIdParams,
@@ -36,7 +37,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
-        if (actor.owner_id !== userId && ctx.userRole !== "admin") {
+        if (actor.owner_id !== userId && !can(ctx.userRole, "admin.character",)) {
           return jsonError({ message: ctx.t?.("errors.forbidden",) ?? "Forbidden", status: HttpStatus.Forbidden, },);
         }
 
