@@ -19,9 +19,9 @@ import { chatSectionsRoutes, } from "./chat-sections";
 
 const USER_ROLE = "solo";
 
-function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
+function createApp(db: Kysely<DB>, userId: string | null, userRole: string = USER_ROLE,): Elysia {
   return new Elysia({ name: "test-chat-sections", },)
-    .derive(() => ({ userId, userRole: USER_ROLE, }))
+    .derive(() => ({ userId, userRole, }))
     .use(chatSectionsRoutes({ database: db, config: {} as any, },),) as unknown as Elysia;
 }
 
@@ -177,7 +177,7 @@ describe("chatSectionsRoutes", () => {
   test("non-owner is denied (404)", async () => {
     const otherUser = uid();
     await insertUser(db, otherUser, `other-${otherUser}`,);
-    const app = createApp(db, otherUser,);
+    const app = createApp(db, otherUser, "user",);
     const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/sections`,),);
     expect(res.status,).toBe(404,);
   });

@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { ChatParticipantRole, } from "../../db/enums";
 import { WorldVisibility, } from "../../db/enums-story";
+import { can, } from "../../users/permissions";
 import { forbiddenResponse as forbidden, jsonCreated, jsonError, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -41,7 +42,7 @@ export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
             .executeTakeFirst();
           const userRole = ctx.userRole as string | null;
           const isOwnerOrAdmin = world !== undefined &&
-            (world.owner_id === userId || userRole === "admin" || userRole === "solo");
+            (world.owner_id === userId || can(userRole, "admin.chat",));
           const isPublicWorld = world?.visibility === WorldVisibility.Public;
           if (!isOwnerOrAdmin && !isPublicWorld) {
             const member = await database

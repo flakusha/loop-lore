@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { notifyGmAction, } from "../../notifications/service";
 import { WorldStateService, } from "../../story/world-state";
+import { can, } from "../../users/permissions";
 import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from "../http-utils";
@@ -23,7 +24,7 @@ export async function handleNpcState(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId)) {
+  if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) {
     return jsonError({ message: "NPC state not found", status: HttpStatus.NotFound, },);
   }
 
@@ -90,7 +91,7 @@ export async function handleNpcsAtLocation(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId)) {
+  if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) {
     return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
 
@@ -113,7 +114,7 @@ export async function handleLocationState(
     .select(["worlds.owner_id",],)
     .where("location_states.location_id", "=", locationId,)
     .executeTakeFirst();
-  if (!locWorld || (userRole !== "admin" && userRole !== "solo" && locWorld.owner_id !== userId)) {
+  if (!locWorld || (!can(userRole, "admin.world",) && locWorld.owner_id !== userId)) {
     return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
 
@@ -179,7 +180,7 @@ export async function handleWorldStates(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  if (!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId)) {
+  if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) {
     return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
 

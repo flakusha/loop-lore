@@ -6,6 +6,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import type { ServiceError, } from "./types";
 
 /**
@@ -46,7 +47,7 @@ export async function checkChatAccess(
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
-  if (userRole === "admin" || userRole === "solo" || chat.created_by === userId) {
+  if (can(userRole, "admin.chat",) || chat.created_by === userId) {
     return { ok: true, };
   }
 

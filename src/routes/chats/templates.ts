@@ -8,6 +8,7 @@ import {
   listChatSetupTemplates,
   updateChatSetupTemplate,
 } from "../../chat/service";
+import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import {
   ChatSetupTemplateCreateBody,
@@ -60,7 +61,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
-          if (ctx.userRole !== "admin") {
+          if (!can(ctx.userRole, "admin.settings",)) {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
           const body = ctx.body as typeof ChatSetupTemplateCreateBody.static;
@@ -94,7 +95,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
-          if (ctx.userRole !== "admin") {
+          if (!can(ctx.userRole, "admin.settings",)) {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
           const body = ctx.body as typeof ChatSetupTemplateUpdateBody.static | undefined;
@@ -126,7 +127,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
-          if (ctx.userRole !== "admin") {
+          if (!can(ctx.userRole, "admin.settings",)) {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
           const result = await deleteChatSetupTemplate(database, ctx.params.templateId,);

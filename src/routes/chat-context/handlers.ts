@@ -12,6 +12,7 @@ import type { DB, } from "../../db/schema";
 import { cancelGenerationByChat, } from "../../generation/cancellation-manager";
 import { isValidRegenStyle, type RegenStyle, } from "../../generation/smart-regen";
 import { getLogger, } from "../../logger";
+import { can, } from "../../users/permissions";
 import {
   ErrorCode,
   HttpStatus,
@@ -70,7 +71,7 @@ export async function handleGetContext(
   }
 
   const isOwner = chat.created_by === userId;
-  const isAdmin = userRole === "admin" || userRole === "solo";
+  const isAdmin = can(userRole, "admin.chat",);
   if (!isOwner && !isAdmin) {
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
@@ -133,7 +134,7 @@ export async function handleRegenerateMessage(
   }
 
   const isOwner = chat.created_by === userId;
-  const isAdmin = userRole === "admin" || userRole === "solo";
+  const isAdmin = can(userRole, "admin.chat",);
   if (!isOwner && !isAdmin) {
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
