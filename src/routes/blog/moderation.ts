@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import type { TranslatorFn, } from "../../i18n/types";
 import { BlogService, } from "../../rpg/blog/service.js";
+import { can, } from "../../users/permissions";
 import {
   BlogPostStatusBody,
   ErrorResponse,
@@ -21,7 +22,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
     .patch(`${prefix}/blog/comments/:id/moderate`, async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
-      if (userRole !== "admin") {
+      if (!can(userRole, "admin.settings",)) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
@@ -56,7 +57,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
     .patch(`${prefix}/blog/posts/:id/moderate`, async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
-      if (userRole !== "admin") {
+      if (!can(userRole, "admin.settings",)) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 

@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { updateImpersonation, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
+import { can, } from "../../users/permissions";
 import {
   ChatIdParams,
   ChatImpersonateBody,
@@ -41,7 +42,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
@@ -119,7 +120,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
@@ -147,7 +148,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 

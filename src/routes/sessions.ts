@@ -16,6 +16,7 @@ import { Elysia, t, } from "elysia";
 import type { Db, } from "../db";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
+import { can, } from "../users/permissions";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, requireUserId, } from "./http-utils";
@@ -72,7 +73,7 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
         const sessionId = (ctx as any).sessionId as string | null;
 
         const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
-        const isAdmin = userRole === "admin";
+        const isAdmin = can(userRole, "admin.users",);
 
         const baseQuery = database
           .selectFrom("sessions",)
@@ -148,7 +149,7 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
 
           if (!session) { return notFound("Session not found",); }
 
-          if (userRole !== "admin" && session.user_id !== userId) {
+          if (!can(userRole, "admin.users",) && session.user_id !== userId) {
             return notFound("Session not found",);
           }
 
@@ -194,7 +195,7 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
 
           if (!session) { return notFound("Session not found",); }
 
-          if (userRole !== "admin" && session.user_id !== userId) {
+          if (!can(userRole, "admin.users",) && session.user_id !== userId) {
             return notFound("Session not found",);
           }
 

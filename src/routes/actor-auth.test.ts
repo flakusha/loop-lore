@@ -67,4 +67,18 @@ describe("checkActorOwnership", () => {
     const { db, } = await createTestDb();
     expect(await checkActorOwnership(db, "missing", "user-1", "admin",),).toBe(false,);
   });
+
+  test("grant for tester role via permission matrix", async () => {
+    const { db, } = await createTestDb();
+    await seedActor(db,);
+    // tester holds "*" in DEFAULT_PERMISSIONS → granted admin.character bypass.
+    expect(await checkActorOwnership(db, "actor-1", "user-2", "tester",),).toBe(true,);
+  });
+
+  test("deny a moderator (no admin.character permission)", async () => {
+    const { db, } = await createTestDb();
+    await seedActor(db,);
+    // moderator has chat.*/character.view/world.view — none grant admin.character.
+    expect(await checkActorOwnership(db, "actor-1", "user-2", "moderator",),).toBe(false,);
+  });
 });

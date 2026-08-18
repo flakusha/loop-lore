@@ -10,6 +10,7 @@
 import type { Kysely, } from "kysely";
 import { MessageStatus, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import type {
   RegenerateVariantParams,
   RegenerateVariantResult,
@@ -59,7 +60,7 @@ export async function regenerateMessageVariant(
     .executeTakeFirst();
 
   const isOwner = chat?.created_by === userId;
-  const isAdmin = userRole === "admin" || userRole === "solo";
+  const isAdmin = can(userRole, "admin.chat",);
   const isAuthor = message.actor_id === userId;
   if (!isOwner && !isAdmin && !isAuthor) {
     return { code: "forbidden", message: "Not authorized to regenerate this message", };
