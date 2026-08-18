@@ -10,13 +10,13 @@
 
 ## Summary
 
-Implement NSFW-specific location mechanics: privacy levels, atmosphere modifiers, available equipment, location-specific actions, discovery risk, and location effects on encounters.
+Implement NSFW-specific location mechanics: privacy levels, atmosphere modifiers, available equipment, location-specific actions, discovery risk, and location effects on encounters, driven by the canonical `NsfwLocationType` enum in `src/db/enums-character/nsfw.ts`.
 
 ## Core Features
 
 ### Location Types
 
-- Bedroom, Bathroom, Kitchen, Dungeon, Brothel, Tavern, Alley, Forest, Beach, Hot Spring, Carriage, Throne Room, Temple, Library, Garden, Balcony, Stage, Club, etc.
+- Type set is canonicalized in `NsfwLocationType` (`src/db/enums-character/nsfw.ts`); extend that enum to add a location. No type list duplicated here.
 
 ### Privacy Levels
 
@@ -32,7 +32,7 @@ Implement NSFW-specific location mechanics: privacy levels, atmosphere modifiers
 
 ### Equipment
 
-- Location-specific equipment (bed, bondage furniture, etc.)
+- Location-specific equipment
 - Enables specific techniques/actions
 - Can be brought to locations
 
