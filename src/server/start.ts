@@ -117,7 +117,7 @@ export async function start() {
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
-  await seedConfiguredContent(database, effectiveSeeding, Boolean(config.auth.required,),);
+  await seedConfiguredContent(database, effectiveSeeding, config.auth.required,);
   const { seedChatSetupTemplates, } = await import("../chat/service");
   await seedChatSetupTemplates(database,);
 
