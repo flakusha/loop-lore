@@ -145,18 +145,19 @@ export async function runCreateGeneration(
 
     // Schema passed: return a preview for user confirmation. The entity is not
     // persisted until the user approves via the confirm endpoint.
-    const warnings = [
-      report.duplicate.found ? report.duplicate.message : null,
-      ...report.consistency.warnings,
-    ].filter((w,): w is string => Boolean(w,));
+    const warnings: string[] = [];
+    if (report.duplicate.found && report.duplicate.message) { warnings.push(report.duplicate.message,); }
+    for (const w of report.consistency.warnings) {
+      if (w) { warnings.push(w,); }
+    }
 
-    const summary = `**${KIND_LABELS[kind]} preview** — review before saving:\n\n` +
-      `**Name:** ${entity.name}\n` +
-      `${entity.description ? `**Description:** ${entity.description}\n` : ""}` +
-      `${entity.personality ? `**Personality:** ${entity.personality}\n` : ""}` +
-      `${entity.scenario ? `**Scenario:** ${entity.scenario}\n` : ""}` +
-      `${entity.lore ? `**Lore:** ${entity.lore}\n` : ""}` +
-      (warnings.length > 0 ? `\n⚠️ ${warnings.join(" ",)}` : "");
+    const summary = "**" + KIND_LABELS[kind] + " preview** — review before saving:\n\n" +
+      "**Name:** " + entity.name + "\n" +
+      (entity.description ? "**Description:** " + entity.description + "\n" : "") +
+      (entity.personality ? "**Personality:** " + entity.personality + "\n" : "") +
+      (entity.scenario ? "**Scenario:** " + entity.scenario + "\n" : "") +
+      (entity.lore ? "**Lore:** " + entity.lore + "\n" : "") +
+      (warnings.length > 0 ? "\n⚠️ " + warnings.join(" ",) : "");
 
     return {
       systemMessage: summary,

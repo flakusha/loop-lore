@@ -88,7 +88,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
    * lives only in Alpine state (the quality gate version doesn't use an
    * in-memory wizard store).
    */
-  cancelWizard(_wizardId: string,): void {
+  async cancelWizard(_wizardId: string,): Promise<void> {
     this.wizardPreviewOpen = false;
     this.wizardDraft = null;
     log.info("wizard cancelled", { wizardId: _wizardId, },);
