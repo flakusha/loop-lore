@@ -10,7 +10,7 @@
 import type { Kysely, Transaction, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { ItemsService, } from "../../story/items";
-import { jsonStringifyOr, uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 import { credit, debit, } from "./balance";
 import { DEFAULT_CURRENCY, } from "./types";
 import type { TradeHistoryEntry, TradeLine, TradeResult, TradeType, } from "./types";
@@ -156,7 +156,7 @@ export async function getTradeHistory(
   db: Kysely<DB>,
   worldId: string,
   actorId?: string,
-  limit: number = 50,
+  limit = 50,
 ): Promise<TradeHistoryEntry[]> {
   let query = db
     .selectFrom("trade_history",)
@@ -181,8 +181,8 @@ export async function getTradeHistory(
     sellerActorId: r.seller_actor_id,
     price: r.price,
     currencyType: r.currency_type,
-    itemsOffered: JSON.parse(r.items_offered,) as string[],
-    itemsRequested: JSON.parse(r.items_requested,) as string[],
+    itemsOffered: jsonParseOr(r.items_offered, [] as string[],),
+    itemsRequested: jsonParseOr(r.items_requested, [] as string[],),
     tradeType: r.trade_type as TradeType,
     createdAt: r.created_at,
   }),);

@@ -41,7 +41,7 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
       async (ctx,) => {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }
-        const { id: chatId, } = ctx.params as { id: string };
+        const { id: chatId, } = ctx.params;
         const access = await checkChatAccess(database, chatId, actorId, null,);
         if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
