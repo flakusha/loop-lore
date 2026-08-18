@@ -11,6 +11,7 @@ import {
   isEncryptionEnabled,
 } from "../../crypto";
 import type { ContentEncoding, } from "../../db/enums";
+import { can, } from "../../users/permissions";
 import { forbidden, notFound, } from "../../validation/middleware";
 import {
   ErrorResponse,
@@ -79,7 +80,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         if (!msg) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
 
-        if (msg.actor_id !== userId && (ctx.userRole as string | null) !== "admin") {
+        if (msg.actor_id !== userId && !can(ctx.userRole as string | null, "admin.chat",)) {
           return jsonError({
             message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
             status: HttpStatus.Forbidden,
@@ -179,7 +180,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
       `${prefix}/messages/:id/status`,
       async (ctx: any,) => {
         const userRole = ctx.userRole as string | null;
-        if (userRole !== "admin") { return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",); }
+        if (!can(userRole, "admin.chat",)) { return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",); }
         const id = (ctx.params as { id: string }).id;
         const body = ctx.body as typeof MessageStatusUpdateBody.static;
 

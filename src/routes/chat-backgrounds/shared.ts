@@ -7,6 +7,7 @@
 import { t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 
 export const BACKGROUND_TYPES = ["static", "parallax", "animated", "video", "particle",];
 
@@ -32,5 +33,5 @@ export async function chatAccess(
     .select("created_by",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
-  return !!chat && (chat.created_by === userId || userRole === "admin");
+  return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
 }

@@ -12,6 +12,7 @@
 import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { can, } from "../users/permissions";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonPaginated, jsonResponse, } from "./http-utils";
@@ -27,7 +28,7 @@ async function checkChatOwnership(
     .select(["created_by",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
-  return !!chat && (chat.created_by === userId || userRole === "admin" || userRole === "solo");
+  return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
 }
 
 export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {

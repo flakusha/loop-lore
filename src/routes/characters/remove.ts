@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { can, } from "../../users/permissions";
 import {
   ActorIdParams,
   ErrorResponse,
@@ -31,7 +32,7 @@ export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
-        if (actor.owner_id !== userId && ctx.userRole !== "admin") {
+        if (actor.owner_id !== userId && !can(ctx.userRole, "admin.character",)) {
           return jsonError({ message: ctx.t?.("errors.forbidden",) ?? "Forbidden", status: HttpStatus.Forbidden, },);
         }
 
