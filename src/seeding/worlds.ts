@@ -71,7 +71,8 @@ export async function seedWorlds(
     },);
     created += 1;
 
-    for (const location of world.locations ?? []) {
+    const locations = world.locations ?? [];
+    for (const location of locations) {
       await database
         .insertInto("locations",)
         .values({
