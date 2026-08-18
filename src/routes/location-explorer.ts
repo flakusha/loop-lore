@@ -11,6 +11,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { WorldVisibility, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
+import { can, } from "../users/permissions";
 import { safeJsonParse, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, } from "../validation/schemas";
@@ -33,7 +34,7 @@ async function requireWorldAccess(
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world) { return notFound("World not found",); }
-  if (userRole === "admin" || world.owner_id === userId) { return null; }
+  if (can(userRole, "admin.world",) || world.owner_id === userId) { return null; }
   if (world.visibility === WorldVisibility.Public) { return null; }
   const member = await database
     .selectFrom("world_members",)

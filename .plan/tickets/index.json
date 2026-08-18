@@ -5809,7 +5809,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-creation-wizard-backend-draft-confirm-flow.md"
+    "source": ".plan/tickets/TASK-creation-wizard-backend-draft-confirm-flow.md",
+    "git_issue": "6f1e2f6"
   },
   "TASK-CREATION-WIZARD-FRONTEND-PREVIEW-EDIT-CONFIRM-UI": {
     "hash": "5040cfd",
@@ -5820,7 +5821,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-creation-wizard-frontend-preview-edit-confirm-ui.md"
+    "source": ".plan/tickets/TASK-creation-wizard-frontend-preview-edit-confirm-ui.md",
+    "git_issue": "5040cfd"
   },
   "TASK-CREATIVE-STUDIO": {
     "epic": "",
@@ -9676,6 +9678,18 @@
     "title": "EPIC: Prompt & Output Control",
     "type": "TASK",
     "git_issue": "cd237ca"
+  },
+  "TASK-OWNERSHIP-ACCESS-CONTROL-REFACTOR": {
+    "hash": "071d766",
+    "extid": "TASK-OWNERSHIP-ACCESS-CONTROL-REFACTOR",
+    "type": "TASK",
+    "title": "Ownership-access control refactor",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ownership-access-control-refactor.md",
+    "git_issue": "071d766"
   },
   "TASK-PARTY-MIGRATION": {
     "epic": "epic-party-migration",

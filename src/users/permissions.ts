@@ -5,13 +5,15 @@
 //
 // Foundational RBAC infrastructure (TASK-user-seeding-role-expansion). Defines
 // the permission vocabulary and the default matrix per role, plus `can()` /
-// `canAny()` helpers with wildcard support ("*", "chat.*").
+// `hasAll()` helpers with wildcard support ("*", "chat.*").
 //
-// This module is ADVISORY: it defines the matrix and provides the check
-// helpers without rewriting the existing inline `userRole === "admin"` checks
-// across route files. Migrating those routes to permission-based checks is a
-// follow-up RBAC migration (documented in the ticket); the matrix here is the
-// single source of truth for role capabilities going forward.
+// This matrix is the source of truth for role capabilities: route guards
+// (admin areas, content ownership bypasses) call `can(role, perm)` rather than
+// comparing raw roles. The ownership-bypass perms (`admin.character`,
+// `admin.chat`, `admin.world`) are granted only to roles holding "*"
+// (admin/solo/tester) — they let those roles operate on any user's content
+// (owner check passes first, bypass is the admin override). Editing the matrix
+// per role is how individual gate softening is configured.
 
 import type { UserRole, } from "../db/enums";
 
@@ -40,6 +42,9 @@ export type Permission =
   | "admin.settings"
   | "admin.users"
   | "admin.system"
+  | "admin.character"
+  | "admin.chat"
+  | "admin.world"
   | "export.own"
   | "export.any"
   | "import.own"

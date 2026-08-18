@@ -7,6 +7,7 @@
  */
 import { sql, } from "kysely";
 import { getLogger, type Logger, } from "../../logger";
+import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import type { MessageSearchQuery, } from "../../validation/schemas";
 
@@ -73,7 +74,7 @@ export function extraWhere(
 ): ReturnType<typeof sql.join> {
   const clauses: ReturnType<typeof sql>[] = [];
 
-  if (!isSingleChat && userRole !== "admin" && userRole !== "solo") {
+  if (!isSingleChat && !can(userRole, "admin.chat",)) {
     clauses.push(sql`
       m.chat_id IN (
             SELECT chat_id FROM chat_participants WHERE actor_id = ${userId}

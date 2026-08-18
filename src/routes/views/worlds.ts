@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { escapeHtml, htmlResponse, } from "./layout";
 
@@ -21,7 +22,7 @@ async function serveWorldsListDb(
 ): Promise<Response> {
   let qb = database.selectFrom("worlds",).selectAll().orderBy("name", "asc",).limit(100,);
   // Non-admin users only see their own worlds (mirrors GET /api/worlds).
-  if (userId && userRole !== "admin") {
+  if (userId && !can(userRole, "admin.world",)) {
     qb = qb.where("owner_id", "=", userId,);
   }
   const worlds = await qb.execute();
@@ -56,7 +57,7 @@ async function serveWorldDetailContent(
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
 
   // Mirror the API: only the owner (or admin) may view world details.
-  if (!world || (userRole !== "admin" && world.owner_id !== userId)) {
+  if (!world || (!can(userRole, "admin.world",) && world.owner_id !== userId)) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">World not found</div>

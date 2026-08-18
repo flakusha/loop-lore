@@ -19,6 +19,7 @@ import {
 } from "../chat/world-invites";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
+import { can, } from "../users/permissions";
 import {
   ErrorResponse,
   Id,
@@ -58,7 +59,7 @@ async function isWorldOwner(
     .select("owner_id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  return Boolean(world,) && (world!.owner_id === userId || userRole === "admin" || userRole === "solo");
+  return Boolean(world,) && (world!.owner_id === userId || can(userRole, "admin.world",));
 }
 
 export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {

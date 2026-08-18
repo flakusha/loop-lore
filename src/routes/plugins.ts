@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { registry, } from "../plugins/registry";
+import { can, } from "../users/permissions";
 import { forbidden, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
@@ -28,7 +29,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
     .get(
       `${prefix}/plugins`,
       (ctx: any,) => {
-        if (ctx.userRole !== "admin") {
+        if (!can(ctx.userRole, "admin.system",)) {
           return forbidden("Admin access required",);
         }
 
@@ -59,7 +60,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
     .post(
       `${prefix}/plugins/:name/enable`,
       async ({ params, userRole, }: any,) => {
-        if (userRole !== "admin") {
+        if (!can(userRole, "admin.system",)) {
           return forbidden("Admin access required",);
         }
 
@@ -109,7 +110,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
     .post(
       `${prefix}/plugins/:name/disable`,
       async ({ params, userRole, }: any,) => {
-        if (userRole !== "admin") {
+        if (!can(userRole, "admin.system",)) {
           return forbidden("Admin access required",);
         }
 

@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import { formatSize, } from "./gallery";
 import { escapeHtml, htmlResponse, } from "./layout";
 
@@ -133,7 +134,7 @@ async function serveWorldsSearch(
 
   let qb = database.selectFrom("worlds",).selectAll();
   // Non-admin users only see their own worlds (mirrors GET /api/worlds).
-  if (userId && userRole !== "admin") {
+  if (userId && !can(userRole, "admin.world",)) {
     qb = qb.where("owner_id", "=", userId,);
   }
 

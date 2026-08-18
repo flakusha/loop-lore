@@ -229,7 +229,8 @@ describe("charactersRoutes", () => {
     );
     const { id, } = (await actorCreate.json()) as { id: string };
 
-    const otherApp = createApp(db, "other-user-id",);
+    // A regular "user"-role caller (no admin.character permission) is denied.
+    const otherApp = createApp(db, "other-user-id", "user",);
     const res = await otherApp.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
@@ -238,5 +239,28 @@ describe("charactersRoutes", () => {
       },),
     );
     expect(res.status,).toBe(403,);
+  });
+
+  test("solo user can modify another user's actor (admin-equivalent via matrix)", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Owner Actor 2", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+
+    // solo holds "*" in DEFAULT_PERMISSIONS → granted admin.character bypass.
+    const soloApp = createApp(db, "solo-user-id", "solo",);
+    const res = await soloApp.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Solo Edit", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
   });
 });

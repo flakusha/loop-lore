@@ -6,6 +6,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import type {
   ListMessagesParams,
   ServiceError,
@@ -38,7 +39,7 @@ export async function getMessageWithAccess(
     .where("id", "=", message.chat_id,)
     .executeTakeFirst();
 
-  if (!chat || (userRole !== "admin" && userRole !== "solo" && chat.created_by !== userId)) {
+  if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
     return { code: "not_found", message: "Message not found", };
   }
 

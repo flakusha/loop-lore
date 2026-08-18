@@ -11,6 +11,7 @@
 import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { can, } from "../users/permissions";
 import { createEntityRoutes, } from "./entity-routes";
 
 async function worldOwnershipCheck({
@@ -32,7 +33,7 @@ async function worldOwnershipCheck({
     .select("owner_id",)
     .where("id", "=", parentId,)
     .executeTakeFirst();
-  if (!world || (userRole !== "admin" && userRole !== "solo" && world.owner_id !== userId)) { return false; }
+  if (!world || (!can(userRole, "admin.world",) && world.owner_id !== userId)) { return false; }
 
   const entityId = _entityId;
   if (entityId) {

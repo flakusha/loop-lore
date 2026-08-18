@@ -11,6 +11,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
+import { can, } from "../users/permissions";
 import { HttpStatus, jsonError, requireUserId, } from "./http-utils";
 
 /** Common handler options for routes that need a database connection. */
@@ -65,5 +66,5 @@ export async function checkActorOwnership(
     .where("id", "=", actorId,)
     .executeTakeFirst();
   if (!actor) { return false; }
-  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
+  return actor.owner_id === userId || can(userRole, "admin.character",);
 }

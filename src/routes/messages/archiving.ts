@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import { can, } from "../../users/permissions";
 import { notFound, } from "../../validation/middleware";
 import { ChatIdParams, ErrorResponse, MessageIdParams, SuccessResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
@@ -29,7 +30,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select("created_by",)
           .where("id", "=", message.chat_id,)
           .executeTakeFirst();
-        if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
+        if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
           return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
         await database
@@ -59,7 +60,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select("created_by",)
           .where("id", "=", message.chat_id,)
           .executeTakeFirst();
-        if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
+        if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
           return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
         await database
@@ -83,7 +84,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select("created_by",)
           .where("id", "=", chatId,)
           .executeTakeFirst();
-        if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
+        if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
           return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",);
         }
         const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,).toISOString();
