@@ -5,6 +5,7 @@ import { Elysia, } from "elysia";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { auditRoutes, } from "./audit";
+import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { chatsRoutes, } from "./chats";
 import { dangerZoneRoutes, } from "./danger-zone";
 import { keyRotationRoutes, } from "./key-rotation";
@@ -52,5 +53,6 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(auditRoutes(opts, prefix,),)
       .use(dangerZoneRoutes(opts, prefix,),)
       .use(keyRotationRoutes(opts, prefix,),)
+      .use(auxTelemetryRoutes(opts, prefix,),)
   );
 }
