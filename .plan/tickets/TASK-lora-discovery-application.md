@@ -23,7 +23,7 @@ LoRA discovery (auto-detect available models from sd.cpp/ComfyUI) and applicatio
 - In-memory cache with TTL and force-refresh
 - Validation with NaN/Infinity guards, boundary checks
 - Injection helpers for both backends (prompt prefix + LoraLoader node builder)
-- Elysia plugin routes gated behind TODO comments
+- Elysia plugin routes — **now wired in `register-plugins.ts`** (2026-08-18, worktree `feature/a8-unwired-closeout`, commit `0e2bc6db`)
 - 39+ unit tests covering discovery, cache, validation, injection
 
 **Known issue — URL resolution in routes.ts:** FIXED 2026-08-01. `pickSdProvider()` returned ONE provider; both comfyUrl and sdServerUrl resolved to same URL. Changed to find providers by `apiFamily` from the `sd[]` array (`"comfyui"` and `"sdcpp"` separately). Removed unused `pickSdProvider` import. Extracted pure helper `resolveBackendUrls()` (uses `.find()`) + added `routes.test.ts` (5 cases: defaults, distinct URLs, single-backend fallback, undefined config). 43/43 tests pass, zero tsc/eslint errors. Also removed `find`/`findIndex`/`some`/`every` from `no-restricted-syntax` in `eslint.config.mjs` — non-allocating early-return predicates don't fit the shadow-allocation rationale.
@@ -40,6 +40,7 @@ LoRA discovery (auto-detect available models from sd.cpp/ComfyUI) and applicatio
 - [x] `POST /api/lora/discover` route (`routes.ts`)
 - [x] `GET /api/lora/list` route (cached) (`routes.ts`)
 - [x] Unit tests for discovery + validation (39+ tests, `discovery.test.ts` + `lora.test.ts`)
+- [x] Routes wired in `register-plugins.ts` (2026-08-18)
 
 ### Phase 2: LoRA Application ⚠️ PARTIAL
 
@@ -91,11 +92,11 @@ const loraPrefix = `[lora:${config.name}:${config.strength}]`;
 | `src/generation/lora/discovery-comfyui.ts`  | ComfyUI backend + node builder    |
 | `src/generation/lora/validation.ts`         | Config/model validation           |
 | `src/generation/lora/index.ts`              | Public API re-exports             |
-| `src/generation/lora/routes.ts`             | Elysia plugin (TODO-gated)        |
+| `src/generation/lora/routes.ts`             | Elysia plugin (wired 2026-08-18)  |
 | `src/generation/lora/discovery.test.ts`     | Discovery + cache tests           |
 | `src/generation/lora/lora.test.ts`          | Validation tests                  |
-| `src/generation/image-gen-route.ts`         | LoRA hooks (commented out)        |
-| `src/elysia-app.ts`                         | LoRA routes (commented out)       |
+| `src/generation/image-gen-route.ts`         | LoRA hooks (still TODO-gated)     |
+| `src/app/register-plugins.ts`               | `loraRoutes({config})` wired      |
 
 ## Related
 
