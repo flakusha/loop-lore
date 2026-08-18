@@ -11,7 +11,7 @@ export const NSFW_DEFAULTS = {
   defaultNsfwScope: "chat",
   consentRequired: true,
   auditLogging: true,
-  useLlmClassifier: false,
+  useLlmClassifier: true,
 } satisfies NsfwConfig;
 
 export class NsfwSection implements NsfwConfig {

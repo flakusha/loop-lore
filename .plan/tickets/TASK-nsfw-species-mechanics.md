@@ -10,25 +10,13 @@
 
 ## Summary
 
-Implement species-specific NSFW mechanics: different reproductive systems, heat/rut cycles, pheromone compatibility, size differences, unique appendages, species-specific kinks, and cross-species interaction mechanics.
+Implement species-specific NSFW mechanics: different reproductive systems, heat/rut cycles, pheromone compatibility, size differences, and cross-species interaction mechanics, driven by the canonical `SizeCategory`, `BodyBuild`, and `HeatPhase` enums in `src/db/enums-character/nsfw.ts`.
 
 ## Core Features
 
 ### Species Variations
 
-- Humanoid (standard)
-- Feline (barbed penis, induced ovulation)
-- Canine (knot, heat cycles)
-- Equine (large size, prehensile)
-- Dragon (fire breath, scales, wings)
-- Elf (long-lived, graceful)
-- Dwarf (sturdy, earthy)
-- Demon (horns, tail, supernatural)
-- Angel (wings, holy light)
-- Slime (amorphous, absorption)
-- Plant (photosynthesis, pollination)
-- Undead (no biological needs)
-- Mechanical (no biological systems)
+- Species set and per-species physiological traits are defined in the species gameplay data (not duplicated as prose here); extend `BodyBuild`/`SizeCategory` enums to add layout-relevant dimensions.
 
 ### Reproductive Differences
 
@@ -39,15 +27,15 @@ Implement species-specific NSFW mechanics: different reproductive systems, heat/
 
 ### Physical Differences
 
-- Size variations (affects compatibility)
-- Unique appendages (tail, tentacles, wings)
+- Size variations (affects compatibility): see canonical `SizeCategory` enum
+- Body build/frame variations: see canonical `BodyBuild` enum
 - Texture differences (fur, scales, slime)
 - Temperature differences (fire, ice)
 
 ### Species Compatibility
 
 - Compatible species for reproduction
-- Compatible species for pleasure
+- Compatible species for interaction
 - Incompatible species (mechanical barriers)
 
 ## Tasks

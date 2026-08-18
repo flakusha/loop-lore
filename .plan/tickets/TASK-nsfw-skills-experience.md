@@ -10,13 +10,13 @@
 
 ## Summary
 
-Implement sexual skill system with skill categories (foreplay, oral, penetrative, BDSM, etc.), skill improvement through practice, technique unlocking based on skill levels, and skill synergy mechanics.
+Implement the sexual skill system with skill categories, skill improvement through practice, technique unlocking based on skill levels, and skill synergy mechanics, driven by the canonical `SeductionSkillCategory` enum in `src/db/enums-character/nsfw.ts`.
 
 ## Core Features
 
 ### Skill Categories
 
-- Foreplay, Oral, Penetrative, Anal, Manual, Toys, BDSM, Massage, Striptease, Dirty Talk, Roleplay, Aftercare, Dominance, Submission, Exhibitionism, Voyeurism, Stamina, Sensitivity, Creativity, Communication
+- Category set is canonicalized in `SeductionSkillCategory` (`src/db/enums-character/nsfw.ts`); extend that enum to add a category. No category list duplicated here.
 
 ### Skill Progression
 

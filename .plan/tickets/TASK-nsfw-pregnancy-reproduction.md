@@ -10,7 +10,7 @@
 
 ## Summary
 
-Implement pregnancy/reproduction mechanics: pregnancy chance calculation, pregnancy state tracking, gestation periods, species-specific reproduction (egg-laying, live birth), offspring generation, and cross-species hybrid mechanics.
+Implement pregnancy/reproduction mechanics: pregnancy chance calculation, pregnancy state tracking, gestation periods, species-specific reproduction, offspring generation, and cross-species hybrid mechanics.
 
 ## Core Features
 
@@ -18,16 +18,14 @@ Implement pregnancy/reproduction mechanics: pregnancy chance calculation, pregna
 
 - Base chance per encounter
 - Fertility modifier
-- Heat cycle modifier
-- Contraception modifier
-- Species compatibility modifier
+- Timing / health / compatibility modifiers
 
 ### Pregnancy State
 
 - Gestation tracking (day-by-day)
-- Stage progression (early, mid, late, labor)
+- Stage progression
 - Health/complications
-- Effects on mother (stamina, sensitivity, mood, cravings)
+- Effects on the parent (stamina, mood)
 
 ### Species-Specific
 
@@ -41,7 +39,7 @@ Implement pregnancy/reproduction mechanics: pregnancy chance calculation, pregna
 - Trait inheritance
 - Species determination
 - Stat generation
-- Name/appearance generation
+- Appearance generation
 
 ## Tasks
 

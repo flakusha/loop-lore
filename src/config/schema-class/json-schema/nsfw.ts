@@ -13,8 +13,9 @@ export const nsfw = {
     auditLogging: { type: "boolean", default: true, },
     useLlmClassifier: {
       type: "boolean",
-      default: false,
-      description: "Augment NSFW keyword detection with an LLM content rating classifier",
+      default: true,
+      description:
+        "Augment NSFW keyword detection with an LLM content rating classifier (on by default — the safety filter for extreme content)",
     },
   },
   required: ["allowNsfw", "nsfwMinAge",],

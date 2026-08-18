@@ -7,4 +7,4 @@ nsfwMinAge = 18
 defaultNsfwScope = "none" # none | user | session | global
 consentRequired = true
 auditLogging = false
-useLlmClassifier = false
+useLlmClassifier = true # LLM safety filter for extreme content — on by default

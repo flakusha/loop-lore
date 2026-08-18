@@ -16,30 +16,28 @@ Implement seduction mechanics with desire profiles (turn-ons, turn-offs, fetishe
 
 ### Desire Profiles
 
-- Turn-ons: traits/actions that increase attraction
-- Turn-offs: traits/actions that decrease attraction
-- Fetishes: specific kinks with mechanical effects
-- Hard limits: never-acceptable boundaries (enforced mechanically)
+- Turn-ons / turn-offs: traits or actions that modify attraction.
+- Fetishes: specific kink tags with mechanical effects (see canonical `FantasyCategory` in `src/db/enums-character/nsfw.ts`).
+- Hard limits: never-acceptable boundaries (enforced mechanically).
 
 ### Seduction Skills
 
-- Flirting, Dirty Talk, Massage, Dancing, Sexting, etc.
-- Skills improve with practice
-- Effectiveness modified by target's desire profile
-- Failure consequences (embarrassment, rejection, intimacy loss)
+- Skill categories (flirting, dirty talk, massage, dancing, sexting, etc.): see canonical `SeductionSkillCategory` enum in `src/db/enums-character/nsfw.ts`.
+- Skills improve with practice.
+- Effectiveness modified by target's desire profile.
+- Failure consequences (embarrassment, rejection, intimacy loss).
 
 ### Arousal State
 
-- 0-100 scale (calm → aroused → desperate → climax)
-- Buildup rate modified by context
-- Decay rate when not stimulated
-- Effects at each threshold (behavior changes, unlock actions)
+- Level on a 0-100 scale with named tiers (`calm`…`climax`): see canonical `ArousalLevel` enum in `src/db/enums-character/nsfw.ts`.
+- Buildup rate modified by context; decay rate when not stimulated.
+- Effects at each threshold (behavior changes, unlock actions).
 
 ### Arousal Modifiers
 
 - Location (public = faster buildup, more risk)
-- Partner (new partner, familiar partner, forbidden partner)
-- Items (toys, aphrodisiacs, alcohol)
+- Partner (new partner, familiar partner)
+- Items (items, consumables)
 - State (heat, arousal, mood)
 
 ## Design
