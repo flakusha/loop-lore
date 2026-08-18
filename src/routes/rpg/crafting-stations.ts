@@ -36,11 +36,13 @@ const CreateStationDefBody = t.Object({
   materialSavingChance: t.Optional(t.Number(),),
   maxDurability: t.Optional(t.Number({ minimum: 1, },),),
 },);
+const NullableString = t.Union([t.String(), t.Null(),],);
+
 const UpdateStationDefBody = t.Object({
   name: t.Optional(t.String({ minLength: 1, },),),
   stationType: t.Optional(StationType,),
   tier: t.Optional(t.Number({ minimum: 1, },),),
-  description: t.Optional(t.Union([t.String(), t.Null(),],),),
+  description: t.Optional(NullableString,),
   speedBonus: t.Optional(t.Number(),),
   qualityBonus: t.Optional(t.Number(),),
   successBonus: t.Optional(t.Number(),),
@@ -130,7 +132,7 @@ export function craftingStationRoutes(opts: HandlerOpts, prefix = "/api",): Elys
         const deny = await assertWorldOwner(opts.database, userId, existing.worldId,);
         if (deny) { return deny; }
         const body = ctx.body as Record<string, unknown>;
-        const ok = await svc.updateStationDef(id, body as never,);
+        const ok = await svc.updateStationDef(id, body,);
         if (!ok) { return jsonError("Update failed", HttpStatus.InternalServerError,); }
         const updated = await svc.getStationDef(id,);
         return jsonResponse(updated,);
