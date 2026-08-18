@@ -1,0 +1,50 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Assistant tab — unified GM & Assistant panel (C1 remainder).
+  Command palette (click to populate the message input) + recent tool-call
+  history. Reads the assistant command list from the chatState scope
+  (`_commandList`) and tool calls derived from loaded messages
+  (`assistantToolCalls`).
+-->
+<div class="assistant-tab" data-testid="assistant-tab">
+  <!-- Assistant commands -->
+  <div class="gm-section">
+    <h4 class="gm-section-title">{{{t("story.assistantCommands")}}}</h4>
+    <div class="assistant-command-list">
+      <template x-for="cmd in _commandList" :key="cmd.name">
+        <button
+          class="assistant-command-item"
+          @click="selectCommand(cmd.name)"
+          :data-testid="'assistant-command-' + cmd.name"
+        >
+          <span class="assistant-command-name" x-text="'/' + cmd.name"></span>
+          <span class="assistant-command-desc" x-text="cmd.description"></span>
+        </button>
+      </template>
+    </div>
+    <p class="gm-section-hint" x-show="_commandList.length === 0">
+      {{{t("story.noCommands")}}}
+    </p>
+  </div>
+
+  <!-- Recent tool calls -->
+  <div class="gm-section">
+    <h4 class="gm-section-title">{{{t("story.toolCalls")}}}</h4>
+    <div class="assistant-tool-calls" x-show="assistantToolCalls.length > 0">
+      <template x-for="tc in assistantToolCalls" :key="tc.actorId + tc.function.name + tc.function.arguments">
+        <details class="tool-call-block assistant-tool-call">
+          <summary>
+            🛠 <span x-text="tc.actorName || t('story.assistant')"></span>:
+            <code class="tool-call-name" x-text="tc.function.name"></code>
+          </summary>
+          <pre class="tool-call-args" x-text="tc.function.arguments"></pre>
+        </details>
+      </template>
+    </div>
+    <p class="gm-section-hint" x-show="assistantToolCalls.length === 0">
+      {{{t("story.noToolCalls")}}}
+    </p>
+  </div>
+</div>

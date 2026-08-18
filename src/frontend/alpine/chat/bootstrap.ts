@@ -14,7 +14,7 @@ import { chatKeys, } from "../chat-keys";
 import { chatLocation, } from "../chat-location";
 import { chatManagement, } from "../chat-management";
 import { chatMessages, } from "../chat-messages";
-import { chatPanels, } from "../chat-panels";
+import { type AssistantToolCall, chatPanels, collectAssistantToolCalls, } from "../chat-panels";
 import { chatParticipants, } from "../chat-participants";
 import { chatPins, } from "../chat-pins";
 import { chatProactive, } from "../chat-proactive";
@@ -181,6 +181,12 @@ export function chatState() {
       return this.chats.find(
         (c: { id: string; name?: string; thinking_visibility?: string },) => c.id === this.activeChat,
       ) ?? null;
+    },
+
+    /** Recent assistant tool calls (newest first, capped at 20) for the
+     *  unified GM & Assistant panel's Assistant tab. */
+    get assistantToolCalls(): AssistantToolCall[] {
+      return collectAssistantToolCalls(this.messages ?? [],);
     },
 
     // ── RPG Stats State ──

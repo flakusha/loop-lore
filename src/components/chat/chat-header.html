@@ -129,16 +129,16 @@
       class="btn-icon"
       :class="$store.ui.showGmPanel ? 'gm-toggle-active' : ''"
       @click="$store.ui.showGmPanel = !$store.ui.showGmPanel"
-      title="GM Panel"
-      aria-label="Toggle GM Panel"
+      title="GM & Assistant"
+      aria-label="Toggle GM & Assistant Panel"
       data-testid="gm-toggle"
     >
       🎭
     </button>
     <button
       class="btn-icon"
-      :class="$store.ui.showQuestLog ? 'gm-toggle-active' : ''"
-      @click="$store.ui.showQuestLog = !$store.ui.showQuestLog"
+      :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'quests' ? 'gm-toggle-active' : ''"
+      @click="window.openGmAssistantTab('quests')"
       x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.mode === 'story'"
       title="Quest Log"
       aria-label="Toggle Quest Log"
@@ -148,8 +148,8 @@
     </button>
     <button
       class="btn-icon"
-      :class="$store.ui.showParticipants ? 'gm-toggle-active' : ''"
-      @click="$store.ui.showParticipants = !$store.ui.showParticipants"
+      :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'story' ? 'gm-toggle-active' : ''"
+      @click="window.openGmAssistantTab('story')"
       x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"
       title="Participants"
       aria-label="Toggle Participant Panel"

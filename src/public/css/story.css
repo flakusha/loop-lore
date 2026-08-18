@@ -420,28 +420,55 @@
   gap: 6px;
 }
 
-/* ── Quest Log panel ────────────────────────────────────────────── */
-.quest-log-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 320px;
-  max-width: 90vw;
-  background: var(--bg-secondary, #16213e);
-  border-left: 1px solid var(--border-default, #333);
-  box-shadow: -4px 0 16px rgb(0 0 0 / 30%);
-  z-index: 60;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+/* ── Unified GM & Assistant panel (C1): Story-tab sections ───────────── */
+.gm-story-guidance,
+.gm-story-participants {
+  border-top: 1px solid var(--border-default, #333);
+  padding-top: var(--space-3, 12px);
+  margin-top: var(--space-4, 16px);
 }
 
-.quest-log-body {
+/* Quests tab */
+.gm-quests-tab .gm-section {
+  margin-top: var(--space-1, 4px);
+}
+
+/* Assistant tab */
+.assistant-command-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: var(--space-2, 8px);
+}
+.assistant-command-item {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: var(--space-3, 12px);
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-default, #333);
+  border-radius: 8px;
+  background: var(--bg-primary, #1a1a2e);
+  color: var(--text-primary, #e0e0e0);
+  cursor: pointer;
+  font-size: 12px;
+  text-align: left;
+}
+.assistant-command-item:hover {
+  border-color: var(--accent-primary, #7aa2f7);
+}
+.assistant-command-name {
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+}
+.assistant-command-desc {
+  font-size: 11px;
+  color: var(--text-secondary, #8892b0);
+}
+.assistant-tool-calls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
 }
 
 /* ── Story footer controls (input toolbar) ──────────────────────── */

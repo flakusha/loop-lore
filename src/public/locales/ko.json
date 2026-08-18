@@ -954,7 +954,15 @@
     "escalateToMe": "Escalate to Me",
     "injectNarration": "Inject Narration",
     "controlsHint": "Pause/step orchestration is wired to the story engine (LLM role wiring). Until then, controls report availability.",
-    "qualityScore": "Quality score from story engine evaluation"
+    "qualityScore": "Quality score from story engine evaluation",
+    "gmAssistant": "GM 및 어시스턴트",
+    "guidance": "안내",
+    "participants": "참가자",
+    "assistantCommands": "어시스턴트 명령",
+    "toolCalls": "최근 도구 호출",
+    "noCommands": "사용 가능한 명령이 없습니다",
+    "noToolCalls": "아직 도구 호출이 없습니다",
+    "assistant": "어시스턴트"
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",

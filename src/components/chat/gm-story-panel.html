@@ -35,53 +35,7 @@
     <p class="gm-section-hint" x-show="actors.length === 0">{{{t("story.noActors")}}}</p>
   </div>
 
-  <!-- Active quests -->
-  <div class="gm-section">
-    <h4 class="gm-section-title">{{{t("story.activeQuests")}}}</h4>
-    <div class="gm-quests" x-show="quests.length > 0">
-      <template x-for="quest in quests" :key="quest.id">
-        <div class="gm-quest-row">
-          <div class="gm-quest-head">
-            <span class="gm-quest-name" x-text="quest.name"></span>
-            <span class="gm-quest-pct" x-text="questProgressPct(quest) + '%'"></span>
-            <button
-              class="btn-icon gm-quest-delete"
-              :title="t('story.deleteQuest')"
-              @click="deleteQuest(quest.id)"
-              data-testid="delete-quest"
-            >
-              &times;
-            </button>
-          </div>
-          <div class="gm-quest-bar">
-            <div
-              class="gm-quest-bar-fill"
-              :style="'width: ' + questProgressPct(quest) + '%'"
-              :class="quest.status === 'completed' ? 'is-complete' : ''"
-            >
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-    <p class="gm-section-hint" x-show="quests.length === 0">{{{t("story.noQuests")}}}</p>
-    <div class="gm-new-quest">
-      <input
-        class="form-input"
-        x-ref="newQuestName"
-        x-model="$refs.newQuestName.value"
-        :placeholder="t('story.newQuestPlaceholder')"
-        data-testid="new-quest-input"
-      />
-      <button
-        class="btn btn-primary btn-sm"
-        @click="createQuest($refs.newQuestName.value); $refs.newQuestName.value = ''"
-        data-testid="new-quest-submit"
-      >
-        {{{t("story.newQuest")}}}
-      </button>
-    </div>
-  </div>
+  <!-- Active quests → moved to the unified panel's Quests tab (gm-quests-panel) -->
 
   <!-- World state -->
   <div class="gm-section">
