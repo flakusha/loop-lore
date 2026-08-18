@@ -11,6 +11,7 @@ import type { ChatKey, } from "../../crypto/chat-keys";
 import { AssetVisibility, } from "../../db/enums";
 import type { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import { getAssetFilePath, } from "./file-system";
 import type { AssetRecord, } from "./types";
 
@@ -103,7 +104,7 @@ export async function listAssets(
   const page = options.page ?? 1;
   const pageSize = Math.min(options.pageSize ?? 50, 200,);
   const offset = (page - 1) * pageSize;
-  const isAdmin = options.actorRole === "admin";
+  const isAdmin = can(options.actorRole, "admin.character",);
   const actorId = options.actorId ?? "";
 
   // If entity filter is provided, join through asset_links
@@ -185,7 +186,7 @@ export async function canAccessAsset(
   actorId: string | null,
   actorRole: string | null,
 ): Promise<boolean> {
-  if (actorRole === "admin") { return true; }
+  if (can(actorRole, "admin.character",)) { return true; }
 
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
   if (!asset) { return false; }

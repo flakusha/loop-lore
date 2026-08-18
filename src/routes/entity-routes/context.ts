@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Db, } from "../../db";
+import { can, } from "../../users/permissions";
 import type { EntityConfig, } from "./types";
 
 export interface EntityPaths {
@@ -39,6 +40,6 @@ export async function checkOwnership(
     .where("id", "=", parentId,)
     .executeTakeFirst();
   return (
-    !!owner && (owner[config.ownershipFkColumn] === userId || userRole === "admin" || userRole === "solo")
+    !!owner && (owner[config.ownershipFkColumn] === userId || can(userRole, "admin.character",))
   );
 }

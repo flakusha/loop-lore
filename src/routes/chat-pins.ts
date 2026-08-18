@@ -9,6 +9,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
+import { can, } from "../users/permissions";
 import { uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
@@ -154,7 +155,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const isPinner = pin.pinned_by === userId;
           const isOwner = chat.created_by === userId;
-          const isAdmin = (ctx.userRole as string | null) === "admin" || (ctx.userRole as string | null) === "solo";
+          const isAdmin = can(ctx.userRole as string | null, "admin.chat",);
 
           if (!isPinner && !isOwner && !isAdmin) {
             return Response.json({ error: "Not authorized to unpin", }, { status: 403, },);

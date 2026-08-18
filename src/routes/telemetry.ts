@@ -19,6 +19,7 @@ import {
   isTelemetryEnabled,
   record,
 } from "../telemetry/service";
+import { can, } from "../users/permissions";
 import { ErrorResponse, SuccessResponse, TelemetryEventBody, } from "../validation/schemas";
 
 interface HandleOpts {
@@ -54,7 +55,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       },
     },)
     .get(`${prefix}/telemetry/analytics/summary`, async (ctx: any,) => {
-      if (ctx.userRole !== "admin") {
+      if (!can(ctx.userRole, "admin.system",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -91,7 +92,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       },
     },)
     .get(`${prefix}/telemetry/analytics/models`, async (ctx: any,) => {
-      if (ctx.userRole !== "admin") {
+      if (!can(ctx.userRole, "admin.system",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -126,7 +127,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       },
     },)
     .get(`${prefix}/telemetry/analytics/errors`, async (ctx: any,) => {
-      if (ctx.userRole !== "admin") {
+      if (!can(ctx.userRole, "admin.system",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -162,7 +163,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       },
     },)
     .get(`${prefix}/telemetry/analytics/daily`, async (ctx: any,) => {
-      if (ctx.userRole !== "admin") {
+      if (!can(ctx.userRole, "admin.system",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
@@ -203,7 +204,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       },
     },)
     .delete(`${prefix}/telemetry/analytics/purge`, async (ctx: any,) => {
-      if (ctx.userRole !== "admin") {
+      if (!can(ctx.userRole, "admin.system",)) {
         return jsonError({
           message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,

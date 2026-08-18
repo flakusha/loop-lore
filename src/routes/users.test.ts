@@ -114,7 +114,7 @@ describe("usersRoutes", () => {
   // ── GET /api/users/:id (admin only) ────────────────────────
 
   test("GET /api/users/:id returns 403 for non-admin", async () => {
-    const app = createApp(db, userId, "solo",);
+    const app = createApp(db, userId, "user",);
     const res = await app.handle(new Request(`http://localhost/api/users/${userId}`,),);
     expect(res.status,).toBe(403,);
   });
@@ -170,7 +170,7 @@ describe("usersRoutes", () => {
       },)
       .execute();
 
-    const app = createApp(db, userId,);
+    const app = createApp(db, userId, "user",);
     const res = await app.handle(
       new Request(`http://localhost/api/users/${otherUserId}`, {
         method: "PUT",
@@ -184,7 +184,7 @@ describe("usersRoutes", () => {
   // ── DELETE /api/users/:id (admin only) ─────────────────────
 
   test("DELETE /api/users/:id returns 403 for non-admin", async () => {
-    const app = createApp(db, userId, "solo",);
+    const app = createApp(db, userId, "user",);
     const res = await app.handle(new Request(`http://localhost/api/users/${userId}`, { method: "DELETE", },),);
     expect(res.status,).toBe(403,);
   });
