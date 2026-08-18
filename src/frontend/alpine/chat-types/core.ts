@@ -241,6 +241,6 @@ export interface ChatCoreState
   } | null;
   wizardPreviewOpen: boolean;
   confirmWizard(wizardId: string,): Promise<void>;
-  cancelWizard(wizardId: string,): void;
+  cancelWizard(wizardId: string,): Promise<void>;
   updateWizardField(field: string, value: string,): void;
 }

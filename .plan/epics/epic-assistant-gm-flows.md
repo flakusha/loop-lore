@@ -284,7 +284,7 @@ Creative processes such as character creation, prompt creation, image/video/audi
 
 ### Story Steering & Notes
 
-- `epic-gm-shadow-notes.md` — **direct dependency**. Whitenotes and shadow notes steer LLM generation. GM/assistant creates shadow notes to influence narrative without player visibility. This epic generates the content; shadow notes steer _how_ it's generated.
+- `epic-gm-shadow-notes.md` — **direct dependency**. Whitenotes and shadow notes steer LLM generation. GM/assistant creates shadow notes to influence narrative without player visibility. This epic generates the content; shadow notes steer *how* it's generated.
 
 ### Narrative Agency
 
