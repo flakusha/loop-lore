@@ -17,8 +17,10 @@ export interface NsfwConfig {
   /**
    * When true, the NSFW gate augments keyword detection with an LLM content
    * rating classifier (config-driven via `resolveSystemPrompt(templates, "nsfw")`).
-   * Off by default — the classifier adds an AUX LLM call to the generation path.
-   * Default false.
+   * On by default — the LLM classifier is the safety filter that detects and
+   * censors extreme content (e.g. gruesome/graphic categories) the keyword pass
+   * does not name. Disable only to trade detection depth for latency/LLM cost.
+   * Default true.
    */
   useLlmClassifier: boolean;
 }
