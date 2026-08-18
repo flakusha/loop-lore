@@ -7203,10 +7203,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-alpine-component-wire-into-app.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-npc-alpine.md"
     }
   ],
   "src/frontend/alpine/nsfw.ts": [
@@ -8039,42 +8035,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trading-interface.md"
-    }
-  ],
-  "src/frontend/npc/faction-list.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-faction-relations.md"
-    }
-  ],
-  "src/frontend/npc/faction-relations.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-faction-relations.md"
-    }
-  ],
-  "src/frontend/npc/karma-display.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-karma-display.md"
-    }
-  ],
-  "src/frontend/npc/npc-details.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-npc-viewer.md"
-    }
-  ],
-  "src/frontend/npc/npc-viewer.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-npc-viewer.md"
-    }
-  ],
-  "src/frontend/npc/standing-bar.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-karma-display.md"
     }
   ],
   "src/frontend/nsfw/body-region.ts": [
