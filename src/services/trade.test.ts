@@ -43,9 +43,9 @@ describe("TradeService — offer lifecycle", () => {
     buyer = uid();
     seller = uid();
     stranger = uid();
-    await insertActors(db, "Buyer", { id: buyer as never, user_id: userId as never, },);
-    await insertActors(db, "Seller", { id: seller as never, user_id: userId as never, },);
-    await insertActors(db, "Stranger", { id: stranger as never, user_id: userId as never, },);
+    await insertActors(db, "Buyer", { id: buyer as never, user_id: userId, },);
+    await insertActors(db, "Seller", { id: seller as never, user_id: userId, },);
+    await insertActors(db, "Stranger", { id: stranger as never, user_id: userId, },);
     defA = uid();
     defB = uid();
     await insertItems(db, worldId, "Potion", "consumable", { id: defA as never, },);
@@ -54,12 +54,12 @@ describe("TradeService — offer lifecycle", () => {
     sellerItem = uid();
     await insertWorldItems(db, worldId, defA, {
       id: buyerItem as never,
-      owner_actor_id: buyer as never,
+      owner_actor_id: buyer,
       quantity: 10 as never,
     },);
     await insertWorldItems(db, worldId, defB, {
       id: sellerItem as never,
-      owner_actor_id: seller as never,
+      owner_actor_id: seller,
       quantity: 5 as never,
     },);
     // Fund both actors.

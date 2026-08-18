@@ -16,7 +16,7 @@ import type { SeedCharacter, } from "../config/schema";
 import { ActorType, AgentType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import type { Logger, } from "../logger";
-import { uid, } from "../utils";
+import { jsonStringifyOr, uid, } from "../utils";
 import { recordSeedAudit, } from "./audit";
 
 /**
@@ -64,7 +64,7 @@ export async function seedCharacters(
         display_name: character.name,
         description: character.description ?? null,
         personality: character.personality
-          ? JSON.stringify(character.personality,)
+          ? jsonStringifyOr(character.personality, "null",)
           : null,
         visibility: character.visibility ?? "private",
         user_id: null,

@@ -90,5 +90,7 @@ async function buildUserById(database: Kysely<DB>,): Promise<Map<string, string>
     .selectFrom("users",)
     .select(["id", "username",],)
     .execute();
-  return new Map(rows.map((row,) => [row.username, row.id,]),);
+  const map = new Map<string, string>();
+  for (const row of rows) { map.set(row.username, row.id,); }
+  return map;
 }
