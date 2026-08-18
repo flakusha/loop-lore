@@ -160,11 +160,15 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-skills-routes.md"
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+      "source": ".plan/tickets/TASK-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skills-routes.md"
     }
   ],
   "src/assets/controller.ts": [
@@ -6097,14 +6101,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-alpine-client.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-lora-discovery-application.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
     },
     {
       "kind": "spec",
@@ -12401,34 +12397,38 @@
       "source": ".plan/tickets/TASK-crafting-system.md"
     }
   ],
-  "src/routes/crafting/attempts.ts": [
+  "src/routes/crafting/attempt.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    }
+  ],
+  "src/routes/crafting/attempt.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-professions-frontend.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-crafting-routes.md"
     }
   ],
-  "src/routes/crafting/handlers.ts": [
+  "src/routes/crafting/attempts.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+      "source": ".plan/tickets/TASK-professions-frontend.md"
     }
   ],
   "src/routes/crafting/index.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
-    },
+      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+    }
+  ],
+  "src/routes/crafting/orders.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     }
   ],
   "src/routes/crafting/orders.ts": [
@@ -12453,6 +12453,32 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+    }
+  ],
+  "src/routes/crafting/station-defs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+    }
+  ],
+  "src/routes/crafting/station-instances.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+    }
+  ],
+  "src/routes/crafting/stations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     }
   ],
   "src/routes/crafting/stations.ts": [
@@ -13801,6 +13827,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-complete-crafting-system-services.md"
+    }
+  ],
+  "src/rpg/crafting/orders.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
     {
       "kind": "ticket",

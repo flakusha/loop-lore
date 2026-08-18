@@ -3,6 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { equipmentRoutes, } from "./equipment";
+import { battleEquipmentDurabilityRoutes, } from "./equipment-durability";
 import { moraleRoutes, } from "./morale";
 import { npcRoutes, } from "./npc";
 import { resolutionRoutes, } from "./resolution";
@@ -16,7 +17,7 @@ import { weatherRoutes, } from "./weather";
  * `elysia-app.ts` wiring is unchanged.
  *
  * Endpoints (all POST):
- *   Equipment: /api/battle/equipment/{calculate,can-equip,durability,repair,loot}
+ *   Equipment: /api/battle/equipment/{calculate,can-equip,durability,repair,loot,combat-use}
  *   Social:    /api/battle/social/{intimidate,taunt,surrender,rally,inspire,demoralize}
  *   NPC:       /api/battle/npc/{decision,memory,surrender}
  *   Weather:   /api/battle/weather/{modifiers,visibility,hazard}
@@ -28,6 +29,7 @@ export function battleRoutes(opts: HandlerOpts,) {
 
   return new Elysia({ name: "battle", },)
     .use(equipmentRoutes(opts,),)
+    .use(battleEquipmentDurabilityRoutes(opts,),)
     .use(socialRoutes(opts,),)
     .use(npcRoutes(opts,),)
     .use(weatherRoutes(opts,),)

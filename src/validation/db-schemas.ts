@@ -672,6 +672,8 @@ export const ActorItemsSchema = t.Object({
   sort_order: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  durability: t.Optional(t.Number(),),
+  max_durability: t.Optional(t.Number(),),
 },);
 
 // ── actor_currencies ────────────────────────────────────────────
