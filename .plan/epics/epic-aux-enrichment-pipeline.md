@@ -70,9 +70,13 @@ Audit of `src/` produced these actionable gaps. Severity: 🔴 high / 🟡 mediu
 
 - Tokenized matching (not substring), severity scoring, `recordAudit` trail, non-destructive suppression (store flagged message, don't drop it).
 
-### M6 — Telemetry
+### M6 — Telemetry ✅
 
-- Record AUX calls in telemetry (event type, model, provider, tokens, latency, success/failure).
+- ✅ AUX calls recorded in telemetry via `callAux` runner (event type `aux.call`, model, provider, tokens, latency, success/failure)
+- ✅ `generation.completed` telemetry reports real `latencyMs` (was hardcoded `0`; now `Date.now() - startedAt`)
+- ✅ Admin endpoint `GET /api/admin/telemetry/aux` returns recent AUX call events with per-task aggregation
+- ✅ All 5 AUX call sites (transition, intent, memory, nsfw, gm-tool) return correct `AuxCallResult` with token/latency data
+- Tests: `src/routes/admin/aux-telemetry.test.ts` (7 tests)
 
 ## Design Principles
 
@@ -348,7 +352,7 @@ Reply with ONLY JSON: { "emotion": "happy|sad|angry|fearful|surprised|disgusted|
 - [ ] Shared runner with provider resolution
 - [ ] **AUX calls resolve apiKey via `resolveProvider` (BYO key parity with main path)** — added 2026-08-01 review
 - [ ] **No AUX call blocks message flow (all ≤2s, none awaited pre-generation without timeout)** — added 2026-08-01 review
-- [ ] **AUX calls recorded in telemetry (tokens, latency, success/failure)** — added 2026-08-01 review
+- [x] **AUX calls recorded in telemetry (tokens, latency, success/failure)** — added 2026-08-01 review, completed 2026-08-18
 - [ ] Enrichment results injected into main generation context
 - [ ] Side effects (DB writes) happen async after main response
 - [ ] All existing tests still pass
