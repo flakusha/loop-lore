@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import type { TranslatorFn, } from "../../i18n/types";
 import { BlogService, } from "../../rpg/blog/service.js";
+import { can, } from "../../users/permissions";
 import {
   BlogPostCreateBody,
   BlogPostResponse,
@@ -103,7 +104,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!post) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      if (userRole !== "admin" && post.author_id !== userId) {
+      if (!can(userRole, "admin.settings",) && post.author_id !== userId) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
@@ -142,7 +143,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!post) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      if (userRole !== "admin" && post.author_id !== userId) {
+      if (!can(userRole, "admin.settings",) && post.author_id !== userId) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 

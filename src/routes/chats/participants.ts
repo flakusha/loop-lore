@@ -6,6 +6,7 @@ import { checkChatAccess, } from "../../chat/service";
 import type { ChatParticipantRole, } from "../../db/enums";
 import { getLogger, type Logger, } from "../../logger";
 import { notifyChatInvite, } from "../../notifications/service";
+import { can, } from "../../users/permissions";
 import { ChatIdParams, ChatParticipantParams, ChatParticipantUpdateBody, } from "../../validation/schemas";
 import {
   HttpStatus,
@@ -76,7 +77,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
@@ -144,7 +145,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
@@ -181,7 +182,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!chat || (userRole !== "admin" && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
 
