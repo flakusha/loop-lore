@@ -22,6 +22,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       const detail = localStorage.getItem("chat-detail-level",);
       if (detail) { this.detailLevel = detail; }
       await this.loadLocales();
+      await this.loadProviders();
       await this.loadSettings();
       await this.loadNsfwConsent();
     },
@@ -118,6 +119,23 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
         return parts.join(", ",) + appended;
       }
       return t("settings.nsfwNone",);
+    },
+
+    async loadProviders() {
+      try {
+        const res = await apiFetch("/api/providers", { headers: { Accept: "application/json", }, },);
+        if (res.ok) {
+          const data = await res.json();
+          const providers = data.providers || [];
+          const healthy: { name: string; label: string; status: string }[] = [];
+          for (const p of providers) {
+            if (p.status === "healthy") { healthy.push(p,); }
+          }
+          this.providerList = healthy;
+        }
+      } catch (error) {
+        log.warn("loadProviders failed", { error: String(error,), },);
+      }
     },
 
     async saveGeneral() {
