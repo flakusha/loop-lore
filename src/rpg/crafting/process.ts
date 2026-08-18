@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import { CraftingAttemptStatus, EquipState, } from "../../db/enums";
+import type { ItemCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 import type {
@@ -84,31 +85,35 @@ function toCraftAttempt(r: {
     createdAt: r.created_at,
   };
 }
-
 /** Crafting process — attempt, consume materials, roll, produce output. */
 export class CraftingProcessService {
   private readonly db: Kysely<DB>;
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }
-
   async attemptCraft(opts: CraftAttemptOpts,): Promise<CraftResult> {
     const recipe = await this.db.selectFrom("crafting_recipes",).selectAll()
       .where("id", "=", opts.recipeId,).executeTakeFirst();
     if (!recipe) { throw new Error(`Recipe not found: ${opts.recipeId}`,); }
     const matRows = await this.db.selectFrom("crafting_recipe_materials",)
       .selectAll().where("recipe_id", "=", opts.recipeId,).execute();
-    const itemIds = matRows.map(m => m.item_id);
+    const itemIds: string[] = Array.from(matRows, m => m.item_id,);
     const defs = itemIds.length > 0
       ? await this.db.selectFrom("items",).selectAll().where("id", "in", itemIds,).execute()
       : [];
-    const defMap = new Map(defs.map(d => [d.id, {
-      name: d.name,
-      description: d.description,
-      category: d.category,
-      value: d.value,
-      weight: d.weight,
-    } as ItemDef,]),);
+    const defMap = new Map<
+      string,
+      { name: string; description: string | null; category: ItemCategory; value: number; weight: number }
+    >();
+    for (const d of defs) {
+      defMap.set(d.id, {
+        name: d.name,
+        description: d.description,
+        category: d.category,
+        value: d.value,
+        weight: d.weight,
+      },);
+    }
     // Validate station if required
     let station: StationBonuses | null = null;
     if (recipe.station_type_required) {
@@ -189,12 +194,14 @@ export class CraftingProcessService {
       } else {
         const saveChance = station?.materialSavingChance ?? 0;
         for (const mat of matRows) {
-          if (Math.random() < saveChance) {
-            const sq = Math.floor(mat.quantity / 2,);
-            if (sq > 0) {
-              saved.push({ itemId: mat.item_id, quantity: sq, },);
-              await upsertActorItem(trx, opts.actorId, defMap.get(mat.item_id,)!, sq,);
-            }
+          if (Math.random() >= saveChance) {
+            continue;
+          }
+
+          const sq = Math.floor(mat.quantity / 2,);
+          if (sq > 0) {
+            saved.push({ itemId: mat.item_id, quantity: sq, },);
+            await upsertActorItem(trx, opts.actorId, defMap.get(mat.item_id,)!, sq,);
           }
         }
       }
@@ -233,11 +240,10 @@ export class CraftingProcessService {
       .where("id", "=", id,).executeTakeFirst();
     return r ? toCraftAttempt(r,) : null;
   }
-
   async listAttempts(actorId: string, worldId: string,): Promise<CraftAttempt[]> {
     const rows = await this.db.selectFrom("crafting_attempts",).selectAll()
       .where("actor_id", "=", actorId,).where("world_id", "=", worldId,)
       .orderBy("created_at", "desc",).execute();
-    return rows.map(toCraftAttempt,);
+    return Array.from(rows, r => toCraftAttempt(r,),);
   }
 }

@@ -102,7 +102,7 @@ export class TradeService {
   getTradeHistory(
     worldId: string,
     actorId?: string,
-    limit: number = 50,
+    limit = 50,
   ): Promise<TradeHistoryEntry[]> {
     return getTradeHistory(this.db, worldId, actorId, limit,);
   }
@@ -183,18 +183,16 @@ export class TradeService {
   listOffers(
     worldId: string,
     actorId: string,
-  ): Promise<
-    Array<{
-      id: string;
-      buyerActorId: string;
-      sellerActorId: string | null;
-      price: number;
-      items: TradeLine[];
-      status: string;
-      deadline: string | null;
-      createdAt: string;
-    }>
-  > {
+  ): Promise<{
+    id: string;
+    buyerActorId: string;
+    sellerActorId: string | null;
+    price: number;
+    items: TradeLine[];
+    status: string;
+    deadline: string | null;
+    createdAt: string;
+  }[]> {
     return listOffersFn(this.db, worldId, actorId,);
   }
 }

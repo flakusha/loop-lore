@@ -151,13 +151,16 @@ export async function runCreateGeneration(
       if (w) { warnings.push(w,); }
     }
 
-    const summary = "**" + KIND_LABELS[kind] + " preview** — review before saving:\n\n" +
-      "**Name:** " + entity.name + "\n" +
-      (entity.description ? "**Description:** " + entity.description + "\n" : "") +
-      (entity.personality ? "**Personality:** " + entity.personality + "\n" : "") +
-      (entity.scenario ? "**Scenario:** " + entity.scenario + "\n" : "") +
-      (entity.lore ? "**Lore:** " + entity.lore + "\n" : "") +
-      (warnings.length > 0 ? "\n⚠️ " + warnings.join(" ",) : "");
+    const parts: string[] = [
+      `**${KIND_LABELS[kind]} preview** — review before saving:\n\n`,
+      `**Name:** ${entity.name}\n`,
+    ];
+    if (entity.description) { parts.push(`**Description:** ${entity.description}\n`,); }
+    if (entity.personality) { parts.push(`**Personality:** ${entity.personality}\n`,); }
+    if (entity.scenario) { parts.push(`**Scenario:** ${entity.scenario}\n`,); }
+    if (entity.lore) { parts.push(`**Lore:** ${entity.lore}\n`,); }
+    if (warnings.length > 0) { parts.push(`\n⚠️ ${warnings.join(" ",)}`,); }
+    const summary = parts.join("",);
 
     return {
       systemMessage: summary,

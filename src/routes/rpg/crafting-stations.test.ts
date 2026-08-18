@@ -63,7 +63,7 @@ describe("Crafting routes", () => {
     await insertUsers(db, "owner", "Owner", { id: U as never, },);
     await insertUsers(db, "other", "Other", { id: U2 as never, },);
     await insertWorlds(db, U, "World", { id: W as never, rpg_enabled: 1 as never, },);
-    await insertActors(db, "Hero", { id: A as never, user_id: U as never, },);
+    await insertActors(db, "Hero", { id: A as never, user_id: U, },);
     await insertItems(db, W, "Iron Ore", "material", { id: ORE as never, value: 5 as never, },);
     await insertItems(db, W, "Iron Sword", "weapon", { id: SWORD as never, value: 50 as never, },);
     await insertActorItems(db, A, "Iron Ore", "material", { quantity: 10 as never, value: 5 as never, },);
