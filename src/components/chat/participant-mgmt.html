@@ -12,9 +12,9 @@
   <div class="participant-turn-order" x-show="_turnOrder && _turnOrder.order.length > 0" data-testid="turn-order">
     <div class="participant-turn-order-header">
       <span>{{{ t("participants.turnOrder") }}}</span>
-      <span class="participant-strategy" x-text="_turnOrder.strategy || ''"></span>
+      <span class="participant-strategy" x-text="_turnOrder?.strategy || ''"></span>
     </div>
-    <template x-for="slot in _turnOrder.order" :key="slot.actor_id">
+    <template x-for="slot in (_turnOrder?.order || [])" :key="slot.actor_id">
       <div
         class="turn-order-slot"
         :class="{ 'is-current': slot.isCurrent, 'is-next': slot.isNext }"
