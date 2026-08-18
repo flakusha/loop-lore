@@ -15,8 +15,8 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **Story mode** — per-actor multi-LLM model assignment, GM-guided story orchestration, story-mode chat view (GM panel, quest log, quality badges), pause/resume/step controls, narration injection, quest banners.
 - **Chat** — chat service layer (context window, transitions, moderation), message/chat CRUD, WebSocket transport, group chat with mention parsing, enhanced assistant with commands + prompt assembly.
-- **RPG subsystems** — combat, quests (consolidated quest engine), skills, loot, stats, dice, morale, world/location states, NPC navigation, world shaping, achievement tracking, item/equipment lifecycle.
-- **Characters** — character services (avatar, mood, traits, relationships), character importers, emotion avatars with multi-provider text2img fallback, avatar generation (LoRA).
+- **RPG subsystems** — combat, quests (consolidated quest engine), skills, loot, stats, dice, morale, world/location states, NPC navigation, world shaping, achievement tracking, item/equipment lifecycle, crafting stations (definitions + instances CRUD), crafting execution (`POST /craft`), crafting orders (place/accept/fulfill/cancel with payment), combat equipment durability degradation.
+- **Characters** — character services (avatar, mood, traits, relationships), character importers, emotion avatars with multi-provider text2img fallback, avatar generation (LoRA), LoRA discovery + application routes wired (`POST /api/lora/discover`, `GET /api/lora/list`).
 - **Memory** — memory budget, provisioning, purge, decay; memory selection UI with pinning, injection, assistant/world tabs.
 - **Assets** — polymorphic asset linking (images/audio/video), metadata extraction, image editing pipeline.
 - **UI** — blessed TUI + htmx/Alpine.js web UI, VN scene generation with choice cards, i18n (server + frontend), persona service, notifications.
@@ -35,8 +35,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
 ### Removed
-
-- Dead/unwired code close-out (A8 — LoRA wiring + RPG service consolidation).
 
 ### Security
 
