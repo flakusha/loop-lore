@@ -86,7 +86,8 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Cancel and discard the wizard draft. No backend call needed — the draft
    * lives only in Alpine state (the quality gate version doesn't use an
-   * in-memory wizard store).
+   * in-memory wizard store). Returns a Promise to match the chat-state
+   * interface (void is a valid resolution).
    */
   async cancelWizard(_wizardId: string,): Promise<void> {
     this.wizardPreviewOpen = false;

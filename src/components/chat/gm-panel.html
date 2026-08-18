@@ -1,7 +1,14 @@
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-<!-- GM Panel — Shadow Notes & Whitenotes sidebar -->
+<!--
+  Unified GM & Assistant Panel (C1 remainder) — replaces the separate GM
+  panel, quest log and participant toggles with one consolidated sidebar.
+  Tabs driven by `$store.ui.gmAssistantTab` (single source of truth set by
+  the header/quest/participant buttons); Shadow + Whitenotes keep the
+  gmPanel CRUD, Story reuses gm-story-panel + guidance + participant mgmt,
+  Quests and Assistant are dedicated surfaces.
+-->
 <div
   x-show="$store.ui.showGmPanel"
   x-cloak
@@ -10,41 +17,61 @@
   data-testid="gm-panel"
 >
   <div class="gm-panel-header">
-    <h3>GM Panel</h3>
-    <button class="btn-icon" @click="$store.ui.showGmPanel = false" aria-label="Close GM Panel">&times;</button>
+    <h3>{{{t("story.gmAssistant")}}}</h3>
+    <button class="btn-icon" @click="$store.ui.showGmPanel = false" aria-label="Close GM & Assistant Panel">
+      &times;
+    </button>
   </div>
 
-  <!-- GM Panel Content (loaded via htmx or Alpine sub-component) -->
   <div class="gm-panel-body" x-data="gmPanel()" x-init="init()">
     <!-- Tab switcher -->
     <div class="gm-tabs">
       <button
         class="btn btn-sm"
-        :class="activeTab === 'shadow' ? 'btn-primary' : 'btn-ghost'"
-        @click="activeTab = 'shadow'"
+        :class="$store.ui.gmAssistantTab === 'shadow' ? 'btn-primary' : 'btn-ghost'"
+        @click="$store.ui.gmAssistantTab = 'shadow'"
+        data-testid="gm-tab-shadow"
       >
         Shadow Notes
       </button>
       <button
         class="btn btn-sm"
-        :class="activeTab === 'white' ? 'btn-primary' : 'btn-ghost'"
-        @click="activeTab = 'white'"
+        :class="$store.ui.gmAssistantTab === 'white' ? 'btn-primary' : 'btn-ghost'"
+        @click="$store.ui.gmAssistantTab = 'white'"
+        data-testid="gm-tab-white"
       >
         Whitenotes
       </button>
       <button
         class="btn btn-sm"
-        :class="activeTab === 'story' ? 'btn-primary' : 'btn-ghost'"
-        @click="activeTab = 'story'"
+        :class="$store.ui.gmAssistantTab === 'story' ? 'btn-primary' : 'btn-ghost'"
+        @click="$store.ui.gmAssistantTab = 'story'"
         x-show="isStoryMode"
-        data-testid="gm-story-tab"
+        data-testid="gm-tab-story"
       >
         Story
+      </button>
+      <button
+        class="btn btn-sm"
+        :class="$store.ui.gmAssistantTab === 'quests' ? 'btn-primary' : 'btn-ghost'"
+        @click="$store.ui.gmAssistantTab = 'quests'"
+        x-show="isStoryMode"
+        data-testid="gm-tab-quests"
+      >
+        Quests
+      </button>
+      <button
+        class="btn btn-sm"
+        :class="$store.ui.gmAssistantTab === 'assistant' ? 'btn-primary' : 'btn-ghost'"
+        @click="$store.ui.gmAssistantTab = 'assistant'"
+        data-testid="gm-tab-assistant"
+      >
+        Assistant
       </button>
     </div>
 
     <!-- Shadow Notes Tab -->
-    <div x-show="activeTab === 'shadow'">
+    <div x-show="$store.ui.gmAssistantTab === 'shadow'">
       <div class="gm-form-group">
         <label class="form-label">Type</label>
         <select class="form-input" x-model="newShadowType">
@@ -85,7 +112,7 @@
     </div>
 
     <!-- Whitenotes Tab -->
-    <div x-show="activeTab === 'white'">
+    <div x-show="$store.ui.gmAssistantTab === 'white'">
       <div class="gm-form-group">
         <label class="form-label">Type</label>
         <select class="form-input" x-model="newWhiteneoteType">
@@ -124,9 +151,32 @@
       </template>
     </div>
 
-    <!-- Story Control Tab (story chats only) -->
-    <div x-show="activeTab === 'story'">
+    <!--
+      Story Control Tab (story chats only): status, turn order, GM guidance,
+      participant/actor management
+    -->
+    <div x-show="$store.ui.gmAssistantTab === 'story'">
       {{> chat/gm-story-panel.html }}
+      <div class="gm-story-guidance">
+        <h4 class="gm-section-title">{{{t("story.guidance")}}}</h4>
+        <div x-data="gmGuidance" x-init="init()">
+          {{> chat/gm-guidance-panel.html }}
+        </div>
+      </div>
+      <div class="gm-story-participants">
+        <h4 class="gm-section-title">{{{t("story.participants")}}}</h4>
+        {{> chat/participant-mgmt.html }}
+      </div>
+    </div>
+
+    <!-- Quests Tab (story chats only) -->
+    <div x-show="$store.ui.gmAssistantTab === 'quests'">
+      {{> chat/gm-quests-panel.html }}
+    </div>
+
+    <!-- Assistant Tab -->
+    <div x-show="$store.ui.gmAssistantTab === 'assistant'">
+      {{> chat/assistant-panel.html }}
     </div>
   </div>
 </div>

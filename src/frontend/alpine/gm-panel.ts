@@ -46,7 +46,6 @@ export interface Whiteneote {
     newWhiteneoteContent: "",
     newWhiteneoteType: "narrative_direction" as Whiteneote["type"],
     newWhiteneotePriority: 5,
-    activeTab: "shadow" as "shadow" | "white" | "story",
 
     async init() {
       const chatId = (this as any).activeChat;

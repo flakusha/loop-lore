@@ -40,6 +40,8 @@ export const uiStoreDefinition: Record<string, unknown> = {
   showGmGuidance: false,
   showQuestLog: false,
   showSideChannels: false,
+  // ── Unified GM & Assistant panel (C1 remainder) — active tab ──
+  gmAssistantTab: "shadow",
   // ── Side-channels (C1) ───────────────────────────────
   sideChannels: [] as {
     id: string;
