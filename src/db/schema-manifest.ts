@@ -1611,6 +1611,8 @@ export const SCHEMA = new SchemaManifest()
     model: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    temperature: col("real",),
+    max_tokens: col("integer",),
   },)
   // ── Activity & Notifications ──────────────────────────────────────────────
   .table("notifications", {
@@ -1636,6 +1638,9 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     format_version: col("integer", { notNull: true, hasDefault: true, },),
+    temperature: col("real",),
+    max_tokens: col("integer",),
+    model: col("text",),
   },)
   .table("sessions", {
     id: col("text", { primaryKey: true, },),
