@@ -48,6 +48,7 @@ export async function runNonStreaming({
   failoverList,
 }: RunNonStreamingOpts,): Promise<Response> {
   try {
+    const startedAt = Date.now();
     let currentMessages = messages;
     let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
 
@@ -116,7 +117,7 @@ export async function runNonStreaming({
           promptTokens: result.tokenUsage.promptTokens,
           completionTokens: result.tokenUsage.completionTokens,
           totalTokens: result.tokenUsage.totalTokens,
-          latencyMs: 0,
+          latencyMs: Date.now() - startedAt,
           model: modelId,
           provider: providerName,
           finishReason: finalResponse.finishReason,
