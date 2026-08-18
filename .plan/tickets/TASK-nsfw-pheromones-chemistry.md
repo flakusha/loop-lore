@@ -10,7 +10,7 @@
 
 ## Summary
 
-Implement pheromone system (natural/synthetic attraction), aphrodisiac items/effects, chemical resistance, and heat/rut cycle mechanics for species that have them.
+Implement the pheromone system (natural/synthetic attraction), consumable effects, chemical resistance, and heat/rut cycle mechanics for species that have them, driven by the canonical `HeatPhase` enum in `src/db/enums-character/nsfw.ts`.
 
 ## Core Features
 
@@ -25,7 +25,7 @@ Implement pheromone system (natural/synthetic attraction), aphrodisiac items/eff
 
 - Natural, alchemical, magical, technological types
 - Effects: arousal boost, buildup rate, resistance reduction
-- Application methods: consumed, inhaled, contact, injected
+- Application methods per item type
 - Side effects, addiction risk
 - Detection difficulty
 
@@ -38,8 +38,8 @@ Implement pheromone system (natural/synthetic attraction), aphrodisiac items/eff
 ### Heat/Rut Cycles
 
 - Species-specific reproductive cycles
-- Phase progression (normal → pre-heat → heat → post-heat)
-- Mechanical effects (arousal multiplier, pheromone boost, fertility, mood)
+- Phase progression (normal → pre-heat → heat → post-heat): see canonical `HeatPhase` enum in `src/db/enums-character/nsfw.ts`
+- Mechanical effects (arousal multiplier, fertility, mood)
 - Duration and cycle length
 
 ## Tasks

@@ -10,13 +10,13 @@
 
 ## Summary
 
-Implement structured adult encounter system with phases (foreplay, building, climax, aftercare), skill checks during encounters, encounter types (romantic, passionate, experimental, dominant, etc.), and mechanical outcomes (satisfaction, pregnancy, bonding, trauma).
+Implement a structured encounter system with phases, skill checks during encounters, and mechanical outcomes, driven by the canonical `NsfwEncounterType` and `ContentIntensity` enums in `src/db/enums-character/nsfw.ts`.
 
 ## Core Features
 
 ### Encounter Types
 
-- Romantic, Passionate, Experimental, Dominant, Submissive, Public, Voyeuristic, Group, Roleplay, Rough, Tender
+- Type set is canonicalized in `NsfwEncounterType` (`src/db/enums-character/nsfw.ts`); extend that enum to add a type. No type list duplicated here.
 
 ### Encounter Phases
 

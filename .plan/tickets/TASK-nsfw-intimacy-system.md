@@ -16,24 +16,20 @@ Implement intimacy level system between characters with progression thresholds, 
 
 ### Intimacy Levels
 
-- Strangers (0) → Acquaintances (10) → Friends (25) → Close Friends (40) → Romantic Interest (55) → Dating (70) → Intimate (85) → Soulbonded (100)
-- Each level unlocks new interaction types
-- Levels can decrease through neglect, betrayal, or negative actions
+- Level tiers and progression thresholds: see canonical `IntimacyLevel` enum in `src/db/enums-character/nsfw.ts`.
+- Each level unlocks new interaction types.
+- Levels can decrease through neglect, betrayal, or negative actions.
 
 ### Intimacy Actions
 
-- Verbal actions (compliments, dirty talk, confessing feelings)
-- Physical actions (touching, kissing, holding hands, more intimate)
-- Gift actions (giving items, crafting for partner)
-- Service actions (helping, protecting, providing)
-- Intimate actions (adult interactions, vulnerability)
+- Action type categories (`verbal`/`physical`/`gift`/`service`/`intimate`): see canonical `IntimacyActionType` enum in `src/db/enums-character/nsfw.ts`.
+- Each action carries an intimacy change, requirements (min level, relationship type, consent, location), and effects.
 
 ### Threshold Events
 
-- New interaction types unlock at each level
-- NPC reactions change at thresholds
-- Gameplay effects (discounts, quests, dialogue options)
-- Memory creation at significant thresholds
+- New interaction types unlock at each level.
+- NPC reactions change at thresholds; gameplay effects (discounts, quests, dialogue options).
+- Memory creation at significant thresholds.
 
 ### Integration
 

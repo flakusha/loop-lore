@@ -10,13 +10,13 @@
 
 ## Summary
 
-Implement fantasy/kink system with kink discovery, fantasy fulfillment mechanics, kink categories (power exchange, exhibitionism, roleplay, sensation, etc.), and mechanical effects for fulfilling fantasies.
+Implement fantasy/kink system with kink discovery, fantasy fulfillment mechanics, and mechanical effects for fulfilling fantasies, driven by the canonical `FantasyCategory` enum in `src/db/enums-character/nsfw.ts`.
 
 ## Core Features
 
 ### Fantasy Categories
 
-- Power Exchange, Exhibitionism, Voyeurism, Roleplay, Sensation, Group, Taboo, Transformation, Worship, Pet Play, Monster, Breeding, Pain Play, Bondage, Service, Degradation, Praise
+- Category set is canonicalized in `FantasyCategory` (`src/db/enums-character/nsfw.ts`); extend that enum to add a category. No category list duplicated here.
 
 ### Kink Discovery
 

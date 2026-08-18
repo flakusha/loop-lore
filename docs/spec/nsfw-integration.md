@@ -5,7 +5,7 @@
 
 ## Overview
 
-The NSFW epic (`epic-nsfw-game-mechanics.md`, 848 lines) defines 8 gameplay systems but has zero cross-references to Housing, Weather, Social, or Disease systems. This spec tracks the integration work to close these gaps.
+The NSFW gameplay systems are defined by the canonical enums in `src/db/enums-character/nsfw.ts` and the rating in `src/schemas/nsfw-rating.ts` (formerly spec'd in `epic-nsfw-game-mechanics.md`, stripped 2026-08 to those enums). The 8 system families below had zero cross-references to Housing, Weather, Social, or Disease systems. This spec tracks the integration work to close these gaps.
 
 ## Current State Assessment
 
@@ -176,41 +176,19 @@ interface NSFWReputationChange {
 
 ### G9: NSFW ↔ Disease Integration
 
-**Reproductive Health**: Disease system covers reproductive health, STDs from NSFW encounters.
+**Reproductive Health**: Disease system covers reproductive health effects and encounter-related risk.
 
-```typescript
-// Disease system covers reproductive health
-interface ReproductiveHealth {
-  fertility: number; // 0-100
-  pregnancy_risk: boolean;
-  contraception: ContraceptionMethod[];
-  sexually_transmitted: STDStatus;
-  heat_cycle: HeatCycle | null;
-}
-
-// NSFW encounters can transmit diseases
-interface NSFWEncounterDiseaseRisk {
-  encounter_id: string;
-  participants: string[];
-  disease_risks: DiseaseRisk[];
-  transmission_probability: number;
-  prevention_methods: string[]; // condoms, contraception, etc.
-}
-
-interface DiseaseRisk {
-  disease_id: string;
-  base_probability: number;
-  modifiers: DiseaseRiskModifier[];
-  prevention_effectiveness: number;
-}
-```
+> Interface detail (reproductive-health fields, encounter disease-risk, transmission
+> probability, prevention methods) removed during rebase cleanup — see canonical
+> `NSFWContentRating` in `src/schemas/nsfw-rating.ts` and the Disease system schemas.
+> Reintroduce specific fields in the Disease schemas when wiring.
 
 **Integration Tasks**:
 
-- Disease system covers reproductive health (STD status, fertility)
-- NSFW encounters can transmit diseases (risk calculation)
+- Disease system covers reproductive health (status, fertility)
+- NSFW encounters can carry disease-transmission risk (risk calculation)
 - Pregnancy system references Disease for complications
-- Contraception methods integrate with Disease prevention mechanics
+- Prevention mechanics integrate with Disease risk reduction
 
 ## Files
 
