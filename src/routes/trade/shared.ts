@@ -6,8 +6,8 @@ import type { Kysely, } from "kysely";
 import type { Db, } from "../../db";
 import type { DB, } from "../../db/schema";
 import type { TradeService, } from "../../services/trade";
-import { jsonError, notFoundResponse, } from "../http-utils";
 import { Id, } from "../../validation/schemas";
+import { jsonError, notFoundResponse, } from "../http-utils";
 
 /** One line of an item transfer within a trade. */
 export const tradeLineSchema = t.Object({
