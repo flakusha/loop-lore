@@ -10,6 +10,7 @@
  *   DELETE /api/users/:id    — delete user (admin only)
  */
 import { Elysia, t, } from "elysia";
+import { can, } from "../../users/permissions";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { forbidden, notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, UserIdParams, UserProfileUpdateBody, } from "../../validation/schemas";
@@ -28,7 +29,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           const targetId = (ctx as any).params.id as string;
 
           // Non-admin can only view own profile via /api/users/me
-          if (userRole !== "admin") {
+          if (!can(userRole, "admin.users",)) {
             return forbidden();
           }
 
@@ -66,7 +67,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           const body = (ctx as any).body as typeof UserProfileUpdateBody;
 
           // User can update own profile; admin can update any
-          if (targetId !== userId && userRole !== "admin") {
+          if (targetId !== userId && !can(userRole, "admin.users",)) {
             return forbidden();
           }
 
@@ -117,7 +118,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           const targetId = (ctx as any).params.id as string;
           const body = (ctx as any).body as Record<string, unknown>;
 
-          if (targetId !== userId && userRole !== "admin") {
+          if (targetId !== userId && !can(userRole, "admin.users",)) {
             return forbidden();
           }
 
@@ -164,7 +165,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           const userRole = (ctx as any).userRole as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (userRole !== "admin") {
+          if (!can(userRole, "admin.users",)) {
             return forbidden();
           }
 

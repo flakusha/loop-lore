@@ -26,6 +26,7 @@ import {
 } from "../chat/invites";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
+import { can, } from "../users/permissions";
 import {
   ErrorResponse,
   InviteChatParams,
@@ -65,7 +66,7 @@ async function isChatOwner(
     .select("created_by",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
-  return Boolean(chat,) && (chat!.created_by === userId || userRole === "admin");
+  return Boolean(chat,) && (chat!.created_by === userId || can(userRole, "admin.chat",));
 }
 
 export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {

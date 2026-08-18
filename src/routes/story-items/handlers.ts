@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import { ItemCategory, ItemRarity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { ItemsService, } from "../../story/items";
+import { can, } from "../../users/permissions";
 import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "../http-utils";
@@ -27,7 +28,7 @@ export async function checkWorldOwnership(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  return !(!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId));
+  return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
 export async function handleInstances(

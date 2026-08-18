@@ -7,6 +7,7 @@ import type { DB, } from "../../db/schema";
 import { notifyQuestUpdate, } from "../../notifications/service";
 import { QuestEngine, } from "../../story/quest-engine";
 import type { QuestConfig, } from "../../story/types";
+import { can, } from "../../users/permissions";
 import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "../http-utils";
@@ -28,7 +29,7 @@ export async function checkQuestAccess(
     .select(["owner_id",],)
     .where("id", "=", questRow.world_id,)
     .executeTakeFirst();
-  if (!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId)) { return null; }
+  if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) { return null; }
   return questRow;
 }
 
@@ -43,7 +44,7 @@ export async function checkWorldAccess(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
-  return !(!worldCheck || (userRole !== "admin" && userRole !== "solo" && worldCheck.owner_id !== userId));
+  return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
 export async function handleListQuests(

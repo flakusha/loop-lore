@@ -17,9 +17,9 @@ import { locationExplorerRoutes, } from "./location-explorer";
 
 const USER_ROLE = "solo";
 
-function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
+function createApp(db: Kysely<DB>, userId: string | null, userRole: string = USER_ROLE,): Elysia {
   return new Elysia({ name: "test-loc-explorer", },)
-    .derive(() => ({ userId, userRole: USER_ROLE, }))
+    .derive(() => ({ userId, userRole, }))
     .use(locationExplorerRoutes({ database: db, },),) as unknown as Elysia;
 }
 
@@ -113,7 +113,7 @@ describe("locationExplorerRoutes", () => {
   test("non-owner cannot read explorer (404)", async () => {
     const other = uid();
     await insertUser(db, other,);
-    const app = createApp(db, other,);
+    const app = createApp(db, other, "user",);
     const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/location-explorer`,),);
     expect(res.status,).toBe(404,);
   });
