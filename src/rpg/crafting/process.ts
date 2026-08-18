@@ -3,66 +3,23 @@
 
 import type { Kysely, } from "kysely";
 import { CraftingAttemptStatus, EquipState, } from "../../db/enums";
-import type { ItemCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
+import type {
+  CraftAttempt,
+  CraftAttemptOpts,
+  CraftResult,
+  ItemDef,
+  MaterialRecord,
+  StationBonuses,
+} from "./types";
 
-/** Input for a craft attempt. */
-export interface CraftAttemptOpts {
-  actorId: string;
-  worldId: string;
-  recipeId: string;
-  stationInstanceId?: string;
-}
-
-/** Material consumed or saved during crafting. */
-export interface MaterialRecord {
-  itemId: string;
-  quantity: number;
-}
-
-/** Outcome of a craft attempt. */
-export interface CraftResult {
-  attemptId: string;
-  status: CraftingAttemptStatus;
-  quality: number;
-  outputItemId: string | null;
-  outputQuantity: number;
-  materialsConsumed: MaterialRecord[];
-  materialsSaved: MaterialRecord[];
-}
-
-/** Recorded craft attempt. */
-export interface CraftAttempt {
-  id: string;
-  actorId: string;
-  worldId: string;
-  recipeId: string;
-  stationInstanceId: string | null;
-  materialsUsed: MaterialRecord[];
-  status: CraftingAttemptStatus;
-  qualityAchieved: number;
-  outputItemId: string | null;
-  outputQuantity: number;
-  experienceGained: number;
-  skillIncrease: number;
-  bonusEffects: string;
-  createdAt: string;
-}
-
-interface ItemDef {
-  name: string;
-  description: string | null;
-  category: ItemCategory;
-  value: number;
-  weight: number;
-}
-
-interface StationBonuses {
-  successBonus: number;
-  qualityBonus: number;
-  materialSavingChance: number;
-}
+export type {
+  CraftAttempt,
+  CraftAttemptOpts,
+  CraftResult,
+  MaterialRecord,
+} from "./types";
 
 /** Find or merge quantity into an actor's inventory. */
 async function upsertActorItem(
