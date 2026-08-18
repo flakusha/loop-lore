@@ -17,6 +17,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
   _chatSettingsMode: "story",
   _chatSettingsTurnStrategy: "round_robin",
+  _chatSettingsThinkingVisibility: "hidden" as "hidden" | "collapsed" | "visible",
   _chatOnline: false,
   _selectedPersonaId: null as string | null,
   _impersonatingActorId: null as string | null,
@@ -53,6 +54,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatSettingsName = chat?.name ?? "";
     this._chatSettingsMode = chat?.mode ?? "story";
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
+    this._chatSettingsThinkingVisibility = (chat?.thinking_visibility ?? "hidden") as
+      | "hidden"
+      | "collapsed"
+      | "visible";
     this._chatOnline = Array.isArray(this.messages,) && this.messages.some((m,) => m.status === "confirmed");
     this._groupPaused = this.isChatPaused(chat,);
     await this.loadChatParticipants();
@@ -138,7 +143,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),
         isPaused: this._groupPaused,
-        thinkingVisibility: this.chats.find((c,) => c.id === this.activeChat)?.thinking_visibility ?? "hidden",
+        thinkingVisibility: this._chatSettingsThinkingVisibility,
       };
       // Key mechanics are immutable once the chat is online — the backend rejects
       // them with 409, so only send them for draft (offline) chats.
