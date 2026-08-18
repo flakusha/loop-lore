@@ -349,6 +349,10 @@
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     },
@@ -375,6 +379,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
     }
   ],
   "src/assistant/commands/dice.ts": [
@@ -893,6 +901,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
+    }
+  ],
+  "src/assistant/prompt/templates/entity-generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
     }
   ],
   "src/assistant/prompt/types.ts": [
