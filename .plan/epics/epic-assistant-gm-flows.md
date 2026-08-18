@@ -223,6 +223,47 @@ The AI Director works alongside the GM system:
 4. How should the AI Director handle multiple players with different preferences?
 5. Should the AI Director be able to override NPC autonomy for narrative purposes?
 
+## Pre-compiled Templates Message/Context Injection (Extension)
+
+Many creative generation processes share a recurring shape: each carries (a) an *internal schema* describing the expected output structure, and (b) an *example / scenario* illustrating a canonical filled instance. Injecting that schema + example into the generation prompt — at the **beginning or end** of the assistant message/context — gives the LLM deterministic, schema-steered guidance, improving output compliance and reducing malformed/partial results.
+
+### Rationale
+
+Creative processes such as character creation, prompt creation, image/video/audio prompting, item/world/location/story creation each carry an internal schema and a worked example. Appending (or prepending) that schema-as-example to the assistant message adds deterministic clarity to the creative process and yields schema-compliant / schema-steered documents.
+
+### Scope (creative processes)
+
+- Character / item / world / location creation — entity generation via `resolveEntityGenerationPrompt`
+- Story creation
+- Prompt creation (generic)
+- Image / video / audio prompting
+
+### Mechanism
+
+1. **Pre-compiled template registry** — per creative-process kind, a `{ schema, example }` pair (schema = compact field spec; example = one canonical filled instance / scenario).
+2. **Injection helper** — assemble `baseInstruction` + schema+example block with configurable `position: "before" | "after"` (default `after`); `off` disables.
+3. **Configurable** via `config.templates.llm.entityGenerationInject` for entity kinds; generalizes to other flows later.
+
+### Integration
+
+- Extend `resolveEntityGenerationPrompt` (already the single source of truth for entity-gen prompts) to embed the precompiled schema+example.
+- **Precondition:** `src/assistant/commands/create.ts` currently uses inline `entityPrompts` + `generateEntityData` and does **not** import `resolveEntityGenerationPrompt` — the centralized template system is orphaned from the command flow. Wiring `create.ts` to the centralized builder is part of this work (closes the cutover gap from the quality-gating effort).
+
+### Tasks
+
+| Task | Description | Priority | Status |
+|------|-------------|----------|--------|
+| TASK-precompiled-templates-injection | Pre-compiled template registry + injection helper + wire into `/create` | Medium | Not Started |
+| TASK-precompiled-templates-story | Extend injection to story creation | Low | Not Started |
+| TASK-precompiled-templates-media | Extend injection to image/video/audio prompting | Low | Not Started |
+| TASK-precompiled-templates-tests | Position / config-override / precedence tests | Medium | Not Started |
+
+### Open Questions
+
+1. Example representation: literal JSON sample vs. natural-language scenario? Proposal: both — compact schema block + one worked example.
+2. Should examples be per-world / per-setting overridable? Deferred.
+3. Default injection position: `after` (instruction stays prominent) vs `before`?
+
 ## Files
 
 - `src/assistant/commands/generate.ts` — generation commands
@@ -273,3 +314,4 @@ The AI Director works alongside the GM system:
 - `TASK-assistant-gm-flows.md` — main implementation tasks
 - `TASK-assistant-gm-flows-reconciliation.md` — reconciliation tasks
 - `TASK-gm-guided-story-creation.md` — user as GM guiding LLM characters in chat/group-chat to create a story together
+- `TASK-precompiled-templates-injection.md` — pre-compiled schema+example prompt injection for creative generation processes
