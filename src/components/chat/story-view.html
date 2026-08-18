@@ -47,8 +47,8 @@
       </button>
       <button
         class="btn btn-sm btn-ghost"
-        @click="$store.ui.showQuestLog = !$store.ui.showQuestLog"
-        :class="$store.ui.showQuestLog ? 'gm-toggle-active' : ''"
+        @click="window.openGmAssistantTab('quests')"
+        :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'quests' ? 'gm-toggle-active' : ''"
         title="{{{t("story.questLog")}}}"
         data-testid="story-quest-log"
       >
