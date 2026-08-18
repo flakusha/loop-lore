@@ -3,7 +3,7 @@
 
 # EPIC: RPG Wiring Completion — Phase 3
 
-**Status:** 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade execution remaining)
+**Status:** 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -15,9 +15,10 @@ Finish wiring the RPG service layer into production routes. `src/rpg/` contains 
 complete services with **zero HTTP consumers** — the item-systems subset landed in
 worktree `rpg-wire-routes` (2026-08-12), and **7 more services were wired directly
 on `dev` (`51a7bc01`, 2026-08-14)** with a wiring gate (`scripts/check-wiring.ts`)
-added to catch future unwired services. This epic now tracks only the deferred
-execution/UX follow-ups. Derived from `../open.md` § Dead/unwired #12–13
-and `epic-item-systems-unification.md` "Remaining Points".
+added to catch future unwired services. The **crafting/trade/battle execution subset**
+landed in worktree `feature/a8-unwired-closeout` (`49ee5c1a`, 2026-08-18). This epic
+now tracks only the remaining frontend/UX follow-ups. Derived from `../open.md` §
+Dead/unwired #12–13 and `epic-item-systems-unification.md` "Remaining Points".
 
 ## Landed
 
@@ -46,14 +47,24 @@ and `epic-item-systems-unification.md` "Remaining Points".
 - **Quest engine consolidation** — dual system removed (`src/rpg/quests/service/` deleted; single engine remains)
 - **Wiring gate** — `scripts/check-wiring.ts` + `check` integration
 
+### (2026-08-18, `49ee5c1a`, worktree `feature/a8-unwired-closeout`)
+
+- **Crafting stations** — station defs CRUD (`station-defs.ts`, 187L) + station instances CRUD (`station-instances.ts`, 146L), barrel in `stations.ts` (24L)
+- **Crafting attempts** — `POST /craft` + list/detail (`attempt.ts`, 152L), backed by `CraftingProcessService`
+- **Crafting orders** — `CraftingOrderService` (`orders.ts`, 186L) with place/accept/fulfill/cancel + payment via `TradeService.trade`
+- **Combat equipment durability** — migration `048` (+durability/max_durability on `actor_items`) + `POST /battle/equipment/combat-use` (`equipment-durability.ts`, 126L)
+- **LoRA routes** — `loraRoutes({config})` wired in `register-plugins.ts`
+- **DB schema artifacts regenerated** after migration 048
+- **20/20 unit tests**, full gate 22/22 green
+
 ## Remaining wire tasks (services still unreachable from HTTP)
 
-| Ticket | Scope | Priority |
-|--------|-------|----------|
-| `TASK-complete-crafting-system-services.md` | StationsService + CraftingProcessService gaps | P1 |
-| `TASK-crafting-stations-execution.md` | ⬜ NEW — station CRUD, `POST /craft` execution, orders via HTTP | P1 |
-| `TASK-trade-history-npc-counterparty.md` | ⬜ NEW — trade history query + NPC counterparty wrapper | P2 |
-| `TASK-battle-item-integration.md` | Combat-action equipment usage + durability degradation in combat | P2 |
+| Ticket | Scope | Priority | Status |
+|--------|-------|----------|--------|
+| `TASK-complete-crafting-system-services.md` | StationsService + CraftingProcessService gaps | P1 | ✅ DONE (2026-08-18, A8 closeout) |
+| `TASK-crafting-stations-execution.md` | Station CRUD, `POST /craft` execution, orders via HTTP | P1 | ✅ DONE (2026-08-18, A8 closeout) |
+| `TASK-trade-history-npc-counterparty.md` | Trade history query + NPC counterparty wrapper | P2 | ✅ DONE (IS4-IS6 already wired) |
+| `TASK-battle-item-integration.md` | Combat-action equipment usage + durability degradation in combat | P2 | ✅ DONE (2026-08-18, migration 048 + route) |
 
 ## Item frontend / UX (deferred from backend, tickets exist)
 

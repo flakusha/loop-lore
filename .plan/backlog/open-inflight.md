@@ -13,7 +13,7 @@
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
 | A5  | Lint-ts debt → `check` lint gate red — 655 problems (64 errors + 591 warnings), **last red gate**. Plan: `TASK-PLAN-LINT-TS-DEBT.md` (44 errors auto-fixable, 20 manual) | `../priority-release-010.md` + ticket | ▲ now (release-blocking) | ✅ **CLOSED 2026-08-14** (worktree `lint-ts-debt`) — `bun run lint` EXIT 0 (0 errors; 193 warnings tracked); check gate **18/18** |
 | A7  | e2e browser stabilization (auth redirect-loop)                                          | `../priority-release-010.md`              | ▲ now                           | ✅ **CLOSED 2026-08-14** (worktree `e2e-stabilization`) — flake was timing (45s beforeAll, 5-15s page loads), not redirect logic; `test:e2e:browser` **19/19 files ×2** |
-| A8  | Unwired-code close-out (crafting stations/execution + trade lifecycle/NPC trading; LoRA wire/drop)       | `../priority-p3-p5.md` + `epic-rpg-wiring-phase3.md` | ▲ now                     | 🟡 7 services wired 2026-08-14 (`51a7bc01`); remaining: crafting IS1–IS3, trade IS4–IS6, battle-item IS7, LoRA decision |
+| A8  | Unwired-code close-out (crafting stations/execution + trade lifecycle/NPC trading; LoRA wire/drop)       | `../priority-p3-p5.md` + `epic-rpg-wiring-phase3.md` | ▲ now                     | ✅ **CLOSED 2026-08-18** (worktree `feature/a8-unwired-closeout`, `49ee5c1a`) — all IS1-IS7 + LoRA wired; full gate 22/22 green |
 | A9  | Release artifacts (release-process, changelog) + push `dev`→`origin/dev`                | `../priority-release-010.md`              | ▲ now                           | 🟡 `docs/meta/release-process.md` + `CHANGELOG.md` done 2026-08-15; **tag v0.1.0 deliberately NOT created — post-testing human decision, never agent-side**; **push pending: pre-push hook blocks agent, human must push** |
 | B8  | Memory selection UI (mid-chat, pinning) + prompt-template UX                           | `../priority-p3-p5.md`                          | ▲ now                           | ✅ done (memory-selection UI + assistant/world tabs shipped dev 5e62eea7; prompt-template preview 2026-08-14) |
 | B10 | Fine-tuning UX (provider health, fine-tune UI)                                         | `../priority-p3-p5.md`                          | ▲ now                           |                       |
@@ -32,7 +32,7 @@
 | W3  | **Push `dev` → `origin/dev`** (Gate C + item-systems + docs-reconcile + memory-selection UI + C1 panel + GM-guided story + 7 wired RPG services) | `dev` (unreleased) | ▲ before release | |
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority-p0-p2.md`                     | ▲ now                           | 🟡 partial (shipped: tool-call UI 2026-08-12) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |
-| E1  | Unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12)                      | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |
+| E1  | Unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12)                      | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 **C1 remainder DONE 2026-08-18** — unified 5-tab "GM & Assistant" panel (Shadow/Whitenotes/Story/Quests/Assistant) merges the separate 🎭/📜/👥 toggles into one sidebar; header/story-view/input-area controls route in toggle-aware via `openGmAssistantTab` (worktree `unified-gm-assistant-view`, commit `ffa776da`) |
 | W5  | **Chat frontend wiring + search + navigation** — WT1 (pins/location/transfer/archive/response-length/route-extract) + WT2 (FTS5 message search + room filters) + WT3 (section navigation + VN wiring + state tests) | `TASK-chat-pins-frontend.md`, `TASK-chat-message-search.md`, `TASK-chat-room-filters.md`, `TASK-chat-flow-section-navigation.md`, `TASK-chat-visual-novel-mode.md` | ▲ now | 🟡 **in progress** — worktree `chat-ux-complete` |
 
 **Deferred (do not decide now):** F1 (9 AUX LLM enrichment tasks) · G3 (external music
@@ -72,7 +72,7 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   timeout budgets raised (beforeAll 45s→90s, page loads 10-15s→30s, waits 5-8s→10-15s)
   plus `ctx?.close()` guard; `test:e2e:browser` 19/19 files ×2 clean runs. Redirect
   logic was correct (fe-fetch already guards login/register); flake was timing.
-- **Remaining release blockers: A8** (crafting stations/execution + trade lifecycle; LoRA decision) **+ A9** (tag v0.1.0 + push).
+- **Remaining release blockers: A9** (tag v0.1.0 + push) — A8 closed 2026-08-18 (`49ee5c1a`).
 - **Broken internal markdown links (resolved 2026-08-14)** — the 17 dead links
   flagged pre-merge (across `docs/README.md`, `docs/spec/build-deploy.md`,
   `battle-integration.md`, `nsfw-integration.md`) are fixed: `bun run md:links` ✅
