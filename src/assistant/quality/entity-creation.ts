@@ -76,7 +76,11 @@ export function validateEntitySchema(
   kind: EntityKind,
   entity: GeneratedEntity,
 ): GateResult {
-  const missing = REQUIRED_FIELDS[kind].filter((f,) => !entity[f as keyof GeneratedEntity]);
+  const required = REQUIRED_FIELDS[kind];
+  const missing: string[] = [];
+  for (const f of required) {
+    if (!entity[f as keyof GeneratedEntity]) { missing.push(f,); }
+  }
   if (missing.length > 0) {
     return { ok: false, message: `Missing required field(s): ${missing.join(", ",)}`, };
   }
@@ -98,36 +102,40 @@ export async function checkDuplicate(
   const needle = entity.name.toLowerCase();
 
   // Typed per-table so the name column access is checked, not asserted.
-  let rows: Array<{ id: string; name: string }>;
+  let rows: { id: string; name: string }[];
   switch (kind) {
-    case "character":
+    case "character": {
       rows = await db
         .selectFrom("actors",)
         .select(["id", "display_name as name",],)
         .where("owner_id", "=", scope.ownerId,)
         .execute();
       break;
-    case "world":
+    }
+    case "world": {
       rows = await db
         .selectFrom("worlds",)
         .select(["id", "name",],)
         .where("owner_id", "=", scope.ownerId,)
         .execute();
       break;
-    case "location":
+    }
+    case "location": {
       rows = await db
         .selectFrom("locations",)
         .select(["id", "name",],)
         .where("world_id", "=", scope.worldId ?? "default",)
         .execute();
       break;
-    case "item":
+    }
+    case "item": {
       rows = await db
         .selectFrom("items",)
         .select(["id", "name",],)
         .where("world_id", "=", scope.worldId ?? "default",)
         .execute();
       break;
+    }
   }
 
   const match = rows.find((r,) => r.name.toLowerCase() === needle);
@@ -154,10 +162,8 @@ export function checkConsistency(
   worldContext?: { name: string; description?: string | null },
 ): QualityReport["consistency"] {
   const warnings: string[] = [];
-  if (kind === "location" || kind === "item") {
-    if (worldContext && !entity.description) {
-      warnings.push(`No description provided while world "${worldContext.name}" context is available.`,);
-    }
+  if ((kind === "location" || kind === "item") && worldContext && !entity.description) {
+    warnings.push(`No description provided while world "${worldContext.name}" context is available.`,);
   }
   return { warnings, };
 }
