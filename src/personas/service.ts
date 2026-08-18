@@ -18,6 +18,9 @@ export interface CreatePersonaParams {
   avatarAssetId?: string | null;
   description?: string | null;
   title?: string | null;
+  temperature?: number | null;
+  maxTokens?: number | null;
+  model?: string | null;
 }
 
 export interface UpdatePersonaParams {
@@ -26,6 +29,9 @@ export interface UpdatePersonaParams {
   description?: string | null;
   title?: string | null;
   isDefault?: boolean;
+  temperature?: number | null;
+  maxTokens?: number | null;
+  model?: string | null;
 }
 
 export class PersonasService {
@@ -61,6 +67,9 @@ export class PersonasService {
         avatar_asset_id: params.avatarAssetId ?? null,
         description: params.description ?? null,
         title: params.title ?? null,
+        temperature: params.temperature ?? null,
+        max_tokens: params.maxTokens ?? null,
+        model: params.model ?? null,
       },)
       .execute();
     return id;
@@ -75,6 +84,9 @@ export class PersonasService {
     if (params.isDefault !== undefined) {
       updates.is_default = params.isDefault ? DefaultState.Default : DefaultState.NotDefault;
     }
+    if (params.temperature !== undefined) { updates.temperature = params.temperature; }
+    if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
+    if (params.model !== undefined) { updates.model = params.model; }
 
     await this.db
       .updateTable("personas",)

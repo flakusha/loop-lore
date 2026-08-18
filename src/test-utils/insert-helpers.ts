@@ -228,6 +228,9 @@ export async function insertPersonas(
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
     format_version?: Generated<number>;
+    temperature?: number | null;
+    max_tokens?: number | null;
+    model?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("personas",).values({
@@ -1161,7 +1164,13 @@ export async function insertModelRoleOverrides(
   db: Db,
   provider: string,
   model: string,
-  opts?: { role?: Generated<ModelRole>; created_at?: Generated<string>; updated_at?: Generated<string> },
+  opts?: {
+    role?: Generated<ModelRole>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+    temperature?: number | null;
+    max_tokens?: number | null;
+  },
 ): Promise<void> {
   await db.insertInto("model_role_overrides",).values({
     provider,

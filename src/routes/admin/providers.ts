@@ -11,6 +11,29 @@ import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-providers", },)
+      // ── Public providers list (no auth) ───────────────────
+      .get(`${prefix}/providers`, () => {
+        const health = getHealthCache();
+        const providers = Array.from(listProviders(), (p,) => {
+          const status = health.find((h,) => h.name === p.name);
+          return {
+            name: p.name,
+            label: p.capabilities.label,
+            status: status?.status ?? "unknown",
+          };
+        },);
+
+        return jsonResponse({ providers, },);
+      }, {
+        response: {
+          200: t.Object({ providers: t.Array(t.Any(),), },),
+        },
+        detail: {
+          summary: "List active providers",
+          description: "Returns available providers for settings dropdown. No authentication required.",
+          tags: ["Providers",],
+        },
+      },)
       // ── Provider management ────────────────────────────────
       .get(`${prefix}/admin/providers`, (ctx: any,) => {
         const { userRole, } = ctx;
