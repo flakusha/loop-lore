@@ -43,7 +43,15 @@ export interface ContentHooksResult {
 export async function runContentHooks(opts: RunContentHooksOpts,): Promise<ContentHooksResult> {
   const { database, config, chatId, actorId, userId, content, } = opts;
 
-  // Fetch actor NSFW policy for hook gating
+  // Fetch actor's canonical content_rating from actors table
+  const actorRow = await database
+    .selectFrom("actors",)
+    .select(["content_rating",],)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  const actorContentRating = (actorRow?.content_rating as string) ?? "sfw";
+
+  // Also fetch legacy nsfw_policy from character_availability for backward compat
   const availability = await database
     .selectFrom("character_availability",)
     .select(["nsfw_policy",],)
@@ -52,6 +60,22 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
   const nsfwPolicy = availability?.nsfw_policy
     ? jsonParseOr<Record<string, unknown>>(availability.nsfw_policy, {},).level as string | undefined
     : undefined;
+
+  // Fetch user's max content rating from nsfw_user_preferences
+  const userPrefs = await database
+    .selectFrom("nsfw_user_preferences",)
+    .select(["max_rating",],)
+    .where("user_id", "=", userId,)
+    .executeTakeFirst();
+  const maxUserRating = userPrefs?.max_rating;
+
+  // Fetch chat-level NSFW override
+  const chatRow = await database
+    .selectFrom("chats",)
+    .select(["nsfw_override",],)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+  const chatNsfwOverride = chatRow?.nsfw_override;
 
   // Determine which hook event types to run based on config
   const hooksConfig = config.hooks ?? {
@@ -74,6 +98,9 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
       userId,
       content,
       nsfwPolicy,
+      actorContentRating,
+      maxUserRating,
+      chatNsfwOverride,
       privacyLevel: "standard",
       eventTypes: enabledEventTypes,
       config,

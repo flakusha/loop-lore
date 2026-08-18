@@ -13,6 +13,12 @@ import { callAux, } from "../../aux-pipeline";
 import { getLogger, } from "../../logger";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { resolveSystemPrompt, } from "../../prompts";
+import {
+  computeEffectiveRating,
+  isRatingAllowed,
+  NSFW_RATING_SEVERITY,
+  NSFWContentRating,
+} from "../../schemas";
 import { jsonParseOr, } from "../../utils/safe-json";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
@@ -64,12 +70,13 @@ export class NsfwHook implements HookHandler {
     // Keyword detection is deterministic and fast; run it first.
     let nsfwLevel = this.detectNsfwLevel(_content,);
 
-    // When configured, augment with an LLM rating classifier for content the
-    // keyword pass missed. The nsfw prompt is config-driven (llm.yaml
-    // `systemPrompts.nsfw`, default NSFW_POLICY_PROMPT).
-    if (nsfwLevel === "none" && _context.nsfwConfig.useLlmClassifier) {
+    // LLM classifier is the safety filter for the extreme tier the keyword pass
+    // cannot name; let it escalate, keeping the more severe of the two ratings.
+    if (_context.nsfwConfig.useLlmClassifier) {
       const llmLevel = await this.detectWithLlm(_content, _context,);
-      if (llmLevel !== "none") { nsfwLevel = llmLevel; }
+      if (NSFW_RATING_SEVERITY[this.levelToRating(llmLevel,)] > NSFW_RATING_SEVERITY[this.levelToRating(nsfwLevel,)]) {
+        nsfwLevel = llmLevel;
+      }
     }
 
     if (nsfwLevel === "none") {
@@ -125,6 +132,8 @@ export class NsfwHook implements HookHandler {
   }
 
   private detectNsfwLevel(content: string,): "none" | "mild" | "moderate" | "intense" | "extreme" {
+    // No keyword extreme tier: "extreme" is LLM-only (detectWithLlm), reachable
+    // via NSFWContentRating.NSFW_EXTREME. Re-add an extremeKeywords array here to restore.
     const lower = content.toLowerCase();
     const intenseKeywords = ["explicit", "graphic", "violent", "brutal", "gore",];
     const moderateKeywords = ["suggestive", "provocative", "steamy", "passionate", "arousing",];
@@ -202,12 +211,61 @@ export class NsfwHook implements HookHandler {
     }
   }
 
-  private isAllowed(level: string, context: HookContext,): boolean {
-    const policy = context.nsfwPolicy ?? "mild";
-    const levels = ["none", "mild", "moderate", "intense", "extreme",];
-    const policyIndex = levels.indexOf(policy,);
-    const contentIndex = levels.indexOf(level,);
+  /** Map hook-detected level string to NSFWContentRating enum.
+   *  Accepts both short names ("extreme") and full enum values ("nsfw_extreme"). */
+  private levelToRating(level: string,): NSFWContentRating {
+    switch (level) {
+      case "extreme":
+      case "nsfw_extreme": {
+        return NSFWContentRating.NSFW_EXTREME;
+      }
+      case "intense":
+      case "nsfw_intense": {
+        return NSFWContentRating.NSFW_INTENSE;
+      }
+      case "moderate":
+      case "nsfw_moderate": {
+        return NSFWContentRating.NSFW_MODERATE;
+      }
+      case "mild":
+      case "nsfw_mild": {
+        return NSFWContentRating.NSFW_MILD;
+      }
+      default: {
+        return NSFWContentRating.SFW;
+      }
+    }
+  }
 
-    return contentIndex <= policyIndex;
+  /**
+   * Compute effective content limit using the NSFWRatingEnforcement contract.
+   * effective_limit = min(actor_rating, user_max_rating, chat_setting).
+   * Falls back to nsfwPolicy-based limit when contract fields are absent.
+   */
+  private computeEffectiveLimit(context: HookContext,): NSFWContentRating {
+    const actorRating = context.actorContentRating
+      ? this.levelToRating(context.actorContentRating,)
+      : undefined;
+    const userRating = context.maxUserRating
+      ? this.levelToRating(context.maxUserRating,)
+      : undefined;
+    const chatRating = context.chatNsfwOverride
+      ? this.levelToRating(context.chatNsfwOverride,)
+      : undefined;
+
+    // When all three contract fields are present, use the contract
+    if (actorRating !== undefined && userRating !== undefined && chatRating !== undefined) {
+      return computeEffectiveRating(actorRating, userRating, chatRating,);
+    }
+
+    // Fallback: use nsfwPolicy (legacy path)
+    const policy = context.nsfwPolicy ?? "mild";
+    return this.levelToRating(policy,);
+  }
+
+  private isAllowed(level: string, context: HookContext,): boolean {
+    const contentRating = this.levelToRating(level,);
+    const effectiveLimit = this.computeEffectiveLimit(context,);
+    return isRatingAllowed(contentRating, effectiveLimit,);
   }
 }
