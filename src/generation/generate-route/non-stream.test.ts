@@ -103,7 +103,7 @@ describe("runNonStreaming — generation.completed latencyMs", () => {
       attemptId: "attempt-1",
       modelId: "test-model",
       providerName: "test-provider",
-      providerReq: { model: "test-model", messages: [], },
+      providerReq: { model: "test-model", messages: [], params: {}, },
       failoverList: [{ name: "test-provider", provider: {} as never, },],
     },);
 
