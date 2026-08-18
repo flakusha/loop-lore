@@ -35,6 +35,7 @@ export interface SettingsState {
   inlinePreview: boolean;
   detailLevel: string;
   provider: string;
+  providerList: { name: string; label: string; status: string }[];
   apiKey: string;
   apiEndpoint: string;
   model: string;
@@ -48,6 +49,7 @@ export interface SettingsState {
   init(): Promise<void>;
   loadLocales(): Promise<void>;
   loadSettings(): Promise<void>;
+  loadProviders(): Promise<void>;
   loadNsfwConsent(): Promise<void>;
   nsfwRestrictionText(): string;
   saveGeneral(): Promise<void>;

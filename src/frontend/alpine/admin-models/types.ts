@@ -22,7 +22,7 @@ export interface ProviderInfo {
 
 export interface ModelRolesResponse {
   roles: { role: string; provider: string; model: string; source: string }[];
-  overrides: Record<string, { provider: string; model: string }>;
+  overrides: Record<string, { provider: string; model: string; temperature: number | null; maxTokens: number | null }>;
   validRoles: string[];
 }
 
@@ -69,7 +69,8 @@ export interface ModelsState {
   providers: ProviderInfo[];
   providerModels: Record<string, ModelInfo[]>;
   modelRoleList: { role: string; provider: string; model: string }[];
-  overrides: Record<string, { provider: string; model: string }>;
+  overrides: Record<string, { provider: string; model: string; temperature: number | null; maxTokens: number | null }>;
+  roleTuning: Record<string, { temperature: string; maxTokens: string }>;
   loadingModels: boolean;
   scanning: boolean;
   expandProvider: string;

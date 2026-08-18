@@ -23,6 +23,8 @@ export const AdminSystemConfigBody = t.Object({
 export const AdminModelRoleOverrideBody = t.Object({
   provider: t.String({ minLength: 1, },),
   model: t.String({ minLength: 1, },),
+  temperature: t.Optional(t.Union([t.Number(), t.Null()],),),
+  maxTokens: t.Optional(t.Union([t.Number(), t.Null()],),),
 },);
 
 export const AdminChatUpdateBody = t.Object({
