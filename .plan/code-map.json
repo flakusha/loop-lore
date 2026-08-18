@@ -11791,6 +11791,12 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     }
   ],
+  "src/routes/admin/aux-telemetry.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    }
+  ],
   "src/routes/admin/chats.ts": [
     {
       "kind": "epic",
