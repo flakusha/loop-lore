@@ -4,8 +4,11 @@
 /**
  * Crafting Routes — barrel export.
  *
- * Exposes crafting HTTP endpoints. Currently recipe CRUD; station,
- * attempt, and order routes land with their services (see
- * src/rpg/crafting index TODO comments).
+ * Exposes the full crafting HTTP surface. Recipe CRUD landed earlier; station
+ * definitions/instances, craft attempts, and crafting orders are wired here
+ * (see `epic-item-systems-unification` / A8 close-out).
  */
+export { craftingAttemptRoutes, } from "./attempt";
+export { craftingOrderRoutes, } from "./orders";
 export { craftingRecipeRoutes, } from "./recipes";
+export { craftingStationRoutes, } from "./stations";

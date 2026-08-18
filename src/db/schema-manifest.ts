@@ -673,6 +673,8 @@ export const SCHEMA = new SchemaManifest()
     sort_order: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    durability: col("integer", { notNull: true, hasDefault: true, },),
+    max_durability: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_keys", {
     id: col("text", { primaryKey: true, },),
