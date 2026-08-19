@@ -14,11 +14,6 @@ import type { HookContext, } from "./types";
 
 export type NsfwLevel = "none" | "mild" | "moderate" | "intense" | "extreme";
 
-export interface NsfwClassifierDeps {
-  /** LLM rating runner; injectable for tests. Defaults to the AUX pipeline. */
-  callAux: typeof callAux;
-}
-
 /**
  * Keyword-based NSFW classifier.
  * Deterministic, fast — runs before any LLM check.
