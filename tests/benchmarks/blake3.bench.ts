@@ -50,10 +50,10 @@ function summarize(name: string, samplesMs: number[], payloadBytes: number,): Sa
     iterations: samplesMs.length,
     totalMs,
     averageMs: mean,
-    minMs: sorted[0],
-    maxMs: sorted[sorted.length - 1],
+    minMs: sorted[0]!,
+    maxMs: sorted[sorted.length - 1]!,
     stddevMs: Math.sqrt(variance,),
-    p95Ms: p95,
+    p95Ms: p95!,
     throughputMiBs: bytesPerSec / (1024 * 1024),
   };
 }

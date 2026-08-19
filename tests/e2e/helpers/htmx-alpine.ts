@@ -198,9 +198,13 @@ export async function getAlpineData<T = Record<string, unknown>,>(
     }
     const alpineEl = el as unknown as { __x?: { getUnobservedData?: () => unknown } };
     const x = alpineEl.__x;
+    // Alpine's runtime global exposes $data(el) but ships no ambient type in this scope.
+    const alpineGlobal = (globalThis as Record<string, unknown>).Alpine as
+      | { $data?: (el: Element,) => unknown }
+      | undefined;
     const raw = x?.getUnobservedData
       ? x.getUnobservedData()
-      : (globalThis as Record<string, unknown>).Alpine?.$data(el,);
+      : alpineGlobal?.$data?.(el,);
     if (raw === undefined || raw === null) {
       throw new Error(`Alpine state not available on ${sel} (element not initialized)`,);
     }
