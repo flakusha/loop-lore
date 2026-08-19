@@ -56,8 +56,13 @@ interface CommandRegistration {
 
 const handlers = new Map<string, CommandRegistration>();
 
-/** Role privilege ordering: higher number = more privilege. */
+/**
+ * Role privilege ordering: higher number = more privilege.
+ * `guest` (party join/leave, C7) sits below observer — a guest has no
+ * command privileges beyond messaging.
+ */
 const ROLE_PRIORITY: Record<ChatParticipantRole, number> = {
+  guest: -1,
   observer: 0,
   member: 1,
   owner: 2,
