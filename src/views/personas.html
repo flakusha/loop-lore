@@ -156,7 +156,7 @@
               :placeholder="t('personas.modelPlaceholder')"
               list="persona-model-list"
             />
-            <datalist id="persona-model-list">
+            <datalist id="persona-model-list" aria-busy="true">
               <template x-for="m in personaAvailableModels" :key="m">
                 <option :value="m"></option>
               </template>
