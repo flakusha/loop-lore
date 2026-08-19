@@ -308,5 +308,85 @@
         </div>
       </div>
     </div>
+
+    <!-- Token budget advisor (FEAT-068): real-time context meter + trim suggestions -->
+    <div
+      class="ctx-meter"
+      x-data="contextWindow()"
+      x-init="init()"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="token-budget-meter"
+    >
+      <button
+        class="ctx-meter-toggle"
+        @click="suggestionsOpen = !suggestionsOpen"
+        x-bind:class="status"
+        x-bind:title="statusText + ' — ' + formattedTokens"
+        data-testid="ctx-meter-toggle"
+      >
+        <span class="ctx-meter-total">{{{t("chats.tokens")}}} <b x-text="formattedTokens"></b></span>
+        <span
+          class="ctx-meter-bar"
+          role="meter"
+          aria-valuenow="0"
+          x-bind:aria-valuenow="percentage"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <!-- Stacked per-section segments (budget advisor breakdown) -->
+          <div class="ctx-meter-fill" x-show="hasSections" x-bind:style="'flex-grow:' + percentage">
+            <span
+              class="ctx-seg"
+              x-bind:class="sectionColor(s.name)"
+              x-bind:style="'flex-grow:' + sectionGrow(s.name)"
+              x-for="s in sections"
+              :key="s.name"
+            ></span>
+          </div>
+          <!-- Fallback: no breakdown → solid status-color usage fill -->
+          <div
+            class="ctx-meter-fill ctx-meter-solid"
+            x-show="!hasSections"
+            x-bind:class="statusColor"
+            x-bind:style="'flex-grow:' + Math.max(percentage, 0.5)"
+          >
+          </div>
+          <span
+            class="ctx-seg ctx-seg-available"
+            x-show="hasSections"
+            x-bind:style="'flex-grow:' + Math.max(available / maxTokens * 100, 0.5)"
+          ></span>
+        </span>
+      </button>
+      <div
+        class="ctx-advisor"
+        x-show="suggestionsOpen"
+        @click.outside="suggestionsOpen = false"
+        x-cloak
+        data-testid="ctx-advisor"
+      >
+        <div class="ctx-advisor-head">
+          <span>{{{t("chats.budgetUsage")}}} <b x-text="percentage + '%'"></b></span>
+          <span x-text="formattedAvailable + ' / ' + maxTokens.toLocaleString()"></span>
+        </div>
+        <template x-for="s in sections" :key="s.name">
+          <div class="ctx-section-row">
+            <span class="ctx-dot" x-bind:class="sectionColor(s.name)"></span>
+            <span class="ctx-section-name" x-text="s.name"></span>
+            <span class="ctx-section-tokens" x-text="s.tokens.toLocaleString() + ' (' + s.pct + '%)'"></span>
+          </div>
+        </template>
+        <div class="ctx-advisor-empty" x-show="sections.length === 0">{{{t("chats.noSections")}}}</div>
+        <div class="ctx-suggestions" x-show="suggestions.length > 0">
+          <div class="ctx-suggestions-title">{{{t("chats.trimSuggestions")}}}</div>
+          <template x-for="sug in suggestions" :key="sug.section">
+            <div class="ctx-suggestion" x-text="sug.message"></div>
+          </template>
+        </div>
+        <div class="ctx-suggestion-ok" x-show="suggestions.length === 0 && percentage <= 80">
+          {{{t("chats.budgetHealthy")}}}
+        </div>
+      </div>
+    </div>
   </div>
 </header>

@@ -16,9 +16,27 @@ import { upsertModelCapabilities, } from "../../admin/model-capabilities";
 import type { DB, } from "../../db/schema";
 import { DEFAULT_CONTEXT_WINDOW, } from "../../generation/context-window-config";
 import type { ModelInfo, } from "../../generation/providers/types";
+import { loadConfig, } from "../../config/load";
+import type { Config, } from "../../config/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, } from "../../test-utils/insert-helpers";
 import { handleGetContext, } from "./handlers";
+
+function makeConfig(): Config {
+  return {
+    ...loadConfig(),
+    generation: {
+      providers: {
+        openaiCompatible: [],
+        anthropic: undefined,
+        ollamaNative: undefined,
+        sd: undefined,
+      },
+      defaultProvider: "mock-provider",
+      defaultModels: { "mock-provider": "mock-model", },
+    },
+  };
+}
 
 function makeModel(overrides: Partial<ModelInfo> = {},): ModelInfo {
   return {
@@ -103,7 +121,7 @@ describe("handleGetContext max-tokens resolution", () => {
   }
 
   async function getMaxTokens(chatId: string,): Promise<number> {
-    const res = await handleGetContext(db, chatId, userId, "solo",);
+    const res = await handleGetContext(db, chatId, userId, "solo", makeConfig(),);
     expect(res.status,).toBe(200,);
     const body = await res.json();
     return (body as { maxTokens: number }).maxTokens;

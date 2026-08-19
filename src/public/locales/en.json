@@ -862,7 +862,11 @@
     "visibilityPrivate": "Private",
     "visibilityPublic": "Public",
     "visibilityUnlisted": "Unlisted",
-    "visualNovelOverlay": "Visual novel overlay (choice cards)"
+    "visualNovelOverlay": "Visual novel overlay (choice cards)",
+    "budgetUsage": "Context budget used:",
+    "noSections": "No section breakdown available yet.",
+    "trimSuggestions": "Trim suggestions",
+    "budgetHealthy": "Context budget healthy — no trimming needed."
   },
   "participants": {
     "title": "Participants",

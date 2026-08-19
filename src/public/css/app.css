@@ -237,54 +237,191 @@ body {
   gap: var(--space-2);
 }
 
-/* --- Context Window Monitor (inline in chat header) --- */
-.context-window-monitor {
+/* --- Token Budget Advisor meter (FEAT-068, inline in chat header) --- */
+.ctx-meter {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: 0 var(--space-2);
 }
 
-.context-bar-container {
+.ctx-meter-toggle {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  cursor: default;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  padding: var(--space-1) var(--space-2);
 }
 
-.context-bar {
-  width: 60px;
-  height: 6px;
+.ctx-meter-total {
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ctx-meter-total b {
+  color: var(--text-primary, #eee);
+  font-weight: 600;
+}
+
+.ctx-meter-bar {
+  display: flex;
+  width: 120px;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
   background: var(--border-default, #333);
-  border-radius: 3px;
+}
+
+.ctx-seg {
+  height: 100%;
+  min-width: 2px;
+  transition: flex-grow 0.3s ease;
+}
+
+/* Wraps stacked segments or the solid fallback fill inside the bar */
+.ctx-meter-fill {
+  display: flex;
+  height: 100%;
+  min-width: 2px;
   overflow: hidden;
 }
 
-.context-bar-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.3s ease, background-color 0.3s ease;
+/* Solid status-color fill used when no per-section breakdown is available */
+.ctx-meter-solid {
+  border-radius: 0;
 }
-
-.context-bar-fill.bg-green-500 {
+.ctx-meter-solid.bg-green-500 {
   background: #22c55e;
 }
-.context-bar-fill.bg-yellow-500 {
+.ctx-meter-solid.bg-yellow-500 {
   background: #eab308;
 }
-.context-bar-fill.bg-orange-500 {
+.ctx-meter-solid.bg-orange-500 {
   background: #f97316;
 }
-.context-bar-fill.bg-red-600 {
+.ctx-meter-solid.bg-red-600 {
   background: #dc2626;
 }
 
-.context-label {
-  font-size: 11px;
-  color: var(--text-secondary, #999);
-  min-width: 30px;
-  text-align: right;
+/* Color-coded section segments (system=blue, lore=green, memories=yellow, history=gray) */
+.ctx-seg-system {
+  background: #3b82f6;
+}
+.ctx-seg-lore {
+  background: #22c55e;
+}
+.ctx-seg-memories {
+  background: #eab308;
+}
+.ctx-seg-history {
+  background: #94a3b8;
+}
+.ctx-seg-available {
+  background: var(--color-surface-2, #262626);
+}
+
+/* Status tint on the bar for overall usage (complements the stacked segments) */
+.ctx-meter-toggle.warning .ctx-meter-bar {
+  outline: 1px solid #eab308;
+}
+.ctx-meter-toggle.critical .ctx-meter-bar {
+  outline: 1px solid #f97316;
+}
+.ctx-meter-toggle.imminent .ctx-meter-bar {
+  outline: 1px solid #dc2626;
+}
+
+/* Advisory popover: per-section breakdown + trim suggestions */
+.ctx-advisor {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: var(--z-modal);
+  min-width: 280px;
+  max-width: 340px;
+  background: var(--color-surface-1, #1a1a1a);
+  border: 1px solid var(--border-default, #333);
+  border-radius: 8px;
+  padding: var(--space-3);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
+}
+
+.ctx-advisor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  color: var(--text-primary, #eee);
+  margin-bottom: var(--space-2);
+}
+
+.ctx-advisor-head b {
+  font-weight: 700;
+}
+
+.ctx-section-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 12px;
+  padding: 2px 0;
+  color: var(--text-secondary, #bbb);
+}
+
+.ctx-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ctx-section-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ctx-section-tokens {
   font-variant-numeric: tabular-nums;
+  color: var(--text-primary, #eee);
+}
+
+.ctx-advisor-empty {
+  font-size: 12px;
+  color: var(--text-secondary, #999);
+  padding: var(--space-1) 0;
+}
+
+.ctx-suggestions {
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--border-default, #333);
+  padding-top: var(--space-2);
+}
+
+.ctx-suggestions-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-warning, #ed6c02);
+  margin-bottom: var(--space-1);
+}
+
+.ctx-suggestion {
+  font-size: 12px;
+  color: var(--text-secondary, #bbb);
+  padding: 2px 0;
+}
+
+.ctx-suggestion-ok {
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--border-default, #333);
+  padding-top: var(--space-2);
+  font-size: 12px;
+  color: var(--color-success, #2e7d32);
 }
 
 /* --- Panel backdrop (click-outside-to-close) --- */

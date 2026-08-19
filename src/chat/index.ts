@@ -12,8 +12,8 @@ export { computeContextWindow, countMessageTokens, getStatus, THRESHOLDS, } from
 export type { ContextStatus, CountableMessage, TokenCountResult, } from "./token-counter";
 export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
-export { computeContextStats, } from "./context-stats";
-export type { ContextStats, } from "./context-stats";
+export { availableTokens, computeContextStats, computeSections, } from "./context-stats";
+export type { BudgetStats, ContextSection, ContextStats, } from "./context-stats";
 export {
   computeContextWindow,
   getThresholdState,
@@ -97,3 +97,7 @@ export {
   type RandomEventOpts,
   randomEventToEventRef,
 } from "./random-events";
+
+// ── Budget Advisor (FEAT-068) ────────────────────────────────
+export { suggestTrims, } from "./trim-suggestions";
+export type { TrimOptions, TrimSuggestion, } from "./trim-suggestions";
