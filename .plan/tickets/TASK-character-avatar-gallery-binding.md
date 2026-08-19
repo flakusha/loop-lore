@@ -3,7 +3,7 @@
 
 # TASK: Character Avatar Gallery Binding
 
-**Status:** 🟢 Visibility inheritance done; gallery tab + unlink pending
+**Status:** ✅ Complete
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-frontend-gallery, epic-character-core-system
@@ -63,10 +63,10 @@ When a user uploads a character avatar, the asset appears in the global gallery 
 - [x] Creating a character avatar produces an `asset_links` entry (`entity_type: "actor"`)
 - [x] Generating emotion avatars produces `asset_links` entries for each generated avatar
 - [x] Gallery page can filter by `entity_type=actor&entity_id=<actorId>` to show only that character's assets
-- [ ] Character detail modal has a "Gallery" tab showing linked assets with thumbnails
-- [ ] Unlinking an asset from a character removes the `asset_links` entry (asset itself preserved)
+- [x] Character detail modal has a "Gallery" tab showing linked assets with thumbnails
+- [x] Unlinking an asset from a character removes the `asset_links` entry (asset itself preserved)
 - [x] Character visibility is respected: private character's avatars not shown in public gallery
-- [ ] Existing avatar creation flow (upload, import, emotion gen) all produce correct links
+- [x] Existing avatar creation flow (upload, import, emotion gen) all produce correct links
 - [x] Tests pass for new linking behavior
 - [x] Typecheck clean
 
