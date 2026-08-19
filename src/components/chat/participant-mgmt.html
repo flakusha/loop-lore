@@ -90,8 +90,9 @@
     />
     <select class="form-input" x-model="_selectedAddRole" data-testid="participant-role-select">
       <option value="member">member</option>
-      <option value="moderator">moderator</option>
-      <option value="gm">gm</option>
+      <option value="owner">owner</option>
+      <option value="observer">observer</option>
+      <option value="guest">guest</option>
     </select>
     <div class="participant-add-list">
       <template x-for="a in filteredAvailableActors" :key="a.id">
