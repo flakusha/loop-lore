@@ -19,7 +19,7 @@ export { exportChatsToZip, } from "./chats";
 export { finalizeExportZip, } from "./finalize";
 export { addChecksum, } from "./helpers";
 export { exportLocationsToZip, } from "./locations";
-export { exportStoryToZip, } from "./story";
+export { buildWorldBundle, exportStoryToZip, } from "./story";
 export type {
   ExportContext,
   ExportItem,
