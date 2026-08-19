@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertActors, insertAssetLinks, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { formatSize, serveGalleryGrid, } from "./gallery";
 
 describe("views/gallery — formatSize", () => {
@@ -69,5 +69,72 @@ describe("views/gallery — serveGalleryGrid", () => {
     const html = await res.text();
     expect(html,).toContain("/api/assets/g1/thumb",);
     expect(html,).toContain("🎵",);
+  });
+});
+
+describe("views/gallery — visibility inheritance (G6)", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+    await insertUsers(db, "owner", "Owner", { id: "alice" as never, },);
+    await insertUsers(db, "bob", "Bob", { id: "bob" as never, },);
+
+    // alice's private character with a linked avatar asset
+    await insertActors(db, "Private Pix", {
+      id: "actor-pix" as never,
+      owner_id: "alice",
+      actor_type: "character" as never,
+      visibility: "private" as never,
+    },);
+    // alice's public character with a linked avatar asset
+    await insertActors(db, "Public Pug", {
+      id: "actor-pug" as never,
+      owner_id: "alice",
+      actor_type: "character" as never,
+      visibility: "public" as never,
+    },);
+
+    await insertAssets(db, "alice", "pix.png", "image/png", "image", 2048, "p/pix", {
+      id: "a-pix" as never,
+    },);
+    await insertAssets(db, "alice", "pug.png", "image/png", "image", 2048, "p/pug", {
+      id: "a-pug" as never,
+    },);
+    await insertAssetLinks(db, "a-pix", "actor", "actor-pix",);
+    await insertAssetLinks(db, "a-pug", "actor", "actor-pug",);
+  },);
+
+  afterAll(() => sqlite.close());
+
+  test("owner sees their private character's avatar", async () => {
+    const res = await serveGalleryGrid(db, undefined, "alice", "user",);
+    const html = await res.text();
+    expect(html,).toContain("asset-card-a-pix",);
+  });
+
+  test("other user does not see private character's avatar", async () => {
+    const res = await serveGalleryGrid(db, undefined, "bob", "user",);
+    const html = await res.text();
+    expect(html,).not.toContain("asset-card-a-pix",);
+  });
+
+  test("anonymous cannot see private character's avatar", async () => {
+    const res = await serveGalleryGrid(db, undefined, null, null,);
+    const html = await res.text();
+    expect(html,).not.toContain("asset-card-a-pix",);
+  });
+
+  test("public character's avatar visible to other users", async () => {
+    const res = await serveGalleryGrid(db, undefined, "bob", "user",);
+    const html = await res.text();
+    expect(html,).toContain("asset-card-a-pug",);
+  });
+
+  test("admin sees private character's avatar", async () => {
+    const res = await serveGalleryGrid(db, undefined, "bob", "admin",);
+    const html = await res.text();
+    expect(html,).toContain("asset-card-a-pix",);
   });
 });
