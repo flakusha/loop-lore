@@ -8,7 +8,10 @@
   <div class="actions">
     <button
       class="btn btn-secondary"
-      x-on:click="window.showToast('info', 'Import feature coming soon')"
+      hx-get="/partials/worlds/import-modal"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('import-world-modal')"
       data-testid="import-world"
     >
       Import
