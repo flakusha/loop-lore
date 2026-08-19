@@ -35,7 +35,7 @@ function serveCharacterChatList(
   let content = loadView("character-chat-list",);
   if (!content) { return null; }
 
-  content = content.replace("{{characterSlug}}", () => slug,);
+  content = content.replaceAll("{{characterSlug}}", () => slug,);
   return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId, request, t,);
 }
 
@@ -79,7 +79,7 @@ async function serveWorldDetail(
   let content = loadView("world-detail",);
   if (!content) { return null; }
 
-  content = content.replace("{{worldId}}", () => worldId,);
+  content = content.replaceAll("{{worldId}}", () => worldId,);
   return respond(content, isHtmx, "World — Details", userId, sessionId, request, t,);
 }
 
@@ -98,7 +98,7 @@ async function serveWorldEdit(
   let content = loadView("world-edit",);
   if (!content) { return null; }
 
-  content = content.replace("{{worldId}}", () => worldId,);
+  content = content.replaceAll("{{worldId}}", () => worldId,);
   return respond(content, isHtmx, "Edit World", userId, sessionId, request, t,);
 }
 
@@ -130,7 +130,7 @@ async function serveCharacterEdit(
   let content = loadView("character-edit",);
   if (!content) { return null; }
 
-  content = content.replace("{{characterId}}", () => characterId,);
+  content = content.replaceAll("{{characterId}}", () => characterId,);
   return respond(content, isHtmx, "Edit Character", userId, sessionId, request, t,);
 }
 
