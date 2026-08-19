@@ -44,6 +44,13 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.setupScrollDetection();
     },);
     await this.loadAllReactions();
+    // Keep the budget advisor meter in sync with this chat's context state.
+    document.dispatchEvent(
+      new CustomEvent("chat-context-refresh", {
+        bubbles: true,
+        detail: { chatId: this.activeChat, },
+      },),
+    );
     // Keep the VN scene in sync with the freshly loaded messages.
     this.updateVnMode?.();
   },
