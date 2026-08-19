@@ -5,10 +5,15 @@ import type { Kysely, } from "kysely";
 import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
-import { formatSize, } from "./gallery";
+import { formatSize, inheritedHiddenAssetIds, } from "./gallery";
 import { escapeHtml, htmlResponse, } from "./layout";
 
-async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+async function serveGallerySearch(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+  actorId?: string | null,
+  actorRole?: string | null,
+): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const type = params.get("type",) ?? "all";
   const sort = params.get("sort",) ?? "name";
@@ -40,7 +45,18 @@ async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams,
 
   const assets = await qb.limit(200,).execute();
 
-  if (assets.length === 0) {
+  // G6 visibility inheritance — hide private-owner's character assets from non-owners
+  const ids = Array.from(assets, (a,) => a.id,);
+  const hidden = await inheritedHiddenAssetIds(database, ids, actorId ?? null, actorRole ?? null,);
+
+  const visible: (typeof assets)[number][] = [];
+  for (const asset of assets) {
+    if (!hidden.has(asset.id,)) {
+      visible.push(asset,);
+    }
+  }
+
+  if (visible.length === 0) {
     return htmlResponse(`<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
       <div class="icon">📁</div>
       <div class="title">No assets match your search</div>
@@ -66,7 +82,7 @@ async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams,
     }
   }
 
-  const cards = Array.from(assets, (a,) => {
+  const cards = Array.from(visible, (a,) => {
     const filename = escapeHtml(a.filename,);
     const size = formatSize(a.size_bytes,);
     return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
