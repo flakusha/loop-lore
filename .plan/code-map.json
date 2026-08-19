@@ -8167,6 +8167,12 @@
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
     }
   ],
+  "src/frontend/pages/characters-edit-form.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
   "src/frontend/pages/characters-proactive.ts": [
     {
       "kind": "ticket",
@@ -12165,6 +12171,18 @@
       "source": "docs/spec/character-spec.md"
     }
   ],
+  "src/routes/characters/create.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
+  "src/routes/characters/update.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
   "src/routes/chat-branches.ts": [
     {
       "kind": "ticket",
@@ -13607,10 +13625,20 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/routes/views/character-edit-form.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
   "src/routes/views/characters.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
   "src/routes/views/layout.ts": [
@@ -16525,6 +16553,12 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/validation/schemas/actors.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
   "src/validation/schemas/chat.ts": [
     {
       "kind": "ticket",
@@ -16543,6 +16577,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harmonize-quest-type-taxonomy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
   "src/validation/schemas/story.ts": [
