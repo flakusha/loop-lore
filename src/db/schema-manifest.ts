@@ -709,6 +709,10 @@ export const SCHEMA = new SchemaManifest()
     last_activated: col("text",),
     audience_scope: col("text",),
     world_id: col("text",),
+    key_type: col("text",),
+    key_groups: col("text",),
+    scan_depth: col("integer",),
+    activation_chance: col("real",),
   },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
@@ -1533,6 +1537,10 @@ export const SCHEMA = new SchemaManifest()
     cooldown_seconds: col("integer", { notNull: true, hasDefault: true, },),
     last_activated: col("text",),
     audience_scope: col("text",),
+    key_type: col("text",),
+    key_groups: col("text",),
+    scan_depth: col("integer",),
+    activation_chance: col("real",),
   },)
   .table("world_members", {
     world_id: col("text", { notNull: true, },),
