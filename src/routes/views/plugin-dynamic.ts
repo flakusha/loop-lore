@@ -23,13 +23,18 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     }, {
       response: { 200: SuccessResponse, },
     },)
-    .get("/dynamic/gallery/grid", async (ctx,) => {
+    .get("/dynamic/gallery/grid", async (ctx: any,) => {
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
       const url = new URL(ctx.request.url,);
-      return await serveGalleryGrid(database, url.searchParams,);
+      return await serveGalleryGrid(
+        database,
+        url.searchParams,
+        ctx.userId as string | null,
+        (ctx.userRole as string | null) ?? null,
+      );
     }, {
       response: { 200: SuccessResponse, },
     },)
@@ -43,13 +48,18 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     // HTMX search endpoints
-    .get("/dynamic/gallery/search", async (ctx,) => {
+    .get("/dynamic/gallery/search", async (ctx: any,) => {
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
       const url = new URL(ctx.request.url,);
-      return await serveGallerySearch(database, url.searchParams,);
+      return await serveGallerySearch(
+        database,
+        url.searchParams,
+        ctx.userId as string | null,
+        (ctx.userRole as string | null) ?? null,
+      );
     }, {
       response: { 200: SuccessResponse, },
     },)
