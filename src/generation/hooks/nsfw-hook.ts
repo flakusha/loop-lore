@@ -22,16 +22,6 @@ import type { HookContext, HookEventType, HookHandler, HookResult, } from "./typ
 
 import { detectNsfwLevel, detectNsfwWithLlm, } from "./nsfw-classifier";
 
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/**
- * NSFW Hook — Checks content against NSFW policy and age gates.
- *
- * Uses keyword detection to classify content NSFW level and gates
- * generation based on the character's nsfw_policy and the global NsfwConfig.
- * Writes moderation audit logs for blocked content.
- */
-
 export interface NsfwHookDeps {
   /** LLM rating runner; injectable for tests. Defaults to the AUX pipeline. */
   callAux: typeof callAux;

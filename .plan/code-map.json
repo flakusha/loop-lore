@@ -4651,6 +4651,52 @@
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     }
   ],
+  "src/db/enums-character/nsfw.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-game-mechanics.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-integration-gaps.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-encounter-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-fantasy-kink.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-intimacy-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-location-environment.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-pheromones-chemistry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-seduction-desire.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-skills-experience.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-species-mechanics.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
+    }
+  ],
   "src/db/enums-config.ts": [
     {
       "kind": "epic",
@@ -15218,6 +15264,10 @@
   "src/schemas/nsfw-rating.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-game-mechanics.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-nsfw-integration-gaps.md"
     },
     {
@@ -15227,6 +15277,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-schema.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
     },
     {
       "kind": "spec",
