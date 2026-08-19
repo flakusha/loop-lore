@@ -178,10 +178,10 @@ describe("chatParticipants", () => {
       const reload = mock(async () => {},);
       const state = buildCtx();
       state.loadParticipants = reload as unknown as ChatState["loadParticipants"];
-      await chatParticipants.addParticipant!.call(state, "a3", "moderator",);
+      await chatParticipants.addParticipant!.call(state, "a3", "guest",);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/participants",);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
-      expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ actorId: "a3", role: "moderator", },);
+      expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ actorId: "a3", role: "guest", },);
       expect(reload,).toHaveBeenCalled();
     });
 

@@ -58,6 +58,16 @@ export type { GroupTurnOrder, TurnOrderSlot, } from "./turn-order";
 // ── Participants ──────────────────────────────────────────────
 export { updateImpersonation, } from "./participants";
 
+// ── Party join/leave (C7 — group-chat VN party) ──────────────
+export {
+  joinParty,
+  leaveParty,
+  type PartyJoinParams,
+  type PartyJoinResult,
+  type PartyLeaveParams,
+  type PartyLeaveResult,
+} from "./party";
+
 // ── Messages ──────────────────────────────────────────────────
 export {
   getMessageVariants,
