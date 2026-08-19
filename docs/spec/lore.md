@@ -51,8 +51,12 @@ Two lore tables exist, both a "lorebook" of entries with selective activation:
 | `sort_order`       | int             | Ordering scaffold                                    |
 | `cooldown_seconds` | int             | Time before the same entry can fire again            |
 | `last_activated`   | text?           | When it last fired (cooldown bookkeeping)            |
+| `key_type`         | text?           | `"regex"` to activate via regex keys, else keyword    |
+| `key_groups`       | json?           | AND/OR activation groups (`string[][]`)               |
+| `scan_depth`       | int?            | Recent user messages to scan (default 1, max 10)      |
+| `activation_chance`| real?           | 0..1 stochastic activation for ambient lore           |
 
-Schema mirrors: `src/db/schema-story.ts` (`WorldLoreEntries`), migration `017_lorebook_cooldowns`.
+Schema mirrors: `src/db/schema-story.ts` (`WorldLoreEntries`), migrations `017_lorebook_cooldowns`, `050_lorebook_activation`.
 
 ### 1.2 `actor_lore_entries` (per-character book)
 
