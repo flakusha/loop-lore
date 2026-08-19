@@ -65,6 +65,19 @@ export interface ModelCapabilityEntry {
   notes: string | null;
 }
 
+/** A flat, deduplicated fine-tune candidate row (provider × model). */
+export interface FineTuneCandidate {
+  provider: string;
+  model: string;
+  paramSize: string | null;
+  contextWindow: number | null;
+  maxOutput: number | null;
+  modalities: string[];
+  thinking: boolean;
+  toolCalling: boolean;
+  ownedBy: string | null;
+}
+
 export interface ModelsState {
   providers: ProviderInfo[];
   providerModels: Record<string, ModelInfo[]>;
@@ -114,4 +127,7 @@ export interface ModelsState {
   saveCapabilityOverride(providerId: string, modelId: string, fields: Record<string, unknown>,): Promise<void>;
   clearCapabilityOverride(providerId: string, modelId: string,): Promise<void>;
   formatCtxWindow(val: number | null,): string;
+  trainingDispatchWired: boolean;
+  fineTuneCandidates(): FineTuneCandidate[];
+  fineTuneReadiness(c: FineTuneCandidate,): string;
 }
