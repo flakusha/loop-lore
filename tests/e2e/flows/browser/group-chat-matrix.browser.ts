@@ -146,4 +146,37 @@ describe("Group-chat matrix UI (C1)", () => {
       await page.close();
     }
   }, 60_000,);
+
+  test("assistant panel opens from the dedicated sidebar toggle (D1)", async () => {
+    const page = await ctx.openPage();
+    try {
+      await openGroupChat(page,);
+
+      // The dedicated Assistant toggle is present once a chat is active.
+      const toggle = page.locator("[data-testid='assistant-toggle']",);
+      await toggle.waitFor({ state: "attached", timeout: 10_000, },);
+
+      // Clicking it opens the unified panel on the Assistant tab.
+      await page.evaluate(() => {
+        document.querySelector("[data-testid='assistant-toggle']",)?.dispatchEvent(
+          new MouseEvent("click", { bubbles: true, },),
+        );
+      },);
+      await page.locator("[data-testid='gm-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
+      await page.locator("[data-testid='assistant-tab']",).waitFor({ state: "visible", timeout: 10_000, },);
+
+      // The command palette list populates inside the assistant surface.
+      await page.locator("[data-testid='assistant-command-help']",).waitFor({ state: "attached", timeout: 10_000, },);
+
+      // Toggling again closes the panel (toggle-aware behavior).
+      await page.evaluate(() => {
+        document.querySelector("[data-testid='assistant-toggle']",)?.dispatchEvent(
+          new MouseEvent("click", { bubbles: true, },),
+        );
+      },);
+      await page.locator("[data-testid='gm-panel']",).waitFor({ state: "hidden", timeout: 10_000, },);
+    } finally {
+      await page.close();
+    }
+  }, 60_000,);
 });
