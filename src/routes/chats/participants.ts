@@ -2,12 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { checkChatAccess, } from "../../chat/service";
-import type { ChatParticipantRole, } from "../../db/enums";
+import { checkChatAccess, joinParty, leaveParty, } from "../../chat/service";
+import { ChatParticipantRole, } from "../../db/enums";
 import { getLogger, type Logger, } from "../../logger";
 import { notifyChatInvite, } from "../../notifications/service";
 import { can, } from "../../users/permissions";
-import { ChatIdParams, ChatParticipantParams, ChatParticipantUpdateBody, } from "../../validation/schemas";
+import {
+  ChatIdParams,
+  ChatParticipantParams,
+  ChatParticipantRoleSchema,
+  ChatParticipantUpdateBody,
+} from "../../validation/schemas";
 import {
   HttpStatus,
   jsonCreated,
@@ -70,7 +75,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          const body = ctx.body as { actorId: string; role?: string };
+          const body = ctx.body as { actorId: string; role?: ChatParticipantRole };
 
           const chat = await database
             .selectFrom("chats",)
@@ -81,54 +86,57 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Chat not found",);
           }
 
-          const role = body.role ?? "member";
-          try {
-            await database
-              .insertInto("chat_participants",)
-              .values({ chat_id: id, actor_id: body.actorId, role_in_chat: role as ChatParticipantRole, },)
-              .execute();
-
-            // Distribute encryption keys if chat is encrypted
-            const chatRecord = await database
-              .selectFrom("chats",)
-              .select("encryption_level",)
-              .where("id", "=", id,)
-              .executeTakeFirst();
-
-            if (chatRecord?.encryption_level === "standard") {
-              try {
-                const { distributeKeysOnJoin, } = await import("../../crypto/key-distribution");
-                await distributeKeysOnJoin(database, id, body.actorId,);
-                log().info("Distributed encryption keys to new participant", {
-                  chatId: id,
-                  participantId: body.actorId,
-                },);
-              } catch (keyError) {
-                log().warn("Failed to distribute keys (non-fatal)", {
-                  chatId: id,
-                  participantId: body.actorId,
-                  error: String(keyError,),
-                },);
-              }
-            }
-
-            void notifyChatInvite(database, {
-              chatId: id,
-              invitedUserId: body.actorId,
-              inviterId: userId,
-            },)
-              // Notification failure is non-fatal — swallow.
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              .catch(() => {},);
-          } catch {
-            /* skip duplicate */
+          const result = await joinParty(database, {
+            chatId: id,
+            actorId: body.actorId,
+            role: body.role ?? ChatParticipantRole.Member,
+          },);
+          if ("code" in result) {
+            const status = result.code === "not_found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
+            return jsonError(result.message, status, result.code as never,);
           }
-          return jsonCreated({ id: body.actorId, },);
+
+          // Distribute encryption keys if chat is encrypted
+          const chatRecord = await database
+            .selectFrom("chats",)
+            .select("encryption_level",)
+            .where("id", "=", id,)
+            .executeTakeFirst();
+
+          if (chatRecord?.encryption_level === "standard") {
+            try {
+              const { distributeKeysOnJoin, } = await import("../../crypto/key-distribution");
+              await distributeKeysOnJoin(database, id, body.actorId,);
+              log().info("Distributed encryption keys to new participant", {
+                chatId: id,
+                participantId: body.actorId,
+              },);
+            } catch (keyError) {
+              log().warn("Failed to distribute keys (non-fatal)", {
+                chatId: id,
+                participantId: body.actorId,
+                error: String(keyError,),
+              },);
+            }
+          }
+
+          void notifyChatInvite(database, {
+            chatId: id,
+            invitedUserId: body.actorId,
+            inviterId: userId,
+          },)
+            // Notification failure is non-fatal — swallow.
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            .catch(() => {},);
+
+          return jsonCreated({ participant: result.participant, },);
         },
         {
           params: ChatIdParams,
-          // eslint-disable-next-line unicorn/max-nested-calls
-          body: t.Object({ actorId: t.String({ minLength: 1, },), role: t.Optional(t.String(),), },),
+          body: t.Object({
+            actorId: t.String({ minLength: 1, },),
+            role: t.Optional(ChatParticipantRoleSchema,),
+          },),
         },
       )
       .put(
@@ -186,11 +194,11 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Chat not found",);
           }
 
-          await database
-            .deleteFrom("chat_participants",)
-            .where("chat_id", "=", id,)
-            .where("actor_id", "=", actorId,)
-            .execute();
+          const result = await leaveParty(database, { chatId: id, actorId, },);
+          if ("code" in result) {
+            const status = result.code === "not_found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
+            return jsonError(result.message, status, result.code as never,);
+          }
 
           // Rotate encryption key on participant leave (forward secrecy)
           const chatRecord = await database
