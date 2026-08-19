@@ -3229,6 +3229,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
     }
   ],
   "src/components/chat/gm-panel.html": [
@@ -6853,6 +6857,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
     },
     {
       "kind": "ticket",
