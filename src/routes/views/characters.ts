@@ -71,6 +71,7 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
   const avatarRemoveBtn = actor.avatar_asset_id
     ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>'
     : "";
+  const contentRating = (actor.content_rating as string | null) ?? "sfw";
 
   return htmlResponse(buildEditFormHtml({
     name,
@@ -85,6 +86,7 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
     avatarId,
     avatarRemoveBtn,
     characterId,
+    contentRating,
   },),);
 }
 

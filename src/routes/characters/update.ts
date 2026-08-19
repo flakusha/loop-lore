@@ -106,6 +106,7 @@ function buildActorUpdates(
     systemPrompt,
     agentRole,
     avatarAssetId,
+    contentRating,
     personality,
     welcomeMessage,
     mesExample,
@@ -120,6 +121,7 @@ function buildActorUpdates(
   if (systemPrompt) { updates.system_prompt = systemPrompt; }
   if (agentRole !== undefined) { updates.agent_role = agentRole; }
   if (avatarAssetId !== undefined) { updates.avatar_asset_id = avatarAssetId; }
+  if (contentRating !== undefined) { updates.content_rating = contentRating; }
   if (personality) { updates.personality = personality; }
   if (welcomeMessage) { updates.welcome_message = welcomeMessage; }
   if (mesExample) { updates.mes_example = mesExample; }

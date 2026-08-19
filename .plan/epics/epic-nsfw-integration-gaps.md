@@ -259,11 +259,11 @@ interface DiseaseRisk {
   - Audit trail for consent decisions
   - Revocation mechanism
 
-- [ ] **NSFW Content Rating Enforcement**
-  - 5-tier rating enum enforcement
-  - Runtime enforcement at generation boundary
-  - Content filtering based on rating
-  - User preference override with warnings
+- [x] **NSFW Content Rating Enforcement**
+  - [x] 5-tier rating enum enforcement (`NSFWContentRating` + `ContentRatingSchema`)
+  - [x] Runtime enforcement at generation boundary (`NsfwHook` effective-limit)
+  - [x] Content filtering based on rating (`isRatingAllowed` + audit log)
+  - [x] User preference override with warnings (nsfw moderation prefs route + editor)
 
 ## Implementation Notes
 
