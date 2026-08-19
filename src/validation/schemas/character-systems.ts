@@ -160,6 +160,10 @@ export const AvatarResponse = t.Object({
   created_at: t.String(),
 },);
 
+export const ActorIdAssetIdParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  assetId: t.String({ format: "uuid", },),
+},);
 export const ActorIdAvatarIdParams = t.Object({
   actorId: t.String({ format: "uuid", },),
   avatarId: t.String({ format: "uuid", },),

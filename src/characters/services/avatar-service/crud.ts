@@ -3,7 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { linkAsset, } from "../../../assets/service";
+import { linkAsset, unlinkAsset, } from "../../../assets/service";
 import { AssetLinkEntity, } from "../../../db/enums-content";
 import type { DB, } from "../../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
@@ -146,8 +146,20 @@ export async function updateAvatar(
 
 /** Delete an avatar */
 export async function deleteAvatar(db: Kysely<DB>, avatarId: string,): Promise<void> {
+  const existing = await getAvatar(db, avatarId,);
   await db
     .deleteFrom("character_avatars",)
     .where("id", "=", avatarId,)
     .execute();
+
+  // Unlink the avatar's asset from its character actor so the gallery's
+  // entity filter no longer surfaces it. The asset itself is preserved.
+  if (existing) {
+    await unlinkAsset({
+      database: db,
+      assetId: existing.assetId,
+      entityType: AssetLinkEntity.Actor,
+      entityId: existing.actorId,
+    },);
+  }
 }
