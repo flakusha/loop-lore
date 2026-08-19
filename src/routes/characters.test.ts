@@ -73,6 +73,52 @@ describe("charactersRoutes", () => {
     expect(actor?.owner_id,).toBe(userId,);
   });
 
+  test("POST /api/actors persists content_rating, defaults to sfw", async () => {
+    const app = createApp(db, userId,);
+    const rated = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Rated", contentRating: "nsfw_intense", },),
+      },),
+    );
+    expect(rated.status,).toBe(201,);
+    const { id, } = (await rated.json()) as { id: string };
+    const stored = await db
+      .selectFrom("actors",)
+      .select("content_rating",)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+    expect(stored?.content_rating,).toBe("nsfw_intense",);
+
+    const unrated = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Unrated", },),
+      },),
+    );
+    const { id: id2, } = (await unrated.json()) as { id: string };
+    const stored2 = await db
+      .selectFrom("actors",)
+      .select("content_rating",)
+      .where("id", "=", id2,)
+      .executeTakeFirst();
+    expect(stored2?.content_rating,).toBe("sfw",);
+  });
+
+  test("POST /api/actors rejects invalid contentRating", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Bad Rating", contentRating: "extreme", },),
+      },),
+    );
+    expect(res.status,).toBe(422,);
+  });
+
   test("POST /api/actors returns 401 without userId", async () => {
     const app = new Elysia({ name: "test-noauth", },)
       .derive(() => ({ userId: null, userRole: null, }))
@@ -182,6 +228,33 @@ describe("charactersRoutes", () => {
 
     const actor = await db.selectFrom("actors",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(actor?.display_name,).toBe("New Name",);
+  });
+
+  test("PUT /api/actors/:id updates content_rating", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Rate Me", contentRating: "nsfw_mild", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ contentRating: "nsfw_extreme", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const stored = await db
+      .selectFrom("actors",)
+      .select("content_rating",)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+    expect(stored?.content_rating,).toBe("nsfw_extreme",);
   });
 
   test("PUT /api/actors/:id returns 404 for nonexistent", async () => {

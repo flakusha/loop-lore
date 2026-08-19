@@ -22,6 +22,8 @@ export interface EditFormValues {
   avatarId: string;
   avatarRemoveBtn: string;
   characterId: string;
+  /** 5-tier NSFW content rating (sfw | nsfw_mild | nsfw_moderate | nsfw_intense | nsfw_extreme). */
+  contentRating: string;
 }
 
 /** Collapsible Internal Traits section HTML */
@@ -129,6 +131,14 @@ export function buildEditFormHtml(v: EditFormValues,): string {
         <div class="form-group"><label class="form-label" for="edit-scenario">Scenario</label><textarea class="form-input form-textarea" id="edit-scenario" rows="3">${v.scenario}</textarea></div>
         <div class="form-group"><label class="form-label" for="edit-example">Example Messages</label><textarea class="form-input form-textarea" id="edit-example" rows="5">${v.mesExample}</textarea></div>
         <div class="form-group"><label class="form-label" for="edit-post-history">Post-History Instructions</label><textarea class="form-input form-textarea" id="edit-post-history" rows="4">${v.postHistory}</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-content-rating">Content Rating</label><select class="form-input" id="edit-content-rating">
+          <option value="sfw"${v.contentRating === "sfw" ? " selected" : ""}>SFW — Safe</option>
+          <option value="nsfw_mild"${v.contentRating === "nsfw_mild" ? " selected" : ""}>Mild</option>
+          <option value="nsfw_moderate"${v.contentRating === "nsfw_moderate" ? " selected" : ""}>Moderate</option>
+          <option value="nsfw_intense"${v.contentRating === "nsfw_intense" ? " selected" : ""}>Intense</option>
+          <option value="nsfw_extreme"${v.contentRating === "nsfw_extreme" ? " selected" : ""}>Extreme</option>
+        </select>
+        <p class="form-hint" style="color:var(--text-secondary)">Maximum explicit content this character may produce. Gated by your account&rsquo;s NSFW preference.</p></div>
         <input type="hidden" id="char-avatar-id" value="${v.avatarId}" />
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
