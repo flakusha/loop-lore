@@ -491,6 +491,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/assistant/commands/sfx.ts": [
@@ -2805,6 +2809,18 @@
       "source": ".plan/epics/epic-file-splitting.md"
     }
   ],
+  "src/chat/service/party.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
+    }
+  ],
+  "src/chat/service/party.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
+    }
+  ],
   "src/chat/service/templates.ts": [
     {
       "kind": "ticket",
@@ -2931,10 +2947,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/chat/types/config.ts": [
@@ -3281,6 +3293,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
+    }
+  ],
+  "src/components/chat/participant-mgmt.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/components/chat/pins-panel.html": [
@@ -4739,6 +4757,12 @@
       "source": "docs/spec/messages.md"
     }
   ],
+  "src/db/enums-core/actors.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
+    }
+  ],
   "src/db/enums-core/flags.ts": [
     {
       "kind": "epic",
@@ -4825,6 +4849,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
+    }
+  ],
+  "src/db/enums.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/db/enums.ts": [
@@ -6788,10 +6818,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-party-migration.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
@@ -6927,10 +6953,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-thinking-tag-context-prune.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-party-migration.md"
     },
     {
       "kind": "frontend",
@@ -8537,10 +8559,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/frontend/vn/dialogue-box.ts": [
@@ -8577,10 +8595,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-visual-novel-mode.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-party-migration.md"
     },
     {
       "kind": "ticket",
@@ -12388,10 +12402,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-party-migration.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
@@ -12431,6 +12441,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
+    }
+  ],
+  "src/routes/chats/participants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/routes/chats/templates.ts": [
@@ -16453,6 +16469,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/validation/schemas.ts": [
@@ -16581,6 +16601,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/validation/schemas/story.ts": [
