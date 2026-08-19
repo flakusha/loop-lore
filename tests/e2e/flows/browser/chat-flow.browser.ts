@@ -14,7 +14,8 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { seedAll, } from "../../helpers/seed";
+import { waitForAlpineState, } from "../../helpers/htmx-alpine";
+import { SEED, seedAll, } from "../../helpers/seed";
 
 let ctx: BrowserTestContext;
 
@@ -167,4 +168,73 @@ describe("Chat list panel", () => {
       await page.close();
     }
   });
+});
+
+describe("Chat gallery upload linkage", () => {
+  test("chat sidebar upload links the asset to the active chat", async () => {
+    const page = await ctx.browser.newPage();
+    try {
+      await gotoChat(page,);
+      // Select the seeded solo chat so activeChat is set and the sidebar's
+      // upload control (inside <template x-if="activeChat">) renders.
+      await page.evaluate(() => {
+        document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
+          new MouseEvent("click", { bubbles: true, },),
+        );
+      },);
+      const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
+        hasText: SEED.soloChat.name,
+      },).first();
+      await chatItem.waitFor({ state: "attached", timeout: 15_000, },);
+      await chatItem.click();
+      await waitForAlpineState(
+        page,
+        "[x-data='chatState()']",
+        (state,) => state.activeChat === SEED.soloChat.id,
+        10_000,
+      );
+
+      // The sidebar upload control must be a wired file input (replacing the
+      // previous htmx→#modal-container button, which never mounted in chat).
+      const input = page.locator("[data-testid='gallery-upload-input']",);
+      await input.waitFor({ state: "attached", timeout: 10_000, },);
+
+      // Register both expected response watchers BEFORE the file input fires,
+      // else the link POST (which follows the upload synchronously) races past.
+      const uploadRes = page.waitForResponse(
+        (res,) => {
+          const url = new URL(res.url(),);
+          return res.request().method() === "POST" && url.pathname === "/api/assets";
+        },
+        { timeout: 15_000, },
+      );
+      const linkRes = page.waitForResponse(
+        (res,) => {
+          const url = new URL(res.url(),);
+          return res.request().method() === "POST" && /^\/api\/assets\/[^/]+\/links$/.test(url.pathname,);
+        },
+        { timeout: 15_000, },
+      );
+
+      const png = Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "base64",
+      );
+      await input.setInputFiles({ name: "chat-upload.png", mimeType: "image/png", buffer: png, },);
+
+      const res = await uploadRes;
+      expect(res.status(), `upload should succeed (got ${res.status()})`,).toBeLessThan(400,);
+      const created = (await res.json()) as { id: string };
+      expect(created.id, "upload response should carry asset id",).toBeDefined();
+
+      // The upload must also create a chat→asset link (entity_type=chat) so
+      // the sidebar's loadGalleryAssets (entity_type=chat) shows it.
+      const links = await linkRes;
+      const linkBody = (await links.json()) as { id?: string };
+      expect(links.status(), `link should succeed (got ${links.status()})`,).toBeLessThan(400,);
+      expect(linkBody.id ?? created.id, "link should reference the uploaded asset",).toBe(created.id,);
+    } finally {
+      await page.close();
+    }
+  }, 45_000,);
 });
