@@ -3,7 +3,10 @@
 
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
-import { extractAuth, } from "../http-utils";
+import { buildWorldBundle, } from "../export-shared";
+import { prettyJson, } from "../export-shared/helpers";
+import { extractAuth, HttpStatus, jsonError, } from "../http-utils";
+import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 import {
   handleCreateWorld,
@@ -72,6 +75,39 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         detail: {
           summary: "Get world",
           description: "Get a world by ID with its locations.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .get(
+      `${prefix}/worlds/:worldId/export`,
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        const worldId = ctx.params.worldId as string;
+        const denied = await requireWorldOwner(database, worldId, userId, userRole,);
+        if (denied) { return denied; }
+        const bundle = await buildWorldBundle(database, worldId,);
+        if (!bundle) {
+          return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
+        }
+        const safeName = (bundle.world.name ?? worldId).replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
+        return new Response(prettyJson(bundle,), {
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Disposition": `attachment; filename="${safeName}.world.json"`,
+          },
+        },);
+      },
+      {
+        response: {
+          200: t.Any(),
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Export world",
+          description:
+            "Download a world (locations, lore, quests, states) as a round-trippable WorldBundle JSON, importable via POST /api/import/world. Owner only.",
           tags: ["Worlds",],
         },
       },

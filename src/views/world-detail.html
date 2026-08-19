@@ -16,6 +16,13 @@
       Refresh
     </button>
     <button
+      class="btn btn-secondary"
+      x-on:click="window.exportWorld('{{worldId}}')"
+      data-testid="export-world"
+    >
+      Export
+    </button>
+    <button
       class="btn btn-primary"
       hx-get="/partials/worlds/edit-modal?worldId={{worldId}}"
       hx-target="#modal-container"
