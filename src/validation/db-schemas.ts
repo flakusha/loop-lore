@@ -44,7 +44,7 @@ export const CancelSourceSchema = t.UnionEnum([
   "system",
 ],);
 export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
-export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer",],);
+export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer", "guest",],);
 export const ChatTypeSchema = t.UnionEnum(["direct", "group",],);
 export const ContentEncodingSchema = t.UnionEnum(["identity", "gzip", "zstd", "brotli",],);
 export const ContentIntensitySchema = t.UnionEnum(["vanilla", "mild", "moderate", "intense", "extreme",],);
