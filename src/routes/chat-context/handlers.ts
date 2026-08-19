@@ -5,11 +5,13 @@
  * Chat context — handler functions + body validation used by the facade routes.
  */
 import type { Kysely, } from "kysely";
+import { getContextWindowForModel, } from "../../admin/model-capabilities";
 import { computeContextWindow, estimateTokens, getThresholdState, } from "../../chat";
 import type { MessageRef, } from "../../chat";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { cancelGenerationByChat, } from "../../generation/cancellation-manager";
+import { DEFAULT_CONTEXT_WINDOW, } from "../../generation/context-window-config";
 import { isValidRegenStyle, type RegenStyle, } from "../../generation/smart-regen";
 import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
@@ -62,7 +64,7 @@ export async function handleGetContext(
   // Verify chat access
   const chat = await database
     .selectFrom("chats",)
-    .select("created_by",)
+    .select(["created_by", "context_max_tokens",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
@@ -79,14 +81,26 @@ export async function handleGetContext(
   // Fetch recent messages (last 100 for token counting)
   const messages = await database
     .selectFrom("messages",)
-    .select(["id", "role", "content", "created_at",],)
+    .select(["id", "role", "content", "created_at", "provider", "model_id",],)
     .where("chat_id", "=", chatId,)
     .orderBy("created_at", "desc",)
     .limit(100,)
     .execute();
 
-  // Determine max tokens from config or model
-  const maxTokens = 32_000; // Default; could be overridden per-chat/model
+  // Determine max tokens: per-chat override → model capability registry → default.
+  // The chat's active model is the provider/model recorded on its most recent
+  // generated message; the registry (auto-populated on provider rescan) supplies
+  // its context window size.
+  let maxTokens = chat.context_max_tokens ?? null;
+  if (maxTokens === null) {
+    const active = messages[0]; // most recent (desc order)
+    if (active?.provider && active?.model_id) {
+      maxTokens = await getContextWindowForModel(database, active.provider, active.model_id,);
+    }
+  }
+  if (maxTokens === null || maxTokens <= 0) {
+    maxTokens = DEFAULT_CONTEXT_WINDOW.maxContextTokens;
+  }
 
   const messageRefs: MessageRef[] = Array.from(messages, (m,) => ({
     messageId: m.id,
