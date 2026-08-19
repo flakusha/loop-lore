@@ -82,7 +82,10 @@ describe("Group-chat matrix UI (C1)", () => {
         new MouseEvent("click", { bubbles: true, },),
       );
     },);
-    await page.locator("[data-testid='participant-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
+    // The participant toggle opens the unified GM panel on the Story tab, whose
+    // turn-order + member list surface is the `participant-mgmt` component.
+    await page.locator("[data-testid='gm-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
+    await page.locator("[data-testid='participant-mgmt']",).waitFor({ state: "visible", timeout: 10_000, },);
   }
 
   test("turn-order indicator renders the AI companion as the next speaker", async () => {
