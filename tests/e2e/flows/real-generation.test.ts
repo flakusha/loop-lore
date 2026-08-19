@@ -30,6 +30,7 @@ function fmtMsg(msg: string | Record<string, unknown>,): string {
 
 /** Logger — falls back to console if app logger not yet initialized */
 const log: Logger = {
+  trace: () => {},
   debug: () => {},
   info(msg: string | Record<string, unknown>,) {
     console.warn(`[server-external-e2e] ${fmtMsg(msg,)}`,);
@@ -40,6 +41,7 @@ const log: Logger = {
   error(msg: string | Record<string, unknown>,) {
     console.error(`[server-external-e2e] ${fmtMsg(msg,)}`,);
   },
+  fatal: () => {},
   child: () => log,
   flush: async () => {},
   addTransport: () => {},
