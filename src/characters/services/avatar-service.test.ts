@@ -68,6 +68,18 @@ describe("AvatarService", () => {
         sortOrder: 0,
       },);
       expect(avatarId,).toBeDefined();
+
+      // AC-6: creating an avatar links the asset to the actor for gallery filtering
+      const links = await db
+        .selectFrom("asset_links",)
+        .select(["asset_id", "entity_type", "entity_id",],)
+        .where("asset_id", "=", testAssetId1,)
+        .where("entity_type", "=", "actor",)
+        .where("entity_id", "=", testActorId,)
+        .execute();
+      expect(links.length,).toBeGreaterThan(0,);
+      expect(links[0]!.entity_type,).toBe("actor",);
+      expect(links[0]!.entity_id,).toBe(testActorId,);
     });
   });
 
@@ -142,9 +154,30 @@ describe("AvatarService", () => {
       const avatarId = avatars[avatars.length - 1]?.id;
       if (!avatarId) { throw new Error("No avatar found",); }
 
+      const avatar = await avatarService.getAvatar(avatarId,);
+      expect(avatar,).toBeDefined();
+      const assetId = avatar!.assetId;
+      const actorId = avatar!.actorId;
+
       await avatarService.deleteAvatar(avatarId,);
       const deleted = await avatarService.getAvatar(avatarId,);
       expect(deleted,).toBeUndefined();
+
+      // AC-5: deleting an avatar unlinks the asset from the actor (asset preserved)
+      const links = await db
+        .selectFrom("asset_links",)
+        .select("asset_id",)
+        .where("asset_id", "=", assetId,)
+        .where("entity_type", "=", "actor",)
+        .where("entity_id", "=", actorId,)
+        .execute();
+      expect(links.length,).toBe(0,);
+      const asset = await db
+        .selectFrom("assets",)
+        .select("id",)
+        .where("id", "=", assetId,)
+        .executeTakeFirst();
+      expect(asset,).toBeDefined();
     });
   });
 

@@ -62,6 +62,7 @@ declare global {
   var adminPage: any;
   var filterCharacters: () => void;
   var selectCharacterCard: (id: string,) => Promise<void>;
+  var unlinkCharacterAsset: (btn: HTMLElement,) => Promise<void>;
   var startChatFromChar: (btn: HTMLElement,) => Promise<void>;
   var editCharacter: (btn: HTMLElement,) => void;
   var deleteCharacter: (btn: HTMLElement,) => Promise<void>;
