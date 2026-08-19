@@ -1,6 +1,6 @@
 ---
 title: "FEAT-068: Token budget advisor"
-status: open
+status: done
 priority: medium
 labels: [feature, prompt-system, frontend]
 epic: epic-chat-context-optimization
@@ -30,12 +30,12 @@ Users have no visibility into how their context budget is allocated across syste
 
 ## Acceptance Criteria
 
-- [ ] **Per-section token breakdown** — API response includes token counts per section: system prompt, lore, memories, character card, conversation history, available budget
-- [ ] **Budget visualization** — stacked bar chart in chat header showing section allocation (color-coded: system=blue, lore=green, memories=yellow, history=gray, available=white)
-- [ ] **Trim suggestions** — when context is >80% full, advisory panel shows which sections are largest and suggests actions ("Lore entries using 2400 tokens — consider pinning fewer entries")
-- [ ] **Section cost in memory panel** — memory panel shows per-entry token cost alongside the total budget meter
-- [ ] **Model-aware budget** — uses FEAT-067 registry for accurate context window size instead of hardcoded 32000
-- [ ] Unit tests for per-section counting and trim suggestion logic
+- [x] **Per-section token breakdown** — API response includes token counts per section: system prompt, lore, memories, character card, conversation history, available budget
+- [x] **Budget visualization** — stacked bar chart in chat header showing section allocation (color-coded: system=blue, lore=green, memories=yellow, history=gray, available=white)
+- [x] **Trim suggestions** — when context is >80% full, advisory panel shows which sections are largest and suggests actions ("Lore entries using 2400 tokens — consider pinning fewer entries")
+- [x] **Section cost in memory panel** — memory panel shows per-entry token cost alongside the total budget meter
+- [x] **Model-aware budget** — uses FEAT-067 registry for accurate context window size instead of hardcoded 32000
+- [x] Unit tests for per-section counting and trim suggestion logic
 
 ## Implementation Notes
 
