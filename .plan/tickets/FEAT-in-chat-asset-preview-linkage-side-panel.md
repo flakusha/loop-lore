@@ -1,6 +1,6 @@
 # FEAT: In-chat asset preview + linkage side panel
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — in-chat asset preview + linkage side panel shipped in dev: `src/components/chat/gallery-sidebar.html` + `media-preview-modal.html` (toggle `showGallery`), `src/frontend/alpine/chat-utils/gallery.ts` (`openAssetPreview`/`loadGalleryAssets`/`getMediaStyle`), message attachments via `pendingAssets`→`sendMessage` (chat-send.ts + chat-editing.ts), upload→chat entity linkage (`entity_type=chat`). Git issue `fef7e3b` closed 2026-08-19.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-asset-support-expansion
@@ -13,9 +13,9 @@ Item 7 (priority-release-010 row 7; P3 #12 / P5). Gallery assets viewable/linkab
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — sidebar + preview modal + message attachments + chat linkage shipped
+- [x] Tests passing — chat-utils/chat-editing unit green
+- [x] Documentation updated — ticket notes
 
 ## Worktree & Baseline (2026-08-16)
 
