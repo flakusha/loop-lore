@@ -3,7 +3,7 @@
 
 # EPIC: Frontend Gallery & Media Viewer
 
-**Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance remaining
+**Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -44,7 +44,7 @@ Frontend implementation of the Gallery & Media Viewer for the loop-lore web UI. 
 
 - [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md) — ✅ Done — gallery grid, preview modal, upload dialog, all three media types
 - [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — ✅ Done — hash-based duplicate detection + frontend toast
-- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance pending
+- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance (G6) done
 
 ## File Structure (verified 2026-08-01)
 
