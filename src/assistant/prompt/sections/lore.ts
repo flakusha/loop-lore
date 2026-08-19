@@ -3,29 +3,38 @@
 
 /**
  * Lore section — actor and world lore entries. Constant and non-selective
- * entries are always included; selective entries only when one of their keys
- * appears in the most recent user message. Entries with active cooldowns
- * are excluded until the cooldown expires. Entries with an audience scope
+ * entries are always included; selective entries activate based on their
+ * activation condition:
+ *
+ *   - default keyword keys: when one of `keys` appears in the scanned window,
+ *   - `key_type === "regex"`: when any of `keys` (compiled as regex) matches
+ *     the scanned conversation text,
+ *   - `key_groups`: AND/OR keyword groups (inner array = AND, outer = OR).
+ *
+ * `scan_depth` controls how many recent user messages are scanned (default 1,
+ * max 10). `activation_chance` (0..1) stochastically gates an otherwise-relevant
+ * entry for ambient world-building. Entries with active cooldowns are excluded
+ * until the cooldown expires. Entries with an audience scope
  * (race/profession/location) are filtered by the speaking actor's identity.
+ * Included entries are ordered by `priority` (high first) then insertion order.
  */
-import type { Kysely, } from "kysely";
-import type { DB, } from "../../../db/schema";
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
 import type { ActorIdentity, } from "../../lore/audience";
 import { wrapSection, } from "../../xml-utils";
-import { parseKeywords, recentUserWords, } from "../keywords";
+import { recentConversation, } from "../keywords";
 import type { SectionBuilder, } from "../types";
-
-/** Wealth of an actor's identity needed for audience scoping. */
-interface LoreIdentityRow {
-  trait_name: string;
-  trait_value: string;
-}
+import {
+  type ActivationEntry,
+  clampScanDepth,
+  matchesSelectiveKeys,
+  MAX_SCAN_DEPTH,
+  passesActivationChance,
+} from "./lore-activation";
+import { resolveActorIdentity, } from "./lore-identity";
 
 /** Row shape returned by the lore queries (used by relevance + audience filtering). */
-interface LoreRow {
+interface LoreRow extends ActivationEntry {
   content: string;
-  keys: unknown;
   position: unknown;
   constant: number | boolean;
   selective: number | boolean;
@@ -33,6 +42,7 @@ interface LoreRow {
   last_activated: string | null;
   id: string;
   audience_scope: string | null;
+  priority: number;
 }
 
 /** Check if a lore entry's cooldown has expired. */
@@ -45,51 +55,6 @@ function isCooldownExpired(
   const lastActivatedMs = new Date(lastActivated,).getTime();
   const cooldownMs = cooldownSeconds * 1000;
   return Date.now() - lastActivatedMs >= cooldownMs;
-}
-
-/**
- * Resolve the speaking actor's identity (race + profession traits) for lore
- * audience scoping. Race = permanent trait `species`; profession = permanent
- * traits named `profession`/`class` plus `professions.discipline` rows.
- */
-async function resolveActorIdentity(
-  db: Kysely<DB>,
-  actorId: string,
-  worldId: string | null,
-): Promise<ActorIdentity> {
-  const identityResults = await Promise.allSettled([
-    db
-      .selectFrom("character_permanent_traits",)
-      .select(["trait_name", "trait_value",],)
-      .where("actor_id", "=", actorId,)
-      .execute(),
-    worldId
-      ? db
-        .selectFrom("professions",)
-        .select("discipline",)
-        .where("actor_id", "=", actorId,)
-        .where("world_id", "=", worldId,)
-        .execute()
-      : Promise.resolve([] as { discipline: string }[],),
-  ],);
-  const traitMetaResult = identityResults[0];
-  const professionResult = identityResults[1];
-  if (traitMetaResult.status === "rejected") { throw traitMetaResult.reason; }
-  if (professionResult.status === "rejected") { throw professionResult.reason; }
-  const traits = traitMetaResult.value as LoreIdentityRow[];
-  const professionRows = professionResult.value;
-  const species = traits.find((t,) => t.trait_name === "species")?.trait_value ?? "human";
-  const professions = new Set<string>();
-  for (const t of traits) {
-    if (t.trait_name === "profession" || t.trait_name === "class") {
-      professions.add(t.trait_value,);
-    }
-  }
-  for (const row of professionRows) {
-    professions.add(row.discipline,);
-  }
-
-  return { race: species, professions: [...professions,], locationId: null, };
 }
 
 export const loreSection: SectionBuilder = {
@@ -112,6 +77,11 @@ export const loreSection: SectionBuilder = {
           "last_activated",
           "id",
           "audience_scope",
+          "key_type",
+          "key_groups",
+          "scan_depth",
+          "activation_chance",
+          "priority",
         ],)
         .where("actor_id", "=", actor.id,)
         .where("enabled", "=", "enabled",)
@@ -138,6 +108,11 @@ export const loreSection: SectionBuilder = {
             "last_activated",
             "id",
             "audience_scope",
+            "key_type",
+            "key_groups",
+            "scan_depth",
+            "activation_chance",
+            "priority",
           ],)
           .where("world_id", "=", chat.world_id,)
           .where("enabled", "=", "enabled",)
@@ -158,9 +133,30 @@ export const loreSection: SectionBuilder = {
 
     const identityWithLocation: ActorIdentity = { ...identity, locationId, };
 
-    const contextWords = params.selectiveKeys
-      ? new Set(Array.from(params.selectiveKeys, (k,) => k.toLowerCase(),),)
-      : await recentUserWords(ctx.db, params.chatId,);
+    const allEntries: LoreRow[] = [...actorLore, ...worldLore,];
+
+    // Compile the conversation scan window once. When selective keys are given
+    // explicitly (e.g. from the UI), activate against those instead of the DB.
+    // Otherwise scan up to the deepest scan_depth among entries that need a scan
+    // (capped), deriving per-entry word/text slices from `recentMessages`.
+    const needsScan = allEntries.some(
+      (e,) => !params.selectiveKeys && e.selective && !e.constant,
+    );
+    let maxDepth = 1;
+    if (needsScan) {
+      let deepest = 1;
+      for (const entry of allEntries) {
+        deepest = Math.max(deepest, clampScanDepth(entry.scan_depth,),);
+      }
+      maxDepth = Math.min(deepest, MAX_SCAN_DEPTH,);
+    }
+    // Conversation scan window, most recent first. When selective keys are given
+    // explicitly (UI override) they stand in for the conversation.
+    const scanned = params.selectiveKeys ? null : await recentConversation(ctx.db, params.chatId, maxDepth,);
+    const recentMessages = params.selectiveKeys
+      ? Array.from(params.selectiveKeys,)
+      : scanned!.text.split("\n",);
+
     const isRelevant = (entry: LoreRow,): boolean => {
       // Audience gate first — forbidden lore is never considered for activation.
       if (!isLoreVisibleTo({ audienceScope: parseLoreScope(entry.audience_scope,), }, identityWithLocation,)) {
@@ -170,17 +166,28 @@ export const loreSection: SectionBuilder = {
       if (!isCooldownExpired(entry.last_activated, entry.cooldown_seconds,)) {
         return false;
       }
-      if (entry.constant) { return true; }
-      if (!entry.selective) { return true; }
-      const keys = parseKeywords(entry.keys,);
-      if (keys.length === 0) { return true; }
-      return keys.some((k,) => contextWords.has(k.toLowerCase(),));
+      if (entry.constant) { return passesActivationChance(entry.activation_chance,); }
+      if (!entry.selective) { return passesActivationChance(entry.activation_chance,); }
+
+      // Selective: build the per-entry scan window (first `scanDepth` messages).
+      const depth = clampScanDepth(entry.scan_depth,);
+      const window = recentMessages.slice(0, depth,).join("\n",);
+      const words = new Set<string>();
+      for (const w of window.toLowerCase().split(/[^a-z0-9]+/i,)) {
+        if (w) { words.add(w,); }
+      }
+      if (!matchesSelectiveKeys(entry, words, window,)) { return false; }
+      return passesActivationChance(entry.activation_chance,);
     };
 
     const relevantEntries: LoreRow[] = [];
-    for (const entry of [...actorLore, ...worldLore,]) {
+    for (const entry of allEntries) {
       if (isRelevant(entry,)) { relevantEntries.push(entry,); }
     }
+
+    // Priority weighting — high-priority entries sort before low-priority ones;
+    // ties keep stable insertion order (position asc from the query).
+    relevantEntries.sort((a, b,) => b.priority - a.priority);
 
     // Update last_activated for entries that were included
     const now = new Date().toISOString();
