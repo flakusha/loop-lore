@@ -1166,7 +1166,8 @@
     "tags": [],
     "title": "# FEAT-2026-012: Signed URLs for asset downloads",
     "type": "FEAT",
-    "git_issue": "afa47aa"
+    "git_issue": "afa47aa",
+    "status": "done"
   },
   "FEAT-2026-013": {
     "epic": "",
@@ -5810,7 +5811,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-creation-wizard-backend-draft-confirm-flow.md",
-    "git_issue": "6f1e2f6"
+    "git_issue": "6f1e2f6",
+    "status": "done"
   },
   "TASK-CREATION-WIZARD-FRONTEND-PREVIEW-EDIT-CONFIRM-UI": {
     "hash": "5040cfd",
@@ -5822,7 +5824,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-creation-wizard-frontend-preview-edit-confirm-ui.md",
-    "git_issue": "5040cfd"
+    "git_issue": "5040cfd",
+    "status": "done"
   },
   "TASK-CREATIVE-STUDIO": {
     "epic": "",
@@ -10064,6 +10067,17 @@
     "type": "TASK",
     "git_issue": "b84e8d8"
   },
+  "TASK-PRECOMPILED-TEMPLATES-INJECTION": {
+    "hash": "pending",
+    "extid": "TASK-PRECOMPILED-TEMPLATES-INJECTION",
+    "type": "TASK",
+    "title": "Pre-compiled Templates Message/Context Injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
+  },
   "TASK-PROACTIVE-MESSAGING": {
     "epic": "",
     "extid": "TASK-PROACTIVE-MESSAGING",
@@ -11189,7 +11203,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Signed URLs for Asset Downloads",
     "type": "TASK"

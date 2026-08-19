@@ -6,8 +6,9 @@
  */
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../../admin/model-capabilities";
-import { computeContextWindow, estimateTokens, getThresholdState, } from "../../chat";
+import { computeContextWindow, estimateTokens, } from "../../chat";
 import type { MessageRef, } from "../../chat";
+import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { cancelGenerationByChat, } from "../../generation/cancellation-manager";
@@ -22,6 +23,7 @@ import {
   jsonResponse,
   unauthorizedResponse,
 } from "../http-utils";
+import { computeBudgetResult, } from "./context-budget";
 
 /** Lazy logger — resolved at request time, not module load. */
 function log() {
@@ -53,13 +55,15 @@ export function validateRegenerateBody(
  * GET /api/chats/:id/context
  *
  * Returns the current context window state for a chat, including
- * token usage, percentage, and status level.
+ * token usage, percentage, status level, per-section breakdown,
+ * available budget, and trim suggestions (FEAT-068 budget advisor).
  */
 export async function handleGetContext(
   database: Kysely<DB>,
   chatId: string,
   userId: string | null,
   userRole: string | null,
+  config: Config,
 ): Promise<Response> {
   // Verify chat access
   const chat = await database
@@ -78,50 +82,71 @@ export async function handleGetContext(
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
 
-  // Fetch recent messages (last 100 for token counting)
-  const messages = await database
+  // Resolve the context budget: per-chat override → model capability registry
+  // → default. The chat's active model is the provider/model recorded on its
+  // most recent generated message; the registry (auto-populated on provider
+  // rescan) supplies its context window size.
+  let maxTokens = chat.context_max_tokens ?? null;
+  const activeMessage = await database
     .selectFrom("messages",)
-    .select(["id", "role", "content", "created_at", "provider", "model_id",],)
+    .select(["provider", "model_id",],)
     .where("chat_id", "=", chatId,)
     .orderBy("created_at", "desc",)
-    .limit(100,)
-    .execute();
-
-  // Determine max tokens: per-chat override → model capability registry → default.
-  // The chat's active model is the provider/model recorded on its most recent
-  // generated message; the registry (auto-populated on provider rescan) supplies
-  // its context window size.
-  let maxTokens = chat.context_max_tokens ?? null;
-  if (maxTokens === null) {
-    const active = messages[0]; // most recent (desc order)
-    if (active?.provider && active?.model_id) {
-      maxTokens = await getContextWindowForModel(database, active.provider, active.model_id,);
-    }
+    .limit(1,)
+    .executeTakeFirst();
+  if (maxTokens === null && activeMessage?.provider && activeMessage.model_id) {
+    maxTokens = await getContextWindowForModel(
+      database,
+      activeMessage.provider,
+      activeMessage.model_id,
+    );
   }
   if (maxTokens === null || maxTokens <= 0) {
     maxTokens = DEFAULT_CONTEXT_WINDOW.maxContextTokens;
   }
 
-  const messageRefs: MessageRef[] = Array.from(messages, (m,) => ({
+  // Derive the actor for prompt assembly: an actor participant that is not the
+  // requesting user (the user is the persona/assistant side of the chat).
+  let actorId: string | null = null;
+  if (userId) {
+    const participant = await database
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "!=", userId,)
+      .limit(1,)
+      .executeTakeFirst();
+    actorId = participant?.actor_id ?? null;
+  }
+
+  // Message-based used-token estimate (fallback when prompt assembly fails).
+  const recent = await database
+    .selectFrom("messages",)
+    .select(["id", "role", "content", "created_at",],)
+    .where("chat_id", "=", chatId,)
+    .orderBy("created_at", "desc",)
+    .limit(100,)
+    .execute();
+  const messageRefs: MessageRef[] = Array.from(recent, (m,) => ({
     messageId: m.id,
     role: m.role,
     content: m.content,
     tokenCount: estimateTokens(m.content,),
     createdAt: m.created_at,
   }),);
+  const fallbackUsedTokens = computeContextWindow(messageRefs, maxTokens,).totalTokens;
 
-  const result = computeContextWindow(messageRefs, maxTokens,);
-  const threshold = getThresholdState(result.usagePercentage,);
-
-  return jsonResponse({
+  const result = await computeBudgetResult(
+    database,
+    config,
     chatId,
-    currentTokens: result.totalTokens,
-    maxTokens: result.maxTokens,
-    percentage: result.usagePercentage,
-    status: threshold,
-    threshold,
-    willTrim: result.willTrim,
-  },);
+    actorId,
+    userId,
+    maxTokens,
+    fallbackUsedTokens,
+  );
+
+  return jsonResponse({ chatId, ...result, },);
 }
 export async function handleRegenerateMessage(
   database: Kysely<DB>,
