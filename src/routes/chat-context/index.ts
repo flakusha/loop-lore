@@ -26,7 +26,7 @@ import type { AuthContext, HandlerOpts, } from "./types";
 export type { HandlerOpts, } from "./types";
 
 export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
-  const { database, } = opts;
+  const { database, config, } = opts;
 
   const regenerateBodySchema = t.Object({
     chatId: t.String(),
@@ -40,7 +40,7 @@ export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
       async (ctx,) => {
         const { id: chatId, } = ctx.params;
         const auth = ctx as unknown as AuthContext;
-        return handleGetContext(database, chatId, auth.userId, auth.userRole,);
+        return handleGetContext(database, chatId, auth.userId, auth.userRole, config,);
       },
       {
         params: ChatIdParams,
