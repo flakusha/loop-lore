@@ -137,6 +137,17 @@
     </button>
     <button
       class="btn-icon"
+      :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'assistant' ? 'gm-toggle-active' : ''"
+      @click="window.openGmAssistantTab('assistant')"
+      x-show="$store.ui.hasActiveChat"
+      title="Assistant"
+      aria-label="Toggle Assistant Panel"
+      data-testid="assistant-toggle"
+    >
+      🤖
+    </button>
+    <button
+      class="btn-icon"
       :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'quests' ? 'gm-toggle-active' : ''"
       @click="window.openGmAssistantTab('quests')"
       x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.mode === 'story'"
