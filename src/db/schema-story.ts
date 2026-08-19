@@ -300,6 +300,10 @@ export interface ActorLoreEntries {
   last_activated: string | null;
   audience_scope: string | null;
   world_id: string | null;
+  key_type: string | null;
+  key_groups: string | null;
+  scan_depth: number | null;
+  activation_chance: number | null;
 }
 export interface WorldLoreEntries {
   id: Generated<string>;
@@ -322,4 +326,8 @@ export interface WorldLoreEntries {
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
   audience_scope: string | null;
+  key_type: string | null;
+  key_groups: string | null;
+  scan_depth: number | null;
+  activation_chance: number | null;
 }

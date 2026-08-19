@@ -516,6 +516,10 @@ export const WorldLoreEntriesSchema = t.Object({
   cooldown_seconds: t.Optional(t.Number(),),
   last_activated: t.Optional(t.String(),),
   audience_scope: t.Optional(t.String(),),
+  key_type: t.Optional(t.String(),),
+  key_groups: t.Optional(t.String(),),
+  scan_depth: t.Optional(t.Number(),),
+  activation_chance: t.Optional(t.Number(),),
 },);
 
 // ── chats ────────────────────────────────────────────
@@ -711,6 +715,10 @@ export const ActorLoreEntriesSchema = t.Object({
   last_activated: t.Optional(t.String(),),
   audience_scope: t.Optional(t.String(),),
   world_id: t.Optional(t.String(),),
+  key_type: t.Optional(t.String(),),
+  key_groups: t.Optional(t.String(),),
+  scan_depth: t.Optional(t.Number(),),
+  activation_chance: t.Optional(t.Number(),),
 },);
 
 // ── system_config ────────────────────────────────────────────
