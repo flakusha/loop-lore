@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { t, } from "../i18n";
+import { jsonBody, } from "../json";
 import type { ChatState, } from "../types";
 
 export type ChatUtilsGallery = Partial<ChatState> & ThisType<ChatState>;
@@ -86,6 +87,63 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     } catch {
       this.galleryAssets = [];
     }
+  },
+
+  /**
+   * Upload file(s) and link them to the active chat, then refresh the
+   * in-chat gallery list. Mirrors handleAttach's upload path but additionally
+   * creates the chat→asset link so the asset shows up in the sidebar.
+   * @param event The change event from the sidebar's file input.
+   */
+  async uploadChatAssets(event: Event,) {
+    const activeChat = this.activeChat;
+    if (!activeChat) {
+      this.$dispatch?.(`show-toast`, { type: "warning", message: t("toasts.selectChatFirst",), },);
+      return;
+    }
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    if (!files?.length) { return; }
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file,);
+      formData.append("alt_text", file.name,);
+      try {
+        const res = await apiFetch("/api/assets", { method: "POST", body: formData, },);
+        let assetId: string | null = null;
+        if (res.ok) {
+          const asset = await res.json();
+          assetId = asset.id;
+        } else {
+          const err = await res.json();
+          this.$dispatch?.(`show-toast`, {
+            type: "error",
+            message: err?.error || t("toasts.failedUpload", { filename: file.name, },),
+          },);
+        }
+        if (assetId) {
+          const linkRes = await apiFetch(`/api/assets/${assetId}/links`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: jsonBody({ entityType: "chat", entityId: activeChat, label: "scene", },),
+          },);
+          if (linkRes.ok) {
+            this.$dispatch?.(`show-toast`, {
+              type: "success",
+              message: t("toasts.assetUploaded",),
+            },);
+          }
+        }
+      } catch {
+        this.$dispatch?.(`show-toast`, {
+          type: "error",
+          message: t("toasts.networkErrorUploading", { filename: file.name, },),
+        },);
+      }
+    }
+    input.value = "";
+    await this.loadGalleryAssets();
   },
 
   async loadCharacterInfo() {

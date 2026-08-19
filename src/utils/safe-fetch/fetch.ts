@@ -48,9 +48,23 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
  * other values are JSON-stringified. Returns undefined for null bodies or
  * when stringification fails.
  */
-function serializeBody(body: unknown,): string | undefined {
+/** Serialize a request body. Native body types (FormData, Blob, stream,
+ * URLSearchParams, ArrayBuffer, view, string) pass through untouched so
+ * multipart/uploads work; plain objects/arrays become JSON. */
+function serializeBody(body: unknown,): BodyInit | undefined {
   if (body === undefined || body === null) { return undefined; }
-  if (typeof body === "string") { return body; }
+  if (
+    typeof body === "string" ||
+    body instanceof FormData ||
+    body instanceof Blob ||
+    body instanceof URLSearchParams ||
+    body instanceof ArrayBuffer ||
+    ArrayBuffer.isView(body,)
+  ) {
+    // ArrayBuffer.isView narrows to ArrayBufferView<ArrayBufferLike>, which the
+    // DOM BodyInit union does not accept; the value is a valid body at runtime.
+    return body as unknown as BodyInit;
+  }
   const jsonResult = safeJsonStringify(body,);
   return jsonResult.ok ? jsonResult.value : undefined;
 }
@@ -59,14 +73,17 @@ function serializeBody(body: unknown,): string | undefined {
 function buildRequestHeaders(
   provided: HeadersInit | undefined,
   auth: FetchAuth | undefined,
-  serializedBody: string | undefined,
+  serializedBody: string | BodyInit | undefined,
 ): Headers {
   const headers = new Headers(provided ?? {},);
   const authHeaders = buildAuthHeaders(auth,);
   for (const [key, value,] of Object.entries(authHeaders,)) {
     headers.set(key, value,);
   }
-  if (serializedBody && !headers.has("Content-Type",)) {
+  // Only a JSON-stringified body should carry the JSON content-type. Native
+  // bodies (FormData/Blob) already set their own multipart/content-type and
+  // must not be overridden.
+  if (typeof serializedBody === "string" && !headers.has("Content-Type",)) {
     headers.set("Content-Type", "application/json",);
   }
   return headers;
