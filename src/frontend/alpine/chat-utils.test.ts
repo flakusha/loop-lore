@@ -2,8 +2,9 @@
  * Tests for frontend/alpine/chat-utils.ts — chat utility functions
  */
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { chatUtils, } from "./chat-utils";
+import type { ChatState, } from "./types";
 
 describe("chatUtils", () => {
   describe("formatTime", () => {
@@ -88,6 +89,87 @@ describe("chatUtils", () => {
     test("returns 50% width for two images", () => {
       const result = (chatUtils as any).getMediaStyle({ type: "image", width: 800, height: 600, }, 2,);
       expect(result.width,).toBe("calc(50% - 6px)",);
+    });
+  });
+
+  describe("uploadChatAssets", () => {
+    const originalApiFetch = globalThis.apiFetch;
+    const fileInput = (name: string,) => {
+      const evt = {
+        target: { files: [new File(["x",], name,),], value: "C:\\fakepath", },
+      };
+      return evt as unknown as Event;
+    };
+
+    interface GalleryState {
+      activeChat: string;
+      galleryAssets: Array<{ id: string }>;
+      loadGalleryAssets(): Promise<void>;
+    }
+
+    afterEach(() => {
+      globalThis.apiFetch = originalApiFetch;
+    },);
+
+    test("uploads a file, links it to the active chat, and reloads gallery", async () => {
+      const calls: Array<{ url: string; method?: string }> = [];
+      globalThis.apiFetch = async (url: string, opts?: RequestInit,) => {
+        calls.push({ url, method: opts?.method, },);
+        if (url === "/api/assets" && opts?.method === "POST") {
+          return Response.json({ id: "a1", }, { status: 201, },);
+        }
+        if (url === "/api/assets/a1/links" && opts?.method === "POST") {
+          return Response.json({ id: "a1", }, { status: 201, },);
+        }
+        if (url.startsWith("/api/assets?entity_type=chat",)) {
+          return Response.json({ data: [{ id: "a1", },], }, { status: 200, },);
+        }
+        return Response.json({ error: "not found", }, { status: 404, },);
+      };
+
+      const state: GalleryState = {
+        activeChat: "chat-1",
+        galleryAssets: [],
+        loadGalleryAssets: async function(this: GalleryState,) {
+          const res = await globalThis.apiFetch(
+            `/api/assets?entity_type=chat&entity_id=${this.activeChat}&pageSize=200`,
+          );
+          const data = await res.json();
+          this.galleryAssets = data.data || [];
+        },
+      };
+
+      // state is a minimal stand-in for the full ChatState `this`; the cast is
+      // unchecked + scoped to this test call.
+      const self = state as unknown as ChatState;
+      await chatUtils.uploadChatAssets!.call(self, fileInput("img.png",),);
+
+      expect(calls.filter((c,) => c.method === "POST").length,).toBe(2,);
+      expect(calls[0]?.url,).toBe("/api/assets",);
+      expect(calls[1]?.url,).toBe("/api/assets/a1/links",);
+      expect(state.galleryAssets,).toEqual([{ id: "a1", },],);
+    });
+
+    test("does not link when upload fails", async () => {
+      const calls: Array<{ url: string; method?: string }> = [];
+      globalThis.apiFetch = async (url: string, opts?: RequestInit,) => {
+        calls.push({ url, method: opts?.method, },);
+        return Response.json({ error: "nope", }, { status: 400, },);
+      };
+
+      const state: GalleryState = {
+        activeChat: "chat-1",
+        galleryAssets: [],
+        loadGalleryAssets: async function(this: GalleryState,) {
+          this.galleryAssets = [];
+        },
+      };
+      const self = state as unknown as ChatState;
+      await chatUtils.uploadChatAssets!.call(self, fileInput("img.png",),);
+
+      const posts = calls.filter((c,) => c.method === "POST");
+      expect(posts.length,).toBe(1,);
+      expect(posts[0]?.url,).toBe("/api/assets",);
     });
   });
 });
