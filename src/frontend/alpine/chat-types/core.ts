@@ -148,6 +148,7 @@ export interface ChatCoreState
   setupScrollDetection(): void;
   scrollToBottomSmooth(): void;
   loadGalleryAssets(): Promise<void>;
+  uploadChatAssets(event: Event,): Promise<void>;
   loadCharacterInfo(): Promise<void>;
   formatTime(iso: string,): string;
   formatTimeShort(iso: string,): string;
