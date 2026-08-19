@@ -177,7 +177,16 @@ export const ItemCategorySchema = t.UnionEnum([
   "misc",
   "other",
 ],);
-export const ItemRaritySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary", "unique", "artifact",],);
+export const ItemRaritySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary", "unique", "artifact",]);
+
+/** 5-tier NSFW content rating — mirrors src/schemas/nsfw-rating.ts NSFWContentRating. */
+export const ContentRatingSchema = t.UnionEnum([
+  "sfw",
+  "nsfw_mild",
+  "nsfw_moderate",
+  "nsfw_intense",
+  "nsfw_extreme",
+],);
 
 // ── Response schemas ──────────────────────────────────────
 

@@ -17,6 +17,7 @@ const BASE: EditFormValues = {
   avatarId: "av1",
   avatarRemoveBtn: '<button id="remove-avatar">Remove</button>',
   characterId: "actor-aria",
+  contentRating: "nsfw_moderate",
 };
 
 describe("views/character-edit-form", () => {
@@ -28,6 +29,13 @@ describe("views/character-edit-form", () => {
     expect(html,).toContain("warm",);
     expect(html,).toContain("At the tavern",);
     expect(html,).toContain("keep it short",);
+  });
+
+  test("renders content rating selector with current rating selected", () => {
+    const html = buildEditFormHtml(BASE,);
+    expect(html,).toContain("edit-content-rating",);
+    expect(html,).toContain('value="nsfw_moderate" selected',);
+    expect(html,).toContain('value="nsfw_extreme"',);
   });
 
   test("passes values through verbatim (escaping is the caller's job)", () => {

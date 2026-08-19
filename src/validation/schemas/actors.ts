@@ -9,6 +9,7 @@ import { t, } from "elysia";
 import {
   ActorTypeSchema,
   AgentTypeSchema,
+  ContentRatingSchema,
   DisplayName,
   Id,
   OptionalId,
@@ -20,12 +21,14 @@ export const ActorCreateBody = t.Object({
   displayName: DisplayName,
   actorType: t.Optional(ActorTypeSchema,),
   agentType: t.Optional(AgentTypeSchema,),
+  contentRating: t.Optional(ContentRatingSchema,),
   description: t.Optional(t.String(),),
   systemPrompt: t.Optional(t.String(),),
 },);
 
 export const ActorUpdateBody = t.Object({
   displayName: t.Optional(DisplayName,),
+  contentRating: t.Optional(ContentRatingSchema,),
   description: t.Optional(t.String(),),
   systemPrompt: t.Optional(t.String(),),
   avatarAssetId: OptionalId,
