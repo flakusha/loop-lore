@@ -10,6 +10,8 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
+import type { WorldBundle, } from "./export-shared";
+import { importWorldBundle, } from "./world-import";
 import { worldsRoutes, } from "./worlds";
 
 const mockDb = {} as any;
@@ -221,5 +223,111 @@ describe("worlds creation publication_status (commit gating)", () => {
       },),
     );
     expect(locRes.status,).toBe(400,);
+  });
+
+  describe("world export/import round-trip", () => {
+    test("GET /api/worlds/:id/export returns a round-trippable WorldBundle with locations", async () => {
+      const app = authedApp();
+
+      const worldRes = await app.handle(
+        new Request("http://localhost/api/worlds", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: "Export Realm", description: "A realm to export", },),
+        },),
+      );
+      const { id: worldId, } = (await worldRes.json()) as { id: string };
+      expect(worldId,).toBeDefined();
+
+      await app.handle(
+        new Request(`http://localhost/api/worlds/${worldId}/locations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: "Keep", },),
+        },),
+      );
+
+      const exportRes = await app.handle(
+        new Request(`http://localhost/api/worlds/${worldId}/export`,),
+      );
+      expect(exportRes.status,).toBe(200,);
+      expect(exportRes.headers.get("Content-Disposition",),).toContain("attachment",);
+      expect(exportRes.headers.get("Content-Type",),).toContain("application/json",);
+
+      const bundle = (await exportRes.json()) as {
+        schema_version: string;
+        world: { id: string; name: string; description: string | null };
+        locations: { id: string; name: string }[];
+      };
+      expect(bundle.schema_version,).toBe("1.0",);
+      expect(bundle.world.id,).toBe(worldId,);
+      expect(bundle.world.name,).toBe("Export Realm",);
+      expect(bundle.locations,).toHaveLength(1,);
+      expect(bundle.locations[0]?.name,).toBe("Keep",);
+    });
+
+    test("exported bundle is accepted by the world importer", async () => {
+      const app = authedApp();
+
+      // Seed a source world with a location.
+      const seedRes = await app.handle(
+        new Request("http://localhost/api/worlds", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: "Source World", },),
+        },),
+      );
+      const { id: sourceId, } = (await seedRes.json()) as { id: string };
+      await app.handle(
+        new Request(`http://localhost/api/worlds/${sourceId}/locations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: "Source Village", },),
+        },),
+      );
+
+      const exportRes = await app.handle(
+        new Request(`http://localhost/api/worlds/${sourceId}/export`,),
+      );
+      expect(exportRes.status,).toBe(200,);
+      const bundle = (await exportRes.json()) as WorldBundle;
+
+      // Feed the exported bundle into the same importer the import route
+      // uses, and confirm it round-trips as a NEW world.
+      const { worldId: importedId, counts, } = await importWorldBundle(db, userId, bundle,);
+      expect(importedId,).not.toBe(sourceId,);
+      expect(counts.locations,).toBe(1,);
+
+      const importedLocs = await db
+        .selectFrom("locations",)
+        .selectAll()
+        .where("world_id", "=", importedId,)
+        .execute();
+      expect(importedLocs,).toHaveLength(1,);
+      expect(importedLocs[0]?.name,).toBe("Source Village",);
+    });
+
+    test("export is owner-gated: non-owner gets forbidden", async () => {
+      const app = authedApp();
+
+      const worldRes = await app.handle(
+        new Request("http://localhost/api/worlds", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: "Private Realm", },),
+        },),
+      );
+      const { id: worldId, } = (await worldRes.json()) as { id: string };
+
+      // Simulate a different user hitting the export endpoint.
+      const otherApp = new Elysia({ name: "test-worlds-other", },)
+        .derive({ as: "scoped", }, (_ctx,) => ({ userId: "other-user", userRole: "user", }),)
+        .use(worldsRoutes({ database: db, config: mockConfig, },),) as any;
+
+      const res = await otherApp.handle(
+        new Request(`http://localhost/api/worlds/${worldId}/export`,),
+      );
+      expect(res.status,).toBe(403,);
+    });
   });
 });

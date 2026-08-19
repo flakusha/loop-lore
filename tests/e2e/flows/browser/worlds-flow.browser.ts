@@ -120,4 +120,98 @@ describe("Worlds flow E2E", () => {
       await page.close();
     });
   });
+
+  describe("World import/export menus", () => {
+    test("world import opens import modal", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoWorlds(page,);
+      await page.locator("[data-testid='import-world']",).waitFor({ state: "visible", timeout: 10_000, },);
+      await page.click("[data-testid='import-world']",);
+      await page.locator("[data-testid='import-world-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
+      await page.locator("[data-testid='import-world-form'] #world-import-file-input",).waitFor({
+        state: "attached",
+        timeout: 10_000,
+      },);
+      await page.close();
+    });
+
+    test("exported world bundle imports via the modal and creates a new world", async () => {
+      // Create a source world, export it to a temp .world.json, then import
+      // that file through the import modal and assert a new world appears.
+      const sourceId = await createWorldViaApi("Source Export World",);
+
+      const client = createClient(ctx.url,);
+      const dlRes = await fetch(`${ctx.url}/api/worlds/${sourceId}/export`, {
+        headers: { Cookie: `ll_token=${client.token ?? ""}`, },
+      },);
+      expect(dlRes.status,).toBe(200,);
+      expect(dlRes.headers.get("content-disposition",),).toContain("attachment",);
+      const bundle = await dlRes.text();
+
+      const fs = await import("node:fs");
+      const { tmpdir, } = await import("node:os");
+      const { join, } = await import("node:path");
+      const tmpDir = `${tmpdir()}/loop-lore-e2e-import`;
+      fs.mkdirSync(tmpDir, { recursive: true, },);
+      const filePath = join(tmpDir, `source-${sourceId}.world.json`,);
+      fs.writeFileSync(filePath, bundle,);
+
+      const page = await ctx.browser.newPage();
+      await gotoWorlds(page,);
+      await page.click("[data-testid='import-world']",);
+
+      const input = page.locator("[data-testid='import-world-form'] #world-import-file-input",);
+      await input.setInputFiles(filePath,);
+
+      // Submit the form → importWorld() reads the file, POSTs the bundle,
+      // then refreshes #world-list via htmx.
+      await page.locator("[data-testid='import-world-form'] button[type='submit']",).click();
+      await page.locator("[data-testid='world-list'] .world-name",).first().waitFor({
+        state: "attached",
+        timeout: 30_000,
+      },);
+      const names = await page.locator("[data-testid='world-list'] .world-name",).allTextContents();
+      expect(names.some((n: string,) => n.includes("Source Export World",)),).toBe(true,);
+      await page.close();
+    }, 90_000,);
+
+    test("world detail export button triggers exportWorld download handler", async () => {
+      const worldId = await createWorldViaApi("Detail Export World",);
+      const page = await ctx.browser.newPage();
+      await gotoWorlds(page,);
+      // Navigate straight to the created world's detail page (avoid depending
+      // on list ordering across tests sharing the DB).
+      await page.goto(`${ctx.url}/worlds/${worldId}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+      await page.locator("[data-testid='world-detail-header']",).waitFor({ state: "attached", timeout: 15_000, },);
+      expect(page.url(),).toMatch(new RegExp(`/worlds/${worldId}`,),);
+
+      const exportBtn = page.locator("[data-testid='export-world']",);
+      await exportBtn.waitFor({ state: "visible", timeout: 10_000, },);
+
+      // exportWorld() does location.assign(GET /api/worlds/:id/export). With
+      // Content-Disposition: attachment the browser fires a download carrying
+      // the world's .world.json bundle. Asserting the REAL world id + name
+      // (not a placeholder) proves the substitution fix.
+      const [download,] = await Promise.all([
+        page.waitForEvent("download", { timeout: 15_000, },),
+        exportBtn.click(),
+      ],);
+      expect(download.suggestedFilename(),).toMatch(/\.world\.json$/i,);
+      const stream = await download.createReadStream();
+      expect(stream,).not.toBeNull();
+      const body = await new Promise<string>((resolve, reject,) => {
+        let data = "";
+        stream?.on("data", (chunk: Buffer,) => {
+          data += chunk.toString();
+        },);
+        stream?.on("end", () => resolve(data,),);
+        stream?.on("error", reject,);
+      },);
+      const parsed = JSON.parse(body,) as { schema_version: string; world: { id: string; name: string } };
+      expect(parsed.schema_version,).toBe("1.0",);
+      expect(parsed.world.id,).toBe(worldId,);
+      expect(parsed.world.name,).toBe("Detail Export World",);
+      await page.close();
+    }, 90_000,);
+  });
 });

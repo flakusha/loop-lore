@@ -13,6 +13,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
+import { serveWorldDetail, } from "./view-serving";
 import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
 
 describe("views/worlds", () => {
@@ -112,6 +113,21 @@ describe("views/worlds", () => {
       expect(html,).toContain('"templateIsDefault":false',);
       expect(html,).toContain("combat",);
       expect(html,).toContain("loot",);
+    });
+  });
+
+  describe("serveWorldDetail (view-serving.ts substitution)", () => {
+    test("substitutes EVERY {{worldId}} placeholder in the detail view", async () => {
+      await insertWorlds(db, "owner", "Sub World", { id: "w-sub" as never, },);
+      const res = await serveWorldDetail("w-sub", db, false, "owner", null, null,);
+      expect(res,).not.toBeNull();
+      const html = await res!.text();
+      // The detail view references {{worldId}} in multiple places (refresh,
+      // export, edit-modal, data-world-id, hx-get) — the single-occurrence
+      // replace() used to leave the rest as literal placeholders. replaceAll
+      // must substitute them all.
+      expect(html,).not.toContain("{{worldId}}",);
+      expect(html,).toContain("w-sub",);
     });
   });
 });
