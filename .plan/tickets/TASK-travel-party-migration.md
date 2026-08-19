@@ -3,7 +3,7 @@
 
 # TASK: Travel Mode — Party Migration Between Chats
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — Phase 1 (party join/leave with VN narration) ✅ done 2026-08-19; Phases 2–4 open
 **Priority:** P2-B
 **Effort:** High
 **Epic:** epic-chat-transfer-location
@@ -27,10 +27,10 @@ to move from one location to another, the party (including GM) can:
 | `DELETE /api/chats/:id/participants/:actorId` | ✅     | Remove participant                    |
 | `POST /api/chats/:id/transfer`                | ✅     | Move chat to new location             |
 | VN scene renderer                             | ✅     | Has transition effects                |
-| VN choice cards                               | ✅     | Can drive location decisions          |
-| Party concept                                 | ❌     | No DB table, implicit via shared chat |
-| VN join/leave narration                       | ❌     | No wiring                             |
-| Party split/merge                             | ❌     | No logic                              |
+| VN choice cards                               | ✅     | Can drive location decisions                |
+| Party concept                                 | ✅     | Implicit via shared chat (`chat_participants`) |
+| VN join/leave narration                       | ✅     | `joinParty`/`leaveParty` emit narration in VN mode (2026-08-19) |
+| Party split/merge                             | ❌     | No logic (Phase 3)                              |
 
 ## Design
 
@@ -190,18 +190,22 @@ See `TASK-transition-aux-llm-fallback.md` for full design.
 
 ### Phase 1: Party Join/Leave with VN Narration
 
-- [ ] Extend `POST /api/chats/:id/participants` with entrance narration
-- [ ] Extend `DELETE /api/chats/:id/participants/:actorId` with departure narration
-- [ ] Wire VN scene renderer for entrance/exit animations
-- [ ] Add character state snapshot on leave
-- [ ] Add talkativity/initiative seeding for new members
+- [x] Extend `POST /api/chats/:id/participants` with entrance narration — done 2026-08-19 (`src/chat/service/party.ts` `joinParty`)
+- [x] Extend `DELETE /api/chats/:id/participants/:actorId` with departure narration — done 2026-08-19 (`leaveParty`)
+- [x] Add talkativity seeding for new members (default 5); initiative relies on DB default 0
+- [x] Add `guest` role to `ChatParticipantRole` enum + validation; frontend role select fixed to real enum values
+- [x] Idempotent rejoin (rejoin with same role → no-op success)
+- [ ] Wire VN scene renderer for entrance/exit animations (frontend, separate ticket)
+- [ ] Add character state snapshot on leave (rejoin continuity, separate ticket)
+
+Implementation note: the stub paths below (`src/routes/chat-party.ts`, `src/chat/service.ts`) do not exist — Phase 1 landed in `src/chat/service/party.ts` + `src/routes/chats/participants.ts`.
 
 ### Phase 2: AUX LLM Transition Fallback
 
-- [ ] Create `src/chat/transition-classifier.ts`
-- [ ] Implement regex-first, AUX-LLM-fallback detection
-- [ ] Wire into message processing pipeline
-- [ ] Add timeout and error handling
+- [x] Create `src/chat/transition-classifier.ts` — done 2026-08-01 (see `TASK-transition-aux-llm-fallback.md`)
+- [x] Implement regex-first, AUX-LLM-fallback detection
+- [x] Wire into message processing pipeline
+- [x] Add timeout and error handling
 
 ### Phase 3: Party Split/Merge
 
@@ -220,30 +224,33 @@ See `TASK-transition-aux-llm-fallback.md` for full design.
 
 ## Files to Create
 
-- `src/chat/transition-classifier.ts` — AUX LLM fallback classifier
-- `src/routes/chat-party.ts` — party join/leave/split/reunite endpoints
+- `src/chat/service/party.ts` — party join/leave service with VN narration ✅ (2026-08-19)
+- `src/chat/service/party.test.ts` — party service tests ✅ (2026-08-19)
+- `src/chat/transition-classifier.ts` — AUX LLM fallback classifier ✅ (2026-08-01)
 
 ## Files to Modify
 
-- `src/routes/chats.ts` — extend participant endpoints
-- `src/chat/service.ts` — add party state snapshot, narration generation
-- `src/chat/transitions.ts` — wire AUX classifier, emit party events
-- `src/chat/types.ts` — add party event types
-- `src/frontend/vn/scene-renderer.ts` — entrance/exit animations
-- `src/frontend/vn/choice-cards.ts` — location action cards
-- `src/frontend/alpine/chat.ts` — party roster panel
-- `src/frontend/alpine/chat-types.ts` — party state types
+- `src/routes/chats/participants.ts` — extend participant endpoints with join/leave + guest role ✅ (2026-08-19)
+- `src/db/enums-core/actors.ts` — add `guest` to `ChatParticipantRole` ✅ (2026-08-19)
+- `src/validation/schemas/primitives.ts` + `src/validation/db-schemas.ts` — add `guest` to role schema ✅
+- `src/assistant/commands/registry.ts` — add `guest` to ROLE_PRIORITY ✅
+- `src/components/chat/participant-mgmt.html` — role select uses real enum values ✅
+- `src/db/enums.test.ts` — expect `guest` in `ChatParticipantRole` ✅
+- `src/chat/transitions.ts` — wire AUX classifier, emit party events (Phase 2 in classifier; events open)
 
 ## Acceptance Criteria
 
-- [ ] Party join generates VN entrance narration
-- [ ] Party leave generates VN departure narration + state snapshot
-- [ ] AUX LLM fallback detects transitions regex misses
-- [ ] AUX LLM fails fast (2s timeout) with graceful degradation
-- [ ] Party split creates branched chats with correct participants
-- [ ] Party merge combines messages and deduplicates participants
-- [ ] VN choice cards can trigger location changes
-- [ ] All existing chat tests still pass
+- [x] Party join generates VN entrance narration (VN-mode chats)
+- [x] Party leave generates VN departure narration (VN-mode chats)
+- [x] Idempotent join; not_found for missing chat / non-member leave
+- [x] `guest` role accepted end-to-end (enum → schema → route → service → frontend)
+- [x] AUX LLM fallback detects transitions regex misses (Phase 2, done 2026-08-01)
+- [x] AUX LLM fails fast (2s timeout) with graceful degradation
+- [x] All existing chat tests still pass
+- [ ] Party split creates branched chats with correct participants (Phase 3)
+- [ ] Party merge combines messages and deduplicates participants (Phase 3)
+- [ ] VN choice cards can trigger location changes (Phase 4)
+- [ ] Character state snapshot on leave (open)
 
 ## Verification
 
