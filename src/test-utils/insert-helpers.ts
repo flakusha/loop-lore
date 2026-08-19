@@ -378,6 +378,10 @@ export async function insertWorldLoreEntries(
     cooldown_seconds?: Generated<number>;
     last_activated?: string | null;
     audience_scope?: string | null;
+    key_type?: string | null;
+    key_groups?: string | null;
+    scan_depth?: number | null;
+    activation_chance?: number | null;
   },
 ): Promise<void> {
   await db.insertInto("world_lore_entries",).values({
@@ -683,6 +687,10 @@ export async function insertActorLoreEntries(
     last_activated?: string | null;
     audience_scope?: string | null;
     world_id?: string | null;
+    key_type?: string | null;
+    key_groups?: string | null;
+    scan_depth?: number | null;
+    activation_chance?: number | null;
   },
 ): Promise<void> {
   await db.insertInto("actor_lore_entries",).values({
