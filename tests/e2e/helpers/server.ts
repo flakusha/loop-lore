@@ -139,7 +139,7 @@ async function parseImportFile(
   const { extractCharacterDataFromPng, } = await import("@/characters/steganography");
 
   if (filename.endsWith(".json",)) {
-    const parsed = jsonParseOr(await file.text(), null,);
+    const parsed = jsonParseOr<Record<string, unknown> | null>(await file.text(), null,);
     if (!parsed || typeof parsed !== "object") { return null; }
     return {
       data: parsed,
