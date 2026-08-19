@@ -27,6 +27,8 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
     // avatarAssetId: null clears the avatar; the hidden input holds the
     // latest uploaded id OR empty string when removed.
     avatarAssetId: editField("char-avatar-id",) || null,
+    // 5-tier NSFW content rating; unchanged when the selector is absent.
+    contentRating: editField("edit-content-rating",) || undefined,
   },);
   try {
     const res = await feFetch(`/api/actors/${characterId}`, {
