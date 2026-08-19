@@ -10,6 +10,15 @@ import { getThresholdState, } from "./context-window";
 import { estimateTokens, } from "./token-utils";
 import type { ContextThreshold, ContextThresholds, } from "./types";
 
+/** Per-section token allocation for the budget advisor (FEAT-068). */
+export interface ContextSection {
+  /** Section name (matches prompt section registry names, e.g. "lore", "memories"). */
+  name: string;
+  tokens: number;
+  /** Share of the total context budget, as a percentage (0-100). */
+  pct: number;
+}
+
 /** Lightweight context stats for API responses. */
 export interface ContextStats {
   used_tokens: number;
@@ -17,6 +26,13 @@ export interface ContextStats {
   percentage: number;
   will_trim: boolean;
   threshold: ContextThreshold;
+}
+
+/** Budget-advisor stats: per-section breakdown + available budget (FEAT-068). */
+export interface BudgetStats {
+  sections: ContextSection[];
+  /** Unused token budget (max_tokens - used_tokens + trimmed overhead). */
+  available: number;
 }
 
 /**
@@ -48,4 +64,45 @@ export function computeContextStats(
   const willTrim = threshold === "imminent";
 
   return { used_tokens: usedTokens, max_tokens: maxTokens, percentage, will_trim: willTrim, threshold, };
+}
+
+/**
+ * Convert prompt-assembler section reports into budget-advisor sections.
+ *
+ * Accepts the shape returned by `PromptAssembler.assemble()` so callers can
+ * hand the assembled prompt straight to the advisor. Dropped sections are
+ * excluded — they never reached the actual context window.
+ *
+ * @param sections - Per-section reports from prompt assembly
+ * @param maxTokens - Total context budget (for per-section percentages)
+ * @returns Budget sections with per-section token counts and budget share
+ */
+export function computeSections(
+  sections: { name: string; tokens: number; dropped: boolean }[],
+  maxTokens: number,
+): ContextSection[] {
+  const out: ContextSection[] = [];
+  for (const s of sections) {
+    if (s.dropped) { continue; }
+    out.push({
+      name: s.name,
+      tokens: s.tokens,
+      pct: maxTokens > 0 ? Math.round((s.tokens / maxTokens) * 100,) : 0,
+    },);
+  }
+  return out;
+}
+
+/**
+ * Compute the remaining (available) token budget.
+ *
+ * The context window is assumed to respect a per-chat or model budget; this
+ * reports what is left after the used (non-dropped) tokens are accounted for.
+ *
+ * @param usedTokens - Tokens currently consumed by the context window
+ * @param maxTokens - Total context budget
+ * @returns Available tokens (never negative)
+ */
+export function availableTokens(usedTokens: number, maxTokens: number,): number {
+  return Math.max(0, maxTokens - usedTokens,);
 }
