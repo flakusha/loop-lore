@@ -27,11 +27,36 @@ export function healthPanelMethods() {
     healthAutoRefresh: false,
     healthRefreshInterval: null as ReturnType<typeof setInterval> | null,
     expandHealthProvider: "",
+    // ── AUX generation telemetry (GET /api/admin/telemetry/aux) ──
+    auxAggregates: [] as {
+      task: string;
+      totalCalls: number;
+      successCount: number;
+      failureCount: number;
+      avgLatencyMs: number;
+      totalPromptTokens: number;
+      totalCompletionTokens: number;
+    }[],
+    auxEvents: [] as {
+      id: string;
+      task: string;
+      model: string | null;
+      provider: string | null;
+      latencyMs: number;
+      success: boolean;
+      promptTokens: number;
+      completionTokens: number;
+      error: string | null;
+      createdAt: string;
+    }[],
+    auxTotal: 0,
+    loadingAuxTelemetry: false,
     nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
     loadingNsfw: false,
 
     async loadHealth() {
       this.loadingHealth = true;
+      await this.loadAuxTelemetry();
       try {
         const res = await apiFetch("/api/v1/health", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
@@ -74,6 +99,25 @@ export function healthPanelMethods() {
       } catch {
         showToast("error", t("toasts.failedLoadHealth",),);
         this.loadingHealth = false;
+      }
+    },
+
+    async loadAuxTelemetry() {
+      this.loadingAuxTelemetry = true;
+      try {
+        const res = await apiFetch("/api/admin/telemetry/aux?limit=50", {
+          headers: { Accept: "application/json", },
+        },);
+        if (res.ok) {
+          const data = await res.json();
+          this.auxAggregates = data.aggregates || [];
+          this.auxEvents = data.events || [];
+          this.auxTotal = data.total || 0;
+        }
+      } catch {
+        log.warn("Failed to load AUX telemetry",);
+      } finally {
+        this.loadingAuxTelemetry = false;
       }
     },
 

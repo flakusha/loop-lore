@@ -1130,6 +1130,71 @@
                   </div>
                 </template>
               </div>
+              <!-- Fine-tuning -->
+              <div style="margin-top: var(--space-6)">
+                <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3)">
+                  <h3 style="font-size: 16px; font-weight: 600; margin: 0">Fine-tuning</h3>
+                  <span
+                    x-show="trainingDispatchWired"
+                    style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #28a74522; color: #28a745"
+                  >
+                    dispatch enabled
+                  </span>
+                  <span
+                    x-show="!trainingDispatchWired"
+                    style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #fff3cd; border: 1px solid #ffc107; color: #856404"
+                  >
+                    automated training not wired
+                  </span>
+                </div>
+                <p
+                  x-show="!trainingDispatchWired"
+                  style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-3)"
+                >
+                  No model provider exposes an automated fine-tune/train dispatch yet. This panel lists candidate base
+                  models (from the live capability registry) with the metadata an operator needs to select a fine-tune
+                  seed and assign it to a role above.
+                </p>
+                <div
+                  x-show="fineTuneCandidates().length === 0"
+                  style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)"
+                >
+                  No models discovered. Rescan providers to populate fine-tune candidates.
+                </div>
+                <template x-if="fineTuneCandidates().length > 0">
+                  <div style="border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; overflow: hidden">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px">
+                      <thead>
+                        <tr style="text-align: left; background: var(--bg-secondary, #f8f9fa); color: var(--text-secondary, #6c757d)">
+                          <th style="padding: 6px 8px">Provider</th>
+                          <th style="padding: 6px 8px">Model</th>
+                          <th style="padding: 6px 8px">Params</th>
+                          <th style="padding: 6px 8px">Context</th>
+                          <th style="padding: 6px 8px">Modalities</th>
+                          <th style="padding: 6px 8px">Base-model readiness</th>
+                        </tr>
+                      </thead>
+                      <tbody aria-busy="true">
+                        <template x-for="c in fineTuneCandidates()" :key="c.provider + '/' + c.model">
+                          <tr style="border-top: 1px solid var(--border-default, #e9ecef)">
+                            <td style="padding: 6px 8px" x-text="c.provider"></td>
+                            <td style="padding: 6px 8px; font-weight: 500" x-text="c.model"></td>
+                            <td style="padding: 6px 8px" x-text="c.paramSize || '-'"></td>
+                            <td
+                              style="padding: 6px 8px"
+                              x-text="c.contextWindow ? formatCtxWindow(c.contextWindow) : '-'"
+                            >
+                            </td>
+                            <td style="padding: 6px 8px" x-text="c.modalities.join(', ') || '-'"></td>
+                            <td style="padding: 6px 8px; color: var(--text-secondary)" x-text="fineTuneReadiness(c)">
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </template>
+              </div>
             </div>
           </div>
         </template>
@@ -1549,6 +1614,95 @@
                         ></span>
                       </template>
                     </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <!-- AUX Generation Telemetry -->
+            <div style="margin-top: var(--space-8)">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+                <h3 style="font-size: 14px; font-weight: 600">Generation Telemetry (AUX)</h3>
+                <button
+                  class="btn btn-secondary btn-xs"
+                  @click="loadAuxTelemetry()"
+                  :disabled="loadingAuxTelemetry"
+                >
+                  Refresh
+                </button>
+              </div>
+              <div x-show="loadingAuxTelemetry" style="font-size: 12px; color: var(--text-secondary)">
+                Loading telemetry…
+              </div>
+              <div
+                x-show="!loadingAuxTelemetry && auxEvents.length === 0"
+                style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)"
+              >
+                No AUX generation calls recorded yet.
+              </div>
+              <template x-if="!loadingAuxTelemetry && auxAggregates.length > 0">
+                <div style="margin-bottom: var(--space-4)">
+                  <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">By task</div>
+                  <table style="width: 100%; border-collapse: collapse; font-size: 12px">
+                    <thead>
+                      <tr style="text-align: left; color: var(--text-secondary, #6c757d)">
+                        <th style="padding: 4px 6px">Task</th>
+                        <th style="padding: 4px 6px">Calls</th>
+                        <th style="padding: 4px 6px">Success</th>
+                        <th style="padding: 4px 6px">Fail</th>
+                        <th style="padding: 4px 6px">Avg Latency</th>
+                        <th style="padding: 4px 6px">Tokens (in/out)</th>
+                      </tr>
+                    </thead>
+                    <tbody aria-busy="true">
+                      <template x-for="agg in auxAggregates" :key="agg.task">
+                        <tr style="border-top: 1px solid var(--border-default, #e9ecef)">
+                          <td style="padding: 4px 6px" x-text="agg.task"></td>
+                          <td style="padding: 4px 6px" x-text="agg.totalCalls"></td>
+                          <td style="padding: 4px 6px; color: var(--color-success, #28a745)" x-text="agg.successCount">
+                          </td>
+                          <td style="padding: 4px 6px; color: #dc3545" x-text="agg.failureCount"></td>
+                          <td style="padding: 4px 6px" x-text="agg.avgLatencyMs + 'ms'"></td>
+                          <td style="padding: 4px 6px" x-text="agg.totalPromptTokens + '/' + agg.totalCompletionTokens">
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+              <template x-if="!loadingAuxTelemetry && auxEvents.length > 0">
+                <div>
+                  <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">
+                    Recent calls <span
+                      style="color: var(--text-secondary, #6c757d); font-weight: 400"
+                      x-text="'(' + auxEvents.length + ' of ' + auxTotal + ')'"
+                    ></span>
+                  </div>
+                  <div style="display: grid; gap: var(--space-2)">
+                    <template x-for="ev in auxEvents" :key="ev.id">
+                      <div style="display: flex; align-items: center; gap: var(--space-2); font-size: 12px; padding: var(--space-2); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px">
+                        <span
+                          style="width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0"
+                          :style="{background: ev.success ? '#28a745' : '#dc3545'}"
+                        ></span>
+                        <span style="font-weight: 500" x-text="ev.task || 'aux'"></span>
+                        <span x-show="ev.model" style="color: var(--text-secondary)" x-text="ev.model"></span>
+                        <span
+                          x-show="ev.latencyMs"
+                          style="color: var(--text-secondary)"
+                          x-text="ev.latencyMs + 'ms'"
+                        ></span>
+                        <span
+                          x-show="ev.error"
+                          style="color: #dc3545; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px"
+                          x-text="ev.error"
+                        ></span>
+                        <span
+                          style="color: var(--text-secondary, #6c757d); margin-left: auto; font-size: 11px"
+                          x-text="new Date(ev.createdAt).toLocaleString()"
+                        ></span>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </template>
