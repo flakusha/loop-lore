@@ -53,7 +53,7 @@
 ## P5 — Wiring, Search & Polish (release-scoped)
 
 - [x] IO (export/import) ✅; Stop generation ✅; Notification center ✅; chat message search ✅; swipe-variant ✅ (implemented + tested); GM role runtime effect ✅ (committed on `dev`)
-- [ ] Frontend wiring — all menus/modals/side-menus/documentation linkage; in-chat asset preview + linkage; assistant panel; message actions UI (see P4/P2 tiers)
+- [ ] Frontend wiring — all menus/modals/side-menus/documentation linkage; in-chat asset preview + linkage; message actions UI (see P4/P2 tiers); **assistant panel ✅ 2026-08-19** (dedicated sidebar `assistant-toggle`, D1 in `../open-inflight.md`)
 - [ ] **Implemented → wired** — wire/drop LoRA routes (P2-G); SSE refactor ✅ (merged `082c20cf`, row W4 resolved in `../open-inflight.md`); remaining RPG services → `epic-rpg-wiring-phase3.md`; ~~dead `detectIntent`~~ ✅ removed (see `../open-inflight.md`)
 - [ ] **Conversation analytics dashboard** (`FEAT-059`) — message counts, token usage over time, conversation length histograms, role distribution visualization. |
 - [ ] **Model comparison A/B** (`FEAT-060`) — side-by-side comparison of model responses (multishot), quality rating, exportable comparison reports. |
