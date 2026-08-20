@@ -5,6 +5,8 @@
  * Output formatting utilities
  */
 
+import { isNoColor, } from "./colors";
+
 export const colors = {
   reset: "\x1b[0m",
   red: "\x1b[31m",
@@ -15,6 +17,7 @@ export const colors = {
 };
 
 export function colorize(text: string, color: keyof typeof colors,): string {
+  if (isNoColor()) { return text; }
   return `${colors[color]}${text}${colors.reset}`;
 }
 
