@@ -162,9 +162,9 @@
       <!-- Story-mode footer controls: GM Panel + Quest Log -->
       <div class="story-footer-controls" x-show="isStoryMode" data-testid="story-footer-controls">
         <button
-          class="btn btn-sm btn-ghost"
-          @click="$store.ui.showGmPanel = !$store.ui.showGmPanel"
-          :class="$store.ui.showGmPanel ? 'gm-toggle-active' : ''"
+        class="btn btn-sm btn-ghost"
+        @click="window.openGmAssistantTab('shadow')"
+        :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'shadow' ? 'gm-toggle-active' : ''"
           data-testid="story-footer-gm"
         >🎭 {{{t("story.gmPanel")}}}</button>
         <button
