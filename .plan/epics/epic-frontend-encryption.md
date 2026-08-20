@@ -3,7 +3,7 @@
 
 # EPIC: Encryption UI
 
-**Status:** ⬜ Not Started
+**Status:** 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending
 **Priority:** Medium
 
 ## Summary

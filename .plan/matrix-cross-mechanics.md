@@ -202,34 +202,12 @@ section). G18–G20 are P6+ cross-enhancements with deferred siblings.
 
 ---
 
-## Pre-Compiled Hot Binary Modules Integration
+## Other Domain Matrices
 
-### Systems This Epic Depends On
+Integration points for non-RPG domains once co-located in this file now live in their own `matrix-*` files:
 
-| System                        | What It Provides                               | How Used                    |
-| ----------------------------- | ---------------------------------------------- | --------------------------- |
-| Testing & Benchmarking        | Performance benchmarks for native modules      | Measure native vs JS speed  |
-| Multi-Instance Reconciliation | Native module initialization in multi-instance | Binary loading per instance |
-
-### Systems That Depend On This Epic
-
-| System                           | What It Consumes          | How Used                         |
-| -------------------------------- | ------------------------- | -------------------------------- |
-| Headless & Alternative Frontends | SDK distribution strategy | Native modules in SDK packages   |
-| Testing & Benchmarking           | Native module benchmarks  | Performance regression detection |
-
-### Shared Data Contracts
-
-| Contract       | Shared With    | Purpose                                   |
-| -------------- | -------------- | ----------------------------------------- |
-| ModuleManifest | Security audit | Binary verification + capability checking |
-
-### Cross-System Events
-
-| Event           | Direction | Purpose                                 |
-| --------------- | --------- | --------------------------------------- |
-| binary.loaded   | emits     | Notify system when native module loaded |
-| binary.fallback | emits     | Notify system when falling back to JS   |
+- `matrix-precompiled-hot-binaries.md` — native hot binary modules (companion epic: `epic-precompiled-hot-binaries.md`).
+- `matrix-federation-swarm.md` — fediverse, messaging bridges, and swarm CRDT sync (companion epic: `epic-federation-swarm-sync.md`).
 
 ## Research-Driven Integration Gaps (2026-08-14)
 

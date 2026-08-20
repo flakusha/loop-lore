@@ -4,7 +4,7 @@
 # TASK: Stable Stored Chat Key (Future)
 
 **Status:** ⬜ Not Started
-**Priority:** low
+**Priority:** High (escalated — see BUG-chat-key-history-loss-join-leave)
 **Effort:** Medium
 **Epic:** epic-encryption-foundation
 
