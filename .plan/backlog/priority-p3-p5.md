@@ -23,11 +23,11 @@
 | 11 | User + admin panels, settings, fine-tuning              | 🟡 partial             | admin user mgmt ✅; fine-tuning UI / provider health pending                                                                                |
 | 12 | (Side panels) without leaving chat                      | 🟡 partial             | chat-settings modal ✅; **in-chat asset preview + linkage ✅** (`FEAT-in-chat-asset-preview-linkage-side-panel`, issue `fef7e3b` closed 2026-08-19) — gallery-sidebar + media-preview-modal + `pendingAssets`→message attachments |
 | 13 | Chat settings menus — templates, tuning                 | 🟡 partial             | setup-template selector ✅; prompt-template registry `src/prompts/registry.ts` ✅ (2026-08-12); detailed tuning frontend open                |
-| 14 | Character/world/location flows                          | 🟡 partial             | character-io ✅; world/location creation + export/import menus pending                                                                      |
+| 14 | Character/world/location flows                          | ✅ complete           | char import (PNG/YAML/TOML/JSON/CHARX) ✅; char export (PNG/JSON/YAML/TOML) ✅; world import bundle ✅; world export (`worlds/:id/export`) ✅; location creation inline in `world-detail.html` ✅; location export bundled in world export ✅ (code-verified 2026-08-20) |
 | 15 | LLM support (chat/captioning/intent/embeddings)         | 🟢 chat/caption/intent | providers ✅ (openai-compat + Anthropic + Ollama native 2026-08-17); `classifyIntent` wired; embeddings greenfield                                                                                 |
 | 16 | Assistant creative tooling                              | 🟡 partial             | command buttons + parser ✅; **tool-call UI ✅ (2026-08-12)**; creation wizards pending                                                     |
 | 17 | Frontend fully wired                                    | 🟡 ongoing             | menus/modals/side-menus/docs — docs reconciliation **merged 2026-08-14** (`docs-reconcile`); 17 broken internal md links open (see `../open-inflight.md`)                            |
-| —  | IO: import/export (characters/worlds/locations/stories) | 🟡 partial             | JSON char import ✅; PNG/YAML/TOML/CHARX + world/loc/story export ✅ (2026-08-06)                                                           |
+| —  | IO: import/export (characters/worlds/locations/stories) | ✅ shipped             | char import (PNG/YAML/TOML/JSON/CHARX) ✅; char export (PNG/JSON/YAML/TOML) ✅; world import bundle ✅; world/loc/story export ✅; bulk ZIP export ✅ (code-verified 2026-08-20) |
 | —  | Stop generation (chat/VN)                               | 🟢 shipped             | chat abort/cancel + VN in-scene stop overlay (2026-08-06)                                                                                   |
 | —  | Notifications + center                                  | 🟢 shipped             | SSE + unread badge + center UI + per-type mute (2026-08-06)                                                                                 |
 | —  | Filtering & search                                      | 🟡 partial             | chat room filters + message search ✅; world/location search pending                                                                        |
@@ -37,12 +37,12 @@
 ## P4 — Core Experience (open remainder of P3 rows)
 
 - [ ] Memory + template injection UX — memory selection UI (mid-chat, pinning); **template injection UX partial** (read-only prompt preview in chat settings modal 2026-08-14; open: inline override per-chat)
-- [ ] Character/world/location flows — multi-format import, creation + settings menus, mood & happiness meter (P3 #14)
+- [x] Character/world/location flows — multi-format import, creation + settings menus ✅ (code-verified 2026-08-20; C4 closed in open-inflight.md)
 - [ ] Assistant tooling — creation wizards, `/commands` tiered access (tool-call display ✅ 2026-08-12) (P3 #16 / P2-C)
 - [x] LLM providers — Anthropic + Ollama native ✅ 2026-08-17 (`chat-matrix-ui-remainder`); ~Bedrock deferred (SigV4 scope)~ (P3 #15)
 - [x] Assets — signed URLs (compression flow ✅ 2026-08-12) (P3 #10) — ✅ DONE (C6, `6b4e1ab4`)
 - [ ] Fine-tuning experience — provider health panel; fine-tuning UI for chat/persona/character (P3 #11)
-- [ ] NSFW — character 5-tier rating runtime enforcement (P3 #6)
+- [x] NSFW — character 5-tier rating runtime enforcement ✅ (code-verified 2026-08-20; C2 closed in open-inflight.md)
 - [ ] Chat UI — group chat matrix UI, unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12; participant panel ✅ 2026-08-14; **turn-order indicator + side-channels ✅ 2026-08-16**; unified GM↔assistant view = E1) (P2-B/P2-D)
 - [ ] **Lorebook activation conditions** (`FEAT-055`) — worldbook/lorebook entries auto-inject into context by keyword/token matching (SillyTavern World Info inspiration). Builds on memorySection + regex pipeline. |
 - [ ] **Prompt library expanded — generation templates** (`FEAT-065` + sub-tickets) — image/audio/video prompt templates with parameter substitution, persistence, and per-provider adapters. Sub-systems: (`FEAT-065-sub-image`), (`FEAT-065-sub-audio`), (`FEAT-065-sub-video`), (`FEAT-065-sub-llm`). Spec: `FEAT-065-template-system.md`. |
