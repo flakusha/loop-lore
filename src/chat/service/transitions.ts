@@ -29,8 +29,6 @@ import type { MigrateChatParams, MigrateChatResult, } from "./types";
  *
  * Idempotency: a source chat may only be migrated once — a second call returns
  * `bad_request` with a pointer to the existing migrated chat.
- *
- * @returns { ok: true, newChatId, sourceChatId } on success, or ServiceError
  */
 export async function migrateChat(
   database: Kysely<DB>,
@@ -142,4 +140,36 @@ export async function migrateChat(
   }
 
   return { ok: true, newChatId, sourceChatId: chatId, };
+}
+
+// ── Narration injection ────────────────────────────────────────────────────────
+
+/**
+ * Inject a VN narration system message into a chat. Non-fatal.
+ * Used by split/reunion to embed VN branching narration.
+ */
+export async function injectNarration(
+  database: Kysely<DB>,
+  chatId: string,
+  text: string,
+): Promise<void> {
+  try {
+    await database
+      .insertInto("messages",)
+      .values({
+        id: crypto.randomUUID(),
+        chat_id: chatId,
+        actor_id: "system",
+        role: "system" as never,
+        content: text,
+        content_type: "narration" as never,
+        content_format: "markdown" as never,
+        content_encoding: "identity" as never,
+        status: "confirmed" as never,
+        visibility: "visible" as never,
+      },)
+      .execute();
+  } catch {
+    /* non-fatal */
+  }
 }
