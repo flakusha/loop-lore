@@ -230,19 +230,4 @@ export interface ChatCoreState
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
-  // Creation wizard state — preview panel for LLM-generated entity drafts
-  wizardDraft: {
-    wizardId: string;
-    entityType: string;
-    label: string;
-    fields: Record<string, string | undefined>;
-    worldId?: string;
-    userId?: string;
-    description?: string;
-    warnings?: string[];
-  } | null;
-  wizardPreviewOpen: boolean;
-  confirmWizard(wizardId: string,): Promise<void>;
-  cancelWizard(wizardId: string,): Promise<void>;
-  updateWizardField(field: string, value: string,): void;
 }
