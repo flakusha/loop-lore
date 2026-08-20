@@ -13,7 +13,7 @@ description: >
 
 ## Overview
 
-Loop-lore uses git worktrees for parallel development. `scripts/worktree.sh`
+Loop-lore uses git worktrees for parallel development. `scripts/worktree/`
 manages merge/rebase operations within the `./tree/` directory.
 
 **Default base branch**: `master` (may shift to `develop` in future).
@@ -27,13 +27,13 @@ manages merge/rebase operations within the `./tree/` directory.
 Merges a source branch into a worktree's current branch:
 
 ```bash
-./scripts/worktree.sh merge <worktree-branch> <source-branch>
+./scripts/worktree/ merge <worktree-branch> <source-branch>
 ```
 
 Example:
 
 ```bash
-./scripts/worktree.sh merge feat feature-api
+./scripts/worktree/ merge feat feature-api
 # Merges 'feature-api' into the 'feat' worktree's branch
 ```
 
@@ -42,14 +42,14 @@ Example:
 Rebases a worktree's branch onto a target (default: master):
 
 ```bash
-./scripts/worktree.sh rebase <worktree-branch> [onto]
+./scripts/worktree/ rebase <worktree-branch> [onto]
 ```
 
 Example:
 
 ```bash
-./scripts/worktree.sh rebase feat          # rebase feat onto master
-./scripts/worktree.sh rebase feat develop  # rebase feat onto develop
+./scripts/worktree/ rebase feat          # rebase feat onto master
+./scripts/worktree/ rebase feat develop  # rebase feat onto develop
 ```
 
 ---
@@ -104,7 +104,7 @@ git rebase --abort
 
 **All commits — including merge commits — must be GPG-signed.**
 
-`scripts/worktree.sh` auto-signs merge commits via `gpg_merge_flags()`.
+`scripts/worktree/` auto-signs merge commits via `gpg_merge_flags()`.
 When `AGENT_GPG_KEY_ID` is set in `.credentials.env` and the secret key
 is available, `merge` and `finalize` pass `-c commit.gpgsign=true
 -c user.signingkey=<key>` to git automatically.
@@ -146,7 +146,7 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 ./scripts/gpg-unlock.mjs
 
 # 1. Create feature worktree
-./scripts/worktree.sh new feature-xyz master
+./scripts/worktree/ new feature-xyz master
 
 # 2. Work on feature (commits happen in tree/feature-xyz)
 cd tree/feature-xyz
@@ -154,18 +154,18 @@ cd tree/feature-xyz
 # Commit with GPG signing (agent-commit skill)
 
 # 3. Sync with master before merge
-./scripts/worktree.sh rebase feature-xyz master
+./scripts/worktree/ rebase feature-xyz master
 
 # 4. Or merge another branch in (auto-signed)
-./scripts/worktree.sh merge feature-xyz other-feature
+./scripts/worktree/ merge feature-xyz other-feature
 
 # 5. Verify signature after commit
 cd tree/feature-xyz
 git log --show-signature -1
 
 # 6. Finalize: run checks, signed merge to master, remove worktree
-./scripts/worktree.sh finalize feature-xyz
-# Or: ./scripts/worktree.sh agent-merge feature-xyz
+./scripts/worktree/ finalize feature-xyz
+# Or: ./scripts/worktree/ agent-merge feature-xyz
 ```
 
 ---
