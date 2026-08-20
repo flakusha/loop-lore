@@ -98,7 +98,7 @@ single source; missing section fails the release.
 
 ## Signing
 
-- Commits: agent commits via `scripts/worktree.sh agent-commit` (Author=user, Committer=agent, agent key).
+- Commits: agent commits via `bun run scripts/worktree/ agent-commit` (Author=user, Committer=agent, agent key).
 - Tags: signed with the same agent key — signature proves the tag came from this repo's release lane.
 - Verify: `git tag -v 0.1.0`.
 
