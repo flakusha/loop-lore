@@ -30,7 +30,22 @@ export function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
 }
 
+/**
+ * Run git in repoRoot. Throws on non-zero exit — callers use try/catch for
+ * existence checks (rev-parse --verify). Use gitSyncQuiet for reads where a
+ * non-zero exit is a legit empty result (e.g. unset git config).
+ */
 export function gitSync(repoRoot: string, ...args: string[]): string {
+  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], { stdout: "pipe", stderr: "pipe", },);
+  if (result.exitCode !== 0) {
+    const stderr = result.stderr.toString().trim();
+    throw new Error(stderr || `git ${args.join(" ",)} failed (exit ${result.exitCode})`,);
+  }
+  return result.stdout.toString().trim();
+}
+
+/** Like gitSync but returns stdout even on non-zero exit (never throws). */
+export function gitSyncQuiet(repoRoot: string, ...args: string[]): string {
   const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], { stdout: "pipe", stderr: "pipe", },);
   return result.stdout.toString().trim();
 }
@@ -83,7 +98,7 @@ export async function getStatus(
   const behindStr = gitSync(repoRoot, "rev-list", "--count", `${branch}..master`,);
   const ahead = parseInt(aheadStr || "0", 10,);
   const behind = parseInt(behindStr || "0", 10,);
-  const dirty = gitSync(repoRoot, "diff", "--quiet",);
+  const dirty = gitSyncQuiet(repoRoot, "status", "--porcelain",);
   return {
     branch,
     ahead,
