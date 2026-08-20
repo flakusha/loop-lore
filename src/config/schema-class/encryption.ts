@@ -8,4 +8,5 @@ export const ENCRYPTION_DEFAULTS = {
   required: false,
   compressThreshold: 128,
   compressAlgorithm: "gzip",
+  keyRotationDays: 90,
 } satisfies EncryptionConfig;
