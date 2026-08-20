@@ -76,6 +76,7 @@ export const MessageRow = Type.Object({
   edited_at: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   thinking: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   actor_name: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
+  actor_id: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   swipe_index: Type.Optional(Type.Union([Type.Number(), Type.Null(),]),),
   continuation_index: Type.Optional(Type.Union([Type.Number(), Type.Null(),]),),
   attachments: Type.Optional(Type.Union([Type.Array(MessageAttachment,), Type.Null(),]),),
