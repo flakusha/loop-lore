@@ -25,7 +25,7 @@ export default defineConfig({
   workers: 1,
   reporter: [
     ["list",],
-    ["html", { open: "never", outputFolder: "playwright-report", },],
+    ["html", { open: "never", outputFolder: ".tmp/playwright-report", },],
   ],
   use: {
     baseURL: "http://localhost:0",
@@ -52,5 +52,5 @@ export default defineConfig({
       },
     },
   ],
-  outputDir: "test-results",
+  outputDir: ".tmp/test-results",
 },);

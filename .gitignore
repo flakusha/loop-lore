@@ -82,9 +82,14 @@ tree/*
 .credentials.env
 
 # Tooling output (reports, analysis, optimization)
+# NOTE: Prefer .tmp/ for transient tool artifacts — it's already gitignored.
+# Only add root-level entries here for tools that can't be configured otherwise.
 .jscpd-report/
 token-optimizer/
 docs/meta/refactoring-analysis.md
+
+# Test coverage (bun test --coverage) — should migrate to .tmp/ when bun supports config
+coverage/
 
 # VitePress compiled output (generated from .mts)
 docs/.vitepress/config.mjs
