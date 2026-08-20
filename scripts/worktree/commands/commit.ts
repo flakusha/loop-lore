@@ -1,0 +1,118 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Commit command — GPG-signed commit on current branch
+ */
+
+import { type WorktreeConfig, } from "../utils/config";
+import { gitSync, } from "../utils/git";
+import { log, } from "../utils/output";
+
+export async function commit(
+  args: string[],
+  config: WorktreeConfig,
+): Promise<void> {
+  const message = args.join(" ",);
+
+  if (!message) {
+    log("error", "commit message required",);
+    console.log("  Usage: worktree commit <message>",);
+    process.exit(1,);
+  }
+
+  // Verify agent credentials
+  if (!config.agentGpgKeyId) {
+    log("error", "AGENT_GPG_KEY_ID not set in .credentials.env",);
+    process.exit(1,);
+  }
+
+  if (!config.agentGpgName || !config.agentGpgEmail) {
+    log("error", "AGENT_GPG_NAME/AGENT_GPG_EMAIL not set in .credentials.env",);
+    process.exit(1,);
+  }
+
+  // Check for staged changes
+  const staged = Bun.spawnSync(
+    ["git", "diff", "--cached", "--quiet",],
+    { stdout: "pipe", stderr: "pipe", cwd: config.repoRoot, },
+  );
+  if (staged.exitCode === 0) {
+    log("error", "no staged changes",);
+    console.log("  Stage files first: git add <files>",);
+    process.exit(1,);
+  }
+
+  // Get author from git config
+  const authorName = gitSync(config.repoRoot, "config", "user.name",);
+  const authorEmail = gitSync(config.repoRoot, "config", "user.email",);
+
+  if (!authorName || !authorEmail) {
+    log("error", "git user.name/user.email not configured",);
+    console.log("  Run: git config user.name 'Your Name' && git config user.email 'you@example.com'",);
+    process.exit(1,);
+  }
+
+  // Verify GPG key available
+  const gpgCheck = Bun.spawnSync(
+    ["gpg", "--list-secret-keys", config.agentGpgKeyId,],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  if (gpgCheck.exitCode !== 0) {
+    log("error", `GPG secret key ${config.agentGpgKeyId} not found — run: ./scripts/gpg-unlock.mjs`,);
+    process.exit(1,);
+  }
+
+  const currentBranch = gitSync(config.repoRoot, "branch", "--show-current",) || "(detached)";
+
+  log("info", `Creating GPG-signed commit on '${currentBranch}'...`,);
+  console.log(`  Author:    ${authorName} <${authorEmail}>`,);
+  console.log(`  Committer: ${config.agentGpgName} <${config.agentGpgEmail}>`,);
+  console.log(`  GPG Key:   ${config.agentGpgKeyId.slice(0, 8,)}...`,);
+
+  const result = Bun.spawnSync(
+    [
+      "git",
+      "-C",
+      config.repoRoot,
+      "-c",
+      `user.signingkey=${config.agentGpgKeyId}`,
+      "-c",
+      "commit.gpgsign=true",
+      "commit",
+      "-S",
+      "--no-verify",
+      `--author=${authorName} <${authorEmail}>`,
+      "-m",
+      message,
+    ],
+    {
+      stdout: "pipe",
+      stderr: "pipe",
+      env: {
+        ...process.env,
+        GIT_COMMITTER_NAME: config.agentGpgName,
+        GIT_COMMITTER_EMAIL: config.agentGpgEmail,
+      },
+    },
+  );
+
+  if (result.exitCode !== 0) {
+    log("error", `commit failed (exit ${result.exitCode})`,);
+    console.error(result.stderr.toString(),);
+    process.exit(1,);
+  }
+
+  // Verify signature
+  const commitSha = gitSync(config.repoRoot, "rev-parse", "HEAD",);
+  const verify = Bun.spawnSync(
+    ["git", "-C", config.repoRoot, "verify-commit", commitSha,],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+
+  if (verify.exitCode === 0) {
+    log("success", `Commit created and GPG-signed: ${commitSha}`,);
+  } else {
+    log("warn", "Commit created but signature verification failed",);
+  }
+}

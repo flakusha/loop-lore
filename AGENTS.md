@@ -128,8 +128,8 @@ rg "interface.*Config" src/ --type ts
 fd "test" src/ --type f -e ts
 
 # Check git issues for active work
-./scripts/worktree.sh issues
-./scripts/worktree.sh search "your topic"
+bun run scripts/worktree/ issues
+bun run scripts/worktree/ search "your topic"
 ```
 
 ## Directory Structure (Key Paths)
@@ -222,7 +222,7 @@ E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 Each `bun run check` writes `.tmp/check-report.json` atomically with provenance
 (branch, gitHead, runId, mode). The pre-commit hook warns when the report is
 stale w.r.t. the tree's current HEAD; treat a stale or failed report as
-"unverified". `bun run check:report-ls` (or `./scripts/worktree.sh report`)
+"unverified". `bun run check:report-ls` (or `bun run scripts/worktree/ report`)
 aggregates report status across all worktrees.
 
 ### DB schema regeneration (required after any migration change)
@@ -248,47 +248,50 @@ schema directly from migrations, so they pick changes up automatically.
 
 ```bash
 # Create worktree
-./scripts/worktree.sh new feature-name
+bun run scripts/worktree/ new feature-name
 
 # Work in worktree
 cd tree/feature-name
 
 # Agent commit (GPG-signed)
-./scripts/worktree.sh agent-commit feature-name "feat(scope): message"
+bun run scripts/worktree/ agent-commit feature-name "feat(scope): message"
 
 # Rebase onto updated dev
-./scripts/worktree.sh rebase feature-name
+bun run scripts/worktree/ rebase feature-name
 
 # Finalize (checks + signed merge + cleanup; --force skips gates)
-./scripts/worktree.sh finalize feature-name
+bun run scripts/worktree/ finalize feature-name
 ```
 
+> **Note:** The old `./scripts/worktree.sh` (shell variant) still works as a thin wrapper for backward compatibility.
+
+````
 ## Issue Tracking
 
 ```bash
 # Create ticket (filename = TYPE-slug from title, e.g. TASK-fix-login; also creates git issue)
-./scripts/worktree.sh ticket TASK "Title" "Description" -l label -p high
+bun run scripts/worktree/ ticket TASK "Title" "Description" -l label -p high
 
 # List/Search
-./scripts/worktree.sh issues
-./scripts/worktree.sh search "pattern"
+bun run scripts/worktree/ issues
+bun run scripts/worktree/ search "pattern"
 
 # Show/Comment/Attach
-./scripts/worktree.sh show TASK-001
-./scripts/worktree.sh comment TASK-001 -m "text"
-./scripts/worktree.sh attach TASK-001 ./file.md
+bun run scripts/worktree/ show TASK-001
+bun run scripts/worktree/ comment TASK-001 -m "text"
+bun run scripts/worktree/ attach TASK-001 ./file.md
 
 # State transitions
-./scripts/worktree.sh state TASK-001 done
+bun run scripts/worktree/ state TASK-001 done
 
 # Sync .plan/tickets/index.json with git issues
-./scripts/worktree.sh sync            # interactive
+bun run scripts/worktree/ sync            # interactive
 bun run plan:sync                     # check
 bun run plan:sync:fix                 # apply fixes
 
 # Direct git-issue
-./scripts/worktree.sh gi <command>
-```
+bun run scripts/worktree/ gi <command>
+````
 
 ## Planning System
 
