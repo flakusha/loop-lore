@@ -6,7 +6,12 @@
     "plugins/core/*/plugin.ts",
     "plugins/core/*/index.ts",
     "plugins/community/*/plugin.ts",
-    "scripts/worktree/index.mjs"
+    "scripts/worktree/index.mjs",
+    "scripts/backup-sqlite.ts",
+    "scripts/validate-backup-restore.ts",
+    "scripts/check-no-shell-refs.ts",
+    "scripts/lib/assertions.ts",
+    "scripts/lib/colors.ts"
   ],
   "project": [
     "src/**/*.ts",
