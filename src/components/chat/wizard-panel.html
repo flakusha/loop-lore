@@ -1,7 +1,13 @@
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-<!-- Creation Wizard Preview Panel — shows LLM-generated entity draft for review -->
+<!--
+  Creation Wizard Preview Panel — multi-step entity draft review.
+
+  Step 1: Edit generated entity fields
+  Step 2: Set additional options (world, visibility)
+  Step 3: Final review and confirm
+-->
 <div
   x-show="wizardPreviewOpen && wizardDraft"
   x-cloak
@@ -15,6 +21,14 @@
       <h3>
         <span x-text="wizardDraft?.label ? t('wizard.previewTitle', { type: wizardDraft.label }) : ''"></span>
       </h3>
+      <div class="wizard-step-indicator">
+        <span
+          x-for="s in wizardTotalSteps"
+          :key="s"
+          class="wizard-step-dot"
+          :class="{ active: wizardStep === s, completed: s < wizardStep }"
+        ></span>
+      </div>
       <button
         class="btn btn-ghost btn-sm"
         @click="cancelWizard(wizardDraft?.wizardId ?? '')"
@@ -34,32 +48,97 @@
         </div>
       </template>
 
-      <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
+      <!-- Step 1: Edit entity fields -->
+      <div x-show="wizardStep === 1">
+        <h4 class="wizard-step-title">{{{ t("wizard.stepEditFields") }}}</h4>
+        <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
+          <div class="wizard-field">
+            <label class="wizard-field-label" x-text="field"></label>
+            <textarea
+              class="wizard-field-textarea"
+              :value="value ?? ''"
+              @input="updateWizardField(field, $event.target.value)"
+              rows="2"
+            ></textarea>
+          </div>
+        </template>
+      </div>
+
+      <!-- Step 2: Additional options -->
+      <div x-show="wizardStep === 2">
+        <h4 class="wizard-step-title">{{{ t("wizard.stepOptions") }}}</h4>
         <div class="wizard-field">
-          <label class="wizard-field-label" x-text="field"></label>
+          <label class="wizard-field-label">{{{ t("wizard.worldScope") }}}</label>
           <input
             type="text"
             class="wizard-field-input"
-            :value="value ?? ''"
-            @input="updateWizardField(field, $event.target.value)"
+            :value="wizardDraft?.worldId ?? ''"
+            @input="if (wizardDraft) wizardDraft.worldId = $event.target.value"
+            placeholder="world-id (optional)"
           />
         </div>
-      </template>
+        <div class="wizard-field">
+          <label class="wizard-field-label">{{{ t("wizard.visibility") }}}</label>
+          <select
+            class="wizard-field-select"
+            x-model="wizardDraft.visibility"
+          >
+            <option value="private">{{{ t("wizard.private") }}}</option>
+            <option value="public">{{{ t("wizard.public") }}}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Step 3: Final review -->
+      <div x-show="wizardStep === 3">
+        <h4 class="wizard-step-title">{{{ t("wizard.stepReview") }}}</h4>
+        <div class="wizard-review-summary">
+          <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
+            <div class="wizard-review-row">
+              <span class="wizard-review-label" x-text="field + ':'"></span>
+              <span class="wizard-review-value" x-text="value ?? ''"></span>
+            </div>
+          </template>
+          <div class="wizard-review-row" x-show="wizardDraft?.worldId">
+            <span class="wizard-review-label">{{{ t("wizard.worldScope") }}}:</span>
+            <span class="wizard-review-value" x-text="wizardDraft?.worldId"></span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="wizard-panel-footer">
-      <button
-        class="btn btn-ghost"
-        @click="cancelWizard(wizardDraft?.wizardId ?? '')"
-      >
-        {{{ t("common.cancel") }}}
-      </button>
-      <button
-        class="btn btn-primary"
-        @click="confirmWizard(wizardDraft?.wizardId ?? '')"
-      >
-        {{{ t("wizard.confirm") }}}
-      </button>
+      <div class="wizard-footer-left">
+        <button
+          class="btn btn-ghost"
+          @click="cancelWizard(wizardDraft?.wizardId ?? '')"
+        >
+          {{{ t("common.cancel") }}}
+        </button>
+      </div>
+      <div class="wizard-footer-right">
+        <button
+          class="btn btn-ghost"
+          x-show="wizardStep > 1"
+          @click="wizardPrevStep()"
+        >
+          {{{ t("common.back") }}}
+        </button>
+        <button
+          class="btn btn-primary"
+          x-show="wizardStep < wizardTotalSteps"
+          @click="wizardNextStep()"
+        >
+          {{{ t("common.next") }}}
+        </button>
+        <button
+          class="btn btn-primary"
+          x-show="wizardStep === wizardTotalSteps"
+          @click="confirmWizard(wizardDraft?.wizardId ?? '')"
+        >
+          {{{ t("wizard.confirm") }}}
+        </button>
+      </div>
     </div>
   </div>
 </div>
