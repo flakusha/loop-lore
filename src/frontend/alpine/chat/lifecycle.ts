@@ -129,6 +129,9 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
         const user = await res.json();
         this.userDisplayName = user.display_name || user.username || t("common.user",);
         this.userRole = user.role || "solo";
+        // Sync role to UI store so cross-component consumers (e.g. command
+        // buttons toolbar) can filter GM-only actions.
+        Alpine.store("ui",).userRole = this.userRole;
       }
     } catch {
       // Silent

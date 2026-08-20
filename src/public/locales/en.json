@@ -90,6 +90,7 @@
     "translatedFrom": "Translated from {locale}",
     "showOriginal": "Show Original",
     "showTranslation": "Show Translation",
+    "ownerMessage": "Authored by chat owner",
     "regenerate": "Regenerate",
     "reroll": "Reroll",
     "thinking": "Thinking...",
@@ -1227,7 +1228,15 @@
     "previewTitle": "Create {type} — Preview",
     "confirm": "Create",
     "cancel": "Cancel",
-    "editHint": "Edit fields below, then confirm to save."
+    "editHint": "Edit fields below, then confirm to save.",
+    "stepEditFields": "Edit Fields",
+    "stepOptions": "Options",
+    "stepReview": "Review & Confirm",
+    "worldScope": "World Scope",
+    "visibility": "Visibility",
+    "private": "Private",
+    "public": "Public",
+    "back": "Back"
   },
   "status": {
     "characterResponding": "Character is responding...",

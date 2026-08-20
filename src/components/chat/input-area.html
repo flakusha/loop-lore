@@ -158,6 +158,33 @@
         ➤
       </button>
     </div>
+    <!-- Command buttons toolbar (D3) -->
+    <div
+      class="command-buttons-row"
+      x-data="commandButtons()"
+      x-show="!isGenerating"
+      data-testid="command-buttons-row"
+    >
+      <template x-for="btn in filteredButtons" :key="btn.name">
+        <button
+          class="btn btn-ghost btn-sm command-button"
+          :title="btn.description"
+          @click="runCommand(btn.name)"
+          :data-testid="'cmd-btn-' + btn.name"
+        >
+          <span x-text="btn.icon"></span>
+          <span class="command-button-label" x-show="showLabels" x-text="btn.label"></span>
+        </button>
+      </template>
+      <button
+        class="btn btn-ghost btn-sm command-button-toggle"
+        @click="toggleLabels()"
+        title="Toggle labels"
+        data-testid="cmd-btn-toggle-labels"
+      >
+        <span x-text="showLabels ? '🏷️' : '🔤'"></span>
+      </button>
+    </div>
     <div class="input-toolbar">
       <!-- Story-mode footer controls: GM Panel + Quest Log -->
       <div class="story-footer-controls" x-show="isStoryMode" data-testid="story-footer-controls">
