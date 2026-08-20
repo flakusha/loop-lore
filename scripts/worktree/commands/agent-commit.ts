@@ -9,7 +9,7 @@ import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
-import { gitSync, } from "../utils/git";
+import { gitSyncQuiet, } from "../utils/git";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -63,8 +63,8 @@ export async function agentCommit(
   }
 
   // Get author from worktree's local git config
-  const authorName = gitSync(wtPath, "config", "user.name",);
-  const authorEmail = gitSync(wtPath, "config", "user.email",);
+  const authorName = gitSyncQuiet(wtPath, "config", "user.name",);
+  const authorEmail = gitSyncQuiet(wtPath, "config", "user.email",);
 
   if (!authorName || !authorEmail) {
     log("error", "worktree user.name/user.email not configured",);
