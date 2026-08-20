@@ -26,6 +26,7 @@ import { getXpHistory, logXp, } from "../../rpg/service/xp";
 import { awardXp, levelFromXp, xpToNextLevel, } from "../../rpg/xp";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { requireActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 import { AwardBody, GenerateBody, LevelBody, NextBody, PersistBody, } from "./xp-loot-schemas";
@@ -41,17 +42,19 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       .post(`${R}/xp/award`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const body = ctx.body as {
+          actorId: string;
+          amount: number;
+          source: string;
+          description?: string;
+          referenceId?: string;
+          chatId?: string;
+          currentLevel?: number;
+          currentXp?: number;
+        };
+        const actorId = await requireActorAccess(database, body.actorId, ctx,);
+        if (typeof actorId !== "string") { return actorId; }
         try {
-          const body = ctx.body as {
-            actorId: string;
-            amount: number;
-            source: string;
-            description?: string;
-            referenceId?: string;
-            chatId?: string;
-            currentLevel?: number;
-            currentXp?: number;
-          };
           const ledgerId = await logXp(deps, {
             actorId: body.actorId,
             amount: body.amount,
@@ -84,6 +87,8 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         try {
           const { actorId, limit, } = ctx.query as { actorId?: string; limit?: string };
           if (!actorId) { return jsonError("actorId query param required", 400,); }
+          const actorErr = await requireActorAccess(database, actorId, ctx,);
+          if (typeof actorErr !== "string") { return actorErr; }
           const rows = await getXpHistory(deps, actorId, limit ? Number(limit,) : 50,);
           return jsonResponse({ entries: rows, },);
         } catch (error) {
