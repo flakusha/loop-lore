@@ -2778,6 +2778,10 @@
   "src/chat/service/crud/create.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -3741,6 +3745,18 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/config/schema-class/encryption.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    }
+  ],
+  "src/config/schema-class/env-map.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    }
+  ],
   "src/config/schema.ts": [
     {
       "kind": "epic",
@@ -3944,6 +3960,10 @@
     }
   ],
   "src/config/sections/encryption.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-config-algorithm.md"
@@ -4168,6 +4188,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-access-management.md"
     },
     {
@@ -4264,6 +4288,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
     },
     {
@@ -4301,6 +4329,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     },
     {
       "kind": "ticket",
@@ -4347,6 +4383,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     },
     {
       "kind": "ticket",
@@ -4413,6 +4453,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
     },
     {
       "kind": "ticket",
@@ -4497,6 +4541,30 @@
       "source": "docs/frontend/encryption.md"
     }
   ],
+  "src/crypto/key-rotation/re-encrypt.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
+    }
+  ],
+  "src/crypto/key-rotation/rotate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
+    }
+  ],
+  "src/crypto/key-rotation/timer.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    }
+  ],
+  "src/crypto/message-content.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    }
+  ],
   "src/crypto/pipeline-algorithm.test.ts": [
     {
       "kind": "ticket",
@@ -4548,6 +4616,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
     },
     {
@@ -4575,6 +4647,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     },
     {
       "kind": "ticket",
@@ -4771,6 +4847,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     },
     {
       "kind": "ticket",
@@ -5019,6 +5099,12 @@
       "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
+  "src/db/migrations/016_asset_encryption.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
+    }
+  ],
   "src/db/migrations/017_lorebook_cooldowns.ts": [
     {
       "kind": "ticket",
@@ -5065,12 +5151,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-lore-structured-generation-via-assistant.md"
-    }
-  ],
-  "src/db/migrations/031_asset_encryption.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     }
   ],
   "src/db/migrations/031_chat_sections.ts": [
@@ -5197,6 +5277,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     },
     {
       "kind": "ticket",
@@ -6779,6 +6863,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/frontend/alpine/chat-send.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    }
+  ],
   "src/frontend/alpine/chat-settings.ts": [
     {
       "kind": "epic",
@@ -7812,6 +7902,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-encryption-foundation-aes-256-gcm.md"
     },
     {
@@ -8051,6 +8145,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
+    }
+  ],
+  "src/frontend/htmx-encrypt.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     }
   ],
   "src/frontend/i18n.ts": [
@@ -9301,10 +9401,6 @@
   ],
   "src/generation/lora/index.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-lora-discovery-application.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
     }
@@ -9327,16 +9423,18 @@
   ],
   "src/generation/lora/routes.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-lora-discovery-application.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-lora-admin-annotation-archival.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
+    }
+  ],
+  "src/generation/lora/routes/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lora-discovery-application.md"
     }
   ],
   "src/generation/lora/types.ts": [
@@ -12428,6 +12526,10 @@
   "src/routes/chats/create.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
@@ -12958,6 +13060,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
     },
     {
@@ -13101,10 +13207,34 @@
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
     }
   ],
+  "src/routes/messages/helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    }
+  ],
+  "src/routes/messages/post.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    }
+  ],
   "src/routes/messages/read.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-db-cold-storage-high-perf.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
     }
   ],
   "src/routes/messages/transitions.ts": [
@@ -15576,6 +15706,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
     },
     {
@@ -15927,6 +16061,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/prompt-creation.md"
+    }
+  ],
+  "src/story/game-master/narration.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     }
   ],
   "src/story/gm/decisions/hardcoded.ts": [

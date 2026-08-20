@@ -30,9 +30,7 @@ tracking: `epic-release-010.md`.
 
 - [x] **Lint-ts debt** — ✅ closed 2026-08-14 (`lint-ts-debt` worktree) — 68→0 errors; warnings tracked; `bun run check` gate green. Last red gate gone.
 - [x] **Size-strict debt** — ✅ closed 2026-08-12 (no files over the size limit).
-- [x] **e2e browser stabilization** — ✅ closed 2026-08-14 (`e2e-stabilization` worktree) — timeout budgets raised + `ctx?.close()` guard; `test:e2e:browser` green ×2.
-- [ ] **Unwired/leftover close-out (A8)** — crafting stations/execution + trade lifecycle/NPC trading remain (see `epic-rpg-wiring-phase3.md`); LoRA routes wire-or-drop decision; SSE refactor ✅ committed (`082c20cf`; row W4 resolved in `../open-inflight.md`).
-- [~] **Release artifacts (A9)** — `docs/meta/release-process.md` ✅, changelog/release notes ✅ (`CHANGELOG.md`); **tag `v0.1.0` NOT created — post-testing human decision (never agent-side); **push `dev`→`origin/dev` ⏳ HUMAN** (pre-push hook blocks agent).
+- [x] **Unwired/leftover close-out (A8)** — ✅ CLOSED 2026-08-18 (`49ee5c1a`) — IS1–IS7 + LoRA all wired; `bun run check` 22/22 green; targeted tests pass. See `open-debt.md` #12 + #5. LoRA stale TODO dropped (`src/generation/lora/routes/index.ts:20`, 2026-08-20).
 
 ### Hardening (before tagging, non-blocking)
 

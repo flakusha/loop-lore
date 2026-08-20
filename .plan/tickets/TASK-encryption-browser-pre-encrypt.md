@@ -3,7 +3,7 @@
 
 # TASK: Encryption — Browser Pre-Encrypt Integration
 
-**Status:** ⬜ Not Started
+**Status:** 🟨 Partial — browser.ts/browser-crypto/browser-compress + send path built; receive-decrypt, feature-detect, key-cache missing (see BUG-private-tier-no-true-e2e)
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-crypto

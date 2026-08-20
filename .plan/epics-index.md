@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 193 epics
+**Total:** 194 epics
 
 ## Summary
 
@@ -80,8 +80,7 @@
 | ⬜ Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
 | ⬜ Not Started | Multi-Session Support | Medium | Med | 6 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | ⬜ Not Started | Notification System UI | Medium | Unknown | 0 | [epic-frontend-notifications.md](/.plan/epics/epic-frontend-notifications.md) |
-| ⬜ Not Started | NPC & Social UI | P2 — Medium | Medium | 19 | [epic-npc-management-ui.md](/.plan/epics/epic-npc-management-ui.md) |
-| ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 6 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
+| ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 5 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
 | ⬜ Not Started | NSFW Interaction UI | P0 — Critical | Medium | 14 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
 | ⬜ Not Started | Party Migration & Travel | Low | Unknown | 0 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
 | ⬜ Not Started | Platform & Provider Integrations (EPIC-046) | P1-High | Very High | 0 | [epic-platform-integrations.md](/.plan/epics/epic-platform-integrations.md) |
@@ -122,7 +121,7 @@
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Unknown | API Governance — Epic | Unknown | Unknown | 36 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
 | Not Started | API Governance — Quick Reference | High | High | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
-| 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review) | AUX LLM Enrichment Pipeline | P2-B | Medium | 11 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
+| 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review) | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | 🟡 Partial (core CRUD + comments + follows + moderation built) | Blog System | Medium | High | 29 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
 | 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy) | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
@@ -152,6 +151,7 @@
 | 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14) | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | Unknown | Epic: Database Backup & Recovery Infrastructure | Unknown | Unknown | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Unknown | Epic: Deployment Infrastructure (Docker & Bare Metal) | Unknown | Unknown | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
+| Unknown | Epic: Federation, Swarm Sync & Decentralized Comms | Unknown | Unknown | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
 | Draft\ | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built) | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
 | Draft\ | Epic: Memory Propagation | High\ | Medium\ | 5 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
@@ -166,7 +166,7 @@
 | Not Started | Epic: World NPCs | High | High | 0 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
 | Not Started | Epic: World Travel & Time | High | High | 0 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
 | 🟢 Complete (core size-strict debt closed; `src/server/start.ts` remains documented follow-on) | File Splitting & God-Module Refactor | High | Very High | 5 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
-| 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance remaining | Frontend Gallery & Media Viewer | Medium | Medium | 1 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
+| 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done | Frontend Gallery & Media Viewer | Medium | Medium | 1 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
 | ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately. | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending) | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
@@ -180,6 +180,7 @@
 | Draft | Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics | Unknown | Unknown | 0 | [epic-mini-games-expanded.md](/.plan/epics/epic-mini-games-expanded.md) |
 | Unknown | Mini-Games: UI Components & API Contracts | Unknown | Unknown | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
 | 🟦 Research | Non-Standard Browser Encryption | Medium | High | 7 | [epic-non-standard-browser-crypto.md](/.plan/epics/epic-non-standard-browser-crypto.md) |
+| 🟢 Implemented (mock data, UI shell) | NPC & Social UI | P2 — Medium | Medium | 19 | [epic-npc-management-ui.md](/.plan/epics/epic-npc-management-ui.md) |
 | ✅ Complete (merged epic-openapi-reference branch) | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
 | 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending) | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | 🟡 Permanently Ongoing | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
@@ -188,7 +189,7 @@
 | Not Started | RAG & Document Processing — Quick Reference | High | High | 0 | [epic-rag-document-processing-quickref.md](/.plan/epics/epic-rag-document-processing-quickref.md) |
 | 🟡 In Progress (Gate C complete 2026-08-14; release blockers: tag + push) | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | 🟡 Partial — Phase 1 core (dice/stats/combat/xp/loot) code+tests+schema done but UNWIRED; combat has no DB schema (in-memory engine) | RPG Mechanics & Extensible Game Systems | Medium | Very High | 28 | [epic-rpg-mechanics.md](/.plan/epics/epic-rpg-mechanics.md) |
-| 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade execution remaining) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
+| 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
 | 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 2 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Unknown | Security & Sandboxing — Epic | Unknown | Unknown | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
@@ -864,15 +865,6 @@ Comprehensive magic and spellcasting system — spell schools, elemental magic, 
 - **Type:** Feature
 - **File:** `.plan/epics/epic-frontend-notifications.md`
 
-### NPC & Social UI
-
-- **Status:** ⬜ Not Started
-- **Priority:** P2 — Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** npc, social, relationships, ui, frontend
-- **File:** `.plan/epics/epic-npc-management-ui.md`
-
 ### NSFW Integration Gaps — Housing, Weather, Social, Disease
 
 - **Status:** ⬜ Not Started
@@ -1525,6 +1517,14 @@ Drafted framework for automated, encrypted backup and recovery of loop-lore's SQ
 
 Containerize the loop-lore application and establish deployment strategies for both containerized environments (Docker) and bare-metal servers. Evaluate cost-effective hosting options that support storage and GPU compute for LLM inference workloads.
 
+### Epic: Federation, Swarm Sync & Decentralized Comms
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-federation-swarm-sync.md`
+
 ### Epic: Lore Knowledge System
 
 - **Status:** Draft\
@@ -1673,7 +1673,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Frontend Gallery & Media Viewer
 
-- **Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance remaining
+- **Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1793,6 +1793,15 @@ LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual 
 - **Tags:** encryption, wasm, js-crypto, chacha20, argon2, libsodium, browser-crypto, post-aes
 - **File:** `.plan/epics/epic-non-standard-browser-crypto.md`
 
+### NPC & Social UI
+
+- **Status:** 🟢 Implemented (mock data, UI shell)
+- **Priority:** P2 — Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** npc, social, relationships, ui, frontend
+- **File:** `.plan/epics/epic-npc-management-ui.md`
+
 ### OpenAPI-Driven API Reference
 
 - **Status:** ✅ Complete (merged epic-openapi-reference branch)
@@ -1869,7 +1878,7 @@ A character has one base **setup** (personality, description, scenario, system
 
 ### RPG Wiring Completion — Phase 3
 
-- **Status:** 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade execution remaining)
+- **Status:** 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18)
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
