@@ -13,12 +13,14 @@
  *   POST /api/rpg/npc-navigation/worlds/:worldId/tick
  *
  * Actor-scoped routes are gated via `requireActorAccess`.
+ * World-mutation routes are gated via `requireWorldOwner`.
  */
 import { Elysia, t, } from "elysia";
 import { type MovementPattern, NpcNavigationService, } from "../../rpg/npc-navigation";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireActorAccess, } from "../nsfw/shared";
+import { requireWorldOwner, } from "../worlds/access";
 import { log, } from "./log";
 import {
   moveBody,
@@ -135,6 +137,9 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
     .post(`${R}/worlds/:worldId/tick`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
+      const userRole = ctx.userRole;
+      const denied = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
+      if (denied) { return denied; }
       try {
         const results = await svc().processMovementTick(ctx.params.worldId,);
         return jsonResponse({ results, },);
@@ -144,7 +149,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
       }
     }, {
       params: t.Object({ worldId: t.String(), },),
-      response: { 200: SuccessResponse, 401: ErrorResponse, },
+      response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, },
       detail: {
         summary: "Process NPC movement tick",
         description: "Advance all NPCs in a world based on their movement patterns.",
