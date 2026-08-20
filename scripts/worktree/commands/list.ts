@@ -22,9 +22,9 @@ function isProtectedBranch(branch: string,): boolean {
 
 export async function listWorktrees(
   _args?: string[],
-  _config?: WorktreeConfig,
+  config?: WorktreeConfig,
 ): Promise<void> {
-  const repoRoot = resolve(__dirname, "..", "..", "..",);
+  const repoRoot = config?.repoRoot ?? resolve(__dirname, "..", "..", "..",);
   const worktrees = await getWorktrees(repoRoot,);
 
   if (worktrees.length === 0) {

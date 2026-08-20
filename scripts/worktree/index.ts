@@ -113,7 +113,7 @@ const commands: Record<string, CommandHandler> = {
   },
   "list": {
     description: "Show all worktrees with status",
-    run: async () => listWorktrees(),
+    run: async (_args, config,) => listWorktrees(_args, config,),
   },
   "merge": {
     description: "Merge source branch into worktree branch",
