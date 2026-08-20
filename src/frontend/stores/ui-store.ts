@@ -35,6 +35,7 @@ export const uiStoreDefinition: Record<string, unknown> = {
 
   // ── State flags ──────────────────────────────────────
   hasActiveChat: false,
+  userRole: "member",
   showGmPanel: false,
   showParticipants: false,
   showGmGuidance: false,

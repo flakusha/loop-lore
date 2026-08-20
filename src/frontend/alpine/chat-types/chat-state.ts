@@ -14,6 +14,7 @@ import type { ChatParticipantsState, } from "./participants-state";
 import type { ChatPinsState, } from "./pins-state";
 import type { ChatRpgState, } from "./rpg-state";
 import type { ChatSideChannelsState, } from "./side-channels-state";
+import type { ChatWizardState, } from "./wizard-state";
 
 /** Aggregate ChatState: composed from domain slices. */
 export interface ChatState
@@ -30,5 +31,6 @@ export interface ChatState
     ChatPinsState,
     ChatArchiveState,
     ChatMovementState,
-    ChatNpcState
+    ChatNpcState,
+    ChatWizardState
 {}

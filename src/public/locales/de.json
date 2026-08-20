@@ -108,7 +108,8 @@
     "original": "Original",
     "stop": "Stop",
     "caption": "Caption:",
-    "playingAs": "Playing as"
+    "playingAs": "Playing as",
+    "ownerMessage": "Authored by chat owner"
   },
   "settings": {
     "title": "Settings",
@@ -1234,5 +1235,15 @@
     "failedAdd": "Failed to add participant",
     "failedRemove": "Failed to remove participant",
     "failedUpdate": "Failed to update participant"
+  },
+  "wizard": {
+    "stepEditFields": "Edit Fields",
+    "stepOptions": "Options",
+    "stepReview": "Review",
+    "worldScope": "World Scope",
+    "visibility": "Visibility",
+    "private": "Private",
+    "public": "Public",
+    "back": "Back"
   }
 }

@@ -31,6 +31,7 @@ export interface Message {
   thinking?: string;
   tool_calls?: ToolCall[] | null;
   actor_name?: string;
+  actor_id?: string;
   variantIndex?: number;
   totalVariants?: number;
   attachments?: MessageAttachment[];

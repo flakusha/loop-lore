@@ -900,6 +900,12 @@ body {
   font-size: 11px;
 }
 
+.message .bubble .meta .owner-badge {
+  font-size: 11px;
+  cursor: help;
+  user-select: none;
+}
+
 .message .bubble .meta .edited-label {
   font-size: 11px;
   font-style: italic;
