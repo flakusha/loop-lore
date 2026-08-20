@@ -26,6 +26,8 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     { name: "music", description: t("commands.music",), },
     { name: "caption", description: t("commands.caption",), },
     { name: "create", description: t("commands.create",), },
+    { name: "rewrite", description: t("commands.rewrite",), },
+    { name: "translate", description: t("commands.translate",), },
     { name: "review", description: t("commands.review",), },
     { name: "clear", description: t("commands.clear",), },
     { name: "stats", description: t("commands.stats",), },

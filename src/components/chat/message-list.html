@@ -129,6 +129,13 @@
           <div class="bubble">
             <div class="meta">
               <span class="name" x-text="displayName(msg)" data-testid="message-author"></span>
+              <!-- Ownership indicator: shows owner badge for user-created actors -->
+              <span
+                class="owner-badge"
+                x-show="msg.actor_id && msg.actor_id.startsWith('actor-user')"
+                x-bind:title="t('chats.ownerMessage')"
+                data-testid="owner-badge"
+              >👑</span>
               <span
                 class="time"
                 x-text="msg.group ? formatTimeShort(msg.created_at) : formatTime(msg.created_at)"
