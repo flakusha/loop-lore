@@ -33,6 +33,19 @@ export async function findCredentials(startDir: string,): Promise<string | null>
   return null;
 }
 
+/** Strip surrounding quotes (shell .env style) — old shell eval stripped them implicitly. */
+function unquote(value: string,): string {
+  const trimmed = value.trim();
+  if (trimmed.length >= 2) {
+    const first = trimmed[0];
+    const last = trimmed[trimmed.length - 1];
+    if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+      return trimmed.slice(1, -1,);
+    }
+  }
+  return trimmed;
+}
+
 export async function loadConfig(): Promise<WorktreeConfig> {
   const repoRoot = process.env.REPO_ROOT ?? resolve(__dirname, "..", "..", "..",);
   const treeDir = process.env.TREE_DIR ?? resolve(repoRoot, "tree",);
@@ -48,11 +61,11 @@ export async function loadConfig(): Promise<WorktreeConfig> {
     const content = await Bun.file(credentialsPath,).text();
     for (const line of content.split("\n",)) {
       if (line.startsWith("AGENT_GPG_KEY_ID=",)) {
-        agentGpgKeyId = line.split("=",)[1];
+        agentGpgKeyId = unquote(line.split("=",)[1],);
       } else if (line.startsWith("AGENT_GPG_NAME=",)) {
-        agentGpgName = line.split("=",)[1];
+        agentGpgName = unquote(line.split("=",)[1],);
       } else if (line.startsWith("AGENT_GPG_EMAIL=",)) {
-        agentGpgEmail = line.split("=",)[1];
+        agentGpgEmail = unquote(line.split("=",)[1],);
       }
     }
   }
