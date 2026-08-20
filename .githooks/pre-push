@@ -54,7 +54,7 @@ detect_agent_push() {
             red "❌ PUSH BLOCKED: Agent commits detected in $local_ref"
             red ""
             red "   Agent commits cannot be pushed to protected branches."
-            red "   Use: ./scripts/worktree.sh finalize <branch>"
+            red "   Use: bun run scripts/worktree/ finalize <branch>"
             red "   Then: git push (as human)"
             red ""
             red "   Override (human approval required):"
