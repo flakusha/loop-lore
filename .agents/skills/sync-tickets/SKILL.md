@@ -34,7 +34,7 @@ that references docs instead of duplicating content.
 bun run scripts/sync-ticket-index.ts
 
 # 2. Fix orphan files (interactive)
-./scripts/worktree.sh sync
+./scripts/worktree/ sync
 
 # 3. Verify clean
 bun run scripts/sync-ticket-index.ts  # expect 0 mismatches
@@ -139,10 +139,10 @@ overlap.length > 0 && extidWords.length <= 3; // 1 match for short extids
 bun run scripts/sync-ticket-index.ts
 
 # Fix orphans (interactive)
-./scripts/worktree.sh sync
+./scripts/worktree/ sync
 
 # Force rebuild index from .md files
-./scripts/worktree.sh sync:fix
+./scripts/worktree/ sync:fix
 
 # Create single git issue for orphan
 git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"

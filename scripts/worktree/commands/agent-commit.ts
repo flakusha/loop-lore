@@ -6,15 +6,11 @@
  */
 
 import { existsSync, } from "fs";
-import { dirname, resolve, } from "path";
-import { fileURLToPath, } from "url";
-import { branchToPath, } from "../utils/config";
+import { resolve, } from "path";
+import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
-
-const __filename = fileURLToPath(import.meta.url,);
-const __dirname = dirname(__filename,);
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
@@ -22,7 +18,10 @@ export function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
 }
 
-export async function agentCommit(args: string[],): Promise<void> {
+export async function agentCommit(
+  args: string[],
+  config: WorktreeConfig,
+): Promise<void> {
   const [branch, ...messageParts] = args;
   const message = messageParts.join(" ",);
 
@@ -37,9 +36,8 @@ export async function agentCommit(args: string[],): Promise<void> {
     process.exit(1,);
   }
 
-  // Find repo root and worktree path
-  const repoRoot = resolve(__dirname, "..", "..", "..",);
-  const wtPath = resolve(repoRoot, "tree", branchToPath(branch,),);
+  // Find worktree path from config
+  const wtPath = resolve(config.treeDir, branchToPath(branch,),);
 
   if (!existsSync(resolve(wtPath, ".git",),)) {
     log("error", `worktree not found for branch '${branch}'`,);
