@@ -126,7 +126,7 @@ interface AlgorithmFactory {
 - `TASK-encryption-key-rotation.md` — 🟨 Partial (manual done, auto missing)
 - `TASK-encryption-wire-message-pipeline.md` — ✅ Done
 - `TASK-stable-stored-chat-key-future.md` — ⬜ Not started
-- `TASK-encryption-auto-key-rotation.md` — ✅ Done
+- `TASK-encryption-auto-key-rotation.md` — 🟨 Partial (built, broken — see BUG-key-rotation-noop-orphans-history)
 - `TASK-world-location-encryption.md` — ⬜ New
 - `TASK-asymmetric-key-pairs.md` — ⬜ New
 - `TASK-fix-crypto-isolation.md` — ✅ Done (was misdiagnosed)
@@ -144,3 +144,10 @@ interface AlgorithmFactory {
 ## Related Epics (Extended)
 
 - `epic-non-standard-browser-crypto.md` — JS/WASM crypto libs, ChaCha20, Argon2, post-quantum readiness
+
+## Known Bugs (2026-08)
+
+See `.plan/tickets/BUG-encryption-tier-not-enforced.md`,
+`BUG-chat-key-history-loss-join-leave.md`,
+`BUG-key-rotation-noop-orphans-history.md`,
+`BUG-private-tier-no-true-e2e.md`, `BUG-auto-rotation-config-drift.md`.

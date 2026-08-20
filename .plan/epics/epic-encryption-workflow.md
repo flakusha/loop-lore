@@ -100,3 +100,16 @@ The encryption workflow now supports future additions of new algorithms through:
 - `TASK-encryption-access-management.md` — ⬜ Not started
 - `TASK-encryption-browser-pre-encrypt.md` — ⬜ Not started
 - `TASK-fix-crypto-isolation.md` — ~20 test failures in full suite
+
+## Known Bugs & Reconciliation (2026-08)
+
+- Encryption tier (`chats.encryption_level`) is NOT enforced by the message
+  pipeline; `public`/`standard`/`private` are indistinguishable at rest.
+  See `BUG-encryption-tier-not-enforced.md`.
+- Auto-key-rotation IS built (`src/crypto/key-rotation/`) but re-encrypt is a
+  silent no-op (orphans history) and is disabled by config drift. See
+  `BUG-key-rotation-noop-orphans-history.md`, `BUG-auto-rotation-config-drift.md`.
+- Asset encryption IS wired (upload/download) — Phase 2b below is stale on that
+  point; the open gap is the HKDF asset subkey, not the wiring.
+- Group key distribution loses history on join/leave. See
+  `BUG-chat-key-history-loss-join-leave.md`.
