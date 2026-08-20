@@ -7,6 +7,7 @@
 
 import { dirname, resolve, } from "path";
 import { fileURLToPath, } from "url";
+import type { WorktreeConfig, } from "../utils/config";
 import { getStatus, getWorktrees, } from "../utils/git";
 import { colorize, colors, log, section, } from "../utils/output";
 
@@ -19,7 +20,10 @@ function isProtectedBranch(branch: string,): boolean {
   return PROTECTED.includes(branch,);
 }
 
-export async function listWorktrees(): Promise<void> {
+export async function listWorktrees(
+  _args?: string[],
+  _config?: WorktreeConfig,
+): Promise<void> {
   const repoRoot = resolve(__dirname, "..", "..", "..",);
   const worktrees = await getWorktrees(repoRoot,);
 
