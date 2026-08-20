@@ -59,7 +59,7 @@ bun test src/        # unit tests (203 test files)
 bun run db:migrate   # DB migrations
 # After a migration change, regenerate schema artifacts (fails `check` otherwise):
 bun run db:sync-types && bun run db:sync-manifest
-./scripts/worktree.sh list   # active worktrees
+./scripts/worktree/ list   # active worktrees
 ```
 
 ## Key Design Decisions
