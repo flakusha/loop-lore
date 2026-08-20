@@ -3,22 +3,35 @@
 
 /**
  * Rotate a single actor's primary key and re-encrypt recent messages.
+ *
+ * Correct rotation sequence (preserves history):
+ * 1. Snapshot: derive OLD chat key from current (pre-rotation) actor keys.
+ * 2. Rotate: expire old actor key + create new one via rotateActorKey.
+ * 3. Derive NEW chat key from post-rotation actor keys.
+ * 4. Re-encrypt: decrypt old messages with OLD key, encrypt with NEW key.
+ *
+ * The old key is marked expired only AFTER re-encryption succeeds.
+ * On any failure during re-encrypt, the error is surfaced (not swallowed),
+ * so the caller can decide whether to retry or roll back.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { generateActorKey, listActorKeys, } from "../actor-keys";
+import { loadActorKeys, rotateActorKey, } from "../actor-keys";
+import { deriveChatKey, getChatParticipantActorIds, } from "../chat-keys";
 import { log, } from "./log";
-import { reEncryptChatMessages, } from "./re-encrypt";
+import { reEncryptWithKeys, } from "./re-encrypt";
 import type { RotationResult, } from "./types";
 
 /**
  * Rotate a single actor's primary key and re-encrypt recent messages.
  *
  * Steps:
- * 1. Generate new actor key
- * 2. Find all chats where this actor participates
- * 3. For each chat: derive new chat key, re-encrypt recent messages
- * 4. Mark old key as expired
+ * 1. Snapshot the OLD chat key from current (pre-rotation) actor keys.
+ * 2. Call rotateActorKey — atomically expires old + creates new.
+ * 3. Derive the NEW chat key from post-rotation actor keys.
+ * 4. Re-encrypt recent messages: decrypt with OLD key, encrypt with NEW key.
+ *    Failures are surfaced (not silently swallowed).
+ * 5. Old actor key is already expired from step 2.
  */
 export async function rotateActorKeyAndReEncrypt(
   database: Kysely<DB>,
@@ -28,42 +41,57 @@ export async function rotateActorKeyAndReEncrypt(
 ): Promise<RotationResult> {
   const log2 = log();
 
-  // 1. Generate new key
-  const newKeyId = await generateActorKey({ database, actorId, smk, },);
+  // ── 1. Snapshot OLD keys BEFORE rotating any actor key ───────────────────
+  const actorIds = await getChatParticipantActorIds(database, actorId,);
+  const oldParticipantKeys = await loadActorKeys({ database, actorIds, smk, },);
 
-  // 2. Find chats where actor participates
+  // ── 2. Rotate the actor key (atomically: expire old + create new) ────────
+  const newKeyId = await rotateActorKey({ database, actorId, smk, },);
+
+  // ── 3. Derive NEW chat key from post-rotation actor keys ─────────────────
+  const newParticipantKeys = await loadActorKeys({ database, actorIds, smk, },);
+
+  // ── 4. Re-encrypt recent messages: OLD → NEW ───────────────────────────
+  let totalReEncrypted = 0;
+  const errors: { chatId: string; messageId: string; reason: string }[] = [];
+
   const participations = await database
     .selectFrom("chat_participants",)
     .select("chat_id",)
     .where("actor_id", "=", actorId,)
     .execute();
 
-  let totalReEncrypted = 0;
-
-  // 3. Re-encrypt recent messages in each chat
   for (const { chat_id: chatId, } of participations) {
-    try {
-      const reEncrypted = await reEncryptChatMessages(
-        database,
-        chatId,
-        smk,
-        reEncryptLimit,
-      );
-      totalReEncrypted += reEncrypted;
-    } catch (error) {
-      log2.warn(`Failed to re-encrypt messages in chat ${chatId}: ${String(error,)}`,);
+    // Re-derive per-chat old/new keys (chatId changes the HKDF salt).
+    const oldChatKey = await deriveChatKey(oldParticipantKeys, chatId,);
+    const newChatKey = await deriveChatKey(newParticipantKeys, chatId,);
+
+    const { reEncrypted, failures, } = await reEncryptWithKeys(
+      database,
+      chatId,
+      oldChatKey,
+      newChatKey,
+      reEncryptLimit,
+    );
+    totalReEncrypted += reEncrypted;
+
+    if (failures.length > 0) {
+      for (const f of failures) {
+        log2.warn(`Failed to re-encrypt message ${f.id} in chat ${chatId}: ${f.reason}`,);
+        errors.push({ chatId, messageId: f.id, reason: f.reason, },);
+      }
     }
   }
 
-  // 4. Find old key ID
-  const keys = await listActorKeys(database, actorId,);
-  const oldKey = keys.find((k,) => k.id !== newKeyId && k.status === "active");
-
-  log2.info(`Rotated key for actor ${actorId}: ${oldKey?.id ?? "unknown"} → ${newKeyId}`,);
+  // ── 5. Done: old key is already expired from step 2 ──────────────────────
+  log2.info(
+    `Rotated key for actor ${actorId}: old=${oldParticipantKeys[0]?.keyId ?? "?"} → new=${newKeyId}` +
+      `; ${totalReEncrypted} messages re-encrypted, ${errors.length} failures`,
+  );
 
   return {
     actorId,
-    oldKeyId: oldKey?.id ?? "unknown",
+    oldKeyId: oldParticipantKeys[0]?.keyId ?? "unknown",
     newKeyId,
     chatsAffected: participations.length,
     messagesReEncrypted: totalReEncrypted,
