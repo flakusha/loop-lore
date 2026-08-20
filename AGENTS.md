@@ -263,7 +263,7 @@ bun run scripts/worktree/ rebase feature-name
 bun run scripts/worktree/ finalize feature-name
 ```
 
-> **Note:** The old `./scripts/worktree.sh` still works as a thin backward-compat wrapper that delegates to the TypeScript dispatcher (`scripts/worktree/index.mjs`). Prefer `bun run scripts/worktree/` directly.
+> **Note:** The worktree CLI is native Bun (`scripts/worktree/index.mjs`). Run via `bun run scripts/worktree/ <command>` — no shell wrapper.
 
 ````
 ## Issue Tracking

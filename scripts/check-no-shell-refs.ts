@@ -10,7 +10,6 @@
 //
 // Recognizes false positives (skips):
 //   - External install commands (curl ... | bash, pip install)
-//   - Backward-compat notes mentioning worktree.sh
 //   - Self-references in this file's comments
 //
 // Pattern: \.sh\b in file content excluding known false positives.
@@ -25,7 +24,6 @@ const REPO_ROOT = resolve(import.meta.dirname, "..",);
 const FALSE_POSITIVE_PATTERNS = [
   /curl.*install-latest\.sh/, // fossa install command
   /pip install/, // pip install references
-  /worktree\.sh/, // worktree.sh references (wrapper, backward compat)
   /\.sh references/, // self-reference in comments
   /\.sh in/, // self-reference in comments
   /\.sh script/, // self-reference in comments
