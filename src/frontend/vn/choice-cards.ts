@@ -6,8 +6,11 @@
  *
  * Renders branching choice cards in VN mode and handles selection.
  */
-
+import { apiFetch, } from "../alpine/htmx";
+import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
+
+const LOCATION_CHANGED_EVENT = "chat:location-changed";
 
 export interface VnChoice {
   id: string;
@@ -22,6 +25,13 @@ export interface VnChoice {
   selected: number;
   selected_at: string | null;
   created_at: string;
+}
+
+/** Return type from selectChoice including location change result. */
+export interface SelectChoiceResult {
+  choice: VnChoice;
+  locationId?: string;
+  locationChanged: boolean;
 }
 
 let choices: VnChoice[] = [];
@@ -56,13 +66,15 @@ export function destroyChoiceCards(): void {
  * Load choices for the current scene from the API.
  */
 export async function loadChoices(): Promise<void> {
-  if (!chatId || !container) { return; }
+  if (!chatId || !container) {
+    return;
+  }
 
   try {
     const res = await feFetch(`/api/chats/${chatId}/vn-choices?sceneIndex=${sceneIndex}`,);
     if (res.ok) {
       const data = await res.json();
-      choices = data.data || [];
+      choices = data.data.choices ?? [];
       renderChoices();
     }
   } catch {
@@ -71,31 +83,61 @@ export async function loadChoices(): Promise<void> {
 }
 
 /**
- * Select a choice and apply its effects.
+ * Select a choice, apply its effects, and trigger a location change if the
+ * choice has a location consequence.
+ *
+ * @returns SelectChoiceResult on success, null on failure.
  */
-export async function selectChoice(choiceId: string,): Promise<VnChoice | null> {
-  if (!chatId) { return null; }
+export async function selectChoice(choiceId: string,): Promise<SelectChoiceResult | null> {
+  if (!chatId) {
+    return null;
+  }
 
   try {
     const res = await feFetch(`/api/chats/${chatId}/vn-choices/${choiceId}/select`, {
       method: "POST",
     },);
 
-    if (res.ok) {
-      const data = await res.json();
-      const selected = data.data;
-      choices = Array.from(
-        choices,
-        (c,) => c.id === choiceId ? { ...c, selected: 1, selected_at: selected.selected_at, } : c,
-      );
-      renderChoices();
-      return selected;
+    if (!res.ok) {
+      return null;
     }
-  } catch {
-    // Non-critical
-  }
 
-  return null;
+    const data = await res.json();
+    const { choice, locationId, } = data.data as { choice: VnChoice; locationId?: string };
+
+    // Update local choice state
+    choices = Array.from(
+      choices,
+      (c,) => c.id === choiceId ? { ...c, selected: 1, selected_at: choice.selected_at, } : c,
+    );
+    renderChoices();
+
+    // Trigger location change if this choice moves the party
+    let locationChanged = false;
+    if (locationId && chatId) {
+      try {
+        const locRes = await apiFetch(`/api/v1/chats/${chatId}/location`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ locationId, },),
+        },);
+        if (locRes.ok) {
+          globalThis.dispatchEvent(
+            new CustomEvent(LOCATION_CHANGED_EVENT, {
+              detail: { chatId, locationId, locationName: null, },
+            },),
+          );
+          locationChanged = true;
+        }
+      } catch {
+        // Location change is best-effort — don't fail the choice selection
+      }
+    }
+
+    return { choice, locationId, locationChanged, };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -109,7 +151,9 @@ export function getAccumulatedImpacts(): {
   const moods: Record<string, number> = {};
 
   for (const choice of choices) {
-    if (!choice.selected) { continue; }
+    if (!choice.selected) {
+      continue;
+    }
 
     for (const [key, value,] of Object.entries(choice.relationship_impact,)) {
       relationships[key] = (relationships[key] ?? 0) + value;
@@ -123,80 +167,65 @@ export function getAccumulatedImpacts(): {
   return { relationships, moods, };
 }
 
-// ── Internal ─────────────────────────────────────────────────
+// ── Internal ────────────────────────────────────────────────────────────────
 
 function renderChoices(): void {
-  if (!container) { return; }
+  if (!container) {
+    return;
+  }
 
   const available: VnChoice[] = [];
   const selected: VnChoice[] = [];
   for (const c of choices) {
-    if (c.selected) { selected.push(c,); }
-    else { available.push(c,); }
+    if (c.selected) {
+      selected.push(c,);
+    } else {
+      available.push(c,);
+    }
   }
 
   container.replaceChildren();
 
-  // Available choices (interactive)
-  if (available.length > 0) {
-    const choiceList = document.createElement("div",);
-    choiceList.className = "vn-choices-list";
+  const choiceList = document.createElement("div",);
+  choiceList.className = "vn-choice-list";
 
-    for (const choice of available) {
-      const card = document.createElement("button",);
-      card.className = "vn-choice-card";
-      card.type = "button";
-      card.dataset.choiceId = choice.id;
+  const renderCard = (choice: VnChoice, isSelected: boolean,) => {
+    const card = document.createElement("button",);
+    card.className = `vn-choice-card${isSelected ? " vn-choice-card--selected" : ""}`;
+    card.type = "button";
 
-      card.innerHTML = `
-        <div class="vn-choice-label">${escapeHtml(choice.label,)}</div>
-        ${choice.description ? `<div class="vn-choice-description">${escapeHtml(choice.description,)}</div>` : ""}
-      `;
+    const label = document.createElement("span",);
+    label.className = "vn-choice-card__label";
+    label.textContent = choice.label;
+    card.append(label,);
 
-      card.addEventListener("click", () => {
-        selectChoice(choice.id,);
-      },);
-
-      choiceList.append(card,);
+    if (choice.description) {
+      const desc = document.createElement("span",);
+      desc.className = "vn-choice-card__desc";
+      desc.textContent = choice.description;
+      card.append(desc,);
     }
 
-    container.append(choiceList,);
-  }
-
-  // Selected choices (history, collapsed)
-  if (selected.length > 0) {
-    const history = document.createElement("details",);
-    history.className = "vn-choice-history";
-
-    const summary = document.createElement("summary",);
-    summary.textContent = `Past choices (${selected.length})`;
-    history.append(summary,);
-
-    const historyList = document.createElement("div",);
-    historyList.className = "vn-choice-history-list";
-
-    for (const choice of selected) {
-      const item = document.createElement("div",);
-      item.className = "vn-choice-selected";
-      item.innerHTML = `
-        <span class="vn-choice-label">${escapeHtml(choice.label,)}</span>
-        <span class="vn-choice-timestamp">${formatTime(choice.selected_at!,)}</span>
-      `;
-      historyList.append(item,);
+    if (isSelected) {
+      card.setAttribute("aria-selected", "true",);
     }
 
-    history.append(historyList,);
-    container.append(history,);
+    return card;
+  };
+
+  for (const c of available) {
+    const card = renderCard(c, false,);
+    card.addEventListener("click", () => {
+      void selectChoice(c.id,);
+    },);
+    choiceList.append(card,);
   }
-}
 
-function escapeHtml(text: string,): string {
-  const div = document.createElement("div",);
-  div.textContent = text;
-  return div.getHTML();
-}
+  for (const c of selected) {
+    const card = renderCard(c, true,);
+    card.disabled = true;
+    choiceList.append(card,);
+  }
 
-function formatTime(iso: string,): string {
-  const date = new Date(iso,);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", },);
+  container.append(choiceList,);
 }
