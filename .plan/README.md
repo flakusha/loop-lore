@@ -92,6 +92,27 @@ Git issues track active work. Each issue references its spec:
 | SOL-  | SOL-   | Architectural solutions          |
 | EPIC- | EPIC-  | Major epics (matches `epics/`)   |
 
+## Integration Matrices
+
+Cross-system integration tracking lives in top-level `matrix-*` files at `.plan/`
+root — one file per domain scope:
+
+| File | Scope | Companion epic |
+| ---- | ----- | -------------- |
+| `matrix-cross-mechanics.md` | RPG sub-system cross-mechanics gaps (G1–G42) + standardized `## Integration Points` template | (many RPG epics) |
+| `matrix-federation-swarm.md` | Fediverse, messaging bridges, swarm CRDT sync — feature evaluation + integration points | `epic-federation-swarm-sync.md` |
+| `matrix-precompiled-hot-binaries.md` | Native hot binary module integration points | `epic-precompiled-hot-binaries.md` |
+
+**Naming rule:** every integration matrix is named `matrix-<scope>.md` (kebab-case scope),
+lives at `.plan/` root, and aggregates one domain's cross-system integration surface. Epics
+carry their own `## Integration Points` section using the standardized template defined in
+`matrix-cross-mechanics.md`; a matrix aggregates pairwise gaps and domain-scoped integration
+points that span multiple epics.
+
+**Next steps:** add further domain matrices (e.g. frontend↔backend, platform integrations)
+as needed; new epics and tickets reference the relevant `matrix-<scope>.md` for cross-system
+integration tracking.
+
 ## Commit Trailers
 
 Link commits to issues:

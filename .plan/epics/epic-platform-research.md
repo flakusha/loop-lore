@@ -146,7 +146,7 @@ Research on agentic NPC systems (Inworld AI, generative-agents, Convai, RisuAI) 
 
 ### Integration Matrix Gaps Added
 
-11 new gaps (G27-G37) added to `cross-mechanics-integration-matrix.md`:
+11 new gaps (G27-G37) added to `matrix-cross-mechanics.md`:
 - BDI Planning ↔ Internal Traits (G27), Mood (G28)
 - NPC-to-NPC Social ↔ Relationships (G29), Memory (G30)
 - Agent Memory Scoring ↔ Emotion Impact (G31)
