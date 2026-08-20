@@ -59,9 +59,11 @@ Key rules in this file:
 - **Imports**: Never import DB-specific modules in services (use Kysely types)
 - **Docs**: Avoid quantitative metrics in documents (commit counts, gate pass tallies, ticket counts, percentages) — they go stale fast and mislead. Use qualitative state ("push pending", "gate green") or recompute at write time; never paste a number captured earlier.
 - **Tags**: Never create git tags (incl. release tags like `v0.1.0`) — tag creation is a post-testing decision reserved for the human. Agents prepare release artifacts (changelog, release-process docs) but stop at tagging.
-- **Scratchpad**: Temporary artifacts (debug tests, research notes, API probes, throwaway scripts) go in `.tmp/` (repo root) or `worktree/.tmp/` — never in `src/`, `tests/`, `docs/`, or repo root. `.tmp/` is auto-ignored by git; delete before merge. Include `.tmp/` paths in `ctx_handoff(paths=[...])` so the next session can pick them up.
+- **Scratchpad & Tool Cache**: Temporary artifacts (debug tests, research notes, API probes, throwaway scripts) go in `.tmp/` (repo root) or `worktree/.tmp/` — never in `src/`, `tests/`, `docs/`, or repo root. `.tmp/` is auto-ignored by git; delete before merge. Include `.tmp/` paths in `ctx_handoff(paths=[...])` so the next session can pick them up. `.tmp/` is also the default cache for tooling output (check reports, Playwright artifacts, etc.).
 
-## Scratchpad (`.tmp/`)
+## Scratchpad & Tool Cache (`.tmp/`)
+
+### Agent scratchpad
 
 Agents must not scatter temporary files across the repo (`src/`, `tests/`,
 `docs/`, repo root). All scratch material lives in `.tmp/`:
@@ -70,6 +72,23 @@ Agents must not scatter temporary files across the repo (`src/`, `tests/`,
 - **Use**: Debug test files, research notes, API specs, interim findings, probe scripts — anything not meant for the committed tree
 - **Rules**: Auto-ignored by git (no `.gitignore` edit needed); delete before finalize/merge; never import from `@/` aliases outside the repo root (module resolution breaks) — run debug scripts from inside `.tmp/` with relative imports or `bun --cwd`
 - **Handoff**: Include `.tmp/` paths in `ctx_handoff(paths=[...])`; cleanup after merge
+
+### Default cache for tooling
+
+`.tmp/` is the default cache/output location for all project-local tooling that
+produces transient artifacts. This keeps the repo root clean and avoids
+scattered gitignore entries.
+
+| Tool                  | Output          | Destination                                           |
+| --------------------- | --------------- | ----------------------------------------------------- |
+| `bun run check`       | check report    | `.tmp/check-report.json`                              |
+| Playwright            | HTML report     | `.tmp/playwright-report/`                             |
+| Playwright            | test artifacts  | `.tmp/test-results/`                                  |
+| `bun test --coverage` | coverage report | `coverage/` (bun default — migrate when configurable) |
+
+**Rule**: When configuring a new tool that writes transient output, point it at
+`.tmp/<tool-name>/`. Only add root-level gitignore entries when the tool cannot
+be configured otherwise (e.g. `bun test --coverage` → `coverage/`).
 
 ## Project Overview
 
