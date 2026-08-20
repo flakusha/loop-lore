@@ -4,22 +4,9 @@
 /**
  * Chat Service Layer barrel.
  *
- * Re-exports the public surface of the split chat service modules.
- * Routes, generation, and the chat module index import from `../chat/service`;
+ * Re-exports the public surface of all chat service modules. Routes,
+ * generation, and the chat module index import from `../chat/service`;
  * this barrel keeps that import path stable.
- *
- * Business logic between routes and database. Routes call these functions;
- * these modules call Kysely. No HTTP concerns — no Request/Response, no
- * Elysia context. Errors are thrown as ServiceError objects; routes map to HTTP.
- *
- * Removed 2026-08-14 (dead — routes implement inline, no external consumers):
- * participants.ts (addParticipant, markChatRead, removeParticipant,
- *   updateChatLocation, updateParticipant, updateUserPersona),
- * context.ts (getChatContext, getFeatureFlags, getResponseLength),
- * write.ts (selectVariant, deleteMessage, editMessage),
- * visibility.ts (updateMessageStatus),
- * access.ts barrel (isChatOnline, KEY_MECHANIC_PARAMS, KeyMechanicParam —
- *   still used internally by crud/update.ts, not exported).
  */
 
 // ── Access ────────────────────────────────────────────────────
@@ -67,6 +54,17 @@ export {
   type PartyLeaveParams,
   type PartyLeaveResult,
 } from "./party";
+
+// ── Party split / reunion (C7 Phase 3) ─────────────────────────
+export {
+  reuniteChats,
+  type ReunitePartyParams,
+  type ReunitePartyResult,
+  type SplitBranch,
+  splitParty,
+  type SplitPartyParams,
+  type SplitPartyResult,
+} from "./split";
 
 // ── Messages ──────────────────────────────────────────────────
 export {
