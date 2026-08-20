@@ -47,9 +47,8 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
   item-systems + 7 wired RPG services, docs reconciliation, memory-selection UI, C1
   panel). Before release (row A9). Pre-push hook blocks agent commits — human push
   required. Details: `open-inflight.md`.
-- **Remaining release blockers: A8** (crafting stations/execution + trade lifecycle; LoRA decision) **+ A9** (tag 0.1.0 + push) — `open-inflight.md`.
-- **Dead/unwired code**: transport module, LoRA routes, music/SFX/Video stubs — `open-debt.md`.
-- **Hardening / deferred clusters**: world timeline steering, avatar-gallery inheritance, MFA — `open-deferred.md` (AUX M6 telemetry ✅ done 2026-08-18).
+- **Remaining release blockers: A8 ✅ CLOSED 2026-08-18** (`49ee5c1a`) — IS1-IS7 + LoRA all wired on `dev` (see `open-debt.md` #12 + #5) **+ A9** (tag 0.1.0 + push) — `open-inflight.md`.
+- **Dead/unwired code**: transport module, music/SFX/Video stubs — `open-debt.md`.
 
 ## Preserved note — concurrent author's claim (2026-08-06 → **landed on dev 2026-08-07**)
 

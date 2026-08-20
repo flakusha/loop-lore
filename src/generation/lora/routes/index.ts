@@ -15,10 +15,7 @@ export { resolveBackendUrls, } from "./urls";
 /**
  * LoRA routes plugin — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`lora`) is preserved so wiring in
- * `elysia-app.ts` / `register-plugins.ts` is unchanged.
- *
- * TODO: Register in elysia-app.ts when LoRA feature is ready for production.
- * All LoRA routes are gated behind auth check.
+ * `register-plugins.ts` is unchanged.
  */
 export function loraRoutes({ config, }: { config: Config },) {
   return (

@@ -3,7 +3,7 @@
 
 # TASK: Encryption — Auto-Key Rotation
 
-**Status:** ✅ Done
+**Status:** 🟨 Partial — built but broken (see BUG-key-rotation-noop-orphans-history, BUG-auto-rotation-config-drift)
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-crypto

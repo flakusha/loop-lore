@@ -33,7 +33,7 @@ Battle currently uses "Use item" as an action type but never references `epic-it
 
 ## Cross-References
 
-- `.plan/cross-mechanics-integration-matrix.md` — Gap G1
+- `.plan/matrix-cross-mechanics.md` — Gap G1
 - `.plan/epics/epic-battle-action-systems.md` — Battle epic
 - `.plan/epics/epic-item-system-extensions.md` — Items epic
 - `docs/spec/battle.md` — Battle spec (newly created)

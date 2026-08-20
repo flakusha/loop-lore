@@ -53,7 +53,7 @@ Asset Download
 ## Files Created
 
 - `src/crypto/asset-encryption.ts` — encrypt/decrypt asset blobs ✅
-- `src/db/migrations/031_asset_encryption.ts` — migration ✅
+- `src/db/migrations/016_asset_encryption.ts` — migration ✅
 
 ## Files Modified
 
@@ -65,3 +65,10 @@ Asset Download
 ## Risk
 
 Low–Med — pipeline exists, just needs wiring to assets. Large file encryption performance.
+
+## Known Issue
+
+Upload-encrypt + download-decrypt are wired, but there is no parent→asset HKDF
+subkey (all assets in a chat share the parent chat key). Asset reads re-derive
+the current key, so asset history breaks on membership change — see
+`BUG-chat-key-history-loss-join-leave.md`.

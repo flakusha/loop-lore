@@ -29,7 +29,7 @@
 | 6 | Authoring/creation ownership indicators                                                                                                                                      | 🟡 Open                                                   |
 | 7 | MFA (TOTP) + `/api/sessions`                                                                                                                                                 | ⏸ Deferred P6+ (local-only auth)                          |
 | 8 | Plugin ecosystem / three-tier memory / artifact / ComfyUI / provider ecosystem / RAG / social hub / decentralization / impersonation / 3D views / model-comparison reactions | ⏸ Deferred P6+ (see `epics/`)                             |
-| 9 | Pre-compiled hot binary modules (native perf: crypto, compression, image/ML inference; Bun FFI + JS fallback)                                                                | ⏸ Deferred P6+ — added 2026-08-15 (matrix § integration; epic `epic-precompiled-hot-binaries.md` + `TASK-precompiled-hot-binaries.md`) |
+| 9 | Pre-compiled hot binary modules (native perf: crypto, compression, image/ML inference; Bun FFI + JS fallback)                                                                | ⏸ Deferred P6+ — added 2026-08-15 (`matrix-precompiled-hot-binaries.md`; epic `epic-precompiled-hot-binaries.md` + `TASK-precompiled-hot-binaries.md`) |
 
 > **2026-08-15 pull-forward:** matrix agentic addendum rates **G38 (proactive messaging),
 > G39 (quiet hours), G40 (keyphrase recall) as 0.1.0 Quick Wins** — pulled from P6-E to
