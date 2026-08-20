@@ -55,3 +55,9 @@ Low — pipeline exists, just needs wiring. Tests validate correctness.
 ## Linked Epics
 
 - `epic-crypto.md`
+
+## Known Issue
+
+Tier enforcement is not implemented: the pipeline encrypts/decrypts on
+`isEncryptionEnabled()` alone and never reads `chats.encryption_level`.
+See `BUG-encryption-tier-not-enforced.md`.

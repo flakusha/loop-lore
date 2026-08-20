@@ -90,7 +90,7 @@ Time scale system — manage game time progression, day/night cycles, seasons, a
 | ------------ | --------- | ------------------------------------------ |
 | time.advanced | emits    | Notify Memory/Timeline of game-time change |
 
-> **G25 (Memory × Time Scale, from `cross-mechanics-integration-matrix.md`):** convert
+> **G25 (Memory × Time Scale, from `matrix-cross-mechanics.md`):** convert
 > memory timestamps to game-time, decay per game-day, and let permanent memories survive
 > compression. Both cross-refs live here and in `epic-memory-knowledge-systems.md`.
 
