@@ -31,72 +31,72 @@ live in `refs/issues/<uuid>` as commit chains with trailers for metadata.
 ### Create Ticket
 
 ```bash
-./scripts/worktree.sh ticket BUG "Fix login crash" -l bug -p high
+./scripts/worktree/ ticket BUG "Fix login crash" -l bug -p high
 # Creates .plan/tickets/BUG-fix-login-crash.md + git issue BUG-fix-login-crash
 ```
 
 ### Create Epic
 
 ```bash
-./scripts/worktree.sh epic 16
+./scripts/worktree/ epic 16
 # Creates branch epic/16 + worktree in tree/epic-16/
 ```
 
 ### List Issues
 
 ```bash
-./scripts/worktree.sh issues
+./scripts/worktree/ issues
 # Lists open issues with branch mapping
 ```
 
 ### Show / Inspect an Issue
 
 ```bash
-./scripts/worktree.sh show TASK-001
+./scripts/worktree/ show TASK-001
 # Full issue detail (metadata, body, trailers)
 ```
 
 ### Search Issues
 
 ```bash
-./scripts/worktree.sh search "combat"
+./scripts/worktree/ search "combat"
 # Fuzzy search across all issues
 ```
 
 ### Comment on an Issue
 
 ```bash
-./scripts/worktree.sh comment TASK-001 -m "blocked on schema"
+./scripts/worktree/ comment TASK-001 -m "blocked on schema"
 # Appends a comment to the issue chain
 ```
 
 ### Edit an Issue
 
 ```bash
-./scripts/worktree.sh edit TASK-001 --title "New title" --body "New body"
+./scripts/worktree/ edit TASK-001 --title "New title" --body "New body"
 # Amends issue metadata/body
 ```
 
 ### Change Issue State
 
 ```bash
-./scripts/worktree.sh state TASK-001 in_progress
+./scripts/worktree/ state TASK-001 in_progress
 # Transitions issue status (open|in_progress|done|blocked)
 ```
 
 ### Attach Files
 
 ```bash
-./scripts/worktree.sh attach TASK-001 ./spec.md
+./scripts/worktree/ attach TASK-001 ./spec.md
 # Attach a single file to the issue
-./scripts/worktree.sh attach-dir TASK-001 ./design-notes/
+./scripts/worktree/ attach-dir TASK-001 ./design-notes/
 # Attach every file in a directory
 ```
 
 ### Run git-issue Directly
 
 ```bash
-./scripts/worktree.sh gi <args>
+./scripts/worktree/ gi <args>
 # Passes through to git-issue command (alias for `issue`)
 ```
 
@@ -105,9 +105,9 @@ live in `refs/issues/<uuid>` as commit chains with trailers for metadata.
 All subcommands above also work via the canonical `issue` dispatch:
 
 ```bash
-./scripts/worktree.sh issue show TASK-001
-./scripts/worktree.sh issue search "combat"
-./scripts/worktree.sh issue attach TASK-001 ./spec.md
+./scripts/worktree/ issue show TASK-001
+./scripts/worktree/ issue search "combat"
+./scripts/worktree/ issue attach TASK-001 ./spec.md
 ```
 
 ## Commit Trailers
@@ -136,13 +136,13 @@ queries them.
 
 ```bash
 # Import from GitHub (requires gh CLI)
-./scripts/worktree.sh issue import github:owner/repo
+./scripts/worktree/ issue import github:owner/repo
 
 # Export to GitHub
-./scripts/worktree.sh issue export github:owner/repo
+./scripts/worktree/ issue export github:owner/repo
 
 # Two-way sync
-./scripts/worktree.sh issue sync github:owner/repo --state all
+./scripts/worktree/ issue sync github:owner/repo --state all
 ```
 
 ## Data Location

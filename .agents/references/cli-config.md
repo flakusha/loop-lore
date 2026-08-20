@@ -72,14 +72,14 @@ Runs on commit: format → check → unit tests → e2e (with safeguards).
 
 ## Native Issue Tracking
 
-| Command                                        | Description                                          |
-| ---------------------------------------------- | ---------------------------------------------------- |
-| `./scripts/worktree.sh ticket TYPE ID "Title"` | Create ticket + worktree (BUG/FIX/FEA/IDEA/TASK/SOL) |
-| `./scripts/worktree.sh ticket ... --epic X`    | Link ticket to an epic                               |
-| `./scripts/worktree.sh issues`                 | List open issues with branch mapping                 |
-| `./scripts/worktree.sh state ID <state>`       | Transition issue status (open/in_progress/done)      |
-| `./scripts/worktree.sh sync`                   | Interactive ticket-index ↔ git issue sync            |
-| `./scripts/worktree.sh gi <args>`              | Run git-issue command directly                       |
+| Command                                      | Description                                          |
+| -------------------------------------------- | ---------------------------------------------------- |
+| `./scripts/worktree/ ticket TYPE ID "Title"` | Create ticket + worktree (BUG/FIX/FEA/IDEA/TASK/SOL) |
+| `./scripts/worktree/ ticket ... --epic X`    | Link ticket to an epic                               |
+| `./scripts/worktree/ issues`                 | List open issues with branch mapping                 |
+| `./scripts/worktree/ state ID <state>`       | Transition issue status (open/in_progress/done)      |
+| `./scripts/worktree/ sync`                   | Interactive ticket-index ↔ git issue sync            |
+| `./scripts/worktree/ gi <args>`              | Run git-issue command directly                       |
 
 ### Extended Identifiers
 
