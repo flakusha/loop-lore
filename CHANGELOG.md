@@ -7,6 +7,10 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ## [Unreleased]
 
+### Added
+
+- **Assistant tooling (D3/P2-C)** — `/rewrite` and `/translate` (`/tl`) commands with style/language parsing, expanded command palette entries, multi-step creation wizard (edit → options → review), command button toolbar with GM-role filtering, ownership indicator badge on user-authored messages.
+
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
