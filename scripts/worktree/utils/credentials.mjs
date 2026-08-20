@@ -9,7 +9,7 @@
  * Shared credential loader for worktree scripts
  *
  * Reads .credentials.env from the main repo root and exports agent identity.
- * Used by the TS dispatcher (import) and the bash wrapper (eval via load-credentials.sh).
+ * Used by the TS dispatcher (import) and loadConfig (via findCredentials).
  */
 
 import { accessSync, constants, readFileSync, } from "fs";

@@ -19,7 +19,7 @@ export async function execute(
 
   const branches = await getBranches(repoRoot,);
   const worktrees = await getWorktrees(repoRoot,);
-  const worktreeBranches = new Set(worktrees.map(wt => wt.branch),);
+  const worktreeBranches = new Set(worktrees.map(wt => wt.branch.replace("refs/heads/", "",)),);
 
   for (const branch of branches) {
     const status = await getStatus(repoRoot, branch.name,);

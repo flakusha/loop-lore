@@ -6,7 +6,7 @@
  */
 
 import { type WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { gitSync, gitSyncQuiet, } from "../utils/git";
 import { log, } from "../utils/output";
 
 export async function commit(
@@ -44,8 +44,8 @@ export async function commit(
   }
 
   // Get author from git config
-  const authorName = gitSync(config.repoRoot, "config", "user.name",);
-  const authorEmail = gitSync(config.repoRoot, "config", "user.email",);
+  const authorName = gitSyncQuiet(config.repoRoot, "config", "user.name",);
+  const authorEmail = gitSyncQuiet(config.repoRoot, "config", "user.email",);
 
   if (!authorName || !authorEmail) {
     log("error", "git user.name/user.email not configured",);
