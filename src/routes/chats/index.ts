@@ -10,21 +10,15 @@ import { listRoutes, } from "./list";
 import { manageRoutes, } from "./manage";
 import { participantRoutes, } from "./participants";
 import { sideChannelRoutes, } from "./side-channels";
+import { partySplitRoutes, } from "./split";
 import { templatesRoutes, } from "./templates";
 import { turnOrderRoutes, } from "./turn-order";
 import type { HandlerOpts, } from "./types";
+import { vnChoiceRoutes, } from "./vn-choices";
 
-/**
- * Chat route module — barrel assembling the HTTP surface from domain
- * sub-plugins. Registration point/name (`chats`) is preserved so the
- * `elysia-app.ts` wiring is unchanged.
- */
 export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats", },)
-      // Capture raw request body text so handlers can distinguish fields the
-      // client explicitly sent from Elysia's auto-applied enum defaults
-      // (e.g. mode → "direct", turnStrategy → "round_robin").
       .onParse(async (ctx: any, contentType: string,) => {
         if (!contentType.includes("application/json",)) {
           return;
@@ -43,6 +37,8 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(participantRoutes(opts, prefix,),)
       .use(sideChannelRoutes(opts, prefix,),)
       .use(turnOrderRoutes(opts, prefix,),)
+      .use(partySplitRoutes(opts, prefix,),)
+      .use(vnChoiceRoutes(opts, prefix,),)
       .use(extrasRoutes(opts, prefix,),)
   );
 }
