@@ -68,7 +68,7 @@ export async function agentCommit(
 
   if (!authorName || !authorEmail) {
     log("error", "worktree user.name/user.email not configured",);
-    console.log(`  Run: ./scripts/worktree.sh sign ${branch}`,);
+    console.log(`  Run: bun run scripts/worktree/ sign ${branch}`,);
     process.exit(1,);
   }
 
