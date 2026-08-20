@@ -38,8 +38,8 @@
       </button>
       <button
         class="btn btn-sm btn-ghost"
-        @click="$store.ui.showGmPanel = !$store.ui.showGmPanel"
-        :class="$store.ui.showGmPanel ? 'gm-toggle-active' : ''"
+        @click="window.openGmAssistantTab('shadow')"
+        :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'shadow' ? 'gm-toggle-active' : ''"
         title="{{{t("story.gmPanel")}}}"
         data-testid="story-gm-panel"
       >
