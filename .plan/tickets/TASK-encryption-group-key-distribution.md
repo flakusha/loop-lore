@@ -53,3 +53,10 @@ Med — re-encryption performance on leave, concurrent access during rotation.
 ## Linked Epics
 
 - `epic-crypto.md`
+
+## Known Issue
+
+Join/leave re-derive the chat key but do not re-encrypt history, so all prior
+messages become undecryptable after a membership change. The "re-encrypt recent
+messages" task above is therefore CRITICAL, not optional. See
+`BUG-chat-key-history-loss-join-leave.md`.

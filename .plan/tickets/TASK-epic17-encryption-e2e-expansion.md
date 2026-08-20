@@ -101,3 +101,12 @@ End-to-end encryption for chat messages, assets, and player state. This epic cov
 - epic-encryption-workflow.md
 - epic-frontend-encryption.md
 - epic-byok-api-keys.md
+
+## Known Bugs & Reconciliation (2026-08)
+
+- "Asset encryption ... nothing wired" above is STALE — upload/download are
+  wired (see TASK-encryption-asset-encryption).
+- "Standalone key-rotation.ts module" missing is STALE — `src/crypto/key-rotation/`
+  exists, but rotation re-encrypt is a silent no-op (see
+  BUG-key-rotation-noop-orphans-history).
+- Tier not enforced: see BUG-encryption-tier-not-enforced.

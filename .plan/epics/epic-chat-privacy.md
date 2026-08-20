@@ -113,3 +113,10 @@ enum SteeringNoteRole {
 - `epic-crypto.md` / `epic-encryption-workflow.md` — at-rest encryption
 - `epic-auth-access.md` — role-based access control
 - `epic-chat-transfer-location.md` — location-scoped chat privacy
+
+## Known Issue
+
+The encryption tiers used by the code (`chats.encryption_level` =
+`none|standard|private`, default `"public"` — out-of-enum) do not match the
+`ChatPrivacy` enum here (`public|private|world|location|group`), and the tier
+is not enforced by the message pipeline. See `BUG-encryption-tier-not-enforced.md`.

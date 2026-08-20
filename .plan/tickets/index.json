@@ -47,6 +47,30 @@
     "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md",
     "git_issue": "80e07be"
   },
+  "BUG-AUTO-ROTATION-CONFIG-DRIFT": {
+    "hash": "a9a4ea3",
+    "extid": "BUG-AUTO-ROTATION-CONFIG-DRIFT",
+    "type": "BUG",
+    "title": "Auto key-rotation is effectively disabled by config drift (KEY_ROTATION_DAYS not wired)",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/BUG-auto-rotation-config-drift.md",
+    "git_issue": "a9a4ea3"
+  },
+  "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
+    "hash": "61c7072",
+    "extid": "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE",
+    "type": "BUG",
+    "title": "Group-chat history becomes undecryptable after any participant join/leave",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md",
+    "git_issue": "61c7072"
+  },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
     "extid": "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE",
@@ -72,6 +96,18 @@
     "status": "done",
     "git_issue": "7e811d7"
   },
+  "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
+    "hash": "76cbe80",
+    "extid": "BUG-ENCRYPTION-TIER-NOT-ENFORCED",
+    "type": "BUG",
+    "title": "Encryption tier (`encryption_level`) is never enforced; default `\"public\"` is out-of-enum",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md",
+    "git_issue": "76cbe80"
+  },
   "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR": {
     "hash": "2a271d7",
     "extid": "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR",
@@ -83,6 +119,30 @@
     "tags": [],
     "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md",
     "git_issue": "2a271d7"
+  },
+  "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY": {
+    "hash": "966f256",
+    "extid": "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY",
+    "type": "BUG",
+    "title": "Actor-key rotation is a silent no-op that orphans all encrypted history",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md",
+    "git_issue": "966f256"
+  },
+  "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
+    "hash": "bc54f30",
+    "extid": "BUG-PRIVATE-TIER-NO-TRUE-E2E",
+    "type": "BUG",
+    "title": "\"Private\"/E2E tier is server-mediated symmetric encryption — no true E2E",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md",
+    "git_issue": "bc54f30"
   },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
@@ -107,6 +167,17 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-24.md",
     "git_issue": "96970f5"
+  },
+  "EPIC-FEDERATION-SWARM-SYNC": {
+    "hash": "pending",
+    "extid": "EPIC-FEDERATION-SWARM-SYNC",
+    "type": "EPIC",
+    "title": "Federation, Swarm Sync & Decentralized Comms",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-federation-swarm-sync.md"
   },
   "FEAT-035": {
     "hash": "0fe7f31",
@@ -912,6 +983,17 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-achievements.md"
   },
+  "FEAT-ACTIVITYPUB-FEDERATION": {
+    "hash": "pending",
+    "extid": "FEAT-ACTIVITYPUB-FEDERATION",
+    "type": "FEAT",
+    "title": "# FEAT-activitypub-federation: ActivityPub / Lemmy / threadiverse federation",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-activitypub-federation.md"
+  },
   "FEAT-ASSET-SUPPORT-EXPANSION": {
     "hash": "269aa69",
     "extid": "FEAT-ASSET-SUPPORT-EXPANSION",
@@ -1277,6 +1359,17 @@
     "source": ".plan/tickets/FEAT-message-swipe-replay-branch.md",
     "git_issue": "b619680"
   },
+  "FEAT-MESSAGING-BRIDGE-EXTENSIONS": {
+    "hash": "pending",
+    "extid": "FEAT-MESSAGING-BRIDGE-EXTENSIONS",
+    "type": "FEAT",
+    "title": "# FEAT-messaging-bridge-extensions: Messaging bridge registry & extended bridges",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-messaging-bridge-extensions.md"
+  },
   "FEAT-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "e901ee2",
     "extid": "FEAT-MULTI-INSTANCE-RECONCILIATION",
@@ -1384,6 +1477,17 @@
     "source": ".plan/tickets/FEAT-race-origin-lore-identity-model.md",
     "git_issue": "d8f6cae"
   },
+  "FEAT-RADICLE-INTEGRATION": {
+    "hash": "pending",
+    "extid": "FEAT-RADICLE-INTEGRATION",
+    "type": "FEAT",
+    "title": "# FEAT-radicle-integration: Radicle P2P collaborative editing",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-radicle-integration.md"
+  },
   "FEAT-RELATIONSHIPS": {
     "hash": "pending",
     "extid": "FEAT-RELATIONSHIPS",
@@ -1440,6 +1544,17 @@
     "epic": "epic-skills",
     "tags": [],
     "source": ".plan/tickets/FEAT-skills.md"
+  },
+  "FEAT-SWARM-MODE-RECONCILIATION": {
+    "hash": "pending",
+    "extid": "FEAT-SWARM-MODE-RECONCILIATION",
+    "type": "FEAT",
+    "title": "# FEAT-swarm-mode-reconciliation: Swarm-mode CRDT multi-instance reconciliation",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-swarm-mode-reconciliation.md"
   },
   "FEAT-TESTING-INFRASTRUCTURE": {
     "hash": "b206a6a",

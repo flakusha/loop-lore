@@ -78,7 +78,7 @@ Dead/unwired #12–13 and `epic-item-systems-unification.md` "Remaining Points".
 
 - RPG subsystems beyond wiring: magic, factions, housing, social, weather, disease,
   stealth, companion/pet, agency/story-points, resolution family — all P6+
-  (see `cross-mechanics-integration-matrix.md`).
+  (see `matrix-cross-mechanics.md`).
 
 ## Definition of Done
 

@@ -52,3 +52,8 @@ Client-side encryption: encrypt data in browser before sending to server. AES-25
 - Reference `epic-encryption-foundation.md` for full system design
 - Core functionality complete, tests may be pending
 - Consider key backup and recovery
+
+## Known Bug
+
+Not true E2E: the server derives and holds the chat key and returns it (base64)
+to clients; there is no client-held secret. See `BUG-private-tier-no-true-e2e.md`.

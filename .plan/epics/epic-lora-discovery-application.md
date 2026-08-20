@@ -107,8 +107,7 @@ interface ImageGenRequest {
 | `src/generation/lora/discovery-sdserver.ts` | 181   | sd.cpp: `discoverSdCppLoras` (GET /sd-api/v1/models → filter) + `buildSdCppLoraPrefix`/`injectSdCppLora`             |
 | `src/generation/lora/discovery-comfyui.ts`  | 260   | ComfyUI: `discoverComfyUILoras` (GET /object_info → LoraLoader) + `buildComfyUILoraNode`/`injectComfyUILora`         |
 | `src/generation/lora/validation.ts`         | 163   | `validateLoRAConfig`, `validateLoRAModel`, `isLoRAFilename`, `extractLoRAName`, `clampStrength`, `isTypicalStrength` |
-| `src/generation/lora/index.ts`              | 49    | Public API re-exports from all sub-modules                                                                           |
-| `src/generation/lora/routes.ts`             | 377   | Elysia plugin: discover, list, status, clear, validate — TODO-gated, not wired                                       |
+| `src/generation/lora/routes/index.ts`       | 140   | Elysia plugin barrel: discover + management + validate sub-plugins — wired 2026-08-18 (`register-plugins.ts:182`)                                            |
 | `src/generation/lora/discovery.test.ts`     | 336   | Mock-fetch tests for both backends, cache, force-refresh                                                             |
 | `src/generation/lora/lora.test.ts`          | 221   | Validation tests: config, model, strength boundary, edge cases                                                       |
 
@@ -116,8 +115,8 @@ interface ImageGenRequest {
 
 | File                                | Change                                                                                            |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `src/generation/image-gen-route.ts` | LoRA hooks added as TODO-gated comments (imports, body field, sdcpp injection, comfyui injection) |
-| `src/elysia-app.ts`                 | `loraRoutes` import + registration commented out with TODO                                        |
+| `src/generation/image-gen-route.ts` | LoRA hooks wired (route registration ✅ 2026-08-18); body field injection TODO-gated (line 29) — wire when image-gen LoRA injection ready |
+| `src/elysia-app.ts`                 | No change — route registration lives in `register-plugins.ts:182` (wired 2026-08-18)                                       |
 
 ## Technical Notes
 
