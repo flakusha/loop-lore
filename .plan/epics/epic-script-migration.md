@@ -16,7 +16,7 @@ Refactor scripts folder into modular architecture with improved maintainability 
 
 1. Create `scripts/lib` directory for shared utilities ✅
 2. Migrate shared functions to TypeScript modules ✅ (check-utils.ts already moved)
-3. Convert shell scripts to ES modules (decide: .mjs vs .ts)
+3. Convert shell scripts to ES modules (decide: .mjs vs .ts) ✅
 4. Implement lean-ctx validation for context management
 5. Create test suite for new architecture
 
@@ -70,9 +70,12 @@ Use `.mjs` for:
 - [x] Directory structure created
 - [x] Shared utilities identified
 - [x] Migration roadmap defined
-- [ ] Validation implementation planned
+- [x] Validation implementation planned (check-no-shell-refs.ts gate)
 - [x] .mjs vs .ts decision documented
-- [ ] Worktree command extraction started
+- [x] Worktree command extraction completed (29 commands ported)
+- [x] AGENTS.md + .agents/skills/* references updated (59 occurrences)
+- [x] Shell scripts ported: backup-sqlite, validate-backup-restore, lib/assertions, lib/colors
+- [x] check-no-shell-refs.ts gate wired into check-parallel.mjs
 
 ### Relevant Files
 

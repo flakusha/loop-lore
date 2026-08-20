@@ -76,6 +76,9 @@ const checks = {
   // Context weight
   "context - weight": "bun run scripts/check-context-weight.ts",
 
+  // Shell reference guard (no .sh references in docs)
+  "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
+
   // Tests
   "test - unit": "bun run test:unit",
   "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",

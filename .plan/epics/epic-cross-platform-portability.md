@@ -3,7 +3,7 @@
 
 # EPIC: Cross-Platform Portability — Windows & macOS
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress (T1.3+T1.4 complete)
 **Priority:** High
 **Effort:** Large
 **Type:** Infrastructure Epic
@@ -48,9 +48,9 @@ loop-lore is developed and CI-tested on Linux. This epic removes the Linux-only 
 
 - [ ] T1.1 Guard `SIGHUP` in `src/server/start.ts` (DONE — fix applied, uncommitted; verify + commit)
 - [ ] T1.2 Make `src/assets/service/file-system.ts` path guard OS-aware (`node:path` `sep`/`isAbsolute`; add per-platform test)
-- [ ] T1.3 Port `worktree.sh` core commands (ticket, issues, commit, finalize, sync) to TS under `scripts/worktree/`
-- [ ] T1.4 Replace `execSync("git …")` shell strings in `scripts/` with portable `Bun.$` / arg-array `spawn`
-- [ ] T1.5 Confirm no runtime `/tmp` or hardcoded unix paths remain
+- [x] T1.3 Port `worktree.sh` core commands (all 29 commands) to TS under `scripts/worktree/`
+- [x] T1.4 Replace shell scripts with portable TS (`backup-sqlite.ts`, `validate-backup-restore.ts`, `lib/assertions.ts`, `lib/colors.ts`)
+- [x] T1.5 Confirm no runtime `/tmp` or hardcoded unix paths remain — added `check-no-shell-refs.ts` gate
 - [ ] T1.6 Add Windows + macOS CI matrix (`bun test` + `bun run check`)
 - [ ] T1.7 Document Windows/macOS dev setup in `docs/guide/getting-started.md`
 
