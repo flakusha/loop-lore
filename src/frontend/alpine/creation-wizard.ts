@@ -4,9 +4,15 @@
 /**
  * Creation wizard Alpine.js state slice.
  *
- * Provides confirm/cancel/edit methods for the wizard preview panel.
+ * Multi-step entity creation flow:
+ *   1. Wizard starts with a preview of LLM-generated entity data
+ *   2. User can edit fields inline (step 1)
+ *   3. User can set additional options (step 2 — world, visibility)
+ *   4. Final review and confirm (step 3)
+ *
  * The actual preview rendering lives in the chat view HTML template.
  */
+
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -18,6 +24,33 @@ const log = rootLog.child({ module: "creation-wizard", },);
 export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   wizardDraft: null,
   wizardPreviewOpen: false,
+  wizardStep: 1,
+  wizardTotalSteps: 3,
+
+  /**
+   * Advance to the next wizard step.
+   */
+  wizardNextStep(): void {
+    if (this.wizardStep < this.wizardTotalSteps) {
+      this.wizardStep++;
+    }
+  },
+
+  /**
+   * Go back to the previous wizard step.
+   */
+  wizardPrevStep(): void {
+    if (this.wizardStep > 1) {
+      this.wizardStep--;
+    }
+  },
+
+  /**
+   * Reset wizard to step 1 (called on cancel or confirm).
+   */
+  wizardResetSteps(): void {
+    this.wizardStep = 1;
+  },
 
   /**
    * Update a single field in the wizard draft (called from inline edit inputs).
@@ -56,6 +89,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
       if (res.ok) {
         this.wizardPreviewOpen = false;
         this.wizardDraft = null;
+        this.wizardResetSteps();
         this.$dispatch?.("show-toast", {
           type: "success",
           message: t("toasts.entityCreated", { name: draft.fields.name ?? "Entity", },),
@@ -84,14 +118,12 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Cancel and discard the wizard draft. No backend call needed — the draft
-   * lives only in Alpine state (the quality gate version doesn't use an
-   * in-memory wizard store). Returns a Promise to match the chat-state
-   * interface (void is a valid resolution).
+   * Cancel and discard the wizard draft. Resets step counter.
    */
   async cancelWizard(_wizardId: string,): Promise<void> {
     this.wizardPreviewOpen = false;
     this.wizardDraft = null;
+    this.wizardResetSteps();
     log.info("wizard cancelled", { wizardId: _wizardId, },);
   },
 };
