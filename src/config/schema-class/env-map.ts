@@ -145,6 +145,7 @@ export const envMap = (): EnvMap => {
   map.ENCRYPTION_REQUIRED = "encryption.required";
   map.COMPRESS_THRESHOLD = "encryption.compressThreshold";
   map.COMPRESS_ALGORITHM = "encryption.compressAlgorithm";
+  map.KEY_ROTATION_DAYS = "encryption.keyRotationDays";
   map.TESTING_LLAMA_MODEL = "testing.llamaModel";
   map.TESTING_SD_MODEL = "testing.sdModel";
   map.TESTING_LLAMA_PORT = "testing.llamaPort";
