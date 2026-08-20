@@ -30,10 +30,10 @@ Identifier format: `<TYPE>-YYYY-<NNN>` (e.g. `BUG-2026-002`, `FEAT-2026-001`).
 
 ```bash
 # List open issues (with branch mapping)
-./scripts/worktree.sh issues
+bun run scripts/worktree/ issues
 
 # Create an issue + branch + worktree in one step
-./scripts/worktree.sh ticket FEAT 015 "Add dark mode toggle"
+bun run scripts/worktree/ ticket FEAT 015 "Add dark mode toggle"
 
 # Create an issue only
 git issue create "Title" -m "Body" -l feature -p medium
@@ -66,33 +66,33 @@ Solution: SOL-2026-001
 
 ## Worktrees (parallel development)
 
-`scripts/worktree.sh` manages git worktrees so multiple branches can be worked
+`bun run scripts/worktree/` manages git worktrees so multiple branches can be worked
 on simultaneously without stashing.
 
 ```bash
 # Create a worktree for an existing branch
-./scripts/worktree.sh create feat-14-io
+bun run scripts/worktree/ create feat-14-io
 
 # Create a new branch + worktree (base defaults to master)
-./scripts/worktree.sh new feat-my-feature
+bun run scripts/worktree/ new feat-my-feature
 
 # Create a ticket branch + worktree (issue already created)
-./scripts/worktree.sh new ticket/BUG-2026-002 master
+bun run scripts/worktree/ new ticket/BUG-2026-002 master
 
 # List / clean up
-./scripts/worktree.sh list
-./scripts/worktree.sh cleanup          # removes worktrees for deleted branches
-./scripts/worktree.sh remove feat-x   # blocks if dirty
+bun run scripts/worktree/ list
+bun run scripts/worktree/ cleanup          # removes worktrees for deleted branches
+bun run scripts/worktree/ remove feat-x   # blocks if dirty
 
 # Integrate back
-./scripts/worktree.sh merge master feat-x     # merge into a branch
-./scripts/worktree.sh finalize feat-x         # check → test → GPG-signed merge → remove
+bun run scripts/worktree/ merge master feat-x     # merge into a branch
+bun run scripts/worktree/ finalize feat-x         # check → test → GPG-signed merge → remove
 ```
 
 ### GPG signing
 
 Commits made inside worktrees are GPG-signed with the agent key configured in
-`.credentials.env`. Use `./scripts/worktree.sh agent-commit <branch> "msg"`
+`.credentials.env`. Use `bun run scripts/worktree/ agent-commit <branch> "msg"`
 rather than raw `git commit`. Merge/finalize operations sign the resulting
 merge commit automatically.
 
@@ -109,7 +109,7 @@ merge commit automatically.
 
 ```bash
 # 1. Create issue + worktree
-./scripts/worktree.sh ticket BUG 002 "Browser E2E parallel instability"
+bun run scripts/worktree/ ticket BUG 002 "Browser E2E parallel instability"
 #    → issue BUG-2026-002, branch ticket/BUG-2026-002, worktree tree/ticket-BUG-2026-002
 
 # 2. Work in the worktree
@@ -117,8 +117,8 @@ cd tree/ticket-BUG-2026-002
 # ... edit, test ...
 
 # 3. Commit (GPG-signed)
-./scripts/worktree.sh agent-commit ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
+bun run scripts/worktree/ agent-commit ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
 
 # 4. Merge back to master (GPG-signed merge, worktree removed)
-./scripts/worktree.sh finalize ticket-BUG-2026-002
+bun run scripts/worktree/ finalize ticket-BUG-2026-002
 ```
