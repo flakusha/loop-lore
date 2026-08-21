@@ -41,12 +41,13 @@ describe("NSFW moderation view E2E", () => {
 
   test("admin can load the nsfw moderation audit view", async () => {
     const page = await ctx.openPage();
-    let errors: ReturnType<typeof trackPageErrors> | undefined;
+    // Login on this page — pre-login 401s (favicon, etc.) are benign noise.
+    await login(page, SEED.admin.username, SEED.admin.password,);
+    // Now start tracking — all subsequent navigation errors are captured.
+    const errors = trackPageErrors(page, {
+      allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+    },);
     try {
-      // Log in first; the login page's own pre-auth 401s are expected noise
-      // and must not be captured by the page-error tracker.
-      await login(page, SEED.admin.username, SEED.admin.password,);
-      errors = trackPageErrors(page,);
       await page.goto(`${ctx.url}/views/nsfw-moderation`, {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
@@ -57,18 +58,19 @@ describe("NSFW moderation view E2E", () => {
       // Consent audit table is server-rendered.
       await page.locator("table.admin-table",).first().waitFor({ state: "visible", timeout: 15_000, },);
     } finally {
-      errors?.assert();
-      errors?.detach();
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
 
   test("non-admin is redirected away from the nsfw moderation view", async () => {
     const page = await ctx.openPage();
-    let errors: ReturnType<typeof trackPageErrors> | undefined;
+    await login(page, SEED.user.username, SEED.user.password,);
+    const errors = trackPageErrors(page, {
+      allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+    },);
     try {
-      await login(page, SEED.user.username, SEED.user.password,);
-      errors = trackPageErrors(page,);
       await page.goto(`${ctx.url}/views/nsfw-moderation`, {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
@@ -77,8 +79,8 @@ describe("NSFW moderation view E2E", () => {
       const path = new URL(page.url(),).pathname;
       expect(path,).not.toBe("/views/nsfw-moderation",);
     } finally {
-      errors?.assert();
-      errors?.detach();
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
