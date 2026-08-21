@@ -2038,3 +2038,11 @@ export const WorldTimelinesSchema = t.Object({
   is_prime: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── chat_keys ────────────────────────────────────────────
+export const ChatKeysSchema = t.Object({
+  chat_id: t.String(),
+  encrypted_chat_key: t.String(),
+  created_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+},);
