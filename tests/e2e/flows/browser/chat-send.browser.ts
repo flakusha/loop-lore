@@ -17,7 +17,7 @@
 import { ensureActorKey, getSmk, } from "@/crypto";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { waitForAlpineState, } from "../../helpers/htmx-alpine";
+import { trackPageErrors, waitForAlpineState, } from "../../helpers/htmx-alpine";
 import { SEED, seedAll, } from "../../helpers/seed";
 
 const VALID_HEX_KEY = "b".repeat(64,); // 32 bytes = 256-bit SMK
@@ -40,20 +40,16 @@ describe("Chat send round-trip (plaintext)", () => {
   ) {
     await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);
-    // Open chat list panel (Alpine store toggle via header button)
     await page.evaluate(() => {
       document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
         new MouseEvent("click", { bubbles: true, },),
       );
     },);
-    // Select the seeded chat by name (solo user owns SEED.soloChat).
     const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
       hasText: SEED.soloChat.name,
     },).first();
     await chatItem.waitFor({ state: "attached", timeout: 15_000, },);
     await chatItem.click();
-    // Wait for the chat to be selected (soloChat seeds no messages, so
-    // don't require messages.length — the send test creates its own).
     await waitForAlpineState(
       page,
       "[x-data='chatState()']",
@@ -64,6 +60,7 @@ describe("Chat send round-trip (plaintext)", () => {
 
   test("sends a message that renders and persists in DB", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await openAndSelectChat(page,);
 
@@ -84,14 +81,18 @@ describe("Chat send round-trip (plaintext)", () => {
       expect(row,).not.toBeNull();
       expect(row!.key_id,).toBeNull();
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
 
   test("does not send empty messages", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await openAndSelectChat(page,);
+
       const before = await ctx.db
         .selectFrom("messages",)
         .select(ctx.db.fn.countAll().as("count",),)
@@ -99,7 +100,14 @@ describe("Chat send round-trip (plaintext)", () => {
         .executeTakeFirstOrThrow();
 
       await page.click("[data-testid='send-button']",);
-      await page.waitForTimeout(500,);
+      // Wait for the Alpine state to reflect no new message (input was empty).
+      // Web-first: poll the messages count via Alpine until it stabilises.
+      await waitForAlpineState(
+        page,
+        "[x-data='chatState()']",
+        (state,) => (state.messages as unknown[]).length === Number(before.count,),
+        10_000,
+      );
 
       const after = await ctx.db
         .selectFrom("messages",)
@@ -108,6 +116,8 @@ describe("Chat send round-trip (plaintext)", () => {
         .executeTakeFirstOrThrow();
       expect(Number(after.count,),).toBe(Number(before.count,),);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
@@ -148,6 +158,7 @@ describe("Chat encryption flow (SMK configured)", () => {
 
   test("sends client-encrypted content; server decrypts for display", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);
@@ -190,6 +201,8 @@ describe("Chat encryption flow (SMK configured)", () => {
       // Payload shape: { enc, nonce, algo, comp, keyId } JSON.
       expect(row!.content,).toMatch(/^\{"enc":/,);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);

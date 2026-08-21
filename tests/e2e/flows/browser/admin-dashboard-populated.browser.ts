@@ -15,22 +15,31 @@
 
 import { afterAll, beforeAll, describe, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, seedUsers, } from "../../helpers/seed";
 
 const U = "00000000-0000-4000-a000-000000000000";
-
 async function loginAsAdmin(ctx: BrowserTestContext,) {
   const page = await ctx.openPage();
-  await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-  await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
-  await page.fill("[data-testid='username-input']", SEED.admin.username,);
-  await page.fill("[data-testid='password-input']", SEED.admin.password,);
-  await page.click("[data-testid='login-submit']",);
-  await page.waitForTimeout(1200,);
-  // Session is validated server-side: reaching the admin header proves auth.
-  await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-  await page.waitForSelector("[data-testid='admin-header']", { timeout: 15_000, },);
-  return page;
+  const errors = trackPageErrors(page,);
+  try {
+    await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
+    await page.fill("[data-testid='username-input']", SEED.admin.username,);
+    await page.fill("[data-testid='password-input']", SEED.admin.password,);
+    await page.click("[data-testid='login-submit']",);
+    // Wait for the login POST response — proves the session cookie was set.
+    await page.waitForResponse(
+      (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+      { timeout: 30_000, },
+    );
+    await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.waitForSelector("[data-testid='admin-header']", { timeout: 15_000, },);
+    return { page, errors, };
+  } catch (error) {
+    await page.close();
+    throw error;
+  }
 }
 
 /** Seed one AUX telemetry event + one model capability so panels populate. */
@@ -83,21 +92,31 @@ describe("Admin dashboard panels — populated", () => {
   },);
 
   test("health tab renders AUX telemetry aggregates and recent calls", async () => {
-    const page = await loginAsAdmin(ctx,);
-    await page.getByRole("button", { name: "Health", },).click();
-    await page.waitForSelector("text=Generation Telemetry (AUX)", { timeout: 10_000, },);
-    await page.waitForSelector("text=summarize", { timeout: 10_000, },);
-    await page.waitForSelector("text=test-8b", { timeout: 10_000, },);
-    await page.close();
+    const { page, errors, } = await loginAsAdmin(ctx,);
+    try {
+      await page.getByRole("button", { name: "Health", },).click();
+      await page.waitForSelector("text=Generation Telemetry (AUX)", { timeout: 10_000, },);
+      await page.waitForSelector("text=summarize", { timeout: 10_000, },);
+      await page.waitForSelector("text=test-8b", { timeout: 10_000, },);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
   }, 60_000,);
 
   test("models tab renders fine-tuning panel with candidates and not-wired status", async () => {
-    const page = await loginAsAdmin(ctx,);
-    await page.getByRole("button", { name: "Models", },).click();
-    await page.waitForSelector("text=Fine-tuning", { timeout: 10_000, },);
-    await page.waitForSelector("text=automated training not wired", { timeout: 10_000, },);
-    await page.waitForSelector("text=test-8b", { timeout: 10_000, },);
-    await page.waitForSelector("text=128K", { timeout: 10_000, },);
-    await page.close();
+    const { page, errors, } = await loginAsAdmin(ctx,);
+    try {
+      await page.getByRole("button", { name: "Models", },).click();
+      await page.waitForSelector("text=Fine-tuning", { timeout: 10_000, },);
+      await page.waitForSelector("text=automated training not wired", { timeout: 10_000, },);
+      await page.waitForSelector("text=test-8b", { timeout: 10_000, },);
+      await page.waitForSelector("text=128K", { timeout: 10_000, },);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
   }, 60_000,);
 });
