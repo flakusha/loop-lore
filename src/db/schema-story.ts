@@ -120,6 +120,133 @@ export interface Locations {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── items ────────────────────────────────────────────
+export interface Items {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  description: string | null;
+  category: ItemCategory;
+  rarity: Generated<ItemRarity>;
+  stackable: Generated<StackableState>;
+  max_stack: Generated<number>;
+  properties: Generated<string>;
+  value: Generated<number>;
+  weight: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_lore_entries ────────────────────────────────────────────
+export interface WorldLoreEntries {
+  id: Generated<string>;
+  world_id: string;
+  name: string | null;
+  content: string;
+  keys: Generated<string>;
+  secondary_keys: string | null;
+  selective: Generated<number>;
+  case_sensitive: Generated<number>;
+  enabled: Generated<LoreEntryStatus>;
+  constant: Generated<number>;
+  position: Generated<LorePosition>;
+  insertion_order: Generated<number>;
+  priority: Generated<number>;
+  comment: string | null;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  cooldown_seconds: Generated<number>;
+  last_activated: string | null;
+  audience_scope: string | null;
+  key_type: string | null;
+  key_groups: string | null;
+  scan_depth: number | null;
+  activation_chance: number | null;
+}
+
+// ── world_items ────────────────────────────────────────────
+export interface WorldItems {
+  id: Generated<string>;
+  world_id: string;
+  item_id: string;
+  location_id: string | null;
+  owner_actor_id: string | null;
+  quantity: Generated<number>;
+  visibility: Generated<ItemVisibility>;
+  spawn_condition: string | null;
+  respawnable: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── actor_memories ────────────────────────────────────────────
+export interface ActorMemories {
+  id: Generated<string>;
+  actor_id: string;
+  source_chat_id: string | null;
+  content: string;
+  memory_type: Generated<MemoryType>;
+  confidence: Generated<number>;
+  importance: Generated<number>;
+  keywords: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  expires_at: string | null;
+  decay_rate: Generated<number>;
+  strength: Generated<number>;
+  last_accessed_at: string | null;
+  source_message_id: string | null;
+  context: string | null;
+  world_id: string | null;
+  user_id: string | null;
+  scope: Generated<string>;
+  pinned: Generated<PinnedState>;
+  privacy: Generated<string>;
+  shareability: string | null;
+}
+
+// ── memory_embeddings ─────────────────────────────────────────
+export interface MemoryEmbeddings {
+  memory_id: string;
+  model: string;
+  dimensions: number;
+  vector_blob: Uint8Array;
+  created_at: number;
+}
+
+// ── actor_lore_entries ────────────────────────────────────────────
+export interface ActorLoreEntries {
+  id: Generated<string>;
+  actor_id: string;
+  name: string | null;
+  content: string;
+  keys: Generated<string>;
+  secondary_keys: string | null;
+  selective: Generated<number>;
+  case_sensitive: Generated<number>;
+  enabled: Generated<LoreEntryStatus>;
+  constant: Generated<number>;
+  position: Generated<LorePosition>;
+  insertion_order: Generated<number>;
+  priority: Generated<number>;
+  comment: string | null;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  cooldown_seconds: Generated<number>;
+  last_activated: string | null;
+  audience_scope: string | null;
+  world_id: string | null;
+  key_type: string | null;
+  key_groups: string | null;
+  scan_depth: number | null;
+  activation_chance: number | null;
+}
+
+
+// ── story_turns ────────────────────────────────────────────
 export interface StoryTurns {
   id: Generated<string>;
   chat_id: string;
