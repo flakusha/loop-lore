@@ -26,10 +26,6 @@ interface ActivityEntry {
   chatName: string;
 }
 
-interface ActivityResponse {
-  chats: Record<string, ActivityEntry>;
-}
-
 /**
  * Computes per-chat unseen counts for a user by comparing visible message
  * counts against each participant's `last_read_message_id`. Shared by the
@@ -69,7 +65,7 @@ export async function computeActivity(
     .where("visibility", "=", "visible",)
     .groupBy("chat_id",)
     .execute();
-  const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created,],),);
+  const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created as string | null,],),);
 
   const lastReadIds: string[] = [];
   for (const v of lastReadByChat.values()) {
@@ -116,22 +112,21 @@ export async function computeActivity(
   return result;
 }
 
-export function activityRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
+export function activityRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "activity", },).get(`${prefix}/chats/activity`, async (ctx,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
     const chats = await computeActivity(database, userId,);
-    return jsonResponse({ chats, } satisfies ActivityResponse,);
+    return jsonResponse({ chats, },);
   }, {
     response: {
       200: SuccessResponse,
       401: ErrorResponse,
     },
     detail: {
-      summary: "Get per-chat unseen message counts",
-      description:
-        "Polls for unseen message counts per chat the authenticated user belongs to. Returns a dict of chatId to unseenCount, lastMessageCreatedAt, and chatName.",
-      tags: ["Activity",],
+      summary: "Get per-chat activity summary",
+      description: "Returns unseen counts and last-message timestamps per chat for the authenticated user.",
+      tags: ["Chats",],
     },
   },);
 }
