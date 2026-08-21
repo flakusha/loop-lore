@@ -103,3 +103,22 @@ export const MessageSearchResponse = t.Object({
   hasMore: t.Boolean(),
   query: t.String(),
 },);
+
+export const MusicLinkMessageSchema = t.Object({
+  id: t.String(),
+  chatId: t.String(),
+  service: t.String(),
+  url: t.String(),
+  embedHtml: t.Nullable(t.String()),
+  title: t.String(),
+  artist: t.String(),
+  thumbnailUrl: t.Nullable(t.String()),
+  durationSecs: t.Nullable(t.Number()),
+  serviceTrackId: t.String(),
+  serviceUrl: t.String(),
+  isPlaylist: t.Boolean(),
+  trackCount: t.Nullable(t.Number()),
+  explicit: t.Boolean(),
+  nsfwHidden: t.Boolean(),
+  createdAt: t.String(),
+},);
