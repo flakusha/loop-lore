@@ -14,6 +14,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
 describe("Creation flows E2E", () => {
   let ctx: BrowserTestContext;
@@ -37,6 +38,7 @@ describe("Creation flows E2E", () => {
   describe("Character create persists", () => {
     test("creates a character that appears in the grid and DB", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/characters",);
         await page.locator("[data-testid='create-character']",).waitFor({ state: "visible", timeout: 15_000, },);
@@ -62,6 +64,8 @@ describe("Creation flows E2E", () => {
         await page.reload({ waitUntil: "domcontentloaded", },);
         await page.locator(`[data-testid='character-card-${row!.id}']`,).waitFor({ timeout: 30_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
@@ -70,6 +74,7 @@ describe("Creation flows E2E", () => {
   describe("World create persists", () => {
     test("creates a world in DB and redirects to its edit page", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/worlds",);
         await page.locator("[data-testid='create-world']",).waitFor({ state: "visible", timeout: 15_000, },);
@@ -93,6 +98,8 @@ describe("Creation flows E2E", () => {
         // App UX: createWorld() redirects to the new world's edit page.
         await page.waitForURL((url,) => url.pathname === `/worlds/${row!.id}/edit`, { timeout: 30_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
@@ -101,6 +108,7 @@ describe("Creation flows E2E", () => {
   describe("World-edit location add persists", () => {
     test("adds a location to a created world that persists to DB", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
       try {
         // Create a world owned by the solo user via the UI modal (the app
         // redirects to its edit page on success where we add the location).
@@ -121,11 +129,14 @@ describe("Creation flows E2E", () => {
         // Navigate to its edit page and wait for the world to load (tab bar).
         await page.goto(`${ctx.url}/worlds/${worldRow!.id}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         await page.locator(".world-edit-tabs",).waitFor({ state: "visible", timeout: 30_000, },);
-        await page.waitForTimeout(500,);
 
         // Switch to the Locations tab.
         await page.locator(".world-edit-tab",).filter({ hasText: "Locations", },).first().click();
-        await page.waitForTimeout(500,);
+        // Wait for the Locations tab panel to become visible.
+        await page.locator(".world-edit-tab",).filter({ hasText: "Locations", },).first().waitFor({
+          state: "visible",
+          timeout: 15_000,
+        },);
 
         // Reveal the add-location form (its toggle sets showAddForm = true).
         // The toggle is the header button with text "Add location".
@@ -139,7 +150,11 @@ describe("Creation flows E2E", () => {
 
         const locName = `Browser-Loc-${Date.now()}`;
         await page.fill("#loc-name", locName,);
-        await page.waitForTimeout(200,);
+        // Wait for the add-location form to become usable.
+        await page.locator(".add-location-form button",).filter({ hasText: /add/i, },).first().waitFor({
+          state: "visible",
+          timeout: 15_000,
+        },);
         await page.evaluate(() => {
           const addBtn = [...document.querySelectorAll(".add-location-form button",),].find((b,) =>
             b.textContent?.trim()?.toLowerCase() === "add"
@@ -159,6 +174,8 @@ describe("Creation flows E2E", () => {
         // Rendered in the locations list (.location-name).
         await page.locator(".location-name",).filter({ hasText: locName, },).waitFor({ timeout: 30_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 90_000,);

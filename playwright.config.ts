@@ -1,56 +1,47 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * Playwright Configuration
- *
- * Browser E2E tests for loop-lore web UI.
- * Uses bun:test runner with Playwright browser fixture.
- *
- * Note: Tests are run via `bun test tests/e2e/flows/browser/*.browser.ts`
- * This config is for Playwright-specific settings (browser launch, viewport, etc).
- */
-import { defineConfig, } from "@playwright/test";
+// Playwright Configuration (documentation only)
+//
+// Tests run via: bun test tests/e2e/flows/browser/*.browser.ts
+// using the createBrowserTest() fixture — NOT the @playwright/test runner.
+//
+// The values below document the effective runtime contract for browser tests
+// even though this file is not consumed by bun:test.
+//
+// ## Relevant values
+//
+// timeout: 30_000 ms per test
+// expect.timeout: 5_000 ms per expect
+// workers: 1 (tests share a single DB via transactions; parallel = false)
+// retries: 1 (flaky network tests get one retry)
+// viewport: { width: 1440, height: 900 }
+// actionTimeout: 10_000 ms
+// navigationTimeout: 15_000 ms
+//
+// ## Browser launch args (chromium, headless)
+//
+// --no-sandbox
+// --disable-setuid-sandbox
+// --disable-dev-shm-usage
+//
+// ## Test discovery
+//
+// Tests live in ./tests/e2e/flows/browser/*.browser.ts and are picked up
+// by the glob **/*.browser.ts pattern.
+//
+// ## Reports
+//
+// HTML report goes to .tmp/playwright-report (not used by bun:test runner).
+//
+// ## Why not consumed
+//
+// createBrowserTest() constructs a BrowserTestContext that wraps a raw
+// Playwright chromium browser instance directly. It does NOT go through
+// @playwright/test's webServer/config pipeline, so this file has no
+// effect on test execution. Keeping it as a comment block preserves the
+// useful documentation without lying about being an active config.
 
-export default defineConfig({
-  testDir: "./tests/e2e/flows/browser",
-  testMatch: "**/*.browser.ts",
-  timeout: 30_000,
-  expect: {
-    timeout: 5_000,
-  },
-  fullyParallel: false,
-  forbidOnly: true,
-  retries: 1,
-  workers: 1,
-  reporter: [
-    ["list",],
-    ["html", { open: "never", outputFolder: ".tmp/playwright-report", },],
-  ],
-  use: {
-    baseURL: "http://localhost:0",
-    trace: "on-first-retry",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
-    viewport: { width: 1440, height: 900, },
-    actionTimeout: 10_000,
-    navigationTimeout: 15_000,
-  },
-  projects: [
-    {
-      name: "chromium",
-      use: {
-        browserName: "chromium",
-        launchOptions: {
-          headless: true,
-          args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-          ],
-        },
-      },
-    },
-  ],
-  outputDir: ".tmp/test-results",
-},);
+export {};
+// This file intentionally contains only export {} to keep TypeScript happy.
+// All content is documentation via // line comments above.

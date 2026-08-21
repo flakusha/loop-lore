@@ -13,6 +13,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
 const ROUTES = {
   root: "/",
@@ -24,12 +25,19 @@ const ROUTES = {
   viewsRoot: "/views/",
 } as const;
 
-async function redirectPath(ctx: BrowserTestContext, path: string, expected: string,): Promise<void> {
+async function redirectPath(
+  ctx: BrowserTestContext,
+  path: string,
+  expected: string,
+): Promise<void> {
   const page = await ctx.openPage();
+  const errors = trackPageErrors(page,);
   try {
     await page.goto(`${ctx.url}${path}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.waitForURL((url,) => url.pathname === expected, { timeout: 30_000, },);
   } finally {
+    errors.assert();
+    errors.detach();
     await page.close();
   }
 }
@@ -79,6 +87,7 @@ describe("Redirection E2E — auth required", () => {
 
   test("direct '/views/chat' without login does not show chat content", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await page.goto(`${ctx.url}${ROUTES.chat}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
 
@@ -104,6 +113,8 @@ describe("Redirection E2E — auth required", () => {
       } catch { /* never became visible */ }
       expect(messageListVisible,).toBe(false,);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
