@@ -20,14 +20,14 @@
     "tests/**/*.ts",
     "plugins/**/*.ts"
   ],
-  // `exports`/`types` analysis is disabled: this repo's plugin + test-helper
-  // API surface is re-exported and exercised via dynamic/test/entry patterns
-  // knip can't follow, producing false positives (e.g. dice-roller routes are
-  // imported by engine.test.ts + index.ts; seed* helpers are used by seedAll).
-  // Dead-code signal = unused files + deps + binaries (still reported).
-  "exclude": ["exports", "types"],
+  // types analysis is disabled: this repo's test factories re-export
+  // their *Factory types as part of a stable public-API surface; knip
+  // cannot trace consumers (test fixtures + plugin manifests), producing
+  // false positives on every test-helper barrel. Dead-code signal still
+  // runs on unused files + exports + deps + binaries.
+  "exclude": ["types"],
   "ignoreDependencies": [
-    // Runtime/string-resolved — used via plugin manifest paths, build scripts,
+    // Runtime/string-resolved -- used via plugin manifest paths, build scripts,
     // or dynamic imports knip can't follow (elysia app def, frontend bundle,
     // blessed TUI, htmx extensions, asset pipeline).
     "blessed-contrib",
@@ -64,19 +64,19 @@
     "scancode", // license compliance gate (scripts/check-licenses.ts)
     "fossa", // license compliance gate (scripts/check-licenses.ts)
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
-    "rustup", // Rust toolchain (scripts/build-native.ts) — external, not npm
-    "rustc" // native cdylib compile (scripts/build-native.ts) — external, not npm
+    "rustup", // Rust toolchain (scripts/build-native.ts) -- external, not npm
+    "rustc" // native cdylib compile (scripts/build-native.ts) -- external, not npm
   ],
   "ignore": [
-    // ── Sample-plugin public API types ─────────────────────────────
+    // Sample-plugin public API types
     // Dead scaffolding deliberately kept for the plugin extension
     // surface (no consumer yet). Tracked: TASK-knip-dead-code.
     "plugins/**/types.ts",
 
-    // ── Worktree CLI migration leftovers ───────────────────────────
-    // `.sh` → `.mjs` migration is incomplete: `index.mjs` only imports
-    // agent-commit/list/git/output; the superseded `commands/{branches,
-    // diff,status}.ts`, `index.ts`, `utils/{config,colors}.ts` remain.
+    // Worktree CLI migration leftovers
+    // .sh -> .mjs migration is incomplete: index.mjs only imports
+    // agent-commit/list/git/output; the superseded commands/{branches,
+    // diff,status}.ts, index.ts, utils/{config,colors}.ts remain.
     // Out of knip's reach (index.mjs is JS, its TS siblings aren't
     // entry-reachable). Removal tracked separately: TASK-worktree-ts-superseded.
     "scripts/worktree/index.ts",
@@ -86,15 +86,46 @@
     "scripts/worktree/utils/config.ts",
     "scripts/worktree/utils/colors.ts",
 
-    // ── Live CLI referenced via shell/docs (not import-reachable) ──
-    // `gpg-unlock.mjs` is invoked by `worktree.sh` and documented in
-    // `.agents/skills/agent-commit/SKILL.md` + `worktree-merge/SKILL.md`.
+    // Live CLI referenced via shell/docs (not import-reachable)
+    // gpg-unlock.mjs is invoked by worktree.sh and documented in
+    // .agents/skills/agent-commit/SKILL.md + worktree-merge/SKILL.md.
     "scripts/gpg-unlock.mjs",
 
-    // ── Native benchmarks ─────────────────────────────────────────
-    // Standalone bench entrypoints (run directly, never imported) —
+    // Native benchmarks
+    // Standalone bench entrypoints (run directly, never imported) --
     // same class as scripts/worktree leftovers above.
     "tests/benchmarks/blake3.bench.ts",
-    "tests/benchmarks/zstd.bench.ts"
+    "tests/benchmarks/zstd.bench.ts",
+
+    // EXPORTS ANALYSIS RE-ENABLED (2026-08-21)
+    // False positives: symbol IS used but knip can't trace usage due to
+    // dynamic/plugin/test/reexport/intra-file patterns.
+    //
+    // Plugin routes: loaded via register-plugins.ts manifest (dynamic registration).
+    // isRollCommand/parseTextCommand: defined in engine.ts, barrel-re-exported
+    // via index.ts; routes.ts:70 re-exports them; plugin is loaded dynamically
+    // via manifest (knip can't trace dynamic plugin registration).
+    "plugins/core/dice-roller/routes.ts",
+    //
+    // Intra-file usage knip can't trace:
+    // - isProtected: called at line 34 within agent-commit.ts; knip only tracks
+    //   inter-file imports, not intra-file calls.
+    // - stripMarkdownCode: called at line 117 within src-refs.ts (same file).
+    "scripts/worktree/commands/agent-commit.ts",
+    "scripts/lib/src-refs.ts",
+    //
+    // Test helpers barrel re-exports used via seedAll; knip can't trace
+    // that the individual seeder functions are called by seedAll().
+    // Tests only import seedAll, seedUsers, seedChat.
+    "tests/e2e/helpers/seed.ts",
+    //
+    // assertNoPageErrors/isAlpineInitialized: called only within htmx-alpine.ts.
+    // Tests only import the trackPageErrors singleton, not these wrappers.
+    "tests/e2e/helpers/htmx-alpine.ts",
+    //
+    // _handleImportRequest: internal route handler called only by createTestServer's
+    // route dispatcher. createTestServer IS used by all e2e tests; knip can't
+    // trace the handler-to-route wiring.
+    "tests/e2e/helpers/server.ts"
   ]
 }
