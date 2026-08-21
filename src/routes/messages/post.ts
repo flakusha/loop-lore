@@ -6,13 +6,12 @@ import { linkAsset, } from "../../assets/service";
 import type { Config, } from "../../config/schema";
 import { encodeContent, } from "../../content/encode";
 import {
-  compressThenEncrypt,
-  deriveChatKeyForChat,
+  encryptAtRest,
   ensureActorKey,
   extractKeyIdFromPayload,
+  getChatEncryptionLevel,
   getSmk,
   isEncryptedPayload,
-  isEncryptionEnabled,
 } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
@@ -28,9 +27,13 @@ export interface StoredContent {
 }
 
 /**
- * Prepare plaintext message content for storage: pass through client
- * pre-encrypted payloads, encrypt+gzip when encryption is enabled, or gzip
- * large plaintext otherwise.
+ * Prepare plaintext message content for storage.
+ *
+ * Handles three cases:
+ *   1. Client pre-encrypted payload — stored as-is (key_id extracted).
+ *   2. Server-side encryption enabled — routes through `encryptAtRest` which
+ *      selects encryption by the chat's `encryption_level` tier.
+ *   3. No encryption — gzip-compresses large plaintext, stores identity otherwise.
  */
 export async function prepareContentStorage(
   database: Kysely<DB>,
@@ -46,19 +49,20 @@ export async function prepareContentStorage(
   }
 
   if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    await ensureActorKey({ database, actorId, smk, },);
-    const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-    const storedContent = await compressThenEncrypt({
+    const smk = getSmk() ?? undefined;
+    if (smk) { await ensureActorKey({ database, actorId, smk, },); }
+    const encryptionLevel = await getChatEncryptionLevel(database, chatId,);
+    const result = await encryptAtRest({
+      database,
+      chatId,
       plaintext,
-      chatKey: chatKey.key,
-      keyId: chatKey.keyId,
+      encryptionLevel,
       config: {
         threshold: config.encryption.compressThreshold,
         algorithm: config.encryption.compressAlgorithm,
       },
     },);
-    return { storedContent, contentEncoding: "identity", storedKeyId: chatKey.keyId, };
+    return { storedContent: result.storedContent, contentEncoding: "identity", storedKeyId: result.keyId, };
   }
 
   const LARGE_CONTENT_THRESHOLD = 10_240;

@@ -6,8 +6,8 @@ import type { ServiceError, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import { decodeContent, } from "../../content/decode";
 import {
-  decryptThenDecompress,
-  deriveChatKeyForChat,
+  decryptAtRest,
+  getChatEncryptionLevel,
   getSmk,
 } from "../../crypto";
 import type { ContentEncoding, } from "../../db/enums";
@@ -148,9 +148,11 @@ export async function resolveMessageContent(
     return enc === "identity" ? message.content : decodeContent(message.content, enc,);
   }
 
-  const smk = getSmk();
-  if (!smk) { throw new Error("Message is encrypted but no SMK loaded. Set SERVER_ENCRYPTION_KEY.",); }
-
-  const chatKey = await deriveChatKeyForChat(database, message.chat_id, smk,);
-  return decryptThenDecompress(message.content, chatKey.key,);
+  const encryptionLevel = await getChatEncryptionLevel(database, message.chat_id,);
+  return decryptAtRest({
+    database,
+    chatId: message.chat_id,
+    storedContent: message.content,
+    encryptionLevel,
+  },);
 }
