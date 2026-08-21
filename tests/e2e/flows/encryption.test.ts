@@ -120,15 +120,15 @@ describe("Encryption Workflow", () => {
       expect(msg!.content,).toBe(msgContent,);
     });
 
-    test("public tier stores plaintext", async () => {
-      // Create a chat with public encryption
+    test("none tier stores plaintext", async () => {
+      // Create a chat with no encryption
       const chatRes = await api.post<{ id: string }>(
         "/api/chats",
         {
           name: "public-chat-e2e",
           type: "direct",
           mode: "direct",
-          encryption_level: "public",
+          encryption_level: "none",
         },
       );
       expect(chatRes.ok,).toBe(true,);
