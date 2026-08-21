@@ -4,6 +4,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-asset-support-expansion
+**Worktree:** `in-chat-asset-preview-panel` (base dev `59b69851`)
 
 ## Summary
 
@@ -17,10 +18,8 @@ Item 7 (priority-release-010 row 7; P3 #12 / P5). Gallery assets viewable/linkab
 - [x] Tests passing — chat-utils/chat-editing unit green
 - [x] Documentation updated — ticket notes
 
-## Worktree & Baseline (2026-08-16)
+## Worktree & Baseline (2026-08-21)
 
-- Worktree: `tree/in-chat-asset-preview` (branch `in-chat-asset-preview`, based on `dev` @ c95cf320) — **deleted after finalize 2026-08-17; the C6 signed-URL scope was merged to dev. This ticket now covers only the remaining in-chat side-panel UI.**
-- C6 dependency (signed URLs) is shipped + merged — unblocks this item.
-- Baseline `bun run check`: 20/22 green — unit + e2e tests, typecheck, lint, wiring, db schema, md lint, changelog, code-map, context-weight all pass.
-- Pre-existing strict-size debt on dev HEAD (NOT item scope, not introduced here): 10 files > 250L — `src/story/shared/story-utils.ts`, `src/services/actor-items.ts`, `src/rpg/location-nsfw/service.ts`, `src/routes/rpg/replayability.ts`, `src/routes/proactive-messaging/index.ts` (285L), `src/routes/messages/handle-scene-transitions.ts`, `src/routes/chats/manage.ts`, `src/generation/generate-route/stream-to-client.ts`, `src/generation/auto-gen/auto-generation.ts`, `src/generation/auto-gen/story-mode.ts`. No dedicated debt ticket yet — pending split work, both trees share the red strict-size gate.
-- Note: pre-existing sibling worktree `tree/feature-in-chat-asset-preview` (same base, from prior planning session) left untouched.
+- Worktree: `tree/in-chat-asset-preview-panel` (branch `in-chat-asset-preview-panel`, based on `dev` @ `59b69851`)
+- All acceptance criteria met; ticket closed 2026-08-21 in this worktree.
+- Baseline `bun run check`: pre-existing (not run here — ticket already verified shipped on dev; worktree used only to record close-out).
