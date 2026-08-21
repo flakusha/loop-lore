@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { load as parseYaml, } from "js-yaml";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import { parse as parseToml, } from "smol-toml";
 import type { ExpansionConfig, } from "./types.js";
 
 // ── File Discovery ─────────────────────────────────────────
@@ -47,7 +45,7 @@ export function parseExpansionFile(filePath: string,): ExpansionConfig {
   const ext = path.extname(filePath,).slice(1,);
 
   if (ext === "toml") {
-    return parseToml(content,) as unknown as ExpansionConfig;
+    return Bun.TOML.parse(content,) as unknown as ExpansionConfig;
   }
-  return parseYaml(content,) as ExpansionConfig;
+  return Bun.YAML.parse(content,) as ExpansionConfig;
 }

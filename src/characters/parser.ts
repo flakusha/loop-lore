@@ -5,9 +5,10 @@
 //
 // Auto-detection and format dispatch for character card imports.
 // Tries each format in order, returning the first successful parse.
-
+// lean-ctx: Bun.YAML.parse available but yamlLoad kept for consistency with
+//          existing parser contract. yamlLoad = load = parse in js-yaml.
+//          Upgrade to Bun.YAML.parse when no behavioural difference remains.
 import { load as yamlLoad, } from "js-yaml";
-import { parse as parseToml, } from "smol-toml";
 import { jsonParseOr, } from "../utils";
 import { safeFromString, } from "../utils/safe-buffer";
 import { extractCharx, } from "./charx";
@@ -147,7 +148,7 @@ function tryParseToml(text: string,): ParseResult | null {
     // Only try TOML if it looks like TOML (has [sections])
     if (!text.includes("[",) || !text.includes("]",)) { return null; }
 
-    const parsed = parseToml(text,);
+    const parsed = Bun.TOML.parse(text,);
     if (!parsed || typeof parsed !== "object") { return null; }
 
     const obj = parsed as Record<string, unknown>;

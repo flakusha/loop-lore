@@ -926,15 +926,16 @@ interface ImportError {
 
 ### Already in package.json
 
-- `js-yaml` — YAML parsing
-- `smol-toml` — TOML parsing
+- `js-yaml` — YAML parsing (kept for block-style stringify)
+
+`smol-toml` removed — using `Bun.TOML` natively.
 
 ### New Dependencies
 
 None required — PNG metadata parsing and ZIP extraction use native Node.js/Bun APIs:
 
 - `Bun.readableStreamToBlob()` — for PNG chunk reading
-- `Bun.zip()` / `jszip` — for CHARX extraction (if needed)
+- `jszip` — for CHARX extraction (Bun has no native zip API)
 
 ---
 

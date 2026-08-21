@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { spawn, } from "bun";
-import { load as parseYaml, } from "js-yaml";
 import { readFileSync, } from "node:fs";
 import { homedir, } from "node:os";
 import { resolve, } from "node:path";
@@ -188,7 +187,7 @@ export async function startLlamaSwap(
 function resolveLlamaSwapPort(host: ServerExternalHost, configPath: string,): number {
   try {
     const content = readFileSync(configPath, "utf8",);
-    const parsed = parseYaml(content,) as { startPort?: number } | null;
+    const parsed = Bun.YAML.parse(content,) as { startPort?: number } | null;
     if (parsed && typeof parsed.startPort === "number") {
       return parsed.startPort;
     }

@@ -590,7 +590,6 @@ and validation.
 Already in `package.json`:
 
 - `js-yaml` — YAML parsing
-- `smol-toml` — TOML parsing
 
 No new dependencies required for the core spec.
 

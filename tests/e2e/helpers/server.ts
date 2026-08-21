@@ -135,7 +135,7 @@ async function parseImportFile(
 ): Promise<{ data: Record<string, unknown>; spec: string | undefined } | null> {
   const { jsonParseOr, } = await import("@/utils");
   const { load: yamlLoad, } = await import("js-yaml");
-  const { parse: parseToml, } = await import("smol-toml");
+  const parseToml = Bun.TOML.parse;
   const { extractCharacterDataFromPng, } = await import("@/characters/steganography");
 
   if (filename.endsWith(".json",)) {

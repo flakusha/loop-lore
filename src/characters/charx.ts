@@ -5,7 +5,9 @@
 //
 // CHARX (Character eXchange) format support.
 // ZIP archive containing card.json + assets/ directory.
-
+// lean-ctx: Bun 1.4 has CompressionStream/DecompressionStream (gzip/deflate only) — not
+//          a full ZIP container. jszip handles ZIP archive creation + multi-file extraction.
+//          Upgrade when Bun exposes a proper zip/unzip archive API.
 import JSZip from "jszip";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import type { CharacterAsset, } from "./spec";
