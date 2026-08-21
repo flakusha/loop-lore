@@ -59,6 +59,28 @@
     "source": ".plan/tickets/BUG-auto-rotation-config-drift.md",
     "git_issue": "a9a4ea3"
   },
+  "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
+    "hash": "pending",
+    "extid": "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED",
+    "type": "BUG",
+    "title": "creation wizard confirmWizard ignores wizardId — cross-talk risk",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md"
+  },
+  "BUG-CHAT-BATCH-EXPORT-N-PLUS-ONE": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-BATCH-EXPORT-N-PLUS-ONE",
+    "type": "BUG",
+    "title": "chat batch export N+1 (batch.ts:72-98)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+  },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
     "extid": "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE",
@@ -71,6 +93,28 @@
     "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md",
     "git_issue": "61c7072"
   },
+  "BUG-CHAT-MENTION-SILENT-ERROR-SWALL": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-MENTION-SILENT-ERROR-SWALL",
+    "type": "BUG",
+    "title": "chat mentions silently swallow persist/notify failures (post.ts:176-188)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md"
+  },
+  "BUG-CHAT-QUIET-HOURS-BOUNDARY": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-QUIET-HOURS-BOUNDARY",
+    "type": "BUG",
+    "title": "proactive quiet-hours off-by-one at boundaries (timing.ts:14-16)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
+  },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
     "extid": "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE",
@@ -82,6 +126,28 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-settings-modal-invalid-mode.md",
     "git_issue": "e5bf24b"
+  },
+  "BUG-CHAT-SWIPE-INDEX-RACE": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-SWIPE-INDEX-RACE",
+    "type": "BUG",
+    "title": "chat swipe_index race on concurrent assistant replies (reply.ts:83-84)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-swipe-index-race.md"
+  },
+  "BUG-CHAT-TRIGGER-AUTO-GENERATION-UNHANDLED-REJECTION": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-TRIGGER-AUTO-GENERATION-UNHANDLED-REJECTION",
+    "type": "BUG",
+    "title": "triggerAutoGeneration fire-and-forget unhandled rejection (reply.ts:40-42)",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
   },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
@@ -108,6 +174,28 @@
     "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md",
     "git_issue": "76cbe80"
   },
+  "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
+    "hash": "pending",
+    "extid": "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID",
+    "type": "BUG",
+    "title": "gallery serveGalleryGrid declared twice — build error",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
+  },
+  "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY": {
+    "hash": "pending",
+    "extid": "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY",
+    "type": "BUG",
+    "title": "gallery grid onclick openAssetPreview ReferenceError when gallery not top-level",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+  },
   "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR": {
     "hash": "2a271d7",
     "extid": "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR",
@@ -120,6 +208,28 @@
     "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md",
     "git_issue": "2a271d7"
   },
+  "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
+    "hash": "pending",
+    "extid": "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR",
+    "type": "BUG",
+    "title": "impersonate buildImpersonateResult ReferenceError on undefined `target`",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-impersonate-buildimpresult-referenceerror.md"
+  },
+  "BUG-IMPERSONATE-COMMANDS-REGISTER-EMPTY-CALLBACK": {
+    "hash": "pending",
+    "extid": "BUG-IMPERSONATE-COMMANDS-REGISTER-EMPTY-CALLBACK",
+    "type": "BUG",
+    "title": "impersonate command register callbacks are empty (no-op)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-impersonate-commands-register-empty-callback.md"
+  },
   "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY": {
     "hash": "966f256",
     "extid": "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY",
@@ -131,6 +241,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md",
     "git_issue": "966f256"
+  },
+  "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
+    "hash": "pending",
+    "extid": "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED",
+    "type": "BUG",
+    "title": "NPC navigation routes entirely stubbed — no service calls",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
   },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
@@ -155,6 +276,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
     "git_issue": "82e8395"
+  },
+  "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
+    "hash": "pending",
+    "extid": "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC",
+    "type": "BUG",
+    "title": "persona handlers missing role check — horizontal privilege escalation",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
   },
   "EPIC-2026-24": {
     "hash": "96970f5",
@@ -1626,6 +1758,39 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-worlds-extension.md",
     "git_issue": "60af48a"
+  },
+  "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH": {
+    "hash": "pending",
+    "extid": "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH",
+    "type": "IMPROVE",
+    "title": "updateImpersonation missing explicit else branch for clarity",
+    "label": "improve",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/IMPROVE-impersonate-explicit-else-branch.md"
+  },
+  "PERF-CHAT-DISPATCH-COMMAND-THREE-SEQUENTIAL-QUERIES": {
+    "hash": "pending",
+    "extid": "PERF-CHAT-DISPATCH-COMMAND-THREE-SEQUENTIAL-QUERIES",
+    "type": "PERF",
+    "title": "dispatchCommand runs 3 sequential DB queries (command.ts:47-60)",
+    "label": "perf",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md"
+  },
+  "PERF-GALLERY-UPLOADCHATASSETS-SEQUENTIAL": {
+    "hash": "pending",
+    "extid": "PERF-GALLERY-UPLOADCHATASSETS-SEQUENTIAL",
+    "type": "PERF",
+    "title": "gallery uploadChatAssets runs uploads sequentially",
+    "label": "perf",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/PERF-gallery-uploadChatAssets-sequential.md"
   },
   "TASK-001": {
     "hash": "732d54b",
@@ -11690,5 +11855,170 @@
     "tags": [],
     "source": ".plan/tickets/TASK-xmpp-integration.md",
     "git_issue": "3835d06"
+  },
+  "TEST-ADMIN-SEEDDEFAULTS-SILENT-DUPLICATE-SKIP-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-ADMIN-SEEDDEFAULTS-SILENT-DUPLICATE-SKIP-UNTESTED",
+    "type": "TEST",
+    "title": "admin seedDefaults idempotency and silent-dup handling untested",
+    "label": "test",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
+  },
+  "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED",
+    "type": "TEST",
+    "title": "characters charx round-trip extract→create untested",
+    "label": "test",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-characters-charx-roundtrip-untested.md"
+  },
+  "TEST-E2E-AUTH-FLOWS-MISSING": {
+    "hash": "pending",
+    "extid": "TEST-E2E-AUTH-FLOWS-MISSING",
+    "type": "TEST",
+    "title": "no e2e spec covers auth flows (login/logout/token expiry)",
+    "label": "test",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-e2e-auth-flows-missing.md"
+  },
+  "TEST-E2E-NSFW-MODERATION-ROUTES-MISSING": {
+    "hash": "pending",
+    "extid": "TEST-E2E-NSFW-MODERATION-ROUTES-MISSING",
+    "type": "TEST",
+    "title": "no e2e spec covers nsfw moderation admin routes",
+    "label": "test",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-e2e-nsfw-moderation-routes-missing.md"
+  },
+  "TEST-E2E-USERS-PERSONAS-ROUTES-MISSING": {
+    "hash": "pending",
+    "extid": "TEST-E2E-USERS-PERSONAS-ROUTES-MISSING",
+    "type": "TEST",
+    "title": "no e2e spec covers /api/users/\\* or /api/personas/\\* routes",
+    "label": "test",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-e2e-users-personas-routes-missing.md"
+  },
+  "TEST-GALLERY-FRONTEND-UTILS-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-GALLERY-FRONTEND-UTILS-UNTESTED",
+    "type": "TEST",
+    "title": "gallery frontend chat-utils has zero unit tests",
+    "label": "test",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
+  },
+  "TEST-GALLERY-UPLOAD-DROPZONE-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-GALLERY-UPLOAD-DROPZONE-UNTESTED",
+    "type": "TEST",
+    "title": "gallery-upload initDropZone has no tests; file validation absent",
+    "label": "test",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-gallery-upload-dropzone-untested.md"
+  },
+  "TEST-NPC-NAVIGATION-PROCESSMOVEMENTTICK-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-NPC-NAVIGATION-PROCESSMOVEMENTTICK-UNTESTED",
+    "type": "TEST",
+    "title": "NpcNavigationService.processMovementTick has zero unit tests",
+    "label": "test",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
+  },
+  "TEST-NSFW-GETFLAGQUEUE-STATUS-FILTER-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-NSFW-GETFLAGQUEUE-STATUS-FILTER-UNTESTED",
+    "type": "TEST",
+    "title": "nsfw getFlagQueue status filter has zero test coverage",
+    "label": "test",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-nsfw-getflagqueue-status-filter-untested.md"
+  },
+  "TEST-PROFANITY-CONTAINSPROFANITY-EDGE-CASES-UNTESTED": {
+    "hash": "pending",
+    "extid": "TEST-PROFANITY-CONTAINSPROFANITY-EDGE-CASES-UNTESTED",
+    "type": "TEST",
+    "title": "profanity containsProfanity edge cases untested",
+    "label": "test",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-profanity-containsprofanity-edge-cases-untested.md"
+  },
+  "WIRE-ASSISTANT-COMMAND-PALETTE-STALE-STATIC-LIST": {
+    "hash": "pending",
+    "extid": "WIRE-ASSISTANT-COMMAND-PALETTE-STALE-STATIC-LIST",
+    "type": "WIRE",
+    "title": "command-palette FE list hardcoded (drift from BE registry)",
+    "label": "wire",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
+  },
+  "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING": {
+    "hash": "pending",
+    "extid": "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING",
+    "type": "WIRE",
+    "title": "character creation missing avatar asset linking",
+    "label": "wire",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md"
+  },
+  "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION": {
+    "hash": "pending",
+    "extid": "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION",
+    "type": "WIRE",
+    "title": "verify ChatImpersonateBody schema includes impersonateActorId",
+    "label": "wire",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
+  },
+  "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH": {
+    "hash": "pending",
+    "extid": "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH",
+    "type": "WIRE",
+    "title": "impersonate command-palette FE has no actionPayload dispatch",
+    "label": "wire",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
+  },
+  "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ": {
+    "hash": "pending",
+    "extid": "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ",
+    "type": "WIRE",
+    "title": "nsfw-audit view route has no inline authz guard",
+    "label": "wire",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
   }
 }
