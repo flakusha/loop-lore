@@ -11017,12 +11017,6 @@
       "source": ".plan/epics/epic-impersonation.md"
     }
   ],
-  "src/personas/handlers.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
-    }
-  ],
   "src/personas/service.test.ts": [
     {
       "kind": "ticket",
@@ -13635,12 +13629,6 @@
       "source": ".plan/tickets/TASK-skills-routes.md"
     }
   ],
-  "src/routes/rpg/npc-navigation.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
-    }
-  ],
   "src/routes/rpg/npc-navigation.ts": [
     {
       "kind": "epic",
@@ -16250,10 +16238,6 @@
     }
   ],
   "src/story/game-master/execute.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
