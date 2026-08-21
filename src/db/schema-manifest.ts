@@ -426,6 +426,12 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("memory_embeddings", {
+    memory_id: col("text", { primaryKey: true, },),
+    model: col("text", { notNull: true, hasDefault: true, },),
+    dimensions: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("integer", { notNull: true, },),
+  },)
   .table("message_reactions", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),

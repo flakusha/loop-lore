@@ -191,4 +191,55 @@ describe("character-world-setup routes", () => {
     );
     expect(res.status,).toBe(404,);
   });
+
+  describe("World setup — admin/solo bypass", () => {
+    let db: Kysely<DB>;
+    let sqlite: Database;
+
+    beforeAll(async () => {
+      ({ db, sqlite, } = await createTestDb());
+      await insertUsers(db, "owner", "Owner", { id: "owner" as never, },);
+      await insertActors(db, "Actor A", { id: ACTOR as never, owner_id: "owner", },);
+      await insertWorlds(db, "owner", "Test World", { id: WORLD as never, },);
+      // Create world setup data
+      const app = makeApp(db, "owner", "user",);
+      await app.handle(
+        new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ scenario: "Test Scenario", },),
+        },),
+      );
+    },);
+
+    afterAll(() => sqlite.close());
+
+    test("admin can GET another user's world setup", async () => {
+      const app = makeApp(db, "owner", "admin",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
+      );
+      expect(res.status,).toBe(200,);
+    });
+
+    test("solo can GET another user's world setup", async () => {
+      const app = makeApp(db, "owner", "solo",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
+      );
+      expect(res.status,).toBe(200,);
+    });
+
+    test("admin can PUT world setup for another user's actor", async () => {
+      const app = makeApp(db, "owner", "admin",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`, {
+          method: "PUT",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ scenario: "admin override", },),
+        },),
+      );
+      expect(res.status,).toBe(201,);
+    });
+  });
 });
