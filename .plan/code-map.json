@@ -667,6 +667,12 @@
       "source": ".plan/tickets/TASK-bound-linked-travel-prompts.md"
     }
   ],
+  "src/assistant/prompt/keywords.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-055.md"
+    }
+  ],
   "src/assistant/prompt/registry.ts": [
     {
       "kind": "epic",
@@ -797,7 +803,7 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
-  "src/assistant/prompt/sections/lore.test.ts": [
+  "src/assistant/prompt/sections/lore-activation.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
@@ -2237,10 +2243,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-055.md"
     },
     {
       "kind": "ticket",
@@ -5105,12 +5107,6 @@
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     }
   ],
-  "src/db/migrations/017_lorebook_cooldowns.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-055.md"
-    }
-  ],
   "src/db/migrations/018_data_version_columns.ts": [
     {
       "kind": "spec",
@@ -5189,6 +5185,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    }
+  ],
+  "src/db/migrations/050_lorebook_activation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-055.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
@@ -9073,10 +9075,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
     }
   ],
   "src/generation/auto-gen/context-pruning.ts": [
@@ -9096,10 +9094,6 @@
     }
   ],
   "src/generation/auto-gen/story-mode.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md"
@@ -9237,12 +9231,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
-    }
-  ],
-  "src/generation/generate-route/stream-to-client.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
     }
   ],
   "src/generation/generate.ts": [
@@ -12547,12 +12535,6 @@
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
     }
   ],
-  "src/routes/chats/manage.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
-    }
-  ],
   "src/routes/chats/participants.ts": [
     {
       "kind": "ticket",
@@ -13200,10 +13182,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
     }
   ],
@@ -13366,10 +13344,6 @@
   "src/routes/proactive-messaging/index.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
@@ -13509,10 +13483,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-wiring-phase3.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
     },
     {
       "kind": "ticket",
@@ -14553,12 +14523,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
-    }
-  ],
-  "src/rpg/location-nsfw/service.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
     }
   ],
   "src/rpg/locations-nsfw/atmosphere.ts": [
@@ -15758,10 +15722,6 @@
   "src/services/actor-items.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-item-service.md"
     },
     {
@@ -16186,10 +16146,6 @@
     }
   ],
   "src/story/shared/story-utils.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
