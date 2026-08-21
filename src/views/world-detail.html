@@ -56,7 +56,9 @@
     @click="showCreate = true"
     data-testid="create-timeline"
     :title="t('worlds.createTimeline')"
-  >+</button>
+  >
+    +
+  </button>
 
   <!-- Create timeline modal -->
   <div
@@ -91,7 +93,8 @@
           ></textarea>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" @click="showCreate = false" x-text="t('common.cancel')"></button>
+          <button type="button" class="btn btn-secondary" @click="showCreate = false" x-text="t('common.cancel')">
+          </button>
           <button type="submit" class="btn btn-primary" x-text="t('common.create')"></button>
         </div>
       </form>

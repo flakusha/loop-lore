@@ -185,7 +185,6 @@ export interface ActorLoreEntries {
   activation_chance: number | null;
 }
 
-
 // ── story_turns ────────────────────────────────────────────
 export interface StoryTurns {
   id: Generated<string>;
