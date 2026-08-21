@@ -6,7 +6,7 @@
 # Encryption Workflow Specification
 
 **Status:** Core pipeline built and wired. Tier system, key distribution, at-rest layer done.
-**Source:** `src/crypto/` (pipeline, smk, actor-keys, chat-keys, key-distribution, at-rest, e2e/key-bundle, user-keys)
+**Source:** `src/crypto/` (pipeline, smk, actor-keys, chat-keys, key-distribution, at-rest)
 
 ---
 
@@ -24,8 +24,6 @@ SERVER_ENCRYPTION_KEY (env var, hex 64 chars = 256 bit)
 1. **SMK** (Server Master Key) — `src/crypto/smk.ts` ✅
 2. **Actor Keys** — per-user keys via Argon2id — `src/crypto/actor-keys.ts` ✅
 3. **Chat Keys** — derived per-chat — `src/crypto/chat-keys.ts` ✅
-4. **User Keys** — passphrase-based — `src/crypto/user-keys.ts` ✅
-5. **E2E Key Bundles** — symmetric key wrapping — `src/crypto/e2e/key-bundle.ts` ✅
 
 ## Encryption Tiers
 
@@ -33,9 +31,11 @@ Chats have three encryption levels, set at creation via `chats.encryption_level`
 
 | Tier       | Behaviour                                        | Status       |
 | ---------- | ------------------------------------------------ | ------------ |
-| `public`   | Plaintext, no crypto                             | ✅ Built     |
+| `none`     | Plaintext, no crypto                             | ✅ Built     |
 | `standard` | Server-mediated AES-256-GCM via chat keys        | ✅ Built     |
-| `private`  | E2E — clients pre-encrypt, server cannot decrypt | ⬜ Not wired |
+| `at-rest`  | Server-mediated at-rest encryption (same as `standard`). Server holds SMK-derived chat keys — NOT true E2E. | ✅ Built     |
+
+> **Historical note:** The `at-rest` tier was previously misnamed `private` and documented as true E2E. That documentation was incorrect — the server can decrypt `at-rest` content. True client-side E2E is tracked in `.plan/tickets/TASK-asymmetric-key-pairs-followup.md`.
 
 ## Compress-Encrypt Pipeline — `src/crypto/pipeline.ts` ✅
 
@@ -82,11 +82,11 @@ Tier-aware wrapper around the pipeline:
 
 ## DB Storage Format
 
-### Standard Tier
+### Standard / At-Rest Tier
 
 `messages.content` stores the encrypted JSON payload directly. `messages.key_id` references the chat key used.
 
-### Public Tier
+### None Tier
 
 `messages.content` stores plaintext. `messages.key_id` is null.
 
@@ -158,11 +158,10 @@ COMPRESS_ALGORITHM=gzip         # gzip | brotli | zstd
 | Asset encryption                | Medium   | Wire message pipeline (done)  |
 | Time-based access expiry        | Medium   | Group key distribution (done) |
 | World/Location encryption       | Low      | Schema design                 |
-| Asymmetric key pairs (E2E)      | Low      | Architecture clarification    |
+| Asymmetric key pairs (true E2E) | Low      | See TASK-asymmetric-key-pairs-followup |
 | Browser pre-encrypt integration | Medium   | Feature detection, fallbacks  |
 | Key management UI (frontend)    | Medium   | Routes exist, UI pending      |
 | Crypto test isolation fix       | High     | ~20 failures in full suite    |
-| Anonymous chat mode             | Medium   | ✅ Done                       |
 
 ## References
 
@@ -171,4 +170,5 @@ COMPRESS_ALGORITHM=gzip         # gzip | brotli | zstd
 - `src/crypto/index.ts` — barrel exports
 - `src/db/schema-core.ts` — `actor_keys`, `messages.key_id`
 - `.plan/epics/epic-crypto.md` — encryption epic
-- `.plan/tickets/TASK-epic17-encryption-e2e-expansion.md` — status tracker
+- `.plan/tickets/BUG-private-tier-no-true-e2e.md` — closed: renamed to at-rest
+- `.plan/tickets/TASK-asymmetric-key-pairs-followup.md` — deferred true E2E work
