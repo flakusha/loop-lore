@@ -225,6 +225,19 @@
                 </template>
               </div>
             </template>
+            <!-- Music embed: shown after media-attachments -->
+            <template x-if="msg.type === 'music_link'">
+              <div class="music-embed" data-testid="music-embed">
+                <template x-if="!msg.nsfwHidden">
+                  <div class="music-embed-player" x-html="renderMusicEmbed(msg)"></div>
+                </template>
+                <template x-if="msg.nsfwHidden">
+                  <div class="music-embed-nsfw">
+                    <span>🔒 Explicit content hidden</span>
+                  </div>
+                </template>
+              </div>
+            </template>
             <!-- Emoji reactions: chips + quick-picker trigger -->
             <div class="message-reactions" data-testid="reaction-bar">
               <template x-if="msg.reactions && msg.reactions.length > 0">
