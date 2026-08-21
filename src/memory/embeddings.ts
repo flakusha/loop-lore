@@ -16,10 +16,10 @@
  * Cosine similarity: dot(a,b) / (|a|*|b|).  Vectors are unit-normalised at
  * embed time, so similarity = dot product (single pass, no divide).
  */
-import type { Kysely } from "kysely";
-import type { DB } from "../db";
-import type { OllamaNativeState } from "../generation/providers/ollama-native/types";
-import { embedDispatch } from "../generation/providers/ollama-native/operations";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db";
+import { embedDispatch, } from "../generation/providers/ollama-native/operations";
+import type { OllamaNativeState, } from "../generation/providers/ollama-native/types";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -56,20 +56,20 @@ function buildOllamaState(): OllamaNativeState {
 // ── Math helpers ─────────────────────────────────────────────────────────────
 
 /** L2 norm of a vector. */
-function l2Norm(vec: Float32Array): number {
+function l2Norm(vec: Float32Array,): number {
   let s = 0;
   for (let i = 0; i < vec.length; i++) { s += (vec[i] ?? 0) * (vec[i] ?? 0); }
-  return Math.sqrt(s);
+  return Math.sqrt(s,);
 }
 
-function dot(a: Float32Array, b: Float32Array): number {
+function dot(a: Float32Array, b: Float32Array,): number {
   let s = 0;
   for (let i = 0; i < a.length; i++) { s += (a[i] ?? 0) * (b[i] ?? 0); }
   return s;
 }
 
-function normalise(vec: Float32Array): Float32Array {
-  const norm = l2Norm(vec);
+function normalise(vec: Float32Array,): Float32Array {
+  const norm = l2Norm(vec,);
   if (norm === 0) { return vec; }
   for (let i = 0; i < vec.length; i++) { vec[i] = (vec[i] ?? 0) / norm; }
   return vec;
@@ -81,13 +81,13 @@ function normalise(vec: Float32Array): Float32Array {
  *
  * @throws If the embedding call fails or returns no results.
  */
-export async function embedText(text: string): Promise<Float32Array> {
+export async function embedText(text: string,): Promise<Float32Array> {
   const state = buildOllamaState();
-  const embeddings = await embedDispatch(state, text, "nomic-embed-text");
+  const embeddings = await embedDispatch(state, text, "nomic-embed-text",);
   const emb = embeddings[0];
-  if (!emb) { throw new Error("Embedding provider returned no embeddings."); }
+  if (!emb) { throw new Error("Embedding provider returned no embeddings.",); }
   // Normalise to unit length so cosine similarity = dot product.
-  return normalise(new Float32Array(emb));
+  return normalise(new Float32Array(emb,),);
 }
 
 // ── Storage ────────────────────────────────────────────────────────────────
@@ -106,23 +106,23 @@ export async function storeEmbedding(
   model = "nomic-embed-text",
 ): Promise<void> {
   const dims = vector.length;
-  const uint8 = new Uint8Array(vector.buffer, vector.byteOffset, vector.byteLength);
+  const uint8 = new Uint8Array(vector.buffer, vector.byteOffset, vector.byteLength,);
   await db
-    .insertInto("memory_embeddings")
+    .insertInto("memory_embeddings",)
     .values({
       memory_id: memoryId,
       model,
       dimensions: dims,
-      vector_blob: Buffer.from(uint8),
-      created_at: Math.floor(Date.now() / 1000),
-    })
-    .onConflict((oc) =>
-      oc.column("memory_id").doUpdateSet({
+      vector_blob: Buffer.from(uint8,),
+      created_at: Math.floor(Date.now() / 1000,),
+    },)
+    .onConflict((oc,) =>
+      oc.column("memory_id",).doUpdateSet({
         model,
         dimensions: dims,
-        vector_blob: Buffer.from(uint8),
-        created_at: Math.floor(Date.now() / 1000),
-      })
+        vector_blob: Buffer.from(uint8,),
+        created_at: Math.floor(Date.now() / 1000,),
+      },)
     )
     .execute();
 }
@@ -135,8 +135,8 @@ export async function deleteEmbedding(
   memoryId: string,
 ): Promise<void> {
   await db
-    .deleteFrom("memory_embeddings")
-    .where("memory_id", "=", memoryId)
+    .deleteFrom("memory_embeddings",)
+    .where("memory_id", "=", memoryId,)
     .execute();
 }
 
@@ -160,10 +160,10 @@ export function rankBySimilarity(
   minScore = 0.5,
 ): SemanticMatch[] {
   return candidates
-    .map(({ memoryId, vector }) => ({ memoryId, score: dot(queryVec, vector) }))
-    .filter((m) => m.score >= minScore)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, topK);
+    .map(({ memoryId, vector, },) => ({ memoryId, score: dot(queryVec, vector,), }))
+    .filter((m,) => m.score >= minScore)
+    .sort((a, b,) => b.score - a.score)
+    .slice(0, topK,);
 }
 
 /**
@@ -175,16 +175,16 @@ export async function getStoredVectors(
 ): Promise<Map<string, Float32Array>> {
   if (memoryIds.length === 0) { return new Map(); }
   const rows = await db
-    .selectFrom("memory_embeddings")
-    .select(["memory_id", "vector_blob"])
-    .where("memory_id", "in", memoryIds)
+    .selectFrom("memory_embeddings",)
+    .select(["memory_id", "vector_blob",],)
+    .where("memory_id", "in", memoryIds,)
     .execute();
 
   const map = new Map<string, Float32Array>();
   for (const row of rows) {
-    const buf = Buffer.from(row.vector_blob);
-    const dims = Math.floor(buf.byteLength / 4);
-    map.set(row.memory_id, new Float32Array(buf.buffer, buf.byteOffset, dims));
+    const buf = Buffer.from(row.vector_blob,);
+    const dims = Math.floor(buf.byteLength / 4,);
+    map.set(row.memory_id, new Float32Array(buf.buffer, buf.byteOffset, dims,),);
   }
   return map;
 }
@@ -205,13 +205,13 @@ export async function semanticRecall(
   minScore = 0.5,
 ): Promise<SemanticMatch[]> {
   if (candidateIds.length === 0) { return []; }
-  const [queryVec, vectorMap] = await Promise.all([
-    embedText(queryText),
-    getStoredVectors(db, candidateIds),
-  ]);
-  const candidates = Array.from(vectorMap.entries()).map(([memoryId, vector]) => ({
+  const [queryVec, vectorMap,] = await Promise.all([
+    embedText(queryText,),
+    getStoredVectors(db, candidateIds,),
+  ],);
+  const candidates = Array.from(vectorMap.entries(),).map(([memoryId, vector,],) => ({
     memoryId,
     vector,
   }));
-  return rankBySimilarity(candidates, queryVec, topK, minScore);
+  return rankBySimilarity(candidates, queryVec, topK, minScore,);
 }
