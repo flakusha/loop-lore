@@ -41,10 +41,10 @@ export interface CreateChatParams {
   parentChatId?: string;
   /** Discoverability state for the chat (private|public|unlisted). */
   visibility?: string;
+  /** Encryption tier for message content at rest. Defaults to "none". */
+  encryptionLevel?: string;
   /** Seed the new chat with participant memories: "full" | "selective" | "fresh". */
   memoryCarry?: "full" | "selective" | "fresh";
-  /** Actor memory ids to carry when memoryCarry === "selective". */
-  memoryCarryIds?: string[];
 }
 
 export interface ChatSetupTemplate {

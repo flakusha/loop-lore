@@ -7,12 +7,17 @@
  * Key hierarchy:
  *   SMK (env var) → actor_keys (SMK-encrypted) → chat key (HKDF-derived)
  *
- * Usage:
+ * Usage (tier-aware):
  *   1. loadSmk(config.encryption) on startup → smk: CryptoKey | null
  *   2. ensureActorKey(db, actorId, smk) when creating actors / logging in
- *   3. deriveChatKeyForChat(db, chatId, smk) on message write/read → chatKey
- *   4. compressThenEncrypt(plaintext, chatKey, keyId, config) → stored JSON
- *   5. decryptThenDecompress(storedJSON, chatKey) → plaintext
+ *   3. encryptAtRest({ database, chatId, plaintext, encryptionLevel, config })
+ *      — selects encryption tier (none/standard/private) and returns stored content
+ *   4. decryptAtRest({ database, chatId, storedContent, encryptionLevel })
+ *      — decrypts content based on the chat's tier
+ *
+ * Direct pipeline (low-level):
+ *   compressThenEncrypt(plaintext, chatKey, keyId, config) → stored JSON
+ *   decryptThenDecompress(storedJSON, chatKey) → plaintext
  */
 
 export {
@@ -37,6 +42,13 @@ export {
   isEncryptedAsset,
 } from "./asset-encryption";
 export type { AssetEncryptionResult, } from "./asset-encryption";
+export {
+  decryptAtRest,
+  encryptAtRest,
+  getChatEncryptionLevel,
+  needsEncryption,
+} from "./at-rest";
+export type { AtRestDecryptOpts, AtRestEncryptOpts, AtRestResult, } from "./at-rest";
 export { decryptValue, encryptValue, } from "./byok";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
 export type { ChatKey, } from "./chat-keys";

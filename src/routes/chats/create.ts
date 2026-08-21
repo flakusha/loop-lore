@@ -162,9 +162,8 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             visibility: hasExplicit("visibility",)
               ? body.visibility
               : (template?.visibility ?? undefined),
+            encryptionLevel: body.encryptionLevel,
             templateId: template?.id,
-            memoryCarry: body.memoryCarry,
-            memoryCarryIds: body.memoryCarryIds,
           },);
 
           await seedWelcomeMessages(database, newChatId, body, opts, userId,);
