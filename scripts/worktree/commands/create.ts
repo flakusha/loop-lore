@@ -54,10 +54,6 @@ export async function execute(
     process.exit(1,);
   }
 
-  // Reset worktree to dev — agents expect fresh state post-creation
-  gitSync(wtPath, "reset", "--hard", "dev",);
-  log("success", "reset to dev",);
-
   // Configure GPG signing
   if (config.agentGpgKeyId) {
     const gpgCheck = Bun.spawnSync(
