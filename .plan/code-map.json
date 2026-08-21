@@ -29,6 +29,18 @@
       "source": "docs/spec/inventory.md"
     }
   ],
+  "src/admin/config.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
+    }
+  ],
+  "src/admin/config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
+    }
+  ],
   "src/admin/model-roles.ts": [
     {
       "kind": "epic",
@@ -455,6 +467,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-impersonate-buildimpresult-referenceerror.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-impersonate-commands-register-empty-callback.md"
     }
   ],
   "src/assistant/commands/improve.ts": [
@@ -495,6 +515,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-travel-party-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
     }
   ],
   "src/assistant/commands/sfx.ts": [
@@ -1649,6 +1673,12 @@
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
     }
   ],
+  "src/characters/charx.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-characters-charx-roundtrip-untested.md"
+    }
+  ],
   "src/characters/charx.ts": [
     {
       "kind": "epic",
@@ -1657,6 +1687,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-characters-charx-roundtrip-untested.md"
     }
   ],
   "src/characters/core.ts": [
@@ -2615,6 +2649,12 @@
       "source": "docs/spec/chat-privacy.md"
     }
   ],
+  "src/chat/proactive/timing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
+    }
+  ],
   "src/chat/pruning.ts": [
     {
       "kind": "epic",
@@ -2751,6 +2791,18 @@
       "source": "docs/spec/worlds.md"
     }
   ],
+  "src/chat/service/batch.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+    }
+  ],
+  "src/chat/service/batch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+    }
+  ],
   "src/chat/service/carry-location.ts": [
     {
       "kind": "ticket",
@@ -2813,6 +2865,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
+    }
+  ],
+  "src/chat/service/participants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IMPROVE-impersonate-explicit-else-branch.md"
     }
   ],
   "src/chat/service/party.test.ts": [
@@ -6803,6 +6861,12 @@
       "source": ".plan/epics/epic-impersonation.md"
     }
   ],
+  "src/frontend/alpine/chat-actions/command-palette.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
+    }
+  ],
   "src/frontend/alpine/chat-activity.ts": [
     {
       "kind": "epic",
@@ -6945,6 +7009,12 @@
       "source": ".plan/epics/epic-npc-management-ui.md"
     }
   ],
+  "src/frontend/alpine/chat-utils/gallery.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
+    }
+  ],
   "src/frontend/alpine/chat-utils/gallery.ts": [
     {
       "kind": "epic",
@@ -6956,7 +7026,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/PERF-gallery-uploadChatAssets-sequential.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-batch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
     }
   ],
   "src/frontend/alpine/chat-utils/validation.ts": [
@@ -7077,6 +7155,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
     }
   ],
   "src/frontend/alpine/context-monitor.ts": [
@@ -7105,6 +7187,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-068.md"
+    }
+  ],
+  "src/frontend/alpine/creation-wizard.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md"
     }
   ],
   "src/frontend/alpine/device-tier.ts": [
@@ -8143,10 +8231,20 @@
       "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
     }
   ],
+  "src/frontend/gallery-upload.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-gallery-upload-dropzone-untested.md"
+    }
+  ],
   "src/frontend/gallery-upload.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-gallery-upload-dropzone-untested.md"
     }
   ],
   "src/frontend/htmx-encrypt.ts": [
@@ -8223,6 +8321,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trading-interface.md"
+    }
+  ],
+  "src/frontend/main.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
     }
   ],
   "src/frontend/nsfw/body-region.ts": [
@@ -8325,6 +8429,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-gallery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
     },
     {
       "kind": "ticket",
@@ -10793,6 +10901,18 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/nsfw/moderation-service/flags.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-nsfw-getflagqueue-status-filter-untested.md"
+    }
+  ],
+  "src/nsfw/moderation-service/flags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-nsfw-getflagqueue-status-filter-untested.md"
+    }
+  ],
   "src/nsfw/rating.ts": [
     {
       "kind": "spec",
@@ -10895,6 +11015,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    }
+  ],
+  "src/personas/handlers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
+    }
+  ],
+  "src/personas/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-e2e-users-personas-routes-missing.md"
     }
   ],
   "src/personas/service.ts": [
@@ -11089,7 +11221,17 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
+  "src/profanity/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-profanity-containsprofanity-edge-cases-untested.md"
+    }
+  ],
   "src/profanity/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-profanity-containsprofanity-edge-cases-untested.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
@@ -12283,6 +12425,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md"
     }
   ],
   "src/routes/characters/update.ts": [
@@ -12533,6 +12679,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
   "src/routes/chats/participants.ts": [
@@ -12545,6 +12695,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    }
+  ],
+  "src/routes/chats/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
   "src/routes/comfyui.ts": [
@@ -13165,6 +13321,12 @@
       "source": "docs/spec/encryption-workflow.md"
     }
   ],
+  "src/routes/messages/command.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md"
+    }
+  ],
   "src/routes/messages/create.ts": [
     {
       "kind": "ticket",
@@ -13202,6 +13364,10 @@
   "src/routes/messages/post.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     }
   ],
@@ -13213,6 +13379,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    }
+  ],
+  "src/routes/messages/reply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-swipe-index-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
     }
   ],
   "src/routes/messages/transitions.ts": [
@@ -13459,10 +13635,20 @@
       "source": ".plan/tickets/TASK-skills-routes.md"
     }
   ],
+  "src/routes/rpg/npc-navigation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
+    }
+  ],
   "src/routes/rpg/npc-navigation.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-wiring-phase3.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
     },
     {
       "kind": "ticket",
@@ -13765,10 +13951,32 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
+  "src/routes/views/gallery.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    }
+  ],
   "src/routes/views/layout.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
+    }
+  ],
+  "src/routes/views/nsfw-audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+    }
+  ],
+  "src/routes/views/plugin-pages.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
     }
   ],
   "src/routes/vn-choices.ts": [
@@ -14733,6 +14941,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
+    }
+  ],
+  "src/rpg/npc-navigation/service/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
+    }
+  ],
+  "src/rpg/npc-navigation/service/processing.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
+    }
+  ],
+  "src/rpg/npc-navigation/service/processing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
     }
   ],
   "src/rpg/pets/battles.ts": [
@@ -16021,6 +16247,16 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/prompt-creation.md"
+    }
+  ],
+  "src/story/game-master/execute.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
     }
   ],
   "src/story/game-master/narration.ts": [
