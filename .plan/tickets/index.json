@@ -3551,6 +3551,17 @@
     "source": ".plan/tickets/TASK-asymmetric-key-pairs.md",
     "git_issue": "c926456"
   },
+  "TASK-ASYMMETRIC-KEY-PAIRS-FOLLOWUP": {
+    "hash": "7739",
+    "extid": "TASK-ASYMMETRIC-KEY-PAIRS-FOLLOWUP",
+    "type": "TASK",
+    "title": "Implement True Client-Side E2E for at-rest+ Tier (Deferred)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+  },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "hash": "966af4f",
     "extid": "TASK-AUDIO-PLAYER-COMPONENT",
