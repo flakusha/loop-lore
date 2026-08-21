@@ -793,6 +793,14 @@ export interface TradeHistory {
   created_at: string;
 }
 
+// ── memory_embeddings ────────────────────────────────────────────
+export interface MemoryEmbeddings {
+  memory_id: Generated<string>;
+  model: Generated<string>;
+  dimensions: Generated<number>;
+  created_at: number;
+}
+
 // ── world_timelines ────────────────────────────────────────────
 export interface WorldTimelines {
   id: Generated<string>;

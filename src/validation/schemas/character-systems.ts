@@ -83,18 +83,16 @@ export type TraitUpdateInput = { name: string; value: string };
 
 export const WorldTraitCreateBody = t.Object({
   trait_category: t.String(),
-  trait_name: t.String({ minLength: 1, },),
+  trait_name: t.String({ minLength: 1 }),
   value: t.Any(),
-  world_id: t.String({ format: "uuid", },),
-},);
+});
 export type WorldTraitCreateInput = { category: string; name: string; value: string; worldId: string };
 
 export const LocationTraitCreateBody = t.Object({
   trait_category: t.String(),
-  trait_name: t.String({ minLength: 1, },),
+  trait_name: t.String({ minLength: 1 }),
   value: t.Any(),
-  location_id: t.String({ format: "uuid", },),
-},);
+});
 export type LocationTraitCreateInput = {
   category: string;
   name: string;

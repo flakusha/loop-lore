@@ -2022,6 +2022,14 @@ export const TradeHistorySchema = t.Object({
   trade_type: t.Optional(t.String(),),
 },);
 
+// ── memory_embeddings ────────────────────────────────────────────
+export const MemoryEmbeddingsSchema = t.Object({
+  created_at: t.Number(),
+  memory_id: t.Optional(t.String(),),
+  model: t.Optional(t.String(),),
+  dimensions: t.Optional(t.Number(),),
+},);
+
 // ── world_timelines ────────────────────────────────────────────
 export const WorldTimelinesSchema = t.Object({
   world_id: t.String(),

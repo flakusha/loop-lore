@@ -3,10 +3,10 @@
 
 import { Elysia, } from "elysia";
 import { bulkTraitsRoutes, } from "./bulk";
-import { locationTraitsRoutes, } from "./location";
-import { permanentTraitsRoutes, } from "./permanent";
+import { locationTraitRoutes, } from "./location";
+import { permanentTraitRoutes, } from "./permanent";
 import type { HandlerOpts, } from "./types";
-import { worldTraitsRoutes, } from "./world";
+import { worldTraitRoutes, } from "./world";
 
 /**
  * Character Traits Routes — barrel assembling the HTTP surface from domain
@@ -16,9 +16,9 @@ import { worldTraitsRoutes, } from "./world";
 export function characterTraitsRoutes(opts: HandlerOpts,) {
   return (
     new Elysia({ name: "character-traits", },)
-      .use(permanentTraitsRoutes(opts,),)
-      .use(worldTraitsRoutes(opts,),)
-      .use(locationTraitsRoutes(opts,),)
+      .use(permanentTraitRoutes(opts,),)
+      .use(worldTraitRoutes(opts,),)
+      .use(locationTraitRoutes(opts,),)
       .use(bulkTraitsRoutes(opts,),)
   );
 }

@@ -14,7 +14,6 @@ import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { checkActorOwnership, } from "./actor-auth";
 import {
-  forbiddenResponse as forbidden,
   HttpStatus,
   jsonCreated,
   jsonError,
@@ -35,10 +34,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     .get(`${prefix}/actors/:actorId/emotion-avatars/jobs`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-
-      const { actorId, } = ctx.params as { actorId: string };
+      const actorId = ctx.params.actorId as string;
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const jobs = emotionAvatarService.listJobs(actorId,);
       return jsonResponse(jobs,);
@@ -47,10 +48,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     .get(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-
-      const { actorId, } = ctx.params as { actorId: string };
+      const actorId = ctx.params.actorId as string;
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
@@ -61,10 +64,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     .post(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId/cancel`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-
-      const { actorId, } = ctx.params as { actorId: string };
+      const actorId = ctx.params.actorId as string;
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const { jobId, } = ctx.params as { jobId: string };
       const cancelled = emotionAvatarService.cancelJob(jobId as any,);
@@ -77,10 +82,12 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     .post(`${prefix}/actors/:actorId/emotion-avatars`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-
-      const { actorId, } = ctx.params as { actorId: string };
+      const actorId = ctx.params.actorId as string;
       if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
       }
       const body = ctx.body as Record<string, unknown>;
 
