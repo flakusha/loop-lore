@@ -27,18 +27,22 @@ describe("Registration flow E2E", () => {
   async function gotoRegister(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
     await page.goto(`${ctx.url}/views/register`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.locator("[data-testid='register-submit']",).waitFor({ state: "visible", timeout: 30_000, },);
+    // sleep: form readiness — Alpine binding may lag domcontentloaded
     await page.waitForTimeout(400,);
   }
 
   describe("Register form", () => {
     test("renders username + password + submit", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
       try {
         await gotoRegister(page,);
         expect(await page.isVisible("[data-testid='username-input']",),).toBe(true,);
         expect(await page.isVisible("[data-testid='password-input']",),).toBe(true,);
         expect(await page.isVisible("[data-testid='register-submit']",),).toBe(true,);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
