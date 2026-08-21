@@ -39,7 +39,7 @@ beforeAll(async () => {
 // ── encryptAtRest ──────────────────────────────────────────
 
 describe("encryptAtRest", () => {
-  test("public tier stores plaintext as-is", async () => {
+  test("none tier stores plaintext as-is", async () => {
     const result = await encryptAtRest({
       database: mockDb,
       chatId: "chat-1",
@@ -71,24 +71,28 @@ describe("encryptAtRest", () => {
     expect(result.wasEncrypted,).toBeTrue();
   });
 
-  test("private tier throws (E2E not wired)", async () => {
-    await expect(
-      encryptAtRest({
-        database: mockDb,
-        chatId: "chat-1",
-        plaintext: "Secret message",
-        encryptionLevel: "private",
-      },),
-    ).rejects.toThrow("private tier requires client-side E2E encryption",);
+  test("at-rest tier encrypts (server-mediated, same as standard)", async () => {
+    // at-rest is server-mediated: server holds the SMK-derived chat key and encrypts.
+    // This test uses encryption disabled to store plaintext (like standard does when SMK absent).
+    const result = await encryptAtRest({
+      database: mockDb,
+      chatId: "chat-1",
+      plaintext: "Secret message",
+      encryptionLevel: "at-rest",
+    },);
+
+    // When encryption is disabled, stores plaintext (matches standard behavior)
+    expect(result.storedContent,).toBe("Secret message",);
+    expect(result.wasEncrypted,).toBeFalse();
   });
 
   test("unknown encryption level throws", async () => {
-    await expect(
+    expect(
       encryptAtRest({
         database: mockDb,
         chatId: "chat-1",
         plaintext: "test",
-        encryptionLevel: "unknown" as any,
+        encryptionLevel: "unknown" as unknown as never,
       },),
     ).rejects.toThrow("Unknown encryption level",);
   });
@@ -97,7 +101,7 @@ describe("encryptAtRest", () => {
 // ── decryptAtRest ──────────────────────────────────────────
 
 describe("decryptAtRest", () => {
-  test("public tier returns content as-is", async () => {
+  test("none tier returns content as-is", async () => {
     const result = await decryptAtRest({
       database: mockDb,
       chatId: "chat-1",
@@ -108,15 +112,15 @@ describe("decryptAtRest", () => {
     expect(result,).toBe("Plaintext message",);
   });
 
-  test("private tier throws (E2E not wired)", async () => {
-    await expect(
-      decryptAtRest({
-        database: mockDb,
-        chatId: "chat-1",
-        storedContent: "encrypted-content",
-        encryptionLevel: "private",
-      },),
-    ).rejects.toThrow("private tier requires client-side E2E decryption",);
+  test("at-rest tier returns content as-is when not encrypted (server-mediated)", async () => {
+    const result = await decryptAtRest({
+      database: mockDb,
+      chatId: "chat-1",
+      storedContent: "plaintext-content",
+      encryptionLevel: "at-rest",
+    },);
+
+    expect(result,).toBe("plaintext-content",);
   });
 
   test("standard tier with legacy plaintext returns as-is", async () => {
@@ -131,12 +135,12 @@ describe("decryptAtRest", () => {
   });
 
   test("unknown encryption level throws", async () => {
-    await expect(
+    expect(
       decryptAtRest({
         database: mockDb,
         chatId: "chat-1",
         storedContent: "test",
-        encryptionLevel: "unknown" as any,
+        encryptionLevel: "unknown" as unknown as never,
       },),
     ).rejects.toThrow("Unknown encryption level",);
   });
@@ -145,7 +149,7 @@ describe("decryptAtRest", () => {
 // ── needsEncryption ────────────────────────────────────────
 
 describe("needsEncryption", () => {
-  test("public tier never needs encryption", () => {
+  test("none tier never needs encryption", () => {
     expect(needsEncryption("none", "plaintext",),).toBeFalse();
   });
 
@@ -153,8 +157,8 @@ describe("needsEncryption", () => {
     expect(needsEncryption("standard", "plaintext",),).toBeTrue();
   });
 
-  test("private tier needs encryption for plaintext", () => {
-    expect(needsEncryption("private", "plaintext",),).toBeTrue();
+  test("at-rest tier needs encryption for plaintext", () => {
+    expect(needsEncryption("at-rest", "plaintext",),).toBeTrue();
   });
 
   test("already encrypted content does not need encryption", async () => {
