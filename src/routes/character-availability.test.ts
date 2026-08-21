@@ -109,6 +109,13 @@ describe("character-availability routes", () => {
     expect(res.status,).toBe(404,); // member actor has no row yet
   });
 
+  test("solo can access any actor's availability", async () => {
+    const res = await makeApp(db, "solo", "solo",).handle(
+      new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/availability`,),
+    );
+    expect(res.status,).toBe(404,); // member actor has no row yet
+  });
+
   test("POST requires auth", async () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`, {
