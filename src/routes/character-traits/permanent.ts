@@ -1,191 +1,109 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * Permanent trait routes (Layer 0).
+ */
 import { Elysia, t, } from "elysia";
 import { TraitsService, } from "../../characters/services/traits-service";
-import type { TranslatorFn, } from "../../i18n/types";
 import {
   ActorIdParams,
   ErrorResponse,
-  Id,
-  ListResponse,
   SuccessResponse,
   TraitCreateBody,
   TraitResponse,
   TraitUpdateBody,
 } from "../../validation/schemas";
-import { checkActorOwnership, } from "../actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
-import type { HandlerOpts, } from "./types";
+import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 
-/**
- * Permanent Traits (Layer 0) sub-plugin — CRUD for actor permanent traits.
- */
-export function permanentTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
+const ActorIdTraitParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  traitName: t.String(),
+},);
+
+export function permanentTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 
-  return (
-    new Elysia({ name: "character-traits-permanent", },)
-      .get(
-        `${prefix}/actors/:actorId/traits/permanent`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
+  return new Elysia({ name: "character-traits-permanent", },)
+    .get(`${prefix}/actors/:actorId/traits`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          const { actorId, } = ctx.params;
+      const { actorId, } = ctx.params as { actorId: string };
+      const traits = await traitsService.getPermanentTraits(actorId,);
+      return jsonResponse(traits,);
+    }, {
+      params: ActorIdParams,
+      response: { 200: t.Array(TraitResponse,), 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "List actor traits",
+        description: "List all permanent traits for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .post(`${prefix}/actors/:actorId/traits`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const traits = await traitsService.getPermanentTraits(actorId,);
-          return jsonResponse(traits,);
-        },
-        {
-          params: ActorIdParams,
-          response: {
-            200: ListResponse(TraitResponse,),
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "List permanent traits",
-            description: "Get all permanent traits for an actor (Layer 0).",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .get(
-        `${prefix}/actors/:actorId/traits/permanent/:traitName`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
+      const { actorId, } = ctx.params as { actorId: string };
+      const { trait_category, trait_name, value, } = (ctx.body ?? {}) as Record<string, unknown>;
 
-          const { actorId, traitName, } = ctx.params;
+      if (!trait_name || !trait_category) {
+        return jsonError({ message: "trait_category and trait_name are required", status: HttpStatus.BadRequest, },);
+      }
 
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const trait = await traitsService.getPermanentTrait(actorId, traitName,);
-          if (!trait) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },); }
-          return jsonResponse(trait,);
-        },
-        {
-          params: t.Object({ actorId: Id, traitName: t.String(), },),
-          response: {
-            200: TraitResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Get permanent trait",
-            description: "Get a specific permanent trait by name.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .post(
-        `${prefix}/actors/:actorId/traits/permanent`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
+      const id = await traitsService.createPermanentTrait({
+        actorId,
+        category: trait_category as string,
+        name: trait_name as string,
+        value: (value as string) ?? "",
+      },);
+      return jsonCreated({ id, },);
+    }, {
+      params: ActorIdParams,
+      body: TraitCreateBody,
+      response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Create trait",
+        description: "Create a permanent trait for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .put(`${prefix}/actors/:actorId/traits/:traitName`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          const { actorId, } = ctx.params;
+      const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
+      const { value, } = (ctx.body ?? {}) as Record<string, unknown>;
 
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const { category, name, value, } = ctx.body;
+      await traitsService.updatePermanentTrait(actorId, { name: traitName, value: (value as string) ?? "", },);
+      return jsonResponse({ ok: true, },);
+    }, {
+      params: ActorIdTraitParams,
+      body: TraitUpdateBody,
+      response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Update trait",
+        description: "Update a permanent trait value for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .delete(`${prefix}/actors/:actorId/traits/:traitName`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          const traitId = await traitsService.createPermanentTrait({
-            actorId,
-            category,
-            name,
-            value,
-          },);
-          return jsonCreated({ id: traitId, },);
-        },
-        {
-          params: t.Object({ actorId: Id, },),
-          body: TraitCreateBody,
-          response: {
-            200: TraitResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Create permanent trait",
-            description: "Create a new permanent trait for an actor.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .put(
-        `${prefix}/actors/:actorId/traits/permanent/:traitName`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
-
-          const { actorId, traitName, } = ctx.params;
-
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const { value, } = ctx.body;
-
-          await traitsService.updatePermanentTrait(actorId, {
-            name: traitName,
-            value,
-          },);
-          return jsonResponse({ ok: true, },);
-        },
-        {
-          params: t.Object({ actorId: Id, traitName: t.String(), },),
-          body: TraitUpdateBody,
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Update permanent trait",
-            description: "Update a permanent trait's value.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .delete(
-        `${prefix}/actors/:actorId/traits/permanent/:traitName`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
-
-          const { actorId, traitName, } = ctx.params;
-
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          await traitsService.deletePermanentTrait(actorId, traitName,);
-          return jsonNoContent();
-        },
-        {
-          params: t.Object({ actorId: Id, traitName: t.String(), },),
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Delete permanent trait",
-            description: "Delete a permanent trait.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-  );
+      const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
+      await traitsService.deletePermanentTrait(actorId, traitName,);
+      return jsonNoContent();
+    }, {
+      params: ActorIdTraitParams,
+      response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Delete trait",
+        description: "Delete a permanent trait from an actor.",
+        tags: ["Character Traits",],
+      },
+    },);
 }

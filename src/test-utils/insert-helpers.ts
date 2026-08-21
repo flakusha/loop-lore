@@ -3116,6 +3116,18 @@ export async function insertTradeHistory(
   } as any,).execute();
 }
 
+/** Insert a memory_embeddings row. */
+export async function insertMemoryEmbeddings(
+  db: Db,
+  created_at: number,
+  opts?: { memory_id?: Generated<string>; model?: Generated<string>; dimensions?: Generated<number> },
+): Promise<void> {
+  await db.insertInto("memory_embeddings",).values({
+    created_at,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a world_timelines row. */
 export async function insertWorldTimelines(
   db: Db,
