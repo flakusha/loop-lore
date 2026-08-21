@@ -35,6 +35,70 @@
   </div>
 </header>
 
+<div
+  class="timeline-bar"
+  x-data="worldTimelineBar('{{worldId}}')"
+  x-init="init()"
+>
+  <label class="timeline-label">{{t("worlds.timeline")}}</label>
+  <select
+    class="timeline-select"
+    x-model="selectedTimeline"
+    @change="switchTimeline()"
+    data-testid="timeline-select"
+  >
+    <template x-for="tl in timelines" :key="tl.id">
+      <option :value="tl.id" :selected="tl.id === selectedTimeline" x-text="tl.name"></option>
+    </template>
+  </select>
+  <button
+    class="btn btn-secondary btn-sm"
+    @click="showCreate = true"
+    data-testid="create-timeline"
+    :title="t('worlds.createTimeline')"
+  >+</button>
+
+  <!-- Create timeline modal -->
+  <div
+    class="modal-backdrop"
+    x-show="showCreate"
+    x-cloak
+    @click.self="showCreate = false"
+    @keydown.escape.window="showCreate = false"
+  >
+    <div class="modal" @click.stop>
+      <h3 x-text="t('worlds.createTimeline')"></h3>
+      <form @submit.prevent="createTimeline()">
+        <div class="form-group">
+          <label for="tl-name" x-text="t('worlds.timelineName')"></label>
+          <input
+            id="tl-name"
+            type="text"
+            x-model="newName"
+            :placeholder="t('worlds.timelineNamePlaceholder')"
+            maxlength="200"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="tl-desc" x-text="t('worlds.timelineDesc')"></label>
+          <textarea
+            id="tl-desc"
+            x-model="newDesc"
+            :placeholder="t('worlds.timelineDescPlaceholder')"
+            maxlength="1000"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" @click="showCreate = false" x-text="t('common.cancel')"></button>
+          <button type="submit" class="btn btn-primary" x-text="t('common.create')"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="app-layout">
   <main class="main-content">
     <div class="chat-area">

@@ -2653,6 +2653,7 @@ export async function insertWorldTimelineEvents(
     actor_id?: string | null;
     data?: string | null;
     created_at?: Generated<string>;
+    timeline_id?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("world_timeline_events",).values({
@@ -3111,6 +3112,26 @@ export async function insertTradeHistory(
     buyer_actor_id,
     seller_actor_id,
     created_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a world_timelines row. */
+export async function insertWorldTimelines(
+  db: Db,
+  world_id: string,
+  name: string,
+  opts?: {
+    id?: Generated<string>;
+    description?: string | null;
+    is_prime?: Generated<number>;
+    created_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("world_timelines",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    name,
     ...opts,
   } as any,).execute();
 }
