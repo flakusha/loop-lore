@@ -6,13 +6,23 @@
  *
  * Pins the chatState() component and ui-store shapes so additions and typos
  * fail loudly. Reads component-local state at runtime (post-init, pre-chat)
- * and asserts declared defaults from src/frontend/alpine/chat.ts and
+ * and asserts declared defaults from src/frontend/alpine/chat/bootstrap.ts and
  * src/frontend/stores/ui-store.ts.
+ *
+ * The `ChatStateShape` / `UiStoreShape` types are re-exported from the
+ * contract fixture so any structural drift in the factory or store definition
+ * causes a TypeScript build error — not a silent hydration mismatch.
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { getAlpineData, getAlpineStore, waitForAlpineReady, } from "../../helpers/htmx-alpine";
+import {
+  getAlpineData,
+  getAlpineStore,
+  waitForAlpineReady,
+  waitForAlpineState,
+} from "../../helpers/htmx-alpine";
+import { CHAT_SELECTORS, type ChatStateShape, type UiStoreShape, } from "../../fixtures/chat-state-contract";
 
 describe("Alpine state contract E2E", () => {
   let ctx: BrowserTestContext;
@@ -31,9 +41,9 @@ describe("Alpine state contract E2E", () => {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await waitForAlpineReady(page,);
 
-      const state = await getAlpineData<Record<string, unknown>>(page, "[x-data='chatState()']",);
+      const state = await getAlpineData<ChatStateShape>(page, CHAT_SELECTORS.chatStateRoot,);
 
-      // Core flags (src/frontend/alpine/chat.ts).
+      // Core flags (src/frontend/alpine/chat/bootstrap.ts).
       expect(state.isGenerating,).toBe(false,);
       expect(state.isContinuing,).toBe(false,);
       expect(state.activeChat,).toBeNull();
@@ -41,7 +51,7 @@ describe("Alpine state contract E2E", () => {
       expect(state.messages,).toEqual([],);
       // chats is auto-loaded on init (solo user's seeded chat appears).
       expect(Array.isArray(state.chats,),).toBe(true,);
-      expect((state.chats as unknown[]).length,).toBeGreaterThan(0,);
+      expect(state.chats.length,).toBeGreaterThan(0,);
       expect(state.loadingMessages,).toBe(false,);
       expect(state.loadingError,).toBeNull();
       expect(state.hasMoreMessages,).toBe(true,);
@@ -65,7 +75,7 @@ describe("Alpine state contract E2E", () => {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await waitForAlpineReady(page,);
 
-      const ui = await getAlpineStore<Record<string, unknown>>(page, "ui",);
+      const ui = await getAlpineStore<UiStoreShape>(page, "ui",);
       // src/frontend/stores/ui-store.ts.
       expect(ui.showChatList,).toBe(false,);
       expect(ui.showGallery,).toBe(false,);
@@ -88,4 +98,29 @@ describe("Alpine state contract E2E", () => {
       await page.close();
     }
   }, 60_000,);
+
+  test(
+    "cold-load: $store.ui.showChatList is false at /views/chat before any user interaction",
+    async () => {
+      const page = await ctx.openPage();
+      try {
+        await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+        await waitForAlpineReady(page,);
+
+        // Use waitForAlpineState to verify the panel toggle is closed — replaces
+        // any ad-hoc timeout that would mask a broken initializer.
+        const ui = await waitForAlpineState<UiStoreShape>(
+          page,
+          "[data-testid='app-root']",
+          (s) => s.showChatList === false,
+          5000,
+        );
+        expect(ui.showChatList,).toBe(false,);
+        expect(ui.showGallery,).toBe(false,);
+      } finally {
+        await page.close();
+      }
+    },
+    60_000,
+  );
 });
