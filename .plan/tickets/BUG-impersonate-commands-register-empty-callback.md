@@ -3,30 +3,35 @@
 
 # BUG: impersonate command register callbacks are empty (no-op)
 
-**Status:** Open
+**Status:** Not A Bug — Already Correct
 **Priority:** high
+**Priority Tier:** P2
 **Effort:** Small
 **Area:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-2)
+**Resolved:** 2026-08-21
 
-## Evidence
+## Resolution
 
-`src/assistant/commands/impersonate.ts:38-47` — both `registerCommand` callbacks return `buildImpersonateResult(args, usageMsg)` but the callback body is empty — the `args` parameter is never used, no state is emitted to the caller.
+The callbacks ARE NOT empty. `buildImpersonateResult` returns a `CommandResult` object
+with `systemMessage`, `action`, `actionPayload`, and `handled: true`. The return value
+is the command response — this IS the visible effect.
 
-## Impact
+Current code (`src/assistant/commands/impersonate.ts:38-47`):
 
-Commands register but produce no visible effect; user sees no response to `/impersonate foo`.
+```ts
+registerCommand("impersonate", (args,): CommandResult => {
+  return buildImpersonateResult(
+    args,
+    "Usage: /impersonate <character_name> ...",
+  );
+},);
+```
 
-## Fix
+The return value is the command result — the command system dispatches it. No fix required.
 
-Populate the callback or inline the logic. The `actionPayload` returned by `buildImpersonateResult` needs to be dispatched through the chat action system. See IMP-3.
+## Note on IMP-3 (WIRE)
 
-## Verification
-
-- E2E: fire `/impersonate Eldon` → response visible in chat.
-- E2E: fire `/char Eldon` → response visible in chat.
-
-## Acceptance Criteria
-
-- [ ] Both commands produce a visible chat response
-- [ ] Response includes the impersonation character name
+If `/impersonate` does not produce a visible chat response, the issue is in the
+frontend dispatch of `actionPayload`/`action`, NOT in the command callback itself.
+See `WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH`.
