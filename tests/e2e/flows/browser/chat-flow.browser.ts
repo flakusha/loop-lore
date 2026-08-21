@@ -16,7 +16,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { waitForAlpineState, } from "../../helpers/htmx-alpine";
+import { trackPageErrors, waitForAlpineState, } from "../../helpers/htmx-alpine";
 import { SEED, seedAll, } from "../../helpers/seed";
 
 let ctx: BrowserTestContext;
@@ -38,42 +38,54 @@ async function gotoChat(page: Awaited<ReturnType<BrowserTestContext["browser"]["
 describe("Toggle buttons", () => {
   test("toggle buttons present in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='toggle-chat-list']",).waitFor({ state: "attached", timeout: 10_000, },);
       await page.locator("[data-testid='toggle-gallery']",).waitFor({ state: "attached", timeout: 10_000, },);
       await page.locator("[data-testid='toggle-character-info']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("chat list panel exists in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='chat-list-panel']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("gallery sidebar exists in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='gallery-sidebar']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("character info panel exists in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='character-info-panel']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
@@ -82,22 +94,28 @@ describe("Toggle buttons", () => {
 describe("Elements present", () => {
   test("all chat panel elements exist in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='character-info-panel']",).waitFor({ state: "attached", timeout: 10_000, },);
       await page.locator("[data-testid='gallery-sidebar']",).waitFor({ state: "attached", timeout: 10_000, },);
       await page.locator("[data-testid='chat-list-panel']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("generation status container exists", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='generation-status']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
@@ -106,40 +124,52 @@ describe("Elements present", () => {
 describe("Message input", () => {
   test("message input exists in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='message-input']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("send button exists in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='send-button']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("attach input exists", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='attach-input']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("message form exists", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='message-form']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
@@ -148,6 +178,7 @@ describe("Message input", () => {
 describe("Chat list panel", () => {
   test("chat list panel has chat template in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       const chatListPanel = page.locator("[data-testid='chat-list-panel']",);
@@ -157,16 +188,21 @@ describe("Chat list panel", () => {
       expect(panelHtml,).toContain("filteredChats",);
       expect(panelHtml,).toContain("selectChat",);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
 
   test("cancel generation button exists in DOM", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       await page.locator("[data-testid='cancel-generation']",).waitFor({ state: "attached", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   });
@@ -175,6 +211,7 @@ describe("Chat list panel", () => {
 describe("Chat gallery upload linkage", () => {
   test("chat sidebar upload links the asset to the active chat", async () => {
     const page = await ctx.browser.newPage();
+    const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
       // Select the seeded solo chat so activeChat is set and the sidebar's
@@ -236,6 +273,8 @@ describe("Chat gallery upload linkage", () => {
       expect(links.status(), `link should succeed (got ${links.status()})`,).toBeLessThan(400,);
       expect(linkBody.id ?? created.id, "link should reference the uploaded asset",).toBe(created.id,);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 45_000,);

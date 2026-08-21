@@ -3,7 +3,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { waitForAlpineReady, } from "../../helpers/htmx-alpine";
+import { trackPageErrors, waitForAlpineReady, } from "../../helpers/htmx-alpine";
 import { seedAll, } from "../../helpers/seed";
 
 describe("Navigation E2E", () => {
@@ -23,8 +23,7 @@ describe("Navigation E2E", () => {
     await page.goto(ctx.url + path, { waitUntil: "commit", timeout: 30_000, },);
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
     await waitForAlpineReady(page,);
-    // Settle: Alpine store exists + DOM processed, but event handlers
-    // on nested elements may take an extra tick to bind
+    // sleep: Alpine event binding on nested elements after DOM settle
     await page.waitForTimeout(500,);
   }
 
@@ -37,6 +36,7 @@ describe("Navigation E2E", () => {
   describe("Sidebar navigation", () => {
     test("navigates from chat to characters via sidebar link", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
@@ -45,12 +45,15 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/characters",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 90_000,);
 
     test("navigates from characters to gallery via sidebar link", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/characters",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
@@ -59,12 +62,15 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/gallery",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 90_000,);
 
     test("navigates from gallery to worlds via sidebar link", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/gallery",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
@@ -73,12 +79,15 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='worlds-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/worlds",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 90_000,);
 
     test("navigates from worlds to chat via sidebar link", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/worlds",);
         await page.locator("[data-testid='hamburger']",).click({ force: true, },);
@@ -87,26 +96,35 @@ describe("Navigation E2E", () => {
         await page.locator("#page-title",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/chat-list",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 90_000,);
 
-    test("hamburger button exists and toggles sidebar", async () => {
+    test("hamburger button exists and toggles sidebar open class", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
         await page.locator("[data-testid='hamburger']",).waitFor({ state: "attached", timeout: 10_000, },);
-        // Use evaluate to click — avoids Playwright hit-test interception
         await page.evaluate(() => {
           const btn = document.querySelector("[data-testid='hamburger']",);
           if (btn instanceof HTMLElement) { btn.click(); }
         },);
-        await page.waitForTimeout(300,);
+        // Wait for Alpine to add 'open' class to the sidebar.
+        await page.waitForFunction(
+          () => document.querySelector("[data-testid='sidebar']",)?.classList.contains("open",) ?? false,
+          null,
+          { timeout: 10_000, },
+        );
         const hasOpen = await page.evaluate(() => {
           return document.querySelector("[data-testid='sidebar']",)?.classList.contains("open",) ?? false;
         },);
         expect(hasOpen,).toBe(true,);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
@@ -115,24 +133,30 @@ describe("Navigation E2E", () => {
   describe("Header integrity", () => {
     test("single header-slot exists in DOM", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
         await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 10_000, },);
         const headers = await page.locator("#header-slot",).count();
         expect(headers,).toBe(1,);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
 
     test("header-slot has correct testid for current page", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
         await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 10_000, },);
         const headerTestId = await page.locator("#header-slot",).getAttribute("data-testid",);
         expect(headerTestId,).toBe("chat-header",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
@@ -141,17 +165,21 @@ describe("Navigation E2E", () => {
   describe("New Chat navigation", () => {
     test("navigates to new-chat form", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/new-chat",);
         await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/new-chat",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
 
     test("creates new chat and redirects to chat page", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/new-chat",);
         await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
@@ -165,6 +193,8 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/chat",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
@@ -173,17 +203,21 @@ describe("Navigation E2E", () => {
   describe("Settings navigation", () => {
     test("navigates to settings page", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/settings",);
         await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/settings",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
 
     test("settings page has header and tabs", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/settings",);
         await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 10_000, },);
@@ -191,6 +225,8 @@ describe("Navigation E2E", () => {
         const count = await tabButtons.count();
         expect(count,).toBeGreaterThan(0,);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
@@ -199,6 +235,7 @@ describe("Navigation E2E", () => {
   describe("Login navigation", () => {
     test("login page has all required elements", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/login",);
         await page.locator("[data-testid='username-input']",).waitFor({ state: "attached", timeout: 10_000, },);
@@ -206,18 +243,23 @@ describe("Navigation E2E", () => {
         await page.locator("[data-testid='login-submit']",).waitFor({ state: "attached", timeout: 10_000, },);
         await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
 
     test("demo login hx-post attribute is correct", async () => {
       const page = await ctx.browser.newPage();
+      const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/login",);
         await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
         const hxPost = await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",);
         expect(hxPost,).toBe("/api/demo-login",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     });
