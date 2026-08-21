@@ -5,7 +5,9 @@
 //
 // YAML exporter for character cards.
 // Converts canonical character card to YAML format.
-
+// lean-ctx: bun:yaml stringify uses flow-style (compact), no lineWidth option;
+//          Bun.YAML.stringify produces incompatible output for multiline YAML.
+//          Keep js-yaml until Bun supports block-style or lineWidth:-1.
 import { dump as yamlDump, } from "js-yaml";
 import type { CanonicalCharacter, } from "../parser";
 

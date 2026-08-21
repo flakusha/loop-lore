@@ -3,9 +3,6 @@
 
 // src/config/load/parse.ts — Config parsing & object helpers
 
-import { load as parseYaml, } from "js-yaml";
-import { parse as parseToml, } from "smol-toml";
-
 export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides: Partial<T>,): T {
   const result = { ...base, };
   for (const key of Object.keys(overrides,)) {
@@ -60,10 +57,10 @@ export function getTypeOfPath(object: Record<string, unknown>, configPath: strin
 
 export function parseFileContent(content: string, extension: string,): Record<string, unknown> {
   if (extension === "yaml" || extension === "yml") {
-    return parseYaml(content,) as Record<string, unknown>;
+    return Bun.YAML.parse(content,) as Record<string, unknown>;
   }
   if (extension === "toml") {
-    return parseToml(content,);
+    return Bun.TOML.parse(content,) as Record<string, unknown>;
   }
   throw new Error(`Unknown config file extension: .${extension}`,);
 }

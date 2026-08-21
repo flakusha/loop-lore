@@ -6,7 +6,6 @@
 // TOML exporter for character cards.
 // Converts canonical character card to TOML format.
 
-import { stringify as tomlStringify, } from "smol-toml";
 import type { CanonicalCharacter, } from "../parser";
 
 /**
@@ -61,5 +60,5 @@ export function exportToToml(character: CanonicalCharacter,): string {
     (tomlData.character as Record<string, unknown>).greetings = greetingsSection;
   }
 
-  return tomlStringify(tomlData,);
+  return Bun.TOML.stringify(tomlData,) as string;
 }

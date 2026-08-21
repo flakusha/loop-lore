@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { load as parseYaml, } from "js-yaml";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import { parse as parseToml, } from "smol-toml";
 import type { TemplatesConfig, } from "../sections/templates";
 
 // ── File Discovery ──────────────────────────────────────────
@@ -101,7 +99,7 @@ export function parseTemplateFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,);
   if (ext === "toml") {
-    return parseToml(content,);
+    return Bun.TOML.parse(content,) as Record<string, unknown>;
   }
-  return parseYaml(content,) as Record<string, unknown>;
+  return Bun.YAML.parse(content,) as Record<string, unknown>;
 }
