@@ -16,21 +16,23 @@ export interface VnChoice {
   id: string;
   chat_id: string;
   scene_index: number;
-  label: string;
+  choice_index: number;
+  text: string;
   description: string | null;
   consequences: Record<string, unknown>;
   relationship_impact: Record<string, number>;
   mood_impact: Record<string, number>;
   unlock_conditions: Record<string, unknown>;
-  selected: number;
-  selected_at: string | null;
-  created_at: string;
+  selection_count: number;
+  is_active: number;
 }
 
 /** Return type from selectChoice including location change result. */
 export interface SelectChoiceResult {
   choice: VnChoice;
   locationId?: string;
+  splitTriggered?: boolean;
+  reunionTriggered?: boolean;
   locationChanged: boolean;
 }
 
@@ -50,8 +52,6 @@ export function initChoiceCards(
   container = containerEl;
   chatId = currentChatId;
   sceneIndex = currentSceneIndex;
-  choices = [];
-  renderChoices();
 }
 
 /**
@@ -59,6 +59,7 @@ export function initChoiceCards(
  */
 export function destroyChoiceCards(): void {
   container = null;
+  chatId = null;
   choices = [];
 }
 
@@ -66,55 +67,75 @@ export function destroyChoiceCards(): void {
  * Load choices for the current scene from the API.
  */
 export async function loadChoices(): Promise<void> {
-  if (!chatId || !container) {
-    return;
-  }
-
+  if (!chatId) { return; }
   try {
-    const res = await feFetch(`/api/chats/${chatId}/vn-choices?sceneIndex=${sceneIndex}`,);
-    if (res.ok) {
-      const data = await res.json();
-      choices = data.data.choices ?? [];
-      renderChoices();
-    }
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices?scene=${sceneIndex}`,);
+    if (!res.ok) { return; }
+    const data = await res.json();
+    choices = (data.data ?? []) as VnChoice[];
+    renderChoices();
   } catch {
-    // Non-critical — choices just won't show
+    choices = [];
   }
 }
 
+/** Detect a split consequence: { action: "split", branches: [...] } */
+function extractSplitBranches(
+  consequences: Record<string, unknown>,
+): { locationId: string; actorIds: string[] }[] | null {
+  const action = consequences["action"];
+  const branches = consequences["branches"];
+  if (action !== "split" || !Array.isArray(branches,)) { return null; }
+  const out: { locationId: string; actorIds: string[] }[] = [];
+  for (const b of branches) {
+    if (!b || typeof b !== "object") { continue; }
+    const rec = b as Record<string, unknown>;
+    const locationId = rec["locationId"];
+    const actorIds = rec["actorIds"];
+    if (typeof locationId !== "string" || !Array.isArray(actorIds,)) { continue; }
+    const ids = actorIds.filter((id,): id is string => typeof id === "string");
+    if (ids.length === 0) { continue; }
+    out.push({ locationId, actorIds: ids, },);
+  }
+  return out.length >= 2 ? out : null;
+}
+
+/** Detect a reunion consequence: { action: "reunite", secondaryChatId } */
+function extractReunionSource(consequences: Record<string, unknown>,): string | null {
+  if (consequences["action"] !== "reunite") { return null; }
+  const id = consequences["secondaryChatId"];
+  return typeof id === "string" ? id : null;
+}
+
 /**
- * Select a choice, apply its effects, and trigger a location change if the
- * choice has a location consequence.
+ * Select a choice, apply its effects, and trigger location/split/reunite
+ * consequences via their dedicated endpoints.
  *
  * @returns SelectChoiceResult on success, null on failure.
  */
 export async function selectChoice(choiceId: string,): Promise<SelectChoiceResult | null> {
-  if (!chatId) {
-    return null;
-  }
+  const choice = choices.find((c,) => c.id === choiceId);
+  if (!choice || !chatId) { return null; }
 
   try {
-    const res = await feFetch(`/api/chats/${chatId}/vn-choices/${choiceId}/select`, {
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/${choiceId}/select`, {
       method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({ choiceId, },),
     },);
-
-    if (!res.ok) {
-      return null;
-    }
-
+    if (!res.ok) { return null; }
     const data = await res.json();
-    const { choice, locationId, } = data.data as { choice: VnChoice; locationId?: string };
+    const { choice: returned, locationId, } = data.data as { choice: VnChoice; locationId?: string };
 
-    // Update local choice state
     choices = Array.from(
-      choices,
-      (c,) => c.id === choiceId ? { ...c, selected: 1, selected_at: choice.selected_at, } : c,
+      choices.map((c,) => c.id === choiceId ? returned : c),
     );
-    renderChoices();
 
-    // Trigger location change if this choice moves the party
     let locationChanged = false;
-    if (locationId && chatId) {
+    let splitTriggered = false;
+    let reunionTriggered = false;
+
+    if (locationId) {
       try {
         const locRes = await apiFetch(`/api/v1/chats/${chatId}/location`, {
           method: "PUT",
@@ -130,11 +151,40 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
           locationChanged = true;
         }
       } catch {
-        // Location change is best-effort — don't fail the choice selection
+        // Location change is best-effort; choice itself already persisted.
       }
     }
 
-    return { choice, locationId, locationChanged, };
+    // Phase 4: split/reunite consequences on choice cards.
+    const splitBranches = extractSplitBranches(returned.consequences,);
+    if (splitBranches) {
+      try {
+        const splitRes = await feFetch(`/api/chats/${chatId}/split`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ branches: splitBranches, },),
+        },);
+        splitTriggered = splitRes.ok;
+      } catch {
+        splitTriggered = false;
+      }
+    }
+
+    const reunionSource = extractReunionSource(returned.consequences,);
+    if (reunionSource) {
+      try {
+        const reuniteRes = await feFetch(`/api/chats/${chatId}/reunite`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ secondaryChatId: reunionSource, },),
+        },);
+        reunionTriggered = reuniteRes.ok;
+      } catch {
+        reunionTriggered = false;
+      }
+    }
+
+    return { choice: returned, locationId, splitTriggered, reunionTriggered, locationChanged, };
   } catch {
     return null;
   }
