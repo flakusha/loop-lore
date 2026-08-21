@@ -6,8 +6,9 @@
 > When a row is decided: finalize → check off in its `../priority.md` (index — tier files below) tier; defer → keep
 > here in the Deferred section. Rows already shipped or explicitly deferred are removed.
 > Rows that mirror a `../priority.md` (index) tier or a section below are removed here.
->
 > **2026-08-16 update:** Feature matrix items FEAT-055/059/060/062/065/066/067/068/075/045-047/048-051 promoted to P4/P5/P6 tiers. Lint-ts + e2e confirmed closed. 0.1.0 release-blocking: A8 (unwired close-out) + A9 (artifacts + push).
+>
+> **2026-08-21 update:** FEAT-055 (lorebook activation) shipped via `lorebook-activation` worktree — regex keys, key_groups, scan_depth, activation_chance, priority weighting all implemented + tested.
 
 | ID  | Item                                                                                    | Ticket / where                               | Recommend                       | Decision              |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
@@ -52,9 +53,7 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 
 - **Feature matrix items promoted** — 10 FEAT tickets mapped to P4/P5/P6 tiers in
   `priority-p3-p5.md` + `priority-p6.md`. New upcoming work:
-  - **P4**: Lorebook activation (FEAT-055), Prompt library expansions (FEAT-065),
-    Model capability registry (FEAT-067), Token budget advisor (FEAT-068),
-    Conversation branching (FEAT-045–047)
+  - **P4**: ~~Lorebook activation (FEAT-055)~~ ✅ **DONE 2026-08-21** (lorebook-activation worktree: regex keys, key_groups, scan_depth, activation_chance, priority weighting; migration 050_lorebook_activation.ts; lore-activation.ts + lore.ts + lore.test.ts); Prompt library expansions (FEAT-065), Model capability registry (FEAT-067), Token budget advisor (FEAT-068), Conversation branching (FEAT-045–047)
   - **P5**: Conversation analytics (FEAT-059), Model comparison A/B (FEAT-060),
     Gen quality metrics (FEAT-062), Lore-consistency checker (FEAT-066),
     Memory access audit (FEAT-075), API versioning (FEAT-035–044)
@@ -89,4 +88,3 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   `docs/reference/api.md`. Only md-lint (84 issues/12 files) matched. Corrected
   counts now in `TASK-PLAN-LINT-TS-DEBT.md` / row A5. dprint + md-lint gates closed;
   lint-ts remains open (see A5).
-
