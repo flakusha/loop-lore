@@ -6,10 +6,11 @@
 # Server-Side Crypto Architecture
 
 Status: Core built. Key management UI pending.
-Source: `src/crypto/` (SMK, actor keys, chat keys, pipeline, BYOK).
-69 unit tests — `bun test src/crypto/`.
+Source: `src/crypto/` (SMK, actor keys, chat keys, pipeline, BYOK, at-rest).
 
-Encryption model: chats use public/standard/private tiers. See `docs/frontend/encryption.md`.
+Encryption model: chats use `public`/`standard`/`at-rest` tiers. See `docs/frontend/encryption.md`.
+
+**Note on `at-rest` tier:** The `at-rest` tier is server-mediated — server holds SMK-derived chat keys and can decrypt. It was previously misnamed `private` with false E2E documentation. True client-side E2E is deferred; see `.plan/tickets/TASK-asymmetric-key-pairs-followup.md`.
 
 ---
 
@@ -106,9 +107,8 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 ### Low Priority
 
 - [ ] **World/Location encryption** — schema columns, key derivation chain (world → location → chat).
-- [ ] **Asymmetric key pairs** — public/private key pair generation for true E2E private chats.
+- [ ] **Asymmetric key pairs (true E2E)** — public/private key pair generation for true E2E for `at-rest` tier. See `.plan/tickets/TASK-asymmetric-key-pairs-followup.md`.
 - [ ] **Stable stored chat key** — store key in DB instead of deriving via HKDF (preserves history across joins).
-- [ ] **Anonymous chat mode** (`ANONYMOUS_CHAT=true`) — actor identities hidden, admin sees real for moderation.
 - [ ] `actor_keys.key_type` enum normalization.
 
 ### Done
@@ -119,8 +119,6 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 - [x] Compress-then-encrypt pipeline (`src/crypto/pipeline.ts`)
 - [x] At-rest tier-aware layer (`src/crypto/at-rest.ts`)
 - [x] Key distribution on join/leave (`src/crypto/key-distribution.ts`)
-- [x] User key management (`src/crypto/user-keys.ts`)
-- [x] E2E key bundles (`src/crypto/e2e/key-bundle.ts`)
 - [x] BYOK API key encryption (`src/crypto/byok.ts`)
 - [x] Message route integration (encrypt on write, decrypt on read)
 - [x] Key management routes (`src/routes/key-management.ts`)
