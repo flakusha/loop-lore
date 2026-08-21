@@ -7,7 +7,7 @@ import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import { uid, } from "../utils";
-import { generateImages, } from "./image-engine";
+import type { LoRAConfig, } from "./lora/types";
 
 interface ImageGenBody {
   prompt: string;
@@ -26,8 +26,8 @@ interface ImageGenBody {
   denoising_strength?: number;
   /** ComfyUI workflow name (filename without .json in configs/workflows/) */
   workflow?: string;
-  // TODO: LoRA integration — enable when ready for production
-  // lora?: { name: string; strength: number; backend?: "comfyui" | "sd-server" };
+  /** Optional LoRA model to inject into the generation pipeline. */
+  lora?: LoRAConfig;
 }
 
 export async function handleImageGeneration(body: unknown,): Promise<Response> {
@@ -48,6 +48,19 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
       { status: 501, },
     );
   }
+  // LoRA opt-in: only comfyui + sd-server/sdcpp support it. Reject mismatched backends early.
+  if (req.lora) {
+    const supported = sdConfig.apiFamily === "comfyui" || sdConfig.apiFamily === "sdcpp";
+    if (!supported) {
+      return Response.json(
+        {
+          error: `LoRA is not supported on backend "${sdConfig.apiFamily}". Use comfyui or sd-server.`,
+          status: 400,
+        },
+        { status: 400, },
+      );
+    }
+  }
 
   const n = Math.min(req.n ?? 1, 4,);
   const outputFormat = req.output_format ?? "png";
@@ -66,6 +79,7 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
     hrScale: req.hr_scale,
     denoisingStrength: req.denoising_strength,
     workflow: req.workflow,
+    lora: req.lora,
   },);
 
   if (!outcome.ok) {
