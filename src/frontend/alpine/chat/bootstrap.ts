@@ -36,6 +36,7 @@ import { rpgStats, } from "../rpg-stats";
 import type { AlpineMagicThis, AlpineState, ChatState, WorldChannelChat, } from "../types";
 import { worldChannels, } from "../world-channels";
 import { chatLifecycle, } from "./lifecycle";
+import { chatMusicEmbed, } from "./music-embed";
 import { chatSearch, } from "./search";
 import { chatWorld, } from "./world";
 
@@ -228,6 +229,7 @@ export function chatState() {
     ...chatManagement,
     ...chatEditing,
     ...chatActions,
+    ...chatMusicEmbed,
     ...chatPins,
     ...messageArchive,
     ...worldChannels,
