@@ -3,7 +3,7 @@
 
 # BUG: Group-chat history becomes undecryptable after any participant join/leave
 
-**Status:** 🟥 Open
+**Status:** 🟢 Closed — fixed by crypto-chat-history-survives-membership branch (commits 8400433a + 8e75ae1f)
 **Severity:** Critical
 **Priority:** High
 **Epic:** epic-crypto
@@ -43,8 +43,6 @@ participant. Affects all encrypted chats (the default path when SMK is set),
 not just `standard`-tier — because key derivation is participant-set-dependent
 independent of the tier-gated `distributeKeysOnJoin`/`rotateKeyOnLeave` calls.
 
-## Acceptance Criteria
-
-- [ ] Chat history survives participant join and leave (stable stored key, or full re-encrypt on membership change).
-- [ ] Read path uses the key that actually encrypted the message (key look-up by `key_id`) — or `key_id` is removed as misleading.
-- [ ] Integration test: add/remove participant after N messages → all N still decrypt.
+- [x] Chat history survives participant join/leave (stable stored key in `chat_keys` table).
+- [x] Read path uses stored `key_id` → `chat_keys` lookup to find the correct key.
+- [x] Integration test: add/remove participant after N messages → all N still decrypt.

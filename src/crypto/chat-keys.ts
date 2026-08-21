@@ -18,7 +18,7 @@
 
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { encryptBytes, decryptBytes, loadActorKeys } from "./actor-keys";
+import { decryptBytes, encryptBytes } from "./actor-keys";
 import type { ActorKeyData } from "./actor-keys";
 
 const HKDF_INFO = "loop-lore-chat-key-v1";
