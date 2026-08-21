@@ -25,6 +25,10 @@ export interface VnChoice {
   unlock_conditions: Record<string, unknown>;
   selection_count: number;
   is_active: number;
+  /** Populated from API on load: true when is_active === 1. */
+  selected?: boolean;
+  /** Display label derived from text on load. */
+  label?: string;
 }
 
 /** Return type from selectChoice including location change result. */
@@ -72,7 +76,15 @@ export async function loadChoices(): Promise<void> {
     const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices?scene=${sceneIndex}`,);
     if (!res.ok) { return; }
     const data = await res.json();
-    choices = (data.data ?? []) as VnChoice[];
+    const raw: VnChoice[] = data.data ?? [];
+    choices = [];
+    for (const c of raw) {
+      choices.push({
+        ...c,
+        selected: c.is_active === 1,
+        label: c.text,
+      },);
+    }
     renderChoices();
   } catch {
     choices = [];
@@ -83,17 +95,20 @@ export async function loadChoices(): Promise<void> {
 function extractSplitBranches(
   consequences: Record<string, unknown>,
 ): { locationId: string; actorIds: string[] }[] | null {
-  const action = consequences["action"];
-  const branches = consequences["branches"];
+  const action = consequences.action;
+  const branches = consequences.branches;
   if (action !== "split" || !Array.isArray(branches,)) { return null; }
   const out: { locationId: string; actorIds: string[] }[] = [];
   for (const b of branches) {
     if (!b || typeof b !== "object") { continue; }
     const rec = b as Record<string, unknown>;
-    const locationId = rec["locationId"];
-    const actorIds = rec["actorIds"];
+    const locationId = rec.locationId;
+    const actorIds = rec.actorIds;
     if (typeof locationId !== "string" || !Array.isArray(actorIds,)) { continue; }
-    const ids = actorIds.filter((id,): id is string => typeof id === "string");
+    const ids: string[] = [];
+    for (const id of actorIds) {
+      if (typeof id === "string") { ids.push(id,); }
+    }
     if (ids.length === 0) { continue; }
     out.push({ locationId, actorIds: ids, },);
   }
@@ -102,8 +117,8 @@ function extractSplitBranches(
 
 /** Detect a reunion consequence: { action: "reunite", secondaryChatId } */
 function extractReunionSource(consequences: Record<string, unknown>,): string | null {
-  if (consequences["action"] !== "reunite") { return null; }
-  const id = consequences["secondaryChatId"];
+  if (consequences.action !== "reunite") { return null; }
+  const id = consequences.secondaryChatId;
   return typeof id === "string" ? id : null;
 }
 
@@ -114,8 +129,9 @@ function extractReunionSource(consequences: Record<string, unknown>,): string | 
  * @returns SelectChoiceResult on success, null on failure.
  */
 export async function selectChoice(choiceId: string,): Promise<SelectChoiceResult | null> {
-  const choice = choices.find((c,) => c.id === choiceId);
-  if (!choice || !chatId) { return null; }
+  if (!chatId) { return null; }
+  const idx = choices.findIndex((c,) => c.id === choiceId);
+  if (idx === -1) { return null; }
 
   try {
     const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/${choiceId}/select`, {
@@ -127,9 +143,8 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     const data = await res.json();
     const { choice: returned, locationId, } = data.data as { choice: VnChoice; locationId?: string };
 
-    choices = Array.from(
-      choices.map((c,) => c.id === choiceId ? returned : c),
-    );
+    const updated: VnChoice = { ...returned, selected: true, label: returned.text, };
+    choices = Array.from(choices, (c, i,) => (i === idx ? updated : c),);
 
     let locationChanged = false;
     let splitTriggered = false;
@@ -246,7 +261,7 @@ function renderChoices(): void {
 
     const label = document.createElement("span",);
     label.className = "vn-choice-card__label";
-    label.textContent = choice.label;
+    label.textContent = choice.label ?? choice.text;
     card.append(label,);
 
     if (choice.description) {
