@@ -1565,6 +1565,15 @@ export const SCHEMA = new SchemaManifest()
     data: col("text",),
     occurred_at: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    timeline_id: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("world_timelines", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    is_prime: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("worlds", {
     id: col("text", { primaryKey: true, },),

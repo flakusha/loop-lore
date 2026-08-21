@@ -135,4 +135,5 @@ export interface DB {
   battles: import("./schema-core").Battles;
   seed_audit: import("./schema-core").SeedAudit;
   trade_history: import("./schema-core").TradeHistory;
+  world_timelines: import("./schema-core").WorldTimelines;
 }
