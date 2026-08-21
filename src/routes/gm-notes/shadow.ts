@@ -5,7 +5,17 @@
  * GM Notes — shadow notes CRUD.
  */
 import { Elysia, } from "elysia";
+import { randomUUID, } from "node:crypto";
 import { checkChatAccess, } from "../../chat/service";
+import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
+import {
+  ContentEncoding,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
+  MessageStatus,
+  MessageVisibility,
+} from "../../db/enums";
 import { uid, } from "../../utils";
 import {
   ChatIdParams,
@@ -21,6 +31,62 @@ import {
 } from "../http-utils";
 import { NoteIdParams, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
+
+/**
+ * Inject a narrator system message into the chat when a shadow note is revealed.
+ * Reveals are rare and high-impact — the narration makes the moment memorable
+ * instead of silently flipping the note's status in the background.
+ *
+ * Mirrors the pattern from `src/story/game-master/narration.ts`.
+ */
+async function injectShadowRevealNarration(
+  database: HandlerOpts["database"],
+  chatId: string,
+  content: string,
+): Promise<void> {
+  const narrator = await database
+    .selectFrom("actors",)
+    .select("id",)
+    .where("actor_type", "=", "narrator",)
+    .where("agent_type", "=", "narrator",)
+    .executeTakeFirst();
+
+  if (!narrator) { return; }
+
+  const text = `[Shadow Revealed] ${content}`;
+
+  let storedContent = text;
+  let storedKeyId: string | null = null;
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    const enc = await encryptMessageContent({
+      database,
+      chatId,
+      actorId: narrator.id,
+      plaintext: text,
+      smk,
+    },);
+    storedContent = enc.storedContent;
+    storedKeyId = enc.keyId ?? null;
+  }
+
+  await database
+    .insertInto("messages",)
+    .values({
+      id: randomUUID() as string,
+      chat_id: chatId,
+      actor_id: narrator.id,
+      role: MessageRole.System,
+      content: storedContent,
+      key_id: storedKeyId,
+      content_type: MessageContentType.Narration,
+      content_format: MessageContentFormat.Markdown,
+      content_encoding: ContentEncoding.Identity,
+      status: MessageStatus.Confirmed,
+      visibility: MessageVisibility.Visible,
+    },)
+    .execute();
+}
 
 export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
@@ -108,6 +174,16 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
+          // Fetch content before update so we can use it in narration.
+          const note = await database
+            .selectFrom("shadow_notes",)
+            .select(["content",],)
+            .where("id", "=", noteId,)
+            .where("chat_id", "=", id,)
+            .executeTakeFirst();
+
+          if (!note) { return notFound("Shadow note not found",); }
+
           const result = await database
             .updateTable("shadow_notes",)
             .set({ status: "revealed", },)
@@ -118,6 +194,10 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (Number(result?.numUpdatedRows ?? 0,) === 0) {
             return notFound("Shadow note not found",);
           }
+
+          // Emit a narrator message so the reveal has real narrative impact
+          // instead of silently flipping the status in the background.
+          await injectShadowRevealNarration(database, id, note.content,);
 
           return jsonNoContent();
         },
