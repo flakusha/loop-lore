@@ -1,0 +1,16 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Music embed: shown inside a message bubble after media-attachments -->
+<template x-if="msg.type === 'music_link'">
+  <div class="music-embed" data-testid="music-embed">
+    <template x-if="!msg.nsfwHidden">
+      <div class="music-embed-player" x-html="renderMusicEmbed(msg)"></div>
+    </template>
+    <template x-if="msg.nsfwHidden">
+      <div class="music-embed-nsfw">
+        <span>🔒 Explicit content hidden</span>
+      </div>
+    </template>
+  </div>
+</template>

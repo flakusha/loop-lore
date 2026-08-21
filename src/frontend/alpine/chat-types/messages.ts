@@ -63,3 +63,20 @@ export interface GenerationDetail {
   status?: string;
   attemptId?: string;
 }
+
+export interface MusicLinkMessage extends Message {
+  type: "music_link";
+  musicService: string;
+  url: string;
+  embedHtml: string | null;
+  title: string;
+  artist: string;
+  thumbnailUrl: string | null;
+  durationSecs: number | null;
+  serviceTrackId: string;
+  serviceUrl: string;
+  isPlaylist: boolean;
+  trackCount: number | null;
+  explicit: boolean;
+  nsfwHidden: boolean;
+}
