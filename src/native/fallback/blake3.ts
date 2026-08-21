@@ -10,9 +10,11 @@
  *
  * Note the `.js` suffix: @noble/hashes' exports map exposes `./blake3.js`
  * (no extensionless alias) — the suffix is required for resolution.
- *
- * @module native-blake3-fallback
  */
+
+// lean-ctx: Bun.hash("blake3") returns bigint — not Uint8Array.
+//          @noble/hashes blake3 returns Uint8Array compatible with existing code.
+//          Upgrade when Bun.hash returns Uint8Array for all algorithms.
 
 import { blake3 as nobleBlake3, } from "@noble/hashes/blake3.js";
 
