@@ -227,3 +227,86 @@ globalThis.worldDetail = function(initial: {
     },
   };
 };
+
+// ── World detail: timeline branch selector ───────────────────
+interface WorldTimeline {
+  id: string;
+  world_id: string;
+  name: string;
+  description: string | null;
+  is_prime: number;
+  created_at: string;
+}
+
+globalThis.worldTimelineBar = function(worldId: string,) {
+  return {
+    worldId,
+    timelines: [] as WorldTimeline[],
+    selectedTimeline: "",
+    showCreate: false,
+    newName: "",
+    newDesc: "",
+
+    async init() {
+      await this.loadTimelines();
+    },
+
+    async loadTimelines() {
+      try {
+        const res = await feFetch(`/api/worlds/${this.worldId}/timelines`,);
+        if (res.ok) {
+          const data = (await res.json()) as { data: WorldTimeline[] };
+          this.timelines = data.data ?? [];
+          // Default to prime timeline if none selected yet.
+          if (!this.selectedTimeline) {
+            const prime = this.timelines.find((t,) => t.is_prime);
+            this.selectedTimeline = prime?.id ?? this.timelines[0]?.id ?? "";
+          }
+        }
+      } catch (error) {
+        pageLog.warn("loadTimelines failed", { error: String(error,), },);
+      }
+    },
+
+    async switchTimeline() {
+      const tl = this.timelines.find((t,) => t.id === this.selectedTimeline);
+      if (!tl) { return; }
+      // Persist the selected timeline on the world-detail reload.
+      // The detail fragment re-queries world_timeline_events filtered by timeline_id.
+      try {
+        const detail = document.querySelector("#world-detail",);
+        if (detail) {
+          const url = `/dynamic/worlds/${this.worldId}/detail?timeline=${encodeURIComponent(this.selectedTimeline,)}`;
+          htmx.ajax("GET", url, { target: "#world-detail", swap: "innerHTML", },);
+        }
+      } catch (error) {
+        pageLog.warn("switchTimeline failed", { error: String(error,), },);
+      }
+    },
+
+    async createTimeline() {
+      if (!this.newName.trim()) { return; }
+      try {
+        const res = await feFetch(`/api/worlds/${this.worldId}/timelines`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: this.newName.trim(), description: this.newDesc.trim() || undefined, },),
+        },);
+        if (res.ok) {
+          const data = (await res.json()) as { data: WorldTimeline };
+          this.timelines.push(data.data,);
+          this.selectedTimeline = data.data.id;
+          this.showCreate = false;
+          this.newName = "";
+          this.newDesc = "";
+          showToast("success", "Timeline created",);
+        } else {
+          const err = (await res.json()) as { message?: string };
+          showToast("error", err.message ?? "Failed to create timeline",);
+        }
+      } catch {
+        showToast("error", "Network error",);
+      }
+    },
+  };
+};

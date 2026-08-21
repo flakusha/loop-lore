@@ -11,29 +11,27 @@
  * A new index on (world_id, timeline_id, occurred_at) enables fast per-timeline
  * queries without a join.
  */
-import type { Kysely } from "kysely";
+import type { Kysely, } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
+export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
-    .alterTable("world_timeline_events")
-    .addColumn("timeline_id", "text", (col) =>
-      col.notNull().defaultTo("prime")
-    )
+    .alterTable("world_timeline_events",)
+    .addColumn("timeline_id", "text", (col,) => col.notNull().defaultTo("prime",),)
     .execute();
 
   await db.schema
-    .createIndex("idx_wte_world_timeline_occurred")
-    .on("world_timeline_events")
-    .columns(["world_id", "timeline_id", "occurred_at"])
+    .createIndex("idx_wte_world_timeline_occurred",)
+    .on("world_timeline_events",)
+    .columns(["world_id", "timeline_id", "occurred_at",],)
     .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
+export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema
-    .dropIndex("idx_wte_world_timeline_occurred")
+    .dropIndex("idx_wte_world_timeline_occurred",)
     .execute();
   await db.schema
-    .alterTable("world_timeline_events")
-    .dropColumn("timeline_id")
+    .alterTable("world_timeline_events",)
+    .dropColumn("timeline_id",)
     .execute();
 }

@@ -9,22 +9,22 @@
  *   memories_fts   — FTS5 virtual table on actor_memories.content for BM25
  *                    fallback + hybrid search
  */
-import { type Kysely, sql } from "kysely";
+import { type Kysely, sql, } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
+export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
-    .createTable("memory_embeddings")
-    .addColumn("memory_id", "text", (col) => col.primaryKey())
-    .addColumn("model", "text", (col) => col.notNull().defaultTo("nomic-embed-text"))
-    .addColumn("dimensions", "integer", (col) => col.notNull().defaultTo(1536))
-    .addColumn("vector_blob", "blob", (col) => col.notNull())
-    .addColumn("created_at", "integer", (col) => col.notNull())
+    .createTable("memory_embeddings",)
+    .addColumn("memory_id", "text", (col,) => col.primaryKey(),)
+    .addColumn("model", "text", (col,) => col.notNull().defaultTo("nomic-embed-text",),)
+    .addColumn("dimensions", "integer", (col,) => col.notNull().defaultTo(1536,),)
+    .addColumn("vector_blob", "blob", (col,) => col.notNull(),)
+    .addColumn("created_at", "integer", (col,) => col.notNull(),)
     .execute();
 
   await db.schema
-    .createIndex("idx_embeddings_model")
-    .on("memory_embeddings")
-    .column("model")
+    .createIndex("idx_embeddings_model",)
+    .on("memory_embeddings",)
+    .column("model",)
     .execute();
 
   await sql`
@@ -33,10 +33,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
       content,
       content_rowid='memory_id'
     )
-  `.execute(db);
+  `.execute(db,);
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  await sql`DROP TABLE IF EXISTS memories_fts`.execute(db);
-  await db.schema.dropTable("memory_embeddings").execute();
+export async function down(db: Kysely<unknown>,): Promise<void> {
+  await sql`DROP TABLE IF EXISTS memories_fts`.execute(db,);
+  await db.schema.dropTable("memory_embeddings",).execute();
 }
