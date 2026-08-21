@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** medium
+**Priority Tier:** P3
 **Effort:** Small
 **Area:** characters
 **Source:** reconcile review (Scout Batch C — CHAR-3)
