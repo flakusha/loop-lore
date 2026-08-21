@@ -42,12 +42,10 @@ function buildMigrationProvider() {
     async getMigrations(): Promise<Record<string, Migration>> {
       const dir = path.join(__dirname, "..", "db", "migrations");
       const fileNames = readdirSync(dir)
-        .filter((f) => f.endsWith(".ts"))
-        .sort();
+        .filter((f) => f?.endsWith(".ts") ?? false)
+        .sort((a, b) => (a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0))
       const migrations: Record<string, Migration> = {};
       for (const fileName of fileNames) {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const mod = await import(path.join(dir, fileName));
         migrations[fileName.replace(/\.ts$/, "")] = mod.default ?? mod;
       }
       return migrations;
@@ -190,7 +188,7 @@ describe("Chat history survival across membership changes", () => {
       .execute();
 
     const decrypted = await Promise.all(
-      msgs.map((msg) => decryptByKeyId(msg.content!, msg.key_id!)),
+      msgs.map((msg) => decryptByKeyId(msg.content, msg.key_id ?? "")),
     );
     expect(decrypted).toContain("Hello from USER_1");
     expect(decrypted).toContain("Hello from USER_2");
@@ -217,7 +215,7 @@ describe("Chat history survival across membership changes", () => {
 
     for (const msg of msgsAfter) {
       expect(msg.key_id).not.toBeNull();
-      const plaintext = await decryptByKeyId(msg.content!, msg.key_id!);
+      const plaintext = await decryptByKeyId(msg.content, msg.key_id ?? "");
       expect(["Hello from USER_1", "Hello from USER_2"]).toContain(plaintext);
     }
 
@@ -237,7 +235,7 @@ describe("Chat history survival across membership changes", () => {
 
     for (const msg of msgs) {
       if (!msg.key_id) continue;
-      const plaintext = await decryptByKeyId(msg.content!, msg.key_id!);
+      const plaintext = await decryptByKeyId(msg.content, msg.key_id ?? "");
       expect(["Hello from USER_1", "Hello from USER_2"]).toContain(plaintext);
     }
   });
@@ -255,7 +253,7 @@ describe("Chat history survival across membership changes", () => {
       .executeTakeFirst();
 
     expect(latestMsg!.key_id).toBe(chatKey.keyId);
-    const plaintext = await decryptByKeyId(latestMsg!.content!, latestMsg!.key_id!);
+    const plaintext = await decryptByKeyId(latestMsg!.content, latestMsg!.key_id ?? "");
     expect(plaintext).toBe(newMsgContent);
   });
 });
