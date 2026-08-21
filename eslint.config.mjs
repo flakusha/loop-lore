@@ -570,6 +570,13 @@ export default tseslint.config(
   // patterns adds churn and risk without production benefit.
   {
     files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts", "**/*.test-helper.ts",],
+    languageOptions: {
+      parser: tseslint.parser,
+      globals: {
+        ...globals.bun,
+        ...globals.node,
+      },
+    },
     rules: {
       "sonarjs/no-identical-functions": "off",
       "unicorn/consistent-function-scoping": "off",

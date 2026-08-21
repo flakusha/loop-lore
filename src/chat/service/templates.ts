@@ -10,11 +10,9 @@
  * idempotent seeding (code defaults + config-file templates merged by slug),
  * and admin CRUD.
  */
-import { load as parseYaml, } from "js-yaml";
 import type { Kysely, } from "kysely";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import { parse as parseToml, } from "smol-toml";
 import { findMainRepoRoot, } from "../../config/templates-loader/discovery";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
@@ -61,7 +59,7 @@ export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDe
   const raw = readFileSync(chosen.path, "utf8",);
   let parsed: unknown;
   try {
-    parsed = chosen.kind === "toml" ? parseToml(raw,) : parseYaml(raw,);
+    parsed = chosen.kind === "toml" ? Bun.TOML.parse(raw,) : Bun.YAML.parse(raw,);
   } catch {
     return [];
   }
