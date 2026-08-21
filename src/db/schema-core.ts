@@ -810,3 +810,12 @@ export interface WorldTimelines {
   is_prime: Generated<number>;
   created_at: Generated<string>;
 }
+
+// ── chat_keys ────────────────────────────────────────────
+export interface ChatKeys {
+  id: Generated<string>;
+  chat_id: string;
+  encrypted_chat_key: string;
+  created_at: Generated<string>;
+  expires_at: string | null;
+}
