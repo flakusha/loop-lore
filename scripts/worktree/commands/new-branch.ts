@@ -12,33 +12,36 @@ export async function execute(
   config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
 ): Promise<void> {
   const branch = args[0];
-  const base = args[1] ?? "master";
+  const base = args[1] ?? "dev";
 
   if (!branch) {
     log("error", "branch name required",);
-    console.log("  Usage: worktree new <branch> [base]",);
+    console.log("  Usage: worktree new-branch <branch> [base]",);
     process.exit(1,);
   }
 
   if (isProtected(branch,)) {
-    log("error", `cannot create branch '${branch}' — protected`,);
+    log("error", `cannot create worktree for protected branch '${branch}'`,);
     process.exit(1,);
   }
 
   // Check branch doesn't already exist
   try {
-    gitSync(config.repoRoot, "rev-parse", "--verify", branch,);
-    log("warn", `branch '${branch}' already exists — use 'create' instead`,);
-    return;
+    gitSync(config.repoRoot, "rev-parse", "--verify", `refs/heads/${branch}`,);
+    log("error", `branch '${branch}' already exists`,);
+    process.exit(1,);
   } catch {
     // branch doesn't exist — good
   }
 
-  // Verify base exists
+  // Resolve current HEAD — works in both attached and detached states
+  const headRef = gitSync(config.repoRoot, "rev-parse", "HEAD",).trim();
+
+  // Verify base exists (accepts branch name, tag, or commit)
   try {
     gitSync(config.repoRoot, "rev-parse", "--verify", base,);
   } catch {
-    log("error", `base branch '${base}' does not exist`,);
+    log("error", `base '${base}' does not exist`,);
     process.exit(1,);
   }
 
@@ -46,16 +49,18 @@ export async function execute(
   const wtPath = resolve(config.treeDir, dirName,);
 
   if (existsSync(wtPath,)) {
-    log("error", `directory already exists: ${wtPath}`,);
-    process.exit(1,);
+    log("warn", `worktree already exists: ${wtPath}`,);
+    return;
   }
 
   mkdirSync(config.treeDir, { recursive: true, },);
 
-  log("info", `Creating new branch '${branch}' from '${base}'`,);
+  log("info", `Creating new branch '${branch}' from '${base}' (HEAD=${headRef.slice(0, 7)})`,);
 
+  // Use HEAD commit directly as base — works regardless of whether repo root
+  // is on a branch or in detached HEAD state.
   const result = Bun.spawnSync(
-    ["git", "-C", config.repoRoot, "worktree", "add", "-b", branch, wtPath, base,],
+    ["git", "-C", config.repoRoot, "worktree", "add", "-b", branch, wtPath, headRef,],
     { stdout: "pipe", stderr: "pipe", },
   );
   if (result.exitCode !== 0) {
