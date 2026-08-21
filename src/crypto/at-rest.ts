@@ -16,20 +16,18 @@
  * removed by the 009_encryption_level_default migration.
  */
 
-import type { Kysely, } from "kysely";
-import type { EncryptionLevel, } from "../db/enums";
-import type { DB, } from "../db/schema";
-import { deriveChatKeyForChat, } from "./chat-keys";
+import type { Kysely } from "kysely";
+import type { EncryptionLevel } from "../db/enums";
+import type { DB } from "../db/schema";
+import { deriveChatKeyForChat, getChatKeyById } from "./chat-keys";
 import {
   compressThenEncrypt,
   decryptThenDecompress,
   extractKeyIdFromPayload,
   isEncryptedPayload,
 } from "./pipeline";
-import type { PipelineConfig, } from "./pipeline";
-import { getSmk, isEncryptionEnabled, } from "./smk";
-
-// ── Types ──────────────────────────────────────────────────
+import type { PipelineConfig } from "./pipeline";
+import { getSmk, isEncryptionEnabled } from "./smk";
 
 export interface AtRestEncryptOpts {
   database: Kysely<DB>;
@@ -52,130 +50,63 @@ export interface AtRestResult {
   wasEncrypted: boolean;
 }
 
-// ── Encrypt ────────────────────────────────────────────────
-
-/**
- * Encrypt content based on the chat's encryption tier.
- *
- * - `public`: stores plaintext as-is (no encryption).
- * - `standard`: compress-then-encrypt via chat key.
- * - `private`: throws (E2E not yet wired — clients must pre-encrypt).
- */
-export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestResult> {
-  const { database, chatId, plaintext, encryptionLevel, config, } = opts;
-
-  // If client already pre-encrypted, store as-is regardless of tier
-  if (isEncryptedPayload(plaintext,)) {
-    return {
-      storedContent: plaintext,
-      keyId: extractKeyIdFromPayload(plaintext,),
-      wasEncrypted: true,
-    };
+export async function encryptAtRest(opts: AtRestEncryptOpts): Promise<AtRestResult> {
+  const { database, chatId, plaintext, encryptionLevel, config } = opts;
+  if (isEncryptedPayload(plaintext)) {
+    return { storedContent: plaintext, keyId: extractKeyIdFromPayload(plaintext), wasEncrypted: true };
   }
-
   switch (encryptionLevel) {
-    case "none": {
-      return { storedContent: plaintext, keyId: null, wasEncrypted: false, };
-    }
-
+    case "none":
+      return { storedContent: plaintext, keyId: null, wasEncrypted: false };
     case "standard": {
-      if (!isEncryptionEnabled()) {
-        return { storedContent: plaintext, keyId: null, wasEncrypted: false, };
-      }
+      if (!isEncryptionEnabled()) return { storedContent: plaintext, keyId: null, wasEncrypted: false };
       const smk = getSmk();
-      if (!smk) { throw new Error("standard tier requires SMK — set SERVER_ENCRYPTION_KEY",); }
-      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-      const stored = await compressThenEncrypt({
-        plaintext,
-        chatKey: chatKey.key,
-        keyId: chatKey.keyId,
-        config,
-      },);
-      return { storedContent: stored, keyId: chatKey.keyId, wasEncrypted: true, };
+      if (!smk) throw new Error("standard tier requires SMK — set SERVER_ENCRYPTION_KEY");
+      const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+      const stored = await compressThenEncrypt({ plaintext, chatKey: chatKey.key, keyId: chatKey.keyId, config });
+      return { storedContent: stored, keyId: chatKey.keyId, wasEncrypted: true };
     }
-
-    case "private": {
-      // E2E: clients must pre-encrypt before sending. Server cannot encrypt.
-      throw new Error(
-        "private tier requires client-side E2E encryption. " +
-          "Pre-encrypt content before sending to the server.",
-      );
-    }
-
-    default: {
-      throw new Error(`Unknown encryption level: ${String(encryptionLevel,)}`,);
-    }
+    case "private":
+      throw new Error("private tier requires client-side E2E encryption. Pre-encrypt content before sending to the server.");
+    default:
+      throw new Error(`Unknown encryption level: ${String(encryptionLevel)}`);
   }
 }
 
-// ── Decrypt ────────────────────────────────────────────────
-
-/**
- * Decrypt content based on the chat's encryption tier.
- *
- * - `public`: returns content as-is.
- * - `standard`: decrypt-then-decompress via chat key.
- * - `private`: throws (E2E not yet wired — clients must decrypt locally).
- */
-export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
-  const { database, chatId, storedContent, encryptionLevel, } = opts;
-
+export async function decryptAtRest(opts: AtRestDecryptOpts): Promise<string> {
+  const { database, storedContent, encryptionLevel } = opts;
   switch (encryptionLevel) {
-    case "none": {
+    case "none":
       return storedContent;
-    }
-
     case "standard": {
-      if (!isEncryptedPayload(storedContent,)) {
-        // Legacy plaintext in standard-tier chat — return as-is
-        return storedContent;
-      }
-      if (!isEncryptionEnabled()) {
-        throw new Error("Content is encrypted but encryption is not enabled on this server",);
-      }
+      if (!isEncryptedPayload(storedContent)) return storedContent;
+      if (!isEncryptionEnabled()) throw new Error("Content is encrypted but encryption is not enabled on this server");
       const smk = getSmk();
-      if (!smk) { throw new Error("standard tier requires SMK — set SERVER_ENCRYPTION_KEY",); }
-      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-      return decryptThenDecompress(storedContent, chatKey.key,);
+      if (!smk) throw new Error("standard tier requires SMK — set SERVER_ENCRYPTION_KEY");
+      const keyId = extractKeyIdFromPayload(storedContent);
+      if (!keyId) return storedContent;
+      const chatKey = await getChatKeyById(database, keyId, smk);
+      if (!chatKey) throw new Error(`Chat key not found for id ${keyId} — rotation may have failed`);
+      return decryptThenDecompress(storedContent, chatKey.key);
     }
-
-    case "private": {
-      // E2E: clients must decrypt locally. Server cannot decrypt.
-      throw new Error(
-        "private tier requires client-side E2E decryption. " +
-          "Decrypt content on the client using the chat's private key.",
-      );
-    }
-
-    default: {
-      throw new Error(`Unknown encryption level: ${String(encryptionLevel,)}`,);
-    }
+    case "private":
+      throw new Error("private tier requires client-side E2E decryption. Decrypt content on the client using the chat's private key.");
+    default:
+      throw new Error(`Unknown encryption level: ${String(encryptionLevel)}`);
   }
 }
 
-// ── Helpers ────────────────────────────────────────────────
-
-/**
- * Check if content needs encryption for the given tier.
- */
-export function needsEncryption(encryptionLevel: EncryptionLevel, storedContent: string,): boolean {
-  if (encryptionLevel === "none") { return false; }
-  if (isEncryptedPayload(storedContent,)) { return false; // already encrypted
-   }
+export function needsEncryption(encryptionLevel: EncryptionLevel, storedContent: string): boolean {
+  if (encryptionLevel === "none") return false;
+  if (isEncryptedPayload(storedContent)) return false;
   return encryptionLevel === "standard" || encryptionLevel === "private";
 }
 
-/**
- * Get the encryption level for a chat (read from DB).
- */
-export async function getChatEncryptionLevel(
-  database: Kysely<DB>,
-  chatId: string,
-): Promise<EncryptionLevel> {
+export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: string): Promise<EncryptionLevel> {
   const row = await database
-    .selectFrom("chats",)
-    .select("encryption_level",)
-    .where("id", "=", chatId,)
+    .selectFrom("chats")
+    .select("encryption_level")
+    .where("id", "=", chatId)
     .executeTakeFirst();
   return (row?.encryption_level as EncryptionLevel) ?? "none";
 }
