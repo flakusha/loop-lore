@@ -3,7 +3,7 @@
 
 # TASK: Wiring + dead-code check gate
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing
@@ -14,6 +14,6 @@ scripts/check-wiring.ts added to check-parallel.mjs: every routes/*.ts mounted i
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
