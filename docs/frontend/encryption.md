@@ -30,24 +30,25 @@ keys and decrypts for authorized users.
 
 Use for: normal roleplay chats, group chats with permissioned access.
 
-### 3. Private (end-to-end)
+### 3. At-Rest (server-mediated)
 
-Messages encrypted end-to-end. Server never sees plaintext — clients encrypt
-and decrypt locally. LLM responses encrypted before storage.
+Messages encrypted at rest with server-held chat keys. **The server can decrypt all
+content** — this is NOT true end-to-end encryption. The server holds SMK-derived
+chat keys and decrypts messages for LLM generation, search, and other server-side
+processing.
 
-Key exchange happens directly between clients; server stores encrypted key
-bundles but cannot decrypt them.
+Use for: chats where at-rest encryption is desired but server-side processing
+(LLM generation, search, moderation) is required.
+
+**Historical note:** This tier was previously misnamed "private" and documented as
+true E2E. That was incorrect. True client-side E2E (where the server cannot
+decrypt) is tracked in `.plan/tickets/TASK-asymmetric-key-pairs-followup.md`.
 
 Rules:
 
-- On user leave: new keys issued for subsequent messages (forward secrecy).
-  Old keys cannot decrypt new content.
-- 100% private chats cannot feed world/location lore or global memories.
-  Local per-user memories may be stored encrypted.
-- Assets created in private chats cannot be re-linked to other chats.
-  Re-linking is restricted to within the same private chat.
-- Users must explicitly share keys when inviting other participants.
-- Sharing with LLM is automatic (server coordinates decryption for generation).
+- At-rest chats can feed world/location lore and global memories (server can read).
+- Assets created in at-rest chats can be re-linked across chats (server can re-encrypt).
+- Sharing with LLM is automatic — server decrypts for generation, re-encrypts on write.
 
 ### Immutability
 
@@ -58,7 +59,7 @@ clone content into a new chat with the desired level.
 
 1. **Public** — ship first. No crypto dependency, validates all other chat flows.
 2. **Standard** — ship second. Server-mediated, reuses existing pipeline.
-3. **Private** — ship last. Requires external security audit before production.
+3. **At-Rest** — ship third. Server-mediated (same as standard), with honest docs.
 
 ---
 
@@ -82,8 +83,6 @@ Encryption keys form a three-level hierarchy:
 2. **Actor Secret Keys** — Each actor (user, character, assistant, narrator, system) has one or more keys. Stored in `actor_keys` table, encrypted at rest by SMK (`AES-256-GCM(SMK, raw_key)`)
 3. **Chat Encryption Keys** — Per-chat keys derived via HKDF from participant actor keys. Used for message content encryption
 
-### Actor Key Table
-
 ---
 
 ## Key Lifecycle
@@ -106,11 +105,18 @@ When a new actor joins a group chat, keys are distributed in four steps:
 4. **New actor decrypts** bundle, can now read chat history
 
 **Implementation note**: Keys are distributed SMK-wrapped (server-mediated).
-True E2E (client-only keys without server access) is future.
+True client-side E2E (server cannot decrypt) is not implemented; see
+`.plan/tickets/TASK-asymmetric-key-pairs-followup.md`.
 
 ### Rotation
 
 Rotation replaces the active chat key without breaking history. Five steps:
+
+1. Server generates new chat key
+2. All current participants' keys re-derived
+3. New messages encrypted with new key
+4. Old key marked `expired` (retained for historical reads)
+5. No re-encryption of history required
 
 ### Revocation
 
@@ -131,13 +137,24 @@ Revoking an actor's key:
 
 A message travels from client to server through these steps:
 
-**Client side:**
+1. Client sends plaintext message to server
+2. Server derives chat key via `deriveChatKeyForChat()`
+3. Server compresses then encrypts: `compressThenEncrypt(plaintext, chatKey)`
+4. Server stores encrypted payload in `messages.content`
 
-**On read by another actor:** 8. Server loads content JSON from DB 9. Decrypt with chat key → compressed bytes 10. Decompress → plaintext 11. Deliver to requesting actor over HTTPS
+**On read by another actor:**
+
+5. Server loads content JSON from DB
+6. Decrypt with chat key → compressed bytes
+7. Decompress → plaintext
+8. Deliver to requesting actor over HTTPS
 
 ### LLM Response (Write Path)
 
 When the server receives an LLM response, it encrypts before storing:
+
+1. Server encrypts LLM output with chat key
+2. Stores encrypted payload in `messages.content`
 
 ### Read Path (Deliver to Actor)
 
@@ -216,7 +233,7 @@ No JSON wrapper in dev mode.
 | ------------- | ----------------- | ------------------------------------------------------- |
 | Decrypt       | Key missing       | Return 403. Actor lacks access to this message.         |
 | Decrypt       | Auth tag mismatch | Log audit event. Return error (tampered data detected). |
-| Decompress    | Invalid data      | Log warning. Return decrypted raw bytes as content.     |
+| Decompress    | Invalid data      | Log warning. Return decrypted raw bytes as content.      |
 | Payload parse | Malformed JSON    | Log audit event. Return error to client.                |
 
 ### Key Errors
@@ -241,7 +258,7 @@ Actors manage keys at `/settings/keys`:
 | Generate key   | Create additional named key                                  |
 | Rotate key     | New primary, old → expired. Optionally re-encrypt history.   |
 | Revoke key     | Irreversible. Confirm with typed "REVOKE".                   |
-| Purge key      | Delete key record. Messages become permanently inaccessible. |
+| Purge key      | Delete key record. Messages become permanently inaccessible.  |
 | View history   | Per-key message list with date/chat/role filters             |
 | Export history | Download as JSON, Markdown, or plain text                    |
 
@@ -295,10 +312,6 @@ Actors manage keys at `/settings/keys`:
 - Deletes encryption key record (irreversible)
 - Historical messages encrypted with that key become permanently inaccessible
 - Warn user about unrecoverable messages before confirming
-
----
-
-## Migration Path: SMK-Only → Actor Keys
 
 ---
 
