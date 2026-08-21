@@ -7,10 +7,8 @@
 // Supports single-character and multi-character files (YAML/TOML).
 // Merges all found characters by name (user wins on conflict).
 
-import { load as parseYaml, } from "js-yaml";
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import { parse as parseToml, } from "smol-toml";
 import type { ContentRating, } from "../characters/spec";
 import type { CharacterTemplateConfig, } from "./sections/templates";
 
@@ -118,9 +116,9 @@ function parseCharacterFile(filePath: string,): CharacterFileData {
   const ext = path.extname(filePath,).slice(1,).toLowerCase();
 
   if (ext === "toml") {
-    return parseToml(content,);
+    return Bun.TOML.parse(content,);
   }
-  return parseYaml(content,) as CharacterFileData;
+  return Bun.YAML.parse(content,) as CharacterFileData;
 }
 
 // ── Normalization ─────────────────────────────────────────────

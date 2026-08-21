@@ -6,10 +6,8 @@
 // Usage: bun run src/config/migrate-config.ts --input configs/config.toml --dry-run
 //        bun run src/config/migrate-config.ts --input configs/config.toml
 
-import { load as parseYaml, } from "js-yaml";
 import { existsSync, mkdirSync, readFileSync, writeFileSync, } from "node:fs";
 import path from "node:path";
-import { parse as parseToml, } from "smol-toml";
 import { createLogger, } from "../logger";
 import { jsonStringifyOr, } from "../utils";
 
@@ -78,10 +76,10 @@ function parseConfigFile(filePath: string,): Record<string, unknown> {
   const ext = path.extname(filePath,).slice(1,);
 
   if (ext === "yaml" || ext === "yml") {
-    return parseYaml(content,) as Record<string, unknown>;
+    return Bun.YAML.parse(content,) as Record<string, unknown>;
   }
   if (ext === "toml") {
-    return parseToml(content,);
+    return Bun.TOML.parse(content,) as Record<string, unknown>;
   }
   throw new Error(`Unknown config file extension: .${ext}`,);
 }
