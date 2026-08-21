@@ -199,7 +199,7 @@ linked to this epic:
 
 - [ ] `TASK-e2e-browser-reliability-hardening` — runner decision, web-first polling,
       console/page-error assertion everywhere, per-test isolation, dead-config cleanup.
-- [ ] `TASK-e2e-alpine-state-harness` — `getAlpineData`/`waitForAlpineState`, migrate
+- [x] `TASK-e2e-alpine-state-harness` — `getAlpineData`/`waitForAlpineState`, migrate
       htmx-alpine/chat-flow off presence+sleeps, pin `chatState()` contract.
 - [ ] `TASK-e2e-scenario-catalog` — feature→scenario→test matrix + coverage report;
       add missing pillar tests.
