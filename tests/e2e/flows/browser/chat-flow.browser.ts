@@ -10,6 +10,8 @@
  * NOTE: Alpine x-show/:style/:disabled timing depends on inline script extraction.
  * Tests use attached-state checks where Alpine init is unreliable.
  * Toggle/visibility tests deferred until inline script migration lands.
+ * @pillar assistant-tool-call-ui
+ * @pillar generation
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
