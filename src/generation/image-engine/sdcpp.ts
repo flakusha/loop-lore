@@ -3,9 +3,11 @@
 
 import type { ImageProviderConfig, } from "../../config/schema";
 import { safeJsonStringify, } from "../../utils";
+import { discoverLoras, } from "../lora/discovery";
+import { injectSdCppLora, } from "../lora/discovery-sdserver";
+import type { LoRAModel, } from "../lora/types";
 import { decodeB64, failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
-
 /** Generate images via sd.cpp — async job submission + polling. */
 export async function generateSDCPP(
   sdConfig: ImageProviderConfig,
@@ -14,8 +16,29 @@ export async function generateSDCPP(
   const outputFormat = opts.outputFormat ?? "png";
   const n = opts.n;
   const sdcppUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/img_gen`;
+
+  // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.
+  let effectivePrompt = opts.prompt;
+  if (opts.lora) {
+    const discovered = await discoverLoras("sd-server", sdcppUrl,);
+    const found = discovered.models.some(
+      (m: LoRAModel,) => m.name === opts.lora!.name,
+    );
+    if (found) {
+      effectivePrompt = injectSdCppLora(
+        opts.prompt,
+        opts.lora.name,
+        opts.lora.strength,
+      );
+    } else {
+      // Unknown LoRA — warn and continue without injection (graceful degradation).
+      console.warn(
+        `[sdcpp] LoRA "${opts.lora.name}" not found on backend "${sdcppUrl}", skipping injection`,
+      );
+    }
+  }
   const sdcppPayload = safeJsonStringify({
-    prompt: opts.prompt,
+    prompt: effectivePrompt,
     negative_prompt: opts.negativePrompt ?? sdConfig.defaults.negativePrompt,
     width: sdConfig.defaults.width,
     height: sdConfig.defaults.height,
@@ -29,7 +52,6 @@ export async function generateSDCPP(
     hr_scale: opts.hrScale,
     denoising_strength: opts.denoisingStrength,
   },);
-
   const submitResp = await fetch(sdcppUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json", },

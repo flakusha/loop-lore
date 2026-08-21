@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/** Inputs shared by every provider. */
+import type { LoRAConfig, } from "../../generation/lora/types";
 export interface ImageGenOptions {
   prompt: string;
   n: number;
@@ -19,6 +19,8 @@ export interface ImageGenOptions {
   denoisingStrength?: number;
   /** ComfyUI workflow name (defaults to "txt2img"). */
   workflow?: string;
+  /** Optional LoRA model to inject into the generation pipeline. */
+  lora?: LoRAConfig;
 }
 
 /** Success carries the generated images and their mime type. */
