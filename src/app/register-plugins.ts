@@ -68,6 +68,7 @@ import { messageEncryptionRoutes, } from "../routes/message-encryption";
 import { messageReactionsRoutes, } from "../routes/message-reactions";
 import { messageSearchRoutes, } from "../routes/message-search";
 import { messagesRoutes, } from "../routes/messages";
+import { musicLinksRoutes, } from "../routes/music-links";
 import { modelComparisonsRoutes, } from "../routes/model-comparisons";
 import { notificationsRoutes, } from "../routes/notifications";
 import { npcMovementRoutes, } from "../routes/npc-movement";
@@ -164,6 +165,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(adminNsfwRoutes(handleOpts,),);
   app.use(characterIoRoutes(handleOpts,),);
   app.use(messagesRoutes(handleOpts,),);
+  app.use(musicLinksRoutes(handleOpts,),);
   app.use(messageReactionsRoutes(handleOpts,),);
   app.use(messageSearchRoutes(handleOpts,),);
   app.use(chatsRoutes(handleOpts,),);
