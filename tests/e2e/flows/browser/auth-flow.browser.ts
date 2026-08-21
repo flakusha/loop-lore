@@ -10,6 +10,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { seedUsers, } from "../../helpers/seed";
 
 describe("Auth browser E2E", () => {
@@ -31,46 +32,70 @@ describe("Auth browser E2E", () => {
 
   describe("Login form", () => {
     test("renders username, password, submit", async () => {
-      const page = await ctx.browser.newPage();
-      await gotoLogin(page,);
-      expect(await page.isVisible("[data-testid='username-input']",),).toBe(true,);
-      expect(await page.isVisible("[data-testid='password-input']",),).toBe(true,);
-      expect(await page.isVisible("[data-testid='login-submit']",),).toBe(true,);
-      await page.close();
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoLogin(page,);
+        expect(await page.isVisible("[data-testid='username-input']",),).toBe(true,);
+        expect(await page.isVisible("[data-testid='password-input']",),).toBe(true,);
+        expect(await page.isVisible("[data-testid='login-submit']",),).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     });
 
     test("demo login link present", async () => {
-      const page = await ctx.browser.newPage();
-      await gotoLogin(page,);
-      expect(await page.isVisible("[data-testid='demo-login']",),).toBe(true,);
-      expect(await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",),).toBe("/api/demo-login",);
-      await page.close();
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoLogin(page,);
+        expect(await page.isVisible("[data-testid='demo-login']",),).toBe(true,);
+        expect(await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",),).toBe("/api/demo-login",);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     });
 
     test("signup link present", async () => {
-      const page = await ctx.browser.newPage();
-      await gotoLogin(page,);
-      expect(await page.isVisible("[data-testid='signup-link']",),).toBe(true,);
-      await page.close();
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoLogin(page,);
+        expect(await page.isVisible("[data-testid='signup-link']",),).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     });
   });
 
   describe("Login validation", () => {
     test("submits login form with htmx", async () => {
-      const page = await ctx.browser.newPage();
-      await gotoLogin(page,);
-      await page.fill("[data-testid='username-input']", "wronguser",);
-      await page.fill("[data-testid='password-input']", "wrongpass",);
-      // Submit triggers htmx POST to /api/auth/login
-      await page.click("[data-testid='login-submit']",);
-      // htmx swaps the response into #login-error (style stays display:none on outer div)
-      await page.waitForTimeout(1500,);
-      // The error element should have received a swap (innerHTML changed)
-      const innerHtml = await page.locator("[data-testid='login-error']",).innerHTML();
-      // After htmx swap, innerHTML should either be non-empty error message
-      // or the style might have changed if the server returns styled HTML
-      expect(innerHtml.length,).toBeGreaterThan(0,);
-      await page.close();
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoLogin(page,);
+        await page.fill("[data-testid='username-input']", "wronguser",);
+        await page.fill("[data-testid='password-input']", "wrongpass",);
+        await page.click("[data-testid='login-submit']",);
+        // Wait for htmx POST response to /api/auth/login.
+        await page.waitForResponse(
+          (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+          { timeout: 30_000, },
+        );
+        // The error element should have received a swap (innerHTML changed).
+        const innerHtml = await page.locator("[data-testid='login-error']",).innerHTML();
+        expect(innerHtml.length,).toBeGreaterThan(0,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     });
   });
 });

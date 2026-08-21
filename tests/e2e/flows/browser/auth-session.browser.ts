@@ -17,8 +17,8 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { seedUsers, } from "../../helpers/seed";
-
 describe("Auth session E2E", () => {
   let ctx: BrowserTestContext;
 
@@ -52,6 +52,10 @@ describe("Auth session E2E", () => {
   describe("Login", () => {
     test("successful login redirects to chat", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page, {
+        // Benign pre-auth 401s (favicon, etc.) appear before the form is usable.
+        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+      },);
       try {
         await gotoLogin(page,);
         await page.fill("[data-testid='username-input']", "e2euser",);
@@ -59,6 +63,8 @@ describe("Auth session E2E", () => {
         await page.click("[data-testid='login-submit']",);
         await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
@@ -67,6 +73,9 @@ describe("Auth session E2E", () => {
   describe("Logout", () => {
     test("logout returns to login and protects authed views", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page, {
+        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+      },);
       try {
         await login(page, "e2euser", "password",);
         // Sidebar footer button — click via evaluate to bypass hit-testing.
@@ -76,6 +85,8 @@ describe("Auth session E2E", () => {
         },);
         await page.waitForURL((url,) => url.pathname === "/views/login", { timeout: 30_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
@@ -84,27 +95,38 @@ describe("Auth session E2E", () => {
   describe("Admin access", () => {
     test("non-admin is redirected away from the admin view", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page, {
+        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+      },);
       try {
         await login(page, "e2euser", "password",);
         await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         // adminViewGuard 302s non-admins to "/", which then redirects to the
         // authed home "/views/chat". Assert we left the admin view.
         await page.waitForURL((url,) => url.pathname !== "/views/admin", { timeout: 30_000, },);
+        // sleep: DOM settle after redirect before reading URL
         await page.waitForTimeout(500,);
         const path = new URL(page.url(),).pathname;
         expect(path,).not.toBe("/views/admin",);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
 
     test("admin can load the admin view", async () => {
       const page = await ctx.openPage();
+      const errors = trackPageErrors(page, {
+        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+      },);
       try {
         await login(page, "e2eadmin", "adminpass",);
         await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         await page.locator("[data-testid='admin-header']",).waitFor({ state: "attached", timeout: 30_000, },);
       } finally {
+        errors.assert();
+        errors.detach();
         await page.close();
       }
     }, 60_000,);
