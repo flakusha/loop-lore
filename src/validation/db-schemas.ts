@@ -1768,6 +1768,7 @@ export const WorldTimelineEventsSchema = t.Object({
   actor_id: t.Optional(t.String(),),
   data: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  timeline_id: t.Optional(t.String(),),
 },);
 
 // ── chat_sections ────────────────────────────────────────────
@@ -2019,4 +2020,13 @@ export const TradeHistorySchema = t.Object({
   items_offered: t.Optional(t.String(),),
   items_requested: t.Optional(t.String(),),
   trade_type: t.Optional(t.String(),),
+},);
+
+// ── world_timelines ────────────────────────────────────────────
+export const WorldTimelinesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  description: t.Optional(t.String(),),
+  is_prime: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
 },);
