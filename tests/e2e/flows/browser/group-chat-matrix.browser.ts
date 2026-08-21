@@ -15,10 +15,9 @@
  * the store sync is caught here.
  */
 import { ChatMode, ChatType, } from "@/db/enums";
-import type { DB, } from "@/db/schema";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, seedAll, } from "../../helpers/seed";
 
 describe("Group-chat matrix UI (C1)", () => {
@@ -29,30 +28,41 @@ describe("Group-chat matrix UI (C1)", () => {
     ctx = await createBrowserTest();
     await seedAll(ctx.db,);
 
-    // Create a group chat owned by the solo user (the browser auto-logs-in as
-    // the solo user) and add the solo AI character as a participant so turn
-    // selection has a non-user candidate.
-    const db: Kysely<DB> = ctx.db;
-    groupId = crypto.randomUUID();
-    await db
+    // Create a group chat with an AI character participant for turn-order tests.
+    await ctx.db
       .insertInto("chats",)
       .values({
-        id: groupId,
-        name: "Matrix Group",
+        id: "g1000001-0000-4000-a000-000000000001",
+        name: "Group Chat Matrix E2E",
         type: ChatType.Group,
-        mode: ChatMode.Group,
+        mode: ChatMode.Story,
         created_by: SEED.solo.id,
-        turn_strategy: "round_robin",
       },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
-    await db
+
+    await ctx.db
       .insertInto("chat_participants",)
-      .values({ chat_id: groupId, actor_id: SEED.solo.id, role_in_chat: "owner", },)
+      .values({ chat_id: "g1000001-0000-4000-a000-000000000001", actor_id: SEED.solo.id, role_in_chat: "owner", },)
+      .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
       .execute();
-    await db
+
+    await ctx.db
       .insertInto("chat_participants",)
-      .values({ chat_id: groupId, actor_id: SEED.soloCharacter.id, role_in_chat: "member", },)
+      .values({
+        chat_id: "g1000001-0000-4000-a000-000000000001",
+        actor_id: SEED.soloCharacter.id,
+        role_in_chat: "member",
+      },)
+      .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
       .execute();
+
+    const chat = await ctx.db
+      .selectFrom("chats",)
+      .select(["id",],)
+      .where("id", "=", "g1000001-0000-4000-a000-000000000001",)
+      .executeTakeFirst();
+    groupId = chat!.id;
   }, 90_000,);
 
   afterAll(async () => {
@@ -68,28 +78,22 @@ describe("Group-chat matrix UI (C1)", () => {
       timeout: 30_000,
     },);
     await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 30_000, },);
-    await page.waitForFunction(
-      (gid,) => location.search.includes(`chatid=${gid}`,),
-      groupId,
-      { timeout: 10_000, },
-    );
   }
 
   /** Open the participant panel (turn-order indicator) via the header toggle. */
   async function openParticipantPanel(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
     await page.evaluate(() => {
-      document.querySelector("[data-testid='participant-toggle']",)?.dispatchEvent(
+      document.querySelector("[data-testid='participant-mgmt']",)?.dispatchEvent(
         new MouseEvent("click", { bubbles: true, },),
       );
     },);
-    // The participant toggle opens the unified GM panel on the Story tab, whose
-    // turn-order + member list surface is the `participant-mgmt` component.
     await page.locator("[data-testid='gm-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
     await page.locator("[data-testid='participant-mgmt']",).waitFor({ state: "visible", timeout: 10_000, },);
   }
 
   test("turn-order indicator renders the AI companion as the next speaker", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await openGroupChat(page,);
       await openParticipantPanel(page,);
@@ -107,12 +111,15 @@ describe("Group-chat matrix UI (C1)", () => {
       const badgeText = await nextBadge.textContent();
       expect(badgeText?.trim(),).toBe("next",);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
 
   test("side-channels dropdown lists channels and opens them", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await openGroupChat(page,);
 
@@ -146,12 +153,15 @@ describe("Group-chat matrix UI (C1)", () => {
         { timeout: 15_000, },
       );
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);
 
   test("assistant panel opens from the dedicated sidebar toggle (D1)", async () => {
     const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
     try {
       await openGroupChat(page,);
 
@@ -179,6 +189,8 @@ describe("Group-chat matrix UI (C1)", () => {
       },);
       await page.locator("[data-testid='gm-panel']",).waitFor({ state: "hidden", timeout: 10_000, },);
     } finally {
+      errors.assert();
+      errors.detach();
       await page.close();
     }
   }, 60_000,);

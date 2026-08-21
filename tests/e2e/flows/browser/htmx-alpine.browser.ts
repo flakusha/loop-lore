@@ -18,11 +18,10 @@ import {
   dispatchEvent,
   getAlpineStore,
   navigateViaHtmx,
+  trackPageErrors,
   waitForAlpineReady,
   waitForAlpineState,
 } from "../../helpers/htmx-alpine";
-import { type UiStoreShape, } from "../../fixtures/chat-state-contract";
-
 import { seedAll, } from "../../helpers/seed";
 
 let ctx: BrowserTestContext;
@@ -54,23 +53,28 @@ describe("htmx swap → Alpine init", () => {
   test(
     "Alpine components in htmx-swapped content are initialized",
     async () => {
-      const page = await ctx.browser.newPage();
-      await gotoView(page, "/views/chat",);
-      await waitForAlpineReady(page,);
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-      // Chat page has x-data="chatState()" on the root element
-      const chatRoot = await page.evaluate(() => {
-        const el = document.querySelector("[x-data='chatState()']",);
-        if (!el) { return null; }
-        return {
-          hasAlpineData: "_x_dataStack" in el || "__x" in el,
-          testid: (el as HTMLElement).dataset?.testid || "",
-        };
-      },);
+        const chatRoot = await page.evaluate(() => {
+          const el = document.querySelector("[x-data='chatState()']",);
+          if (!el) { return null; }
+          return {
+            hasAlpineData: "_x_dataStack" in el || "__x" in el,
+            testid: (el as HTMLElement).dataset?.testid || "",
+          };
+        },);
 
-      expect(chatRoot,).not.toBeNull();
-      expect(chatRoot!.hasAlpineData,).toBe(true,);
-      await page.close();
+        expect(chatRoot,).not.toBeNull();
+        expect(chatRoot!.hasAlpineData,).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     },
     45_000,
   );
@@ -78,16 +82,18 @@ describe("htmx swap → Alpine init", () => {
   test(
     "navigating via htmx initializes Alpine on swapped content",
     async () => {
-      const page = await ctx.browser.newPage();
-      await gotoView(page, "/views/chat",);
-      await waitForAlpineReady(page,);
-
-      // Navigate to characters via htmx sidebar link
-      await navigateViaHtmx(page, "nav-characters", "characters-header",);
-
-      // Characters page should be reachable
-      expect(page.url(),).toContain("/views/characters",);
-      await page.close();
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
+        await navigateViaHtmx(page, "nav-characters", "characters-header",);
+        expect(page.url(),).toContain("/views/characters",);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     },
     45_000,
   );
@@ -99,35 +105,33 @@ describe("Morph swap state reset", () => {
   test(
     "$store.ui resets when navigating away from chat",
     async () => {
-      const page = await ctx.browser.newPage();
-      await gotoView(page, "/views/chat",);
-      await waitForAlpineReady(page,);
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-      // Open chat list panel via Alpine store
-      await page.evaluate(() => {
-        Alpine.store("ui",).showChatList = true;
-      },);
-      let uiState = await getAlpineStore<UiStoreShape>(page, "ui",);
-      expect(uiState.showChatList,).toBe(true,);
+        await page.evaluate(() => {
+          Alpine.store("ui",).showChatList = true;
+        },);
+        let uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(true,);
 
-      // Navigate away via htmx morph
-      await navigateViaHtmx(page, "nav-characters", "characters-header",);
+        await navigateViaHtmx(page, "nav-characters", "characters-header",);
+        await navigateViaHtmx(page, "nav-chat",);
 
-      // Navigate back to chat (chat-list has no testid, wait for app-root)
-      await navigateViaHtmx(page, "nav-chat",);
-
-      // After morph re-init, chatState.init() should reset store.
-      // Use waitForAlpineState so we don't race against a slow htmx swap.
-      uiState = await waitForAlpineState<UiStoreShape>(
-        page,
-        "[data-testid='app-root']",
-        (s) => s.showChatList === false && s.showGallery === false && s.showCharacterInfo === false,
-        8000,
-      );
-      expect(uiState.showChatList,).toBe(false,);
-      expect(uiState.showGallery,).toBe(false,);
-      expect(uiState.showCharacterInfo,).toBe(false,);
-      await page.close();
+        // Poll until Alpine settles after morph re-init.
+        // waitForAlpineReady() polls until Alpine has settled after morph re-init.
+        await waitForAlpineReady(page,);
+        uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(false,);
+        expect(uiState.showGallery,).toBe(false,);
+        expect(uiState.showCharacterInfo,).toBe(false,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     },
     45_000,
   );
@@ -136,95 +140,111 @@ describe("Morph swap state reset", () => {
 // ── Panel toggles + Escape key cleanup (ALP.1) ─────────────
 
 describe("Panel toggles + Escape key", () => {
-  test("Escape key closes open panels", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "Escape key closes open panels",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // Open chat list panel via evaluate — avoids Playwright hit-test
-    // issues with force:true and Alpine @click binding
-    await page.evaluate(() => {
-      document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
-        new MouseEvent("click", { bubbles: true, },),
-      );
-    },);
-    // Use Alpine state predicate — avoids race against keyboard event dispatch
-    let uiState = await waitForAlpineState<UiStoreShape>(
-      page,
-      "[data-testid='app-root']",
-      (s) => s.showChatList === true,
-      5000,
-    );
-    expect(uiState.showChatList,).toBe(true,);
+        await page.evaluate(() => {
+          document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
+            new MouseEvent("click", { bubbles: true, },),
+          );
+        },);
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => (state as Record<string, unknown>).showChatList === true,
+          10_000,
+        );
+        let uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(true,);
 
-    // Press Escape — wait for the store flag to flip
-    await page.keyboard.press("Escape",);
-    uiState = await waitForAlpineState<UiStoreShape>(
-      page,
-      "[data-testid='app-root']",
-      (s) => s.showChatList === false,
-      5000,
-    );
-    expect(uiState.showChatList,).toBe(false,);
-    await page.close();
-  });
+        await page.keyboard.press("Escape",);
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => (state as Record<string, unknown>).showChatList === false,
+          10_000,
+        );
+        uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(false,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 
-  test("Escape does not error when no panels are open", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "Escape does not error when no panels are open",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // Press Escape with nothing open — should not throw.
-    // Timing wait: debounce of the keyboard handler is synchronous but the
-    // store update + DOM reflection takes a microtask. A short wait verifies
-    // the handler returned without error.
-    // timing: keyboard event processing + Alpine handler call
-    await page.keyboard.press("Escape",);
-    await page.waitForTimeout(200,);     const uiState = await getAlpineStore<UiStoreShape>(page, "ui",);
-    expect(uiState.showChatList,).toBe(false,);
-    expect(uiState.showGallery,).toBe(false,);
-    expect(uiState.showCharacterInfo,).toBe(false,);
-    await page.close();
-  });
+        await page.keyboard.press("Escape",);
+        // sleep: keyboard event processing
+        await page.waitForTimeout(200,);
+        const uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(false,);
+        expect(uiState.showGallery,).toBe(false,);
+        expect(uiState.showCharacterInfo,).toBe(false,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 
   test(
     "keydown handler works after morph navigation",
     async () => {
-      const page = await ctx.browser.newPage();
-      await gotoView(page, "/views/chat",);
-      await waitForAlpineReady(page,);
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-      // Navigate away and back via morph — wait for chatState Alpine to re-init
-      await navigateViaHtmx(page, "nav-characters", "characters-header",);
-      await navigateViaHtmx(page, "nav-chat",);
-      await waitForAlpineState<UiStoreShape>(
-        page,
-        "[data-testid='app-root']",
-        (s) => s.showChatList === false,
-        8000,
-      );
+        await navigateViaHtmx(page, "nav-characters", "characters-header",);
+        await navigateViaHtmx(page, "nav-chat",);
+        await waitForAlpineReady(page,);
 
-      // Open panel and press Escape — handler from init() should still work
-      await page.evaluate(() => {
-        document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
-          new MouseEvent("click", { bubbles: true, },),
+        await page.evaluate(() => {
+          document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
+            new MouseEvent("click", { bubbles: true, },),
+          );
+        },);
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => (state as Record<string, unknown>).showChatList === true,
+          10_000,
         );
-      },);
-      await waitForAlpineState<UiStoreShape>(
-        page,
-        "[data-testid='app-root']",
-        (s) => s.showChatList === true,
-        5000,
-      );
-      await page.keyboard.press("Escape",);
-      const uiState = await waitForAlpineState<UiStoreShape>(
-        page,
-        "[data-testid='app-root']",
-        (s) => s.showChatList === false,
-        5000,
-      );
-      expect(uiState.showChatList,).toBe(false,);
-      await page.close();
+        await page.keyboard.press("Escape",);
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => (state as Record<string, unknown>).showChatList === false,
+          10_000,
+        );
+
+        const uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(false,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     },
     45_000,
   );
@@ -236,26 +256,29 @@ describe("htmx modal + Alpine", () => {
   test(
     "characters page lazy-loads create modal via htmx",
     async () => {
-      const page = await ctx.browser.newPage();
-      await gotoView(page, "/views/characters",);
-      await page
-        .locator("[data-testid='characters-header']",)
-        .waitFor({ state: "attached", timeout: 15_000, },);
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/characters",);
+        await page
+          .locator("[data-testid='characters-header']",)
+          .waitFor({ state: "attached", timeout: 15_000, },);
 
-      // Click create character button (triggers htmx to load modal)
-      const createBtn = page.locator("[data-testid='create-character']",);
-      await createBtn.waitFor({ state: "attached", timeout: 10_000, },);
-      await createBtn.click();
+        const createBtn = page.locator("[data-testid='create-character']",);
+        await createBtn.waitFor({ state: "attached", timeout: 10_000, },);
+        await createBtn.click();
 
-      // Wait for htmx to load and open the modal
-      await page
-        .locator("[data-testid='create-character-modal']",)
-        .waitFor({ state: "visible", timeout: 15_000, },);
+        await page
+          .locator("[data-testid='create-character-modal']",)
+          .waitFor({ state: "visible", timeout: 15_000, },);
 
-      // Modal should be visible
-      const isVisible = await page.locator("[data-testid='create-character-modal']",).isVisible();
-      expect(isVisible,).toBe(true,);
-      await page.close();
+        const isVisible = await page.locator("[data-testid='create-character-modal']",).isVisible();
+        expect(isVisible,).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     },
     45_000,
   );
@@ -263,25 +286,29 @@ describe("htmx modal + Alpine", () => {
   test(
     "gallery page lazy-loads upload modal via htmx",
     async () => {
-      const page = await ctx.browser.newPage();
-      await gotoView(page, "/views/gallery",);
-      await page
-        .locator("[data-testid='gallery-header']",)
-        .waitFor({ state: "attached", timeout: 15_000, },);
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/gallery",);
+        await page
+          .locator("[data-testid='gallery-header']",)
+          .waitFor({ state: "attached", timeout: 15_000, },);
 
-      // Click upload button
-      const uploadBtn = page.locator("[data-testid='upload-button']",);
-      await uploadBtn.waitFor({ state: "attached", timeout: 10_000, },);
-      await uploadBtn.click();
+        const uploadBtn = page.locator("[data-testid='upload-button']",);
+        await uploadBtn.waitFor({ state: "attached", timeout: 10_000, },);
+        await uploadBtn.click();
 
-      // Wait for modal to appear
-      await page
-        .locator("[data-testid='upload-modal']",)
-        .waitFor({ state: "visible", timeout: 15_000, },);
+        await page
+          .locator("[data-testid='upload-modal']",)
+          .waitFor({ state: "visible", timeout: 15_000, },);
 
-      const isVisible = await page.locator("[data-testid='upload-modal']",).isVisible();
-      expect(isVisible,).toBe(true,);
-      await page.close();
+        const isVisible = await page.locator("[data-testid='upload-modal']",).isVisible();
+        expect(isVisible,).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
     },
     45_000,
   );
@@ -290,80 +317,131 @@ describe("htmx modal + Alpine", () => {
 // ── Toast deduplication (ALP.2) ─────────────────────────────
 
 describe("Toast deduplication", () => {
-  test("show-toast event creates exactly one DOM toast", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "show-toast event creates exactly one DOM toast",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // Dispatch show-toast event
-    await dispatchEvent(page, "show-toast", {
-      type: "success",
-      message: "Test toast",
-    },);
-    // timing: CSS animation delay for toast entrance (not state-asserting)
-    await page.waitForTimeout(200,); 
-    const toasts = await countToasts(page,);
-    expect(toasts,).toBe(1,);
-    await page.close();
-  });
+        await dispatchEvent(page, "show-toast", {
+          type: "success",
+          message: "Test toast",
+        },);
+        await page.waitForFunction(
+          () => document.querySelectorAll("[data-testid^='toast-']",).length > 0,
+          null,
+          { timeout: 10_000, },
+        );
 
-  test("multiple rapid show-toast events create individual toasts", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+        const toasts = await countToasts(page,);
+        expect(toasts,).toBe(1,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 
-    await dispatchEvent(page, "show-toast", { type: "info", message: "First", },);
-    await dispatchEvent(page, "show-toast", { type: "info", message: "Second", },);
-    // timing: CSS animation delay for toast entrance (not state-asserting)
-    await page.waitForTimeout(200,); 
-    const toasts = await countToasts(page,);
-    expect(toasts,).toBe(2,);
-    await page.close();
-  });
+  test(
+    "multiple rapid show-toast events create individual toasts",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
+
+        await dispatchEvent(page, "show-toast", { type: "info", message: "First", },);
+        await dispatchEvent(page, "show-toast", { type: "info", message: "Second", },);
+        await page.waitForFunction(
+          () => document.querySelectorAll("[data-testid^='toast-']",).length >= 2,
+          null,
+          { timeout: 10_000, },
+        );
+
+        const toasts = await countToasts(page,);
+        expect(toasts,).toBe(2,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 });
 
 // ── Sidebar + Alpine store sync ─────────────────────────────
 
 describe("Sidebar store sync", () => {
-  test("hamburger toggles sidebar and syncs Alpine store", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "hamburger toggles sidebar and syncs Alpine store",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // Click hamburger — Alpine event handler opens the sidebar
-    await page.click("[data-testid='hamburger']",);
-    // timing: Alpine event handler + CSS transition (not state-asserting)
-    await page.waitForTimeout(200,); 
-    // Sidebar should be open (CSS class)
-    const sidebarClass = await page.locator("[data-testid='sidebar']",).getAttribute("class",);
-    expect(sidebarClass,).toContain("open",);
+        await page.click("[data-testid='hamburger']",);
+        await page.waitForFunction(
+          () => document.querySelector("[data-testid='sidebar']",)?.classList.contains("open",),
+          null,
+          { timeout: 10_000, },
+        );
 
-    // Alpine store should sync
-    const store = await getAlpineStore<{ open: boolean }>(page, "sidebar",);
-    expect(store.open,).toBe(true,);
-    await page.close();
-  });
+        const sidebarClass = await page.locator("[data-testid='sidebar']",).getAttribute("class",);
+        expect(sidebarClass,).toContain("open",);
 
-  test("Escape key closes sidebar when open", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+        const store = await getAlpineStore<{ open: boolean }>(page, "sidebar",);
+        expect(store.open,).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 
-    // Open sidebar
-    await page.click("[data-testid='hamburger']",);
-    // timing: Alpine event handler + CSS transition (not state-asserting)
-    await page.waitForTimeout(200,); 
-    // Press Escape
-    await page.keyboard.press("Escape",);
-    // timing: keyboard event processing + CSS transition (not state-asserting)
-    await page.waitForTimeout(200,); 
-    const sidebarClass = await page.locator("[data-testid='sidebar']",).getAttribute("class",);
-    expect(sidebarClass,).not.toContain("open",);
-    await page.close();
-  });
+  test(
+    "Escape key closes sidebar when open",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
+
+        await page.click("[data-testid='hamburger']",);
+        await page.waitForFunction(
+          () => document.querySelector("[data-testid='sidebar']",)?.classList.contains("open",),
+          null,
+          { timeout: 10_000, },
+        );
+
+        await page.keyboard.press("Escape",);
+        // sleep: CSS transition for sidebar close
+        await page.waitForTimeout(200,);
+
+        const sidebarClass = await page.locator("[data-testid='sidebar']",).getAttribute("class",);
+        expect(sidebarClass,).not.toContain("open",);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 });
 
-// ── Notifications lifecycle (ALP.6) ───────────────────────
+// ── Notifications lifecycle (ALP.6) ────────────────────────
 
 // Note: notifications.ts is tree-shaken out of the production bundle
 // (globalThis.notifications not available). ALP.6 fix (cleanup handlers
@@ -371,129 +449,150 @@ describe("Sidebar store sync", () => {
 // is kept as a placeholder for when the module is re-included.
 
 describe("Notifications manager lifecycle", () => {
-  test("notifications module import is present in source", async () => {
-    // Verify the source file exists and has the expected shape.
-    // The actual runtime test requires the module in the bundle.
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "notifications module import is present in source",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // At minimum, the page loads without errors — notifications import
-    // in index.ts would fail at bundle time if the module were broken.
-    const appRoot = await page.locator("[data-testid='app-root']",).isVisible();
-    expect(appRoot,).toBe(true,);
-    await page.close();
-  });
+        const appRoot = await page.locator("[data-testid='app-root']",).isVisible();
+        expect(appRoot,).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 });
 
 // ── Chat list selection + Alpine state ──────────────────────
 
 describe("Chat list selection", () => {
-  test("selecting a chat enables input and sets store state", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "selecting a chat enables input and sets store state",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // Open chat list
-    await page.click("[data-testid='toggle-chat-list']",);
-    await waitForAlpineState<UiStoreShape>(
-      page,
-      "[data-testid='app-root']",
-      (s) => s.showChatList === true,
-      5000,
-    );
+        await page.click("[data-testid='toggle-chat-list']",);
+        await page.locator("[data-testid='chat-list-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
 
-    // Click first chat
-    const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
-    await chatItem.waitFor({ state: "attached", timeout: 10_000, },);
-    await chatItem.click();
-    // Wait for activeChat to be set (causes message list to re-render)
-    await waitForAlpineState<UiStoreShape>(
-      page,
-      "[data-testid='app-root']",
-      (s) => s.hasActiveChat === true,
-      5000,
-    );
+        const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
+        await chatItem.waitFor({ state: "attached", timeout: 10_000, },);
+        await chatItem.click();
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => !!(state as Record<string, unknown>).activeChat,
+          10_000,
+        );
 
-    // Input should be enabled
-    const disabled = await page.getAttribute("[data-testid='message-input']", "disabled",);
-    expect(disabled,).toBeNull();
+        const disabled = await page.getAttribute("[data-testid='message-input']", "disabled",);
+        expect(disabled,).toBeNull();
 
-    // Alpine store should reflect active chat
-    const uiState = await getAlpineStore<UiStoreShape>(page, "ui",);
-    expect(uiState.hasActiveChat,).toBe(true,);
-    await page.close();
-  });
+        const uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.hasActiveChat,).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 });
 
 // ── Chat window modals open (regression for x-show + .open CSS) ──
 
 describe("Chat window modals open", () => {
-  test("chat settings modal becomes visible when store toggled (.open fix)", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "chat settings modal becomes visible when store toggled (.open fix)",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // Header "Chat settings" button sets this store flag.
-    await page.evaluate(() => {
-      Alpine.store("ui",).showChatSettings = true;
-    },);
-    // Wait for modal DOM + CSS transition (x-show adds .open class)
-    const modal = page.locator("[data-testid='chat-settings-modal']",);
-    await modal.waitFor({ state: "visible", timeout: 10_000, },);
-    // timing: CSS transition for modal entrance (not state-asserting)
-    await page.waitForTimeout(300,); 
-    const cls = await modal.getAttribute("class",);
-    expect(cls,).toContain("open",);
-    expect(await modal.isVisible(),).toBe(true,);
-    await page.close();
-  });
+        await page.evaluate(() => {
+          Alpine.store("ui",).showChatSettings = true;
+        },);
+        const modal = page.locator("[data-testid='chat-settings-modal']",);
+        await modal.waitFor({ state: "visible", timeout: 10_000, },);
+        const cls = await modal.getAttribute("class",);
+        expect(cls,).toContain("open",);
+        expect(await modal.isVisible(),).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 
-  test("chat settings button opens modal after selecting a chat", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "chat settings button opens modal after selecting a chat",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    await page.click("[data-testid='toggle-chat-list']",);
-    await waitForAlpineState<UiStoreShape>(
-      page,
-      "[data-testid='app-root']",
-      (s) => s.showChatList === true,
-      5000,
-    );
-    const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
-    await chatItem.waitFor({ state: "attached", timeout: 10_000, },);
-    await chatItem.click();
-    await waitForAlpineState<UiStoreShape>(
-      page,
-      "[data-testid='app-root']",
-      (s) => s.hasActiveChat === true,
-      5000,
-    );
+        await page.click("[data-testid='toggle-chat-list']",);
+        await page.locator("[data-testid='chat-list-panel'] .nav-item",).first().waitFor({
+          state: "attached",
+          timeout: 10_000,
+        },);
+        await page.locator("[data-testid='chat-list-panel'] .nav-item",).first().click();
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => !!(state as Record<string, unknown>).activeChat,
+          10_000,
+        );
 
-    await page.click("[data-testid='toggle-chat-settings']",);
-    // Wait for modal DOM + CSS transition (x-show adds .open class)
-    const modal = page.locator("[data-testid='chat-settings-modal']",);
-    await modal.waitFor({ state: "visible", timeout: 10_000, },);
-    // timing: CSS transition for modal entrance (not state-asserting)
-    await page.waitForTimeout(400,); 
-    expect(await modal.isVisible(),).toBe(true,);
-    await page.close();
-  });
+        await page.click("[data-testid='toggle-chat-settings']",);
+        const modal = page.locator("[data-testid='chat-settings-modal']",);
+        await modal.waitFor({ state: "visible", timeout: 10_000, },);
+        expect(await modal.isVisible(),).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 
-  test("user preferences modal opens via header button", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat",);
-    await waitForAlpineReady(page,);
+  test(
+    "user preferences modal opens via header button",
+    async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        await gotoView(page, "/views/chat",);
+        await waitForAlpineReady(page,);
 
-    // "User preferences" button dispatches a window 'settings-modal' event.
-    await page.click("[data-testid='toggle-user-preferences']",);
-    // Wait for modal DOM + CSS transition (x-show adds .open class)
-    const title = page.locator("[data-testid='settings-modal-title']",);
-    await title.waitFor({ state: "visible", timeout: 10_000, },);
-    // timing: CSS transition for modal entrance (not state-asserting)
-    await page.waitForTimeout(400,); 
-    expect(await title.isVisible(),).toBe(true,);
-    await page.close();
-  });
+        await page.click("[data-testid='toggle-user-preferences']",);
+        const title = page.locator("[data-testid='settings-modal-title']",);
+        await title.waitFor({ state: "visible", timeout: 10_000, },);
+        expect(await title.isVisible(),).toBe(true,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    },
+    45_000,
+  );
 });
