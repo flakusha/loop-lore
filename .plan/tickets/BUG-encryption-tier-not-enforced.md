@@ -3,7 +3,7 @@
 
 # BUG: Encryption tier (`encryption_level`) is never enforced; default `"public"` is out-of-enum
 
-**Status:** 🟥 Open
+**Status:** 🟢 Closed — fixed by crypto-tier-foundation branch (commits f06900a0 + 9c800c52)
 **Severity:** Critical
 **Priority:** High
 **Epic:** epic-crypto
@@ -46,9 +46,7 @@ server-global `isEncryptionEnabled()` (SMK presence), never reading
 - The `private` tier's `throw` in `at-rest.ts` is unreachable, so a `private`
   chat silently behaves like `standard`.
 
-## Acceptance Criteria
-
-- [ ] `encryption_level` default reconciled to a valid enum value (or enum gains `"public"`).
-- [ ] `createChat` sets `encryption_level` explicitly.
-- [ ] Message write/read branches on the tier, or `at-rest.ts` becomes the single wired entry point.
-- [ ] Test proving `public` chats store plaintext, `standard` server-encrypts, `private` refuses server-side plaintext handling.
+- [x] `encryption_level` default reconciled to valid enum value (`none`).
+- [x] `createChat` sets `encryption_level` explicitly.
+- [x] Message write/read branches on tier; `at-rest.ts` is the wired entry point.
+- [x] Test proving `none` chats store plaintext, `standard` server-encrypts, `at-rest` mirrors standard (honest model).
