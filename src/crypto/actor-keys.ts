@@ -71,7 +71,7 @@ async function decryptWithSmk(smk: CryptoKey, encryptedValue: string,): Promise<
   return decryptBytes(smk, encryptedValue,);
 }
 
-async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Promise<string> {
+export async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH,),);
   const input = toBufferSource(plaintext,);
   const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv, }, key, input,);
@@ -80,7 +80,7 @@ async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Promise<str
   return `${ivB64}:${ctB64}`;
 }
 
-async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<Uint8Array> {
+export async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<Uint8Array> {
   const colonIdx = encrypted.indexOf(":",);
   if (colonIdx === -1) { throw new Error("Invalid encrypted key format",); }
   const iv = toBufferSource(Uint8Array.fromBase64(encrypted.slice(0, colonIdx,),),);
