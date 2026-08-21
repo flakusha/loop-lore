@@ -1207,6 +1207,13 @@ export const SCHEMA = new SchemaManifest()
     uses: col("integer", { notNull: true, hasDefault: true, },),
     status: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("chat_keys", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    encrypted_chat_key: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+  },)
   .table("chat_location_events", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),

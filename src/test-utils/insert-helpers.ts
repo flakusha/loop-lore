@@ -3147,3 +3147,18 @@ export async function insertWorldTimelines(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a chat_keys row. */
+export async function insertChatKeys(
+  db: Db,
+  chat_id: string,
+  encrypted_chat_key: string,
+  opts?: { id?: Generated<string>; created_at?: Generated<string>; expires_at?: string | null },
+): Promise<void> {
+  await db.insertInto("chat_keys",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    encrypted_chat_key,
+    ...opts,
+  } as any,).execute();
+}

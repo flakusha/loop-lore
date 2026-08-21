@@ -137,4 +137,5 @@ export interface DB {
   trade_history: import("./schema-core").TradeHistory;
   memory_embeddings: import("./schema-core").MemoryEmbeddings;
   world_timelines: import("./schema-core").WorldTimelines;
+  chat_keys: import("./schema-core").ChatKeys;
 }
