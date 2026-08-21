@@ -21,6 +21,7 @@ export const MessageContentType = {
   Narration: "narration",
   System: "system",
   Continuation: "continuation",
+  MusicLink: "music_link",
 } as const;
 export type MessageContentType = (typeof MessageContentType)[keyof typeof MessageContentType];
 
