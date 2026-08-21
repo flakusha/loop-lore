@@ -32,6 +32,7 @@ describe("Settings flow E2E", () => {
     await page.locator("[data-testid='settings-header']",).waitFor({ state: "attached", timeout: 30_000, },);
     // Wait for settings to load (save button enabled only once loaded).
     await page.locator("[data-testid='save-general']",).waitFor({ state: "visible", timeout: 30_000, },);
+    // sleep: Alpine event binding after form load
     await page.waitForTimeout(500,);
   }
 
@@ -44,8 +45,13 @@ describe("Settings flow E2E", () => {
 
         const displayName = `Browser-User-${Date.now()}`;
         await page.fill("#displayName", displayName,);
+        // Wait for the PUT /api/users/me response to complete before DB check.
+        const saveRes = page.waitForResponse(
+          (res,) => res.url().includes("/api/users/me",) && res.request().method() === "PUT",
+          { timeout: 30_000, },
+        );
         await page.click("[data-testid='save-general']",);
-        await page.waitForTimeout(800,);
+        await saveRes;
 
         // PUT /api/users/me sets users.display_name for the solo user.
         const row = await ctx.db
@@ -69,9 +75,13 @@ describe("Settings flow E2E", () => {
         await gotoSettings(page,);
 
         const theme = "dracula";
+        // Wait for the PATCH /api/users/me/settings response to complete.
+        const settingsRes = page.waitForResponse(
+          (res,) => res.url().includes("/api/users/me/settings",) && res.request().method() === "PATCH",
+          { timeout: 30_000, },
+        );
         await page.selectOption("[data-testid='theme-select']", theme,);
-        // @change calls saveGeneral() automatically.
-        await page.waitForTimeout(800,);
+        await settingsRes;
 
         const row = await ctx.db
           .selectFrom("users",)
@@ -98,6 +108,7 @@ describe("Settings flow E2E", () => {
       try {
         await gotoSettings(page,);
         await page.locator(".world-edit-tab",).filter({ hasText: "Keys", },).first().click();
+        // sleep: Alpine x-show transition for tab panel
         await page.waitForTimeout(500,);
         await page.locator("[data-testid='settings-keys']",).waitFor({ state: "visible", timeout: 15_000, },);
       } finally {
