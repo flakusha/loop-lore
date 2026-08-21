@@ -36,6 +36,7 @@ export interface DB {
   characters: import("./schema-core").Characters;
   world_items: import("./schema-story").WorldItems;
   actor_memories: import("./schema-story").ActorMemories;
+  memory_embeddings: import("./schema-story").MemoryEmbeddings;
   actor_notes: import("./schema-core").ActorNotes;
   actor_items: import("./schema-core").ActorItems;
   actor_currencies: import("./schema-core").ActorCurrencies;
