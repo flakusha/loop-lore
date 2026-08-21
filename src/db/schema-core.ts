@@ -482,6 +482,7 @@ export interface WorldTimelineEvents {
   data: string | null;
   occurred_at: string;
   created_at: Generated<string>;
+  timeline_id: Generated<string>;
 }
 
 // ── chat_sections ────────────────────────────────────────────
@@ -737,3 +738,13 @@ export interface TradeHistory {
   created_at: string;
 }
 
+
+
+export interface WorldTimelines {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  description: string | null;
+  is_prime: Generated<number>;
+  created_at: Generated<string>;
+}
