@@ -52,8 +52,9 @@ function parseTicketFile(filePath: string,): TicketFile | null {
 
     // Extract title from first heading
     const titleMatch = lines.find((l,) => l.startsWith("# ",));
-    const title = titleMatch?.replace(/^#\s+(?:TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA):\s*/i, "",).trim() ??
-      filename.replace(/\.md$/, "",);
+    const title =
+      titleMatch?.replace(/^#\s+(?:TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA|TEST|PERF|WIRE|IMPROVE):\s*/i, "",).trim() ??
+        filename.replace(/\.md$/, "",);
 
     // Extract metadata fields
     const statusMatch = raw.match(/\*\*Status:\*\*\s*(.+)/i,);
@@ -61,7 +62,7 @@ function parseTicketFile(filePath: string,): TicketFile | null {
     const epicMatch = raw.match(/\*\*Epic:\*\*\s*(.+)/i,);
 
     // Extract type from heading
-    const typeMatch = titleMatch?.match(/^#\s+(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA)/i,);
+    const typeMatch = titleMatch?.match(/^#\s+(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA|TEST|PERF|WIRE|IMPROVE)/i,);
     const type = typeMatch?.[1]?.toUpperCase() ?? guessType(filename,);
 
     // Extract hash from content (7+ hex chars, likely git issue hash)
@@ -92,7 +93,9 @@ function parseTicketFile(filePath: string,): TicketFile | null {
 
 function guessType(filename: string,): string {
   const prefix = filename.split("-",)[0]?.toUpperCase();
-  if (["TASK", "FEAT", "BUG", "FIX", "EPIC", "SOL", "INFRA",].includes(prefix ?? "",)) {
+  if (
+    ["TASK", "FEAT", "BUG", "FIX", "EPIC", "SOL", "INFRA", "TEST", "PERF", "WIRE", "IMPROVE",].includes(prefix ?? "",)
+  ) {
     return prefix!;
   }
   return "TASK";
@@ -313,7 +316,7 @@ Options:
   }
 
   const mdFiles = readdirSync(TICKETS_DIR,).filter(
-    (f,) => f.endsWith(".md",) && /^(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA)-/i.test(f,),
+    (f,) => f.endsWith(".md",) && /^(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA|TEST|PERF|WIRE|IMPROVE)-/i.test(f,),
   );
 
   const ticketFiles: TicketFile[] = [];
