@@ -24,9 +24,27 @@
 ## P2 — Core Workstream (Next Work)
 
 > Emphasis: VN mode, chat, assistant, tool calling, GM flows, GM-guided story, auth/access,
-> gallery. RPG mechanics deferred to P2-later — **except the item-systems backend wiring
-> which merged to `dev` 2026-08-14 from worktree `rpg-wire-routes`** (see P2-later row + `epic-rpg-wiring-phase3.md`).
+> gallery, reconcile bugs (build-fix + security + broken features). RPG mechanics deferred to
+> P2-later — **except the item-systems backend wiring which merged to `dev` 2026-08-14 from
+> worktree `rpg-wire-routes`** (see P2-later row + `epic-rpg-wiring-phase3.md`).
 > Detailed per-tier tickets live in `../tickets/`.
+
+### P2-Reconcile — Reconcile Bugs (Build-fix + Security + Broken Features)
+
+> Added 2026-08-21 from reconcile review (Scout Batch C). 9 tickets, all high-priority defects
+> that block 0.1.0 quality.
+
+| Ticket | Area | Effort | Why P2 |
+|--------|------|--------|--------|
+| `BUG-gallery-duplicate-serveGalleryGrid` | gallery | Trivial | Build broken |
+| `BUG-impersonate-buildimpresult-referenceerror` | impersonation | Small | Impersonation broken (ReferenceError) |
+| `BUG-impersonate-commands-register-empty-callback` | impersonation | Small | Impersonate commands no-op |
+| `BUG-npc-navigation-routes-all-stubbed` | npcs | Large | NPC nav entirely stubbed |
+| `BUG-users-persona-handlers-horizontal-priv-esc` | users/personas | Small | **Security** — missing role check |
+| `BUG-chat-swipe-index-race` | chat | Small | Data corruption risk |
+| `WIRE-impersonate-command-palette-no-actionpayload-dispatch` | impersonation | Medium | Impersonate FE dead |
+| `WIRE-characters-create-avatar-linking-missing` | characters | Medium | Character creation missing asset wiring |
+| `WIRE-nsfw-audit-page-missing-inline-authz` | nsfw | Small | **Security** — unguarded audit route |
 
 | Tier     | Topic                                 | Tickets                                                                                                                                                                               | Status                                                                                                                                                        |
 | -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
