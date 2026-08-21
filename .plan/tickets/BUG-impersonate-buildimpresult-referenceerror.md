@@ -3,45 +3,29 @@
 
 # BUG: impersonate buildImpersonateResult ReferenceError on undefined `target`
 
-**Status:** Open
+**Status:** Not A Bug — Already Fixed
 **Priority:** high
+**Priority Tier:** P2
 **Effort:** Small
 **Area:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-1)
+**Resolved:** 2026-08-21
+
+## Resolution
+
+`target` IS correctly declared at `src/assistant/commands/impersonate.ts:20`:
+
+```ts
+const target = args.join(" ",).toLowerCase();
+```
+
+The ticket described stale code. The `buildImpersonateResult` function is correct as written. No fix required.
 
 ## Evidence
 
-`src/assistant/commands/impersonate.ts:10-25` — `function buildImpersonateResult(args, usageMsg)` references `target` at L21 which is never declared. `args` parameter is unused inside the function body — `target = args.join(...)` assignment is missing.
+Current implementation (lines 10-36):
+- Line 11: `if (args.length === 0)` — args used in guard ✓
+- Line 20: `const target = args.join(" ",).toLowerCase()` — target declared ✓
+- Line 21: `if (target === "off" || target === "stop")` — target used correctly ✓
 
-```ts
-function buildImpersonateResult(args: string[], usageMsg: string) {
-  // args is never used — target never assigned
-  const charName = target.split("/")[0]; // ReferenceError: target is not defined
-  return { systemMessage: { ... } };
-}
-```
-
-## Impact
-
-Registration-time ReferenceError when any user fires `/impersonate` or `/char`; entire impersonation flow dead at runtime.
-
-## Fix
-
-```ts
-function buildImpersonateResult(args: string[], usageMsg: string) {
-  const target = args.join(" ").toLowerCase();
-  const charName = target.split("/")[0];
-  ...
-}
-```
-
-## Verification
-
-- Unit test: call `buildImpersonateResult(["Eldon", "friendly"], ...)` → no throw, charName === "eldon".
-- E2E: fire `/impersonate Eldon` in a chat → no console error.
-
-## Acceptance Criteria
-
-- [ ] `buildImpersonateResult` no ReferenceError
-- [ ] `charName` correctly parsed from args
-- [ ] Existing impersonation tests pass
+The function correctly joins args, lowercases, and handles "off"/"stop" as toggle.
