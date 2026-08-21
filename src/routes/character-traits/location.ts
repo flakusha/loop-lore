@@ -1,152 +1,103 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * Location-scoped trait routes (Layer 3).
+ */
 import { Elysia, t, } from "elysia";
 import { TraitsService, } from "../../characters/services/traits-service";
-import type { TranslatorFn, } from "../../i18n/types";
 import {
   ErrorResponse,
-  Id,
-  ListResponse,
   LocationTraitCreateBody,
-  LocationTraitUpdateBody,
   SuccessResponse,
   TraitResponse,
 } from "../../validation/schemas";
-import { checkActorOwnership, } from "../actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
-import type { HandlerOpts, } from "./types";
+import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 
-/**
- * Location Traits (Layer 3) sub-plugin — CRUD for actor location-specific traits.
- */
-export function locationTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
+const ActorIdLocationParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  locationId: t.String({ format: "uuid", },),
+},);
+
+const ActorIdLocationTraitParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  locationId: t.String({ format: "uuid", },),
+  traitName: t.String(),
+},);
+
+export function locationTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 
-  return (
-    new Elysia({ name: "character-traits-location", },)
-      .get(`${prefix}/actors/:actorId/traits/location/:locationId`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const t = ctx.t as TranslatorFn | undefined;
+  return new Elysia({ name: "character-traits-location", },)
+    .get(`${prefix}/actors/:actorId/traits/location/:locationId`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-        const { actorId, locationId, } = ctx.params;
+      const { actorId, locationId, } = ctx.params as { actorId: string; locationId: string };
+      const traits = await traitsService.getLocationTraits(actorId, locationId,);
+      return jsonResponse(traits,);
+    }, {
+      params: ActorIdLocationParams,
+      response: { 200: t.Array(TraitResponse,), 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "List location traits",
+        description: "List all location-scoped traits for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .post(`${prefix}/actors/:actorId/traits/location/:locationId`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-        }
-        const traits = await traitsService.getLocationTraits(actorId, locationId,);
-        return jsonResponse(traits,);
-      }, {
-        params: t.Object({ actorId: Id, locationId: Id, },),
-        response: {
-          200: ListResponse(TraitResponse,),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-      },)
-      .get(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const t = ctx.t as TranslatorFn | undefined;
+      const { actorId, locationId, } = ctx.params as { actorId: string; locationId: string };
+      const body = (ctx.body ?? {}) as Record<string, unknown>;
 
-        const { actorId, locationId, traitName, } = ctx.params;
+      const { trait_category, trait_name, value, bonus, penalty, effects, } = body;
+      if (!trait_name) {
+        return jsonError({ message: "trait_name is required", status: HttpStatus.BadRequest, },);
+      }
 
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-        }
-        const trait = await traitsService.getLocationTrait(actorId, locationId, traitName,);
-        if (!trait) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },); }
-        return jsonResponse(trait,);
-      }, {
-        params: t.Object({ actorId: Id, locationId: Id, traitName: t.String(), },),
-        response: {
-          200: TraitResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-      },)
-      .post(`${prefix}/actors/:actorId/traits/location/:locationId`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const t = ctx.t as TranslatorFn | undefined;
+      const id = await traitsService.createLocationTrait({
+        actorId,
+        locationId,
+        category: (trait_category as string | undefined) ?? "custom",
+        name: trait_name as string,
+        value: (value as string | undefined) ?? "",
+        bonus: bonus as number | undefined,
+        penalty: penalty as number | undefined,
+        effects: effects as string | undefined,
+      },);
+      return jsonCreated({ id, },);
+    }, {
+      params: ActorIdLocationParams,
+      body: LocationTraitCreateBody,
+      response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Create location trait",
+        description: "Create a location-scoped trait for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .delete(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-        const { actorId, locationId, } = ctx.params;
-
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-        }
-        const { trait_category, trait_name, value, bonus, penalty, effects, } = ctx.body;
-
-        const traitId = await traitsService.createLocationTrait({
-          actorId,
-          locationId,
-          category: trait_category,
-          name: trait_name,
-          value,
-          bonus: bonus ?? 0,
-          penalty: penalty ?? 0,
-          effects: effects ?? "",
-        },);
-        return jsonCreated({ id: traitId, },);
-      }, {
-        params: t.Object({ actorId: Id, locationId: Id, },),
-        body: LocationTraitCreateBody,
-        response: {
-          200: TraitResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-      },)
-      .put(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const t = ctx.t as TranslatorFn | undefined;
-
-        const { actorId, locationId, traitName, } = ctx.params;
-
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-        }
-        const { value, bonus, penalty, effects, } = ctx.body;
-
-        await traitsService.updateLocationTrait(actorId, locationId, {
-          name: traitName,
-          value,
-          bonus: bonus ?? 0,
-          penalty: penalty ?? 0,
-          effects: effects ?? {},
-        },);
-        return jsonResponse({ ok: true, },);
-      }, {
-        params: t.Object({ actorId: Id, locationId: Id, traitName: t.String(), },),
-        body: LocationTraitUpdateBody,
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-      },)
-      .delete(`${prefix}/actors/:actorId/traits/location/:locationId/:traitName`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const t = ctx.t as TranslatorFn | undefined;
-
-        const { actorId, locationId, traitName, } = ctx.params;
-
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-        }
-        await traitsService.deleteLocationTrait(actorId, locationId, traitName,);
-        return jsonNoContent();
-      }, {
-        params: t.Object({ actorId: Id, locationId: Id, traitName: t.String(), },),
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-      },)
-  );
+      const { actorId, locationId, traitName, } = ctx.params as {
+        actorId: string;
+        locationId: string;
+        traitName: string;
+      };
+      await traitsService.deleteLocationTrait(actorId, locationId, traitName,);
+      return jsonNoContent();
+    }, {
+      params: ActorIdLocationTraitParams,
+      response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Delete location trait",
+        description: "Delete a location-scoped trait from an actor.",
+        tags: ["Character Traits",],
+      },
+    },);
 }
