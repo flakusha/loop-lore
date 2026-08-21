@@ -7,7 +7,7 @@
  * These centralize the encryption/decryption of `messages.content` so every
  * read path (prompt assembly, exports, context/token counting, message list)
  * and every write path (auto-gen, generate-route, game-master narration) uses
- * the same rules as the canonical inline implementation in `routes/messages.ts`.
+ * the tier-aware at-rest layer.
  *
  * Invariant: a message row is encrypted **iff** its `key_id` is set. Unencrypted
  * rows carry an opaque `content_encoding` (usually `identity`, or `gzip` for
@@ -19,12 +19,7 @@ import { decodeContent, } from "../content/decode";
 import type { ContentEncoding, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { ensureActorKey, } from "./actor-keys";
-import { deriveChatKeyForChat, } from "./chat-keys";
-import {
-  compressThenEncrypt,
-  decryptThenDecompress,
-  type PipelineConfig,
-} from "./pipeline";
+import { decryptAtRest, encryptAtRest, getChatEncryptionLevel, } from "./at-rest";
 
 /** The parts of a message row the encryption helpers need. */
 export interface MessageContentRef {
@@ -40,7 +35,7 @@ export interface EncryptMessageOpts {
   actorId: string;
   plaintext: string;
   smk: CryptoKey;
-  pipeline?: PipelineConfig;
+  pipeline?: { threshold?: number; algorithm?: string };
 }
 
 export interface EncryptMessageResult {
@@ -49,12 +44,12 @@ export interface EncryptMessageResult {
 }
 
 /**
- * Encrypt (and compress) a plaintext message body for a chat, ensuring the
- * actor key exists first (a prerequisite for per-chat key derivation).
+ * Encrypt (and compress) a plaintext message body for a chat.
  *
- * Always returns a `{storedContent, keyId}` pair; the caller decides whether
- * encryption is enabled. When the caller does not want encryption, ignore the
- * result and store plaintext with `content_encoding = identity`.
+ * The chat's encryption tier is read from the database via
+ * `getChatEncryptionLevel`. This function delegates entirely to `encryptAtRest`,
+ * which handles tier-aware encryption (none → plaintext, standard → AES-256-GCM,
+ * private → throws with guidance to pre-encrypt client-side).
  */
 export async function encryptMessageContent({
   database,
@@ -64,34 +59,40 @@ export async function encryptMessageContent({
   smk,
   pipeline,
 }: EncryptMessageOpts,): Promise<EncryptMessageResult> {
-  // ensureActorKey is required before deriveChatKeyForChat — without it the
-  // actor_key row is missing and per-chat derivation crashes in story/GM chats.
+  // ensureActorKey is required before deriveChatKeyForChat in the standard path —
+  // without it the actor_keys row is missing and per-chat derivation crashes.
   await ensureActorKey({ database, actorId, smk, },);
-  const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-  const storedContent = await compressThenEncrypt({
+  const encryptionLevel = await getChatEncryptionLevel(database, chatId,);
+  const result = await encryptAtRest({
+    database,
+    chatId,
     plaintext,
-    chatKey: chatKey.key,
-    keyId: chatKey.keyId,
+    encryptionLevel,
     config: pipeline,
   },);
-  return { storedContent, keyId: chatKey.keyId, };
+  return { storedContent: result.storedContent, keyId: result.keyId, };
 }
 
 /**
- * Read a message's content to plaintext, decrypting when the row is encrypted.
+ * Read a message's content to plaintext, decrypting based on the chat's tier.
  *
- * @throws If the row is encrypted but decryption fails (tampered / wrong key),
- *         or if `key_id` is set but no SMK is loaded.
+ * The chat's encryption tier is read from the database. This function delegates
+ * entirely to `decryptAtRest`, which handles tier-aware decryption
+ * (none → identity/decode, standard → decrypt-then-decompress, private → throws).
+ *
+ * @throws If decryption fails (tampered / wrong key) or if no SMK is available
+ *         for a standard-tier chat.
  */
 export async function decryptMessageContent(
   database: Kysely<DB>,
   message: MessageContentRef,
-  smk: CryptoKey,
+  _smk: CryptoKey,
 ): Promise<string> {
-  if (!message.key_id) {
-    const enc = message.content_encoding as ContentEncoding;
-    return enc === "identity" ? message.content : decodeContent(message.content, enc,);
-  }
-  const chatKey = await deriveChatKeyForChat(database, message.chat_id, smk,);
-  return decryptThenDecompress(message.content, chatKey.key,);
+  const encryptionLevel = await getChatEncryptionLevel(database, message.chat_id,);
+  return decryptAtRest({
+    database,
+    chatId: message.chat_id,
+    storedContent: message.content,
+    encryptionLevel,
+  },);
 }

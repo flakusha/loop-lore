@@ -7,7 +7,9 @@ import { PromptAssembler, } from "../../assistant/prompt-assembler";
 import {
   compressThenEncrypt,
   deriveChatKeyForChat,
+  encryptAtRest,
   ensureActorKey,
+  getChatEncryptionLevel,
   getSmk,
   isEncryptionEnabled,
 } from "../../crypto";
@@ -47,7 +49,9 @@ export interface GenDeps {
   getSmk: () => CryptoKey | null;
   ensureActorKey: typeof ensureActorKey;
   deriveChatKeyForChat: typeof deriveChatKeyForChat;
+  getChatEncryptionLevel: typeof getChatEncryptionLevel;
   compressThenEncrypt: typeof compressThenEncrypt;
+  encryptAtRest: typeof encryptAtRest;
   markedParse: (src: string, opts?: Record<string, unknown>,) => string;
   createPromptAssembler: (db: Kysely<DB>,) => PromptAssembler;
   /** Self-references for recursive calls (set automatically). */
@@ -69,10 +73,11 @@ export function createDefaultDeps(): GenDeps {
     callWithFailover,
     buildFailoverList,
     isEncryptionEnabled,
-    getSmk,
     ensureActorKey,
     deriveChatKeyForChat,
+    getChatEncryptionLevel,
     compressThenEncrypt,
+    encryptAtRest,
     markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
     createPromptAssembler: (db,) => new PromptAssembler(db,),
     triggerAutoGeneration,

@@ -136,24 +136,23 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   let storedKeyId: string | null = null;
   const contentEncoding = ContentEncoding.Identity;
 
-  if (deps.isEncryptionEnabled()) {
-    const smk = deps.getSmk()!;
-    // ensureActorKey is required before deriveChatKeyForChat — without it the
-    // actor_key row is missing and derivation crashes in story/GM chats
-    // (the actor may never have been provisioned on this chat's path).
-    await deps.ensureActorKey({ database, actorId: turnResult.actorId, smk, },);
-    const chatKey = await deps.deriveChatKeyForChat(database, chatId, smk,);
-    storedContent = await deps.compressThenEncrypt({
-      plaintext: turnResult.prompt,
-      chatKey: chatKey.key,
-      keyId: chatKey.keyId,
-      config: {
-        threshold: config.encryption.compressThreshold,
-        algorithm: config.encryption.compressAlgorithm,
-      },
-    },);
-    storedKeyId = chatKey.keyId;
-  }
+  // ensureActorKey is required before deriveChatKeyForChat in the standard path —
+  // without it the actor_keys row is missing and per-chat derivation crashes.
+  const smk = deps.getSmk() ?? undefined;
+  if (smk) { await deps.ensureActorKey({ database, actorId: turnResult.actorId, smk, },); }
+  const encryptionLevel = await deps.getChatEncryptionLevel(database, chatId,);
+  const result = await deps.encryptAtRest({
+    database,
+    chatId,
+    plaintext: turnResult.prompt,
+    encryptionLevel,
+    config: {
+      threshold: config.encryption.compressThreshold,
+      algorithm: config.encryption.compressAlgorithm,
+    },
+  },);
+  storedContent = result.storedContent;
+  storedKeyId = result.keyId;
 
   // Detect the dominant emotion on the generated story content via the same
   // EmotionHook used by the regular path (gated on config.hooks.enableEmotionHooks),

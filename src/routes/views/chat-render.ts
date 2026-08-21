@@ -81,7 +81,7 @@ function renderChatListItems(rows: {
     const name = escapeHtml(r.name,);
     const typeLabel = r.type === "group" ? "👥" : "💬";
     const pinned = r.is_pinned === "pinned" ? " ★" : "";
-    const encryptionBadge = r.encryption_level !== "public" && r.encryption_level !== "none"
+    const encryptionBadge = r.encryption_level !== "none"
       ? `<span title="Encrypted (${
         escapeHtml(r.encryption_level,)
       })" style="font-size:11px;color:var(--accent-cyan)">🔒</span>`

@@ -82,7 +82,7 @@ export async function seedChats(
         auto_advance: null,
         parent_chat_id: null,
         is_pinned: "unpinned",
-        encryption_level: "public",
+        encryption_level: "none",
         response_length_preset: "medium",
         response_length_custom: null,
         context_max_tokens: null,
