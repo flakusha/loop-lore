@@ -39,7 +39,3 @@ export function section(title: string,): void {
   console.log(colorize(`\u2551\u2551\u2551 ${title} \u2551\u2551\u2551`, "cyan",),);
   console.log("",);
 }
-
-export function indent(text: string, spaces = 2,): string {
-  return " ".repeat(spaces,) + text;
-}
