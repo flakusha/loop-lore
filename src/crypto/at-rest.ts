@@ -8,9 +8,12 @@
  * Reads the chat's `encryption_level` to decide whether to encrypt/decrypt.
  *
  * Tiers:
- *   - `public`   — plaintext, no crypto
+ *   - `none`     — plaintext, no crypto
  *   - `standard` — server-mediated AES-256-GCM via chat keys (existing pipeline)
  *   - `private`  — end-to-end (delegated to e2e module, not yet wired)
+ *
+ * Note: `public` is NOT a valid tier value. The historical "public" sentinel was
+ * removed by the 009_encryption_level_default migration.
  */
 
 import type { Kysely, } from "kysely";

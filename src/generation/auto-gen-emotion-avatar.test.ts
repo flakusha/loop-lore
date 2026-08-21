@@ -108,6 +108,10 @@ function createMockDeps(): Partial<GenDeps> {
     deriveChatKeyForChat: mock(() =>
       Promise.resolve({ key: {} as CryptoKey, keyId: "mock-key-id", rawKey: {} as CryptoKey, },)
     ),
+    getChatEncryptionLevel: mock(() => Promise.resolve("none" as const,)),
+    encryptAtRest: mock((opts: any,) =>
+      Promise.resolve({ storedContent: opts.plaintext, keyId: null, wasEncrypted: false, },)
+    ),
     compressThenEncrypt: mock((args: { plaintext: string },) => Promise.resolve(args.plaintext,)),
     markedParse: (s: string,) => `<p>${s}</p>`,
   } as unknown as Partial<GenDeps>;

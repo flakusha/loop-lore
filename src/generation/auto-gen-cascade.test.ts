@@ -92,6 +92,7 @@ function createMockDeps(): Partial<GenDeps> {
     deriveChatKeyForChat: mock(() =>
       Promise.resolve({ key: {} as CryptoKey, keyId: "mock-key-id", rawKey: {} as CryptoKey, },)
     ),
+    getChatEncryptionLevel: mock(() => Promise.resolve("none" as const,)),
     compressThenEncrypt: mock((args: any,) => Promise.resolve(args.plaintext,)),
     createPromptAssembler: () =>
       ({

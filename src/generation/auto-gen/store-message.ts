@@ -70,7 +70,6 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
   } = opts;
 
   // ── Regex Output Transforms ──────────────────────────────────
-  // Apply user-configured regex transforms to LLM output before storage
   const log = getLogger().child({ module: "auto-gen", },);
   let storedText = content;
   const regexTransforms = config.generation.regexTransforms;
@@ -86,6 +85,22 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     }
   }
 
+  // ── Encryption ────────────────────────────────────────────────
+  const smk = d.getSmk() ?? undefined;
+  if (smk) { await d.ensureActorKey({ database, actorId, smk, },); }
+  const encryptionLevel = await d.getChatEncryptionLevel(database, chatId,);
+  const encResult = await d.encryptAtRest({
+    database,
+    chatId,
+    plaintext: storedText,
+    encryptionLevel,
+    config: {
+      threshold: config.encryption.compressThreshold,
+      algorithm: config.encryption.compressAlgorithm,
+    },
+  },);
+
+  // ── Swipe index ───────────────────────────────────────────────
   const messageId = uid();
   const maxSwipe = parentMessageId
     ? await database
@@ -97,28 +112,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     : undefined;
   const swipeIndex = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
 
-  let storedContent: string = storedText;
-  let storedKeyId: string | null = null;
-  const contentEncoding = ContentEncoding.Identity;
-  if (d.isEncryptionEnabled()) {
-    const smk = d.getSmk()!;
-    // ensureActorKey is required before deriveChatKeyForChat — without it the
-    // actor_key row is missing and derivation crashes in story/GM chats
-    // (the actor may never have been provisioned on this chat's path).
-    await d.ensureActorKey({ database, actorId, smk, },);
-    const chatKey = await d.deriveChatKeyForChat(database, chatId, smk,);
-    storedContent = await d.compressThenEncrypt({
-      plaintext: storedText,
-      chatKey: chatKey.key,
-      keyId: chatKey.keyId,
-      config: {
-        threshold: config.encryption.compressThreshold,
-        algorithm: config.encryption.compressAlgorithm,
-      },
-    },);
-    storedKeyId = chatKey.keyId;
-  }
-
+  // ── Persist ──────────────────────────────────────────────────
   await database
     .insertInto("messages",)
     .values({
@@ -127,11 +121,11 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
       actor_id: actorId,
       parent_id: parentMessageId,
       role: MessageRole.Assistant,
-      content: storedContent,
-      key_id: storedKeyId,
+      content: encResult.storedContent,
+      key_id: encResult.keyId,
       content_type: MessageContentType.Text,
       content_format: MessageContentFormat.Markdown,
-      content_encoding: contentEncoding,
+      content_encoding: ContentEncoding.Identity,
       model_id: resolved.resolvedModel,
       provider: resolved.resolvedProviderName,
       token_count_prompt: tokenUsage.promptTokens,
