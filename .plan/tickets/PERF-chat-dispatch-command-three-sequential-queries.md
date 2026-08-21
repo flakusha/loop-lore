@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** low
+**Priority Tier:** P6+
 **Effort:** Trivial
 **Area:** chat
 **Source:** reconcile review (Scout Batch A — ISSUE-5)

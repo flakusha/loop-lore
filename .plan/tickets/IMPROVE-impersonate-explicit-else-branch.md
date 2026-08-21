@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** low
+**Priority Tier:** P6+
 **Effort:** Trivial
 **Area:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-4)

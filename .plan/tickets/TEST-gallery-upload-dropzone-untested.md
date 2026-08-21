@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** low
+**Priority Tier:** P5
 **Effort:** Small
 **Area:** gallery
 **Source:** reconcile review (Scout Batch C — GAL-5)
