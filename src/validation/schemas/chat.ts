@@ -21,7 +21,6 @@ import {
 } from "./primitives";
 
 // ── Chat routes ────────────────────────────────────────────
-
 export const ChatCreateBody = t.Object({
   name: Name,
   type: t.Optional(ChatTypeSchema,),
@@ -33,6 +32,12 @@ export const ChatCreateBody = t.Object({
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
   visibility: t.Optional(ChatVisibilitySchema,),
+  /** Encryption tier for message content at rest. Defaults to "none" on the server. */
+  encryptionLevel: t.Optional(t.Union([
+    t.Literal("none",),
+    t.Literal("standard",),
+    t.Literal("private",),
+  ],),),
   templateId: t.Optional(t.String({ minLength: 1, },),),
   // Memory carry: seed the new chat with the participant character's
   // memories (full = all, selective = only memoryCarryIds, fresh = none).

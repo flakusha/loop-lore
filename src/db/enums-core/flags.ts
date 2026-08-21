@@ -69,7 +69,19 @@ export const ModelRole = {
 } as const;
 export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
 
-// ── Encryption Levels ─────────────────────────────────────
+/**
+ * Chat encryption tier — determines whether and how message content is encrypted at rest.
+ *
+ * Valid values:
+ *   - `none`    — plaintext storage, no server-side encryption
+ *   - `standard` — AES-256-GCM via per-chat keys derived from the SMK
+ *   - `private`  — end-to-end; clients must pre-encrypt before sending
+ *
+ * Note: `public` is NOT a valid EncryptionLevel value. Historically a "public"
+ * sentinel appeared in the chats table default but was never a valid tier. The
+ * `009_encryption_level_default` migration removes it. Any code that encounters
+ * a `public` value should treat it as `none` (plaintext).
+ */
 export const EncryptionLevel = {
   None: "none",
   Standard: "standard",

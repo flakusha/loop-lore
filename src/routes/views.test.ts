@@ -219,7 +219,7 @@ describe("chat list encryption badge", () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "owner", "Owner", { id: "owner-1", } as any,);
     await insertChats(db, "Encrypted chat", "owner-1", { encryption_level: "standard", } as any,);
-    await insertChats(db, "Public chat", "owner-1", { encryption_level: "public", } as any,);
+    await insertChats(db, "Public chat", "owner-1", { encryption_level: "none", } as any,);
 
     const app = viewRoutes({ database: db, },);
     const res = await app.handle(
