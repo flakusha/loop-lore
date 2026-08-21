@@ -1,0 +1,242 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-08-21T11:32:47.067Z",
+    "pillarCount": 15,
+    "scenarioCount": 26,
+    "testCount": 26
+  },
+  "pillars": [
+    {
+      "id": "api-keys",
+      "scenarios": [
+        {
+          "id": "settings-flow",
+          "tests": [
+            "tests/e2e/flows/browser/settings-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "assistant-tool-call-ui",
+      "scenarios": [
+        {
+          "id": "chat-flow",
+          "tests": [
+            "tests/e2e/flows/browser/chat-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "auth-session",
+      "scenarios": [
+        {
+          "id": "auth-flow",
+          "tests": [
+            "tests/e2e/flows/browser/auth-flow.browser.ts"
+          ]
+        },
+        {
+          "id": "auth-session",
+          "tests": [
+            "tests/e2e/flows/browser/auth-session.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "characters",
+      "scenarios": [
+        {
+          "id": "admin-dashboard-empty",
+          "tests": [
+            "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts"
+          ]
+        },
+        {
+          "id": "admin-dashboard-populated",
+          "tests": [
+            "tests/e2e/flows/browser/admin-dashboard-populated.browser.ts"
+          ]
+        },
+        {
+          "id": "characters-flow",
+          "tests": [
+            "tests/e2e/flows/browser/characters-flow.browser.ts"
+          ]
+        },
+        {
+          "id": "creation-flow",
+          "tests": [
+            "tests/e2e/flows/browser/creation-flow.browser.ts"
+          ]
+        },
+        {
+          "id": "personas-flow",
+          "tests": [
+            "tests/e2e/flows/browser/personas-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chat-send",
+      "scenarios": [
+        {
+          "id": "chat-send",
+          "tests": [
+            "tests/e2e/flows/browser/chat-send.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chat-state",
+      "scenarios": [
+        {
+          "id": "chat-state",
+          "tests": [
+            "tests/e2e/flows/browser/chat-state.browser.ts"
+          ]
+        },
+        {
+          "id": "group-chat-matrix",
+          "tests": [
+            "tests/e2e/flows/browser/group-chat-matrix.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gallery-batch",
+      "scenarios": [
+        {
+          "id": "gallery-flow",
+          "tests": [
+            "tests/e2e/flows/browser/gallery-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "generation",
+      "scenarios": [
+        {
+          "id": "chat-flow",
+          "tests": [
+            "tests/e2e/flows/browser/chat-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gm-panels-quest-log",
+      "scenarios": [
+        {
+          "id": "notifications-flow",
+          "tests": [
+            "tests/e2e/flows/browser/notifications-flow.browser.ts"
+          ]
+        },
+        {
+          "id": "quests-flow",
+          "tests": [
+            "tests/e2e/flows/browser/quests-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "invite-join",
+      "scenarios": [
+        {
+          "id": "world-invites",
+          "tests": [
+            "tests/e2e/flows/browser/world-invites.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "navigation",
+      "scenarios": [
+        {
+          "id": "htmx-alpine",
+          "tests": [
+            "tests/e2e/flows/browser/htmx-alpine.browser.ts"
+          ]
+        },
+        {
+          "id": "navigation",
+          "tests": [
+            "tests/e2e/flows/browser/navigation.browser.ts"
+          ]
+        },
+        {
+          "id": "redirection",
+          "tests": [
+            "tests/e2e/flows/browser/redirection.browser.ts"
+          ]
+        },
+        {
+          "id": "smoke",
+          "tests": [
+            "tests/e2e/flows/browser/smoke.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "register",
+      "scenarios": [
+        {
+          "id": "register-flow",
+          "tests": [
+            "tests/e2e/flows/browser/register-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "search",
+      "scenarios": [
+        {
+          "id": "search-flow",
+          "tests": [
+            "tests/e2e/flows/browser/search-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "scenarios": [
+        {
+          "id": "nsfw-moderation-flow",
+          "tests": [
+            "tests/e2e/flows/browser/nsfw-moderation-flow.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "world-location-access",
+      "scenarios": [
+        {
+          "id": "access-correctness",
+          "tests": [
+            "tests/e2e/flows/browser/access-correctness.browser.ts"
+          ]
+        },
+        {
+          "id": "worlds-flow",
+          "tests": [
+            "tests/e2e/flows/browser/worlds-flow.browser.ts"
+          ]
+        }
+      ]
+    }
+  ]
+}

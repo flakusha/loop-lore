@@ -8,6 +8,7 @@
  *  - displayName → PUT /api/users/me → users.display_name
  *  - theme → PATCH /api/users/me/settings → users.settings JSON + localStorage
  *  - keys tab renders the encryption-key management surface
+ * @pillar api-keys
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
