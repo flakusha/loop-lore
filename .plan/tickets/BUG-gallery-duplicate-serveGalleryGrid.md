@@ -3,31 +3,27 @@
 
 # BUG: gallery serveGalleryGrid declared twice — build error
 
-**Status:** Open
+**Status:** Not A Bug — Already Correct
 **Priority:** high
+**Priority Tier:** P2
 **Effort:** Trivial
 **Area:** gallery
 **Source:** reconcile review (Scout Batch C — GAL-1)
+**Resolved:** 2026-08-21
 
-## Evidence
+## Resolution
 
-`src/routes/views/gallery.ts:58` and `src/routes/views/gallery.ts:101` — `async function serveGalleryGrid(...)` is declared twice. TypeScript/Bun errors "Duplicate identifier 'serveGalleryGrid'" at compile time.
+There is exactly ONE `serveGalleryGrid` declaration in `src/routes/views/gallery.ts:58-102`.
+The ticket claimed a second declaration at line 101, but line 101 is `function renderCards(...)`.
+No duplicate exists; no build error from this file.
 
-## Impact
-
-Build fails; gallery grid cannot be served. Site likely broken at `/gallery`.
-
-## Fix
-
-Delete the first declaration at line 58 (local helper), keep only the second (exported) one at line 101.
+The check failure that triggered this ticket (`src/routes/views/gallery.ts` appears in `bun run check`
+output) is from a different lint issue — `no-restricted-syntax` in `extractSplitBranches` /
+ `extractReunionSource` functions, unrelated to `serveGalleryGrid`.
 
 ## Verification
 
-- `bun run check` (tsc) passes after fix.
-- Run `bun run dev` → GET /gallery → 200.
-
-## Acceptance Criteria
-
-- [ ] `serveGalleryGrid` declared exactly once
-- [ ] Build clean
-- [ ] Gallery page loads
+```bash
+rg "function serveGalleryGrid|async function serveGalleryGrid|export.*serveGalleryGrid" src/routes/views/gallery.ts
+# Only one match at line 58
+```

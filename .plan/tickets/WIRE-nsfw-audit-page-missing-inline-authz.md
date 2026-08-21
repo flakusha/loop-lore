@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** high
+**Priority Tier:** P2
 **Effort:** Small
 **Area:** moderation
 **Source:** reconcile review (Scout Batch B — ISSUE-002)

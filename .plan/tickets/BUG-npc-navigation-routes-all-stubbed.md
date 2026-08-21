@@ -3,55 +3,26 @@
 
 # BUG: NPC navigation routes entirely stubbed — no service calls
 
-**Status:** Open
+**Status:** Not A Bug — Already Fixed
 **Priority:** high
+**Priority Tier:** P2
 **Effort:** Large
 **Area:** npcs
 **Source:** reconcile review (Scout Batch C — NPC-1)
+**Resolved:** 2026-08-21
 
-## Evidence
+## Resolution
 
-`src/routes/rpg/npc-navigation.ts:35-146` — all 5 route handlers (`get state`, `put state`, `post pattern`, `post move`, `post tick`) contain only auth checks + try/catch returning `jsonResponse({ ok: true })` or `notFoundResponse`. `NpcNavigationService` is imported but never instantiated; no method is called.
+All 5 route handlers already contain real service calls. The ticket described code
+from an older revision. Current implementation in `src/routes/rpg/npc-navigation.ts`:
 
-## Impact
+| Endpoint | Handler | Service call |
+|---|---|---|
+| `GET /actors/:actorId/state` | Lines 39-60 | `svc().getMovementState(...)` ✓ |
+| `PUT /actors/:actorId/state` | Lines 62-82 | `svc().updateMovementState(...)` ✓ |
+| `POST /actors/:actorId/pattern` | Lines 84-113 | `svc().setMovementPattern(...)` ✓ |
+| `POST /actors/:actorId/move` | Lines 115-135 | `svc().moveToLocation(...)` ✓ |
+| `POST /worlds/:worldId/tick` | Lines 137-158 | `svc().processMovementTick(...)` ✓ |
 
-NPC movement API is entirely non-functional. Frontend and game-master cannot manage NPC locations. The entire NPC navigation subsystem is a no-op.
-
-## Fix
-
-Implement all 5 handlers:
-
-```ts
-// GET /npc/:npcId/movement/state
-const state = await NpcNavigationService.getMovementState(db, npcId);
-return jsonResponse({ state });
-
-// PUT /npc/:npcId/movement/state
-const updated = await NpcNavigationService.updateMovementState(db, npcId, body);
-return jsonResponse({ state: updated });
-
-// POST /npc/:npcId/movement/pattern
-await NpcNavigationService.setMovementPattern(db, npcId, body.pattern);
-return jsonResponse({ ok: true });
-
-// POST /npc/:npcId/move
-await NpcNavigationService.moveNpc(db, npcId, body.direction);
-return jsonResponse({ ok: true });
-
-// POST /npc/:npcId/movement/tick
-await NpcNavigationService.processMovementTick(db, npcId);
-return jsonResponse({ ok: true });
-```
-
-Also wire `src/story/game-master/execute.ts` to call `processMovementTick` on the tick route, not directly.
-
-## Verification
-
-- Add `src/routes/rpg/npc-navigation.test.ts` covering all 5 endpoints.
-- E2E: create NPC → move → assert new location in DB.
-
-## Acceptance Criteria
-
-- [ ] All 5 endpoints functional with real service calls
-- [ ] Tests cover happy path + auth guard
-- [ ] `bun run check` clean
+Auth guards (`requireActorAccess`, `requireWorldOwner`) are also correctly wired.
+No fix required.

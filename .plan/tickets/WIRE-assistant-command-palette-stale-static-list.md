@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** medium
+**Priority Tier:** P3
 **Effort:** Medium
 **Area:** assistant
 **Source:** reconcile review (Scout Batch A — ISSUE-7)

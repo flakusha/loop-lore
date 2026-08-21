@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** low
+**Priority Tier:** P5
 **Effort:** Small
 **Area:** moderation (profanity)
 **Source:** reconcile review (Scout Batch B — ISSUE-004)

@@ -5,6 +5,7 @@
 
 **Status:** Open
 **Priority:** medium
+**Priority Tier:** P5
 **Effort:** Medium
 **Area:** npcs
 **Source:** reconcile review (Scout Batch C — NPC-2)
