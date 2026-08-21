@@ -1,191 +1,95 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * World-scoped trait routes (Layer 2).
+ */
 import { Elysia, t, } from "elysia";
 import { TraitsService, } from "../../characters/services/traits-service";
-import type { TranslatorFn, } from "../../i18n/types";
 import {
   ErrorResponse,
-  Id,
-  ListResponse,
   SuccessResponse,
   TraitResponse,
-  TraitUpdateBody,
   WorldTraitCreateBody,
 } from "../../validation/schemas";
-import { checkActorOwnership, } from "../actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
-import type { HandlerOpts, } from "./types";
+import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 
-/**
- * World Traits (Layer 2) sub-plugin — CRUD for actor world-specific traits.
- */
-export function worldTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
+const ActorIdWorldParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  worldId: t.String({ format: "uuid", },),
+},);
+
+const ActorIdWorldTraitParams = t.Object({
+  actorId: t.String({ format: "uuid", },),
+  worldId: t.String({ format: "uuid", },),
+  traitName: t.String(),
+},);
+
+export function worldTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);
 
-  return (
-    new Elysia({ name: "character-traits-world", },)
-      .get(
-        `${prefix}/actors/:actorId/traits/world/:worldId`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
+  return new Elysia({ name: "character-traits-world", },)
+    .get(`${prefix}/actors/:actorId/traits/world/:worldId`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          const { actorId, worldId, } = ctx.params;
+      const { actorId, worldId, } = ctx.params as { actorId: string; worldId: string };
+      const traits = await traitsService.getWorldTraits(actorId, worldId,);
+      return jsonResponse(traits,);
+    }, {
+      params: ActorIdWorldParams,
+      response: { 200: t.Array(TraitResponse,), 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "List world traits",
+        description: "List all world-scoped traits for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .post(`${prefix}/actors/:actorId/traits/world/:worldId`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const traits = await traitsService.getWorldTraits(actorId, worldId,);
-          return jsonResponse(traits,);
-        },
-        {
-          params: t.Object({ actorId: Id, worldId: Id, },),
-          response: {
-            200: ListResponse(TraitResponse,),
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "List world traits",
-            description: "Get all world-specific traits for an actor.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .get(
-        `${prefix}/actors/:actorId/traits/world/:worldId/:traitName`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
+      const { actorId, worldId, } = ctx.params as { actorId: string; worldId: string };
+      const { trait_category, trait_name, value, } = (ctx.body ?? {}) as Record<string, unknown>;
 
-          const { actorId, worldId, traitName, } = ctx.params;
+      if (!trait_name || !trait_category) {
+        return jsonError({ message: "trait_category and trait_name are required", status: HttpStatus.BadRequest, },);
+      }
 
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const trait = await traitsService.getWorldTrait(actorId, worldId, traitName,);
-          if (!trait) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },); }
-          return jsonResponse(trait,);
-        },
-        {
-          params: t.Object({ actorId: Id, worldId: Id, traitName: t.String(), },),
-          response: {
-            200: TraitResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Get world trait",
-            description: "Get a specific world trait by name.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .post(
-        `${prefix}/actors/:actorId/traits/world/:worldId`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
+      const id = await traitsService.createWorldTrait({
+        actorId,
+        worldId,
+        category: trait_category as string,
+        name: trait_name as string,
+        value: (value as string) ?? "",
+      },);
+      return jsonCreated({ id, },);
+    }, {
+      params: ActorIdWorldParams,
+      body: WorldTraitCreateBody,
+      response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Create world trait",
+        description: "Create a world-scoped trait for an actor.",
+        tags: ["Character Traits",],
+      },
+    },)
+    .delete(`${prefix}/actors/:actorId/traits/world/:worldId/:traitName`, async (ctx,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
 
-          const { actorId, worldId, } = ctx.params;
-
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const { category, name, value, } = ctx.body;
-
-          const traitId = await traitsService.createWorldTrait({
-            actorId,
-            worldId,
-            category,
-            name,
-            value,
-          },);
-          return jsonCreated({ id: traitId, },);
-        },
-        {
-          params: t.Object({ actorId: Id, worldId: Id, },),
-          body: WorldTraitCreateBody,
-          response: {
-            200: TraitResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Create world trait",
-            description: "Create a new world-specific trait for an actor.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .put(
-        `${prefix}/actors/:actorId/traits/world/:worldId/:traitName`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
-
-          const { actorId, worldId, traitName, } = ctx.params;
-
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          const { value, } = ctx.body;
-
-          await traitsService.updateWorldTrait(actorId, worldId, {
-            name: traitName,
-            value,
-          },);
-          return jsonResponse({ ok: true, },);
-        },
-        {
-          params: t.Object({ actorId: Id, worldId: Id, traitName: t.String(), },),
-          body: TraitUpdateBody,
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Update world trait",
-            description: "Update a world-specific trait's value.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-      .delete(
-        `${prefix}/actors/:actorId/traits/world/:worldId/:traitName`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const t = ctx.t as TranslatorFn | undefined;
-
-          const { actorId, worldId, traitName, } = ctx.params;
-
-          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-            return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
-          }
-          await traitsService.deleteWorldTrait(actorId, worldId, traitName,);
-          return jsonNoContent();
-        },
-        {
-          params: t.Object({ actorId: Id, worldId: Id, traitName: t.String(), },),
-          response: {
-            200: SuccessResponse,
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
-          detail: {
-            summary: "Delete world trait",
-            description: "Delete a world-specific trait.",
-            tags: ["Character Traits",],
-          },
-        },
-      )
-  );
+      const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
+      await traitsService.deleteWorldTrait(actorId, worldId, traitName,);
+      return jsonNoContent();
+    }, {
+      params: ActorIdWorldTraitParams,
+      response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+      detail: {
+        summary: "Delete world trait",
+        description: "Delete a world-scoped trait from an actor.",
+        tags: ["Character Traits",],
+      },
+    },);
 }

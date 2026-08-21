@@ -398,4 +398,48 @@ describe("character-relationships routes", () => {
     );
     expect(res.status,).toBe(401,);
   });
+
+  describe("Relationships — admin/solo bypass", () => {
+    let db: Kysely<DB>;
+    let sqlite: Database;
+
+    beforeAll(async () => {
+      ({ db, sqlite, } = await createTestDb());
+      await insertUsers(db, "owner", "Owner", { id: "owner" as never, },);
+      await insertUsers(db, "member", "Member", { id: "member" as never, },);
+      await insertActors(db, "Actor A", { id: A as never, owner_id: "owner", },);
+      await insertActors(db, "Actor B", { id: B as never, owner_id: "member", },);
+      await insertWorlds(db, "owner", "Test World", { id: WORLD as never, },);
+    },);
+
+    afterAll(() => sqlite.close());
+
+    test("admin can GET relationships for another user's actor", async () => {
+      const app = makeApp(db, "admin", "admin",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${A}/relationships`,),
+      );
+      expect(res.status,).toBe(200,);
+    });
+
+    test("solo can GET relationships for another user's actor", async () => {
+      const app = makeApp(db, "solo", "solo",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${A}/relationships`,),
+      );
+      expect(res.status,).toBe(200,);
+    });
+
+    test("admin can POST relationship for another user's actor", async () => {
+      const app = makeApp(db, "admin", "admin",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/actors/${A}/relationships`, {
+          method: "POST",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ target_actor_id: B, relationship_type: "friend", },),
+        },),
+      );
+      expect(res.status,).toBe(201,);
+    });
+  });
 });

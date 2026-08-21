@@ -208,13 +208,6 @@ export interface ActorMemories {
 }
 
 // ── memory_embeddings ─────────────────────────────────────────
-export interface MemoryEmbeddings {
-  memory_id: string;
-  model: string;
-  dimensions: number;
-  vector_blob: Uint8Array;
-  created_at: number;
-}
 
 // ── actor_lore_entries ────────────────────────────────────────────
 export interface ActorLoreEntries {
