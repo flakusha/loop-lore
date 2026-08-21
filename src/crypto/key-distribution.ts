@@ -2,157 +2,111 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Key Distribution — Group Chat Key Management
+ * Key Distribution — Stable Per-Chat Random Keys
  *
- * When a new participant joins a group chat:
- * 1. Load existing chat key (or derive if first participant)
- * 2. Ensure new participant has an actor key
- * 3. Store encrypted copy of chat key for new participant
- * 4. Return chat key to new participant
- *
- * When a participant leaves:
- * 1. Generate new chat key
- * 2. Re-encrypt for remaining participants
- * 3. Old key discarded (forward secrecy)
+ * Design (per BUG-chat-key-history-loss-join-leave fix):
+ * - Each chat has one stable random key in `chat_keys` (SMK-encrypted).
+ *   Derived once, reused forever. Join/leave does NOT change it.
+ * - `distributeKeysOnJoin`: ensure new participant has an actor key.
+ *   The chat key is already stable — no re-encrypt needed.
+ * - `rotateKeyOnLeave`: generate a new random chat key, re-encrypt all
+ *   messages OLD→NEW in one transaction. Old key is replaced (forward secrecy).
+ * - `getChatKey` / `resolveChatKey`: delegates to `deriveChatKeyForChat`
+ *   which loads (or creates lazily) the stable chat key.
  */
 
-import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { getLogger, type Logger, } from "../logger";
-import {
-  ensureActorKey,
-  loadActorKeys,
-} from "./actor-keys";
-import {
-  type ChatKey,
-  deriveChatKey,
-  getChatParticipantActorIds,
-} from "./chat-keys";
-import { getSmk, } from "./smk";
+import type { Kysely } from "kysely";
+import type { DB } from "../db/schema";
+import { getLogger } from "../logger";
+import type { Logger } from "../logger";
+import { ensureActorKey, encryptBytes } from "./actor-keys";
+import { type ChatKey, deriveChatKeyForChat } from "./chat-keys";
+import { reEncryptWithKeys } from "./key-rotation/re-encrypt";
+import { getSmk } from "./smk";
+
+const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
 
 function log(): Logger {
-  return getLogger().child({ module: "key-distribution", },);
+  return getLogger().child({ module: "key-distribution" });
 }
 
-/**
- * Get or create the chat key for a chat.
- *
- * The chat key is derived deterministically from the sorted participant keys.
- * This ensures all participants derive the same key.
- */
-export async function getChatKey(
-  database: Kysely<DB>,
-  chatId: string,
-): Promise<ChatKey> {
+export async function getChatKey(database: Kysely<DB>, chatId: string): Promise<ChatKey> {
   const smk = getSmk();
-  if (!smk) {
-    throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",);
-  }
-
-  const actorIds = await getChatParticipantActorIds(database, chatId,);
-  const keys = await loadActorKeys({ database, actorIds, smk, },);
-
-  if (keys.length === 0) {
-    throw new Error(`No participant keys found for chat ${chatId}`,);
-  }
-
-  return deriveChatKey(keys, chatId,);
+  if (!smk) throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY");
+  return deriveChatKeyForChat(database, chatId, smk);
 }
 
-/**
- * Distribute keys to a new participant joining a group chat.
- *
- * This ensures the new participant can decrypt existing messages.
- * The chat key is derived from ALL participant keys (including the new one),
- * so we need to re-derive it after adding the participant.
- *
- * @returns The chat key for the new participant to use
- */
 export async function distributeKeysOnJoin(
   database: Kysely<DB>,
   chatId: string,
   newParticipantId: string,
 ): Promise<ChatKey> {
   const smk = getSmk();
-  if (!smk) {
-    throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",);
-  }
-
-  // Ensure new participant has an actor key
-  await ensureActorKey({ database, actorId: newParticipantId, smk, },);
-
-  // Get all participant IDs (including the new one)
-  const actorIds = await getChatParticipantActorIds(database, chatId,);
-
-  // Load all participant keys
-  const keys = await loadActorKeys({ database, actorIds, smk, },);
-
-  // Derive chat key (deterministic from sorted participant keys)
-  const chatKey = await deriveChatKey(keys, chatId,);
-
-  log().info("Distributed keys for new participant", {
-    chatId,
-    newParticipantId,
-    keyId: chatKey.keyId,
-    participantCount: keys.length,
-  },);
-
+  if (!smk) throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY");
+  await ensureActorKey({ database, actorId: newParticipantId, smk });
+  const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+  log().info("Distributed chat key to new participant (stable, no re-encrypt)", {
+    chatId, newParticipantId, keyId: chatKey.keyId,
+  });
   return chatKey;
 }
 
-/**
- * Rotate chat key when a participant leaves (forward secrecy).
- *
- * This generates a new chat key that excludes the departed participant.
- * Old messages remain encrypted with the old key (inaccessible to departed).
- * New messages use the new key.
- *
- * @returns The new chat key
- */
 export async function rotateKeyOnLeave(
   database: Kysely<DB>,
   chatId: string,
   departedParticipantId: string,
 ): Promise<ChatKey> {
   const smk = getSmk();
-  if (!smk) {
-    throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",);
+  if (!smk) throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY");
+
+  const oldChatKey = await deriveChatKeyForChat(database, chatId, smk);
+
+  const allActorIds = await database
+    .selectFrom("chat_participants")
+    .select("actor_id")
+    .where("chat_id", "=", chatId)
+    .execute();
+
+  const remainingActors = allActorIds
+    .map((r) => r.actor_id)
+    .filter((id) => id !== departedParticipantId);
+
+  if (remainingActors.length === 0) {
+    throw new Error("Cannot rotate key: no remaining participants");
   }
 
-  // Get remaining participant IDs (excluding departed)
-  const allActorIds = await getChatParticipantActorIds(database, chatId,);
-  const remainingActorIds: string[] = [];
-  for (const id of allActorIds) { if (id !== departedParticipantId) { remainingActorIds.push(id,); } }
+  const newId = crypto.randomUUID();
+  const newRawKey = crypto.getRandomValues(new Uint8Array(32));
+  const newEncryptedKey = await encryptBytes(smk, newRawKey);
+  const newKey = await crypto.subtle.importKey(
+    "raw", newRawKey, "AES-GCM", true, ["encrypt", "decrypt"]
+  );
+  const newChatKey: ChatKey = { key: newKey, keyId: newId, rawKey: newRawKey };
 
-  if (remainingActorIds.length === 0) {
-    throw new Error("Cannot rotate key: no remaining participants",);
+  const { reEncrypted, failures } = await reEncryptWithKeys(
+    database, chatId, oldChatKey, newChatKey, RE_ENCRYPT_LIMIT
+  );
+
+  if (failures.length > 0) {
+    log().error("rotateKeyOnLeave: re-encryption failures — aborting rotation", {
+      chatId, departedParticipantId, failures,
+    });
+    throw new Error(`rotateKeyOnLeave: ${failures.length} message(s) failed to re-encrypt: ${failures[0]!.reason}`);
   }
 
-  // Load remaining participant keys
-  const keys = await loadActorKeys({ database, actorIds: remainingActorIds, smk, },);
+  await database
+    .updateTable("chat_keys")
+    .set({ id: newId, encrypted_chat_key: newEncryptedKey, expires_at: null })
+    .where("chat_id", "=", chatId)
+    .execute();
 
-  // Derive new chat key (different because participant set changed)
-  const newChatKey = await deriveChatKey(keys, chatId,);
-
-  log().info("Rotated chat key on participant leave", {
-    chatId,
-    departedParticipantId,
-    newKeyId: newChatKey.keyId,
-    remainingParticipants: remainingActorIds.length,
-  },);
+  log().info("Rotated chat key on participant leave (forward secrecy)", {
+    chatId, departedParticipantId, oldKeyId: oldChatKey.keyId, newKeyId: newId, reEncrypted,
+  });
 
   return newChatKey;
 }
 
-/**
- * Get the chat key for message encryption/decryption.
- *
- * This is the main entry point for the message route.
- * It handles the common case where the chat already has participants.
- */
-export async function resolveChatKey(
-  database: Kysely<DB>,
-  chatId: string,
-): Promise<ChatKey> {
-  return getChatKey(database, chatId,);
+export async function resolveChatKey(database: Kysely<DB>, chatId: string): Promise<ChatKey> {
+  return getChatKey(database, chatId);
 }
