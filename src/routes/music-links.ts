@@ -31,12 +31,12 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
   return (
     new Elysia({ name: "music-links", },)
       .post(
-        "/api/chats/:chatId/music-links",
+        "/api/chats/:id/music-links",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
 
-          const chatId = ctx.params.chatId as string;
+          const chatId = ctx.params.id as string;
           const body = ctx.body as { chatId: string; url: string; sectionId?: string | null };
 
           // Detect service
@@ -78,12 +78,12 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
         },
       )
       .get(
-        "/api/chats/:chatId/music-links",
+        "/api/chats/:id/music-links",
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
 
-          const chatId = ctx.params.chatId as string;
+          const chatId = ctx.params.id as string;
           const rows = await service.list(chatId,);
           /* eslint-disable no-restricted-syntax */
           return jsonResponse({ data: rows.map(toResponse,), },);
