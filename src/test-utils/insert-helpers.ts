@@ -868,6 +868,10 @@ export async function insertMessages(
     tool_calls?: string | null;
     thinking?: string | null;
     metadata?: string | null;
+    e2e_payload?: string | null;
+    e2e_session_id?: string | null;
+    e2e_sender_eph_pub_jwk?: string | null;
+    e2e_chain_index?: number | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
@@ -3230,9 +3234,11 @@ export async function insertActorE2ePubkeys(
 export async function insertE2eSessions(
   db: Db,
   sender_actor_id: string,
-  recipient_actor_id: string,
   opts?: {
     id?: Generated<string>;
+    recipient_actor_id?: string | null;
+    chat_id?: string | null;
+    kind?: Generated<string>;
     created_at?: Generated<string>;
     last_message_at?: string | null;
     revoked_at?: string | null;
@@ -3248,7 +3254,46 @@ export async function insertE2eSessions(
   await db.insertInto("e2e_sessions",).values({
     id: crypto.randomUUID(),
     sender_actor_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a e2e_group_wraps row. */
+export async function insertE2eGroupWraps(
+  db: Db,
+  group_session_id: string,
+  recipient_actor_id: string,
+  wrapped_key: string,
+  sender_eph_pub_jwk: string,
+  chain_index: number,
+  opts?: { id?: Generated<string>; created_at?: Generated<string> },
+): Promise<void> {
+  await db.insertInto("e2e_group_wraps",).values({
+    id: crypto.randomUUID(),
+    group_session_id,
     recipient_actor_id,
+    wrapped_key,
+    sender_eph_pub_jwk,
+    chain_index,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a e2e_skipped_message_keys row. */
+export async function insertE2eSkippedMessageKeys(
+  db: Db,
+  session_id: string,
+  recipient_actor_id: string,
+  chain_index: number,
+  message_key: string,
+  opts?: { id?: Generated<string>; created_at?: Generated<string> },
+): Promise<void> {
+  await db.insertInto("e2e_skipped_message_keys",).values({
+    id: crypto.randomUUID(),
+    session_id,
+    recipient_actor_id,
+    chain_index,
+    message_key,
     ...opts,
   } as any,).execute();
 }

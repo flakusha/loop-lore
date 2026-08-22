@@ -50,10 +50,9 @@ describe("encryptAtRest", () => {
     expect(result.storedContent,).toBe("Hello, World!",);
     expect(result.keyId,).toBeNull();
     expect(result.wasEncrypted,).toBeFalse();
-  });
+  },);
 
   test("pre-encrypted content stored as-is regardless of tier", async () => {
-    // Create a valid encrypted payload
     const encrypted = await compressThenEncrypt({
       plaintext: "Already encrypted",
       chatKey: testSmk,
@@ -69,22 +68,28 @@ describe("encryptAtRest", () => {
 
     expect(result.storedContent,).toBe(encrypted,);
     expect(result.wasEncrypted,).toBeTrue();
-  });
+  },);
 
-  test("at-rest tier encrypts (server-mediated, same as standard)", async () => {
-    // at-rest is server-mediated: server holds the SMK-derived chat key and encrypts.
-    // This test uses encryption disabled to store plaintext (like standard does when SMK absent).
+  test("at-rest tier stores the wire payload verbatim (server does not decrypt)", async () => {
+    // Phase D: the server has no chain state for at-rest chats; the
+    // client's pre-encrypted payload is stored as-is. Standard-tier
+    // behaviour (server encrypts via chat key) does NOT apply here.
+    const wire = JSON.stringify({
+      e2e: true,
+      ciphertext: "opaque-blob",
+      nonce: "x",
+      senderEphPubJwk: { kty: "EC" },
+      chainIndex: 0,
+    },);
     const result = await encryptAtRest({
       database: mockDb,
       chatId: "chat-1",
-      plaintext: "Secret message",
-      encryptionLevel: "standard",
+      plaintext: wire,
+      encryptionLevel: "at-rest",
     },);
-
-    // When encryption is disabled, stores plaintext (matches standard behavior)
-    expect(result.storedContent,).toBe("Secret message",);
-    expect(result.wasEncrypted,).toBeFalse();
-  });
+    expect(result.storedContent,).toBe(wire,);
+    expect(result.wasEncrypted,).toBe(true,);
+  },);
 
   test("unknown encryption level throws", async () => {
     expect(
@@ -95,7 +100,7 @@ describe("encryptAtRest", () => {
         encryptionLevel: "unknown" as unknown as never,
       },),
     ).rejects.toThrow("Unknown encryption level",);
-  });
+  },);
 });
 
 // ── decryptAtRest ──────────────────────────────────────────
@@ -110,18 +115,7 @@ describe("decryptAtRest", () => {
     },);
 
     expect(result,).toBe("Plaintext message",);
-  });
-
-  test("at-rest tier returns content as-is when not encrypted (server-mediated)", async () => {
-    const result = await decryptAtRest({
-      database: mockDb,
-      chatId: "chat-1",
-      storedContent: "plaintext-content",
-      encryptionLevel: "standard",
-    },);
-
-    expect(result,).toBe("plaintext-content",);
-  });
+  },);
 
   test("standard tier with legacy plaintext returns as-is", async () => {
     const result = await decryptAtRest({
@@ -132,7 +126,23 @@ describe("decryptAtRest", () => {
     },);
 
     expect(result,).toBe("Legacy plaintext in standard-tier chat",);
-  });
+  },);
+
+  test("at-rest tier returns content unchanged (server has no chain state)", async () => {
+    const wire = JSON.stringify({
+      e2e: true,
+      ciphertext: "client-encrypted",
+      nonce: "n",
+      senderEphPubJwk: { kty: "EC" },
+    },);
+    const result = await decryptAtRest({
+      database: mockDb,
+      chatId: "chat-1",
+      storedContent: wire,
+      encryptionLevel: "at-rest",
+    },);
+    expect(result,).toBe(wire,);
+  },);
 
   test("unknown encryption level throws", async () => {
     expect(
@@ -143,7 +153,7 @@ describe("decryptAtRest", () => {
         encryptionLevel: "unknown" as unknown as never,
       },),
     ).rejects.toThrow("Unknown encryption level",);
-  });
+  },);
 });
 
 // ── needsEncryption ────────────────────────────────────────
@@ -151,15 +161,15 @@ describe("decryptAtRest", () => {
 describe("needsEncryption", () => {
   test("none tier never needs encryption", () => {
     expect(needsEncryption("none", "plaintext",),).toBeFalse();
-  });
+  },);
 
   test("standard tier needs encryption for plaintext", () => {
     expect(needsEncryption("standard", "plaintext",),).toBeTrue();
-  });
+  },);
 
-  test("at-rest tier needs encryption for plaintext", () => {
-    expect(needsEncryption("standard", "plaintext",),).toBeTrue();
-  });
+  test("at-rest tier needs encryption for plaintext (server-side, but stored as-is)", () => {
+    expect(needsEncryption("at-rest", "plaintext",),).toBeTrue();
+  },);
 
   test("already encrypted content does not need encryption", async () => {
     const encrypted = await compressThenEncrypt({
@@ -169,7 +179,7 @@ describe("needsEncryption", () => {
     },);
 
     expect(needsEncryption("standard", encrypted,),).toBeFalse();
-  });
+  },);
 });
 
 // ── getChatEncryptionLevel ─────────────────────────────────
@@ -188,7 +198,7 @@ describe("getChatEncryptionLevel", () => {
 
     const result = await getChatEncryptionLevel(mockDbWithLevel, "chat-1",);
     expect(result,).toBe("standard",);
-  });
+  },);
 
   test("returns 'none' when no row found", async () => {
     const mockDbEmpty = {
@@ -203,5 +213,5 @@ describe("getChatEncryptionLevel", () => {
 
     const result = await getChatEncryptionLevel(mockDbEmpty, "chat-1",);
     expect(result,).toBe("none",);
-  });
+  },);
 });
