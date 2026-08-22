@@ -38,7 +38,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
   AgentType: ["none", "ai", "narrator", "npc",],
   ChatParticipantRole: ["member", "owner", "observer", "guest",],
   MessageRole: ["user", "assistant", "character", "system",],
-  MessageContentType: ["text", "action", "narration", "system", "continuation",],
+  MessageContentType: ["text", "action", "narration", "system", "continuation", "music_link",],
   MessageContentFormat: ["markdown",],
   MessageStatus: ["sending", "confirmed", "failed", "partial", "rejected", "cancelled",],
   MessageVisibility: ["visible", "hidden_by_user", "hidden_by_moderator", "auto_hidden", "redacted",],
