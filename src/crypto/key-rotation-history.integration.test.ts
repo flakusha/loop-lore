@@ -169,8 +169,8 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
 
     for (const [i, row,] of messages.entries()) {
       expect(row.key_id,).toBe(result.newKeyId,);
-      const plaintext = await decryptThenDecompress(row.content, newChatKey.key,);
-      expect(plaintext,).toBe(PLAINTEXTS[i],);
+      const plaintext = await decryptThenDecompress(row.content as string, newChatKey.key as CryptoKey,);
+      expect(plaintext,).toBe(PLAINTEXTS[i]!,);
     }
 
     // ── 6. Old actor key is expired ───────────────────────────────────────

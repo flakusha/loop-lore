@@ -98,7 +98,7 @@ export async function rotateKeyOnLeave(
   );
 
   if (failures.length > 0) {
-    log().error("rotateKeyOnLeave: re-encryption failures — aborting rotation", {
+    log().error("rotateKeyOnLeave: re-encryption failures — aborting rotation", undefined, {
       chatId,
       departedParticipantId,
       failures,

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { type Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 
 /**
  * Fix chats.encryption_level default: was historically set to "public" but
@@ -23,10 +23,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   // Idempotent backfill: fix any existing "public" rows created before the
   // previous migration corrected this constraint
-  await database.updateTable("chats",)
-    .set({ encryption_level: "none", },)
-    .where("encryption_level", "=", "public",)
-    .execute();
+  await sql`UPDATE chats SET encryption_level = 'none' WHERE encryption_level = 'public'`.execute(database,);
 }
 
 export async function down(_database: Kysely<unknown>,): Promise<void> {
