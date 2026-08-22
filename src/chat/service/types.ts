@@ -45,6 +45,8 @@ export interface CreateChatParams {
   encryptionLevel?: string;
   /** Seed the new chat with participant memories: "full" | "selective" | "fresh". */
   memoryCarry?: "full" | "selective" | "fresh";
+  /** When memoryCarry is "selective", IDs of specific memories to carry forward. */
+  memoryCarryIds?: string[];
 }
 
 export interface ChatSetupTemplate {

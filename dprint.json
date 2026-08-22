@@ -4,8 +4,8 @@
   "lineWidth": 120,
   "excludes": [
     "**/.plan/**",
-    "**/node_modules",
     "**/dist",
+    "eslint.config.mjs",
     "**/data",
     "**/.tmp",
     "**/.hermes",

@@ -4352,6 +4352,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
     },
     {
@@ -4459,14 +4463,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/crypto.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/encryption-workflow.md"
     }
   ],
   "src/crypto/e2e/key-exchange.ts": [
@@ -4482,6 +4478,10 @@
     }
   ],
   "src/crypto/e2e/key-pairs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs.md"
@@ -4563,6 +4563,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-architecture-clarification.md"
+    }
+  ],
+  "src/crypto/key-rotation-history.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
+    }
+  ],
+  "src/crypto/key-rotation-timer.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
     }
   ],
   "src/crypto/key-rotation.test.ts": [
@@ -4703,6 +4715,12 @@
       "source": "docs/spec/encryption-workflow.md"
     }
   ],
+  "src/crypto/user-keys.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    }
+  ],
   "src/crypto/user-keys.ts": [
     {
       "kind": "epic",
@@ -4715,14 +4733,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/crypto.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/encryption-workflow.md"
     }
   ],
   "src/crypto/world-keys.test.ts": [
@@ -4911,6 +4921,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     },
     {
       "kind": "ticket",
@@ -5659,6 +5673,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-item-service.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     },
     {
       "kind": "ticket",
@@ -6929,12 +6947,6 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-  "src/frontend/alpine/chat-send.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
-    }
-  ],
   "src/frontend/alpine/chat-settings.ts": [
     {
       "kind": "epic",
@@ -7992,11 +8004,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+      "source": ".plan/tickets/FEAT-encryption-foundation-aes-256-gcm.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-encryption-foundation-aes-256-gcm.md"
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     },
     {
       "kind": "ticket",

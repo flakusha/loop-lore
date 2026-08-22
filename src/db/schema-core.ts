@@ -798,6 +798,7 @@ export interface MemoryEmbeddings {
   memory_id: Generated<string>;
   model: Generated<string>;
   dimensions: Generated<number>;
+  vector_blob: Uint8Array;
   created_at: number;
 }
 
@@ -818,4 +819,28 @@ export interface ChatKeys {
   encrypted_chat_key: string;
   created_at: Generated<string>;
   expires_at: string | null;
+}
+
+// ── music_links ────────────────────────────────────────────
+export interface MusicLinks {
+  id: Generated<string>;
+  chat_id: string;
+  section_id: string | null;
+  sender_id: string;
+  service: string;
+  url: string;
+  embed_html: string | null;
+  title: string;
+  artist: string;
+  thumbnail_url: string | null;
+  duration_secs: number | null;
+  service_track_id: string;
+  service_url: string;
+  is_playlist: Generated<number>;
+  track_count: number | null;
+  explicit: Generated<number>;
+  year: number | null;
+  genre: string | null;
+  nsfw_hidden: Generated<number>;
+  created_at: Generated<string>;
 }

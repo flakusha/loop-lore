@@ -132,10 +132,11 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
 
   // Store the generated response as a message
   const messageId = uid();
+  // eslint-disable-next-line no-useless-assignment -- placeholder; reassigned after encryptAtRest
   let storedContent = turnResult.prompt;
+  // eslint-disable-next-line no-useless-assignment -- placeholder; reassigned after encryptAtRest
   let storedKeyId: string | null = null;
   const contentEncoding = ContentEncoding.Identity;
-
   // ensureActorKey is required before deriveChatKeyForChat in the standard path —
   // without it the actor_keys row is missing and per-chat derivation crashes.
   const smk = deps.getSmk() ?? undefined;

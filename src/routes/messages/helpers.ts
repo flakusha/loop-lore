@@ -6,9 +6,9 @@ import type { ServiceError, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import { decodeContent, } from "../../content/decode";
 import {
+  _getSmk,
   decryptAtRest,
   getChatEncryptionLevel,
-  getSmk,
 } from "../../crypto";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
