@@ -3236,12 +3236,40 @@ export async function insertE2eSessions(
     created_at?: Generated<string>;
     last_message_at?: string | null;
     revoked_at?: string | null;
+    root_key?: Uint8Array | null;
+    sending_chain_key?: Uint8Array | null;
+    receiving_chain_key?: Uint8Array | null;
+    send_count?: Generated<number>;
+    recv_count?: Generated<number>;
+    ephemeral_public_jwk?: string | null;
+    ephemeral_private_jwk?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("e2e_sessions",).values({
     id: crypto.randomUUID(),
     sender_actor_id,
     recipient_actor_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a e2e_skipped_keys row. */
+export async function insertE2eSkippedKeys(
+  db: Db,
+  session_id: string,
+  dh_public_jwk: string,
+  counter: number,
+  encrypted_message_key: string,
+  expires_at: string,
+  opts?: { id?: Generated<string>; created_at?: Generated<string> },
+): Promise<void> {
+  await db.insertInto("e2e_skipped_keys",).values({
+    id: crypto.randomUUID(),
+    session_id,
+    dh_public_jwk,
+    counter,
+    encrypted_message_key,
+    expires_at,
     ...opts,
   } as any,).execute();
 }

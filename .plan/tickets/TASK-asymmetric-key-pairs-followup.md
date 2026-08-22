@@ -195,5 +195,3 @@ each subsequent phase closes a slice once shipped.
 - `bun run typecheck` + `bun test src/crypto/e2e/ src/frontend/e2e/`
   green.
 - `bun run plan:sync` green.
-
-
