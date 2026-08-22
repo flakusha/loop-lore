@@ -334,6 +334,10 @@ export interface Messages {
   tool_calls: string | null;
   thinking: string | null;
   metadata: string | null;
+  e2e_payload: string | null;
+  e2e_session_id: string | null;
+  e2e_sender_eph_pub_jwk: string | null;
+  e2e_chain_index: number | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
@@ -860,7 +864,9 @@ export interface ActorE2ePubkeys {
 export interface E2eSessions {
   id: Generated<string>;
   sender_actor_id: string;
-  recipient_actor_id: string;
+  recipient_actor_id: string | null;
+  chat_id: string | null;
+  kind: Generated<string>;
   created_at: Generated<string>;
   last_message_at: string | null;
   revoked_at: string | null;
@@ -871,6 +877,27 @@ export interface E2eSessions {
   recv_count: Generated<number>;
   ephemeral_public_jwk: string | null;
   ephemeral_private_jwk: string | null;
+}
+
+// ── e2e_group_wraps ────────────────────────────────────────────
+export interface E2eGroupWraps {
+  id: Generated<string>;
+  group_session_id: string;
+  recipient_actor_id: string;
+  wrapped_key: string;
+  sender_eph_pub_jwk: string;
+  chain_index: number;
+  created_at: Generated<string>;
+}
+
+// ── e2e_skipped_message_keys ────────────────────────────────────────────
+export interface E2eSkippedMessageKeys {
+  id: Generated<string>;
+  session_id: string;
+  recipient_actor_id: string;
+  chain_index: number;
+  message_key: string;
+  created_at: Generated<string>;
 }
 
 // ── e2e_skipped_keys ────────────────────────────────────────────

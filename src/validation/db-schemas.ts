@@ -833,6 +833,10 @@ export const MessagesSchema = t.Object({
   tool_calls: t.Optional(t.String(),),
   thinking: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),
+  e2e_payload: t.Optional(t.String(),),
+  e2e_session_id: t.Optional(t.String(),),
+  e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
+  e2e_chain_index: t.Optional(t.Number(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
@@ -2091,7 +2095,9 @@ export const ActorE2ePubkeysSchema = t.Object({
 // ── e2e_sessions ────────────────────────────────────────────
 export const E2eSessionsSchema = t.Object({
   sender_actor_id: t.String(),
-  recipient_actor_id: t.String(),
+  recipient_actor_id: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
+  kind: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   last_message_at: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
@@ -2102,6 +2108,25 @@ export const E2eSessionsSchema = t.Object({
   recv_count: t.Optional(t.Number(),),
   ephemeral_public_jwk: t.Optional(t.String(),),
   ephemeral_private_jwk: t.Optional(t.String(),),
+},);
+
+// ── e2e_group_wraps ────────────────────────────────────────────
+export const E2eGroupWrapsSchema = t.Object({
+  group_session_id: t.String(),
+  recipient_actor_id: t.String(),
+  wrapped_key: t.String(),
+  sender_eph_pub_jwk: t.String(),
+  chain_index: t.Number(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── e2e_skipped_message_keys ────────────────────────────────────────────
+export const E2eSkippedMessageKeysSchema = t.Object({
+  session_id: t.String(),
+  recipient_actor_id: t.String(),
+  chain_index: t.Number(),
+  message_key: t.String(),
+  created_at: t.Optional(t.String(),),
 },);
 
 // ── e2e_skipped_keys ────────────────────────────────────────────
