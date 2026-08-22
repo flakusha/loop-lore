@@ -280,12 +280,11 @@
     "priority": "high",
     "epic": "epic-rpg-wiring-phase3",
     "tags": [],
-    "status": "closed",
+    "status": "done",
     "closed_at": "2026-08-20",
     "verified_on_dev": "2026-08-22",
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
-    "git_issue": "82e8395",
-    "status": "done"
+    "git_issue": "82e8395"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -7762,7 +7761,8 @@
     "epic": "epic-world-management-ui.md",
     "tags": [],
     "source": ".plan/tickets/TASK-location-explorer.md",
-    "git_issue": "c36e803"
+    "git_issue": "c36e803",
+    "status": "done"
   },
   "TASK-LOG-ADD-TRACE-FATAL": {
     "hash": "pending",
