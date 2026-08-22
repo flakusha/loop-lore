@@ -2087,3 +2087,12 @@ export const ActorE2ePubkeysSchema = t.Object({
   expires_at: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
 },);
+
+// ── e2e_sessions ────────────────────────────────────────────
+export const E2eSessionsSchema = t.Object({
+  sender_actor_id: t.String(),
+  recipient_actor_id: t.String(),
+  created_at: t.Optional(t.String(),),
+  last_message_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+},);
