@@ -139,4 +139,5 @@ export interface DB {
   world_timelines: import("./schema-core").WorldTimelines;
   chat_keys: import("./schema-core").ChatKeys;
   music_links: import("./schema-core").MusicLinks;
+  actor_e2e_pubkeys: import("./schema-core").ActorE2ePubkeys;
 }
