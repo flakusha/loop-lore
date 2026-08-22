@@ -49,16 +49,13 @@
     "md:links": "bun run scripts/check-md-links.ts",
     "md:links:fix": "bun run scripts/check-md-links.ts --fix",
     "md:lint:fix": "markdownlint-cli2 --fix \"docs/**/*.md\" \".plan/**/*.md\"",
-    "typecheck": "tsc --noEmit --project tsconfig.backend.json",
-    "typecheck:frontend": "tsc --noEmit --project tsconfig.frontend.json",
-    "typecheck:coverage": "type-coverage --strict --at-least 90 --project tsconfig.backend.json",
+    "typecheck": "tsgo --noEmit --project tsconfig.backend.json",
+    "typecheck:tsc": "tsc --noEmit --project tsconfig.backend.json",
+    "typecheck:frontend": "tsgo --noEmit --project tsconfig.frontend.json",
+    "typecheck:frontend:tsc": "tsc --noEmit --project tsconfig.frontend.json",
     "typecheck:coverage:frontend": "type-coverage --strict --at-least 90 --project tsconfig.frontend.json",
-    "check": "bun run check:parallel",
     "check:parallel": "bun run scripts/check-parallel.mjs",
     "check:serial": "bun run typecheck && bun run typecheck:frontend && bun run typecheck:coverage && bun run typecheck:coverage:frontend && bun run lint && bun run lint:css && bun run lint:html && bun run lint:html-scripts && bun run lint:chaining && bun run format:dprint && bun run md:lint",
-    "check:typecheck": "bun run typecheck && bun run typecheck:frontend && bun run typecheck:coverage && bun run typecheck:coverage:frontend",
-    "check:lint": "bun run lint && bun run lint:css && bun run lint:html && bun run lint:html-scripts && bun run lint:chaining",
-    "check:format": "bun run format:dprint && bun run md:lint",
     "check:ci": "bun run scripts/check-parallel.mjs --ci",
     "check:fix": "bun run scripts/check-parallel.mjs --fix",
     "check:report-ls": "bun run scripts/check-parallel.mjs --report-ls",
@@ -111,7 +108,10 @@
     "deno:audit:json": "bun run scripts/audit-runtime-compat.ts --json",
     "deno:pkg:from-deno": "bun run scripts/gen-pkg-from-deno.ts",
     "deno:pkg:from-deno:check": "bun run scripts/gen-pkg-from-deno.ts --check",
-    "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
+    "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build",
+    "typecheck:coverage": "type-coverage --strict --at-least 90 --project tsconfig.backend.json",
+    "check": "bun run check:parallel",
+    "check:typecheck": "bun run typecheck && bun run typecheck:frontend && bun run typecheck:coverage && bun run typecheck:coverage:frontend"
   },
   "dependencies": {
     "@elysia/openapi": "^1.4.15",
@@ -133,7 +133,6 @@
   "devDependencies": {
     "@alpinejs/morph": "^3.16.2",
     "@biomejs/biome": "^2.5.10",
-
     "@markuplint/html-spec": "^4.18.0",
     "@markuplint/mustache-parser": "4.18.3",
     "@playwright/test": "^1.62.1",
@@ -145,6 +144,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/jszip": "^3.4.1",
     "@types/terser": "^3.12.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260707.2",
     "alpinejs": "^3.16.2",
     "bun-plugin-html": "2.2.8",
     "dprint": "^0.56.1",
