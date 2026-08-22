@@ -7419,6 +7419,18 @@
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
     }
   ],
+  "src/frontend/alpine/location-explorer.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
+    }
+  ],
+  "src/frontend/alpine/location-explorer.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
+    }
+  ],
   "src/frontend/alpine/memory-panel.ts": [
     {
       "kind": "ticket",
@@ -8997,20 +9009,10 @@
       "source": ".plan/tickets/TASK-location-details.md"
     }
   ],
-  "src/frontend/alpine/location-explorer.ts": [
+  "src/frontend/world/location-explorer.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-frontend-backend-integration.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-location-explorer.md"
-    }
-  ],
-  "src/frontend/alpine/location-explorer.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-location-explorer.md"
+      "source": ".plan/epics/epic-world-management-ui.md"
     }
   ],
   "src/frontend/world/time-weather.ts": [
@@ -11336,6 +11338,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-quick-regen-button.md"
     },
     {
@@ -13183,6 +13189,18 @@
       "source": "docs/spec/licensing.md"
     }
   ],
+  "src/routes/location-explorer.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
+    }
+  ],
+  "src/routes/location-explorer.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
+    }
+  ],
   "src/routes/locations.ts": [
     {
       "kind": "ticket",
@@ -14093,6 +14111,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
   "src/rpg": [
@@ -17345,6 +17367,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-provisioning-dashboard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
   "src/views/world-editor.html": [
