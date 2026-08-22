@@ -687,6 +687,15 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("actor_e2e_pubkeys", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    public_key_jwk: col("text", { notNull: true, },),
+    algorithm: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+    revoked_at: col("text",),
+  },)
   .table("actor_items", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
