@@ -45,6 +45,8 @@
     "@alpinejs/morph",
     "@markuplint/html-spec",
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
+    "markuplint", // CLI binary invoked by pre-commit hook, not imported
+    "@eslint/js", // eslint.config.mjs rewritten as stubs (no @eslint/js import needed)
     "@elysia/openapi",
     "@sinclair/typebox", // frontend bundle + validation schemas; frontend entries not in knip's entry list
     "@types/clean-css",
