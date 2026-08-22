@@ -8997,17 +8997,17 @@
       "source": ".plan/tickets/TASK-location-details.md"
     }
   ],
-  "src/frontend/world/location-explorer.ts": [
+  "src/frontend/alpine/location-explorer.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
+      "source": ".plan/epics/epic-frontend-backend-integration.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
-  "src/frontend/world/location-tree.ts": [
+  "src/frontend/alpine/location-explorer.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
