@@ -3,13 +3,21 @@
 
 # BUG: gallery serveGalleryGrid declared twice — build error
 
-**Status:** Not A Bug — Already Correct
+**Status:** ✅ Closed (2026-08-22, verified on `dev`)
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Trivial
 **Area:** gallery
 **Source:** reconcile review (Scout Batch C — GAL-1)
-**Resolved:** 2026-08-21
+**Resolved:** 2026-08-21 (analysis) / 2026-08-22 (verification on `dev`)
+
+## Verification (2026-08-22, `dev` @ 0e31e903)
+
+`bun run check` passes 21/21 on the current `dev` tree. The check failure that
+originally prompted this ticket (`no-restricted-syntax` on `extractSplitBranches` /
+`extractReunionSource`) is unrelated to `serveGalleryGrid` and is no longer
+blocking the gate. No duplicate `serveGalleryGrid` declaration exists; the
+function is defined exactly once at `src/routes/views/gallery.ts:58-102`.
 
 ## Resolution
 
