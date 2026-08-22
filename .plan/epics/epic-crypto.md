@@ -220,10 +220,13 @@ removal excludes future message wraps.
 - `src/routes/messages/post.ts` — accept `e2e_payload` for `at-rest` tier
   chats; reject server-mediated encryption path for those chats.
 - `src/routes/messages/helpers.ts` (read path) — return `e2e_payload` to
-  client without attempting server-side decryption.
-- `src/crypto/at-rest.ts:69,96` — relax `case "private"` throw for the
-  payload path; the rename to `EncryptionLevel.AtRest` (tracked in
-  `BUG-private-tier-no-true-e2e` §"Resolution") remains pending.
+- `src/crypto/at-rest.ts` — relax `case "private"` throw for the
+ payload path; the rename to `EncryptionLevel.AtRest` (tracked in
+ `BUG-private-tier-no-true-e2e` §"Resolution") remains pending.
+ ✅ DONE in commit `TBD` — `at-rest` is the canonical wire value; the
+ `private` tier handler has been removed; migration `057` rewrites
+ existing rows.
+</input>
 
 **Tests:** full HTTP route round-trip, server-encrypt rejection for
 `at-rest` tier, read path returns ciphertext unchanged.

@@ -70,22 +70,29 @@ export const ModelRole = {
 export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
 
 /**
- * Chat encryption tier — determines whether and how message content is encrypted at rest.
+ * Chat encryption tier — determines whether and how message content is
+ * encrypted at rest.
  *
  * Valid values:
- *   - `none`    — plaintext storage, no server-side encryption
- *   - `standard` — AES-256-GCM via per-chat keys derived from the SMK
- *   - `private`  — end-to-end; clients must pre-encrypt before sending
+ *   - "none"      — plaintext, no crypto
+ *   - "standard"  — server-mediated AES-256-GCM via stable chat keys
+ *   - "at-rest"   — client-side E2E; server stores ciphertext as-is
+ *                   and cannot decrypt (the messages.e2e_payload column).
  *
- * Note: `public` is NOT a valid EncryptionLevel value. Historically a "public"
- * sentinel appeared in the chats table default but was never a valid tier. The
- * `009_encryption_level_default` migration removes it. Any code that encounters
- * a `public` value should treat it as `none` (plaintext).
+ * Note: `public` is NOT a valid EncryptionLevel value. Historically a
+ * "public" sentinel appeared in the chats table default but was never a
+ * valid tier. The `009_encryption_level_default` migration removes it.
+ * Any code that encounters a `public` value should treat it as `none`.
+ *
+ * Migration history (TASK-asymmetric-key-pairs-followup Phase D):
+ *   - The historical `"private"` value is renamed to `"at-rest"`. The
+ *     `057_encryption_level_at_rest_rename` migration rewrites existing
+ *     rows so live deployments roll forward cleanly.
  */
 export const EncryptionLevel = {
   None: "none",
   Standard: "standard",
-  Private: "private",
+  AtRest: "at-rest",
 } as const;
 export type EncryptionLevel = (typeof EncryptionLevel)[keyof typeof EncryptionLevel];
 
