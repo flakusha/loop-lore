@@ -2351,12 +2351,22 @@ body {
     height: 100vh;
     right: 0;
     box-shadow: none;
-    border-left: none;
     border-top: 1px solid var(--border-default);
   }
 
   .hamburger {
     left: var(--space-4);
+  }
+
+  /* Location Explorer: stack tree + detail on narrow viewports */
+  .loc-explorer-layout {
+    flex-direction: column;
+  }
+  .loc-explorer-detail {
+    border-left: none;
+    border-top: 1px solid var(--border-default);
+    padding-left: 0;
+    padding-top: var(--space-3);
   }
 }
 
