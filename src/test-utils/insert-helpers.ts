@@ -3225,3 +3225,23 @@ export async function insertActorE2ePubkeys(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a e2e_sessions row. */
+export async function insertE2eSessions(
+  db: Db,
+  sender_actor_id: string,
+  recipient_actor_id: string,
+  opts?: {
+    id?: Generated<string>;
+    created_at?: Generated<string>;
+    last_message_at?: string | null;
+    revoked_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("e2e_sessions",).values({
+    id: crypto.randomUUID(),
+    sender_actor_id,
+    recipient_actor_id,
+    ...opts,
+  } as any,).execute();
+}

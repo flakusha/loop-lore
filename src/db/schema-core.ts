@@ -855,3 +855,13 @@ export interface ActorE2ePubkeys {
   expires_at: string | null;
   revoked_at: string | null;
 }
+
+// ── e2e_sessions ────────────────────────────────────────────
+export interface E2eSessions {
+  id: Generated<string>;
+  sender_actor_id: string;
+  recipient_actor_id: string;
+  created_at: Generated<string>;
+  last_message_at: string | null;
+  revoked_at: string | null;
+}
