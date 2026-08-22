@@ -84,7 +84,7 @@ green "  ✓ bun: $(command -v bun)"
 # ── Step 1: Auto-fix formatting ──────────────────────────────
 echo ""
 echo "--- Step 1: Auto-fix formatting ---"
-if bun run format:dprint:fix; then
+if bun run format:fix; then
   green "PASS: dprint auto-fix"
 else
   red "FAIL: dprint auto-fix"
@@ -109,7 +109,7 @@ CHECK_CMDS=(
   "bun run typecheck:frontend"
   "bun run lint"
   "bun run lint:css"
-  "bun run format:dprint"
+  "bun run format"
   "bun run md:lint"
   "bun run schemas:check"
 )
