@@ -45,4 +45,14 @@ independent of the tier-gated `distributeKeysOnJoin`/`rotateKeyOnLeave` calls.
 
 - [x] Chat history survives participant join/leave (stable stored key in `chat_keys` table).
 - [x] Read path uses stored `key_id` → `chat_keys` lookup to find the correct key.
+
+## Reconciliation (2026-08-22)
+
+- **Git issue state:** OPEN (`61c7072`). Run `bun run scripts/worktree/ state 61c7072 done` after this verification is reviewed.
+ +- **Code fix verified:**
+  - `src/db/migrations/054_chat_keys.ts` — `chat_keys` table (UNIQUE on `chat_id`) with stable random 32-byte key, SMK-encrypted at rest.
+  - `src/crypto/key-distribution.ts:rotateKeyOnLeave` — opt-in forward secrecy path; join no longer rotates by default.
+  - `src/crypto/message-content.ts` — read path uses `messages.key_id` → `chat_keys` lookup, no longer re-derives.
+  - `src/crypto/chat-history-membership.integration.test.ts` — proves survival of N messages across join/leave.
+- The 4 root causes cited in this ticket are all closed in current code.
 - [x] Integration test: add/remove participant after N messages → all N still decrypt.
