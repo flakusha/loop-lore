@@ -41,13 +41,13 @@ export function substituteWorkflow<T,>(
   }
 
   if (Array.isArray(obj,)) {
-    return Array.from(obj, (item,) => substituteWorkflow(item, vars, nodeOverrides,),) as T;
+    return Array.from(obj, (item,) => substituteWorkflow(item, vars, _nodeOverrides,),) as T;
   }
 
   if (typeof obj === "object") {
     const result: Record<string, unknown> = {};
     for (const [key, value,] of Object.entries(obj as Record<string, unknown>,)) {
-      result[key] = substituteWorkflow(value, vars, nodeOverrides,);
+      result[key] = substituteWorkflow(value, vars, _nodeOverrides,);
     }
     return result as T;
   }
