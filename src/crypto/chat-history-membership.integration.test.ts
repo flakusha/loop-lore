@@ -46,6 +46,7 @@ function buildMigrationProvider() {
         .sort((a, b,) => (a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0));
       const migrations: Record<string, Migration> = {};
       for (const fileName of fileNames) {
+        const mod = await import(path.join(dir, fileName,));
         migrations[fileName.replace(/\.ts$/, "",)] = mod.default ?? mod;
       }
       return migrations;

@@ -12,6 +12,7 @@ import {
   getChatEncryptionLevel,
   getSmk,
   isEncryptedPayload,
+  isEncryptionEnabled,
 } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { extractMentionedActorIds, } from "../../group-chat/mention-parser";

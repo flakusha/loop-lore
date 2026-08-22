@@ -206,6 +206,7 @@ export async function semanticRecall(
   candidateIds: string[],
   queryText: string,
   topK = 10,
+  minScore = 0.3,
 ): Promise<SemanticMatch[]> {
   if (candidateIds.length === 0) { return []; }
   /* eslint-disable no-restricted-syntax */
