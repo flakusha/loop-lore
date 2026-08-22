@@ -32,11 +32,10 @@ export async function getGmDecision(
   if (!actorId && guidance) {
     actorId = resolveGuidedActor(guidance, context, state.turnManager.state?.currentActorId ?? null,);
   }
-  if (!actorId) {
-    actorId = await state.turnManager.selectNextActor(undefined, turnContext,);
-  }
 
-  if (!actorId) {
+  actorId ??= await state.turnManager.selectNextActor(undefined, turnContext,);
+
+  if (actorId == null) {
     throw new Error("No available actors for next turn",);
   }
 

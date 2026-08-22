@@ -144,10 +144,10 @@ A message travels from client to server through these steps:
 
 **On read by another actor:**
 
-5. Server loads content JSON from DB
-6. Decrypt with chat key → compressed bytes
-7. Decompress → plaintext
-8. Deliver to requesting actor over HTTPS
+1. Server loads content JSON from DB
+2. Decrypt with chat key → compressed bytes
+3. Decompress → plaintext
+4. Deliver to requesting actor over HTTPS
 
 ### LLM Response (Write Path)
 

@@ -81,15 +81,15 @@ export async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Prom
 }
 
 export async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<Uint8Array> {
-  if (!encrypted) { throw new Error("decryptBytes: encrypted value is empty"); }
+  if (!encrypted) { throw new Error("decryptBytes: encrypted value is empty",); }
   // sonarjs false positive: !encrypted guard on line above
   // eslint-disable-next-line sonarjs/null-dereference -- !encrypted guard above
-  const parts = encrypted.split(":");
-  if (parts.length !== 2) { throw new Error("Invalid encrypted key format"); }
-  const iv = toBufferSource(Uint8Array.fromBase64(parts[0]));
-  const data = toBufferSource(Uint8Array.fromBase64(parts[1]));
-  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
-  return new Uint8Array(plaintext);
+  const parts = encrypted.split(":",);
+  if (parts.length !== 2) { throw new Error("Invalid encrypted key format",); }
+  const iv = toBufferSource(Uint8Array.fromBase64(parts[0]!,),);
+  const data = toBufferSource(Uint8Array.fromBase64(parts[1]!,),);
+  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv, }, key, data,);
+  return new Uint8Array(plaintext,);
 }
 /** Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource. */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {

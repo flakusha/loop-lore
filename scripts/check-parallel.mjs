@@ -40,12 +40,9 @@ const checks = {
   "typecheck - coverage": "bun run typecheck:coverage",
   "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend",
 
-  // Linting
-  "lint - ts": "bun run lint",
-  "lint - css": "bun run lint:css",
-  "lint - html": "bun run lint:html",
-  "lint - html - scripts": "bun run lint:html-scripts",
-  "lint - chaining": "bun run lint:chaining",
+  "lint - ts (eslint)": "bun run lint:eslint",
+  "lint - oxlint (correctness)": "bun run lint:oxlint",
+  "lint - eslint": "bun run lint:eslint",
 
   // Formatting
   "format - dprint": "bun run format:dprint",

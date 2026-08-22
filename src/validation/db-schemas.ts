@@ -163,7 +163,14 @@ export const LorePositionSchema = t.UnionEnum(["before_char", "after_char", "in_
 export const MaterialSlotTypeSchema = t.UnionEnum(["required", "optional", "catalyst",],);
 export const MemoryTypeSchema = t.UnionEnum(["episodic", "semantic", "procedural",],);
 export const MessageContentFormatSchema = t.UnionEnum(["markdown",],);
-export const MessageContentTypeSchema = t.UnionEnum(["text", "action", "narration", "system", "continuation",],);
+export const MessageContentTypeSchema = t.UnionEnum([
+  "text",
+  "action",
+  "narration",
+  "system",
+  "continuation",
+  "music_link",
+],);
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
 export const MessageStatusSchema = t.UnionEnum([
   "sending",
@@ -2024,6 +2031,7 @@ export const TradeHistorySchema = t.Object({
 
 // ── memory_embeddings ────────────────────────────────────────────
 export const MemoryEmbeddingsSchema = t.Object({
+  vector_blob: t.String(),
   created_at: t.Number(),
   memory_id: t.Optional(t.String(),),
   model: t.Optional(t.String(),),
@@ -2045,4 +2053,27 @@ export const ChatKeysSchema = t.Object({
   encrypted_chat_key: t.String(),
   created_at: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
+},);
+
+// ── music_links ────────────────────────────────────────────
+export const MusicLinksSchema = t.Object({
+  chat_id: t.String(),
+  sender_id: t.String(),
+  service: t.String(),
+  url: t.String(),
+  title: t.String(),
+  artist: t.String(),
+  service_track_id: t.String(),
+  service_url: t.String(),
+  section_id: t.Optional(t.String(),),
+  embed_html: t.Optional(t.String(),),
+  thumbnail_url: t.Optional(t.String(),),
+  duration_secs: t.Optional(t.Number(),),
+  is_playlist: t.Optional(t.Number(),),
+  track_count: t.Optional(t.Number(),),
+  explicit: t.Optional(t.Number(),),
+  year: t.Optional(t.Number(),),
+  genre: t.Optional(t.String(),),
+  nsfw_hidden: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
 },);

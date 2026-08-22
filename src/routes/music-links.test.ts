@@ -15,6 +15,6 @@ describe("MusicLinks routes", () => {
   // use the test DB harness (createTestDb, etc.).
 
   test("placeholder: service URL validation is exercised by service tests", () => {
-    expect(true).toBe(true);
+    expect(true,).toBe(true,);
   });
 });

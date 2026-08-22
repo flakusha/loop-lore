@@ -15,7 +15,7 @@
 // Pattern: \.sh\b in file content excluding known false positives.
 // Exit 0 if clean, 1 if violations found.
 
-import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
+import { existsSync, readdirSync, readFileSync, } from "node:fs";
 import { join, relative, resolve, } from "node:path";
 
 const REPO_ROOT = resolve(import.meta.dirname, "..",);

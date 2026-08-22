@@ -22,7 +22,7 @@ const MANIFEST_PATH = DB_OUTPUT_DIR
 // ── Types ──────────────────────────────────────────────────
 
 interface ColumnDef {
-  type: "text" | "integer" | "real";
+  type: "text" | "integer" | "real" | "blob";
   notNull: boolean;
   hasDefault: boolean;
   primaryKey: boolean;
@@ -153,7 +153,7 @@ function parseColumns(block: string,): Record<string, ColumnDef> {
     const part = parts[i];
 
     // Extract column name and type: "name", "type"
-    const headerMatch = part.match(/^\s*"(\w+)"\s*,\s*"(text|integer|real)"/,);
+    const headerMatch = part.match(/^\s*"(\w+)"\s*,\s*"(text|integer|real|blob)"/,);
     if (!headerMatch) { continue; }
 
     const [, name, type,] = headerMatch;
@@ -237,7 +237,7 @@ function generateManifest(
   lines.push(``,);
   lines.push(`interface ColMeta {`,);
   lines.push(`  /** SQLite storage type */`,);
-  lines.push(`  type: "text" | "integer" | "real";`,);
+  lines.push(`  type: "text" | "integer" | "real" | "blob";`,);
   lines.push(`  /** NOT NULL constraint */`,);
   lines.push(`  notNull?: boolean;`,);
   lines.push(`  /** Has DEFAULT expression or value */`,);
