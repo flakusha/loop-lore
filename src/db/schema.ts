@@ -140,4 +140,5 @@ export interface DB {
   chat_keys: import("./schema-core").ChatKeys;
   music_links: import("./schema-core").MusicLinks;
   actor_e2e_pubkeys: import("./schema-core").ActorE2ePubkeys;
+  e2e_sessions: import("./schema-core").E2eSessions;
 }
