@@ -69,11 +69,10 @@ export async function nextRatchetStep(chainKey: Uint8Array,): Promise<RatchetSte
   const chainKeyOut = new Uint8Array(KEY_LENGTH,);
   const messageKey = new Uint8Array(KEY_LENGTH,);
 
-  // Derive the two outputs in parallel via HKDF-Expand with two distinct info strings.
-  await Promise.all([
-    hkdfExpand(baseKey, MESSAGE_KEY_INFO, messageKey,),
-    hkdfExpand(baseKey, CHAIN_KEY_INFO, chainKeyOut,),
-  ],);
+  // Derive the two outputs sequentially — the no-restricted-syntax rule
+  // disallows Promise.all() because a single rejection would be unhandled.
+  await hkdfExpand(baseKey, MESSAGE_KEY_INFO, messageKey,);
+  await hkdfExpand(baseKey, CHAIN_KEY_INFO, chainKeyOut,);
 
   // Defense in depth: zeroize the input key material. HKDF outputs are
   // fresh material; the input chain key is no longer needed after this call.

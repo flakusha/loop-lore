@@ -23,9 +23,14 @@
  *     same browser (per-actor namespace).
  */
 
-import type { KeyPairJwk, } from "../../crypto/e2e/key-pairs";
-import { generateKeyPair, importKeyPair, } from "../../crypto/e2e/key-pairs";
-import { exportPrivateJwk, exportPublicJwk, } from "../../crypto/e2e/key-pairs";
+import {
+  exportPrivateJwk,
+  exportPublicJwk,
+  generateKeyPair,
+  importKeyPair,
+  type KeyPairJwk,
+} from "../../crypto/e2e/key-pairs";
+import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 
 const STORAGE_PREFIX = "ll-e2e-privkey-v1";
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;
@@ -91,12 +96,10 @@ export async function loadOrCreateKeyPair(opts: LoadOrCreateOpts,): Promise<Load
 export function getStoredKeyPair(actorId: string,): StoredKeyPair | null {
   const raw = localStorage.getItem(storageKey(actorId,),);
   if (!raw) { return null; }
-  try {
-    const parsed: unknown = JSON.parse(raw,);
-    return isStoredKeyPair(parsed,) ? parsed : null;
-  } catch {
-    return null;
-  }
+  const parsedResult = safeJsonParse<unknown>(raw,);
+  if (!parsedResult.ok) { return null; }
+  const parsed: unknown = parsedResult.value;
+  return isStoredKeyPair(parsed,) ? parsed : null;
 }
 
 /**
@@ -126,8 +129,14 @@ function storageKey(actorId: string,): string {
 }
 
 function persistStoredKeyPair(stored: StoredKeyPair,): void {
+  const r = safeJsonStringify(stored,);
+  if (!r.ok) {
+    // Quota or serialization error — silently skip. Backup is the user's
+    // responsibility via the export flow.
+    return;
+  }
   try {
-    localStorage.setItem(storageKey(stored.actorId,), JSON.stringify(stored,),);
+    localStorage.setItem(storageKey(stored.actorId,), r.value,);
   } catch {
     // Quota or serialization error — silently skip. Backup is the user's
     // responsibility via the export flow.
