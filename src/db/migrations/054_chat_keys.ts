@@ -114,7 +114,8 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   await sql`ALTER TABLE messages_new RENAME TO messages`.execute(db,);
 
   // Recreate the indexes that survived DROP TABLE
-  await db.schema.createIndex("idx_messages_chat_created",).on("messages",).columns(["chat_id", "created_at",],).execute();
+  await db.schema.createIndex("idx_messages_chat_created",).on("messages",).columns(["chat_id", "created_at",],)
+    .execute();
   await db.schema.createIndex("idx_messages_idempotency",).on("messages",).column("idempotency_key",).execute();
   await db.schema.createIndex("idx_messages_actor",).on("messages",).column("actor_id",).execute();
   await db.schema.createIndex("idx_messages_parent",).on("messages",).column("parent_id",).execute();
@@ -196,7 +197,8 @@ export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("messages",).execute();
   await sql`ALTER TABLE messages_old RENAME TO messages`.execute(db,);
 
-  await db.schema.createIndex("idx_messages_chat_created",).on("messages",).columns(["chat_id", "created_at",],).execute();
+  await db.schema.createIndex("idx_messages_chat_created",).on("messages",).columns(["chat_id", "created_at",],)
+    .execute();
   await db.schema.createIndex("idx_messages_idempotency",).on("messages",).column("idempotency_key",).execute();
   await db.schema.createIndex("idx_messages_actor",).on("messages",).column("actor_id",).execute();
   await db.schema.createIndex("idx_messages_parent",).on("messages",).column("parent_id",).execute();

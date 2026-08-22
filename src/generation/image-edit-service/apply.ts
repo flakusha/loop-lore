@@ -169,7 +169,7 @@ export async function applyEdit(
     const id = randomUUID();
     const filename = `edit-${id.slice(0, 8,)}.png`;
 
-    const { asset: asset, } = await createAsset({
+    const { asset, } = await createAsset({
       database: db,
       input: {
         ownerId: opts.actorId,

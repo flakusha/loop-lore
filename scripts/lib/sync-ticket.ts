@@ -205,21 +205,20 @@ export function reconcile(
     const issueTitleNorm = issue.title.toLowerCase().replace(/[^a-z0-9]/g, "",);
 
     // Remove common prefixes from issue title (e.g. "TASK-006: " or "FEAT-070: ")
-    const issueTitleClean = issueTitleNorm.replace(/^(task|feat|bug|fix|epic|sol|infra)[\-_]\d+[:\-_\s]*/i, "",);
-
+    const issueTitleClean = issueTitleNorm.replace(/^(task|feat|bug|fix|epic|sol|infra)[_]\d+[:_s]*/i, "",);
     // Also try matching extid directly
     const extidNorm = extid.toLowerCase().replace(/[^a-z0-9]/g, "",);
 
     // Extract meaningful words from extid (skip common prefixes like "task", "feat", "epic")
     const extidWords = extid.toLowerCase()
-      .replace(/^(task|feat|bug|fix|epic|sol|infra)[\-_]/i, "",)
+      .replace(/^(task|feat|bug|fix|epic|sol|infra)[_]/i, "",)
       .split(/[^a-z0-9]+/,)
       .filter(w => w.length > 2);
     const issueWords = issueTitleClean.split(/[^a-z0-9]+/,).filter(w => w.length > 2);
 
     // Count word overlap
     const overlap = extidWords.filter(w => issueWords.some(iw => w === iw || w.includes(iw,) || iw.includes(w,)));
-    const overlapRatio = overlap.length / Math.max(extidWords.length, 1,);
+    const _overlapRatio = overlap.length / Math.max(extidWords.length, 1,);
 
     // Check if titles share significant overlap (at least 10 chars)
     // Also accept if 2+ words overlap, or if the first significant word matches
