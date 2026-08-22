@@ -3204,3 +3204,24 @@ export async function insertMusicLinks(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a actor_e2e_pubkeys row. */
+export async function insertActorE2ePubkeys(
+  db: Db,
+  actor_id: string,
+  public_key_jwk: string,
+  opts?: {
+    id?: Generated<string>;
+    algorithm?: Generated<string>;
+    created_at?: Generated<string>;
+    expires_at?: string | null;
+    revoked_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("actor_e2e_pubkeys",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    public_key_jwk,
+    ...opts,
+  } as any,).execute();
+}

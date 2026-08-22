@@ -767,7 +767,6 @@ export interface ChatKeys {
 }
 
 
-
 export interface MusicLinks {
   id: Generated<string>;
   chat_id: string;
@@ -789,4 +788,15 @@ export interface MusicLinks {
   genre: string | null;
   nsfw_hidden: Generated<number>;
   created_at: Generated<string>;
+}
+
+// ── actor_e2e_pubkeys ────────────────────────────────────────────
+export interface ActorE2ePubkeys {
+  id: Generated<string>;
+  actor_id: string;
+  public_key_jwk: string;
+  algorithm: Generated<string>;
+  created_at: Generated<string>;
+  expires_at: string | null;
+  revoked_at: string | null;
 }
