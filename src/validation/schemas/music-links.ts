@@ -25,7 +25,7 @@ export const MusicLinkIdParams = t.Object({
 });
 
 export const ChatIdParams = t.Object({
-  chatId: Id,
+  id: Id,
 });
 
 export const MusicLinkResponse = t.Object({
