@@ -304,6 +304,22 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     last_message_at: col("text",),
     revoked_at: col("text",),
+    root_key: col("blob",),
+    sending_chain_key: col("blob",),
+    receiving_chain_key: col("blob",),
+    send_count: col("integer", { notNull: true, hasDefault: true, },),
+    recv_count: col("integer", { notNull: true, hasDefault: true, },),
+    ephemeral_public_jwk: col("text",),
+    ephemeral_private_jwk: col("text",),
+  },)
+  .table("e2e_skipped_keys", {
+    id: col("text", { primaryKey: true, },),
+    session_id: col("text", { notNull: true, },),
+    dh_public_jwk: col("text", { notNull: true, },),
+    counter: col("integer", { notNull: true, },),
+    encrypted_message_key: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text", { notNull: true, },),
   },)
   .table("emotions", {
     id: col("text", { primaryKey: true, },),

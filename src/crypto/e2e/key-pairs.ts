@@ -114,10 +114,8 @@ export async function importKeyPair(
   jwks: KeyPairJwk,
   opts: { extractablePrivate?: boolean } = {},
 ): Promise<CryptoKeyPair> {
-  const [publicKey, privateKey,] = await Promise.all([
-    importPublicKey(jwks.publicKey,),
-    importPrivateKey(jwks.privateKey, { extractable: opts.extractablePrivate ?? false, },),
-  ],);
+  const publicKey = await importPublicKey(jwks.publicKey,);
+  const privateKey = await importPrivateKey(jwks.privateKey, { extractable: opts.extractablePrivate ?? false, },);
   return { publicKey, privateKey, };
 }
 

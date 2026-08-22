@@ -25,6 +25,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
+import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;
 
@@ -86,7 +87,7 @@ export async function registerPublicKey(opts: RegisterPublicKeyOpts,): Promise<P
     .values({
       id,
       actor_id: actorId,
-      public_key_jwk: JSON.stringify(publicKeyJwk,),
+      public_key_jwk: serializeJwk(publicKeyJwk,),
       algorithm,
       created_at: now as unknown as string,
       expires_at: opts.expiresAt ?? null,
@@ -161,17 +162,19 @@ interface ActorE2EPubkeyRow {
   revoked_at: string | null;
 }
 
+function serializeJwk(jwk: JsonWebKey,): string {
+  const r = safeJsonStringify(jwk,);
+  if (!r.ok) { throw new Error("serializeJwk: failed to serialize public_key_jwk",); }
+  return r.value;
+}
+
 function rowToPublicKey(row: ActorE2EPubkeyRow,): PublicKeyRow {
-  let publicKeyJwk: JsonWebKey;
-  try {
-    publicKeyJwk = JSON.parse(row.public_key_jwk,) as JsonWebKey;
-  } catch {
-    throw new Error(`actor_e2e_pubkeys row ${row.id}: malformed public_key_jwk`,);
-  }
+  const parsed = safeJsonParse<JsonWebKey>(row.public_key_jwk,);
+  if (!parsed.ok) { throw new Error(`actor_e2e_pubkeys row ${row.id}: malformed public_key_jwk`,); }
   return {
     id: row.id,
     actorId: row.actor_id,
-    publicKeyJwk,
+    publicKeyJwk: parsed.value,
     algorithm: row.algorithm,
     createdAt: row.created_at,
     expiresAt: row.expires_at,
