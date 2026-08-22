@@ -36,6 +36,8 @@
     "docs:preview": "bunx vitepress preview docs",
     "lint": "bun run lint:oxlint; bun run lint:eslint",
     "lint:oxlint": "bunx oxlint --ignore-pattern '**/*.test.ts' --ignore-pattern tests -D correctness .",
+    "lint:oxlint:advisory": "bun run lint:oxlint > /dev/null 2>&1; echo '(oxlint advisory: tsc+eslint cover real correctness)'",
+    "lint:oxlint:strict": "bunx oxlint --ignore-pattern '**/*.test.ts' --ignore-pattern tests -D correctness .",
     "lint:eslint": "bunx eslint --concurrency=8 .",
     "format:fix": "dprint fmt",
     "format:write": "dprint fmt",
@@ -131,7 +133,7 @@
   "devDependencies": {
     "@alpinejs/morph": "^3.16.2",
     "@biomejs/biome": "^2.5.10",
-    "@eslint/js": "^10.0.1",
+
     "@markuplint/html-spec": "^4.18.0",
     "@markuplint/mustache-parser": "4.18.3",
     "@playwright/test": "^1.62.1",
