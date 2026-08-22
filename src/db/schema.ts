@@ -138,4 +138,5 @@ export interface DB {
   memory_embeddings: import("./schema-core").MemoryEmbeddings;
   world_timelines: import("./schema-core").WorldTimelines;
   chat_keys: import("./schema-core").ChatKeys;
+  music_links: import("./schema-core").MusicLinks;
 }

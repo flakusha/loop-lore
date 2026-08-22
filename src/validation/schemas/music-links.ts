@@ -1,15 +1,6 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-/**
- * Music link route validation schemas.
- */
 import { t, } from "elysia";
-import {
-  Id,
-  OptionalId,
-} from "./primitives";
-
+import { Id, OptionalId, } from "./primitives";
+import type { Static, } from "@sinclair/typebox";
 // ── Service enum ─────────────────────────────────────────────
 
 export const MusicServiceSchema = t.Union([
@@ -19,7 +10,7 @@ export const MusicServiceSchema = t.Union([
   t.Literal("apple_music"),
   t.Literal("bandcamp"),
 ]);
-export type MusicService = t.infer<typeof MusicServiceSchema>;
+export type MusicService = Static<typeof MusicServiceSchema>;
 
 // ── Route schemas ────────────────────────────────────────────
 

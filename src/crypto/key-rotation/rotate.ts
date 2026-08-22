@@ -45,30 +45,30 @@ export async function rotateActorKeyAndReEncrypt(
   // ── 1. Snapshot OLD keys BEFORE rotating any actor key ───────────────────
   // Get all chats this actor participates in.
   const chatRows = await database
-    .selectFrom("chat_participants")
-    .select("chat_id")
-    .where("actor_id", "=", actorId)
+    .selectFrom("chat_participants",)
+    .select("chat_id",)
+    .where("actor_id", "=", actorId,)
     .execute();
   const chatIds: string[] = [];
   for (const row of chatRows) {
-    chatIds.push(row.chat_id);
+    chatIds.push(row.chat_id,);
   }
 
   // Load keys for ALL participants of those chats (not just this actor).
   const actorIds: string[] = [];
   if (chatIds.length > 0) {
     const actorRows = await database
-      .selectFrom("chat_participants")
-      .select("actor_id")
-      .where("chat_id", "in", chatIds)
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "in", chatIds,)
       .distinct()
       .execute();
     for (const row of actorRows) {
-      actorIds.push(row.actor_id);
+      actorIds.push(row.actor_id,);
     }
   }
 
-  const oldParticipantKeys = await loadActorKeys({ database, actorIds, smk });
+  const oldParticipantKeys = await loadActorKeys({ database, actorIds, smk, },);
   // ── 2. Rotate the actor key (atomically: expire old + create new) ────────
   const newKeyId = await rotateActorKey({ database, actorId, smk, },);
 

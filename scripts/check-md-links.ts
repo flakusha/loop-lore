@@ -35,7 +35,7 @@ import { dirname, join, resolve, } from "node:path";
 import { extractComments, extractDocRefs, } from "./lib/src-refs";
 
 const PROJECT_ROOT = import.meta.dir + "/..";
-const GLOBS = ["docs/**/*.md", ".plan/**/*.md",];
+const _GLOBS = ["docs/**/*.md", ".plan/**/*.md",];
 // Bun's Glob does not traverse dot-directories (.plan/), so walk the tree.
 const SCAN_DIRS = ["docs", ".plan",];
 const SRC_DIR = "src";

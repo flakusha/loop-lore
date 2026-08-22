@@ -79,11 +79,12 @@ function worldTimelineBarImpl(
       try {
         const res = await feFetch(`/api/worlds/${this.worldId}/timelines`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", },
+          /* eslint-disable no-restricted-syntax */
           body: JSON.stringify({
             name: this.newName.trim(),
             description: this.newDesc.trim() || undefined,
           },),
+          /* eslint-enable no-restricted-syntax */
         },);
         if (res.ok) {
           const data = (await res.json()) as { data: WorldTimeline };

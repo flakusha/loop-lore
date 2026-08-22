@@ -125,7 +125,42 @@
     //
     // _handleImportRequest: internal route handler called only by createTestServer's
     // route dispatcher. createTestServer IS used by all e2e tests; knip can't
-    // trace the handler-to-route wiring.
-    "tests/e2e/helpers/server.ts"
+    "tests/e2e/helpers/server.ts",
+
+    // Schema check scripts: standalone CLI tools, not entry-reachable
+    // (consumed via bun run scripts/..., not import)
+    "scripts/check-db-schemas.ts",
+
+    // Chat-state contract fixture: type-pinned test helper imported by tests
+    // but not by production code (tests/ only, not in knip entry graph)
+    "tests/e2e/fixtures/chat-state-contract.ts",
+
+    // Browser E2E tests: run via bun test, not import-reachable from production.
+    // Each is an entry-point test file executed by the test runner.
+    "tests/e2e/flows/browser/access-correctness.browser.ts",
+    "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts",
+    "tests/e2e/flows/browser/admin-dashboard-populated.browser.ts",
+    "tests/e2e/flows/browser/auth-flow.browser.ts",
+    "tests/e2e/flows/browser/auth-session.browser.ts",
+    "tests/e2e/flows/browser/characters-flow.browser.ts",
+    "tests/e2e/flows/browser/chat-flow.browser.ts",
+    "tests/e2e/flows/browser/chat-send.browser.ts",
+    "tests/e2e/flows/browser/chat-state.browser.ts",
+    "tests/e2e/flows/browser/creation-flow.browser.ts",
+    "tests/e2e/flows/browser/gallery-flow.browser.ts",
+    "tests/e2e/flows/browser/group-chat-matrix.browser.ts",
+    "tests/e2e/flows/browser/htmx-alpine.browser.ts",
+    "tests/e2e/flows/browser/navigation.browser.ts",
+    "tests/e2e/flows/browser/notifications-flow.browser.ts",
+    "tests/e2e/flows/browser/nsfw-moderation-flow.browser.ts",
+    "tests/e2e/flows/browser/personas-flow.browser.ts",
+    "tests/e2e/flows/browser/quests-flow.browser.ts",
+    "tests/e2e/flows/browser/redirection.browser.ts",
+    "tests/e2e/flows/browser/register-flow.browser.ts",
+    "tests/e2e/flows/browser/search-flow.browser.ts",
+    "tests/e2e/flows/browser/settings-flow.browser.ts",
+    "tests/e2e/flows/browser/smoke.browser.ts",
+    "tests/e2e/flows/browser/world-invites.browser.ts",
+    "tests/e2e/flows/browser/worlds-flow.browser.ts"
   ]
 }

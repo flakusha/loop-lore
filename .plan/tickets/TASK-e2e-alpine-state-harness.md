@@ -15,11 +15,13 @@ getAlpineData + waitForAlpineState helpers reading Alpine.$data / __x.getUnobser
 ## Implementation Notes
 
 ### helpers (already done by previous work)
+
 `tests/e2e/helpers/htmx-alpine.ts` exports:
 - `getAlpineData<T>(page, selector)` — reads `__x.getUnobservedData()` / `Alpine.$data(el)`
 - `waitForAlpineState<T>(page, selector, predicate, timeoutMs)` — polls Alpine component state
 
 ### Contract fixture
+
 `tests/e2e/fixtures/chat-state-contract.ts` (new) exports:
 - `ChatStateShape` interface — re-exports `ChatState` from `@/frontend/alpine/chat-types`
 - `UiStoreShape` interface — explicit properties mirroring `uiStoreDefinition` keys
@@ -28,6 +30,7 @@ getAlpineData + waitForAlpineState helpers reading Alpine.$data / __x.getUnobser
 - `CHAT_SELECTORS` const — pinned `data-testid` + Alpine `x-data` selectors used by all state-asserting tests
 
 ### Migrations
+
 **chat-state.browser.ts** (upgraded):
 - Replaced `Record<string, unknown>` with `ChatStateShape` / `UiStoreShape`
 - Added third test: cold-load `$store.ui.showChatList === false` at `/views/chat` via `waitForAlpineState`
