@@ -9,10 +9,10 @@
 // parent_location_id), and shows a detail pane for the selected location.
 // It is read-only — location CRUD lives in the Locations tab (world-locations.ts).
 import { jsonParseOr, } from "../../utils";
+import { locationExplorerControls, } from "./location-explorer-controls";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "location-explorer", },);
-
 export interface ExplorerLocation {
   id: string;
   name: string;
@@ -50,6 +50,7 @@ const safeParseList = (raw: string,): string[] => {
 
 (globalThis as any).locationExplorerState = function(worldId: string,) {
   return {
+    ...locationExplorerControls,
     worldId,
     locations: [] as ExplorerLocation[],
     states: [] as ExplorerLocationState[],
@@ -202,81 +203,5 @@ const safeParseList = (raw: string,): string[] => {
       const state = this.locationStateFor(loc.id,);
       return state ? safeParseList(state.npcs_present,) : [];
     },
-
-    // ── Filter option refresh ───────────────────────────────
-    // Distinct non-null values from loaded location_states, used to
-    // populate the dropdown options. Sorted for stable UI order.
-    _refreshOptionLists() {
-      const atmospheres = new Set<string>();
-      const weathers = new Set<string>();
-      const times = new Set<string>();
-      for (const s of this.states) {
-        if (s.atmosphere) { atmospheres.add(s.atmosphere,); }
-        if (s.weather) { weathers.add(s.weather,); }
-        if (s.time_of_day) { times.add(s.time_of_day,); }
-      }
-      this.atmosphereOptions = Array.from(atmospheres,).sort();
-      this.weatherOptions = Array.from(weathers,).sort();
-      this.timeOfDayOptions = Array.from(times,).sort();
-    },
-
-    /** Distinct publication_status values from loaded locations. */
-    get statusOptions(): string[] {
-      const seen = new Set<string>();
-      for (const l of this.locations) { if (l.publication_status) { seen.add(l.publication_status,); } }
-      return Array.from(seen,).sort();
-    },
-
-    /** True when any filter differs from its default (used to show a "Clear filters" affordance). */
-    get hasActiveFilters(): boolean {
-      return Boolean(
-        this.search.trim() ||
-        this.filterStatus ||
-        this.filterHasState ||
-        this.filterAtmosphere ||
-        this.filterWeather ||
-        this.filterTimeOfDay ||
-        this.filterTopLevelOnly,
-      );
-    },
-
-    clearFilters() {
-      this.search = "";
-      this.filterStatus = "";
-      this.filterHasState = "";
-      this.filterAtmosphere = "";
-      this.filterWeather = "";
-      this.filterTimeOfDay = "";
-      this.filterTopLevelOnly = false;
-    },
-
-    // ── Hover-preview (throttled) ──────────────────────────
-    // Delay before selectLoc fires on mouseenter, so casual sweeps don't
-    // burn detail fetches. Cancelled if user moves to another row.
-    hoverLoc(locId: string,) {
-      this._hoveredLocId = locId;
-      if (typeof window !== "undefined") {
-        window.clearTimeout(this._hoverTimer,);
-        this._hoverTimer = window.setTimeout(() => {
-          if (this._hoveredLocId === locId) { void this.selectLoc(locId,); }
-        }, 350,);
-      }
-    },
-
-    leaveLoc() {
-      this._hoveredLocId = "";
-      if (typeof window !== "undefined") { window.clearTimeout(this._hoverTimer,); }
-    },
-
-    // ── Quick navigation ───────────────────────────────────
-    // Deep-link to the chat that currently anchors this location, falling
-    // back to the world's public chat when no specific chat is bound.
-    // Both URLs are best-effort — they resolve client-side via the
-    // existing chat-list / chat-location routes.
-    navigateTo(locId: string,) {
-      const url = `/worlds/${this.worldId}/locations/${locId}`;
-      if (typeof window !== "undefined") { window.location.href = url; }
-    },
-
   };
 };
