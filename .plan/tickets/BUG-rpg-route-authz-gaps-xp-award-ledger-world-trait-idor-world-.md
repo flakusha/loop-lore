@@ -8,6 +8,7 @@
 **Effort:** Medium
 **Epic:** epic-rpg-wiring-phase3
 **Commit:** `rpg-authz-fix` worktree
+**Verified on dev:** 2026-08-22 (`bun run check` 21/21)
 
 ## Summary
 
