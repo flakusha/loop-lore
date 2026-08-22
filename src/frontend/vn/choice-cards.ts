@@ -9,6 +9,7 @@
 import { apiFetch, } from "../alpine/htmx";
 import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
+import { renderChoiceCards, } from "./choice-cards-render";
 
 const LOCATION_CHANGED_EVENT = "chat:location-changed";
 
@@ -232,65 +233,10 @@ export function getAccumulatedImpacts(): {
   return { relationships, moods, };
 }
 
-// ── Internal ────────────────────────────────────────────────────────────────
-
+/**
+ * Internal: dispatch to renderChoices in ./choice-cards-render.ts
+ */
 function renderChoices(): void {
-  if (!container) {
-    return;
-  }
-
-  const available: VnChoice[] = [];
-  const selected: VnChoice[] = [];
-  for (const c of choices) {
-    if (c.selected) {
-      selected.push(c,);
-    } else {
-      available.push(c,);
-    }
-  }
-
-  container.replaceChildren();
-
-  const choiceList = document.createElement("div",);
-  choiceList.className = "vn-choice-list";
-
-  const renderCard = (choice: VnChoice, isSelected: boolean,) => {
-    const card = document.createElement("button",);
-    card.className = `vn-choice-card${isSelected ? " vn-choice-card--selected" : ""}`;
-    card.type = "button";
-
-    const label = document.createElement("span",);
-    label.className = "vn-choice-card__label";
-    label.textContent = choice.label ?? choice.text;
-    card.append(label,);
-
-    if (choice.description) {
-      const desc = document.createElement("span",);
-      desc.className = "vn-choice-card__desc";
-      desc.textContent = choice.description;
-      card.append(desc,);
-    }
-
-    if (isSelected) {
-      card.setAttribute("aria-selected", "true",);
-    }
-
-    return card;
-  };
-
-  for (const c of available) {
-    const card = renderCard(c, false,);
-    card.addEventListener("click", () => {
-      void selectChoice(c.id,);
-    },);
-    choiceList.append(card,);
-  }
-
-  for (const c of selected) {
-    const card = renderCard(c, true,);
-    card.disabled = true;
-    choiceList.append(card,);
-  }
-
-  container.append(choiceList,);
+  if (!container) { return; }
+  renderChoiceCards(container, choices, (id,) => void selectChoice(id,),);
 }
