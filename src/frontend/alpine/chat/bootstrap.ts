@@ -40,24 +40,7 @@ import { chatMusicEmbed, } from "./music-embed";
 import { chatSearch, } from "./search";
 import { chatWorld, } from "./world";
 
-/**
- * Merge a sub-module's own properties into the state object, preserving
- * accessors (getters/setters) as live properties. A plain object spread
- * (`...source`) EVALUATES getters at spread time and copies a stale snapshot,
- * so computed state like `groupedMessages` never recomputes. Use this for any
- * sub-module that declares `get`/`set` accessors consumed by templates.
- */
-function mergeReactiveSource(target: Record<string, unknown>, source: object,): void {
-  for (const name of Object.getOwnPropertyNames(source,)) {
-    const desc = Object.getOwnPropertyDescriptor(source, name,);
-    if (!desc) { continue; }
-    if ("value" in desc) {
-      target[name] = desc.value;
-    } else {
-      Object.defineProperty(target, name, desc,);
-    }
-  }
-}
+import { mergeReactiveSource, } from "./merge-reactive";
 
 /** Build the chat page's reactive Alpine state (registry entry = chatState). */
 export function chatState() {
