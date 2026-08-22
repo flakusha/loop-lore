@@ -24,7 +24,7 @@ export type TableName = keyof DB;
 
 interface ColMeta {
   /** SQLite storage type */
-  type: "text" | "integer" | "real";
+  type: "text" | "integer" | "real" | "blob";
   /** NOT NULL constraint */
   notNull?: boolean;
   /** Has DEFAULT expression or value */
@@ -430,6 +430,7 @@ export const SCHEMA = new SchemaManifest()
     memory_id: col("text", { primaryKey: true, },),
     model: col("text", { notNull: true, hasDefault: true, },),
     dimensions: col("integer", { notNull: true, hasDefault: true, },),
+    vector_blob: col("blob", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
   },)
   .table("message_reactions", {
@@ -469,6 +470,28 @@ export const SCHEMA = new SchemaManifest()
     source: col("text", { notNull: true, },),
     source_id: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
+  },)
+  .table("music_links", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    section_id: col("text",),
+    sender_id: col("text", { notNull: true, },),
+    service: col("text", { notNull: true, },),
+    url: col("text", { notNull: true, },),
+    embed_html: col("text",),
+    title: col("text", { notNull: true, },),
+    artist: col("text", { notNull: true, },),
+    thumbnail_url: col("text",),
+    duration_secs: col("integer",),
+    service_track_id: col("text", { notNull: true, },),
+    service_url: col("text", { notNull: true, },),
+    is_playlist: col("integer", { notNull: true, hasDefault: true, },),
+    track_count: col("integer",),
+    explicit: col("integer", { notNull: true, hasDefault: true, },),
+    year: col("integer",),
+    genre: col("text",),
+    nsfw_hidden: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("npc_states", {
     id: col("text", { primaryKey: true, },),
