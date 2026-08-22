@@ -51,7 +51,7 @@ jobs:
         run: bun run lint:html
 
       - name: Format check
-        run: bun run format:dprint
+        run: bun run format
 
       - name: Markdown lint
         run: bun run md:lint
