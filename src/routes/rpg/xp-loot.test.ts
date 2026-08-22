@@ -10,7 +10,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import { insertActors, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { xpLootRoutes, } from "./xp-loot";
 import { xpLootTablesRoutes, } from "./xp-loot-tables";
@@ -45,10 +45,16 @@ describe("XP & loot (auth-gated)", () => {
     );
     worldId = uid();
     await insertWorlds(db, userId, "XP World", { id: worldId, } as never,);
-  },);
-
-  afterAll(async () => {
-    await db.destroy();
+    await insertActors(db, userId, {
+      id: "actor-xp",
+      actor_type: "character",
+      owner_id: userId,
+      user_id: null,
+      agent_type: "none",
+      settings: "{}",
+      format_version: 0,
+      visibility: "private",
+    } as never,);
   },);
 
   function authedApp(actingUserId: string = userId,): Elysia {
@@ -167,4 +173,8 @@ describe("XP & loot (auth-gated)", () => {
     );
     expect(res.status,).toBe(401,);
   });
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
 });

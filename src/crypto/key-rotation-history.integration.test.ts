@@ -13,8 +13,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:te
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
-import { generateActorKey, } from "./actor-keys";
-import { deriveChatKeyForChat, } from "./chat-keys";
+import { generateActorKey, loadActorKeys, } from "./actor-keys";
+import { deriveChatKey, } from "./chat-keys";
 import { rotateActorKeyAndReEncrypt, } from "./key-rotation/rotate";
 import { compressThenEncrypt, decryptThenDecompress, } from "./pipeline";
 import { getSmk, initSmk, } from "./smk";
@@ -118,15 +118,16 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
   test("5 messages encrypted with OLD chat key survive actor-key rotation and decrypt with NEW chat key", async () => {
     const smk = getSmkSafe();
 
-    // ── 1. Snapshot OLD chat key + OLD actor-key id for PARTICIPANT_1 ──────
-    const oldChatKey = await deriveChatKeyForChat(db, CHAT_ID, smk,);
+    // ── 1. Snapshot OLD chat key (HKDF from current participant keys) ──────
     const oldKeys = await db
       .selectFrom("actor_keys",)
       .select(["id",],)
-      .where("actor_id", "=", PARTICIPANT_1,)
+      .where("actor_id", "in", [PARTICIPANT_1, PARTICIPANT_2,],)
       .where("status", "=", "active",)
       .execute();
-    expect(oldKeys.length,).toBe(1,);
+    expect(oldKeys.length,).toBe(2,);
+    const participantKeys = await loadActorKeys({ database: db, actorIds: [PARTICIPANT_1, PARTICIPANT_2,], smk, },);
+    const oldChatKey = await deriveChatKey(participantKeys, CHAT_ID,);
     const oldKeyId = oldKeys[0]!.id;
 
     // ── 2. Encrypt 5 messages with the OLD chat key, store with key_id=OLD ─
@@ -153,8 +154,9 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
     expect(result.chatsAffected,).toBeGreaterThanOrEqual(1,);
     expect(result.messagesReEncrypted,).toBeGreaterThanOrEqual(5,);
 
-    // ── 4. Derive NEW chat key ────────────────────────────────────────────
-    const newChatKey = await deriveChatKeyForChat(db, CHAT_ID, smk,);
+    // ── 4. Derive NEW chat key (HKDF from post-rotation participant keys) ──
+    const newParticipantKeys = await loadActorKeys({ database: db, actorIds: [PARTICIPANT_1, PARTICIPANT_2,], smk, },);
+    const newChatKey = await deriveChatKey(newParticipantKeys, CHAT_ID,);
     expect(newChatKey.keyId,).not.toBe(oldKeyId,);
     expect(Array.from(newChatKey.rawKey,),).not.toEqual(Array.from(oldChatKey.rawKey,),);
 
@@ -169,7 +171,7 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
 
     for (const [i, row,] of messages.entries()) {
       expect(row.key_id,).toBe(result.newKeyId,);
-      const plaintext = await decryptThenDecompress(row.content as string, newChatKey.key as CryptoKey,);
+      const plaintext = await decryptThenDecompress(row.content as string, newChatKey.key,);
       expect(plaintext,).toBe(PLAINTEXTS[i]!,);
     }
 
@@ -201,7 +203,9 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
 
   test("rotation preserves history across multiple rounds", async () => {
     const smk = getSmkSafe();
-    const oldChatKey = await deriveChatKeyForChat(db, CHAT_ID, smk,);
+    // Initial HKDF chat key from current participant keys
+    let participantKeys = await loadActorKeys({ database: db, actorIds: [PARTICIPANT_1, PARTICIPANT_2,], smk, },);
+    let initialChatKey = await deriveChatKey(participantKeys, CHAT_ID,);
     const initialKeys = await db
       .selectFrom("actor_keys",)
       .select("id",)
@@ -214,7 +218,7 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
     for (let i = 0; i < 3; i++) {
       const content = await compressThenEncrypt({
         plaintext: `round-1-msg-${i}`,
-        chatKey: oldChatKey.key,
+        chatKey: initialChatKey.key,
         keyId: initialKeyId,
       },);
       await db.insertInto("messages",).values({
@@ -232,7 +236,8 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
     // First rotation
     const r1 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk, 100,);
     expect(r1.messagesReEncrypted,).toBeGreaterThanOrEqual(3,);
-    const midChatKey = await deriveChatKeyForChat(db, CHAT_ID, smk,);
+    participantKeys = await loadActorKeys({ database: db, actorIds: [PARTICIPANT_1, PARTICIPANT_2,], smk, },);
+    const midChatKey = await deriveChatKey(participantKeys, CHAT_ID,);
 
     // Verify round-1 messages decrypt with the post-r1 chat key
     for (let i = 0; i < 3; i++) {
@@ -267,7 +272,8 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
     expect(r2.newKeyId,).not.toBe(r1.newKeyId,);
 
     // All 5 messages must decrypt with the post-r2 chat key
-    const finalChatKey = await deriveChatKeyForChat(db, CHAT_ID, smk,);
+    participantKeys = await loadActorKeys({ database: db, actorIds: [PARTICIPANT_1, PARTICIPANT_2,], smk, },);
+    const finalChatKey = await deriveChatKey(participantKeys, CHAT_ID,);
     for (let i = 0; i < 3; i++) {
       const row = await db.selectFrom("messages",).select("content",).where("id", "=", `r1-msg-${i}`,)
         .executeTakeFirst();
