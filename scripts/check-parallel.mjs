@@ -51,7 +51,7 @@ const checks = {
     "lint - eslint": "bun run lint:eslint",
 
     // Formatting
-    "format - dprint": "bun run format:dprint",
+    "format - dprint": "bun run format",
     "md - lint": "bun run md:lint",
 
     // Dead-code analysis (knip)
