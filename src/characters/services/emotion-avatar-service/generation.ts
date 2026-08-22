@@ -199,7 +199,7 @@ export async function generateEmotionAvatar(
     const id = randomUUID();
     const filename = `emotion-${opts.emotion}-${id.slice(0, 8,)}.${outputFormat}`;
 
-    const { asset: asset, } = await createAsset({
+    const { asset, } = await createAsset({
       database: svc.db,
       input: {
         ownerId: opts.actorId,

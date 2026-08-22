@@ -3,10 +3,10 @@
  */
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { Kysely, sql } from "kysely";
-import type { Migration } from "kysely/migration";
-import { Migrator } from "kysely/migration";
-import { readdirSync } from "node:fs";
+import { Kysely, sql, } from "kysely";
+import type { Migration, } from "kysely/migration";
+import { Migrator, } from "kysely/migration";
+import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
@@ -35,20 +35,21 @@ beforeAll(async () => {
     db,
     provider: {
       async getMigrations(): Promise<Record<string, Migration>> {
-        const dir = path.join(__dirname, '..', 'db', 'migrations');
-        const fileNames = readdirSync(dir).filter((f) => f.endsWith('.ts')).sort();
+        const dir = path.join(__dirname, "..", "db", "migrations",);
+        const fileNames = readdirSync(dir,).filter((f,) => f.endsWith(".ts",)).sort();
         const migrations: Record<string, Migration> = {};
         for (const fileName of fileNames) {
-          const mod = await import(path.join(dir, fileName));
-          migrations[fileName.replace(/\.ts$/, '')] = mod.default ?? mod;
+          const mod = await import(path.join(dir, fileName,));
+          migrations[fileName.replace(/\.ts$/, "",)] = mod.default ?? mod;
         }
         return migrations;
       },
     },
-  });
-  const { error } = await migrator.migrateToLatest();
-  if (error) throw new Error('Migration failed: ' + JSON.stringify(error));
-  await sql`PRAGMA foreign_keys = OFF`.execute(db);  await initSmk({
+  },);
+  const { error, } = await migrator.migrateToLatest();
+  if (error) { throw new Error("Migration failed: " + JSON.stringify(error,),); }
+  await sql`PRAGMA foreign_keys = OFF`.execute(db,);
+  await initSmk({
     serverEncryptionKey: VALID_HEX_KEY,
     required: false,
     compressThreshold: 128,

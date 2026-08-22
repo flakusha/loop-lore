@@ -32,7 +32,7 @@ const VALIDATION_DIR = DB_OUTPUT_DIR
 // ── Types ──────────────────────────────────────────────────
 
 interface ColumnDef {
-  type: "text" | "integer" | "real";
+  type: "text" | "integer" | "real" | "blob";
   notNull: boolean;
   hasDefault: boolean;
   primaryKey: boolean;
@@ -138,7 +138,8 @@ function parseColumns(block: string,): Record<string, ColumnDef> {
 
   for (let i = 1; i < parts.length; i++) {
     const part = parts[i];
-    const headerMatch = part.match(/^\s*"(\w+)"\s*,\s*"(text|integer|real)"/,);
+    const headerMatch = part.match(/^\s*"(\w+)"\s*,\s*"(text|integer|real|blob)"/,);
+    // Accept 2-arg form (name, type) AND 3-arg form (name, type, builder) — builder may follow
     if (!headerMatch) { continue; }
 
     const [, name, type,] = headerMatch;
@@ -353,6 +354,9 @@ function tsType(col: ColumnDef, tableName: string, colName: string,): string {
       case "real":
         base = "number";
         break;
+      case "blob":
+        base = "Uint8Array";
+        break;
       default:
         base = "string";
     }
@@ -397,7 +401,7 @@ function generateDomainFiles(tables: Map<string, Record<string, ColumnDef>>,): v
     const enumImports = new Set<string>();
     for (const [name, cols,] of domainTables) {
       const tableName = pascalCase(name,);
-      for (const [colName, colDef,] of Object.entries(cols,)) {
+      for (const [colName, _colDef,] of Object.entries(cols,)) {
         const overrides = COLUMN_TYPE_OVERRIDES[tableName] || COLUMN_TYPE_OVERRIDES[name] || {};
         if (overrides[colName]) {
           enumImports.add(overrides[colName],);
@@ -477,7 +481,7 @@ function generateBarrel(tables: Map<string, Record<string, ColumnDef>>,): void {
 // ── Generator: test insert helpers ───────────────────────────
 
 /** Strip Generated<> wrapper for test-helper input types. */
-function inputType(t: string,): string {
+function _inputType(t: string,): string {
   const m = t.match(/^Generated<(.+)>$/,);
   return m ? m[1]! : t;
 }
@@ -673,6 +677,9 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
             break;
           case "real":
             typeBox = "t.Number()";
+            break;
+          case "blob":
+            typeBox = "t.String()";
             break;
           default:
             typeBox = "t.String()";
