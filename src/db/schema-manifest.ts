@@ -297,6 +297,14 @@ export const SCHEMA = new SchemaManifest()
     purpose: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("e2e_sessions", {
+    id: col("text", { primaryKey: true, },),
+    sender_actor_id: col("text", { notNull: true, },),
+    recipient_actor_id: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    last_message_at: col("text",),
+    revoked_at: col("text",),
+  },)
   .table("emotions", {
     id: col("text", { primaryKey: true, },),
     name: col("text", { notNull: true, },),

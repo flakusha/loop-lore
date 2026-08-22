@@ -157,6 +157,21 @@ export async function deriveSharedSecret(opts: DeriveSharedSecretOpts,): Promise
   );
 }
 
+/**
+ * Variant of `deriveSharedSecret` that returns the raw 32-byte ECDH output
+ * instead of an AES-GCM session key. Used as input keying material for the
+ * symmetric ratchet (`nextRatchetStep`) — the chain key is bound into the
+ * HKDF step, so the message key is per-chain-step.
+ *
+ * The ratchet module will accept this raw IKM directly via
+ * `nextRatchetStep(rawBytes)`. Callers needing an AES-GCM session key for
+ * generic purposes (not the ratchet) should use `deriveSharedSecret`.
+ */
+export async function deriveSharedBytes(opts: DeriveSharedSecretOpts,): Promise<Uint8Array> {
+  const sharedBits = await crypto.subtle.deriveBits({ name: "ECDH", public: opts.publicKey, }, opts.privateKey, 256,);
+  return new Uint8Array(sharedBits,);
+}
+
 // ── Internal helpers ───────────────────────────────────────
 
 /** WebCrypto requires `BufferSource` for input; many lib versions don't accept `Uint8Array` directly. */
