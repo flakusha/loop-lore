@@ -287,7 +287,7 @@ Complete world and location management interface, including world CRUD, location
 | Task                      | Priority | Status         |
 | ------------------------- | -------- | -------------- |
 | TASK-world-dashboard.md   | P0       | ⬜ Not Started |
-| TASK-location-explorer.md | P0       | ⬜ Not Started |
+| TASK-location-explorer.md | P0       | ✅ Done (2026-08-22) |
 | TASK-travel-interface.md  | P0       | ⬜ Not Started |
 | TASK-time-weather.md      | P0       | ⬜ Not Started |
 | TASK-location-details.md  | P0       | ⬜ Not Started |

@@ -46,7 +46,7 @@ Frontend review found **~150 frontend call sites** all resolve to real backend r
 | Backend Component | Frontend Requirement                  | Status         | Priority |
 | ----------------- | ------------------------------------- | -------------- | -------- |
 | World CRUD        | World management UI                   | ⬜ Not Started | High     |
-| Location CRUD     | Location explorer UI                  | ⬜ Not Started | High     |
+| Location CRUD     | Location explorer UI                  | ✅ Done (2026-08-22, feature/location-explorer-ui) | High     |
 | Travel system     | Travel UI (route selection, progress) | ⬜ Not Started | High     |
 | Time tracking     | Time display widget                   | ⬜ Not Started | Medium   |
 | NPC placement     | NPC location display                  | ⬜ Not Started | Medium   |

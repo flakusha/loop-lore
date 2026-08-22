@@ -3,7 +3,7 @@
 
 # TASK: Location Explorer
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-08-22, feature/location-explorer-ui)
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -23,14 +23,24 @@ Location browser for exploring world locations.
 
 ## Acceptance Criteria
 
-- [ ] Hierarchical location tree view
-- [ ] Search locations by name
-- [ ] Filter by type, region, status
-- [ ] Location details preview on hover
-- [ ] Quick navigation to selected location
-- [ ] Mobile responsive
+- [x] Hierarchical location tree view
+- [x] Search locations by name
+- [x] Filter by status (type/region deferred to LLM/SD prompt layer per 2026-08-22 decision — see epic-frontend-backend-integration.md)
+- [x] Location details preview on hover (350ms throttle)
+- [x] Quick navigation to selected location (Open button → /worlds/:id/locations/:locId)
+- [x] Mobile responsive (stacks tree+detail below 768px)
 
-## Files to Create
+## Files Touched
 
-- `src/frontend/world/location-explorer.ts`
-- `src/frontend/world/location-tree.ts`
+- `src/frontend/alpine/location-explorer.ts` — added filter state, hover-preview throttle, detail cache, navigateTo
+- `src/frontend/alpine/location-explorer.test.ts` — new, 13 tests covering filter + tree + cache
+- `src/views/world-edit.html` — Explore tab: filter bar, hover handlers, navigate button
+- `src/public/css/app.css` — responsive stack below 768px
+
+No migration added (no schema extension — `type`/`region` deferred to LLM/SD prompt layer per user decision).
+
+## Related
+
+- `src/routes/location-explorer.ts` (existing) — backend route, no changes needed
+- `src/routes/location-explorer.test.ts` (existing) — backend tests, no changes needed
+- `src/routes/worlds/locations.ts` (existing) — CRUD routes, unchanged
