@@ -7,6 +7,7 @@ import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import { uid, } from "../utils";
+import { generateImages, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
 
 interface ImageGenBody {
