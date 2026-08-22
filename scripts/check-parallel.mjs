@@ -74,8 +74,8 @@ const checks = {
 
     // Size check
     "size - check": "bun run scripts/check-file-size.ts",
-    // size - strict: disabled — 4 files >250L (music-links, memories, choice-cards, bootstrap); tracked separately per user direction
-
+    // size - strict: re-enabled — files over 250L need splitting (recent additions)
+    "size - strict": "bun run scripts/check-file-size.ts --strict",
     // Context weight
     "context - weight": "bun run scripts/check-context-weight.ts",
 
