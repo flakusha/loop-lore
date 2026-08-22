@@ -32,7 +32,7 @@ Add `tests/e2e/flows/users.flows.ts` and `tests/e2e/flows/personas.flows.ts`:
 - `POST /api/personas` → 201, persona created
 - `GET /api/personas/:id` (owner) → 200
 - `PATCH /api/personas/:id` (owner) → 200
-- `DELETE /api/personas/:id` (non-owner) → 403 (see BUG-users-persona-handlers-horizontal-priv-esc)
+- `DELETE /api/personas/:id` (non-owner) → 403 (service-layer `WHERE user_id=?` enforces this; see `BUG-users-persona-handlers-horizontal-priv-esc` ✅ closed 2026-08-22)
 - `POST /api/personas/:id/convert-to-character` → 200
 
 ## Verification
