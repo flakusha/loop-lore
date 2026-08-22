@@ -129,16 +129,10 @@ interface AlgorithmFactory {
 - `TASK-encryption-auto-key-rotation.md` — 🟨 Partial (built, broken — see BUG-key-rotation-noop-orphans-history)
 - `TASK-world-location-encryption.md` — ⬜ New
 - `TASK-asymmetric-key-pairs.md` — ⬜ New
+- `TASK-asymmetric-key-pairs-followup.md` — 🟡 Partial (MVP landed on dev commit 17410ce1; browser encrypt + ratchet + group chat still pending — see 4-phase plan below)
 - `TASK-fix-crypto-isolation.md` — ✅ Done (was misdiagnosed)
 - `TASK-non-standard-browser-crypto-research.md` — ⬜ Research: JS/WASM crypto beyond WebCrypto
 
-### Algorithm Extensibility (New)
-
-- `TASK-crypto-algorithm-factory.md` — ⬜ Not started
-- `TASK-crypto-plugin-hooks.md` — ⬜ Not started
-- `TASK-crypto-config-algorithm.md` — ⬜ Not started
-- `TASK-encryption-asset-encryption-update.md` — ⬜ Not started
-- `TASK-encryption-backward-compatibility.md` — ⬜ Not started
 - `TASK-crypto-algorithm-tests.md` — ⬜ Not started
 
 ## Related Epics (Extended)
@@ -151,3 +145,93 @@ See `.plan/tickets/BUG-encryption-tier-not-enforced.md`,
 `BUG-chat-key-history-loss-join-leave.md`,
 `BUG-key-rotation-noop-orphans-history.md`,
 `BUG-private-tier-no-true-e2e.md`, `BUG-auto-rotation-config-drift.md`.
+
+## Client-Side E2E — 4-Phase Plan (2026-08-22)
+
+True client-side E2E encryption for the `at-rest` (== `Private`) tier, where
+the server cannot decrypt message content. Foundation shipped via merge
+commit `17410ce1` to dev (originally on `asymmetric-e2e`, finalized and
+removed 2026-08-22); four subsequent slices complete the feature.
+
+Each phase is its own worktree + ticket slice; phases must ship in order.
+Foundation phase already shipped:
+
+**Foundation (✅ merged to dev)**
+
+- Migration `055_e2e_pubkeys`: `actor_e2e_pubkeys` table (per-actor public
+  key JWK + algorithm + soft-revoked audit history).
+- `src/crypto/e2e/key-pairs.ts`: ECDH P-256 generateKeyPair / importPublicKey
+  / importPrivateKey / exportPublicJwk / exportPrivateJwk / deriveSharedSecret
+  (ECDH → HKDF-SHA256 → AES-256-GCM session key).
+- `src/frontend/e2e/key-store.ts`: `localStorage`-backed per-actor private-key
+  JWK persistence. v1 accepts the same threat surface as other persisted
+  secrets (session token, theme prefs); IndexedDB-with-wrapped-key is the
+  documented hardening follow-up.
+- `src/crypto/e2e/server-registry.ts`: registerPublicKey / getActivePublicKey /
+  listActivePublicKeys / revokePublicKey. Soft-revokes on rotation.
+- `src/routes/actor-e2e-pubkeys.ts`: `GET/PUT/DELETE /api/actors/:id/e2e-public-key`.
+  Owner-only writes; any-auth reads.
+- Tests: 9 unit (key-pairs) + 12 integration (server-registry, in-memory
+  SQLite + full migration set). 21/21 pass.
+
+### Phase A — Ratchet primitive + 1:1 E2E (NEXT)
+
+Smallest viable slice that puts an encrypted message on the wire.
+
+- `src/crypto/e2e/ratchet.ts` — symmetric-key ratchet:
+  `nextSessionKey(ck) → { chainKey, messageKey }`. Single-message
+  (no chain advancement yet).
+- `src/frontend/e2e/encrypt-message.ts` — fetch recipient's pubkey via the
+  new HTTP route, ECDH-derive session key, encrypt plaintext, format
+  `{ciphertext, nonce, ephemeralPubKey, chainKey}`.
+- `src/frontend/e2e/decrypt-message.ts` — symmetric counterpart using the
+  same `(ephemeralPubKey, ciphertext, nonce, chainKey)` tuple.
+- Migration `056_e2e_payload`: add `messages.e2e_payload` (TEXT, nullable),
+  `messages.e2e_session_id` (TEXT, nullable), new table `e2e_sessions`
+  (sender/recipient pair → chain state).
+- `src/crypto/e2e/e2e-session.ts` — server-side session lookup (read-only;
+  chain state itself never lives on the server).
+
+**Tests:** 1:1 roundtrip, tamper detection, persistence round-trip.
+
+### Phase B — Chain advancement (forward secrecy)
+
+- Advance chain key after each message via HKDF step.
+- `messages.e2e_chain_index` tracks position; receiver persists chain state
+  locally (localStorage v1; IndexedDB-wrapped-key later).
+- Out-of-order handling (skip + back-fill).
+
+**Tests:** sequential messages, skipped messages, replay ordering, forward-
+secrecy claim verification.
+
+### Phase C — Group chat (sender-key distribution)
+
+- Sender generates one symmetric chain, ECDH-wraps the initial chain key
+  to each participant.
+- Wire format adds `per_recipient: { actorId: { wrappedKey, ephemeralPubKey } }`.
+- Server picks per-recipient wraps from `chat_participants` of the chat.
+- Join/leave triggers chain-key rotation.
+
+**Tests:** 3-participant group, new joiner receives wrapped key, member
+removal excludes future message wraps.
+
+### Phase D — Sender-side integration with the chat route
+
+- `src/routes/messages/post.ts` — accept `e2e_payload` for `at-rest` tier
+  chats; reject server-mediated encryption path for those chats.
+- `src/routes/messages/helpers.ts` (read path) — return `e2e_payload` to
+  client without attempting server-side decryption.
+- `src/crypto/at-rest.ts:69,96` — relax `case "private"` throw for the
+  payload path; the rename to `EncryptionLevel.AtRest` (tracked in
+  `BUG-private-tier-no-true-e2e` §"Resolution") remains pending.
+
+**Tests:** full HTTP route round-trip, server-encrypt rejection for
+`at-rest` tier, read path returns ciphertext unchanged.
+
+### Open design questions (must be resolved before Phase B/C)
+
+- **Forward secrecy re-keying cadence**: per-message vs per-session?
+- **Group rekey on member join/leave**: re-encrypt history? Re-key the chain?
+- **Key recovery / escrow** (out of scope for v1).
+- **LLM integration for E2E chats**: client-side inference / secure
+  enclave / E2E + deniability for generation.
