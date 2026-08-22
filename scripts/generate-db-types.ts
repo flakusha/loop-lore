@@ -739,7 +739,7 @@ function main() {
     cwd: resolve(import.meta.dir, "..",),
   },);
   if (fmt.exitCode !== 0) {
-    console.warn("  [warn] dprint fmt on generated files failed; run `bun run format:dprint` manually",);
+    console.warn("  [warn] dprint fmt on generated files failed; run \`bun run format:fix\` manually",);
   }
 
   console.log(`\nDone. Run \`bun run check\` to verify.`,);
