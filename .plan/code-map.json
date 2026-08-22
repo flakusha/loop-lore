@@ -4493,6 +4493,12 @@
       "source": ".plan/tickets/TASK-asymmetric-key-pairs.md"
     }
   ],
+  "src/crypto/e2e/server-registry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    }
+  ],
   "src/crypto/index.ts": [
     {
       "kind": "ticket",
@@ -5275,6 +5281,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    }
+  ],
+  "src/db/migrations/055_e2e_pubkeys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
@@ -8201,6 +8213,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    }
+  ],
+  "src/frontend/e2e/key-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     }
   ],
   "src/frontend/effects/decorations.ts": [
@@ -12023,6 +12041,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
+    }
+  ],
+  "src/routes/actor-e2e-pubkeys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     }
   ],
   "src/routes/actor-items.ts": [
