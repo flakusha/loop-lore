@@ -3,12 +3,14 @@
 
 # TASK: Implement True Client-Side E2E for at-rest+ Tier (Deferred)
 
-**Status:** ⬜ Not Started
-**Priority:** Low
+**Status:** 🟡 Partial — keypair + public-key registry MVP landed (commit f534c4d3)
+**Priority:** Medium
 **Effort:** Large
 **Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-architecture-clarification
+**Git issue:** 5d9636b (open — re-open on next phase)
+**Branch:** asymmetric-e2e
 
 ## Summary
 
@@ -102,14 +104,14 @@ Server roles (E2E path):
 
 - [ ] Resolve key open questions (forward secrecy strategy, group chat key management, key recovery, LLM integration)
 - [ ] Architecture clarification ticket (`TASK-encryption-architecture-clarification.md`)
-- [ ] Implement ECDH key pair generation (`src/crypto/e2e/key-pairs.ts` or new location)
-- [ ] Public key registration and distribution
-- [ ] ECDH key agreement on message send/receive
+- [x] Implement ECDH key pair generation (`src/crypto/e2e/key-pairs.ts`)
+- [x] Public key registration and distribution (`src/crypto/e2e/server-registry.ts` + `actor_e2e_pubkeys` table)
+- [x] ECDH key agreement (shared secret derivation via `deriveSharedSecret` + HKDF-AES-256-GCM session key)
 - [ ] Session key ratchet (forward secrecy)
-- [ ] Delete or adapt `src/crypto/e2e/` code after rename (previously deleted; re-evaluate what's needed vs what was dead wiring)
 - [ ] Browser integration: key storage, encrypt on send, decrypt on receive
 - [ ] Group chat: sender-key ratchet or pairwise ECDH
 - [ ] Tests: key generation, agreement, encrypt/decrypt, forward secrecy, group chat
+
 
 ## Files to Create
 
@@ -133,3 +135,43 @@ TBD after architecture clarification.
 - `TASK-encryption-browser-pre-encrypt.md` — browser wiring ticket
 - `docs/frontend/encryption.md` — current (honest) tier documentation
 - `docs/spec/encryption-workflow.md` — current workflow spec
+
+## Verification Notes (2026-08-22)
+
+First slice landed in commit `f534c4d3` on branch `asymmetric-e2e`:
+
+- **Migration:** `src/db/migrations/055_e2e_pubkeys.ts` — `actor_e2e_pubkeys`
+  table with `actor_id`, `public_key_jwk` (text), `algorithm` (default
+  `ECDH-P256`), `created_at`, `expires_at`, `revoked_at`. Soft-revoke
+  pattern (revoked rows kept for audit). Uniqueness-across-rotations is
+  enforced in application code (`registerPublicKey` soft-revokes the old
+  row before insert).
+- **Crypto core:** `src/crypto/e2e/key-pairs.ts` — ECDH P-256 keypair gen,
+  JWK import/export, `deriveSharedSecret` (ECDH → HKDF-SHA256 →
+  AES-256-GCM session key). All exported CryptoKey handles are
+  non-extractable at the public-import + session-key stages.
+- **Frontend store:** `src/frontend/e2e/key-store.ts` — `localStorage`-backed
+  per-actor private-key JWK persistence. v1 accepts the same threat
+  surface as other persisted secrets (session token, theme prefs).
+  IndexedDB-with-wrapped-key is the documented hardening follow-up.
+- **Server registry:** `src/crypto/e2e/server-registry.ts` — register,
+  get-active, list-active, revoke operations.
+- **HTTP:** `src/routes/actor-e2e-pubkeys.ts` — `GET/PUT/DELETE
+  /api/actors/:id/e2e-public-key`. Owner-only writes, any-auth reads.
+- **Tests:** 9 unit tests (key-pairs) + 12 integration tests (server
+  registry, in-memory SQLite with full migration set). All pass.
+
+**Still TODO (next slices):**
+
+- Browser encrypt-on-send / decrypt-on-receive wiring
+  (cross-references `TASK-encryption-browser-pre-encrypt.md`).
+- Sender-key ratchet for forward secrecy (architectural decision still
+  open — see "Key Open Questions" above).
+- Group chat key distribution (pairwise ECDH vs sender-key).
+- Key recovery / escrow flow.
+- LLM integration strategy for E2E chats (3 options listed above;
+  needs product decision).
+
+**Closed-by:** none yet — ticket remains open. The MVP is the foundation;
+  each subsequent feature (sender-key ratchet, browser encrypt, group chat)
+  is its own ticket once architecture questions are resolved.
