@@ -4389,6 +4389,12 @@
       "source": "docs/spec/crypto.md"
     }
   ],
+  "src/crypto/chat-history-membership.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    }
+  ],
   "src/crypto/chat-keys.ts": [
     {
       "kind": "epic",
@@ -5263,6 +5269,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
+    }
+  ],
+  "src/db/migrations/054_chat_keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [

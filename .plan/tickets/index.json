@@ -57,7 +57,8 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/BUG-auto-rotation-config-drift.md",
-    "git_issue": "a9a4ea3"
+    "git_issue": "a9a4ea3",
+    "status": "done"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -91,7 +92,8 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md",
-    "git_issue": "61c7072"
+    "git_issue": "61c7072",
+    "status": "done"
   },
   "BUG-CHAT-MENTION-SILENT-ERROR-SWALL": {
     "hash": "pending",
@@ -172,7 +174,8 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md",
-    "git_issue": "76cbe80"
+    "git_issue": "76cbe80",
+    "status": "done"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -183,6 +186,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
+    "status": "closed",
+    "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
   },
   "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY": {
@@ -240,7 +245,8 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md",
-    "git_issue": "966f256"
+    "git_issue": "966f256",
+    "status": "done"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
@@ -274,6 +280,9 @@
     "priority": "high",
     "epic": "epic-rpg-wiring-phase3",
     "tags": [],
+    "status": "closed",
+    "closed_at": "2026-08-20",
+    "verified_on_dev": "2026-08-22",
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
     "git_issue": "82e8395"
   },
@@ -286,6 +295,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
+    "status": "closed",
+    "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
   },
   "EPIC-2026-24": {
@@ -3560,7 +3571,8 @@
     "priority": "Low",
     "epic": "epic-crypto",
     "tags": [],
-    "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md",
+    "git_issue": "5d9636b"
   },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "hash": "966af4f",
@@ -4862,7 +4874,8 @@
     "priority": "medium",
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
-    "source": ".plan/tickets/TASK-chat-route-extraction.md"
+    "source": ".plan/tickets/TASK-chat-route-extraction.md",
+    "git_issue": "d60edc4"
   },
   "TASK-CHAT-SECTIONING-MULTI-LOCATION": {
     "hash": "802a74b",
@@ -7954,7 +7967,8 @@
     "priority": "medium",
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
-    "source": ".plan/tickets/TASK-memory-promotion-pipeline.md"
+    "source": ".plan/tickets/TASK-memory-promotion-pipeline.md",
+    "git_issue": "cbd08c7"
   },
   "TASK-MEMORY-PROVISION-WIRING": {
     "hash": "3bfb101c",
@@ -7965,7 +7979,8 @@
     "priority": "high",
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
-    "source": ".plan/tickets/TASK-memory-provision-wiring.md"
+    "source": ".plan/tickets/TASK-memory-provision-wiring.md",
+    "git_issue": "90378a1"
   },
   "TASK-MEMORY-SELECTION-UI": {
     "hash": "1fd6514f",
