@@ -45,8 +45,9 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
   }
   const ikmLength = participantKeys.length * 32;
   const ikm = new Uint8Array(ikmLength,);
-  for (const [index, participantKey,] of participantKeys.entries()) {
-    ikm.set(participantKey.rawKey, index * 32,);
+  for (let i = 0; i < participantKeys.length; i++) {
+    const participantKey = participantKeys[i]!;
+    ikm.set(participantKey.rawKey, i * 32,);
   }
   const keyMaterial = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveKey",],);
   const salt = new TextEncoder().encode(chatId,);
@@ -74,7 +75,13 @@ export async function getChatKeyById(
     .executeTakeFirst();
   if (!row?.encrypted_chat_key) { return null; }
   const rawKey = await decryptBytes(smk, row.encrypted_chat_key,);
-  const key = await crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, ["encrypt", "decrypt",],);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    rawKey as unknown as Parameters<typeof crypto.subtle.importKey>[1],
+    "AES-GCM",
+    true,
+    ["encrypt", "decrypt",],
+  );
   return { key, keyId: row.id, rawKey, };
 }
 
@@ -90,7 +97,13 @@ export async function deriveChatKeyForChat(
     .executeTakeFirst();
   if (existing?.encrypted_chat_key) {
     const rawKey = await decryptBytes(smk, existing.encrypted_chat_key,);
-    const key = await crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, ["encrypt", "decrypt",],);
+    const key = await crypto.subtle.importKey(
+      "raw",
+      rawKey as unknown as Parameters<typeof crypto.subtle.importKey>[1],
+      "AES-GCM",
+      true,
+      ["encrypt", "decrypt",],
+    );
     return { key, keyId: existing.id, rawKey, };
   }
   const id = crypto.randomUUID();
@@ -103,6 +116,12 @@ export async function deriveChatKeyForChat(
     created_at: new Date().toISOString(),
     expires_at: null,
   },).execute();
-  const key = await crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, ["encrypt", "decrypt",],);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    rawKey as unknown as Parameters<typeof crypto.subtle.importKey>[1],
+    "AES-GCM",
+    true,
+    ["encrypt", "decrypt",],
+  );
   return { key, keyId: id, rawKey, };
 }

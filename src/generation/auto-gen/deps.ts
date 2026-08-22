@@ -5,12 +5,12 @@ import type { Kysely, } from "kysely";
 import { marked, } from "marked";
 import { PromptAssembler, } from "../../assistant/prompt-assembler";
 import {
-  _getSmk,
   compressThenEncrypt,
   deriveChatKeyForChat,
   encryptAtRest,
   ensureActorKey,
   getChatEncryptionLevel,
+  getSmk,
   isEncryptionEnabled,
 } from "../../crypto";
 import type { DB, } from "../../db/schema";
@@ -73,6 +73,7 @@ export function createDefaultDeps(): GenDeps {
     callWithFailover,
     buildFailoverList,
     isEncryptionEnabled,
+    getSmk,
     ensureActorKey,
     deriveChatKeyForChat,
     getChatEncryptionLevel,

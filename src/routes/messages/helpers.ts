@@ -6,7 +6,6 @@ import type { ServiceError, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import { decodeContent, } from "../../content/decode";
 import {
-  _getSmk,
   decryptAtRest,
   getChatEncryptionLevel,
 } from "../../crypto";
