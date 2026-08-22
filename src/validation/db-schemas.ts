@@ -2077,3 +2077,13 @@ export const MusicLinksSchema = t.Object({
   nsfw_hidden: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── actor_e2e_pubkeys ────────────────────────────────────────────
+export const ActorE2ePubkeysSchema = t.Object({
+  actor_id: t.String(),
+  public_key_jwk: t.String(),
+  algorithm: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+},);
