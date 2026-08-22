@@ -61,7 +61,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     this.ensureConnected();
 
     if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(data,);
+      this.ws.send(typeof data === "string" ? data : (data as unknown as Parameters<WebSocket["send"]>[0]),);
     } else {
       this.pendingMessages.push(data,);
     }
