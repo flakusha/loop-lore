@@ -18,7 +18,7 @@
  * Usage: bun run scripts/check-db-schemas.ts
  */
 import { execFileSync, } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { dirname, join, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
@@ -88,7 +88,7 @@ try {
 // reformatted here with the repo config before diffing.
 try {
   writeFileSync(join(tmp, "dprint.json",), readFileSync(join(ROOT, "dprint.json",), "utf8",),);
-  const fmt = execFileSync("bunx", ["dprint", "fmt", ...ARTIFACTS.map((a,) => a.generated),], {
+  const _fmt = execFileSync("bunx", ["dprint", "fmt", ...ARTIFACTS.map((a,) => a.generated),], {
     cwd: tmp,
     stdio: ["ignore", "ignore", "pipe",],
   },);

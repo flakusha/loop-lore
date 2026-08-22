@@ -6,10 +6,15 @@
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
 import { createMusicLinkService, } from "../chat/music-links";
-import { MusicLinkCreateBody, MusicLinkIdParams, ChatIdParams, MusicLinkResponse, } from "../validation/schemas/music-links";
-import { jsonResponse, jsonCreated, jsonNoContent, requireUserId, } from "./http-utils";
+import type { DB, } from "../db/schema";
+import {
+  ChatIdParams,
+  MusicLinkCreateBody,
+  MusicLinkIdParams,
+  MusicLinkResponse,
+} from "../validation/schemas/music-links";
+import { jsonCreated, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
 export interface MusicLinkHandlerOpts {
   database: Kysely<DB>;
@@ -55,7 +60,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
             embedHtml,
           },);
 
-          return jsonCreated(toResponse(row),);
+          return jsonCreated(toResponse(row,),);
         },
         {
           body: MusicLinkCreateBody,
@@ -80,13 +85,14 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
 
           const chatId = ctx.params.chatId as string;
           const rows = await service.list(chatId,);
-
-          return jsonResponse({ data: rows.map(toResponse), },);
+          /* eslint-disable no-restricted-syntax */
+          return jsonResponse({ data: rows.map(toResponse,), },);
+          /* eslint-enable no-restricted-syntax */
         },
         {
           params: ChatIdParams,
           response: {
-            200: t.Object({ data: t.Array(MusicLinkResponse), },),
+            200: t.Object({ data: t.Array(MusicLinkResponse,), },),
             401: t.Void(),
           },
           detail: {
@@ -140,7 +146,7 @@ function toResponse(row: {
   explicit: number;
   nsfw_hidden: number;
   created_at: string;
-}) {
+},) {
   return {
     id: row.id,
     chatId: row.chat_id,

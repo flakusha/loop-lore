@@ -96,7 +96,12 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
    * Detect which music service (if any) a URL belongs to.
    */
   function validateUrl(url: string,): MusicService | null {
-    for (const [service, { pattern, }] of Object.entries(SERVICES) as [MusicService, { pattern: RegExp; oembed: string | null }][]) {
+    for (
+      const [service, { pattern, },] of Object.entries(SERVICES,) as [
+        MusicService,
+        { pattern: RegExp; oembed: string | null },
+      ][]
+    ) {
       if (pattern.test(url,)) {
         return service;
       }
@@ -110,8 +115,8 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
    */
   async function fetchOembed(url: string, oembedEndpoint: string,): Promise<Record<string, unknown> | null> {
     try {
-      const fetchUrl = `${oembedEndpoint}?url=${encodeURIComponent(url)}&format=json`;
-      const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(5000), });
+      const fetchUrl = `${oembedEndpoint}?url=${encodeURIComponent(url,)}&format=json`;
+      const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(5000,), },);
       if (!res.ok) { return null; }
       return await res.json() as Record<string, unknown>;
     } catch {
@@ -131,13 +136,13 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
       const data = await fetchOembed(url, oembed,);
       if (data) {
         return {
-          title: String(data["title"] ?? "Unknown"),
-          artist: String(data["author_name"] ?? "Unknown"),
-          thumbnailUrl: data["thumbnail_url"] ? String(data["thumbnail_url"]) : null,
+          title: String(data["title"] ?? "Unknown",),
+          artist: String(data["author_name"] ?? "Unknown",),
+          thumbnailUrl: data["thumbnail_url"] ? String(data["thumbnail_url"],) : null,
           durationSecs: null,
-          serviceTrackId: extractTrackId(url, service),
-          serviceUrl: toServiceUrl(url, service),
-          isPlaylist: url.includes("/playlist/") || url.includes("/album/"),
+          serviceTrackId: extractTrackId(url, service,),
+          serviceUrl: toServiceUrl(url, service,),
+          isPlaylist: url.includes("/playlist/",) || url.includes("/album/",),
           trackCount: null,
           explicit: false,
           year: null,
@@ -152,8 +157,8 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
       artist: "Unknown",
       thumbnailUrl: null,
       durationSecs: null,
-      serviceTrackId: extractTrackId(url, service),
-      serviceUrl: toServiceUrl(url, service),
+      serviceTrackId: extractTrackId(url, service,),
+      serviceUrl: toServiceUrl(url, service,),
       isPlaylist: false,
       trackCount: null,
       explicit: false,
@@ -177,7 +182,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
     }
 
     // Fallback: construct iframe directly
-    const embedSrc = toEmbedSrc(url, service);
+    const embedSrc = toEmbedSrc(url, service,);
     return `<iframe src="${embedSrc}" width="400" height="80" allow="autoplay" ` +
       `frameborder="0" scrolling="no"></iframe>`;
   }
@@ -246,47 +251,47 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
     await db.deleteFrom("music_links",).where("id", "=", id,).execute();
   }
 
-  return { validateUrl, fetchMetadata, getEmbedHtml, store, list, destroy };
+  return { validateUrl, fetchMetadata, getEmbedHtml, store, list, destroy, };
 }
 
 export type MusicLinkService = ReturnType<typeof createMusicLinkService>;
 
 // ── Internal helpers ────────────────────────────────────────
 
-function extractTrackId(url: string, service: MusicService,): string {
-  switch (service) {
+function extractTrackId(url: string, _service: MusicService,): string {
+  switch (_service) {
     case "spotify": {
-      const m = url.match(/spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/,);
-      return m ? m[2] : url;
+      const m = /spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/.exec(url,);
+      return (m?.[2] ?? url) as string;
     }
     case "youtube_music": {
-      const m = url.match(/music\.youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/,);
-      return m ? m[1] : url;
+      const m = /music\.youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/.exec(url,);
+      return (m?.[1] ?? url) as string;
     }
     case "soundcloud": {
       return url;
     }
-    case "apple_music": {
-      const m = url.match(/music\.apple\.com\/[\w-]+\/[\w-]+\/(\d+)/,);
-      return m ? m[1] : url;
-    }
     case "bandcamp": {
       return url;
+    }
+    case "apple_music": {
+      const m = /music\.apple\.com\/[\w-]+\/[\w-]+\/(\d+)/.exec(url,);
+      return (m?.[1] ?? url) as string;
     }
   }
 }
 
-function toServiceUrl(url: string, service: MusicService,): string {
+function toServiceUrl(url: string, _service: MusicService,): string {
   // Normalize to a clean https:// URL for deep linking
-  if (url.startsWith("http")) { return url; }
+  if (url.startsWith("http",)) { return url; }
   return `https://${url}`;
 }
 
 function toEmbedSrc(url: string, service: MusicService,): string {
-  const clean = url.startsWith("http") ? url : `https://${url}`;
+  const clean = url.startsWith("http",) ? url : `https://${url}`;
   switch (service) {
     case "youtube_music":
-      return clean.replace("music.youtube.com", "www.youtube.com");
+      return clean.replace("music.youtube.com", "www.youtube.com",);
     case "apple_music": {
       // Apple Music embeds use embed.com widget
       const m = clean.match(/music\.apple\.com\/([\w-]+)\/([\w-]+)\/(\d+)/,);
