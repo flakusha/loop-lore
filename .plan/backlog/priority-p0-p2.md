@@ -36,15 +36,17 @@
 
 | Ticket | Area | Effort | Why P2 |
 |--------|------|--------|--------|
-| `BUG-gallery-duplicate-serveGalleryGrid` | gallery | Trivial | Build broken |
 | `BUG-impersonate-buildimpresult-referenceerror` | impersonation | Small | Impersonation broken (ReferenceError) |
 | `BUG-impersonate-commands-register-empty-callback` | impersonation | Small | Impersonate commands no-op |
 | `BUG-npc-navigation-routes-all-stubbed` | npcs | Large | NPC nav entirely stubbed |
-| `BUG-users-persona-handlers-horizontal-priv-esc` | users/personas | Small | **Security** — missing role check |
 | `BUG-chat-swipe-index-race` | chat | Small | Data corruption risk |
 | `WIRE-impersonate-command-palette-no-actionpayload-dispatch` | impersonation | Medium | Impersonate FE dead |
 | `WIRE-characters-create-avatar-linking-missing` | characters | Medium | Character creation missing asset wiring |
 | `WIRE-nsfw-audit-page-missing-inline-authz` | nsfw | Small | **Security** — unguarded audit route |
+
+> **Closed (verify on `dev` 2026-08-22):** `BUG-gallery-duplicate-serveGalleryGrid`,
+> `BUG-users-persona-handlers-horizontal-priv-esc`, `BUG-rpg-route-authz-gaps-*`.
+>
 
 | Tier     | Topic                                 | Tickets                                                                                                                                                                               | Status                                                                                                                                                        |
 | -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
