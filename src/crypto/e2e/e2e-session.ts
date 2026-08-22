@@ -104,7 +104,7 @@ export async function ensureActiveSession(
   opts: EnsureActiveSessionOpts,
 ): Promise<E2eSessionRow> {
   const existing = await findActiveSession(opts,);
-  if (existing) return existing;
+  if (existing) { return existing; }
 
   const id = uid();
   try {
@@ -120,12 +120,12 @@ export async function ensureActiveSession(
   } catch (err) {
     // Concurrent insert lost the race; re-read.
     const raced = await findActiveSession(opts,);
-    if (raced) return raced;
+    if (raced) { return raced; }
     throw err;
   }
   const created = await findSession({ database: opts.database, sessionId: id, },);
   if (!created) {
-    throw new Error(`e2e-session: insert succeeded but row ${id} not found`);
+    throw new Error(`e2e-session: insert succeeded but row ${id} not found`,);
   }
   return created;
 }

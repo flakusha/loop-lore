@@ -141,4 +141,5 @@ export interface DB {
   music_links: import("./schema-core").MusicLinks;
   actor_e2e_pubkeys: import("./schema-core").ActorE2ePubkeys;
   e2e_sessions: import("./schema-core").E2eSessions;
+  e2e_skipped_keys: import("./schema-core").E2eSkippedKeys;
 }
