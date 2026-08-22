@@ -864,4 +864,22 @@ export interface E2eSessions {
   created_at: Generated<string>;
   last_message_at: string | null;
   revoked_at: string | null;
+  root_key: Uint8Array | null;
+  sending_chain_key: Uint8Array | null;
+  receiving_chain_key: Uint8Array | null;
+  send_count: Generated<number>;
+  recv_count: Generated<number>;
+  ephemeral_public_jwk: string | null;
+  ephemeral_private_jwk: string | null;
+}
+
+// ── e2e_skipped_keys ────────────────────────────────────────────
+export interface E2eSkippedKeys {
+  id: Generated<string>;
+  session_id: string;
+  dh_public_jwk: string;
+  counter: number;
+  encrypted_message_key: string;
+  created_at: Generated<string>;
+  expires_at: string;
 }

@@ -2095,4 +2095,21 @@ export const E2eSessionsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   last_message_at: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
+  root_key: t.Optional(t.String(),),
+  sending_chain_key: t.Optional(t.String(),),
+  receiving_chain_key: t.Optional(t.String(),),
+  send_count: t.Optional(t.Number(),),
+  recv_count: t.Optional(t.Number(),),
+  ephemeral_public_jwk: t.Optional(t.String(),),
+  ephemeral_private_jwk: t.Optional(t.String(),),
+},);
+
+// ── e2e_skipped_keys ────────────────────────────────────────────
+export const E2eSkippedKeysSchema = t.Object({
+  session_id: t.String(),
+  dh_public_jwk: t.String(),
+  counter: t.Number(),
+  encrypted_message_key: t.String(),
+  expires_at: t.String(),
+  created_at: t.Optional(t.String(),),
 },);
