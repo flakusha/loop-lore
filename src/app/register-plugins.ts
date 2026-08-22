@@ -18,6 +18,7 @@ import { loraRoutes, } from "../generation/lora/routes";
 import { personaRoutes, } from "../personas/controller";
 import { activityRoutes, } from "../routes/activity";
 import { activityStreamRoutes, } from "../routes/activity-stream";
+import { actorE2EPubkeyRoutes, } from "../routes/actor-e2e-pubkeys";
 import { actorItemsRoutes, } from "../routes/actor-items";
 import { actorLoreEntriesRoutes, } from "../routes/actor-lore-entries";
 import { actorMemoriesRoutes, } from "../routes/actor-memories";
@@ -129,6 +130,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(keyManagementRoutes({ database: handleOpts.database, },),);
   app.use(usersRoutes(handleOpts,),);
   app.use(sessionsRoutes(handleOpts,),);
+  app.use(actorE2EPubkeyRoutes(handleOpts,),);
   app.use(actorItemsRoutes(handleOpts,),);
   app.use(actorMemoriesRoutes(handleOpts,),);
   app.use(actorLoreEntriesRoutes(handleOpts,),);
