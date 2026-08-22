@@ -174,12 +174,12 @@ function addMapRow(index: string, file: string,): boolean {
   let insertAt = -1;
 
   for (let i = 0; i < lines.length; i++) {
-    if (/^## File map/.test(lines[i]!,)) {
+    if (lines[i]!.startsWith("## File map",)) {
       inMap = true;
       continue;
     }
-    if (inMap && /^## /.test(lines[i]!,)) { break; } // next section
-    if (inMap && /^\|/.test(lines[i]!,) && !/^\| ---/.test(lines[i]!,)) {
+    if (inMap && lines[i]!.startsWith("## ",)) { break; } // next section
+    if (inMap && lines[i]!.startsWith("|",) && !lines[i]!.startsWith("| ---",)) {
       insertAt = i; // last table row seen
     }
   }

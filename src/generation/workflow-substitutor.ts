@@ -32,7 +32,7 @@ const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
 export function substituteWorkflow<T,>(
   obj: T,
   vars: SubstitutionVars,
-  nodeOverrides?: Map<string, Record<string, unknown>>,
+  _nodeOverrides?: Map<string, Record<string, unknown>>,
 ): T {
   if (obj === null || obj === undefined) { return obj; }
 
