@@ -4,17 +4,20 @@
 /**
  * Music embed renderer — returns sanitized iframe HTML for music link messages.
  */
-import type { ChatState, } from "../types";
 import type { MusicLinkMessage, } from "../chat-types/messages";
+import type { ChatState, } from "../types";
 
 export type ChatMusicEmbed = Pick<ChatState, never>;
 
-const getDOMPurify = () => (globalThis as { __DOMPurify?: { sanitize: (html: string, config: { ALLOWED_TAGS: string[]; ALLOWED_ATTR: string[] }) => string } }).__DOMPurify;
+const getDOMPurify = () =>
+  (globalThis as {
+    __DOMPurify?: { sanitize: (html: string, config: { ALLOWED_TAGS: string[]; ALLOWED_ATTR: string[] },) => string };
+  }).__DOMPurify;
 
 const NSFW_PLACEHOLDER = '<span class="music-embed-nsfw">🔒 Explicit content hidden</span>';
 
 export const chatMusicEmbed: ChatMusicEmbed = {
-  renderMusicEmbed(msg: MusicLinkMessage): string {
+  renderMusicEmbed(msg: MusicLinkMessage,): string {
     const DOMPurify = getDOMPurify();
 
     if (msg.nsfwHidden) {
@@ -37,8 +40,8 @@ export const chatMusicEmbed: ChatMusicEmbed = {
     if (!DOMPurify) { return msg.embedHtml; }
 
     return DOMPurify.sanitize(msg.embedHtml, {
-      ALLOWED_TAGS: ["iframe", "span"],
-      ALLOWED_ATTR: ["src", "width", "height", "allow", "allowfullscreen", "frameborder", "scrolling"],
-    });
+      ALLOWED_TAGS: ["iframe", "span",],
+      ALLOWED_ATTR: ["src", "width", "height", "allow", "allowfullscreen", "frameborder", "scrolling",],
+    },);
   },
 };

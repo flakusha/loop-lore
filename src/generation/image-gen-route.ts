@@ -98,7 +98,7 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
     const assetId = uid();
     const filename = `generated-${assetId.slice(0, 8,)}.${outputFormat}`;
     const meta = extractImageMetadata(buffer,);
-    const { asset: asset, } = await createAsset({
+    const { asset, } = await createAsset({
       database: db,
       input: {
         ownerId: "system",

@@ -197,13 +197,12 @@ browser tests can pass while Alpine hydration is broken.
 See "Platform-integrations tickets" pattern — created via `worktree.sh ticket`,
 linked to this epic:
 
-- [ ] `TASK-e2e-browser-reliability-hardening` — runner decision, web-first polling,
+- [x] `TASK-e2e-browser-reliability-hardening` — runner decision, web-first polling,
       console/page-error assertion everywhere, per-test isolation, dead-config cleanup.
 - [x] `TASK-e2e-alpine-state-harness` — `getAlpineData`/`waitForAlpineState`, migrate
       htmx-alpine/chat-flow off presence+sleeps, pin `chatState()` contract.
-- [ ] `TASK-e2e-scenario-catalog` — feature→scenario→test matrix + coverage report;
-      add missing pillar tests.
-- [ ] `TASK-wiring-dead-code-gate` — `check:wiring` + knip `exports` tightening +
+- [x] `TASK-e2e-scenario-catalog` — feature→scenario→test matrix + coverage report;
+- [x] `TASK-wiring-dead-code-gate` — `check:wiring` + knip `exports` tightening +
       route-test coverage assertion.
 - [ ] `TASK-generation-mock-scenario-provider` — full-surface mock + fake ComfyUI server.
 - [ ] `TASK-generation-cassette-replay` — record/replay harness + first fixtures.

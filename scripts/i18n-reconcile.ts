@@ -20,7 +20,7 @@ import { join, } from "path";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Discrepancy {
+interface _Discrepancy {
   locale: string;
   type: "missing" | "extra" | "type_mismatch";
   key: string;

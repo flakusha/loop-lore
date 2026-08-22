@@ -161,7 +161,10 @@ export async function decryptThenDecompress(storedContent: string, chatKey: Cryp
     decryptedBytes = new Uint8Array(decrypted,);
   } catch (error) {
     // Authentication tag mismatch or wrong key
-    throw new Error(`Decryption failed: ${(error as Error).message}. Possible tampered data or wrong key.`,);
+    // eslint-disable-next-line no-restricted-syntax
+    throw new Error(`Decryption failed: ${(error as Error).message}. Possible tampered data or wrong key.`, {
+      cause: error,
+    },);
   }
 
   const decryptedText = new TextDecoder().decode(decryptedBytes,);

@@ -55,7 +55,7 @@ export async function execute(
 
   mkdirSync(config.treeDir, { recursive: true, },);
 
-  log("info", `Creating new branch '${branch}' from '${base}' (HEAD=${headRef.slice(0, 7)})`,);
+  log("info", `Creating new branch '${branch}' from '${base}' (HEAD=${headRef.slice(0, 7,)})`,);
 
   // Use HEAD commit directly as base — works regardless of whether repo root
   // is on a branch or in detached HEAD state.

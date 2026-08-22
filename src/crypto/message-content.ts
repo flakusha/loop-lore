@@ -15,12 +15,9 @@
  */
 
 import type { Kysely, } from "kysely";
-import { decodeContent, } from "../content/decode";
-import type { ContentEncoding, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { ensureActorKey, } from "./actor-keys";
 import { decryptAtRest, encryptAtRest, getChatEncryptionLevel, } from "./at-rest";
-
 /** The parts of a message row the encryption helpers need. */
 export interface MessageContentRef {
   content: string;

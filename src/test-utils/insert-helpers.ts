@@ -3119,10 +3119,12 @@ export async function insertTradeHistory(
 /** Insert a memory_embeddings row. */
 export async function insertMemoryEmbeddings(
   db: Db,
+  vector_blob: Uint8Array,
   created_at: number,
   opts?: { memory_id?: Generated<string>; model?: Generated<string>; dimensions?: Generated<number> },
 ): Promise<void> {
   await db.insertInto("memory_embeddings",).values({
+    vector_blob,
     created_at,
     ...opts,
   } as any,).execute();
@@ -3159,6 +3161,46 @@ export async function insertChatKeys(
     id: crypto.randomUUID(),
     chat_id,
     encrypted_chat_key,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a music_links row. */
+export async function insertMusicLinks(
+  db: Db,
+  chat_id: string,
+  sender_id: string,
+  service: string,
+  url: string,
+  title: string,
+  artist: string,
+  service_track_id: string,
+  service_url: string,
+  opts?: {
+    id?: Generated<string>;
+    section_id?: string | null;
+    embed_html?: string | null;
+    thumbnail_url?: string | null;
+    duration_secs?: number | null;
+    is_playlist?: Generated<number>;
+    track_count?: number | null;
+    explicit?: Generated<number>;
+    year?: number | null;
+    genre?: string | null;
+    nsfw_hidden?: Generated<number>;
+    created_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("music_links",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    sender_id,
+    service,
+    url,
+    title,
+    artist,
+    service_track_id,
+    service_url,
     ...opts,
   } as any,).execute();
 }
