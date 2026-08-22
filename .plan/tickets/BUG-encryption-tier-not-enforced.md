@@ -22,9 +22,12 @@ server-global `isEncryptionEnabled()` (SMK presence), never reading
 
 1. **Out-of-enum default.** `src/db/migrations/parts/004_chats_actors.ts:21`
    sets `encryption_level ... NOT NULL DEFAULT 'public'`, but
-   `src/db/enums-core/flags.ts:73-78` defines `EncryptionLevel =
-   { None: "none", Standard: "standard", Private: "private" }`. `"public"` is
+   `src/db/enums-core/flags.ts` defines `EncryptionLevel =
+   { None: "none", Standard: "standard", AtRest: "at-rest" }` (the historical
+   `"private"` value was renamed to `"at-rest"` in migration `057` per
+   the Phase D cutover of TASK-asymmetric-key-pairs-followup). `"public"` is
    not a member.
+</input>
 2. **Column never set at creation.** `src/chat/service/crud/create.ts` and
    `src/routes/chats/create.ts` never assign `encryption_level`, so every new
    chat inherits the invalid `"public"` default.

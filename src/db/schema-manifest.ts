@@ -297,10 +297,21 @@ export const SCHEMA = new SchemaManifest()
     purpose: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("e2e_group_wraps", {
+    id: col("text", { primaryKey: true, },),
+    group_session_id: col("text", { notNull: true, },),
+    recipient_actor_id: col("text", { notNull: true, },),
+    wrapped_key: col("text", { notNull: true, },),
+    sender_eph_pub_jwk: col("text", { notNull: true, },),
+    chain_index: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("e2e_sessions", {
     id: col("text", { primaryKey: true, },),
     sender_actor_id: col("text", { notNull: true, },),
-    recipient_actor_id: col("text", { notNull: true, },),
+    recipient_actor_id: col("text",),
+    chat_id: col("text",),
+    kind: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     last_message_at: col("text",),
     revoked_at: col("text",),
@@ -320,6 +331,14 @@ export const SCHEMA = new SchemaManifest()
     encrypted_message_key: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text", { notNull: true, },),
+  },)
+  .table("e2e_skipped_message_keys", {
+    id: col("text", { primaryKey: true, },),
+    session_id: col("text", { notNull: true, },),
+    recipient_actor_id: col("text", { notNull: true, },),
+    chain_index: col("integer", { notNull: true, },),
+    message_key: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("emotions", {
     id: col("text", { primaryKey: true, },),
@@ -1397,6 +1416,10 @@ export const SCHEMA = new SchemaManifest()
     tool_calls: col("text",),
     thinking: col("text",),
     metadata: col("text",),
+    e2e_payload: col("text",),
+    e2e_session_id: col("text",),
+    e2e_sender_eph_pub_jwk: col("text",),
+    e2e_chain_index: col("integer",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {
