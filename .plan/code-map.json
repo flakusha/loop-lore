@@ -4344,6 +4344,10 @@
   "src/crypto/at-rest.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
     },
     {
@@ -4449,6 +4453,16 @@
       "source": "docs/spec/encryption-workflow.md"
     }
   ],
+  "src/crypto/e2e/e2e-session.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    }
+  ],
   "src/crypto/e2e/key-bundle.ts": [
     {
       "kind": "epic",
@@ -4485,6 +4499,10 @@
   ],
   "src/crypto/e2e/key-pairs.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     },
@@ -4493,7 +4511,21 @@
       "source": ".plan/tickets/TASK-asymmetric-key-pairs.md"
     }
   ],
+  "src/crypto/e2e/ratchet.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    }
+  ],
   "src/crypto/e2e/server-registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
@@ -8215,7 +8247,31 @@
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
     }
   ],
+  "src/frontend/e2e/decrypt-message.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    }
+  ],
+  "src/frontend/e2e/encrypt-message.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    }
+  ],
   "src/frontend/e2e/key-store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
@@ -12045,6 +12101,10 @@
   ],
   "src/routes/actor-e2e-pubkeys.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     }
@@ -13409,6 +13469,10 @@
   ],
   "src/routes/messages/helpers.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
     },
@@ -13422,6 +13486,10 @@
     }
   ],
   "src/routes/messages/post.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crypto.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md"
