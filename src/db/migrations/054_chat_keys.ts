@@ -134,6 +134,34 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   // `chat_keys` table; the `messages.key_id` column carries the new
   // semantic without an inline FK (matches the looseness of `parent_id`).
 
+  // ── 4. Restore FTS triggers ─────────────────────────────────────
+  // The DROP TABLE messages above implicitly drops the messages_fts_ai/ad/au
+  // triggers (SQLite drops triggers attached to a table when the table is
+  // dropped). Re-create them so message inserts continue to populate the FTS index.
+  await sql`
+    CREATE TRIGGER IF NOT EXISTS messages_fts_ai
+    AFTER INSERT ON messages BEGIN
+      INSERT INTO messages_fts(message_id, chat_id, content)
+      VALUES (new.id, new.chat_id, new.content);
+    END
+  `.execute(db,);
+
+  await sql`
+    CREATE TRIGGER IF NOT EXISTS messages_fts_ad
+    AFTER DELETE ON messages BEGIN
+      DELETE FROM messages_fts WHERE message_id = old.id;
+    END
+  `.execute(db,);
+
+  await sql`
+    CREATE TRIGGER IF NOT EXISTS messages_fts_au
+    AFTER UPDATE OF content ON messages BEGIN
+      DELETE FROM messages_fts WHERE message_id = old.id;
+      INSERT INTO messages_fts(message_id, chat_id, content)
+      VALUES (new.id, new.chat_id, new.content);
+    END
+  `.execute(db,);
+
   await sql`PRAGMA foreign_keys = ON`.execute(db,);
 }
 
