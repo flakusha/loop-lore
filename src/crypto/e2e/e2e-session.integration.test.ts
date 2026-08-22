@@ -23,8 +23,7 @@ import {
   mock,
   test,
 } from "bun:test";
-import { sql, } from "kysely";
-import { Kysely, } from "kysely";
+import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
@@ -81,11 +80,11 @@ function buildMigrationProvider() {
     async getMigrations(): Promise<Record<string, Migration>> {
       const migrationDir = path.join(__dirname, "..", "..", "db", "migrations",);
       const migrationFiles = readdirSync(migrationDir,)
-        .filter((f,) => f.endsWith(".ts",),)
-        .toSorted((a, b,) => a.localeCompare(b,),);
+        .filter((f,) => f.endsWith(".ts",))
+        .toSorted((a, b,) => a.localeCompare(b,));
       const migrations: Record<string, Migration> = {};
       for (const f of migrationFiles) {
-        const mod = (await import(path.join(migrationDir, f,),)) as
+        const mod = (await import(path.join(migrationDir, f,))) as
           | { default?: Migration }
           | Migration;
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
@@ -182,10 +181,10 @@ function buildPubKeyRegistry(): Record<string, JsonWebKey> {
   const reg: Record<string, JsonWebKey> = {};
   for (const actorId of ACTOR_IDS) {
     const raw = localStorage.getItem(`${KEY_STORE_PREFIX}:${actorId}`,);
-    if (!raw) continue;
+    if (!raw) { continue; }
     const parsed = JSON.parse(raw,) as { keyPairJwk?: { publicKey?: JsonWebKey } };
     const jwk = parsed.keyPairJwk?.publicKey;
-    if (jwk) reg[actorId] = jwk;
+    if (jwk) { reg[actorId] = jwk; }
   }
   return reg;
 }
@@ -195,16 +194,16 @@ function bindStubFetch(): void {
   const stub = mock(async (input: RequestInfo | URL,) => {
     const url = typeof input === "string" ? input : input.toString();
     const match = url.match(/\/api\/actors\/([^/]+)\/e2e-public-key$/,);
-    if (!match) throw new Error(`Unexpected fetch in test: ${url}`);
+    if (!match) { throw new Error(`Unexpected fetch in test: ${url}`,); }
     const targetId = match[1];
     const jwk = targetId ? registry[targetId] : undefined;
     if (!jwk) {
-      return new Response(JSON.stringify({ error: "not_found", }), {
+      return new Response(JSON.stringify({ error: "not_found", },), {
         status: 404,
         headers: { "content-type": "application/json", },
       },);
     }
-    return new Response(JSON.stringify({ publicKeyJwk: jwk, algorithm: "ECDH-P256", }), {
+    return new Response(JSON.stringify({ publicKeyJwk: jwk, algorithm: "ECDH-P256", },), {
       status: 200,
       headers: { "content-type": "application/json", },
     },);
@@ -235,7 +234,7 @@ describe("e2e-session lookup helpers", () => {
       recipientActorId: BOB_ID,
     },);
     expect(b.id,).toBe(a.id,);
-  },);
+  });
 
   test("findActiveSession returns null for a never-touched pair", async () => {
     const r = await findActiveSession({
@@ -244,12 +243,12 @@ describe("e2e-session lookup helpers", () => {
       recipientActorId: ALICE_ID,
     },);
     expect(r,).toBeNull();
-  },);
+  });
 
   test("findSession returns null for an unknown id", async () => {
     const r = await findSession({ database: db, sessionId: "does-not-exist", },);
     expect(r,).toBeNull();
-  },);
+  });
 
   test("recordMessageSent updates last_message_at", async () => {
     const session = await ensureActiveSession({
@@ -261,7 +260,7 @@ describe("e2e-session lookup helpers", () => {
     await recordMessageSent({ database: db, sessionId: session.id, },);
     const reread = await findSession({ database: db, sessionId: session.id, },);
     expect(reread?.lastMessageAt,).not.toBeNull();
-  },);
+  });
 
   test("revokeSession is idempotent and hides the session from findActiveSession", async () => {
     const session = await ensureActiveSession({
@@ -277,7 +276,7 @@ describe("e2e-session lookup helpers", () => {
       recipientActorId: ALICE_ID,
     },);
     expect(active,).toBeNull();
-  },);
+  });
 });
 
 describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => {
@@ -323,7 +322,9 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
       model_id: null,
       provider: null,
     },).execute();
-    await sql`UPDATE messages SET e2e_payload = ${JSON.stringify(payload,)}, e2e_session_id = ${session.id} WHERE id = ${messageId}`.execute(
+    await sql`UPDATE messages SET e2e_payload = ${
+      JSON.stringify(payload,)
+    }, e2e_session_id = ${session.id} WHERE id = ${messageId}`.execute(
       db,
     );
     await recordMessageSent({ database: db, sessionId: session.id, },);
@@ -348,7 +349,7 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
     },);
     expect(decrypt.plaintext,).toBe(plaintext,);
     expect(decrypt.nextChainKey.byteLength,).toBe(32,);
-  },);
+  });
 
   test("tampered ciphertext throws on decrypt (AES-GCM auth-tag mismatch)", async () => {
     await persistKeyPair(ALICE_ID,);
@@ -382,7 +383,9 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
       model_id: null,
       provider: null,
     },).execute();
-    await sql`UPDATE messages SET e2e_payload = ${JSON.stringify(payload,)}, e2e_session_id = ${session.id} WHERE id = ${messageId}`.execute(
+    await sql`UPDATE messages SET e2e_payload = ${
+      JSON.stringify(payload,)
+    }, e2e_session_id = ${session.id} WHERE id = ${messageId}`.execute(
       db,
     );
 
@@ -398,5 +401,5 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
         payload: tampered,
       },),
     ).rejects.toThrow();
-  },);
+  });
 });

@@ -5,10 +5,8 @@
 
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import { sql, } from "kysely";
-import { Kysely, } from "kysely";
-import type { Migration, } from "kysely/migration";
-import { Migrator, } from "kysely/migration";
+import { Kysely, sql, } from "kysely";
+import { type Migration, Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createSqliteDialect, } from "../../db";
