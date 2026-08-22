@@ -5,24 +5,26 @@ import { describe, expect, test, } from "bun:test";
 import type { MusicService, } from "../validation/schemas/music-links";
 import { createMusicLinkService, } from "./music-links";
 
-// Mock DB — typed as `any`; service is called with `as never` so only the
-// methods we actually invoke need to exist on the object.
-function makeMockDb(): any {
+// Mock DB — typed as `unknown`; the service is invoked via `as never` so only
+// the methods we actually call need to exist on the object.
+// Captures the most recent `insertInto(table).values(row)` call and echoes it
+// back from `selectFrom(table).executeTakeFirst()` so the service's
+// `selectAll().where().executeTakeFirst()` post-insert can return the row
+// it just wrote (matches real Kysely behavior).
+function makeMockDb(): Record<string, unknown> {
+  const lastInserted: Record<string, Record<string, unknown>> = {};
   return {
-    insertInto: () => ({
-      values: () => ({
-        execute: async () => {},
+    insertInto: (table: string,) => ({
+      values: (row: Record<string, unknown>,) => ({
+        execute: async () => {
+          lastInserted[table] = row;
+        },
       }),
     }),
-    selectFrom: () => ({
+    selectFrom: (table: string,) => ({
       selectAll: () => ({
         where: () => ({
-          executeTakeFirst: async () => null,
-        }),
-      }),
-      delete: () => ({
-        where: () => ({
-          execute: async () => {},
+          executeTakeFirst: async () => lastInserted[table] ?? null,
         }),
       }),
     }),
