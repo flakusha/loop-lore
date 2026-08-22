@@ -1,16 +1,16 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Implement True Client-Side E2E for at-rest+ Tier (Deferred)
+# TASK: Implement True Client-Side E2E for at-rest+ Tier (4-phase delivery)
 
-**Status:** 🟡 Partial — keypair + public-key registry MVP landed (commit f534c4d3)
+**Status:** 🟡 Partial — foundation merged to dev (17410ce1); Phase A next
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
-**Blocked by:** TASK-encryption-architecture-clarification
+**Blocked by:** TASK-encryption-architecture-clarification (Phase B/C only)
 **Git issue:** 5d9636b (open — re-open on next phase)
-**Branch:** asymmetric-e2e
+**Branch:** (Phase A) e2e-ratchet-phase-a
 
 ## Summary
 
@@ -138,7 +138,10 @@ TBD after architecture clarification.
 
 ## Verification Notes (2026-08-22)
 
-First slice landed in commit `f534c4d3` on branch `asymmetric-e2e`:
+First slice landed in commits `f534c4d3` + `a2f90efa` + `1108b063` (branch
+`asymmetric-e2e`) and was merged to dev as commit `17410ce1`. Branch
+`asymmetric-e2e` was removed after finalization.
+
 
 - **Migration:** `src/db/migrations/055_e2e_pubkeys.ts` — `actor_e2e_pubkeys`
   table with `actor_id`, `public_key_jwk` (text), `algorithm` (default
@@ -161,17 +164,36 @@ First slice landed in commit `f534c4d3` on branch `asymmetric-e2e`:
 - **Tests:** 9 unit tests (key-pairs) + 12 integration tests (server
   registry, in-memory SQLite with full migration set). All pass.
 
-**Still TODO (next slices):**
+**Subsequent phases (4-phase plan; see `epic-crypto.md` §"Client-Side E2E — 4-Phase Plan"):**
 
-- Browser encrypt-on-send / decrypt-on-receive wiring
-  (cross-references `TASK-encryption-browser-pre-encrypt.md`).
-- Sender-key ratchet for forward secrecy (architectural decision still
-  open — see "Key Open Questions" above).
-- Group chat key distribution (pairwise ECDH vs sender-key).
-- Key recovery / escrow flow.
-- LLM integration strategy for E2E chats (3 options listed above;
-  needs product decision).
+- **Phase A (NEXT):** ratchet primitive + 1:1 E2E message exchange.
+  Branch `e2e-ratchet-phase-a`. See acceptance criteria below.
+- Phase B: chain advancement + forward secrecy.
+- Phase C: group chat (sender-key distribution).
+- Phase D: sender-side integration with the chat route + at-rest tier
+  enum relaxation.
 
-**Closed-by:** none yet — ticket remains open. The MVP is the foundation;
-  each subsequent feature (sender-key ratchet, browser encrypt, group chat)
-  is its own ticket once architecture questions are resolved.
+**Closed-by:** none yet — ticket remains open. Foundation shipped;
+each subsequent phase closes a slice once shipped.
+
+## Phase A — Acceptance Criteria
+
+- `src/crypto/e2e/ratchet.ts` exposes `nextSessionKey(chainKey)` returning
+  `{ chainKey, messageKey }`.
+- `src/frontend/e2e/encrypt-message.ts` fetches recipient's pubkey, ECDH-
+  derives a session key, encrypts plaintext, emits
+  `{ciphertext, nonce, ephemeralPubKey, chainKey}`.
+- `src/frontend/e2e/decrypt-message.ts` decrypts the same tuple.
+- Migration `056_e2e_payload`: `messages.e2e_payload` (TEXT, nullable),
+  `messages.e2e_session_id` (TEXT, nullable), `e2e_sessions` table.
+- `src/crypto/e2e/e2e-session.ts` server-side session lookup (read-only).
+- Unit tests for ratchet (single message → next chain step), encrypt/
+  decrypt roundtrip, tamper detection (auth-tag mismatch throws).
+- Integration test: Alice encrypts → store in DB → Bob fetches via the
+  server → decrypts with his stored private key + the message's
+  `ephemeralPubKey`/`chainKey`.
+- `bun run typecheck` + `bun test src/crypto/e2e/ src/frontend/e2e/`
+  green.
+- `bun run plan:sync` green.
+
+
