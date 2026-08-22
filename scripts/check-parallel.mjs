@@ -25,98 +25,105 @@
 
 // ── Imports ─────────────────────────────────────────────────────
 
+// oxlint-disable-next-line import/no-nodejs-modules
 import { execFileSync, } from "node:child_process";
+// oxlint-disable-next-line import/no-nodejs-modules sort-imports
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync, } from "node:fs";
+// oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
 
 // ── Parse args ──────────────────────────────────────────────────
 
 // ── Check definitions ───────────────────────────────────────────
 
+// oxlint-disable-next-line sort-keys
 const checks = {
-  // Type checking
-  "typecheck - backend": "bun run typecheck",
-  "typecheck - frontend": "bun run typecheck:frontend",
-  "typecheck - coverage": "bun run typecheck:coverage",
-  "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend",
+    // Type checking
+    "typecheck - backend": "bun run typecheck",
+    "typecheck - frontend": "bun run typecheck:frontend",
+    "typecheck - coverage": "bun run typecheck:coverage",
+    "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend",
 
-  "lint - ts (eslint)": "bun run lint:eslint",
-  "lint - oxlint (correctness)": "bun run lint:oxlint",
-  "lint - eslint": "bun run lint:eslint",
+    "lint - ts (eslint)": "bun run lint:eslint",
+    "lint - oxlint (correctness)": "bun run lint:oxlint",
+    "lint - eslint": "bun run lint:eslint",
 
-  // Formatting
-  "format - dprint": "bun run format:dprint",
-  "md - lint": "bun run md:lint",
+    // Formatting
+    "format - dprint": "bun run format:dprint",
+    "md - lint": "bun run md:lint",
 
-  // Dead-code analysis (knip)
-  "dead - code (knip)": "bun run dead:code",
+    // Dead-code analysis (knip)
+    "dead - code (knip)": "bun run dead:code",
 
-  // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
-  "wiring - check": "bun run scripts/check-wiring.ts",
+    // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
+    "wiring - check": "bun run scripts/check-wiring.ts",
 
-  // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
-  "changelog - gate": "bun run scripts/check-changelog.ts",
+    // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
+    "changelog - gate": "bun run scripts/check-changelog.ts",
 
-  // DB schema staleness (regenerates into temp dir, diffs vs committed)
-  "db - schema gate": "bun run scripts/check-db-schemas.ts",
+    // DB schema staleness (regenerates into temp dir, diffs vs committed)
+    "db - schema gate": "bun run scripts/check-db-schemas.ts",
 
-  // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
-  "backlog - index": "bun run plan:backlog:sync",
+    // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
+    "backlog - index": "bun run plan:backlog:sync",
 
-  // Reverse code→plan index freshness (code-map.json matches a fresh rebuild)
-  "code-map - freshness": "bun run plan:map:check",
+    // Reverse code→plan index freshness (code-map.json matches a fresh rebuild)
+    "code-map - freshness": "bun run plan:map:check",
 
-  // Size check
-  "size - check": "bun run scripts/check-file-size.ts",
-  "size - strict": "bun run scripts/check-file-size.ts --strict",
+    // Size check
+    "size - check": "bun run scripts/check-file-size.ts",
+    "size - strict": "bun run scripts/check-file-size.ts --strict",
 
-  // Context weight
-  "context - weight": "bun run scripts/check-context-weight.ts",
+    // Context weight
+    "context - weight": "bun run scripts/check-context-weight.ts",
 
-  // Shell reference guard (no .sh references in docs)
-  "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
+    // Shell reference guard (no .sh references in docs)
+    "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
 
-  // Tests
-  "test - unit": "bun run test:unit",
-  "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
-};
+    // Tests
+    "test - unit": "bun run test:unit",
+    "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
+  },
+  // ── Run checks in parallel ──────────────────────────────────────
 
-// ── Run checks in parallel ──────────────────────────────────────
+  PROJECT_ROOT = path.resolve(import.meta.dir, "..",),
+  // Machine-readable report: written after every run, git-ignored (.tmp/).
+  REPORT_DIR_RELATIVE = ".tmp",
+  REPORT_RELATIVE = ".tmp/check-report.json",
+  REPORT_PATH = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE, "check-report.json",),
+  // Per-check output cap for the report (guards against multi-MB failure dumps).
+  MAX_OUTPUT_CHARS = 100_000,
+  // Run identity: unique per invocation; embedded in the report and used to make
+  // oxlint-disable-next-line capitalized-comments
+  // the on-disk write atomic (temp file → rename).
+  RUN_ID = `${process.pid}-${Date.now().toString(36,)}`,
+  // Invocation mode — the runner is mode-agnostic; the label only records how the
+  // oxlint-disable-next-line capitalized-comments
+  // check was invoked so fix/ci runs can't masquerade as plain ones.
+  MODE = (() => {
+    if (process.argv.includes("--ci",)) { return "ci"; }
+    if (process.argv.includes("--fix",)) { return "fix"; }
+    return "plain";
+  })(),
+  IS_REPORT_LS = process.argv.includes("--report-ls",);
 
-const PROJECT_ROOT = path.resolve(import.meta.dir, "..",);
-
-// Machine-readable report: written after every run, git-ignored (.tmp/).
-const REPORT_DIR_RELATIVE = ".tmp";
-const REPORT_RELATIVE = ".tmp/check-report.json";
-const REPORT_PATH = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE, "check-report.json",);
-// Per-check output cap for the report (guards against multi-MB failure dumps).
-const MAX_OUTPUT_CHARS = 100_000;
-
-// Run identity: unique per invocation; embedded in the report and used to make
-// the on-disk write atomic (temp file → rename).
-const RUN_ID = `${process.pid}-${Date.now().toString(36,)}`;
-// Invocation mode — the runner is mode-agnostic; the label only records how the
-// check was invoked so fix/ci runs can't masquerade as plain ones.
-const MODE = (() => {
-  if (process.argv.includes("--ci",)) { return "ci"; }
-  if (process.argv.includes("--fix",)) { return "fix"; }
-  return "plain";
-})();
-const IS_REPORT_LS = process.argv.includes("--report-ls",);
-
+// oxlint-disable-next-line func-style
 async function runCheck(name, command,) {
-  const startedAt = performance.now();
-  const commandParts = ["-c", command,];
+  const startedAt = performance.now(),
+    commandParts = ["-c", command,];
+
   try {
+    // oxlint-disable-next-line sort-keys
     const proc = Bun.spawn(["bash", ...commandParts,], {
-      cwd: PROJECT_ROOT,
-      stdout: "pipe",
-      stderr: "pipe",
-    },);
-    const exitCode = await proc.exited;
-    const stdout = await new Response(proc.stdout,).text();
-    const stderr = await new Response(proc.stderr,).text();
-    const output = stdout || stderr;
+        cwd: PROJECT_ROOT,
+        stdout: "pipe",
+        stderr: "pipe",
+      },),
+      exitCode = await proc.exited,
+      stdout = await new Response(proc.stdout,).text(),
+      stderr = await new Response(proc.stderr,).text(),
+      output = stdout || stderr;
+    // oxlint-disable-next-line sort-keys
     return {
       name,
       command,
@@ -127,6 +134,7 @@ async function runCheck(name, command,) {
       truncated: output.length > MAX_OUTPUT_CHARS,
     };
   } catch (error) {
+    // oxlint-disable-next-line sort-keys
     return {
       name,
       command,
@@ -357,8 +365,8 @@ async function runNonBlockingChecks(notes,) {
       stderr: "pipe",
     },);
     await packageProc.exited;
-    const packageText = await new Response(packageProc.stdout,).text();
-    const packageVersion = packageText.trim();
+    const packageText = await new Response(packageProc.stdout,).text(),
+      packageVersion = packageText.trim();
 
     if (latestTag && packageVersion) {
       const tagVersion = latestTag.replace(/^v/, "",);

@@ -78,7 +78,7 @@ describe("encryptAtRest", () => {
       database: mockDb,
       chatId: "chat-1",
       plaintext: "Secret message",
-      encryptionLevel: "at-rest",
+      encryptionLevel: "standard",
     },);
 
     // When encryption is disabled, stores plaintext (matches standard behavior)
@@ -117,7 +117,7 @@ describe("decryptAtRest", () => {
       database: mockDb,
       chatId: "chat-1",
       storedContent: "plaintext-content",
-      encryptionLevel: "at-rest",
+      encryptionLevel: "standard",
     },);
 
     expect(result,).toBe("plaintext-content",);
@@ -158,7 +158,7 @@ describe("needsEncryption", () => {
   });
 
   test("at-rest tier needs encryption for plaintext", () => {
-    expect(needsEncryption("at-rest", "plaintext",),).toBeTrue();
+    expect(needsEncryption("standard", "plaintext",),).toBeTrue();
   });
 
   test("already encrypted content does not need encryption", async () => {

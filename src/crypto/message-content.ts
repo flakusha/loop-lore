@@ -32,7 +32,7 @@ export interface EncryptMessageOpts {
   actorId: string;
   plaintext: string;
   smk: CryptoKey;
-  pipeline?: { threshold?: number; algorithm?: string };
+  pipeline?: { threshold?: number; algorithm?: "gzip" | "brotli" | "zstd" };
 }
 
 export interface EncryptMessageResult {
@@ -65,7 +65,10 @@ export async function encryptMessageContent({
     chatId,
     plaintext,
     encryptionLevel,
-    config: pipeline,
+    config: {
+      threshold: pipeline?.threshold ?? 128,
+      algorithm: (pipeline?.algorithm ?? "gzip") as "gzip" | "brotli" | "zstd",
+    },
   },);
   return { storedContent: result.storedContent, keyId: result.keyId, };
 }
