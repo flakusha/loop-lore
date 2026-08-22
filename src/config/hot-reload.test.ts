@@ -1,62 +1,67 @@
 // src/config/hot-reload.test.ts — Tests for domain config hot-reload
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 import { stopWatchingDomainConfigs, watchDomainConfigs, } from "./hot-reload";
 
 const TEST_DIR = path.join(import.meta.dir, "__test_hot_reload__",);
 
+// Mock node:fs.watch so the test does NOT consume an inotify instance.
+// fs.inotify.max_user_instances caps at 128 on Linux, and bun:test opens
+// watchers per-test-file — we cannot afford to add real fs.watch calls here.
+const closeMock = mock(() => {},);
+const watchMock = mock((_path: string, _opts: unknown, _listener: unknown,) => {
+  return { close: closeMock, } as unknown as ReturnType<typeof import("node:fs").watch>;
+},);
+
+mock.module("node:fs", () => {
+  const actual = require("node:fs",);
+  return {
+    ...actual,
+    watch: watchMock,
+  };
+},);
+
+afterEach(() => {
+  rmSync(TEST_DIR, { recursive: true, force: true, },);
+  watchMock.mockClear();
+  closeMock.mockClear();
+},);
+
 describe("Domain Config Hot-Reload", () => {
-  test("watches domain config files for changes", async () => {
+  test("watches domain config files for changes", () => {
     mkdirSync(path.join(TEST_DIR, "configs",), { recursive: true, },);
 
-    // Create initial domain config
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.server.toml",),
       "[server]\nport = 8080\n",
     );
 
     let reloadCalled = false;
-    let reloadedDomain = "";
-
-    const watcher = watchDomainConfigs(TEST_DIR, (domain, _config,) => {
+    const watcher = watchDomainConfigs(TEST_DIR, (_domain, _config,) => {
       reloadCalled = true;
-      reloadedDomain = domain;
     },);
 
-    // Wait a bit for watcher to be ready
-    await new Promise((resolve,) => setTimeout(resolve, 100,));
-
-    // Modify the domain config
-    writeFileSync(
-      path.join(TEST_DIR, "configs", "config.server.toml",),
-      "[server]\nport = 9090\n",
-    );
-
-    // Wait for reload to be triggered
-    await new Promise((resolve,) => setTimeout(resolve, 200,));
+    expect(watchMock,).toHaveBeenCalledTimes(1,);
+    expect(watchMock.mock.calls[0]?.[0],).toBe(TEST_DIR,);
 
     stopWatchingDomainConfigs(watcher,);
+    expect(closeMock,).toHaveBeenCalledTimes(1,);
 
-    // Note: In test environment, file watching might not trigger reliably
-    // This test verifies the watcher can be created and stopped
-    expect(reloadCalled,).toBe(false,); // May not trigger in test
-    expect(reloadedDomain,).toBe("",);
-
-    // Cleanup
-    rmSync(TEST_DIR, { recursive: true, },);
-  });
+    // We did not actually exercise fs.watch — the callback is unverifiable
+    // here without a real inotify handle. The test asserts the lifecycle
+    // contract instead: watch() + close() are called exactly once each.
+    expect(reloadCalled,).toBe(false,);
+  },);
 
   test("stops watching domain configs", () => {
     mkdirSync(path.join(TEST_DIR, "configs",), { recursive: true, },);
 
     const watcher = watchDomainConfigs(TEST_DIR, () => {},);
 
-    // Should not throw
+    // Should not throw and should close the watcher
     stopWatchingDomainConfigs(watcher,);
-
-    // Cleanup
-    rmSync(TEST_DIR, { recursive: true, },);
-  });
-});
+    expect(closeMock,).toHaveBeenCalledTimes(1,);
+  },);
+},);
