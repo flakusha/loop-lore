@@ -47,12 +47,12 @@ export async function getAssetData(
 
   const fileData = readFileSync(filePath,);
 
-  // If asset is encrypted, decrypt it
+  // If asset is encrypted, decrypt it (per-asset HKDF subkey derives from chatKey + assetId)
   if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
     if (!chatKey) {
       throw new Error("Chat key required to decrypt encrypted asset",);
     }
-    return decryptAssetBlob(fileData, chatKey,);
+    return decryptAssetBlob(fileData, chatKey, asset.id,);
   }
 
   return fileData;

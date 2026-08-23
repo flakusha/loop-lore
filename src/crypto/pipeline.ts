@@ -25,6 +25,7 @@ export interface EncryptedPayload {
   comp: boolean; // was compression applied before encrypt?
   compAlgo?: string; // which algorithm: gzip / brotli / zstd
   key_id: string; // FK → actor_keys.id
+  a_id?: string; // asset id salt for HKDF-derived subkey (v2 only; absent = v1 legacy)
 }
 
 export interface PipelineConfig {
@@ -37,6 +38,7 @@ export interface CompressThenEncryptOpts {
   chatKey: CryptoKey;
   keyId: string;
   config?: PipelineConfig;
+  aId?: string; // asset id salt — emits v2 payload; absence = v1 legacy
 }
 
 /**
@@ -77,8 +79,8 @@ export async function compressThenEncrypt({
   chatKey,
   keyId,
   config = DEFAULT_PIPELINE_CONFIG,
+  aId,
 }: CompressThenEncryptOpts,): Promise<string> {
-  // 1. Compress if large enough
   let compressed = "";
   let compAlgo: string | undefined;
   let didCompress = false;
@@ -119,7 +121,6 @@ export async function compressThenEncrypt({
   const nonce = new Uint8Array(crypto.getRandomValues(new Uint8Array(IV_LENGTH,),),);
   const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce, }, chatKey, dataBytes,);
 
-  // 3. Package
   const payload: EncryptedPayload = {
     enc: new Uint8Array(ciphertext,).toBase64(),
     nonce: nonce.toBase64(),
@@ -127,8 +128,8 @@ export async function compressThenEncrypt({
     comp: didCompress,
     compAlgo: didCompress ? compAlgo : undefined,
     key_id: keyId,
+    ...(aId !== undefined && { a_id: aId, }),
   };
-
   const r = safeJsonStringify(payload,);
   if (!r.ok) { throw new Error("Failed to serialize encrypted payload",); }
   return r.value;
