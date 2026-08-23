@@ -10,6 +10,9 @@
 
 import { beforeEach, describe, expect, it, mock, } from "bun:test";
 import { randomUUID, } from "node:crypto";
+// Captured before the mock below so the `./links` mock can re-expose the real
+// exports (unlinkAsset/getAssetLinks) and only override linkAsset.
+import * as realAssetLinks from "../assets/service/links";
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
@@ -100,8 +103,14 @@ mock.module("../utils", () => ({
   uid: mockUid,
 }),);
 
-mock.module("../assets/service", () => ({
+// Narrow mocks to the specific submodules the SUT imports. Mocking the whole
+// `../assets/service` barrel leaks (without --isolate) and clobbers
+// detectAssetType/unlinkAsset/getAsset/etc. for every later test file.
+mock.module("../assets/service/create", () => ({
   createAsset: mockCreateAsset,
+}),);
+mock.module("../assets/service/links", () => ({
+  ...realAssetLinks,
   linkAsset: mockLinkAsset,
 }),);
 

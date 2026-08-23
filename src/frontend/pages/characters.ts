@@ -7,7 +7,7 @@ import { log as rootLog, } from "../alpine/logger";
 import { fetchMood, happinessColor, moodToEmoji, moodToLabel, } from "../alpine/mood-panel";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
-import { fetchPartial, filterCards, } from "./shared";
+import { escapeHtml, fetchPartial, filterCards, } from "./shared";
 
 // Initialize traits + proactive messaging modules
 import { initProactive, } from "./characters-proactive";
@@ -51,7 +51,9 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
     (char.system_prompt || "No system prompt") as string;
   const avatarId = char.avatar_asset_id as string | undefined;
   modal.querySelector("[data-field='avatar']",)!.innerHTML = avatarId
-    ? `<img src="/api/assets/${avatarId}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
+    ? `<img src="/api/assets/${
+      escapeHtml(avatarId,)
+    }/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
     : "<span>👤</span>";
   modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
   modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
@@ -97,14 +99,18 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
       (av,) =>
         `<div class="avatar-gallery-item" style="display:flex;flex-direction:column;align-items:center;gap:var(--space-1)">
       <div style="width:56px;height:56px;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-tertiary);border:1px solid var(--border-default)">
-        <img src="/api/assets/${av.assetId}/thumb" alt="${
-          av.label || "avatar"
+        <img src="/api/assets/${escapeHtml(av.assetId,)}/thumb" alt="${
+          escapeHtml(av.label || "avatar",)
         }" style="width:100%;height:100%;object-fit:cover" />
       </div>
       <span style="font-size:var(--fs-base-xs);color:var(--text-secondary);max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${
-          av.label || ""
+          escapeHtml(av.label || "",)
         }</span>
-      <button class="btn btn-ghost btn-sm" data-action="unlink-asset" data-asset-id="${av.assetId}" data-actor-id="${id}" x-on:click="window.unlinkCharacterAsset($el)" title="Unlink from character">✕ Unlink</button>
+      <button class="btn btn-ghost btn-sm" data-action="unlink-asset" data-asset-id="${
+          escapeHtml(av.assetId,)
+        }" data-actor-id="${
+          escapeHtml(id,)
+        }" x-on:click="window.unlinkCharacterAsset($el)" title="Unlink from character">✕ Unlink</button>
     </div>`,
     ).join("",);
   } catch {

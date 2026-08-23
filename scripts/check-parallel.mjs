@@ -85,6 +85,14 @@ const checks = {
     // Tests
     "test - unit": "bun run test:unit",
     "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
+
+    // Frontend security + hygiene gates (promoted from .tmp investigation scripts)
+    // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
+    "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
+    // Advisory: reports pre-existing banned-pattern debt; not blocking.
+    "frontend - banned patterns (ESLint-gap heuristic, advisory)": "bun run scripts/check-frontend-banned-patterns.ts || true",
+    // Advisory: planning hygiene — stale/missing epic coverage.
+    "plan - epic coverage (advisory)": "bun run scripts/check-epic-coverage.ts || true",
   },
   // ── Run checks in parallel ──────────────────────────────────────
 
