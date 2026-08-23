@@ -1,8 +1,9 @@
 /**
  * Tests for provider-health cache service (scan, cache, summary helpers).
  */
-import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../logger";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 import {
   getHealthCache,
@@ -38,22 +39,24 @@ const throwingProvider = {
   },
 } as never;
 
-mock.module("../generation/providers/registry", () => ({
-  listProviders: () => [
-    { name: "healthy-prov", capabilities: { label: "Healthy", supports: [], }, },
-    { name: "sick-prov", capabilities: { label: "Sick", supports: [], }, },
-    { name: "throw-prov", capabilities: { label: "Throws", supports: [], }, },
-    { name: "ghost-prov", capabilities: { label: "Ghost", supports: [], }, },
-  ],
-  getProvider: (name: string,) => {
-    if (name === "healthy-prov") { return healthyProvider; }
-    if (name === "sick-prov") { return sickProvider; }
-    if (name === "throw-prov") { return throwingProvider; }
-    return;
-  },
-}),);
+if (ISOLATED) {
+  mock.module("../generation/providers/registry", () => ({
+    listProviders: () => [
+      { name: "healthy-prov", capabilities: { label: "Healthy", supports: [], }, },
+      { name: "sick-prov", capabilities: { label: "Sick", supports: [], }, },
+      { name: "throw-prov", capabilities: { label: "Throws", supports: [], }, },
+      { name: "ghost-prov", capabilities: { label: "Ghost", supports: [], }, },
+    ],
+    getProvider: (name: string,) => {
+      if (name === "healthy-prov") { return healthyProvider; }
+      if (name === "sick-prov") { return sickProvider; }
+      if (name === "throw-prov") { return throwingProvider; }
+      return;
+    },
+  }),);
+}
 
-describe("provider-health", () => {
+describeOrSkip("provider-health", () => {
   beforeAll(() => {
     createLogger({ level: "warn", },);
   },);
@@ -62,7 +65,7 @@ describe("provider-health", () => {
     // Reset the module-level cache between files via re-scan semantics.
   },);
 
-  describe("scanAllProviders", () => {
+  describeOrSkip("scanAllProviders", () => {
     test("reports healthy, unreachable, error and missing providers", async () => {
       const results = await scanAllProviders();
       const byName = new Map(results.map(r => [r.name, r,]),);
@@ -76,9 +79,9 @@ describe("provider-health", () => {
       expect(byName.get("ghost-prov",)!.status,).toBe("error",);
       expect(byName.get("ghost-prov",)!.error,).toContain("Provider not found in registry",);
     });
-  });
+  },);
 
-  describe("cache accessors", () => {
+  describeOrSkip("cache accessors", () => {
     test("getHealthCache returns the last scan", async () => {
       const cache = getHealthCache();
       expect(cache,).toHaveLength(4,);
@@ -97,9 +100,9 @@ describe("provider-health", () => {
       expect(bad,).toContain("throw-prov",);
       expect(bad,).toContain("ghost-prov",);
     });
-  });
+  },);
 
-  describe("providerToSummary", () => {
+  describeOrSkip("providerToSummary", () => {
     test("serializes health status", () => {
       const summary = providerToSummary({
         name: "healthy-prov",
@@ -118,5 +121,5 @@ describe("provider-health", () => {
         error: undefined,
       },);
     });
-  });
-});
+  },);
+},);
