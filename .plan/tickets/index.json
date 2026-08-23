@@ -9,7 +9,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-2025-001-missing-data-id-start-chat-button.md",
-    "git_issue": "52224d7"
+    "git_issue": "52224d7",
+    "status": "done"
   },
   "BUG-2025-002-REFERENCE-ERROR-VIEW-NOT-DEFINED": {
     "hash": "ff1656c",
@@ -21,7 +22,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md",
-    "git_issue": "ff1656c"
+    "git_issue": "ff1656c",
+    "status": "done"
   },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
@@ -73,6 +75,30 @@
     "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md",
     "git_issue": "80e07be"
   },
+  "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
+    "hash": "pending",
+    "extid": "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE",
+    "type": "BUG",
+    "title": "TASK-assistant-creative-studio-workflows.md claims `sd.ts` and `scenario-source.ts` were \"deleted 2026-08-14\" but both files still exist on disk",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-assistant-creative-studio-workflows",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assistant-creative-studio-task-stale.md",
+    "git_issue": "9544668"
+  },
+  "BUG-ASSISTANT-IMPROVE-TRANSLATE-REWRITE-NEVER-CALL-LLM": {
+    "hash": "pending",
+    "extid": "BUG-ASSISTANT-IMPROVE-TRANSLATE-REWRITE-NEVER-CALL-LLM",
+    "type": "BUG",
+    "title": "/improve, /translate, /rewrite advertise LLM behaviour but only do local string manipulation",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-assistant-gm-flows, epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md",
+    "git_issue": "821e0d1"
+  },
   "BUG-AUTO-ROTATION-CONFIG-DRIFT": {
     "hash": "a9a4ea3",
     "extid": "BUG-AUTO-ROTATION-CONFIG-DRIFT",
@@ -98,6 +124,18 @@
     "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md",
     "git_issue": "d0d3739"
   },
+  "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-": {
+    "hash": "d2861ca",
+    "extid": "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-",
+    "type": "BUG",
+    "title": "Character export broken: export modal missing data-character-id",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md",
+    "git_issue": "d2861ca"
+  },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
     "extid": "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED",
@@ -109,6 +147,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md"
   },
+  "BUG-CHAT-ASSISTANT-RETRY-SILENT-500": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-ASSISTANT-RETRY-SILENT-500",
+    "type": "BUG",
+    "title": "assistant reply unique-constraint retry exhausts then throws raw SQLite error to the client",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-assistant-retry-silent-500.md",
+    "git_issue": "31f5098"
+  },
   "BUG-CHAT-BATCH-EXPORT-N-PLUS-ONE": {
     "hash": "pending",
     "extid": "BUG-CHAT-BATCH-EXPORT-N-PLUS-ONE",
@@ -119,6 +169,30 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+  },
+  "BUG-CHAT-FTS-ENCRYPT-MISMATCH": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-FTS-ENCRYPT-MISMATCH",
+    "type": "BUG",
+    "title": "FTS5 triggers index encrypted ciphertext — chat search is non-functional for at-rest encrypted chats",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md",
+    "git_issue": "1b233cc"
+  },
+  "BUG-CHAT-IDEMPOTENCY-NOT-ENFORCED": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-IDEMPOTENCY-NOT-ENFORCED",
+    "type": "BUG",
+    "title": "idempotency_key column exists but no unique index — retried requests double-insert",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md",
+    "git_issue": "f06194a"
   },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
@@ -144,6 +218,66 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md"
   },
+  "BUG-CHAT-MESSAGE-CREATE-SWIPE-RACE": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-MESSAGE-CREATE-SWIPE-RACE",
+    "type": "BUG",
+    "title": "User-message create path has no transactional guard around swipe_index — race allows duplicate swipe slots or 500s",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md",
+    "git_issue": "2597c06"
+  },
+  "BUG-CHAT-MESSAGE-DELETE-SOFT-FAILS-COMPLIANCE": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-MESSAGE-DELETE-SOFT-FAILS-COMPLIANCE",
+    "type": "BUG",
+    "title": "DELETE /messages/:id sets visibility=hidden but doesn't clear FTS row or wipe ciphertext — violates right-to-be-forgotten",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md",
+    "git_issue": "4217100"
+  },
+  "BUG-CHAT-MESSAGE-UPDATE-NO-FTS-REFRESH": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-MESSAGE-UPDATE-NO-FTS-REFRESH",
+    "type": "BUG",
+    "title": "PATCH /messages/:id edit does not re-tokenize FTS — edited messages are searchable only against the original plaintext",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-message-update-no-fts-refresh.md",
+    "git_issue": "aef8b4f"
+  },
+  "BUG-CHAT-PERSIST-INIT-HARDCODED-SCENE": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-PERSIST-INIT-HARDCODED-SCENE",
+    "type": "BUG",
+    "title": "`persistInitiative` writes against the literal scene \"main\" — group-scene initiative ordering is broken",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-battle-action-systems, epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-persist-init-hardcoded-scene.md",
+    "git_issue": "2239de6"
+  },
+  "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY",
+    "type": "BUG",
+    "title": "Chat-level promptOverride is persisted but never consumed by assistant reply or auto-generation",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-output-control-transforms, epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md",
+    "git_issue": "4c97a16"
+  },
   "BUG-CHAT-QUIET-HOURS-BOUNDARY": {
     "hash": "pending",
     "extid": "BUG-CHAT-QUIET-HOURS-BOUNDARY",
@@ -154,6 +288,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
+  },
+  "BUG-CHAT-RANDOM-EVENTS-NO-CHARACTER-BINDING": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-RANDOM-EVENTS-NO-CHARACTER-BINDING",
+    "type": "BUG",
+    "title": "random-event templates substitute `{npc}` from a generic pool, never from the chat's actual participants",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-creative-studio",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md",
+    "git_issue": "31e8676"
   },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
@@ -178,6 +324,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-swipe-index-race.md"
   },
+  "BUG-CHAT-TRANSITIONS-MEMORY-POISONING": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-TRANSITIONS-MEMORY-POISONING",
+    "type": "BUG",
+    "title": "`promoteMessagesToMemories` / `classifyTransitionMessage` lack ownership checks — attacker can poison victim actor's memory store",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation, epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-transitions-memory-poisoning.md",
+    "git_issue": "f355410"
+  },
   "BUG-CHAT-TRIGGER-AUTO-GENERATION-UNHANDLED-REJECTION": {
     "hash": "pending",
     "extid": "BUG-CHAT-TRIGGER-AUTO-GENERATION-UNHANDLED-REJECTION",
@@ -188,6 +346,42 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
+  },
+  "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS": {
+    "hash": "pending",
+    "extid": "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS",
+    "type": "BUG",
+    "title": "`/create` duplicate check loads every owner-scoped entity row and filters in JS — O(N) on /create per chat",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-assistant-gm-flows, epic-creative-studio",
+    "tags": [],
+    "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md",
+    "git_issue": "2b01c97"
+  },
+  "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED": {
+    "hash": "pending",
+    "extid": "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED",
+    "type": "BUG",
+    "title": "classifyIntent / parseGmToolDetection accept LLM confidence without numeric bounds check",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-chat-lifecycle-moderation, epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/BUG-classify-intent-confidence-unbounded.md",
+    "git_issue": "ce245f4"
+  },
+  "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT": {
+    "hash": "pending",
+    "extid": "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT",
+    "type": "BUG",
+    "title": "dispatchCommand awaits async handler without safety net — a thrown promise becomes a 500 instead of a friendly systemMessage",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-command-dispatch-async-handler-uncaught.md",
+    "git_issue": "6faa7ba"
   },
   "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
     "hash": "6fb9cbd",
@@ -262,6 +456,90 @@
     "tags": [],
     "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md",
     "git_issue": "2a271d7"
+  },
+  "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
+    "hash": "pending",
+    "extid": "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD",
+    "type": "BUG",
+    "title": "TurnManager strategies have no consecutive-turn guard — an actor can speak twice in a row when strategy weight ties",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md",
+    "git_issue": "f2d2b95"
+  },
+  "BUG-GROUP-CASCADE-MAX-TURNS-OFF-BY-ONE": {
+    "hash": "pending",
+    "extid": "BUG-GROUP-CASCADE-MAX-TURNS-OFF-BY-ONE",
+    "type": "BUG",
+    "title": "Group cascade depth boundary semantics off-by-one — max_turns=3 produces 4 AI messages",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation, epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-cascade-max-turns-off-by-one.md",
+    "git_issue": "bb174eb"
+  },
+  "BUG-GROUP-CASCADE-MID-CASCADE-PAUSE-IGNORED": {
+    "hash": "pending",
+    "extid": "BUG-GROUP-CASCADE-MID-CASCADE-PAUSE-IGNORED",
+    "type": "BUG",
+    "title": "Mid-cascade pause toggle does not abort the in-flight LLM call or stop the chain promptly",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-cascade-mid-cascade-pause-ignored.md",
+    "git_issue": "1d1b2f3"
+  },
+  "BUG-GROUP-CHAT-MENTION-PREFIX-COLLISION": {
+    "hash": "pending",
+    "extid": "BUG-GROUP-CHAT-MENTION-PREFIX-COLLISION",
+    "type": "BUG",
+    "title": "Group chat @mention parser silently picks wrong actor on prefix collision",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation, epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-chat-mention-prefix-collision.md",
+    "git_issue": "5d75396"
+  },
+  "BUG-GROUP-CHAT-SILENCE-PASS-NOT-IMPLEMENTED": {
+    "hash": "pending",
+    "extid": "BUG-GROUP-CHAT-SILENCE-PASS-NOT-IMPLEMENTED",
+    "type": "BUG",
+    "title": "Group chat cascade has no silence / pass-through mechanic — every cascade turn forces an LLM generation regardless of relevance",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md",
+    "git_issue": "35643c7"
+  },
+  "BUG-GROUP-CHAT-TALKATIVITY-NOT-SURFACED-IN-PROMPT": {
+    "hash": "pending",
+    "extid": "BUG-GROUP-CHAT-TALKATIVITY-NOT-SURFACED-IN-PROMPT",
+    "type": "BUG",
+    "title": "talkativity is consumed by TurnManager for selection but never surfaced to the LLM in the per-actor system prompt",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md",
+    "git_issue": "87098c5"
+  },
+  "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
+    "hash": "pending",
+    "extid": "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED",
+    "type": "BUG",
+    "title": "hallucination-guard accepts knownActorIds/knownLocationIds params but isKnownEntity ignores them — uses global 500-row load instead",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md",
+    "git_issue": "103e372"
   },
   "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
     "hash": "106844a",
@@ -450,6 +728,18 @@
     "git_issue": "b3c47b2",
     "status": "open"
   },
+  "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS": {
+    "hash": "pending",
+    "extid": "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS",
+    "type": "BUG",
+    "title": "gatePluginToolsByRole exposes ALL tools when role declares an empty allowlist (privilege escalation vs unassigned)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-plugin-system, epic-plugin-extension-points",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md",
+    "git_issue": "9860eb0"
+  },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
     "extid": "BUG-PRIVATE-TIER-NO-TRUE-E2E",
@@ -477,6 +767,18 @@
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
     "git_issue": "82e8395"
   },
+  "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
+    "hash": "pending",
+    "extid": "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH",
+    "type": "BUG",
+    "title": "smart-regen validates style then drops it — the style parameter never reaches the LLM call",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md",
+    "git_issue": "0c43869"
+  },
   "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE": {
     "hash": "7a293c3",
     "extid": "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE",
@@ -488,6 +790,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md",
     "git_issue": "7a293c3"
+  },
+  "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT": {
+    "hash": "pending",
+    "extid": "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT",
+    "type": "BUG",
+    "title": "story-mode.ts stores `turnResult.prompt` as the message content — `gmDecision.turnPrompt` is the prompt to LLM, not the user-visible AI response",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md",
+    "git_issue": "879fa11"
   },
   "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
     "hash": "pending",
@@ -515,6 +829,42 @@
     "git_issue": "a697ad3",
     "status": "open"
   },
+  "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
+    "hash": "1e5d5dc",
+    "extid": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
+    "type": "BUG",
+    "title": "# BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: test-suite-flaky-44-on-dev-2026-08-22: test-suite-flaky-44-on-dev-2026-08-22",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md",
+    "git_issue": "1e5d5dc"
+  },
+  "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
+    "hash": "pending",
+    "extid": "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK",
+    "type": "BUG",
+    "title": "executeToolCalls silently passes empty `{}` to handlers when tool-call arguments JSON is malformed",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-plugin-system, epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tool-call-arg-parse-silent-fallback.md",
+    "git_issue": "b66dd45"
+  },
+  "BUG-TOOL-CALL-RESULT-NO-FRONTEND-RENDERING": {
+    "hash": "pending",
+    "extid": "BUG-TOOL-CALL-RESULT-NO-FRONTEND-RENDERING",
+    "type": "BUG",
+    "title": "LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-assistant-gm-flows, epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md",
+    "git_issue": "6a4f485"
+  },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
     "extid": "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC",
@@ -527,6 +877,474 @@
     "status": "closed",
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
+  },
+  "EPIC-027": {
+    "hash": "821ab24",
+    "extid": "EPIC-027",
+    "type": "EPIC",
+    "title": "# EPIC-027: 027: Deno Support (Possible Node)",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-027.md",
+    "git_issue": "821ab24"
+  },
+  "EPIC-028": {
+    "hash": "1e37b11",
+    "extid": "EPIC-028",
+    "type": "EPIC",
+    "title": "# EPIC-028: 028: Logic Reconciliation (Permanently Ongoing)",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-028.md",
+    "git_issue": "1e37b11"
+  },
+  "EPIC-029": {
+    "hash": "280c355",
+    "extid": "EPIC-029",
+    "type": "EPIC",
+    "title": "# EPIC-029: 029: Two-Factor / Multi-Factor Auth",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-029.md",
+    "git_issue": "280c355"
+  },
+  "EPIC-030": {
+    "hash": "6ed8545",
+    "extid": "EPIC-030",
+    "type": "EPIC",
+    "title": "# EPIC-030: 030: LLM Request Throughput & Message Scheduling",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-030.md",
+    "git_issue": "6ed8545"
+  },
+  "EPIC-031": {
+    "hash": "136d857",
+    "extid": "EPIC-031",
+    "type": "EPIC",
+    "title": "# EPIC-031: 031: World & Locations",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-031.md",
+    "git_issue": "136d857"
+  },
+  "EPIC-032": {
+    "hash": "baa672b",
+    "extid": "EPIC-032",
+    "type": "EPIC",
+    "title": "# EPIC-032: 032: Battle & Action Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-032.md",
+    "git_issue": "baa672b"
+  },
+  "EPIC-033": {
+    "hash": "e8b0c6b",
+    "extid": "EPIC-033",
+    "type": "EPIC",
+    "title": "# EPIC-033: 033: Plugin System & Extensibility",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-033.md",
+    "git_issue": "e8b0c6b"
+  },
+  "EPIC-034": {
+    "hash": "30a1b4b",
+    "extid": "EPIC-034",
+    "type": "EPIC",
+    "title": "# EPIC-034: 034: AO NSFW Game Mechanics",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-034.md",
+    "git_issue": "30a1b4b"
+  },
+  "EPIC-035": {
+    "hash": "e03faaf",
+    "extid": "EPIC-035",
+    "type": "EPIC",
+    "title": "# EPIC-035: 035: Magic & Spell Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-035.md",
+    "git_issue": "e03faaf"
+  },
+  "EPIC-036": {
+    "hash": "328843b",
+    "extid": "EPIC-036",
+    "type": "EPIC",
+    "title": "# EPIC-036: 036: Crafting & Professions",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-036.md",
+    "git_issue": "328843b"
+  },
+  "EPIC-037": {
+    "hash": "9009940",
+    "extid": "EPIC-037",
+    "type": "EPIC",
+    "title": "# EPIC-037: 037: Companion Pet Mount Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-037.md",
+    "git_issue": "9009940"
+  },
+  "EPIC-038": {
+    "hash": "fd70c95",
+    "extid": "EPIC-038",
+    "type": "EPIC",
+    "title": "# EPIC-038: 038: Housing & Base Building",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-038.md",
+    "git_issue": "fd70c95"
+  },
+  "EPIC-039": {
+    "hash": "2b7280b",
+    "extid": "EPIC-039",
+    "type": "EPIC",
+    "title": "# EPIC-039: 039: Stealth & Crime Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-039.md",
+    "git_issue": "2b7280b"
+  },
+  "EPIC-040": {
+    "hash": "8104527",
+    "extid": "EPIC-040",
+    "type": "EPIC",
+    "title": "# EPIC-040: 040: Disease & Poison Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-040.md",
+    "git_issue": "8104527"
+  },
+  "EPIC-041": {
+    "hash": "697652f",
+    "extid": "EPIC-041",
+    "type": "EPIC",
+    "title": "# EPIC-041: 041: Social Interaction Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-041.md",
+    "git_issue": "697652f"
+  },
+  "EPIC-042": {
+    "hash": "3fe9de8",
+    "extid": "EPIC-042",
+    "type": "EPIC",
+    "title": "# EPIC-042: 042: Weather & Environmental Effects",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-042.md",
+    "git_issue": "3fe9de8"
+  },
+  "EPIC-043": {
+    "hash": "a8b30aa",
+    "extid": "EPIC-043",
+    "type": "EPIC",
+    "title": "# EPIC-043: 043: Exploration & Discovery Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-043.md",
+    "git_issue": "a8b30aa"
+  },
+  "EPIC-044": {
+    "hash": "772d0e5",
+    "extid": "EPIC-044",
+    "type": "EPIC",
+    "title": "# EPIC-044: 044: Economy & Trading Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-044.md",
+    "git_issue": "772d0e5"
+  },
+  "EPIC-045": {
+    "hash": "7cbf607",
+    "extid": "EPIC-045",
+    "type": "EPIC",
+    "title": "# EPIC-045: 045: Item System Extensions",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-045.md",
+    "git_issue": "7cbf607"
+  },
+  "EPIC-046": {
+    "hash": "a759102",
+    "extid": "EPIC-046",
+    "type": "EPIC",
+    "title": "# EPIC-046: 046: External Integrations: Provider Expansion",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-046.md",
+    "git_issue": "a759102"
+  },
+  "EPIC-047": {
+    "hash": "001b22d",
+    "extid": "EPIC-047",
+    "type": "EPIC",
+    "title": "# EPIC-047: 047: API Versioning Strategy",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-047.md",
+    "git_issue": "001b22d"
+  },
+  "EPIC-048": {
+    "hash": "a2ce521",
+    "extid": "EPIC-048",
+    "type": "EPIC",
+    "title": "# EPIC-048: 048: DB Content Versioning & Migrations",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-048.md",
+    "git_issue": "a2ce521"
+  },
+  "EPIC-049": {
+    "hash": "392ea44",
+    "extid": "EPIC-049",
+    "type": "EPIC",
+    "title": "# EPIC-049: 049: Conversation Branching",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-049.md",
+    "git_issue": "392ea44"
+  },
+  "EPIC-050": {
+    "hash": "391f972",
+    "extid": "EPIC-050",
+    "type": "EPIC",
+    "title": "# EPIC-050: 050: Plugin Extension Points",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-050.md",
+    "git_issue": "391f972"
+  },
+  "EPIC-051": {
+    "hash": "1d347cd",
+    "extid": "EPIC-051",
+    "type": "EPIC",
+    "title": "# EPIC-051: 051: Memory & Knowledge Systems",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-051.md",
+    "git_issue": "1d347cd"
+  },
+  "EPIC-052": {
+    "hash": "0aa1e33",
+    "extid": "EPIC-052",
+    "type": "EPIC",
+    "title": "# EPIC-052: 052: Analytics & Observability",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-052.md",
+    "git_issue": "0aa1e33"
+  },
+  "EPIC-053": {
+    "hash": "ee67dd2",
+    "extid": "EPIC-053",
+    "type": "EPIC",
+    "title": "# EPIC-053: 053: Output Control & Transforms",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-053.md",
+    "git_issue": "ee67dd2"
+  },
+  "EPIC-054": {
+    "hash": "2bf50dd",
+    "extid": "EPIC-054",
+    "type": "EPIC",
+    "title": "# EPIC-054: 054: Embeddable Engine & Game Frontend",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-054.md",
+    "git_issue": "2bf50dd"
+  },
+  "EPIC-055": {
+    "hash": "29d4e8c",
+    "extid": "EPIC-055",
+    "type": "EPIC",
+    "title": "# EPIC-055: 055: Assistant Generation Extensions",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-055.md",
+    "git_issue": "29d4e8c"
+  },
+  "EPIC-056": {
+    "hash": "6c84baa",
+    "extid": "EPIC-056",
+    "type": "EPIC",
+    "title": "# EPIC-056: 056: Worlds Extension",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-056.md",
+    "git_issue": "6c84baa"
+  },
+  "EPIC-057": {
+    "hash": "8b193c8",
+    "extid": "EPIC-057",
+    "type": "EPIC",
+    "title": "# EPIC-057: 057: Blog System",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-057.md",
+    "git_issue": "8b193c8"
+  },
+  "EPIC-058": {
+    "hash": "c1fd428",
+    "extid": "EPIC-058",
+    "type": "EPIC",
+    "title": "# EPIC-058: 058: Chat Lifecycle & Moderation",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-058.md",
+    "git_issue": "c1fd428"
+  },
+  "EPIC-2026-11": {
+    "hash": "e78120b",
+    "extid": "EPIC-2026-11",
+    "type": "EPIC",
+    "title": "# EPIC-2026-11: 2026-11: Admin & Settings",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-11.md",
+    "git_issue": "e78120b"
+  },
+  "EPIC-2026-14": {
+    "hash": "6945660",
+    "extid": "EPIC-2026-14",
+    "type": "EPIC",
+    "title": "# EPIC-2026-14: 2026-14: Import/Export & Data Portability",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-14.md",
+    "git_issue": "6945660"
+  },
+  "EPIC-2026-15": {
+    "hash": "cf1e173",
+    "extid": "EPIC-2026-15",
+    "type": "EPIC",
+    "title": "# EPIC-2026-15: 2026-15: i18n & Accessibility",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-15.md",
+    "git_issue": "cf1e173"
+  },
+  "EPIC-2026-17": {
+    "hash": "78d601d",
+    "extid": "EPIC-2026-17",
+    "type": "EPIC",
+    "title": "# EPIC-2026-17: 2026-17: Encryption Foundation",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-17.md",
+    "git_issue": "78d601d"
+  },
+  "EPIC-2026-21": {
+    "hash": "c4b708e",
+    "extid": "EPIC-2026-21",
+    "type": "EPIC",
+    "title": "# EPIC-2026-21: 2026-21: Notification Expansion",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-21.md",
+    "git_issue": "c4b708e"
+  },
+  "EPIC-2026-22": {
+    "hash": "fedd80c",
+    "extid": "EPIC-2026-22",
+    "type": "EPIC",
+    "title": "# EPIC-2026-22: 2026-22: RPG Mechanics Core",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-22.md",
+    "git_issue": "fedd80c"
+  },
+  "EPIC-2026-23": {
+    "hash": "8c07e16",
+    "extid": "EPIC-2026-23",
+    "type": "EPIC",
+    "title": "# EPIC-2026-23: 2026-23: Assistant Commands",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-2026-23.md",
+    "git_issue": "8c07e16"
   },
   "EPIC-2026-24": {
     "hash": "96970f5",
@@ -550,6 +1368,30 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/EPIC-federation-swarm-sync.md"
+  },
+  "EPIC-FRONTEND-BACKEND-INTEGRATION": {
+    "hash": "bd5eaa3",
+    "extid": "EPIC-FRONTEND-BACKEND-INTEGRATION",
+    "type": "EPIC",
+    "title": "# EPIC-FRONTEND-BACKEND-INTEGRATION: FRONTEND-BACKEND-INTEGRATION: EPIC Frontend Backend Integration",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-FRONTEND-BACKEND-INTEGRATION.md",
+    "git_issue": "bd5eaa3"
+  },
+  "EPIC-HOUSING": {
+    "hash": "5c7f4bb",
+    "extid": "EPIC-HOUSING",
+    "type": "EPIC",
+    "title": "# EPIC-HOUSING: HOUSING: EPIC Housing System",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-HOUSING.md",
+    "git_issue": "5c7f4bb"
   },
   "FEAT-035": {
     "hash": "0fe7f31",
@@ -2124,7 +2966,7 @@
     "source": ".plan/tickets/TASK-003-gpu-separation.md"
   },
   "TASK-003-HOSTING-COMPARISON": {
-    "hash": "1787920943",
+    "hash": "b7d387d",
     "extid": "TASK-003-HOSTING-COMPARISON",
     "type": "TASK",
     "title": "# Hosting Provider Comparison for Loop-Lore Deployment",
@@ -2132,7 +2974,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-003-hosting-comparison.md"
+    "source": ".plan/tickets/TASK-003-hosting-comparison.md",
+    "git_issue": "b7d387d"
   },
   "TASK-004": {
     "hash": "bd70e0f",
@@ -3702,7 +4545,7 @@
     "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-world.md"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS": {
-    "hash": "pending",
+    "hash": "9544668",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS",
     "type": "TASK",
     "title": "Assistant Creative Studio — Workflow Templates",
@@ -3710,7 +4553,8 @@
     "priority": "High (MVP scoped, post-Gate C)",
     "epic": "`epic-assistant-creative-studio-workflows`",
     "tags": [],
-    "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md",
+    "git_issue": "ad082ef"
   },
   "TASK-ASSISTANT-GENERATION-EXTENSIONS": {
     "hash": "pending",
@@ -3792,7 +4636,7 @@
     "git_issue": "c926456"
   },
   "TASK-ASYMMETRIC-KEY-PAIRS-FOLLOWUP": {
-    "hash": "7739",
+    "hash": "5d9636b",
     "extid": "TASK-ASYMMETRIC-KEY-PAIRS-FOLLOWUP",
     "type": "TASK",
     "title": "Implement True Client-Side E2E for at-rest+ Tier (Deferred)",
@@ -5183,7 +6027,7 @@
     "git_issue": "a7fe0d6"
   },
   "TASK-CHAT-ROUTE-EXTRACTION": {
-    "hash": "db5a19ae",
+    "hash": "d60edc4",
     "extid": "TASK-CHAT-ROUTE-EXTRACTION",
     "type": "TASK",
     "title": "Extract chat business logic from routes",
@@ -7583,7 +8427,7 @@
     "git_issue": "bf0bdbc"
   },
   "TASK-IM-ABSTRACTION-LAYER": {
-    "hash": "123456789",
+    "hash": "37b4eab",
     "extid": "TASK-IM-ABSTRACTION-LAYER",
     "type": "TASK",
     "title": "Instant Messaging Abstraction Layer",
@@ -8054,7 +8898,7 @@
     "git_issue": "d82fb3e"
   },
   "TASK-LLM-SANDBOXING": {
-    "hash": "100000000",
+    "hash": "0982d2a",
     "extid": "TASK-LLM-SANDBOXING",
     "type": "TASK",
     "title": "LLM Sandboxing",
@@ -8205,7 +9049,7 @@
     "git_issue": "ff096fa"
   },
   "TASK-LOREBOOK-TEMPLATE-SEEDING": {
-    "hash": "pending",
+    "hash": "98ecdbb",
     "extid": "TASK-LOREBOOK-TEMPLATE-SEEDING",
     "type": "TASK",
     "title": "Lorebook Template Seeding (Character + World Config)",
@@ -8213,7 +9057,8 @@
     "priority": "P1 — High",
     "epic": "epic-character-core-system / epic-world-locations (cross-cutting)",
     "tags": [],
-    "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
+    "source": ".plan/tickets/TASK-lorebook-template-seeding.md",
+    "git_issue": "98ecdbb"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
     "hash": "pending",
@@ -8274,7 +9119,7 @@
     "source": ".plan/tickets/TASK-memory-character-integration.md"
   },
   "TASK-MEMORY-DECAY-LOGIC": {
-    "hash": "d1b048b4",
+    "hash": "bf19355",
     "extid": "TASK-MEMORY-DECAY-LOGIC",
     "type": "TASK",
     "title": "Implement memory decay logic",
@@ -8283,7 +9128,8 @@
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-memory-decay-logic.md",
-    "git_issue": "bf19355"
+    "git_issue": "bf19355",
+    "status": "done"
   },
   "TASK-MEMORY-DISTILLATION-DREAMS": {
     "hash": "1a50571",
@@ -8321,7 +9167,7 @@
     "source": ".plan/tickets/TASK-memory-happiness-patterns.md"
   },
   "TASK-MEMORY-PROMOTION-PIPELINE": {
-    "hash": "22f6cd99",
+    "hash": "cbd08c7",
     "extid": "TASK-MEMORY-PROMOTION-PIPELINE",
     "type": "TASK",
     "title": "Implement memory promotion pipeline",
@@ -8333,7 +9179,7 @@
     "git_issue": "cbd08c7"
   },
   "TASK-MEMORY-PROVISION-WIRING": {
-    "hash": "3bfb101c",
+    "hash": "90378a1",
     "extid": "TASK-MEMORY-PROVISION-WIRING",
     "type": "TASK",
     "title": "Wire memory provision into prompt assembly",
@@ -8368,7 +9214,7 @@
     "source": ".plan/tickets/TASK-memory-timescape.md"
   },
   "TASK-MEMORY-TRUST-MODIFIER-WIRING": {
-    "hash": "d1f2a3b4",
+    "hash": "e128690",
     "extid": "TASK-MEMORY-TRUST-MODIFIER-WIRING",
     "type": "TASK",
     "title": "Wire trustModifier from Relationships into Memory Provision",
@@ -8377,7 +9223,8 @@
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md",
-    "git_issue": "e128690"
+    "git_issue": "e128690",
+    "status": "done"
   },
   "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
     "hash": "0395b7af",
@@ -10036,7 +10883,7 @@
     "git_issue": "456ae2d"
   },
   "TASK-RAG-CONTEXT-ENRICHMENT": {
-    "hash": "3600000",
+    "hash": "94d0df8",
     "extid": "TASK-RAG-CONTEXT-ENRICHMENT",
     "type": "TASK",
     "title": "RAG Context Enrichment Integrations",
@@ -10072,7 +10919,7 @@
     "git_issue": "d744582"
   },
   "TASK-RAG-LOCAL-SEARCH-CACHE": {
-    "hash": "1800000",
+    "hash": "a7e766b",
     "extid": "TASK-RAG-LOCAL-SEARCH-CACHE",
     "type": "TASK",
     "title": "Local Search Providers & Caches",
@@ -10108,7 +10955,7 @@
     "git_issue": "e77ef93"
   },
   "TASK-RAG-SEARCH-PROVIDERS": {
-    "hash": "3600000",
+    "hash": "dc8ba02",
     "extid": "TASK-RAG-SEARCH-PROVIDERS",
     "type": "TASK",
     "title": "RAG Search Providers Integration",
@@ -10485,7 +11332,7 @@
     "source": ".plan/tickets/TASK-research-character-systems-landscape.md"
   },
   "TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE": {
-    "hash": "pending",
+    "hash": "8d31b76",
     "extid": "TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE",
     "type": "TASK",
     "title": "Research — Creative Content Systems Landscape",
@@ -10493,7 +11340,8 @@
     "priority": "P2 — Medium",
     "epic": "epic-creative-studio (research sub-area)",
     "tags": [],
-    "source": ".plan/tickets/TASK-research-creative-content-systems-landscape.md"
+    "source": ".plan/tickets/TASK-research-creative-content-systems-landscape.md",
+    "git_issue": "8d31b76"
   },
   "TASK-RESEARCH-WORLD-LOCATION-SYSTEMS-LANDSCAPE": {
     "hash": "pending",
@@ -10945,7 +11793,7 @@
     "git_issue": "c41b00a"
   },
   "TASK-SCENARIO-SYSTEM-AUTHORING": {
-    "hash": "pending",
+    "hash": "cbb7cd3",
     "extid": "TASK-SCENARIO-SYSTEM-AUTHORING",
     "type": "TASK",
     "title": "Scenario System — User-Facing Authoring & Catalog",
@@ -10953,7 +11801,8 @@
     "priority": "P1 — High",
     "epic": "epic-creative-studio",
     "tags": [],
-    "source": ".plan/tickets/TASK-scenario-system-authoring.md"
+    "source": ".plan/tickets/TASK-scenario-system-authoring.md",
+    "git_issue": "cbb7cd3"
   },
   "TASK-SCHEMA": {
     "hash": "a4f6353",
@@ -11366,6 +12215,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-story-world-state.md",
     "git_issue": "4ffae25"
+  },
+  "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
+    "hash": "pending",
+    "extid": "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY",
+    "type": "TASK",
+    "title": "Extend talkativity to also influence response verbosity (design proposal — separate from selection-rate)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md",
+    "git_issue": "df6f69b"
   },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
     "hash": "pending",
