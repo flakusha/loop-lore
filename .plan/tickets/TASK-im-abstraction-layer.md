@@ -81,3 +81,6 @@ curl -X POST http://localhost:3000/api/integrations/im/telegram/send \
 # Check IM status
 curl http://localhost:3000/api/integrations/im/status
 ```
+
+
+git issue: 37b4eab

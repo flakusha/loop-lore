@@ -277,7 +277,7 @@ in "Open bugs against Phase B/C/D code" above; must resolve before Phase E.
   `{ skippedKeys[], lastSeenEphemeralJwk?, lastSeenCounter? }` so the
   browser can rebuild local chain state without server-side plaintext.
 - Migration `058_e2e_receiver_state.ts` extends `e2e_session` with counters
-  + public-ephemeral metadata only (never keys).
+  - public-ephemeral metadata only (never keys).
 - Frontend `src/frontend/e2e/hydrate-chain-state.ts` consumes the route,
   rebuilds `DhRatchetState`, and feeds `decrypt-message.ts`.
 - Full scope: see `TASK-asymmetric-key-pairs-followup.md` §"Phase E".
@@ -290,6 +290,7 @@ Phase G blocked on `TASK-encryption-architecture-clarification.md`
 (LLM-with-E2E strategy). Phases F + G see
 `TASK-asymmetric-key-pairs-followup.md` §"Phase F / G".
 </input>
+
 ### Open design questions (must be resolved before Phase B/C)
 
 - **Forward secrecy re-keying cadence**: per-message vs per-session?

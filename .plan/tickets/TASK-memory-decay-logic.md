@@ -35,3 +35,6 @@ Migration 011 added `decay_rate`, `strength`, and `last_accessed_at` columns to 
 
 - `src/memory/purge.ts` (✅ implemented)
 - `src/memory/purge.test.ts` (✅ tests exist)
+
+
+git issue: bf19355

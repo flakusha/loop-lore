@@ -35,3 +35,6 @@ Wire message promotion to memory extraction and storage.
 - `src/chat/transitions.ts` (modify)
 - `src/chat/context-window.ts` (may modify)
 - `src/memory/extraction.ts` (read-only)
+
+
+git issue: cbd08c7
