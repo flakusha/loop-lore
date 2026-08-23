@@ -59,6 +59,7 @@ Auth: none on `notifyUser` itself; called from
 1. **Replace `body: reason` with a canned `bodies: Record<string,
    string>` map** (mirror `titles`) at
    `src/nsfw/moderation-service/audit.ts:88-95`:
+
    ```ts
    const bodies: Record<string, string> = {
      block: "You can no longer interact with NSFW content.",
@@ -69,6 +70,7 @@ Auth: none on `notifyUser` itself; called from
      unshadow: "Your NSFW access restrictions have been lifted.",
      },
    ```
+
    For action types not in the map, fall back to a generic template.
 2. **Optionally include a sanitized short reason** for the user
    only if the admin has explicitly marked it as `user_visible`

@@ -59,10 +59,12 @@ OR has `admin.system`.
 ## Fix
 
 1. **Split `get` vs `getOrCreateOwn`**:
+
    ```ts
    function get(userId: string): Promise<NsfwUserPrefs | null>;
    function getOrCreateOwn(userId: string): Promise<NsfwUserPrefs>;
    ```
+
 2. **Route handlers pick the right one**:
    - `GET /api/nsfw/moderation/preferences/:userId` → `get` (read
      only, returns 404 if missing).
