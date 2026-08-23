@@ -16,6 +16,7 @@ import type { ChatKey, } from "../crypto/chat-keys";
 // ── Test helpers ────────────────────────────────────────────
 
 const KEY_ID = "test-upload-key-001";
+const ASSET_ID = "test-upload-asset-001";
 const PIPELINE_CONFIG = {
   threshold: 128,
   algorithm: "gzip" as const,
@@ -42,6 +43,7 @@ describe("Asset upload encryption wiring", () => {
       plaintext,
       chatKey,
       KEY_ID,
+      ASSET_ID,
       PIPELINE_CONFIG,
       "standard",
     );
@@ -64,6 +66,7 @@ describe("Asset upload encryption wiring", () => {
       plaintext,
       chatKey,
       KEY_ID,
+      ASSET_ID,
       PIPELINE_CONFIG,
       "public",
     );
@@ -80,6 +83,7 @@ describe("Asset upload encryption wiring", () => {
       plaintext,
       null,
       null,
+      ASSET_ID,
       PIPELINE_CONFIG,
       "standard",
     );
@@ -97,13 +101,14 @@ describe("Asset upload encryption wiring", () => {
       plaintext,
       chatKey,
       KEY_ID,
+      ASSET_ID,
       PIPELINE_CONFIG,
       "standard",
     );
 
     expect(encrypted.encrypted,).toBe(true,);
 
-    const decrypted = await decryptAssetBlob(encrypted.data, chatKey,);
+    const decrypted = await decryptAssetBlob(encrypted.data, chatKey, ASSET_ID,);
     expect(decrypted.toString("utf8",),).toBe("Hello, encrypted world!",);
   });
 
@@ -115,6 +120,7 @@ describe("Asset upload encryption wiring", () => {
       plaintext,
       chatKey,
       KEY_ID,
+      ASSET_ID,
       PIPELINE_CONFIG,
       "standard",
     );

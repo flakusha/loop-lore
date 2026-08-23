@@ -76,10 +76,12 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   let encryptedKeyId: string | null = null;
 
   if (encryptionTier !== "public" && input.chatKey && input.keyId && input.pipelineConfig) {
+    // assetId must exist by this point — uid() generated at line 69
     const result = await encryptAssetBlob(
       input.buffer,
       input.chatKey,
       input.keyId,
+      id,
       input.pipelineConfig,
       encryptionTier,
     );
