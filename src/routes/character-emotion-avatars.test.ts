@@ -5,41 +5,44 @@
  * production), so job state is scripted per scenario. Requires `--isolate`.
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 import { characterEmotionAvatarsRoutes, } from "./character-emotion-avatars";
 
-mock.module("../characters/services/emotion-avatar-service", () => {
-  const jobs = new Map<string, unknown>();
-  class EmotionAvatarService {
-    listJobs(actorId: string,) {
-      return Array.from(jobs.values(),).filter((j,) => (j as { actorId: string }).actorId === actorId);
+if (ISOLATED) {
+  mock.module("../characters/services/emotion-avatar-service", () => {
+    const jobs = new Map<string, unknown>();
+    class EmotionAvatarService {
+      listJobs(actorId: string,) {
+        return Array.from(jobs.values(),).filter((j,) => (j as { actorId: string }).actorId === actorId);
+      }
+      getJobStatus(jobId: string,) {
+        return jobs.get(jobId,);
+      }
+      cancelJob(jobId: string,) {
+        if (!jobs.has(jobId,)) { return false; }
+        const job = jobs.get(jobId,);
+        jobs.set(jobId, { ...(job as object), status: "cancelled", },);
+        return true;
+      }
+      async startBatchGeneration(opts: { actorId: string },) {
+        const jobId = `job-${jobs.size + 1}`;
+        jobs.set(jobId, { jobId, actorId: opts.actorId, status: "running", },);
+        return jobId;
+      }
+      getEmotionPromptModifier(emotion: string,) {
+        return `[${emotion} mood]`;
+      }
     }
-    getJobStatus(jobId: string,) {
-      return jobs.get(jobId,);
-    }
-    cancelJob(jobId: string,) {
-      if (!jobs.has(jobId,)) { return false; }
-      const job = jobs.get(jobId,);
-      jobs.set(jobId, { ...(job as object), status: "cancelled", },);
-      return true;
-    }
-    async startBatchGeneration(opts: { actorId: string },) {
-      const jobId = `job-${jobs.size + 1}`;
-      jobs.set(jobId, { jobId, actorId: opts.actorId, status: "running", },);
-      return jobId;
-    }
-    getEmotionPromptModifier(emotion: string,) {
-      return `[${emotion} mood]`;
-    }
-  }
-  return { EmotionAvatarService, };
-},);
+    return { EmotionAvatarService, };
+  },);
+}
 
 const ACTOR = "00000000-0000-4000-8000-000000000001";
 const OTHER = "00000000-0000-4000-8000-000000000002";
@@ -64,7 +67,7 @@ interface JobBody {
   displayName?: string;
 }
 
-describe("character-emotion-avatars routes", () => {
+describeOrSkip("character-emotion-avatars routes", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
@@ -222,9 +225,9 @@ describe("character-emotion-avatars routes", () => {
     expect(body[0]?.value,).toBeDefined();
     expect(body[0]?.displayName,).toBeDefined();
   });
-});
+},);
 
-describe("Emotion avatars — admin/solo bypass", () => {
+describeOrSkip("Emotion avatars — admin/solo bypass", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
@@ -263,4 +266,4 @@ describe("Emotion avatars — admin/solo bypass", () => {
     );
     expect(res.status,).toBe(201,);
   });
-});
+},);
