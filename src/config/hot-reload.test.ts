@@ -9,8 +9,7 @@
 // so the watcher's reload path resolves with a trivial config object.
 
 import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
-import type { FSWatcher, } from "node:fs";
-import type { watch as NodeWatch, } from "node:fs";
+import type { FSWatcher, watch as NodeWatch, } from "node:fs";
 import { mkdirSync, rmSync, } from "node:fs";
 import path from "node:path";
 
