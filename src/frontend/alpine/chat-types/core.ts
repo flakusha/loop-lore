@@ -156,6 +156,7 @@ export interface ChatCoreState
   copyMessage(msgId: string, event: Event,): Promise<void>;
   removeMessage(msgId: string, event: Event,): Promise<void>;
   toggleImpersonate(): Promise<void>;
+  impersonate(cmd: string,): Promise<void>;
   toggleDebugView(): void;
   handleCommandInput(event: Event,): void;
   selectCommand(name: string,): void;
