@@ -23,6 +23,32 @@
     "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md",
     "git_issue": "ff1656c"
   },
+  "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
+    "hash": "pending",
+    "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
+    "type": "BUG",
+    "title": "`/api/admin/audit` returns `selectAll()` rows but `AdminAuditRow` schema omits `meta`/`user_id`/`request_id`/`session_id` → `parseOr` strict fallback → empty audit list",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-frontend-admin",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-audit-selectAll-schema-mismatch-empty.md",
+    "git_issue": "e2b43f3",
+    "status": "open"
+  },
+  "BUG-ADMIN-AUXTELEMETRY-LEAKS-USERID-CHATID": {
+    "hash": "pending",
+    "extid": "BUG-ADMIN-AUXTELEMETRY-LEAKS-USERID-CHATID",
+    "type": "BUG",
+    "title": "`/api/admin/telemetry/aux` returns `userId` + `chatId` + raw `error` string per AUX call — no scoping, no hashing",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md",
+    "git_issue": "ac11385",
+    "status": "open"
+  },
   "BUG-ALPINE-INIT-HYDRATION": {
     "hash": "20354a1",
     "extid": "BUG-ALPINE-INIT-HYDRATION",
@@ -69,7 +95,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md"
+    "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md",
+    "git_issue": "d0d3739"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -171,7 +198,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md"
+    "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md",
+    "git_issue": "6fb9cbd"
   },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
@@ -244,7 +272,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md"
+    "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md",
+    "git_issue": "106844a"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
@@ -277,7 +306,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md"
+    "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
+    "git_issue": "86a2a1b"
   },
   "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY": {
     "hash": "966f256",
@@ -302,6 +332,123 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
+  },
+  "BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE",
+    "type": "BUG",
+    "title": "NSFW appeals service uses `as any` casts and is unwired — either dead code or missing routes",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md",
+    "git_issue": "064e938",
+    "status": "open"
+  },
+  "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG",
+    "type": "BUG",
+    "title": "NSFW `exportUserData` returns full GDPR bundle (prefs + audit + flags) with no access log, no rate limit, no elevated capability",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md",
+    "git_issue": "9d02c08",
+    "status": "open"
+  },
+  "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII",
+    "type": "BUG",
+    "title": "NSFW flag queue endpoint returns full `reporter_id` + free-text `description` to admin — no projection or redaction",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md",
+    "git_issue": "c48d5fb",
+    "status": "open"
+  },
+  "BUG-NSFW-GATE-LOG-PLAINTEXT-PII": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-GATE-LOG-PLAINTEXT-PII",
+    "type": "BUG",
+    "title": "NSFW gate `logNsfwEvent` writes plaintext PII (userId/chatId/reason) to `log_entries`; accessible to all admin readers",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-gate-log-plaintext-pii.md",
+    "git_issue": "9f3faa5",
+    "status": "open"
+  },
+  "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY",
+    "type": "BUG",
+    "title": "NSFW mod actions (`block/unblock/ban/unban/shadow/unshadow`) trust `performedBy` from request body — admin impersonation",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-modactions-performedby-from-body.md",
+    "git_issue": "bd2b3b5",
+    "status": "open"
+  },
+  "BUG-NSFW-MODERATION-DELETE-DESTROYS-AUDIT-LOG": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-MODERATION-DELETE-DESTROYS-AUDIT-LOG",
+    "type": "BUG",
+    "title": "NSFW `deleteUserData` hard-deletes `moderation_actions` rows — destroys auditability",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md",
+    "git_issue": "50a69ff",
+    "status": "open"
+  },
+  "BUG-NSFW-MODSERVICE-NOTIFY-USER-LEAKS-ADMIN-REASON": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-MODSERVICE-NOTIFY-USER-LEAKS-ADMIN-REASON",
+    "type": "BUG",
+    "title": "NSFW `notifyUser` stores admin's verbatim `reason` as `notifications.body` — leaks internal case-detail text to user",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-modservice-notify-user-leaks-admin-reason.md",
+    "git_issue": "09b4d62",
+    "status": "open"
+  },
+  "BUG-NSFW-PREFERENCES-ADMIN-READ-MATERIALIZES-ROW": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-PREFERENCES-ADMIN-READ-MATERIALIZES-ROW",
+    "type": "BUG",
+    "title": "NSFW `getPreferences` lazily INSERTs default row on miss — admin read materializes phantom row",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md",
+    "git_issue": "3cf439b",
+    "status": "open"
+  },
+  "BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS": {
+    "hash": "pending",
+    "extid": "BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS",
+    "type": "BUG",
+    "title": "`reviewAppeal` auto-reverses `block`/`ban`/`shadow` on a single admin's approval — no separate confirmation",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-reviewappeal-auto-reverses-actions.md",
+    "git_issue": "b3c47b2",
+    "status": "open"
   },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
@@ -329,6 +476,44 @@
     "verified_on_dev": "2026-08-22",
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
     "git_issue": "82e8395"
+  },
+  "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE": {
+    "hash": "7a293c3",
+    "extid": "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE",
+    "type": "BUG",
+    "title": "Stored XSS — unescaped server-derived asset IDs/labels in innerHTML",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-frontend-gallery.md",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md",
+    "git_issue": "7a293c3"
+  },
+  "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
+    "hash": "pending",
+    "extid": "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA",
+    "type": "BUG",
+    "title": "`/api/telemetry/analytics/errors` exposes raw `event_data` JSON + `user_id`/`chat_id` to admin",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md",
+    "git_issue": "dbd9c18",
+    "status": "open"
+  },
+  "BUG-TELEMETRY-PURGE-UNBOUNDED-DAYS": {
+    "hash": "pending",
+    "extid": "BUG-TELEMETRY-PURGE-UNBOUNDED-DAYS",
+    "type": "BUG",
+    "title": "`DELETE /api/telemetry/analytics/purge` accepts unbounded `?days=` — admin can wipe instantly with `days=0`",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-telemetry-purge-unbounded-days.md",
+    "git_issue": "a697ad3",
+    "status": "open"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -4168,6 +4353,61 @@
     "source": ".plan/tickets/TASK-byok-api-keys.md",
     "git_issue": "e665ded"
   },
+  "TASK-CHAR-EDITOR-DB-STORAGE-SYNC": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-EDITOR-DB-STORAGE-SYNC",
+    "type": "TASK",
+    "title": "# TASK-char-editor-db-storage-sync",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-editor-db-storage-sync.md"
+  },
+  "TASK-CHAR-EDITOR-IMPORT-EXPORT-UI": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-EDITOR-IMPORT-EXPORT-UI",
+    "type": "TASK",
+    "title": "# TASK-char-editor-import-export-ui",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-editor-import-export-ui.md"
+  },
+  "TASK-CHAR-EDITOR-RAW-JSON-YAML-TOML-EDITOR": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-EDITOR-RAW-JSON-YAML-TOML-EDITOR",
+    "type": "TASK",
+    "title": "# TASK-char-editor-raw-json-yaml-toml-editor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-editor-raw-json-yaml-toml-editor.md"
+  },
+  "TASK-CHAR-EDITOR-STRUCTURED-FIELDS-UI": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-EDITOR-STRUCTURED-FIELDS-UI",
+    "type": "TASK",
+    "title": "# TASK-char-editor-structured-fields-ui",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-editor-structured-fields-ui.md"
+  },
+  "TASK-CHAR-EDITOR-VALIDATION-SPEC-COMPLIANCE": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-EDITOR-VALIDATION-SPEC-COMPLIANCE",
+    "type": "TASK",
+    "title": "# TASK-char-editor-validation-spec-compliance",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-editor-validation-spec-compliance.md"
+  },
   "TASK-CHAR-GROWTH-ARCS": {
     "hash": "pending",
     "extid": "TASK-CHAR-GROWTH-ARCS",
@@ -4420,6 +4660,39 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-char-memory-tests.md"
+  },
+  "TASK-CHAR-SPEC-ADOPT-CCV3-PARAMETERS": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-SPEC-ADOPT-CCV3-PARAMETERS",
+    "type": "TASK",
+    "title": "# TASK-char-spec-adopt-ccv3-parameters",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-spec-adopt-ccv3-parameters.md"
+  },
+  "TASK-CHAR-SPEC-ADOPT-SILLYTAVERN-EXTENSIONS": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-SPEC-ADOPT-SILLYTAVERN-EXTENSIONS",
+    "type": "TASK",
+    "title": "# TASK-char-spec-adopt-sillytavern-extensions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-spec-adopt-sillytavern-extensions.md"
+  },
+  "TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE",
+    "type": "TASK",
+    "title": "Character Template — Full Canonical Model Coverage",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-character-core-system (config-templates sub-area)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-template-full-model-coverage.md"
   },
   "TASK-CHARACTER-AVATAR-GALLERY-BINDING": {
     "hash": "5f54dbc",
@@ -5210,6 +5483,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-config-domain-validation.md",
     "git_issue": "ec99914"
+  },
+  "TASK-CONFIG-EXAMPLE-TEMPLATE-VARIABLES-DOC": {
+    "hash": "pending",
+    "extid": "TASK-CONFIG-EXAMPLE-TEMPLATE-VARIABLES-DOC",
+    "type": "TASK",
+    "title": "# TASK-config-example-template-variables-doc",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-example-template-variables-doc.md"
   },
   "TASK-CONFIG-EXTENSIONS": {
     "hash": "d1f633b",
@@ -6902,6 +7186,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-tree-shake.md"
   },
+  "TASK-GALLERY-EDITOR-STRUCTURED-UI": {
+    "hash": "pending",
+    "extid": "TASK-GALLERY-EDITOR-STRUCTURED-UI",
+    "type": "TASK",
+    "title": "# TASK-gallery-editor-structured-ui",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
+  },
   "TASK-GALLERY-MINIMAL-IMAGE-ASSET-VIEWER": {
     "hash": "4e59b5f",
     "extid": "TASK-GALLERY-MINIMAL-IMAGE-ASSET-VIEWER",
@@ -7795,6 +8090,17 @@
     "source": ".plan/tickets/TASK-location-details.md",
     "git_issue": "bf07e94"
   },
+  "TASK-LOCATION-EDITOR-STRUCTURED-UI": {
+    "hash": "pending",
+    "extid": "TASK-LOCATION-EDITOR-STRUCTURED-UI",
+    "type": "TASK",
+    "title": "# TASK-location-editor-structured-ui",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
+  },
   "TASK-LOCATION-EXPLORER": {
     "hash": "c36e803",
     "extid": "TASK-LOCATION-EXPLORER",
@@ -7897,6 +8203,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-lorebook-export.md",
     "git_issue": "ff096fa"
+  },
+  "TASK-LOREBOOK-TEMPLATE-SEEDING": {
+    "hash": "pending",
+    "extid": "TASK-LOREBOOK-TEMPLATE-SEEDING",
+    "type": "TASK",
+    "title": "Lorebook Template Seeding (Character + World Config)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-character-core-system / epic-world-locations (cross-cutting)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
     "hash": "pending",
@@ -9488,6 +9805,28 @@
     "source": ".plan/tickets/TASK-promote-size-check-to-ci.md",
     "git_issue": "2a932ab"
   },
+  "TASK-PROMPT-CHARACTER-EXTENSIONS-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-CHARACTER-EXTENSIONS-SECTION",
+    "type": "TASK",
+    "title": "# TASK-prompt-character-extensions-section",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-character-extensions-section.md"
+  },
+  "TASK-PROMPT-FEATURE-FLAGS-CONDITIONAL-INJECTION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-FEATURE-FLAGS-CONDITIONAL-INJECTION",
+    "type": "TASK",
+    "title": "# TASK-prompt-feature-flags-conditional-injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-feature-flags-conditional-injection.md"
+  },
   "TASK-PROMPT-LIBRARY": {
     "hash": "pending",
     "extid": "TASK-PROMPT-LIBRARY",
@@ -9498,6 +9837,50 @@
     "epic": "epic-assistant-generation-extensions",
     "tags": [],
     "source": ".plan/tickets/TASK-prompt-library.md"
+  },
+  "TASK-PROMPT-MOOD-FULL-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-MOOD-FULL-SECTION",
+    "type": "TASK",
+    "title": "# TASK-prompt-mood-full-section",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-mood-full-section.md"
+  },
+  "TASK-PROMPT-NSFW-TRAITS-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-NSFW-TRAITS-SECTION",
+    "type": "TASK",
+    "title": "# TASK-prompt-nsfw-traits-section",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-nsfw-traits-section.md"
+  },
+  "TASK-PROMPT-PERMANENT-TRAITS-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-PERMANENT-TRAITS-SECTION",
+    "type": "TASK",
+    "title": "# TASK-prompt-permanent-traits-section",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-permanent-traits-section.md"
+  },
+  "TASK-PROMPT-RELATIONSHIPS-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-RELATIONSHIPS-SECTION",
+    "type": "TASK",
+    "title": "# TASK-prompt-relationships-section",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-relationships-section.md"
   },
   "TASK-PROMPT-TEMPLATE-PER-CHAT-OVERRIDE-UX": {
     "hash": "bc78ca36",
@@ -9771,6 +10154,102 @@
     "tags": [],
     "source": ".plan/tickets/TASK-reconcile-achievement-unlock-sources.md"
   },
+  "TASK-RECONCILE-EPIC-FRONTEND-AGE-GATE-VERIFY-AGE-GATE-FRONTEND-CA": {
+    "hash": "31b9862",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-AGE-GATE-VERIFY-AGE-GATE-FRONTEND-CA",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-age-gate: verify age-gate frontend, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-age-gate.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca.md",
+    "git_issue": "31b9862"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-COMPONENTS-VERIFY-COMPONENT-LIBRARY-": {
+    "hash": "2cecd02",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-COMPONENTS-VERIFY-COMPONENT-LIBRARY-",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-components: verify component library, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-components.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-components-verify-component-library-.md",
+    "git_issue": "2cecd02"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-HEADERS-VERIFY-HEADER-MANAGEMENT-UI-": {
+    "hash": "73258ce",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-HEADERS-VERIFY-HEADER-MANAGEMENT-UI-",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-headers: verify header management UI, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-headers-management.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-headers-verify-header-management-ui-.md",
+    "git_issue": "73258ce"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-I18N-VERIFY-I18N-WIRING-CAPTURE-GAPS": {
+    "hash": "6e2b1d8",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-I18N-VERIFY-I18N-WIRING-CAPTURE-GAPS",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-i18n: verify i18n wiring, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-internationalization.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-i18n-verify-i18n-wiring-capture-gaps.md",
+    "git_issue": "6e2b1d8"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-LOGIN-VERIFY-LOGIN-REGISTER-UI-CAPTU": {
+    "hash": "768f164",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-LOGIN-VERIFY-LOGIN-REGISTER-UI-CAPTU",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-login: verify login/register UI, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-login.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-login-verify-login-register-ui-captu.md",
+    "git_issue": "768f164"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-NOTIFICATIONS-VERIFY-BELL-PREFS-UI-C": {
+    "hash": "73a4c1d",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-NOTIFICATIONS-VERIFY-BELL-PREFS-UI-C",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-notifications: verify bell/prefs UI, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-notifications.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-notifications-verify-bell-prefs-ui-c.md",
+    "git_issue": "73a4c1d"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-ROUTING-VERIFY-HTMX-VIEW-ROUTING-CAP": {
+    "hash": "9b71c1e",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-ROUTING-VERIFY-HTMX-VIEW-ROUTING-CAP",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-routing: verify htmx view routing, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-routing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-routing-verify-htmx-view-routing-cap.md",
+    "git_issue": "9b71c1e"
+  },
+  "TASK-RECONCILE-EPIC-FRONTEND-SETTINGS-VERIFY-SETTINGS-UI-CAPTURE-": {
+    "hash": "84fc44e",
+    "extid": "TASK-RECONCILE-EPIC-FRONTEND-SETTINGS-VERIFY-SETTINGS-UI-CAPTURE-",
+    "type": "TASK",
+    "title": "Reconcile epic-frontend-settings: verify settings UI, capture gaps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-settings.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-epic-frontend-settings-verify-settings-ui-capture-.md",
+    "git_issue": "84fc44e"
+  },
   "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
     "hash": "8700aac",
     "extid": "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION",
@@ -9993,6 +10472,39 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-reputation-schema.md"
+  },
+  "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE": {
+    "hash": "pending",
+    "extid": "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE",
+    "type": "TASK",
+    "title": "Research — Famous Text-Game Character Systems Landscape",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-character-core-system (research sub-area)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-research-character-systems-landscape.md"
+  },
+  "TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE": {
+    "hash": "pending",
+    "extid": "TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE",
+    "type": "TASK",
+    "title": "Research — Creative Content Systems Landscape",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-creative-studio (research sub-area)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-research-creative-content-systems-landscape.md"
+  },
+  "TASK-RESEARCH-WORLD-LOCATION-SYSTEMS-LANDSCAPE": {
+    "hash": "pending",
+    "extid": "TASK-RESEARCH-WORLD-LOCATION-SYSTEMS-LANDSCAPE",
+    "type": "TASK",
+    "title": "Research — Famous World/Location Systems Landscape",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-world-locations (research sub-area)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-research-world-location-systems-landscape.md"
   },
   "TASK-RESOLUTION-FAMILY-DECISION": {
     "hash": "8ad130c",
@@ -10432,6 +10944,17 @@
     "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md",
     "git_issue": "c41b00a"
   },
+  "TASK-SCENARIO-SYSTEM-AUTHORING": {
+    "hash": "pending",
+    "extid": "TASK-SCENARIO-SYSTEM-AUTHORING",
+    "type": "TASK",
+    "title": "Scenario System — User-Facing Authoring & Catalog",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-creative-studio",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scenario-system-authoring.md"
+  },
   "TASK-SCHEMA": {
     "hash": "a4f6353",
     "extid": "TASK-SCHEMA",
@@ -10843,6 +11366,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-story-world-state.md",
     "git_issue": "4ffae25"
+  },
+  "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
+    "hash": "pending",
+    "extid": "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE",
+    "type": "TASK",
+    "title": "# TASK-template-unified-variable-engine",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-template-unified-variable-engine.md"
   },
   "TASK-TEMPLATES-LOADER-MERGE-STRATEGY-CONSISTENCY": {
     "hash": "d27888e",
@@ -11798,6 +12332,17 @@
     "source": ".plan/tickets/TASK-world-dashboard.md",
     "git_issue": "5609ef0"
   },
+  "TASK-WORLD-EDITOR-STRUCTURED-UI": {
+    "hash": "pending",
+    "extid": "TASK-WORLD-EDITOR-STRUCTURED-UI",
+    "type": "TASK",
+    "title": "# TASK-world-editor-structured-ui",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-world-editor-structured-ui.md"
+  },
   "TASK-WORLD-EVENT-SYSTEM": {
     "hash": "d90078a",
     "extid": "TASK-WORLD-EVENT-SYSTEM",
@@ -11892,6 +12437,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-world-state-management.md",
     "git_issue": "a612c78"
+  },
+  "TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE": {
+    "hash": "pending",
+    "extid": "TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE",
+    "type": "TASK",
+    "title": "World & Location Template — Full Canonical Model Coverage",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-world-locations (config-templates sub-area)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-world-template-full-model-coverage.md"
   },
   "TASK-WORLDINFO-ENGINE-PARITY": {
     "hash": "pending",
