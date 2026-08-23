@@ -68,7 +68,9 @@ export function filterCards(opts: FilterCardsOptions,): void {
       empty.className = "empty-state";
       if (opts.emptyStyle) { empty.style.cssText = opts.emptyStyle; }
       else { empty.style.padding = "var(--space-12)"; }
-      empty.innerHTML = `<div class="icon">${opts.emptyIcon}</div><div class="title">${opts.emptyTitle}</div>`;
+      empty.innerHTML = `<div class="icon">${escapeHtml(opts.emptyIcon,)}</div><div class="title">${
+        escapeHtml(opts.emptyTitle,)
+      }</div>`;
       container.append(empty,);
     }
   }
