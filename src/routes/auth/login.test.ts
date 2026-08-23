@@ -141,8 +141,13 @@ describe("handleLogin — success", () => {
     expect(cookie,).toContain("HttpOnly",);
     expect(cookie,).toContain("SameSite=Lax",);
 
-    const session = await db.selectFrom("sessions",).select(["user_id", "ip",],).executeTakeFirst();
+    const session = await db.selectFrom("sessions",).select(["user_id", "ip", "token_hash", "id",],).executeTakeFirst();
     expect(session?.user_id,).toBe(USER_ID,);
+    // AUTH-4: JWT sessions must store a non-empty, provenance-tagged token_hash
+    // so the legacy opaque-token lookup path (sha256(token) match) cannot
+    // collide with an empty hash from a JWT session.
+    expect(session?.token_hash,).toStartWith("jwt:",);
+    expect(session?.token_hash,).toBe(session ? `jwt:${session.id}` : undefined,);
   });
 });
 
@@ -173,5 +178,54 @@ describe("handleDemoLogin", () => {
   test("returns 500 when the JWT secret is missing", async () => {
     const res = await handleDemoLogin(makeRequest(), db, makeConfig({ jwtSecret: undefined, },),);
     expect(res.status,).toBe(500,);
+  });
+});
+
+describe("handleLogin — Secure cookie", () => {
+  // Snapshot env vars that drive `setTokenCookie`'s Secure-flag decision.
+  const envSnapshot = {
+    NODE_ENV: process.env.NODE_ENV,
+    LL_COOKIE_SECURE: process.env.LL_COOKIE_SECURE,
+  };
+
+  function restoreEnv(): void {
+    for (const [k, v,] of Object.entries(envSnapshot,)) {
+      if (v === undefined) { delete process.env[k]; }
+      else { process.env[k] = v; }
+    }
+  }
+
+  beforeEach(restoreEnv,);
+  afterAll(restoreEnv,);
+
+  test("omits Secure when neither NODE_ENV=production nor LL_COOKIE_SECURE is set", async () => {
+    delete process.env.NODE_ENV;
+    delete process.env.LL_COOKIE_SECURE;
+    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(),);
+    const cookie = res.headers.get("Set-Cookie",) ?? "";
+    expect(cookie,).not.toContain("Secure",);
+    expect(cookie,).toContain("HttpOnly",);
+    expect(cookie,).toContain("SameSite=Lax",);
+  });
+
+  test("emits Secure when NODE_ENV=production", async () => {
+    process.env.NODE_ENV = "production";
+    delete process.env.LL_COOKIE_SECURE;
+    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(),);
+    expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
+  });
+
+  test("emits Secure when LL_COOKIE_SECURE=true overrides NODE_ENV=development", async () => {
+    process.env.NODE_ENV = "development";
+    process.env.LL_COOKIE_SECURE = "true";
+    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(),);
+    expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
+  });
+
+  test("omits Secure when LL_COOKIE_SECURE=false overrides NODE_ENV=production", async () => {
+    process.env.NODE_ENV = "production";
+    process.env.LL_COOKIE_SECURE = "false";
+    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(),);
+    expect(res.headers.get("Set-Cookie",),).not.toContain("Secure",);
   });
 });

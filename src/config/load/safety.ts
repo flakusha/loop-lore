@@ -46,3 +46,76 @@ export function validateDatabaseSafety(config: Config,): void {
     );
   }
 }
+
+/**
+ * Minimum HMAC-SHA256 secret length when JWT auth is required. Below this,
+ * tokens are trivially forgeable via brute-force / known-weak-key lists.
+ */
+export const MIN_JWT_SECRET_LENGTH = 32;
+
+/**
+ * Validate auth safety constraints.
+ *
+ * When `auth.required = true` (multi-user mode), JWTs are signed with
+ * `auth.jwtSecret` via HMAC-SHA256. An empty or short secret means any
+ * attacker who learns the deployment uses JWTs (the loop-lore default)
+ * can forge valid tokens for any user — including admin — without ever
+ * touching the password store.
+ *
+ * This guard MUST run at config-load time (startup) so the server refuses
+ * to boot in an insecure state. A runtime check on first /login is too
+ * late: by then the admin bootstrap may have already happened and the
+ * server is reachable on the network.
+ *
+ * Solo mode (`auth.required = false`, the default) skips the secret-length
+ * check entirely — solo users are auto-authenticated and never see JWTs.
+ *
+ * @throws {Error} When auth is required but the JWT secret is missing or weak
+ */
+export function validateAuthSafety(config: Config,): void {
+  const { auth, } = config;
+  if (!auth.required) { return; }
+
+  const secret = auth.jwtSecret ?? "";
+  if (secret.length === 0) {
+    throw new Error(
+      "AUTH SAFETY: auth.required = true but auth.jwtSecret is empty. " +
+        "Any JWT minted by the server would be forgeable by an attacker who " +
+        "guesses (or learns) that the secret is empty. " +
+        "Fix: set AUTH_JWT_SECRET env var to a random string of at least " +
+        `${MIN_JWT_SECRET_LENGTH} characters, or disable multi-user auth ` +
+        "(auth.required = false for solo mode).",
+    );
+  }
+  if (secret.length < MIN_JWT_SECRET_LENGTH) {
+    throw new Error(
+      `AUTH SAFETY: auth.required = true but auth.jwtSecret is only ` +
+        `${secret.length} characters (minimum: ${MIN_JWT_SECRET_LENGTH}). ` +
+        "Short HMAC-SHA256 secrets are brute-forceable. " +
+        "Fix: regenerate AUTH_JWT_SECRET with `openssl rand -base64 48` or " +
+        "an equivalent cryptographically secure random string.",
+    );
+  }
+
+  // Warn (don't throw) on suspicious placeholder patterns. Placeholder
+  // secrets are fine for local development but must be replaced before
+  // exposing the server to any network.
+  const suspiciousPatterns = [
+    /^change.?me/i,
+    /^secret$/i,
+    /^password$/i,
+    /^test/i,
+    /^dev/i,
+    /^demo$/i,
+    /^example$/i,
+    /^loop.?lore/i,
+  ];
+  if (suspiciousPatterns.some((re,) => re.test(secret,),)) {
+    getLogger().child({ module: "config-safety", },).warn(
+      "AUTH SAFETY: auth.jwtSecret matches a known placeholder pattern. " +
+        "This is fine for local development but MUST be replaced before " +
+        "exposing the server to any network. Generate a random secret " +
+        "with `openssl rand -base64 48` and set AUTH_JWT_SECRET.",
+    );
+  }
+}
