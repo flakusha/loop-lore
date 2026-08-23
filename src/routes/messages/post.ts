@@ -145,6 +145,16 @@ export async function persistInitiative(
   log().info("Initiative claimed", { chatId, actorId, scene: currentScene, },);
 }
 
+/** Per-actor persist + notify result counts returned to callers. */
+export interface MentionPersistResult {
+  /** Total mention rows successfully inserted into `chat_mentions`. */
+  persisted: number;
+  /** Total mention notifications successfully dispatched. */
+  notified: number;
+  /** Count of actors whose insert OR notification failed. */
+  failed: number;
+}
+
 /** Record @mentions for the message and fire the mention notification. */
 export async function persistMentions(
   database: Kysely<DB>,
@@ -152,7 +162,8 @@ export async function persistMentions(
   senderId: string,
   messageId: string,
   filteredContent: string,
-): Promise<void> {
+): Promise<MentionPersistResult> {
+  const result: MentionPersistResult = { persisted: 0, notified: 0, failed: 0, };
   const participants = await database
     .selectFrom("chat_participants",)
     .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
@@ -163,31 +174,62 @@ export async function persistMentions(
     filteredContent,
     Array.from(participants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
   );
-  if (mentionedActorIds.length > 0) {
-    const insertPromises: Promise<void>[] = [];
-    for (const actorId of mentionedActorIds) {
-      insertPromises.push(
-        (async (): Promise<void> => {
-          try {
-            await database
-              .insertInto("chat_mentions",)
-              .values({ id: uid(), message_id: messageId, actor_id: actorId, },)
-              .execute();
-          } catch {
-            /* ignore duplicate */
-          }
-        })(),
-      );
+  if (mentionedActorIds.length === 0) { return result; }
+
+  // Persist per-actor mention rows. Aggregate results so callers see counts.
+  const insertOutcomes = await Promise.allSettled(
+    mentionedActorIds.map(async (actorId,) => {
+      try {
+        await database
+          .insertInto("chat_mentions",)
+          .values({ id: uid(), message_id: messageId, actor_id: actorId, },)
+          .execute();
+        return actorId;
+      } catch (err) {
+        log().warn("persistMentions: insert failed", { chatId, actorId, err, },);
+        throw err;
+      }
+    },),
+  );
+
+  // A duplicate-insert is benign (same actor mentioned twice in one message);
+  // we treat any other failure as a real error.
+  const persistedActorIds: string[] = [];
+  for (const [i, outcome] of insertOutcomes.entries()) {
+    const actorId = mentionedActorIds[i]!;
+    if (outcome.status === "fulfilled") {
+      result.persisted++;
+      persistedActorIds.push(actorId,);
+    } else if (!isBenignMentionInsertError(outcome.reason,)) {
+      result.failed++;
+    } else {
+      // Duplicate — count as persisted (the row already exists).
+      result.persisted++;
+      persistedActorIds.push(actorId,);
     }
-    await Promise.allSettled(insertPromises,);
-    void notifyMention(database, {
+  }
+
+  // Fire notifications for actors whose mention row actually persisted.
+  if (persistedActorIds.length === 0) { return result; }
+
+  try {
+    await notifyMention(database, {
       chatId,
       senderId,
-      mentionedActorIds,
+      mentionedActorIds: persistedActorIds,
       messageId,
-    },)
-      // Mention notification failure is non-fatal — swallow.
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .catch(() => {},);
+    },);
+    result.notified = persistedActorIds.length;
+  } catch (err) {
+    log().warn("persistMentions: notifyMention failed", { chatId, senderId, err, },);
+    result.failed += persistedActorIds.length;
   }
+  return result;
+}
+
+/** True when the error is a unique-constraint violation (already-inserted row). */
+function isBenignMentionInsertError(err: unknown,): boolean {
+  if (err === null || typeof err !== "object") { return false; }
+  const message = (err as { message?: unknown }).message;
+  return typeof message === "string" && /unique|constraint/i.test(message,);
 }

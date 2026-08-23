@@ -133,6 +133,39 @@ describe("batch chat operations", () => {
       expect((exported?.[0]?.chat as { id: string }).id,).toBe(ownedChat2,);
     });
   });
+  describe("batchExportChats — query budget", () => {
+    test("issues ≤3 queries regardless of chat count (no N+1)", async () => {
+      // Insert many owned chats plus messages and participants for each.
+      const ids: string[] = [];
+      for (let i = 0; i < 5; i++) {
+        const id = crypto.randomUUID();
+        ids.push(id,);
+        await insertChats(db, `Bulk ${i}`, ownerId, { id, } as never,);
+        await insertChatParticipants(db, id, ownerActorId, {},);
+        await insertMessages(db, id, ownerActorId, MessageRole.User, `bulk msg ${i}`, {},);
+      }
+
+      // Wrap db.selectFrom to count calls. Kysely's chainable API means we
+      // only need to intercept the entry point to count every query.
+      const dbTyped = db as unknown as { selectFrom: (...args: unknown[]) => unknown };
+      const originalSelectFrom = dbTyped.selectFrom.bind(db,);
+      let queryCount = 0;
+      dbTyped.selectFrom = ((...args: unknown[]) => {
+        queryCount++;
+        return originalSelectFrom(...args);
+      }) as typeof dbTyped.selectFrom;
+
+      try {
+        await batchExportChats(db, ids, ownerId,);
+      } finally {
+        dbTyped.selectFrom = originalSelectFrom as typeof dbTyped.selectFrom;
+      }
+
+      // Three queries total: owned chats + messages + chat_participants.
+      expect(queryCount,).toBeLessThanOrEqual(3,);
+      expect(queryCount,).toBe(3,);
+    },);
+  },);
 });
 
 async function chatExists(db: Kysely<DB>, chatId: string,): Promise<boolean> {
