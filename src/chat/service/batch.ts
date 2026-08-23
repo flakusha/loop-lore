@@ -84,20 +84,52 @@ export async function batchExportChats(
 
   if (owned.length === 0) { return null; }
 
-  const exports: { chat: (typeof owned)[number]; messages: unknown[]; participants: unknown[] }[] = [];
-  for (const chat of owned) {
-    const messages = await database
+  // Pre-fetch messages and participants for all owned chats in two batch queries.
+  // Avoids N+1: previously 2 queries per chat.
+  const ownedIds = Array.from(owned, (c,) => c.id,);
+  const [allMessages, allParticipants,] = await Promise.all([
+    database
       .selectFrom("messages",)
       .selectAll()
-      .where("chat_id", "=", chat.id,)
+      .where("chat_id", "in", ownedIds,)
+      .orderBy("chat_id",)
       .orderBy("created_at", "asc",)
-      .execute();
-    const participants = await database
+      .execute(),
+    database
       .selectFrom("chat_participants",)
       .selectAll()
-      .where("chat_id", "=", chat.id,)
-      .execute();
-    exports.push({ chat, messages, participants, },);
+      .where("chat_id", "in", ownedIds,)
+      .execute(),
+  ],);
+
+  // Partition in-memory by chat_id. Preserve the chat order from `owned` so
+  // callers see a stable export sequence.
+  const messagesByChat = new Map<string, unknown[]>();
+  for (const m of allMessages as { chat_id: string }[]) {
+    const list = messagesByChat.get(m.chat_id,);
+    if (list) {
+      list.push(m,);
+    } else {
+      messagesByChat.set(m.chat_id, [m,],);
+    }
+  }
+  const participantsByChat = new Map<string, unknown[]>();
+  for (const p of allParticipants as { chat_id: string }[]) {
+    const list = participantsByChat.get(p.chat_id,);
+    if (list) {
+      list.push(p,);
+    } else {
+      participantsByChat.set(p.chat_id, [p,],);
+    }
+  }
+
+  const exports: { chat: (typeof owned)[number]; messages: unknown[]; participants: unknown[] }[] = [];
+  for (const chat of owned) {
+    exports.push({
+      chat,
+      messages: messagesByChat.get(chat.id,) ?? [],
+      participants: participantsByChat.get(chat.id,) ?? [],
+    },);
   }
   return exports;
 }
