@@ -90,16 +90,21 @@ globalThis.openAssetPreview = async function(id: string,) {
 
     switch (a.asset_type) {
       case "image": {
-        body.innerHTML = `<img src="${mediaSrc}" alt="${escapeHtml(a.filename,)}" style="width:100%;display:block" />`;
+        body.innerHTML = `<img src="${escapeHtml(mediaSrc,)}" alt="${
+          escapeHtml(a.filename,)
+        }" style="width:100%;display:block" />`;
         break;
       }
       case "audio": {
-        body.innerHTML =
-          `<audio controls style="width:100%;padding:var(--space-6)"><source src="${mediaSrc}" /></audio>`;
+        body.innerHTML = `<audio controls style="width:100%;padding:var(--space-6)"><source src="${
+          escapeHtml(mediaSrc,)
+        }" /></audio>`;
         break;
       }
       case "video": {
-        body.innerHTML = `<video controls style="width:100%;display:block"><source src="${mediaSrc}" /></video>`;
+        body.innerHTML = `<video controls style="width:100%;display:block"><source src="${
+          escapeHtml(mediaSrc,)
+        }" /></video>`;
         break;
       }
       default: {

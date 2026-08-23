@@ -11,8 +11,7 @@
 
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
-import { sql, } from "kysely";
+import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";

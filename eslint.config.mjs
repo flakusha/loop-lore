@@ -201,6 +201,11 @@ export default [
       "@typescript-eslint/prefer-regexp-exec": "off",
       "@typescript-eslint/no-unnecessary-template-expression": "off",
       "no-restricted-globals": "off",
+      // Banned-pattern enforcement on frontend is owned by ESLint (not a separate
+      // script). Warn-level so `check` stays green while surfacing debt; promote
+      // to "error" after the existing occurrences are cleaned up.
+      "@typescript-eslint/no-explicit-any": "warn",
+      "no-console": "warn",
     },
   },
   // Test files: disable all restrictions
