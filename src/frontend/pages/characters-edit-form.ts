@@ -9,6 +9,7 @@
 import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
+import { escapeHtml, } from "./shared";
 
 function editField(id: string,): string {
   return document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`,)?.value ?? "";
@@ -81,8 +82,9 @@ globalThis.uploadAvatar = async function(input: HTMLInputElement,) {
     if (avatarInput) { avatarInput.value = asset.id; }
     const preview = document.querySelector("#avatar-preview",);
     if (preview) {
-      preview.innerHTML =
-        `<img src="/api/assets/${asset.id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`;
+      preview.innerHTML = `<img src="/api/assets/${
+        escapeHtml(asset.id,)
+      }/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`;
     }
     showToast("success", "Avatar uploaded — save to apply",);
   } catch {

@@ -107,7 +107,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     if (!files?.length) { return; }
 
     const fileList = Array.from(files,);
-    await Promise.all(
+    await Promise.allSettled(
       fileList.map(async (file,) => {
         const formData = new FormData();
         formData.append("file", file,);
