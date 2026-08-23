@@ -5,19 +5,18 @@
  * E2E Double Ratchet — DH + chain-key + skipped-key retention
  * (TASK-asymmetric-key-pairs-followup §Phase B).
  *
- * Bounded subset of the Signal Double Ratchet for 1:1 chat:
- *   - DH step on new ephemeral (post-compromise security)
- *   - Chain step per message (within a chain)
- *   - Skipped-key retention (bounded; server-side buffer)
- *   - Two separate chains (sending + receiving)
+ * Bounded subset of the Signal Double Ratchet for 1:1 chat: DH step on
+ * a new ephemeral (post-compromise), chain step per message, bounded
+ * skipped-key retention, and separate sending/receiving chains.
  *
- * Out of scope:
- *   - Asynchronous pre-keys — bootstrap via init exchange.
- *   - Group chat sender-key — Phase C.
+ * Out of scope: async pre-keys (bootstrap via init exchange), group
+ * sender-key (Phase C).
  *
- * Crypto primitives live in `./dh-ratchet-primitives.ts`.
+ * Primitives: `./dh-ratchet-primitives.ts`. Helpers (`skipOldChain`,
+ * `SkippedKey`): `./dh-ratchet-helpers.ts`.
  */
 import { toBase64, } from "../../utils/base64";
+import { skipOldChain, type SkippedKey, } from "./dh-ratchet-helpers";
 import type { DhMessagePayload, } from "./dh-ratchet-primitives";
 import {
   canonicalJwk,
@@ -43,12 +42,9 @@ export interface InitDhRatchetOpts {
   rootKey: Uint8Array;
 }
 
-// theirInitialPub was previously declared here but never used.
-// The ECDH agreement producing `rootKey` already occurs upstream
-// (see deriveSharedSecret in key-pairs.ts); the initial chain key
-// is derived deterministically from `rootKey` via deriveChainKeyFromRoot,
-// so no peer pubkey is needed at init time.
-
+// theirInitialPub was previously declared here but never used: the
+// ECDH agreement producing rootKey occurs upstream (deriveSharedSecret),
+// and the initial chain key is derived deterministically from rootKey.
 export interface InitDhRatchetResult {
   state: DhRatchetState;
   myInitialPubJwk: JsonWebKey;
@@ -57,8 +53,6 @@ export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRat
   if (opts.rootKey.byteLength !== KEY_BYTES) {
     throw new Error(`rootKey must be ${KEY_BYTES} bytes (got ${opts.rootKey.byteLength})`,);
   }
-  // Initial chain key derived deterministically from the shared rootKey
-  // (rootKey comes from the existing ECDH agreement in deriveSharedSecret).
   const chainKeyBits = await deriveChainKeyFromRoot(opts.rootKey,);
   const initialChainKey = new Uint8Array(chainKeyBits,) as Uint8Array<ArrayBuffer>;
   const myEphemeral = await crypto.subtle.generateKey(
@@ -131,13 +125,6 @@ export interface DhRatchetDecryptResult {
   newSkippedKeys: SkippedKey[];
 }
 
-export interface SkippedKey {
-  id: string;
-  ephemeralPublicJwk: JsonWebKey;
-  counter: number;
-  messageKeyBytes: Uint8Array;
-}
-
 export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhRatchetDecryptResult> {
   const { state, payload, } = opts;
   const ephemeralKey = canonicalJwk(payload.ephemeralPublicJwk,);
@@ -155,9 +142,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
     };
   }
 
-  // 2. Chain advancement: either a new ephemeral (DH step + fresh chain) or
-  //    a continuation of the current chain (counter advance only).
-  // Clone state to avoid mutating caller's input (BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard).
+  // 2. Clone state (avoid mutating caller's input — aliasing hazard).
   let workingState: DhRatchetState = {
     ...state,
     receivingChainKey: new Uint8Array(state.receivingChainKey,),
@@ -232,22 +217,4 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
   workingState.receivingChainKey = chainKey;
   workingState.recvCount = payload.counter + 1;
   return { plaintext, state: workingState, consumedSkippedKeyIds: [], newSkippedKeys, };
-}
-
-async function skipOldChain(state: DhRatchetState, untilCounter: number,): Promise<SkippedKey[]> {
-  if (untilCounter === 0) { return []; }
-  const skipped: SkippedKey[] = [];
-  let chainKey: Uint8Array = state.receivingChainKey;
-  for (let i = 0; i < untilCounter; i++) {
-    const step = await chainStep(chainKey,);
-    chainKey.fill(0,);
-    chainKey = step.nextChainKey;
-    skipped.push({
-      id: crypto.randomUUID(),
-      ephemeralPublicJwk: state.theirCurrentPubJwk ?? { kty: "EC", },
-      counter: state.recvCount + i,
-      messageKeyBytes: step.messageKeyBytes,
-    },);
-  }
-  return skipped;
 }
