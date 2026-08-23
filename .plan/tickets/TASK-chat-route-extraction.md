@@ -37,3 +37,6 @@ Move business logic from route handlers into the service layer.
 - `src/chat/service.ts` (modify)
 - `src/routes/chats.ts` (modify)
 - `src/routes/messages.ts` (modify)
+
+
+git issue: d60edc4

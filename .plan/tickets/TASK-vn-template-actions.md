@@ -4,7 +4,7 @@
 # TASK: VN Pre-Configured Scene & Dialogue Templates
 
 **Priority:** Medium
-**Status:** ✅ Complete
+**Status:** 🟡 Partial Complete — Pre-defined templates ✅, Renderer/UI application ⬜ not wired
 **Epic:** Epic Visual Novel Mode (51)
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
@@ -128,14 +128,26 @@ interface VnDialogueTemplate {
 
 ## Acceptance Criteria
 
-- [ ] Scene templates apply layout, transition, emotion defaults to VN scenes
-- [ ] Dialogue templates control typewriter speed, pauses, text style
-- [ ] Transition triggers auto-fire on location change, combat start, etc.
-- [ ] GM can browse and select templates from a picker UI
+### ✅ Pre-defined Data (DONE)
+
+- [x] Scene templates defined as `SCENE_TEMPLATES` array (`src/frontend/vn/templates/scene-templates/scene-templates.ts`) — 10 scenes (introduction, confrontation, resolution, flashback, discovery, farewell, combat_start, quiet_moment, mystery, celebration)
+- [x] Dialogue templates defined as `DIALOGUE_TEMPLATES` array (`src/frontend/vn/templates/scene-templates/dialogue-templates.ts`) — 7 dialogue styles
+- [x] Transition triggers defined as `TRANSITION_TRIGGERS` array (`src/frontend/vn/templates/transition-triggers.ts`) — 5 built-in triggers (location change, combat start, character enter, emotion shift, choice result, scene end)
+- [x] Template registry accessors — `getSceneTemplate`, `listSceneTemplates`, `getDialogueTemplate`, `listDialogueTemplates`, `findMatchingTriggers`
+
+### ⬜ Renderer/UI Wiring (NOT IMPLEMENTED)
+
+- [ ] Scene templates apply layout, transition, emotion defaults to VN scenes (renderer does not yet read from template registry)
+- [ ] Dialogue templates control typewriter speed, pauses, text style (typewriter does not yet consume dialogue template variables)
+- [ ] Transition triggers auto-fire on location change, combat start, etc. (trigger list defined but no consumer)
+- [ ] GM can browse and select templates from a picker UI (no modal/sidebar UI)
 - [ ] Templates can be overridden per-scene without modifying the template
 - [ ] Template chaining works (apply intro → dialogue → resolution sequence)
 - [ ] Templates don't conflict with manual VN settings
-- [ ] No performance regression in VN mode rendering
+
+### 🟢 Performance
+
+- [x] No performance regression in VN mode rendering
 
 ## Risk
 

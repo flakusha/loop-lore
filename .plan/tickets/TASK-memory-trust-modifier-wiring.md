@@ -48,3 +48,6 @@ Wire trustModifier from character relationships into the memory provision pipeli
 - TASK-memory-provision-wiring.md — parent wiring task
 - TASK-character-mood-happiness.md — mood affects sharing
 - TASK-character-memory-injection.md — full injection probability model
+
+
+git issue: e128690
