@@ -47,27 +47,41 @@ export async function dispatchCommand(
   const handler = getCommand(parsed.command,);
   if (!handler) { return { handled: false, }; }
 
-  const chatRecord = await database
-    .selectFrom("chats",)
-    .select(["id", "mode", "type", "gm_config", "world_id",],)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  const recentMessages = await database
-    .selectFrom("messages",)
-    .select(["id", "role", "content", "created_at",],)
-    .where("chat_id", "=", chatId,)
-    .orderBy("created_at", "desc",)
-    .limit(50,)
-    .execute();
-
-  // Resolve the calling participant's role for tiered command access.
-  const participant = await database
-    .selectFrom("chat_participants",)
-    .select("role_in_chat",)
-    .where("chat_id", "=", chatId,)
-    .where("actor_id", "=", actorId,)
-    .executeTakeFirst();
+  // Issue chat context, recent-message history, and participant lookup
+  // concurrently — they are independent reads and used downstream only
+  // after this point. (Was 3 sequential awaits: ~3× round-trip latency.)
+  // `Promise.allSettled` is the project-mandated shape (`no-restricted-syntax`
+  // disallows bare `Promise.all` for unhandled-rejection safety).
+  const settled = await Promise.allSettled([
+    database
+      .selectFrom("chats",)
+      .select(["id", "mode", "type", "gm_config", "world_id",],)
+      .where("id", "=", chatId,)
+      .executeTakeFirst(),
+    database
+      .selectFrom("messages",)
+      .select(["id", "role", "content", "created_at",],)
+      .where("chat_id", "=", chatId,)
+      .orderBy("created_at", "desc",)
+      .limit(50,)
+      .execute(),
+    // Resolve the calling participant's role for tiered command access.
+    database
+      .selectFrom("chat_participants",)
+      .select("role_in_chat",)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst(),
+  ],);
+  // All settled entries are fulfilled at this point — narrow for destructuring.
+  // The Promise.allSettled pattern is required by `no-restricted-syntax`;
+  // we throw on any rejection so behavior matches sequential await.
+  if (settled.some((r,) => r.status === "rejected",)) {
+    throw new Error("dispatchCommand: chat context lookup failed",);
+  }
+  const chatRecord = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
+  const recentMessages = settled[1]?.status === "fulfilled" ? settled[1].value : [];
+  const participant = settled[2]?.status === "fulfilled" ? settled[2].value : undefined;
   const roleInChat: ChatParticipantRole = participant?.role_in_chat ?? ChatParticipantRole.Member;
 
   // Tiered access: deny when the participant's role is below the command's minimum.
