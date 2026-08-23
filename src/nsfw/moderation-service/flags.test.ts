@@ -249,3 +249,111 @@ describe("resolveFlag", () => {
     },),).rejects.toThrow("not found after resolution",);
   });
 });
+describe("getFlagQueue status filter (all variants)", () => {
+  test("returns only pending flags when status='pending'", async () => {
+    await insertFlagRow({
+      id: "sp-1",
+      reporterId: REPORTER,
+      status: "pending",
+      createdAt: "2026-03-01T00:00:00.000Z",
+    });
+    await insertFlagRow({
+      id: "sr-1",
+      reporterId: REPORTER,
+      status: "resolved",
+      createdAt: "2026-03-02T00:00:00.000Z",
+    });
+    await insertFlagRow({
+      id: "sd-1",
+      reporterId: REPORTER,
+      status: "dismissed",
+      createdAt: "2026-03-03T00:00:00.000Z",
+    });
+
+    const { flags, total } = await getFlagQueue({ thisL: makeCtx(), params: { status: "pending" } });
+    expect(total).toBe(1);
+    expect(flags).toHaveLength(1);
+    expect(flags[0].id).toBe("sp-1");
+    expect(flags.every((f) => f.status === "pending")).toBe(true);
+  });
+
+  test("returns only dismissed flags when status='dismissed'", async () => {
+    await insertFlagRow({
+      id: "sp-2",
+      reporterId: REPORTER,
+      status: "pending",
+      createdAt: "2026-04-01T00:00:00.000Z",
+    });
+    await insertFlagRow({
+      id: "sd-2",
+      reporterId: REPORTER,
+      status: "dismissed",
+      createdAt: "2026-04-02T00:00:00.000Z",
+    });
+    await insertFlagRow({
+      id: "sd-3",
+      reporterId: REPORTER,
+      status: "dismissed",
+      createdAt: "2026-04-03T00:00:00.000Z",
+    });
+
+    const { flags, total } = await getFlagQueue({ thisL: makeCtx(), params: { status: "dismissed" } });
+    expect(total).toBe(2);
+    expect(flags).toHaveLength(2);
+    expect(flags.every((f) => f.status === "dismissed")).toBe(true);
+  });
+
+  test("returns only resolved flags when status='resolved'", async () => {
+    await insertFlagRow({
+      id: "sp-3",
+      reporterId: REPORTER,
+      status: "pending",
+      createdAt: "2026-05-01T00:00:00.000Z",
+    });
+    await insertFlagRow({
+      id: "sr-2",
+      reporterId: REPORTER,
+      status: "resolved",
+      createdAt: "2026-05-02T00:00:00.000Z",
+    });
+    await insertFlagRow({
+      id: "sr-3",
+      reporterId: REPORTER,
+      status: "resolved",
+      createdAt: "2026-05-03T00:00:00.000Z",
+    });
+
+    const { flags, total } = await getFlagQueue({ thisL: makeCtx(), params: { status: "resolved" } });
+    expect(total).toBe(2);
+    expect(flags).toHaveLength(2);
+    expect(flags.every((f) => f.status === "resolved")).toBe(true);
+  });
+
+  test("mixed dataset: each status variant returns correct subset", async () => {
+    const rows = [
+      { id: "m-1", status: "pending", createdAt: "2026-06-01T00:00:00.000Z" },
+      { id: "m-2", status: "pending", createdAt: "2026-06-02T00:00:00.000Z" },
+      { id: "m-3", status: "dismissed", createdAt: "2026-06-03T00:00:00.000Z" },
+      { id: "m-4", status: "resolved", createdAt: "2026-06-04T00:00:00.000Z" },
+      { id: "m-5", status: "resolved", createdAt: "2026-06-05T00:00:00.000Z" },
+      { id: "m-6", status: "resolved", createdAt: "2026-06-06T00:00:00.000Z" },
+    ];
+    for (const r of rows) {
+      await insertFlagRow({
+        id: r.id,
+        reporterId: REPORTER,
+        status: r.status as any,
+        createdAt: r.createdAt,
+      });
+    }
+
+    const p = await getFlagQueue({ thisL: makeCtx(), params: { status: "pending" } });
+    expect(p.total).toBe(2);
+
+    const d = await getFlagQueue({ thisL: makeCtx(), params: { status: "dismissed" } });
+    expect(d.total).toBe(1);
+
+    const r = await getFlagQueue({ thisL: makeCtx(), params: { status: "resolved" } });
+    expect(r.total).toBe(3);
+});
+});
