@@ -110,7 +110,7 @@ export async function start() {
 
   // ── Centralized response-header + dynamic-response policies ──
   // Applied to EVERY outgoing response via createRequestHandler.
-  const handleRequest = createRequestHandler(app, config, logger,);
+  const handleRequest = createRequestHandler(app, config, logger, database,);
 
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);

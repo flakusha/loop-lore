@@ -2,15 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Middleware barrel — exports types, auth, pipeline.
+ * Middleware barrel — exports types, auth, response policies.
  */
 
-export { adminViewGuard, requireAdmin, } from "./admin-gate";
+export { adminViewGuard, } from "./admin-gate";
 export { authenticate, extractBearerToken, resetSoloUserCache, } from "./auth";
 export { DynamicResponsePolicy, } from "./dynamic-response";
 export type { DynamicApplyOptions, } from "./dynamic-response";
-export { compose, emptyContext, errorBoundary, } from "./pipeline";
-export type { Pipeline, } from "./pipeline";
+export { createHandleResolver, } from "./handle-resolver";
+export type { HandleResolver, } from "./handle-resolver";
+export { requirePermission, } from "./permissions";
+export type { PermissionCtx, RequirePermissionOpts, } from "./permissions";
 export { normalizeHeaderKey, ResponseHeaderPolicy, } from "./response-headers";
 export type { ApplyOptions, RouteKind, } from "./response-headers";
 export type { Middleware, RequestContext, RouteHandler, } from "./types";
