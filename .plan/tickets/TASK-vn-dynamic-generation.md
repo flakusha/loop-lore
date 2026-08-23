@@ -4,7 +4,7 @@
 # TASK: Visual Novel Mode — Dynamic Image & Story Generation
 
 **Priority:** Medium
-**Status:** 🟡 Partial Complete
+**Status:** 🟡 Partial Complete — Story generation ✅, Image generation deferred, Q&A routes not in this ticket
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, dynamic-image, story-generation, image-gen, llm
 
@@ -32,6 +32,10 @@ Builds on `TASK-visual-novel-mode.md` (base VN rendering, backend complete) and 
 - [x] Frontend story overlay with generated narrative text
 - [ ] Config: enable/disable dynamic generation per world/chat
 - [ ] Config: image generation model selection per world
+
+## Scope Clarification (2026-08-23)
+
+This ticket covers **dynamic generation** only. The Q&A interaction loop (question-card display, answer routing, consequence application) is out of scope here — see `TASK-vn-qa-mode.md` and the planned follow-up `TASK-vn-question-answer-interaction.md`. The Q&A backend routes listed in earlier drafts of this ticket are not wired in `src/routes/vn-generate/index.ts` and are not part of this ticket's deliverable.
 
 ## Technical Notes
 

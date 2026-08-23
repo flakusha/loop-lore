@@ -4,7 +4,7 @@
 # TASK: VN Scene Template System
 
 **Priority:** Medium
-**Status:** ✅ Complete
+**Status:** ✅ Engine Complete (2026-08-23) — Template core done; GM builder UI not implemented
 **Epic:** Epic Visual Novel Mode (51)
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med
@@ -182,17 +182,25 @@ Example: `combat_intro` composite:
 
 ## Acceptance Criteria
 
-- [ ] GM can create custom scene templates with variables
-- [ ] Variable substitution works in text fields (`{{name}}` → resolved value)
-- [ ] Template inheritance works (child inherits parent, overrides fields)
-- [ ] Composite templates execute sequential steps with delays
-- [ ] Templates persist per-world in localStorage
+### ✅ Engine (DONE)
+
+- [x] GM can create custom scene templates with variables — `VnTemplate` / `VnTemplateVariable` types in `src/frontend/vn/templates/template-engine.ts`
+- [x] Variable substitution works in text fields (`{{name}}` → resolved value) — `resolveVariables`, `substituteTemplate`
+- [x] Template inheritance works (child inherits parent, overrides fields) — `resolveTemplate`
+- [x] Composite templates execute sequential steps with delays — composite executor in `template-engine.ts`
+- [x] Templates persist per-world in localStorage — localStorage CRUD
+- [x] Templates can be exported/imported as JSON — `exportTemplate` / `importTemplate`
+- [x] Required variables enforce presence before template application — `resolveVariables` raises on missing required
+
+### ⬜ GM Builder UI (NOT IMPLEMENTED)
+
 - [ ] Template builder UI allows drag-and-drop scene element configuration
 - [ ] Template gallery shows all templates by category
-- [ ] Templates can be exported/imported as JSON
 - [ ] Variable autocomplete shows available variables in GM UI
-- [ ] Required variables enforce presence before template application
-- [ ] No performance regression in VN mode rendering
+
+### 🟢 Performance
+
+- [x] No performance regression in VN mode rendering
 
 ## Risk
 
