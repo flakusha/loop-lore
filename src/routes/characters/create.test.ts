@@ -17,6 +17,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 
 import { createRoutes, } from "./create";
+import * as realLinks from "../../assets/service/links";
 
 interface LinkAssetCall {
   database: unknown;
@@ -30,6 +31,7 @@ mock.module("../../assets/service/links", () => {
     linkAssetCalls.push(opts,);
   };
   return {
+    ...realLinks,
     linkAsset: linkAssetMock,
     unlinkAsset: async () => {},
     getAssetLinks: async () => [],
