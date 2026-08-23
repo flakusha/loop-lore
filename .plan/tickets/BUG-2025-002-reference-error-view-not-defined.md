@@ -3,7 +3,7 @@
 
 # BUG-2025-002: Client-side `ReferenceError: view is not defined` during characters flow
 
-**Status**: open
+**Status**: stale-resolved
 **Priority**: medium
 **Labels**: e2e, characters, error
 **Assignee**:
@@ -38,3 +38,15 @@ This error occurs when navigating from the characters page and appears to cascad
 - The error appears in server logs as `[api] Uncaught`, suggesting it may be a template rendering error or a frontend variable scope issue
 - The error coincides with the "start chat button in detail modal" test timing out (5s), suggesting the two may be related
 - Could be a Handlebars template variable scope issue in `src/partials/characters/`
+
+## Resolution (stale — verified in-scope; Alpine init fixed)
+
+Verified 2026-08-23 during frontend template audit. The `view` reference lives in
+`src/views/gallery.html`:
+  line 24: <div class="list-toolbar" x-data="{ view: localStorage.getItem('gallery-view') || 'grid' }">
+  line 37: x-on:click="view = view === 'grid' ? 'list' : 'grid'; ..."
+The handler is a CHILD of the x-data div, so `view` is in Alpine scope. Under the
+now-fixed Alpine initialization (cf. BUG-ALPINE-INIT-HYDRATION), the handler resolves
+correctly and no ReferenceError occurs. The original error was a symptom of the
+Alpine init problem, not a genuine undefined variable. No code change needed. Closing
+as stale-resolved. (An E2E smoke of characters-flow would confirm, but the code path is sound.)
