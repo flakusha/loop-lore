@@ -113,3 +113,5 @@ Given the nature of Loop-Lore (RPG chat application with LLM inference):
 - [Lambda Labs Pricing](https://lambda.labs/pricing)
 - [Vast.ai Pricing](https://vast.ai/pricing)
 - [Hosting Provider Comparison](https://r.search.yahoo.com/_ylt=AwrFeHYuDX9qOAIAyLtXNyoA;_ylu=Y29sbwNiZjEEcG9zAzUEdnRpZAMEc2VjA3Ny/RV=2/RE=1787920943/RO=10/RU=https%3a%2f%2fgputracker.dev%2flambda-labs-vs-vastai/RK=2/RS=VKJTbw7yMXlLFP3jjcpacPta8bU-)
+
+git issue: b7d387d

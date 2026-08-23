@@ -239,3 +239,6 @@ curl -X POST http://localhost:3000/api/rag/search \
   -H "Content-Type: application/json" \
   -d '{"query": "cached results", "offline": true}'
 ```
+
+
+git issue: a7e766b
