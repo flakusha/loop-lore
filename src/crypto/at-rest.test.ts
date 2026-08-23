@@ -70,10 +70,13 @@ describe("encryptAtRest", () => {
     expect(result.wasEncrypted,).toBeTrue();
   },);
 
-  test("at-rest tier stores the wire payload verbatim (server does not decrypt)", async () => {
-    // Phase D: the server has no chain state for at-rest chats; the
-    // client's pre-encrypted payload is stored as-is. Standard-tier
+  test("at-rest tier stores the wire payload verbatim (server is a passthrough)", async () => {
+    // Phase D: the server does not transform at-rest payloads — it
+    // accepts whatever the caller submits (plaintext or client-pre-
+    // encrypted wire blob) and stores it as-is. Standard-tier
     // behaviour (server encrypts via chat key) does NOT apply here.
+    // True E2E (client pre-encrypts, server stores ciphertext without
+    // the ability to decrypt) is deferred to Phase E+.
     const wire = JSON.stringify({
       e2e: true,
       ciphertext: "opaque-blob",
@@ -128,7 +131,7 @@ describe("decryptAtRest", () => {
     expect(result,).toBe("Legacy plaintext in standard-tier chat",);
   },);
 
-  test("at-rest tier returns content unchanged (server has no chain state)", async () => {
+  test("at-rest tier returns content unchanged (server is a passthrough)", async () => {
     const wire = JSON.stringify({
       e2e: true,
       ciphertext: "client-encrypted",
@@ -167,9 +170,10 @@ describe("needsEncryption", () => {
     expect(needsEncryption("standard", "plaintext",),).toBeTrue();
   },);
 
-  test("at-rest tier needs encryption for plaintext (server-side, but stored as-is)", () => {
+  test("at-rest tier reports encryption-not-needed=false for plaintext (caller must pre-encrypt)", () => {
     expect(needsEncryption("at-rest", "plaintext",),).toBeTrue();
   },);
+
 
   test("already encrypted content does not need encryption", async () => {
     const encrypted = await compressThenEncrypt({
