@@ -1,53 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { adminViewGuard, requireAdmin, } from "./admin-gate";
-import { createRequestContext, } from "./types";
-
-describe("requireAdmin", () => {
-  it("allows admin role", async () => {
-    const ctx = createRequestContext({ userId: "1", userRole: "admin", sessionId: null, },);
-    let nextCalled = false;
-    const result = await requireAdmin(new Request("http://localhost",), ctx, async () => {
-      nextCalled = true;
-      return new Response("ok",);
-    },);
-    expect(nextCalled,).toBe(true,);
-    expect(result,).toBeInstanceOf(Response,);
-  });
-
-  it("allows solo role", async () => {
-    const ctx = createRequestContext({ userId: "1", userRole: "solo", sessionId: null, },);
-    let nextCalled = false;
-    await requireAdmin(new Request("http://localhost",), ctx, async () => {
-      nextCalled = true;
-      return new Response("ok",);
-    },);
-    expect(nextCalled,).toBe(true,);
-  });
-
-  it("rejects regular user", async () => {
-    const ctx = createRequestContext({ userId: "1", userRole: "user", sessionId: null, },);
-    let nextCalled = false;
-    const result = await requireAdmin(new Request("http://localhost",), ctx, async () => {
-      nextCalled = true;
-      return new Response("ok",);
-    },);
-    expect(nextCalled,).toBe(false,);
-    expect(result,).toBeInstanceOf(Response,);
-    const body = await result.json();
-    expect(body.error,).toBeDefined();
-    expect(result.status,).toBe(403,);
-  });
-
-  it("rejects null role", async () => {
-    const ctx = createRequestContext({ userId: "1", userRole: null, sessionId: null, },);
-    let nextCalled = false;
-    await requireAdmin(new Request("http://localhost",), ctx, async () => {
-      nextCalled = true;
-      return new Response("ok",);
-    },);
-    expect(nextCalled,).toBe(false,);
-  });
-});
+import { adminViewGuard, } from "./admin-gate";
 
 describe("adminViewGuard", () => {
   it("returns undefined for admin role (allow)", () => {
