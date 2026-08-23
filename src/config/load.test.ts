@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { createLogger, } from "../logger";
-import { coerceValue, deepMerge, loadConfig, setByPath, validateConfig, validateDatabaseSafety, } from "./load";
+import { coerceValue, deepMerge, loadConfig, setByPath, validateAuthSafety, validateConfig, validateDatabaseSafety, } from "./load";
 import type { Config, } from "./schema";
 import { createConfigSchema, } from "./schema-class";
 
@@ -483,5 +483,61 @@ describe("validateDatabaseSafety", () => {
       if (original === undefined) { delete process.env.INSTANCE_COUNT; }
       else { process.env.INSTANCE_COUNT = original; }
     }
+  });
+});
+
+describe("validateAuthSafety", () => {
+  function authConfig(overrides?: Partial<Config["auth"]>,): Config {
+    const defaults = structuredClone(createConfigSchema().defaults,);
+    Object.assign(defaults.auth, overrides,);
+    return defaults;
+  }
+
+  test("skips check when auth.required is false (solo mode)", () => {
+    // Empty secret is fine in solo mode — solo users never see JWTs.
+    expect(() => {
+      validateAuthSafety(authConfig({ required: false, jwtSecret: "", },),);
+    },).not.toThrow();
+  });
+
+  test("rejects empty secret when auth.required is true", () => {
+    expect(() => {
+      validateAuthSafety(authConfig({ required: true, jwtSecret: "", },),);
+    },).toThrow(/AUTH SAFETY.*jwtSecret is empty/,);
+  });
+
+  test("rejects short secret when auth.required is true", () => {
+    expect(() => {
+      validateAuthSafety(authConfig({ required: true, jwtSecret: "tooshort", },),);
+    },).toThrow(/AUTH SAFETY.*characters.*minimum: 32/,);
+  });
+
+  test("rejects secret of exactly 31 characters", () => {
+    const secret = "a".repeat(31,);
+    expect(() => {
+      validateAuthSafety(authConfig({ required: true, jwtSecret: secret, },),);
+    },).toThrow(/AUTH SAFETY/,);
+  });
+
+  test("accepts secret of exactly 32 characters", () => {
+    const secret = "a".repeat(32,);
+    expect(() => {
+      validateAuthSafety(authConfig({ required: true, jwtSecret: secret, },),);
+    },).not.toThrow();
+  });
+
+  test("accepts a realistic random base64 secret", () => {
+    // 48 bytes of base64 = 64 characters — well above minimum.
+    const secret = "k6QmH8sPv2xN4jR1tYbD9wLcEgF3hKaZ7uMoA0iBnW5rTqX8yJlP2vSdF6hZ4mN1";
+    expect(secret.length,).toBeGreaterThanOrEqual(32,);
+    expect(() => {
+      validateAuthSafety(authConfig({ required: true, jwtSecret: secret, },),);
+    },).not.toThrow();
+  });
+
+  test("placeholder secret 'change-me-now' is rejected as too short", () => {
+    expect(() => {
+      validateAuthSafety(authConfig({ required: true, jwtSecret: "change-me-now", },),);
+    },).toThrow(/AUTH SAFETY/,);
   });
 });

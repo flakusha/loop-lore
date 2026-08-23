@@ -19,7 +19,30 @@ const TOKEN_COOKIE = "ll_token";
 const COOKIE_PATH = "/";
 
 function setTokenCookie(token: string, maxAgeSecs: number,): string {
-  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${maxAgeSecs}; HttpOnly; SameSite=Lax`;
+  // `Secure` is omitted unless the deployment is reachable over HTTPS.
+  // A cookie with `Secure` set will be silently dropped by the browser
+  // when the page is loaded over plain HTTP (e.g. local dev), breaking auth.
+  //
+  // Decision matrix (first match wins):
+  //   LL_COOKIE_SECURE=true   → emit Secure (override; e.g. behind TLS-terminating proxy on a custom port)
+  //   LL_COOKIE_SECURE=false  → never emit Secure (override)
+  //   NODE_ENV === "production" → emit Secure
+  //   otherwise                → omit Secure (dev / solo / unknown)
+  const override = process.env.LL_COOKIE_SECURE;
+  let secure: boolean;
+  if (override === "true") { secure = true; }
+  else if (override === "false") { secure = false; }
+  else { secure = process.env.NODE_ENV === "production"; }
+
+  const parts = [
+    `${TOKEN_COOKIE}=${token}`,
+    `Path=${COOKIE_PATH}`,
+    `Max-Age=${maxAgeSecs}`,
+    "HttpOnly",
+    "SameSite=Lax",
+  ];
+  if (secure) { parts.push("Secure",); }
+  return parts.join("; ",);
 }
 
 // ── Helpers ───────────────────────────────────────────────────
