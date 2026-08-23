@@ -76,8 +76,15 @@ export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
  * Valid values:
  *   - "none"      — plaintext, no crypto
  *   - "standard"  — server-mediated AES-256-GCM via stable chat keys
- *   - "at-rest"   — client-side E2E; server stores ciphertext as-is
- *                   and cannot decrypt (the messages.e2e_payload column).
+ *   - "at-rest"   — wire-passthrough (Phase D plumbing). The server stores
+ *                   whatever the caller hands in and returns it on read;
+ *                   it does NOT attempt server-side encrypt, decrypt, or
+ *                   transform. The caller is responsible for pre-encrypting
+ *                   when true client-side E2E is desired. The server still
+ *                   holds SMK-derived chat keys, so plaintext submitted
+ *                   by the caller lands in the DB as plaintext. True
+ *                   client-side E2E (server cannot decrypt) is deferred —
+ *                   see TASK-asymmetric-key-pairs-followup Phase E+.
  *
  * Note: `public` is NOT a valid EncryptionLevel value. Historically a
  * "public" sentinel appeared in the chats table default but was never a
@@ -85,9 +92,11 @@ export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
  * Any code that encounters a `public` value should treat it as `none`.
  *
  * Migration history (TASK-asymmetric-key-pairs-followup Phase D):
- *   - The historical `"private"` value is renamed to `"at-rest"`. The
+ *   - The historical `"private"` value was renamed to `"at-rest"`. The
  *     `057_encryption_level_at_rest_rename` migration rewrites existing
- *     rows so live deployments roll forward cleanly.
+ *     rows so live deployments roll forward cleanly. The removed
+ *     `Private` symbol was replaced by `AtRest` (clean cutover, no
+ *     deprecated alias).
  */
 export const EncryptionLevel = {
   None: "none",
