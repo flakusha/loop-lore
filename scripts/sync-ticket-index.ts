@@ -21,6 +21,10 @@
  *   bun run scripts/sync-ticket-index.ts              # dry-run report
  *   bun run scripts/sync-ticket-index.ts --fix        # write fixes to index.json
  *   bun run scripts/sync-ticket-index.ts --verbose    # show all entries
+ *
+ * --fix also resolves placeholder hashes (index hash with no git-issue /
+ * commit provenance) by linking to a matching git issue (by extid) or, if
+ * none exists, creating one and writing its ref back into the .md file.
  */
 
 import { execSync, } from "node:child_process";
@@ -179,6 +183,72 @@ function applyFixes(
         hash: missing.suggestedHash!,
       };
       report.fixesApplied.push(`${missing.extid}: added hash ${missing.suggestedHash}`,);
+    }
+  }
+
+  // Fix placeholder hashes: index hash points to no git issue and is not a
+  // real commit (no provenance at all). Resolve by linking to a matching git
+  // issue (by extid) — the common case where the stored hash drifted but the
+  // real issue still exists — or, if none exists, creating one so the entry
+  // gains provenance. Mirrors the missing-hash fix for unprovenanced hashes.
+  for (const ph of report.placeholderHashes) {
+    const entry = fixed[ph.extid];
+    if (!entry) { continue; }
+
+    // 1. Try a matching git issue by extid.
+    let target: GitIssue | undefined;
+    for (const [, issue,] of gitIssues) {
+      if (issue.extid === ph.extid) { target = issue; break; }
+    }
+
+    // 2. Otherwise create a git issue so the entry has provenance.
+    if (!target) {
+      const title = ph.ticketTitle || ph.extid;
+      const safeTitle = title.replace(/"/g, '\\"',);
+      const body = `Auto-created during index reconciliation (placeholder hash ${ph.indexHash} had no provenance).`;
+      try {
+        const out = execSync(
+          `git issue create "${ph.extid}: ${safeTitle}" -m "${body}" -l task -p medium`,
+          { timeout: 15_000, },
+        ).toString();
+        const hm = out.match(/Created issue ([0-9a-f]{7,})/);
+        if (hm) {
+          const newHash = hm[1].slice(0, 7,);
+          target = { hash: newHash, status: "open", title: `${ph.extid}: ${title}`, extid: ph.extid };
+          gitIssues.set(newHash, target,);
+          report.fixesApplied.push(`${ph.extid}: created git issue ${newHash}`,);
+        }
+      } catch {
+        report.fixesApplied.push(`${ph.extid}: FAILED to create git issue`,);
+        continue;
+      }
+    }
+
+    if (!target) { continue; }
+
+    // 3. Update the index entry.
+    fixed[ph.extid] = {
+      ...fixed[ph.extid],
+      hash: target.hash,
+      git_issue: target.hash,
+    };
+    report.fixesApplied.push(`${ph.extid}: replaced placeholder ${ph.indexHash} → ${target.hash}`,);
+
+    // 4. Update the .md file's git issue ref if present.
+    const tf = fileByExtid.get(ph.extid,);
+    if (tf) {
+      try {
+        let raw = readFileSync(tf.path, "utf8",);
+        if (/(?:git.?issue|issue):\s*[0-9a-f]{7,}/i.test(raw)) {
+          raw = raw.replace(/(?:git.?issue|issue):\s*[0-9a-f]{7,}/i, `git issue: ${target.hash}`,);
+        } else {
+          raw = raw.replace(/(\n---\n|$)/, `\n\ngit issue: ${target.hash}\n`,);
+        }
+        writeFileSync(tf.path, raw,);
+        report.fixesApplied.push(`${ph.extid}: linked .md to git issue ${target.hash}`,);
+      } catch {
+        // non-fatal: the index entry itself is already corrected
+      }
     }
   }
 
@@ -458,13 +528,6 @@ Options:
     report.orphanGitIssues.length;
 
   console.log(`\n${"═".repeat(60,)}`,);
-  if (totalIssues === 0) {
-    console.log(`✅ Index is in sync${advisoryCount > 0 ? ` (${advisoryCount} advisory)` : ""}`,);
-  } else {
-    console.log(
-      `⚠️  ${totalIssues} actionable issue(s) found${advisoryCount > 0 ? `, ${advisoryCount} advisory` : ""}`,
-    );
-  }
 
   // Apply fixes (also when only advisory issues exist — e.g. missing-hash links)
   if (fixMode && (totalIssues > 0 || advisoryCount > 0)) {
@@ -483,10 +546,38 @@ Options:
       console.log(`\n📝 Changes:`,);
       report.fixesApplied.forEach((f,) => console.log(`   ${f}`,));
     }
-  } else if (fixMode && totalIssues === 0) {
+
+    // Recompute reconciliation on the *fixed* index so the summary reflects the
+    // resolved state (e.g. placeholder hashes now linked, not still advisory).
+    const postReport = reconcile(ticketFiles, gitIssues, fixedIndex, verbose, ROOT,);
+    const postTotal = postReport.orphanFiles.length +
+      postReport.phantomEntries.length +
+      postReport.hashMismatches.length +
+      postReport.statusMismatches.length +
+      postReport.staleOpenGitIssues.length;
+    const postAdvisory = postReport.placeholderHashes.length +
+      postReport.missingHashes.length +
+      postReport.missingGitIssueLinks.length +
+      postReport.orphanGitIssues.length;
+
+    if (postTotal === 0) {
+      console.log(`✅ Index is in sync${postAdvisory > 0 ? ` (${postAdvisory} advisory remaining)` : ""}`,);
+    } else {
+      console.log(`⚠️  ${postTotal} actionable issue(s) remain${postAdvisory > 0 ? `, ${postAdvisory} advisory` : ""}`,);
+    }
+    process.exit(postTotal > 0 ? 1 : 0,);
+  }
+
+  if (fixMode && totalIssues === 0) {
     console.log(`\nNothing to fix`,);
   } else if (totalIssues > 0) {
     console.log(`\nRun with --fix to apply automatic fixes`,);
+  }
+
+  if (totalIssues === 0) {
+    console.log(`✅ Index is in sync${advisoryCount > 0 ? ` (${advisoryCount} advisory)` : ""}`,);
+  } else {
+    console.log(`⚠️  ${totalIssues} actionable issue(s) found${advisoryCount > 0 ? `, ${advisoryCount} advisory` : ""}`,);
   }
 
   // Exit code
