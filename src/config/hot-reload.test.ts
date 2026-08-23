@@ -8,10 +8,11 @@
 // fires synchronously when the test simulates a "change" event. Stub ./load
 // so the watcher's reload path resolves with a trivial config object.
 
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import type { FSWatcher, watch as NodeWatch, } from "node:fs";
 import { mkdirSync, rmSync, } from "node:fs";
 import path from "node:path";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 // ── Stubs ────────────────────────────────────────────────────
 
@@ -47,20 +48,24 @@ const stubWatch: WatchFn = ((_dir: string, _opts: unknown, listener: unknown,) =
   return watcher as unknown as FSWatcher;
 }) as WatchFn;
 
-mock.module("node:fs", () => {
-  const actual = require("node:fs",);
-  return { ...actual, watch: stubWatch, };
-},);
+if (ISOLATED) {
+  mock.module("node:fs", () => {
+    const actual = require("node:fs",);
+    return { ...actual, watch: stubWatch, };
+  },);
+}
 
-mock.module("./load", () => ({
-  loadConfig: () => ({}),
-}),);
+if (ISOLATED) {
+  mock.module("./load", () => ({
+    loadConfig: () => ({}),
+  }),);
+}
 
 const TEST_DIR = path.join(import.meta.dir, "__test_hot_reload__",);
 
 // ── Tests ────────────────────────────────────────────────────
 
-describe("Domain Config Hot-Reload", () => {
+describeOrSkip("Domain Config Hot-Reload", () => {
   beforeEach(() => {
     mkdirSync(path.join(TEST_DIR, "configs",), { recursive: true, },);
     stubState.watchers = [];
@@ -71,7 +76,7 @@ describe("Domain Config Hot-Reload", () => {
     rmSync(TEST_DIR, { recursive: true, force: true, },);
   },);
 
-  // Hot-reload.ts is imported lazily so the `mock.module(...)` calls above
+  // Hot-reload.ts is imported lazily so the `if (ISOLATED) mock.module(...)` calls above
   // are registered before the import resolves. The dynamic import is the
   // standard bun:test seam for module-mock boundaries; the path is a literal
   // known at author time, not runtime-selected.
@@ -141,4 +146,4 @@ describe("Domain Config Hot-Reload", () => {
     stopWatchingDomainConfigs(watcher,);
     expect(stubState.watchers[0]?.closed,).toBe(true,);
   });
-});
+},);
