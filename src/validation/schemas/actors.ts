@@ -24,6 +24,7 @@ export const ActorCreateBody = t.Object({
   contentRating: t.Optional(ContentRatingSchema,),
   description: t.Optional(t.String(),),
   systemPrompt: t.Optional(t.String(),),
+  assetId: OptionalId,
 },);
 
 export const ActorUpdateBody = t.Object({

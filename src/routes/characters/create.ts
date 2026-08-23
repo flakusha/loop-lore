@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { ActorType, AgentType, } from "../../db/enums";
+import { linkAsset, } from "../../assets/service/links";
+import { ActorType, AgentType, AssetLinkEntity, } from "../../db/enums";
 import { jsonStringifyOr, uid, } from "../../utils";
 import {
   ActorCreateBody,
@@ -31,6 +32,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           welcomeMessage,
           systemPrompt,
         } = ctx.body;
+        const assetId = (ctx.body as { assetId?: string | null }).assetId ?? null;
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -66,6 +68,13 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             format_version: 0,
           },)
           .execute();
+        if (assetId) {
+          await linkAsset({
+            database,
+            assetId,
+            link: { entityType: AssetLinkEntity.Actor, entityId: id, label: "avatar", },
+          },);
+        }
 
         return jsonCreated({ id, },);
       },

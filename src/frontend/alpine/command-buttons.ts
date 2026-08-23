@@ -83,6 +83,16 @@ const COMMAND_BUTTONS: CommandButton[] = [
         }
         return;
       }
+      if (cmd === "impersonate" || cmd === "char") {
+        const chat = (globalThis as { Alpine?: { store: (n: string,) => Record<string, unknown> } })
+          .Alpine
+          ?.store("chat",);
+        const impersonate = chat && typeof chat.impersonate === "function"
+          ? (chat.impersonate as (cmd: string,) => void)
+          : null;
+        if (impersonate) { impersonate(cmd,); }
+        return;
+      }
       const input = document.querySelector("#message-input",) as HTMLTextAreaElement | null;
       if (input) {
         input.value = `/${cmd} `;
