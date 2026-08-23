@@ -35,7 +35,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { uid, } from "../../utils";
+import { safeJsonStringify, uid, } from "../../utils";
 import {
   hkdfExpandToBytes,
   KEY_LENGTH,
@@ -196,6 +196,8 @@ export async function recordGroupWrap(
   opts: RecordGroupWrapRowOpts,
 ): Promise<GroupWrapRow> {
   const id = uid();
+  const ephPubJwkResult = safeJsonStringify(opts.senderEphPubJwk,);
+  const senderEphPubJwkStr = ephPubJwkResult.ok ? ephPubJwkResult.value : "";
   await opts.database
     .insertInto("e2e_group_wraps",)
     .values({
@@ -203,7 +205,7 @@ export async function recordGroupWrap(
       group_session_id: opts.groupSessionId,
       recipient_actor_id: opts.recipientActorId,
       wrapped_key: opts.wrappedKey,
-      sender_eph_pub_jwk: JSON.stringify(opts.senderEphPubJwk,),
+      sender_eph_pub_jwk: senderEphPubJwkStr,
       chain_index: opts.chainIndex,
     },)
     .execute();
@@ -212,7 +214,7 @@ export async function recordGroupWrap(
     groupSessionId: opts.groupSessionId,
     recipientActorId: opts.recipientActorId,
     wrappedKey: opts.wrappedKey,
-    senderEphPubJwk: JSON.stringify(opts.senderEphPubJwk,),
+    senderEphPubJwk: senderEphPubJwkStr,
     chainIndex: opts.chainIndex,
   };
 }

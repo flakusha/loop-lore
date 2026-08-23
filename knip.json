@@ -132,6 +132,11 @@
     // Schema check scripts: standalone CLI tools, not entry-reachable
     // (consumed via bun run scripts/..., not import)
     "scripts/check-db-schemas.ts",
+    // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
+    // not import-reachable. Promoted from .tmp/ investigation scripts.
+    "scripts/check-frontend-banned-patterns.ts",
+    "scripts/check-frontend-innerhtml-xss.ts",
+    "scripts/check-epic-coverage.ts",
 
     // Chat-state contract fixture: type-pinned test helper imported by tests
     // but not by production code (tests/ only, not in knip entry graph)
@@ -163,6 +168,7 @@
     "tests/e2e/flows/browser/settings-flow.browser.ts",
     "tests/e2e/flows/browser/smoke.browser.ts",
     "tests/e2e/flows/browser/world-invites.browser.ts",
-    "tests/e2e/flows/browser/worlds-flow.browser.ts"
+    "tests/e2e/flows/browser/worlds-flow.browser.ts",
+    "tests/e2e/flows/browser/vn-settings.browser.ts"
   ]
 }
