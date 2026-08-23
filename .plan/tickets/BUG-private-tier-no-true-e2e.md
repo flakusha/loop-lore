@@ -9,13 +9,15 @@
 **Epic:** epic-crypto
 **Related:** TASK-asymmetric-key-pairs, TASK-encryption-architecture-clarification, TASK-encryption-browser-pre-encrypt
 
-## Summary
-
-No asymmetric or client-held-secret path exists anywhere in `src/`. All message
-and asset encryption uses a chat key the server derives from SMK-decryptable
-actor keys; the server holds the SMK (in-memory) and every actor key (SMK-
-encrypted in DB), so it can decrypt everything. The client "pre-encrypt" flow,
-where it exists, is theater: the server hands the same key to the client.
+> **2026-08-23 reconciliation note:** the original "Resolution — Chose Rename Path"
+> section below was authored against an early plan in which
+> `src/crypto/e2e/` (and several other paths) were marked "Dead wiring
+> deleted." That never happened — `src/crypto/e2e/` is **active** code
+> (Phase D's ratchet + sender-key + group-encrypt-message implementations
+> + Phase D's wire envelope used by `at-rest` tier's passthrough). Only
+> the rename shipped. See `epic-crypto.md` §"Phase D+" for the audit
+> pass that brought the docs/comments in line with the wire-passthrough
+> semantics of the current `at-rest` tier.
 
 ## Resolution — Chose Rename Path
 
@@ -23,13 +25,22 @@ User chose rename + defer over immediate E2E implementation:
 
 - `private` tier renamed → `at-rest` with honest server-mediated semantics.
 - `EncryptionLevel.Private` → `EncryptionLevel.AtRest` in `src/db/enums-core/flags.ts`.
-- `src/crypto/at-rest.ts`: `case "at-rest"` now mirrors `standard` (server encrypts/decrypts).
-- All "E2E", "server never sees plaintext", "private = true E2E" claims removed from:
+- `src/crypto/at-rest.ts`: `case "at-rest"` now wires the wire-passthrough
+  branch (server stores whatever the caller submits and returns it on
+  read). This is **not** server-encrypt and **not** true E2E — it is the
+  Phase D plumbing for the eventual Phase E client-side E2E wiring.
+- All "E2E", "server never sees plaintext", "private = true E2E" claims
+  removed from:
   - `docs/frontend/encryption.md`
   - `docs/spec/encryption-workflow.md`
   - `docs/spec/crypto.md`
-- Dead wiring deleted: `src/crypto/e2e/` (whole dir), `src/crypto/user-keys.ts`,
-  `src/crypto/user-keys.test.ts`, `src/frontend/htmx-encrypt.ts`.
+- **NOT DELETED** (original plan was wrong): `src/crypto/e2e/` is active
+  code — Phase D ratchet + sender-key + group-encrypt-message +
+  `isE2eOrEncrypted` helper consumed by the at-rest read path. Also not
+  deleted: `src/crypto/user-keys.ts`, `src/crypto/user-keys.test.ts`,
+  `src/frontend/htmx-encrypt.ts` — these were never present in this
+  branch (predecessor commits removed them earlier; the resolution
+  text here was speculative).
 - `docs/meta/pattern-divergence.md`: deleted-file rows marked (historical record).
 - Deferred true E2E work tracked in: `.plan/tickets/TASK-asymmetric-key-pairs-followup.md`.
 
