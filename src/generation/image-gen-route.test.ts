@@ -10,9 +10,17 @@
 
 import { beforeEach, describe, expect, it, mock, } from "bun:test";
 import { randomUUID, } from "node:crypto";
-// Captured before the mock below so the `./links` mock can re-expose the real
-// exports (unlinkAsset/getAssetLinks) and only override linkAsset.
+// Capture real modules before mocking so each mock re-exposes the module's
+// other exports and overrides only the specific function under test. Bun's
+// mock.module leaks across files without --isolate; mocking a whole module
+// clobbers every other export it provides (e.g. safeJsonParse in ../utils),
+// breaking unrelated tests that import the same barrel/module.
+import * as realAssetMetadata from "../assets/metadata";
 import * as realAssetLinks from "../assets/service/links";
+import * as realConfigLoad from "../config/load";
+import * as realDb from "../db/index";
+import * as realUtils from "../utils";
+import * as realImageEngine from "./image-engine";
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
@@ -88,18 +96,22 @@ const defaultConfig = {
 // ── Register mocks BEFORE importing module-under-test ────────────────────────────
 
 mock.module("../config/load", () => ({
+  ...realConfigLoad,
   loadConfig: () => defaultConfig,
 }),);
 
 mock.module("./image-engine", () => ({
+  ...realImageEngine,
   generateImages: mockGenerateImages,
 }),);
 
 mock.module("../assets/metadata", () => ({
+  ...realAssetMetadata,
   extractImageMetadata: mockExtractImageMetadata,
 }),);
 
 mock.module("../utils", () => ({
+  ...realUtils,
   uid: mockUid,
 }),);
 
@@ -115,6 +127,7 @@ mock.module("../assets/service/links", () => ({
 }),);
 
 mock.module("../db/index", () => ({
+  ...realDb,
   getDatabase: mockGetDatabase,
 }),);
 
@@ -180,7 +193,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (3) Opt-in: ComfyUI backend selected + lora → passed through
 
   it("passes lora config to generateImages when ComfyUI backend is selected", async () => {
-    mock.module("../config/load", () => ({
+    mock.module("../config/load", () => ({ ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: {
@@ -236,7 +249,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (5) No sd provider → HTTP 501
 
   it("returns HTTP 501 when no image generation provider is configured", async () => {
-    mock.module("../config/load", () => ({
+    mock.module("../config/load", () => ({ ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: { providers: { sd: [], }, },
@@ -253,7 +266,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (6) openai backend + lora → HTTP 400 (non-fallible guard)
 
   it("returns HTTP 400 when LoRA is requested with an unsupported backend (openai)", async () => {
-    mock.module("../config/load", () => ({
+    mock.module("../config/load", () => ({ ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: {
@@ -298,7 +311,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (7) openai backend, no lora → HTTP 200 (normal path still works)
 
   it("returns HTTP 200 when no lora is requested, regardless of backend", async () => {
-    mock.module("../config/load", () => ({
+    mock.module("../config/load", () => ({ ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: {
