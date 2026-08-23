@@ -214,12 +214,14 @@ describe("charactersRoutes", () => {
       },),
     );
     const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
 
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ displayName: "New Name", },),
+        body: JSON.stringify({ displayName: "New Name", dataVersion: created?.format_version, },),
+
       },),
     );
     expect(res.status,).toBe(200,);
@@ -240,12 +242,14 @@ describe("charactersRoutes", () => {
       },),
     );
     const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
 
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ contentRating: "nsfw_extreme", },),
+        body: JSON.stringify({ contentRating: "nsfw_extreme", dataVersion: created?.format_version, },),
+
       },),
     );
     expect(res.status,).toBe(200,);
@@ -267,6 +271,63 @@ describe("charactersRoutes", () => {
       },),
     );
     expect(res.status,).toBe(404,);
+  });
+
+  // CHAR-1: dataVersion is REQUIRED for concurrent-edit safety. Without
+  // it, concurrent edits silently overwrite each other (last-write-wins).
+  test("PUT /api/actors/:id returns 400 when dataVersion is missing", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Versioned Actor", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "No Version Sent", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("PUT /api/actors/:id returns 409 when dataVersion is stale", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Concurrent Target", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+
+    // Send a deliberately-stale dataVersion (one less than current).
+    const current = await db
+      .selectFrom("actors",)
+      .select("format_version",)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+    // Send a deliberately-stale dataVersion that is still >= 0 so it passes
+    // schema validation (Elysia rejects negative integers with 422).
+    const staleVersion = (current?.format_version ?? 0) + 1;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Concurrent Edit", dataVersion: staleVersion, },),
+      },),
+    );
+    expect(res.status,).toBe(409,);
+    // Genuine optimistic-lock conflict, not a schema/middleware 400 or 422.
+    const body = (await res.json()) as { error?: string };
+    expect(body.error ?? "",).toMatch(/version|conflict|stale/i,);
   });
 
   // ── DELETE /api/actors/:id ──────────────────────────────────
@@ -324,6 +385,7 @@ describe("charactersRoutes", () => {
       },),
     );
     const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
 
     // solo holds "*" in DEFAULT_PERMISSIONS → granted admin.character bypass.
     const soloApp = createApp(db, "solo-user-id", "solo",);
@@ -331,7 +393,8 @@ describe("charactersRoutes", () => {
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ displayName: "Solo Edit", },),
+        body: JSON.stringify({ displayName: "Solo Edit", dataVersion: created?.format_version, },),
+
       },),
     );
     expect(res.status,).toBe(200,);
