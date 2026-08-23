@@ -2,28 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Group Sender-Key Wrap (TASK-asymmetric-key-pairs-followup — Phase C)
+ * Group Sender-Key Wrap — protocol + persistence
+ * (TASK-asymmetric-key-pairs-followup — Phase C)
  *
- * The sender of a group message chooses ONE 32-byte sender chain key per
- * outgoing message (random, fresh per send). For each intended recipient,
- * the sender wraps the chain key so only they can recover it AND so a
- * wrong-recipient unwrap fails authentication (not silently returns
- * garbage):
+ *   The sender of a group message chooses ONE 32-byte sender chain key
+ *   per outgoing message (random, fresh per send). For each intended
+ *   recipient, the sender wraps the chain key so only they can recover
+ *   it AND so a wrong-recipient unwrap fails authentication (not
+ *   silently returns garbage):
  *
- *   wrap(recipient, chainKey):
- *     1. eph = ECDH.generateKeyPair()
- *     2. shared = ECDH(eph.priv, recipient.static.pub)
- *     3. keystream = HKDF-Expand(shared, info="loop-lore-e2e-sender-key-wrap-v1")
- *     4. nonce = 12 random bytes
- *     5. aad = "loop-lore-e2e-sender-key-wrap-aad-v1:<recipientActorId>"
- *     6. ciphertext = AES-GCM(keystream-as-key, nonce, aad, chainKey)
- *     7. wire = nonce_b64 "." ct_b64
- *
- *   unwrap(wire, senderEphPubJwk, myStatic.priv, recipientActorId):
- *     1. shared = ECDH(myStatic.priv, senderEph)
- *     2. keystream = HKDF-Expand(shared, info=...)
- *     3. AES-GCM-decrypt(keystream-as-key, nonce, aad, ct) — throws on
- *        auth-tag mismatch (wrong recipient or tampered wire)
+ *   See `wrap-sender-key-helpers.ts` for the underlying constants,
+ *   AAD builder, and HKDF-expand primitive; this file owns the
+ *   `wrapSenderKey` / `unwrapSenderKey` protocol functions and the
+ *   server-side persistence helpers (`recordGroupWrap`,
+ *   `latestGroupWrapForRecipient`).
  *
  * Forward secrecy of the chain key:
  *   Each message uses a fresh random chain key. The CHAIN KEY for
@@ -42,42 +34,27 @@
  */
 
 import type { Kysely, } from "kysely";
-
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
+import {
+  hkdfExpandToBytes,
+  KEY_LENGTH,
+  WRAP_INFO,
+  WRAP_NONCE_LENGTH,
+  wrapAad,
+} from "./wrap-sender-key-helpers";
+import type {
+  RecipientWrap,
+  UnwrapSenderKeyOpts,
+  WrapSenderKeyOpts,
+} from "./wrap-sender-key-helpers";
 
-const WRAP_INFO = "loop-lore-e2e-sender-key-wrap-v1" as const;
-const AAD_PREFIX = "loop-lore-e2e-sender-key-wrap-aad-v1" as const;
-const KEY_LENGTH = 32;
-const WRAP_NONCE_LENGTH = 12;
-
-function wrapAad(recipientActorId: string,): Uint8Array {
-  return new TextEncoder().encode(`${AAD_PREFIX}:${recipientActorId}`,);
-}
-
-export interface RecipientWrap {
-  recipientActorId: string;
-  /**
-   * base64. `<nonce_b64>"."<ct_b64>` — AES-GCM ciphertext of the chain
-   * key under the per-recipient wrap key, with the recipient actor id
-   * bound as AAD.
-   */
-  wrappedKey: string;
-  /** Per-recipient ephemeral ECDH public key (JWK). */
-  senderEphPubJwk: JsonWebKey;
-}
-
-export interface WrapSenderKeyOpts {
-  chainKey: Uint8Array;
-  recipients: { actorId: string; staticPubJwk: JsonWebKey }[];
-}
-
-export interface UnwrapSenderKeyOpts {
-  wrappedKey: string;
-  senderEphPubJwk: JsonWebKey;
-  recipientStaticPriv: CryptoKey;
-  recipientActorId: string;
-}
+// Re-export types so existing importers (`import { ... } from "./wrap-sender-key"`) keep working.
+export type {
+  RecipientWrap,
+  UnwrapSenderKeyOpts,
+  WrapSenderKeyOpts,
+} from "./wrap-sender-key-helpers";
 
 export async function wrapSenderKey(
   opts: WrapSenderKeyOpts,
@@ -195,32 +172,7 @@ export async function unwrapSenderKey(
   return pt;
 }
 
-async function hkdfExpandToBytes(
-  sharedBytes: Uint8Array,
-  info: string,
-  outLen: number,
-): Promise<Uint8Array> {
-  const base = await crypto.subtle.importKey(
-    "raw",
-    new Uint8Array(sharedBytes,).buffer as ArrayBuffer,
-    "HKDF",
-    false,
-    ["deriveBits",],
-  );
-  const bits = await crypto.subtle.deriveBits(
-    {
-      name: "HKDF",
-      hash: "SHA-256",
-      salt: new Uint8Array(0,),
-      info: new TextEncoder().encode(info,),
-    },
-    base,
-    outLen * 8,
-  );
-  return new Uint8Array(bits,);
-}
-
-// ── Server-side helpers (e2e_group_wraps table) ─────────────
+// ── Server-side helpers (e2e_group_wraps table) ────────────────────────────
 
 export interface GroupWrapRow {
   id: string;
