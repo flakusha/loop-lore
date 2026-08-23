@@ -129,7 +129,8 @@ interface AlgorithmFactory {
 - `TASK-encryption-auto-key-rotation.md` — 🟨 Partial (built, broken — see BUG-key-rotation-noop-orphans-history)
 - `TASK-world-location-encryption.md` — ⬜ New
 - `TASK-asymmetric-key-pairs.md` — ⬜ New
-- `TASK-asymmetric-key-pairs-followup.md` — 🟡 Partial (MVP landed on dev commit 17410ce1; browser encrypt + ratchet + group chat still pending — see 4-phase plan below)
+- `TASK-asymmetric-key-pairs-followup.md` — 🟡 Partial (Foundation + Phases A–D shipped on dev commit `10b203b4`; Phases E–G queue receiver-side wiring / Signal-grade ratchet / UI affordances — see "Client-Side E2E — 4-Phase Plan" below)
+</input>
 - `TASK-fix-crypto-isolation.md` — ✅ Done (was misdiagnosed)
 - `TASK-non-standard-browser-crypto-research.md` — ⬜ Research: JS/WASM crypto beyond WebCrypto
 
@@ -145,6 +146,16 @@ See `.plan/tickets/BUG-encryption-tier-not-enforced.md`,
 `BUG-chat-key-history-loss-join-leave.md`,
 `BUG-key-rotation-noop-orphans-history.md`,
 `BUG-private-tier-no-true-e2e.md`, `BUG-auto-rotation-config-drift.md`.
+
+### Open bugs against Phase B/C/D code (2026-08-23)
+
+Cross-references from `TASK-asymmetric-key-pairs-followup.md` "Open bugs against
+the shipped code":
+- `BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md` — aliasing hazard in `dh-ratchet.ts`.
+- `BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md` — dead param in `initDhRatchet`.
+- `BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md` — `?? 0` mask in `utils/base64.ts`.
+- `BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md` — pre-existing config-infra coverage gap; defer to backlog.
+</input>
 
 ## Client-Side E2E — 4-Phase Plan (2026-08-22)
 
@@ -226,11 +237,36 @@ removal excludes future message wraps.
  ✅ DONE in commit `TBD` — `at-rest` is the canonical wire value; the
  `private` tier handler has been removed; migration `057` rewrites
  existing rows.
-</input>
 
 **Tests:** full HTTP route round-trip, server-encrypt rejection for
 `at-rest` tier, read path returns ciphertext unchanged.
+### Phases A–D — Shipped status (2026-08-23)
+</input>
 
+All four phases shipped via `bun x tsgo --noEmit -p tsconfig.backend.json`
+exit 0 + `bun test src/crypto/ src/frontend/e2e/ src/db/` → 531 pass / 0 fail.
+Merge commit on dev: `10b203b4`. Open bugs against the shipped code listed
+in "Open bugs against Phase B/C/D code" above; must resolve before Phase E.
+
+### Phase E (NEXT) — Receiver-side wiring
+
+- `GET /api/chats/:id/e2e-session/:recipientActorId` returns
+  `{ skippedKeys[], lastSeenEphemeralJwk?, lastSeenCounter? }` so the
+  browser can rebuild local chain state without server-side plaintext.
+- Migration `058_e2e_receiver_state.ts` extends `e2e_session` with counters
+  + public-ephemeral metadata only (never keys).
+- Frontend `src/frontend/e2e/hydrate-chain-state.ts` consumes the route,
+  rebuilds `DhRatchetState`, and feeds `decrypt-message.ts`.
+- Full scope: see `TASK-asymmetric-key-pairs-followup.md` §"Phase E".
+
+### Phase F — Signal-grade double ratchet (X3DH + unbounded skip)
+
+### Phase G — UI affordances (per-chat tier dropdown, key-recovery, LLM-with-E2E consent UX)
+
+Phase G blocked on `TASK-encryption-architecture-clarification.md`
+(LLM-with-E2E strategy). Phases F + G see
+`TASK-asymmetric-key-pairs-followup.md` §"Phase F / G".
+</input>
 ### Open design questions (must be resolved before Phase B/C)
 
 - **Forward secrecy re-keying cadence**: per-message vs per-session?

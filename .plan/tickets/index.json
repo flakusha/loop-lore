@@ -60,6 +60,17 @@
     "git_issue": "a9a4ea3",
     "status": "done"
   },
+  "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
+    "hash": "d0d3739",
+    "extid": "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0",
+    "type": "BUG",
+    "title": "base64.toBase64 coerces undefined to 0 via bytes[i] ?? 0",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md"
+  },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
     "extid": "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED",
@@ -151,6 +162,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
   },
+  "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
+    "hash": "6fb9cbd",
+    "extid": "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD",
+    "type": "BUG",
+    "title": "dhRatchetDecrypt mutates opts.state (aliasing hazard)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md"
+  },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
     "extid": "BUG-E2E-TEST-INFRASTRUCTURE-FIXES",
@@ -213,6 +235,17 @@
     "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md",
     "git_issue": "2a271d7"
   },
+  "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
+    "hash": "106844a",
+    "extid": "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C",
+    "type": "BUG",
+    "title": "hot-reload.test.ts asserts trivially-true on EMFILE/ENOENT (coverage regression)",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md"
+  },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
     "extid": "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR",
@@ -234,6 +267,17 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-impersonate-commands-register-empty-callback.md"
+  },
+  "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ": {
+    "hash": "86a2a1b",
+    "extid": "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ",
+    "type": "BUG",
+    "title": "InitDhRatchetOpts.theirInitialPub declared but never read",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md"
   },
   "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY": {
     "hash": "966f256",

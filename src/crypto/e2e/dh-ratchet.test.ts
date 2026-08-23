@@ -19,15 +19,12 @@ import {
   type DhRatchetState,
   initDhRatchet,
 } from "./dh-ratchet.ts";
-import { generateKeyPair, } from "./key-pairs.ts";
 
 async function setupAliceBob(): Promise<{
   aliceState: DhRatchetState;
   aliceInitialPubJwk: JsonWebKey;
   bobState: DhRatchetState;
 }> {
-  const aliceIdentity = await generateKeyPair();
-  const bobIdentity = await generateKeyPair();
   // rootKey is a 32-byte shared secret derived out-of-band (e.g. via the
   // existing `deriveSharedSecret` in key-pairs.ts). Tests use a fresh
   // random value here for realism.
@@ -35,11 +32,9 @@ async function setupAliceBob(): Promise<{
 
   const aliceInit = await initDhRatchet({
     rootKey,
-    theirInitialPub: bobIdentity.publicKey,
   },);
   const bobInit = await initDhRatchet({
     rootKey,
-    theirInitialPub: aliceIdentity.publicKey,
   },);
   return {
     aliceState: aliceInit.state,
@@ -209,12 +204,10 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
   });
 
   test("init: both sides produce same initial chain key from same root", async () => {
-    const aliceIdentity = await generateKeyPair();
-    const bobIdentity = await generateKeyPair();
     const rootKey = crypto.getRandomValues(new Uint8Array(32,),);
 
-    const a = await initDhRatchet({ rootKey, theirInitialPub: bobIdentity.publicKey, },);
-    const b = await initDhRatchet({ rootKey, theirInitialPub: aliceIdentity.publicKey, },);
+    const a = await initDhRatchet({ rootKey, },);
+    const b = await initDhRatchet({ rootKey, },);
 
     expect(Buffer.from(a.state.sendingChainKey,).toString("hex",),)
       .toBe(Buffer.from(b.state.receivingChainKey,).toString("hex",),);
@@ -223,10 +216,8 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
   });
 
   test("rootKey byte length validation: throws on wrong size", async () => {
-    const aliceIdentity = await generateKeyPair();
     await expect(initDhRatchet({
       rootKey: new Uint8Array(16,), // too short
-      theirInitialPub: aliceIdentity.publicKey,
     },),).rejects.toThrow(/must be 32 bytes/,);
   });
 });

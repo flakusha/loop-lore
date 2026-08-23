@@ -3,15 +3,14 @@
 
 # TASK: Implement True Client-Side E2E for at-rest+ Tier (4-phase delivery)
 
-**Status:** 🟡 Partial — foundation merged to dev (17410ce1); Phase A next
+**Status:** 🟡 Phases A–D shipped (commit `10b203b4` on dev); Phase E next
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
-**Blocked by:** TASK-encryption-architecture-clarification (Phase B/C only)
+**Blocked by:** TASK-encryption-architecture-clarification (Phase G only — see below)
 **Git issue:** 5d9636b (open — re-open on next phase)
-**Branch:** (Phase A) e2e-ratchet-phase-a
-
+**Branch:** (next) e2e-ratchet-phase-e-receiver-wiring
 ## Summary
 
 Implement genuine end-to-end encryption for the `at-rest` encryption tier where the server
@@ -195,3 +194,112 @@ each subsequent phase closes a slice once shipped.
 - `bun run typecheck` + `bun test src/crypto/e2e/ src/frontend/e2e/`
   green.
 - `bun run plan:sync` green.
+
+## Phase Status (post-Phase-D, 2026-08-23)
+
+- [x] **Foundation** (commit `17410ce1`) — ECDH keypair gen + actor pubkey registry + session key derive.
+- [x] **Phase A** (commit `10b203b4`) — ratchet primitive + 1:1 encrypt/decrypt.
+- [x] **Phase B** (commit `10b203b4`) — per-message ECDH forward-secrecy window + skipped-key retention.
+- [x] **Phase C** (commit `10b203b4`) — group sender-key + per-recipient ECDH wrap + tamper-detected unwrap.
+- [x] **Phase D** (commit `10b203b4`) — tier rename `private → at-rest` + 057 migration + integration tests green.
+- [ ] **Phase E** (NEXT) — receiver-side wiring: server-issued ephemeral pubkey round trip
+       on inbound messages, chain-state hydration, on-receive decrypt at the browser layer.
+- [ ] **Phase F** — full Signal-grade double ratchet (X3DH initial key agreement,
+       unbounded skipped-key retention, async receiver state persistence).
+- [ ] **Phase G** — UI affordances: per-chat tier dropdown, key-recovery flow,
+       LLM-with-E2E consent UX. Blocked on `TASK-encryption-architecture-clarification`.
+
+### Open bugs against the shipped code (must resolve before Phase E starts)
+
+- `BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md` —
+  `dhRatchetDecrypt` continuation branch aliases caller's state. Latent bug if a
+  caller retains the input. Fix: clone `state` at the top of the function.
+  See `src/crypto/e2e/dh-ratchet.ts:156`.
+- `BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md` —
+  `initDhRatchet` accepts `theirInitialPub` but never uses it. Misleading API;
+  remove the dead param + callsites (option A from the ticket) — option B (use
+  it to seed the DH) would break the existing test contract that asserts
+  `sendingChainKey === receivingChainKey` derived from root.
+  See `src/crypto/e2e/dh-ratchet.ts:42-79`.
+- `BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md` —
+  `toBase64` reads `bytes[i] ?? 0`; the `?? 0` is dead for `Uint8Array` and
+  silently masks caller bugs. Replace with `bytes[i]!`. Affects `dh-ratchet.ts`.
+  See `src/utils/base64.ts:18`.
+- `BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md` —
+  pre-existing config-infra coverage gap, unrelated to crypto. Defer to backlog.
+
+## Phase E — Receiver-side wiring (NEXT slice)
+
+**Goal:** Inbound messages for `at-rest` chats decrypt at the browser layer
+before they reach the chat UI; the server never observes plaintext.
+
+**Backend (`src/crypto/e2e/`, `src/routes/`):**
+- Wire `src/crypto/e2e/dh-ratchet.ts` decrypt path into the existing message
+  read flow (today the read path returns `e2e_payload` but does not invoke
+  `dhRatchetDecrypt` server-side — server must not, by design, but the route
+  still needs to attach the recipient's stored skipped-keys row so a follow-up
+  browser-side hydration call has what it needs).
+- New route: `GET /api/chats/:id/e2e-session/:recipientActorId` returning the
+  server-side `{ skippedKeys[], lastSeenEphemeralJwk?, lastSeenCounter? }`
+  for a recipient to rebuild local chain state.
+- Per-recipient `e2e_session` rows: extend `e2e_session` shape with a
+  `skipped_keys_summary` JSON column to carry the recipient's seen-chain
+  context without putting crypto material on the server (only counters +
+  ephemeral pubkeys, never chain keys).
+
+**Frontend (`src/frontend/e2e/`, `src/frontend/browser.ts`):**
+- `src/frontend/e2e/decrypt-message.ts` — call `dhRatchetDecrypt` with
+  hydrated chain state + skipped keys; fall back to the existing symmetric
+  decrypt path when payload is non-E2E (semantic-preserving backwards compat).
+- `src/frontend/e2e/hydrate-chain-state.ts` — on message stream open for an
+  `at-rest` chat, fetch `/e2e-session/:recipientId` + actor's local private
+  key from `key-store.ts`, recompute the chain root via
+  `deriveSharedSecret(localPriv, theirEphemeral)`, and produce a usable
+  `DhRatchetState`.
+- Hook into the existing chat-template hydrate path: replace the read-time
+  server-decrypt call (where present) with a client-decrypt step; preserve
+  fallback for `none`/`standard` chats.
+
+**DB (`src/db/migrations/`, `src/db/schema-core.ts`):**
+- New migration `058_e2e_receiver_state.ts`: extend `e2e_session` with
+  `last_seen_ephemeral_jwk`, `last_seen_counter`, `skipped_keys_summary`
+  columns; these are server-stored because they're per-recipient metadata
+  (counters + public ephemerals only — no keys).
+- Regenerate downstream artifacts:
+  `src/db/schema-core.ts`, `src/db/schema.ts`, `src/db/schema-manifest.ts`,
+  `src/test-utils/insert-helpers.ts`, `src/validation/db-schemas.ts`.
+
+**Acceptance criteria:**
+- Inbound E2E message visible in the chat UI without server-side decrypt.
+- Manual destroy of one actor's localStorage forces a fresh `dhRatchetDecrypt`
+  fail (expected — client-side state is the source of truth).
+- Out-of-order delivery (counter gap) yields correct plaintext via the
+  skipped-key retention path; previously-decoded counter values are still
+  accessible.
+- `bun test src/crypto/ src/frontend/e2e/ src/db/ src/routes/ -t "e2e"` green.
+- `bun run plan:sync` green; `bun run scripts/check-db-schemas.ts` green.
+
+## Phase F — Full Signal-grade double ratchet
+
+Out of scope for Phase E; replace the current ECDH-ephemeral approach with:
+- **X3DH initial key agreement** (signed prekeys + one-time prekeys + DH ratchet).
+- **Asynchronous initial-key delivery** (server stores the signed prekey
+  bundle; receiver fetches on first contact).
+- **Unbounded skipped-key retention** (today capped at `maxSkip`).
+- **Asynchronous ratchet state persistence** (IndexedDB-wrapped-key store;
+  today localStorage JWK).
+
+Tracked here for forward visibility; not blocked on anything but Phase E.
+
+## Phase G — UI affordances
+
+Blocked on `TASK-encryption-architecture-clarification.md` until the LLM-with-
+E2E strategy is settled (deniability + server-mediated generation vs. client-
+side inference vs. secure-enclave). Scope:
+- Per-chat tier dropdown (`none` / `standard` / `at-rest`).
+- Key-recovery flow (social recovery, opt-in escrow, or none — pending arch).
+- LLM-with-E2E consent UX (per-message or per-chat toggle; explicit server
+  decrypt with auditing).
+- Client-side key management screen
+  (`src/components/settings/key-management.html` per
+  `epic-encryption-workflow.md` §"Phase 2c").
