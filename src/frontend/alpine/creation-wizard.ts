@@ -63,6 +63,14 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Confirm and save the wizard draft. Sends the edited entity data to the
    * create-entity-confirm endpoint which persists the entity.
+   *
+   * State shape note: `wizardDraft` is a single slot, not a keyed map. The
+   * `wizardId` parameter is validated against the active draft's wizardId —
+   * if they differ, the call is a no-op (logged at warn). This guards against
+   * cross-talk when a stale wizard's confirm fires after a newer wizard
+   * replaced the draft (the second wizard wins, the first is silently dropped
+   * by the guard rather than committing the wrong entity). Switching to a
+   * keyed map would be required to support concurrent live drafts.
    */
   async confirmWizard(wizardId: string,): Promise<void> {
     if (this.wizardDraft?.wizardId !== wizardId) {
