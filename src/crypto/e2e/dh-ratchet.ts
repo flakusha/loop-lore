@@ -18,7 +18,7 @@
  * Crypto primitives live in `./dh-ratchet-primitives.ts`.
  */
 import { toBase64, } from "../../utils/base64";
-import type { DhMessagePayload, } from "./dh-ratchet-primitives.ts";
+import type { DhMessagePayload, } from "./dh-ratchet-primitives";
 import {
   canonicalJwk,
   chainStep,
@@ -26,7 +26,7 @@ import {
   deriveChainKeyFromRoot,
   dhStep,
   KEY_BYTES,
-} from "./dh-ratchet-primitives.ts";
+} from "./dh-ratchet-primitives";
 
 export interface DhRatchetState {
   rootKey: Uint8Array;
@@ -41,14 +41,18 @@ export interface DhRatchetState {
 
 export interface InitDhRatchetOpts {
   rootKey: Uint8Array;
-  theirInitialPub: CryptoKey;
 }
+
+// theirInitialPub was previously declared here but never used.
+// The ECDH agreement producing `rootKey` already occurs upstream
+// (see deriveSharedSecret in key-pairs.ts); the initial chain key
+// is derived deterministically from `rootKey` via deriveChainKeyFromRoot,
+// so no peer pubkey is needed at init time.
 
 export interface InitDhRatchetResult {
   state: DhRatchetState;
   myInitialPubJwk: JsonWebKey;
 }
-
 export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRatchetResult> {
   if (opts.rootKey.byteLength !== KEY_BYTES) {
     throw new Error(`rootKey must be ${KEY_BYTES} bytes (got ${opts.rootKey.byteLength})`,);
@@ -153,7 +157,13 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
 
   // 2. Chain advancement: either a new ephemeral (DH step + fresh chain) or
   //    a continuation of the current chain (counter advance only).
-  let workingState = state;
+  // Clone state to avoid mutating caller's input (BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard).
+  let workingState: DhRatchetState = {
+    ...state,
+    receivingChainKey: new Uint8Array(state.receivingChainKey,),
+    myEphemeralPubJwk: { ...state.myEphemeralPubJwk, },
+    theirCurrentPubJwk: state.theirCurrentPubJwk === null ? null : { ...state.theirCurrentPubJwk, },
+  };
   let newSkippedKeys: SkippedKey[] = [];
   let recvCountAdvance = 0;
   let chainKey: Uint8Array = new Uint8Array(workingState.receivingChainKey,);
@@ -180,7 +190,6 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
       theirCurrentPubJwk: payload.ephemeralPublicJwk,
       recvCount: 0,
     };
-    chainKey = new Uint8Array(workingState.receivingChainKey,);
   } else {
     recvCountAdvance = payload.counter - state.recvCount;
     if (recvCountAdvance < 0) {
