@@ -41,6 +41,8 @@ export const ActorUpdateBody = t.Object({
   creator: t.Optional(t.String(),),
   characterVersion: t.Optional(t.String(),),
   settings: t.Optional(t.Any(),),
+  /** Optimistic-concurrency version from the prior GET response. CHAR-1. */
+  dataVersion: t.Optional(t.Integer({ minimum: 0, },),),
 },);
 
 export const ActorIdParams = t.Object({

@@ -41,8 +41,18 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError({ message: ctx.t?.("errors.forbidden",) ?? "Forbidden", status: HttpStatus.Forbidden, },);
         }
 
-        // Optimistic concurrency check
-        if (dataVersion !== undefined && dataVersion !== actor.format_version) {
+        // CHAR-1: optimistic concurrency version is REQUIRED. Without it,
+        // concurrent edits silently overwrite each other (last-write-wins).
+        // Clients send `dataVersion` from the prior GET response.
+        if (dataVersion === undefined) {
+          return jsonError({
+            message: ctx.t?.("characters.dataVersionRequired",) ??
+              "dataVersion is required for concurrent-edit safety. Re-fetch the actor and retry.",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+
+        if (dataVersion !== actor.format_version) {
           return jsonError({
             message: "Version conflict: record was modified by another process",
             status: HttpStatus.Conflict,
