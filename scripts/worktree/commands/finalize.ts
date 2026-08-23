@@ -4,7 +4,7 @@
 import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { assertNotInWorktree, gitSync, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -71,6 +71,7 @@ export async function finalize(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
+  assertNotInWorktree("finalize",);
   let branch = "";
   let mergeStrategy = "rebase";
   let force = false;

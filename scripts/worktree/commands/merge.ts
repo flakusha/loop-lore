@@ -4,7 +4,7 @@
 import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { assertNotInWorktree, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 function gpgMergeFlags(config: WorktreeConfig,): string[] {
@@ -33,6 +33,7 @@ export async function merge(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
+  assertNotInWorktree("merge",);
   const [branch, source,] = args;
 
   if (!branch || !source) {

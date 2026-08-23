@@ -5,6 +5,9 @@
  * Git operation utilities for worktree management
  */
 
+import { resolve, } from "node:path";
+import { log, } from "./output";
+
 export interface GitBranch {
   name: string;
   current: boolean;
@@ -28,6 +31,36 @@ const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
 export function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
+}
+
+/**
+ * True when `cwd` lies inside a linked worktree (e.g. tree/<branch>) rather
+ * than the main repo root. Detection is git-aware (uses rev-parse) so it works
+ * regardless of how the CLI was launched or which checkout's copy is running:
+ * in a linked worktree `--show-toplevel` differs from the parent of
+ * `--git-common-dir` (the shared .git).
+ */
+export function isInsideWorktree(cwd: string = process.cwd(),): boolean {
+  try {
+    const toplevel = gitSync(cwd, "rev-parse", "--show-toplevel",).trim();
+    const commonDir = gitSync(cwd, "rev-parse", "--git-common-dir",).trim();
+    const mainRoot = resolve(commonDir, "..",);
+    return toplevel !== mainRoot;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fail fast if a worktree-management command is run from inside a linked
+ * worktree (tree/*) instead of the repo root.
+ */
+export function assertNotInWorktree(command: string,): void {
+  if (isInsideWorktree()) {
+    console.error(`✘ command '${command}' must be run from the repo root, not inside a worktree (tree/*)`,);
+    console.log("  cd to the repo root and re-run: bun run scripts/worktree/ " + command,);
+    process.exit(1,);
+  }
 }
 
 /**
