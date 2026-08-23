@@ -60,6 +60,7 @@ Auth at the route layer: `requireAdmin(ctx)` (≡ `can(ctx.userRole,
 
 1. **Strip `performedBy` from the body schemas** at the route layer
    (`src/routes/nsfw-moderation/shared.ts:43-52`):
+
    ```ts
    export const blockBody = t.Object({
      targetUserId: t.String(),
@@ -67,6 +68,7 @@ Auth at the route layer: `requireAdmin(ctx)` (≡ `can(ctx.userRole,
      // performedBy removed
      },);
    ```
+
 2. **Derive `performedBy` server-side**: change all six
    `mod-actions.ts` functions to accept `performedBy: string` from
    the route — pass `ctx.userId` (server-trusted). Update the

@@ -33,7 +33,7 @@ redaction.
 | `src/routes/admin/aux-telemetry.ts` | 149-172 | TypeBox response schema declares `userId`, `chatId`, `error` fields — no redaction |
 | `src/aux-pipeline/runner.ts` | 91-106 | Emits `aux.call` events with `userId`, `chatId`, `data: { task, model, provider, latencyMs, success, promptTokens, completionTokens, error }` |
 | `src/routes/admin/aux-telemetry.ts` | 44-45 | `DEFAULT_LIMIT = 50, MAX_LIMIT = 500` — `MAX_LIMIT = 500` is high for a single response |
-| `src/routes/admin/aux-telemetry.ts` | 67-70 | `limit` parsed from query with `Math.min(Math.max(Number(query?.limit,) || DEFAULT_LIMIT, 1,), MAX_LIMIT,)` — no row-level scoping |
+| `src/routes/admin/aux-telemetry.ts` | 67-70 | `limit` parsed from query with `Math.min(Math.max(Number(query?.limit,) \|\| DEFAULT_LIMIT, 1,), MAX_LIMIT,)` — no row-level scoping |
 
 Auth: `can(ctx.userRole, "admin.system")` at line 58 ✓.
 
@@ -83,7 +83,7 @@ Auth: `can(ctx.userRole, "admin.system")` at line 58 ✓.
 ## Verification
 
 - Unit: `aux-telemetry.ts:73-105` returns rows with `actorHash`
-  + `chatHash` (length 16 hex), no raw user_id/chat_id; `error`
+  - `chatHash` (length 16 hex), no raw user_id/chat_id; `error`
   redacted to `errorCategory` enum; `limit` capped at 100;
   `since > 7d` returns 400.
 - Integration: seed AUX events with raw user_id; admin GET returns

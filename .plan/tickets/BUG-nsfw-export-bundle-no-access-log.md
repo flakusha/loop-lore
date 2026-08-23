@@ -62,6 +62,7 @@ elevation. No rate limit. No access log. No confirmation token.
 1. **Elevate the capability**: require `admin.users` (not
    `admin.system`). Document the rationale (PII surface).
 2. **Emit a `log_entries` access-log row** before serving:
+
    ```ts
    await db.insertInto("log_entries").values({
      id: crypto.randomUUID(),
@@ -78,6 +79,7 @@ elevation. No rate limit. No access log. No confirmation token.
      timestamp: Date.now(),
      },).execute();
    ```
+
 3. **Rate-limit the endpoint** at the middleware layer (e.g.
    10/hour per admin) — reuse `src/middleware/rate-limit.ts`.
 4. **Stream the bundle to a signed URL** rather than returning
