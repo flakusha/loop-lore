@@ -27,8 +27,8 @@ import "./alpine/index";
 // ── 9. UI utilities (sidebar, toast, modal) ─────────────────────
 import "./ui";
 
-// ── 10. Gallery upload dropzone ─────────────────────────────────
-import "./gallery-upload";
+// ── 10. Asset preview global (openAssetPreview for embedded gallery grids) ──
+import "./asset-preview";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
 const g = globalThis as Record<string, unknown>;
