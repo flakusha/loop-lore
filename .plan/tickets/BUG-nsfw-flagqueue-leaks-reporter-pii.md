@@ -59,10 +59,12 @@ exposes who reported what.
 
 1. **Project to a `FlagQueueView` type** in
    `src/nsfw/moderation-service/flags.ts`:
+
    ```ts
    type FlagQueueView = Omit<ContentFlag,
      "reporterId" | "description" | "chatId" | "worldId" | "contentId">;
    ```
+
    `getFlagQueue` returns `FlagQueueView[]`. `description` is
    loaded only on explicit single-flag detail (new
    `GET /api/nsfw/moderation/flags/:id`).
