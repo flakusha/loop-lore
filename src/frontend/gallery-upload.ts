@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+export const ALLOWED_TYPES = ["image/", "audio/", "video/"] as const;
+
+export function isAllowedType(file: { type: string }): boolean {
+  return ALLOWED_TYPES.some((t) => file.type.startsWith(t));
+}
+
+
 export function initDropZone(dropZoneId: string, inputId: string,): void {
   if (typeof document === "undefined") { return; }
 
