@@ -147,7 +147,7 @@ async function createSessionAndCookie(
     .values({
       id: sessionId,
       user_id: userId,
-      token_hash: "",
+      token_hash: `jwt:${sessionId}`,
       ip,
       user_agent: userAgent,
       expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
