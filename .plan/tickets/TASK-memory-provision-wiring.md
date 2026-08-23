@@ -36,3 +36,6 @@ Connect the memory provision module to the prompt assembly pipeline.
 - `src/assistant/prompt/sections/memories.ts` (modify)
 - `src/memory/provision.ts` (read-only)
 - `src/memory/provision.test.ts` (may extend)
+
+
+git issue: 90378a1

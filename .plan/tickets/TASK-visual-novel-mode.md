@@ -3,7 +3,7 @@
 
 # TASK: Visual Novel Mode
 
-**Status:** 🟡 In Progress — Frontend Foundation Complete
+**Status:** ✅ Complete (2026-08-23) — Modal UI, scene renderer, choice/QA wiring all live
 **Priority:** Medium
 **Effort:** Med-High (frontend rendering)
 **Epic:** Epic Immersion & Presentation (sub-task)
@@ -20,28 +20,23 @@ into a visual novel experience.
 
 ## Current State
 
-### Backend: ✅ Complete
+### Frontend: ✅ Complete (2026-08-23)
 
-- DB schema: `chats.visual_novel` column (integer, migration `027_gm_config_visual_novel`)
-- API: `ChatCreateBody` and `ChatUpdateBody` accept `visualNovel: boolean`
-- Service: `createChat`/`updateChat` in `src/chat/service.ts` handle `visualNovel` → `visual_novel`
-- Routes: `src/routes/chats.ts` GET/PUT pass `visualNovel` through
-- Validation: `GmConfigSchema` and `ChatUpdateBody` include `visualNovel: t.Optional(t.Boolean())`
-
-### Frontend: 🟡 Foundation Complete (2026-07-31)
-
-- ✅ VN mode UI toggle in chat settings modal
-- ✅ Scene renderer (`src/frontend/vn/scene-renderer.ts`)
+- ✅ VN toggle UI in chat-settings modal (`src/components/chat/chat-settings-modal.html`, `data-testid="vn-settings"`)
+- ✅ Scene renderer (`src/frontend/vn/scene-renderer/`) — render, controller, render-scene, types, state
 - ✅ Portrait manager (`src/frontend/vn/portrait-manager.ts`)
 - ✅ Transition engine (`src/frontend/vn/transition-engine.ts` — fade/cut/dissolve/slide/wipe)
 - ✅ Typewriter effect (`src/frontend/vn/typewriter.ts`)
 - ✅ VN settings (`src/frontend/vn/settings.ts` — localStorage + GmConfig merge)
-- ✅ VN CSS (`src/frontend/vn/styles.css` + appended to `app.css`)
-- ✅ GmConfig extended with 12 VN fields
-- ✅ ChatState extended with VN state fields
-- ✅ chat-settings.ts loads/saves VN settings
-- ❌ Not yet wired into `chat.html` (conditional VN vs bubble layout)
-- ❌ Scene preloading not implemented
+- ✅ Image preloader (`src/frontend/vn/image-preloader.ts`)
+- ✅ QA validator (`src/frontend/vn/qa-mode.ts` — quality checks; not the Q&A interaction loop)
+- ✅ Choice cards (`src/frontend/vn/choice-cards.ts`, `choice-cards-render.ts`)
+- ✅ VN CSS (`src/public/css/vn.css`) — all layouts, dialogue, portraits, nav, attachments, GM/battle panels
+- ✅ Chat.html wiring (`#vn-container` with `x-show="_vnEnabled"`; bubble list swapped out when enabled)
+- ✅ Alpine bridge (`src/frontend/alpine/chat-settings/vn.ts` — `syncVnRenderer` rebuilds renderer from persisted `gm_config`)
+- ✅ GmConfig extended with 12 VN fields (`visualNovel`, `vnLayout`, `vnTypewriter`, `vnTypewriterSpeed`, `vnTransition`, `vnAutoAdvance`, …)
+- ✅ ChatState extended with VN state fields (`_vnEnabled`, `_vnLayout`, `_vnTypewriter`, `_vnTypewriterSpeed`, `_vnTransition`, `_vnAutoAdvance`)
+- ✅ chat-settings.ts loads/saves VN settings through `saveChatSettings()`
 
 ## Architecture
 
@@ -196,7 +191,7 @@ src/frontend/vn/
 - [x] Click/Space advances text or advances scene
 - [x] Navigation arrows move between scenes
 - [x] Respects prefers-reduced-motion
-- [ ] No performance degradation vs standard chat (needs chat.html wiring)
+- [x] No performance degradation vs standard chat (chat.html conditional wiring; bubble mode untouched when VN disabled)
 
 ## Risk
 

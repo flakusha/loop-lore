@@ -1,6 +1,6 @@
 # TASK: VN Q&A Mode
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial Complete — QA Validator ✅, Q&A Interaction Loop ⬜ Not Started
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Type:** Feature Task
@@ -10,6 +10,32 @@
 ## Summary
 
 Question<->Answer interaction mode within VN scenes. Player asks questions, characters respond with emotion/expression changes. Answers drive scene branching and consequence tracking. Builds on existing VN rendering (✅ complete).
+
+## Status Split (2026-08-23)
+
+This ticket covers two distinct deliverables — only the first is done.
+
+### ✅ QA Validator (DONE)
+
+`src/frontend/vn/qa-mode.ts` implements a static QA validator:
+
+- Scene text / character / background completeness checks
+- Consecutive narration pacing check
+- `runQaCheck()` produces a report
+- `renderQaReport()` surfaces issues to the GM
+
+Invoked by the chat panel / GM tooling, not as part of the Q&A interaction loop.
+
+### ⬜ Q&A Interaction Loop (NOT STARTED)
+
+Genuinely missing. The question-card → answer → consequence pipeline is not implemented:
+
+- `POST /api/chats/:id/vn/questions` — not wired
+- `POST /api/chats/:id/vn/questions/:qid/answer` — not wired
+- `src/frontend/vn/qa-mode.ts` covers validation only, not interaction
+- `src/routes/vn-generate/index.ts` only wires `storyRoutes` + `choicesRoutes`; no question/answer routes
+
+Move the interaction-loop scope to a new ticket (`TASK-vn-question-answer-interaction.md`) to avoid conflating static QA with the missing interactive feature.
 
 ## Scope
 
