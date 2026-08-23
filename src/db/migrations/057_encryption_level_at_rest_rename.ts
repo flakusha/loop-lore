@@ -7,8 +7,11 @@
  *
  * The runtime tier symbol was updated:
  *   EncryptionLevel.Private  → EncryptionLevel.AtRest
- * with the same storage value `private` renamed to `at-rest` so the wire
- * shape reflects that the server cannot decrypt (true E2E).
+ * The storage value `"private"` is renamed to `"at-rest"`. The new
+ * value name is honest about what the server does today: it stores
+ * the wire payload verbatim (server-mediated pass-through). True
+ * client-side E2E — where the server cannot decrypt — is deferred
+ * to TASK-asymmetric-key-pairs-followup Phase E+.
  *
  * This migration rewrites existing rows so live deployments roll forward
  * cleanly without any backfill hazard. The mapping is:
