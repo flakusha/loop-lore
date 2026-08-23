@@ -105,6 +105,62 @@ merge commit automatically.
 | `fix/<name>`           | Bug fixes                     |
 | `epic/<n>`             | Major epic initiative         |
 
+
+### Branch tiers
+
+Long-lived branches enforce a stability ladder. Work flows **upward** only — lower
+tiers never pull from higher tiers.
+
+| Tier       | Purpose                                                                                  | Protection            | Work allowed                                          |
+| ---------- | ---------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------- |
+| `master`   | Finalized releases only. Stable, reproducible, well-known versions.                      | Protected; signed tag | Tag promotion only — no direct commits                |
+| `stg`      | Stable checkpoint on top of `dev`. Patch-level fixes + vetted subset of `dev`.            | Protected; GPG-signed | Patch fixes only (no feature branches)                |
+| `dev`      | Default integration branch. Most work lands here first via worktree + finalize.          | Unprotected           | Everything: features, fixes, refactors, docs, tickets |
+| worktrees  | Transient `tree/<branch>/` directories under the repo root for parallel work.            | Per-branch            | Whatever the branch allows                            |
+
+**Flow rules:**
+
+- `dev` ← all new work (feature/fix/refactor/TASK) lands here via `bun run scripts/worktree/ finalize`.
+- `stg` ← fast-forward or merge from `dev` once `stg` is clean. Add patch-level hotfixes on top.
+- `master` ← only release tags from `stg`. Promotion requires a signed, annotated tag (see [Release Process](/meta/release-process)).
+
+**Concrete promote steps:**
+
+```bash
+# Promote dev → stg (fast-forward is fine when stg has no divergent work)
+git checkout stg
+git merge --ff-only dev      # or: git merge dev (will fast-forward if clean)
+
+# Or, when stg has its own hotfixes you want to keep, merge non-FF:
+git checkout stg
+git merge dev                # creates a merge commit if histories diverged
+
+# Promote stg → master is tag-only, never a direct push:
+git checkout master
+git merge --ff-only stg      # optional: keep master at a vetted subset
+git tag -s 0.2.0 -m "loop-lore 0.2.0"   # tag, then push (see release-process)
+```
+
+**What `stg` is NOT:**
+
+- Not a catch-all for unmerged work. If a worktree is in flight, it stays in its
+  own branch under `tree/` until `finalize` brings it into `dev`.
+- Not a sibling clone. `stg` is a regular worktree under `tree/stg/`, not a
+  parallel checkout in `../`. Work that lands in a sibling clone bypasses
+  GPG signing and the `finalize` checks; it must be folded back into `dev`
+  through the normal flow.
+- Not a feature branch. Feature work lives in `ticket/*` or `feat/*` worktrees,
+  not on `stg`.
+
+**Why this structure:**
+
+- `dev` can move fast with feature work and experimental refactors.
+- `stg` is where things settle — patch fixes land here, the branch stays small
+  and stable, and it serves as the buildable checkpoint between `dev` and
+  `master`.
+- `master` only ever moves via signed tags; its history is the set of released
+  versions and nothing else.
+
 ## End-to-end example
 
 ```bash
@@ -119,6 +175,13 @@ cd tree/ticket-BUG-2026-002
 # 3. Commit (GPG-signed)
 bun run scripts/worktree/ agent-commit ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
 
-# 4. Merge back to master (GPG-signed merge, worktree removed)
+# 4. Finalize (check + test + GPG-signed merge of feature branch into dev, worktree removed)
 bun run scripts/worktree/ finalize ticket-BUG-2026-002
+
+# 5. Promote dev → stg (when stg is clean; see "Branch tiers" above)
+git switch stg
+git merge --ff-only dev
+
+# 6. Promote stg → master — tag-only (see /meta/release-process), never direct push.
+#    Done by a human after release testing.
 ```
