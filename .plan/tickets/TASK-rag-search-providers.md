@@ -220,3 +220,6 @@ curl -X POST http://localhost:3000/api/rag/research \
 # List available providers
 curl http://localhost:3000/api/rag/search/providers
 ```
+
+
+git issue: dc8ba02

@@ -11,6 +11,7 @@
 **Blocked by:** TASK-encryption-architecture-clarification (Phase G only — see below)
 **Git issue:** 5d9636b (open — re-open on next phase)
 **Branch:** (next) e2e-ratchet-phase-e-receiver-wiring
+
 ## Summary
 
 Implement genuine end-to-end encryption for the `at-rest` encryption tier where the server
@@ -303,3 +304,6 @@ side inference vs. secure-enclave). Scope:
 - Client-side key management screen
   (`src/components/settings/key-management.html` per
   `epic-encryption-workflow.md` §"Phase 2c").
+
+
+git issue: 5d9636b
