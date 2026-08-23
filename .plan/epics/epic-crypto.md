@@ -234,13 +234,36 @@ removal excludes future message wraps.
 - `src/crypto/at-rest.ts` — relax `case "private"` throw for the
  payload path; the rename to `EncryptionLevel.AtRest` (tracked in
  `BUG-private-tier-no-true-e2e` §"Resolution") remains pending.
- ✅ DONE in commit `TBD` — `at-rest` is the canonical wire value; the
- `private` tier handler has been removed; migration `057` rewrites
- existing rows.
+ ✅ DONE — `at-rest` is the canonical wire value; the `private` tier
+ handler has been removed; migration `057` rewrites existing rows;
+ `EncryptionLevel.Private` removed (clean cutover, no @deprecated
+ alias). Merge commit on dev: `10b203b4`.
 
 **Tests:** full HTTP route round-trip, server-encrypt rejection for
 `at-rest` tier, read path returns ciphertext unchanged.
-### Phases A–D — Shipped status (2026-08-23)
+
+### Phase D+ — Honest docs + audit pass (2026-08-23)
+
+- `src/crypto/at-rest.ts` — header & body comments rewritten to drop
+  the false "server cannot decrypt" / "true E2E" claim. `at-rest` is
+  a **wire-passthrough** tier: the server stores whatever the caller
+  submits and returns it on read. The caller is responsible for
+  pre-encrypting when true client-side E2E is desired. True E2E
+  (server cannot decrypt) remains deferred to TASK-asymmetric-key-
+  pairs-followup Phase E+.
+- `src/db/enums-core/flags.ts` — `EncryptionLevel` docstring rewritten
+  to match the wire-passthrough semantics.
+- `src/db/migrations/057_encryption_level_at_rest_rename.ts` —
+  docstring tightened (no more "true E2E" claim).
+- `src/crypto/at-rest.test.ts` + `at-rest.integration.test.ts` — test
+  descriptions clarified ("server is a passthrough" replaces
+  "server does not decrypt").
+- New: `src/db/enums-core/rename-verification.test.ts` — guards
+  against reintroduction of `EncryptionLevel.Private` symbol.
+- `BUG-private-tier-no-true-e2e.md` ticket body needs reconciliation
+  (see note in the commit message); the `e2e/` directory is **active**
+  and not deleted, contradicting the ticket's "Dead wiring deleted"
+  claim.
 </input>
 
 All four phases shipped via `bun x tsgo --noEmit -p tsconfig.backend.json`

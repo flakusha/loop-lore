@@ -10,17 +10,24 @@
  * Tiers:
  *   - `none`      — plaintext, no crypto
  *   - `standard`  — server-mediated AES-256-GCM via chat keys
- *   - `at-rest`   — end-to-end; server cannot decrypt. The client supplies
- *                   a pre-encrypted `e2e_payload` JSON blob; we store it
- *                   as-is and return it on read.
+ *   - `at-rest`   — wire-passthrough (Phase D plumbing). The server stores
+ *                   whatever the caller hands in and returns it on read.
+ *                   It does NOT attempt server-side encrypt, decrypt, or
+ *                   transform. The caller is responsible for pre-encrypting
+ *                   when true client-side E2E is desired. NOTE: the server
+ *                   still holds SMK-derived chat keys, so any caller that
+ *                   submits plaintext will land in the DB as plaintext.
+ *                   True client-side E2E (server cannot decrypt) is tracked
+ *                   in TASK-asymmetric-key-pairs-followup Phase E+.
  *
  * Note: `public` is NOT a valid tier value. The historical "public" sentinel
  * was removed by the 009_encryption_level_default migration.
  *
- * Migration note (TASK-asymmetric-key-pairs-followup Phase D):
+ * Migration note:
  *   - The historical value `"private"` was renamed to `"at-rest"` by the
- *     `057_encryption_level_at_rest_rename` migration. The runtime symbol
- *     `EncryptionLevel.AtRest` replaces `EncryptionLevel.Private`.
+ *     `057_encryption_level_at_rest_rename` migration. The runtime
+ *     `AtRest` symbol replaces the removed `Private` symbol (no
+ *     deprecated alias — clean cutover).
  */
 
 import type { Kysely, } from "kysely";
@@ -74,11 +81,15 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
       return { storedContent: stored, keyId: chatKey.keyId, wasEncrypted: true, };
     }
     case "at-rest":
-      // Server cannot decrypt `at-rest` content. The caller is expected to
-      // have pre-encrypted via the client-side pipeline (`encrypt-message`).
-      // The server stores whatever the client sent, unchanged. The shape
-      // detection (`isEncryptedPayload` above) recognises standard server-
-      // encrypted forms; for `at-rest` we accept any input.
+      // Wire passthrough. The server does not transform the payload —
+      // encryption responsibility sits with the caller (client-side E2E
+      // pipeline once TASK-asymmetric-key-pairs-followup Phase E lands,
+      // or whatever upstream pre-encrypts the message). The pre-check
+      // at the top of this function (`isEncryptedPayload`) recognises
+      // standard server-encrypted envelopes; for `at-rest` we accept
+      // any input and store it as-is. `wasEncrypted: true` reflects
+      // "stored verbatim, not transformed by the server" rather than
+      // "encrypted by this call".
       return { storedContent: plaintext, keyId: null, wasEncrypted: true, };
     default:
       throw new Error(`Unknown encryption level: ${String(encryptionLevel,)}`,);
@@ -104,9 +115,10 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
       return decryptThenDecompress(storedContent, chatKey.key,);
     }
     case "at-rest":
-      // Server has no chain state; cannot decrypt. The HTTP read path
-      // passes the ciphertext blob back to the client verbatim; the client
-      // decrypts using its local key store.
+      // Wire passthrough. The server does not attempt to decrypt: it
+      // returns the stored content verbatim so the upstream reader (the
+      // HTTP route, or a future client-side E2E receive path) can do the
+      // right thing with it. Plaintext will round-trip as plaintext.
       return storedContent;
     default:
       throw new Error(`Unknown encryption level: ${String(encryptionLevel,)}`,);
@@ -131,12 +143,12 @@ export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: strin
 /**
  * Inspect a stored message body to decide whether it carries ciphertext
  * (either a standard server-encrypted `{enc,nonce,...}` shape, or an
- * `at-rest` `{e2e:true,...}` envelope). The `at-rest` flow uses this
+ * `at-rest` `{e2e:true,...}` envelope). The HTTP read path uses this
  * helper to short-circuit decryption at the chat list / read layer.
  *
  * Returns true when the body is a JSON-encoded object containing either
- * `e2e: true` (E2E at-rest envelope) or a string `enc` field
- * (server-encrypted payload).
+ * `e2e: true` (client-pre-encrypted envelope — server does not decrypt,
+ * future Phase E+) or a string `enc` field (server-encrypted payload).
  */
 export function isE2eOrEncrypted(storedContent: string,): boolean {
   if (!storedContent) return false;
