@@ -132,8 +132,8 @@ describe("encryptAtRest — tier-aware path", () => {
   },);
 });
 
-describe("at-rest tier — Phase D wire semantics", () => {
-  test("at-rest tier: stores whatever the client sent (server does not decrypt)", async () => {
+describe("at-rest tier — wire-passthrough semantics", () => {
+  test("at-rest tier: stores whatever the caller submits (server is a passthrough)", async () => {
     const chatId = "chat-at-rest-001";
     await db.insertInto("chats",).values({
       id: chatId,
@@ -161,8 +161,8 @@ describe("at-rest tier — Phase D wire semantics", () => {
     expect(result.keyId,).toBeNull();
   },);
 
-  test("at-rest tier: any plaintext is stored verbatim (no server encrypt)", async () => {
-    const wire = "the-server-cannot-see-this";
+  test("at-rest tier: any plaintext is stored verbatim (caller is responsible for pre-encrypt)", async () => {
+    const wire = "the-server-stores-verbatim";
     const out = await encryptAtRest({
       database: db,
       chatId: "ignored",
