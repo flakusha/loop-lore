@@ -16,6 +16,7 @@ import { checkChatAccess, } from "../chat/service";
 import type { Config, } from "../config/schema";
 import {
   deriveChatKeyForChat,
+  getChatEncryptionLevel,
   getSmk,
   isAnonymousModeEnabled,
   isEncryptionEnabled,
@@ -41,6 +42,15 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config }, 
 
       const access = await checkChatAccess(opts.database, chatId, userId, userRole,);
       if (!access.ok) { return notFound("Chat not found",); }
+
+      // Tier gate: this endpoint serves the `standard` tier only. For `at-rest`
+      // the server has no chain state (E2E keys live on the client); returning
+      // a server-derived key here would leak the server's ability to decrypt.
+      // For `none` there is no key to derive. Both reject as 404 so the
+      // response is indistinguishable from "no chat access" — an attacker
+      // cannot probe tier via this endpoint.
+      const encryptionLevel = await getChatEncryptionLevel(opts.database, chatId,);
+      if (encryptionLevel !== "standard") { return notFound("Chat not found",); }
 
       if (!isEncryptionEnabled()) {
         return jsonError({

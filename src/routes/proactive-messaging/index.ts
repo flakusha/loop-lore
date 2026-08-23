@@ -6,16 +6,92 @@
  *
  * CRUD + check/trigger endpoints for per-chat proactive messaging config.
  * See .plan/tickets/TASK-proactive-messaging.md
+ *
+ * Authorization:
+ *   Every endpoint validates two things before touching the service layer:
+ *     1. The authenticated user owns the `actorId` (or has `admin.character`).
+ *     2. The authenticated user has access to `chatId` (creator, participant,
+ *        or `admin.chat`). Both gates use the existing helpers
+ *        `checkActorOwnership` / `checkChatAccess`; `actorId` is therefore
+ *        scoped to the requester — a participant cannot target another
+ *        user's actor via query manipulation.
  */
-import { Elysia, } from "elysia";
+import { Elysia, type Context, } from "elysia";
+import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import type { ProactiveConfigInput, } from "../../chat/proactive/types";
+import type { DB, } from "../../db/schema";
+import { checkActorOwnership, } from "../actor-auth";
 import { NotificationType, } from "../../db/enums-core";
 import { triggerAutoGeneration, } from "../../generation/auto-gen";
 import { NotificationService, } from "../../notifications/service";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  requireUserId,
+} from "../http-utils";
 import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
 import type { ProactiveRouteOpts, } from "./schemas";
+
+/**
+ * Shape of the auth-guard context that the global elysia-app derive populates
+ * (`userId`, `userRole`). Tests inject the same shape via `.derive(...)`.
+ * Defined as a named interface so route handlers stay narrowly typed without
+ * the `any` banned-pattern.
+ */
+interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+}
+
+/** Route handler context — augments Elysia's auto context with auth fields. */
+type Ctx = Context & AuthContext;
+
+/**
+ * Verify the authenticated user owns `actorId` AND has access to `chatId`.
+ * Returns the userId on success; on failure returns a Response that the
+ * caller should return as-is (401 / 404).
+ *
+ * Both checks fail-closed with `notFound` (404) to avoid leaking which
+ * dimension of the authorization failed. Used in 7 of 8 endpoints (the
+ * `configs` list endpoint scopes only by chat and so uses
+ * `checkChatAccess` inline).
+ *
+ * @param database - Kysely handle for the authorization checks
+ * @param ctx - Elysia handler context (auth fields populated by global derive)
+ * @param chatId - Chat the user must have access to
+ * @param actorId - Actor the user must own (target of the proactive config)
+ * @returns The authenticated userId, or a Response to short-circuit
+ */
+async function authorizeProactiveTarget(
+  database: Kysely<DB>,
+  ctx: Ctx,
+  chatId: string,
+  actorId: string,
+): Promise<string | Response> {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+  const userRole = ctx.userRole;
+
+  if (!(await checkActorOwnership(database, actorId, userId, userRole,))) {
+    return jsonError({
+      message: "Actor not found",
+      status: HttpStatus.NotFound,
+    },);
+  }
+
+  const access = await checkChatAccess(database, chatId, userId, userRole,);
+  if (!access.ok) {
+    return jsonError({
+      message: "Chat not found",
+      status: HttpStatus.NotFound,
+    },);
+  }
+
+  return userId;
+}
 
 export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
   const svc = () => new ProactiveMessagingService(opts.database,);
@@ -23,10 +99,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
 
   return new Elysia({ name: "proactive-messaging", },)
     // ── Get config for chat+actor ────────────────────────
-    .get(`${R}/config`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .get(`${R}/config`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const config = await svc().getConfig(chatId, actorId,);
         return jsonResponse(config,);
@@ -43,10 +119,14 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── List configs for chat ─────────────────────────────
-    .get(`${R}/configs`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
+    .get(`${R}/configs`, async (ctx,) => {
+      const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-      const { chatId, } = ctx.query as { chatId: string };
+      const { chatId, } = ctx.query;
+      const access = await checkChatAccess(database, chatId, userId, (ctx as unknown as Ctx).userRole,);
+      if (!access.ok) {
+        return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
+      }
       try {
         const configs = await svc().getChatConfigs(chatId,);
         return jsonResponse(configs,);
@@ -63,10 +143,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Create/update config ──────────────────────────────
-    .put(`${R}/config`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .put(`${R}/config`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       const body = ctx.body as ProactiveConfigInput;
       try {
         const config = await svc().upsertConfig(chatId, actorId, body,);
@@ -85,10 +165,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Check if should message now ───────────────────────
-    .get(`${R}/check`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .get(`${R}/check`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const result = await svc().checkShouldMessage(chatId, actorId,);
         return jsonResponse(result,);
@@ -105,10 +185,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Record message sent ───────────────────────────────
-    .post(`${R}/record-sent`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .post(`${R}/record-sent`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         await svc().recordSent(chatId, actorId,);
         return jsonResponse({ ok: true, },);
@@ -125,10 +205,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Reset backoff (user responded) ────────────────────
-    .post(`${R}/reset-backoff`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .post(`${R}/reset-backoff`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         await svc().resetBackoff(chatId, actorId,);
         return jsonResponse({ ok: true, },);
@@ -145,10 +225,11 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Send a proactive message (trigger generation) ──────
-    .post(`${R}/send`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .post(`${R}/send`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
+      const userId = auth;
       try {
         const result = await svc().checkShouldMessage(chatId, actorId,);
         if (!result.shouldMessage) {
@@ -205,10 +286,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Increment backoff (user did not respond) ─────────────
-    .post(`${R}/backoff`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .post(`${R}/backoff`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         await svc().incrementBackoff(chatId, actorId,);
         return jsonResponse({ ok: true, },);
@@ -225,10 +306,10 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
       },
     },)
     // ── Delete config ─────────────────────────────────────
-    .delete(`${R}/config`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const { chatId, actorId, } = ctx.query as { chatId: string; actorId: string };
+    .delete(`${R}/config`, async (ctx,) => {
+      const { chatId, actorId, } = ctx.query;
+      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
+      if (typeof auth !== "string") { return auth; }
       try {
         const deleted = await svc().deleteConfig(chatId, actorId,);
         return jsonResponse({ deleted, },);
