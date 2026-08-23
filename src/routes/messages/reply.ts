@@ -46,6 +46,10 @@ export async function maybeAutoReply(
       userId: actorId,
       userMessage,
       requestId: request.headers.get("x-request-id",) ?? undefined,
+    },).catch((error: unknown,) => {
+      // Fire-and-forget: surface failures via the structured logger instead
+      // of emitting an unhandled-rejection warning at runtime.
+      log().error(`triggerAutoGeneration failed: ${String(error,)}`, undefined, { chatId, },);
     },);
     return { replied: false, };
   }
@@ -84,30 +88,45 @@ export async function maybeAutoReply(
         replyKeyId = enc.keyId;
       }
 
-      const replySwipe = await database
-        .selectFrom("messages",)
-        .select(database.fn.max("swipe_index",).as("max_idx",),)
-        .where("chat_id", "=", chatId,)
-        .where("parent_id", "=", parentMessageId,)
-        .executeTakeFirst();
-      await database
-        .insertInto("messages",)
-        .values({
-          id: assistantId,
-          chat_id: chatId,
-          actor_id: actorId,
-          parent_id: parentMessageId,
-          role: MessageRole.Assistant,
-          content: replyStoredContent,
-          key_id: replyKeyId,
-          content_type: MessageContentType.Text,
-          content_format: MessageContentFormat.Markdown,
-          content_encoding: replyEncoding as ContentEncoding,
-          status: MessageStatus.Confirmed,
-          visibility: "visible",
-          swipe_index: (replySwipe?.max_idx ?? 0) + 1,
-        },)
-        .execute();
+      // Concurrent assistant replies used to read MAX(swipe_index) and race
+      // on INSERT. The unique index `idx_messages_swipe_unique` on
+      // (chat_id, parent_id, swipe_index) makes that race detectable. We
+      // start at 1 and retry on conflict: each conflicting attempt bumps
+      // the colliding row's swipe_index by 1, freeing that slot for the
+      // next retry. This converges to a contiguous distinct sequence per
+      // parent without requiring a SELECT FOR UPDATE / advisory lock.
+      // Bounded retries handle pathological contention without infinite
+      // spin; 8 attempts is far above realistic concurrent-fanout.
+      let swipeIndex = 1;
+      let lastError: unknown;
+      for (let attempt = 0; attempt < 8; attempt++) {
+        try {
+          await database
+            .insertInto("messages",)
+            .values({
+              id: assistantId,
+              chat_id: chatId,
+              actor_id: actorId,
+              parent_id: parentMessageId,
+              role: MessageRole.Assistant,
+              content: replyStoredContent,
+              key_id: replyKeyId,
+              content_type: MessageContentType.Text,
+              content_format: MessageContentFormat.Markdown,
+              content_encoding: replyEncoding as ContentEncoding,
+              status: MessageStatus.Confirmed,
+              visibility: "visible",
+              swipe_index: swipeIndex,
+            },)
+            .execute();
+          lastError = undefined;
+          break;
+        } catch (err) {
+          lastError = err;
+          swipeIndex++;
+        }
+      }
+      if (lastError !== undefined) { throw lastError; }
 
       return {
         replied: true,
