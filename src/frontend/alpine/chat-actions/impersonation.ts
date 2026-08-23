@@ -59,6 +59,16 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * Dispatch entrypoint used by command-buttons.runCommand for the
+   * "impersonate" / "char" buttons. The `cmd` argument is currently
+   * informational — both commands invoke the existing toggle behavior,
+   * which starts or ends impersonation depending on current state.
+   */
+  async impersonate(_cmd: string,): Promise<void> {
+    await this.toggleImpersonate();
+  },
+
   async loadImpersonationState() {
     if (!this.activeChat) { return; }
     try {
