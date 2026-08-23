@@ -6,20 +6,23 @@
  * Requires `--isolate` (suite default) — the mock leaks to other files otherwise.
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { telemetryRoutes, } from "./telemetry";
 
-mock.module("../telemetry/service", () => ({
-  record: async () => {},
-  isTelemetryEnabled: () => false,
-  isFrontendTelemetryEnabled: () => false,
-  getRetentionDays: () => 90,
-}),);
+if (ISOLATED) {
+  mock.module("../telemetry/service", () => ({
+    record: async () => {},
+    isTelemetryEnabled: () => false,
+    isFrontendTelemetryEnabled: () => false,
+    getRetentionDays: () => 90,
+  }),);
+}
 
 function makeApp(db: Kysely<DB>, userId: string, userRole: string,) {
   const app = new Elysia({ name: "test-telemetry-disabled", },);
@@ -27,7 +30,7 @@ function makeApp(db: Kysely<DB>, userId: string, userRole: string,) {
   return app.use(telemetryRoutes({ database: db, },),);
 }
 
-describe("telemetry routes — disabled", () => {
+describeOrSkip("telemetry routes — disabled", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
@@ -95,4 +98,4 @@ describe("telemetry routes — disabled", () => {
     );
     expect(res.status,).toBe(403,);
   });
-});
+},);

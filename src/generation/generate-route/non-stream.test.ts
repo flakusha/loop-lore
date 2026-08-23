@@ -7,47 +7,58 @@
  * Verifies that the non-streaming generation path records a real elapsed
  * latencyMs (not the old hardcoded 0).
  */
-import { describe, expect, it, mock, } from "bun:test";
+import { expect, it, mock, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 
 // Telemetry calls are fire-and-forget (void record(...)).
 // To capture them we spy on the module's `record` export.
 const recordedEvents: { eventType: string; data: Record<string, unknown> }[] = [];
 
 // Stub the telemetry service before importing the module under test.
-mock.module("../../telemetry/service", () => ({
-  record: async (...args: unknown[]) => {
-    const params = args[1] as { eventType: string; data: Record<string, unknown> };
-    recordedEvents.push(params,);
-  },
-  isTelemetryEnabled: () => true,
-}),);
+if (ISOLATED) {
+  mock.module("../../telemetry/service", () => ({
+    record: async (...args: unknown[]) => {
+      const params = args[1] as { eventType: string; data: Record<string, unknown> };
+      recordedEvents.push(params,);
+    },
+    isTelemetryEnabled: () => true,
+  }),);
+}
 
 // Stub extractAndStoreMemories — it's a background side-effect, not under test.
-mock.module("../../memory", () => ({
-  extractAndStoreMemories: async () => {},
-}),);
+if (ISOLATED) {
+  mock.module("../../memory", () => ({
+    extractAndStoreMemories: async () => {},
+  }),);
+}
 
 // Stub failGeneration — only invoked on error paths.
-mock.module("../cancellation-manager", () => ({
-  failGeneration: async () => {},
-}),);
+if (ISOLATED) {
+  mock.module("../cancellation-manager", () => ({
+    failGeneration: async () => {},
+  }),);
+}
 
 // Stub persist helpers — DB writes are not under test.
-mock.module("./persist", () => ({
-  buildGenerationResult: () => ({
-    content: "test response",
-    thinking: null,
-    tokenUsage: { promptTokens: 10, completionTokens: 5, totalTokens: 15, },
-    finishReason: "stop",
-  }),
-  storeGenerationResult: async () => "msg-id-1",
-}),);
+if (ISOLATED) {
+  mock.module("./persist", () => ({
+    buildGenerationResult: () => ({
+      content: "test response",
+      thinking: null,
+      tokenUsage: { promptTokens: 10, completionTokens: 5, totalTokens: 15, },
+      finishReason: "stop",
+    }),
+    storeGenerationResult: async () => "msg-id-1",
+  }),);
+}
 
 // Stub tool-execution — not exercised in the no-tool-call path.
-mock.module("./tool-execution", () => ({
-  executeToolCalls: async () => [],
-  MAX_TOOL_ROUNDS: 3,
-}),);
+if (ISOLATED) {
+  mock.module("./tool-execution", () => ({
+    executeToolCalls: async () => [],
+    MAX_TOOL_ROUNDS: 3,
+  }),);
+}
 
 // Stub callWithFailover — we control the provider response.
 // Import the module reference so we can spy on it.
@@ -62,15 +73,17 @@ const fakeResponse = {
   toolCalls: null,
 };
 
-mock.module("../providers/registry", () => ({
-  ...registry,
-  callWithFailover: async () => {
-    if (callDelayMs > 0) {
-      await new Promise<void>(r => setTimeout(r, callDelayMs,));
-    }
-    return fakeResponse;
-  },
-}),);
+if (ISOLATED) {
+  mock.module("../providers/registry", () => ({
+    ...registry,
+    callWithFailover: async () => {
+      if (callDelayMs > 0) {
+        await new Promise<void>(r => setTimeout(r, callDelayMs,));
+      }
+      return fakeResponse;
+    },
+  }),);
+}
 
 // Now import the function under test (after all mocks are in place).
 const { runNonStreaming, } = await import("./non-stream");
@@ -86,7 +99,7 @@ const mockInput = {
   parentMessageId: null,
 } as unknown as import("./types").GenerateRequest;
 
-describe("runNonStreaming — generation.completed latencyMs", () => {
+describeOrSkip("runNonStreaming — generation.completed latencyMs", () => {
   it("records a non-zero latencyMs in the telemetry event", async () => {
     recordedEvents.length = 0;
     callDelayMs = 5; // 5ms simulated provider delay
@@ -120,4 +133,4 @@ describe("runNonStreaming — generation.completed latencyMs", () => {
 
     sqlite.close();
   });
-});
+},);
