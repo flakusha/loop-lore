@@ -26,7 +26,7 @@ nothing — both are unintended behaviors of an "admin" tool.
 | File | Line | Issue |
 | --- | --- | --- |
 | `src/routes/telemetry.ts` | 206-236 | `DELETE /api/telemetry/analytics/purge` handler |
-| `src/routes/telemetry.ts` | 215 | `const retentionDays = Number(ctx.query.days,) || 90;` — `Number("0")` is `0`, so the default 90 only kicks in for `undefined` / `NaN` |
+| `src/routes/telemetry.ts` | 215 | `const retentionDays = Number(ctx.query.days,) \|\| 90;` — `Number("0")` is `0`, so the default 90 only kicks in for `undefined` / `NaN` |
 | `src/routes/telemetry.ts` | 216 | `const cutoff = new Date(Date.now() - retentionDays * 86_400_000,).toISOString();` — `days=0` → cutoff = now → deletes all rows |
 | `src/routes/telemetry.ts` | 218 | `await database.deleteFrom("telemetry_events",).where("created_at", "<", cutoff,).execute();` — runs unconditionally |
 | `src/frontend/alpine/admin-system.ts` | 110-127 | `purgeAnalytics()` always passes `?days=90` — safe in current UI, but the API is wide open |

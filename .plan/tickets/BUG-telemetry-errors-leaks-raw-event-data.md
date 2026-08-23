@@ -35,7 +35,7 @@ blob, which then surfaces verbatim in the admin view.
 | `src/validation/schemas/telemetry.ts` | 12-18 | `TelemetryEventBody.data = t.Record(t.String(), t.Any())` — ingest accepts any JSON payload |
 | `src/routes/telemetry.ts` | 31-56 | `POST /api/telemetry/event` writes whatever the caller supplies |
 | `src/frontend/alpine/admin-system.ts` | 90-109 | `loadAnalytics()` fetches `/api/telemetry/analytics/errors` and stores the raw response in `this.errorEvents` with **no `parseOr`** |
-| `src/frontend/alpine/admin-system.ts` | 34 | `errorEvents: [] as { id: string; event_type: string; session_id: string | null; created_at: string }[]` — TS hint narrowed, but runtime payload is unrestricted |
+| `src/frontend/alpine/admin-system.ts` | 34 | `errorEvents: [] as { id: string; event_type: string; session_id: string \| null; created_at: string }[]` — TS hint narrowed, but runtime payload is unrestricted |
 | `src/views/admin.html` | 1489-1494 | Renders only `e.session_id?.slice(0,8)` — but in-memory JS retains full payload including `event_data` |
 | `src/generation/auto-gen/handle-generation-error.ts` | 27-34 | Emits `generation.failed` with `data: { error: (error as Error).message, chatId }` — admin sees raw `error.message` |
 
