@@ -2,100 +2,29 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Proactive Messaging Routes
+ * Proactive Messaging Routes — registration only.
  *
- * CRUD + check/trigger endpoints for per-chat proactive messaging config.
- * See .plan/tickets/TASK-proactive-messaging.md
+ * The auth helper lives in `./auth.ts` and the `/send` orchestration
+ * (the only endpoint with non-trivial body) lives in
+ * `./send-handler.ts`. This file owns the Elysia wiring for the
+ * simpler CRUD/check/record endpoints.
  *
- * Authorization:
- *   Every endpoint validates two things before touching the service layer:
- *     1. The authenticated user owns the `actorId` (or has `admin.character`).
- *     2. The authenticated user has access to `chatId` (creator, participant,
- *        or `admin.chat`). Both gates use the existing helpers
- *        `checkActorOwnership` / `checkChatAccess`; `actorId` is therefore
- *        scoped to the requester — a participant cannot target another
- *        user's actor via query manipulation.
+ * See .plan/tickets/TASK-proactive-messaging.md.
  */
 import { Elysia, type Context, } from "elysia";
-import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../../chat/service";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import type { ProactiveConfigInput, } from "../../chat/proactive/types";
-import type { DB, } from "../../db/schema";
-import { checkActorOwnership, } from "../actor-auth";
-import { NotificationType, } from "../../db/enums-core";
-import { triggerAutoGeneration, } from "../../generation/auto-gen";
-import { NotificationService, } from "../../notifications/service";
-import {
-  HttpStatus,
-  jsonError,
-  jsonResponse,
-  requireUserId,
-} from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
 import type { ProactiveRouteOpts, } from "./schemas";
-
-/**
- * Shape of the auth-guard context that the global elysia-app derive populates
- * (`userId`, `userRole`). Tests inject the same shape via `.derive(...)`.
- * Defined as a named interface so route handlers stay narrowly typed without
- * the `any` banned-pattern.
- */
-interface AuthContext {
-  userId: string | null;
-  userRole: string | null;
-}
-
-/** Route handler context — augments Elysia's auto context with auth fields. */
-type Ctx = Context & AuthContext;
-
-/**
- * Verify the authenticated user owns `actorId` AND has access to `chatId`.
- * Returns the userId on success; on failure returns a Response that the
- * caller should return as-is (401 / 404).
- *
- * Both checks fail-closed with `notFound` (404) to avoid leaking which
- * dimension of the authorization failed. Used in 7 of 8 endpoints (the
- * `configs` list endpoint scopes only by chat and so uses
- * `checkChatAccess` inline).
- *
- * @param database - Kysely handle for the authorization checks
- * @param ctx - Elysia handler context (auth fields populated by global derive)
- * @param chatId - Chat the user must have access to
- * @param actorId - Actor the user must own (target of the proactive config)
- * @returns The authenticated userId, or a Response to short-circuit
- */
-async function authorizeProactiveTarget(
-  database: Kysely<DB>,
-  ctx: Ctx,
-  chatId: string,
-  actorId: string,
-): Promise<string | Response> {
-  const userId = requireUserId(ctx,);
-  if (typeof userId !== "string") { return userId; }
-  const userRole = ctx.userRole;
-
-  if (!(await checkActorOwnership(database, actorId, userId, userRole,))) {
-    return jsonError({
-      message: "Actor not found",
-      status: HttpStatus.NotFound,
-    },);
-  }
-
-  const access = await checkChatAccess(database, chatId, userId, userRole,);
-  if (!access.ok) {
-    return jsonError({
-      message: "Chat not found",
-      status: HttpStatus.NotFound,
-    },);
-  }
-
-  return userId;
-}
+import type { Ctx, } from "./auth";
+import { authorizeProactiveTarget, } from "./auth";
+import { sendProactiveHandler, } from "./send-handler";
 
 export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
   const svc = () => new ProactiveMessagingService(opts.database,);
-  const { database, config, } = opts;
+  const { database, } = opts;
 
   return new Elysia({ name: "proactive-messaging", },)
     // ── Get config for chat+actor ────────────────────────
@@ -224,60 +153,8 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
         tags: ["Proactive Messaging",],
       },
     },)
-    // ── Send a proactive message (trigger generation) ──────
-    .post(`${R}/send`, async (ctx,) => {
-      const { chatId, actorId, } = ctx.query;
-      const auth = await authorizeProactiveTarget(database, ctx as unknown as Ctx, chatId, actorId,);
-      if (typeof auth !== "string") { return auth; }
-      const userId = auth;
-      try {
-        const result = await svc().checkShouldMessage(chatId, actorId,);
-        if (!result.shouldMessage) {
-          return jsonError({
-            message: result.reason,
-            status: HttpStatus.Conflict,
-          },);
-        }
-
-        // Anchor the proactive message in-thread to the most recent message so
-        // the character's check-in generates as a normal continuation.
-        const lastMsg = await database
-          .selectFrom("messages",)
-          .select("id",)
-          .where("chat_id", "=", chatId,)
-          .orderBy("created_at", "desc",)
-          .limit(1,)
-          .executeTakeFirst();
-
-        await triggerAutoGeneration({
-          database,
-          config,
-          chatId,
-          parentMessageId: lastMsg?.id ?? null,
-          userId,
-          _cascadeActorId: actorId,
-          requestId: ctx.request.headers.get("x-request-id",) ?? undefined,
-        },);
-
-        await svc().recordSent(chatId, actorId,);
-
-        // Notify the user a character reached out — surfaces via the existing
-        // notification SSE + center (email/push when user has them enabled).
-        new NotificationService(database,).emit({
-          userId,
-          type: NotificationType.System,
-          title: "Character reached out",
-          body: "A character messaged you while you were away.",
-          link: `/views/chat?chatid=${encodeURIComponent(chatId,)}`,
-          data: { chatId, actorId, },
-        },);
-
-        return jsonResponse({ triggered: true, },);
-      } catch (error) {
-        logErr("Failed to send proactive message", error,);
-        return jsonError("Internal server error", 500,);
-      }
-    }, {
+    // ── Send a proactive message (orchestration in send-handler.ts) ──
+    .post(`${R}/send`, async (ctx: Context,) => sendProactiveHandler(opts, ctx,), {
       query: chatActorQuery,
       detail: {
         summary: "Send a proactive message",
