@@ -72,6 +72,9 @@ const checks = {
     // Reverse code→plan index freshness (code-map.json matches a fresh rebuild)
     "code-map - freshness": "bun run plan:map:check",
 
+    // Ticket index reconciliation (index.json ↔ .md ↔ git issues)
+    "plan - ticket index (sync)": "bun run plan:sync",
+
     // Size check
     "size - check": "bun run scripts/check-file-size.ts",
     // size - strict: re-enabled — files over 250L need splitting (recent additions)
