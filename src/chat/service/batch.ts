@@ -87,20 +87,18 @@ export async function batchExportChats(
   // Pre-fetch messages and participants for all owned chats in two batch queries.
   // Avoids N+1: previously 2 queries per chat.
   const ownedIds = Array.from(owned, (c,) => c.id,);
-  const [allMessages, allParticipants,] = await Promise.all([
-    database
-      .selectFrom("messages",)
-      .selectAll()
-      .where("chat_id", "in", ownedIds,)
-      .orderBy("chat_id",)
-      .orderBy("created_at", "asc",)
-      .execute(),
-    database
-      .selectFrom("chat_participants",)
-      .selectAll()
-      .where("chat_id", "in", ownedIds,)
-      .execute(),
-  ],);
+  const allMessages = await database
+    .selectFrom("messages",)
+    .selectAll()
+    .where("chat_id", "in", ownedIds,)
+    .orderBy("chat_id",)
+    .orderBy("created_at", "asc",)
+    .execute();
+  const allParticipants = await database
+    .selectFrom("chat_participants",)
+    .selectAll()
+    .where("chat_id", "in", ownedIds,)
+    .execute();
 
   // Partition in-memory by chat_id. Preserve the chat order from `owned` so
   // callers see a stable export sequence.
