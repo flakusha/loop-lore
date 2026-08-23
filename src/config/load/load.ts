@@ -14,7 +14,7 @@ import { loadDomainConfigs, } from "./domain";
 import { applyEnvironmentOverrides, applyProviderEnvVars, } from "./env";
 import { findConfigFile, findMainRepoRoot, firstExisting, } from "./fs";
 import { deepMerge, parseFileContent, } from "./parse";
-import { validateDatabaseSafety, } from "./safety";
+import { validateAuthSafety, validateDatabaseSafety, } from "./safety";
 
 export function validateConfig(config: Config,): void {
   validate(config,);
@@ -124,5 +124,6 @@ export function loadConfig(cwd?: string,): Config {
 
   validateConfig(config,);
   validateDatabaseSafety(config,);
+  validateAuthSafety(config,);
   return config;
 }
