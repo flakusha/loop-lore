@@ -84,6 +84,50 @@ describe("Mention Parser", () => {
       ];
       expect(resolveMention("A", p,),).toBe("x1",);
     });
+
+    test("exact match wins over prefix-matchable participants", () => {
+      // [Luna], [Lun] + "Lun" → "Lun" (exact match wins)
+      const p = [
+        { actorId: "a1", displayName: "Luna", },
+        { actorId: "a2", displayName: "Lun", },
+      ];
+      expect(resolveMention("Lun", p,),).toBe("a2",);
+    });
+    test("returns null when prefix matches multiple participants", () => {
+      // [Luna, Lunatic] + "Lun" → ambiguous → null
+      const p = [
+        { actorId: "a1", displayName: "Luna", },
+        { actorId: "a3", displayName: "Lunatic", },
+      ];
+      expect(resolveMention("Lun", p,),).toBeNull();
+    });
+
+    test("exact match wins when another participant shares the prefix", () => {
+      // [Alex, Alexa] + "Alex" → "Alex" (exact match)
+      const p = [
+        { actorId: "a1", displayName: "Alex", },
+        { actorId: "a2", displayName: "Alexa", },
+      ];
+      expect(resolveMention("Alex", p,),).toBe("a1",);
+    });
+
+    test("returns null when only prefix matches are ambiguous", () => {
+      // [Alexa, Alexander] + "Alex" → ambiguous → null
+      const p = [
+        { actorId: "a1", displayName: "Alexa", },
+        { actorId: "a2", displayName: "Alexander", },
+      ];
+      expect(resolveMention("Alex", p,),).toBeNull();
+    });
+
+    test("exact-insensitive match wins for the lowercased display name", () => {
+      // [alex, Alexa] + "ALEX" → "alex" (exact case-insensitive)
+      const p = [
+        { actorId: "a1", displayName: "alex", },
+        { actorId: "a2", displayName: "Alexa", },
+      ];
+      expect(resolveMention("ALEX", p,),).toBe("a1",);
+    });
   });
 
   describe("extractMentionedActorIds()", () => {

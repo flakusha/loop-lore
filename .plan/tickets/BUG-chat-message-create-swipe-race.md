@@ -3,7 +3,7 @@
 
 # BUG: User-message create path has no transactional guard around swipe_index — race allows duplicate swipe slots or 500s
 
-**Status:** Not Started
+**Status:** Open
 **Severity:** high
 **Priority:** high
 **Effort:** small
@@ -45,3 +45,15 @@ Correctness + UX. Direct threat to swipe / variant integrity (variants are desig
 
 - `BUG-chat-idempotency-not-enforced` — same pattern on a different invariant.
 - `epic-chat-lifecycle-moderation.md` (message lifecycle / variant ordering).
+
+## Resolution (WIP)
+
+Fixed in worktree `fix-chat-message-create-swipe-race` (branch off `dev`).
+
+- **src/routes/messages/swipe-race-insert.ts** (NEW): exports `insertUserMessageWithRetry` (mirrors the reply.ts:100-129 retry loop, 8 attempts on unique-index collision), `findByIdempotencyKey` (covers the idempotency ticket too), and `SwipeInsertExhaustedError`.
+- **src/routes/messages/create.ts**: the SELECT-MAX + INSERT block (lines 78-109 in original) replaced by `findByIdempotencyKey` short-circuit + `insertUserMessageWithRetry` call. Side effects (attachMessageAttachments, persistInitiative, persistMentions, profanity moderation) now run only after the retry loop resolves successfully, so retry-exhaust throws before they run (no orphan rows). On `SwipeInsertExhaustedError`, returns **503 service_busy** (not 500) via `jsonResponse(...)`; added `503: ErrorResponse` to the route response schema.
+- **src/routes/messages/swipe-race-insert.test.ts** (NEW): 7 tests covering concurrent inserts (8-way fanout produces distinct swipe_indexes 1..8), parent-less inserts (swipe_index null), retry exhaustion (PK-collision triggers `SwipeInsertExhaustedError`), idempotency hit returns existing row id, idempotency scoped per chat, null key never blocks, multiple top-level inserts with null key succeed.
+- Test result: `bun test src/routes/messages/swipe-race-insert.test.ts` → **7 pass / 0 fail / 12 expect()**.
+- Typecheck: `bunx tsc --noEmit -p tsconfig.backend.json` → no errors in create.ts or swipe-race-insert.ts.
+- Worktree left uncommitted per AGENTS.md. Both this ticket and `BUG-chat-idempotency-not-enforced` are addressed by the same change set.
+- Deviation: extracted retry logic into a helper (test seam) rather than inlining the loop in `create.ts`. The `SwipeInsertExhaustedError` name documents the contract; behavior matches the ticket.
