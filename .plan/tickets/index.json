@@ -486,6 +486,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
   },
+  "BUG-EMOTION-MOOD-HOOK-STALE-LLM-JAVADOC": {
+    "hash": "pending",
+    "extid": "BUG-EMOTION-MOOD-HOOK-STALE-LLM-JAVADOC",
+    "type": "BUG",
+    "title": "MoodHook + EmotionHook JSDoc claims \"Uses the LLM\"; both are regex-only",
+    "label": "bug",
+    "priority": "P3",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+  },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "hash": "76cbe80",
     "extid": "BUG-ENCRYPTION-TIER-NOT-ENFORCED",
@@ -9444,6 +9455,7 @@
     "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md",
     "git_issue": "d0b9bb7"
   },
+
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "b5e9d7c",
     "extid": "TASK-MULTI-INSTANCE-RECONCILIATION",
