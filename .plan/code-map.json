@@ -293,12 +293,6 @@
       "source": "docs/spec/crypto.md"
     }
   ],
-  "src/assets/service/create.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
-    }
-  ],
   "src/assets/service/file-system.test.ts": [
     {
       "kind": "epic",
@@ -653,10 +647,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
     },
     {
       "kind": "ticket",
@@ -1287,12 +1277,6 @@
       "source": ".plan/epics/epic-two-factor-auth.md"
     }
   ],
-  "src/aux-pipeline": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-    }
-  ],
   "src/aux-pipeline/index.ts": [
     {
       "kind": "epic",
@@ -1304,19 +1288,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-environment-interaction.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-gm-tool-detection.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     },
     {
       "kind": "ticket",
@@ -1339,14 +1315,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     }
   ],
   "src/aux-pipeline/runner.ts": [
@@ -1357,30 +1325,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     }
   ],
   "src/aux-pipeline/tasks/emotion-avatar.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-emotion-avatar.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-    }
-  ],
-  "src/aux-pipeline/tasks/emotion.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     }
   ],
   "src/aux-pipeline/tasks/environment.ts": [
@@ -1417,10 +1367,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
     },
     {
       "kind": "ticket",
@@ -1461,10 +1407,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-emotion-avatar.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
     }
   ],
   "src/battle": [
@@ -2379,12 +2321,6 @@
       "source": ".plan/tickets/TASK-scenario-system-authoring.md"
     }
   ],
-  "src/characters/services/avatar-service.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
-    }
-  ],
   "src/characters/services/avatar-service.ts": [
     {
       "kind": "epic",
@@ -2407,36 +2343,6 @@
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     }
   ],
-  "src/characters/services/avatar-service/config.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-select-fallback-chain-unwired.md"
-    }
-  ],
-  "src/characters/services/avatar-service/selection.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-select-fallback-chain-unwired.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
-    }
-  ],
-  "src/characters/services/emotion-avatar-fallback.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
-    }
-  ],
   "src/characters/services/emotion-avatar-service.test.ts": [
     {
       "kind": "ticket",
@@ -2447,12 +2353,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
-    }
-  ],
-  "src/characters/services/emotion-avatar-service/generation.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     }
   ],
   "src/characters/services/personality-service.ts": [
@@ -3177,12 +3077,6 @@
       "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
-  "src/chat/service/read.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
-    }
-  ],
   "src/chat/service/templates.ts": [
     {
       "kind": "ticket",
@@ -3476,10 +3370,6 @@
   "src/components/character/emotion-avatars-panel.html": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
@@ -3695,12 +3585,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
-    }
-  ],
-  "src/components/chat/mood-panel.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
     }
   ],
   "src/components/chat/participant-mgmt.html": [
@@ -5263,16 +5147,6 @@
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     }
   ],
-  "src/db/enums-character/avatar.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
-    }
-  ],
   "src/db/enums-character/nsfw.ts": [
     {
       "kind": "epic",
@@ -5775,6 +5649,16 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
+  "src/db/migrations/042_character_world_setup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-character-world-setup.md"
+    }
+  ],
   "src/db/migrations/050_lorebook_activation.ts": [
     {
       "kind": "ticket",
@@ -5801,16 +5685,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
-    }
-  ],
-  "src/db/migrations/060_character_world_setup.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-world-setup.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-character-world-setup.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
@@ -6084,10 +5958,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
     },
     {
@@ -6174,10 +6044,6 @@
   "src/db/schema-content.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     },
     {
@@ -6249,10 +6115,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
       "kind": "ticket",
@@ -7290,10 +7152,6 @@
   "src/frontend/alpine/actor-emotion-avatars.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
@@ -8083,12 +7941,6 @@
       "source": ".plan/tickets/TASK-chat-message-search.md"
     }
   ],
-  "src/frontend/alpine/mood.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
-    }
-  ],
   "src/frontend/alpine/mood.ts": [
     {
       "kind": "ticket",
@@ -8097,20 +7949,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
-    }
-  ],
-  "src/frontend/alpine/mood/avatars.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
   "src/frontend/alpine/new-chat.ts": [
@@ -9937,12 +9775,6 @@
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
-  "src/generation/auto-gen-emotion-avatar.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
-    }
-  ],
   "src/generation/auto-gen.ts": [
     {
       "kind": "epic",
@@ -10027,12 +9859,6 @@
       "source": ".plan/tickets/BUG-classify-intent-confidence-unbounded.md"
     }
   ],
-  "src/generation/auto-gen/content-hooks.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
-    }
-  ],
   "src/generation/auto-gen/context-pruning.ts": [
     {
       "kind": "epic",
@@ -10083,18 +9909,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-mid-cascade-pause-ignored.md"
-    }
-  ],
-  "src/generation/auto-gen/prepare-generation.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
-    }
-  ],
-  "src/generation/auto-gen/store-message.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
   "src/generation/auto-gen/story-mode.test.ts": [
@@ -10177,12 +9991,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
-    }
-  ],
-  "src/generation/emotion-avatar-pipeline.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
   "src/generation/emotion-avatar.test.ts": [
@@ -10332,23 +10140,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
   "src/generation/hooks/hooks.test.ts": [
@@ -10381,12 +10177,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
-    }
-  ],
-  "src/generation/hooks/registry.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     }
   ],
   "src/generation/image-gen-route.ts": [
@@ -13525,28 +13315,10 @@
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
     }
   ],
-  "src/routes/character-avatars/select.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
-    }
-  ],
   "src/routes/character-emotions.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
-    }
-  ],
-  "src/routes/character-emotions/actor.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
-    }
-  ],
-  "src/routes/character-emotions/definitions.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
     }
   ],
   "src/routes/character-import.ts": [
@@ -14745,26 +14517,6 @@
       "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
     }
   ],
-  "src/routes/messages/swipe-race-insert.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md"
-    }
-  ],
-  "src/routes/messages/swipe-race-insert.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md"
-    }
-  ],
   "src/routes/messages/transitions.ts": [
     {
       "kind": "ticket",
@@ -14869,10 +14621,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-modactions-performedby-from-body.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/appeals.ts": [
@@ -14895,38 +14643,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
-    }
-  ],
-  "src/routes/nsfw-moderation/flags.routes.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/flags.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/index.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md"
-    }
-  ],
-  "src/routes/nsfw-moderation/overrides.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/preferences.ts": [
@@ -14955,10 +14683,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw.ts": [
@@ -18336,18 +18060,10 @@
   "src/users/permissions.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
     }
   ],
   "src/users/permissions.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
