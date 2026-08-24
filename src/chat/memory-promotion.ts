@@ -8,8 +8,8 @@
  * Split from `transitions.ts` to keep that file under the 250-line size
  * limit (see check-file-size).
  */
-import { randomUUID, } from "node:crypto";
 import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db/schema";
 import type { ExtractedMemory, } from "../memory/types";
 import { jsonStringifyOr, } from "../utils";
