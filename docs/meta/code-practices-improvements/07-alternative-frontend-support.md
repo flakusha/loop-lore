@@ -62,7 +62,7 @@ static dir) / `none` (API only). Operators must fork behavior in code.
   `cors: { allowedOrigins: string[] }`.
 - Edit `src/elysia-app.ts`: gate `viewRoutes` + `handleNonApiRequest` on
   `config.frontend.mode !== "none"`; add SPA fallback when `mode === "spa"`.
-- Add `src/middleware/cors.ts`; register on `/api/*`.
+- Add CORS middleware (see `TASK-cors-middleware.md`); register on `/api/*`.
 - Add `src/middleware/negotiate.ts` (Accept → json|html) used by read routes.
 - Update `docs/frontend/overview.md` + `06` to state: "API is the contract;
   htmx is one of N possible frontends."

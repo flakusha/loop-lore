@@ -77,13 +77,17 @@ and consumed by route handlers:
 RequestContext { userId, userRole, sessionId }
 ```
 
-#### Auth Middleware (`src/middleware/auth.ts`)
+#### Auth Middleware (`src/middleware/auth/`)
 
-Opaque session token model (no JWT dependency):
+JWT (primary) + legacy opaque session token model:
 
-- Bypasses token check
-- Returns a singleton solo user context
-- No DB lookup per request
+- JWT (new logins): signed with `authConfig.jwtSecret`, verified per request
+  via `verifyJwt()`; `sub` → userId, `sid` → sessionId.
+- Legacy opaque token (older sessions): SHA-256 hash in `sessions.token_hash`,
+  resolved via `resolveUserIdFromRequest()` in `src/middleware/auth/token.ts`.
+- Solo mode (`authConfig.required === false`): bypasses token check; returns a
+  singleton solo user context; no DB lookup per request.
+
 
 `compose(middleware[], finalHandler)` — chains middleware left-to-right. Each
 middleware receives `(request, context, next)` and either returns `Response` to
