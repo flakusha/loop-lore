@@ -112,39 +112,6 @@
     "git_issue": "a9a4ea3",
     "status": "done"
   },
-  "BUG-AVATAR-SELECT-EMPTY-THROWS-NO-FRONTEND-FALLBACK": {
-    "hash": "pending",
-    "extid": "BUG-AVATAR-SELECT-EMPTY-THROWS-NO-FRONTEND-FALLBACK",
-    "type": "BUG",
-    "title": "selectAvatar throws on actors with no avatars; no safe-fallback API",
-    "label": "bug",
-    "priority": "P2",
-    "epic": "epic-character-core-system",
-    "tags": [],
-    "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
-  },
-  "BUG-AVATAR-SELECT-FALLBACK-CHAIN-UNWIRED": {
-    "hash": "pending",
-    "extid": "BUG-AVATAR-SELECT-FALLBACK-CHAIN-UNWIRED",
-    "type": "BUG",
-    "title": "selectAvatar ignores fallback_chain (config column is dead)",
-    "label": "bug",
-    "priority": "P2",
-    "epic": "epic-character-core-system",
-    "tags": [],
-    "source": ".plan/tickets/BUG-avatar-select-fallback-chain-unwired.md"
-  },
-  "BUG-AVATAR-SELECTION-RULE-UNIMPLEMENTED-BRANCHES": {
-    "hash": "pending",
-    "extid": "BUG-AVATAR-SELECTION-RULE-UNIMPLEMENTED-BRANCHES",
-    "type": "BUG",
-    "title": "selectionRule branches action_first / context_first / weighted are no-ops",
-    "label": "bug",
-    "priority": "P3",
-    "epic": "epic-character-core-system",
-    "tags": [],
-    "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
-  },
   "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
     "hash": "d0d3739",
     "extid": "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0",
@@ -380,17 +347,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
   },
-  "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE": {
-    "hash": "9437278",
-    "extid": "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE",
-    "type": "BUG",
-    "title": "check-db-schemas.ts dprint subprocess exit-20 masks stale detection",
-    "label": "bug",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
-  },
   "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS": {
     "hash": "pending",
     "extid": "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS",
@@ -427,17 +383,6 @@
     "source": ".plan/tickets/BUG-command-dispatch-async-handler-uncaught.md",
     "git_issue": "6faa7ba"
   },
-  "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
-    "hash": "pending",
-    "extid": "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION",
-    "type": "BUG",
-    "title": "detectAvatarChangeIntent runs on user messages, not assistant responses",
-    "label": "bug",
-    "priority": "P2",
-    "epic": "epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
-  },
   "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
     "hash": "6fb9cbd",
     "extid": "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD",
@@ -462,17 +407,6 @@
     "source": ".plan/tickets/BUG-e2e-test-infrastructure-fixes.md",
     "status": "done",
     "git_issue": "7e811d7"
-  },
-  "BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE": {
-    "hash": "pending",
-    "extid": "BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE",
-    "type": "BUG",
-    "title": "Emotion-avatar fallback prompt only sees `alt_text`; never uses character description",
-    "label": "bug",
-    "priority": "P2",
-    "epic": "epic-emotion-avatar-message-binding / epic-character-core-system",
-    "tags": [],
-    "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
   },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "hash": "76cbe80",
@@ -930,17 +864,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md",
     "git_issue": "6a4f485"
-  },
-  "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-": {
-    "hash": "d88ff7f",
-    "extid": "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-",
-    "type": "BUG",
-    "title": "transitions.test.ts ownership tests fail with FK constraint missing fixture rows",
-    "label": "bug",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -3993,17 +3916,6 @@
     "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md",
     "git_issue": "9ca71ff"
   },
-  "TASK-ACTOR-EMOTION-AVATARS-FRONTEND-PANEL": {
-    "hash": "pending",
-    "extid": "TASK-ACTOR-EMOTION-AVATARS-FRONTEND-PANEL",
-    "type": "TASK",
-    "title": "Actor emotion avatars frontend panel",
-    "label": "task",
-    "priority": "P2",
-    "epic": "epic-frontend-backend-integration / epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-  },
   "TASK-ACTOR-ITEM-SERVICE": {
     "hash": "c68b555",
     "extid": "TASK-ACTOR-ITEM-SERVICE",
@@ -4794,17 +4706,6 @@
     "source": ".plan/tickets/TASK-aux-emotion-avatar.md",
     "git_issue": "4e54f94"
   },
-  "TASK-AUX-ENRICHMENT-EMOTION-AVATAR-TASK": {
-    "hash": "pending",
-    "extid": "TASK-AUX-ENRICHMENT-EMOTION-AVATAR-TASK",
-    "type": "TASK",
-    "title": "Implement `emotion_avatar` enrichment task in AUX pipeline",
-    "label": "task",
-    "priority": "P3",
-    "epic": "epic-aux-enrichment-pipeline",
-    "tags": [],
-    "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
-  },
   "TASK-AUX-ENVIRONMENT-INTERACTION": {
     "hash": "edf93cf",
     "extid": "TASK-AUX-ENVIRONMENT-INTERACTION",
@@ -4828,17 +4729,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-aux-gm-tool-detection.md",
     "git_issue": "4c12c84"
-  },
-  "TASK-AUX-LLM-EMOTION-CLASSIFIER": {
-    "hash": "pending",
-    "extid": "TASK-AUX-LLM-EMOTION-CLASSIFIER",
-    "type": "TASK",
-    "title": "AUX LLM emotion classifier (replace keyword EmotionHook)",
-    "label": "task",
-    "priority": "P3",
-    "epic": "epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
   },
   "TASK-AUX-MEMORY-EXTRACTION": {
     "hash": "feb9bec",
@@ -5706,17 +5596,6 @@
     "epic": "Character Core System",
     "tags": [],
     "source": ".plan/tickets/TASK-character-creator-prerogative.md"
-  },
-  "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI": {
-    "hash": "pending",
-    "extid": "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI",
-    "type": "TASK",
-    "title": "Character emotion definitions CRUD + admin UI",
-    "label": "task",
-    "priority": "P3",
-    "epic": "epic-character-core-system / epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
   },
   "TASK-CHARACTER-GROWTH-DEVELOPMENT": {
     "hash": "pending",
@@ -7987,17 +7866,6 @@
     "status": "done",
     "git_issue": "9d04b37"
   },
-  "TASK-FIX-SHARED-STATE-SQLITE-CONTAMINATION-IN-UNIT-TEST-SUITE-53-": {
-    "hash": "d5f3070",
-    "extid": "TASK-FIX-SHARED-STATE-SQLITE-CONTAMINATION-IN-UNIT-TEST-SUITE-53-",
-    "type": "TASK",
-    "title": "fix shared-state SQLite contamination in unit test suite (53 fail when full-run, all pass in isolation)",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-fix-shared-state-sqlite-contamination-in-unit-test-suite-53-.md"
-  },
   "TASK-FIX-TEST-FAILURES": {
     "hash": "cc5ba3f",
     "extid": "TASK-FIX-TEST-FAILURES",
@@ -9452,18 +9320,6 @@
     "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md",
     "git_issue": "d0b9bb7"
   },
-  "TASK-MODERATOR-PERMISSION-GATING-FOR-READ-ONLY-REVIEW-SURFACE": {
-    "hash": "5f22b58",
-    "extid": "TASK-MODERATOR-PERMISSION-GATING-FOR-READ-ONLY-REVIEW-SURFACE",
-    "type": "TASK",
-    "title": "Moderator permission gating for read-only review surface",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md",
-    "git_issue": "5f22b58"
-  },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "b5e9d7c",
     "extid": "TASK-MULTI-INSTANCE-RECONCILIATION",
@@ -9580,8 +9436,7 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md",
-    "git_issue": "70c23fb"
+    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md"
   },
   "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH": {
     "hash": "ef125d4",
@@ -11545,17 +11400,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-resolution-system.md",
     "git_issue": "6fdc7d5"
-  },
-  "TASK-RESOLVE-10-OXLINT-WARNINGS-IN-SRC-CHAT-RANDOM-EVENTS-TS": {
-    "hash": "7ffa7c7",
-    "extid": "TASK-RESOLVE-10-OXLINT-WARNINGS-IN-SRC-CHAT-RANDOM-EVENTS-TS",
-    "type": "TASK",
-    "title": "resolve 10 oxlint warnings in src/chat/random-events.ts",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md"
   },
   "TASK-RESOLVE-PLAYWRIGHT-CFG": {
     "hash": "9621690",
@@ -13522,17 +13366,6 @@
     "tags": [],
     "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
   },
-  "TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE": {
-    "hash": "pending",
-    "extid": "TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE",
-    "type": "TEST",
-    "title": "Cover selectAvatar scoring paths + empty-actor fallback",
-    "label": "test",
-    "priority": "P2",
-    "epic": "epic-character-core-system",
-    "tags": [],
-    "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
-  },
   "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED": {
     "hash": "pending",
     "extid": "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED",
@@ -13576,17 +13409,6 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-e2e-users-personas-routes-missing.md"
-  },
-  "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION": {
-    "hash": "pending",
-    "extid": "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION",
-    "type": "TEST",
-    "title": "End-to-end emotion-hook → messages.emotion → avatarForMessage",
-    "label": "test",
-    "priority": "P2",
-    "epic": "epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
   },
   "TEST-GALLERY-FRONTEND-UTILS-UNTESTED": {
     "hash": "pending",
