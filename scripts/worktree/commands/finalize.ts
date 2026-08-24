@@ -4,7 +4,7 @@
 import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { assertNotInWorktree, gitSync, } from "../utils/git";
+import { gitSync, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -71,7 +71,9 @@ export async function finalize(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
-  assertNotInWorktree("finalize",);
+  // finalize is allowed from inside the worktree (e.g. while iterating on it):
+  // the explicit branch arg identifies the target worktree, and loadConfig now
+  // resolves repoRoot correctly via --git-common-dir regardless of cwd.
   let branch = "";
   let mergeStrategy = "rebase";
   let force = false;
