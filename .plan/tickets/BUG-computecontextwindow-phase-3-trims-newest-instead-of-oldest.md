@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: computeContextWindow phase-3 trims newest instead of oldest
 
 **Status:** ⬜ Not Started
