@@ -8,11 +8,11 @@
  * `promoteMessagesToMemories` and `classifyTransitionMessage`.
  */
 import type { Database, } from "bun:sqlite";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
+import { beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { readFile, } from "node:fs/promises";
 import type { DB, } from "../db/schema";
-import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
+import { createTestDb, } from "../test-utils/create-test-db";
 import { OwnershipError, } from "./ownership";
 import {
   classifyTransitionMessage,
@@ -102,13 +102,9 @@ describe("selectMessagesForPromotion", () => {
 
 let db: Kysely<DB>;
 let sqlite: Database;
-
 beforeEach(async () => {
   ({ db, sqlite, } = await createTestDb());
-},);
-
-afterEach(() => {
-  resetTestDb(sqlite,);
+  await seedOwnershipFixtures(db,);
 },);
 // Module-scope constants so all ownership-guard describe blocks can share
 // the same fixture ids (the test bodies reference these from sibling blocks).
@@ -118,18 +114,35 @@ const CHAT_VICTIM_JOINS = "chat-victim-joins";
 const CHAT_ATTACKER_JOINS = "chat-attacker-joins";
 const NON_PARTICIPANT_ID = "non-participant";
 const ATTACKER_ID = "attacker-1";
-describe("promoteMessagesToMemories — ownership guard", () => {
-  // Create the actor rows referenced by chat_participants.actor_id FK.
-  // Tests below reuse these ids across describe blocks.
-  beforeAll(async () => {
-    for (const id of [VICTIM_ID, NON_PARTICIPANT_ID, ATTACKER_ID,]) {
-      await db
+// Seed the victim users, actors, and chats once per test (beforeEach wipes the
+// DB, so the ownership-guard fixtures must be re-inserted on every test).
+async function seedOwnershipFixtures(database: Kysely<DB>,): Promise<void> {
+  // beforeEach already wipes the DB, but the per-describe beforeAll in the
+  // sibling describe block re-runs after the first describe's tests have
+  // deleted rows — swallow unique collisions to stay idempotent.
+  for (const id of [VICTIM_ID, NON_PARTICIPANT_ID, ATTACKER_ID,]) {
+    try {
+      await database
+        .insertInto("users",)
+        .values({
+          id,
+          username: id,
+          display_name: id,
+          role: "user",
+          status: "active",
+          settings: "{}",
+        },)
+        .execute();
+    } catch { /* already exists */ }
+    try {
+      await database
         .insertInto("actors",)
         .values({
           id,
           actor_type: "user",
           display_name: id,
           owner_id: id,
+          user_id: id,
           agent_type: "none",
           settings: "{}",
           format_version: 0,
@@ -137,23 +150,20 @@ describe("promoteMessagesToMemories — ownership guard", () => {
           import_spec: "{}",
         },)
         .execute();
-    }
-    // also create the chats referenced by FK
-    for (const chatId of [CHAT_OWNED_BY_VICTIM, "chat-victim-joins", "chat-attacker-joins",]) {
-      await db
+    } catch { /* already exists */ }
+  }
+  for (const chatId of [CHAT_OWNED_BY_VICTIM, CHAT_VICTIM_JOINS, CHAT_ATTACKER_JOINS,]) {
+    try {
+      await database
         .insertInto("chats",)
         .values({ id: chatId, name: chatId, created_by: VICTIM_ID, },)
         .execute();
-    }
-  },);
+    } catch { /* already exists */ }
+  }
+}
 
+describe("promoteMessagesToMemories — ownership guard", () => {
   it("rejects when the actor is not a participant of the chat (memory poisoning defense)", async () => {
-    // The caller (NON_PARTICIPANT_ID) is NOT a participant of CHAT_OWNED_BY_VICTIM.
-    // promoteMessagesToMemories must throw OwnershipError and NOT insert any row.
-    await db
-      .insertInto("chat_participants",)
-      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner", },)
-      .execute();
     const msgs: MessageRef[] = [{
       messageId: "m1",
       role: "user",
@@ -162,13 +172,20 @@ describe("promoteMessagesToMemories — ownership guard", () => {
       createdAt: "",
       score: 0.9,
     },];
-
+    // Memory-poisoning defense: the caller passes attacker-controlled
+    // `participantIds` claiming they are a participant, but the actorId is a
+    // non-participant. The function must validate against the real chat
+    // participants table and reject.
+    await db
+      .insertInto("chat_participants",)
+      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner", },)
+      .execute();
     let caught: unknown;
     try {
       await promoteMessagesToMemories(db, {
         messages: msgs,
         maxTokens: 100,
-        actorId: VICTIM_ID,
+        actorId: NON_PARTICIPANT_ID,
         chatId: CHAT_OWNED_BY_VICTIM,
         participantIds: [VICTIM_ID,],
       },);
@@ -280,37 +297,6 @@ describe("classifyTransitionMessage ownership guard", () => {
       ),
     ).rejects.toBeInstanceOf(OwnershipError,);
   });
-  beforeAll(async () => {
-    // re-create chats/actors in case the prior describe's afterEach wiped them.
-    // Swallow unique-key collisions because resetTestDb may have left rows.
-    for (const chatId of [CHAT_OWNED_BY_VICTIM, CHAT_VICTIM_JOINS, CHAT_ATTACKER_JOINS,]) {
-      try {
-        await db
-          .insertInto("chats",)
-          .values({ id: chatId, name: chatId, created_by: VICTIM_ID, },)
-          .execute();
-      } catch { /* already exists */ }
-    }
-    for (const id of [VICTIM_ID, NON_PARTICIPANT_ID, ATTACKER_ID,]) {
-      try {
-        await db
-          .insertInto("actors",)
-          .values({
-            id,
-            actor_type: "user",
-            display_name: id,
-            owner_id: id,
-            agent_type: "none",
-            settings: "{}",
-            format_version: 0,
-            visibility: "private",
-            import_spec: "{}",
-          },)
-          .execute();
-      } catch { /* already exists */ }
-    }
-  },);
-
   it("allows when ownership context is provided and actor is a participant", async () => {
     await db
       .insertInto("chat_participants",)
