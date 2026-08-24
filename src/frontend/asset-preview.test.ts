@@ -10,12 +10,12 @@ import "./asset-preview";
 describe("asset-preview global registration", () => {
   test("registers globalThis.openAssetPreview on import", () => {
     expect(typeof globalThis.openAssetPreview,).toBe("function",);
-  },);
+  });
 
   test("openAssetPreview is callable with a string id (returns a promise)", () => {
     // We do not assert success — the test env has no DOM and no API. The
     // contract is purely that the global exists and accepts a string id.
     const result = globalThis.openAssetPreview("test-asset-id",);
     expect(result,).toBeInstanceOf(Promise,);
-  },);
+  });
 });

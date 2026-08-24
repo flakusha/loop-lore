@@ -28,7 +28,7 @@ per-`(actor, world)` record.
 
 ## Work
 
-1. **Migration `042_character_world_setup.ts`** — `character_world_setup` table
+1. **Migration `060_character_world_setup.ts`** — `character_world_setup` table
    (columns per epic data model), `UNIQUE(actor_id, world_id)`, indexes on
    `actor_id` and `world_id`.
 2. **Regenerate** — `bun run db:sync-types && bun run db:sync-manifest`
@@ -59,7 +59,7 @@ per-`(actor, world)` record.
 
 ## Files
 
-- `src/db/migrations/042_character_world_setup.ts`
+- `src/db/migrations/060_character_world_setup.ts`
 - `src/db/schema-character.ts` (generated)
 - `src/characters/world-setup/{types,crud,resolve,index}.ts`
 - `src/story/world-state/init.ts`

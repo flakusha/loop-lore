@@ -76,7 +76,7 @@ export async function dispatchCommand(
   // All settled entries are fulfilled at this point — narrow for destructuring.
   // The Promise.allSettled pattern is required by `no-restricted-syntax`;
   // we throw on any rejection so behavior matches sequential await.
-  if (settled.some((r,) => r.status === "rejected",)) {
+  if (settled.some((r,) => r.status === "rejected")) {
     throw new Error("dispatchCommand: chat context lookup failed",);
   }
   const chatRecord = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;

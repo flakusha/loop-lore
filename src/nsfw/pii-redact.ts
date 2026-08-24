@@ -26,7 +26,7 @@ export type ErrorCategory =
   | "other";
 
 /** Pattern-based error categorisation keyed on the lower-cased error text. */
-const ERROR_PATTERNS: Array<[RegExp, ErrorCategory]> = [
+const ERROR_PATTERNS: Array<[RegExp, ErrorCategory,]> = [
   [/timeout/i, "timeout",],
   [/rate.?limit|too.?many.?requests|429/i, "rate_limit",],
   [/schema|validation|parse|malformed|invalid.?json/i, "schema_validation",],
@@ -67,8 +67,8 @@ export async function hmacHex(value: string, secret: string, byteCount = 8,): Pr
     encoder.encode(value,) as BufferSource,
   );
   return Array.from(new Uint8Array(sig, 0, byteCount,),)
-    .map((b,) => b.toString(16,).padStart(2, "0",),)
-    .join("");
+    .map((b,) => b.toString(16,).padStart(2, "0",))
+    .join("",);
 }
 
 // ── ID hasher ───────────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ export async function chatHash(
 // ── Error redaction ─────────────────────────────────────────────────────
 
 /** Patterns stripped from error strings before admin exposure. */
-const SENSITIVE_PATTERNS: Array<[RegExp, string]> = [
+const SENSITIVE_PATTERNS: Array<[RegExp, string,]> = [
   [/(?:bearer |token[=:]?\s*)[\w\-._~/+]+/gi, "[token]",],
   [/(?:api[_-]?key|secret|password)[=:]\s*[\w\-._~/+]+/gi, "[key_redacted]",],
   [/"key_id"\s*:\s*"\w+"/g, '"key_id":"[key_id_redacted]"',],

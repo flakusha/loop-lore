@@ -26,6 +26,7 @@ export interface BlockUserArgs {
 export async function blockUser({ thisL, targetUserId, performedBy, reason, }: BlockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   const prefs = await thisL.getPreferences(targetUserId,);
+  if (!prefs) { throw new Error(`No NSFW preferences found for user ${targetUserId}.`,); }
   if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "blocked",)) {
     throw new Error(`Cannot block user in state ${prefs.accessStatus}.`,);
   }
@@ -82,6 +83,7 @@ export interface BanUserArgs {
 export async function banUser({ thisL, targetUserId, performedBy, reason, }: BanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   const prefs = await thisL.getPreferences(targetUserId,);
+  if (!prefs) { throw new Error(`No NSFW preferences found for user ${targetUserId}.`,); }
   if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "banned",)) {
     throw new Error(`Cannot ban user in state ${prefs.accessStatus}.`,);
   }

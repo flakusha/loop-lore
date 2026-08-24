@@ -221,7 +221,6 @@ describe("charactersRoutes", () => {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ displayName: "New Name", dataVersion: created?.format_version, },),
-
       },),
     );
     expect(res.status,).toBe(200,);
@@ -249,7 +248,6 @@ describe("charactersRoutes", () => {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ contentRating: "nsfw_extreme", dataVersion: created?.format_version, },),
-
       },),
     );
     expect(res.status,).toBe(200,);
@@ -394,7 +392,6 @@ describe("charactersRoutes", () => {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ displayName: "Solo Edit", dataVersion: created?.format_version, },),
-
       },),
     );
     expect(res.status,).toBe(200,);

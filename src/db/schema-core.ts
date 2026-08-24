@@ -127,9 +127,9 @@ export interface Chats {
   name_source: string | null;
   template_id: string | null;
   visibility: Generated<string>;
-  thinking_visibility: Generated<string>;
-  prompt_override: string | null;
   quick_replies: string | null;
+  prompt_override: string | null;
+  thinking_visibility: Generated<string>;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -332,12 +332,12 @@ export interface Messages {
   format_version: Generated<number>;
   section_id: string | null;
   tool_calls: string | null;
-  thinking: string | null;
   metadata: string | null;
   e2e_payload: string | null;
   e2e_session_id: string | null;
   e2e_sender_eph_pub_jwk: string | null;
   e2e_chain_index: number | null;
+  thinking: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
@@ -756,22 +756,6 @@ export interface ModelCapabilities {
   updated_at: string;
 }
 
-// ── battles ────────────────────────────────────────────
-export interface Battles {
-  id: Generated<string>;
-  chat_id: string;
-  world_id: string | null;
-  status: Generated<string>;
-  round: Generated<number>;
-  turn_index: Generated<number>;
-  combatants: Generated<string>;
-  log: Generated<string>;
-  created_by: string;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  ended_at: string | null;
-}
-
 // ── seed_audit ────────────────────────────────────────────
 export interface SeedAudit {
   id: Generated<string>;
@@ -781,20 +765,6 @@ export interface SeedAudit {
   seeded_at: string;
   environment: string;
   metadata: string | null;
-}
-
-// ── trade_history ────────────────────────────────────────────
-export interface TradeHistory {
-  id: Generated<string>;
-  world_id: string;
-  buyer_actor_id: string;
-  seller_actor_id: string;
-  price: Generated<number>;
-  currency_type: Generated<string>;
-  items_offered: Generated<string>;
-  items_requested: Generated<string>;
-  trade_type: Generated<string>;
-  created_at: string;
 }
 
 // ── memory_embeddings ────────────────────────────────────────────
@@ -909,4 +879,34 @@ export interface E2eSkippedKeys {
   encrypted_message_key: string;
   created_at: Generated<string>;
   expires_at: string;
+}
+
+// ── battles ────────────────────────────────────────────
+export interface Battles {
+  id: Generated<string>;
+  chat_id: string;
+  world_id: string | null;
+  status: Generated<string>;
+  round: Generated<number>;
+  turn_index: Generated<number>;
+  combatants: Generated<string>;
+  log: Generated<string>;
+  created_by: string;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  ended_at: string | null;
+}
+
+// ── trade_history ────────────────────────────────────────────
+export interface TradeHistory {
+  id: Generated<string>;
+  world_id: string;
+  buyer_actor_id: string;
+  seller_actor_id: string;
+  price: Generated<number>;
+  currency_type: Generated<string>;
+  items_offered: Generated<string>;
+  items_requested: Generated<string>;
+  trade_type: Generated<string>;
+  created_at: string;
 }

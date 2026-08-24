@@ -11,15 +11,15 @@
  *
  * See .plan/tickets/TASK-proactive-messaging.md.
  */
-import { Elysia, type Context, } from "elysia";
-import { checkChatAccess, } from "../../chat/service";
+import { type Context, Elysia, } from "elysia";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import type { ProactiveConfigInput, } from "../../chat/proactive/types";
+import { checkChatAccess, } from "../../chat/service";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
-import type { ProactiveRouteOpts, } from "./schemas";
 import type { Ctx, } from "./auth";
 import { authorizeProactiveTarget, } from "./auth";
+import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
+import type { ProactiveRouteOpts, } from "./schemas";
 import { sendProactiveHandler, } from "./send-handler";
 
 export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {

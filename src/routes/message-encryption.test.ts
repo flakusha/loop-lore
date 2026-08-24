@@ -7,16 +7,16 @@
  *   - `standard` chats still resolve through deriveChatKeyForChat
  */
 
+import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
-import { Database, } from "bun:sqlite";
 import { Kysely, sql, } from "kysely";
-import { Migrator, type Migration, } from "kysely/migration";
+import { type Migration, Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 
-import { createSqliteDialect, } from "../db";
 import { initSmk, } from "../crypto/smk";
+import { createSqliteDialect, } from "../db";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { messageEncryptionRoutes, } from "./message-encryption";
@@ -32,15 +32,15 @@ function buildMigrationProvider(): { getMigrations: () => Promise<Record<string,
     async getMigrations(): Promise<Record<string, Migration>> {
       const dir = path.join(__dirname, "..", "db", "migrations",);
       const files = readdirSync(dir,)
-        .filter((f,) => f.endsWith(".ts",),)
-        .toSorted((a, b,) => a.localeCompare(b,),);
+        .filter((f,) => f.endsWith(".ts",))
+        .toSorted((a, b,) => a.localeCompare(b,));
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
         // The migration specifier IS genuinely runtime-selected (readdirSync
         // of src/db/migrations/); a static import would require hardcoding
         // every filename. The only writable alternative would be a generated
         // barrel, which the project deliberately avoids.
-        const mod = (await import(path.join(dir, f,),)) as
+        const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
@@ -93,7 +93,7 @@ beforeEach(async () => {
   await sql`DELETE FROM chat_keys`.execute(db,);
 },);
 
-async function insertChat(chatId: string, level: "none" | "standard" | "at-rest"): Promise<void> {
+async function insertChat(chatId: string, level: "none" | "standard" | "at-rest",): Promise<void> {
   await db.insertInto("chats",).values({
     id: chatId,
     name: chatId,
@@ -104,7 +104,7 @@ async function insertChat(chatId: string, level: "none" | "standard" | "at-rest"
   },).execute();
 }
 
-async function callKeyEndpoint(chatId: string): Promise<Response> {
+async function callKeyEndpoint(chatId: string,): Promise<Response> {
   return app.handle(
     new Request(`http://localhost/api/chats/${chatId}/encryption-key`, {
       method: "GET",
@@ -115,7 +115,7 @@ async function callKeyEndpoint(chatId: string): Promise<Response> {
 describe("message-encryption route", () => {
   test("module exports expected functions", () => {
     expect(typeof messageEncryptionRoutes,).toBe("function",);
-  },);
+  });
 });
 
 describe("GET /api/chats/:id/encryption-key — tier gate", () => {
@@ -129,13 +129,13 @@ describe("GET /api/chats/:id/encryption-key — tier gate", () => {
       .where("chat_id", "=", "chat-at-rest-001",)
       .executeTakeFirst();
     expect(keyRow,).toBeUndefined();
-  },);
+  });
 
   test("none chat: returns 404", async () => {
     await insertChat("chat-none-001", "none",);
     const res = await callKeyEndpoint("chat-none-001",);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("standard chat: returns 200 with rawKey when encryption is enabled", async () => {
     await insertChat("chat-standard-001", "standard",);
@@ -145,5 +145,5 @@ describe("GET /api/chats/:id/encryption-key — tier gate", () => {
     expect(body.algorithm,).toBe("AES-GCM",);
     expect(typeof body.rawKey,).toBe("string",);
     expect(body.rawKey,).toMatch(/^[A-Za-z0-9+/]+=*$/,);
-  },);
-},);
+  });
+});
