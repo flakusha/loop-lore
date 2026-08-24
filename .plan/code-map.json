@@ -2425,6 +2425,12 @@
       "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
     }
   ],
+  "src/characters/services/emotion-avatar-fallback.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    }
+  ],
   "src/characters/services/emotion-avatar-fallback.ts": [
     {
       "kind": "ticket",
@@ -2441,6 +2447,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service/generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     }
   ],
   "src/characters/services/personality-service.ts": [
@@ -5763,16 +5775,6 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
-  "src/db/migrations/060_character_world_setup.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-world-setup.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-character-world-setup.md"
-    }
-  ],
   "src/db/migrations/050_lorebook_activation.ts": [
     {
       "kind": "ticket",
@@ -5799,6 +5801,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
+    }
+  ],
+  "src/db/migrations/060_character_world_setup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-character-world-setup.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
@@ -6072,6 +6084,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
     },
     {
@@ -6158,6 +6174,10 @@
   "src/db/schema-content.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     },
     {
@@ -6229,6 +6249,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
       "kind": "ticket",

@@ -127,9 +127,9 @@ export interface Chats {
   name_source: string | null;
   template_id: string | null;
   visibility: Generated<string>;
+  thinking_visibility: Generated<string>;
   quick_replies: string | null;
   prompt_override: string | null;
-  thinking_visibility: Generated<string>;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -332,12 +332,12 @@ export interface Messages {
   format_version: Generated<number>;
   section_id: string | null;
   tool_calls: string | null;
+  thinking: string | null;
   metadata: string | null;
   e2e_payload: string | null;
   e2e_session_id: string | null;
   e2e_sender_eph_pub_jwk: string | null;
   e2e_chain_index: number | null;
-  thinking: string | null;
 }
 
 // ── actor_keys ────────────────────────────────────────────
