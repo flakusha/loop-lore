@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 194 epics
+**Total:** 196 epics
 
 ## Summary
 
@@ -149,6 +149,7 @@
 | 🟡 Draft | Epic: Chat Context Optimization | High | High | 0 | [epic-chat-context-optimization.md](/.plan/epics/epic-chat-context-optimization.md) |
 | 📝 Draft — spec Final (`docs/spec/chat-privacy.md`); partial implementation (GM notes, chat `public` flag); privacy/purpose columns + steering-notes API not implemented | Epic: Chat Privacy | Medium | Medium | 9 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14) | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
+| Unknown | Epic: Context Injection Correctness | Unknown | Unknown | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
 | Unknown | Epic: Database Backup & Recovery Infrastructure | Unknown | Unknown | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Unknown | Epic: Deployment Infrastructure (Docker & Bare Metal) | Unknown | Unknown | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | Unknown | Epic: Federation, Swarm Sync & Decentralized Comms | Unknown | Unknown | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
@@ -169,6 +170,7 @@
 | 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done | Frontend Gallery & Media Viewer | Medium | Medium | 1 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
 | ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately. | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending) | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
+| 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; 3 bug tickets open, 2 feature tickets now track completion. | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
@@ -1497,6 +1499,14 @@ Chat privacy specification — covers message encryption, access control, privac
 - **Type:** Feature Epic / Cross-cutting Framework
 - **File:** `.plan/epics/epic-config-extensions.md`
 
+### Epic: Context Injection Correctness
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-context-injection-correctness.md`
+
 ### Epic: Database Backup & Recovery Infrastructure
 
 - **Status:** Unknown
@@ -1697,6 +1707,17 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Type:** Feature Epic
 - **Tags:** gm, assistant, story, notes, steering, system-message, user-message
 - **File:** `.plan/epics/epic-gm-shadow-notes.md`
+
+### Group Chat
+
+- **Status:** 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; 3 bug tickets open, 2 feature tickets now track completion.
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** group-chat, multi-character, mention, turn-orchestration, talkativity
+- **File:** `.plan/epics/epic-group-chat.md`
+
+Group chat lets multiple characters participate in one conversation. The runtime
 
 ### Impersonation System
 

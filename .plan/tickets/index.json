@@ -108,7 +108,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md"
+    "source": ".plan/tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md",
+    "git_issue": "8a5e407"
   },
   "BUG-AUTO-ROTATION-CONFIG-DRIFT": {
     "hash": "a9a4ea3",
@@ -246,7 +247,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md"
+    "source": ".plan/tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md",
+    "git_issue": "d4547f8"
   },
   "BUG-CHAT-IDEMPOTENCY-NOT-ENFORCED": {
     "hash": "pending",
@@ -470,7 +472,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md"
+    "source": ".plan/tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md",
+    "git_issue": "51281c7"
   },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
@@ -671,7 +674,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
+    "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md",
+    "git_issue": "807abdb"
   },
   "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
     "hash": "pending",
@@ -8348,6 +8352,18 @@
     "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md",
     "git_issue": "4e59b5f"
   },
+  "TASK-GALLERY-REVIEW-APPROVAL-QUEUE": {
+    "hash": "69e421f",
+    "extid": "TASK-GALLERY-REVIEW-APPROVAL-QUEUE",
+    "type": "TASK",
+    "title": "Gallery Review & Approval Queue",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-gallery",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-review-approval-queue.md",
+    "git_issue": "69e421f"
+  },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
     "extid": "TASK-GEMINI-PROVIDER",
@@ -8467,6 +8483,30 @@
     "source": ".plan/tickets/TASK-gm-whitenotes.md",
     "status": "done",
     "git_issue": "dbe91d6"
+  },
+  "TASK-GROUP-CHAT-MENTION-ROUTING": {
+    "hash": "0008385",
+    "extid": "TASK-GROUP-CHAT-MENTION-ROUTING",
+    "type": "TASK",
+    "title": "Group Chat Mention Routing",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-group-chat",
+    "tags": [],
+    "source": ".plan/tickets/TASK-group-chat-mention-routing.md",
+    "git_issue": "0008385"
+  },
+  "TASK-GROUP-CHAT-TURN-ORCHESTRATION": {
+    "hash": "6af81fc",
+    "extid": "TASK-GROUP-CHAT-TURN-ORCHESTRATION",
+    "type": "TASK",
+    "title": "Group Chat Turn Orchestration",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-group-chat",
+    "tags": [],
+    "source": ".plan/tickets/TASK-group-chat-turn-orchestration.md",
+    "git_issue": "6af81fc"
   },
   "TASK-HARMONIZE-QUEST-TYPE-TAXONOMY": {
     "hash": "51a7bc01",
@@ -10992,6 +11032,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-promote-size-check-to-ci.md",
     "git_issue": "2a932ab"
+  },
+  "TASK-PROMOTE-USER-TO-MODERATOR": {
+    "hash": "45d6f78",
+    "extid": "TASK-PROMOTE-USER-TO-MODERATOR",
+    "type": "TASK",
+    "title": "Promote User to Moderator",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-promote-user-to-moderator.md",
+    "git_issue": "45d6f78"
   },
   "TASK-PROMPT-CHARACTER-EXTENSIONS-SECTION": {
     "hash": "pending",
