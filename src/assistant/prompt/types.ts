@@ -47,8 +47,12 @@ export interface PromptParams {
   emotionAvatar?: string;
   /** Application config — enables config-driven prompt sections (e.g. NSFW policy). */
   config?: Config;
-  /** Generation task type for task-clarification injection (e.g. "chat-reply", "vn-choice"). */
-  task?: string;
+  /**
+   * Generation task type for task-clarification injection (e.g. "chat-reply", "vn-choice").
+   * Pass `null` to explicitly disable the task-clarification section for this prompt;
+   * `undefined` (omitted) defaults to "chat-reply".
+   */
+  task?: string | null;
   /** Optional action context for task-clarification injection. */
   action?: string;
   /** Optional assistant persona name for task-clarification injection. */
@@ -109,8 +113,11 @@ export interface AssembleContext {
   tokenBudget: number;
   /** Application config (optional) — available to config-driven sections. */
   config?: Config;
-  /** Generation task type for task-clarification injection. */
-  task?: string;
+  /**
+   * Generation task type for task-clarification injection.
+   * `null` = explicitly disabled (section returns empty); `undefined` = default "chat-reply".
+   */
+  task?: string | null;
   /** Optional action context for task-clarification injection. */
   action?: string;
   /** Optional assistant persona name for task-clarification injection. */
