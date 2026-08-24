@@ -38,17 +38,35 @@ export interface AvatarMetadata {
 const DEFAULT_QUALITY_TAGS = "high quality, detailed, sharp focus, professional";
 
 /**
+ * Options for {@link extractAvatarMetadata}.
+ *
+ * When `actorId` is supplied, the character description is fetched as a
+ * caption anchor and the matching `character_avatars` row's `tags` JSON is
+ * surfaced. Without `actorId`, the function is a drop-in for its previous
+ * signature.
+ */
+export interface ExtractAvatarMetadataOpts {
+  actorId?: string;
+}
+
+/**
  * Extract metadata from an avatar's asset for prompt construction.
  *
- * Pulls caption, tags, alt text, and generation prompt from the asset record.
+ * Pulls caption, tags, alt text, and image dimensions from the asset row
+ * and (when `opts.actorId` is provided) the character description and the
+ * matching `character_avatars.tags` JSON.
  *
  * @param db - Database instance
  * @param assetId - Asset ID to extract metadata from
- * @returns Extracted metadata
+ * @param opts - Optional extractor knobs; pass `actorId` to enable the
+ *               description + tags lookup.
+ * @returns Extracted metadata (always shaped `AvatarMetadata`; absent
+ *          fields are undefined, never `null`)
  */
 export async function extractAvatarMetadata(
   db: Kysely<DB>,
   assetId: string,
+  opts: ExtractAvatarMetadataOpts = {},
 ): Promise<AvatarMetadata> {
   const asset = await getAsset(db, assetId,);
 
@@ -56,12 +74,64 @@ export async function extractAvatarMetadata(
     return {};
   }
 
-  return {
-    caption: asset.alt_text ?? undefined,
-    altText: asset.alt_text ?? undefined,
-    width: asset.width ?? undefined,
-    height: asset.height ?? undefined,
-  };
+  // asset.alt_text wins over any character-derived caption; if absent, fall
+  // back to actors.description when the caller knows the actor.
+  let caption: string | undefined = asset.alt_text ?? undefined;
+  let tags: Record<string, string> | undefined;
+
+  if (opts.actorId) {
+    if (!caption) {
+      const actor = await db
+        .selectFrom("actors",)
+        .select("description",)
+        .where("id", "=", opts.actorId,)
+        .executeTakeFirst();
+      if (actor?.description) {
+        caption = actor.description;
+      }
+    }
+
+    const avatarRow = await db
+      .selectFrom("character_avatars",)
+      .select("tags",)
+      .where("actor_id", "=", opts.actorId,)
+      .where("asset_id", "=", assetId,)
+      .executeTakeFirst();
+    if (avatarRow) {
+      try {
+        const parsed = JSON.parse(avatarRow.tags,) as unknown;
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed,)) {
+          const record = parsed as Record<string, unknown>;
+          const sanitized: Record<string, string> = {};
+          for (const [k, v,] of Object.entries(record,)) {
+            if (typeof v === "string") {
+              sanitized[k] = v;
+            }
+          }
+          tags = sanitized;
+        }
+      } catch {
+        // Malformed JSON on the row → ignore, don't throw.
+      }
+    }
+  }
+  // Drop-in compat: only surface `tags` when the caller passed `actorId`,
+  // otherwise callers using the old single-arg signature get an unchanged
+  // shape (no `tags: undefined` key).
+  return tags !== undefined
+    ? {
+      caption,
+      altText: asset.alt_text ?? undefined,
+      width: asset.width ?? undefined,
+      height: asset.height ?? undefined,
+      tags,
+    }
+    : {
+      caption,
+      altText: asset.alt_text ?? undefined,
+      width: asset.width ?? undefined,
+      height: asset.height ?? undefined,
+};
 }
 
 /**

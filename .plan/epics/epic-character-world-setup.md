@@ -155,7 +155,7 @@ phase 2.
 
 ## Files
 
-- `src/db/migrations/042_character_world_setup.ts` — schema migration
+- `src/db/migrations/060_character_world_setup.ts` — schema migration
 - `src/db/schema-character.ts` — generated `CharacterWorldSetup` interface
 - `src/characters/world-setup/types.ts` — row + input + resolution types
 - `src/characters/world-setup/crud.ts` — CRUD dispatchers

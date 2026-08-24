@@ -10,11 +10,11 @@ describe("createHandleResolver", () => {
 
   beforeEach(async () => {
     db = (await createTestDb()).db;
-  });
+  },);
 
   afterEach(async () => {
     await db.destroy();
-  });
+  },);
 
   async function insertUser(id: string, username: string,): Promise<void> {
     await db.insertInto("users",)

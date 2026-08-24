@@ -422,9 +422,9 @@ export async function insertChats(
     name_source?: string | null;
     template_id?: string | null;
     visibility?: Generated<string>;
-    thinking_visibility?: Generated<string>;
-    prompt_override?: string | null;
     quick_replies?: string | null;
+    prompt_override?: string | null;
+    thinking_visibility?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({
@@ -866,12 +866,12 @@ export async function insertMessages(
     format_version?: Generated<number>;
     section_id?: string | null;
     tool_calls?: string | null;
-    thinking?: string | null;
     metadata?: string | null;
     e2e_payload?: string | null;
     e2e_session_id?: string | null;
     e2e_sender_eph_pub_jwk?: string | null;
     e2e_chain_index?: number | null;
+    thinking?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
@@ -2989,31 +2989,6 @@ export async function insertCharacterInternalTraits(
   } as any,).execute();
 }
 
-/** Insert a character_world_setup row. */
-export async function insertCharacterWorldSetup(
-  db: Db,
-  actor_id: string,
-  world_id: string,
-  opts?: {
-    id?: Generated<string>;
-    starting_inventory?: Generated<string>;
-    lore_entries?: Generated<string>;
-    backstory?: string | null;
-    scenario_override?: string | null;
-    system_prompt_override?: string | null;
-    initial_state?: Generated<string>;
-    created_at?: Generated<string>;
-    updated_at?: Generated<string>;
-  },
-): Promise<void> {
-  await db.insertInto("character_world_setup",).values({
-    id: crypto.randomUUID(),
-    actor_id,
-    world_id,
-    ...opts,
-  } as any,).execute();
-}
-
 /** Insert a model_capabilities row. */
 export async function insertModelCapabilities(
   db: Db,
@@ -3047,32 +3022,6 @@ export async function insertModelCapabilities(
   } as any,).execute();
 }
 
-/** Insert a battles row. */
-export async function insertBattles(
-  db: Db,
-  chat_id: string,
-  created_by: string,
-  opts?: {
-    id?: Generated<string>;
-    world_id?: string | null;
-    status?: Generated<string>;
-    round?: Generated<number>;
-    turn_index?: Generated<number>;
-    combatants?: Generated<string>;
-    log?: Generated<string>;
-    created_at?: Generated<string>;
-    updated_at?: Generated<string>;
-    ended_at?: string | null;
-  },
-): Promise<void> {
-  await db.insertInto("battles",).values({
-    id: crypto.randomUUID(),
-    chat_id,
-    created_by,
-    ...opts,
-  } as any,).execute();
-}
-
 /** Insert a seed_audit row. */
 export async function insertSeedAudit(
   db: Db,
@@ -3090,32 +3039,6 @@ export async function insertSeedAudit(
     seeded_by,
     seeded_at,
     environment,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a trade_history row. */
-export async function insertTradeHistory(
-  db: Db,
-  world_id: string,
-  buyer_actor_id: string,
-  seller_actor_id: string,
-  created_at: string,
-  opts?: {
-    id?: Generated<string>;
-    price?: Generated<number>;
-    currency_type?: Generated<string>;
-    items_offered?: Generated<string>;
-    items_requested?: Generated<string>;
-    trade_type?: Generated<string>;
-  },
-): Promise<void> {
-  await db.insertInto("trade_history",).values({
-    id: crypto.randomUUID(),
-    world_id,
-    buyer_actor_id,
-    seller_actor_id,
-    created_at,
     ...opts,
   } as any,).execute();
 }
@@ -3315,6 +3238,83 @@ export async function insertE2eSkippedKeys(
     counter,
     encrypted_message_key,
     expires_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a character_world_setup row. */
+export async function insertCharacterWorldSetup(
+  db: Db,
+  actor_id: string,
+  world_id: string,
+  opts?: {
+    id?: Generated<string>;
+    starting_inventory?: Generated<string>;
+    lore_entries?: Generated<string>;
+    backstory?: string | null;
+    scenario_override?: string | null;
+    system_prompt_override?: string | null;
+    initial_state?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("character_world_setup",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    world_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a battles row. */
+export async function insertBattles(
+  db: Db,
+  chat_id: string,
+  created_by: string,
+  opts?: {
+    id?: Generated<string>;
+    world_id?: string | null;
+    status?: Generated<string>;
+    round?: Generated<number>;
+    turn_index?: Generated<number>;
+    combatants?: Generated<string>;
+    log?: Generated<string>;
+    created_at?: Generated<string>;
+    updated_at?: Generated<string>;
+    ended_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("battles",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    created_by,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a trade_history row. */
+export async function insertTradeHistory(
+  db: Db,
+  world_id: string,
+  buyer_actor_id: string,
+  seller_actor_id: string,
+  created_at: string,
+  opts?: {
+    id?: Generated<string>;
+    price?: Generated<number>;
+    currency_type?: Generated<string>;
+    items_offered?: Generated<string>;
+    items_requested?: Generated<string>;
+    trade_type?: Generated<string>;
+  },
+): Promise<void> {
+  await db.insertInto("trade_history",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    buyer_actor_id,
+    seller_actor_id,
+    created_at,
     ...opts,
   } as any,).execute();
 }
