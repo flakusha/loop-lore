@@ -46,8 +46,19 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 | DB migrate runner                            | `src/db/migrate.ts`                                                   |
 | Config loader (YAML/TOML/env)                | `src/config/load.ts`                                                  |
 | TLS cert auto-generation                     | `src/config/cert.ts`                                                  |
-| Auth middleware (Bearer+SHA256)              | `src/middleware/auth.ts`                                              |
-| Middleware pipeline (compose, errorBoundary) | `src/middleware/pipeline.ts`                                          |
+| Auth middleware (JWT + solo fallback)        | `src/middleware/auth/` (barrel: `index.ts`, `authenticate.ts`, `token.ts`, `solo-user.ts`) |
+| Role/permission guard                        | `src/middleware/permissions.ts` (`requirePermission()` Elysia `beforeHandle`) |
+| Admin view guard                             | `src/middleware/admin-gate.ts` (`adminViewGuard`, 302 redirect)      |
+| i18n middleware (locale detect + translator)  | `src/middleware/i18n.ts` (`detectLocale`, `createI18nContext`)       |
+| Rate limiter (sliding window)                | `src/middleware/rate-limit.ts`                                        |
+| CSP nonce store (per-request WeakMap)        | `src/middleware/csp-nonce.ts`                                         |
+| Response-header policy engine                 | `src/middleware/response-headers.ts`                                  |
+| Dynamic-response policy (minify + compress)  | `src/middleware/dynamic-response.ts`                                 |
+| Handle resolver (userId → handle for audit)  | `src/middleware/handle-resolver.ts`                                   |
+| NSFW gate (access + consent + logging)       | `src/middleware/nsfw-gate/` (barrel: `index.ts`)                     |
+| Elysia auth guard shim (legacy, see elysia-app.ts) | `src/middleware/elysia-auth.ts`                                 |
+| API version redirect + resolver              | `src/routes/middleware/version-redirect.ts`, `version-resolver.ts`  |
+| Auth + i18n wiring (Elysia `.derive()`)       | `src/elysia-app.ts`                                                   |
 | Structured logger (levels, rotate, censor)   | `src/logger/*.ts`                                                     |
 | Content encoding (gzip/zstd/brotli)          | `src/content/encode.ts`, `compress.ts`                                |
 | Content minification                         | `src/content/minify.ts`                                               |
@@ -112,7 +123,7 @@ Tool Use, RAG, Model Comparison, Multi-Agent, Structured Output, Prompt Chaining
 
 ### Browser Hardening (Response Headers)
 
-Policy engine built (`src/middleware/response-headers.ts`). Post-MVP: self-host htmx/Alpine, COEP, Early Hints, CSP rollout. See `docs/frontend/headers-management.md`.
+Policy engine built (`src/middleware/response-headers.ts`); dynamic-response policy built (`src/middleware/dynamic-response.ts`); CSP nonce store built (`src/middleware/csp-nonce.ts`). Post-MVP: self-host htmx/Alpine, COEP, Early Hints, CSP rollout. See `docs/frontend/headers-management.md`.
 
 ### Administrative
 
