@@ -5,15 +5,23 @@
  * Prompt-preparation step for auto-generation.
  *
  * Resolves the provider, assembles the prompt (with GM-role system prompt
- * override and config-driven emotion injection), and starts generation
- * tracking when a parent message exists.
+ * override), and starts generation tracking when a parent message exists.
+ *
+ * Note: emotion context for the `emotionAvatar` prompt section is resolved
+ * by `PromptAssembler` (src/assistant/prompt-assembler.ts) from the
+ * actor's persisted `character_mood.current_mood`, kept current by the
+ * mood/emotion hooks. The previous user-message scan
+ * (`detectAvatarChangeIntent`) was removed: it ran on the user's input
+ * and biased the LLM toward the user's mood, which is the opposite of
+ * what avatar binding wants (the avatar should reflect the assistant's
+ * reply, not the user's prompt).
  */
 import type { Kysely, } from "kysely";
-import { detectAvatarChangeIntent, } from "../../assistant/intent";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
+import type { GenerationMessage, } from "../types";
 import type { GenDeps, } from "./deps";
 
 export interface PrepareGenerationOpts {
@@ -27,7 +35,6 @@ export interface PrepareGenerationOpts {
   actorId: string;
   /** True for group chats — the assembler excludes the generating actor. */
   isGroupChat: boolean;
-  userMessage?: string;
   /** Resolved GM system prompt (from the `"gm"` assistant role), if any. */
   systemPromptOverride?: string;
 }
@@ -39,7 +46,7 @@ export interface PreparedGeneration {
     resolvedApiKey?: string;
     provider: { capabilities: { streaming: boolean } };
   };
-  prompt: { messages: import("../types").GenerationMessage[] };
+  prompt: { messages: GenerationMessage[] };
   /** Generation tracking (undefined for initial greeting). */
   tracking?: { attemptId: string; abortSignal: AbortSignal };
 }
@@ -60,7 +67,6 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     userId,
     actorId,
     isGroupChat,
-    userMessage,
     systemPromptOverride,
   } = opts;
   const log = getLogger().child({ module: "auto-gen", },);
@@ -81,16 +87,6 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     groupParticipantIds = participantIds;
   }
 
-  // Wire the config-driven avatar-change intent detector: when the user's
-  // latest message matches a pattern in config.templates.avatar.intentPatterns,
-  // the resolved emotion is injected as params.emotion so the emotionAvatar
-  // section fires (and the generation provider picks the matching emotion
-  // modifier). No match → undefined → the assembler falls back to the actor's
-  // persisted mood.
-  const detectedEmotion = userMessage && config.templates.avatar
-    ? detectAvatarChangeIntent(userMessage, config.templates.avatar,) ?? undefined
-    : undefined;
-
   const prompt = await assembler.assemble({
     actorId,
     chatId,
@@ -99,7 +95,6 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     groupParticipantIds,
     config,
     systemPromptOverride,
-    emotion: detectedEmotion,
   },);
   log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
