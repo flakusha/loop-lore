@@ -19,6 +19,7 @@ import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
+import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
 import { maybeAutoReply, } from "./reply";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
 import { autoRenameChat, } from "./transitions";
@@ -171,6 +172,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           503: ErrorResponse,
         },
       },
-    )
-    .use(createEntityConfirmRoutes(opts, prefix,),);
-}
+     )
+     .use(createEntityConfirmRoutes(opts, prefix,),);
+ }
