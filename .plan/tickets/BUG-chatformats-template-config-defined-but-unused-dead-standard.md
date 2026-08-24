@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: chatFormats template config defined but unused (dead standard-template feature)
 
 **Status:** ⬜ Not Started
