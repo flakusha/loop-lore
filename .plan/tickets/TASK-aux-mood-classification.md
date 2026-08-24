@@ -80,16 +80,21 @@ interface MoodClassification {
 | `MoodHook` (`mood_shift`)            | ⚠️ keyword-based positive/negative word counting, **no LLM**; doc header claims "Uses the LLM" (stale) | `generation/hooks/mood-hook.ts`  |
 | `character_mood` table               | ✅ schema exists                                                                                      | `src/db/schema-character.ts:63`  |
 | Mood → expression modifier injection | ❌ not wired from hook `data`                                                                         | —                                |
-| Hook event consumption               | ❌ `data.dominantMood`/`delta` never read — `auto-gen.ts` consumes only `hookResult.allowed`          | `generation/auto-gen.ts:412-431` |
+| Hook event consumption               | ✅ `content-hooks.ts:127-132` extracts `moodShiftDelta`; `post-store.ts:85-91` calls `MoodService.applyHappinessDelta(actorId, worldId, delta)`. | `auto-gen/content-hooks.ts:127-132`, `auto-gen/post-store.ts:85-91` |
 
-Key finding: `mood_shift` events fire but nothing applies them —
-no `character_mood` write, no expression modifier, no avatar context.
+Note: `mood_shift` events fire and **are** applied — `post-store.ts`
+calls `MoodService.applyHappinessDelta(actorId, worldId, delta)` whenever
+`moodShiftDelta != null`. The remaining gap is the **LLM classifier**
+(replacing the keyword `MoodHook` for richer detection), not persistence.
+Expression-modifier injection from hook `data` remains out of scope for
+this ticket (tracked separately by the mood/integration epic).
 
-## Next Actionable Items
-
-1. **Apply hook results** (epic M4): in `auto-gen.ts` post-hook, consume
-   `mood_shift` events → write `character_mood` delta (table exists), feed
-   `mood` into `AvatarSelectionContext` for avatar scoring.
+1. **Hook results applied** (done 2026-08-02): `content-hooks.ts` extracts
+   `moodShiftDelta`; `post-store.ts:85-91` calls
+   `MoodService.applyHappinessDelta(actorId, worldId, delta)`. Avatar-scoring
+   context still comes from the explicit HTTP route (`mood` field in the
+   request body) — see `TASK-character-mood-happiness` for the happiness-based
+   expression modifiers that already update via the same path.
 2. **LLM classification task** (`src/aux-pipeline/tasks/mood.ts`, prompt
    drafted above): auxiliary role via shared runner (M1); replace keyword
    `MoodHook`. Constraints: temp 0.0, maxTokens 80, 2s timeout, confidence >= 0.5 gate.
