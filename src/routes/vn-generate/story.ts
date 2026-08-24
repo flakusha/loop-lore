@@ -51,6 +51,7 @@ async function generateStoryDescription(
     includeStoryContext: true,
     includeExamples: false,
     config,
+    task: "vn-story",
   },);
 
   const styleInstruction = body.style
