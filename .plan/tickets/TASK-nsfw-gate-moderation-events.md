@@ -26,7 +26,7 @@ NSFW enable/disable + non-public moderation events.
 
 ## Files
 
-- `src/middleware/nsfw-gate.ts` (new)
+- `src/middleware/nsfw-gate/` (new)
 - `src/db/schema.ts` (modify)
 
 ## Related

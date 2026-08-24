@@ -29,13 +29,11 @@ Add OpenAPI spec generation, headless mode, and API versioning to enable externa
   - Mount routes under `/api/v1/`
   - Add version header middleware
 
-- [ ] Add CORS middleware
-  - File: `src/middleware/cors.ts`
+- [ ] Add CORS middleware (see `TASK-cors-middleware.md`)
   - Configure allowed origins via config
   - Support preflight requests
 
-- [ ] Add API key authentication
-  - File: `src/middleware/api-key.ts`
+- [ ] Add API key authentication (see `TASK-api-key-auth-middleware.md`)
   - Validate `X-API-Key` header
   - Optional auth for public endpoints
 
@@ -60,5 +58,5 @@ curl -H "Origin: https://example.com" http://localhost:3000/api/v1/chats
 - `src/routes/openapi.ts` — OpenAPI spec generation
 - `src/config/schema.ts` — Config schema update
 - `src/elysia-app.ts` — Route mounting
-- `src/middleware/cors.ts` — CORS middleware
-- `src/middleware/api-key.ts` — API key auth
+- CORS middleware (see `TASK-cors-middleware.md`)
+- API key auth (see `TASK-api-key-auth-middleware.md`)
