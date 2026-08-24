@@ -16,10 +16,10 @@ import { NotificationType, } from "../../db/enums-core";
 import { triggerAutoGeneration, } from "../../generation/auto-gen";
 import { NotificationService, } from "../../notifications/service";
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
-import { logErr, } from "./schemas";
-import type { ProactiveRouteOpts, } from "./schemas";
 import type { Ctx, } from "./auth";
 import { authorizeProactiveTarget, } from "./auth";
+import { logErr, } from "./schemas";
+import type { ProactiveRouteOpts, } from "./schemas";
 
 /**
  * Handle `POST /api/proactive-messaging/send`.

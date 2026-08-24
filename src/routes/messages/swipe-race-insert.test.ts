@@ -15,7 +15,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { MessageContentFormat, MessageRole, MessageStatus, MessageContentType, } from "../../db/enums";
+import { MessageContentFormat, MessageContentType, MessageRole, MessageStatus, } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -84,18 +84,16 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
   test("concurrent inserts at the same parent produce distinct swipe_indexes", async () => {
     const fanout = 8;
     const results = await Promise.all(
-      Array.from({ length: fanout, }, () =>
-        insertUserMessageWithRetry(db, makeBase(uid()),)
-      ),
+      Array.from({ length: fanout, }, () => insertUserMessageWithRetry(db, makeBase(uid(),),),),
     );
 
-    expect(results).toHaveLength(fanout);
-    const indexes = results.map((r,) => r.swipeIndex,).sort((a, b,) => (a ?? 0) - (b ?? 0),);
+    expect(results,).toHaveLength(fanout,);
+    const indexes = results.map((r,) => r.swipeIndex).sort((a, b,) => (a ?? 0) - (b ?? 0));
     // Each index must be unique and start at 1 (MAX(parent.swipe_index=0) + 1)
-    expect(new Set(indexes,).size,).toBe(fanout);
-    expect(indexes[0]).toBe(1);
-    expect(indexes[fanout - 1]).toBe(fanout);
-  },);
+    expect(new Set(indexes,).size,).toBe(fanout,);
+    expect(indexes[0],).toBe(1,);
+    expect(indexes[fanout - 1],).toBe(fanout,);
+  });
 
   test("parent-less insert leaves swipe_index null", async () => {
     const newChatId = uid();
@@ -105,8 +103,8 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
       chatId: newChatId,
       parentId: null,
     },);
-    expect(result.swipeIndex).toBeNull();
-  },);
+    expect(result.swipeIndex,).toBeNull();
+  });
 
   test("exhausted retry throws SwipeInsertExhaustedError", async () => {
     // Force a collision by pre-inserting a row with swipe_index = MAX_INSEMPTS
@@ -196,8 +194,8 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
         parentId: null,
       },),
     ).rejects.toBeInstanceOf(SwipeInsertExhaustedError,);
-  },);
-},);
+  });
+});
 
 describe("swipe-race-insert — idempotency", () => {
   let db: Kysely<DB>;
@@ -240,8 +238,8 @@ describe("swipe-race-insert — idempotency", () => {
 
   test("findByIdempotencyKey returns null when no row exists", async () => {
     const result = await findByIdempotencyKey(db, chatId, idemKey,);
-    expect(result).toBeNull();
-  },);
+    expect(result,).toBeNull();
+  });
 
   test("after insert with idempotencyKey, findByIdempotencyKey returns that row's id", async () => {
     const rowId = uid();
@@ -256,19 +254,19 @@ describe("swipe-race-insert — idempotency", () => {
       idempotencyKey: idemKey,
     },);
     const result = await findByIdempotencyKey(db, chatId, idemKey,);
-    expect(result).toBe(rowId);
-  },);
+    expect(result,).toBe(rowId,);
+  });
 
   test("same idempotencyKey on a different chat is independent", async () => {
     const result = await findByIdempotencyKey(db, otherChatId, idemKey,);
-    expect(result).toBeNull();
-  },);
+    expect(result,).toBeNull();
+  });
 
   test("null idempotencyKey always returns null and never blocks inserts", async () => {
-    const r1 = await findByIdempotencyKey(db, chatId, "");
-    const r2 = await findByIdempotencyKey(db, chatId, "");
-    expect(r1).toBeNull();
-    expect(r2).toBeNull();
+    const r1 = await findByIdempotencyKey(db, chatId, "",);
+    const r2 = await findByIdempotencyKey(db, chatId, "",);
+    expect(r1,).toBeNull();
+    expect(r2,).toBeNull();
     // Two top-level inserts with no key — both succeed.
     const a = await insertUserMessageWithRetry(db, {
       id: uid(),
@@ -290,6 +288,6 @@ describe("swipe-race-insert — idempotency", () => {
       contentEncoding: "utf8" as ContentEncoding,
       idempotencyKey: null,
     },);
-    expect(a.id).not.toBe(b.id);
-  },);
-},);
+    expect(a.id,).not.toBe(b.id,);
+  });
+});

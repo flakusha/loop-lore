@@ -93,7 +93,8 @@ const checks = {
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
     "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
     // Advisory: reports pre-existing banned-pattern debt; not blocking.
-    "frontend - banned patterns (ESLint-gap heuristic, advisory)": "bun run scripts/check-frontend-banned-patterns.ts || true",
+    "frontend - banned patterns (ESLint-gap heuristic, advisory)":
+      "bun run scripts/check-frontend-banned-patterns.ts || true",
     // Advisory: planning hygiene — stale/missing epic coverage.
     "plan - epic coverage (advisory)": "bun run scripts/check-epic-coverage.ts || true",
   },
