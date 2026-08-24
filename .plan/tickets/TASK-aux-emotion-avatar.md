@@ -149,7 +149,7 @@ context — these feed directly into avatar selection as additional context.
 | `POST /api/actors/:actorId/avatars/select` | ✅                                                                                      | `routes/character-avatars.ts:239`               |
 | `AvatarService.selectAvatar()`             | ✅ weighted scoring, `emotion_first` rule                                               | `characters/services/avatar-service.ts`         |
 | Emotion avatar generation (ComfyUI)        | ✅ image-gen only, no LLM                                                               | `characters/services/emotion-avatar-service.ts` |
-| `detectAvatarChangeIntent()`               | ❌ **dead code** — zero consumers                                                       | `assistant/intent.ts:139`                       |
+| `detectAvatarChangeIntent()`               | ⚠️ had a wrong-direction consumer (run on user message, not assistant reply). Removed 2026-08-24 by fix-detect-avatar-change-intent-direction; now zero production consumers. Function retained (still tested in `intent.test.ts`) for potential AUX classification replacement. | `assistant/intent.ts:28-46` |
 | `EmotionHook` (`emotion_change`)           | ⚠️ keyword-based; doc header claims "Uses the LLM" (stale)                               | `generation/hooks/emotion-hook.ts`              |
 | Hook event consumption                     | ❌ `data.dominantEmotion` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431`                |
 | Auto-trigger on response                   | ❌ manual API call only                                                                 | —                                               |
