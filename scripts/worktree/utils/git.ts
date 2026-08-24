@@ -34,6 +34,28 @@ export function isProtected(branch: string,): boolean {
 }
 
 /**
+ * Resolve the *main* repo root for a git checkout regardless of cwd.
+ *
+ * Works correctly from any linked worktree: `--git-common-dir` returns the
+ * shared `.git` directory (lives at the main repo root), so `dirname` of that
+ * is always the main repo. From the main repo itself the same call returns
+ * the local `.git`, whose parent is the main repo. Resolves relative paths
+ * (e.g. `.git`) against `startDir` before computing the parent.
+ *
+ * Use this instead of `import.meta.url`-derived paths whenever the CLI is
+ * launched from inside a worktree — `bun run scripts/worktree/...` resolves
+ * the script path relative to cwd, which would otherwise point into the
+ * worktree and yield a wrong repoRoot.
+ */
+export function findRepoRoot(startDir: string = process.cwd(),): string {
+  const commonDir = gitSyncQuiet(startDir, "rev-parse", "--git-common-dir",);
+  if (!commonDir) {
+    throw new Error(`findRepoRoot: not a git repository (cwd: ${startDir})`,);
+  }
+  return resolve(startDir, commonDir, "..",);
+}
+
+/**
  * True when `cwd` lies inside a linked worktree (e.g. tree/<branch>) rather
  * than the main repo root. Detection is git-aware (uses rev-parse) so it works
  * regardless of how the CLI was launched or which checkout's copy is running:
@@ -43,8 +65,7 @@ export function isProtected(branch: string,): boolean {
 function isInsideWorktree(cwd: string = process.cwd(),): boolean {
   try {
     const toplevel = gitSync(cwd, "rev-parse", "--show-toplevel",).trim();
-    const commonDir = gitSync(cwd, "rev-parse", "--git-common-dir",).trim();
-    const mainRoot = resolve(commonDir, "..",);
+    const mainRoot = findRepoRoot(cwd,);
     return toplevel !== mainRoot;
   } catch {
     return false;
