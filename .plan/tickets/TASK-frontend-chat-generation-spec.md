@@ -8,6 +8,7 @@
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
 **Related:** docs/frontend/chat/generation.md
+**git issue:** d18c94e
 
 ## Summary
 

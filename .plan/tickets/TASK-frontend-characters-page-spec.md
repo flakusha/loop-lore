@@ -8,6 +8,7 @@
 **Effort:** Medium
 **Epic:** (none — no dedicated frontend epic tracks this spec)
 **Related:** docs/frontend/characters.md
+**git issue:** ec5148d
 
 ## Summary
 
