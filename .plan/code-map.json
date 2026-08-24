@@ -723,6 +723,10 @@
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-prompt-library-expanded.md"
     },
@@ -757,6 +761,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
+    }
+  ],
+  "src/assistant/prompt-budget.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
     }
   ],
   "src/assistant/prompt/assembly.ts": [
@@ -847,6 +857,10 @@
   ],
   "src/assistant/prompt/sections/chat-history.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/chat-privacy.md"
     }
@@ -900,6 +914,10 @@
     }
   ],
   "src/assistant/prompt/sections/group-participants.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
@@ -1040,6 +1058,10 @@
     }
   ],
   "src/assistant/prompt/sections/user-persona.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
@@ -2785,6 +2807,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
     },
     {
       "kind": "epic",
@@ -10167,6 +10193,10 @@
   ],
   "src/generation/auto-gen/prepare-generation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
     }
@@ -10347,6 +10377,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
     }
   ],
   "src/generation/generate-route/handler.test.ts": [
@@ -11080,6 +11114,10 @@
   "src/group-chat/mention-parser.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     },
     {
@@ -11104,6 +11142,10 @@
     }
   ],
   "src/group-chat/turn-selector.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
