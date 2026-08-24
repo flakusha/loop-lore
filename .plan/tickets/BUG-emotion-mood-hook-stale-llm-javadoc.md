@@ -34,25 +34,6 @@ replacement work:
   AUX classifier
 - `TASK-aux-mood-classification.md` — replace keyword `MoodHook` with AUX
   classifier
-## Adjacent nit: spurious `async` on `canHandle`
-
-All 4 hooks (`emotion-hook.ts:20`, `mood-hook.ts:20`, `moderation-hook.ts:109`,
-`nsfw-hook.ts:44`) declare `canHandle` as `async` and carry the
-`// eslint-disable-next-line @typescript-eslint/require-await` disable comment.
-Functionally correct (JS auto-wraps the bare return), but the modifier is
-superfluous — `canHandle` has no `await` in any of the 4 bodies. A sync
-function returning `boolean` doesn't satisfy the `HookHandler.canHandle`
-interface (`types.ts:54` mandates `Promise<boolean>`), so the `async`
-keyword is the legitimate way to satisfy the interface — but the disable
-comment makes the intent explicit at the call site.
-
-If the interface is loosened to `boolean | Promise<boolean>` in a follow-up,
-all 4 `canHandle` methods can drop both the `async` keyword and the
-disable comment in one pass. Trivial, low-risk, but cross-cuts the
-`HookHandler` contract — coordinate with the other hook consumers
-(custom user-defined hooks via `registerHook`) before changing.
-
-## Fix
 - `TASK-aux-enrichment-emotion-avatar-task.md` — wrapper scaffolding for
   `src/aux-pipeline/tasks/emotion-avatar.ts`
 
@@ -64,6 +45,24 @@ For comparison: the actual LLM-using hook (`src/generation/hooks/nsfw-hook.ts:7`
 correctly states "Uses keyword detection to classify content NSFW level" —
 the LLM path is a separate `detectNsfwWithLlm` function (`nsfw-classifier.ts:52`)
 explicitly named.
+
+## Adjacent nit: spurious `async` on `canHandle`
+
+All 4 hooks (`emotion-hook.ts:20`, `mood-hook.ts:20`, `moderation-hook.ts:109`,
+`nsfw-hook.ts:44`) declare `canHandle` as `async` and carry the
+`// eslint-disable-next-line @typescript-eslint/require-await` disable comment.
+Functionally correct (JS auto-wraps the bare `return`), but the `async`
+modifier is superfluous — `canHandle` has no `await` in any of the 4 bodies.
+A sync function returning `boolean` doesn't satisfy the `HookHandler.canHandle`
+interface (`types.ts:54` mandates `Promise<boolean>`), so the `async`
+keyword is the legitimate way to satisfy the interface — but the disable
+comment makes the intent explicit at the call site.
+
+If the interface is loosened to `boolean | Promise<boolean>` in a follow-up,
+all 4 `canHandle` methods can drop both the `async` keyword and the
+disable comment in one pass. Trivial, low-risk, but cross-cuts the
+`HookHandler` contract — coordinate with the other hook consumers
+(custom user-defined hooks via `registerHook`) before changing.
 
 ## Fix
 
@@ -88,6 +87,9 @@ explicitly named.
      read `context.actorContentRating` to scale intensity for NSFW
      characters. This subsumes the BUG-emotion-mood-hook-payload-missing-actor-chat.md
      fix in the same diff.
+4. (Adjacent nit) Defer the `canHandle` `async`-cleanup to a separate pass
+   that loosens `HookHandler.canHandle` to `boolean | Promise<boolean>` —
+   noted above for future reference.
 
 ## Acceptance Criteria
 
@@ -98,3 +100,5 @@ explicitly named.
 - [ ] Existing tests (`hooks.test.ts:80-184`, `e2e-integration.test.ts:174-272`)
       still green.
 - [ ] `bun run check` green.
+- [ ] `canHandle` async-cleanup explicitly NOT included in this fix's scope
+      (tracked as future-work above).
