@@ -131,7 +131,7 @@ export async function extractAvatarMetadata(
       altText: asset.alt_text ?? undefined,
       width: asset.width ?? undefined,
       height: asset.height ?? undefined,
-};
+    };
 }
 
 /**
