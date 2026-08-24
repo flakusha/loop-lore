@@ -54,7 +54,7 @@ function branchToSquashMessage(branch: string,): string {
 function runCheck(wtPath: string,): boolean {
   const result = Bun.spawnSync(
     ["bun", "run", "check",],
-    { stdout: "pipe", stderr: "pipe", cwd: wtPath, env: { ...process.env, REPO_ROOT: "", }, },
+    { stdout: "pipe", stderr: "pipe", cwd: wtPath, },
   );
   return result.exitCode === 0;
 }
@@ -62,7 +62,7 @@ function runCheck(wtPath: string,): boolean {
 function runTests(wtPath: string,): boolean {
   const result = Bun.spawnSync(
     ["bun", "run", "test:unit",],
-    { stdout: "pipe", stderr: "pipe", cwd: wtPath, env: { ...process.env, REPO_ROOT: "", }, },
+    { stdout: "pipe", stderr: "pipe", cwd: wtPath, },
   );
   return result.exitCode === 0;
 }
