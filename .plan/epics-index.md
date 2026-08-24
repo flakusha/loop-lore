@@ -44,14 +44,12 @@
 | ⬜ Not Started | Communications Integrations | Medium | High | 60 | [epic-communications-integrations.md](/.plan/epics/epic-communications-integrations.md) |
 | ⬜ Not Started | Companion, Pet & Mount Systems | Medium | Very High | 0 | [epic-companion-pet-mount.md](/.plan/epics/epic-companion-pet-mount.md) |
 | ⬜ Not Started | Configs Path Resolution — File-Relative Paths + Windows/macOS Parity | High | Medium | 12 | [epic-configs-path-resolution.md](/.plan/epics/epic-configs-path-resolution.md) |
-| ⬜ Not Started | Cross-Platform Portability — Windows & macOS | High | Large | 11 | [epic-cross-platform-portability.md](/.plan/epics/epic-cross-platform-portability.md) |
 | ⬜ Not Started | Database Schema | High | Medium | 0 | [epic-schema.md](/.plan/epics/epic-schema.md) |
 | ⬜ Not Started | Deno Support (Possible Node) | Low | Medium | 20 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
 | ⬜ Not Started | Disease & Poison Systems | Medium | High | 0 | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md) |
 | ⬜ Not Started | Economy & Trading Systems | Medium | Very High | 0 | [epic-economy-trading.md](/.plan/epics/epic-economy-trading.md) |
 | ⬜ Not Started | Embeddable Engine & 2D/3D Game Frontend (Far Fetched) | Low | Very High | 37 | [epic-embeddable-engine-game-frontend.md](/.plan/epics/epic-embeddable-engine-game-frontend.md) |
 | ⬜ Not Started | Emergent Narrative Design Principles | Medium | Low | 0 | [epic-emergent-narrative-design.md](/.plan/epics/epic-emergent-narrative-design.md) |
-| ⬜ Not Started | Encryption UI | Medium | Unknown | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
 | ⬜ Not Started | Enemies & Monsters Systems | Low | Unknown | 0 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
 | ⬜ Not Started | Epic: Mini-Games & Interactive Mechanics | Medium | High | 28 | [epic-mini-games.md](/.plan/epics/epic-mini-games.md) |
 | ⬜ Not Started | Error Envelope | Medium | Unknown | 0 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
@@ -131,11 +129,13 @@
 | 🟡 Partial — unified ComfyUI + sd-server image editing, node discovery (comfyui/http/sdserver), workflow templates + LoRA shipped; GGUF model loading pending | ComfyUI Plugin & Workflow Templates | High | High | 24 | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md) |
 | Not Started | Communications Integrations — Quick Reference | Medium | High | 0 | [epic-communications-integrations-quickref.md](/.plan/epics/epic-communications-integrations-quickref.md) |
 | 📝 Draft → 🟡 In Progress (MVP scoped) | Creative Studio | High (MVP), Medium (full) | High | 0 | [epic-creative-studio.md](/.plan/epics/epic-creative-studio.md) |
+| 🟡 In Progress (T1.3+T1.4 complete) | Cross-Platform Portability — Windows & macOS | High | Large | 8 | [epic-cross-platform-portability.md](/.plan/epics/epic-cross-platform-portability.md) |
 | 🔵 Research | DB & Asset Snapshot Recovery | High | High | 7 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | 🟡 Draft — analysis complete, tickets scoped | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 7 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
-| 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 7 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
+| 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 3 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
 | 🟡 In Progress (migration + schema done) | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | 🟡 Partial | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
+| 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending | Encryption UI | Medium | Unknown | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
 | 🟡 Core Built, Integration Pending | Encryption Workflow | Medium | Unknown | 27 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
 | ✅ Implemented (updated 2026-07-30 — code audit) | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Unknown | Epic 16: Observability | Unknown | Unknown | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
@@ -190,7 +190,7 @@
 | 🟡 In Progress (Gate C complete 2026-08-14; release blockers: tag + push) | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | 🟡 Partial — Phase 1 core (dice/stats/combat/xp/loot) code+tests+schema done but UNWIRED; combat has no DB schema (in-memory engine) | RPG Mechanics & Extensible Game Systems | Medium | Very High | 28 | [epic-rpg-mechanics.md](/.plan/epics/epic-rpg-mechanics.md) |
 | 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
-| 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 2 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
+| 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Unknown | Security & Sandboxing — Epic | Unknown | Unknown | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
 | 🟢 Complete (implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables) | Shared Schemas — Reputation, Consent, NSFW Content Rating | High | Medium | 1 | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md) |
@@ -548,15 +548,6 @@ Companion, pet, and mount system — NPC companions with loyalty/progression, pe
 - **Tags:** config, paths, resolution, cross-platform, windows, macos, cwd
 - **File:** `.plan/epics/epic-configs-path-resolution.md`
 
-### Cross-Platform Portability — Windows & macOS
-
-- **Status:** ⬜ Not Started
-- **Priority:** High
-- **Effort:** Large
-- **Type:** Infrastructure Epic
-- **Tags:** cross-platform, windows, macos, portability, build, runtime
-- **File:** `.plan/epics/epic-cross-platform-portability.md`
-
 ### Database Schema
 
 - **Status:** ⬜ Not Started
@@ -614,14 +605,6 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Effort:** Low
 - **Type:** Design Principle Epic
 - **File:** `.plan/epics/epic-emergent-narrative-design.md`
-
-### Encryption UI
-
-- **Status:** ⬜ Not Started
-- **Priority:** Medium
-- **Effort:** Unknown
-- **Type:** Feature
-- **File:** `.plan/epics/epic-frontend-encryption.md`
 
 ### Enemies & Monsters Systems
 
@@ -1331,6 +1314,15 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Tags:** creative-studio, search, modals, toolbar, unified-search
 - **File:** `.plan/epics/epic-creative-studio.md`
 
+### Cross-Platform Portability — Windows & macOS
+
+- **Status:** 🟡 In Progress (T1.3+T1.4 complete)
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Infrastructure Epic
+- **Tags:** cross-platform, windows, macos, portability, build, runtime
+- **File:** `.plan/epics/epic-cross-platform-portability.md`
+
 ### DB & Asset Snapshot Recovery
 
 - **Status:** 🔵 Research
@@ -1375,6 +1367,14 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Type:** Feature Epic
 - **Tags:** encryption, aes-256-gcm, key-management, e2ee, browser-crypto
 - **File:** `.plan/epics/epic-crypto.md`
+
+### Encryption UI
+
+- **Status:** 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending
+- **Priority:** Medium
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-frontend-encryption.md`
 
 ### Encryption Workflow
 
