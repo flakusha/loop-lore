@@ -1197,7 +1197,8 @@
     "epic": "epic-api-versioning",
     "tags": [],
     "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md",
-    "git_issue": "2021fbd"
+    "git_issue": "2021fbd",
+    "status": "done"
   },
   "BUG-WORLD-BUNDLE-IMPORT-UNTRANSACTED-PARTIAL-IMPORT-CORRUPTS-WOR": {
     "hash": "ca69118",
