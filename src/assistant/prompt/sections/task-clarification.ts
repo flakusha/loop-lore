@@ -17,8 +17,11 @@ import type { SectionBuilder, } from "../types";
 
 export const taskClarificationSection: SectionBuilder = {
   name: "taskClarification",
-  enabled: (_ctx,) => true,
+  enabled: (ctx,) => ctx.task !== null,
   build: (ctx,) => {
+    // Defensive: `enabled` should have gated this, but if a caller builds the
+    // section directly we still honor `task: null` as opt-out.
+    if (ctx.task === null) { return []; }
     const isCharacter = ctx.actor.type === "character";
     const isGM = ctx.task === "gm-decision";
     const content = buildTaskClarification({
