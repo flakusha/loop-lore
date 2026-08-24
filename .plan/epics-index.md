@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 196 epics
+**Total:** 197 epics
 
 ## Summary
 
@@ -150,6 +150,7 @@
 | 📝 Draft — spec Final (`docs/spec/chat-privacy.md`); partial implementation (GM notes, chat `public` flag); privacy/purpose columns + steering-notes API not implemented | Epic: Chat Privacy | Medium | Medium | 9 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14) | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | Unknown | Epic: Context Injection Correctness | Unknown | Unknown | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
+| Unknown | Epic: Context Injection Templates | Unknown | Unknown | 0 | [epic-context-injection-templates.md](/.plan/epics/epic-context-injection-templates.md) |
 | Unknown | Epic: Database Backup & Recovery Infrastructure | Unknown | Unknown | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Unknown | Epic: Deployment Infrastructure (Docker & Bare Metal) | Unknown | Unknown | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | Unknown | Epic: Federation, Swarm Sync & Decentralized Comms | Unknown | Unknown | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
@@ -1506,6 +1507,14 @@ Chat privacy specification — covers message encryption, access control, privac
 - **Effort:** Unknown
 - **Type:** Feature
 - **File:** `.plan/epics/epic-context-injection-correctness.md`
+
+### Epic: Context Injection Templates
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-context-injection-templates.md`
 
 ### Epic: Database Backup & Recovery Infrastructure
 
