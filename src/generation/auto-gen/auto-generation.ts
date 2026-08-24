@@ -129,7 +129,6 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       userId,
       actorId: characterId,
       isGroupChat: chat?.type === "group",
-      userMessage,
       systemPromptOverride,
     },);
     const { resolved, prompt, tracking, } = prepared;
