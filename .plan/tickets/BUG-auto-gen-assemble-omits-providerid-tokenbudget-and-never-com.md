@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Auto-gen assemble() omits providerId/tokenBudget and never compacts
 
 **Status:** ⬜ Not Started
