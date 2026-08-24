@@ -6,11 +6,7 @@
  */
 
 import { dirname, resolve, } from "path";
-import { fileURLToPath, } from "url";
-import { gitSync, } from "./git";
-
-const __filename = fileURLToPath(import.meta.url,);
-const __dirname = dirname(__filename,);
+import { findRepoRoot, gitSync, } from "./git";
 
 export interface WorktreeConfig {
   repoRoot: string;
@@ -47,7 +43,10 @@ function unquote(value: string,): string {
 }
 
 export async function loadConfig(): Promise<WorktreeConfig> {
-  const repoRoot = process.env.REPO_ROOT ?? resolve(__dirname, "..", "..", "..",);
+  // Resolve the main repo root via git so the CLI works correctly when
+  // invoked from inside a linked worktree (tree/<branch>). REPO_ROOT remains
+  // an opt-in escape hatch for CI / non-standard layouts.
+  const repoRoot = process.env.REPO_ROOT ?? findRepoRoot();
   const treeDir = process.env.TREE_DIR ?? resolve(repoRoot, "tree",);
 
   // Load agent credentials from main repo
