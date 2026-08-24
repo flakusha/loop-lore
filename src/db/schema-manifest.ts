@@ -1376,9 +1376,9 @@ export const SCHEMA = new SchemaManifest()
     name_source: col("text",),
     template_id: col("text",),
     visibility: col("text", { notNull: true, hasDefault: true, },),
+    thinking_visibility: col("text", { notNull: true, hasDefault: true, },),
     quick_replies: col("text",),
     prompt_override: col("text",),
-    thinking_visibility: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -1414,12 +1414,12 @@ export const SCHEMA = new SchemaManifest()
     format_version: col("integer", { notNull: true, hasDefault: true, },),
     section_id: col("text",),
     tool_calls: col("text",),
+    thinking: col("text",),
     metadata: col("text",),
     e2e_payload: col("text",),
     e2e_session_id: col("text",),
     e2e_sender_eph_pub_jwk: col("text",),
     e2e_chain_index: col("integer",),
-    thinking: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {
