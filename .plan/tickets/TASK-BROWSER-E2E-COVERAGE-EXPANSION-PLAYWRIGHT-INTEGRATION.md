@@ -115,7 +115,7 @@ API-level e2e coverage (`tests/e2e/flows/*.test.ts`) exists for ALL 11 topics be
 ### 3. Authorization flow
 
 - **API:** `auth.test.ts` (login/demo/logout/me/401), `users.test.ts` (403 non-admin), `isolation.test.ts`, `age-gate.test.ts`.
-- **Source:** `middleware/auth.ts` (JWT bearer>cookie, solo fallback), `admin-gate.ts` (`adminViewGuard` 302, `requireAdmin`), `views/login.html` (`demo-login`, `signup-link`).
+- **Source:** `src/middleware/auth/` (JWT bearer>cookie, solo fallback), `admin-gate.ts` (`adminViewGuard` 302, `requirePermission`), `views/login.html` (`demo-login`, `signup-link`).
 - **New browser cases:**
   - Successful login (valid `seedUsers` creds → redirect `/views/chat` + cookie set) — missing today (auth-flow only tests invalid creds).
   - Demo-login click → htmx swap to authed view.
