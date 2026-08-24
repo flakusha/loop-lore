@@ -8091,7 +8091,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-fix-worktree-cli-repo-root-tree-dir-env-var-requirement-when.md"
+    "source": ".plan/tickets/TASK-fix-worktree-cli-repo-root-tree-dir-env-var-requirement-when.md",
+    "git_issue": "c02be17"
   },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
@@ -8116,6 +8117,61 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-bundle-analysis.md",
     "git_issue": "372be44"
+  },
+  "TASK-FRONTEND-CHARACTERS-PAGE-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHARACTERS-PAGE-SPEC",
+    "type": "TASK",
+    "title": "Frontend Characters Page Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "(none — no dedicated frontend epic tracks this spec)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-characters-page-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Commands & Extras Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-commands-extras-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-GENERATION-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-GENERATION-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Generation & Streaming Implementation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-generation-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-MEMORIES-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-MEMORIES-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Memory Panel Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-memories-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-MESSAGES-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-MESSAGES-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Messages Bubble & Detail Levels",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-messages-spec.md"
   },
   "TASK-FRONTEND-COMPRESSION": {
     "hash": "pending",
