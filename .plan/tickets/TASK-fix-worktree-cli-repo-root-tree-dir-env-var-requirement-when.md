@@ -17,7 +17,7 @@ Root cause:
 scripts/worktree/utils/config.ts derived __dirname from import.meta.url. When
 bun resolved scripts/worktree/ via cwd-relative resolution from inside a
 worktree, import.meta.url pointed into <worktree>/scripts/worktree/utils/config.ts
-(a real path bun creates), and resolve(__dirname, '..', '..', '..') on that
+(a real path bun creates), and `resolve(__dirname, "..", "..", "..")` on that
 returned <worktree> instead of the main repo.
 
 Effect (before fix):
