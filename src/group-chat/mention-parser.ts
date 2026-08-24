@@ -94,6 +94,7 @@ export function resolveMention(
 
   // Stable order by actorId so prefix-match selection is deterministic when
   // no ambiguity exists.
+
   const ordered = [...participants,].sort((a, b,) => a.actorId.localeCompare(b.actorId,));
 
   // Prefix match — count matches; >1 is ambiguous.
