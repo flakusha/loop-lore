@@ -34,8 +34,17 @@ function fakeCtx(overrides: Partial<AssembleContext> = {},): AssembleContext {
 }
 
 describe("taskClarificationSection", () => {
-  it("is always enabled", () => {
+  it("is enabled when task is omitted (defaults to chat-reply)", () => {
     expect(taskClarificationSection.enabled(fakeCtx(),),).toBe(true,);
+  });
+
+  it("is disabled when task is explicitly null (opt-out)", () => {
+    expect(taskClarificationSection.enabled(fakeCtx({ task: null, },),),).toBe(false,);
+  });
+
+  it("build returns empty array when task is null", async () => {
+    const msgs = await taskClarificationSection.build(fakeCtx({ task: null, },),);
+    expect(msgs,).toHaveLength(0,);
   });
 
   it("shows the character in role for a character actor", async () => {
