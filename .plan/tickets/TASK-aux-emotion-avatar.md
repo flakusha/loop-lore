@@ -151,13 +151,16 @@ context — these feed directly into avatar selection as additional context.
 | Emotion avatar generation (ComfyUI)        | ✅ image-gen only, no LLM                                                               | `characters/services/emotion-avatar-service.ts` |
 | `detectAvatarChangeIntent()`               | ⚠️ had a wrong-direction consumer (run on user message, not assistant reply). Removed 2026-08-24 by fix-detect-avatar-change-intent-direction; now zero production consumers. Function retained (still tested in `intent.test.ts`) for potential AUX classification replacement. | `assistant/intent.ts:28-46` |
 | `EmotionHook` (`emotion_change`)           | ⚠️ keyword-based; doc header claims "Uses the LLM" (stale)                               | `generation/hooks/emotion-hook.ts`              |
-| Hook event consumption                     | ❌ `data.dominantEmotion` never read — `auto-gen.ts` consumes only `hookResult.allowed` | `generation/auto-gen.ts:412-431`                |
-| Auto-trigger on response                   | ❌ manual API call only                                                                 | —                                               |
+| Hook event consumption                     | ✅ `content-hooks.ts:122-124` extracts `data.dominantEmotion`; `auto-generation.ts:183` passes to `store-message.ts:137` which persists `messages.emotion`. | `generation/auto-gen/content-hooks.ts:122-124`, `auto-generation.ts:183`, `store-message.ts:137` |
+| Auto-trigger on response                   | ✅ fires inside `auto-generation.ts` hook chain; per-message binding wired (2026-08-02, see `TASK-emotion-avatar-message-binding`) | `auto-generation.ts` |
 
-Key finding: the emotion → avatar pipeline is a **dead end**. The
-`emotion_change` event fires (keyword match) but nothing reads its `data`;
-the only avatar selection path is the explicit HTTP route with
-user-supplied `emotion`/`mood` context.
+Note: the emotion → avatar pipeline is **not a dead end**. The
+`emotion_change` event fires (keyword match) and `data.dominantEmotion`
+is consumed by `content-hooks.ts` → `auto-generation.ts` →
+`store-message.ts` (persists to `messages.emotion`) →
+`frontend/mood.ts:avatarForMessage()` (resolves per-message avatar). The
+explicit HTTP route (`POST /api/actors/:actorId/avatars/select`) remains
+the manual override path; the per-message auto-binding is the default.
 
 ## Next Actionable Items
 
