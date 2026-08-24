@@ -75,11 +75,25 @@ async function serveNsfwModerationAudit(
   // The audit view needs both; preserve all-or-nothing behavior.
   if (prefsResult.status === "rejected") { throw prefsResult.reason; }
   if (actionsResult.status === "rejected") { throw actionsResult.reason; }
-  const prefs = prefsResult.value;
   const actions = actionsResult.value;
+  // Lazy default consent row when no stored prefs exist (admin view always
+  // shows the consent panel, even for users who never logged in).
+  const prefs: NsfwUserPrefs = prefsResult.value ?? {
+    id: "",
+    userId: targetUserId,
+    nsfwEnabled: true,
+    maxRating: "nsfw_mild",
+    accessStatus: "clear",
+    shadowNsfw: false,
+    blockReason: null,
+    bannedAt: null,
+    bannedBy: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
 
   content = content.replace("{{targetUserId}}", () => escapeHtml(targetUserId,),);
-  content = content.replace("{{consentHtml}}", () => renderNsfwConsent(prefs ?? ({} as never),),);
+  content = content.replace("{{consentHtml}}", () => renderNsfwConsent(prefs,),);
   content = content.replace("{{auditRows}}", () => renderNsfwAuditRows(actions,),);
 
   return respond(content, isHtmx, "NSFW Moderation Audit", userId, sessionId, request, t,);
