@@ -624,6 +624,10 @@
   "src/assistant/gm-tool-detection.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-classify-intent-confidence-unbounded.md"
     }
   ],
@@ -1290,6 +1294,10 @@
   "src/aux-pipeline": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
     }
   ],
@@ -1297,6 +1305,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     },
     {
       "kind": "ticket",
@@ -1342,6 +1354,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
     },
     {
@@ -1360,10 +1376,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     }
   ],
   "src/aux-pipeline/tasks/emotion-avatar.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-emotion-avatar.md"
@@ -1457,6 +1481,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     },
     {
       "kind": "ticket",
@@ -2455,6 +2483,12 @@
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     }
   ],
+  "src/characters/services/mood-service/apply-happiness-delta.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+    }
+  ],
   "src/characters/services/personality-service.ts": [
     {
       "kind": "epic",
@@ -2886,6 +2920,10 @@
   "src/chat/memory-promotion.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-context-cut-memory-promotion.md"
     },
     {
@@ -2985,6 +3023,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md"
     }
   ],
   "src/chat/response-length.ts": [
@@ -3283,6 +3325,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-transitions-memory-poisoning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
     }
   ],
   "src/chat/transitions.ts": [
@@ -5801,6 +5847,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
+    }
+  ],
+  "src/db/migrations/058_actor_memory.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
     }
   ],
   "src/db/migrations/060_character_world_setup.ts": [
@@ -10013,6 +10065,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
     }
   ],
   "src/generation/auto-gen/classify-intent.test.ts": [
@@ -10028,6 +10084,18 @@
     }
   ],
   "src/generation/auto-gen/content-hooks.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
@@ -10082,7 +10150,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-mid-cascade-pause-ignored.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
     }
   ],
   "src/generation/auto-gen/prepare-generation.ts": [
@@ -10092,6 +10172,10 @@
     }
   ],
   "src/generation/auto-gen/store-message.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
@@ -10104,6 +10188,14 @@
     }
   ],
   "src/generation/auto-gen/story-mode.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md"
@@ -10315,6 +10407,12 @@
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
     }
   ],
+  "src/generation/hooks/_tokenize.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+    }
+  ],
   "src/generation/hooks/e2e-integration.test.ts": [
     {
       "kind": "ticket",
@@ -10329,6 +10427,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
     },
     {
       "kind": "ticket",
@@ -10348,6 +10454,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
@@ -10361,18 +10471,44 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
     }
   ],
   "src/generation/hooks/mood-hook.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+    }
+  ],
+  "src/generation/hooks/nsfw-classifier.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     }
   ],
   "src/generation/hooks/nsfw-hook.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
     },
     {
       "kind": "ticket",
@@ -10386,7 +10522,25 @@
   "src/generation/hooks/registry.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
+    }
+  ],
+  "src/generation/hooks/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
     }
   ],
   "src/generation/image-gen-route.ts": [
@@ -12381,6 +12535,12 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/prompts/registry": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    }
+  ],
   "src/prompts/registry.test.ts": [
     {
       "kind": "epic",
@@ -12399,6 +12559,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     },
     {
       "kind": "ticket",
@@ -18039,6 +18203,12 @@
       "source": ".plan/tickets/TASK-fix-test-failures.md"
     }
   ],
+  "src/test-utils/db.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-shared-state-sqlite-contamination-in-unit-test-suite-53-.md"
+    }
+  ],
   "src/test-utils/factories.ts": [
     {
       "kind": "epic",
@@ -18365,6 +18535,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
+    }
+  ],
+  "src/utils": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
     }
   ],
   "src/utils.ts": [
