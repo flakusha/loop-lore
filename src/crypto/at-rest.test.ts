@@ -50,7 +50,7 @@ describe("encryptAtRest", () => {
     expect(result.storedContent,).toBe("Hello, World!",);
     expect(result.keyId,).toBeNull();
     expect(result.wasEncrypted,).toBeFalse();
-  },);
+  });
 
   test("pre-encrypted content stored as-is regardless of tier", async () => {
     const encrypted = await compressThenEncrypt({
@@ -68,7 +68,7 @@ describe("encryptAtRest", () => {
 
     expect(result.storedContent,).toBe(encrypted,);
     expect(result.wasEncrypted,).toBeTrue();
-  },);
+  });
 
   test("at-rest tier stores the wire payload verbatim (server is a passthrough)", async () => {
     // Phase D: the server does not transform at-rest payloads — it
@@ -81,7 +81,7 @@ describe("encryptAtRest", () => {
       e2e: true,
       ciphertext: "opaque-blob",
       nonce: "x",
-      senderEphPubJwk: { kty: "EC" },
+      senderEphPubJwk: { kty: "EC", },
       chainIndex: 0,
     },);
     const result = await encryptAtRest({
@@ -92,7 +92,7 @@ describe("encryptAtRest", () => {
     },);
     expect(result.storedContent,).toBe(wire,);
     expect(result.wasEncrypted,).toBe(true,);
-  },);
+  });
 
   test("unknown encryption level throws", async () => {
     expect(
@@ -103,7 +103,7 @@ describe("encryptAtRest", () => {
         encryptionLevel: "unknown" as unknown as never,
       },),
     ).rejects.toThrow("Unknown encryption level",);
-  },);
+  });
 });
 
 // ── decryptAtRest ──────────────────────────────────────────
@@ -118,7 +118,7 @@ describe("decryptAtRest", () => {
     },);
 
     expect(result,).toBe("Plaintext message",);
-  },);
+  });
 
   test("standard tier with legacy plaintext returns as-is", async () => {
     const result = await decryptAtRest({
@@ -129,14 +129,14 @@ describe("decryptAtRest", () => {
     },);
 
     expect(result,).toBe("Legacy plaintext in standard-tier chat",);
-  },);
+  });
 
   test("at-rest tier returns content unchanged (server is a passthrough)", async () => {
     const wire = JSON.stringify({
       e2e: true,
       ciphertext: "client-encrypted",
       nonce: "n",
-      senderEphPubJwk: { kty: "EC" },
+      senderEphPubJwk: { kty: "EC", },
     },);
     const result = await decryptAtRest({
       database: mockDb,
@@ -145,7 +145,7 @@ describe("decryptAtRest", () => {
       encryptionLevel: "at-rest",
     },);
     expect(result,).toBe(wire,);
-  },);
+  });
 
   test("unknown encryption level throws", async () => {
     expect(
@@ -156,7 +156,7 @@ describe("decryptAtRest", () => {
         encryptionLevel: "unknown" as unknown as never,
       },),
     ).rejects.toThrow("Unknown encryption level",);
-  },);
+  });
 });
 
 // ── needsEncryption ────────────────────────────────────────
@@ -164,16 +164,15 @@ describe("decryptAtRest", () => {
 describe("needsEncryption", () => {
   test("none tier never needs encryption", () => {
     expect(needsEncryption("none", "plaintext",),).toBeFalse();
-  },);
+  });
 
   test("standard tier needs encryption for plaintext", () => {
     expect(needsEncryption("standard", "plaintext",),).toBeTrue();
-  },);
+  });
 
   test("at-rest tier reports encryption-not-needed=false for plaintext (caller must pre-encrypt)", () => {
     expect(needsEncryption("at-rest", "plaintext",),).toBeTrue();
-  },);
-
+  });
 
   test("already encrypted content does not need encryption", async () => {
     const encrypted = await compressThenEncrypt({
@@ -183,7 +182,7 @@ describe("needsEncryption", () => {
     },);
 
     expect(needsEncryption("standard", encrypted,),).toBeFalse();
-  },);
+  });
 });
 
 // ── getChatEncryptionLevel ─────────────────────────────────
@@ -202,7 +201,7 @@ describe("getChatEncryptionLevel", () => {
 
     const result = await getChatEncryptionLevel(mockDbWithLevel, "chat-1",);
     expect(result,).toBe("standard",);
-  },);
+  });
 
   test("returns 'none' when no row found", async () => {
     const mockDbEmpty = {
@@ -217,5 +216,5 @@ describe("getChatEncryptionLevel", () => {
 
     const result = await getChatEncryptionLevel(mockDbEmpty, "chat-1",);
     expect(result,).toBe("none",);
-  },);
+  });
 });

@@ -131,7 +131,10 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 description: "SD image model prompt templates",
               },)
               .onConflict((oc,) =>
-                oc.column("key",).doUpdateSet({ value: jsonStringifyOr(profiles,), updated_at: new Date().toISOString(), },)
+                oc.column("key",).doUpdateSet({
+                  value: jsonStringifyOr(profiles,),
+                  updated_at: new Date().toISOString(),
+                },)
               )
               .execute();
             return jsonNoContent();
@@ -141,7 +144,6 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               403: ErrorResponse,
               404: ErrorResponse,
             },
-          },)
-      ,)
+          },),)
   );
 }

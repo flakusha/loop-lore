@@ -1,10 +1,10 @@
 import type { loadConfig, } from "../config/load";
 import type { getDatabase, } from "../db/index";
 import type { getLogger, } from "../logger";
-import type { HandleResolver, } from "../middleware/handle-resolver";
-import { createHandleResolver, } from "../middleware/handle-resolver";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "../middleware";
 import { generateNonce, } from "../middleware/csp-nonce";
+import type { HandleResolver, } from "../middleware/handle-resolver";
+import { createHandleResolver, } from "../middleware/handle-resolver";
 import { dispatchPluginRoute, } from "../plugins";
 
 /**
@@ -97,9 +97,14 @@ async function logAccess(opts: LogAccessOpts,): Promise<void> {
 
   try {
     switch (severity) {
-      case "error": logger.error("http access", undefined, entry,); break;
-      case "warn": logger.warn("http access", entry,); break;
-      default: logger.info("http access", entry,);
+      case "error":
+        logger.error("http access", undefined, entry,);
+        break;
+      case "warn":
+        logger.warn("http access", entry,);
+        break;
+      default:
+        logger.info("http access", entry,);
     }
   } catch {
     // Logger may be torn down during shutdown — fall back silently.

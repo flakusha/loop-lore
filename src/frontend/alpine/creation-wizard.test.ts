@@ -37,7 +37,7 @@ function buildCtx(): { ctx: Record<string, unknown>; toasts: { type: string; mes
         toasts.push({ type: detail.type as string, message: detail.message as string, },);
       }
     },
-    loadMessages: mock(async () => {}),
+    loadMessages: mock(async () => {},),
     wizardResetSteps() {
       ctx.wizardStep = 1;
     },
@@ -65,7 +65,7 @@ describe("creationWizard.confirmWizard", () => {
     expect((ctx.wizardDraft as { wizardId?: string } | null)?.wizardId,).toBe("wiz-current",);
     expect(ctx.wizardPreviewOpen,).toBe(true,);
     expect(toasts.length,).toBe(0,);
-  },);
+  });
 
   test("confirms when wizardId matches the current draft", async () => {
     mockFetch(200,);
@@ -84,8 +84,8 @@ describe("creationWizard.confirmWizard", () => {
     expect(ctx.wizardDraft,).toBeNull();
     expect(ctx.wizardPreviewOpen,).toBe(false,);
     expect(ctx.wizardStep,).toBe(1,);
-    expect(toasts.some((t,) => t.type === "success",),).toBe(true,);
-  },);
+    expect(toasts.some((t,) => t.type === "success"),).toBe(true,);
+  });
 });
 
 describe("creationWizard.cancelWizard", () => {
@@ -103,5 +103,5 @@ describe("creationWizard.cancelWizard", () => {
 
     expect(ctx.wizardDraft,).toBeNull();
     expect(ctx.wizardPreviewOpen,).toBe(false,);
-  },);
+  });
 });

@@ -156,8 +156,12 @@ export async function generateEmotionAvatar(
   if (opts.promptPrefix) {
     prompt = `${opts.promptPrefix}, ${emotionModifier}`;
   } else if (opts.baseAvatarId && opts.fallbackMode !== "none") {
-    // Extract metadata from base avatar for fallback prompt construction
-    const metadata = await extractAvatarMetadata(svc.db, opts.baseAvatarId,);
+    // Extract metadata from base avatar for fallback prompt construction.
+    // Pass `actorId` so the character description anchors the prompt when
+    // the asset row has no alt text.
+    const metadata = await extractAvatarMetadata(svc.db, opts.baseAvatarId, {
+      actorId: opts.actorId,
+    },);
     prompt = buildEmotionPrompt(metadata, opts.emotion, emotionModifier,);
     usedFallback = true;
   } else {

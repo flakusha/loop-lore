@@ -60,7 +60,7 @@ export async function wrapSenderKey(
   opts: WrapSenderKeyOpts,
 ): Promise<RecipientWrap[]> {
   if (opts.chainKey.byteLength !== KEY_LENGTH) {
-    throw new Error(`chainKey must be ${KEY_LENGTH} bytes (got ${opts.chainKey.byteLength})`);
+    throw new Error(`chainKey must be ${KEY_LENGTH} bytes (got ${opts.chainKey.byteLength})`,);
   }
   const wraps: RecipientWrap[] = [];
   for (const recipient of opts.recipients) {
@@ -138,13 +138,13 @@ export async function unwrapSenderKey(
   const keystream = await hkdfExpandToBytes(shared, WRAP_INFO, KEY_LENGTH,);
   const parts = opts.wrappedKey.split(".",);
   if (parts.length !== 2) {
-    throw new Error("wrap wire format invalid: expected `<nonce_b64>.<ct_b64>`");
+    throw new Error("wrap wire format invalid: expected `<nonce_b64>.<ct_b64>`",);
   }
-  const [nonceB64, ctB64] = parts as [string, string];
+  const [nonceB64, ctB64,] = parts as [string, string,];
   const wrapNonce = Uint8Array.fromBase64(nonceB64,);
   const ct = Uint8Array.fromBase64(ctB64,);
   if (wrapNonce.byteLength !== WRAP_NONCE_LENGTH) {
-    throw new Error(`wrap nonce must be ${WRAP_NONCE_LENGTH} bytes`);
+    throw new Error(`wrap nonce must be ${WRAP_NONCE_LENGTH} bytes`,);
   }
   const wrapKey = await crypto.subtle.importKey(
     "raw",
@@ -167,7 +167,7 @@ export async function unwrapSenderKey(
     ),
   );
   if (pt.byteLength !== KEY_LENGTH) {
-    throw new Error(`unwrapped chain key must be ${KEY_LENGTH} bytes`);
+    throw new Error(`unwrapped chain key must be ${KEY_LENGTH} bytes`,);
   }
   return pt;
 }
@@ -234,12 +234,12 @@ export async function latestGroupWrapForRecipient(
     .executeTakeFirst();
   return row
     ? {
-        id: row.id,
-        groupSessionId: row.group_session_id,
-        recipientActorId: row.recipient_actor_id,
-        wrappedKey: row.wrapped_key,
-        senderEphPubJwk: row.sender_eph_pub_jwk,
-        chainIndex: row.chain_index,
-      }
+      id: row.id,
+      groupSessionId: row.group_session_id,
+      recipientActorId: row.recipient_actor_id,
+      wrappedKey: row.wrapped_key,
+      senderEphPubJwk: row.sender_eph_pub_jwk,
+      chainIndex: row.chain_index,
+    }
     : null;
 }
