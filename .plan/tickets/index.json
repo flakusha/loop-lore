@@ -112,6 +112,17 @@
     "git_issue": "a9a4ea3",
     "status": "done"
   },
+  "BUG-AUX-PIPELINE-PROMPT-REEXPORT-ASYMMETRY": {
+    "hash": "pending",
+    "extid": "BUG-AUX-PIPELINE-PROMPT-REEXPORT-ASYMMETRY",
+    "type": "BUG",
+    "title": "aux-pipeline index.ts re-export set doesn't match AuxTaskName union",
+    "label": "bug",
+    "priority": "P3",
+    "epic": "epic-aux-enrichment-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+  },
   "BUG-AVATAR-SELECT-EMPTY-THROWS-NO-FRONTEND-FALLBACK": {
     "hash": "pending",
     "extid": "BUG-AVATAR-SELECT-EMPTY-THROWS-NO-FRONTEND-FALLBACK",
@@ -389,7 +400,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
+    "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md",
+    "git_issue": "9437278"
   },
   "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS": {
     "hash": "pending",
@@ -473,6 +485,17 @@
     "epic": "epic-emotion-avatar-message-binding / epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+  },
+  "BUG-EMOTION-MOOD-HOOK-PAYLOAD-MISSING-ACTOR-CHAT": {
+    "hash": "pending",
+    "extid": "BUG-EMOTION-MOOD-HOOK-PAYLOAD-MISSING-ACTOR-CHAT",
+    "type": "BUG",
+    "title": "EmotionHook + MoodHook payloads don't carry actorId/chatId; ambiguous in group chats",
+    "label": "bug",
+    "priority": "P3",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
   },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "hash": "76cbe80",
@@ -845,6 +868,17 @@
     "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md",
     "git_issue": "0c43869"
   },
+  "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES": {
+    "hash": "pending",
+    "extid": "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES",
+    "type": "BUG",
+    "title": "Stale audit rows in TASK-aux-emotion-avatar.md + TASK-aux-mood-classification.md contradict current wiring",
+    "label": "bug",
+    "priority": "P3",
+    "epic": "epic-aux-enrichment-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+  },
   "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE": {
     "hash": "7a293c3",
     "extid": "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE",
@@ -940,7 +974,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
+    "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md",
+    "git_issue": "d88ff7f"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -7996,7 +8031,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-fix-shared-state-sqlite-contamination-in-unit-test-suite-53-.md"
+    "source": ".plan/tickets/TASK-fix-shared-state-sqlite-contamination-in-unit-test-suite-53-.md",
+    "git_issue": "d5f3070"
   },
   "TASK-FIX-TEST-FAILURES": {
     "hash": "cc5ba3f",
@@ -8351,6 +8387,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-health-bar.md",
     "git_issue": "330ccdd"
+  },
+  "TASK-HOOK-RESULT-PAYLOAD-CARRY-CONTEXT": {
+    "hash": "pending",
+    "extid": "TASK-HOOK-RESULT-PAYLOAD-CARRY-CONTEXT",
+    "type": "TASK",
+    "title": "Add a canonical context-carrier wrapper to HookResult.data",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
   },
   "TASK-HOUSING-BASE-BUILDING": {
     "hash": "pending",
@@ -11555,7 +11602,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md"
+    "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md",
+    "git_issue": "7ffa7c7"
   },
   "TASK-RESOLVE-PLAYWRIGHT-CFG": {
     "hash": "9621690",
