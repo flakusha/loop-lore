@@ -879,10 +879,24 @@
       "source": ".plan/tickets/TASK-gm-whitenotes.md"
     }
   ],
+  "src/assistant/prompt/sections/group-participants.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    }
+  ],
   "src/assistant/prompt/sections/group-participants.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md"
     }
   ],
   "src/assistant/prompt/sections/group-talkativity.test.ts": [
@@ -999,6 +1013,12 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/assistant/prompt/sections/registry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    }
+  ],
   "src/assistant/prompt/sections/travel.ts": [
     {
       "kind": "ticket",
@@ -1062,6 +1082,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-creative-studio-task-stale.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
     },
     {
@@ -1081,6 +1105,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-creative-studio-task-stale.md"
     },
     {
       "kind": "ticket",
@@ -1137,6 +1165,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-creative-studio-task-stale.md"
     },
     {
       "kind": "ticket",
@@ -4319,6 +4351,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md"
     }
   ],
   "src/config/seeding.ts": [
@@ -5033,6 +5069,12 @@
       "source": ".plan/tickets/TASK-world-location-encryption.md"
     }
   ],
+  "src/db": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
+    }
+  ],
   "src/db/column-types.ts": [
     {
       "kind": "ticket",
@@ -5221,7 +5263,17 @@
       "source": ".plan/tickets/TASK-unify-item-types.md"
     }
   ],
+  "src/db/enums-core/messages.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    }
+  ],
   "src/db/enums-core/messages.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
@@ -5449,6 +5501,12 @@
       "source": "docs/spec/schema.md"
     }
   ],
+  "src/db/migrations/003_group_chat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    }
+  ],
   "src/db/migrations/005_utility_tables.ts": [
     {
       "kind": "ticket",
@@ -5565,6 +5623,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-update-no-fts-refresh.md"
+    }
+  ],
+  "src/db/migrations/037_message_tool_calls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
   "src/db/migrations/038": [
@@ -7315,6 +7379,12 @@
       "source": ".plan/tickets/FEAT-047.md"
     }
   ],
+  "src/frontend/alpine/chat-bubble.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    }
+  ],
   "src/frontend/alpine/chat-filters.ts": [
     {
       "kind": "ticket",
@@ -8991,6 +9061,12 @@
       "source": ".plan/tickets/TASK-harmonize-quest-type-taxonomy.md"
     }
   ],
+  "src/frontend/pages/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md"
+    }
+  ],
   "src/frontend/pages/worlds.ts": [
     {
       "kind": "ticket",
@@ -9676,6 +9752,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-max-turns-off-by-one.md"
     },
     {
@@ -9685,6 +9765,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-mention-prefix-collision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
   "src/generation/auto-gen.ts": [
@@ -9784,6 +9872,10 @@
   "src/generation/auto-gen/group-cascade.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-max-turns-off-by-one.md"
     },
     {
@@ -9793,6 +9885,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-mention-prefix-collision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
   "src/generation/auto-gen/handle-generation-error.ts": [
@@ -9985,6 +10085,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-arg-parse-silent-fallback.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
   "src/generation/generate-route/tool-execution.ts": [
@@ -9995,6 +10099,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-arg-parse-silent-fallback.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
   "src/generation/generate.ts": [
@@ -10599,6 +10707,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-mention-prefix-collision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
     }
   ],
   "src/group-chat/mention-parser.ts": [
@@ -10609,6 +10721,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-mention-prefix-collision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
     }
   ],
   "src/group-chat/mention-queue.ts": [
@@ -10627,6 +10743,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md"
     },
     {
       "kind": "frontend",
@@ -17899,10 +18023,26 @@
       "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
+  "src/turning/turn-manager/selection.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
+    }
+  ],
+  "src/turning/turn-strategies.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
+    }
+  ],
   "src/turning/turn-strategies.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
     }
   ],
   "src/turning/types.ts": [
@@ -18291,6 +18431,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    }
+  ],
+  "src/views/chat-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
   "src/views/chat-settings.html": [
