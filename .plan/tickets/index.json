@@ -500,7 +500,7 @@
     "git_issue": "51281c7"
   },
   "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
-    "hash": "pending",
+    "hash": "5f00999",
     "extid": "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY",
     "type": "BUG",
     "title": "NSFW consent state is in-memory only, never persisted",
@@ -508,7 +508,8 @@
     "priority": "high",
     "epic": "epic-nsfw-integration-gaps",
     "tags": [],
-    "source": ".plan/tickets/BUG-consent-state-not-persisted-in-memory-only.md"
+    "source": ".plan/tickets/BUG-consent-state-not-persisted-in-memory-only.md",
+    "git_issue": "5f00999"
   },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
@@ -547,7 +548,7 @@
     "git_issue": "7e811d7"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
-    "hash": "pending",
+    "hash": "d0d5792",
     "extid": "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC",
     "type": "BUG",
     "title": "`src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic",
@@ -555,7 +556,8 @@
     "priority": "medium",
     "epic": "epic-architecture",
     "tags": [],
-    "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md",
+    "git_issue": "d0d5792"
   },
   "BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE": {
     "hash": "pending",
@@ -1120,7 +1122,7 @@
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
   },
   "BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED": {
-    "hash": "pending",
+    "hash": "2021fbd",
     "extid": "BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED",
     "type": "BUG",
     "title": "Version resolver middleware built but never wired",
@@ -1128,7 +1130,8 @@
     "priority": "high",
     "epic": "epic-api-versioning",
     "tags": [],
-    "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
+    "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md",
+    "git_issue": "2021fbd"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -4600,7 +4603,7 @@
     "git_issue": "b761cea"
   },
   "TASK-API-KEY-AUTH-MIDDLEWARE": {
-    "hash": "pending",
+    "hash": "1c4e914",
     "extid": "TASK-API-KEY-AUTH-MIDDLEWARE",
     "type": "TASK",
     "title": "API key authentication middleware",
@@ -4608,7 +4611,8 @@
     "priority": "medium",
     "epic": "epic-headless-alternative-frontends",
     "tags": [],
-    "source": ".plan/tickets/TASK-api-key-auth-middleware.md"
+    "source": ".plan/tickets/TASK-api-key-auth-middleware.md",
+    "git_issue": "1c4e914"
   },
   "TASK-API-ROUTES": {
     "hash": "c4ee57e",
@@ -6778,7 +6782,7 @@
     "source": ".plan/tickets/TASK-conversation-branching.md"
   },
   "TASK-CORS-MIDDLEWARE": {
-    "hash": "pending",
+    "hash": "60592ef",
     "extid": "TASK-CORS-MIDDLEWARE",
     "type": "TASK",
     "title": "CORS middleware for external origins",
@@ -6786,7 +6790,8 @@
     "priority": "medium",
     "epic": "epic-headless-alternative-frontends",
     "tags": [],
-    "source": ".plan/tickets/TASK-cors-middleware.md"
+    "source": ".plan/tickets/TASK-cors-middleware.md",
+    "git_issue": "60592ef"
   },
   "TASK-CRAFTING-ENCHANTING": {
     "hash": "32bcaa6",
@@ -11501,7 +11506,7 @@
     "git_issue": "e53d2f0"
   },
   "TASK-RATE-LIMIT-COVERAGE-EXPANSION": {
-    "hash": "pending",
+    "hash": "4eb8964",
     "extid": "TASK-RATE-LIMIT-COVERAGE-EXPANSION",
     "type": "TASK",
     "title": "Rate-limit coverage expansion",
@@ -11509,7 +11514,8 @@
     "priority": "medium",
     "epic": "epic-api-governance",
     "tags": [],
-    "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
+    "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md",
+    "git_issue": "4eb8964"
   },
   "TASK-RATE-LIMITING-TELEMETRY": {
     "hash": "2e40125",
