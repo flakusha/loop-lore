@@ -530,4 +530,38 @@ describe("worktree CLI", () => {
     expect(result.exitCode,).toBe(0,);
     expect(result.stdout.toString().trim(),).toBe(repoRoot,);
   });
+
+  test("53. REPO_ROOT='' (empty string) does not disable findRepoRoot fallback", () => {
+    // Regression: empty-string env values are NOT nullish, so the `??` operator
+    // does NOT fall back to findRepoRoot. Previously finalize.ts spawnSync
+    // calls set `REPO_ROOT: ""` which broke the subprocess's loadConfig.
+    const result = Bun.spawnSync(
+      ["bun", "-e", "console.log(process.env.REPO_ROOT ?? 'fallback')",],
+      {
+        cwd: repoRoot,
+        env: { ...process.env, REPO_ROOT: "", },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    expect(result.exitCode,).toBe(0,);
+    // Demonstrates the `??` semantics: empty string is kept (not replaced).
+    expect(result.stdout.toString().trim(),).toBe("",);
+
+    // What finalize.ts should do: NOT pass `REPO_ROOT: ""`. Verify that a
+    // subprocess with no REPO_ROOT at all still works from a worktree cwd.
+    mkdirSync(treeDir, { recursive: true, },);
+    const wt = join(treeDir, "feat-empty-env-target",);
+    expect(gitOk(repoRoot, "worktree", "add", "-b", "feat/empty-env-target", wt, "master",),).toBe(true,);
+    const r2 = Bun.spawnSync(
+      ["bun", "run", DISPATCHER, "status", "feat/empty-env-target",],
+      {
+        cwd: wt,
+        env: Object.fromEntries(Object.entries(process.env,).filter(([k,],) => k !== "REPO_ROOT" && k !== "TREE_DIR"),),
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    expect(r2.exitCode,).toBe(0, `stderr: ${r2.stderr.toString()}`,);
+  });
 });
