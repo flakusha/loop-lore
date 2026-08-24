@@ -18,6 +18,7 @@ import { requireActorExists, requireChatParticipant, } from "./ownership";
 import { estimateTokens, } from "./token-utils";
 import { classifyTransition, } from "./transition-classifier";
 import type { ChatTransition, MessageRef, TransitionClassification, } from "./types";
+import { requireActorExists, requireChatParticipant, } from "./ownership";
 
 // ─── Transition Detection ─────────────────────────────────────
 
