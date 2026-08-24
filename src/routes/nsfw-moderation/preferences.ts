@@ -26,7 +26,7 @@ export function preferencesRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (typeof auth !== "string") { return auth; }
         try {
           const prefs = await svc.getPreferences(ctx.params.userId,);
-          return jsonResponse({ ...SuccessResponse, data: prefs, },);
+          if (!prefs) { return jsonError("Preferences not found", 404,); }
         } catch (error: unknown) {
           const msg = error instanceof Error ? error.message : String(error,);
           log().error("Failed to get NSFW preferences", error instanceof Error ? error : undefined,);

@@ -74,7 +74,8 @@ export interface ModerationDeps {
  * parallel interface alongside it.
  */
 export interface NsfwModerationService {
-  getPreferences(userId: string,): Promise<NsfwUserPrefs>;
+  getPreferences(userId: string,): Promise<NsfwUserPrefs | null>;
+  getOrCreateOwn(userId: string,): Promise<NsfwUserPrefs>;
   updatePreferences(
     userId: string,
     updates: Partial<Pick<NsfwUserPrefs, "nsfwEnabled" | "maxRating">>,
