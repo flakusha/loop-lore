@@ -9427,6 +9427,17 @@
     "source": ".plan/tickets/TASK-native-aws-bedrock-adapter.md",
     "git_issue": "30fd582"
   },
+  "TASK-NON-ISOLATED-BUN-TEST-SRC-RED-SHARED-STATE-CONTAMINATION": {
+    "hash": "70c23fb",
+    "extid": "TASK-NON-ISOLATED-BUN-TEST-SRC-RED-SHARED-STATE-CONTAMINATION",
+    "type": "TASK",
+    "title": "Non-isolated bun test src/ red: shared-state contamination",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md"
+  },
   "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH": {
     "hash": "ef125d4",
     "extid": "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH",
