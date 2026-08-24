@@ -499,6 +499,17 @@
     "source": ".plan/tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md",
     "git_issue": "51281c7"
   },
+  "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
+    "hash": "pending",
+    "extid": "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY",
+    "type": "BUG",
+    "title": "NSFW consent state is in-memory only, never persisted",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-integration-gaps",
+    "tags": [],
+    "source": ".plan/tickets/BUG-consent-state-not-persisted-in-memory-only.md"
+  },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
     "extid": "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION",
@@ -534,6 +545,17 @@
     "source": ".plan/tickets/BUG-e2e-test-infrastructure-fixes.md",
     "status": "done",
     "git_issue": "7e811d7"
+  },
+  "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
+    "hash": "pending",
+    "extid": "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC",
+    "type": "BUG",
+    "title": "`src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-architecture",
+    "tags": [],
+    "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
   },
   "BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE": {
     "hash": "pending",
@@ -1096,6 +1118,17 @@
     "status": "closed",
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
+  },
+  "BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED": {
+    "hash": "pending",
+    "extid": "BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED",
+    "type": "BUG",
+    "title": "Version resolver middleware built but never wired",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-api-versioning",
+    "tags": [],
+    "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -2989,6 +3022,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-swarm-mode-reconciliation.md"
   },
+  "FEAT-TASK-CLARIFICATION-INJECTION-TEMPLATE-FOR-CHAT-ASSISTANT-GEN": {
+    "hash": "7aed28e",
+    "extid": "FEAT-TASK-CLARIFICATION-INJECTION-TEMPLATE-FOR-CHAT-ASSISTANT-GEN",
+    "type": "FEAT",
+    "title": "Task-clarification injection template for chat/assistant generation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-task-clarification-injection-template-for-chat-assistant-gen.md",
+    "status": "done",
+    "git_issue": "7aed28e"
+  },
   "FEAT-TESTING-INFRASTRUCTURE": {
     "hash": "b206a6a",
     "extid": "FEAT-TESTING-INFRASTRUCTURE",
@@ -4553,6 +4599,17 @@
     "source": ".plan/tickets/TASK-api-first-foundation.md",
     "git_issue": "b761cea"
   },
+  "TASK-API-KEY-AUTH-MIDDLEWARE": {
+    "hash": "pending",
+    "extid": "TASK-API-KEY-AUTH-MIDDLEWARE",
+    "type": "TASK",
+    "title": "API key authentication middleware",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-headless-alternative-frontends",
+    "tags": [],
+    "source": ".plan/tickets/TASK-api-key-auth-middleware.md"
+  },
   "TASK-API-ROUTES": {
     "hash": "c4ee57e",
     "extid": "TASK-API-ROUTES",
@@ -4900,6 +4957,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-auth-register-route.md",
     "git_issue": "afc949f"
+  },
+  "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE": {
+    "hash": "a867b46",
+    "extid": "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE",
+    "type": "TASK",
+    "title": "Author task-clarification prompt templates per task type",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-author-task-clarification-prompt-templates-per-task-type.md",
+    "status": "done",
+    "git_issue": "a867b46"
   },
   "TASK-AUTHORING-CREATION": {
     "hash": "eb42411",
@@ -6706,6 +6776,17 @@
     "epic": "epic-conversation-branching",
     "tags": [],
     "source": ".plan/tickets/TASK-conversation-branching.md"
+  },
+  "TASK-CORS-MIDDLEWARE": {
+    "hash": "pending",
+    "extid": "TASK-CORS-MIDDLEWARE",
+    "type": "TASK",
+    "title": "CORS middleware for external origins",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-headless-alternative-frontends",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cors-middleware.md"
   },
   "TASK-CRAFTING-ENCHANTING": {
     "hash": "32bcaa6",
@@ -11418,6 +11499,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-random-encounters-events.md",
     "git_issue": "e53d2f0"
+  },
+  "TASK-RATE-LIMIT-COVERAGE-EXPANSION": {
+    "hash": "pending",
+    "extid": "TASK-RATE-LIMIT-COVERAGE-EXPANSION",
+    "type": "TASK",
+    "title": "Rate-limit coverage expansion",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-governance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
   },
   "TASK-RATE-LIMITING-TELEMETRY": {
     "hash": "2e40125",
