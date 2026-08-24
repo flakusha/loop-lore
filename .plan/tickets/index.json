@@ -123,6 +123,18 @@
     "source": ".plan/tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md",
     "git_issue": "8a5e407"
   },
+  "BUG-AUTO-GEN-STREAMING-PATH-UNHANDLED-REJECTION-ABORT-NEVER-WIRE": {
+    "hash": "7a4cc5d",
+    "extid": "BUG-AUTO-GEN-STREAMING-PATH-UNHANDLED-REJECTION-ABORT-NEVER-WIRE",
+    "type": "BUG",
+    "title": "Auto-gen streaming path: unhandled rejection + abort never wired to provider stream",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire.md",
+    "git_issue": "7a4cc5d"
+  },
   "BUG-AUTO-ROTATION-CONFIG-DRIFT": {
     "hash": "a9a4ea3",
     "extid": "BUG-AUTO-ROTATION-CONFIG-DRIFT",
@@ -201,7 +213,20 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md"
+    "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md",
+    "git_issue": "bc5de16"
+  },
+  "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
+    "hash": "cfc029f",
+    "extid": "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN",
+    "type": "BUG",
+    "title": "Cancellation lifecycle: DB failure permanently marks chat generating; state machine advisory only",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-cancellation-lifecycle-db-failure-permanently-marks-chat-gen.md",
+    "git_issue": "cfc029f"
   },
   "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-": {
     "hash": "d2861ca",
@@ -214,6 +239,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md",
     "git_issue": "d2861ca"
+  },
+  "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
+    "hash": "d6c64be",
+    "extid": "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED",
+    "type": "BUG",
+    "title": "Character internal traits IDOR — actor ownership never checked",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-internal-traits-idor-actor-ownership-never-checked.md",
+    "git_issue": "d6c64be"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -522,6 +559,30 @@
     "source": ".plan/tickets/BUG-consent-state-not-persisted-in-memory-only.md",
     "git_issue": "5f00999"
   },
+  "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-": {
+    "hash": "65693a3",
+    "extid": "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-",
+    "type": "BUG",
+    "title": "Context window trim keeps oldest messages, drops newest when over budget",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-context-window-trim-keeps-oldest-messages-drops-newest-when-.md",
+    "git_issue": "65693a3"
+  },
+  "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-": {
+    "hash": "7bde6bd",
+    "extid": "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-",
+    "type": "BUG",
+    "title": "Crafting station instances scoped across worlds — cross-world read/write",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-crafting-station-instances-scoped-across-worlds-cross-world-.md",
+    "git_issue": "7bde6bd"
+  },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
     "extid": "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION",
@@ -637,7 +698,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md"
+    "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md",
+    "git_issue": "dc5a8b8"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -662,6 +724,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+  },
+  "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY": {
+    "hash": "f52b255",
+    "extid": "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY",
+    "type": "BUG",
+    "title": "getClientIp trusts spoofable proxy headers unconditionally",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md",
+    "git_issue": "f52b255"
   },
   "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR": {
     "hash": "2a271d7",
@@ -817,6 +891,18 @@
     "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
     "git_issue": "86a2a1b"
   },
+  "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
+    "hash": "c31f487",
+    "extid": "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA",
+    "type": "BUG",
+    "title": "JWT payload parse failure yields empty object accepted as valid token",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-jwt-payload-parse-failure-yields-empty-object-accepted-as-va.md",
+    "git_issue": "c31f487"
+  },
   "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY": {
     "hash": "966f256",
     "extid": "BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY",
@@ -830,6 +916,30 @@
     "git_issue": "966f256",
     "status": "done"
   },
+  "BUG-LEGACY-SHA256-TOKEN-HASH-FALLBACK-AUTHENTICATES-WHEN-JWT-SEC": {
+    "hash": "d489199",
+    "extid": "BUG-LEGACY-SHA256-TOKEN-HASH-FALLBACK-AUTHENTICATES-WHEN-JWT-SEC",
+    "type": "BUG",
+    "title": "Legacy sha256 token-hash fallback authenticates when JWT secret unset",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec.md",
+    "git_issue": "d489199"
+  },
+  "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
+    "hash": "fafb5a9",
+    "extid": "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK",
+    "type": "BUG",
+    "title": "Logout deletes session without signature or ownership check",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md",
+    "git_issue": "fafb5a9"
+  },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "hash": "6ca8fad",
     "extid": "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM",
@@ -839,7 +949,32 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+    "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md",
+    "git_issue": "6ca8fad"
+  },
+  "BUG-MODEL-COMPARISONS-ANALYTICS-LEAKS-ALL-USERS-ROWS-MISSING-USE": {
+    "hash": "43587b3",
+    "extid": "BUG-MODEL-COMPARISONS-ANALYTICS-LEAKS-ALL-USERS-ROWS-MISSING-USE",
+    "type": "BUG",
+    "title": "Model comparisons analytics leaks all users' rows — missing user_id filter",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-model-comparisons-analytics-leaks-all-users-rows-missing-use.md",
+    "git_issue": "43587b3"
+  },
+  "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W": {
+    "hash": "d283ff9",
+    "extid": "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W",
+    "type": "BUG",
+    "title": "Music links routes lack chat access checks — cross-chat read/write",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-music-links-routes-lack-chat-access-checks-cross-chat-read-w.md",
+    "git_issue": "d283ff9"
   },
   "BUG-N-1-QUERIES-IN-STORY-WORLD-STATE-CONTEXT-PER-PARTICIPANT": {
     "hash": "e874b71",
@@ -850,7 +985,20 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-n-1-queries-in-story-world-state-context-per-participant.md"
+    "source": ".plan/tickets/BUG-n-1-queries-in-story-world-state-context-per-participant.md",
+    "git_issue": "e874b71"
+  },
+  "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L": {
+    "hash": "a33c6f6",
+    "extid": "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L",
+    "type": "BUG",
+    "title": "No in-flight generation check — concurrent generate requests last-wins abort",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-no-in-flight-generation-check-concurrent-generate-requests-l.md",
+    "git_issue": "a33c6f6"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
@@ -875,6 +1023,18 @@
     "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md",
     "git_issue": "064e938",
     "status": "open"
+  },
+  "BUG-NSFW-BODY-PROFILE-MASS-ASSIGNMENT-RAW-BODY-INTO-UPDATEPROFIL": {
+    "hash": "5264b8b",
+    "extid": "BUG-NSFW-BODY-PROFILE-MASS-ASSIGNMENT-RAW-BODY-INTO-UPDATEPROFIL",
+    "type": "BUG",
+    "title": "NSFW body profile mass assignment — raw body into updateProfile",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-body-profile-mass-assignment-raw-body-into-updateprofil.md",
+    "git_issue": "5264b8b"
   },
   "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG": {
     "hash": "pending",
@@ -1052,7 +1212,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-sqlite-fk-pragma-no-op-in-migration-047-rebuild.md"
+    "source": ".plan/tickets/BUG-sqlite-fk-pragma-no-op-in-migration-047-rebuild.md",
+    "git_issue": "1f7ba9e"
   },
   "BUG-SQLITE-PRAGMAS-SKIPPED-WHEN-DIALECT-BUILT-FROM-EXISTING-DATA": {
     "hash": "3e90ae3",
@@ -1063,7 +1224,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md"
+    "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md",
+    "git_issue": "3e90ae3"
   },
   "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES": {
     "hash": "pending",
@@ -1099,6 +1261,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md",
     "git_issue": "879fa11"
+  },
+  "BUG-STREAM-CANCEL-LEAVES-ATTEMPT-STUCK-PROCESSING-FOREVER-NO-CLE": {
+    "hash": "268fdae",
+    "extid": "BUG-STREAM-CANCEL-LEAVES-ATTEMPT-STUCK-PROCESSING-FOREVER-NO-CLE",
+    "type": "BUG",
+    "title": "Stream cancel leaves attempt stuck Processing forever — no cleanup/persist",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md",
+    "git_issue": "268fdae"
   },
   "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
     "hash": "pending",
@@ -1174,6 +1348,18 @@
     "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md",
     "git_issue": "d88ff7f"
   },
+  "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
+    "hash": "02abf8a",
+    "extid": "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN",
+    "type": "BUG",
+    "title": "Turn state blind read-modify-write — lost updates on concurrent turns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md",
+    "git_issue": "02abf8a"
+  },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
     "extid": "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC",
@@ -1209,7 +1395,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md"
+    "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md",
+    "git_issue": "ca69118"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -4529,7 +4716,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-agents-md-references-nonexistent-db-schemas-check-script.md"
+    "source": ".plan/tickets/TASK-agents-md-references-nonexistent-db-schemas-check-script.md",
+    "git_issue": "9f3366d"
   },
   "TASK-AGENTS-SCRIPTS-WORKTREE-DOCS": {
     "hash": "b56fbb5",
@@ -4811,6 +4999,18 @@
     "source": ".plan/tickets/TASK-asset-templates.md",
     "git_issue": "cec1622"
   },
+  "TASK-ASSET-UPLOAD-PATH-TRAVERSAL-ENABLES-ARBITRARY-FILE-WRITE": {
+    "hash": "e4000f4",
+    "extid": "TASK-ASSET-UPLOAD-PATH-TRAVERSAL-ENABLES-ARBITRARY-FILE-WRITE",
+    "type": "TASK",
+    "title": "Asset upload path traversal enables arbitrary file write",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-upload-path-traversal-enables-arbitrary-file-write.md",
+    "git_issue": "e4000f4"
+  },
   "TASK-ASSET-VERSIONING": {
     "hash": "b395f85",
     "extid": "TASK-ASSET-VERSIONING",
@@ -5038,6 +5238,42 @@
     "tags": [],
     "source": ".plan/tickets/TASK-audio-player-component.md",
     "git_issue": "966af4f"
+  },
+  "TASK-AUTH-HARDENING-XFF-TRUST-SESSION-CAP-ALGO-PIN-DERIVE-SHORT-C": {
+    "hash": "a001848",
+    "extid": "TASK-AUTH-HARDENING-XFF-TRUST-SESSION-CAP-ALGO-PIN-DERIVE-SHORT-C",
+    "type": "TASK",
+    "title": "Auth hardening: XFF trust, session cap, algo pin, derive short-circuit, logout verify",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md",
+    "git_issue": "a001848"
+  },
+  "TASK-AUTH-ME-TRUSTS-UNVERIFIED-JWT-ALLOWING-USER-IMPERSONATION": {
+    "hash": "e16fb61",
+    "extid": "TASK-AUTH-ME-TRUSTS-UNVERIFIED-JWT-ALLOWING-USER-IMPERSONATION",
+    "type": "TASK",
+    "title": "Auth /me trusts unverified JWT allowing user impersonation",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auth-me-trusts-unverified-jwt-allowing-user-impersonation.md",
+    "git_issue": "e16fb61"
+  },
+  "TASK-AUTH-POLISH-MIME-SNIFF-VISIBILITY-LAST-SEEN-I18N-COOKIE-REGI": {
+    "hash": "843a93c",
+    "extid": "TASK-AUTH-POLISH-MIME-SNIFF-VISIBILITY-LAST-SEEN-I18N-COOKIE-REGI",
+    "type": "TASK",
+    "title": "Auth polish: MIME sniff, visibility, last_seen, i18n, cookie, register spec, misc",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auth-polish-mime-sniff-visibility-last-seen-i18n-cookie-regi.md",
+    "git_issue": "843a93c"
   },
   "TASK-AUTH-REGISTER-ROUTE": {
     "hash": "afc949f",
@@ -6012,6 +6248,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-character-creator-prerogative.md"
   },
+  "TASK-CHARACTER-EDIT-FORM-RENDERS-UNESCAPED-USER-FIELDS-STORED-XSS": {
+    "hash": "8c992e8",
+    "extid": "TASK-CHARACTER-EDIT-FORM-RENDERS-UNESCAPED-USER-FIELDS-STORED-XSS",
+    "type": "TASK",
+    "title": "Character edit form renders unescaped user fields (stored XSS)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-edit-form-renders-unescaped-user-fields-stored-xss.md",
+    "git_issue": "8c992e8"
+  },
   "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI": {
     "hash": "pending",
     "extid": "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI",
@@ -6225,6 +6473,18 @@
     "source": ".plan/tickets/TASK-character-template-seeding.md",
     "git_issue": "e9ac22b"
   },
+  "TASK-CHARACTER-TRAITS-PAGE-INJECTS-UNESCAPED-GOAL-INTO-INNERHTML-": {
+    "hash": "ac7ae01",
+    "extid": "TASK-CHARACTER-TRAITS-PAGE-INJECTS-UNESCAPED-GOAL-INTO-INNERHTML-",
+    "type": "TASK",
+    "title": "Character traits page injects unescaped goal into innerHTML (stored XSS)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-traits-page-injects-unescaped-goal-into-innerhtml-.md",
+    "git_issue": "ac7ae01"
+  },
   "TASK-CHARACTER-VOICE-PROFILE": {
     "hash": "pending",
     "extid": "TASK-CHARACTER-VOICE-PROFILE",
@@ -6246,6 +6506,18 @@
     "epic": "Character Core System",
     "tags": [],
     "source": ".plan/tickets/TASK-character-world-data-separation.md"
+  },
+  "TASK-CHARACTER-WORLD-PROMPT-OVERRIDES-INJECTED-VERBATIM-AS-SYSTEM": {
+    "hash": "663722a",
+    "extid": "TASK-CHARACTER-WORLD-PROMPT-OVERRIDES-INJECTED-VERBATIM-AS-SYSTEM",
+    "type": "TASK",
+    "title": "Character/world prompt overrides injected verbatim as system role",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-world-prompt-overrides-injected-verbatim-as-system.md",
+    "git_issue": "663722a"
   },
   "TASK-CHARX-JPEG-RCC-SUPPORT": {
     "hash": "pending",
@@ -6331,6 +6603,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-chat-flow-section-navigation.md",
     "git_issue": "26eb01e"
+  },
+  "TASK-CHAT-HISTORY-CAN-INJECT-SYSTEM-ROLE-MESSAGES-PROMPT-INJECTIO": {
+    "hash": "9aec25a",
+    "extid": "TASK-CHAT-HISTORY-CAN-INJECT-SYSTEM-ROLE-MESSAGES-PROMPT-INJECTIO",
+    "type": "TASK",
+    "title": "Chat history can inject System-role messages (prompt injection)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-history-can-inject-system-role-messages-prompt-injectio.md",
+    "git_issue": "9aec25a"
   },
   "TASK-CHAT-HISTORY-IMPORT-EXPORT": {
     "hash": "pending",
@@ -7147,6 +7431,17 @@
     "source": ".plan/tickets/TASK-crypto-algorithm-tests.md",
     "git_issue": "5e2382e"
   },
+  "TASK-CRYPTO-BYO-KEY-OPTIONAL-WEAK-PBKDF2-100K-ITERATIONS": {
+    "hash": "95aacd1",
+    "extid": "TASK-CRYPTO-BYO-KEY-OPTIONAL-WEAK-PBKDF2-100K-ITERATIONS",
+    "type": "TASK",
+    "title": "Crypto: BYO key optional/weak + PBKDF2 100k iterations",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations.md"
+  },
   "TASK-CRYPTO-CONFIG-ALGORITHM": {
     "hash": "0e5dac9",
     "extid": "TASK-CRYPTO-CONFIG-ALGORITHM",
@@ -7170,6 +7465,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-crypto-plugin-hooks.md",
     "git_issue": "682cf60"
+  },
+  "TASK-CSP-ALLOWS-UNSAFE-INLINE-AND-UNSAFE-EVAL-DEFEATING-NONCE": {
+    "hash": "0ce5784",
+    "extid": "TASK-CSP-ALLOWS-UNSAFE-INLINE-AND-UNSAFE-EVAL-DEFEATING-NONCE",
+    "type": "TASK",
+    "title": "CSP allows unsafe-inline and unsafe-eval defeating nonce",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-csp-allows-unsafe-inline-and-unsafe-eval-defeating-nonce.md",
+    "git_issue": "0ce5784"
   },
   "TASK-CSS-DEDUPLICATION-JSCPD-FULL": {
     "hash": "fbfedfc",
@@ -7355,6 +7662,17 @@
     "status": "done",
     "git_issue": "cc1706e"
   },
+  "TASK-DB-ASSET-DELETE-NO-TX-N-1-MEMORY-PURGE-COLUMN-ALLOWLIST-PLAY": {
+    "hash": "c5a899d",
+    "extid": "TASK-DB-ASSET-DELETE-NO-TX-N-1-MEMORY-PURGE-COLUMN-ALLOWLIST-PLAY",
+    "type": "TASK",
+    "title": "DB: asset delete no tx, N+1 memory purge, column allowlist, playthrough ownership",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
+  },
   "TASK-DB-CONTENT-VERSIONING": {
     "hash": "59efcd3",
     "extid": "TASK-DB-CONTENT-VERSIONING",
@@ -7412,6 +7730,29 @@
     "epic": "epic-frontend-backend-integration.md",
     "tags": [],
     "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
+  },
+  "TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA": {
+    "hash": "06df3a3",
+    "extid": "TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA",
+    "type": "TASK",
+    "title": "Defined-but-not-enforced debt: unused schemas and dead validators",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida.md",
+    "git_issue": "06df3a3"
+  },
+  "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
+    "hash": "abc8205",
+    "extid": "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP",
+    "type": "TASK",
+    "title": "deleteChat runs 9 sequential deletes without transaction (orphan risk)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
   },
   "TASK-DENO-SUPPORT": {
     "hash": "pending",
@@ -8483,6 +8824,18 @@
     "source": ".plan/tickets/TASK-frontend-e2e-improvements-draft.md",
     "git_issue": "01ab23f"
   },
+  "TASK-FRONTEND-EXPOSES-SESSION-TOKEN-IN-LOCALSTORAGE": {
+    "hash": "6bda93f",
+    "extid": "TASK-FRONTEND-EXPOSES-SESSION-TOKEN-IN-LOCALSTORAGE",
+    "type": "TASK",
+    "title": "Frontend exposes session token in localStorage",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-exposes-session-token-in-localstorage.md",
+    "git_issue": "6bda93f"
+  },
   "TASK-FRONTEND-LAZY-PAGES": {
     "hash": "0f82e72",
     "extid": "TASK-FRONTEND-LAZY-PAGES",
@@ -8506,6 +8859,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-lazy-vendor.md",
     "git_issue": "790cbc2"
+  },
+  "TASK-FRONTEND-SANITIZE-FALLBACKS-INJECT-RAW-HTML-WHEN-LIB-MISSING": {
+    "hash": "3691b57",
+    "extid": "TASK-FRONTEND-SANITIZE-FALLBACKS-INJECT-RAW-HTML-WHEN-LIB-MISSING",
+    "type": "TASK",
+    "title": "Frontend sanitize fallbacks inject raw HTML when lib missing",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing.md",
+    "git_issue": "3691b57"
   },
   "TASK-FRONTEND-SIZE-GATE": {
     "hash": "pending",
@@ -8620,6 +8985,30 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-generation-cassette-replay.md"
+  },
+  "TASK-GENERATION-ERROR-HANDLING-GAPS-DETECTOR-ABORT-VOID-PROMISES": {
+    "hash": "d14fd85",
+    "extid": "TASK-GENERATION-ERROR-HANDLING-GAPS-DETECTOR-ABORT-VOID-PROMISES",
+    "type": "TASK",
+    "title": "Generation error-handling gaps (detector, abort, void promises)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md",
+    "git_issue": "d14fd85"
+  },
+  "TASK-GENERATION-MAXTOKENS-AND-PROMPT-ARRAY-UNVALIDATED-COST-DOS": {
+    "hash": "3457e6b",
+    "extid": "TASK-GENERATION-MAXTOKENS-AND-PROMPT-ARRAY-UNVALIDATED-COST-DOS",
+    "type": "TASK",
+    "title": "Generation maxTokens and prompt array unvalidated (cost/DoS)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos.md",
+    "git_issue": "3457e6b"
   },
   "TASK-GENERATION-MOCK-SCENARIO-PROVIDER": {
     "hash": "5ff5952",
@@ -8777,6 +9166,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-health-bar.md",
     "git_issue": "330ccdd"
+  },
+  "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
+    "hash": "20a414f",
+    "extid": "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE",
+    "type": "TASK",
+    "title": "Hook chain and moderation robustness in generation pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hook-chain-and-moderation-robustness-in-generation-pipeline.md",
+    "git_issue": "20a414f"
   },
   "TASK-HOOK-RESULT-PAYLOAD-CARRY-CONTEXT": {
     "hash": "pending",
@@ -9162,6 +9563,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-inner-monologue.md"
   },
+  "TASK-INPUT-VALIDATION-BATTLE-SCHEMA-LESS-POST-EMOTION-AVATARS-PAR": {
+    "hash": "9f6b799",
+    "extid": "TASK-INPUT-VALIDATION-BATTLE-SCHEMA-LESS-POST-EMOTION-AVATARS-PAR",
+    "type": "TASK",
+    "title": "Input validation: battle schema-less POST + emotion-avatars params + query schemas",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-input-validation-battle-schema-less-post-emotion-avatars-par.md"
+  },
   "TASK-INSERT-LOG-FATAL-AND-LOG-TRACE-CALLS-AT-KEY-SITES": {
     "hash": "da82d1c",
     "extid": "TASK-INSERT-LOG-FATAL-AND-LOG-TRACE-CALLS-AT-KEY-SITES",
@@ -9348,6 +9760,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-item-system-extensions.md",
     "git_issue": "801bcd0"
+  },
+  "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
+    "hash": "379011c",
+    "extid": "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT",
+    "type": "TASK",
+    "title": "JWT header alg/kid never asserted; fail-open route guard pattern",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt.md",
+    "git_issue": "379011c"
   },
   "TASK-KARMA-DISPLAY-METER-AND-TIERS": {
     "hash": "dc19c9e",
@@ -9549,6 +9973,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-log-call-insertion.md"
   },
+  "TASK-LOG-FILES-CREATED-WORLD-READABLE-0644": {
+    "hash": "8e464f9",
+    "extid": "TASK-LOG-FILES-CREATED-WORLD-READABLE-0644",
+    "type": "TASK",
+    "title": "Log files created world-readable (0644)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-log-files-created-world-readable-0644.md"
+  },
   "TASK-LOG-JSONL-FORMAT": {
     "hash": "pending",
     "extid": "TASK-LOG-JSONL-FORMAT",
@@ -9571,6 +10006,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-log-verify.md"
   },
+  "TASK-LOGGER-CENSOR-BYPASSES-MESSAGE-FIELD-PII-SECRET-LEAK": {
+    "hash": "377cf9c",
+    "extid": "TASK-LOGGER-CENSOR-BYPASSES-MESSAGE-FIELD-PII-SECRET-LEAK",
+    "type": "TASK",
+    "title": "Logger censor bypasses message field (PII/secret leak)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-logger-censor-bypasses-message-field-pii-secret-leak.md"
+  },
   "TASK-LOGGING": {
     "hash": "7ed37ae",
     "extid": "TASK-LOGGING",
@@ -9583,6 +10029,17 @@
     "source": ".plan/tickets/TASK-logging.md",
     "git_issue": "7ed37ae"
   },
+  "TASK-LOGGING-CENSOR-EXACT-MATCH-RULES-ERROR-STACK-PATH-LEAK": {
+    "hash": "714ca84",
+    "extid": "TASK-LOGGING-CENSOR-EXACT-MATCH-RULES-ERROR-STACK-PATH-LEAK",
+    "type": "TASK",
+    "title": "Logging: censor exact-match rules + error-stack path leak",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-logging-censor-exact-match-rules-error-stack-path-leak.md"
+  },
   "TASK-LORA-DISCOVERY-APPLICATION": {
     "hash": "b2774878",
     "extid": "TASK-LORA-DISCOVERY-APPLICATION",
@@ -9593,6 +10050,18 @@
     "epic": "epic-lora-discovery-application",
     "tags": [],
     "source": ".plan/tickets/TASK-lora-discovery-application.md"
+  },
+  "TASK-LORE-PERSONA-TRAITS-PLACED-AS-SYSTEM-MESSAGES-SEMANTIC-INJEC": {
+    "hash": "cad5904",
+    "extid": "TASK-LORE-PERSONA-TRAITS-PLACED-AS-SYSTEM-MESSAGES-SEMANTIC-INJEC",
+    "type": "TASK",
+    "title": "Lore/persona/traits placed as system messages (semantic injection)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-persona-traits-placed-as-system-messages-semantic-injec.md",
+    "git_issue": "cad5904"
   },
   "TASK-LORE-TIMELINE-REVEAL": {
     "hash": "pending",
@@ -10339,6 +10808,17 @@
     "source": ".plan/tickets/TASK-npcs.md",
     "git_issue": "e95bc04"
   },
+  "TASK-NSFW-AGE-GATE-NEVER-VERIFIED-AT-GENERATION-TIME": {
+    "hash": "5232abe",
+    "extid": "TASK-NSFW-AGE-GATE-NEVER-VERIFIED-AT-GENERATION-TIME",
+    "type": "TASK",
+    "title": "NSFW age gate never verified at generation time",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-age-gate-never-verified-at-generation-time.md"
+  },
   "TASK-NSFW-ALPINE": {
     "hash": "d9fae17",
     "extid": "TASK-NSFW-ALPINE",
@@ -10454,6 +10934,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-game-mechanics.md",
     "git_issue": "dffee6b"
+  },
+  "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA": {
+    "hash": "7ba53d1",
+    "extid": "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA",
+    "type": "TASK",
+    "title": "NSFW gate gaps: performedBy spoof, audit target, misconfig disable, PII secret",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
   },
   "TASK-NSFW-GATE-MODERATION-EVENTS": {
     "hash": "acdae7a",
@@ -11618,6 +12109,18 @@
     "source": ".plan/tickets/TASK-rate-limiting-telemetry.md",
     "git_issue": "2e40125"
   },
+  "TASK-RBAC-CAPABILITY-MATRIX-NOT-ENFORCED-25-OF-30-CAPS-DECORATIVE": {
+    "hash": "2129b97",
+    "extid": "TASK-RBAC-CAPABILITY-MATRIX-NOT-ENFORCED-25-OF-30-CAPS-DECORATIVE",
+    "type": "TASK",
+    "title": "RBAC capability matrix not enforced (25 of 30 caps decorative)",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative.md",
+    "git_issue": "2129b97"
+  },
   "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
     "hash": "pending",
     "extid": "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES",
@@ -11749,6 +12252,28 @@
     "source": ".plan/tickets/TASK-reconciliation-plan.md",
     "git_issue": "4fee514"
   },
+  "TASK-REDOS-CONFIG-TRANSFORMS-BUILD-REGEXP-FROM-UNTRUSTED-PATTERN": {
+    "hash": "1330c1f",
+    "extid": "TASK-REDOS-CONFIG-TRANSFORMS-BUILD-REGEXP-FROM-UNTRUSTED-PATTERN",
+    "type": "TASK",
+    "title": "ReDoS: config transforms build RegExp from untrusted pattern",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-redos-config-transforms-build-regexp-from-untrusted-pattern.md"
+  },
+  "TASK-REDOS-LORE-ACTIVATION-BUILDS-REGEXP-FROM-AUTHOR-CONTROLLED-K": {
+    "hash": "5c73739",
+    "extid": "TASK-REDOS-LORE-ACTIVATION-BUILDS-REGEXP-FROM-AUTHOR-CONTROLLED-K",
+    "type": "TASK",
+    "title": "ReDoS: lore activation builds RegExp from author-controlled key",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md"
+  },
   "TASK-REGEX-EXTRACTION-TESTS": {
     "hash": "592149a",
     "extid": "TASK-REGEX-EXTRACTION-TESTS",
@@ -11774,6 +12299,17 @@
     "source": ".plan/tickets/TASK-regex-output-transforms-quick-win.md",
     "status": "done",
     "git_issue": "770f3fb"
+  },
+  "TASK-REGEX-SAFETY-XML-UTILS-TAG-UNESCAPED-NARRATIVE-GREEDY": {
+    "hash": "3302cdc",
+    "extid": "TASK-REGEX-SAFETY-XML-UTILS-TAG-UNESCAPED-NARRATIVE-GREEDY",
+    "type": "TASK",
+    "title": "Regex safety: xml-utils tag unescaped, narrative greedy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
   },
   "TASK-RELATED-MEMORY-EVENT-INJECTION-HOOKS": {
     "hash": "3506045",
@@ -12502,6 +13038,18 @@
     "source": ".plan/tickets/TASK-screen-reader-support.md",
     "git_issue": "bcdd5b5"
   },
+  "TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER": {
+    "hash": "c9036fd",
+    "extid": "TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER",
+    "type": "TASK",
+    "title": "Server-edge error handling gaps in routes layer",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-server-edge-error-handling-gaps-in-routes-layer.md",
+    "git_issue": "c9036fd"
+  },
   "TASK-SERVER-SIDE-I18N-MIDDLEWARE": {
     "hash": "9268e9d",
     "extid": "TASK-SERVER-SIDE-I18N-MIDDLEWARE",
@@ -12526,6 +13074,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-sessions-api-routes.md",
     "git_issue": "cd27cec"
+  },
+  "TASK-SETTINGS-PATCH-USES-T-ANY-BODY-ALLOWING-MASS-ASSIGNMENT": {
+    "hash": "ef55dc7",
+    "extid": "TASK-SETTINGS-PATCH-USES-T-ANY-BODY-ALLOWING-MASS-ASSIGNMENT",
+    "type": "TASK",
+    "title": "Settings PATCH uses t.Any body allowing mass assignment",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-settings-patch-uses-t-any-body-allowing-mass-assignment.md",
+    "git_issue": "ef55dc7"
   },
   "TASK-SHARED-SCHEMAS": {
     "hash": "754a395",
@@ -12809,6 +13369,17 @@
     "source": ".plan/tickets/TASK-story-alpine.md",
     "git_issue": "871b352"
   },
+  "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS": {
+    "hash": "f0683a8",
+    "extid": "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS",
+    "type": "TASK",
+    "title": "Story/GM generation never NSFW-gated (content safety bypass)",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass.md"
+  },
   "TASK-STORY-MODE-FRONTEND": {
     "hash": "pending",
     "extid": "TASK-STORY-MODE-FRONTEND",
@@ -12856,6 +13427,18 @@
     "source": ".plan/tickets/TASK-story-world-state.md",
     "git_issue": "4ffae25"
   },
+  "TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS": {
+    "hash": "962618b",
+    "extid": "TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS",
+    "type": "TASK",
+    "title": "SVG upload leads to stored XSS",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-svg-upload-leads-to-stored-xss.md",
+    "git_issue": "962618b"
+  },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
     "hash": "pending",
     "extid": "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY",
@@ -12867,6 +13450,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md",
     "git_issue": "df6f69b"
+  },
+  "TASK-TELEMETRY-ENDPOINT-TRUSTS-USERID-FROM-REQUEST-BODY": {
+    "hash": "fcdcefc",
+    "extid": "TASK-TELEMETRY-ENDPOINT-TRUSTS-USERID-FROM-REQUEST-BODY",
+    "type": "TASK",
+    "title": "Telemetry endpoint trusts userId from request body",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-telemetry-endpoint-trusts-userid-from-request-body.md",
+    "git_issue": "fcdcefc"
   },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
     "hash": "pending",
@@ -13499,6 +14094,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-verify-logging-changes-green.md",
     "git_issue": "a51c266"
+  },
+  "TASK-VERIFYJWT-ACCEPTS-MALFORMED-OR-CLAIMLESS-PAYLOAD-AS-VALID": {
+    "hash": "b87cc89",
+    "extid": "TASK-VERIFYJWT-ACCEPTS-MALFORMED-OR-CLAIMLESS-PAYLOAD-AS-VALID",
+    "type": "TASK",
+    "title": "verifyJwt accepts malformed or claimless payload as valid",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-verifyjwt-accepts-malformed-or-claimless-payload-as-valid.md",
+    "git_issue": "b87cc89"
   },
   "TASK-VISUAL-NOVEL-MODE": {
     "hash": "8be84a7",

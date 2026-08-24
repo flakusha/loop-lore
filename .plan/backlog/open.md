@@ -38,6 +38,7 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 | [`open-debt.md`](./open-debt.md) | **Debt** — dead/unwired code, schema drift / latent bugs, release hardening |
 | [`open-deferred.md`](./open-deferred.md) | **Deferred** — item-systems deferred follow-ups (IS1–IS7), hardening / deferred clusters, pull-forward notes |
 | [`open-closed.md`](./open-closed.md) | **Closed (reference)** — recent wiring log, security & access closed, resolved (moved off), preserved notes |
+| [`security-review-2026-08-25.md`](./security-review-2026-08-25.md) | **Security review plan** — auth/access surface findings (CRIT→LOW) + proposed fix tickets + next-review backlog (WS/RBAC/asset reviews done 2026-08-25) |
 
 `../priority.md` holds the priority ladder P0→P6+ — see its index.
 
