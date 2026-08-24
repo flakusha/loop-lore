@@ -6,24 +6,20 @@ import { getConfigValue, } from "../../admin/config";
 import { computeContextStats, } from "../../chat";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
-import {
-  MessageContentFormat,
-  MessageContentType,
-  MessageRole,
-  MessageStatus,
-} from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import { parseInitiativeFlag, } from "../../group-chat/mention-parser";
 import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
-import { jsonCreated, requireUserId, } from "../http-utils";
+import { jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
+import type { HttpStatusCode, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
+import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
 import { maybeAutoReply, } from "./reply";
 import { autoRenameChat, } from "./transitions";
 import type { HandlerOpts, } from "./types";
@@ -77,44 +73,39 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const id = uid();
         const parentId = body.parentId ?? null;
-        let msgSwipeIndex: number | null = null;
-        if (parentId) {
-          const maxSwipe = await database
-            .selectFrom("messages",)
-            .select(database.fn.max("swipe_index",).as("max_idx",),)
-            .where("chat_id", "=", chatId,)
-            .where("parent_id", "=", parentId,)
-            .executeTakeFirst();
-          msgSwipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
+        // ── Idempotency: short-circuit if a row already covers this key.
+        // Closes the duplicate-insert hazard for retried POSTs. The key is
+        // optional; the helper handles null by returning null.
+        const idempotencyKey = body.idempotencyKey ?? null;
+        const existingId = idempotencyKey
+          ? await findByIdempotencyKey(database, chatId, idempotencyKey,)
+          : null;
+        if (existingId) {
+          return jsonCreated({ id: existingId, context: {}, },);
         }
-
-        await database
-          .insertInto("messages",)
-          .values({
+        try {
+          await insertUserMessageWithRetry(database, {
             id,
-            chat_id: chatId,
-            actor_id: actorId,
-            parent_id: parentId,
-            role: body.role ?? MessageRole.User,
-            content: storedContent,
-            key_id: storedKeyId,
-            content_type: body.contentType ?? MessageContentType.Text,
-            content_format: MessageContentFormat.Markdown,
-            content_encoding: contentEncoding as ContentEncoding,
-            status: MessageStatus.Confirmed,
-            visibility: "visible",
-            idempotency_key: body.idempotencyKey ?? null,
-            swipe_index: msgSwipeIndex,
-          },)
-          .execute();
-
+            chatId,
+            actorId,
+            parentId,
+            storedContent,
+            storedKeyId,
+            contentEncoding: contentEncoding as ContentEncoding,
+            idempotencyKey,
+          },);
+        } catch (err) {
+          if (err instanceof SwipeInsertExhaustedError) {
+            return jsonResponse(
+              { error: "service_busy", message: err.message, },
+              503 as HttpStatusCode,
+            );
+          }
+          throw err;
+        }
         const attachments = body.attachments;
 
         // ── Profanity moderation gate ─────────────────────────
-        // When the admin `profanity_filter` toggle is enabled, hide profane
-        // user messages behind moderation instead of silently censoring only.
-        // The censor above still runs regardless; this adds an opt-in
-        // flag/hide path (see docs/frontend/chat/assistant.md "moderation").
         if (hasProfanity) {
           const profanityFilter = (await getConfigValue(database, "profanity_filter",)) === "true";
           if (profanityFilter) {
@@ -173,25 +164,13 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         params: ChatIdParams,
         body: MessageCreateBody,
         response: {
-          201: t.Object({
-            id: t.Optional(t.String(),),
-            context: t.Object({
-              used_tokens: t.Number(),
-              max_tokens: t.Number(),
-              percentage: t.Number(),
-              will_trim: t.Boolean(),
-              threshold: t.String(),
-            },),
-            assistantMessage: t.Optional(t.Object({
-              id: t.String(),
-              content: t.String(),
-            },),),
-          },),
+          201: t.Object({ id: t.String(), context: t.Any(), },),
           401: ErrorResponse,
           403: ErrorResponse,
           404: ErrorResponse,
+          503: ErrorResponse,
         },
       },
-    )
-    .use(createEntityConfirmRoutes(opts, prefix,),);
-}
+     )
+     .use(createEntityConfirmRoutes(opts, prefix,),);
+ }
