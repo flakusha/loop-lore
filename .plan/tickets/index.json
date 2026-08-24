@@ -99,6 +99,17 @@
     "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md",
     "git_issue": "821e0d1"
   },
+  "BUG-AUTHOR-NOTE-SECTION-DUPLICATES-POST-HISTORY-INSTRUCTIONS-SAM": {
+    "hash": "1bc8ffd",
+    "extid": "BUG-AUTHOR-NOTE-SECTION-DUPLICATES-POST-HISTORY-INSTRUCTIONS-SAM",
+    "type": "BUG",
+    "title": "Author-note section duplicates post-history instructions (same field)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
+  },
   "BUG-AUTO-GEN-ASSEMBLE-OMITS-PROVIDERID-TOKENBUDGET-AND-NEVER-COM": {
     "hash": "8a5e407",
     "extid": "BUG-AUTO-GEN-ASSEMBLE-OMITS-PROVIDERID-TOKENBUDGET-AND-NEVER-COM",
@@ -415,6 +426,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
   },
+  "BUG-CHATFORMATS-TEMPLATE-CONFIG-DEFINED-BUT-UNUSED-DEAD-STANDARD": {
+    "hash": "6730c8b",
+    "extid": "BUG-CHATFORMATS-TEMPLATE-CONFIG-DEFINED-BUT-UNUSED-DEAD-STANDARD",
+    "type": "BUG",
+    "title": "chatFormats template config defined but unused (dead standard-template feature)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chatformats-template-config-defined-but-unused-dead-standard.md"
+  },
   "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE": {
     "hash": "9437278",
     "extid": "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE",
@@ -556,6 +578,17 @@
     "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md",
     "git_issue": "76cbe80",
     "status": "done"
+  },
+  "BUG-EXAMPLE-DIALOGUE-MES-EXAMPLE-FEW-SHOT-NEVER-INJECTED-INCLUDE": {
+    "hash": "6b6c898",
+    "extid": "BUG-EXAMPLE-DIALOGUE-MES-EXAMPLE-FEW-SHOT-NEVER-INJECTED-INCLUDE",
+    "type": "BUG",
+    "title": "Example dialogue (mes_example few-shot) never injected; includeExamples never set",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -887,6 +920,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md",
     "git_issue": "9860eb0"
+  },
+  "BUG-POST-HISTORY-INSTRUCTION-RELOCATED-TO-FRONT-NOT-AFTER-HISTOR": {
+    "hash": "0d223a7",
+    "extid": "BUG-POST-HISTORY-INSTRUCTION-RELOCATED-TO-FRONT-NOT-AFTER-HISTOR",
+    "type": "BUG",
+    "title": "Post-history instruction relocated to front, not after history",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md"
   },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
