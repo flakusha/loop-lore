@@ -293,6 +293,12 @@
       "source": "docs/spec/crypto.md"
     }
   ],
+  "src/assets/service/create.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    }
+  ],
   "src/assets/service/file-system.test.ts": [
     {
       "kind": "epic",
@@ -2423,12 +2429,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
-    }
-  ],
-  "src/characters/services/emotion-avatar-fallback.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     }
   ],
   "src/characters/services/emotion-avatar-fallback.ts": [
