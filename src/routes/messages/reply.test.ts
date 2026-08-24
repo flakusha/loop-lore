@@ -13,8 +13,8 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { MessageRole, } from "../../db/enums";
 import type { Config, } from "../../config/schema";
+import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -94,11 +94,11 @@ describe("maybeAutoReply — swipe_index race", () => {
             parentMessageId,
             "hello", // matches assistant "hello" keyword → generateResponse returns content
             new Request("http://localhost/",),
-          )
-        ),);
+          ),),
+      );
 
       // Every call should report a synchronous assistant reply.
-      expect(results.every((r,) => r.replied,)).toBe(true);
+      expect(results.every((r,) => r.replied),).toBe(true,);
 
       // Read back all swipe_indexes for this (chat, parent) — must be
       // a contiguous distinct sequence with no gaps and no duplicates.
@@ -111,10 +111,10 @@ describe("maybeAutoReply — swipe_index race", () => {
         .orderBy("swipe_index", "asc",)
         .execute();
 
-      const indexes = swipes.map((r,) => r.swipe_index,);
-      expect(indexes,).toHaveLength(fanout);
-      expect(new Set(indexes,).size,).toBe(fanout); // all distinct
-      expect(indexes,).toEqual([1, 2, 3, 4, 5, 6, 7, 8,]); // contiguous
+      const indexes = swipes.map((r,) => r.swipe_index);
+      expect(indexes,).toHaveLength(fanout,);
+      expect(new Set(indexes,).size,).toBe(fanout,); // all distinct
+      expect(indexes,).toEqual([1, 2, 3, 4, 5, 6, 7, 8,],); // contiguous
     },
   );
 });

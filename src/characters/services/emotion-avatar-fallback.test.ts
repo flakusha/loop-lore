@@ -124,4 +124,158 @@ describe("extractAvatarMetadata", () => {
     expect(result.width,).toBe(512,);
     expect(result.height,).toBe(512,);
   });
+
+  it("falls back to actor description when alt text is missing", async () => {
+    const { actorId, } = await createTestActors(db, "test-actor-no-alt");
+    await db
+      .updateTable("actors",)
+      .set({ description: "Aria, the elven mage with silver hair", },)
+      .where("id", "=", actorId,)
+      .execute();
+
+    const buffer = makeMinimalPng(320, 320,);
+    const { asset, } = await createAsset({
+      database: db,
+      input: {
+        ownerId: testUserId,
+        filename: "no-alt.png",
+        mimeType: "image/png",
+        assetType: "image",
+        sizeBytes: buffer.length,
+        buffer,
+      },
+      uploadDir: "/tmp/test-uploads",
+    },);
+
+    const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
+    expect(result.caption,).toBe("Aria, the elven mage with silver hair",);
+    expect(result.altText,).toBeUndefined();
+  });
+
+  it("prefers alt text over actor description", async () => {
+    const { actorId, } = await createTestActors(db, "test-actor-alt-wins",);
+    await db
+      .updateTable("actors",)
+      .set({ description: "from description", },)
+      .where("id", "=", actorId,)
+      .execute();
+
+    const buffer = makeMinimalPng(384, 384,);
+    const { asset, } = await createAsset({
+      database: db,
+      input: {
+        ownerId: testUserId,
+        filename: "alt-wins.png",
+        mimeType: "image/png",
+        assetType: "image",
+        sizeBytes: buffer.length,
+        buffer,
+        altText: "from alt text",
+      },
+      uploadDir: "/tmp/test-uploads",
+    },);
+
+    const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
+    expect(result.caption,).toBe("from alt text",);
+    expect(result.altText,).toBe("from alt text",);
+  });
+
+  it("surfaces character_avatars tags when actorId is provided", async () => {
+    const { actorId, } = await createTestActors(db, "test-actor-tags",);
+    const buffer = makeMinimalPng(448, 448,);
+    const { asset, } = await createAsset({
+      database: db,
+      input: {
+        ownerId: testUserId,
+        filename: "tags.png",
+        mimeType: "image/png",
+        assetType: "image",
+        sizeBytes: buffer.length,
+        buffer,
+      },
+      uploadDir: "/tmp/test-uploads",
+    },);
+    const now = new Date().toISOString();
+    await db
+      .insertInto("character_avatars",)
+      .values({
+        id: "avatar-tags-1",
+        actor_id: actorId,
+        asset_id: asset.id,
+        label: "happy expression",
+        tags: JSON.stringify({ emotion: "happy", mood: "cheerful", action: "smile", },),
+        is_primary: 0,
+        sort_order: 1,
+        created_at: now,
+        updated_at: now,
+      },)
+      .execute();
+
+    const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
+    expect(result.tags,).toEqual({
+      emotion: "happy",
+      mood: "cheerful",
+      action: "smile",
+    },);
+  });
+
+  it("ignores malformed tags JSON without throwing", async () => {
+    const { actorId, } = await createTestActors(db, "test-actor-bad-tags",);
+    const buffer = makeMinimalPng(576, 576,);
+    const { asset, } = await createAsset({
+      database: db,
+      input: {
+        ownerId: testUserId,
+        filename: "bad-tags.png",
+        mimeType: "image/png",
+        assetType: "image",
+        sizeBytes: buffer.length,
+        buffer,
+      },
+      uploadDir: "/tmp/test-uploads",
+    },);
+
+    await db
+      .insertInto("character_avatars",)
+      .values({
+        id: "avatar-bad-tags-1",
+        actor_id: actorId,
+        label: "broken",
+        asset_id: asset.id,
+        tags: "not-json{",
+        is_primary: 0,
+        sort_order: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },)
+      .execute();
+
+    const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
+    expect(result.tags,).toBeUndefined();
+  });
+
+  it("returns existing shape unchanged when actorId is omitted", async () => {
+    const buffer = makeMinimalPng(640, 640,);
+    const { asset, } = await createAsset({
+      database: db,
+      input: {
+        ownerId: testUserId,
+        filename: "no-actor.png",
+        mimeType: "image/png",
+        assetType: "image",
+        sizeBytes: buffer.length,
+        buffer,
+        altText: "drop-in",
+      },
+      uploadDir: "/tmp/test-uploads",
+    },);
+
+    const result = await extractAvatarMetadata(db, asset.id,);
+    expect(result,).toEqual({
+      caption: "drop-in",
+      altText: "drop-in",
+      width: 640,
+      height: 640,
+    },);
+  });
 });

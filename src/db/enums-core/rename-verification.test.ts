@@ -10,7 +10,7 @@
  *   - a stale re-export / legacy helper.
  * Both fail this test.
  */
-import { existsSync, readFileSync, readdirSync, statSync, } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import { join, } from "node:path";
 
 import { describe, expect, test, } from "bun:test";
@@ -20,29 +20,29 @@ import { EncryptionLevel, } from "./flags.js";
 // ── 1. Direct symbol/value contract ────────────────────────────
 
 describe("EncryptionLevel rename — direct contract", () => {
-  test("AtRest member exists and resolves to \"at-rest\"", () => {
+  test('AtRest member exists and resolves to "at-rest"', () => {
     expect(EncryptionLevel.AtRest,).toBe("at-rest",);
-  },);
+  });
 
-  test("None member still resolves to \"none\"", () => {
+  test('None member still resolves to "none"', () => {
     expect(EncryptionLevel.None,).toBe("none",);
-  },);
+  });
 
-  test("Standard member still resolves to \"standard\"", () => {
+  test('Standard member still resolves to "standard"', () => {
     expect(EncryptionLevel.Standard,).toBe("standard",);
-  },);
+  });
 
   test("Private member is gone (clean cutover, no @deprecated alias)", () => {
     expect(
       // @ts-expect-error — intentional: the symbol must NOT exist after the rename.
       EncryptionLevel.Private,
     ).toBeUndefined();
-  },);
+  });
 
   test("encryption-level type union has exactly three members", () => {
     const values = Object.values(EncryptionLevel,).sort();
-    expect(values,).toEqual(["at-rest", "none", "standard",]);
-  },);
+    expect(values,).toEqual(["at-rest", "none", "standard",],);
+  });
 });
 
 // ── 2. Source-tree grep guard ──────────────────────────────────
@@ -91,12 +91,12 @@ describe("EncryptionLevel rename — source-tree grep guard", () => {
   test("src/ contains at least one .ts file (sanity)", () => {
     expect(SRC_FILES.length,).toBeGreaterThan(0,);
     expect(existsSync(SRC_ROOT,),).toBe(true,);
-  },);
+  });
 
   test("no .ts file under src/ contains the literal `EncryptionLevel.Private`", () => {
-    const offenders: { file: string, line: number, text: string, }[] = [];
+    const offenders: { file: string; line: number; text: string }[] = [];
     for (const file of SRC_FILES) {
-      if (EXEMPT_FILES[file]) continue;
+      if (EXEMPT_FILES[file]) { continue; }
       const content = readFileSync(file, "utf8",);
       const lines = content.split(/\r?\n/,);
       for (let i = 0; i < lines.length; i++) {
@@ -108,12 +108,12 @@ describe("EncryptionLevel rename — source-tree grep guard", () => {
     }
     if (offenders.length > 0) {
       const formatted = offenders
-        .map((o) => `  ${o.file}:${o.line}  ${o.text.trim()}`)
+        .map((o,) => `  ${o.file}:${o.line}  ${o.text.trim()}`)
         .join("\n",);
       throw new Error(
         `Found ${offenders.length} reference(s) to EncryptionLevel.Private in src/:\n${formatted}\n` +
           `The rename to EncryptionLevel.AtRest must be clean — no @deprecated alias.`,
       );
     }
-  },);
+  });
 });

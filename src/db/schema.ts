@@ -130,11 +130,8 @@ export interface DB {
   chat_location_events: import("./schema-core").ChatLocationEvents;
   proactive_messaging_config: import("./schema-core").ProactiveMessagingConfig;
   character_internal_traits: import("./schema-core").CharacterInternalTraits;
-  character_world_setup: import("./schema-character").CharacterWorldSetup;
   model_capabilities: import("./schema-core").ModelCapabilities;
-  battles: import("./schema-core").Battles;
   seed_audit: import("./schema-core").SeedAudit;
-  trade_history: import("./schema-core").TradeHistory;
   memory_embeddings: import("./schema-core").MemoryEmbeddings;
   world_timelines: import("./schema-core").WorldTimelines;
   chat_keys: import("./schema-core").ChatKeys;
@@ -144,4 +141,7 @@ export interface DB {
   e2e_group_wraps: import("./schema-core").E2eGroupWraps;
   e2e_skipped_message_keys: import("./schema-core").E2eSkippedMessageKeys;
   e2e_skipped_keys: import("./schema-core").E2eSkippedKeys;
+  character_world_setup: import("./schema-character").CharacterWorldSetup;
+  battles: import("./schema-core").Battles;
+  trade_history: import("./schema-core").TradeHistory;
 }

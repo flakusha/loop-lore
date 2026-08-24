@@ -195,7 +195,7 @@ export async function persistMentions(
   // A duplicate-insert is benign (same actor mentioned twice in one message);
   // we treat any other failure as a real error.
   const persistedActorIds: string[] = [];
-  for (const [i, outcome] of insertOutcomes.entries()) {
+  for (const [i, outcome,] of insertOutcomes.entries()) {
     const actorId = mentionedActorIds[i]!;
     if (outcome.status === "fulfilled") {
       result.persisted++;
