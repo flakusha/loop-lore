@@ -8,7 +8,7 @@ import { Elysia, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, } from "../http-utils";
-import { auditQuery, requireAdmin, userIdParam, } from "./shared";
+import { auditQuery, requireAdmin, requireModerationReview, userIdParam, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
@@ -17,7 +17,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw-moderation-audit", },)
       .get(`${prefix}/nsfw/moderation/audit/:userId`, async (ctx: any,) => {
-        const auth = requireAdmin(ctx,);
+        const auth = requireModerationReview(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
           const limit = Number(ctx.query.limit ?? 100,);
