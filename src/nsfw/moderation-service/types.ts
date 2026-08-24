@@ -104,7 +104,7 @@ export interface NsfwModerationService {
     status: "resolved" | "dismissed" | "confirmed",
   ): Promise<ContentFlag>;
   getAuditLog(targetUserId: string, options?: { limit?: number; offset?: number },): Promise<ModAction[]>;
-  exportUserData(userId: string,): Promise<{ preferences: NsfwUserPrefs; actions: ModAction[]; flags: ContentFlag[] }>;
+  exportUserData(userId: string): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }>;
   deleteUserData(userId: string,): Promise<void>;
   getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }>;
   setChatNsfwOverride(chatId: string, override: "enabled" | "disabled" | null,): Promise<void>;

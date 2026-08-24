@@ -7,7 +7,7 @@
  * Computing the effective NSFW setting for a chat and setting chat/world
  * level overrides.
  */
-import type { NsfwModerationServiceContext, } from "./types";
+import type { NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
 
 export interface GetEffectiveNsfwArgs {
   thisL: NsfwModerationServiceContext;
@@ -23,8 +23,8 @@ export async function getEffectiveNsfw(
   { thisL, chatId, userId, }: GetEffectiveNsfwArgs,
 ): Promise<{ enabled: boolean; source: string }> {
   // 0. Check if user is shadow-banned from NSFW (overrides everything)
-  const prefs = await thisL.getPreferences(userId,);
-  if (prefs.shadowNsfw) {
+  const prefs = (await thisL.getPreferences(userId,)) ?? ({} as NsfwUserPrefs);
+  if (prefs?.shadowNsfw) {
     return { enabled: false, source: "shadow_ban", };
   }
 
@@ -46,8 +46,7 @@ export async function getEffectiveNsfw(
     if (world?.nsfw_override === "disabled") { return { enabled: false, source: "world_override", }; }
   }
 
-  // 3. Fall back to user preference
-  return { enabled: prefs.nsfwEnabled, source: "user_preference", };
+  return { enabled: prefs?.nsfwEnabled ?? false, source: "user_preference", };
 }
 
 export interface SetChatNsfwOverrideArgs {
