@@ -380,6 +380,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
   },
+  "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE": {
+    "hash": "9437278",
+    "extid": "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE",
+    "type": "BUG",
+    "title": "check-db-schemas.ts dprint subprocess exit-20 masks stale detection",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
+  },
   "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS": {
     "hash": "pending",
     "extid": "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS",
@@ -919,6 +930,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md",
     "git_issue": "6a4f485"
+  },
+  "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-": {
+    "hash": "d88ff7f",
+    "extid": "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-",
+    "type": "BUG",
+    "title": "transitions.test.ts ownership tests fail with FK constraint missing fixture rows",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -7965,6 +7987,17 @@
     "status": "done",
     "git_issue": "9d04b37"
   },
+  "TASK-FIX-SHARED-STATE-SQLITE-CONTAMINATION-IN-UNIT-TEST-SUITE-53-": {
+    "hash": "d5f3070",
+    "extid": "TASK-FIX-SHARED-STATE-SQLITE-CONTAMINATION-IN-UNIT-TEST-SUITE-53-",
+    "type": "TASK",
+    "title": "fix shared-state SQLite contamination in unit test suite (53 fail when full-run, all pass in isolation)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-shared-state-sqlite-contamination-in-unit-test-suite-53-.md"
+  },
   "TASK-FIX-TEST-FAILURES": {
     "hash": "cc5ba3f",
     "extid": "TASK-FIX-TEST-FAILURES",
@@ -9428,7 +9461,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
+    "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md",
+    "git_issue": "5f22b58"
   },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "b5e9d7c",
@@ -9546,7 +9580,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md"
+    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md",
+    "git_issue": "70c23fb"
   },
   "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH": {
     "hash": "ef125d4",
@@ -11510,6 +11545,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-resolution-system.md",
     "git_issue": "6fdc7d5"
+  },
+  "TASK-RESOLVE-10-OXLINT-WARNINGS-IN-SRC-CHAT-RANDOM-EVENTS-TS": {
+    "hash": "7ffa7c7",
+    "extid": "TASK-RESOLVE-10-OXLINT-WARNINGS-IN-SRC-CHAT-RANDOM-EVENTS-TS",
+    "type": "TASK",
+    "title": "resolve 10 oxlint warnings in src/chat/random-events.ts",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md"
   },
   "TASK-RESOLVE-PLAYWRIGHT-CFG": {
     "hash": "9621690",
