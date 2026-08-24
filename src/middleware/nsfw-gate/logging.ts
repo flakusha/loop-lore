@@ -51,23 +51,22 @@ export async function logNsfwEvent(
   database: Kysely<DB>,
   event: LogNsfwEventInput,
 ): Promise<void> {
-  if (!isNsfwGateReason(event.reason,)) {
+  if (!isNsfwGateReason(event.reason)) {
     throw new Error(
-      `logNsfwEvent: reason must be a NsfwGateReason, got "${String(event.reason,)}"`,
+      `logNsfwEvent: reason must be a NsfwGateReason, got "${String(event.reason)}"`,
     );
   }
 
   // Hash identifiers before persisting; the raw values never touch the row.
-  const userHash = event.userId ? await hashId(event.userId,) : null;
-  const actorHash = event.actorId ? await hashId(event.actorId,) : null;
-  const chatHash = event.chatId ? await hashId(event.chatId,) : null;
+  const userHash = event.userId ? await hashId(event.userId) : null;
+  const actorHash = event.actorId ? await hashId(event.actorId) : null;
+  const chatHash = event.chatId ? await hashId(event.chatId) : null;
 
   const entityType = actorHash ? "actor" : (chatHash ? "chat" : null);
   const entityId = actorHash || chatHash || null;
 
   const redactedMeta = applyNsfwMetadataRedaction(event.metadata,);
   const meta = jsonStringifyOr(redactedMeta,);
-
   try {
     const log = getLogger().child({ module: "nsfw-gate", },);
     // Non-PII summary: action bucket, hashed subject, severity bucket only.
@@ -96,11 +95,11 @@ export async function logNsfwEvent(
       .execute();
   } catch (error: unknown) {
     try {
-      const log = getLogger().child({ module: "nsfw-gate", },);
+      const log = getLogger().child({ module: "nsfw-gate" });
       log.error(
         "Failed to log NSFW event",
-        error instanceof Error ? error : new Error(String(error,),),
-        { decisionType: event.action, reason: event.reason, },
+        error instanceof Error ? error : new Error(String(error)),
+        { decisionType: event.action, reason: event.reason },
       );
     } catch { /* logger not initialized */ }
   }
