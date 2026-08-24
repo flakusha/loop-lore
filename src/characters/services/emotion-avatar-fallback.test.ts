@@ -126,7 +126,7 @@ describe("extractAvatarMetadata", () => {
   });
 
   it("falls back to actor description when alt text is missing", async () => {
-    const { actorId, } = await createTestActors(db, "test-actor-no-alt");
+    const { actorId, } = await createTestActors(db, "test-actor-no-alt",);
     await db
       .updateTable("actors",)
       .set({ description: "Aria, the elven mage with silver hair", },)
