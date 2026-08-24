@@ -36,9 +36,9 @@ Verified schema before scoping:
   the `AvatarMetadata` interface declaration itself
   (`emotion-avatar-fallback.ts:29`). The SD prompt that drove a
   generation is **not persisted anywhere**.
-- The original ticket premise — "stored `generationPrompt` on
+- The earlier round-1 ticket premise — "stored `generationPrompt` on
   `assets.metadata`" — was incorrect. The data was never captured.
-  See "Follow-on" below.
+  The corrected follow-up is in the Follow-on section below.
 
 `actors.description` (`src/db/schema-core.ts:143`) is the right anchor
 for the fallback path. It's already known to the caller in
@@ -111,23 +111,40 @@ the prompt builder — it already prefers caption over altText.
       and no alt text, `buildEmotionPrompt` produces
       `"Aria, the elven mage, <emotionModifier>, <qualityTags>"`.
 - [ ] New unit tests in `emotion-avatar-fallback.test.ts` cover:
-      altText set / altText unset with description /
-      description null with no altText / actor row missing.
-- [ ] `bun run check` + `bun test src/characters/services/emotion-avatar-fallback.test.ts` green.
+      alt text wins over description / description used as caption when
+      alt text missing / `character_avatars.tags` surfaced /
+      malformed `tags` JSON ignored (no throw) /
+      drop-in compat: omitting `actorId` returns unchanged shape.
 
 ## Follow-on (separate ticket; do not bundle)
 
 The original spec (`TASK-emotions-avatar-edit-model.md:52-61`) calls
-for `caption` (auto-generated), `tags` (style/setting), `generationPrompt`,
-and `EXIF`. None of those have DB storage today. Recommend:
+for four metadata sources: `caption` (auto-generated), `tags`
+(style/setting), `generationPrompt`, and `EXIF`. Status after
+investigation:
 
-1. Add migration `016_asset_generation_metadata` adding
-   `assets.metadata` (JSON text, nullable) — stores
-   `{ tags: Record<string, string>, generationPrompt?: string,
-   caption?: string, exif?: Record<string, unknown> }`.
-2. Update `generateEmotionAvatar` (`generation.ts:200-216`) to pass
-   the SD prompt through to `createAsset`.
-3. Then `extractAvatarMetadata` reads from the new column.
+- **`caption`**: ALREADY captured at upload time by `createAsset`
+  (`src/assets/service/create.ts:100-104`), which calls
+  `extractImageMetadata(buffer)` and promotes the PNG `tEXt` / JPEG
+  COM / GIF comment into `assets.alt_text`. No additional work needed
+  in this file's path. The current fix only reaches this column when
+  the caller doesn't pass `actorId` (drop-in compat).
+- **`tags`**: Currently NOT captured anywhere. The `character_avatars.tags`
+  JSON column exists and is read by `selectAvatar`, but it's set by
+  callers (e.g. `generation.ts:223` hardcodes `{ emotion: opts.emotion }`)
+  with the avatar's own tag set, not style/setting context. A future
+  ticket could persist per-asset style tags alongside the file.
+- **`generationPrompt`**: NOT captured. SD pipelines
+  (`src/generation/image-engine/*.ts`) don't write the prompt back into
+  the PNG `tEXt` chunk. Persisting it would require either (a) modifying
+  the SD call sites to encode the prompt into the PNG metadata, or
+  (b) adding an `assets.metadata` JSON column and threading the prompt
+  through `createAsset`. Both are out of scope here.
+- **`EXIF`**: NOT extracted. `extractImageMetadata` only reads `tEXt`
+  / JPEG COM / GIF comment — no EXIF parsing. Out of scope here.
 
-Tracked as a separate ticket because it touches a migration (gate
-`db:schemas:check`) and needs design sign-off on the column shape.
+The current fix is intentionally narrow: it surfaces
+`actors.description` (the right DB-side anchor) and `character_avatars.tags`
+(current row data) without introducing new columns or new file-format
+dependencies. Wider metadata capture is tracked as a separate ticket
+once the spec calls.
