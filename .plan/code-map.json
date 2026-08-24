@@ -14621,6 +14621,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-modactions-performedby-from-body.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/appeals.ts": [
@@ -14643,18 +14647,38 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
+    }
+  ],
+  "src/routes/nsfw-moderation/flags.routes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/flags.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/index.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md"
+    }
+  ],
+  "src/routes/nsfw-moderation/overrides.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw-moderation/preferences.ts": [
@@ -14683,6 +14707,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
   "src/routes/nsfw.ts": [
@@ -18060,10 +18088,18 @@
   "src/users/permissions.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
     }
   ],
   "src/users/permissions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
