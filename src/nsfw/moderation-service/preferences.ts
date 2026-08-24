@@ -4,7 +4,13 @@
 /**
  * NSFW Moderation Service — preferences
  *
- * Reading (with lazy default creation) and updating a user's NSFW prefs.
+ * Split into read-only `get` (no side effect) and `getOrCreateOwn`
+ * (write semantics — lazy default creation on first self-write).
+ *
+ * The `getPreferences` alias preserves the historical contract for
+ * callers that already imported the lazy-create form (block, ban,
+ * self-update). New admin read paths MUST use `get` so an admin GET
+ * never materialises a phantom row for a user who never configured NSFW.
  */
 import type { NsfwAccessStatus, } from "../../db/enums";
 import type { NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
@@ -15,21 +21,37 @@ export interface GetPreferencesArgs {
 }
 
 /**
- * Read the user's NSFW preferences, lazily creating default prefs on first
- * access.
- *
- * @param args.thisL - The moderation service instance
- * @param args.userId - Target user ID
- * @returns The user's NSFW preferences
+ * Read-only fetch — returns null when no preferences row exists.
+ * Does NOT create a phantom row.
  */
-export async function getPreferences({ thisL, userId, }: GetPreferencesArgs,): Promise<NsfwUserPrefs> {
+export async function get({ thisL, userId, }: GetPreferencesArgs,): Promise<NsfwUserPrefs | null> {
   const row = await thisL.db
     .selectFrom("nsfw_user_preferences",)
     .where("user_id", "=", userId,)
     .selectAll()
     .executeTakeFirst();
+  return row ? mapPrefs(row,) : null;
+}
 
-  if (row) { return mapPrefs(row,); }
+/**
+ * Backward-compatibility alias. Kept for callers that import the lazy-create
+ * form (block, ban, self-update). Returns `NsfwUserPrefs | null`; if you need
+ * write semantics on a miss, use {@link getOrCreateOwn}.
+ */
+export const getPreferences = get;
+
+export interface GetOrCreateOwnArgs {
+  thisL: NsfwModerationServiceContext;
+  userId: string;
+}
+
+/**
+ * Read-or-create — used by self-update, block, and ban flows. Write
+ * semantics are intentional: callers mutate the row anyway.
+ */
+export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): Promise<NsfwUserPrefs> {
+  const existing = await get({ thisL, userId, },);
+  if (existing) { return existing; }
 
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
@@ -70,20 +92,18 @@ export interface UpdatePreferencesArgs {
 
 /**
  * Update a user's NSFW preferences (enabled flag and/or max rating).
- *
- * @param args.thisL - The moderation service instance
- * @param args.userId - Target user ID
- * @param args.updates - Fields to change
- * @returns The updated preferences
+ * Uses `getOrCreateOwn` so the first self-write creates the row.
  */
 export async function updatePreferences({ thisL, userId, updates, }: UpdatePreferencesArgs,): Promise<NsfwUserPrefs> {
   const now = new Date().toISOString();
-  await thisL.getPreferences(userId,);
+  // Self-write: lazy-create is intentional
+  await getOrCreateOwn({ thisL, userId, },);
   const sets: Record<string, unknown> = { updated_at: now, };
   if (updates.nsfwEnabled !== undefined) { sets.nsfw_enabled = updates.nsfwEnabled ? 1 : 0; }
   if (updates.maxRating !== undefined) { sets.max_rating = updates.maxRating; }
   await thisL.db.updateTable("nsfw_user_preferences",).set(sets,).where("user_id", "=", userId,).execute();
-  return thisL.getPreferences(userId,);
+  // Read back (non-creating) — we just upserted so the row exists
+  return (await get({ thisL, userId, },))!;
 }
 
 /** Map a storage row (snake_case) to the camel-cased NsfwUserPrefs shape. */

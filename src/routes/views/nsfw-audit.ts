@@ -79,7 +79,7 @@ async function serveNsfwModerationAudit(
   const actions = actionsResult.value;
 
   content = content.replace("{{targetUserId}}", () => escapeHtml(targetUserId,),);
-  content = content.replace("{{consentHtml}}", () => renderNsfwConsent(prefs,),);
+  content = content.replace("{{consentHtml}}", () => renderNsfwConsent(prefs ?? ({} as never),),);
   content = content.replace("{{auditRows}}", () => renderNsfwAuditRows(actions,),);
 
   return respond(content, isHtmx, "NSFW Moderation Audit", userId, sessionId, request, t,);

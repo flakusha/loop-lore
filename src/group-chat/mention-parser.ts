@@ -68,26 +68,37 @@ export function parseMentions(text: string,): ParsedMention[] {
 /**
  * Resolve a parsed mention name to an actor ID.
  *
- * Case-insensitive match against participant display names.
- * Returns the first match if multiple participants share a prefix.
+ * Case-insensitive match against participant display names. The exact match
+ * (case-insensitive) wins outright. If no exact match, the mention is treated
+ * as a prefix and matched against display names; when more than one
+ * participant shares the prefix the resolution is ambiguous and `null` is
+ * returned so the caller can surface a system message asking the user to
+ * disambiguate (e.g. `@Lun#` or the full display name). When ambiguity is not
+ * triggered the prefix match is deterministic: participants are ordered by
+ * `actorId` lexicographically before scanning.
  *
- * @param name - Mention name to resolve
+ * @param name - Mention name to resolve (empty string returns null)
  * @param participants - Available participants [{actorId, displayName}]
- * @returns Matching actor ID, or null if no match
+ * @returns Matching actor ID, or null if no match / ambiguous prefix
  */
 export function resolveMention(
   name: string,
   participants: { actorId: string; displayName: string }[],
 ): string | null {
   const lower = name.toLowerCase();
+  if (lower.length === 0) { return null; }
 
-  // Exact match first
+  // Exact match first (case-insensitive)
   const exact = participants.find((p,) => p.displayName.toLowerCase() === lower);
   if (exact) { return exact.actorId; }
 
-  // Prefix match
-  const prefix = participants.find((p,) => p.displayName.toLowerCase().startsWith(lower,));
-  if (prefix) { return prefix.actorId; }
+  // Stable order by actorId so prefix-match selection is deterministic when
+  // no ambiguity exists.
+  const ordered = [...participants].sort((a, b,) => a.actorId.localeCompare(b.actorId,));
+
+  // Prefix match — count matches; >1 is ambiguous.
+  const prefixMatches = ordered.filter((p,) => p.displayName.toLowerCase().startsWith(lower,));
+  if (prefixMatches.length === 1) { return prefixMatches[0]!.actorId; }
 
   return null;
 }

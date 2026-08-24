@@ -17,7 +17,7 @@ export interface ExportUserDataArgs {
 /** Export all moderation data for a user (prefs, actions, flags). */
 export async function exportUserData(
   { thisL, userId, }: ExportUserDataArgs,
-): Promise<{ preferences: NsfwUserPrefs; actions: ModAction[]; flags: ContentFlag[] }> {
+): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }> {
   const [preferences, actions,] = await Promise.allSettled([
     thisL.getPreferences(userId,),
     thisL.getAuditLog(userId,),
@@ -28,7 +28,7 @@ export async function exportUserData(
   ).selectAll().execute();
   const flags = Array.from(flagRows, (r,) => mapFlag(r,),);
   return {
-    preferences: preferences.status === "fulfilled" ? preferences.value : {} as NsfwUserPrefs,
+    preferences: preferences.status === "fulfilled" ? preferences.value : null as NsfwUserPrefs | null,
     actions: actions.status === "fulfilled" ? actions.value : [],
     flags,
   };
