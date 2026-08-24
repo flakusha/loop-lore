@@ -8,6 +8,7 @@
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
 **Related:** docs/frontend/chat/memories.md
+**git issue:** 2f6424b
 
 ## Summary
 
