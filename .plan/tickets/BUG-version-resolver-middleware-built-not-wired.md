@@ -3,7 +3,7 @@
 
 # BUG: Version resolver middleware built but never wired
 
-**Status:** 🔴 Open
+**Status:** ✅ Resolved (2026-08-25, worktree fix-version-resolver-wiring — added `.use(versionResolver())` to `elysia-app.ts` before `registerPlugins`; covered by `src/routes/middleware/version-resolver.test.ts`)
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-api-versioning
