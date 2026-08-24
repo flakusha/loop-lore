@@ -192,6 +192,17 @@
     "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md",
     "git_issue": "d0d3739"
   },
+  "BUG-BATCH-CHAT-DELETE-LACKS-TRANSACTION-ORPHANED-ROWS-ON-PARTIAL": {
+    "hash": "bc5de16",
+    "extid": "BUG-BATCH-CHAT-DELETE-LACKS-TRANSACTION-ORPHANED-ROWS-ON-PARTIAL",
+    "type": "BUG",
+    "title": "Batch chat delete lacks transaction — orphaned rows on partial failure",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md"
+  },
   "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-": {
     "hash": "d2861ca",
     "extid": "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-",
@@ -617,6 +628,17 @@
     "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md",
     "git_issue": "6b6c898"
   },
+  "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-": {
+    "hash": "dc5a8b8",
+    "extid": "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-",
+    "type": "BUG",
+    "title": "Factory reset deletes tables without transaction, silent per-table catch",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md"
+  },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
     "extid": "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID",
@@ -807,6 +829,28 @@
     "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md",
     "git_issue": "966f256",
     "status": "done"
+  },
+  "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
+    "hash": "6ca8fad",
+    "extid": "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM",
+    "type": "BUG",
+    "title": "Migration ordering ambiguous via localeCompare + duplicate numeric prefixes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+  },
+  "BUG-N-1-QUERIES-IN-STORY-WORLD-STATE-CONTEXT-PER-PARTICIPANT": {
+    "hash": "e874b71",
+    "extid": "BUG-N-1-QUERIES-IN-STORY-WORLD-STATE-CONTEXT-PER-PARTICIPANT",
+    "type": "BUG",
+    "title": "N+1 queries in story world-state context per participant",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-n-1-queries-in-story-world-state-context-per-participant.md"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
@@ -999,6 +1043,28 @@
     "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md",
     "git_issue": "0c43869"
   },
+  "BUG-SQLITE-FK-PRAGMA-NO-OP-IN-MIGRATION-047-REBUILD": {
+    "hash": "1f7ba9e",
+    "extid": "BUG-SQLITE-FK-PRAGMA-NO-OP-IN-MIGRATION-047-REBUILD",
+    "type": "BUG",
+    "title": "SQLite FK pragma no-op in migration 047 rebuild",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sqlite-fk-pragma-no-op-in-migration-047-rebuild.md"
+  },
+  "BUG-SQLITE-PRAGMAS-SKIPPED-WHEN-DIALECT-BUILT-FROM-EXISTING-DATA": {
+    "hash": "3e90ae3",
+    "extid": "BUG-SQLITE-PRAGMAS-SKIPPED-WHEN-DIALECT-BUILT-FROM-EXISTING-DATA",
+    "type": "BUG",
+    "title": "SQLite pragmas skipped when dialect built from existing Database",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md"
+  },
   "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES": {
     "hash": "pending",
     "extid": "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES",
@@ -1132,6 +1198,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md",
     "git_issue": "2021fbd"
+  },
+  "BUG-WORLD-BUNDLE-IMPORT-UNTRANSACTED-PARTIAL-IMPORT-CORRUPTS-WOR": {
+    "hash": "ca69118",
+    "extid": "BUG-WORLD-BUNDLE-IMPORT-UNTRANSACTED-PARTIAL-IMPORT-CORRUPTS-WOR",
+    "type": "BUG",
+    "title": "World bundle import untransacted — partial import corrupts world",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -4441,6 +4518,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-agentic-workspace-mode.md",
     "git_issue": "c94bade"
+  },
+  "TASK-AGENTS-MD-REFERENCES-NONEXISTENT-DB-SCHEMAS-CHECK-SCRIPT": {
+    "hash": "9f3366d",
+    "extid": "TASK-AGENTS-MD-REFERENCES-NONEXISTENT-DB-SCHEMAS-CHECK-SCRIPT",
+    "type": "TASK",
+    "title": "AGENTS.md references nonexistent db:schemas:check script",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-agents-md-references-nonexistent-db-schemas-check-script.md"
   },
   "TASK-AGENTS-SCRIPTS-WORKTREE-DOCS": {
     "hash": "b56fbb5",
