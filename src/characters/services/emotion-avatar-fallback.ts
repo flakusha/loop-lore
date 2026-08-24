@@ -14,6 +14,7 @@ import type { Kysely, } from "kysely";
 import { getAsset, } from "../../assets/service";
 import type { EmotionType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { safeJsonParse, } from "../../utils/safe-json";
 
 /**
  * Metadata extracted from an avatar image for prompt construction.
@@ -98,24 +99,16 @@ export async function extractAvatarMetadata(
       .where("asset_id", "=", assetId,)
       .executeTakeFirst();
     if (avatarRow) {
-      try {
-        const parsed = JSON.parse(avatarRow.tags,) as unknown;
-        if (parsed && typeof parsed === "object" && !Array.isArray(parsed,)) {
-          const record = parsed as Record<string, unknown>;
-          const sanitized: Record<string, string> = {};
-          for (const [k, v,] of Object.entries(record,)) {
-            if (typeof v === "string") {
-              sanitized[k] = v;
-            }
-          }
-          tags = sanitized;
+      const parsed = safeJsonParse<Record<string, unknown>>(avatarRow.tags,);
+      if (parsed.ok && parsed.value && typeof parsed.value === "object" && !Array.isArray(parsed.value,)) {
+        const sanitized: Record<string, string> = {};
+        for (const [k, v,] of Object.entries(parsed.value,)) {
+          if (typeof v === "string") { sanitized[k] = v; }
         }
-      } catch {
-        // Malformed JSON on the row → ignore, don't throw.
+        tags = sanitized;
       }
     }
   }
-
   // Drop-in compat: only surface `tags` when the caller passed `actorId`,
   // otherwise callers using the old single-arg signature get an unchanged
   // shape (no `tags: undefined` key).
