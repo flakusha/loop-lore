@@ -89,7 +89,7 @@ Response envelope carries `meta.api_version`; paginated responses add
 - [x] Context propagation proven: `.derive()` userId flows through v1 barrel (integration test)
 - [x] Existing `/api/*` routes keep working (backward compatible)
 - [ ] Remaining routes added to v1 barrel (admin, characters, messages, assets, etc.) — 3/70+ done
-- [ ] Version resolver middleware sets `ctx.apiVersion`; plugins read it — **resolver built but `versionResolver()` not called in `elysia-app.ts`** (only `versionRedirect` is wired)
+- [x] Version resolver middleware sets `ctx.apiVersion`; plugins read it — **wired in `elysia-app.ts` via `.use(versionResolver())` before `registerPlugins`** (resolved BUG-version-resolver-middleware-built-not-wired; covered by `src/routes/middleware/version-resolver.test.ts`)
 - [ ] Deprecation headers on legacy `/api/*` routes
 - [ ] OpenAPI spec generated per version (FEAT-039)
 
