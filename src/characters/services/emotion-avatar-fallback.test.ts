@@ -195,6 +195,7 @@ describe("extractAvatarMetadata", () => {
       },
       uploadDir: "/tmp/test-uploads",
     },);
+
     const now = new Date().toISOString();
     await db
       .insertInto("character_avatars",)
@@ -240,8 +241,8 @@ describe("extractAvatarMetadata", () => {
       .values({
         id: "avatar-bad-tags-1",
         actor_id: actorId,
-        label: "broken",
         asset_id: asset.id,
+        label: "broken",
         tags: "not-json{",
         is_primary: 0,
         sort_order: 1,

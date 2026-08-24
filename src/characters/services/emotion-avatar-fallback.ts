@@ -115,6 +115,7 @@ export async function extractAvatarMetadata(
       }
     }
   }
+
   // Drop-in compat: only surface `tags` when the caller passed `actorId`,
   // otherwise callers using the old single-arg signature get an unchanged
   // shape (no `tags: undefined` key).
