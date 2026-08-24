@@ -11,12 +11,10 @@
  * archiving and memory promotion are handled by the message routes.
  */
 import type { Kysely, } from "kysely";
-import { randomUUID, } from "node:crypto";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import type { ExtractedMemory, } from "../memory/types";
-import { jsonStringifyOr, } from "../utils";
 import { requireActorExists, requireChatParticipant, } from "./ownership";
+import { detectScope, storeMemoriesWithScope, } from "./memory-promotion";
 import { estimateTokens, } from "./token-utils";
 import { classifyTransition, } from "./transition-classifier";
 import type { ChatTransition, MessageRef, TransitionClassification, } from "./types";
@@ -207,68 +205,4 @@ export async function promoteMessagesToMemories(
   return promotedIds;
 }
 
-/**
- * Detect memory scope from message content.
- */
-function detectScope(
-  _content: string,
-  role: string,
-  worldId: string | null,
-  _participantIds: string[],
-): "character" | "world" | "assistant" {
-  if (role === "system" || role === "assistant") {
-    return "assistant";
-  }
-  if (worldId) {
-    return "world";
-  }
-  return "character";
-}
-
-/**
- * Store extracted memories with explicit scope.
- * Extends storeMemories by setting scope on inserted memories.
- */
-async function storeMemoriesWithScope(
-  db: Kysely<DB>,
-  actorId: string,
-  chatId: string,
-  memories: ExtractedMemory[],
-  scope: "character" | "world" | "assistant",
-): Promise<string[]> {
-  const stored: string[] = [];
-
-  for (const memory of memories) {
-    const existing = await db
-      .selectFrom("actor_memories",)
-      .select("id",)
-      .where("actor_id", "=", actorId,)
-      .where("content", "=", memory.content,)
-      .executeTakeFirst();
-
-    if (existing) { continue; }
-
-    const id = randomUUID();
-    await db
-      .insertInto("actor_memories",)
-      .values({
-        id,
-        actor_id: actorId,
-        content: memory.content,
-        memory_type: memory.memoryType,
-        confidence: memory.confidence,
-        importance: memory.importance,
-        keywords: jsonStringifyOr(memory.keywords,),
-        source_chat_id: chatId,
-        scope,
-        privacy: "shared",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },)
-      .execute();
-
-    stored.push(id,);
-  }
-
-  return stored;
-}
+//
