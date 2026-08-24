@@ -7,7 +7,7 @@
 **Priority:** high
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-chat-lifecycle-moderation, epic-chat-context-optimization
+**Epic:** epic-chat-lifecycle-moderation, epic-chat-context-optimization, epic-group-chat
 **Files:** src/group-chat/mention-parser.ts:78-93; src/group-chat/mention-parser.test.ts:71-74
 
 ## Issue
