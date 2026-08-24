@@ -14,7 +14,7 @@ export class OwnershipError extends Error {
     message = "Caller is not a participant of this chat",
     options?: ErrorOptions,
   ) {
-    super(message, options);
+    super(message, options,);
     this.name = "OwnershipError";
   }
 }
@@ -30,10 +30,10 @@ export async function requireChatParticipant(
   actorId: string,
 ): Promise<{ actor_id: string; role_in_chat: string }> {
   const participant = await db
-    .selectFrom("chat_participants")
-    .select(["actor_id", "role_in_chat"])
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", actorId)
+    .selectFrom("chat_participants",)
+    .select(["actor_id", "role_in_chat",],)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", actorId,)
     .executeTakeFirst();
 
   if (!participant) {
@@ -55,12 +55,12 @@ export async function requireActorExists(
   userId: string,
 ): Promise<void> {
   const actor = await db
-    .selectFrom("actors")
-    .select("id")
-    .where("id", "=", userId)
+    .selectFrom("actors",)
+    .select("id",)
+    .where("id", "=", userId,)
     .executeTakeFirst();
 
   if (!actor) {
-    throw new OwnershipError(`Unknown actor: ${userId}`);
+    throw new OwnershipError(`Unknown actor: ${userId}`,);
   }
 }

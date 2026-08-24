@@ -15,11 +15,11 @@ describe("requirePermission", () => {
 
   beforeEach(() => {
     setGlobalLogger(silentLogger(),);
-  });
+  },);
 
   afterEach(() => {
     if (originalLogger) { setGlobalLogger(originalLogger,); }
-  });
+  },);
 
   it("returns undefined (allow) when role has the permission", async () => {
     const guard = requirePermission("admin.settings",);
@@ -48,7 +48,9 @@ describe("requirePermission", () => {
 
   it("logs denial with userId + permission + path + requestId", async () => {
     const warnMock = mock(() => {},);
-    const fakeLog = { warn: warnMock, info: () => {}, error: () => {}, debug: () => {}, } as unknown as ReturnType<typeof createLogger>;
+    const fakeLog = { warn: warnMock, info: () => {}, error: () => {}, debug: () => {}, } as unknown as ReturnType<
+      typeof createLogger
+    >;
     const guard = requirePermission("admin.settings", { logger: fakeLog, },);
     await guard({
       request: new Request("http://localhost/api/admin/secret", { method: "DELETE", },),
@@ -58,7 +60,7 @@ describe("requirePermission", () => {
       t: (k,) => k,
     },);
     expect(warnMock,).toHaveBeenCalledTimes(1,);
-    const [msg, entry,] = warnMock.mock.calls[0] as unknown as [string, Record<string, unknown>];
+    const [msg, entry,] = warnMock.mock.calls[0] as unknown as [string, Record<string, unknown>,];
     expect(msg,).toBe("Permission denied",);
     expect(entry.permission,).toBe("admin.settings",);
     expect(entry.userId,).toBe("u-42",);
@@ -77,7 +79,6 @@ describe("requirePermission", () => {
     },);
     const body = await result!.json();
     expect(body.error,).toBe("[tr]admin.adminAccessRequired",);
-
   });
 
   it("falls back to English when no translator is provided", async () => {
@@ -92,9 +93,11 @@ describe("requirePermission", () => {
   });
 
   it("resolves handle for audit log when resolveHandle provided", async () => {
-    const resolveHandle = mock(async (id: string,) => `handle-for-${id}`,);
+    const resolveHandle = mock(async (id: string,) => `handle-for-${id}`);
     const warnMock = mock(() => {},);
-    const fakeLog = { warn: warnMock, info: () => {}, error: () => {}, debug: () => {}, } as unknown as ReturnType<typeof createLogger>;
+    const fakeLog = { warn: warnMock, info: () => {}, error: () => {}, debug: () => {}, } as unknown as ReturnType<
+      typeof createLogger
+    >;
     const guard = requirePermission("admin.settings", { logger: fakeLog, resolveHandle, },);
 
     // First denial — triggers DB lookup
@@ -113,7 +116,7 @@ describe("requirePermission", () => {
     },);
 
     expect(resolveHandle,).toHaveBeenCalledTimes(1,);
-    const [, entry,] = warnMock.mock.calls[1] as unknown as [string, Record<string, unknown>];
+    const [, entry,] = warnMock.mock.calls[1] as unknown as [string, Record<string, unknown>,];
     expect(entry.handle,).toBe("handle-for-u-99",);
   });
 });
