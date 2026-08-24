@@ -8082,6 +8082,17 @@
     "status": "done",
     "git_issue": "bb2423e"
   },
+  "TASK-FIX-WORKTREE-CLI-REPO-ROOT-TREE-DIR-ENV-VAR-REQUIREMENT-WHEN": {
+    "hash": "c02be17",
+    "extid": "TASK-FIX-WORKTREE-CLI-REPO-ROOT-TREE-DIR-ENV-VAR-REQUIREMENT-WHEN",
+    "type": "TASK",
+    "title": "Fix worktree CLI REPO_ROOT/TREE_DIR env-var requirement when run from inside a worktree",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-worktree-cli-repo-root-tree-dir-env-var-requirement-when.md"
+  },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
     "extid": "TASK-FORMAT-VERSION-MIGRATION",
