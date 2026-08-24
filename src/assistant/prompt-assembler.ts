@@ -19,6 +19,7 @@ import { getLogger, } from "../logger";
 import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
 import type {
+  AssembleActor,
   AssembleChat,
   AssembleContext,
   AssembledPrompt,
@@ -38,6 +39,7 @@ export class PromptAssembler {
         .selectFrom("actors",)
         .select([
           "id",
+          "actor_type",
           "display_name",
           "system_prompt",
           "description",
@@ -59,7 +61,7 @@ export class PromptAssembler {
     const chatResult = projectionResults[1];
     if (actorResult.status === "rejected") { throw actorResult.reason; }
     if (chatResult.status === "rejected") { throw chatResult.reason; }
-    const actor = actorResult.value;
+    const actor: AssembleActor = { ...actorResult.value, type: actorResult.value.actor_type, };
     const chat = chatResult.value;
 
     // Per-world setup overlay: apply scenario/system-prompt overrides for the
@@ -117,6 +119,10 @@ export class PromptAssembler {
       isStory,
       tokenBudget,
       config: efParams.config,
+      task: efParams.task,
+      action: efParams.action,
+      assistantName: efParams.assistantName,
+      gmName: efParams.gmName,
     };
 
     const sections: PromptSectionReport[] = [];

@@ -47,6 +47,14 @@ export interface PromptParams {
   emotionAvatar?: string;
   /** Application config — enables config-driven prompt sections (e.g. NSFW policy). */
   config?: Config;
+  /** Generation task type for task-clarification injection (e.g. "chat-reply", "vn-choice"). */
+  task?: string;
+  /** Optional action context for task-clarification injection. */
+  action?: string;
+  /** Optional assistant persona name for task-clarification injection. */
+  assistantName?: string;
+  /** Optional game-master name for task-clarification injection. */
+  gmName?: string;
 }
 
 export interface PromptSectionReport {
@@ -72,6 +80,7 @@ export interface AssembledPrompt {
 /** Minimal actor projection the section builders need. */
 export interface AssembleActor {
   id: string;
+  type?: string | null;
   display_name: string | null;
   system_prompt: string | null;
   description: string | null;
@@ -100,6 +109,14 @@ export interface AssembleContext {
   tokenBudget: number;
   /** Application config (optional) — available to config-driven sections. */
   config?: Config;
+  /** Generation task type for task-clarification injection. */
+  task?: string;
+  /** Optional action context for task-clarification injection. */
+  action?: string;
+  /** Optional assistant persona name for task-clarification injection. */
+  assistantName?: string;
+  /** Optional game-master name for task-clarification injection. */
+  gmName?: string;
 }
 
 /** Builds one prompt section's messages. */
@@ -114,6 +131,7 @@ export interface SectionBuilder {
 // Lower rank = kept longer when trimming
 export const PRIORITY = {
   system: 0,
+  taskClarification: 0,
   actorHeader: 0,
   authorNote: 0,
   groupParticipants: 0,
