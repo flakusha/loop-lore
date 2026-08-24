@@ -9,170 +9,118 @@
 
 Two-mode authentication system:
 
-1. **Remote multi-user** — `config.auth.required = true`. Bearer token → SHA-256
-   hash → sessions table lookup. Supports admin/user/viewer roles.
+1. **Remote multi-user** — `config.auth.required = true`. JWT Bearer token →
+   `verifyJwt()` → sessions table lookup. Supports admin/user/viewer/solo roles.
 2. **Solo/demo mode** — `config.auth.required = false`. No token check. Implicit
    solo user looked up once and cached.
 
-## Auth Flow (MVP)
+## Auth Flow
 
-Every request to `handleApiRequest()` follows this decision journey:
+Every request passes through the Elysia `.derive()` block in `src/elysia-app.ts`,
+which runs `authenticate()` **before** all route handlers and plugin
+registration. The derive block returns `{ userId, userRole, sessionId, ...i18n }`
+into the Elysia context for every downstream route.
 
-**Step 1: Check auth-skip paths**
+**Step 1: Authenticate** (`src/middleware/auth/authenticate.ts`)
 
-- If path is one of `login`, `demo-login`, `register`, `age-gate/*`, or asset signed URLs:
-  - Route directly via `compose([errorBoundary], handler)` — no auth, no
-    pipeline
-  - Jump straight to handler execution
-- Otherwise, continue to step 2
+- `authenticate({ request, database, authConfig })` returns either:
+  - `{ context: RequestContext }` on success, or
+  - `jsonError({ status: 401 })` Response on required-auth failure
+- Token extraction priority: `Authorization: Bearer <token>` header → `ll_token`
+  cookie.
+- JWT verification via `verifyJwt()` (`src/auth/jwt.ts`). If `authConfig.jwtSecret`
+  is unset, warns and falls back to solo mode.
+- JWT payload `sub` → user ID; `sid` → session ID. Session validity checked
+  against `sessions` table (`expires_at`).
+- **Legacy opaque-token fallback**: `src/middleware/auth/token.ts` still resolves
+  `sha256(token)` → `sessions.token_hash` for older sessions. New logins use JWT.
 
-**Step 2: Authenticate**
+**Step 2: Solo fallback** (when `authConfig.required === false`)
 
-- Call `authenticate(request)` which:
-  1. Extracts `Authorization: Bearer <token>` header
-  2. SHA-256 hashes the token
-  3. Looks up `sessions` table by `token_hash`
-  4. If not found or expired → returns `401 Unauthorized`
-  5. Fetches user role, updates `last_activity`
-  6. Returns `RequestContext { userId, userRole, sessionId }`
+- `getOrCreateSoloUserForAuth()` lazily creates/caches the solo user.
+- Returns `{ userId, userRole: UserRole.Solo, sessionId: null }`.
 
-**Step 3: Execute middleware chain**
+**Step 3: i18n context** (always, including auth-failure path)
 
-- `compose([errorBoundary], handler)(request, context)`
-- Route handler receives validated context, processes the request
+- `detectLocale(request)` — Cookie (`ll_locale`) → Accept-Language → default.
+- `createI18nContext(locale)` — loads translations, builds `t` translator fn.
+- Spread into context alongside auth fields.
 
-### Auth as pre-step (MVP)
+**Step 4: Route handler dispatch**
 
-`authenticate()` runs **before** the middleware pipeline. Reason: auth-skip
-paths bypass the entire auth + pipeline step, not just the token check. If we
-folded auth into the pipeline, auth middleware would need path-matching logic to
-skip itself — more complexity for marginal gain.
+- Route handlers receive `ctx.userId` / `ctx.userRole` / `ctx.sessionId` / `ctx.t`.
+- When `userId === null`, route handlers return 401 via `requireUserId(ctx)`
+  (`src/routes/http-utils.ts`) or `unauthorizedResponse()`.
 
-### Future: Auth as middleware
-
-When role guards, rate limiters, and audit logging are needed:
-
-```typescript
-compose([errorBoundary, rateLimiter, authenticate, requireRole("admin",),], dispatchRoutes,);
-```
+> **Note:** Auth runs as an inline Elysia `.derive()`, **not** a `.use()` plugin.
+> Reason: Elysia child plugins don't share derived values with sibling route
+> plugins — inlining on the root app ensures `userId` propagates everywhere.
+> `src/middleware/elysia-auth.ts` exports an `authGuard()` plugin for backward
+> compatibility / unit tests, but production wiring is inline in `elysia-app.ts`.
 
 ## Token Format
 
-Opaque UUID v4 string. Server-side:
+**JWT (primary)** — signed with `authConfig.jwtSecret`. Payload: `{ sub: userId,
+sid: sessionId, ... }`. Verified per request via `verifyJwt()`.
 
-- On login: generate UUID → SHA-256 hash → store hash in `sessions.token_hash`
-- Return raw UUID to client via `ll_token` HttpOnly cookie (or accept it as a Bearer token)
-- On request: SHA-256(raw token) → lookup `sessions` by hash
+**Legacy opaque token (fallback)** — UUID v4 string, SHA-256 hashed, stored in
+`sessions.token_hash`. `resolveUserIdFromRequest()` in `auth/token.ts` still
+checks this path for older sessions.
 
 ```
-Client:    Authorization: Bearer 550e8400-e29b-41d4-a716-446655440000
-Server:    hash = sha256("550e8400-...") → "a1b2c3..."
-           SELECT * FROM sessions WHERE token_hash = "a1b2c3..."
+Client:    Authorization: Bearer <jwt-or-opaque-token>
+Server:    try verifyJwt(token, jwtSecret) → { sub, sid }
+           → fetch user + session, check expires_at
+           fallback (legacy): sha256(token) → SELECT sessions WHERE token_hash = ?
 ```
 
-Benefits over JWT:
+## Permission System
 
-- No key management
-- Session revocation = DELETE row (immediate)
-- No token payload size limits
-- Simpler to implement
+### Role-based guards (matrix-driven)
 
-Trade-off: DB lookup per request. Acceptable for MVP. Can add JWT layer later
-via session cache.
+`src/middleware/permissions.ts` exports `requirePermission(permission,
+opts?)` — an Elysia `beforeHandle` factory that:
 
-## Session Model
+- Calls `can(ctx.userRole, permission)` (`src/users/permissions.ts`).
+- On denial: returns localized 403 via `jsonError()` + `ctx.t()`.
+- Auto-logs denial with `{ userId, handle, requestId, permission, method, path }`
+  for security forensics (lazy handle resolution via `HandleResolver`).
 
-### Creation (login)
+Usage:
 
-```http
-POST /api/auth/login
-Content-Type: application/x-www-form-urlencoded
-
-username=alice&password=...
+```typescript
+.guard({ beforeHandle: requirePermission("admin.settings") }, (app) => ...)
 ```
 
-Server:
+### Admin view guard
 
-### Validation (every request)
+`src/middleware/admin-gate.ts` exports `adminViewGuard(ctx)` — for `/views/admin/*`
+HTML routes. Returns 302 redirect to `/` on denial (non-disruptive page-nav UX).
 
-`authenticate()` does:
+### Ownership/access control
 
-### Expiration
+Per-resource ownership checks migrated to the permission matrix via
+`TASK-ownership-access-control-refactor` (done 2026-08-18). Roles holding `"*"`
+(admin/solo/tester) bypass ownership checks via `admin.{chat,character,world}`
+perms. See `src/users/permissions.ts` for the full matrix.
 
-- Configurable: `auth.sessionTimeoutHours` (default 24h)
-- Checked on every request — expired session deleted lazily
-- No periodic cleanup for MVP. Future: background sweep every N minutes
+### 401 guard helper
 
-## RequestContext
+`src/routes/http-utils.ts` exports `requireUserId(ctx)` — the canonical
+"require authenticated user" helper. Localized via `ctx.t?.("errors.unauthorized")
+?? "Unauthorized"`. See `TASK-unify-401-guard-helpers` (done).
 
-- `userId` / `sessionId` are `null` only in solo/demo mode before any auth runs
-- `userRole` is `null` before auth, then populated with actual role
-- Solo mode: `userId` = solo user's UUID, `userRole = "solo"`,
-  `sessionId = null`
+## Rate Limiting
 
-## Solo/Demo Mode
+`src/middleware/rate-limit.ts` — in-memory sliding-window rate limiter
+(`createRateLimiter({ windowMs, maxRequests })`). General-purpose, but
+currently only wired to auth routes (`src/routes/auth/shared.ts`,
+`src/routes/auth/login.test.ts`).
 
-When `config.auth.required = false`:
-
-1. No Authorization header needed
-2. Single implicit user (role: `solo`)
-3. User looked up by `WHERE role = "solo"` — created on first request if missing
-4. In-memory cache after first lookup (reset for testing via
-   `resetSoloUserCache()`)
-5. Race-safe creation: duplicate insert is caught by unique constraint on role,
-   re-fetch resolves
-
-6. **Solo user is the instance owner.** In demo/solo mode the single `solo`
-   user is treated as admin-equivalent: it has full access to user management,
-   system config, and age-gate config. There is no separate admin in this mode.
-
-## Role Guard
-
-### Planned middleware (post-MVP)
-
-### Current (MVP)
-
-Inline checks in route handlers:
-
-### Permission matrix
-
-| Action                  | admin | user | viewer | solo |
-| ----------------------- | :---: | :--: | :----: | :--: |
-| Create chats            |   ✓   |  ✓   |        |  ✓   |
-| Read own chats          |   ✓   |  ✓   |   ✓    |  ✓   |
-| Read any chat           |   ✓   |      |        |  ✓   |
-| Send messages           |   ✓   |  ✓   |        |  ✓   |
-| Edit own messages       |   ✓   |  ✓   |        |  ✓   |
-| Delete own messages     |   ✓   |  ✓   |        |  ✓   |
-| Manage users            |   ✓   |      |        |  ✓   |
-| View age gate config    |   ✓   |      |        |  ✓   |
-| Modify age gate config  |   ✓   |      |        |  ✓   |
-| View system config      |   ✓   |      |        |  ✓   |
-| Modify system config    |   ✓   |      |        |  ✓   |
-| List active generations |   ✓   |      |        |  ✓   |
-| Override message status |   ✓   |      |        |  ✓   |
-
-## Rate Limiting (MVP)
-
-### Login throttle
-
-Simple per-IP in-memory counter:
-
-Logic:
-
-1. On POST `/api/auth/login`: get client IP from `X-Forwarded-For` or
-   `request.ip`
-2. Look up bucket for IP
-3. If outside window → reset bucket
-4. If count >= MAX_ATTEMPTS → return 429 Too Many Requests
-5. Increment count, proceed
-
-Rate limiter is only on login — not on authenticated routes. Simple, no external
-dependency.
-
-### Registration throttle
-
-Same mechanism, separate bucket, lower limit (e.g., 3 per hour per IP).
+Per-IP buckets; prunes stale entries every 2× window. Not applied to
+authenticated routes — see `TASK-rate-limit-coverage-expansion` and
+`epic-api-governance` for the planned full rate-limiting subsystem
+(token bucket, Redis/SQLite store, per-user, burst, dashboard).
 
 ## Session Management Routes
 
@@ -202,7 +150,7 @@ token_hash → sessions row).
 
 ### GET /api/auth/me
 
-Returns:
+Returns current user profile.
 
 ## Security Considerations
 
@@ -218,8 +166,10 @@ Returns:
   max-age), set by login/demo-login/register. HttpOnly keeps it out of JS.
 - Client (API/programmatic): may send the raw token via `Authorization: Bearer`
   header instead of the cookie.
-- Server: SHA-256 hash in `sessions.token_hash` — raw token never stored
-- Token never appears in URL query params (except asset signed URLs)
+- Server (JWT): signed token verified via `verifyJwt()`; `jwtSecret` from config.
+- Server (legacy opaque): SHA-256 hash in `sessions.token_hash` — raw token never
+  stored.
+- Token never appears in URL query params (except asset signed URLs).
 
 ### Signed URLs (Asset Downloads)
 
@@ -243,6 +193,7 @@ Server validates on `/api/assets/:id/download`:
   "auth": {
     "required": false, // true = remote auth, false = solo/demo
     "registrationOpen": true, // allow new user registration
+    "jwtSecret": null, // JWT signing secret (multi-user mode). Fallback: solo mode.
     "sessionTimeoutHours": 24, // idle session expiry
     "maxSessionsPerUser": 10, // concurrent session limit
     "adminUsername": "admin", // bootstrap admin (multi-user mode)
@@ -274,5 +225,10 @@ AUTH_ADMIN_PASSWORD=<secret>   # bootstrap admin password — set via env only
 
 - [Users, Roles & Sessions](./users-sessions.md)
 - [API Route Contract](./api-routes.md) — auth routes
-- `src/middleware/auth.ts` — implementation
-- `src/middleware/pipeline.ts` — middleware chain
+- `src/middleware/auth/` — auth middleware barrel (`authenticate.ts`, `token.ts`,
+  `solo-user.ts`, `types.ts`)
+- `src/middleware/permissions.ts` — `requirePermission()` role/permission guard
+- `src/middleware/admin-gate.ts` — `adminViewGuard` for HTML admin views
+- `src/middleware/rate-limit.ts` — sliding-window rate limiter
+- `src/elysia-app.ts` — auth + i18n wiring via Elysia `.derive()`
+- `src/auth/jwt.ts` — `verifyJwt()` / JWT signing
