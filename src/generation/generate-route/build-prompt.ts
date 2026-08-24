@@ -51,6 +51,7 @@ export async function buildPrompt({
     systemPromptOverride: input.systemPrompt,
     systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant",),
     config: cfg,
+    task: "chat-reply",
   },);
   let messages = assembled.messages;
   const systemPrompt = assembled.systemPrompt;

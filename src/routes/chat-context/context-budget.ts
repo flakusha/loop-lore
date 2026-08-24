@@ -69,6 +69,7 @@ export async function assembleBudgetSections(
       providerId: resolved.resolvedProviderName,
       tokenBudget: maxTokens,
       userId: userId ?? undefined,
+      task: "chat-reply",
     },);
     return {
       sections: computeSections(assembled.sections, maxTokens,),
