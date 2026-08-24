@@ -439,6 +439,17 @@
     "source": ".plan/tickets/BUG-command-dispatch-async-handler-uncaught.md",
     "git_issue": "6faa7ba"
   },
+  "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
+    "hash": "pending",
+    "extid": "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION",
+    "type": "BUG",
+    "title": "detectAvatarChangeIntent runs on user messages, not assistant responses",
+    "label": "bug",
+    "priority": "P2",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
+  },
   "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
     "hash": "6fb9cbd",
     "extid": "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD",
@@ -4028,6 +4039,17 @@
     "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md",
     "git_issue": "9ca71ff"
   },
+  "TASK-ACTOR-EMOTION-AVATARS-FRONTEND-PANEL": {
+    "hash": "pending",
+    "extid": "TASK-ACTOR-EMOTION-AVATARS-FRONTEND-PANEL",
+    "type": "TASK",
+    "title": "Actor emotion avatars frontend panel",
+    "label": "task",
+    "priority": "P2",
+    "epic": "epic-frontend-backend-integration / epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
+  },
   "TASK-ACTOR-ITEM-SERVICE": {
     "hash": "c68b555",
     "extid": "TASK-ACTOR-ITEM-SERVICE",
@@ -4818,6 +4840,17 @@
     "source": ".plan/tickets/TASK-aux-emotion-avatar.md",
     "git_issue": "4e54f94"
   },
+  "TASK-AUX-ENRICHMENT-EMOTION-AVATAR-TASK": {
+    "hash": "pending",
+    "extid": "TASK-AUX-ENRICHMENT-EMOTION-AVATAR-TASK",
+    "type": "TASK",
+    "title": "Implement `emotion_avatar` enrichment task in AUX pipeline",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-aux-enrichment-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
+  },
   "TASK-AUX-ENVIRONMENT-INTERACTION": {
     "hash": "edf93cf",
     "extid": "TASK-AUX-ENVIRONMENT-INTERACTION",
@@ -4841,6 +4874,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-aux-gm-tool-detection.md",
     "git_issue": "4c12c84"
+  },
+  "TASK-AUX-LLM-EMOTION-CLASSIFIER": {
+    "hash": "pending",
+    "extid": "TASK-AUX-LLM-EMOTION-CLASSIFIER",
+    "type": "TASK",
+    "title": "AUX LLM emotion classifier (replace keyword EmotionHook)",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
   },
   "TASK-AUX-MEMORY-EXTRACTION": {
     "hash": "feb9bec",
@@ -5708,6 +5752,17 @@
     "epic": "Character Core System",
     "tags": [],
     "source": ".plan/tickets/TASK-character-creator-prerogative.md"
+  },
+  "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI": {
+    "hash": "pending",
+    "extid": "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI",
+    "type": "TASK",
+    "title": "Character emotion definitions CRUD + admin UI",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-character-core-system / epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
   },
   "TASK-CHARACTER-GROWTH-DEVELOPMENT": {
     "hash": "pending",
@@ -8036,7 +8091,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-fix-worktree-cli-repo-root-tree-dir-env-var-requirement-when.md"
+    "source": ".plan/tickets/TASK-fix-worktree-cli-repo-root-tree-dir-env-var-requirement-when.md",
+    "git_issue": "c02be17"
   },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
@@ -8061,6 +8117,61 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-bundle-analysis.md",
     "git_issue": "372be44"
+  },
+  "TASK-FRONTEND-CHARACTERS-PAGE-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHARACTERS-PAGE-SPEC",
+    "type": "TASK",
+    "title": "Frontend Characters Page Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "(none — no dedicated frontend epic tracks this spec)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-characters-page-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Commands & Extras Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-commands-extras-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-GENERATION-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-GENERATION-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Generation & Streaming Implementation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-generation-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-MEMORIES-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-MEMORIES-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Memory Panel Implementation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-memories-spec.md"
+  },
+  "TASK-FRONTEND-CHAT-MESSAGES-SPEC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-MESSAGES-SPEC",
+    "type": "TASK",
+    "title": "Frontend Chat Messages Bubble & Detail Levels",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-backend-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-messages-spec.md"
   },
   "TASK-FRONTEND-COMPRESSION": {
     "hash": "pending",
@@ -9466,7 +9577,29 @@
     "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md",
     "git_issue": "d0b9bb7"
   },
-
+  "TASK-MODERATOR-PERMISSION-GATING-FOR-READ-ONLY-REVIEW-SURFACE": {
+    "hash": "5f22b58",
+    "extid": "TASK-MODERATOR-PERMISSION-GATING-FOR-READ-ONLY-REVIEW-SURFACE",
+    "type": "TASK",
+    "title": "Moderator permission gating for read-only review surface",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md",
+    "git_issue": "5f22b58"
+  },
+  "TASK-MOOD-SHIFT-DELTA-TUNING-WORD-BOUNDARY": {
+    "hash": "pending",
+    "extid": "TASK-MOOD-SHIFT-DELTA-TUNING-WORD-BOUNDARY",
+    "type": "TASK",
+    "title": "MoodHook — word-boundary matching + intensity-scaled delta",
+    "label": "task",
+    "priority": "P2",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+  },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "b5e9d7c",
     "extid": "TASK-MULTI-INSTANCE-RECONCILIATION",
@@ -9583,7 +9716,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md"
+    "source": ".plan/tickets/TASK-non-isolated-bun-test-src-red-shared-state-contamination.md",
+    "git_issue": "70c23fb"
   },
   "TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH": {
     "hash": "ef125d4",
@@ -13525,6 +13659,17 @@
     "tags": [],
     "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
   },
+  "TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE": {
+    "hash": "pending",
+    "extid": "TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE",
+    "type": "TEST",
+    "title": "Cover selectAvatar scoring paths + empty-actor fallback",
+    "label": "test",
+    "priority": "P2",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
+  },
   "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED": {
     "hash": "pending",
     "extid": "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED",
@@ -13568,6 +13713,17 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-e2e-users-personas-routes-missing.md"
+  },
+  "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION",
+    "type": "TEST",
+    "title": "End-to-end emotion-hook → messages.emotion → avatarForMessage",
+    "label": "test",
+    "priority": "P2",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
   },
   "TEST-GALLERY-FRONTEND-UTILS-UNTESTED": {
     "hash": "pending",
