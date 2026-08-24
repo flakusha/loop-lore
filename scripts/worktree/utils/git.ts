@@ -40,7 +40,7 @@ export function isProtected(branch: string,): boolean {
  * in a linked worktree `--show-toplevel` differs from the parent of
  * `--git-common-dir` (the shared .git).
  */
-export function isInsideWorktree(cwd: string = process.cwd(),): boolean {
+function isInsideWorktree(cwd: string = process.cwd(),): boolean {
   try {
     const toplevel = gitSync(cwd, "rev-parse", "--show-toplevel",).trim();
     const commonDir = gitSync(cwd, "rev-parse", "--git-common-dir",).trim();
