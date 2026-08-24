@@ -24,12 +24,14 @@ import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
 import { systemSection, } from "./sections/system";
+import { taskClarificationSection, } from "./sections/task-clarification";
 import { travelSection, } from "./sections/travel";
 import { userPersonaSection, } from "./sections/user-persona";
 import type { SectionBuilder, } from "./types";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
+  taskClarificationSection,
   nsfwPolicySection,
   authorNoteSection,
   actorHeaderSection,
