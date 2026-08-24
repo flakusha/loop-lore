@@ -95,6 +95,7 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     groupParticipantIds,
     config,
     systemPromptOverride,
+    task: "auto-reply",
   },);
   log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 

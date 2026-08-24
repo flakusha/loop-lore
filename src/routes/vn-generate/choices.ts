@@ -51,6 +51,7 @@ async function generateBranchingChoices(
     includeStoryContext: true,
     includeExamples: false,
     config,
+    task: "vn-choice",
   },);
 
   const choiceCount = body.count ?? 3;
