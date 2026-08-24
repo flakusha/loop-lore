@@ -69,7 +69,7 @@ export async function encryptGroupMessage(
   opts: GroupEncryptOpts,
 ): Promise<GroupEncryptedPayload> {
   if (opts.recipients.length === 0) {
-    throw new Error("encryptGroupMessage requires at least one recipient");
+    throw new Error("encryptGroupMessage requires at least one recipient",);
   }
   const chainKey = crypto.getRandomValues(new Uint8Array(32,),);
   const wraps = await wrapSenderKey({
@@ -132,7 +132,7 @@ export async function decryptGroupMessage(
   const ct = Uint8Array.fromBase64(opts.payload.ciphertext,);
   const nonce = Uint8Array.fromBase64(opts.payload.nonce,);
   if (nonce.byteLength !== NONCE_LENGTH) {
-    throw new Error(`nonce must be ${NONCE_LENGTH} bytes (got ${nonce.byteLength})`);
+    throw new Error(`nonce must be ${NONCE_LENGTH} bytes (got ${nonce.byteLength})`,);
   }
   const pt = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: new Uint8Array(nonce,).buffer as ArrayBuffer, },

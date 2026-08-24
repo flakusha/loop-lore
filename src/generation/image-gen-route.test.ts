@@ -193,7 +193,8 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (3) Opt-in: ComfyUI backend selected + lora → passed through
 
   it("passes lora config to generateImages when ComfyUI backend is selected", async () => {
-    mock.module("../config/load", () => ({ ...realConfigLoad,
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: {
@@ -249,7 +250,8 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (5) No sd provider → HTTP 501
 
   it("returns HTTP 501 when no image generation provider is configured", async () => {
-    mock.module("../config/load", () => ({ ...realConfigLoad,
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: { providers: { sd: [], }, },
@@ -266,7 +268,8 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (6) openai backend + lora → HTTP 400 (non-fallible guard)
 
   it("returns HTTP 400 when LoRA is requested with an unsupported backend (openai)", async () => {
-    mock.module("../config/load", () => ({ ...realConfigLoad,
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: {
@@ -311,7 +314,8 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (7) openai backend, no lora → HTTP 200 (normal path still works)
 
   it("returns HTTP 200 when no lora is requested, regardless of backend", async () => {
-    mock.module("../config/load", () => ({ ...realConfigLoad,
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
       loadConfig: () => ({
         ...defaultConfig,
         generation: {

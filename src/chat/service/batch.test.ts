@@ -152,7 +152,7 @@ describe("batch chat operations", () => {
       let queryCount = 0;
       dbTyped.selectFrom = ((...args: unknown[]) => {
         queryCount++;
-        return originalSelectFrom(...args);
+        return originalSelectFrom(...args,);
       }) as typeof dbTyped.selectFrom;
 
       try {
@@ -164,8 +164,8 @@ describe("batch chat operations", () => {
       // Three queries total: owned chats + messages + chat_participants.
       expect(queryCount,).toBeLessThanOrEqual(3,);
       expect(queryCount,).toBe(3,);
-    },);
-  },);
+    });
+  });
 });
 
 async function chatExists(db: Kysely<DB>, chatId: string,): Promise<boolean> {

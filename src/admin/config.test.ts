@@ -3,11 +3,11 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import type { Config } from "../config/schema";
-import { deleteConfig, getAllConfig, getConfig, seedDefaults, setConfig } from "./config";
+import { deleteConfig, getAllConfig, getConfig, seedDefaults, setConfig, } from "./config";
 
 describe("getAllConfig", () => {
   let db: Kysely<DB>;
@@ -104,18 +104,17 @@ describe("deleteConfig", () => {
   });
 });
 
-
 describe("seedDefaults", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    createLogger({ level: "warn" });
-    ({ db } = await createTestDb());
-  });
+    createLogger({ level: "warn", },);
+    ({ db, } = await createTestDb());
+  },);
 
   afterAll(async () => {
     await db.destroy();
-  });
+  },);
 
   test("seedDefaults is idempotent (no throw on second call)", async () => {
     const cfg = {
@@ -124,14 +123,14 @@ describe("seedDefaults", () => {
         sessionTimeoutHours: 24,
         maxSessionsPerUser: 5,
       },
-      assets: { maxFileSize: 10485760 },
+      assets: { maxFileSize: 10485760, },
       generation: {
         defaultProvider: "openai",
-        defaultModels: { openai: "gpt-4o-mini" },
+        defaultModels: { openai: "gpt-4o-mini", },
       },
     } as unknown as Config;
-    await seedDefaults(db, cfg);
-    await expect(seedDefaults(db, cfg)).resolves.toBeUndefined();
+    await seedDefaults(db, cfg,);
+    await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
   });
 
   test("all 11 default keys present after seedDefaults", async () => {
@@ -141,15 +140,15 @@ describe("seedDefaults", () => {
         sessionTimeoutHours: 24,
         maxSessionsPerUser: 5,
       },
-      assets: { maxFileSize: 10485760 },
+      assets: { maxFileSize: 10485760, },
       generation: {
         defaultProvider: "openai",
-        defaultModels: { openai: "gpt-4o-mini" },
+        defaultModels: { openai: "gpt-4o-mini", },
       },
     } as unknown as Config;
-    await seedDefaults(db, cfg);
-    const rows = await db.selectFrom("system_config").selectAll().execute();
-    const keys = rows.map((r) => r.key);
+    await seedDefaults(db, cfg,);
+    const rows = await db.selectFrom("system_config",).selectAll().execute();
+    const keys = rows.map((r,) => r.key);
     const expectedKeys = [
       "registration_open",
       "session_timeout_hours",
@@ -164,7 +163,7 @@ describe("seedDefaults", () => {
       "max_flags_before_hide",
     ];
     for (const k of expectedKeys) {
-      expect(keys).toContain(k);
+      expect(keys,).toContain(k,);
     }
   });
 });

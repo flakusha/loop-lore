@@ -33,8 +33,8 @@
 import type { Kysely, } from "kysely";
 import type { EncryptionLevel, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { deriveChatKeyForChat, getChatKeyById, } from "./chat-keys";
 import { safeJsonParse, } from "../utils";
+import { deriveChatKeyForChat, getChatKeyById, } from "./chat-keys";
 import {
   compressThenEncrypt,
   decryptThenDecompress,
@@ -152,12 +152,12 @@ export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: strin
  * future Phase E+) or a string `enc` field (server-encrypted payload).
  */
 export function isE2eOrEncrypted(storedContent: string,): boolean {
-  if (!storedContent) return false;
+  if (!storedContent) { return false; }
   const parsed = safeJsonParse(storedContent,);
-  if (!parsed.ok) return false;
+  if (!parsed.ok) { return false; }
   const obj = parsed.value as Record<string, unknown>;
-  if (typeof obj !== "object" || obj === null) return false;
-  if (obj["e2e"] === true) return true;
-  if (typeof obj["enc"] === "string") return true;
+  if (typeof obj !== "object" || obj === null) { return false; }
+  if (obj["e2e"] === true) { return true; }
+  if (typeof obj["enc"] === "string") { return true; }
   return false;
 }

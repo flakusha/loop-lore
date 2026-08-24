@@ -7,19 +7,19 @@
  * Includes ownership / memory-poisoning guard tests for
  * `promoteMessagesToMemories` and `classifyTransitionMessage`.
  */
+import type { Database, } from "bun:sqlite";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { Database, } from "bun:sqlite";
 import { readFile, } from "node:fs/promises";
+import type { DB, } from "../db/schema";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
+import { OwnershipError, } from "./ownership";
 import {
   classifyTransitionMessage,
   createTransition,
   promoteMessagesToMemories,
   selectMessagesForPromotion,
 } from "./transitions";
-import { OwnershipError, } from "./ownership";
-import type { DB, } from "../db/schema";
 import type { MessageRef, } from "./types";
 
 // ── Pure-function tests ───────────────────────────────────────
@@ -36,7 +36,7 @@ describe("createTransition", () => {
     expect(t.narration,).toBe("Walking to the tavern",);
     expect(t.promotedMemoryIds,).toEqual([],);
     expect(t.createdAt,).toBeTruthy();
-  },);
+  });
 
   it("creates a location change transition", () => {
     const t = createTransition({
@@ -46,7 +46,7 @@ describe("createTransition", () => {
 
     expect(t.type,).toBe("location_change",);
     expect(t.newLocationId,).toBe("loc-1",);
-  },);
+  });
 
   it("includes promoted memory IDs", () => {
     const t = createTransition({
@@ -55,7 +55,7 @@ describe("createTransition", () => {
     },);
 
     expect(t.promotedMemoryIds,).toEqual(["mem-1", "mem-2",],);
-  },);
+  });
 });
 
 describe("selectMessagesForPromotion", () => {
@@ -74,7 +74,7 @@ describe("selectMessagesForPromotion", () => {
     const msgs = [makeMsg("1", "Short message",),];
     const result = selectMessagesForPromotion(msgs, 10_000,);
     expect(result,).toEqual([],);
-  },);
+  });
 
   it("promotes messages over budget that meet score threshold", () => {
     const msgs: MessageRef[] = [
@@ -86,7 +86,7 @@ describe("selectMessagesForPromotion", () => {
     expect(result,).toContain("2",);
     expect(result,).not.toContain("1",);
     expect(result,).not.toContain("3",);
-  },);
+  });
 
   it("uses length heuristic when score is absent", () => {
     const msgs = [
@@ -95,11 +95,10 @@ describe("selectMessagesForPromotion", () => {
     ];
     const result = selectMessagesForPromotion(msgs, 10, 0.6,);
     expect(result.length,).toBeGreaterThan(0,);
-  },);
+  });
 });
 
 // ── Ownership / memory-poisoning guard tests ──────────────────
-
 
 let db: Kysely<DB>;
 let sqlite: Database;
@@ -110,7 +109,7 @@ beforeEach(async () => {
 
 afterEach(() => {
   resetTestDb(sqlite,);
-});
+},);
 // Module-scope constants so all ownership-guard describe blocks can share
 // the same fixture ids (the test bodies reference these from sibling blocks).
 const VICTIM_ID = "victim-1";
@@ -125,7 +124,7 @@ describe("promoteMessagesToMemories — ownership guard", () => {
   beforeAll(async () => {
     for (const id of [VICTIM_ID, NON_PARTICIPANT_ID, ATTACKER_ID,]) {
       await db
-        .insertInto("actors")
+        .insertInto("actors",)
         .values({
           id,
           actor_type: "user",
@@ -142,7 +141,7 @@ describe("promoteMessagesToMemories — ownership guard", () => {
     // also create the chats referenced by FK
     for (const chatId of [CHAT_OWNED_BY_VICTIM, "chat-victim-joins", "chat-attacker-joins",]) {
       await db
-        .insertInto("chats")
+        .insertInto("chats",)
         .values({ id: chatId, name: chatId, created_by: VICTIM_ID, },)
         .execute();
     }
@@ -152,8 +151,8 @@ describe("promoteMessagesToMemories — ownership guard", () => {
     // The caller (NON_PARTICIPANT_ID) is NOT a participant of CHAT_OWNED_BY_VICTIM.
     // promoteMessagesToMemories must throw OwnershipError and NOT insert any row.
     await db
-      .insertInto("chat_participants")
-      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner" })
+      .insertInto("chat_participants",)
+      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner", },)
       .execute();
     const msgs: MessageRef[] = [{
       messageId: "m1",
@@ -171,21 +170,21 @@ describe("promoteMessagesToMemories — ownership guard", () => {
         maxTokens: 100,
         actorId: VICTIM_ID,
         chatId: CHAT_OWNED_BY_VICTIM,
-        participantIds: [VICTIM_ID],
-      });
+        participantIds: [VICTIM_ID,],
+      },);
     } catch (e) {
       caught = e;
     }
 
-    expect(caught,).toBeInstanceOf(OwnershipError);
+    expect(caught,).toBeInstanceOf(OwnershipError,);
 
     const rows = await db
-      .selectFrom("actor_memories")
+      .selectFrom("actor_memories",)
       .selectAll()
-      .where("actor_id", "=", VICTIM_ID)
+      .where("actor_id", "=", VICTIM_ID,)
       .execute();
-    expect(rows,).toEqual([]);
-  },);
+    expect(rows,).toEqual([],);
+  });
 
   it("rejects when actor is not a participant of the chat", async () => {
     const msgs: MessageRef[] = [{
@@ -203,21 +202,21 @@ describe("promoteMessagesToMemories — ownership guard", () => {
         maxTokens: 100,
         actorId: ATTACKER_ID,
         chatId: CHAT_OWNED_BY_VICTIM,
-        participantIds: [ATTACKER_ID],
-      }),
-    ).rejects.toBeInstanceOf(OwnershipError);
-  },);
+        participantIds: [ATTACKER_ID,],
+      },),
+    ).rejects.toBeInstanceOf(OwnershipError,);
+  });
 
   it("rejects non-participant actor against chat they don't belong to", async () => {
     await db
-      .insertInto("chat_participants")
-      .values({ chat_id: CHAT_VICTIM_JOINS, actor_id: VICTIM_ID, role_in_chat: "member" })
+      .insertInto("chat_participants",)
+      .values({ chat_id: CHAT_VICTIM_JOINS, actor_id: VICTIM_ID, role_in_chat: "member", },)
       .execute();
 
     const msgs: MessageRef[] = [{
       messageId: "m1",
       role: "user",
-      content: "x".repeat(2000),
+      content: "x".repeat(2000,),
       tokenCount: 2000,
       createdAt: "",
       score: 0.9,
@@ -229,21 +228,21 @@ describe("promoteMessagesToMemories — ownership guard", () => {
         maxTokens: 100,
         actorId: ATTACKER_ID,
         chatId: CHAT_VICTIM_JOINS,
-        participantIds: [VICTIM_ID],
-      }),
-    ).rejects.toBeInstanceOf(OwnershipError);
-  },);
+        participantIds: [VICTIM_ID,],
+      },),
+    ).rejects.toBeInstanceOf(OwnershipError,);
+  });
 
   it("allows legitimate call when actor is a participant of the chat", async () => {
     await db
-      .insertInto("chat_participants")
-      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner" })
+      .insertInto("chat_participants",)
+      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner", },)
       .execute();
 
     const msgs: MessageRef[] = [{
       messageId: "m1",
       role: "user",
-      content: "x".repeat(2000),
+      content: "x".repeat(2000,),
       tokenCount: 2000,
       createdAt: "",
       score: 0.9,
@@ -254,18 +253,18 @@ describe("promoteMessagesToMemories — ownership guard", () => {
       maxTokens: 100,
       actorId: VICTIM_ID,
       chatId: CHAT_OWNED_BY_VICTIM,
-      participantIds: [VICTIM_ID],
-    });
+      participantIds: [VICTIM_ID,],
+    },);
 
-    expect(ids.length,).toBe(1);
+    expect(ids.length,).toBe(1,);
     const stored = await db
-      .selectFrom("actor_memories")
+      .selectFrom("actor_memories",)
       .selectAll()
-      .where("actor_id", "=", VICTIM_ID)
+      .where("actor_id", "=", VICTIM_ID,)
       .execute();
-    expect(stored.length,).toBe(1);
-    expect(stored[0]?.source_chat_id,).toBe(CHAT_OWNED_BY_VICTIM);
-  },);
+    expect(stored.length,).toBe(1,);
+    expect(stored[0]?.source_chat_id,).toBe(CHAT_OWNED_BY_VICTIM,);
+  });
 });
 
 describe("classifyTransitionMessage ownership guard", () => {
@@ -277,17 +276,17 @@ describe("classifyTransitionMessage ownership guard", () => {
         {} as never,
         db,
         undefined,
-        { chatId: CHAT_OWNED_BY_VICTIM, actorId: ATTACKER_ID },
+        { chatId: CHAT_OWNED_BY_VICTIM, actorId: ATTACKER_ID, },
       ),
-    ).rejects.toBeInstanceOf(OwnershipError);
-  },);
+    ).rejects.toBeInstanceOf(OwnershipError,);
+  });
   beforeAll(async () => {
     // re-create chats/actors in case the prior describe's afterEach wiped them.
     // Swallow unique-key collisions because resetTestDb may have left rows.
     for (const chatId of [CHAT_OWNED_BY_VICTIM, CHAT_VICTIM_JOINS, CHAT_ATTACKER_JOINS,]) {
       try {
         await db
-          .insertInto("chats")
+          .insertInto("chats",)
           .values({ id: chatId, name: chatId, created_by: VICTIM_ID, },)
           .execute();
       } catch { /* already exists */ }
@@ -295,7 +294,7 @@ describe("classifyTransitionMessage ownership guard", () => {
     for (const id of [VICTIM_ID, NON_PARTICIPANT_ID, ATTACKER_ID,]) {
       try {
         await db
-          .insertInto("actors")
+          .insertInto("actors",)
           .values({
             id,
             actor_type: "user",
@@ -314,8 +313,8 @@ describe("classifyTransitionMessage ownership guard", () => {
 
   it("allows when ownership context is provided and actor is a participant", async () => {
     await db
-      .insertInto("chat_participants")
-      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner" })
+      .insertInto("chat_participants",)
+      .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner", },)
       .execute();
 
     const result = await classifyTransitionMessage(
@@ -324,12 +323,12 @@ describe("classifyTransitionMessage ownership guard", () => {
       {} as never,
       db,
       VICTIM_ID,
-      { chatId: CHAT_OWNED_BY_VICTIM, actorId: VICTIM_ID },
+      { chatId: CHAT_OWNED_BY_VICTIM, actorId: VICTIM_ID, },
     );
 
-    expect(result.isTransition,).toBe(true);
-    expect(result.type,).toBe("location_change");
-  },);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+  });
 
   it("rejects when userId is provided but does not correspond to an actor", async () => {
     await expect(
@@ -340,8 +339,8 @@ describe("classifyTransitionMessage ownership guard", () => {
         db,
         "ghost-user-id",
       ),
-    ).rejects.toBeInstanceOf(OwnershipError);
-  },);
+    ).rejects.toBeInstanceOf(OwnershipError,);
+  });
 });
 
 // ── Audit: enumerate every exported function and confirm coverage ──
@@ -349,7 +348,7 @@ describe("classifyTransitionMessage ownership guard", () => {
 describe("ownership audit (exported-function coverage)", () => {
   it("covers all exported functions with appropriate guards", async () => {
     const src = await readFile(
-      new URL("./transitions.ts", import.meta.url),
+      new URL("./transitions.ts", import.meta.url,),
       "utf8",
     );
 
@@ -375,24 +374,24 @@ describe("ownership audit (exported-function coverage)", () => {
         `(?:export\\s+(?:async\\s+)?function\\s+${fn}\\s*\\([^)]*\\)\\s*[^{]*\\{)([\\s\\S]*?)\\n\\}`,
         "m",
       );
-      const m = fnBlockRe.exec(src);
+      const m = fnBlockRe.exec(src,);
       expect(m,).not.toBeNull();
       const body = m?.[1] ?? "";
 
-      if (mustGuard.includes(fn)) {
-        const hasGuard = /requireChatParticipant|requireActorExists/.test(body);
+      if (mustGuard.includes(fn,)) {
+        const hasGuard = /requireChatParticipant|requireActorExists/.test(body,);
         expect(
           hasGuard,
           `expected ${fn} to call an ownership guard`,
-        ).toBe(true);
+        ).toBe(true,);
       }
       if (pure[fn]) {
-        const hasGuard = /requireChatParticipant|requireActorExists/.test(body);
+        const hasGuard = /requireChatParticipant|requireActorExists/.test(body,);
         expect(
           hasGuard,
           `${fn} is a pure function and must NOT call an ownership guard`,
-        ).toBe(false);
+        ).toBe(false,);
       }
     }
-  },);
+  });
 });

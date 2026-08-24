@@ -40,11 +40,11 @@ function buildMigrationProvider(): {
     async getMigrations(): Promise<Record<string, Migration>> {
       const dir = path.join(__dirname, "..", "db", "migrations",);
       const files = readdirSync(dir,)
-        .filter((f,) => f.endsWith(".ts",),)
-        .toSorted((a, b,) => a.localeCompare(b,),);
+        .filter((f,) => f.endsWith(".ts",))
+        .toSorted((a, b,) => a.localeCompare(b,));
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
-        const mod = (await import(path.join(dir, f,),)) as
+        const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
@@ -106,7 +106,7 @@ describe("encryptAtRest — tier-aware path", () => {
     expect(result.storedContent,).toBe("hello world",);
     expect(result.wasEncrypted,).toBe(false,);
     expect(result.keyId,).toBeNull();
-  },);
+  });
 
   test("standard tier: runs through server encrypt path (smoke)", async () => {
     const chatId = "chat-standard-001";
@@ -128,7 +128,7 @@ describe("encryptAtRest — tier-aware path", () => {
     expect(typeof result.storedContent,).toBe("string",);
     expect(typeof result.wasEncrypted,).toBe("boolean",);
     expect(result.keyId === null || typeof result.keyId === "string",).toBeTrue();
-  },);
+  });
 });
 
 describe("at-rest tier — wire-passthrough semantics", () => {
@@ -146,7 +146,7 @@ describe("at-rest tier — wire-passthrough semantics", () => {
       e2e: true,
       ciphertext: "opaque-blob",
       nonce: "x",
-      senderEphPubJwk: { kty: "EC" },
+      senderEphPubJwk: { kty: "EC", },
       chainIndex: 0,
     },);
     const result = await encryptAtRest({
@@ -158,7 +158,7 @@ describe("at-rest tier — wire-passthrough semantics", () => {
     expect(result.storedContent,).toBe(wire,);
     expect(result.wasEncrypted,).toBe(true,);
     expect(result.keyId,).toBeNull();
-  },);
+  });
 
   test("at-rest tier: any plaintext is stored verbatim (caller is responsible for pre-encrypt)", async () => {
     const wire = "the-server-stores-verbatim";
@@ -170,7 +170,7 @@ describe("at-rest tier — wire-passthrough semantics", () => {
     },);
     expect(out.storedContent,).toBe(wire,);
     expect(out.wasEncrypted,).toBe(true,);
-  },);
+  });
 });
 
 describe("getChatEncryptionLevel", () => {
@@ -186,39 +186,39 @@ describe("getChatEncryptionLevel", () => {
     },).execute();
     const level = await getChatEncryptionLevel(db, chatId,);
     expect(level,).toBe("standard",);
-  },);
+  });
 
   test("defaults to none for unknown chat", async () => {
     const level = await getChatEncryptionLevel(db, "nonexistent-chat-id",);
     expect(level,).toBe("none",);
-  },);
+  });
 });
 
 describe("isE2eOrEncrypted envelope detection", () => {
   test("returns true for at-rest envelope", () => {
-    expect(isE2eOrEncrypted(JSON.stringify({ e2e: true, ciphertext: "abc" },),),)
+    expect(isE2eOrEncrypted(JSON.stringify({ e2e: true, ciphertext: "abc", },),),)
       .toBeTrue();
-  },);
+  });
 
   test("returns true for server-encrypted envelope", () => {
     expect(isE2eOrEncrypted(JSON.stringify({ enc: "cipher", nonce: "n1", algo: "AES-GCM", },),),)
       .toBeTrue();
-  },);
+  });
 
   test("returns false for plain text", () => {
     expect(isE2eOrEncrypted("hello world",),).toBeFalse();
-  },);
+  });
 
   test("returns false for non-object JSON", () => {
     expect(isE2eOrEncrypted('["a","b"]',),).toBeFalse();
     expect(isE2eOrEncrypted("42",),).toBeFalse();
-  },);
+  });
 
   test("returns false for malformed JSON", () => {
     expect(isE2eOrEncrypted("{not-valid",),).toBeFalse();
-  },);
+  });
 
   test("returns false for empty input", () => {
     expect(isE2eOrEncrypted("",),).toBeFalse();
-  },);
+  });
 });
