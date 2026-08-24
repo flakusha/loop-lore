@@ -108,7 +108,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
+    "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md",
+    "git_issue": "1bc8ffd"
   },
   "BUG-AUTO-GEN-ASSEMBLE-OMITS-PROVIDERID-TOKENBUDGET-AND-NEVER-COM": {
     "hash": "8a5e407",
@@ -435,7 +436,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chatformats-template-config-defined-but-unused-dead-standard.md"
+    "source": ".plan/tickets/BUG-chatformats-template-config-defined-but-unused-dead-standard.md",
+    "git_issue": "6730c8b"
   },
   "BUG-CHECK-DB-SCHEMAS-TS-DPRINT-SUBPROCESS-EXIT-20-MASKS-STALE-DE": {
     "hash": "9437278",
@@ -588,7 +590,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md"
+    "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md",
+    "git_issue": "6b6c898"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -930,7 +933,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md"
+    "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md",
+    "git_issue": "0d223a7"
   },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
