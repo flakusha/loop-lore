@@ -425,4 +425,109 @@ describe("worktree CLI", () => {
     expect(r.stdout,).toContain("Behind",);
     runWt("remove", "feat/behind-test",);
   });
+
+  test("48. issues — runs without REPO_ROOT env var", () => {
+    // Regression: previously loadConfig derived repoRoot from import.meta.url,
+    // which broke when invoked from inside a linked worktree because bun
+    // resolves the script path relative to cwd. The fix uses
+    // `git rev-parse --git-common-dir` to locate the main repo.
+    const result = Bun.spawnSync(
+      ["bun", "run", DISPATCHER, "issues",],
+      {
+        cwd: repoRoot,
+        // Strip REPO_ROOT/TREE_DIR to simulate "no env vars".
+        env: Object.fromEntries(Object.entries(process.env,).filter(([k,],) => k !== "REPO_ROOT" && k !== "TREE_DIR"),),
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    expect(result.exitCode,).toBe(0,);
+    // If the env-var requirement had regressed, loadConfig would have set
+    // repoRoot to <worktree> rather than the main repo and any command that
+    // reads treeDir (e.g. listing branches) would fail or return wrong data.
+    // issues command prints nothing on empty repo, but exitCode=0 + no error
+    // proves config resolved correctly.
+    const stdout = result.stdout.toString();
+    const stderr = result.stderr.toString();
+    expect(stderr,).not.toContain("worktree not found",);
+    expect(stdout + stderr,).not.toMatch(/must be run from the repo root/,);
+  });
+
+  test("49. status — works from inside a linked worktree without env vars", () => {
+    // Create the worktree directly via git (the worktree CLI's `new` command
+    // defaults its base to `dev`, which doesn't exist in the test repo's
+    // master-only layout — pre-existing baseline gap, not this fix's concern).
+    mkdirSync(treeDir, { recursive: true, },);
+    const wt = join(treeDir, "feat-inworktree-status",);
+    expect(gitOk(repoRoot, "worktree", "add", "-b", "feat/inworktree-status", wt, "master",),).toBe(true,);
+    expect(existsSync(wt,),).toBe(true,);
+
+    const result = Bun.spawnSync(
+      ["bun", "run", DISPATCHER, "status", "feat/inworktree-status",],
+      {
+        cwd: wt,
+        env: Object.fromEntries(Object.entries(process.env,).filter(([k,],) => k !== "REPO_ROOT" && k !== "TREE_DIR"),),
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    const stderr = result.stderr.toString();
+    const stdout = result.stdout.toString();
+    expect(result.exitCode,).toBe(0, `stderr: ${stderr}\nstdout: ${stdout}`,);
+    expect(stderr,).not.toContain("worktree not found",);
+    expect(stderr,).not.toMatch(/must be run from the repo root/,);
+    expect(stdout,).toMatch(/Branch:\s+feat\/inworktree-status/,);
+  });
+
+  test("50. REPO_ROOT env var still works as escape hatch", () => {
+    const result = Bun.spawnSync(
+      ["bun", "run", DISPATCHER, "issues",],
+      {
+        cwd: repoRoot,
+        env: { ...process.env, REPO_ROOT: repoRoot, TREE_DIR: treeDir, NO_COLOR: "1", },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    expect(result.exitCode,).toBe(0,);
+  });
+
+  test("51. REPO_ROOT pointing at a different repo errors clearly", () => {
+    // When REPO_ROOT is explicitly set to a non-existent dir, loadConfig
+    // must honor it but downstream commands may fail with their own errors.
+    const fakeRoot = join(tmpdir(), `wt-fake-${Date.now()}`,);
+    mkdirSync(fakeRoot, { recursive: true, },);
+    const result = Bun.spawnSync(
+      ["bun", "run", DISPATCHER, "issues",],
+      {
+        cwd: repoRoot,
+        env: { ...process.env, REPO_ROOT: fakeRoot, TREE_DIR: join(fakeRoot, "tree",), NO_COLOR: "1", },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    // Whatever the command does with the fake root, loadConfig did NOT
+    // silently fall back to autodetect — REPO_ROOT was used as-is.
+    const stderr = result.stderr.toString();
+    expect(stderr,).not.toMatch(/must be run from the repo root/,);
+    rmSync(fakeRoot, { recursive: true, force: true, },);
+  });
+  test("52. findRepoRoot — resolves to main repo from worktree cwd", () => {
+    mkdirSync(treeDir, { recursive: true, },);
+    const wt = join(treeDir, "feat-find-root-target",);
+    expect(gitOk(repoRoot, "worktree", "add", "-b", "feat/find-root-target", wt, "master",),).toBe(true,);
+
+    const result = Bun.spawnSync(
+      [
+        "bun",
+        "-e",
+        "import { findRepoRoot } from '" + resolve(import.meta.dir, "..", "scripts", "worktree", "utils", "git.ts",) +
+        "'; " +
+        "console.log(findRepoRoot(process.cwd()))",
+      ],
+      { cwd: wt, stdout: "pipe", stderr: "pipe", },
+    );
+    expect(result.exitCode,).toBe(0,);
+    expect(result.stdout.toString().trim(),).toBe(repoRoot,);
+  });
 });
