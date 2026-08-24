@@ -46,7 +46,10 @@ export async function getEffectiveNsfw(
     if (world?.nsfw_override === "disabled") { return { enabled: false, source: "world_override", }; }
   }
 
-  return { enabled: prefs?.nsfwEnabled ?? false, source: "user_preference", };
+  // No row → schema default nsfw_enabled=1 is "enabled". Keep the fallback in
+  // sync with that default; defaulting to false here caused hooks to globally
+  // block users who never explicitly opted out (see e2e-integration test).
+  return { enabled: prefs?.nsfwEnabled ?? true, source: "user_preference", };
 }
 
 export interface SetChatNsfwOverrideArgs {
