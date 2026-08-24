@@ -6,7 +6,7 @@
 ## Project State
 
 - **Runtime**: Bun `serve()` — no Express/Elysia
-- **Router**: Custom dispatch chain (`src/routes/router.ts`) + middleware pipeline (`src/middleware/pipeline.ts`)
+- **Router**: Custom dispatch chain (`src/routes/router.ts`) + middleware modules under `src/middleware/` (auth, permissions, response-headers, rate-limit, nsfw-gate, …)
 - **Validation**: Manual `parseBody()` + `str()`/`num()` helpers
 - **Error shape**: `{ error: string, code?: ErrorCode, details?: unknown }`
 - **Test runner**: `bun:test`

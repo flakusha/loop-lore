@@ -63,7 +63,13 @@ Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
 ### Remote Multi-User Sessions
 
 - Session token stored in DB (not in-memory) — survives server restart
-- Token: [REDACTED:API key param] UUID + SHA-256 hash** (no JWT for MVP). The UUID is the bearer token; only its SHA-256 hash is stored in DB.
+- Token: **JWT (primary)** signed with `authConfig.jwtSecret` (HMAC, see
+  `src/auth/jwt.ts`). JWT payload `{ sub: userId, sid: sessionId }` is verified
+  per request via `verifyJwt()`. New logins emit JWTs.
+- **Legacy fallback**: opaque UUID v4 token, SHA-256 hashed and stored in
+  `sessions.token_hash` (legacy `resolveUserIdFromRequest()` path in
+  `src/middleware/auth/token.ts`). Used only for older sessions created before
+  the JWT migration.
 - Multiple simultaneous sessions per user allowed (configurable max)
 - Session timeout configurable (default: 24h idle)
 - Web clients carry the token in the `ll_token` HttpOnly cookie; API clients may
