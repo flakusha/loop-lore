@@ -15,6 +15,7 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { detectScope, storeMemoriesWithScope, } from "./memory-promotion";
 import { requireActorExists, requireChatParticipant, } from "./ownership";
+import { requireActorExists, requireChatParticipant, } from "./ownership";
 import { estimateTokens, } from "./token-utils";
 import { classifyTransition, } from "./transition-classifier";
 import type { ChatTransition, MessageRef, TransitionClassification, } from "./types";
