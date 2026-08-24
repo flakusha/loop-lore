@@ -497,6 +497,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
   },
+  "BUG-EMOTION-MOOD-HOOK-STALE-LLM-JAVADOC": {
+    "hash": "pending",
+    "extid": "BUG-EMOTION-MOOD-HOOK-STALE-LLM-JAVADOC",
+    "type": "BUG",
+    "title": "MoodHook + EmotionHook JSDoc claims \"Uses the LLM\"; both are regex-only",
+    "label": "bug",
+    "priority": "P3",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+  },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "hash": "76cbe80",
     "extid": "BUG-ENCRYPTION-TIER-NOT-ENFORCED",
@@ -9510,6 +9521,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md",
     "git_issue": "5f22b58"
+  },
+  "TASK-MOOD-SHIFT-DELTA-TUNING-WORD-BOUNDARY": {
+    "hash": "pending",
+    "extid": "TASK-MOOD-SHIFT-DELTA-TUNING-WORD-BOUNDARY",
+    "type": "TASK",
+    "title": "MoodHook — word-boundary matching + intensity-scaled delta",
+    "label": "task",
+    "priority": "P2",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
   },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "b5e9d7c",
