@@ -50,7 +50,7 @@ describe("wrap / unwrap sender chain key", () => {
       recipientActorId: bob.id,
     },);
     expect(recovered,).toEqual(chainKey,);
-  },);
+  });
 
   test("multiple recipients get distinct wraps + each can unwrap independently", async () => {
     const chainKey = crypto.getRandomValues(new Uint8Array(32,),);
@@ -80,7 +80,7 @@ describe("wrap / unwrap sender chain key", () => {
     },);
     expect(bobRec,).toEqual(chainKey,);
     expect(carolRec,).toEqual(chainKey,);
-  },);
+  });
 
   test("wrong recipient key fails to unwrap (auth-tag mismatch)", async () => {
     const chainKey = crypto.getRandomValues(new Uint8Array(32,),);
@@ -96,7 +96,7 @@ describe("wrap / unwrap sender chain key", () => {
         recipientActorId: carol.id,
       },),
     ).rejects.toThrow();
-  },);
+  });
 });
 
 describe("group message encrypt + decrypt", () => {
@@ -115,7 +115,7 @@ describe("group message encrypt + decrypt", () => {
     expect(wire.chainIndex,).toBe(0,);
     expect(Object.keys(wire.per_recipient,),).toHaveLength(3,);
 
-    for (const setup of [alice, bob, carol]) {
+    for (const setup of [alice, bob, carol,]) {
       const pt = await decryptGroupMessage({
         payload: wire,
         recipientActorId: setup.id,
@@ -123,7 +123,7 @@ describe("group message encrypt + decrypt", () => {
       },);
       expect(pt,).toBe("hello team",);
     }
-  },);
+  });
 
   test("non-recipient gets an error (no wrap for them)", async () => {
     const wire = await encryptGroupMessage({
@@ -140,8 +140,8 @@ describe("group message encrypt + decrypt", () => {
         recipientActorId: "eve",
         recipientStaticPriv: alice.kp.privateKey,
       },),
-    ).rejects.toThrow(/no wrap found/);
-  },);
+    ).rejects.toThrow(/no wrap found/,);
+  });
 
   test("substituting another recipient's wrap produces wrong chain key → AES-GCM auth failure", async () => {
     const wire = await encryptGroupMessage({
@@ -164,7 +164,7 @@ describe("group message encrypt + decrypt", () => {
         recipientStaticPriv: bob.kp.privateKey,
       },),
     ).rejects.toThrow();
-  },);
+  });
 
   test("tampered ciphertext throws (AES-GCM auth-tag mismatch)", async () => {
     const wire = await encryptGroupMessage({
@@ -182,7 +182,7 @@ describe("group message encrypt + decrypt", () => {
         recipientStaticPriv: bob.kp.privateKey,
       },),
     ).rejects.toThrow();
-  },);
+  });
 
   test("each send uses a fresh sender chain key (no replay of past keys)", async () => {
     const w1 = await encryptGroupMessage({
@@ -212,5 +212,5 @@ describe("group message encrypt + decrypt", () => {
         recipientStaticPriv: bob.kp.privateKey,
       },),
     ).toBe("second",);
-  },);
+  });
 });

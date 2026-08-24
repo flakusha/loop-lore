@@ -37,7 +37,7 @@ export interface PermissionCtx {
 }
 
 /** Resolved user handle for audit logging — fetched lazily on denial. */
-type HandleResolver = (userId: string) => Promise<string | null>;
+type HandleResolver = (userId: string,) => Promise<string | null>;
 
 /** Optional cache to avoid per-request DB lookups for the same user. */
 class HandleCache {
@@ -111,6 +111,5 @@ export function requirePermission(
       status: HttpStatus.Forbidden,
       code: ErrorCode.Forbidden,
     },);
-
-  }
+  };
 }

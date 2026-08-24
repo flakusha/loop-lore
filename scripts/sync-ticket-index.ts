@@ -198,7 +198,10 @@ function applyFixes(
     // 1. Try a matching git issue by extid.
     let target: GitIssue | undefined;
     for (const [, issue,] of gitIssues) {
-      if (issue.extid === ph.extid) { target = issue; break; }
+      if (issue.extid === ph.extid) {
+        target = issue;
+        break;
+      }
     }
 
     // 2. Otherwise create a git issue so the entry has provenance.
@@ -211,10 +214,10 @@ function applyFixes(
           `git issue create "${ph.extid}: ${safeTitle}" -m "${body}" -l task -p medium`,
           { timeout: 15_000, },
         ).toString();
-        const hm = out.match(/Created issue ([0-9a-f]{7,})/);
+        const hm = out.match(/Created issue ([0-9a-f]{7,})/,);
         if (hm) {
           const newHash = hm[1].slice(0, 7,);
-          target = { hash: newHash, status: "open", title: `${ph.extid}: ${title}`, extid: ph.extid };
+          target = { hash: newHash, status: "open", title: `${ph.extid}: ${title}`, extid: ph.extid, };
           gitIssues.set(newHash, target,);
           report.fixesApplied.push(`${ph.extid}: created git issue ${newHash}`,);
         }
@@ -239,7 +242,7 @@ function applyFixes(
     if (tf) {
       try {
         let raw = readFileSync(tf.path, "utf8",);
-        if (/(?:git.?issue|issue):\s*[0-9a-f]{7,}/i.test(raw)) {
+        if (/(?:git.?issue|issue):\s*[0-9a-f]{7,}/i.test(raw,)) {
           raw = raw.replace(/(?:git.?issue|issue):\s*[0-9a-f]{7,}/i, `git issue: ${target.hash}`,);
         } else {
           raw = raw.replace(/(\n---\n|$)/, `\n\ngit issue: ${target.hash}\n`,);
@@ -563,7 +566,9 @@ Options:
     if (postTotal === 0) {
       console.log(`✅ Index is in sync${postAdvisory > 0 ? ` (${postAdvisory} advisory remaining)` : ""}`,);
     } else {
-      console.log(`⚠️  ${postTotal} actionable issue(s) remain${postAdvisory > 0 ? `, ${postAdvisory} advisory` : ""}`,);
+      console.log(
+        `⚠️  ${postTotal} actionable issue(s) remain${postAdvisory > 0 ? `, ${postAdvisory} advisory` : ""}`,
+      );
     }
     process.exit(postTotal > 0 ? 1 : 0,);
   }
@@ -577,7 +582,9 @@ Options:
   if (totalIssues === 0) {
     console.log(`✅ Index is in sync${advisoryCount > 0 ? ` (${advisoryCount} advisory)` : ""}`,);
   } else {
-    console.log(`⚠️  ${totalIssues} actionable issue(s) found${advisoryCount > 0 ? `, ${advisoryCount} advisory` : ""}`,);
+    console.log(
+      `⚠️  ${totalIssues} actionable issue(s) found${advisoryCount > 0 ? `, ${advisoryCount} advisory` : ""}`,
+    );
   }
 
   // Exit code

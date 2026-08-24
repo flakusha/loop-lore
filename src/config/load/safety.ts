@@ -110,7 +110,7 @@ export function validateAuthSafety(config: Config,): void {
     /^example$/i,
     /^loop.?lore/i,
   ];
-  if (suspiciousPatterns.some((re,) => re.test(secret,),)) {
+  if (suspiciousPatterns.some((re,) => re.test(secret,))) {
     getLogger().child({ module: "config-safety", },).warn(
       "AUTH SAFETY: auth.jwtSecret matches a known placeholder pattern. " +
         "This is fine for local development but MUST be replaced before " +

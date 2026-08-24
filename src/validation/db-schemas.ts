@@ -556,9 +556,9 @@ export const ChatsSchema = t.Object({
   name_source: t.Optional(t.String(),),
   template_id: t.Optional(t.String(),),
   visibility: t.Optional(t.String(),),
-  thinking_visibility: t.Optional(t.String(),),
-  prompt_override: t.Optional(t.String(),),
   quick_replies: t.Optional(t.String(),),
+  prompt_override: t.Optional(t.String(),),
+  thinking_visibility: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────
@@ -831,12 +831,12 @@ export const MessagesSchema = t.Object({
   format_version: t.Optional(t.Number(),),
   section_id: t.Optional(t.String(),),
   tool_calls: t.Optional(t.String(),),
-  thinking: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),
   e2e_payload: t.Optional(t.String(),),
   e2e_session_id: t.Optional(t.String(),),
   e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
   e2e_chain_index: t.Optional(t.Number(),),
+  thinking: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
@@ -1962,20 +1962,6 @@ export const CharacterInternalTraitsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── character_world_setup ────────────────────────────────────────────
-export const CharacterWorldSetupSchema = t.Object({
-  actor_id: t.String(),
-  world_id: t.String(),
-  starting_inventory: t.Optional(t.String(),),
-  lore_entries: t.Optional(t.String(),),
-  backstory: t.Optional(t.String(),),
-  scenario_override: t.Optional(t.String(),),
-  system_prompt_override: t.Optional(t.String(),),
-  initial_state: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
 // ── model_capabilities ────────────────────────────────────────────
 export const ModelCapabilitiesSchema = t.Object({
   provider_id: t.String(),
@@ -1995,21 +1981,6 @@ export const ModelCapabilitiesSchema = t.Object({
   notes: t.Optional(t.String(),),
 },);
 
-// ── battles ────────────────────────────────────────────
-export const BattlesSchema = t.Object({
-  chat_id: t.String(),
-  created_by: t.String(),
-  world_id: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  round: t.Optional(t.Number(),),
-  turn_index: t.Optional(t.Number(),),
-  combatants: t.Optional(t.String(),),
-  log: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  ended_at: t.Optional(t.String(),),
-},);
-
 // ── seed_audit ────────────────────────────────────────────
 export const SeedAuditSchema = t.Object({
   seed_type: t.String(),
@@ -2018,19 +1989,6 @@ export const SeedAuditSchema = t.Object({
   seeded_at: t.String(),
   environment: t.String(),
   metadata: t.Optional(t.String(),),
-},);
-
-// ── trade_history ────────────────────────────────────────────
-export const TradeHistorySchema = t.Object({
-  world_id: t.String(),
-  buyer_actor_id: t.String(),
-  seller_actor_id: t.String(),
-  created_at: t.String(),
-  price: t.Optional(t.Number(),),
-  currency_type: t.Optional(t.String(),),
-  items_offered: t.Optional(t.String(),),
-  items_requested: t.Optional(t.String(),),
-  trade_type: t.Optional(t.String(),),
 },);
 
 // ── memory_embeddings ────────────────────────────────────────────
@@ -2137,4 +2095,46 @@ export const E2eSkippedKeysSchema = t.Object({
   encrypted_message_key: t.String(),
   expires_at: t.String(),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── character_world_setup ────────────────────────────────────────────
+export const CharacterWorldSetupSchema = t.Object({
+  actor_id: t.String(),
+  world_id: t.String(),
+  starting_inventory: t.Optional(t.String(),),
+  lore_entries: t.Optional(t.String(),),
+  backstory: t.Optional(t.String(),),
+  scenario_override: t.Optional(t.String(),),
+  system_prompt_override: t.Optional(t.String(),),
+  initial_state: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── battles ────────────────────────────────────────────
+export const BattlesSchema = t.Object({
+  chat_id: t.String(),
+  created_by: t.String(),
+  world_id: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  round: t.Optional(t.Number(),),
+  turn_index: t.Optional(t.Number(),),
+  combatants: t.Optional(t.String(),),
+  log: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  ended_at: t.Optional(t.String(),),
+},);
+
+// ── trade_history ────────────────────────────────────────────
+export const TradeHistorySchema = t.Object({
+  world_id: t.String(),
+  buyer_actor_id: t.String(),
+  seller_actor_id: t.String(),
+  created_at: t.String(),
+  price: t.Optional(t.Number(),),
+  currency_type: t.Optional(t.String(),),
+  items_offered: t.Optional(t.String(),),
+  items_requested: t.Optional(t.String(),),
+  trade_type: t.Optional(t.String(),),
 },);

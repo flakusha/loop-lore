@@ -187,7 +187,7 @@ export async function decodeEphemeralPayload(
   const ct = Uint8Array.fromBase64(payload.ciphertext,);
   const nonce = Uint8Array.fromBase64(payload.nonce,);
   if (nonce.byteLength !== NONCE_LENGTH) {
-    throw new Error(`nonce must be ${NONCE_LENGTH} bytes (got ${nonce.byteLength})`);
+    throw new Error(`nonce must be ${NONCE_LENGTH} bytes (got ${nonce.byteLength})`,);
   }
   const pt = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: new Uint8Array(nonce,).buffer as ArrayBuffer, },
@@ -217,7 +217,7 @@ async function deriveChainKey(
     ["deriveBits",],
   );
   const salt = new Uint8Array(8,);
-  new DataView(salt.buffer,).setBigUint64(0, BigInt(chainIndex),);
+  new DataView(salt.buffer,).setBigUint64(0, BigInt(chainIndex,),);
   const bits = await crypto.subtle.deriveBits(
     {
       name: "HKDF",

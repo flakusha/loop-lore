@@ -31,8 +31,14 @@ import {
   importPrivateKey,
 } from "./key-pairs";
 
-let aliceKp: CryptoKeyPair = { publicKey: { type: "public", } as unknown as CryptoKey, privateKey: { type: "private", } as unknown as CryptoKey, };
-let bobKp: CryptoKeyPair = { publicKey: { type: "public", } as unknown as CryptoKey, privateKey: { type: "private", } as unknown as CryptoKey, };
+let aliceKp: CryptoKeyPair = {
+  publicKey: { type: "public", } as unknown as CryptoKey,
+  privateKey: { type: "private", } as unknown as CryptoKey,
+};
+let bobKp: CryptoKeyPair = {
+  publicKey: { type: "public", } as unknown as CryptoKey,
+  privateKey: { type: "private", } as unknown as CryptoKey,
+};
 let alicePubJwk: JsonWebKey = { kty: "EC", };
 let bobPubJwk: JsonWebKey = { kty: "EC", };
 
@@ -67,7 +73,7 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
       receiverStaticPriv: bobKp.privateKey,
     },);
     expect(plaintext,).toBe("hello bob",);
-  },);
+  });
 
   test("Alice → Bob: N sequential messages decrypt in order", async () => {
     const wire: EphemeralRatchetWirePayload[] = [];
@@ -81,7 +87,7 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
       },);
       expect(plain,).toBe(`message ${i}`,);
     }
-  },);
+  });
 
   test("tampered ciphertext throws (AES-GCM auth-tag mismatch)", async () => {
     const wire = await encrypt("secret", 0,);
@@ -94,7 +100,7 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
         receiverStaticPriv: bobKp.privateKey,
       },),
     ).rejects.toThrow();
-  },);
+  });
 
   test("substituted ephemeral pub decodes to auth-tag failure", async () => {
     const real = await encrypt("real", 0,);
@@ -108,7 +114,7 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
         receiverStaticPriv: bobKp.privateKey,
       },),
     ).rejects.toThrow();
-  },);
+  });
 
   test("each message uses a distinct ephemeral public key", async () => {
     const seen = new Set<string>();
@@ -119,13 +125,13 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
       seen.add(key,);
     }
     expect(seen.size,).toBe(10,);
-  },);
+  });
 
   test("two messages with the same chainIndex derive distinct ciphertexts (different eph)", async () => {
     const a = await encrypt("same", 0,);
     const b = await encrypt("same", 0,);
     expect(a.ciphertext,).not.toBe(b.ciphertext,);
-  },);
+  });
 });
 
 describe("per-message ephemeral ECDH — forward-secrecy claims", () => {
@@ -210,7 +216,7 @@ describe("per-message ephemeral ECDH — interop with foundation primitives", ()
     expect(wire.senderEphPubJwk.kty,).toBe("EC",);
     expect(wire.senderEphPubJwk.x,).toBeTruthy();
     expect(wire.senderEphPubJwk.y,).toBeTruthy();
-  },);
+  });
 });
 
 // Reference `alicePubJwk` and `aliceKp` to keep the typed bindings — future

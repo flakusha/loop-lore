@@ -119,7 +119,7 @@ export async function ensureActiveSession(
       senderActorId: opts.senderActorId,
       recipientActorId: opts.recipientActorId,
     },);
-    if (existing) return existing;
+    if (existing) { return existing; }
   } else {
     const existing = await opts.database
       .selectFrom("e2e_sessions",)
@@ -131,7 +131,7 @@ export async function ensureActiveSession(
       .orderBy("created_at", "desc",)
       .limit(1,)
       .executeTakeFirst();
-    if (existing) return rowToSession(existing as E2eSessionsDbRow,);
+    if (existing) { return rowToSession(existing as E2eSessionsDbRow,); }
   }
 
   const id = uid();
@@ -174,13 +174,13 @@ export async function ensureActiveSession(
         .orderBy("created_at", "desc",)
         .limit(1,)
         .executeTakeFirst()
-        .then((row) => (row ? rowToSession(row as E2eSessionsDbRow,) : null));
-    if (raced) return raced;
+        .then((row,) => (row ? rowToSession(row as E2eSessionsDbRow,) : null));
+    if (raced) { return raced; }
     throw err;
   }
   const created = await findSession({ database: opts.database, sessionId: id, },);
   if (!created) {
-    throw new Error(`e2e-session: insert succeeded but row ${id} not found`);
+    throw new Error(`e2e-session: insert succeeded but row ${id} not found`,);
   }
   return created;
 }
