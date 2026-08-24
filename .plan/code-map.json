@@ -728,6 +728,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-prompt-library-expanded.md"
     },
     {
@@ -1315,6 +1319,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/users-sessions.md"
     }
   ],
   "src/auth/recovery.ts": [
@@ -11977,6 +11985,14 @@
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/implementation.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/users-sessions.md"
     }
   ],
   "src/middleware/cors.ts": [
