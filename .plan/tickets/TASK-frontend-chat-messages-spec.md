@@ -8,6 +8,7 @@
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration
 **Related:** docs/frontend/chat/messages.md
+**git issue:** 710b94e
 
 ## Summary
 
