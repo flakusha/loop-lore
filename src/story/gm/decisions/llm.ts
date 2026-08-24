@@ -30,6 +30,7 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
     includeExamples: false,
     config: deps.appConfig,
     task: "gm-decision",
+    action: `advance story at "${context.world.currentLocation.name}"`,
   },);
 
   const location = context.world.currentLocation;
