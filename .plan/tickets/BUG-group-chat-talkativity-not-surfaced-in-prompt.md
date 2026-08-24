@@ -8,7 +8,7 @@
 **Priority:** low
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-chat-context-optimization
+**Epic:** epic-chat-context-optimization, epic-group-chat
 **Files:** src/assistant/prompt/sections/group-participants.ts; src/assistant/prompt/sections/registry.ts (PROMPT_SECTIONS); src/group-chat/turn-selector.ts:73
 
 ## Issue
