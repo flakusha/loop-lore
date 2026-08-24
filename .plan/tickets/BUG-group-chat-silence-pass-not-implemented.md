@@ -8,7 +8,7 @@
 **Priority:** medium
 **Effort:** medium
 **Type:** BUG
-**Epic:** epic-chat-lifecycle-moderation
+**Epic:** epic-chat-lifecycle-moderation, epic-group-chat
 **Files:** src/group-chat/mention-parser.ts (no PASS detection); src/generation/auto-gen/group-cascade.ts; src/db schema (silence/pass columns if added); configs/templates/group-chat-defaults.yaml (if applicable)
 
 ## Issue
