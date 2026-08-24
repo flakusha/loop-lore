@@ -10,7 +10,7 @@ import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { requireAdmin, } from "./shared";
+import { requireModerationAction, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 const nsfwOverrideBody = t.Object({
@@ -44,7 +44,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
       }, { params: t.Object({ chatId: t.String(), },), response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
       .put(`${prefix}/nsfw/moderation/chat/:chatId`, async (ctx: any,) => {
-        const auth = requireAdmin(ctx,);
+        const auth = requireModerationAction(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
           const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
@@ -59,7 +59,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
         response: { 200: SuccessResponse, 500: ErrorResponse, },
       },)
       .put(`${prefix}/nsfw/moderation/world/:worldId`, async (ctx: any,) => {
-        const auth = requireAdmin(ctx,);
+        const auth = requireModerationAction(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
           const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
