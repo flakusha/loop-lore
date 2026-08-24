@@ -3,7 +3,7 @@
 
 # BUG: Stale audit rows in TASK-aux-emotion-avatar.md + TASK-aux-mood-classification.md contradict current wiring
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (2026-08-24, fix-aux-emotion-mood-task-tables-docs-sync)
 **Priority:** P3
 **Effort:** Trivial
 **Epic:** epic-aux-enrichment-pipeline
