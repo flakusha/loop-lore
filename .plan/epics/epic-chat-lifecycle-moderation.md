@@ -174,7 +174,7 @@ interface ModerationAction {
 - `src/generation/auto-gen/post-store.ts` — random event injection after message storage
 - `src/generation/repetition.ts` — loop detection (existing)
 - `src/chat/moderation.ts` — blocks, bans, shadowing, flags
-- `src/middleware/nsfw-gate.ts` — NSFW toggle enforcement
+- `src/middleware/nsfw-gate/` — NSFW toggle enforcement (barrel: `access.ts`, `consent.ts`, `logging.ts`, `constants.ts`)
 - `src/db/schema.ts` — moderation_action, block, flag tables
 - `src/components/chat/chat-header.html` — context window monitor widget
 - `src/frontend/alpine/context-window.ts` — Alpine.js context monitor component
