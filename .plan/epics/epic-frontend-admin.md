@@ -102,6 +102,6 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 ## Related Epics
 
 - `docs/frontend/admin.md` — UX spec (authoritative)
-- `epic-auth-access.md` — admin role gating (`isAdminRole` middleware)
+- `epic-auth-access.md` — admin role gating (`requirePermission("admin.system")` / `adminViewGuard`)
 - `epic-frontend-settings.md` — settings UI (adjacent surface)
 - `epic-logging-telemetry.md` — audit log data source

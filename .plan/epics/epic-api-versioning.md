@@ -81,7 +81,7 @@ Response envelope carries `meta.api_version`; paginated responses add
 - [x] `meta.api_version` injected into all response helpers (Phase 0 complete)
 - [x] `ApiResponseMeta` type exported from `http-utils/types.ts`
 - [x] V1 barrel at `src/routes/v1/index.ts` mounts versioned routes via `.use()`
-- [x] Version resolver middleware at `src/routes/middleware/version-resolver.ts`
+- [x] Version resolver middleware at `src/routes/middleware/version-resolver.ts` (built, but **not wired** — see BUG-version-resolver-middleware-built-not-wired)
 - [x] Legacy redirect middleware at `src/routes/middleware/version-redirect.ts`
 - [x] All 133 route factories accept optional `prefix` param (default `"/api"`)
 - [x] 3 core routes wired into v1 barrel (health, chats, users)
@@ -89,7 +89,7 @@ Response envelope carries `meta.api_version`; paginated responses add
 - [x] Context propagation proven: `.derive()` userId flows through v1 barrel (integration test)
 - [x] Existing `/api/*` routes keep working (backward compatible)
 - [ ] Remaining routes added to v1 barrel (admin, characters, messages, assets, etc.) — 3/70+ done
-- [ ] Version resolver middleware sets `ctx.apiVersion`; plugins read it
+- [ ] Version resolver middleware sets `ctx.apiVersion`; plugins read it — **resolver built but `versionResolver()` not called in `elysia-app.ts`** (only `versionRedirect` is wired)
 - [ ] Deprecation headers on legacy `/api/*` routes
 - [ ] OpenAPI spec generated per version (FEAT-039)
 

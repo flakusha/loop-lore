@@ -65,11 +65,11 @@ TUI rendering, browser UI (htmx/Alpine.js), file uploads, real-time streaming.
 
 ### Files Without Tests — Quick Win (pure logic, ~17 files)
 
-`src/utils/get-type.ts`, `src/utils/safe-json.ts`, `src/profanity/service.ts`, `src/db/state.ts`, `src/middleware/admin-gate.ts`, `src/middleware/rate-limit.ts`, `src/middleware/pipeline.ts`, `src/transport/errors.ts`, `src/transport/compression.ts`, `src/story/quality-evaluator.ts`, `src/story/turn-strategies.ts`, `src/story/events/extraction.ts`, `src/assistant/service.ts`, `src/content/hash-injection.ts`, `src/routes/router.ts`, `src/plugins/registry.ts`, `src/config/constants.ts`
+`src/utils/get-type.ts`, `src/utils/safe-json.ts`, `src/profanity/service.ts`, `src/db/state.ts`, `src/middleware/admin-gate.ts`, `src/middleware/rate-limit.ts`, `src/transport/errors.ts`, `src/transport/compression.ts`, `src/story/quality-evaluator.ts`, `src/story/turn-strategies.ts`, `src/story/events/extraction.ts`, `src/assistant/service.ts`, `src/content/hash-injection.ts`, `src/routes/router.ts`, `src/plugins/registry.ts`, `src/config/constants.ts`
 
 ### Key Files Needing DB/Provider Mocks
 
-`cancellation-actions.ts`, `cancellation-tracker.ts`, `image-gen-route.ts`, `generation-routes.ts`, `assets/service.ts`, `assets/controller.ts`, `personas/service.ts`, `personas/controller.ts`, `turn-manager.ts`, `quest-engine.ts`, `world-state.ts`, `story/events/` (validation + application), `middleware/auth.ts`, `assistant/prompt-assembler.ts`
+`cancellation-actions.ts`, `cancellation-tracker.ts`, `image-gen-route.ts`, `generation-routes.ts`, `assets/service.ts`, `assets/controller.ts`, `personas/service.ts`, `personas/controller.ts`, `turn-manager.ts`, `quest-engine.ts`, `world-state.ts`, `story/events/` (validation + application), `src/middleware/auth/`, `assistant/prompt-assembler.ts`
 
 ### Hard to Unit Test
 

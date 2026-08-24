@@ -116,7 +116,7 @@ Reconciliation of logic across the codebase — chat logic, group chat logic, pe
 
 - `src/routes/chats.ts` — chat logic
 - `src/group-chat/` — group chat logic
-- `src/middleware/auth.ts` — permissions
+- `src/middleware/auth/` — permissions (barrel: `authenticate.ts`, `token.ts`, `solo-user.ts`)
 - `src/routes/chat-export.ts` — blog/export
 - `src/crypto/` — encryption
 - `src/age-gate/` — NSFW support
