@@ -1,9 +1,12 @@
 /**
  * Route tests for the content-flag endpoints.
  *
- * Covers the reporter-identity hardening: `reporterId` must come from the
- * authenticated session, never from the request body, so a caller cannot
- * flag content as another user.
+ * Covers:
+ *   - Reporter-identity hardening: `reporterId` is derived from the
+ *     authenticated session, never the request body.
+ *   - Moderator permission gating: GET /flags (review) and PUT /flags/:id
+ *     (action) accept the `moderator` role in addition to `admin`/`solo`/`tester`.
+ *     Non-moderator roles (user/player/viewer/guest/bot/creator) are denied.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -91,5 +94,98 @@ describe("content flag routes", () => {
     const { flags, total, } = body.data;
     expect(Array.isArray(flags,),).toBe(true,);
     expect(typeof total,).toBe("number",);
+  });
+
+  // ── Moderator permission gating ────────────────────────────
+
+  test("GET queue denies user role", async () => {
+    const app = createApp(db, uid(), "user",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET queue denies player role", async () => {
+    const app = createApp(db, uid(), "player",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET queue denies viewer role", async () => {
+    const app = createApp(db, uid(), "viewer",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET queue denies guest role", async () => {
+    const app = createApp(db, uid(), "guest",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET queue denies bot role", async () => {
+    const app = createApp(db, uid(), "bot",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET queue denies creator role", async () => {
+    const app = createApp(db, uid(), "creator",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET queue accepts moderator role", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags?status=pending",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json();
+    expect(Array.isArray(body.data.flags,),).toBe(true,);
+  });
+
+  test("GET queue accepts solo role", async () => {
+    const app = createApp(db, uid(), "solo",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("GET queue accepts tester role", async () => {
+    const app = createApp(db, uid(), "tester",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("GET queue requires auth", async () => {
+    const app = createApp(db, null, "moderator",);
+    const res = await app.handle(new Request("http://localhost/api/nsfw/moderation/flags",),);
+    expect(res.status,).toBe(401,);
+  });
+
+  // PUT /flags/:id (resolve) requires moderation.action
+
+  function resolveRequest(flagId: string, body: Record<string, unknown>,): Request {
+    return new Request(`http://localhost/api/nsfw/moderation/flags/${flagId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify(body,),
+    },);
+  }
+
+  test("PUT /flags/:id denies user role", async () => {
+    const app = createApp(db, uid(), "user",);
+    const res = await app.handle(resolveRequest("flag-1", { resolution: "kept", status: "resolved", },),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("PUT /flags/:id denies viewer role", async () => {
+    const app = createApp(db, uid(), "viewer",);
+    const res = await app.handle(resolveRequest("flag-1", { resolution: "kept", status: "resolved", },),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("PUT /flags/:id accepts moderator role", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    const res = await app.handle(resolveRequest("nonexistent-flag", { resolution: "kept", status: "resolved", },),);
+    // Resolves to 400 (flag not found) once auth passes — confirms moderator reached the handler.
+    expect(res.status,).toBe(400,);
   });
 });

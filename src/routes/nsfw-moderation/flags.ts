@@ -8,7 +8,7 @@ import { Elysia, t, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { flagBody, flagQuery, requireAdmin, resolveFlagBody, } from "./shared";
+import { flagBody, flagQuery, requireModerationAction, requireModerationReview, resolveFlagBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
@@ -36,7 +36,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
       }, { body: flagBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
       .get(`${prefix}/nsfw/moderation/flags`, async (ctx: any,) => {
-        const auth = requireAdmin(ctx,);
+        const auth = requireModerationReview(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
           const status = (ctx.query.status as string) ?? "pending";
@@ -49,7 +49,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
       }, { query: flagQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
       .put(`${prefix}/nsfw/moderation/flags/:id`, async (ctx: any,) => {
-        const adminId = requireAdmin(ctx,);
+        const adminId = requireModerationAction(ctx,);
         if (typeof adminId !== "string") { return adminId; }
         try {
           const { resolution, status, } = ctx.body;
