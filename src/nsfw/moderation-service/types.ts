@@ -74,7 +74,8 @@ export interface ModerationDeps {
  * parallel interface alongside it.
  */
 export interface NsfwModerationService {
-  getPreferences(userId: string,): Promise<NsfwUserPrefs>;
+  getPreferences(userId: string,): Promise<NsfwUserPrefs | null>;
+  getOrCreateOwn(userId: string,): Promise<NsfwUserPrefs>;
   updatePreferences(
     userId: string,
     updates: Partial<Pick<NsfwUserPrefs, "nsfwEnabled" | "maxRating">>,
@@ -104,7 +105,7 @@ export interface NsfwModerationService {
     status: "resolved" | "dismissed" | "confirmed",
   ): Promise<ContentFlag>;
   getAuditLog(targetUserId: string, options?: { limit?: number; offset?: number },): Promise<ModAction[]>;
-  exportUserData(userId: string,): Promise<{ preferences: NsfwUserPrefs; actions: ModAction[]; flags: ContentFlag[] }>;
+  exportUserData(userId: string): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }>;
   deleteUserData(userId: string,): Promise<void>;
   getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }>;
   setChatNsfwOverride(chatId: string, override: "enabled" | "disabled" | null,): Promise<void>;

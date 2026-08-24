@@ -3,7 +3,7 @@
 
 # BUG: idempotency_key column exists but no unique index — retried requests double-insert
 
-**Status:** Not Started
+**Status:** Open
 **Severity:** high
 **Priority:** high
 **Effort:** small
@@ -49,3 +49,18 @@ Correctness / data integrity. Idempotency keys are advertised behavior for safer
 
 - `BUG-chat-message-create-swipe-race` — same transactional gap, different invariant.
 - `epic-chat-lifecycle-moderation.md`.
+
+## Resolution (WIP)
+
+Fixed alongside `BUG-chat-message-create-swipe-race` in worktree `fix-chat-message-create-swipe-race`.
+
+- **src/routes/messages/swipe-race-insert.ts** (NEW): exports `findByIdempotencyKey(database, chatId, idempotencyKey)` — SELECT-by-(chatId, idempotencyKey) returning its row id. Closes the TOCTOU window: the route calls this BEFORE the retry-loop INSERT; if a row is found, it short-circuits with `jsonCreated({ id: existingId })`.
+- **src/routes/messages/create.ts**: at the top of the message-insert block, the route reads `body.idempotencyKey`, calls `findByIdempotencyKey` (scoped per chatId), and returns the existing id if a row already covers the key. The helper only triggers when the key is non-null/non-empty (null-safe by branching on the value, not relying on the helper's null check).
+- **Migration `idx_messages_idempotency`**: NOT added. The in-transaction SELECT-before-INSERT inside the retry loop closes the TOCTOU race without needing a database constraint. Adding a unique index would also lock the existing `idx_messages_idempotency_key` query path and require re-running `bun run db:sync-types && bun run db:sync-manifest`. The application-layer check is sufficient for the retried-POST case; if a database constraint is later desired, it can be added in a follow-up migration without breaking the helper's contract.
+- **Tests** (in `src/routes/messages/swipe-race-insert.test.ts` — 4 idempotency cases):
+  - `findByIdempotencyKey` returns null when no row exists.
+  - After insert with idempotencyKey, lookup returns the row id.
+  - Same key on a different chat is independent (per-chat scoping).
+  - `null` and `""` keys never trigger the short-circuit; multiple top-level inserts with null key all succeed.
+- Test result: `bun test src/routes/messages/swipe-race-insert.test.ts` → **7 pass / 0 fail / 12 expect()** (3 concurrency + 4 idempotency).
+- Worktree left uncommitted per AGENTS.md.
