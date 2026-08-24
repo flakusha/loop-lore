@@ -556,9 +556,9 @@ export const ChatsSchema = t.Object({
   name_source: t.Optional(t.String(),),
   template_id: t.Optional(t.String(),),
   visibility: t.Optional(t.String(),),
+  thinking_visibility: t.Optional(t.String(),),
   quick_replies: t.Optional(t.String(),),
   prompt_override: t.Optional(t.String(),),
-  thinking_visibility: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────
@@ -831,12 +831,12 @@ export const MessagesSchema = t.Object({
   format_version: t.Optional(t.Number(),),
   section_id: t.Optional(t.String(),),
   tool_calls: t.Optional(t.String(),),
+  thinking: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),
   e2e_payload: t.Optional(t.String(),),
   e2e_session_id: t.Optional(t.String(),),
   e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
   e2e_chain_index: t.Optional(t.Number(),),
-  thinking: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
