@@ -8,6 +8,7 @@
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
 **Related:** docs/frontend/chat/commands-and-misc.md
+**git issue:** 273bcfa
 
 ## Summary
 

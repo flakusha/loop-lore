@@ -99,6 +99,17 @@
     "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md",
     "git_issue": "821e0d1"
   },
+  "BUG-AUTO-GEN-ASSEMBLE-OMITS-PROVIDERID-TOKENBUDGET-AND-NEVER-COM": {
+    "hash": "8a5e407",
+    "extid": "BUG-AUTO-GEN-ASSEMBLE-OMITS-PROVIDERID-TOKENBUDGET-AND-NEVER-COM",
+    "type": "BUG",
+    "title": "Auto-gen assemble() omits providerId/tokenBudget and never compacts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md"
+  },
   "BUG-AUTO-ROTATION-CONFIG-DRIFT": {
     "hash": "a9a4ea3",
     "extid": "BUG-AUTO-ROTATION-CONFIG-DRIFT",
@@ -225,6 +236,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md",
     "git_issue": "1b233cc"
+  },
+  "BUG-CHAT-HISTORY-TRUNCATES-TO-OLDEST-MESSAGES-DROPS-RECENT-TURNS": {
+    "hash": "d4547f8",
+    "extid": "BUG-CHAT-HISTORY-TRUNCATES-TO-OLDEST-MESSAGES-DROPS-RECENT-TURNS",
+    "type": "BUG",
+    "title": "Chat history truncates to oldest messages, drops recent turns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md"
   },
   "BUG-CHAT-IDEMPOTENCY-NOT-ENFORCED": {
     "hash": "pending",
@@ -439,6 +461,17 @@
     "source": ".plan/tickets/BUG-command-dispatch-async-handler-uncaught.md",
     "git_issue": "6faa7ba"
   },
+  "BUG-COMPUTECONTEXTWINDOW-PHASE-3-TRIMS-NEWEST-INSTEAD-OF-OLDEST": {
+    "hash": "51281c7",
+    "extid": "BUG-COMPUTECONTEXTWINDOW-PHASE-3-TRIMS-NEWEST-INSTEAD-OF-OLDEST",
+    "type": "BUG",
+    "title": "computeContextWindow phase-3 trims newest instead of oldest",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md"
+  },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
     "extid": "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION",
@@ -628,6 +661,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md",
     "git_issue": "87098c5"
+  },
+  "BUG-GROUP-PARTICIPANT-INJECTION-ABSENT-ON-MANUAL-GENERATE-ROUTE": {
+    "hash": "807abdb",
+    "extid": "BUG-GROUP-PARTICIPANT-INJECTION-ABSENT-ON-MANUAL-GENERATE-ROUTE",
+    "type": "BUG",
+    "title": "Group participant injection absent on manual generate route",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
   },
   "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
     "hash": "pending",
@@ -8127,7 +8171,8 @@
     "priority": "Medium",
     "epic": "(none — no dedicated frontend epic tracks this spec)",
     "tags": [],
-    "source": ".plan/tickets/TASK-frontend-characters-page-spec.md"
+    "source": ".plan/tickets/TASK-frontend-characters-page-spec.md",
+    "git_issue": "ec5148d"
   },
   "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC": {
     "hash": "pending",
@@ -8138,7 +8183,8 @@
     "priority": "Medium",
     "epic": "epic-frontend-backend-integration",
     "tags": [],
-    "source": ".plan/tickets/TASK-frontend-chat-commands-extras-spec.md"
+    "source": ".plan/tickets/TASK-frontend-chat-commands-extras-spec.md",
+    "git_issue": "273bcfa"
   },
   "TASK-FRONTEND-CHAT-GENERATION-SPEC": {
     "hash": "pending",
@@ -8149,7 +8195,8 @@
     "priority": "High",
     "epic": "epic-frontend-backend-integration",
     "tags": [],
-    "source": ".plan/tickets/TASK-frontend-chat-generation-spec.md"
+    "source": ".plan/tickets/TASK-frontend-chat-generation-spec.md",
+    "git_issue": "d18c94e"
   },
   "TASK-FRONTEND-CHAT-MEMORIES-SPEC": {
     "hash": "pending",
@@ -8160,7 +8207,8 @@
     "priority": "Medium",
     "epic": "epic-frontend-backend-integration",
     "tags": [],
-    "source": ".plan/tickets/TASK-frontend-chat-memories-spec.md"
+    "source": ".plan/tickets/TASK-frontend-chat-memories-spec.md",
+    "git_issue": "2f6424b"
   },
   "TASK-FRONTEND-CHAT-MESSAGES-SPEC": {
     "hash": "pending",
@@ -8171,7 +8219,8 @@
     "priority": "High",
     "epic": "epic-frontend-backend-integration",
     "tags": [],
-    "source": ".plan/tickets/TASK-frontend-chat-messages-spec.md"
+    "source": ".plan/tickets/TASK-frontend-chat-messages-spec.md",
+    "git_issue": "710b94e"
   },
   "TASK-FRONTEND-COMPRESSION": {
     "hash": "pending",
