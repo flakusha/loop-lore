@@ -34,6 +34,25 @@ replacement work:
   AUX classifier
 - `TASK-aux-mood-classification.md` — replace keyword `MoodHook` with AUX
   classifier
+## Adjacent nit: spurious `async` on `canHandle`
+
+All 4 hooks (`emotion-hook.ts:20`, `mood-hook.ts:20`, `moderation-hook.ts:109`,
+`nsfw-hook.ts:44`) declare `canHandle` as `async` and carry the
+`// eslint-disable-next-line @typescript-eslint/require-await` disable comment.
+Functionally correct (JS auto-wraps the bare return), but the modifier is
+superfluous — `canHandle` has no `await` in any of the 4 bodies. A sync
+function returning `boolean` doesn't satisfy the `HookHandler.canHandle`
+interface (`types.ts:54` mandates `Promise<boolean>`), so the `async`
+keyword is the legitimate way to satisfy the interface — but the disable
+comment makes the intent explicit at the call site.
+
+If the interface is loosened to `boolean | Promise<boolean>` in a follow-up,
+all 4 `canHandle` methods can drop both the `async` keyword and the
+disable comment in one pass. Trivial, low-risk, but cross-cuts the
+`HookHandler` contract — coordinate with the other hook consumers
+(custom user-defined hooks via `registerHook`) before changing.
+
+## Fix
 - `TASK-aux-enrichment-emotion-avatar-task.md` — wrapper scaffolding for
   `src/aux-pipeline/tasks/emotion-avatar.ts`
 
