@@ -27,3 +27,6 @@ degradation (IS7) closed in worktree `feature/a8-unwired-closeout` (commit `a7ff
 ## Acceptance
 
 - [x] Equipment durability degradation in combat (IS7)
+
+
+git issue: 3d93144
