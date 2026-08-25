@@ -22,6 +22,7 @@ export interface ChatCoreUiState {
   _storageHandler: ((e: StorageEvent,) => void) | null;
   _unseenCounts: Record<string, number>;
   _isScrolledUp: boolean;
+  _scrollEl: Element | null;
   _scrollHandler: (() => void) | null;
   _debugView: boolean;
   _showCommandPalette: boolean;

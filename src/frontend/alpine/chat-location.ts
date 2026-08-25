@@ -1,15 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// ── Chat location (change / transfer / join at location) — panel ─
-//
-// Location controls surface for the active chat. It lists the world's
-// locations, lets the user change the chat's current location (PUT
-// /api/v1/chats/:id/location), transfer the chat to a location (POST
-// /api/chats/:id/transfer), and discover/join other chats already at a
-// selected location (GET /api/chats/joinable + POST /api/chats/:id/join).
-// This module only drives existing endpoints — no location access-check
-// logic is modified.
+// ── Chat location panel: change/transfer location, join chats at a location.
+// Drives existing endpoints only; no access-check logic modified.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -36,6 +29,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   _chatCurrentLocationId: null as string | null,
   _chatRecentLocationChanged: false,
   _locationBusy: false,
+  _locationFlagTimer: null as ReturnType<typeof setTimeout> | null,
   _locationJoinableChats: [] as {
     chatId: string;
     chatName: string;
@@ -48,6 +42,17 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     if (this._locationOpen && this.activeChat) {
       this.loadLocations();
     }
+  },
+
+  /** Mark recently-changed flag; cancel any pending reset timer first (rapid changes). */
+  _scheduleRecentLocationFlagReset() {
+    if (this._locationFlagTimer) {
+      globalThis.clearTimeout(this._locationFlagTimer,);
+    }
+    this._locationFlagTimer = globalThis.setTimeout(() => {
+      this._chatRecentLocationChanged = false;
+      this._locationFlagTimer = null;
+    }, 2500,);
   },
 
   /** Load the world's locations and chat metadata for the active chat. */
@@ -143,9 +148,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         const reload = await Promise.allSettled([this.loadChats?.(), this.loadBackground?.(),],);
         if (reload.some((r,) => r.status === "rejected")) { throw new Error("chat reload failed",); }
         await this.loadLocationJoinable();
-        globalThis.setTimeout(() => {
-          this._chatRecentLocationChanged = false;
-        }, 2500,);
+        this._scheduleRecentLocationFlagReset();
       } else {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedChangeLocation",), },);
       }
@@ -178,9 +181,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         const reload = await Promise.allSettled([this.loadChats?.(), this.loadBackground?.(),],);
         if (reload.some((r,) => r.status === "rejected")) { throw new Error("chat reload failed",); }
         await this.loadLocationJoinable();
-        globalThis.setTimeout(() => {
-          this._chatRecentLocationChanged = false;
-        }, 2500,);
+        this._scheduleRecentLocationFlagReset();
       } else {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedTransferChat",), },);
       }

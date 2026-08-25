@@ -89,6 +89,8 @@ export interface ChatLocationState {
   _chatCurrentLocationId: string | null;
   _chatRecentLocationChanged: boolean;
   _locationBusy: boolean;
+  _locationFlagTimer: ReturnType<typeof setTimeout> | null;
+  _scheduleRecentLocationFlagReset(): void;
   _locationJoinableChats: {
     chatId: string;
     chatName: string;
