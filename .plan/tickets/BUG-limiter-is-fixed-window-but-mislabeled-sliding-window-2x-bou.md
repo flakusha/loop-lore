@@ -1,6 +1,7 @@
 # BUG: Limiter is fixed-window but mislabeled sliding-window (2x boundary burst)
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Resolved (true sliding-window via per-key timestamp queue; consume() returns {allowed,limit,remaining,resetSec}; 19 unit tests incl. 2x-burst regression)
+
 **Priority:** high
 **Effort:** Medium
 
