@@ -13,6 +13,9 @@
  * - Test files (`*.test.ts`) and migrations may legitimately be large.
  * - Auto-generated files (carry `DO NOT EDIT MANUALLY` banner emitted by
  *   the `db:sync-*` generators) are owned by their generator, not hand-split.
+ * - Per-file override: a top-of-file `// size-allow: N` directive (within the
+ *   first 5 lines, alongside the SPDX header) sets a larger line budget for
+ *   that one file. Use sparingly — the default 250L is the AGENTS.md ceiling.
  *
  * Modes:
  * - Default (no flags): warns and exits 0 — non-blocking nudge
@@ -34,15 +37,23 @@ const glob = new Glob("src/**/*.ts",);
 // splitting them by hand would be overwritten on the next db:sync-* run.
 const GENERATED_MARKER = "DO NOT EDIT MANUALLY";
 
+// Per-file override: a `// size-allow: N` directive in the first 5 lines
+// bumps the budget for that file. Scoped to the file header (first 512 chars)
+// so it can sit next to the SPDX banner without polluting the body.
+const SIZE_ALLOW_RE = /^\/\/\s*size-allow:\s*(\d+)\s*$/m;
+const HEADER_BYTES = 512;
+
 let errors = 0;
 let warnings = 0;
 for await (const file of glob.scan()) {
   if (file.includes(".test.",) || file.includes("/migrations/",)) { continue; }
   const text = await Bun.file(file,).text();
   if (text.includes(GENERATED_MARKER,)) { continue; }
+  const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
+  const fileLimit = allowMatch ? parseInt(allowMatch[1], 10,) : LIMIT;
   const lines = text.split("\n",).length;
-  if (lines > LIMIT) {
-    const msg = `[size] ${file}: ${lines}L exceeds ${LIMIT}L limit`;
+  if (lines > fileLimit) {
+    const msg = `[size] ${file}: ${lines}L exceeds ${fileLimit}L limit`;
     if (STRICT) {
       console.error(msg + " — must split (see 04)",);
       errors++;
