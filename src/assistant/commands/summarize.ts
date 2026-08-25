@@ -5,6 +5,7 @@
 //
 // /summarize — extractive summary of recent messages.
 
+import { parseIntOr, } from "../../utils/parse-number";
 import { type CommandResult, registerCommand, } from "./registry";
 
 function buildSummary(args: string[], ctx: { messages?: { role: string; content: string }[] },): CommandResult {
@@ -12,7 +13,7 @@ function buildSummary(args: string[], ctx: { messages?: { role: string; content:
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
 
-  const count = Math.min(parseInt(args[0] || "10", 10,) || 10, ctx.messages.length,);
+  const count = Math.min(parseIntOr(args[0] ?? "10", 10,), ctx.messages.length,);
   const recent = ctx.messages.slice(-count,);
   const userMsgs: typeof recent = [];
   const aiMsgs: typeof recent = [];

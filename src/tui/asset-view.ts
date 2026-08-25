@@ -10,6 +10,7 @@
  */
 
 import blessed from "blessed";
+import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
 
 export interface LinkedAsset {
@@ -170,13 +171,18 @@ export class AssetView {
 
     try {
       const url = `${API_BASE}/api/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
-      const res = await fetch(url,);
-      if (!res.ok) {
-        this.renderInfo(`Failed to load (HTTP ${res.status})`,);
+      const result = await safeFetch<{ data?: LinkedAsset[] }>(url, {
+        handle401: false,
+      },);
+      if (!result.ok) {
+        this.renderInfo(
+          result.status !== undefined
+            ? `Failed to load (HTTP ${result.status})`
+            : `Error: ${result.error.message}`,
+        );
         return;
       }
-      const body = (await res.json()) as { data?: LinkedAsset[] };
-      this.assets = body.data ?? [];
+      this.assets = result.data.data ?? [];
       this.currentIndex = 0;
       this.renderCurrent();
     } catch (error) {

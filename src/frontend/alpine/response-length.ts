@@ -9,6 +9,7 @@
  * influence the max_tokens parameter passed to the LLM.
  */
 
+import { parseIntOr, } from "../utils/parse-number";
 const LENGTH_PRESETS = [
   { value: "short", label: "Short (50–150 tokens)", maxTokens: 150, },
   { value: "medium", label: "Medium (150–400 tokens)", maxTokens: 400, },
@@ -48,8 +49,6 @@ const LENGTH_PRESETS = [
 
     /** Set the preset and persist to localStorage */
     setPreset(value: string,): void {
-      this.preset = value;
-      this.showCustom = value === "custom";
       localStorage.setItem("response-length-preset", value,);
     },
 
@@ -64,9 +63,9 @@ const LENGTH_PRESETS = [
       const savedPreset = localStorage.getItem("response-length-preset",);
       if (savedPreset) { this.preset = savedPreset; }
       const savedMin = localStorage.getItem("response-length-custom-min",);
-      if (savedMin) { this.customMin = parseInt(savedMin, 10,); }
+      if (savedMin) { this.customMin = parseIntOr(savedMin, this.customMin,); }
       const savedMax = localStorage.getItem("response-length-custom-max",);
-      if (savedMax) { this.customMax = parseInt(savedMax, 10,); }
+      if (savedMax) { this.customMax = parseIntOr(savedMax, this.customMax,); }
       this.showCustom = this.preset === "custom";
     },
   };
