@@ -39,6 +39,7 @@ import {
   TelemetryAnalyticsErrorsRow,
   TelemetryEventBody,
 } from "../validation/schemas";
+import { purgeTelemetryEvents, } from "./telemetry-purge";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -197,32 +198,20 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
         tags: ["Telemetry", "Analytics",],
       },
     },)
-    .delete(`${prefix}/telemetry/analytics/purge`, async (ctx: any,) => {
-      if (!can(ctx.userRole, "admin.system",)) {
-        return jsonError({
-          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
-          status: HttpStatus.Forbidden,
-          code: ErrorCode.Forbidden,
-        },);
-      }
-      if (!isTelemetryEnabled()) {
-        return jsonError({
-          message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
-          status: HttpStatus.NotFound,
-        },);
-      }
-      const retentionDays = ctx.query.days ? Number(ctx.query.days,) : 30;
-      const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000,).toISOString();
-      const result = await database
-        .deleteFrom("telemetry_events",)
-        .where("created_at", "<", cutoff,)
-        .executeTakeFirst();
-      return jsonResponse({ purged: Number(result.numDeletedRows ?? 0,), },);
-    }, {
-      response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+    .delete(`${prefix}/telemetry/analytics/purge`, async (ctx: any,) =>
+      // BUG-telemetry-purge-unbounded-days — handler lives in ./telemetry-purge
+      purgeTelemetryEvents(database, ctx,), {
+      response: {
+        200: SuccessResponse,
+        400: ErrorResponse,
+        401: ErrorResponse,
+        403: ErrorResponse,
+        404: ErrorResponse,
+      },
       detail: {
         summary: "Purge old telemetry",
-        description: "Delete telemetry events older than retention window. Admin only.",
+        description:
+          "Delete telemetry events older than the retention period (clamped 1..365 days). Requires ?confirm=PURGE. Admin only.",
         tags: ["Telemetry", "Analytics",],
       },
     },);
