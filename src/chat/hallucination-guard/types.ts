@@ -42,6 +42,14 @@ export interface HallucinationCheckOpts {
   knownActorIds?: string[];
   /** Location IDs that are known (always valid) */
   knownLocationIds?: string[];
+  /**
+   * Transient/dynamic entity names that are valid for this check even though
+   * they are not (yet) persisted in the database. Use for session-created
+   * objects, NPCs spawned this turn, or other world-state entities that exist
+   * but are absent from the static snapshot — prevents false-positive
+   * hallucination flags. (B2, 2026-08-25)
+   */
+  knownEntityNames?: string[];
 }
 
 /** A proper noun extracted from text, pending classification. */
