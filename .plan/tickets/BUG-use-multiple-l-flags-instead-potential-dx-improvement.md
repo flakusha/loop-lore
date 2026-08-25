@@ -1,6 +1,6 @@
 # BUG: use multiple -l flags instead - potential DX improvement
 
-**Status:** ⬜ Not Started (validated 2026-08-25 — premise CONFIRMED)
+**Status:** ✅ Done (fixed: comma lists + single-edit application)
 **Priority:** low
 **Effort:** Medium
 
