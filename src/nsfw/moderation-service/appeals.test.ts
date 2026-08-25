@@ -10,6 +10,7 @@ import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import {
+  executeReversal,
   getPendingAppeals,
   getUserAppeals,
   reviewAppeal,
@@ -39,9 +40,41 @@ function makeCtx(overrides?: {
   unbanUser?: ReturnType<typeof mock>;
   unshadowUser?: ReturnType<typeof mock>;
 },): NsfwModerationServiceContext {
+  const recordAction = mock(async (params: Parameters<NsfwModerationServiceContext["recordAction"]>[0],) => {
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
+    await db.insertInto("moderation_actions",).values({
+      id,
+      action_type: params.actionType,
+      target_user_id: params.targetUserId,
+      performed_by: params.performedBy,
+      reason: params.reason,
+      scope: params.scope,
+      scope_id: params.scopeId,
+      metadata: "{}",
+      expires_at: null,
+      created_at: now,
+      superseded_by: null,
+      deleted_at: null,
+      deleted_by: null,
+    },).execute();
+    return {
+      id,
+      actionType: params.actionType,
+      targetUserId: params.targetUserId,
+      performedBy: params.performedBy,
+      reason: params.reason,
+      scope: params.scope,
+      scopeId: params.scopeId,
+      metadata: {},
+      expiresAt: null,
+      createdAt: now,
+    } as ModAction;
+  },);
   return {
     db,
     log: makeLog(),
+    recordAction,
     unblockUser: overrides?.unblockUser ?? mock(() => Promise.resolve({} as ModAction,)),
     unbanUser: overrides?.unbanUser ?? mock(() => Promise.resolve({} as ModAction,)),
     unshadowUser: overrides?.unshadowUser ?? mock(() => Promise.resolve({} as ModAction,)),
@@ -228,7 +261,7 @@ describe("reviewAppeal", () => {
     expect(row?.updated_at,).toBeTruthy();
   });
 
-  test("approving a block appeal calls unblockUser for the target", async () => {
+  test("approving a block appeal records pending_reversal but does NOT unblock yet", async () => {
     await insertActionRow({ id: "action-d2", actionType: "block", targetUserId: USER, },);
     const unblock = mock(() => Promise.resolve({} as ModAction,));
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d2", reason: "x", },);
@@ -241,11 +274,16 @@ describe("reviewAppeal", () => {
       reviewNote: "appeal granted",
     },);
 
-    expect(unblock,).toHaveBeenCalledTimes(1,);
-    expect(unblock,).toHaveBeenCalledWith(USER, "admin-2", "Appeal approved",);
+    // BUG-nsfw-reviewappeal-auto-reverses-actions: approval is two-phase.
+    expect(unblock,).not.toHaveBeenCalled();
+    const reversal = await db.selectFrom("moderation_actions",).selectAll()
+      .where("action_type", "=", "pending_reversal",).execute();
+    expect(reversal,).toHaveLength(1,);
+    expect(reversal[0]?.reason,).toBe("appeal granted",);
+    expect(reversal[0]?.superseded_by,).toBeNull();
   });
 
-  test("approving a ban appeal calls unbanUser for the target", async () => {
+  test("approving a ban appeal records pending_reversal but does NOT unban yet", async () => {
     await insertActionRow({ id: "action-d3", actionType: "ban", targetUserId: USER, },);
     const unban = mock(() => Promise.resolve({} as ModAction,));
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d3", reason: "x", },);
@@ -258,11 +296,13 @@ describe("reviewAppeal", () => {
       reviewNote: "appeal granted",
     },);
 
-    expect(unban,).toHaveBeenCalledTimes(1,);
-    expect(unban,).toHaveBeenCalledWith(USER, "admin-2", "Appeal approved",);
+    expect(unban,).not.toHaveBeenCalled();
+    const reversal = await db.selectFrom("moderation_actions",).selectAll()
+      .where("action_type", "=", "pending_reversal",).execute();
+    expect(reversal,).toHaveLength(1,);
   });
 
-  test("approving a shadow appeal calls unshadowUser", async () => {
+  test("approving a shadow appeal records pending_reversal but does NOT unshadow yet", async () => {
     await insertActionRow({ id: "action-d4", actionType: "shadow", targetUserId: USER, },);
     const unshadow = mock(() => Promise.resolve({} as ModAction,));
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d4", reason: "x", },);
@@ -275,7 +315,10 @@ describe("reviewAppeal", () => {
       reviewNote: "appeal granted",
     },);
 
-    expect(unshadow,).toHaveBeenCalledTimes(1,);
+    expect(unshadow,).not.toHaveBeenCalled();
+    const reversal = await db.selectFrom("moderation_actions",).selectAll()
+      .where("action_type", "=", "pending_reversal",).execute();
+    expect(reversal,).toHaveLength(1,);
   });
 
   test("approving an appeal for an unknown action type does not throw", async () => {
@@ -304,5 +347,86 @@ describe("reviewAppeal", () => {
       status: "approved",
       reviewNote: "ok",
     },),).resolves.toBeUndefined();
+  });
+});
+
+describe("executeReversal", () => {
+  test("admin-B can execute the reversal after admin-A approves", async () => {
+    await insertActionRow({ id: "action-r1", actionType: "block", targetUserId: USER, },);
+    const unblock = mock(() => Promise.resolve({ id: "reversal-row", } as ModAction,));
+    const appeal = await submitAppeal({
+      thisL: makeCtx(),
+      userId: USER,
+      actionId: "action-r1",
+      reason: "please reconsider",
+    },);
+
+    await reviewAppeal({
+      thisL: makeCtx({ unblockUser: unblock, },),
+      appealId: appeal.id,
+      reviewedBy: "admin-A",
+      status: "approved",
+      reviewNote: "ok, releasing",
+    },);
+
+    await executeReversal({
+      thisL: makeCtx({ unblockUser: unblock, },),
+      appealId: appeal.id,
+      executedBy: "admin-B",
+    },);
+
+    expect(unblock,).toHaveBeenCalledTimes(1,);
+
+    const updated = await db.selectFrom("moderation_actions",).selectAll()
+      .where("id", "=", "action-r1",).executeTakeFirst();
+    expect(updated?.superseded_by,).toBe("reversal-row",);
+  });
+
+  test("rejects same-admin reversal (rejected by executeReversal guard)", async () => {
+    await insertActionRow({ id: "action-r2", actionType: "block", targetUserId: USER, },);
+    const appeal = await submitAppeal({
+      thisL: makeCtx(),
+      userId: USER,
+      actionId: "action-r2",
+      reason: "x",
+    },);
+
+    await reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-A",
+      status: "approved",
+      reviewNote: "ok",
+    },);
+
+    await expect(executeReversal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      executedBy: "admin-A",
+    },),).rejects.toThrow(/different admin/,);
+  });
+
+  test("rejects executeReversal when appeal is not approved", async () => {
+    await insertActionRow({ id: "action-r3", actionType: "block", targetUserId: USER, },);
+    const appeal = await submitAppeal({
+      thisL: makeCtx(),
+      userId: USER,
+      actionId: "action-r3",
+      reason: "x",
+    },);
+
+    await reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-A",
+      status: "denied",
+      reviewNote: "denied",
+    },);
+
+    await expect(executeReversal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      executedBy: "admin-B",
+    },),).rejects.toThrow(/not in 'approved'/,);
   });
 });
