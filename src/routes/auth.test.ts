@@ -44,7 +44,7 @@ function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },)
   const sessionsCount = overrides?.sessionsCount ?? 0;
   return {
     fn: {
-      countAll: () => ({ as: (_alias: string) => "count_all_marker" }),
+      countAll: () => ({ as: (_alias: string,) => "count_all_marker", }),
     },
     selectFrom: (table: string,) => ({
       select: (cols: any,) => {

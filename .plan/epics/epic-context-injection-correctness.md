@@ -26,10 +26,10 @@ consistently.
 
 | Ticket | Severity | Summary |
 | ------ | -------- | ------- |
-| [BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns](../../tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md) | high | Chat history ordered `created_at ASC` + `limit(tokenBudget/4)` keeps oldest, drops newest; `chatHistory` is `PRIORITY 0` so never trimmed. |
-| [BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-compacts](../../tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md) | high | `prepare-generation.ts:90` omits `providerId`/`tokenBudget`; budget defaults 32000, no compaction; `compactPromptHistory` dead. |
-| [BUG-group-participant-injection-absent-on-manual-generate-route](../../tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md) | medium | `groupParticipantIds` only set in auto-gen; manual route + context-budget omit it; includes user participants. |
-| [BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest](../../tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md) | low | `computeContextWindow` phase-3 keeps oldest on overflow; latent (handlers uses only `totalTokens`). |
+| [BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns](../tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md) | high | Chat history ordered `created_at ASC` + `limit(tokenBudget/4)` keeps oldest, drops newest; `chatHistory` is `PRIORITY 0` so never trimmed. |
+| [BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-compacts](../tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md) | high | `prepare-generation.ts:90` omits `providerId`/`tokenBudget`; budget defaults 32000, no compaction; `compactPromptHistory` dead. |
+| [BUG-group-participant-injection-absent-on-manual-generate-route](../tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md) | medium | `groupParticipantIds` only set in auto-gen; manual route + context-budget omit it; includes user participants. |
+| [BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest](../tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md) | low | `computeContextWindow` phase-3 keeps oldest on overflow; latent (handlers uses only `totalTokens`). |
 
 ## Open verification (not yet filed)
 
