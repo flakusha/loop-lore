@@ -68,21 +68,21 @@ export function hasSafeShape(pattern: string,): boolean {
     }
     if (ch === "|") {
       // Empty branch when nothing precedes this "|" (start or after "|").
-      if (body.length === 0 || body.endsWith("|")) { emptyBranch = true; }
+      if (body.length === 0 || body.endsWith("|",)) { emptyBranch = true; }
       body += "|";
       continue;
     }
     if (ch === ")") {
       // Empty trailing branch: body ends with "|" (e.g. "(a|)").
-      if (body.length === 0 || body.endsWith("|")) { emptyBranch = true; }
+      if (body.length === 0 || body.endsWith("|",)) { emptyBranch = true; }
       const closedBody = body;
-      const closedEmpty = emptyBranch;
-      const outer = groupStack.pop() ?? { body: "", emptyBranch: false };
+      const closedEmpty: boolean = emptyBranch;
+      const outer = groupStack.pop() ?? { body: "", emptyBranch: false, };
       const next = pattern[i + 1];
-      const groupQuantified = next !== undefined && ATOM_QUANTIFIER.test(next);
+      const groupQuantified = next !== undefined && ATOM_QUANTIFIER.test(next,);
       // Escaped sequences (\+, \{) are inert — mask them before scanning.
-      const unescaped = closedBody.replace(/\\./g, "ES");
-      if (groupQuantified && (GROUP_BODY_QUANTIFIER.test(unescaped) || closedEmpty)) {
+      const unescaped = closedBody.replace(/\\./g, "ES",);
+      if (groupQuantified && (GROUP_BODY_QUANTIFIER.test(unescaped,) || closedEmpty)) {
         return false;
       }
       emptyBranch = outer.emptyBranch || closedEmpty;
@@ -92,4 +92,3 @@ export function hasSafeShape(pattern: string,): boolean {
   }
   return true;
 }
-
