@@ -6,9 +6,9 @@
  *
  * Exporting and deleting a user's moderation-related data (GDPR support).
  */
+import { jsonStringifyOr, } from "../../utils/safe-json";
 import { mapFlag, } from "./flags";
 import type { ContentFlag, ModAction, NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
-import { jsonStringifyOr, } from "../../utils/safe-json";
 
 export interface ExportUserDataArgs {
   thisL: NsfwModerationServiceContext;
