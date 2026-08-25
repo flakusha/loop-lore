@@ -10,6 +10,8 @@
  * is one file + one line in the registry — no edits to the orchestrator.
  */
 import type { Kysely, } from "kysely";
+import type { OutputStyleConfig, } from "../../chat/output-style";
+import type { ResponseLengthConfig, } from "../../chat/types";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
@@ -79,6 +81,8 @@ export interface AssembledPrompt {
   tokenBudget: number;
   /** Per-section breakdown for debug UI */
   sections: PromptSectionReport[];
+  /** Resolved response-length config (wires resolveResponseLength into assembly). */
+  responseLength?: ResponseLengthConfig | null;
 }
 
 /** Minimal actor projection the section builders need. */
@@ -101,6 +105,10 @@ export interface AssembleChat {
   mode: string;
   world_id: string | null;
   current_location_id: string | null;
+  output_style_preset: string | null;
+  gm_config: string | null;
+  response_length_preset: string | null;
+  response_length_custom: number | null;
 }
 
 /** Shared inputs handed to every section builder. */
@@ -124,6 +132,10 @@ export interface AssembleContext {
   assistantName?: string;
   /** Optional game-master name for task-clarification injection. */
   gmName?: string;
+  /** Resolved output style (null when none configured). */
+  outputStyle?: OutputStyleConfig | null;
+  /** Resolved response-length config (wires resolveResponseLength into assembly). */
+  responseLength?: ResponseLengthConfig | null;
 }
 
 /** Builds one prompt section's messages. */
