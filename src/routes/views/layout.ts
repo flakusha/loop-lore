@@ -61,6 +61,7 @@ function wrapWithLayout(
   layout = layout.replace("{{locale}}", () => safeLocale,);
   layout = layout.replace("{{localeDir}}", () => LOCALE_REGISTRY[safeLocale].direction,);
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
+  // i18n: replace {{{t("key")}}} with translated string
   layout = applyI18n(layout, t,);
   // Inject locale strings synchronously so Alpine t() calls resolve before fetch completes
   if (locale) {
