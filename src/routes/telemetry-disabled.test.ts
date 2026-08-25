@@ -47,7 +47,7 @@ describeOrSkip("telemetry routes — disabled", () => {
       new Request("http://localhost/api/telemetry/event", {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ type: "frontend.page_view", },),
+        body: JSON.stringify({ type: "frontend.page_view", data: { path: "/", }, },),
       },),
     );
     expect(res.status,).toBe(200,);
