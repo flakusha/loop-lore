@@ -17,6 +17,9 @@ import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat", },);
 
+/** Monotonic per-load counter for optimistic temp message ids. */
+let TEMP_SEQ = 0;
+
 /** Build request body for sendMessage (handles encryption + attachments). */
 async function buildSendBody(
   ctx: ChatState,
@@ -72,7 +75,8 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     }
 
     // Unique id per optimistic send so rollback can target exactly this message.
-    const tempId = `temp-${globalThis.crypto.randomUUID()}`;
+    // No crypto.randomUUID — unavailable in insecure contexts (plain-http LAN).
+    const tempId = `temp-${Date.now()}-${(++TEMP_SEQ).toString(36,)}`;
     const msgs = this.messages;
     msgs.push({
       id: tempId,
