@@ -946,6 +946,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-history-can-inject-system-role-messages-prompt-injectio.md"
     },
     {
@@ -3355,6 +3359,12 @@
       "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
     }
   ],
+  "src/chat/service/carry-history.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-carryhistory-copies-key-id-into-migrated-chat-history-breaks.md"
+    }
+  ],
   "src/chat/service/carry-location.ts": [
     {
       "kind": "ticket",
@@ -4262,7 +4272,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
     },
     {
       "kind": "spec",
@@ -4825,6 +4843,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
     }
   ],
   "src/config/sections/templates.ts": [
@@ -5092,6 +5114,10 @@
   "src/crypto/asset-encryption.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     },
     {
@@ -5121,6 +5147,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
     },
     {
       "kind": "ticket",
@@ -5195,6 +5225,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint.md"
     },
     {
       "kind": "ticket",
@@ -5378,6 +5412,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-partial-failure-leaves-mixed-key-state-non-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-auto-key-rotation.md"
     },
     {
@@ -5471,13 +5513,27 @@
       "source": "docs/frontend/encryption.md"
     }
   ],
+  "src/crypto/key-rotation/auto-run.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k.md"
+    }
+  ],
   "src/crypto/key-rotation/re-encrypt.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
     }
   ],
   "src/crypto/key-rotation/rotate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-key-rotation-non-transactional-incomplete-re-encryption-stra.md"
@@ -5509,6 +5565,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-encrypted-envelope-v3-always-emit-compalgo-and-explicit-vers.md"
     },
     {
       "kind": "ticket",
@@ -9234,6 +9302,10 @@
     }
   ],
   "src/frontend/browser-compress.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-zstd-decompress-uses-fixed-16x-output-capacity-high-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-browser-pre-encrypt.md"
@@ -14359,10 +14431,6 @@
   ],
   "src/routes/admin/aux-telemetry.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-process-swarm.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md"
     }
@@ -14857,6 +14925,12 @@
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
     }
   ],
+  "src/routes/chat-export/export-route.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    }
+  ],
   "src/routes/chat-join.test.ts": [
     {
       "kind": "ticket",
@@ -15080,6 +15154,14 @@
   "src/routes/chats/participants.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-partial-failure-leaves-mixed-key-state-non-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
@@ -15293,6 +15375,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
+    }
+  ],
+  "src/routes/export-shared/chats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
     }
   ],
   "src/routes/export-sse.ts": [
@@ -15689,6 +15777,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
     }
   ],
   "src/routes/messages.test.ts": [
@@ -15860,7 +15952,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
     }
   ],
   "src/routes/messages/post.test.ts": [
@@ -15896,7 +15996,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
     },
     {
       "kind": "ticket",
@@ -15993,6 +16101,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-update-no-fts-refresh.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
     }
   ],
   "src/routes/middleware/version-redirect.ts": [
@@ -18804,6 +18916,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
     },
     {
@@ -18813,6 +18929,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
     },
     {
       "kind": "ticket",
@@ -18839,6 +18959,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-static-files-304-only-matches-a-single-exact-if-none-match-e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc.md"
     },
     {
       "kind": "ticket",
@@ -19539,6 +19663,10 @@
       "source": ".plan/epics/epic-transport-expansion.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-transport-compression-wire-receive-side-decompression-with-l.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     },
@@ -19561,6 +19689,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-transport-compression-wire-receive-side-decompression-with-l.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
     },
     {
       "kind": "spec",
@@ -19603,6 +19739,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc.md"
     }
   ],
   "src/transport/negotiation.ts": [
@@ -19875,6 +20015,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tighten-safeparseint-to-strict-base-10-contract.md"
+    }
+  ],
+  "src/utils/safe-buffer/compression.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-transport-compression-wire-receive-side-decompression-with-l.md"
     }
   ],
   "src/utils/safe-json.ts": [
