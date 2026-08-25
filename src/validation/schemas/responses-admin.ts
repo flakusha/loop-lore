@@ -61,9 +61,15 @@ export const AdminAuditRow = Type.Object({
   event_type: Type.Union([Type.String(), Type.Null(),]),
   entity_type: Type.Union([Type.String(), Type.Null(),]),
   entity_id: Type.Union([Type.String(), Type.Null(),]),
+  user_id: Type.Union([Type.String(), Type.Null(),]),
+  session_id: Type.Union([Type.String(), Type.Null(),]),
+  request_id: Type.Union([Type.String(), Type.Null(),]),
+  meta: Type.Union([Type.String(), Type.Null(),]),
+  action: Type.Union([Type.String(), Type.Null(),]),
+  timestamp: Type.Union([Type.Number(), Type.Null(),]),
+  time: Type.Union([Type.String(), Type.Null(),]),
   created_at: Type.String(),
 },);
-export type AdminAuditRow = Static<typeof AdminAuditRow>;
 
 /** One template profile summary (admin-templates.ts). */
 export const AdminTemplateProfile = Type.Object({
