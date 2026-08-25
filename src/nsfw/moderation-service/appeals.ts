@@ -6,7 +6,7 @@
  *
  * Submitting, listing, and reviewing moderation action appeals.
  */
-import type { NsfwModerationServiceContext, } from "./types";
+import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 export interface SubmitAppealArgs {
   thisL: NsfwModerationServiceContext;
@@ -162,7 +162,7 @@ export async function reviewAppeal(
     thisL.log.info("Appeal approved; pending_reversal recorded", {
       appealId,
       reviewedBy,
-      reversalOf: appeal.action_id,
+      reversalOf: appealRow?.action_id ?? null,
     },);
   }
 }
