@@ -12,6 +12,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { canAccessNsfw, } from "../../middleware/nsfw-gate/access";
 import { jsonParseOr, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
 import type { HookEventType, } from "../hooks";
@@ -50,6 +51,24 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     .where("id", "=", actorId,)
     .executeTakeFirst();
   const actorContentRating = (actorRow?.content_rating as string) ?? "sfw";
+
+  // Age-gate precheck (BUG-5232abe — NSFW age gate never verified at generation).
+  // canAccessNsfw enforces: NSFW globally enabled, user authenticated, age
+  // gate accepted, user above nsfwMinAge. We only need the gate when the
+  // actor's content rating is NSFW — a SFW actor never produces content
+  // that requires age verification, so the check would otherwise reject
+  // every SFW generation for users without an age-gate accept.
+  const isNsfwActor = actorContentRating !== "sfw" && actorContentRating !== "safe";
+  if (isNsfwActor) {
+    const access = await canAccessNsfw(database, config, userId,);
+    if (!access.allowed) {
+      getLogger().child({ module: "auto-gen", },).warn(
+        "Generation blocked by NSFW age-gate precheck",
+        { actorId, userId, reason: access.reason, chatId, },
+      );
+      return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, };
+    }
+  }
 
   // Also fetch legacy nsfw_policy from character_availability for backward compat
   const availability = await database
