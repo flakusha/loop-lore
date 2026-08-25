@@ -3,20 +3,10 @@
 
 /**
  * Elysia validation & error middleware.
- *
- * Provides `onValidationError` — an `onError` handler for Elysia apps
- * that formats validation errors per the envelope spec:
- *   { error, code: "VALIDATION_ERROR", details: [{ field, message }] }
- *
- * Also catches NotFoundError / ForbiddenError from service layer
- * and maps them to 404 / 403 with the correct code.
- *
- * Usage:
- *   app.onError(onValidationError)
- *
- * @module validation/middleware
- */
+ …
+ 18: */
 
+import { getLogger, } from "../logger";
 import { ForbiddenError, NotFoundError, } from "../routes/http-utils";
 
 /**
@@ -99,8 +89,21 @@ export function onValidationError(
   }
 
   // ── Unknown errors → 500 ────────────────────────────────
+  // Never leak `err.message` to the client: SQL errors, file paths, and
+  // stack frames can disclose schema, infrastructure topology, or secrets.
+  // Log the full error server-side and return a generic envelope.
+  try {
+    getLogger().error(
+      "Unhandled error in Elysia onError handler",
+      error instanceof Error ? error : new Error(String(error,),),
+      { code, },
+    );
+  } catch {
+    // Logger not initialized — silently swallow; never let logging break
+    // the error response.
+  }
   set.status = 500;
-  return { error: err?.message ?? "Internal server error", code: "SERVER_ERROR", };
+  return { error: "Internal server error", code: "SERVER_ERROR", };
 }
 
 /**

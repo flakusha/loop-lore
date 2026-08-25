@@ -319,4 +319,21 @@ describe("onValidationError", () => {
     // our handler maps unknown errors to 500
     expect(res.status,).toBe(404,);
   });
+
+  test("redacts raw err.message on unknown errors (500 envelope)", async () => {
+    const SECRET_PATH = "/var/secrets/private/db-password.txt";
+    const app = new Elysia()
+      .onError((ctx: any,) => onValidationError(ctx.code, ctx.error, ctx.set,))
+      .get("/boom", () => {
+        throw new Error(`SQLITE_CANTOPEN: unable to open ${SECRET_PATH}`,);
+      },);
+    const res = await app.handle(new Request("http://localhost/boom",),);
+    expect(res.status,).toBe(500,);
+    const body = (await res.json()) as { error: string; code: string };
+    expect(body.code,).toBe("SERVER_ERROR",);
+    // Generic envelope, NOT the raw error message containing the secret path
+    expect(body.error,).toBe("Internal server error",);
+    expect(body.error,).not.toContain(SECRET_PATH,);
+    expect(body.error,).not.toContain("SQLITE_CANTOPEN",);
+  });
 });
