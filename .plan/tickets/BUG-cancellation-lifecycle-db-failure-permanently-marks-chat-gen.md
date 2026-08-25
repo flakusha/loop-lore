@@ -1,8 +1,7 @@
 # BUG: Cancellation lifecycle: DB failure permanently marks chat generating; state machine advisory only
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (failGeneration + completeGeneration DB write wrapped in try/catch; in-memory cleanup runs regardless of DB outcome)
 **Priority:** medium
-**Effort:** Medium
 
 ## Summary
 
