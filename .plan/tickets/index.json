@@ -6157,7 +6157,7 @@
     "source": ".plan/tickets/TASK-assistant-gm-flows.md"
   },
   "TASK-ASSISTANT-GM-FLOWS-RECONCILIATION": {
-    "hash": "022f9a82",
+    "hash": "b035376",
     "extid": "TASK-ASSISTANT-GM-FLOWS-RECONCILIATION",
     "type": "TASK",
     "title": "Assistant/GM Flows Reconciliation",
@@ -6166,7 +6166,8 @@
     "epic": "epic-assistant-gm-flows",
     "tags": [],
     "source": ".plan/tickets/TASK-assistant-gm-flows-reconciliation.md",
-    "git_issue": "b035376"
+    "git_issue": "b035376",
+    "status": "done"
   },
   "TASK-ASSISTANT-NSFW-API-PREFILTERING": {
     "hash": "pending",
@@ -6523,7 +6524,7 @@
     "source": ".plan/tickets/TASK-battle-environment-integration.md"
   },
   "TASK-BATTLE-EQUIPMENT-INTEGRATION": {
-    "hash": "a7ffbb70",
+    "hash": "3d93144",
     "extid": "TASK-BATTLE-EQUIPMENT-INTEGRATION",
     "type": "TASK",
     "title": "Battle Equipment Integration",
@@ -6531,7 +6532,8 @@
     "priority": "medium",
     "epic": "epic-battle-integration-gaps",
     "tags": [],
-    "source": ".plan/tickets/TASK-battle-equipment-integration.md"
+    "source": ".plan/tickets/TASK-battle-equipment-integration.md",
+    "git_issue": "3d93144"
   },
   "TASK-BATTLE-FRONTEND-INTEGRATION": {
     "hash": "942aa4b",
@@ -7725,7 +7727,7 @@
     "git_issue": "e803564"
   },
   "TASK-CHAT-PINS-FRONTEND": {
-    "hash": "0395b7af",
+    "hash": "3de6f91",
     "extid": "TASK-CHAT-PINS-FRONTEND",
     "type": "TASK",
     "title": "Chat Pins Frontend",
@@ -7734,7 +7736,8 @@
     "epic": "epic-frontend-backend-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-pins-frontend.md",
-    "git_issue": "3de6f91"
+    "git_issue": "3de6f91",
+    "status": "done"
   },
   "TASK-CHAT-ROOM-FILTERS": {
     "hash": "db8aa55",
@@ -8147,7 +8150,7 @@
     "source": ".plan/tickets/TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle.md"
   },
   "TASK-CONSOLIDATE-QUEST-ENGINES": {
-    "hash": "51a7bc01",
+    "hash": "82bb36d",
     "extid": "TASK-CONSOLIDATE-QUEST-ENGINES",
     "type": "TASK",
     "title": "Consolidate Quest Engines",
@@ -8155,7 +8158,8 @@
     "priority": "High",
     "epic": "epic-quests-encounters",
     "tags": [],
-    "source": ".plan/tickets/TASK-consolidate-quest-engines.md"
+    "source": ".plan/tickets/TASK-consolidate-quest-engines.md",
+    "git_issue": "82bb36d"
   },
   "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS": {
     "hash": "ad8bb7e",
@@ -8252,7 +8256,7 @@
     "git_issue": "890506b"
   },
   "TASK-CRAFTING-STATIONS-EXECUTION": {
-    "hash": "a7ffbb70",
+    "hash": "1fead82",
     "extid": "TASK-CRAFTING-STATIONS-EXECUTION",
     "type": "TASK",
     "title": "Crafting Stations & Execution (stations CRUD + `POST /craft` + orders)",
@@ -8260,7 +8264,8 @@
     "priority": "high",
     "epic": "epic-rpg-wiring-phase3.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    "source": ".plan/tickets/TASK-crafting-stations-execution.md",
+    "git_issue": "1fead82"
   },
   "TASK-CRAFTING-SYSTEM": {
     "hash": "pending",
@@ -8712,6 +8717,18 @@
     "status": "done",
     "git_issue": "1961226"
   },
+  "TASK-DATA-LEVEL-INTEGRITY-CHECKSUMS-AND-RE-READABLE-LOGICAL-DUMPS": {
+    "hash": "ad81c3c",
+    "git_issue": "ad81c3c",
+    "extid": "TASK-DATA-LEVEL-INTEGRITY-CHECKSUMS-AND-RE-READABLE-LOGICAL-DUMPS",
+    "type": "TASK",
+    "title": "Data-level integrity checksums and re-readable logical dumps",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
+  },
   "TASK-DATA-MIGRATION-TRANSITIVITY": {
     "hash": "522927b",
     "extid": "TASK-DATA-MIGRATION-TRANSITIVITY",
@@ -8760,6 +8777,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-content-versioning.md",
     "git_issue": "59efcd3"
+  },
+  "TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING": {
+    "hash": "62d1647",
+    "git_issue": "62d1647",
+    "extid": "TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING",
+    "type": "TASK",
+    "title": "DB reinit archives previous database instead of deleting",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-database-backup-recovery.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
   },
   "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO": {
     "hash": "2abec61",
@@ -9067,7 +9096,7 @@
     "git_issue": "207aa27"
   },
   "TASK-DYNAMIC-MEMORY-WRITES-VIA-TOOL-CALL": {
-    "hash": "23ed39fc",
+    "hash": "f768c0e",
     "extid": "TASK-DYNAMIC-MEMORY-WRITES-VIA-TOOL-CALL",
     "type": "TASK",
     "title": "Dynamic Memory Writes via Tool-Call",
@@ -9076,7 +9105,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-dynamic-memory-writes-via-tool-call.md",
-    "git_issue": "f768c0e"
+    "git_issue": "f768c0e",
+    "status": "done"
   },
   "TASK-E2E-ALPINE-STATE-HARNESS": {
     "hash": "950f39f",
@@ -9585,7 +9615,7 @@
     "git_issue": "4d8fd3f"
   },
   "TASK-FACTION-RELATIONS-LIST-AND-STANDING": {
-    "hash": "dc19c9e",
+    "hash": "aa72df8",
     "extid": "TASK-FACTION-RELATIONS-LIST-AND-STANDING",
     "type": "TASK",
     "title": "Faction Relations — list and standing",
@@ -9594,7 +9624,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-faction-relations-list-and-standing.md",
-    "git_issue": "aa72df8"
+    "git_issue": "aa72df8",
+    "status": "done"
   },
   "TASK-FACTION-REPUTATION": {
     "hash": "9b4507c",
@@ -9632,7 +9663,7 @@
     "source": ".plan/tickets/TASK-file-split-chat-service.md"
   },
   "TASK-FILE-SPLIT-CLASS-FACTORY": {
-    "hash": "f51c3c64",
+    "hash": "2110eee",
     "extid": "TASK-FILE-SPLIT-CLASS-FACTORY",
     "type": "TASK",
     "title": "# TASK-file-split-class-factory: Convert class/stateful services to interface-merged factories (thisL)",
@@ -9640,10 +9671,11 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-file-split-class-factory.md"
+    "source": ".plan/tickets/TASK-file-split-class-factory.md",
+    "git_issue": "2110eee"
   },
   "TASK-FILE-SPLIT-ROUTES": {
-    "hash": "518429e5",
+    "hash": "e18b91c",
     "extid": "TASK-FILE-SPLIT-ROUTES",
     "type": "TASK",
     "title": "# TASK-file-split-routes: Split oversized route modules (views/messages/auto-gen/admin)",
@@ -9651,7 +9683,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-file-split-routes.md"
+    "source": ".plan/tickets/TASK-file-split-routes.md",
+    "git_issue": "e18b91c"
   },
   "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING": {
     "hash": "3bf85e0",
@@ -10289,7 +10322,7 @@
     "git_issue": "b14a507"
   },
   "TASK-HARMONIZE-QUEST-TYPE-TAXONOMY": {
-    "hash": "51a7bc01",
+    "hash": "2918503",
     "extid": "TASK-HARMONIZE-QUEST-TYPE-TAXONOMY",
     "type": "TASK",
     "title": "Harmonize Quest Type Taxonomy",
@@ -10297,7 +10330,8 @@
     "priority": "High",
     "epic": "epic-quests-encounters",
     "tags": [],
-    "source": ".plan/tickets/TASK-harmonize-quest-type-taxonomy.md"
+    "source": ".plan/tickets/TASK-harmonize-quest-type-taxonomy.md",
+    "git_issue": "2918503"
   },
   "TASK-HEADLESS-ALTERNATIVE-FRONTENDS": {
     "hash": "190ae11",
@@ -10970,7 +11004,7 @@
     "git_issue": "379011c"
   },
   "TASK-KARMA-DISPLAY-METER-AND-TIERS": {
-    "hash": "dc19c9e",
+    "hash": "f0a0935",
     "extid": "TASK-KARMA-DISPLAY-METER-AND-TIERS",
     "type": "TASK",
     "title": "Karma Display — meter and tiers",
@@ -10979,7 +11013,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-karma-display-meter-and-tiers.md",
-    "git_issue": "f0a0935"
+    "git_issue": "f0a0935",
+    "status": "done"
   },
   "TASK-KEYBOARD-NAVIGATION": {
     "hash": "9c554c6",
@@ -11111,6 +11146,18 @@
     "status": "done",
     "git_issue": "36632b3"
   },
+  "TASK-LOCAL-SWARM-ROUTER-IN-HOST-PROCESS-MANAGE-FILTER-BALANCE": {
+    "hash": "d44ece0",
+    "git_issue": "d44ece0",
+    "extid": "TASK-LOCAL-SWARM-ROUTER-IN-HOST-PROCESS-MANAGE-FILTER-BALANCE",
+    "type": "TASK",
+    "title": "Local Swarm Router — in-host process manage/filter/balance",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-process-swarm",
+    "tags": [],
+    "source": ".plan/tickets/TASK-local-swarm-router-in-host-process-manage-filter-balance.md"
+  },
   "TASK-LOCATION-DETAILS": {
     "hash": "bf07e94",
     "extid": "TASK-LOCATION-DETAILS",
@@ -11240,7 +11287,7 @@
     "git_issue": "714ca84"
   },
   "TASK-LORA-DISCOVERY-APPLICATION": {
-    "hash": "b2774878",
+    "hash": "b3764b1",
     "extid": "TASK-LORA-DISCOVERY-APPLICATION",
     "type": "TASK",
     "title": "LoRA Discovery & Application",
@@ -11248,7 +11295,8 @@
     "priority": "High",
     "epic": "epic-lora-discovery-application",
     "tags": [],
-    "source": ".plan/tickets/TASK-lora-discovery-application.md"
+    "source": ".plan/tickets/TASK-lora-discovery-application.md",
+    "git_issue": "b3764b1"
   },
   "TASK-LORE-PERSONA-TRAITS-PLACED-AS-SYSTEM-MESSAGES-SEMANTIC-INJEC": {
     "hash": "cad5904",
@@ -11464,7 +11512,7 @@
     "status": "done"
   },
   "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
-    "hash": "0395b7af",
+    "hash": "eb021bb",
     "extid": "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND",
     "type": "TASK",
     "title": "Message Archive/Restore Frontend",
@@ -11473,7 +11521,8 @@
     "epic": "epic-frontend-backend-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-message-archive-restore-frontend.md",
-    "git_issue": "eb021bb"
+    "git_issue": "eb021bb",
+    "status": "done"
   },
   "TASK-MESSAGE-ARCHIVING": {
     "hash": "6bd88be",
@@ -11488,7 +11537,7 @@
     "git_issue": "6bd88be"
   },
   "TASK-MESSAGE-QUICK-EMOJIS-FRONTEND": {
-    "hash": "4ec0054",
+    "hash": "cb9cc57",
     "extid": "TASK-MESSAGE-QUICK-EMOJIS-FRONTEND",
     "type": "TASK",
     "title": "Message Quick Emojis Frontend",
@@ -11496,7 +11545,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-message-quick-emojis-frontend.md"
+    "source": ".plan/tickets/TASK-message-quick-emojis-frontend.md",
+    "git_issue": "cb9cc57"
   },
   "TASK-MESSAGES": {
     "hash": "c6bbaad",
@@ -11783,7 +11833,7 @@
     "git_issue": "8ddbd79"
   },
   "TASK-NPC-ALPINE-COMPONENT-WIRE-INTO-APP": {
-    "hash": "dc19c9e",
+    "hash": "ddbc8a8",
     "extid": "TASK-NPC-ALPINE-COMPONENT-WIRE-INTO-APP",
     "type": "TASK",
     "title": "NPC Alpine Component — wire into app",
@@ -11792,7 +11842,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-npc-alpine-component-wire-into-app.md",
-    "git_issue": "ddbc8a8"
+    "git_issue": "ddbc8a8",
+    "status": "done"
   },
   "TASK-NPC-BDI-PLANNING": {
     "hash": "pending",
@@ -11876,7 +11927,7 @@
     "git_issue": "2d51dee"
   },
   "TASK-NPC-MOVEMENT-INDICATOR-IN-CHAT": {
-    "hash": "4809f056",
+    "hash": "f9b5586",
     "extid": "TASK-NPC-MOVEMENT-INDICATOR-IN-CHAT",
     "type": "TASK",
     "title": "NPC Movement Indicator in Chat",
@@ -11885,7 +11936,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-npc-movement-indicator-in-chat.md",
-    "git_issue": "f9b5586"
+    "git_issue": "f9b5586",
+    "status": "done"
   },
   "TASK-NPC-NAVIGATION": {
     "hash": "ad5b148",
@@ -12032,7 +12084,7 @@
     "source": ".plan/tickets/TASK-npc-to-npc-social.md"
   },
   "TASK-NPC-VIEWER-LIST-DETAILS-SCHEDULE": {
-    "hash": "dc19c9e",
+    "hash": "1b734cc",
     "extid": "TASK-NPC-VIEWER-LIST-DETAILS-SCHEDULE",
     "type": "TASK",
     "title": "NPC Viewer — list, details, schedule",
@@ -12041,7 +12093,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-npc-viewer-list-details-schedule.md",
-    "git_issue": "1b734cc"
+    "git_issue": "1b734cc",
+    "status": "done"
   },
   "TASK-NPCS": {
     "hash": "e95bc04",
@@ -13089,7 +13142,7 @@
     "source": ".plan/tickets/TASK-prompt-relationships-section.md"
   },
   "TASK-PROMPT-TEMPLATE-PER-CHAT-OVERRIDE-UX": {
-    "hash": "bc78ca36",
+    "hash": "139a2e4",
     "extid": "TASK-PROMPT-TEMPLATE-PER-CHAT-OVERRIDE-UX",
     "type": "TASK",
     "title": "Prompt Template Per-Chat Override UX",
@@ -13098,7 +13151,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-prompt-template-per-chat-override-ux.md",
-    "git_issue": "139a2e4"
+    "git_issue": "139a2e4",
+    "status": "done"
   },
   "TASK-PROMPT-TEMPLATE-REGISTRY": {
     "hash": "9aefe593",
@@ -13184,7 +13238,7 @@
     "source": ".plan/tickets/TASK-quick-regen-button.md"
   },
   "TASK-QUICK-REPLY-EVENT-DRIVEN-AUTOMATION": {
-    "hash": "ac5b2545",
+    "hash": "b9b0b5c",
     "extid": "TASK-QUICK-REPLY-EVENT-DRIVEN-AUTOMATION",
     "type": "TASK",
     "title": "Quick-Reply / Event-Driven Automation",
@@ -13193,7 +13247,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-quick-reply-event-driven-automation.md",
-    "git_issue": "b9b0b5c"
+    "git_issue": "b9b0b5c",
+    "status": "done"
   },
   "TASK-QUIET-HOURS": {
     "hash": "pending",
@@ -13628,7 +13683,7 @@
     "source": ".plan/tickets/TASK-relationship-events.md"
   },
   "TASK-RELATIONSHIP-MAP-VISUAL-GRAPH": {
-    "hash": "dc19c9e",
+    "hash": "5a2a0cd",
     "extid": "TASK-RELATIONSHIP-MAP-VISUAL-GRAPH",
     "type": "TASK",
     "title": "Relationship Map — visual graph",
@@ -13637,7 +13692,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-relationship-map-visual-graph.md",
-    "git_issue": "5a2a0cd"
+    "git_issue": "5a2a0cd",
+    "status": "done"
   },
   "TASK-RELATIONSHIP-MEMORY": {
     "hash": "pending",
@@ -14783,6 +14839,18 @@
     "source": ".plan/tickets/TASK-svg-upload-leads-to-stored-xss.md",
     "git_issue": "962618b"
   },
+  "TASK-SWARM-ROUTER-DEDICATED-VPS-FEDERATION-OF-LOCALLY-RUNNING-INS": {
+    "hash": "50c9791",
+    "git_issue": "50c9791",
+    "extid": "TASK-SWARM-ROUTER-DEDICATED-VPS-FEDERATION-OF-LOCALLY-RUNNING-INS",
+    "type": "TASK",
+    "title": "Swarm Router (dedicated VPS) — federation of locally-running instances",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-process-swarm",
+    "tags": [],
+    "source": ".plan/tickets/TASK-swarm-router-dedicated-vps-federation-of-locally-running-ins.md"
+  },
   "TASK-SWARM-SUPERVISOR": {
     "hash": "pending",
     "extid": "TASK-SWARM-SUPERVISOR",
@@ -15577,7 +15645,7 @@
     "source": ".plan/tickets/TASK-weather-environment.md"
   },
   "TASK-WIRE-ACHIEVEMENTS-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "3c45a3a",
     "extid": "TASK-WIRE-ACHIEVEMENTS-ROUTES",
     "type": "TASK",
     "title": "Wire Achievements Routes",
@@ -15585,7 +15653,8 @@
     "priority": "Medium",
     "epic": "epic-achievements",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-achievements-routes.md"
+    "source": ".plan/tickets/TASK-wire-achievements-routes.md",
+    "git_issue": "3c45a3a"
   },
   "TASK-WIRE-AUTO-RENAME": {
     "hash": "4410dff",
@@ -15601,7 +15670,7 @@
     "git_issue": "4410dff"
   },
   "TASK-WIRE-COMBAT-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "1cfb14a",
     "extid": "TASK-WIRE-COMBAT-ROUTES",
     "type": "TASK",
     "title": "Wire Combat Routes",
@@ -15609,7 +15678,8 @@
     "priority": "Medium",
     "epic": "epic-rpg-mechanics",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-combat-routes.md"
+    "source": ".plan/tickets/TASK-wire-combat-routes.md",
+    "git_issue": "1cfb14a"
   },
   "TASK-WIRE-CONTEXT-PRUNING": {
     "hash": "pending",
@@ -15623,7 +15693,7 @@
     "source": ".plan/tickets/TASK-wire-context-pruning.md"
   },
   "TASK-WIRE-CRAFTING-ROUTES": {
-    "hash": "a7ffbb70",
+    "hash": "a2a2669",
     "extid": "TASK-WIRE-CRAFTING-ROUTES",
     "type": "TASK",
     "title": "Wire Crafting Routes (Expose RecipesService via HTTP)",
@@ -15632,7 +15702,8 @@
     "epic": "epic-item-systems-unification",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-crafting-routes.md",
-    "git_issue": "a2a2669"
+    "git_issue": "a2a2669",
+    "status": "done"
   },
   "TASK-WIRE-GM-SERVICE-STORY-MODE": {
     "hash": "pending",
@@ -15685,7 +15756,7 @@
     "git_issue": "150fd6b"
   },
   "TASK-WIRE-NPC-NAVIGATION-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "d1ad853",
     "extid": "TASK-WIRE-NPC-NAVIGATION-ROUTES",
     "type": "TASK",
     "title": "Wire NPC Navigation Routes",
@@ -15693,10 +15764,11 @@
     "priority": "High",
     "epic": "epic-npc-navigation",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-npc-navigation-routes.md"
+    "source": ".plan/tickets/TASK-wire-npc-navigation-routes.md",
+    "git_issue": "d1ad853"
   },
   "TASK-WIRE-QUESTS-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "3307132",
     "extid": "TASK-WIRE-QUESTS-ROUTES",
     "type": "TASK",
     "title": "Wire Quests Routes",
@@ -15704,10 +15776,11 @@
     "priority": "High",
     "epic": "epic-quests-encounters",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-quests-routes.md"
+    "source": ".plan/tickets/TASK-wire-quests-routes.md",
+    "git_issue": "3307132"
   },
   "TASK-WIRE-REPLAYABILITY-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "fedb7bf",
     "extid": "TASK-WIRE-REPLAYABILITY-ROUTES",
     "type": "TASK",
     "title": "Wire Replayability Routes",
@@ -15715,10 +15788,11 @@
     "priority": "Medium",
     "epic": "epic-replayability",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-replayability-routes.md"
+    "source": ".plan/tickets/TASK-wire-replayability-routes.md",
+    "git_issue": "fedb7bf"
   },
   "TASK-WIRE-SKILLS-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "2a93044",
     "extid": "TASK-WIRE-SKILLS-ROUTES",
     "type": "TASK",
     "title": "Wire Skills Routes",
@@ -15726,7 +15800,8 @@
     "priority": "High",
     "epic": "epic-skills",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-skills-routes.md"
+    "source": ".plan/tickets/TASK-wire-skills-routes.md",
+    "git_issue": "2a93044"
   },
   "TASK-WIRE-TRANSITIONS": {
     "hash": "a4044bc",
@@ -15754,7 +15829,7 @@
     "git_issue": "0b49061"
   },
   "TASK-WIRE-WORLD-LOCATION-TRAITS-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "43e8dec",
     "extid": "TASK-WIRE-WORLD-LOCATION-TRAITS-ROUTES",
     "type": "TASK",
     "title": "Wire World Location Traits Routes",
@@ -15762,10 +15837,11 @@
     "priority": "High",
     "epic": "epic-locations",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-world-location-traits-routes.md"
+    "source": ".plan/tickets/TASK-wire-world-location-traits-routes.md",
+    "git_issue": "43e8dec"
   },
   "TASK-WIRE-XP-LOOT-ROUTES": {
-    "hash": "51a7bc01",
+    "hash": "a62672d",
     "extid": "TASK-WIRE-XP-LOOT-ROUTES",
     "type": "TASK",
     "title": "Wire XP & Loot Routes",
@@ -15773,7 +15849,8 @@
     "priority": "Medium",
     "epic": "epic-rpg-mechanics",
     "tags": [],
-    "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
+    "source": ".plan/tickets/TASK-wire-xp-loot-routes.md",
+    "git_issue": "a62672d"
   },
   "TASK-WIRING-DEAD-CODE-CHECK-GATE": {
     "hash": "fc3d9db",
