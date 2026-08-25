@@ -10,14 +10,21 @@
  * an explicit captioning assignment it falls back to an explicitly configured
  * `main` model (the typical multimodal-capable choice), then the default
  * provider so captioning remains available in minimal setups.
+ *
+ * Ownership: only assets owned by the calling user are captioned; foreign or
+ * unknown asset ids yield empty captions instead of leaking or overwriting.
  */
 import { resolveModelRole, } from "../admin/model-roles";
 import { getAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";
 import { ModelRole, } from "../db/enums-core";
 import { getDatabase, } from "../db/index";
+import { getLogger, } from "../logger/index";
 import { getProvider, resolveProvider, } from "./providers/registry";
 import type { GenerateRequest, } from "./providers/types";
+
+const MAX_CAPTION_BATCH = 5;
+const MAX_CAPTION_LENGTH = 500;
 
 interface CaptionBody {
   chatId?: string;
@@ -26,8 +33,12 @@ interface CaptionBody {
 }
 
 export async function handleImageCaption(body: unknown, userId?: string,): Promise<Response> {
+  const log = getLogger().child({ module: "generation/caption-route", },);
   const req = body as CaptionBody;
 
+  if (!userId) {
+    return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
+  }
   if (!req.assetIds || req.assetIds.length === 0) {
     return Response.json({ error: "Missing required field: assetIds", status: 400, }, { status: 400, },);
   }
@@ -61,8 +72,8 @@ export async function handleImageCaption(body: unknown, userId?: string,): Promi
       db,
     },);
     apiKey = resolved.resolvedApiKey;
-  } catch {
-    // Non-fatal — fall back to the provider instance's configured key.
+  } catch (error) {
+    log.debug("BYO key resolution failed; falling back to provider key", { error, },);
   }
 
   const provider = getProvider(role.provider,);
@@ -72,9 +83,14 @@ export async function handleImageCaption(body: unknown, userId?: string,): Promi
 
   const captions: { assetId: string; caption: string }[] = [];
 
-  for (const assetId of req.assetIds.slice(0, 5,)) {
+  for (const assetId of req.assetIds.slice(0, MAX_CAPTION_BATCH,)) {
     const asset = await getAsset(db, assetId,);
     if (!asset) {
+      captions.push({ assetId, caption: "", },);
+      continue;
+    }
+    // Foreign assets are treated as not found — never read or overwrite them.
+    if (asset.owner_id !== userId) {
       captions.push({ assetId, caption: "", },);
       continue;
     }
@@ -95,12 +111,16 @@ export async function handleImageCaption(body: unknown, userId?: string,): Promi
       };
 
       const result = await provider.complete({ ...genReq, apiKey, },);
-      const caption = result.content.replaceAll(/^["']|["']$/g, "",).trim().replaceAll(/<[^>]*>/g, "",).slice(0, 500,);
+      const caption = result.content.replaceAll(/^["']|["']$/g, "",).trim().replaceAll(/<[^>]*>/g, "",).slice(
+        0,
+        MAX_CAPTION_LENGTH,
+      );
 
       await db.updateTable("assets",).set({ alt_text: caption, },).where("id", "=", assetId,).execute();
 
       captions.push({ assetId, caption, },);
-    } catch {
+    } catch (error) {
+      log.warn("caption generation failed", { assetId, error, },);
       captions.push({ assetId, caption: "", },);
     }
   }
