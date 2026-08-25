@@ -89,6 +89,13 @@ describe("parseAcceptEncoding", () => {
     expect(result,).toEqual([CompressionAlgorithm.Zstd, CompressionAlgorithm.Gzip,],);
   });
 
+  test("excludes quality value of 0 (not acceptable per RFC 7231)", () => {
+    const result = parseAcceptEncoding("gzip;q=0, br;q=1",);
+    // q=0 means "not acceptable" — gzip must be excluded; br selected.
+    expect(result,).not.toContain(CompressionAlgorithm.Gzip,);
+    expect(result,).toEqual([CompressionAlgorithm.Brotli,],);
+  });
+
   test("parses identity (no compression)", () => {
     const result = parseAcceptEncoding("identity",);
     expect(result,).toEqual([CompressionAlgorithm.None,],);
