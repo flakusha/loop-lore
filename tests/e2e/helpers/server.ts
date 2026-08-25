@@ -159,7 +159,7 @@ async function parseImportFile(
   if (filename.endsWith(".toml",)) {
     const parsed = parseToml(await file.text(),);
     if (!parsed || typeof parsed !== "object") { return null; }
-    return { data: parsed, spec: undefined, };
+    return { data: parsed as Record<string, unknown>, spec: undefined, };
   }
   return null;
 }
