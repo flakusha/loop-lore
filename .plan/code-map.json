@@ -4647,6 +4647,12 @@
       "source": ".plan/tickets/TASK-item-config-templates.md"
     }
   ],
+  "src/config/schema/generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
+    }
+  ],
   "src/config/schema/seeding.ts": [
     {
       "kind": "ticket",
@@ -10893,6 +10899,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-test-failures.md"
+    }
+  ],
+  "src/generation/cancellation-actions/cancel.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-generation-flow-control.md"
     }
   ],
   "src/generation/cancellation-manager.ts": [
