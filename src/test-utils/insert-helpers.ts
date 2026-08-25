@@ -2337,10 +2337,9 @@ export async function insertModerationActions(
     metadata?: Generated<string>;
     expires_at?: string | null;
     created_at?: Generated<string>;
-superseded_by?: string | null;
+    superseded_by?: string | null;
     deleted_at?: string | null;
     deleted_by?: string | null;
-    superseded_by?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("moderation_actions",).values({
