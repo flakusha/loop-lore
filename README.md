@@ -15,8 +15,8 @@ Inspired by:
 - [Odysseus](https://github.com/pewdiepie-archdaemon/odysseus)
 - [Open WebUI](https://github.com/open-webui/open-webui).
 
-loop-lore aims to rebuild the core — characters, chats, lorebooks, multi-backend
-LLM — on a sane architecture:
+loop-lore rebuilds the core — characters, chats, lorebooks, multi-backend
+LLM — on a sane foundation:
 
 - **TypeScript + Bun** — no compilation step, fast runtime
 - **Database-backed** — `bun:sqlite` local, PostgreSQL remote (Kysely query
@@ -27,79 +27,44 @@ LLM — on a sane architecture:
 - **Assistant** — user-focused help (ideas, suggestions, troubleshooting)
 - **Clean code** — small files, strict types, no 12K-line monoliths
 
+See [`docs/spec/architecture.md`](docs/spec/architecture.md) for the system
+layers, design principles, and key decisions. The authoritative source for
+project structure is `src/` and [`AGENTS.md`](AGENTS.md) — directory
+listings in this README would go stale within days.
+
 ---
 
 ## Features
 
-| Feature                | Status  | Notes                                                          |
-| ---------------------- | ------- | -------------------------------------------------------------- |
-| Character management   | WIP     | PNG card import/export (V2/V3), JSON, TOML, YAML               |
-| Chat engine            | WIP     | Multi-backend LLM, streaming, swipe, transitions               |
-| TUI chat interface     | WIP     | Blessed-based, keyboard-driven                                 |
-| Database layer         | WIP     | bun:sqlite + Kysely (type-safe, dialect-swappable)             |
-| Assets (media)         | WIP     | Images/audio/video, polymorphic linking, metadata extraction   |
-| Assistant chat         | MVP     | Rule-based, context-aware suggestions, dice, music commands    |
-| VN scene generation    | WIP     | Choice cards, scene templates, transition triggers             |
-| Emotion avatars        | WIP     | Multi-provider text2img (openai, sdapi, sdcpp, comfyui)        |
-| Regex extraction       | WIP     | Image edits, intents, memory, transitions, hallucination guard |
-| RPG systems            | WIP     | Combat, quests, skills, loot, XP, dice, NPC navigation         |
-| Lorebooks / World Info | Planned | Sticky/cooldown/delay entries                                  |
-| Web UI                 | WIP     | htmx + Alpine.js, VN renderer, chat UI                         |
-| Plugin system          | WIP     | Server plugins + client extensions                             |
-| Crypto / Encryption    | WIP     | Actor keys, chat keys, BYOK, SMK, at-rest encryption           |
-| Multi-session          | WIP     | Solo user mode, session management                             |
-| I18n                   | WIP     | Internationalization with locale loading                       |
-| Memory                 | WIP     | Budget, provisioning, purge, shareability                      |
-| Telemetry              | WIP     | Event tracking                                                 |
-| Profanity filter       | WIP     | Text filtering service                                         |
-| Age gate               | WIP     | Age verification service                                       |
-| Notifications          | WIP     | Notification service                                           |
+Status legend: **MVP** = shipped, **WIP** = active, **Planned** = scoped
+but not started. Spec links go to [`docs/spec/`](docs/spec/) and
+[`docs/frontend/`](docs/frontend/); epic progress lives in
+[`.plan/epics-index.md`](.plan/epics-index.md) and active work in
+[`.plan/backlog/open.md`](.plan/backlog/open.md).
 
----
-
-## Architecture
-
-```
-src/
-├── elysia-app.ts      Elysia setup + route registration
-├── server/            HTTP entry (handler, index, start, static-files)
-├── db/                Kysely init + schema types + migrations
-├── config/            Config loading + hot-reload + templates
-├── routes/            REST API endpoints (100+ route files)
-├── app/              Plugin registration (register-plugins.ts)
-├── assets/            Asset service + metadata extraction
-├── assistant/         Assistant service + commands (dice, music)
-├── characters/        Character services (avatar, mood, traits)
-├── chat/              Chat engine (hallucination guard, transitions)
-├── content/           Hash injection, compression, encoding
-├── crypto/            Encryption (actor keys, BYOK, SMK, at-rest)
-├── eslint-rules/      Custom ESLint rules (param-limit)
-├── frontend/          htmx + Alpine.js + VN renderer
-├── generation/        LLM generation (multi-provider, streaming)
-├── memory/            Memory budget, provisioning, purge
-├── middleware/         Auth, NSFW gate, solo user, rate limit
-├── plugins/           Plugin registry + hooks
-├── public/            Static assets served at / (CSS, locales, img)
-├── regex/             Extraction pipeline (image edits, intents, etc.)
-├── rpg/               RPG subsystems (combat, quests, skills, loot)
-├── routes/            REST handlers
-├── scripts/           Build scripts (commit-check, smoke-app, version-bump)
-├── story/             Multi-LLM story engine
-├── transport/         WebSocket transport layer (aspirational)
-├── turning/           Turn orchestration
-├── tui/               Terminal UI (blessed)
-├── validation/        Elysia t (TypeBox) schemas + middleware
-└── utils/             Shared utilities
-```
-
-**Key decisions:**
-
-- Kysely query builder — type-safe, dialect-swappable (bun:sqlite ↔ postgres),
-  no ORM overhead
-- No god-object modules — each file <200 lines preferred
-- Event bus for cross-module communication (learned from SillyTavern's event
-  system)
-- Provider registry for LLM backends
+| Feature                | Status  | Reference                                                                                                                                            |
+| ---------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Character management   | WIP     | [spec/character-spec](docs/spec/character-spec.md), [frontend/characters](docs/frontend/characters.md)                                               |
+| Chat engine            | WIP     | [spec/messages](docs/spec/messages.md), [frontend/chat](docs/frontend/chat/overview.md)                                                              |
+| TUI chat interface     | WIP     | [spec/terminal-ui](docs/spec/terminal-ui.md), [guide/getting-started](docs/guide/getting-started.md)                                                 |
+| Database layer         | WIP     | [spec/schema](docs/spec/schema.md), [spec/db-versioning](docs/spec/db-versioning.md)                                                                 |
+| Assets (media)         | WIP     | [spec/assets](docs/spec/assets.md), [frontend/gallery](docs/frontend/gallery.md)                                                                     |
+| Assistant chat         | MVP     | [spec/assistant-commands](docs/spec/assistant-commands.md), [frontend/chat/assistant](docs/frontend/chat/assistant.md)                               |
+| VN scene generation    | WIP     | [spec/visual-novel](docs/spec/visual-novel.md), [frontend/chat/visual-novel-mode](docs/frontend/chat/visual-novel-mode.md)                           |
+| Emotion avatars        | WIP     | _spec pending — tracked in `.plan/`_                                                                                                                 |
+| Regex extraction       | WIP     | _spec pending — see `src/regex/`_                                                                                                                    |
+| RPG systems            | WIP     | [spec/rpg-mechanics](docs/spec/rpg-mechanics.md), [spec/achievements](docs/spec/achievements.md)                                                     |
+| Lorebooks / World Info | Planned | [spec/lore](docs/spec/lore.md), [frontend/worlds](docs/frontend/worlds.md)                                                                           |
+| Web UI                 | WIP     | [frontend/component-architecture](docs/frontend/component-architecture.md)                                                                           |
+| Plugin system          | WIP     | [spec/plugin-system](docs/spec/plugin-system.md)                                                                                                     |
+| Crypto / Encryption    | WIP     | [spec/crypto](docs/spec/crypto.md), [spec/encryption-workflow](docs/spec/encryption-workflow.md), [frontend/encryption](docs/frontend/encryption.md) |
+| Multi-session          | WIP     | [spec/users-sessions](docs/spec/users-sessions.md)                                                                                                   |
+| I18n                   | WIP     | [frontend/internationalization](docs/frontend/internationalization.md), [docs/i18n](docs/i18n/)                                                      |
+| Memory                 | WIP     | [spec/memory-system](docs/spec/memory-system.md), [frontend/chat/memories](docs/frontend/chat/memories.md)                                           |
+| Telemetry              | WIP     | [spec/observability-telemetry](docs/spec/observability-telemetry.md)                                                                                 |
+| Profanity filter       | WIP     | _spec pending — see `src/profanity/`_                                                                                                                |
+| Age gate               | WIP     | [frontend/age-gate](docs/frontend/age-gate.md)                                                                                                       |
+| Notifications          | WIP     | [frontend/notifications](docs/frontend/notifications.md)                                                                                             |
 
 ---
 
@@ -113,6 +78,10 @@ src/
 | Query Builder | Kysely (type-safe, no ORM overhead)             |
 | TUI           | blessed + blessed-contrib                       |
 | Web UI        | htmx + Alpine.js                                |
+
+Architecture decisions and tradeoffs live in
+[`docs/spec/architecture.md`](docs/spec/architecture.md). Coding conventions
+are in [`.agents/references/`](.agents/references/).
 
 ---
 
@@ -137,23 +106,26 @@ bun run check
 bun test src/
 ```
 
+Full guide: [`docs/guide/getting-started.md`](docs/guide/getting-started.md).
+
 ---
 
 ## Documentation
 
-- `docs/spec/` — Core specs (106 files)
-- `docs/frontend/` — UX specs (17 files)
-- `docs/guide/` — User guides
-- `docs/reference/` — Reference documentation
-- `docs/ideas/` — Design ideas and proposals
-- `docs/meta/code-practices-improvements/*` — Code practices research
-- `docs/meta/pattern-divergence.md` — Quantified divergence audit
-- `docs/meta/` — Research, assessments, reviews, workflow
-- `docs/public/` — Public-facing docs
-- `docs/i18n/` — Localized README translations
-- `.plan/` — Task tracking (source of truth for active work)
-- `.agents/references/` — Coding conventions (banned patterns, recommendations)
-- `AGENTS.md` — Agent instructions and project overview
+- [`docs/spec/`](docs/spec/) — Core specs (architecture, characters, chat,
+  RPG, encryption, telemetry, …)
+- [`docs/frontend/`](docs/frontend/) — UX specs (components, chat, gallery,
+  characters, …)
+- [`docs/guide/`](docs/guide/) — User guides (installation, first chat,
+  gallery, characters, worlds, personas, settings)
+- [`docs/reference/`](docs/reference/) — Reference docs (API surface)
+- [`docs/ideas/`](docs/ideas/) — Design ideas and proposals
+- [`docs/meta/`](docs/meta/) — Research, assessments, reviews, workflow
+- [`docs/i18n/`](docs/i18n/) — Localized README translations
+- [`.plan/`](.plan/) — Task tracking (source of truth for active work)
+- [`.agents/references/`](.agents/references/) — Coding conventions
+  (banned patterns, recommendations)
+- [`AGENTS.md`](AGENTS.md) — Agent instructions and project overview
 
 ---
 
