@@ -18,8 +18,9 @@ async function handleLogin(
   database: Kysely<DB>,
   config: Config,
   t?: TranslatorFn,
+  peerIp?: string | null,
 ): Promise<Response> {
-  const ip = getClientIp(request, config,);
+  const ip = getClientIp(request, config, peerIp ?? null,);
   if (!loginLimiter.check(ip,)) {
     return new Response(
       `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many attempts. Try again later."}</p>`,
@@ -129,6 +130,7 @@ async function handleDemoLogin(
   database: Kysely<DB>,
   config: Config,
   t?: TranslatorFn,
+  peerIp?: string | null,
 ): Promise<Response> {
   const soloUser = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername,);
   if (!soloUser) {
@@ -139,7 +141,7 @@ async function handleDemoLogin(
     },);
   }
 
-  const ip = getClientIp(request, config,);
+  const ip = getClientIp(request, config, peerIp ?? null,);
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
 
