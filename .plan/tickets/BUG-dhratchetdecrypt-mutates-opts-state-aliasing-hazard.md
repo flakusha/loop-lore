@@ -1,6 +1,6 @@
 # BUG: dhRatchetDecrypt mutates opts.state (aliasing hazard)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (fixed by f69d0229)
 **Priority:** medium
 **Effort:** Medium
 
