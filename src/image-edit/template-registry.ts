@@ -17,6 +17,8 @@ import type {
   WorkflowTemplate,
 } from "./types";
 
+import { builtinTemplates, } from "./templates/builtin";
+
 // ── Config Integration ──────────────────────────────────────
 
 import type { ImageEditTemplateConfig, } from "../config/sections/templates";
@@ -113,4 +115,18 @@ export function registerConfigWorkflows(
     };
     registry.register(template,);
   }
+}
+
+let builtinTemplatesRegistered = false;
+
+/**
+ * Register the built-in ComfyUI workflow templates into the singleton registry.
+ * Idempotent — safe to call on every route mount.
+ */
+export function registerBuiltinTemplates(registry: TemplateRegistry = templateRegistry,): void {
+  if (builtinTemplatesRegistered) { return; }
+  for (const template of builtinTemplates) {
+    registry.register(template,);
+  }
+  builtinTemplatesRegistered = true;
 }
