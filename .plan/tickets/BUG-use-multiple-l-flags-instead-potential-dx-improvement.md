@@ -1,6 +1,6 @@
 # BUG: use multiple -l flags instead - potential DX improvement
 
-**Status:** ⬜ Not Started
+**Status:** 🚫 Invalid premise (verified 2026-08-25)
 **Priority:** low
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ DX improvement: where a single label flag is accepted, support repeated -l flags
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Verification
+
+scripts/worktree/commands/ticket.ts already accepts repeated --label flags: labels array initialized empty, pushed per occurrence, applied per label via git issue edit -l. Premise does not hold for this codebase.
