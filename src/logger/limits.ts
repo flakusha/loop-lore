@@ -88,7 +88,7 @@ export function applyLimits(entry: LogEntry, overrides?: Partial<SizeLimits>,): 
   // Truncate message string
   if (typeof result.message === "string") {
     result.message = truncateString(result.message, limits.maxMessageBytes,);
-  } else if (typeof result.message === "object") {
+  } else if (typeof result.message === "object" && result.message !== null) {
     const keys = Object.keys(result.message,);
     if (keys.length > limits.maxMessageKeys) {
       const truncated: Record<string, unknown> = {};
