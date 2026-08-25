@@ -101,7 +101,6 @@ The encryption workflow now supports future additions of new algorithms through:
 - `TASK-encryption-browser-pre-encrypt.md` — ⬜ Not started
 - `TASK-fix-crypto-isolation.md` — was misdiagnosed; root cause was missed migration context for `keyRotationDays` test fixtures. See ticket status.
 - `TASK-asymmetric-key-pairs-followup.md` — Phases A–D shipped on dev `10b203b4`; Phase E (receiver-side wiring) next.
-</input>
 
 ## Known Bugs & Reconciliation (2026-08)
 
@@ -118,4 +117,3 @@ The encryption workflow now supports future additions of new algorithms through:
 - Phase B/C/D crypto shipping surfaced 4 latent bugs — see
   `epic-crypto.md` §"Open bugs against Phase B/C/D code" (2026-08-23)
   for the cross-referenced list.
-</input>
