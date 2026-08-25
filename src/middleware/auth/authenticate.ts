@@ -94,12 +94,14 @@ async function verifyTokenContext(
     return null;
   }
 
-  // Update last activity (non-blocking)
+  // Update last activity (throttled: at most once per 5 minutes)
   try {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000,).toISOString();
     await database
       .updateTable("users",)
       .set({ last_seen_at: new Date().toISOString(), },)
       .where("id", "=", payload.sub,)
+      .where("last_seen_at", "<", fiveMinutesAgo,)
       .execute();
   } catch {
     /* non-critical */
