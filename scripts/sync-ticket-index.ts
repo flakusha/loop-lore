@@ -348,7 +348,10 @@ function applyFixes(
     if (!cur || cur.status !== "closed") { continue; }
     let openDup: GitIssue | null = null;
     for (const [, issue,] of gitIssues) {
-      if (issue.status === "open" && issue.extid === extid) { openDup = issue; break; }
+      if (issue.status === "open" && issue.extid === extid) {
+        openDup = issue;
+        break;
+      }
     }
     if (openDup) {
       fixed[extid] = { ...entry, hash: openDup.hash, git_issue: openDup.hash, };
