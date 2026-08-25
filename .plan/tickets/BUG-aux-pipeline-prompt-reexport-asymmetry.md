@@ -3,7 +3,7 @@
 
 # BUG: aux-pipeline index.ts re-export set doesn't match AuxTaskName union
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (2026-08-25)
 **Priority:** P3
 **Effort:** Trivial
 **Epic:** epic-aux-enrichment-pipeline
@@ -79,10 +79,19 @@ Pick **one** convention and align the AUX index with the union:
 
 ## Acceptance Criteria
 
-- [ ] All 5 `AuxTaskName` tasks have a single-source prompt location.
-- [ ] `aux-pipeline/index.ts` re-export set matches the union (either all 5
-      prompts re-exported, or 0 prompt re-exports if Option B).
-- [ ] `src/prompts/registry.ts` no longer drifts from the AUX home.
-- [ ] Existing tests (`nsfw-classifier.test.ts`, `gm-tool-detection.test.ts`,
-      `registry.test.ts`) pass without modification.
-- [ ] `bun run check` green.
+- [x] All 5 `AuxTaskName` tasks have a single-source prompt location (`src/aux-pipeline/prompts.ts`).
+- [x] `src/aux-pipeline/index.ts` re-exports all 5 prompts (`GM_TOOL_DETECTION_PROMPT`, `INTENT_CLASSIFIER_PROMPT`, `MEMORY_EXTRACTION_PROMPT`, `NSFW_POLICY_LEVELS_PROMPT`, `NSFW_POLICY_PROMPT`, `TRANSITION_CLASSIFIER_PROMPT`).
+- [x] `src/prompts/registry.ts` re-imports the moved prompts from `aux-pipeline/prompts.ts` so the public `src/prompts` barrel keeps the same API for downstream consumers.
+- [x] Existing tests (`registry.test.ts`, `nsfw-policy.test.ts`, `game-master.test.ts`) pass without modification.
+- [x] `bun run check` green (25/25).
+
+## Resolution
+
+Took Option A (AUX owns its prompts). Moved `NSFW_POLICY_PROMPT` and
+`NSFW_POLICY_LEVELS_PROMPT` from `src/prompts/registry.ts` to
+`src/aux-pipeline/prompts.ts`; updated `src/aux-pipeline/index.ts` to
+re-export all 5 prompts; updated `src/prompts/registry.ts` to import them
+from `aux-pipeline/prompts.ts` so the `src/prompts` public barrel keeps the
+same surface. `NSFW_POLICY_SFW_PROMPT` stays in `registry.ts` because it
+isn't an `AuxTaskName` prompt (it's an injected system message, not a
+classifier).
