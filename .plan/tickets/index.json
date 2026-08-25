@@ -883,6 +883,18 @@
     "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md",
     "git_issue": "6b6c898"
   },
+  "BUG-EXECUTEREVERSAL-AND-REVIEWAPPEAL-DO-NOT-EXCLUDE-SOFT-DELETED": {
+    "hash": "0eb6b9d",
+    "extid": "BUG-EXECUTEREVERSAL-AND-REVIEWAPPEAL-DO-NOT-EXCLUDE-SOFT-DELETED",
+    "type": "BUG",
+    "title": "executeReversal and reviewAppeal do not exclude soft-deleted moderation_actions — deleted actions can be reinstated or re-appealed",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-executereversal-and-reviewappeal-do-not-exclude-soft-deleted.md",
+    "git_issue": "0eb6b9d"
+  },
   "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-": {
     "hash": "dc5a8b8",
     "extid": "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-",
@@ -1159,6 +1171,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md",
     "git_issue": "103e372"
+  },
+  "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
+    "hash": "df90721",
+    "extid": "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B",
+    "type": "BUG",
+    "title": "hashReporterId uses hardcoded default secret in production — breaks PII pseudonymous projection",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-hashreporterid-uses-hardcoded-default-secret-in-production-b.md",
+    "git_issue": "df90721"
   },
   "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
     "hash": "106844a",
@@ -1599,6 +1623,18 @@
     "git_issue": "b3c47b2",
     "status": "open"
   },
+  "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
+    "hash": "b8f7ad2",
+    "extid": "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA",
+    "type": "BUG",
+    "title": "NsfwModerationService missing getOrCreateOwn wiring — block/ban/shadow all return 400",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba.md",
+    "git_issue": "b8f7ad2"
+  },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "hash": "b91c284",
     "extid": "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES",
@@ -1707,6 +1743,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md",
     "git_issue": "e2daa2d"
+  },
+  "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT": {
+    "hash": "9c4390c",
+    "extid": "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT",
+    "type": "BUG",
+    "title": "resolveFlagBody schema allows upheld but service type expects confirmed — status mismatch",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/BUG-resolveflagbody-schema-allows-upheld-but-service-type-expect.md",
+    "git_issue": "9c4390c"
   },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
@@ -2012,6 +2060,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md",
     "git_issue": "6c5ec87"
+  },
+  "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
+    "hash": "0cd09d6",
+    "extid": "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT",
+    "type": "BUG",
+    "title": "use multiple -l flags instead - potential DX improvement",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-use-multiple-l-flags-instead-potential-dx-improvement.md",
+    "git_issue": "0cd09d6"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -3685,6 +3745,18 @@
     "status": "done",
     "git_issue": "441a05e"
   },
+  "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT": {
+    "hash": "9c1c458",
+    "extid": "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT",
+    "type": "FEAT",
+    "title": "Federate blog system via ActivityPub (Lemmy/Mastodon/Reddit)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit.md",
+    "git_issue": "9c1c458"
+  },
   "FEAT-FILTERING-PAGINATION": {
     "hash": "0154377",
     "extid": "FEAT-FILTERING-PAGINATION",
@@ -3722,6 +3794,18 @@
     "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md",
     "status": "done",
     "git_issue": "fef7e3b"
+  },
+  "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {
+    "hash": "eed7cfa",
+    "extid": "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT",
+    "type": "FEAT",
+    "title": "IRC integration: channels as group-chat, PM as chat",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-irc-integration-channels-as-group-chat-pm-as-chat.md",
+    "git_issue": "eed7cfa"
   },
   "FEAT-ITEM-SYSTEM-EXTENSIONS": {
     "hash": "4a1f830",
@@ -7864,6 +7948,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-consent-schema.md"
   },
+  "TASK-CONSOLIDATE-CHAT-IM-ADAPTER-ABSTRACTION-ABOVE-PROTOCOLHANDLE": {
+    "hash": "7768a28",
+    "extid": "TASK-CONSOLIDATE-CHAT-IM-ADAPTER-ABSTRACTION-ABOVE-PROTOCOLHANDLE",
+    "type": "TASK",
+    "title": "Consolidate chat/IM adapter abstraction above ProtocolHandler",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle.md",
+    "git_issue": "7768a28"
+  },
   "TASK-CONSOLIDATE-QUEST-ENGINES": {
     "hash": "51a7bc01",
     "extid": "TASK-CONSOLIDATE-QUEST-ENGINES",
@@ -8478,6 +8574,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-content-versioning.md",
     "git_issue": "59efcd3"
+  },
+  "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO": {
+    "hash": "2abec61",
+    "extid": "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO",
+    "type": "TASK",
+    "title": "Dead rejectBodyImpersonation guard never fires — Elysia TypeBox parser strips performedBy before beforeHandle",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dead-rejectbodyimpersonation-guard-never-fires-elysia-typebo.md",
+    "git_issue": "2abec61"
   },
   "TASK-DEDUPE-CONTEXT-WINDOW": {
     "hash": "pending",
@@ -9530,6 +9638,18 @@
     "source": ".plan/tickets/TASK-fix-worktree-cli-repo-root-tree-dir-env-var-requirement-when.md",
     "git_issue": "c02be17",
     "status": "done"
+  },
+  "TASK-FLAGBODY-FLAGQUERY-RESOLVEFLAGBODY-SCHEMAS-LACK-CLOSED-POSTU": {
+    "hash": "4317173",
+    "extid": "TASK-FLAGBODY-FLAGQUERY-RESOLVEFLAGBODY-SCHEMAS-LACK-CLOSED-POSTU",
+    "type": "TASK",
+    "title": "flagBody, flagQuery, resolveFlagBody schemas lack CLOSED posture (additionalProperties: false) — unlike blockBody/modBody/unblockBody",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/TASK-flagbody-flagquery-resolveflagbody-schemas-lack-closed-postu.md",
+    "git_issue": "4317173"
   },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
@@ -14450,6 +14570,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-telemetry-endpoint-trusts-userid-from-request-body.md",
     "git_issue": "fcdcefc"
+  },
+  "TASK-TELEMETRY-SCHEMA-COMMENT-CLAIMS-ADDITIONALPROPERTIES-FALSE-R": {
+    "hash": "12a153e",
+    "extid": "TASK-TELEMETRY-SCHEMA-COMMENT-CLAIMS-ADDITIONALPROPERTIES-FALSE-R",
+    "type": "TASK",
+    "title": "Telemetry schema comment claims additionalProperties: false rejects unknown fields — actually silently strips them",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/TASK-telemetry-schema-comment-claims-additionalproperties-false-r.md",
+    "git_issue": "12a153e"
   },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
     "hash": "pending",
