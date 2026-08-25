@@ -42,16 +42,26 @@ export function resolveUploadDir(uploadDir: string,): string {
  * Returns the relative storage path (e.g., "ab/cd/uuid.jpg").
  */
 export function storeFile(uploadDir: string, assetId: string, filename: string, buffer: Buffer,): string {
+  const root = resolveUploadDir(uploadDir,);
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
-  const fullDir = join(resolveUploadDir(uploadDir,), "raw", subDir,);
+  const fullDir = join(root, "raw", subDir,);
   mkdirSync(fullDir, { recursive: true, },);
 
-  // Preserve extension
-  const ext = filename.split(".",).pop()?.toLowerCase() ?? "";
+  // Preserve a sanitized extension only: basename (no separators), then a
+  // strict charset/length whitelist. A raw filename like "../../evil" or
+  // "x/../../../etc/cron" must never influence the on-disk path.
+  const base = filename.replaceAll("\\", "/",).split("/").pop() ?? "";
+  const rawExt = base.includes(".",) ? (base.split(".").pop() ?? "") : "";
+  const ext = /^[a-z0-9]{1,10}$/i.test(rawExt,) ? rawExt.toLowerCase() : "";
   const storageFilename = ext ? `${assetId}.${ext}` : assetId;
   const storagePath = `raw/${subDir}/${storageFilename}`;
 
-  writeFileSync(join(resolveUploadDir(uploadDir,), storagePath,), buffer,);
+  const target = join(root, storagePath,);
+  // Containment assert: the resolved target must stay inside the upload root.
+  if (!target.startsWith(`${root}/`,)) {
+    throw new Error(`Refusing to write outside upload dir: ${target}`,);
+  }
+  writeFileSync(target, buffer,);
   return storagePath;
 }
 
