@@ -35,7 +35,7 @@ import { state, } from "./commands/state";
 import { execute as statusCmd, } from "./commands/status";
 import { sync, } from "./commands/sync";
 import { ticket, } from "./commands/ticket";
-import { loadConfig, resolveBranch, type WorktreeConfig, } from "./utils/config";
+import { loadConfig, resolveBranch, } from "./utils/config";
 import { getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
 import { colorize, colors, log, section, } from "./utils/output";
 
@@ -66,12 +66,10 @@ const commands: Record<string, CommandHandler> = {
   "attach": {
     description: "Attach file to issue as comment",
     run: attach,
-    usage: "attach <ID> <file>",
   },
   "attach-dir": {
     description: "Attach all files in directory to issue",
     run: attachDir,
-    usage: "attach-dir <ID> <dir>",
   },
   "branches": {
     description: "List branches with status",
@@ -84,7 +82,6 @@ const commands: Record<string, CommandHandler> = {
   "comment": {
     description: "Add comment to issue",
     run: comment,
-    usage: "comment <ID> -m <text>",
   },
   "commit": {
     description: "GPG-signed commit on current branch",
@@ -101,7 +98,6 @@ const commands: Record<string, CommandHandler> = {
   "edit": {
     description: "Edit issue metadata",
     run: edit,
-    usage: "edit <ID> [--label X] [--assignee X] [--priority X]",
   },
   "finalize": {
     description: "Validate, merge, remove worktree, delete branch",
@@ -110,12 +106,10 @@ const commands: Record<string, CommandHandler> = {
   "gi": {
     description: "Run git-issue command directly",
     run: gi,
-    usage: "gi <git-issue-subcommand> [args]",
   },
   "issues": {
     description: "List issues",
     run: issues,
-    usage: "issues [--all] [--format oneline|json]",
   },
   "list": {
     description: "Show all worktrees with status",
@@ -128,7 +122,6 @@ const commands: Record<string, CommandHandler> = {
   "new": {
     description: "Create new branch + worktree",
     run: newBranchCmd,
-    usage: "new <branch-name>",
   },
   "prs": {
     description: "Create worktrees for open PRs",
@@ -149,12 +142,10 @@ const commands: Record<string, CommandHandler> = {
   "search": {
     description: "Search issues by text pattern",
     run: search,
-    usage: "search <pattern>",
   },
   "show": {
     description: "Show issue details and comments",
     run: show,
-    usage: "show <ID>",
   },
   "sign": {
     description: "Configure GPG signing for existing worktree",
@@ -163,7 +154,6 @@ const commands: Record<string, CommandHandler> = {
   "state": {
     description: "Change issue state",
     run: state,
-    usage: "state <ID> <open|closed>",
   },
   "status": {
     description: "Show branch sync status",
@@ -176,7 +166,6 @@ const commands: Record<string, CommandHandler> = {
   "ticket": {
     description: "Create ticket file + git issue",
     run: ticket,
-    usage: "ticket <TYPE> <title> [body] [-l label] [-p priority] [-e epic] [--effort S|M|L|XL]",
   },
   "help": {
     description: "Show this help",
@@ -196,29 +185,12 @@ function showHelp(): void {
   }
   console.log("",);
   console.log("Run: worktree <command> [args]",);
-  console.log("Per-command help: worktree <command> --help",);
-  console.log("",);
-}
-
-function showCommandHelp(name: string,): void {
-  const cmd = commands[name];
-  console.log("",);
-  console.log(`${colorize(name, "cyan",)} — ${cmd.description}`,);
-  if (cmd.usage) {
-    console.log("",);
-    console.log(`  Usage: worktree ${cmd.usage}`,);
-  }
   console.log("",);
 }
 
 export async function main(): Promise<void> {
   const config = await loadConfig();
   const [cmdName, ...cmdArgs] = process.argv.slice(2,);
-
-  if (commands[cmdName] && cmdArgs.some((a,) => a === "-h" || a === "--help")) {
-    showCommandHelp(cmdName,);
-    process.exit(0,);
-  }
 
   if (!cmdName || cmdName === "help" || !commands[cmdName]) {
     if (cmdName && cmdName !== "help") {
