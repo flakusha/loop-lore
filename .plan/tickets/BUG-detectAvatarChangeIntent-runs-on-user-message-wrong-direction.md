@@ -101,10 +101,10 @@ actual consumer and the wrong-direction defect.
 
 ## Evidence
 
- - prepare-generation.ts no longer imports or calls detectAvatarChangeIntent; the file docstring (lines 4-17) documents the removal rationale (prompt bias, wrong direction, EmotionHook already covers the assistant-response signal).
- - bun test src/generation/: 494 pass / 0 fail
- - bun test src/assistant/: 177 pass / 0 fail
- - bunx tsc --noEmit -p tsconfig.backend.json: exit 0
+- prepare-generation.ts no longer imports or calls detectAvatarChangeIntent; the file docstring (lines 4-17) documents the removal rationale (prompt bias, wrong direction, EmotionHook already covers the assistant-response signal).
+- bun test src/generation/: 494 pass / 0 fail
+- bun test src/assistant/: 177 pass / 0 fail
+- bunx tsc --noEmit -p tsconfig.backend.json: exit 0
 
 ## Acceptance Criteria
 
