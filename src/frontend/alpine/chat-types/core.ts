@@ -125,6 +125,8 @@ export interface ChatCoreState
   fireAutoQuickReplies(trigger: "user" | "ai",): Promise<void>;
   saveQuickReplies(): Promise<void>;
   // Proactive messaging scheduler (chat-proactive.ts) — polls for due messages.
+  /** Guard: a selectChat() run is in flight — ignore overlapping calls. */
+  _selectingChat: boolean;
   _proactiveTimer: ReturnType<typeof setInterval> | null;
   _proactiveInFlight: boolean;
   _proactiveLastSendAt: number;
@@ -138,6 +140,8 @@ export interface ChatCoreState
   destroy(): void;
   loadUserInfo(): Promise<void>;
   loadChats(): Promise<void>;
+  /** Internal selectChat body — split out for the reentrancy guard. */
+  _selectChatInner(chatId: string,): Promise<void>;
   selectChat(chatId: string,): Promise<void>;
   loadMessages(): Promise<void>;
   loadOlderMessages(): Promise<void>;

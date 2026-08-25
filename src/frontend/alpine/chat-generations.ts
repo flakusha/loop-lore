@@ -22,26 +22,34 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     const url = `/api/generation/stream/${chatId}`;
     const es = new EventSource(url,);
     this._generationEventSource = es;
+    // Stale-stream guard: handlers close over the chat this stream belongs to
+    // and must not write shared stream state after the user switched chats.
+    const isStale = () => this.activeChat !== chatId;
 
     es.addEventListener("stream-update", (event: MessageEvent,) => {
+      if (isStale()) { return; }
       this._streamContent = event.data;
       this.renderStreamContainer();
       this.activeAttemptId = chatId;
     },);
 
     es.addEventListener("tool_call", (event: MessageEvent,) => {
+      if (isStale()) { return; }
       this._streamToolCalls.push(event.data,);
       this.renderStreamContainer();
     },);
 
     es.addEventListener("stream-done", () => {
-      trackTelemetry("generation.completed", { chatId, },);
+      if (!isStale()) {
+        trackTelemetry("generation.completed", { chatId, },);
+      }
       this.isGenerating = false;
       this.activeAttemptId = null;
       this.generationDetail = null;
       this._streamToolCalls = [];
       this._streamContent = "";
       this._cleanupSSE();
+      if (isStale()) { return; }
       void (async () => {
         try {
           await this.loadMessages();
@@ -60,6 +68,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this._streamToolCalls = [];
       this._streamContent = "";
       this._cleanupSSE();
+      if (isStale()) { return; }
       try {
         const data = parseOr(ErrorEvent, jsonParseOr(event.data, null,), {},);
         this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.generationFailed",), },);
@@ -111,8 +120,9 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
         this.activeAttemptId = null;
         this.generationDetail = null;
       }
-    } catch {
-      /* Silent */
+    } catch (error) {
+      // Recovery poll is best-effort; surface the reason instead of swallowing it.
+      log.debug("checkGenerationStatus failed", { chatId, error: String(error,), },);
     }
   },
 

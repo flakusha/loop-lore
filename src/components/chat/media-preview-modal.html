@@ -13,7 +13,7 @@
   <div class="modal" style="max-width: 90vw; max-height: 90vh">
     <div class="modal-header">
       <span class="title" x-text="previewMediaAsset?.caption || previewMediaAsset?.filename"></span>
-      <button class="btn-icon" @click="previewMediaAsset = null">&times;</button>
+      <button class="btn-icon" @click="previewMediaAsset = null" x-bind:aria-label="t('common.close')">&times;</button>
     </div>
     <div class="modal-body" style="padding: 0; text-align: center">
       <template x-if="previewMediaAsset?.type === 'image'">

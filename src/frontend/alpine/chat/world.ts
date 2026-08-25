@@ -56,6 +56,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   async selectChat(chatId: string,) {
+    // Reentrancy guard: overlapping selectChat calls interleave their loads and
+    // interleave last-writer-wins writes → mixed-chat state.
+    if (this._selectingChat) { return; }
     if (this.isGenerating) {
       this.$dispatch("show-toast", {
         type: "warning",
@@ -63,6 +66,15 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       },);
       return;
     }
+    this._selectingChat = true;
+    try {
+      await this._selectChatInner(chatId,);
+    } finally {
+      this._selectingChat = false;
+    }
+  },
+
+  async _selectChatInner(chatId: string,) {
     this.loadingError = null;
     this.activeChat = chatId;
     getLogger().setBindings({ chatId, },);
@@ -87,9 +99,21 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     this.currentPage = 1;
     this.hasMoreMessages = true;
     this.loadingOlder = false;
+    // Location-scoped features: reset per-chat state BEFORE loading so the
+    // fresh rows fetched below are not wiped by a post-load reset.
+    this._sections = [];
+    this._activeSectionId = null;
+    this._background = null;
+    this._locations = [];
+    this._selectedLocationId = "";
+    this._chatWorldId = null;
+    this._chatCurrentLocationId = null;
+    this._chatRecentLocationChanged = false;
+    this._locationJoinableChats = [];
     const selectReload = await Promise.allSettled([
       this.loadMessages(),
       this.loadSections(),
+      this.loadBackground(),
       this.loadGalleryAssets(),
       this.loadCharacterInfo(),
       this.loadMood(),
@@ -108,18 +132,6 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       await this.loadTurnOrder();
       await this.loadAvailableActors();
     }
-    // Location-scoped features: reset per-chat state then load fresh.
-    this._sections = [];
-    this._activeSectionId = null;
-    this._background = null;
-    this._locations = [];
-    this._selectedLocationId = "";
-    this._chatWorldId = null;
-    this._chatCurrentLocationId = null;
-    this._chatRecentLocationChanged = false;
-    this._locationJoinableChats = [];
-    const sectionReload = await Promise.allSettled([this.loadSections(), this.loadBackground(),],);
-    if (sectionReload.some((r,) => r.status === "rejected")) { throw new Error("section reload failed",); }
   },
 
   getChatId() {

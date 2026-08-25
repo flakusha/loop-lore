@@ -4,6 +4,7 @@
 import { existsSync, readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { getRawTranslations, } from "../../i18n/locale-loader";
+import { isLocale, LOCALE_REGISTRY, } from "../../i18n/locale-registry";
 import type { Locale, } from "../../i18n/types";
 import { getNonce, } from "../../middleware/csp-nonce";
 import { detectLocale, } from "../../middleware/i18n";
@@ -55,8 +56,11 @@ function wrapWithLayout(
   layout = layout.replace("{{userId}}", () => jsonStringifyOr(userId ?? null, "null",),);
   layout = layout.replace("{{sessionId}}", () => jsonStringifyOr(sessionId ?? null, "null",),);
   layout = layout.replaceAll("{{cspNonce}}", () => cspNonce ?? "",);
+  // i18n: html lang/dir follow the detected request locale (RTL-aware).
+  const safeLocale = locale && isLocale(locale,) ? locale : "en";
+  layout = layout.replace("{{locale}}", () => safeLocale,);
+  layout = layout.replace("{{localeDir}}", () => LOCALE_REGISTRY[safeLocale].direction,);
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
-  // i18n: replace {{{t("key")}}} with translated string
   layout = applyI18n(layout, t,);
   // Inject locale strings synchronously so Alpine t() calls resolve before fetch completes
   if (locale) {
