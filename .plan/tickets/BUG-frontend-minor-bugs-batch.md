@@ -1,6 +1,6 @@
 # BUG: Frontend minor bugs batch
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (2026-08-25, worktree `bugfix-medium-low`, commit 04411f8 — all six sub-fixes)
 **Priority:** low
 **Effort:** Medium
 
