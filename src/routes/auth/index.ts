@@ -35,6 +35,10 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
       async ({ request, ...rest },) =>
         handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
+        // Form-encoded POST; Request-first handlers trigger sucrose
+        // JSON-body inference which rejects form submissions (415/400).
+        // Disable body parsing — handler uses parseCredentials(request).
+        parse: "none",
         response: {
           200: SuccessResponse,
         },
@@ -47,9 +51,8 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
     )
     .post(
       `${prefix}/demo-login`,
-      async ({ request, ...rest },) =>
-        handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
+        parse: "none",
         response: {
           200: SuccessResponse,
         },
@@ -62,9 +65,8 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
     )
     .post(
       `${prefix}/auth/register`,
-      async ({ request, ...rest },) =>
-        handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
+        parse: "none",
         response: {
           200: SuccessResponse,
         },

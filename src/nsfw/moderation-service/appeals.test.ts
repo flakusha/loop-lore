@@ -16,7 +16,6 @@ import {
   reviewAppeal,
   submitAppeal,
 } from "./appeals";
-import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
@@ -261,7 +260,7 @@ describe("reviewAppeal", () => {
     expect(row?.updated_at,).toBeTruthy();
   });
 
-  test("approving a block appeal records pending_reversal but does NOT unblock yet", async () => {
+  test("approving a block appeal records pending_reversal without calling unblockUser", async () => {
     await insertActionRow({ id: "action-d2", actionType: "block", targetUserId: USER, },);
     const unblock = mock(() => Promise.resolve({} as ModAction,));
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d2", reason: "x", },);
@@ -274,16 +273,19 @@ describe("reviewAppeal", () => {
       reviewNote: "appeal granted",
     },);
 
-    // BUG-nsfw-reviewappeal-auto-reverses-actions: approval is two-phase.
+    // Approval MUST NOT call unblockUser; reversal is deferred to executeReversal.
     expect(unblock,).not.toHaveBeenCalled();
-    const reversal = await db.selectFrom("moderation_actions",).selectAll()
-      .where("action_type", "=", "pending_reversal",).execute();
-    expect(reversal,).toHaveLength(1,);
-    expect(reversal[0]?.reason,).toBe("appeal granted",);
-    expect(reversal[0]?.superseded_by,).toBeNull();
+    const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+    expect(appealRow?.status,).toBe("pending_reversal",);
+    const actionRow = await db.selectFrom("moderation_actions",)
+      .select(["id", "superseded_by",],)
+      .where("id", "=", "action-d2",)
+      .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
+    expect(actionRow?.superseded_by,).toBe(appeal.id,);
   });
 
-  test("approving a ban appeal records pending_reversal but does NOT unban yet", async () => {
+  test("approving a ban appeal records pending_reversal and supersedes the action", async () => {
     await insertActionRow({ id: "action-d3", actionType: "ban", targetUserId: USER, },);
     const unban = mock(() => Promise.resolve({} as ModAction,));
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d3", reason: "x", },);
@@ -297,12 +299,17 @@ describe("reviewAppeal", () => {
     },);
 
     expect(unban,).not.toHaveBeenCalled();
-    const reversal = await db.selectFrom("moderation_actions",).selectAll()
-      .where("action_type", "=", "pending_reversal",).execute();
-    expect(reversal,).toHaveLength(1,);
+    const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+    expect(appealRow?.status,).toBe("pending_reversal",);
+    const actionRow = await db.selectFrom("moderation_actions",)
+      .select(["id", "superseded_by",],)
+      .where("id", "=", "action-d3",)
+      .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
+    expect(actionRow?.superseded_by,).toBe(appeal.id,);
   });
 
-  test("approving a shadow appeal records pending_reversal but does NOT unshadow yet", async () => {
+  test("approving a shadow appeal records pending_reversal and supersedes the action", async () => {
     await insertActionRow({ id: "action-d4", actionType: "shadow", targetUserId: USER, },);
     const unshadow = mock(() => Promise.resolve({} as ModAction,));
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d4", reason: "x", },);
@@ -315,13 +322,13 @@ describe("reviewAppeal", () => {
       reviewNote: "appeal granted",
     },);
 
-    expect(unshadow,).not.toHaveBeenCalled();
-    const reversal = await db.selectFrom("moderation_actions",).selectAll()
-      .where("action_type", "=", "pending_reversal",).execute();
-    expect(reversal,).toHaveLength(1,);
+    const actionRow = await db.selectFrom("moderation_actions",)
+      .select(["id", "superseded_by",],)
+      .where("id", "=", "action-d4",)
+      .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
   });
 
-  test("approving an appeal for an unknown action type does not throw", async () => {
+  test("approving an appeal for an unknown action type still records pending_reversal", async () => {
     await insertActionRow({ id: "action-d5", actionType: "mystery", targetUserId: USER, },);
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-d5", reason: "x", },);
 
@@ -332,6 +339,9 @@ describe("reviewAppeal", () => {
       status: "approved",
       reviewNote: "ok",
     },),).resolves.toBeUndefined();
+    const row = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+    expect(row?.status,).toBe("pending_reversal",);
   });
 
   test("approving an appeal with a missing action does not throw", async () => {
@@ -351,82 +361,134 @@ describe("reviewAppeal", () => {
 });
 
 describe("executeReversal", () => {
-  test("admin-B can execute the reversal after admin-A approves", async () => {
+  test("throws when caller is the same as the approver (single-admin guard)", async () => {
     await insertActionRow({ id: "action-r1", actionType: "block", targetUserId: USER, },);
-    const unblock = mock(() => Promise.resolve({ id: "reversal-row", } as ModAction,));
-    const appeal = await submitAppeal({
-      thisL: makeCtx(),
-      userId: USER,
-      actionId: "action-r1",
-      reason: "please reconsider",
-    },);
-
-    await reviewAppeal({
-      thisL: makeCtx({ unblockUser: unblock, },),
-      appealId: appeal.id,
-      reviewedBy: "admin-A",
-      status: "approved",
-      reviewNote: "ok, releasing",
-    },);
-
-    await executeReversal({
-      thisL: makeCtx({ unblockUser: unblock, },),
-      appealId: appeal.id,
-      executedBy: "admin-B",
-    },);
-
-    expect(unblock,).toHaveBeenCalledTimes(1,);
-
-    const updated = await db.selectFrom("moderation_actions",).selectAll()
-      .where("id", "=", "action-r1",).executeTakeFirst();
-    expect(updated?.superseded_by,).toBe("reversal-row",);
-  });
-
-  test("rejects same-admin reversal (rejected by executeReversal guard)", async () => {
-    await insertActionRow({ id: "action-r2", actionType: "block", targetUserId: USER, },);
-    const appeal = await submitAppeal({
-      thisL: makeCtx(),
-      userId: USER,
-      actionId: "action-r2",
-      reason: "x",
-    },);
-
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r1", reason: "x", },);
     await reviewAppeal({
       thisL: makeCtx(),
       appealId: appeal.id,
-      reviewedBy: "admin-A",
+      reviewedBy: "admin-1",
       status: "approved",
       reviewNote: "ok",
     },);
-
     await expect(executeReversal({
       thisL: makeCtx(),
       appealId: appeal.id,
-      executedBy: "admin-A",
-    },),).rejects.toThrow(/different admin/,);
+      executedBy: "admin-1",
+      approvedBy: "admin-1",
+    },),).rejects.toThrow(/a second admin is required/,);
   });
 
-  test("rejects executeReversal when appeal is not approved", async () => {
-    await insertActionRow({ id: "action-r3", actionType: "block", targetUserId: USER, },);
-    const appeal = await submitAppeal({
-      thisL: makeCtx(),
-      userId: USER,
-      actionId: "action-r3",
-      reason: "x",
-    },);
-
+  test("throws when the appeal is not in pending_reversal", async () => {
+    await insertActionRow({ id: "action-r2", actionType: "block", targetUserId: USER, },);
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r2", reason: "x", },);
     await reviewAppeal({
       thisL: makeCtx(),
       appealId: appeal.id,
-      reviewedBy: "admin-A",
+      reviewedBy: "admin-1",
       status: "denied",
-      reviewNote: "denied",
+      reviewNote: "no",
     },);
-
     await expect(executeReversal({
       thisL: makeCtx(),
       appealId: appeal.id,
-      executedBy: "admin-B",
-    },),).rejects.toThrow(/not in 'approved'/,);
+      executedBy: "admin-2",
+      approvedBy: "admin-1",
+    },),).rejects.toThrow(/expected "pending_reversal"/,);
+  });
+
+  test("two-admin reversal calls unblockUser and moves the appeal to reversed", async () => {
+    await insertActionRow({ id: "action-r3", actionType: "block", targetUserId: USER, },);
+    const unblock = mock(() =>
+      Promise.resolve({
+        id: "rev-r3",
+        actionType: "unblock",
+        targetUserId: USER,
+        performedBy: "admin-2",
+        reason: "x",
+        scope: "nsfw",
+        scopeId: null,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        metadata: "{}",
+      } as ModAction,)
+    );
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r3", reason: "x", },);
+    await reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-1",
+      status: "approved",
+      reviewNote: "ok",
+    },);
+    await executeReversal({
+      thisL: makeCtx({ unblockUser: unblock, },),
+      appealId: appeal.id,
+      executedBy: "admin-2",
+      approvedBy: "admin-1",
+    },);
+
+    expect(unblock,).toHaveBeenCalledTimes(1,);
+    const row = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+    expect(row?.status,).toBe("reversed",);
+  });
+
+  test("reversal writes a notifications row for the original moderator", async () => {
+    // The notifications.user_id has a FK to users.id; create the moderator first.
+    await db.insertInto("users",).values({
+      id: "moderator-A",
+      username: "moderator-A",
+      display_name: "Moderator A",
+      password_hash: null,
+      role: "admin",
+      status: "active",
+      settings: "{}",
+      format_version: 0,
+      created_at: "2026-01-01T00:00:00.000Z",
+    },).execute();
+    await db.insertInto("moderation_actions",).values({
+      id: "action-r4",
+      action_type: "block",
+      target_user_id: USER,
+      performed_by: "moderator-A",
+      reason: "x",
+      scope: "nsfw",
+      scope_id: null,
+      metadata: "{}",
+      created_at: "2026-01-01T00:00:00.000Z",
+      deleted_at: null,
+      deleted_by: null,
+      superseded_by: null,
+    },).execute();
+    const unblock = mock(() =>
+      Promise.resolve({
+        id: "rev-r4",
+        actionType: "unblock",
+        targetUserId: USER,
+        performedBy: "admin-2",
+        reason: "x",
+        scope: "nsfw",
+        scopeId: null,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        metadata: "{}",
+      } as ModAction,)
+    );
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r4", reason: "x", },);
+    await reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-1",
+      status: "approved",
+      reviewNote: "ok",
+    },);
+    await executeReversal({
+      thisL: makeCtx({ unblockUser: unblock, },),
+      appealId: appeal.id,
+      executedBy: "admin-2",
+      approvedBy: "admin-1",
+    },);
+    const note = await db.selectFrom("notifications",).selectAll()
+      .where("user_id", "=", "moderator-A",).executeTakeFirst();
+    expect(note?.type,).toBe("appeal.reversed",);
   });
 });
