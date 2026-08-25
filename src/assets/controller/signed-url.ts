@@ -21,6 +21,7 @@
  */
 
 import { getLogger, } from "../../logger/index";
+import { DOMAIN_INFO, domainKey, } from "../../utils/hkdf";
 
 const SIGNED_URL_ACTIONS = ["raw", "download", "thumb", "compressed",] as const;
 export type SignedUrlAction = (typeof SIGNED_URL_ACTIONS)[number];
@@ -60,11 +61,20 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
 
+/**
+ * Derive the asset signed-URL HMAC key from the resolved secret.
+ *
+ * SECURITY (BUG-jwtsecret-reused-across-three-security-domains): when the
+ * caller falls back to `auth.jwtSecret` (via `resolveSignedUrlSecret`), the
+ * same upstream secret is consumed here, by `src/auth/jwt.ts`, and by
+ * `src/nsfw/pii-redaction.ts`. HKDF-SHA256 with a domain-specific info
+ * keeps the resulting HMAC keys independent.
+ */
 async function importSecretKey(secret: string,): Promise<CryptoKey> {
-  const encoder = new TextEncoder();
+  const subkey = await domainKey(secret, DOMAIN_INFO.ASSETS_SIGNED_URL, 32,);
   return crypto.subtle.importKey(
     "raw",
-    toBufferSource(encoder.encode(secret,),),
+    toBufferSource(subkey,),
     { name: "HMAC", hash: "SHA-256", },
     false,
     ["sign", "verify",],
