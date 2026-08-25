@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { RegexTransform, RegexTransformPhase, } from "../config/schema";
+import { compileSafeRegExp, } from "../utils/safe-regexp";
 
 export interface TransformResult {
   text: string;
@@ -45,7 +46,10 @@ export function applyRegexTransforms(
     for (const t of bucket) {
       if (!t.enabled) { continue; }
       try {
-        const regex = new RegExp(t.pattern, t.flags ?? "g",);
+        // Transform patterns come from user config / shared presets — untrusted.
+        // Safe compile rejects catastrophic-backtracking shapes (ReDoS).
+        const regex = compileSafeRegExp(t.pattern, t.flags ?? "g",);
+        if (!regex) { continue; }
         const matches = current.match(regex,);
         if (matches && matches.length > 0) {
           applied.push({ name: t.name, pattern: t.pattern, matches: matches.length, },);
@@ -53,7 +57,7 @@ export function applyRegexTransforms(
           current = current.replace(regex, t.replacement,);
         }
       } catch {
-        // Skip invalid regex patterns
+        // Skip invalid or unsafe regex patterns
       }
     }
   }
