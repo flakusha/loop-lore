@@ -12999,6 +12999,12 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/prompts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    }
+  ],
   "src/prompts/purposes.ts": [
     {
       "kind": "epic",
