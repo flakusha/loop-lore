@@ -83,7 +83,15 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
   return new Elysia({ name: "auth-protected", },)
     .post(
       `${prefix}/auth/logout`,
-      async ({ request, },) => handleLogout(request, database,),
+      async ({ request, ...rest },) => {
+        const userId = "userId" in rest && typeof rest.userId === "string"
+          ? rest.userId
+          : null;
+        const sessionId = "sessionId" in rest && typeof rest.sessionId === "string"
+          ? rest.sessionId
+          : null;
+        return handleLogout(request, database, userId, sessionId,);
+      },
       {
         response: {
           200: SuccessResponse,
@@ -98,7 +106,12 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
     )
     .get(
       `${prefix}/auth/me`,
-      async ({ request, ...rest },) => handleMe(request, database, (rest as any).userId as string | null | undefined,),
+      async ({ request, ...rest },) => {
+        const userId = "userId" in rest && typeof rest.userId === "string"
+          ? rest.userId
+          : null;
+        return handleMe(request, database, userId,);
+      },
       {
         response: {
           200: SuccessResponse,
