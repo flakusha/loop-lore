@@ -218,7 +218,6 @@ export function reconcile(
 
     // Count word overlap
     const overlap = extidWords.filter(w => issueWords.some(iw => w === iw || w.includes(iw,) || iw.includes(w,)));
-    const _overlapRatio = overlap.length / Math.max(extidWords.length, 1,);
 
     // Check if titles share significant overlap (at least 10 chars)
     // Also accept if 2+ words overlap, or if the first significant word matches
