@@ -148,6 +148,18 @@
     "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md",
     "git_issue": "821e0d1"
   },
+  "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-": {
+    "hash": "a877274",
+    "extid": "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-",
+    "type": "BUG",
+    "title": "Auth rate-limiter tests seed per-IP buckets via getClientIp internals — no direct bucket isolation",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-.md",
+    "git_issue": "a877274"
+  },
   "BUG-AUTHOR-NOTE-SECTION-DUPLICATES-POST-HISTORY-INSTRUCTIONS-SAM": {
     "hash": "1bc8ffd",
     "extid": "BUG-AUTHOR-NOTE-SECTION-DUPLICATES-POST-HISTORY-INSTRUCTIONS-SAM",
@@ -858,6 +870,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-generated-images-owned-by-system-are-invisible-to-the-reques.md",
     "git_issue": "5d355aa"
+  },
+  "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
+    "hash": "8d307ae",
+    "extid": "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC",
+    "type": "BUG",
+    "title": "getClientIp is untestable without a live Bun server — IP source not injectable",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourc.md",
+    "git_issue": "8d307ae"
   },
   "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY": {
     "hash": "f52b255",
@@ -10078,6 +10102,17 @@
     "source": ".plan/tickets/TASK-implement-memory-decay-logic.md",
     "status": "done",
     "git_issue": "ab3dad5"
+  },
+  "TASK-IMPLEMENT-PER-CONNECTION-IP-SOURCING-FOR-AUTH-RATE-LIMITERS": {
+    "hash": "5353f07",
+    "extid": "TASK-IMPLEMENT-PER-CONNECTION-IP-SOURCING-FOR-AUTH-RATE-LIMITERS",
+    "type": "TASK",
+    "title": "Implement per-connection IP sourcing for auth rate limiters",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md"
   },
   "TASK-IMPLEMENT-TRADE": {
     "hash": "f71d103",
