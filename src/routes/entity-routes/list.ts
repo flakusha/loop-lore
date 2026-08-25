@@ -26,8 +26,8 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
         return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound, },);
       }
 
-      const page = parseInt(searchParams.get("page",) ?? "1", 10,);
-      const pageSize = parseInt(searchParams.get("pageSize",) ?? "50", 10,);
+      const page = parseInt(searchParams.get("page",) || "1", 10,);
+      const pageSize = parseInt(searchParams.get("pageSize",) || "50", 10,);
       const offset = (page - 1) * pageSize;
 
       const countQuery = db
