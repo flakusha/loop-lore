@@ -84,8 +84,9 @@ async function handleRegister(
   database: Kysely<DB>,
   config: Config,
   t?: TranslatorFn,
+  peerIp?: string | null,
 ): Promise<Response> {
-  const ip = getClientIp(request, config,);
+  const ip = getClientIp(request, config, peerIp ?? null,);
   const gateError = checkRegisterGate(config, ip, t,);
   if (gateError) { return gateError; }
 

@@ -69,6 +69,7 @@ Pick ONE of:
 **Discovered by:** cleanup session 2026-08-24, post-`793a170d` check run.
 **Rationale for deferral:** Per subagent advisory "skip lint warnings
 (pre-existing scripts issues)". File as ticket for future cleanup sprint.
+
 ## Chat Audit 2026-08-25 — Cross-Reference
 
 **Finding B5:** Same skeletal `src/chat/random-events.ts` flagged by oxlint — confirms incomplete/stagnant implementation in the proactive/random-events subsystem.

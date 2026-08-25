@@ -47,24 +47,38 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
 
 // ── Helpers ───────────────────────────────────────────────────
 
-function getClientIp(request: Request, config: Config,): string {
-  const remoteAddr = hasRemoteAddress(request,) ? request.remoteAddress : undefined;
-  if (remoteAddr) { return remoteAddr; }
-  // SECURITY (BUG-getclientip-trusts-spoofable-proxy-headers): the headers
-  // below are attacker-controlled unless the server sits behind a reverse
-  // proxy that overwrites them on every request. Default deny — only
-  // honor them when explicitly opted in via `server.trustProxy`.
-  if (!config.server?.trustProxy) { return "unknown"; }
-  return (
-    request.headers.get("X-Forwarded-For",)?.split(",", 1,)[0]?.trim() ??
-      request.headers.get("x-real-ip",) ??
-      request.headers.get("CF-Connecting-IP",) ??
-      "unknown"
-  );
+/**
+ * Resolve the rate-limiter bucket key for a request.
+ *
+ * `peerIp` is the connection-derived address (Bun server.requestIP(request)),
+ * threaded in from the Elysia route context — `request.remoteAddress` is never
+ * set for plain HTTP, so it cannot be sourced from the Request alone.
+ *
+ * Policy:
+ * - peerIp known, trustProxy off → use the peer address (spoofed XFF ignored).
+ * - peerIp known, trustProxy on  → the nearest trusted proxy appended the
+ *   client IP to X-Forwarded-For; trust only its LAST (proxy-appended) entry, falling back to
+ *   x-real-ip / CF-Connecting-IP / the peer address.
+ * - no peerIp (unit tests, exotic runtimes) → default deny: "unknown". All
+ *   such callers share one bucket by design rather than trusting headers.
+ */
+/** Rightmost XFF entry = the one the nearest trusted proxy appended. */
+function forwardedForLast(request: Request,): string | null {
+  const entries = request.headers.get("X-Forwarded-For",)?.split(",",);
+  if (!entries || entries.length === 0) { return null; }
+  const last = entries.at(-1,)?.trim();
+  return last ? last : null;
 }
 
-function hasRemoteAddress(req: Request,): req is Request & { remoteAddress: string } {
-  return typeof (req as { remoteAddress?: unknown }).remoteAddress === "string";
+function getClientIp(request: Request, config: Config, peerIp?: string | null,): string {
+  if (!peerIp) { return "unknown"; }
+  if (!config.server?.trustProxy) { return peerIp; }
+  return (
+    forwardedForLast(request,) ??
+      request.headers.get("x-real-ip",) ??
+      request.headers.get("CF-Connecting-IP",) ??
+      peerIp
+  );
 }
 
 function escapeHtml(str: string,): string {
