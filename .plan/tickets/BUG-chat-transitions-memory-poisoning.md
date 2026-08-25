@@ -57,3 +57,9 @@ Security / data integrity. Memory poisoning is harder to detect than message inj
 
 - `BUG-users-persona-handlers-horizontal-priv-esc.md` (related horizontal-priv-esc class).
 - `epic-chat-lifecycle-moderation.md`, `epic-assistant-gm-flows.md`.
+
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B1:** Transition classifier over-triggers on ordinary prose. `src/chat/transition-classifier.ts` matches `location_change` via `/(to|into|toward|inside|outside|through|across|over)s+(thes+)?[a-z]+/i`, firing on narration like "to the store"/"into the night" → false transitions that poison memory/transition state.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._
