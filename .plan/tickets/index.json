@@ -729,6 +729,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
   },
+  "BUG-DHRATCHETDECRYPT-DH-STEP-BRANCH-DERIVES-MESSAGE-KEY-FROM-STA": {
+    "hash": "ecf20e4",
+    "git_issue": "ecf20e4",
+    "extid": "BUG-DHRATCHETDECRYPT-DH-STEP-BRANCH-DERIVES-MESSAGE-KEY-FROM-STA",
+    "type": "BUG",
+    "title": "dhRatchetDecrypt DH-step branch derives message key from stale previous-epoch chain (f69d0229 regression)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-sta.md"
+  },
   "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
     "hash": "6fb9cbd",
     "extid": "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD",
