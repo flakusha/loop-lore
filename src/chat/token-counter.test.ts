@@ -78,3 +78,19 @@ describe("computeContextWindow", () => {
     expect(result.status,).toBe("danger",);
   });
 });
+
+describe("countMessageTokens (B3: model-specific counting)", () => {
+  it("honors an injected TokenCountFn instead of the default heuristic", () => {
+    const messages = [msg("Hello world",), msg("This is a test",),];
+    const modelSpecific = (text: string,) => text.length; // 1 token/char estimator
+    // default heuristic → 3 + 4 = 7; custom → 11 + 14 = 25
+    expect(countMessageTokens(messages,),).toBe(7,);
+    expect(countMessageTokens(messages, modelSpecific,),).toBe(25,);
+  });
+
+  it("computeContextWindow threads TokenCountFn into currentTokens", () => {
+    const messages = [msg("Hello world",),];
+    const result = computeContextWindow(messages, 32_000, THRESHOLDS.critical, (text,) => text.length,);
+    expect(result.currentTokens,).toBe(11,);
+  });
+});

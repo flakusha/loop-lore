@@ -241,3 +241,39 @@ describe("classifyTransition (edge cases)", () => {
     expect(result,).toBeDefined();
   });
 });
+
+// ─── B1 Regression: no false location_change on ordinary narration ───
+
+describe("classifyTransition (B1: no over-triggering)", () => {
+  const noAux = {
+    generation: {
+      defaultProvider: "mock-provider",
+      defaultModels: { "mock-provider": "mock-model", },
+      modelRoles: {},
+    },
+  } as any;
+
+  const ordinary = [
+    "I went to the store to buy bread",
+    "She looked into the mirror",
+    "We sat through the night telling stories",
+    "He stepped over the threshold and sighed",
+    "The letter was sent to the mayor",
+    "They walked past the fountain",
+  ];
+
+  for (const msg of ordinary) {
+    it(`does not flag ordinary narration as location_change: "${msg}"`, async () => {
+      const result = await classifyTransition(msg, [], noAux, mockDb,);
+      expect(result.type,).not.toBe("location_change",);
+      expect(result.source,).not.toBe("regex",);
+    });
+  }
+
+  it("still detects explicit movement (positive control)", async () => {
+    const result = await classifyTransition("We travel to the city", [], noAux, mockDb,);
+    expect(result.isTransition,).toBe(true,);
+    expect(result.type,).toBe("location_change",);
+    expect(result.source,).toBe("regex",);
+  });
+});
