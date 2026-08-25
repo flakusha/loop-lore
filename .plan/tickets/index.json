@@ -287,7 +287,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md",
-    "git_issue": "d0d3739"
+    "git_issue": "d0d3739",
+    "status": "done"
   },
   "BUG-BATCH-CHAT-DELETE-LACKS-TRANSACTION-ORPHANED-ROWS-ON-PARTIAL": {
     "hash": "bc5de16",
@@ -738,7 +739,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md",
-    "git_issue": "6fb9cbd"
+    "git_issue": "6fb9cbd",
+    "status": "done"
   },
   "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI": {
     "hash": "fbd71df",
@@ -1252,7 +1254,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
-    "git_issue": "86a2a1b"
+    "git_issue": "86a2a1b",
+    "status": "done"
   },
   "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
     "hash": "f254f7a",
