@@ -37,6 +37,7 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 | [`open-inflight.md`](./open-inflight.md) | **In-flight / decision queue** — rows needing a finalize-vs-defer call (A5–W3, B/C/D/E/F/G series) + open/next actions |
 | [`open-debt.md`](./open-debt.md) | **Debt** — dead/unwired code, schema drift / latent bugs, release hardening |
 | [`open-deferred.md`](./open-deferred.md) | **Deferred** — item-systems deferred follow-ups (IS1–IS7), hardening / deferred clusters, pull-forward notes |
+| [`open-untriaged.md`](./open-untriaged.md) | **Untriaged** — git issues with no index entry (2026-08-25 security/hardening wave), cluster suggestions, known index defects |
 | [`open-closed.md`](./open-closed.md) | **Closed (reference)** — recent wiring log, security & access closed, resolved (moved off), preserved notes |
 | [`security-review-2026-08-25.md`](./security-review-2026-08-25.md) | **Security review plan** — auth/access surface findings (CRIT→LOW) + proposed fix tickets + next-review backlog (WS/RBAC/asset reviews done 2026-08-25) |
 
