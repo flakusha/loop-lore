@@ -169,7 +169,7 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
     // failure outright; callers can then safely assume every valid token has
     // the full claim set.
     const parsed = safeJsonParse<JwtPayload>(payloadStr,);
-    if (!parsed.ok || !parsed.value || typeof parsed.value !== "object" || Array.isArray(parsed.value)) {
+    if (!parsed.ok || !parsed.value || typeof parsed.value !== "object" || Array.isArray(parsed.value,)) {
       return { valid: false, error: "Invalid payload", };
     }
     const payload = parsed.value;
