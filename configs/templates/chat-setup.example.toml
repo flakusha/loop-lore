@@ -1,0 +1,42 @@
+# Chat Setup Templates
+#
+# Optional user-defined chat setup templates. Copy this file to
+# `configs/templates/chat-setup.toml` (or `.yaml` / `.yml`) to add templates
+# on top of the built-in code defaults. YAML wins over TOML when both exist.
+#
+# Seeding is idempotent upsert-by-slug: templates declared here are INSERTED
+# when their slug is missing at server boot; existing rows (admin-edited or
+# previously seeded) are NEVER overwritten. Code defaults (simple-direct,
+# advanced-roleplay, group-gm, brainstorm-assistant, visual-novel, world)
+# are always present even without this file.
+#
+# Fields:
+#   slug          required — unique key; id becomes `template-<slug>`
+#   name          required — display name in the template dropdown
+#   description   optional — short explanation shown in tooltip
+#   mode          optional — direct | group | story
+#   turnStrategy  optional — round_robin | scene_based | initiative | quest_driven | hybrid
+#   visualNovel   optional — boolean, enables the VN overlay
+#   worldId       optional — bind to a fixed world (rare)
+#   gmConfig      optional — { assistantRole: off | helper | gm | moderator, ... }
+#   visibility    optional — private | public | unlisted (seeded onto created chats)
+#   features      optional — display tags shown as a feature list on selection,
+#                             e.g. "rpg mode", "vn mode", "no quests", "sfw only",
+#                             "no gm", "no assistant"
+#
+# Key mechanics seeded from a template are immutable once the bound chat is
+# online; changing them requires migrating to a new chat.
+
+[[templates]]
+slug = "my-rpg"
+name = "My Custom RPG"
+description = "Fantasy roleplay with a game master."
+mode = "story"
+turnStrategy = "scene_based"
+visualNovel = false
+
+[templates.gmConfig]
+assistantRole = "gm"
+
+visibility = "private"
+features = ["rpg mode", "gm"]

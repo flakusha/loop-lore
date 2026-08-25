@@ -18,7 +18,14 @@ import {
   mergeLlmConfig,
   mergeSdConfig,
 } from "./merge.js";
-import { validateLlmConfig, } from "./validation.js";
+import {
+  validateAvatarConfig,
+  validateCharacterConfig,
+  validateImageEditConfig,
+  validateLlmConfig,
+  validateSdConfig,
+  warnUnknownPromptPurposes,
+} from "./validation.js";
 
 /**
  * Load template configuration from configs/templates/ directory.
@@ -53,6 +60,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
         case "llm": {
           // Fail fast on malformed llm config before merging.
           validateLlmConfig(raw,);
+          warnUnknownPromptPurposes(raw.systemPrompts,);
           config.llm = mergeLlmConfig(
             config.llm,
             raw,
@@ -61,6 +69,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
           break;
         }
         case "sd": {
+          validateSdConfig(raw,);
           config.sd = mergeSdConfig(
             config.sd,
             raw,
@@ -69,6 +78,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
           break;
         }
         case "avatar": {
+          validateAvatarConfig(raw,);
           config.avatar = mergeAvatarConfig(
             config.avatar,
             raw,
@@ -77,6 +87,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
           break;
         }
         case "imageEdit": {
+          validateImageEditConfig(raw,);
           config.imageEdit = mergeImageEditConfig(
             config.imageEdit,
             raw,
@@ -85,6 +96,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
           break;
         }
         case "character": {
+          validateCharacterConfig(raw,);
           config.character = mergeCharacterConfig(
             config.character,
             raw,
@@ -116,4 +128,10 @@ export {
   mergeLlmConfig,
   mergeSdConfig,
 } from "./merge.js";
-export { validateLlmConfig, } from "./validation.js";
+export {
+  validateAvatarConfig,
+  validateCharacterConfig,
+  validateImageEditConfig,
+  validateLlmConfig,
+  validateSdConfig,
+} from "./validation.js";

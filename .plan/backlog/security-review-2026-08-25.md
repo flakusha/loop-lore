@@ -151,6 +151,7 @@ Sweep covered: auth/registration flow, WS transport, RBAC enforcement, asset aut
 **GRAND TOTAL: 41 tickets filed** (label `security`) across the full sweep.
 
 ### Remediation priority (recommended order)
+
 1. CRITICAL auth/core: `0ce5784` CSP · `e16fb61` /me · `b87cc89` verifyJwt · `f0683a8` NSFW gen gate · `5c73739` ReDoS lore
 2. HIGH: `6bda93f` session token · `2129b97` RBAC · `5232abe` NSFW age · `1330c1f` ReDoS transforms · `377cf9c` logger censor · `8e464f9` log perms · `abc8205` deleteChat tx · `e9c30c5` regression tests
 3. MEDIUM: crypto BYO · input-val battle · DB tx/N+1 · logging censor/stack · NSFW gaps · regex safety · admin requireUserId · concurrency races (d239395, bee01ca, c8dbeab, 3a009b6, 76d9ab4)

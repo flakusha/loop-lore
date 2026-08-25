@@ -16,7 +16,7 @@ import type { SectionBuilder, } from "../types";
 export const dynamicContextSection: SectionBuilder = {
   name: "dynamicContext",
   enabled: () => true,
-  // eslint-disable-next-line @typescript-eslint/require-await -- PromptSection.build is typed Promise<Message[]>
+
   build: async () => {
     const now = new Date();
     const dateStr = now.toISOString().split("T", 1,)[0] ?? "unknown";

@@ -3,7 +3,6 @@
 
 import { createRateLimiter, } from "../../middleware/rate-limit";
 import { LL_TOKEN, } from "../../regex/cookies";
-import { jsonParseOr, } from "../../utils";
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
@@ -71,38 +70,11 @@ function errorHtml(msg: string,): Response {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
 }
-
-/** Extract session ID from JWT payload without signature verification (for logout). */
-function extractSessionIdFromJwt(token: string,): string | null {
-  try {
-    const parts = token.split(".",);
-    if (parts.length !== 3) { return null; }
-    const payloadB64 = parts[1]!;
-    const base64 = payloadB64.replaceAll("-", "+",).replaceAll("_", "/",);
-    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
-    const payloadBytes = Uint8Array.from(atob(padded,), (c,) => c.charCodeAt(0,),);
-    const payload = jsonParseOr<{ sid?: string }>(new TextDecoder().decode(payloadBytes,), {},);
-    return payload.sid ?? null;
-  } catch {
-    return null;
-  }
-}
-
-/** Extract user ID from JWT payload without signature verification (for /me). */
-function extractUserIdFromJwt(token: string,): string | null {
-  try {
-    const parts = token.split(".",);
-    if (parts.length !== 3) { return null; }
-    const payloadB64 = parts[1]!;
-    const base64 = payloadB64.replaceAll("-", "+",).replaceAll("_", "/",);
-    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
-    const payloadBytes = Uint8Array.from(atob(padded,), (c,) => c.charCodeAt(0,),);
-    const payload = jsonParseOr<{ sub?: string }>(new TextDecoder().decode(payloadBytes,), {},);
-    return payload.sub ?? null;
-  } catch {
-    return null;
-  }
-}
+// SECURITY NOTE: intentionally NO unverified-JWT extractors here. Previous
+// versions exposed extractSessionIdFromJwt/extractUserIdFromJwt which decoded
+// the JWT payload without checking the signature. Those helpers were used by
+// /me and logout and allowed impersonation / logout-DoS attacks when an
+// attacker could set a forged cookie. Always go through verifyJwt().
 
 function getTokenFromCookie(request: Request,): string | null {
   const cookieHeader = request.headers.get("Cookie",);
@@ -123,8 +95,6 @@ export function resetRegisterRateLimiter(): void {
 export {
   COOKIE_PATH,
   errorHtml,
-  extractSessionIdFromJwt,
-  extractUserIdFromJwt,
   getClientIp,
   getTokenFromCookie,
   loginLimiter,

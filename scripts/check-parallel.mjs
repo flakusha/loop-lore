@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/* eslint-disable no-undef, unicorn/name-replacements, unicorn/consistent-boolean-name */
-
 /**
  * Parallel check runner for loop-lore
  * Runs independent checks in parallel and aggregates results
