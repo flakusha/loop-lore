@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { formatTime, tzOffset, unixMs, unixSec, } from "./date";
+import { formatHuman, formatTime, serializeDate, toDate, tzOffset, unixMs, unixSec, } from "./date";
 
 describe("unixMs", () => {
   test("returns a number close to Date.now()", () => {
@@ -110,5 +110,91 @@ describe("formatTime", () => {
     const date = new Date("2026-07-04T00:00:00.005Z",);
     const result = formatTime({ date, tz: "UTC", style: "standard", },);
     expect(result,).toContain(".005",);
+  });
+});
+
+describe("toDate", () => {
+  test("returns Invalid Date for empty string", () => {
+    expect(Number.isNaN(toDate("",).getTime(),),).toBe(true,);
+  });
+
+  test("defaults to now for undefined", () => {
+    const d = toDate();
+    expect(Number.isNaN(d.getTime(),),).toBe(false,);
+  });
+
+  test("accepts epoch ms number", () => {
+    const d = toDate(1751639400000,);
+    expect(d.getTime(),).toBe(1751639400000,);
+  });
+
+  test("accepts ISO string", () => {
+    const d = toDate("2026-07-04T14:30:00Z",);
+    expect(d.toISOString(),).toBe("2026-07-04T14:30:00.000Z",);
+  });
+
+  test("passes through a Date", () => {
+    const src = new Date("2026-07-04T14:30:00Z",);
+    expect(toDate(src,),).toBe(src,);
+  });
+});
+
+describe("formatHuman", () => {
+  const instant = "2026-07-04T14:30:00Z"; // 16:30 CEST / 23:30 JST
+
+  test("empty/invalid input yields empty string", () => {
+    expect(formatHuman("",),).toBe("",);
+    expect(formatHuman("not-a-date",),).toBe("",);
+  });
+
+  test("renders locale/region aware date-time (de-DE, Berlin)", () => {
+    const out = formatHuman(instant, { locale: "de-DE", tz: "Europe/Berlin", },);
+    expect(out,).toMatch(/Juli 2026/,);
+    expect(out,).toMatch(/16:30/,);
+  });
+
+  test("renders in Japanese locale + timezone (ja-JP, Tokyo)", () => {
+    const out = formatHuman(instant, { locale: "ja-JP", tz: "Asia/Tokyo", },);
+    expect(out,).toMatch(/2026/,);
+    expect(out,).toMatch(/23:30/,);
+  });
+
+  test("time-only style honors locale + tz", () => {
+    const out = formatHuman(instant, { locale: "en-US", tz: "America/New_York", humanStyle: "time", },);
+    expect(out,).toMatch(/10:30/,);
+  });
+});
+
+describe("serializeDate", () => {
+  const instant = new Date("2026-07-04T14:30:00.123Z",);
+
+  test("unix returns epoch milliseconds", () => {
+    expect(serializeDate(instant, "unix",),).toBe(instant.getTime(),);
+  });
+
+  test("iso yields native-Date round-trippable string with tz offset", () => {
+    const iso = serializeDate(instant, "iso", { tz: "America/New_York", },) as string;
+    expect(iso,).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[-+]\d{2}:\d{2}$/,);
+    expect(new Date(iso,).getTime(),).toBe(instant.getTime(),);
+  });
+
+  test("compact yields dense sortable pattern", () => {
+    const out = serializeDate(instant, "compact", { tz: "UTC", },) as string;
+    expect(out,).toMatch(/^\d{8}T\d{6}\.\d{3}\+00:00$/,);
+  });
+
+  test("human yields locale display", () => {
+    const out = serializeDate(instant, "human", { locale: "de-DE", tz: "Europe/Berlin", },) as string;
+    expect(out,).toMatch(/Juli 2026/,);
+  });
+
+  test("invalid input yields empty string for display formats (no NaN soup)", () => {
+    expect(serializeDate("", "iso",),).toBe("",);
+    expect(serializeDate("bad", "compact",),).toBe("",);
+    expect(serializeDate("", "human",),).toBe("",);
+  });
+
+  test("invalid input yields NaN for unix", () => {
+    expect(Number.isNaN(serializeDate("", "unix",) as number,),).toBe(true,);
   });
 });
