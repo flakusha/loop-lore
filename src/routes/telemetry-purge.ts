@@ -4,9 +4,9 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 import { can, } from "../users/permissions";
 import { jsonStringifyOr, } from "../utils/safe-json";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 /**
  * BUG-telemetry-purge-unbounded-days — delete telemetry events older than
