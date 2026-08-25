@@ -14319,6 +14319,18 @@
     "source": ".plan/tickets/TASK-screen-reader-support.md",
     "git_issue": "bcdd5b5"
   },
+  "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE": {
+    "hash": "74cafdc",
+    "git_issue": "74cafdc",
+    "extid": "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE",
+    "type": "TASK",
+    "title": "SD e2e real-server fixtures via sd.cpp and ComfyUI with generation metadata",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-e2e-integration-testing.md (Pillar 3 — real-server tier)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md"
+  },
   "TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER": {
     "hash": "c9036fd",
     "extid": "TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER",
