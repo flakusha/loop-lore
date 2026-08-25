@@ -327,6 +327,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     }
   ],
   "src/assets/service/delete.ts": [
@@ -4639,6 +4643,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md"
     }
   ],
   "src/config/sections/byo-key.ts": [
@@ -5082,6 +5090,10 @@
     }
   ],
   "src/crypto/asset-encryption.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption-update.md"
@@ -6421,6 +6433,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
     }
   ],
   "src/db/schema": [
@@ -10633,6 +10649,12 @@
       "source": ".plan/tickets/BUG-classify-intent-confidence-unbounded.md"
     }
   ],
+  "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
+    }
+  ],
   "src/generation/auto-gen/content-hooks.ts": [
     {
       "kind": "ticket",
@@ -10667,6 +10689,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md"
+    }
+  ],
+  "src/generation/auto-gen/deps.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
     }
   ],
   "src/generation/auto-gen/group-cascade.ts": [
@@ -10745,6 +10773,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
+    }
+  ],
+  "src/generation/auto-gen/story-mode-fail-closed.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
     }
   ],
   "src/generation/auto-gen/story-mode.test.ts": [
@@ -12793,6 +12827,12 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
+  "src/native/blake3.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
+    }
+  ],
   "src/native/hot-reload.ts": [
     {
       "kind": "epic",
@@ -14319,6 +14359,10 @@
   ],
   "src/routes/admin/aux-telemetry.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md"
     }
@@ -15237,6 +15281,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/routes/export": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     }
   ],
   "src/routes/export-shared.ts": [
