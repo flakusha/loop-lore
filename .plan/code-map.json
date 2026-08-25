@@ -203,6 +203,18 @@
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     }
   ],
+  "src/assets/controller/files.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md"
+    }
+  ],
+  "src/assets/controller/handlers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-link-share-handlers-and-gallery-grid-param-lack-valida.md"
+    }
+  ],
   "src/assets/controller/signed-url-routes.ts": [
     {
       "kind": "ticket",
@@ -343,6 +355,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    }
+  ],
+  "src/assets/service/read.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md"
+    }
+  ],
+  "src/assistant": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex.md"
     }
   ],
   "src/assistant/command-parser.ts": [
@@ -3142,6 +3166,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-random-encounters-events.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     },
     {
@@ -3386,7 +3414,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-swipe-replay-branch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-test-chat-module.md"
     }
   ],
   "src/chat/service/write.test.ts": [
@@ -3418,6 +3454,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-ctx-token-accuracy.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
@@ -3445,6 +3485,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-transitions-memory-poisoning.md"
     },
     {
       "kind": "ticket",
@@ -3525,8 +3573,20 @@
   ],
   "src/chat/types/nsfw.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-log-plaintext-pii.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-schema.md"
     }
   ],
   "src/chat/visibility.ts": [
@@ -6571,6 +6631,10 @@
       "source": ".plan/tickets/TASK-mini-games-framework.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-test-chat-module.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/assistant.md"
     },
@@ -8328,6 +8392,10 @@
   "src/frontend/alpine/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
     }
   ],
@@ -8768,6 +8836,10 @@
     }
   ],
   "src/frontend/asset-preview.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-duplicate-openassetpreview-definitions-with-divergent-behavi.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md"
@@ -9550,6 +9622,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-duplicate-openassetpreview-definitions-with-divergent-behavi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
     },
     {
@@ -9882,6 +9958,10 @@
     }
   ],
   "src/frontend/ui.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-test-failures.md"
@@ -10569,6 +10649,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md"
     }
   ],
   "src/generation/context-compactor.ts": [
@@ -15491,6 +15575,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md"
     }
   ],
   "src/routes/messages/read.ts": [
@@ -16317,6 +16405,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-grid-exposes-other-users-private-assets.md"
     },
     {
       "kind": "ticket",
@@ -18078,7 +18170,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     },
     {
       "kind": "ticket",
@@ -19869,6 +19969,12 @@
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
     }
   ],
+  "src/views/notifications.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
+    }
+  ],
   "src/views/partials/worlds/item-provisioning-panel.html": [
     {
       "kind": "ticket",
@@ -19931,6 +20037,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
     },
     {
       "kind": "ticket",

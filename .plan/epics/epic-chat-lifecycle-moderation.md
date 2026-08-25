@@ -392,3 +392,11 @@ const MODE_INSTRUCTIONS: Record<ChatMode, string> = {
 2. **Mode transitions** — Can a chat switch from `story` to `battle` mid-conversation? Yes — the mode affects generation, not state. Switching is safe.
 
 3. **Response style vs max_tokens** — Should `custom` style use `response_style_custom` as max_tokens, or should it be a multiplier? Recommendation: direct max_tokens for simplicity.
+
+## Chat Audit 2026-08-25 — Related Findings
+
+- **B1:** Transition classifier over-triggers on ordinary prose (`src/chat/transition-classifier.ts` broad regex) → false `location_change` transitions. See BUG-chat-transitions-memory-poisoning.
+- **B5:** `src/chat/proactive/*` + `random-events.ts` skeletal — missing event lifecycle/persistence. See TASK-random-encounters-events.
+- **B6:** `Messages` lacks first-class reaction/grading fields; assets via separate `asset_links`. Swipe hierarchy present. See TASK-test-chat-module, FEAT-message-swipe-replay-branch.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25._
