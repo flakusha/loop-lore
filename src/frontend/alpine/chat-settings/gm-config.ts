@@ -10,6 +10,7 @@
  * 250L file-size guard.
  */
 
+import type { OutputStylePreset, } from "../../../chat/output-style";
 import { jsonParseOr, safeJsonStringify, } from "../json";
 import type { GmConfig, } from "../types";
 
@@ -31,6 +32,9 @@ export interface GmSettingsFields {
   gmMaxTokens: number;
   responseLengthPreset: "short" | "medium" | "long" | "custom";
   responseLengthCustom: number;
+  /** "" = no style directive (section stays off). */
+  outputStylePreset: "" | OutputStylePreset;
+  outputStyleIntensity: number;
 }
 
 /** Read the editable GM/VN settings out of a chat's persisted GmConfig. */
@@ -52,6 +56,8 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
     gmMaxTokens: config.llmConfig?.maxTokens ?? 2000,
     responseLengthPreset: config.responseLengthPreset ?? "medium",
     responseLengthCustom: config.responseLengthCustom ?? 1000,
+    outputStylePreset: config.outputStyle?.preset ?? "",
+    outputStyleIntensity: config.outputStyle?.intensity ?? 0.5,
   };
 }
 
@@ -107,6 +113,14 @@ export function buildGmConfig(
     gmConfig.responseLengthCustom = fields.responseLengthCustom;
   } else {
     delete gmConfig.responseLengthCustom;
+  }
+  if (fields.outputStylePreset) {
+    gmConfig.outputStyle = {
+      preset: fields.outputStylePreset,
+      intensity: fields.outputStyleIntensity,
+    };
+  } else {
+    delete gmConfig.outputStyle;
   }
   return gmConfig;
 }

@@ -105,6 +105,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             thinkingVisibility: body.thinkingVisibility,
             promptOverride: hasExplicit("promptOverride",) ? body.promptOverride : undefined,
             quickReplies: hasExplicit("quickReplies",) ? body.quickReplies : undefined,
+            outputStylePreset: hasExplicit("outputStylePreset",) ? body.outputStylePreset : undefined,
             userRole,
           },);
           if ("code" in result) {
