@@ -166,7 +166,7 @@ describe("Encryption Workflow", () => {
           name: "key-chat-e2e",
           type: "direct",
           mode: "direct",
-          encryption_level: "standard",
+          encryptionLevel: "standard",
         },
       );
       expect(chatRes.ok,).toBe(true,);

@@ -30,13 +30,16 @@ implementation is a follow-up to the BUG ticket once the shape is agreed.
 ## Proposal
 
 1. Add a base interface `HookResultPayload`:
+
    ```ts
    interface HookResultPayload {
      actorId: string;
      chatId: string;
    }
    ```
+
 2. Define per-`eventType` payload types:
+
    ```ts
    interface EmotionChangePayload extends HookResultPayload {
      dominantEmotion: string;
@@ -57,17 +60,19 @@ implementation is a follow-up to the BUG ticket once the shape is agreed.
      severity: string;
    }
    ```
+
 3. Widen `HookResult.data` from `Record<string, unknown>` to a discriminated
    union (`HookResultPayload & EmotionChangePayload | …`) — or keep
    `unknown` but add a typed accessor on the registry.
-5. Update hooks to merge `_context.actorId` + `_context.chatId` into `data`.
-6. Update consumers (`content-hooks.ts`, `post-store.ts`, `story-mode.ts`)
+4. Update hooks to merge `_context.actorId` + `_context.chatId` into `data`.
+5. Update consumers (`content-hooks.ts`, `post-store.ts`, `story-mode.ts`)
    to type-narrow instead of using ambient `opts`.
 
 ## Alternative considered
 
 Keep `data: Record<string, unknown>` and add **separate fields** to
 `HookResult`:
+
 ```ts
 interface HookResult {
   handled: boolean;
@@ -79,6 +84,7 @@ interface HookResult {
   reason?: string;
 }
 ```
+
 Simpler migration (no union changes), but `data` is still structurally loose.
 
 ## Acceptance Criteria

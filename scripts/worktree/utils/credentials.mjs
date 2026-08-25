@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/* eslint-disable unicorn/name-replacements, unicorn/prefer-string-replace-all, unicorn/prefer-switch, unicorn/no-lonely-if, unicorn/import-style -- utility file, pedantic rules */
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
@@ -66,7 +65,6 @@ import { execSync, } from "child_process";
 
 let repoRoot = resolve(__dirname, "..", "..", "..",);
 try {
-  // eslint-disable-next-line sonarjs/no-os-command-from-path -- trusted dev script; git via user PATH is standard, fallback only (symlink/worktree CWD)
   const gitRoot = execSync("git rev-parse --show-toplevel", { encoding: "utf-8", cwd: repoRoot, timeout: 5000, },)
     .trim();
   if (gitRoot) { repoRoot = gitRoot; }

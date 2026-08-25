@@ -79,6 +79,7 @@ describe("Characters E2E", () => {
   test("PUT /api/actors/:id updates actor", async () => {
     const res = await api.put(`/api/actors/${SEED.character.id}`, {
       displayName: "Updated Character Name",
+      dataVersion: 0,
     },);
     expect(res.ok,).toBe(true,);
 
