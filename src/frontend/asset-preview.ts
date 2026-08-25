@@ -11,8 +11,8 @@
  * re-define these globals elsewhere.
  */
 
-import { feFetch, } from "./fe-fetch";
 import { safeFetch, } from "../utils";
+import { feFetch, } from "./fe-fetch";
 
 interface PreviewAsset {
   id: string;
