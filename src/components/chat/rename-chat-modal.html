@@ -13,7 +13,9 @@
   <div class="modal" style="max-width: 420px">
     <div class="modal-header">
       <span class="title">{{{t("chats.renameChat")}}}</span>
-      <button class="btn-icon" @click="$store.ui.showRenameModal = false">&times;</button>
+      <button class="btn-icon" @click="$store.ui.showRenameModal = false" x-bind:aria-label="t('common.close')">
+        &times;
+      </button>
     </div>
     <div class="modal-body">
       <div class="form-group">
