@@ -8,6 +8,7 @@ import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
 import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
+import { rateLimitHeaders, } from "../../middleware/rate-limit";
 import { uid, } from "../../utils";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { errorHtml, getClientIp, registerLimiter, setTokenCookie, } from "./shared";
@@ -67,12 +68,17 @@ function checkRegisterGate(
   if (!config.auth.registrationOpen) {
     return errorHtml(t ? t("auth.registrationClosed",) : "Registration is closed.",);
   }
-  if (!registerLimiter.check(ip,)) {
+  // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit headers.
+  const regLimit = registerLimiter.consume(ip,);
+  if (!regLimit.allowed) {
     return new Response(
       `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many registration attempts. Try again later."}</p>`,
       {
         status: HttpStatus.TooManyRequests,
-        headers: { "Content-Type": "text/html; charset=utf-8", },
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          ...rateLimitHeaders(regLimit, regLimit.resetSec,),
+        },
       },
     );
   }

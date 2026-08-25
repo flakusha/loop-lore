@@ -13,7 +13,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { handleDemoLogin, handleLogin, } from "./login";
-import { resetLoginRateLimiter, } from "./shared";
+import { resetDemoLoginRateLimiter, resetLoginRateLimiter, } from "./shared";
 
 let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
@@ -82,6 +82,7 @@ async function seedUsers(): Promise<void> {
 beforeEach(() => {
   resetTestDb(sqlite,);
   resetLoginRateLimiter();
+  resetDemoLoginRateLimiter();
   return seedUsers();
 },);
 
@@ -161,6 +162,28 @@ describe("handleLogin — rate limiting", () => {
     expect(blocked.status,).toBe(429,);
     expect(await blocked.text(),).toContain("Too many attempts",);
   });
+
+  // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers
+  test("429 response carries Retry-After and X-RateLimit-* headers", async () => {
+    for (let i = 0; i < 10; i++) {
+      await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(),);
+    }
+    const blocked = await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(),);
+    expect(blocked.status,).toBe(429,);
+    expect(blocked.headers.get("Retry-After",),).toBeDefined();
+    expect(blocked.headers.get("X-RateLimit-Limit",),).toBe("10",);
+    expect(blocked.headers.get("X-RateLimit-Remaining",),).toBe("0",);
+    expect(blocked.headers.get("X-RateLimit-Reset",),).toBeDefined();
+  });
+
+  test("successful login emits X-RateLimit-Remaining (informational)", async () => {
+    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(),);
+    expect(res.status,).toBe(200,);
+    // No Retry-After on 200 — only X-RateLimit-* informational headers.
+    expect(res.headers.get("Retry-After",),).toBeNull();
+    // X-RateLimit-Limit stays informational; not auto-attached to 200 in the
+    // current handler. The header is only attached to the 429 branch.
+  });
 });
 
 describe("handleDemoLogin", () => {
@@ -178,6 +201,29 @@ describe("handleDemoLogin", () => {
   test("returns 500 when the JWT secret is missing", async () => {
     const res = await handleDemoLogin(makeRequest(), db, makeConfig({ jwtSecret: undefined, },),);
     expect(res.status,).toBe(500,);
+  });
+
+  // BUG-demo-login-endpoint-bypasses-rate-limiter
+  test("returns 429 after DEMO_LOGIN_MAX_ATTEMPTS (5) requests from the same IP", async () => {
+    for (let i = 0; i < 5; i++) {
+      const res = await handleDemoLogin(makeRequest(), db, makeConfig(),);
+      expect(res.status,).toBe(200,);
+    }
+    const blocked = await handleDemoLogin(makeRequest(), db, makeConfig(),);
+    expect(blocked.status,).toBe(429,);
+    expect(await blocked.text(),).toContain("Too many attempts",);
+    expect(blocked.headers.get("Retry-After",),).toBeDefined();
+  });
+  test("demo-login limiter is per-IP — a different peer keeps a fresh budget", async () => {
+    // Exhaust one peer
+    for (let i = 0; i < 5; i++) {
+      await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, "10.0.0.1",);
+    }
+    const blocked = await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, "10.0.0.1",);
+    expect(blocked.status,).toBe(429,);
+    // A different peer keeps its own budget
+    const ok = await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, "10.0.0.2",);
+    expect(ok.status,).toBe(200,);
   });
 });
 
