@@ -40,14 +40,24 @@ function executeTakeFirst(existingUser?: boolean,) {
   };
 }
 
-function makeDb(overrides?: { existingUser?: boolean },): any {
+function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },): any {
+  const sessionsCount = overrides?.sessionsCount ?? 0;
   return {
-    selectFrom: () => ({
-      select: () => ({
-        where: () => ({
-          executeTakeFirst: executeTakeFirst(overrides?.existingUser,),
-        }),
-      }),
+    fn: {
+      countAll: () => ({ as: (_alias: string) => "count_all_marker" }),
+    },
+    selectFrom: (table: string,) => ({
+      select: (cols: any,) => {
+        const isSessionsCount = table === "sessions" && cols === "count_all_marker";
+        return {
+          where: () => ({
+            executeTakeFirst: async () => {
+              if (isSessionsCount) { return { cnt: BigInt(sessionsCount,), }; }
+              return executeTakeFirst(overrides?.existingUser,)();
+            },
+          }),
+        };
+      },
     }),
     insertInto: () => ({
       values: () => ({
