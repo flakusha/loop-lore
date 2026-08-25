@@ -1,8 +1,7 @@
 # BUG: No in-flight generation check — concurrent generate requests last-wins abort
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (hasInFlightGeneration check wired in handleGenerate before startGenerationTracking; 409 Conflict response on duplicate)
 **Priority:** high
-**Effort:** Medium
 
 ## Summary
 
