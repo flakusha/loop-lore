@@ -4,6 +4,7 @@
 # Epic: Generation Flow Control — Pause, Throttling & Concurrency
 
 ## Status: Proposed
+
 **Priority:** High
 **Labels:** generation, pause, rate-limit, concurrency, admin
 
