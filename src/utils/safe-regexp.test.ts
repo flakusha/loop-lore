@@ -37,6 +37,16 @@ describe("compileSafeRegExp", () => {
     expect(compileSafeRegExp("^(?:\\w{3,10})$",),).not.toBeNull();
   });
 
+  test("rejects empty alternation branch nested in quantified group wrapper", () => {
+    expect(compileSafeRegExp("((a|))+",),).toBeNull();
+    expect(compileSafeRegExp("((a|))*",),).toBeNull();
+  });
+
+  test("allows unquantified group containing empty branch", () => {
+    expect(compileSafeRegExp("((a|))",),).not.toBeNull();
+  });
+
+
   test("escaped quantifiers are not treated as nested quantification", () => {
     expect(compileSafeRegExp("(a\\+)+",),).not.toBeNull();
   });
