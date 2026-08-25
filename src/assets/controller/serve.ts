@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 300
 
 /**
  * Asset Controller — serve/download handlers
@@ -144,7 +145,7 @@ export async function handleServeRaw({
       },);
     } catch {
       return new Response("Failed to decrypt asset", { status: 500, },);
-  }
+    }
   }
   // Non-encrypted asset — serve directly
   return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
