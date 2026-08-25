@@ -9953,6 +9953,18 @@
     "source": ".plan/tickets/TASK-gallery-review-approval-queue.md",
     "git_issue": "69e421f"
   },
+  "TASK-GALLERY-REVIEW-MINORS-SWEEP-PAGINATION-SYNC-IO-FORMATSIZE-DE": {
+    "hash": "e5b72c2",
+    "git_issue": "e5b72c2",
+    "extid": "TASK-GALLERY-REVIEW-MINORS-SWEEP-PAGINATION-SYNC-IO-FORMATSIZE-DE",
+    "type": "TASK",
+    "title": "gallery-review minors sweep (pagination, sync IO, formatSize dedupe, any-typing)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-review-minors-sweep-pagination-sync-io-formatsize-de.md"
+  },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
     "extid": "TASK-GEMINI-PROVIDER",
