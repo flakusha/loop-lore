@@ -76,9 +76,10 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       const cfg = this.getConfig();
       if (!cfg || !this.baseUrl) { return false; }
 
-      const result = await safeFetch(this.baseUrl, {
+      const result = await safeFetch<string>(this.baseUrl, {
         timeout: 5_000,
         handle401: false,
+        parseJson: false,
       },);
       return result.ok;
     } catch {
