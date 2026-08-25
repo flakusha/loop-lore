@@ -68,6 +68,7 @@ explicitly named.
 ## Fix
 
 1. Update `mood-hook.ts:7-9` JSDoc:
+
    ```ts
    /**
     * Mood Hook — Detects mood shifts in content and fires mood delta events.
@@ -78,6 +79,7 @@ explicitly named.
     * is planned (see TASK-aux-mood-classification.md).
     */
    ```
+
 2. Update `emotion-hook.ts:6-8` JSDoc symmetrically.
 3. Decide whether to wire `_context` now or rename to `_`:
    - **Quick fix**: rename `_context` → `_` on both `execute` methods,
