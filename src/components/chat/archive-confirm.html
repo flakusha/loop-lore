@@ -12,7 +12,7 @@
   <div class="modal" style="max-width: 360px">
     <div class="modal-header">
       <span class="title">Archive Message</span>
-      <button class="btn-icon" @click="cancelArchive()">&times;</button>
+      <button class="btn-icon" @click="cancelArchive()" x-bind:aria-label="t('common.close')">&times;</button>
     </div>
     <div class="modal-body">
       <p style="font-size: 14px; color: var(--text-secondary)">

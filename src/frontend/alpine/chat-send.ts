@@ -13,13 +13,13 @@ import { browserCompressThenEncrypt, } from "../browser";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
-import type { ChatState, Message, } from "./types";
+import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat", },);
 
 /** Build request body for sendMessage (handles encryption + attachments). */
 async function buildSendBody(
-  ctx: any,
+  ctx: ChatState,
   text: string,
   msgs: Array<{ id: string }>,
   pendingAssets: Array<{ assetId: string }>,
@@ -45,11 +45,13 @@ async function buildSendBody(
   return body;
 }
 
-/** Remove optimistic temp messages after send failure. */
-function removeTempMessages(ctx: ChatState, msgs: Array<{ id: string }>,) {
-  const filtered: Message[] = [];
-  for (const m of msgs) { if (!m.id.startsWith("temp-",)) { filtered.push(m as Message,); } }
-  ctx.messages = filtered;
+/** Remove one optimistic temp message after its send failed.
+ *
+ * Scoped to the exact temp id so a failure does not strip temp messages
+ * belonging to concurrent optimistic sends.
+ */
+function removeTempMessage(ctx: ChatState, tempId: string,) {
+  ctx.messages = ctx.messages.filter((m,) => m.id !== tempId);
 }
 
 export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
@@ -69,9 +71,11 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       this._consecutiveAutoFires = 0;
     }
 
+    // Unique id per optimistic send so rollback can target exactly this message.
+    const tempId = `temp-${globalThis.crypto.randomUUID()}`;
     const msgs = this.messages;
     msgs.push({
-      id: `temp-${Date.now()}`,
+      id: tempId,
       role: "user",
       content: text || "(attached media)",
       created_at: new Date().toISOString(),
@@ -114,13 +118,13 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this._autoFired = false;
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
-        removeTempMessages(this, msgs,);
+        removeTempMessage(this, tempId,);
       }
     } catch {
       this.isGenerating = false;
       this._autoFired = false;
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
-      removeTempMessages(this, msgs,);
+      removeTempMessage(this, tempId,);
     }
   },
 };
