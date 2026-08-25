@@ -88,6 +88,10 @@ function isHashedAsset(filePath: string,): boolean {
   return /\.[0-9a-f]{8,}\.[a-z0-9]+$/i.test(name,);
 }
 
+// Dev cache TTL. Prod: bump hashed files to IMMUTABLE_CACHE_MAX_AGE + immutable,
+// non-hashed to 3600 (or no-cache). See injectContentHashes in build/compress.ts.
+const STATIC_CACHE_MAX_AGE = 60;
+
 /**
  * Build the Cache-Control header value for a static file response.
  * Hashed assets (content-hashed filenames) get long-lived immutable caching.
