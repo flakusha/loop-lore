@@ -56,12 +56,11 @@ describe("parseAcceptProtocols", () => {
     expect(result,).toEqual([],);
   });
 
-  test("handles quality value of 0", () => {
+  test("excludes quality value of 0 (not acceptable per RFC 7231)", () => {
     const result = parseAcceptProtocols("http/1.1;q=0, http/2;q=1",);
-    // q=0 should still be included but at lowest priority
-    expect(result,).toContain(TransportProtocol.Http1_1,);
-    expect(result,).toContain(TransportProtocol.Http2,);
-    expect(result[0],).toBe(TransportProtocol.Http2,);
+    // q=0 means "not acceptable" — http/1.1 must be excluded; http/2 selected.
+    expect(result,).not.toContain(TransportProtocol.Http1_1,);
+    expect(result,).toEqual([TransportProtocol.Http2,],);
   });
 
   test("handles malformed quality values gracefully", () => {
