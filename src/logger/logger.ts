@@ -89,12 +89,20 @@ export class LoggerImpl implements Logger {
     const numericLevel = LogLevelNumeric[level];
     if (!shouldEmit(numericLevel, this.threshold,)) { return; }
 
+    // Censor structured messages: object messages carry key-value PII/secrets
+    // (logger.info({ password })) and previously bypassed censoring entirely.
+    // Free-text string messages pass through (no reliable content censoring).
+    const safeMessage: string | Record<string, unknown> =
+      options?.skipCensor || typeof message === "string"
+        ? message
+        : censorMeta({ meta: message, extraRules: fieldNamesToRules(this.censorFields,), },) ?? message;
+
     // Build entry
     const entry: LogEntry = {
       level: numericLevel,
       timestamp: unixSec(),
       time: formatTime(),
-      message,
+      message: safeMessage,
       ...this.bindings,
     };
 
