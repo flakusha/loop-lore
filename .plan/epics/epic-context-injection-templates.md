@@ -41,10 +41,10 @@ and not duplicated, disabled, or dead.
 
 | Ticket | Severity | Summary |
 | ------ | -------- | ------- |
-| [BUG-author-note-section-duplicates-post-history-instructions](../../tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md) | high | authorNote + postHistory both gated on `post_history_instructions`; same text injected twice as `<author_note>` + `<post_history>`; no real author-note field. |
-| [BUG-example-dialogue-mes-example-few-shot-never-injected](../../tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md) | high | `examplesSection` needs `includeExamples` (default false); no caller sets it → character `mes_example` never injected. |
-| [BUG-chatformats-template-config-defined-but-unused](../../tickets/BUG-chatformats-template-config-defined-but-unused-dead-standard.md) | medium | `LlmTemplateConfig.chatFormats` has 0 usages in `src`; message-format wrapping unimplemented. |
-| [BUG-post-history-instruction-relocated-to-front](../../tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md) | medium | `reorderPromptMessages` moves all system-role msgs to front; `<post_history>` lands at prompt top, not after history. |
+| [BUG-author-note-section-duplicates-post-history-instructions](../tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md) | high | authorNote + postHistory both gated on `post_history_instructions`; same text injected twice as `<author_note>` + `<post_history>`; no real author-note field. |
+| [BUG-example-dialogue-mes-example-few-shot-never-injected](../tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md) | high | `examplesSection` needs `includeExamples` (default false); no caller sets it → character `mes_example` never injected. |
+| [BUG-chatformats-template-config-defined-but-unused](../tickets/BUG-chatformats-template-config-defined-but-unused-dead-standard.md) | medium | `LlmTemplateConfig.chatFormats` has 0 usages in `src`; message-format wrapping unimplemented. |
+| [BUG-post-history-instruction-relocated-to-front](../tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md) | medium | `reorderPromptMessages` moves all system-role msgs to front; `<post_history>` lands at prompt top, not after history. |
 
 ## Open verification (not filed)
 

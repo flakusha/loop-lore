@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { beforeEach, describe, expect, test, } from "bun:test";
-import { mkdtempSync, readFileSync, readdirSync, } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { storeFile, } from "./service/file-system";
 
@@ -11,7 +11,7 @@ describe("storeFile path traversal", () => {
 
   beforeEach(() => {
     uploadDir = mkdtempSync(join("/tmp", "ll-assets-",),);
-  });
+  },);
 
   test("benign filename keeps its extension", () => {
     const p = storeFile(uploadDir, "abcdef01", "photo.PNG", Buffer.from("x",),);
@@ -20,9 +20,9 @@ describe("storeFile path traversal", () => {
 
   test("traversal filename cannot escape upload root", () => {
     const p = storeFile(uploadDir, "abcdef02", "../../pwned.sh", Buffer.from("x",),);
-    expect(p.startsWith("raw/"),).toBe(true,);
+    expect(p.startsWith("raw/",),).toBe(true,);
     // Nothing written outside the root
-    const written = readFileSync(join(uploadDir, p,)).toString();
+    const written = readFileSync(join(uploadDir, p,),).toString();
     expect(written,).toBe("x",);
     expect(readdirSync(uploadDir,).sort(),).toEqual(["raw",],);
   });

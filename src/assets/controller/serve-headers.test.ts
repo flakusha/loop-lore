@@ -8,7 +8,7 @@ import type { AssetRecord, } from "../service/types";
 import { serveFile, } from "./files";
 import { cacheControlFor, contentDispositionFor, } from "./serve";
 
-function asset(overrides: Partial<AssetRecord>): AssetRecord {
+function asset(overrides: Partial<AssetRecord>,): AssetRecord {
   return {
     id: "abcdef01",
     owner_id: "u1",
@@ -32,25 +32,25 @@ function asset(overrides: Partial<AssetRecord>): AssetRecord {
 
 describe("cacheControlFor", () => {
   test("public assets are shared-cache cacheable", () => {
-    expect(cacheControlFor(asset({ visibility: "public", },),),).toMatch(/^public,/);
+    expect(cacheControlFor(asset({ visibility: "public", },),),).toMatch(/^public,/,);
   });
 
   test("private and shared assets stay out of shared caches", () => {
-    expect(cacheControlFor(asset({ visibility: "private", },),),).toBe("private, max-age=3600");
-    expect(cacheControlFor(asset({ visibility: "shared", },),),).toBe("private, max-age=3600");
+    expect(cacheControlFor(asset({ visibility: "private", },),),).toBe("private, max-age=3600",);
+    expect(cacheControlFor(asset({ visibility: "shared", },),),).toBe("private, max-age=3600",);
   });
 });
 
 describe("contentDispositionFor", () => {
   test("active types are forced to attachment", () => {
-    for (const mime of ["image/svg+xml", "text/html", "application/xhtml+xml"]) {
+    for (const mime of ["image/svg+xml", "text/html", "application/xhtml+xml",]) {
       const headers = contentDispositionFor(asset({ mime_type: mime, },), "evil.svg",);
       expect(headers["Content-Disposition"],).toContain("attachment",);
     }
   });
 
   test("inert types stay inline", () => {
-    expect(contentDispositionFor(asset({ mime_type: "image/png", },), "p.png",),).toEqual({});
+    expect(contentDispositionFor(asset({ mime_type: "image/png", },), "p.png",),).toEqual({},);
   });
 
   test("filename is sanitized against header injection", () => {

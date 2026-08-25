@@ -17,8 +17,8 @@
  * entry for ambient world-building. Invalid regex patterns are treated as
  * no-match so prompt assembly never crashes on bad author input.
  */
-import { parseKeyGroups, parseKeywords, } from "../keywords";
 import { compileSafeRegExp, } from "../../../utils/safe-regexp";
+import { parseKeyGroups, parseKeywords, } from "../keywords";
 
 /** Maximum number of recent user messages scanned for activation. */
 export const MAX_SCAN_DEPTH = 10;
