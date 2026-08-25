@@ -155,3 +155,45 @@ Out of scope (owned by other epics): Matrix/XMPP/Email core adapters, Tor/I2P hi
 - `FEAT-swarm-mode-reconciliation`
 - `FEAT-radicle-integration`
 - `FEAT-messaging-bridge-extensions`
+
+
+## Protocol → Chat / Group-Chat / Blog Mapping (2026-08-25)
+
+Research extending this epic: how Lemmy, Mastodon, Matrix, IRC, XMPP, and other protocols integrate as chat/group-chat items, with the **blog system as the Reddit/X-like (Lemmy/Mastodon) federation primitive**. Full mapping, verified seams, and references in `matrix-protocol-chat-group-integration.md`.
+
+Summary:
+- The blog system (posts + threaded comments + follows + visibility tiers, chat-shaped) is the natural Lemmy/Mastodon/Reddit/ATProto federation primitive — not the World/Channel/Character actor model alone.
+- Chat-room protocols (Matrix, IRC, XMPP, Discord, Telegram, Signal) map to **group-chat** (room/channel/MUC + members + mentions + AI turn-selector); 1:1 maps to **chat**.
+- The only real transport seam is `ProtocolHandler` (byte/connection layer); chat/IM adapter abstractions are planning-only and currently duplicated.
+
+New gaps filed from this research:
+
+| ID | Gap | Ticket |
+|---|---|---|
+| G15 | blog_comments lacks parent_comment_id (flat) — blocks Lemmy/Mastodon/Reddit thread parity | `BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm` |
+| G16 | chat/IM adapter duplicated (ProtocolAdapter vs SocialAdapter), no code | `BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so` |
+| G17 | ActivityPub federation ignores the blog system (the Lemmy/Mastodon primitive) | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` |
+| G18 | IRC integration unscoped as group-chat (only in social-hub adapter list) | `BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad` |
+
+
+## Protocol Integration Plan — Status & Blockers (2026-08-25)
+
+**Status: RESEARCH / PLANNED — NOT IMPLEMENTABLE AS OF NOW.** This plan extends the federation epic with how Lemmy, Mastodon, Matrix, IRC, XMPP, and other protocols integrate as chat/group-chat/blog items. No implementation can start until the blockers below are resolved. Full mapping in `matrix-protocol-chat-group-integration.md` and the *Protocol → Chat / Group-Chat / Blog Mapping* section above.
+
+### Plan summary (target shape)
+
+- **Blog system = Lemmy/Mastodon/Reddit/ATProto federation primitive.** `blog_post` → Lemmy Post/Page & Mastodon Status; `blog_comment` (threaded) → Lemmy Comment/Note & Mastodon reply; `blog_follows` → ActivityPub Follow. Federate the blog system via ActivityPub (extend `FEAT-activitypub-federation`).
+- **group-chat = room/channel/MUC primitive** for Matrix, IRC, XMPP, Discord, Telegram, Signal. Reuse `src/group-chat/turn-selector.ts` (AI turns) + mention-parser.
+- **chat = 1:1 / DM primitive.**
+- The chat/IM adapter sits ABOVE the real `ProtocolHandler` transport seam.
+
+### Blockers (must resolve before any implementation)
+
+| ID | Blocker | Why it blocks | Ticket |
+|---|---|---|---|
+| G15 | `blog_comments` has no `parent_comment_id` (flat) | Lemmy/Mastodon/Reddit require threaded comments; flat comments cannot federate threads | `BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm` |
+| G16 | chat/IM adapter abstraction duplicated (ProtocolAdapter vs SocialAdapter), no code | Two competing designs, zero implementation; must consolidate on one before building any adapter | `BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so` |
+| G17 | ActivityPub federation ignores the blog system | Current `FEAT-activitypub-federation` models only World/Channel/Character actors; the Lemmy/Mastodon primitive (blog) is unused | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` |
+| G18 | IRC integration unscoped as group-chat | No ticket/scope for IRC (only an adapter filename in social-hub); cannot start IRC integration | `BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad` |
+
+**Conclusion:** treat this as a research/architecture plan. Do not open implementation tickets or write adapter code until G15-G18 are closed. `blog_comments` threading (G15) and adapter consolidation (G16) are the gating prerequisites.

@@ -20,7 +20,7 @@ EVIDENCE (src/, excl tests)
 - Buffer: 65 Buffer.* (some already use safeFromUint8Array; raw Buffer.from/alloc remain).
 
 FINDINGS (severity)
-1. [MINOR-BLOCKING] Locale/TZ-naive display: 31 toLocale* + new Date(<var>).toLocale* render in runtime/browser tz, NOT the user's i18n locale/tz -> user-visible wrongness. Fix: route through formatHuman (locale=active i18n locale, tz=viewer tz). Affects routes/views/characters.ts:112, routes/chat-export/format.ts:77/193, frontend/alpine/key-management.ts:135, notification-center.ts:166, admin.ts:140, pages/quests.ts:167, chat-sections.ts:165.
+1. [MINOR-BLOCKING] Locale/TZ-naive display: 31 toLocale*+ new Date(<var>).toLocale* render in runtime/browser tz, NOT the user's i18n locale/tz -> user-visible wrongness. Fix: route through formatHuman (locale=active i18n locale, tz=viewer tz). Affects routes/views/characters.ts:112, routes/chat-export/format.ts:77/193, frontend/alpine/key-management.ts:135, notification-center.ts:166, admin.ts:140, pages/quests.ts:167, chat-sections.ts:165.
 2. [MINOR] Untrusted parse without guard: new Date(userInput) can yield Invalid Date -> NaN logic. age-gate/service.ts:98 (birthDate from user), middleware/nsfw-gate/constants.ts:27. Fix: toDate() + validity check.
 3. [NIT] Date.parse (10) returns NaN unchecked. Fix: toDate().
 4. [NIT] Raw JSON.parse remains in scripts/version-bump.ts:108/114, routes/views/layout.ts:73 (already try-wrapped). Low risk (trusted). Fix: safeJsonParse for consistency.
