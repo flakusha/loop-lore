@@ -1613,7 +1613,8 @@
     "priority": "high",
     "epic": "epic-nsfw-moderation-priority",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba.md"
+    "source": ".plan/tickets/BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba.md",
+    "status": "done"
   },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "hash": "b91c284",
@@ -1905,7 +1906,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-stray-input-close-tags-corrupt-three-planning-docs.md"
+    "source": ".plan/tickets/BUG-stray-input-close-tags-corrupt-three-planning-docs.md",
+    "status": "done"
   },
   "BUG-STREAM-CANCEL-LEAVES-ATTEMPT-STUCK-PROCESSING-FOREVER-NO-CLE": {
     "hash": "268fdae",
