@@ -1,6 +1,6 @@
 # BUG: base64.toBase64 coerces undefined to 0 via bytes[i] ?? 0
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (fixed by f69d0229)
 **Priority:** low
 **Effort:** Medium
 

@@ -1,6 +1,6 @@
 # BUG: hot-reload.test.ts asserts trivially-true on EMFILE/ENOENT (coverage regression)
 
-**Status:** ⬜ Not Started
+**Status:** 🚫 Stale premise (file already stubs node:fs.watch and exercises reload)
 **Priority:** low
 **Effort:** Medium
 
