@@ -103,6 +103,21 @@ export interface ChatCoreState
   _vnAutoAdvance: boolean;
   _responseLengthPreset: "short" | "medium" | "long" | "custom";
   _responseLengthCustom: number;
+  /** Chat-level output-style preset ("" = none). */
+  _outputStylePreset:
+    | ""
+    | "neutral"
+    | "high_fantasy"
+    | "sci_fi"
+    | "modern"
+    | "noir"
+    | "cyberpunk"
+    | "pulp"
+    | "literary"
+    | "horror"
+    | "western";
+  /** How strongly the style is imposed (0–1). */
+  _outputStyleIntensity: number;
   _promptTemplate: PromptTemplateInfo | null;
   _promptLoading: boolean;
   _promptExpanded: boolean;

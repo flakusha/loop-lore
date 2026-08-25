@@ -14,6 +14,7 @@ import { MoodService, } from "../characters/services/mood-service";
 import { resolveOutputStyle, } from "../chat/output-style";
 import type { OutputStylePreset, } from "../chat/output-style";
 import { resolveResponseLength, } from "../chat/response-length";
+import type { ResponseLengthPreset, } from "../chat/types";
 import type { GmConfig, } from "../chat/types/config";
 import { ChatMode, } from "../db/enums";
 import type { DB, } from "../db/schema";

@@ -105,10 +105,10 @@ export interface AssembleChat {
   mode: string;
   world_id: string | null;
   current_location_id: string | null;
-  output_style_preset: string | null;
-  gm_config: string | null;
-  response_length_preset: string | null;
-  response_length_custom: number | null;
+  output_style_preset?: string | null;
+  gm_config?: string | null;
+  response_length_preset?: string | null;
+  response_length_custom?: number | null;
 }
 
 /** Shared inputs handed to every section builder. */
