@@ -192,22 +192,25 @@ Their context model is the canonical precedent for our lossless/lossy split:
 **Depends on:** `resolveResponseLength` wiring gap; `epic-config-extensions.md` (ECE for custom genres); `epic-frontend-settings.md` (UI)
 
 ### Problem
-Chat settings today expose *length* (`responseLengthPreset`/`responseLengthCustom`) and
+
+Chat settings today expose _length_ (`responseLengthPreset`/`responseLengthCustom`) and
 GM/LLM knobs (`gm_config`), but no first-class **writing-style** control. A user cannot
 declare a genre/register ("high fantasy", "sci-fi", "modern noir") that is resolved and
-injected into the LLM context. The SillyTavern-derived seams that *could* carry style
+injected into the LLM context. The SillyTavern-derived seams that _could_ carry style
 (`mes_example`, `post_history_instructions`) are character-level and free-form — there is no
 chat/user/server-scoped selector. Worse, `resolveResponseLength` (`src/chat/response-length.ts`)
 is defined + exported but **never wired into generation**, so even length is not yet bound to
 context construction.
 
 ### Clarification — length vs. style are orthogonal
-The example list "short, high fantasy, sci-fi, modern" mixes two axes. `short` is a *length*
+
+The example list "short, high fantasy, sci-fi, modern" mixes two axes. `short` is a _length_
 concern already owned by `responseLength` (short/medium/long/custom). **Output Styling = genre /
 register / tone**, orthogonal to length, so the two compose (e.g. `long` + `cyberpunk`). The new
 parameter must not re-encode length.
 
 ### Design
+
 One new chat-level setting, resolved via the existing **chat → user → server** fallback chain:
 - `chats.output_style_preset` (text, nullable) — chat override (DB column, mirrors `response_length_preset`).
 - `chats.gm_config.outputStyle` (JSON, optional) — richer shape `{ preset, customInstruction?, intensity? }` for per-chat tuning.
@@ -218,6 +221,7 @@ Resolver `resolveOutputStyle(chatPreset, userPreset, serverDefault)` (mirror `sr
 → `OutputStyleConfig { preset, customInstruction?, intensity }`.
 
 ### Binding to context construction (the key constraint)
+
 Inject via a **new prompt section** so it lives in the assembled system context, not ad-hoc:
 - Add `styleSection` to `PROMPT_SECTIONS` in `src/assistant/prompt/registry.ts`, ordered immediately
   after `systemSection` / adjacent to `authorNoteSection` (high precedence, early system context).
@@ -229,23 +233,27 @@ Inject via a **new prompt section** so it lives in the assembled system context,
 - **Also wire `resolveResponseLength`** in the same pass — same seam, closes the current dead-code gap.
 
 ### Inspirational references (repo)
+
 - `src/assistant/prompt/sections/examples.ts` — `mes_example` few-shot style demonstration (SillyTavern pattern).
 - `src/assistant/prompt/sections/author-note.ts` + `post-history.ts` — `post_history_instructions` as a persistent tone directive, XML-wrapped.
 - `src/assistant/prompt/sections/system.ts` — system-prompt precedence (override > fallback > actor).
 - `src/chat/response-length.ts` — the resolver/fallback pattern to mirror.
 
 ### Inspirational references (external research)
+
 - **NovelAI Preamble** — style tags `[ Style : chat, detailed, sensory ]` inserted above the chat to steer writing style (docs.sillytavern.app/usage/api-connections/novelai).
-- **Tavern Studio Presets** — *global preset* + *chat-level preset override* (tavernstudio.com/docs/en/preset-basics) — maps 1:1 to our chat→user→server chain.
+- **Tavern Studio Presets** — _global preset_ + _chat-level preset override_ (tavernstudio.com/docs/en/preset-basics) — maps 1:1 to our chat→user→server chain.
 - **sillytavern-preset-creator** — custom presets add formatting/HTML/CYOA features.
-- **RPG tools** (LoreKeeper, Vellum, Infitale, roleplaywritingstyles.com) — genre + tone as *fundamental* generation parameters ("define genre (high fantasy, sci-fi, horror), tone").
+- **RPG tools** (LoreKeeper, Vellum, Infitale, roleplaywritingstyles.com) — genre + tone as _fundamental_ generation parameters ("define genre (high fantasy, sci-fi, horror), tone").
 
 ### Extensions (from web research)
-- **Extensible genre enum** — ship built-in presets (`neutral`, `high_fantasy`, `sci_fi`, `modern`, `noir`, `cyberpunk`, `pulp`, `literary`, `horror`, `western`) now; custom-genre extension via the **ECE primitive** is *contingent* — `epic-config-extensions.md` is 📝 Draft and the ECE primitive is unimplemented (semantic sweep: 0), so custom genres block on that epic landing first (built-in ∪ extensions, precompiled, once ECE exists).
+
+- **Extensible genre enum** — ship built-in presets (`neutral`, `high_fantasy`, `sci_fi`, `modern`, `noir`, `cyberpunk`, `pulp`, `literary`, `horror`, `western`) now; custom-genre extension via the **ECE primitive** is _contingent_ — `epic-config-extensions.md` is 📝 Draft and the ECE primitive is unimplemented (semantic sweep: 0), so custom genres block on that epic landing first (built-in ∪ extensions, precompiled, once ECE exists).
 - **Per-actor style override** — like `actorModels`, allow per-speaker style in multi-LLM story mode.
 - **Curated few-shot examples** — one exemplar passage per built-in genre, injected via the `examples` machinery; `customInstruction` for bespoke voices.
 
 ### Proposed tickets
+
 - `FEAT-chat-output-styling` — config schema + `resolveOutputStyle` + `styleSection` binding + wire `resolveResponseLength`.
 - `FEAT-chat-output-styling-ui` — chat-settings modal control (depends on `epic-frontend-settings.md`).
 - `FEAT-chat-output-styling-extensible` — custom genres via ECE (depends on `epic-config-extensions.md`).
