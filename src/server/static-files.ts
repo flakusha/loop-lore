@@ -111,6 +111,9 @@ function respondWithFile(
 
   // Short-circuit 304 when the client's cached representation matches.
   // RFC 7232: If-None-Match may be a comma-separated ETag list or "*".
+  // Strict string match is safe here because the server emits a single
+  // weak ETag (W/"mtime-size") per resource; the browser echoes that
+  // exact string back, so weak comparison would be a no-op.
   if (
     ifNoneMatch &&
     (ifNoneMatch === "*" ||
