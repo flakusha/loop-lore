@@ -41,7 +41,7 @@ export async function recordAction({ thisL, params, }: RecordActionArgs,): Promi
   // Notify the target user of the action (skip for system actions)
   if (params.performedBy !== "system") {
     try {
-      await notifyUser({ db: thisL.db, log: thisL.log, }, params.targetUserId, params.actionType, params.reason,);
+      await notifyUser({ db: thisL.db, log: thisL.log, }, params.targetUserId, params.actionType,);
     } catch (error) {
       thisL.log.warn("Failed to send moderation notification", { error: String(error,), },);
     }
@@ -83,7 +83,6 @@ export async function notifyUser(
   deps: { db: NsfwModerationServiceContext["db"]; log: NsfwModerationServiceContext["log"] },
   userId: string,
   actionType: string,
-  reason: string,
 ): Promise<void> {
   const titles: Record<string, string> = {
     block: "You have been blocked from NSFW content",
@@ -94,12 +93,24 @@ export async function notifyUser(
     unshadow: "Your NSFW access restrictions have been lifted",
   };
   const title = titles[actionType] ?? `Moderation action: ${actionType}`;
+  // BUG-nsfw-modservice-notify-user-leaks-admin-reason: canned body map
+  // mirrors `titles`. The admin's verbatim `reason` is intentionally NEVER
+  // surfaced to the user; admins see it in `moderation_actions.reason` only.
+  const bodies: Record<string, string> = {
+    block: "You can no longer interact with NSFW content.",
+    unblock: "Your NSFW access has been restored.",
+    ban: "You are no longer permitted to interact with NSFW content.",
+    unban: "Your NSFW access has been restored.",
+    shadow: "Some of your NSFW interactions have been limited.",
+    unshadow: "Your NSFW access restrictions have been lifted.",
+  };
+  const body = (bodies[actionType] ?? `A moderation action was applied to your account: ${actionType}.`).slice(0, 500,);
   await deps.db.insertInto("notifications",).values({
     id: crypto.randomUUID(),
     user_id: userId,
     type: "moderation",
     title,
-    body: reason,
+    body,
     link: null,
     data: jsonStringifyOr({ actionType, },),
     created_at: new Date().toISOString(),

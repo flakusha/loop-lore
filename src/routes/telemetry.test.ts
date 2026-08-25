@@ -263,11 +263,14 @@ describe("telemetry routes — enabled", () => {
       ],)
       .execute();
 
+    // BUG-telemetry-purge-unbounded-days: must include ?confirm=PURGE
     const res = await makeApp(db, "admin", "admin",).handle(
-      new Request("http://localhost/api/telemetry/analytics/purge", { method: "DELETE", },),
+      new Request("http://localhost/api/telemetry/analytics/purge?days=30&confirm=PURGE", { method: "DELETE", },),
     );
     expect(res.status,).toBe(200,);
-    expect((await res.json() as EventBody).purged,).toBe(true,);
+    const body = await res.json() as EventBody & { count?: number };
+    expect(body.purged,).toBe(true,);
+    expect(typeof body.count,).toBe("number",);
 
     const oldRow = await db
       .selectFrom("telemetry_events",)
@@ -282,5 +285,26 @@ describe("telemetry routes — enabled", () => {
       .where("id", "=", "fresh-1",)
       .executeTakeFirst();
     expect(freshRow,).toBeDefined();
+  });
+
+  test("DELETE analytics/purge rejects days=0 with 400", async () => {
+    const res = await makeApp(db, "admin", "admin",).handle(
+      new Request("http://localhost/api/telemetry/analytics/purge?days=0&confirm=PURGE", { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("DELETE analytics/purge rejects days > 365 with 400", async () => {
+    const res = await makeApp(db, "admin", "admin",).handle(
+      new Request("http://localhost/api/telemetry/analytics/purge?days=400&confirm=PURGE", { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("DELETE analytics/purge rejects missing confirm token with 400", async () => {
+    const res = await makeApp(db, "admin", "admin",).handle(
+      new Request("http://localhost/api/telemetry/analytics/purge?days=30", { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(400,);
   });
 });
