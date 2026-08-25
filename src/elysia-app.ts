@@ -51,11 +51,19 @@ export function createApp(deps: AppDeps,): Elysia {
         // Still detect locale even when auth fails
         const locale = detectLocale(request,);
         const i18n = createI18nContext(locale,);
+        // Unauthenticated: drop any client-supplied x-user-id so it cannot
+        // spoof the user attributed in the access log (handler reads it).
+        request.headers.delete("x-user-id",);
         return { userId: null, userRole: null, sessionId: null, ...i18n, };
       }
       // Detect locale and create translator
       const locale = detectLocale(request,);
       const i18n = createI18nContext(locale,);
+      // Propagate the resolved user id onto the request so the access-log
+      // handler (src/server/handler.ts) can attribute the request via the
+      // x-user-id header. This is the same Request object the handler clones
+      // and later reads, so the mutation is observed downstream.
+      request.headers.set("x-user-id", authResult.context.userId,);
       return {
         userId: authResult.context.userId,
         userRole: authResult.context.userRole,
