@@ -12,6 +12,7 @@
  */
 
 import { describe, expect, test, } from "bun:test";
+import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 import { signJwt, verifyJwt, } from "./jwt";
 
 const SECRET = "test-secret-must-be-at-least-32-chars-long-aaaa";
@@ -27,9 +28,12 @@ function base64urlEncode(value: string,): string {
 
 async function signRaw(headerB64: string, payloadB64: string, secret: string,): Promise<string> {
   const encoder = new TextEncoder();
+  // Match `verifyJwt`'s key derivation so the signature check passes; the
+  // payload-level assertions below are what these tests actually exercise.
+  const subkey = await domainKey(secret, DOMAIN_INFO.JWT_SIGNING, 32,);
   const key = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(secret,),
+    subkey as unknown as ArrayBuffer,
     { name: "HMAC", hash: "SHA-256", },
     false,
     ["sign",],
