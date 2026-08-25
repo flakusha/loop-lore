@@ -109,8 +109,13 @@ function respondWithFile(
   const etag = computeEtag(servePath,);
   headers.ETag = etag;
 
-  // Short-circuit 304 when client has matching ETag
-  if (ifNoneMatch === etag) {
+  // Short-circuit 304 when the client's cached representation matches.
+  // RFC 7232: If-None-Match may be a comma-separated ETag list or "*".
+  if (
+    ifNoneMatch &&
+    (ifNoneMatch === "*" ||
+      ifNoneMatch.split(",",).some((candidate,) => candidate.trim() === etag))
+  ) {
     return new Response(null, { status: 304, headers: { ...headers, "Content-Length": "0", }, },);
   }
 
