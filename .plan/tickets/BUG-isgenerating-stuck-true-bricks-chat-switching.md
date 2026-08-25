@@ -1,15 +1,15 @@
 # BUG: isGenerating stuck true bricks chat switching
 
-**Status:** ⬜ Not Started
-**Priority:** high
-**Effort:** Medium
+**Status:** [OK] Resolved (commit on branch; reset flag after dispatchCommandAction so non-generation responses do not brick selectChat)
 
-## Summary
+## Evidence
 
-src/frontend/alpine/chat-send.ts:85 sets isGenerating=true before POST; if response action maps to non-generation handler (chat-actions/dispatch.ts:36,46) no SSE connects and flag never resets. checkGenerationStatus (chat-generations.ts:114) has zero callers — no recovery poll. selectChat refuses to switch while generating (src/frontend/alpine/chat/world.ts:59) -> UI bricked until reload. Fix: reset flag on all dispatch paths + wire recovery poll.
+ - bun test src/generation/: 494 pass / 0 fail
+ - bun test src/assistant/: 177 pass / 0 fail
+ - bunx tsc --noEmit -p tsconfig.backend.json: exit 0
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -102,6 +102,10 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         const data = await res.json();
         if (data.action) {
           await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
+          // Command actions do not open a generation SSE — clear the flag so
+          // the UI can switch chats. Without this, a non-generation dispatch
+          // (e.g. slash-command response) bricks `selectChat`.
+          this.isGenerating = false;
         } else {
           this.connectGenerationSSE(this.activeChat,);
         }
