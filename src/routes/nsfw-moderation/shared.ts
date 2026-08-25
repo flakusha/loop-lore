@@ -25,6 +25,22 @@ export function requireAdmin(ctx: any,): string | Response {
 }
 
 /**
+ * Require the elevated `admin.users` capability — granted to admin/solo/tester
+ * but NOT moderator. Used for destructive user-data operations (GDPR
+ * delete-user-data) where a single admin should not be able to act alone.
+ *
+ * Returns userId on success, else a 403 Response.
+ */
+export function requireAdminUsers(ctx: any,): string | Response {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+  if (!can(ctx.userRole, "admin.users",)) {
+    return forbiddenResponse();
+  }
+  return userId;
+}
+
+/**
  * Require an authenticated moderator (or admin) for read-only review
  * surfaces: flag queue, mod-action audit log.
  *
@@ -73,7 +89,9 @@ export function requireOwnOrAdmin(ctx: any, targetUserId: string,): string | Res
   return userId;
 }
 
-// ── Extracted schemas (avoid nesting depth lint) ──────────
+/** Reject any extra fields on body schemas (e.g. `performedBy` impersonation attempts). */
+const CLOSED = { additionalProperties: false, };
+
 export const userIdParam = t.Object({ userId: t.String(), },);
 export const updatePrefsBody = t.Object({
   nsfwEnabled: t.Optional(t.Boolean(),),
@@ -81,15 +99,13 @@ export const updatePrefsBody = t.Object({
 },);
 export const blockBody = t.Object({
   targetUserId: t.String(),
-  performedBy: t.String(),
   reason: t.String(),
-},);
+}, CLOSED,);
 export const modBody = t.Object({
   targetUserId: t.String(),
-  performedBy: t.String(),
   reason: t.String(),
-},);
-export const unblockBody = t.Object({ targetUserId: t.String(), },);
+}, CLOSED,);
+export const unblockBody = t.Object({ targetUserId: t.String(), }, CLOSED,);
 export const flagBody = t.Object({
   contentType: t.String(),
   contentId: t.String(),
