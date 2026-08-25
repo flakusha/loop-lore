@@ -27,6 +27,10 @@ export function importRoutes(
     if (authResult instanceof Response) { return authResult; }
     return handleImport(ctx.request, database, authResult.context.userId!, uploadDir,);
   }, {
+    // parse: "none" — handler uses ctx.request directly for both multipart
+    // and JSON variants; sibling JSON routes in sub-plugins would otherwise
+    // force inference.body=true and consume the multipart stream.
+    parse: "none",
     response: {
       200: SuccessResponse,
       401: ErrorResponse,
