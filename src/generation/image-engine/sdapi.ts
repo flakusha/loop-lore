@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ImageProviderConfig, } from "../../config/schema";
-import { safeJsonStringify, } from "../../utils";
+import { safeFetch, safeJsonStringify, } from "../../utils";
 import { decodeB64, failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
@@ -23,23 +23,20 @@ export async function generateSDAPI(
     sampler_name: opts.samplerName ?? sdConfig.defaults.sampler,
     batch_size: n,
   },);
-  const resp = await fetch(url, {
+  // Base64 image payloads can exceed safeFetch's default size cap.
+  const result = await safeFetch<{ images: string[] }>(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: sdPayload.ok ? sdPayload.value : "{}",
-    signal: AbortSignal.timeout(sdConfig.generationTimeout ?? 120_000,),
+    timeout: sdConfig.generationTimeout ?? 120_000,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
   },);
 
-  if (!resp.ok) {
-    let errText = "unknown";
-    try {
-      errText = await resp.text();
-    } catch {
-      // Error body read failed — keep "unknown" fallback
-    }
-    return failure(`Image generation failed: ${errText}`, 502,);
+  if (!result.ok) {
+    return failure(`Image generation failed: ${result.error.message}`, 502,);
   }
 
-  const sdData = (await resp.json()) as { images: string[] };
+  const sdData = result.data;
   return ok(Array.from(sdData.images, (b64,) => decodeB64(b64,),), "image/png",);
 }

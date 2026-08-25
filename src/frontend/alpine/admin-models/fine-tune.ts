@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { parseFloatOr, } from "../../../utils/parse-number";
 import type { FineTuneCandidate, ModelsState, } from "./types";
 
 /**
@@ -83,7 +84,7 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
 
   /** Readiness of a model as a fine-tune base, derived from real metadata. */
   fineTuneReadiness(c: FineTuneCandidate,): string {
-    const size = c.paramSize ? parseFloat(c.paramSize,) : NaN;
+    const size = c.paramSize ? parseFloatOr(c.paramSize, Number.NaN,) : Number.NaN;
     const ctx = c.contextWindow ?? 0;
     if (!Number.isNaN(size,) && size >= 8) {
       return "Suitable base — large param count";

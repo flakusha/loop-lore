@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { parseIntOr, } from "../../utils/parse-number";
 import type {
   RollModifier,
 } from "../integration-schemas";
@@ -67,9 +68,9 @@ export function calculateDamage(
     };
   }
 
-  const count = parseInt(match[1] ?? "1", 10,);
-  const sides = parseInt(match[2] ?? "6", 10,);
-  const bonus = match[3] ? parseInt(match[3], 10,) : 0;
+  const count = match[1] ? parseIntOr(match[1], 1,) : 1;
+  const sides = match[2] ? parseIntOr(match[2], 6,) : 6;
+  const bonus = match[3] ? parseIntOr(match[3], 0,) : 0;
 
   // Roll damage dice
   let baseDamageValue = 0;
