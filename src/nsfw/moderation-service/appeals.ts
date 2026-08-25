@@ -6,7 +6,7 @@
  *
  * Submitting, listing, and reviewing moderation action appeals.
  */
-import type { ModAction, NsfwModerationServiceContext, } from "./types";
+import type { NsfwModerationServiceContext, } from "./types";
 
 export interface SubmitAppealArgs {
   thisL: NsfwModerationServiceContext;
@@ -165,87 +165,4 @@ export async function reviewAppeal(
       reversalOf: appealRow?.action_id ?? null,
     },);
   }
-}
-
-export interface ExecuteReversalArgs {
-  thisL: NsfwModerationServiceContext;
-  appealId: string;
-  executedBy: string;
-}
-
-/**
- * Apply the reversal recorded by an approved appeal. Requires a different
- * admin from the one who approved (single-admin decision invalidates the
- * multi-admin trust model).
- *
- * On success: marks the original action's `superseded_by`, calls the
- * matching reversal service (unblockUser/unbanUser/unshadowUser), and
- * emits a `notifications` row to the admin who took the original action.
- */
-export async function executeReversal(
-  { thisL, appealId, executedBy, }: ExecuteReversalArgs,
-): Promise<void> {
-  const now = new Date().toISOString();
-  const appeal = await thisL.db.selectFrom("moderation_appeals" as any,)
-    .select(["action_id", "reviewed_by", "status",],)
-    .where("id", "=", appealId,)
-    .executeTakeFirst() as
-      | { action_id: string; reviewed_by: string | null; status: string }
-      | undefined;
-  if (!appeal) { throw new Error(`Appeal ${appealId} not found.`,); }
-  if (appeal.status !== "approved") {
-    throw new Error(`Appeal ${appealId} is not in 'approved' state (got '${appeal.status}').`,);
-  }
-  if (appeal.reviewed_by && appeal.reviewed_by === executedBy) {
-    throw new Error(
-      `Reversal requires a different admin from the reviewer (${appeal.reviewed_by}); same-admin reversal is rejected.`,
-    );
-  }
-
-  const original = await thisL.db.selectFrom("moderation_actions",)
-    .select(["id", "action_type", "target_user_id", "performed_by",],)
-    .where("id", "=", appeal.action_id,)
-    .executeTakeFirst();
-  if (!original) { throw new Error(`Original action ${appeal.action_id} not found.`,); }
-
-  const reverseMap: Record<string, () => Promise<ModAction>> = {
-    block: () => thisL.unblockUser(original.target_user_id, executedBy, "Reversal via appeal",),
-    ban: () => thisL.unbanUser(original.target_user_id, executedBy, "Reversal via appeal",),
-    shadow: () => thisL.unshadowUser(original.target_user_id, executedBy, "Reversal via appeal",),
-  };
-  const reverser = reverseMap[original.action_type];
-  if (!reverser) {
-    throw new Error(`No reversal handler for action_type '${original.action_type}'.`,);
-  }
-  const reversal = await reverser();
-
-  await thisL.db.updateTable("moderation_actions",)
-    .set({ superseded_by: reversal.id, },)
-    .where("id", "=", original.id,)
-    .execute();
-
-  // Notify the admin who took the original action (if they're still around).
-  // Best-effort: a missing user (deleted) shouldn't abort the reversal.
-  if (original.performed_by) {
-    try {
-      await thisL.db.insertInto("notifications",).values({
-        id: crypto.randomUUID(),
-        user_id: original.performed_by,
-        type: "moderation",
-        title: `Your moderation action was reversed`,
-        body:
-          `Your ${original.action_type} on ${original.target_user_id} was reversed via appeal ${appealId} by ${executedBy}.`,
-        link: null,
-        data: "{}",
-        created_at: now,
-      },).execute();
-    } catch (error) {
-      thisL.log.warn("Failed to notify original moderator of reversal", {
-        appealId,
-        performedBy: original.performed_by,
-        error: String(error,),
-      },);
-    }
-  }
-  thisL.log.info("Appeal reversal executed", { appealId, executedBy, reversalId: reversal.id, },);
 }
