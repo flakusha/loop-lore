@@ -23,6 +23,7 @@ import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
+import { styleSection, } from "./sections/output-style";
 import { systemSection, } from "./sections/system";
 import { taskClarificationSection, } from "./sections/task-clarification";
 import { travelSection, } from "./sections/travel";
@@ -30,6 +31,7 @@ import { userPersonaSection, } from "./sections/user-persona";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
+  styleSection,
   taskClarificationSection,
   nsfwPolicySection,
   authorNoteSection,

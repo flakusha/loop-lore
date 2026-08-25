@@ -80,6 +80,19 @@ export const ChatUpdateBody = t.Object({
     },),),
     t.Null(),
   ],),),
+  outputStylePreset: t.Optional(t.Union([
+    t.Literal("neutral",),
+    t.Literal("high_fantasy",),
+    t.Literal("sci_fi",),
+    t.Literal("modern",),
+    t.Literal("noir",),
+    t.Literal("cyberpunk",),
+    t.Literal("pulp",),
+    t.Literal("literary",),
+    t.Literal("horror",),
+    t.Literal("western",),
+    t.Literal("",),
+  ],),),
 },);
 
 /**

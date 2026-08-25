@@ -3,6 +3,7 @@
 
 // src/config/schema/generation.ts — Generation config type
 
+import type { OutputStylePreset, } from "../../chat/output-style";
 import type { AutoStartConfig, } from "./auto-start";
 import type { GenerationProvidersConfig, } from "./providers";
 
@@ -63,4 +64,12 @@ export interface GenerationConfig {
     /** Fallback mode when edit model is unavailable: "generation" uses txt2img, "none" disables fallback */
     fallbackMode?: "generation" | "none";
   };
+  /** Server-wide defaults for chat-level generation features. */
+  chatDefaults?: GenerationChatDefaults;
+}
+
+/** Server-wide defaults applied when a chat/user doesn't override. */
+export interface GenerationChatDefaults {
+  /** Default output-style preset (null = no default style). */
+  outputStyle?: OutputStylePreset | null;
 }

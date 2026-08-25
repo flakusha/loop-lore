@@ -83,4 +83,20 @@ export interface GmConfig {
   responseLengthPreset?: "short" | "medium" | "long" | "custom";
   /** Custom token count when preset is "custom" (50–2000). */
   responseLengthCustom?: number;
+  /** Output styling (genre/register/tone) resolved into the prompt context. */
+  outputStyle?: {
+    preset?:
+      | "neutral"
+      | "high_fantasy"
+      | "sci_fi"
+      | "modern"
+      | "noir"
+      | "cyberpunk"
+      | "pulp"
+      | "literary"
+      | "horror"
+      | "western";
+    customInstruction?: string;
+    intensity?: number;
+  } | null;
 }
