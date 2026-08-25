@@ -13,6 +13,7 @@
 No regulation on generation routes: middleware/rate-limit.ts sliding window used only by auth; concurrency unbounded (only per-chat idempotency). Add: (1) concurrency semaphore over the cancellation-tracker registry with per-user/per-chat/global tiers, configurable via generation.limits in config schema + env-map entries; (2) request-rate limits reusing createRateLimiter keyed per-user with per-IP fallback, 429 + Retry-After headers (reuse rateLimitHeaders); (3) reject-fast default with structured error body, optional queue-hold mode per scope as config policy. Provider-side backoff/circuit-breaker stays untouched. Epic: epic-generation-flow-control
 
 ## Acceptance Criteria
+
 +- [ ] Concurrency semaphore over the cancellation-tracker registry with per-user / per-chat / global tiers
 +- [ ] Request-rate limits reusing createRateLimiter keyed per-user (per-IP fallback), 429 + Retry-After via existing rateLimitHeaders
 +- [ ] Config surface: generation.limits in src/config/schema/generation.ts + env-map entries; no new ad-hoc env vars
