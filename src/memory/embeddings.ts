@@ -159,13 +159,11 @@ export function rankBySimilarity(
   topK = 10,
   minScore = 0.5,
 ): SemanticMatch[] {
-  /* eslint-disable no-restricted-syntax */
   return candidates
     .map(({ memoryId, vector, },) => ({ memoryId, score: dot(queryVec, vector,), }))
     .filter((m,) => m.score >= minScore)
     .sort((a, b,) => b.score - a.score)
     .slice(0, topK,);
-  /* eslint-enable no-restricted-syntax */
 }
 
 /**
@@ -184,9 +182,8 @@ export async function getStoredVectors(
 
   const map = new Map<string, Float32Array>();
   for (const row of rows) {
-    /* eslint-disable no-restricted-syntax */
     const buf = Buffer.from(row.vector_blob,);
-    /* eslint-enable no-restricted-syntax */
+
     const dims = Math.floor(buf.byteLength / 4,);
     map.set(row.memory_id, new Float32Array(buf.buffer, buf.byteOffset, dims,),);
   }
@@ -215,11 +212,11 @@ export async function semanticRecall(
     getStoredVectors(db, candidateIds,),
   ],);
   /* eslint-enable no-restricted-syntax */
-  /* eslint-disable no-restricted-syntax */
+
   const candidates = Array.from(vectorMap.entries(),).map(([memoryId, vector,],) => ({
     memoryId,
     vector,
   }));
-  /* eslint-enable no-restricted-syntax */
+
   return rankBySimilarity(candidates, queryVec, topK, minScore,);
 }

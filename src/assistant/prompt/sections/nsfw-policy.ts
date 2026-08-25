@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * NSFW Policy section — injects the SFW/NSFW level taxonomy as a system
- * message so the model writes within the chat's maximum allowed rating.
+ * NSFW Policy section — injects a content-rating policy as a system message
+ * so the model writes within the chat's maximum allowed rating.
  *
- * The policy text is config-driven: `resolveSystemPrompt(config.templates.llm,
- * "nsfwPolicy")` overlays a user override from `configs/templates/llm.yaml`
- * over the code default (`NSFW_POLICY_LEVELS_PROMPT`), the same resolution
- * path every other generation prompt uses. It is injected only when NSFW
- * content is allowed in the app config; when the config is absent (e.g. tests)
- * the code default is used and the section stays gated on `allowNsfw`.
+ * Rating-aware: when NSFW is disallowed (`allowNsfw` false, or the runtime
+ * admin toggle in `nsfwRuntimeConfig`), the SFW-only variant
+ * (`nsfwPolicySfw`) is injected instead of the full taxonomy — the model gets
+ * an explicit restriction rather than levels it must not use. Both texts are
+ * config-driven via `resolveSystemPrompt` over `configs/templates/llm.yaml`.
  */
+import { getRuntimeNsfwConfig, } from "../../../nsfw/runtime-config";
 import { resolveSystemPrompt, } from "../../../prompts";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
@@ -20,7 +20,12 @@ export const nsfwPolicySection: SectionBuilder = {
   name: "nsfwPolicy",
   enabled: (ctx,) => ctx.config?.nsfw.allowNsfw ?? true,
   build: (ctx,) => {
-    const policy = resolveSystemPrompt(ctx.config?.templates.llm, "nsfwPolicy",);
+    const nsfwAllowed = (ctx.config?.nsfw.allowNsfw ?? true) &&
+      getRuntimeNsfwConfig().allowNsfw;
+    const policy = resolveSystemPrompt(
+      ctx.config?.templates.llm,
+      nsfwAllowed ? "nsfwPolicy" : "nsfwPolicySfw",
+    );
     if (!policy) { return []; }
     return [{ role: "system", content: wrapSection("nsfw_policy", policy,), },];
   },

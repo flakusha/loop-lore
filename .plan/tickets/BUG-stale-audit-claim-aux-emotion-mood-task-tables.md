@@ -75,15 +75,19 @@ self-contradictory in the same file.
 ## Fix
 
 1. In `TASK-aux-emotion-avatar.md`, replace the rows + key finding with:
+
    ```md
    | Hook event consumption               | ✅ `content-hooks.ts:122-124` extracts `data.dominantEmotion`; `auto-generation.ts:183` passes to `store-message.ts:137` which persists `messages.emotion`. | `generation/auto-gen/content-hooks.ts:122-124`, `auto-generation.ts:183`, `store-message.ts:137` |
    | Auto-trigger on response             | ✅ fires inside `auto-generation.ts` hook chain; per-message binding wired (2026-08-02, see `TASK-emotion-avatar-message-binding`) | `auto-generation.ts` |
    ```
+
 2. Delete or rewrite the "Key finding: … dead end …" paragraph.
 3. In `TASK-aux-mood-classification.md`, replace the row:
+
    ```md
    | Hook event consumption               | ✅ `content-hooks.ts:127-132` extracts `moodShiftDelta`; `post-store.ts:85-91` calls `MoodService.applyHappinessDelta(actorId, worldId, delta)`. | `auto-gen/content-hooks.ts:127-132`, `auto-gen/post-store.ts:85-91` |
    ```
+
 4. Rewrite the "Key finding: … no `character_mood` write …" line — it is now
    "wiring exists; follow-ups are LLM classification to replace keyword
    detection, not persistence."

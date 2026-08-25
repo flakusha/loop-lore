@@ -7,18 +7,26 @@ import { notFound, unauthorized, } from "../../validation/middleware";
 import { HttpStatus, jsonResponse, } from "../http-utils";
 import {
   COOKIE_PATH,
-  extractSessionIdFromJwt,
-  extractUserIdFromJwt,
-  getTokenFromCookie,
   TOKEN_COOKIE,
 } from "./shared";
 
-async function handleLogout(request: Request, database: Kysely<DB>,): Promise<Response> {
-  const token = getTokenFromCookie(request,);
-  const sessionId = token ? extractSessionIdFromJwt(token,) : null;
-
-  if (sessionId) {
-    await database.deleteFrom("sessions",).where("id", "=", sessionId,).execute();
+async function handleLogout(
+  request: Request,
+  database: Kysely<DB>,
+  derivedUserId: string | null = null,
+  derivedSessionId: string | null = null,
+): Promise<Response> {
+  // SECURITY: only delete the session row when both the userId and sessionId
+  // came from the authenticated middleware (signature-verified JWT + DB-bound
+  // session). Previously logout parsed `sid` from an unverified JWT cookie,
+  // so a forged token + known session id was a logout DoS.
+  void request;
+  if (derivedUserId && derivedSessionId) {
+    await database
+      .deleteFrom("sessions",)
+      .where("id", "=", derivedSessionId,)
+      .where("user_id", "=", derivedUserId,)
+      .execute();
   }
 
   return new Response(null, {
@@ -34,21 +42,20 @@ async function handleMe(
   database: Kysely<DB>,
   derivedUserId: string | null = null,
 ): Promise<Response> {
-  let userId: string | null = derivedUserId;
-
-  if (!userId) {
-    const token = getTokenFromCookie(request,);
-    userId = token ? extractUserIdFromJwt(token,) : null;
-  }
-
-  if (!userId) {
+  // SECURITY: only trust userId from the authenticated middleware path.
+  // Falling back to a base64 decode of the cookie (no signature check) allowed
+  // impersonation by anyone who could set a cookie with a chosen `sub`.
+  // The route is mounted on authProtectedRoutes so the middleware runs first;
+  // if it failed to bind a userId the response is 401, not "trust the cookie".
+  void request;
+  if (!derivedUserId) {
     return unauthorized();
   }
 
   const user = await database
     .selectFrom("users",)
     .select(["id", "username", "display_name", "role", "created_at", "last_seen_at",],)
-    .where("id", "=", userId,)
+    .where("id", "=", derivedUserId,)
     .executeTakeFirst();
 
   if (!user) { return notFound("User not found",); }
