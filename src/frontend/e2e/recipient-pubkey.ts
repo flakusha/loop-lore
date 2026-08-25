@@ -11,6 +11,7 @@
  * The HTTP call is the only network dependency in the encrypt pipeline.
  * Returns the deserialized `JsonWebKey` ready for `importPublicKey()`.
  */
+import { safeFetch, } from "../../utils";
 
 /** Server base URL with no trailing slash. Falls back to current origin. */
 function apiBase(): string {
@@ -25,14 +26,16 @@ function apiBase(): string {
  */
 export async function fetchRecipientPublicKey(actorId: string,): Promise<JsonWebKey | null> {
   const url = `${apiBase()}/api/actors/${encodeURIComponent(actorId,)}/e2e-public-key`;
-  const res = await fetch(url, { credentials: "include", },);
-  if (res.status === 404) { return null; }
-  if (!res.ok) {
-    throw new Error(`recipient pubkey fetch failed: ${res.status} ${res.statusText}`,);
+  const result = await safeFetch<{ publicKeyJwk?: JsonWebKey }>(url, {
+    credentials: "include",
+    handle401: false,
+  },);
+  if (!result.ok) {
+    if (result.status === 404) { return null; }
+    throw new Error(`recipient pubkey fetch failed: ${result.error.message}`,);
   }
-  const body = (await res.json()) as { publicKeyJwk?: JsonWebKey };
-  if (!body.publicKeyJwk) {
+  if (!result.data.publicKeyJwk) {
     throw new Error("recipient pubkey response missing publicKeyJwk",);
   }
-  return body.publicKeyJwk;
+  return result.data.publicKeyJwk;
 }

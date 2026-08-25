@@ -20,6 +20,7 @@ import {
 } from "../../../config/schema";
 import type { ImageApiFamily, } from "../../../db/enums-config";
 import { getLogger, } from "../../../logger";
+import { safeFetch, } from "../../../utils";
 import { validateProviderUrl, } from "../../../utils/url-validation";
 import type {
   ImageEditBackend,
@@ -75,10 +76,11 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       const cfg = this.getConfig();
       if (!cfg || !this.baseUrl) { return false; }
 
-      const res = await fetch(this.baseUrl, {
-        signal: AbortSignal.timeout(5000,),
+      const result = await safeFetch(this.baseUrl, {
+        timeout: 5_000,
+        handle401: false,
       },);
-      return res.ok;
+      return result.ok;
     } catch {
       return false;
     }

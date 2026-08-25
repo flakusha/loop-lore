@@ -10,6 +10,7 @@
 
 import { getLogger, } from "../logger/index";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
+import { fromBase64, toBase64, } from "../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 
 let _log: ReturnType<typeof getLogger> | null = null;
@@ -65,17 +66,13 @@ export interface VerifyJwtOpts {
 // ── Base64url helpers ─────────────────────────────────────────
 
 function base64urlEncode(data: Uint8Array,): string {
-  const bytes = Array.from(data,);
-  const base64 = btoa(String.fromCharCode(...bytes,),);
-  return base64.replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
+  return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
 }
 
 function base64urlDecode(str: string,): Uint8Array {
   const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
   const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
-  const binary = atob(padded,);
-  const bytes = Array.from({ length: binary.length, }, (_, i,) => binary.charCodeAt(i,),);
-  return new Uint8Array(bytes,);
+  return fromBase64(padded,);
 }
 
 // ── Crypto helpers ────────────────────────────────────────────

@@ -14,6 +14,7 @@
 // Returns individual rolls + total for display.
 
 import { getLogger, type Logger, } from "../../logger";
+import { parseIntOr, } from "../../utils/parse-number";
 import { registerCommand, } from "./registry";
 
 /** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
@@ -65,9 +66,9 @@ export function parseDiceNotation(notation: string,): DiceNotation | null {
   const match = /^(\d+)?d(\d+)([+-]\d+)?$/.exec(trimmed,);
   if (!match) { return null; }
 
-  const count = match[1] ? parseInt(match[1], 10,) : 1;
-  const sides = parseInt(match[2]!, 10,);
-  const modifier = match[3] ? parseInt(match[3], 10,) : 0;
+  const count = match[1] ? parseIntOr(match[1], 1,) : 1;
+  const sides = parseIntOr(match[2]!, 0,);
+  const modifier = match[3] ? parseIntOr(match[3], 0,) : 0;
 
   if (count < 1 || count > 100 || sides < 1 || sides > 1000) { return null; }
 

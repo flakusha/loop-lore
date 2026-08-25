@@ -33,6 +33,26 @@ const customRestrictedSyntax = [
     selector: "CallExpression[callee.object.name='Promise'][callee.property.name='all']",
     message: "Promise.all() can cause unhandled rejections. Use Promise.allSettled() or sequential await.",
   },
+  {
+    selector: "CallExpression[callee.name='fetch']",
+    message: "Use safeFetch()/safeFetchWithRetry() from utils/safe-fetch instead of bare fetch",
+  },
+  {
+    selector: "CallExpression[callee.name='btoa']",
+    message: "Use toBase64() from utils/base64 (or safeToBase64 from utils/safe-buffer) instead of btoa",
+  },
+  {
+    selector: "CallExpression[callee.name='atob']",
+    message: "Use fromBase64() from utils/base64 (or safeFromBase64 from utils/safe-buffer) instead of atob",
+  },
+  {
+    selector: "CallExpression[callee.name='parseInt']",
+    message: "Use safeParseInt()/parseIntOr() from utils/parse-number instead of bare parseInt",
+  },
+  {
+    selector: "CallExpression[callee.name='parseFloat']",
+    message: "Use safeParseFloat()/parseFloatOr() from utils/parse-number instead of bare parseFloat",
+  },
 ];
 
 // Shared plugins
@@ -217,18 +237,34 @@ export default [
       "@typescript-eslint/no-empty-function": "off",
     },
   },
-  // safe-json implementation: allow JSON.parse/stringify
+  // Util implementations: base64 wraps btoa/atob; safe-fetch wraps bare fetch;
+  // url-validation parses ports.
   {
-    files: ["src/utils/safe-json.ts", "src/frontend/alpine/json.ts"],
+    files: [
+      "src/utils/safe-json.ts",
+      "src/frontend/alpine/json.ts",
+      "src/utils/base64.ts",
+      "src/utils/safe-fetch/fetch.ts",
+      "src/utils/url-validation.ts",
+    ],
     rules: {
       "no-restricted-syntax": "off",
+      "no-restricted-globals": "off",
     },
   },
-  // safe-fetch: allow bare fetch
+  // Deliberate bare fetch: these layers need the raw Response (SSE/retry
+  // stream handling, error-body introspection, arrayBuffer downloads) which
+  // safeFetch's Result union cannot express.
   {
-    files: ["src/utils/safe-fetch/fetch.ts"],
+    files: [
+      "src/generation/providers/anthropic/http.ts",
+      "src/generation/providers/ollama-native/http.ts",
+      "src/generation/providers/openai-compatible/http.ts",
+      "src/generation/lora/discovery-http.ts",
+      "src/generation/providers/comfyui.ts",
+    ],
     rules: {
-      "no-restricted-globals": "off",
+      "no-restricted-syntax": "off",
     },
   },
   // Specific source files with JSON.parse/stringify or fetch
