@@ -2340,6 +2340,7 @@ export async function insertModerationActions(
 superseded_by?: string | null;
     deleted_at?: string | null;
     deleted_by?: string | null;
+    superseded_by?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("moderation_actions",).values({

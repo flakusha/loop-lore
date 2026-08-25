@@ -51,6 +51,8 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
     )
     .post(
       `${prefix}/demo-login`,
+      async ({ request, ...rest },) =>
+        handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
         parse: "none",
         response: {
@@ -65,6 +67,8 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
     )
     .post(
       `${prefix}/auth/register`,
+      async ({ request, ...rest },) =>
+        handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
       {
         parse: "none",
         response: {
