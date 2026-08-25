@@ -61,17 +61,16 @@
     "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md",
     "git_issue": "2d01b19"
   },
-  "BUG-ACTIVITYPUB-FEDERATION-DOES-NOT-LEVERAGE-THE-BLOG-SYSTEM-LEM": {
-    "hash": "81b59cf",
-    "extid": "BUG-ACTIVITYPUB-FEDERATION-DOES-NOT-LEVERAGE-THE-BLOG-SYSTEM-LEM",
-    "type": "BUG",
-    "title": "ActivityPub federation does not leverage the blog system (Lemmy/Mastodon primitive)",
-    "label": "bug",
+  "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ": {
+    "hash": "pending",
+    "extid": "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ",
+    "type": "WIRE",
+    "title": "nsfw-audit view route has no inline authz guard",
+    "label": "wire",
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md",
-    "git_issue": "81b59cf"
+    "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
   },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
@@ -313,17 +312,16 @@
     "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md",
     "git_issue": "bc5de16"
   },
-  "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
-    "hash": "69d45a5",
-    "extid": "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM",
-    "type": "BUG",
-    "title": "Blog comments lack threading (parent_comment_id) blocking Lemmy/Mastodon/Reddit parity",
-    "label": "bug",
+  "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH": {
+    "hash": "pending",
+    "extid": "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH",
+    "type": "WIRE",
+    "title": "impersonate command-palette FE has no actionPayload dispatch",
+    "label": "wire",
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm.md",
-    "git_issue": "69d45a5"
+    "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
   },
   "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
     "hash": "cfc029f",
@@ -455,17 +453,16 @@
     "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md",
     "git_issue": "f06194a"
   },
-  "BUG-CHAT-IM-ADAPTER-ABSTRACTION-DUPLICATED-PROTOCOLADAPTER-VS-SO": {
-    "hash": "476e62b",
-    "extid": "BUG-CHAT-IM-ADAPTER-ABSTRACTION-DUPLICATED-PROTOCOLADAPTER-VS-SO",
-    "type": "BUG",
-    "title": "Chat/IM adapter abstraction duplicated (ProtocolAdapter vs SocialAdapter), no code",
-    "label": "bug",
-    "priority": "medium",
+  "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION": {
+    "hash": "pending",
+    "extid": "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION",
+    "type": "WIRE",
+    "title": "verify ChatImpersonateBody schema includes impersonateActorId",
+    "label": "wire",
+    "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so.md",
-    "git_issue": "476e62b"
+    "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
   },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
@@ -1278,17 +1275,16 @@
     "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
     "git_issue": "86a2a1b"
   },
-  "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
-    "hash": "27cc7ab",
-    "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
-    "type": "BUG",
-    "title": "IRC integration unscoped as group-chat (only in social-hub adapter list)",
-    "label": "bug",
-    "priority": "medium",
+  "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING": {
+    "hash": "pending",
+    "extid": "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING",
+    "type": "WIRE",
+    "title": "character creation missing avatar asset linking",
+    "label": "wire",
+    "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad.md",
-    "git_issue": "27cc7ab"
+    "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md"
   },
   "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
     "hash": "f254f7a",
@@ -9676,7 +9672,7 @@
     "git_issue": "372be44"
   },
   "TASK-FRONTEND-CHARACTERS-PAGE-SPEC": {
-    "hash": "pending",
+    "hash": "ec5148d",
     "extid": "TASK-FRONTEND-CHARACTERS-PAGE-SPEC",
     "type": "TASK",
     "title": "Frontend Characters Page Implementation",
@@ -9688,7 +9684,7 @@
     "git_issue": "ec5148d"
   },
   "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC": {
-    "hash": "pending",
+    "hash": "273bcfa",
     "extid": "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Commands & Extras Implementation",
@@ -9700,7 +9696,7 @@
     "git_issue": "273bcfa"
   },
   "TASK-FRONTEND-CHAT-GENERATION-SPEC": {
-    "hash": "pending",
+    "hash": "d18c94e",
     "extid": "TASK-FRONTEND-CHAT-GENERATION-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Generation & Streaming Implementation",
@@ -9712,7 +9708,7 @@
     "git_issue": "d18c94e"
   },
   "TASK-FRONTEND-CHAT-MEMORIES-SPEC": {
-    "hash": "pending",
+    "hash": "2f6424b",
     "extid": "TASK-FRONTEND-CHAT-MEMORIES-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Memory Panel Implementation",
@@ -9724,7 +9720,7 @@
     "git_issue": "2f6424b"
   },
   "TASK-FRONTEND-CHAT-MESSAGES-SPEC": {
-    "hash": "pending",
+    "hash": "710b94e",
     "extid": "TASK-FRONTEND-CHAT-MESSAGES-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Messages Bubble & Detail Levels",
@@ -15857,49 +15853,5 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
-  },
-  "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING": {
-    "hash": "pending",
-    "extid": "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING",
-    "type": "WIRE",
-    "title": "character creation missing avatar asset linking",
-    "label": "wire",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md"
-  },
-  "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION": {
-    "hash": "pending",
-    "extid": "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION",
-    "type": "WIRE",
-    "title": "verify ChatImpersonateBody schema includes impersonateActorId",
-    "label": "wire",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
-  },
-  "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH": {
-    "hash": "pending",
-    "extid": "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH",
-    "type": "WIRE",
-    "title": "impersonate command-palette FE has no actionPayload dispatch",
-    "label": "wire",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
-  },
-  "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ": {
-    "hash": "pending",
-    "extid": "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ",
-    "type": "WIRE",
-    "title": "nsfw-audit view route has no inline authz guard",
-    "label": "wire",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
   }
 }
