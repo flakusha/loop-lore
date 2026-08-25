@@ -36,6 +36,9 @@ export type {
   NsfwUserPrefs,
 } from "./types";
 
+export type { FlagQueueView, ResolvedFlagView, } from "./flags";
+export { clampFlagLimit, hashReporterId, toQueueView, toResolvedView, } from "./flags";
+
 /**
  * Public API type — declaration-merged with the class value below so one name
  * is both the instance type and the `new`-able constructor.
@@ -90,8 +93,8 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
     getAuditLog({ thisL: this as unknown as NsfwModerationServiceContext, targetUserId, options, },);
   exportUserData = (userId: string,) =>
     exportUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
-  deleteUserData = (userId: string,) =>
-    deleteUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
+  deleteUserData = (userId: string, deletedBy: string,) =>
+    deleteUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, deletedBy, },);
   getEffectiveNsfw = (chatId: string, userId: string,) =>
     getEffectiveNsfw({ thisL: this as unknown as NsfwModerationServiceContext, chatId, userId, },);
   setChatNsfwOverride = (chatId: string, override: Parameters<NsfwModerationServiceIface["setChatNsfwOverride"]>[1],) =>

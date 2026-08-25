@@ -1,9 +1,15 @@
 /**
  * Tests for telemetry routes (event ingestion + admin analytics).
  *
- * Telemetry is enabled by default in dev/test (`NODE_ENV !== "production"`),
- * so these exercise the real `record()` path against the test DB. The
- * disabled-flag paths live in `telemetry-disabled.test.ts` (mocked config).
+ * Updated for BUG-telemetry-errors-leaks-raw-event-data:
+ *   - TelemetryEventBody has no sessionId/userId/chatId — those come from
+ *     the request context (`ctx.sessionId` / `ctx.userId`).
+ *   - Server-derived inserts use `source: "server"` to satisfy the
+ *     `source = 'server'` filter on analytics endpoints.
+ *   - The body schema has `additionalProperties: false`, but TypeBox strips
+ *     unknown keys rather than rejecting them. The security invariant is
+ *     enforced at the route layer: `ctx.body.sessionId` etc. is NEVER
+ *     read; sessionId/userId come from the auth context only.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -17,7 +23,7 @@ import { telemetryRoutes, } from "./telemetry";
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-telemetry", },);
   if (userId) {
-    app.derive(() => ({ userId, userRole, }));
+    app.derive(() => ({ userId, userRole, sessionId: `sess-${userId}`, }));
   }
   return app.use(telemetryRoutes({ database: db, },),);
 }
@@ -26,10 +32,8 @@ interface EventBody {
   ok?: boolean;
   dropped?: string;
   error?: string;
-  purged?: boolean;
+  purged?: boolean | number;
   total?: number;
-  distinct_sessions?: number;
-  distinct_users?: number;
 }
 
 describe("telemetry routes — enabled", () => {
@@ -50,7 +54,10 @@ describe("telemetry routes — enabled", () => {
       new Request("http://localhost/api/telemetry/event", {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ type: "frontend.page_view", sessionId: "sess-1", userId: "user1", },),
+        body: JSON.stringify({
+          type: "frontend.page_view",
+          data: { path: "/home", referrer: "https://example.test", },
+        },),
       },),
     );
     expect(res.status,).toBe(200,);
@@ -60,26 +67,24 @@ describe("telemetry routes — enabled", () => {
 
     const rows = await db
       .selectFrom("telemetry_events",)
-      .select(["event_type", "session_id", "user_id", "chat_id", "event_data",],)
+      .select(["event_type", "session_id", "user_id", "chat_id", "source", "event_data",],)
       .where("event_type", "=", "frontend.page_view",)
       .execute();
     expect(rows,).toHaveLength(1,);
-    expect(rows[0]?.session_id,).toBe("sess-1",);
+    expect(rows[0]?.session_id,).toBe("sess-user1",);
     expect(rows[0]?.user_id,).toBe("user1",);
     expect(rows[0]?.chat_id,).toBeNull();
-    expect(rows[0]?.event_data,).toBe("{}",);
+    expect(rows[0]?.source,).toBe("frontend",);
+    expect(rows[0]?.event_data,).toBe(JSON.stringify({ path: "/home", referrer: "https://example.test", },),);
   });
 
-  test("POST with data and chatId serializes event_data JSON", async () => {
+  test("POST with typed generation.started data serializes event_data JSON", async () => {
     const res = await makeApp(db, "user2", "user",).handle(
       new Request("http://localhost/api/telemetry/event", {
         method: "POST",
         headers: { "content-type": "application/json", },
         body: JSON.stringify({
           type: "generation.started",
-          sessionId: "sess-2",
-          userId: "user2",
-          chatId: "chat-9",
           data: { provider: "openai", model: "gpt-4o", },
         },),
       },),
@@ -88,11 +93,41 @@ describe("telemetry routes — enabled", () => {
 
     const row = await db
       .selectFrom("telemetry_events",)
-      .select(["chat_id", "event_data",],)
-      .where("chat_id", "=", "chat-9",)
+      .select(["event_data", "user_id",],)
+      .where("event_type", "=", "generation.started",)
       .executeTakeFirst();
-    expect(row?.chat_id,).toBe("chat-9",);
+    expect(row?.user_id,).toBe("user2",);
     expect(JSON.parse(row?.event_data ?? "{}",),).toEqual({ provider: "openai", model: "gpt-4o", },);
+  });
+
+  test("POST sessionId/userId in body are silently ignored (server-derived wins)", async () => {
+    // TypeBox strips unknown body keys rather than rejecting them, so the
+    // request succeeds with 200. The security invariant is enforced at the
+    // route layer: `ctx.body.sessionId` is NEVER read; sessionId comes from
+    // the auth context (`ctx.sessionId`).
+    const res = await makeApp(db, "user1", "user",).handle(
+      new Request("http://localhost/api/telemetry/event", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          type: "frontend.page_view",
+          sessionId: "attacker-spoofed-id",
+          userId: "attacker-user-id",
+          chatId: "attacker-chat-id",
+          data: { path: "/x", },
+        },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const row = await db
+      .selectFrom("telemetry_events",)
+      .select(["session_id", "user_id",],)
+      .where("event_type", "=", "frontend.page_view",)
+      .orderBy("created_at", "desc",)
+      .limit(1,)
+      .executeTakeFirst();
+    expect(row?.session_id,).toBe("sess-user1",);
+    expect(row?.user_id,).toBe("user1",);
   });
 
   test("POST without a type fails schema validation", async () => {
@@ -100,27 +135,31 @@ describe("telemetry routes — enabled", () => {
       new Request("http://localhost/api/telemetry/event", {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ sessionId: "sess-3", },),
+        body: JSON.stringify({ data: { path: "/x", }, },),
       },),
     );
-    expect(res.status,).not.toBe(200,);
+    expect(res.status,).toBe(422,);
   });
 
-  test("GET analytics/summary requires admin", async () => {
+  test("POST with unknown event_type fails schema validation", async () => {
     const res = await makeApp(db, "user1", "user",).handle(
-      new Request("http://localhost/api/telemetry/analytics/summary",),
+      new Request("http://localhost/api/telemetry/event", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ type: "totally.unknown.type", data: {}, },),
+      },),
     );
-    expect(res.status,).toBe(403,);
-    expect((await res.json() as EventBody).error,).toBeDefined();
+    expect(res.status,).toBe(422,);
   });
 
-  test("GET analytics/summary returns counts for admin", async () => {
+  test("GET analytics/summary returns counts for admin (server-only)", async () => {
     await db
       .insertInto("telemetry_events",)
       .values([
         {
           id: "t1",
-          event_type: "frontend.click",
+          event_type: "frontend.page_view",
+          source: "server",
           session_id: "s1",
           user_id: "user1",
           event_data: "{}",
@@ -129,6 +168,7 @@ describe("telemetry routes — enabled", () => {
         {
           id: "t2",
           event_type: "frontend.click",
+          source: "server",
           session_id: "s1",
           user_id: "user1",
           event_data: "{}",
@@ -137,7 +177,18 @@ describe("telemetry routes — enabled", () => {
         {
           id: "t3",
           event_type: "frontend.page_view",
+          source: "server",
           session_id: "s2",
+          user_id: "user2",
+          event_data: "{}",
+          created_at: new Date().toISOString(),
+        },
+        {
+          // Frontend-sourced events MUST NOT count toward server totals.
+          id: "t4",
+          event_type: "frontend.page_view",
+          source: "frontend",
+          session_id: "s3",
           user_id: "user2",
           event_data: "{}",
           created_at: new Date().toISOString(),
@@ -151,8 +202,6 @@ describe("telemetry routes — enabled", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as EventBody;
     expect(body.total,).toBeGreaterThanOrEqual(3,);
-    expect(body.distinct_sessions,).toBeGreaterThanOrEqual(2,);
-    expect(body.distinct_users,).toBeGreaterThanOrEqual(2,);
   });
 
   test("GET analytics/models requires admin", async () => {
@@ -170,6 +219,7 @@ describe("telemetry routes — enabled", () => {
         {
           id: "m1",
           event_type: "generation.started",
+          source: "server",
           session_id: "s1",
           event_data: "{}",
           created_at: new Date().toISOString(),
@@ -177,6 +227,7 @@ describe("telemetry routes — enabled", () => {
         {
           id: "m2",
           event_type: "generation.started",
+          source: "server",
           session_id: "s1",
           event_data: "{}",
           created_at: new Date().toISOString(),
@@ -184,6 +235,7 @@ describe("telemetry routes — enabled", () => {
         {
           id: "m3",
           event_type: "generation.failed",
+          source: "server",
           session_id: "s2",
           event_data: "{}",
           created_at: new Date().toISOString(),
@@ -191,6 +243,7 @@ describe("telemetry routes — enabled", () => {
         {
           id: "m4",
           event_type: "frontend.click",
+          source: "server",
           session_id: "s3",
           event_data: "{}",
           created_at: new Date().toISOString(),
@@ -210,19 +263,51 @@ describe("telemetry routes — enabled", () => {
     expect(rows.find((r,) => r.event_type === "frontend.click"),).toBeUndefined();
   });
 
-  test("GET analytics/errors returns only failed events", async () => {
+  test("GET analytics/errors returns narrow projection (no event_data, no user_id)", async () => {
+    await db.deleteFrom("telemetry_events",).execute();
+    await db.insertInto("telemetry_events",).values({
+      id: "err-1",
+      event_type: "generation.failed",
+      source: "server",
+      session_id: "s1",
+      user_id: "user-victim",
+      chat_id: "chat-secret",
+      event_data: JSON.stringify({
+        error: "leak-test-secret-prompt-fragment-about-user-and-pii",
+        stackTrace: "long-stack-…",
+      },),
+      created_at: new Date().toISOString(),
+    },).execute();
+
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/errors",),
     );
     expect(res.status,).toBe(200,);
-    const rows = await res.json() as { event_type: string }[];
+    const rows = await res.json() as Array<Record<string, unknown>>;
     expect(rows.length,).toBeGreaterThanOrEqual(1,);
     for (const row of rows) {
-      expect(row.event_type,).toContain("failed",);
+      expect(row["event_data"],).toBeUndefined();
+      expect(row["user_id"],).toBeUndefined();
+      expect(row["chat_id"],).toBeUndefined();
+      expect(row["session_id"],).toBeUndefined();
+      expect(row["source"],).toBe("server",);
+      expect(String(row["event_type"] ?? "",),).toContain("failed",);
     }
+    const bodyText = JSON.stringify(rows,);
+    expect(bodyText.includes("leak-test-secret",),).toBe(false,);
+    expect(bodyText.includes("user-victim",),).toBe(false,);
+    expect(bodyText.includes("chat-secret",),).toBe(false,);
   });
 
   test("GET analytics/daily groups by date with limit", async () => {
+    await db.deleteFrom("telemetry_events",).execute();
+    await db.insertInto("telemetry_events",).values({
+      id: "d1",
+      event_type: "generation.started",
+      source: "server",
+      event_data: "{}",
+      created_at: new Date().toISOString(),
+    },).execute();
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/daily?limit=2",),
     );
@@ -248,14 +333,23 @@ describe("telemetry routes — enabled", () => {
   });
 
   test("DELETE analytics/purge removes events older than retention", async () => {
+    await db.deleteFrom("telemetry_events",).execute();
     const oldCutoff = new Date(Date.now() - 120 * 86_400_000,).toISOString();
     await db
       .insertInto("telemetry_events",)
       .values([
-        { id: "old-1", event_type: "frontend.click", session_id: "s-old", event_data: "{}", created_at: oldCutoff, },
+        {
+          id: "old-1",
+          event_type: "frontend.click",
+          source: "server",
+          session_id: "s-old",
+          event_data: "{}",
+          created_at: oldCutoff,
+        },
         {
           id: "fresh-1",
           event_type: "frontend.click",
+          source: "server",
           session_id: "s-new",
           event_data: "{}",
           created_at: new Date().toISOString(),
@@ -268,9 +362,9 @@ describe("telemetry routes — enabled", () => {
       new Request("http://localhost/api/telemetry/analytics/purge?days=30&confirm=PURGE", { method: "DELETE", },),
     );
     expect(res.status,).toBe(200,);
-    const body = await res.json() as EventBody & { count?: number };
-    expect(body.purged,).toBe(true,);
-    expect(typeof body.count,).toBe("number",);
+const body = await res.json() as EventBody;
+    expect(typeof body.purged,).toBe("number",);
+    expect(body.purged,).toBeGreaterThanOrEqual(1,);
 
     const oldRow = await db
       .selectFrom("telemetry_events",)

@@ -31,6 +31,17 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           const entityType = url.searchParams.get("entity_type",);
           const q = url.searchParams.get("q",);
 
+          // NSFW gate events (`nsfw.gate.*`) carry hashed user/chat identifiers and
+          // the closed-enum gate reason. Reading them requires the dedicated
+          // `admin.audit.nsfw` capability on top of `admin.system`.
+          const isNsfwEventQuery = eventType?.startsWith("nsfw.gate.",) ?? false;
+          if (isNsfwEventQuery && !can(userRole, "admin.audit.nsfw",)) {
+            return jsonError({
+              message: ctx.t?.("admin.nsfwAuditAccessRequired",) ?? "NSFW audit access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            },);
+          }
           let query = opts.database
             .selectFrom("log_entries",)
             .selectAll()
