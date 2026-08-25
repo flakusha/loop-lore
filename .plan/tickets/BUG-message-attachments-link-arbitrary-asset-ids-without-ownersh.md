@@ -1,6 +1,6 @@
 # BUG: Message attachments link arbitrary asset ids without ownership check
 
-**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 641f566, 0b41aa0)
+**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 69222c34, 0b41aa0)
 **Priority:** high
 **Effort:** Medium
 
