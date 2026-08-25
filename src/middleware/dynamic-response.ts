@@ -31,7 +31,9 @@
 import { brotliCompressSync, gzipSync, } from "node:zlib";
 import type { DynamicResponseConfig, } from "../config/schema";
 import { minifyCSS, minifyHTMLContent, minifyJS, } from "../content/minify";
+import { CompressionAlgorithm, } from "../db/enums";
 import type { Logger, } from "../logger";
+import { parseAcceptEncoding, } from "../transport/negotiation-parsers";
 
 /** Body content classes this policy knows how to optimize. */
 type BodyKind = "html" | "css" | "js" | "json";
@@ -187,22 +189,22 @@ export class DynamicResponsePolicy {
    * configured preference. Returns null when no supported encoding is offered.
    */
   private negotiateEncoding(accept: string,): "br" | "gzip" | null {
-    const hasBr = accept.includes("br",);
-    const hasGzip = accept.includes("gzip",);
-
-    switch (this.config.compressAlgorithm) {
-      case "br": {
-        return hasBr ? "br" : null;
-      }
-      case "gzip": {
-        return hasGzip ? "gzip" : null;
-      }
-      case "auto": {
-        if (hasBr) { return "br"; }
-        if (hasGzip) { return "gzip"; }
-        return null;
-      }
+    // parseAcceptEncoding honors client q-values and excludes q<=0
+    // ("not acceptable", RFC 7231); identity maps to None and is dropped.
+    const accepted = new Set(
+      parseAcceptEncoding(accept,).filter((algo,) => algo !== CompressionAlgorithm.None),
+    );
+    // Explicit algorithm: only if the client accepts it.
+    if (this.config.compressAlgorithm === "br") {
+      return accepted.has(CompressionAlgorithm.Brotli,) ? "br" : null;
     }
+    if (this.config.compressAlgorithm === "gzip") {
+      return accepted.has(CompressionAlgorithm.Gzip,) ? "gzip" : null;
+    }
+    // auto: server preference br > gzip among client-accepted algorithms.
+    if (accepted.has(CompressionAlgorithm.Brotli,)) { return "br"; }
+    if (accepted.has(CompressionAlgorithm.Gzip,)) { return "gzip"; }
+    return null;
   }
 
   /** Merge `Accept-Encoding` into an existing Vary header without duplicates. */

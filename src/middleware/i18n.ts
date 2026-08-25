@@ -22,15 +22,21 @@ import type { I18nConfig, Locale, } from "../i18n/types";
  * // => ["ja", "en-US", "en"]
  */
 export function parseAcceptLanguage(header: string,): string[] {
-  const result: string[] = [];
+  const parsed: { lang: string; q: number }[] = [];
   for (const part of header.split(",",)) {
-    const [lang,] = part.trim().split(";", 1,);
-    const trimmed = lang?.trim();
-    if (trimmed !== undefined && trimmed.length > 0) {
-      result.push(trimmed,);
-    }
+    const [raw,] = part.trim().split(";", 1,);
+    const lang = raw?.trim();
+    if (!lang) { continue; }
+    // Parse the optional q-value; invalid q falls back to 1, q<=0 means
+    // "not acceptable" (RFC 7231) and is excluded.
+    const qStr = part.split(";", 2,)[1];
+    const qRaw = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const q = Number.isFinite(qRaw,) ? Math.min(1, Math.max(0, qRaw,),) : 1;
+    if (q <= 0) { continue; }
+    parsed.push({ lang, q, },);
   }
-  return result;
+  // Highest preference first, honoring client-declared q-values.
+  return Array.from(parsed.toSorted((a, b,) => b.q - a.q), (e,) => e.lang,);
 }
 
 /**
