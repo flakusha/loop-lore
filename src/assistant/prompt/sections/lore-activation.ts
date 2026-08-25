@@ -18,6 +18,7 @@
  * no-match so prompt assembly never crashes on bad author input.
  */
 import { parseKeyGroups, parseKeywords, } from "../keywords";
+import { compileSafeRegExp, } from "../../../utils/safe-regexp";
 
 /** Maximum number of recent user messages scanned for activation. */
 export const MAX_SCAN_DEPTH = 10;
@@ -38,15 +39,14 @@ export function clampScanDepth(scanDepth: number | null,): number {
 }
 
 /**
- * Compile a lore key into a RegExp, or return null when it is invalid.
- * Invalid patterns are treated as no-match (never crash prompt assembly).
+ * Compile a lore key into a RegExp, or return null when it is invalid or
+ * unsafe. Keys are author/imported-card controlled — safe compile rejects
+ * catastrophic-backtracking shapes so a malicious card cannot freeze every
+ * chat turn. Invalid patterns are treated as no-match (never crash prompt
+ * assembly).
  */
 function compileKeyRegex(key: string,): RegExp | null {
-  try {
-    return new RegExp(key, "i",);
-  } catch {
-    return null;
-  }
+  return compileSafeRegExp(key, "i",);
 }
 
 /**
