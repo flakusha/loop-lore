@@ -10,6 +10,7 @@
 
 import { getLogger, } from "../logger/index";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
+import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function getLog() {
@@ -83,12 +84,19 @@ function base64urlDecode(str: string,): Uint8Array {
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
-
+/**
+ * Derive the JWT-signing HMAC key from the shared auth secret.
+ *
+ * SECURITY (BUG-jwtsecret-reused-across-three-security-domains): the same
+ * `auth.jwtSecret` is used here, by `src/assets/controller/signed-url.ts`,
+ * and by `src/nsfw/pii-redaction.ts`. Domain-separating the consumers with
+ * HKDF-SHA256 means a leak of one subkey cannot impersonate the others.
+ */
 async function importSecretKey(secret: string,): Promise<CryptoKey> {
-  const encoder = new TextEncoder();
+  const subkey = await domainKey(secret, DOMAIN_INFO.JWT_SIGNING, 32,);
   return crypto.subtle.importKey(
     "raw",
-    toBufferSource(encoder.encode(secret,),),
+    toBufferSource(subkey,),
     { name: "HMAC", hash: "SHA-256", },
     false,
     ["sign", "verify",],
