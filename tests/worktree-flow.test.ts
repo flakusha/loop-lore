@@ -473,7 +473,8 @@ describe("worktree CLI", () => {
     );
     const stderr = result.stderr.toString();
     const stdout = result.stdout.toString();
-    expect(result.exitCode,).toBe(0, `stderr: ${stderr}\nstdout: ${stdout}`,);
+    if (result.exitCode !== 0) { throw new Error(`stderr: ${stderr}\nstdout: ${stdout}`,); }
+    expect(result.exitCode,).toBe(0,);
     expect(stderr,).not.toContain("worktree not found",);
     expect(stderr,).not.toMatch(/must be run from the repo root/,);
     expect(stdout,).toMatch(/Branch:\s+feat\/inworktree-status/,);
@@ -562,6 +563,7 @@ describe("worktree CLI", () => {
         stderr: "pipe",
       },
     );
-    expect(r2.exitCode,).toBe(0, `stderr: ${r2.stderr.toString()}`,);
+    if (r2.exitCode !== 0) { throw new Error(`stderr: ${r2.stderr.toString()}`,); }
+    expect(r2.exitCode,).toBe(0,);
   });
 });
