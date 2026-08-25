@@ -13,7 +13,13 @@ export const chatUtilsRender: ChatUtilsRender = {
     if (!content) { return ""; }
     const marked = getMarked();
     const DOMPurify = getDOMPurify();
-    if (!marked || !DOMPurify) { return content; }
+    if (!marked || !DOMPurify) {
+      // Fail-safe: without the sanitizer we must not inject raw HTML —
+      // escape the source text instead of rendering it.
+      const div = document.createElement("div",);
+      div.textContent = content;
+      return div.getHTML();
+    }
     const html = marked.parse(content,) as string;
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [
