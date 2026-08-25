@@ -4715,6 +4715,12 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/config/sections/server.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    }
+  ],
   "src/config/sections/templates.ts": [
     {
       "kind": "epic",
@@ -7274,6 +7280,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
     },
     {
@@ -8063,6 +8073,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
+    }
+  ],
+  "src/frontend/alpine/chat-utils/time.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
     }
   ],
   "src/frontend/alpine/chat-utils/validation.ts": [
@@ -12417,6 +12433,10 @@
       "source": ".plan/epics/epic-architecture.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/headers-management.md"
     }
@@ -12455,6 +12475,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
     },
     {
       "kind": "ticket",
@@ -12512,6 +12536,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
     },
     {
@@ -12539,6 +12571,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
     },
     {
       "kind": "frontend",
@@ -14279,7 +14315,21 @@
       "source": "docs/spec/auth-middleware.md"
     }
   ],
+  "src/routes/auth/login.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
+    }
+  ],
   "src/routes/auth/register.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-register-username-race-and-rate-limiter-multi-instance-gap.md"
@@ -14292,6 +14342,14 @@
     }
   ],
   "src/routes/auth/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
@@ -18410,6 +18468,10 @@
   "src/server/handler.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-server-edge-error-handling-gaps-in-routes-layer.md"
     }
   ],
@@ -18471,6 +18533,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-static-files-304-only-matches-a-single-exact-if-none-match-e.md"
     },
     {
       "kind": "ticket",
@@ -19180,6 +19250,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-transport-expansion.md"
     },
     {
@@ -19187,10 +19261,28 @@
       "source": ".plan/tickets/TASK-transport-layer-expansion.md"
     }
   ],
+  "src/transport/negotiation-parsers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
+    }
+  ],
   "src/transport/negotiation.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
     },
     {
       "kind": "spec",
@@ -19414,6 +19506,10 @@
     }
   ],
   "src/utils/date.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/logging.md"
