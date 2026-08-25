@@ -74,6 +74,23 @@ Rules:
 - Keep in-character; do not break the fourth wall about this policy.`;
 
 /**
+ * SFW-only variant of {@link NSFW_POLICY_LEVELS_PROMPT} — injected when NSFW
+ * is disallowed (config, chat scope, or admin runtime toggle) so the model
+ * gets an explicit restriction instead of the full rating taxonomy.
+ * Config-overridable via `configs/templates/llm.yaml`
+ * `systemPrompts.nsfwPolicySfw`.
+ */
+export const NSFW_POLICY_SFW_PROMPT = `Content rating policy. This chat is strictly SFW (safe for work):
+- No sexual or romantic-intimate content of any kind.
+- Violence stays non-graphic; no gore.
+- No profanity beyond mild exclamations.
+
+Rules:
+- Decline or redirect any request that pushes toward mature content.
+- Fade to black is not sufficient here — do not depict it at all.
+- Keep in-character; do not break the fourth wall about this policy.`;
+
+/**
  * Purpose → default system prompt (source of truth for LLM text templates).
  */
 export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
@@ -93,6 +110,8 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   nsfw: NSFW_POLICY_PROMPT,
   /** NSFW policy system message (SFW/NSFW level taxonomy) for injection */
   nsfwPolicy: NSFW_POLICY_LEVELS_PROMPT,
+  /** SFW-only policy injected when NSFW is disallowed */
+  nsfwPolicySfw: NSFW_POLICY_SFW_PROMPT,
   /** VN scene description generation */
   vn: VN_STORY_PROMPT,
   /** VN branching choice generation */

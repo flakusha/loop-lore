@@ -82,6 +82,7 @@ of `±5 * 0.6 = ±3`. That's reasonable, but two issues remain:
 ### Phase 2 — intensity-scaled delta (medium risk, medium value)
 
 1. Change `MoodHook.calculateMoodDelta` from a fixed ±5 to:
+
    ```ts
    private calculateMoodDelta(dominant: string, totalIndicators: number, dominanceRatio: number,): number {
      if (dominant === "neutral") return 0;
@@ -93,6 +94,7 @@ of `±5 * 0.6 = ±3`. That's reasonable, but two issues remain:
      return Math.round(base * intensity * confidence);
    }
    ```
+
 2. Pass `totalIndicators` and `dominanceRatio` from `execute()`.
 3. Update `MoodHook.data` to include `intensity` and `dominanceRatio` so
    consumers can audit / log the signal.

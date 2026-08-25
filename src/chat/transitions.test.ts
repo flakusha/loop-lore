@@ -7,7 +7,6 @@
  * Includes ownership / memory-poisoning guard tests for
  * `promoteMessagesToMemories` and `classifyTransitionMessage`.
  */
-import type { Database, } from "bun:sqlite";
 import { beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { readFile, } from "node:fs/promises";
@@ -101,9 +100,8 @@ describe("selectMessagesForPromotion", () => {
 // ── Ownership / memory-poisoning guard tests ──────────────────
 
 let db: Kysely<DB>;
-let sqlite: Database;
 beforeEach(async () => {
-  ({ db, sqlite, } = await createTestDb());
+  ({ db, } = await createTestDb());
   await seedOwnershipFixtures(db,);
 },);
 // Module-scope constants so all ownership-guard describe blocks can share

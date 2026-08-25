@@ -9,7 +9,7 @@
  */
 
 import { getLogger, } from "../logger/index";
-import { jsonParseOr, jsonStringifyOr, } from "../utils";
+import { jsonStringifyOr, safeJsonParse, } from "../utils";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function getLog() {
@@ -163,11 +163,36 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
 
     const payloadBytes = base64urlDecode(payloadB64,);
     const payloadStr = new TextDecoder().decode(payloadBytes,);
-    const payload = jsonParseOr<JwtPayload>(payloadStr, {} as JwtPayload,);
+    // Defense-in-depth: a malformed payload must NOT silently coerce to {} —
+    // an empty `{}` previously passed expiration check (`undefined < now` is
+    // false) and was returned as `valid:true` with no `sub`/`sid`. Reject parse
+    // failure outright; callers can then safely assume every valid token has
+    // the full claim set.
+    const parsed = safeJsonParse<JwtPayload>(payloadStr,);
+    if (!parsed.ok || !parsed.value || typeof parsed.value !== "object" || Array.isArray(parsed.value)) {
+      return { valid: false, error: "Invalid payload", };
+    }
+    const payload = parsed.value;
 
-    // Check expiration
+    // Required claims — token is useless without a subject, role, or session.
+    if (
+      typeof payload.sub !== "string" || payload.sub.length === 0 ||
+      typeof payload.role !== "string" || payload.role.length === 0 ||
+      typeof payload.sid !== "string" || payload.sid.length === 0
+    ) {
+      return { valid: false, error: "Missing required claims", };
+    }
+
+    // Finite, future-dated expiration. A token missing `exp` or with a
+    // non-numeric value would otherwise be treated as never-expiring.
+    if (
+      typeof payload.exp !== "number" ||
+      !Number.isFinite(payload.exp,)
+    ) {
+      return { valid: false, error: "Missing or invalid exp claim", };
+    }
     const now = Math.floor(Date.now() / 1000,);
-    if (payload.exp < now) {
+    if (payload.exp <= now) {
       return { valid: false, error: "Token expired", };
     }
 
