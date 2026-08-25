@@ -229,6 +229,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/api-routes.md"
     }
   ],
   "src/assets/emotion-portraits.ts": [
