@@ -98,7 +98,7 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
     // Single edit invocation: `git issue edit -l` replaces the whole label set,
     // so per-label edits would leave only the last label applied.
     if (flags.labels.length > 0) {
-      gitSync(repoRoot, "issue", "edit", hash, ...flags.labels.flatMap((label,) => ["-l", label,],),);
+      gitSync(repoRoot, "issue", "edit", hash, ...flags.labels.flatMap((label,) => ["-l", label,]),);
     }
     if (flags.priority) {
       gitSync(repoRoot, "issue", "edit", hash, "-p", flags.priority,);
@@ -119,7 +119,7 @@ function parseFlags(args: string[],): TicketFlags {
     switch (args[i]) {
       case "-l":
       case "--label":
-        flags.labels.push(...args[++i].split(",",).map((l,) => l.trim(),).filter((l,) => l.length > 0,),);
+        flags.labels.push(...args[++i].split(",",).map((l,) => l.trim()).filter((l,) => l.length > 0),);
         break;
       case "-p":
       case "--priority":

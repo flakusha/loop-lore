@@ -17,13 +17,13 @@
  * reply, not the user's prompt).
  */
 import type { Kysely, } from "kysely";
+import { compactPromptHistory, } from "../../assistant/prompt-budget";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 import type { GenDeps, } from "./deps";
-import { compactPromptHistory, } from "../../assistant/prompt-budget";
 
 export interface PrepareGenerationOpts {
   d: GenDeps;
