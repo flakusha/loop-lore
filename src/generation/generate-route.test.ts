@@ -239,12 +239,17 @@ describe("gatePluginToolsByRole", () => {
     expect(tools.map((t,) => t.name),).toEqual(["play_card_battle",],);
   });
 
-  test("returns all tools when role declares empty tool list", () => {
+  test("returns zero tools when role declares empty tool list (explicit deny)", () => {
+    // SECURITY (BUG-plugin-tool-gating-empty-role-bypass): an empty allowlist
+    // is an explicit "deny all", not a fallback to "allow all". Role assignment
+    // implies intent — if the admin configured `tools: []`, the actor gets no
+    // plugin tools. This is intentional and stricter than `agentRole === null`
+    // (unassigned) which still exposes all tools.
     registry.addAgentRoles("card-battle", [
       { id: "card-battler", name: "Card Battler", description: "", systemPrompt: "", tools: [], },
     ],);
     const tools = gatePluginToolsByRole("card-battler",);
-    expect(tools.map((t,) => t.name),).toEqual(["play_card_battle", "play_rps",],);
+    expect(tools,).toEqual([],);
   });
 });
 

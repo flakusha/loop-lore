@@ -100,8 +100,9 @@ export const envMap = (): EnvMap => {
   map.AGE_GATE_ENABLED = "ageGate.enabled";
   map.AGE_GATE_MINIMUM_AGE = "ageGate.minimumAge";
   map.AGE_GATE_MODE = "ageGate.mode";
-  map.TLS_KEY = "server.tls.key";
   map.TLS_CERT = "server.tls.cert";
+  map.TLS_KEY = "server.tls.key";
+  map.SERVER_TRUST_PROXY = "server.trustProxy";
   map.AUTH_REQUIRED = "auth.required";
   map.AUTH_REGISTRATION_OPEN = "auth.registrationOpen";
   map.SESSION_TIMEOUT_HOURS = "auth.sessionTimeoutHours";
@@ -111,6 +112,7 @@ export const envMap = (): EnvMap => {
   map.AUTH_ADMIN_USERNAME = "auth.adminUsername";
   // eslint-disable-next-line sonarjs/no-hardcoded-passwords
   map.AUTH_ADMIN_PASSWORD = "auth.adminPassword";
+  map.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "auth.legacyOpaqueTokenFallback";
   map.TRANSPORT_DEFAULT_PROTOCOL = "transport.defaultProtocol";
   map.TRANSPORT_ENABLE_WEBSOCKET = "transport.enableWebSocket";
   map.TRANSPORT_ENABLE_WEBTRANSPORT = "transport.enableWebTransport";
