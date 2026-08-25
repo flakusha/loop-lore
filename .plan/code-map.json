@@ -4417,6 +4417,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     }
   ],
   "src/config/schema-class/hooks.ts": [
@@ -4557,6 +4561,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-template-full-model-coverage.md"
+    }
+  ],
+  "src/config/schema/testing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     }
   ],
   "src/config/sections/byo-key.ts": [
@@ -7969,12 +7979,6 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-  "src/frontend/alpine/chat-send.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
-    }
-  ],
   "src/frontend/alpine/chat-settings.ts": [
     {
       "kind": "epic",
@@ -8216,10 +8220,6 @@
     }
   ],
   "src/frontend/alpine/chat/world.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
@@ -10611,6 +10611,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
     }
   ],
   "src/generation/auto-gen/store-message.ts": [
@@ -18613,6 +18617,10 @@
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/platform-support.md"
     }
@@ -18655,6 +18663,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     }
   ],
   "src/services/server-external-manager/start-sd.ts": [
@@ -19209,6 +19221,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-e2e-integration-testing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     }
   ],
   "src/test/worktree.test.ts": [
