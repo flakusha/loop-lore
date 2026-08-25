@@ -219,6 +219,18 @@
     "source": ".plan/tickets/BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire.md",
     "git_issue": "7a4cc5d"
   },
+  "BUG-AUTO-KEY-ROTATION-DERIVES-CHAT-KEYS-FROM-PARTICIPANT-ACTOR-K": {
+    "hash": "2f79f0e",
+    "git_issue": "2f79f0e",
+    "extid": "BUG-AUTO-KEY-ROTATION-DERIVES-CHAT-KEYS-FROM-PARTICIPANT-ACTOR-K",
+    "type": "BUG",
+    "title": "auto key rotation derives chat keys from participant actor keys - legacy scheme incompatible with stable chat_keys",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k.md"
+  },
   "BUG-AUTO-ROTATION-CONFIG-DRIFT": {
     "hash": "a9a4ea3",
     "extid": "BUG-AUTO-ROTATION-CONFIG-DRIFT",
@@ -313,6 +325,18 @@
     "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md",
     "git_issue": "bc5de16"
   },
+  "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-": {
+    "hash": "881f7d7",
+    "git_issue": "881f7d7",
+    "extid": "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-",
+    "type": "BUG",
+    "title": "browser zstd decompress uses fixed 16x output capacity - high-ratio payloads silently return base64",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-browser-zstd-decompress-uses-fixed-16x-output-capacity-high-.md"
+  },
   "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
     "hash": "cfc029f",
     "extid": "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN",
@@ -336,6 +360,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md",
     "git_issue": "07a1ef2"
+  },
+  "BUG-CARRYHISTORY-COPIES-KEY-ID-INTO-MIGRATED-CHAT-HISTORY-BREAKS": {
+    "hash": "aaba0e3",
+    "git_issue": "aaba0e3",
+    "extid": "BUG-CARRYHISTORY-COPIES-KEY-ID-INTO-MIGRATED-CHAT-HISTORY-BREAKS",
+    "type": "BUG",
+    "title": "carryHistory copies key_id into migrated chat - history breaks when source chat is deleted or rotated",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-carryhistory-copies-key-id-into-migrated-chat-history-breaks.md"
   },
   "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-": {
     "hash": "d2861ca",
@@ -467,6 +503,18 @@
     "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md",
     "git_issue": "61c7072",
     "status": "done"
+  },
+  "BUG-CHAT-KEY-LAZY-CREATE-RACE-VIOLATES-CHAT-ID-UNIQUE-CONSTRAINT": {
+    "hash": "b9ce65c",
+    "git_issue": "b9ce65c",
+    "extid": "BUG-CHAT-KEY-LAZY-CREATE-RACE-VIOLATES-CHAT-ID-UNIQUE-CONSTRAINT",
+    "type": "BUG",
+    "title": "chat key lazy-create race violates chat_id unique constraint on concurrent first messages",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint.md"
   },
   "BUG-CHAT-MENTION-SILENT-ERROR-SWALL": {
     "hash": "pending",
@@ -907,6 +955,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
   },
+  "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN": {
+    "hash": "546662e",
+    "git_issue": "546662e",
+    "extid": "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN",
+    "type": "BUG",
+    "title": "encrypted-payload sniffing misclassifies user JSON as pre-encrypted content",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
+  },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "hash": "76cbe80",
     "extid": "BUG-ENCRYPTION-TIER-NOT-ENFORCED",
@@ -1221,6 +1281,18 @@
     "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md",
     "git_issue": "807abdb"
   },
+  "BUG-GZIP-STORED-UNENCRYPTED-MESSAGES-REACH-LLM-PROMPT-AND-EXPORT": {
+    "hash": "e336dc6",
+    "git_issue": "e336dc6",
+    "extid": "BUG-GZIP-STORED-UNENCRYPTED-MESSAGES-REACH-LLM-PROMPT-AND-EXPORT",
+    "type": "BUG",
+    "title": "gzip-stored unencrypted messages reach LLM prompt and exports as base64",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+  },
   "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
     "hash": "pending",
     "extid": "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED",
@@ -1485,6 +1557,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md",
     "git_issue": "1fbe78c"
+  },
+  "BUG-MESSAGE-SEARCH-RETURNS-CIPHERTEXT-AND-INDEXES-CIPHERTEXT-FOR": {
+    "hash": "baf5c4b",
+    "git_issue": "baf5c4b",
+    "extid": "BUG-MESSAGE-SEARCH-RETURNS-CIPHERTEXT-AND-INDEXES-CIPHERTEXT-FOR",
+    "type": "BUG",
+    "title": "message search returns ciphertext and indexes ciphertext for encrypted chats",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
   },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "hash": "6ca8fad",
@@ -1832,6 +1916,30 @@
     "tags": [],
     "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
   },
+  "BUG-ROTATEKEYONLEAVE-PARTIAL-FAILURE-LEAVES-MIXED-KEY-STATE-NON-": {
+    "hash": "d503b9c",
+    "git_issue": "d503b9c",
+    "extid": "BUG-ROTATEKEYONLEAVE-PARTIAL-FAILURE-LEAVES-MIXED-KEY-STATE-NON-",
+    "type": "BUG",
+    "title": "rotateKeyOnLeave partial failure leaves mixed key state - non-transactional and swallowed",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rotatekeyonleave-partial-failure-leaves-mixed-key-state-non-.md"
+  },
+  "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-MESSAGES-ONLY-ENCRYPTED-ASSETS-": {
+    "hash": "fe272d4",
+    "git_issue": "fe272d4",
+    "extid": "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-MESSAGES-ONLY-ENCRYPTED-ASSETS-",
+    "type": "BUG",
+    "title": "rotateKeyOnLeave re-encrypts messages only - encrypted assets become undecryptable",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
+  },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
     "extid": "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-",
@@ -1846,6 +1954,18 @@
     "verified_on_dev": "2026-08-22",
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
     "git_issue": "82e8395"
+  },
+  "BUG-SAFEDECOMPRESS-PRE-CHECK-REJECTS-COMPRESSED-PAYLOADS-OVER-10": {
+    "hash": "343f641",
+    "git_issue": "343f641",
+    "extid": "BUG-SAFEDECOMPRESS-PRE-CHECK-REJECTS-COMPRESSED-PAYLOADS-OVER-10",
+    "type": "BUG",
+    "title": "safeDecompress pre-check rejects compressed payloads over ~10KB (silent garbage reads)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
   },
   "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-": {
     "hash": "df71725",
@@ -3870,6 +3990,18 @@
     "source": ".plan/tickets/FEAT-e2e-performance-benchmarks.md",
     "git_issue": "2082412"
   },
+  "FEAT-ENCRYPTED-ENVELOPE-V3-ALWAYS-EMIT-COMPALGO-AND-EXPLICIT-VERS": {
+    "hash": "802ab64",
+    "git_issue": "802ab64",
+    "extid": "FEAT-ENCRYPTED-ENVELOPE-V3-ALWAYS-EMIT-COMPALGO-AND-EXPLICIT-VERS",
+    "type": "FEAT",
+    "title": "encrypted envelope v3 - always emit compAlgo and explicit version field",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-encrypted-envelope-v3-always-emit-compalgo-and-explicit-vers.md"
+  },
   "FEAT-ENCRYPTION-FOUNDATION-AES-256-GCM": {
     "hash": "441a05e",
     "extid": "FEAT-ENCRYPTION-FOUNDATION-AES-256-GCM",
@@ -4216,6 +4348,18 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-skills.md"
   },
+  "FEAT-STATIC-FILE-SERVER-HONORS-ACCEPT-ENCODING-Q-VALUES-AND-WILDC": {
+    "hash": "fb24118",
+    "git_issue": "fb24118",
+    "extid": "FEAT-STATIC-FILE-SERVER-HONORS-ACCEPT-ENCODING-Q-VALUES-AND-WILDC",
+    "type": "FEAT",
+    "title": "static file server honors Accept-Encoding q-values and wildcard",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc.md"
+  },
   "FEAT-SWARM-MODE-RECONCILIATION": {
     "hash": "pending",
     "extid": "FEAT-SWARM-MODE-RECONCILIATION",
@@ -4262,6 +4406,18 @@
     "epic": "epic-time-scale",
     "tags": [],
     "source": ".plan/tickets/FEAT-time-scale.md"
+  },
+  "FEAT-TRANSPORT-COMPRESSION-WIRE-RECEIVE-SIDE-DECOMPRESSION-WITH-L": {
+    "hash": "9606042",
+    "git_issue": "9606042",
+    "extid": "FEAT-TRANSPORT-COMPRESSION-WIRE-RECEIVE-SIDE-DECOMPRESSION-WITH-L",
+    "type": "FEAT",
+    "title": "transport compression - wire receive-side decompression with limits or remove dead decorator",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-transport-compression-wire-receive-side-decompression-with-l.md"
   },
   "FEAT-UNIFIED-DATE-REPRESENTATION-UTIL-LOCALE-REGION-IANA-TIMEZONE": {
     "hash": "7118f58",
@@ -6322,6 +6478,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-auto-translation-layer.md"
   },
+  "TASK-AUTONOMY-CONFIG-SURFACE-LAYERING-PRESETS-AND-OVERRIDES": {
+    "hash": "db98e0e",
+    "git_issue": "db98e0e",
+    "extid": "TASK-AUTONOMY-CONFIG-SURFACE-LAYERING-PRESETS-AND-OVERRIDES",
+    "type": "TASK",
+    "title": "Autonomy config surface layering presets and overrides",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md"
+  },
+  "TASK-AUTONOMY-RATE-GOVERNOR-FOR-LLM-ACTORS": {
+    "hash": "995a82c",
+    "git_issue": "995a82c",
+    "extid": "TASK-AUTONOMY-RATE-GOVERNOR-FOR-LLM-ACTORS",
+    "type": "TASK",
+    "title": "Autonomy rate governor for LLM actors",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
+  },
   "TASK-AUX-EMOTION-AVATAR": {
     "hash": "4e54f94",
     "extid": "TASK-AUX-EMOTION-AVATAR",
@@ -6871,6 +7051,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-caption-variants-create-recreate-pick-best-scenario.md",
     "git_issue": "bba2547"
+  },
+  "TASK-CERTIFICATE-LIFECYCLE-EXPIRY-MONITORING-AND-HEALTH-VERDICTS": {
+    "hash": "895d5b8",
+    "git_issue": "895d5b8",
+    "extid": "TASK-CERTIFICATE-LIFECYCLE-EXPIRY-MONITORING-AND-HEALTH-VERDICTS",
+    "type": "TASK",
+    "title": "Certificate lifecycle expiry monitoring and health verdicts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-certificate-and-tls-management.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts.md"
   },
   "TASK-CHAR-EDITOR-DB-STORAGE-SYNC": {
     "hash": "pending",
@@ -9650,6 +9842,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-faction-standing-schema.md",
     "git_issue": "c8f2e8a"
+  },
+  "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
+    "hash": "99c122b",
+    "git_issue": "99c122b",
+    "extid": "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL",
+    "type": "TASK",
+    "title": "Federation TLS peer trust custom CA pinning and optional mTLS",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-certificate-and-tls-management.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md"
   },
   "TASK-FILE-SPLIT-CHAT-SERVICE": {
     "hash": "pending",
@@ -13018,6 +13222,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-proactive-messaging.md"
   },
+  "TASK-PRODUCTION-TLS-MODES-BYO-CERTS-ACME-AND-PROXY-TERMINATION": {
+    "hash": "680d81e",
+    "git_issue": "680d81e",
+    "extid": "TASK-PRODUCTION-TLS-MODES-BYO-CERTS-ACME-AND-PROXY-TERMINATION",
+    "type": "TASK",
+    "title": "Production TLS modes BYO certs ACME and proxy termination",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-certificate-and-tls-management.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
+  },
   "TASK-PROFESSIONS-FRONTEND": {
     "hash": "pending",
     "extid": "TASK-PROFESSIONS-FRONTEND",
@@ -14766,6 +14982,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-story-alpine.md",
     "git_issue": "871b352"
+  },
+  "TASK-STORY-AUTO-DRIVE-SCHEDULER-WORLD-TICK-AND-ACTOR-TURNS": {
+    "hash": "3a224b3",
+    "git_issue": "3a224b3",
+    "extid": "TASK-STORY-AUTO-DRIVE-SCHEDULER-WORLD-TICK-AND-ACTOR-TURNS",
+    "type": "TASK",
+    "title": "Story auto-drive scheduler world tick and actor turns",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-auto-drive-scheduler-world-tick-and-actor-turns.md"
   },
   "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS": {
     "hash": "f0683a8",
