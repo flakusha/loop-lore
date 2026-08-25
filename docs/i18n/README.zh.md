@@ -1,8 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# loop-lore
-
 [![EN](https://img.shields.io/badge/EN-blue)](../../README.md)
 [![中文](https://img.shields.io/badge/中文-blue)](README.zh.md)
 [![Español](https://img.shields.io/badge/Español-blue)](README.es.md)
@@ -10,6 +8,8 @@
 [![한국어](https://img.shields.io/badge/한국어-blue)](README.ko.md)
 [![Русский](https://img.shields.io/badge/Русский-blue)](README.ru.md)
 [![Français](https://img.shields.io/badge/Français-blue)](README.fr.md)
+
+# loop-lore
 
 **LLM RPG 聊天及其他。**
 
