@@ -2040,7 +2040,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-use-multiple-l-flags-instead-potential-dx-improvement.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
