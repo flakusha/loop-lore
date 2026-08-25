@@ -32,8 +32,14 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
   return new Elysia({ name: "auth-public", },)
     .post(
       `${prefix}/auth/login`,
-      async ({ request, ...rest },) =>
-        handleLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+      async ({ request, server, ...rest },) =>
+        handleLogin(
+          request,
+          database,
+          config,
+          (rest as any).t as TranslatorFn | undefined,
+          server?.requestIP(request,)?.address ?? null,
+        ),
       {
         // Form-encoded POST; Request-first handlers trigger sucrose
         // JSON-body inference which rejects form submissions (415/400).
@@ -51,8 +57,14 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
     )
     .post(
       `${prefix}/demo-login`,
-      async ({ request, ...rest },) =>
-        handleDemoLogin(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+      async ({ request, server, ...rest },) =>
+        handleDemoLogin(
+          request,
+          database,
+          config,
+          (rest as any).t as TranslatorFn | undefined,
+          server?.requestIP(request,)?.address ?? null,
+        ),
       {
         parse: "none",
         response: {
@@ -67,8 +79,14 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
     )
     .post(
       `${prefix}/auth/register`,
-      async ({ request, ...rest },) =>
-        handleRegister(request, database, config, (rest as any).t as TranslatorFn | undefined,),
+      async ({ request, server, ...rest },) =>
+        handleRegister(
+          request,
+          database,
+          config,
+          (rest as any).t as TranslatorFn | undefined,
+          server?.requestIP(request,)?.address ?? null,
+        ),
       {
         parse: "none",
         response: {
@@ -89,7 +107,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
   return new Elysia({ name: "auth-protected", },)
     .post(
       `${prefix}/auth/logout`,
-      async ({ request, ...rest },) => {
+      async ({ request, server, ...rest },) => {
         const userId = "userId" in rest && typeof rest.userId === "string"
           ? rest.userId
           : null;
@@ -112,7 +130,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
     )
     .get(
       `${prefix}/auth/me`,
-      async ({ request, ...rest },) => {
+      async ({ request, server, ...rest },) => {
         const userId = "userId" in rest && typeof rest.userId === "string"
           ? rest.userId
           : null;
