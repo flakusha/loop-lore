@@ -186,18 +186,35 @@ export interface ResolvedFlagView {
 const FLAG_QUEUE_LIMIT_CAP = 100;
 const FLAG_DESCRIPTION_MAX = 1000;
 
+/** Resolve the reporter-hash HMAC secret, production-gated. */
+function resolveReporterHashSecret(): string {
+  const envSecret = process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] ??
+    process.env["NSFW_MODERATION_HMAC_SECRET"];
+  if (envSecret) { return envSecret; }
+  const env = process.env["NODE_ENV"] ?? "";
+  if (env === "test" || env === "development" || env === "dev") {
+    return "loop-lore-nsfw-default-do-not-use-in-prod";
+  }
+  throw new Error(
+    "NSFW_FLAG_REPORTER_HASH_SECRET is required in production. Set it to a random string.",
+  );
+}
+
+const REPORTER_HASH_SECRET = resolveReporterHashSecret();
+
 /**
  * Stable, opaque hash of a reporter id. Allows admins to correlate repeat
  * reporters across flags without exposing raw user ids.
+ *
+ * SECURITY: the secret is production-gated (see resolveReporterHashSecret)
+ * so a deployment without `NSFW_FLAG_REPORTER_HASH_SECRET` cannot boot in
+ * production with a known default salt.
  *
  * @param reporterId - Raw reporter id (UUID).
  * @returns 32-char hex digest prefixed with "rh_".
  */
 export function hashReporterId(reporterId: string,): string {
-  const secret = process.env.NSFW_FLAG_REPORTER_HASH_SECRET ??
-    process.env.NSFW_MODERATION_HMAC_SECRET ??
-    "loop-lore-nsfw-default-do-not-use-in-prod";
-  const hasher = new Bun.CryptoHasher("sha256", secret,);
+  const hasher = new Bun.CryptoHasher("sha256", REPORTER_HASH_SECRET,);
   hasher.update(reporterId,);
   return `rh_${hasher.digest("hex",).slice(0, 32,)}`;
 }

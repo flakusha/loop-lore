@@ -65,6 +65,8 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
 
   getPreferences = (userId: string,) =>
     getPreferences({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
+  getOrCreateOwn = (userId: string,) =>
+    getOrCreateOwn({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
   updatePreferences = (userId: string, updates: Parameters<NsfwModerationServiceIface["updatePreferences"]>[1],) =>
     updatePreferences({ thisL: this as unknown as NsfwModerationServiceContext, userId, updates, },);
   getOrCreateOwn = (userId: string,) =>
