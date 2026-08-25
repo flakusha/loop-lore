@@ -12227,7 +12227,17 @@
       "source": ".plan/tickets/TASK-api-key-auth-middleware.md"
     }
   ],
+  "src/middleware/auth.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    }
+  ],
   "src/middleware/auth/authenticate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
@@ -12283,6 +12293,12 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
+  "src/middleware/elysia-auth.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    }
+  ],
   "src/middleware/elysia-auth.ts": [
     {
       "kind": "epic",
@@ -12291,6 +12307,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt.md"
     },
     {
       "kind": "spec",
