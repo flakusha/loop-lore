@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 197 epics
+**Total:** 198 epics
 
 ## Summary
 
@@ -72,6 +72,7 @@
 | ⬜ Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | ⬜ Not Started | Licensing | Low | Unknown | 0 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
 | ⬜ Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
+| ⬜ Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
 | ⬜ Not Started | Logging & Structured Logging | Medium | Unknown | 0 | [epic-logging.md](/.plan/epics/epic-logging.md) |
 | ⬜ Not Started | Login & Authentication UI | Medium | Unknown | 0 | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md) |
 | ⬜ Not Started | Magic & Spell Systems | Medium | Very High | 0 | [epic-magic-spell-systems.md](/.plan/epics/epic-magic-spell-systems.md) |
@@ -798,6 +799,15 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Effort:** Large
 - **Type:** Feature Epic
 - **File:** `.plan/epics/epic-llm-queue.md`
+
+### Local Process Swarm (Bun-Managed Multi-Process Decomposition)
+
+- **Status:** ⬜ Not Started
+- **Priority:** Medium
+- **Effort:** Very High
+- **Type:** Architecture Epic
+- **Tags:** architecture, deployment, processes, swarm, bun, supervisor
+- **File:** `.plan/epics/epic-local-process-swarm.md`
 
 ### Logging & Structured Logging
 
