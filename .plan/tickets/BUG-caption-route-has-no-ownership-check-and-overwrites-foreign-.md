@@ -1,6 +1,6 @@
 # BUG: Caption route has no ownership check and overwrites foreign alt_text
 
-**Status:** ⬜ Not Started
+**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 641f566, 0b41aa0)
 **Priority:** high
 **Effort:** Medium
 
