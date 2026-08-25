@@ -362,9 +362,9 @@ describe("telemetry routes — enabled", () => {
       new Request("http://localhost/api/telemetry/analytics/purge?days=30&confirm=PURGE", { method: "DELETE", },),
     );
     expect(res.status,).toBe(200,);
-const body = await res.json() as EventBody;
-    expect(typeof body.purged,).toBe("number",);
-    expect(body.purged,).toBeGreaterThanOrEqual(1,);
+    const body = await res.json() as EventBody & { count?: number };
+    expect(body.purged,).toBe(true,);
+    expect(typeof body.count,).toBe("number",);
 
     const oldRow = await db
       .selectFrom("telemetry_events",)
