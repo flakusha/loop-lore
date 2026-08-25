@@ -85,7 +85,7 @@ async function handleRegister(
   config: Config,
   t?: TranslatorFn,
 ): Promise<Response> {
-  const ip = getClientIp(request,);
+  const ip = getClientIp(request, config,);
   const gateError = checkRegisterGate(config, ip, t,);
   if (gateError) { return gateError; }
 

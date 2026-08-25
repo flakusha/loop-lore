@@ -19,7 +19,7 @@ async function handleLogin(
   config: Config,
   t?: TranslatorFn,
 ): Promise<Response> {
-  const ip = getClientIp(request,);
+  const ip = getClientIp(request, config,);
   if (!loginLimiter.check(ip,)) {
     return new Response(
       `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many attempts. Try again later."}</p>`,
@@ -139,7 +139,7 @@ async function handleDemoLogin(
     },);
   }
 
-  const ip = getClientIp(request,);
+  const ip = getClientIp(request, config,);
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
 
