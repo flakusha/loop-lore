@@ -16,7 +16,11 @@ import { createLogger, } from "../logger";
  * @returns Both the typed Kysely instance and raw SQLite handle
  *   (for introspection tests that need PRAGMA queries).
  */
-export async function createTestDb(): Promise<{ db: Kysely<DB>; sqlite: Database }> {
+export interface TestDb {
+  db: Kysely<DB>;
+  sqlite: Database;
+}
+export async function createTestDb(): Promise<TestDb> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = ON",);
   const dialect = createSqliteDialect(sqlite,);
