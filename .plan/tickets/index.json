@@ -25,42 +25,6 @@
     "git_issue": "ff1656c",
     "status": "done"
   },
-  "BUG-429-RESPONSES-OMIT-RETRY-AFTER-AND-X-RATELIMIT-HEADERS": {
-    "hash": "3703291",
-    "git_issue": "3703291",
-    "extid": "BUG-429-RESPONSES-OMIT-RETRY-AFTER-AND-X-RATELIMIT-HEADERS",
-    "type": "BUG",
-    "title": "429 responses omit Retry-After and X-RateLimit headers",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
-  },
-  "BUG-ACCESS-LOG-NEVER-RECORDS-USERID-HANDLE-X-USER-ID-HEADER-NEVE": {
-    "hash": "114a27f",
-    "git_issue": "114a27f",
-    "extid": "BUG-ACCESS-LOG-NEVER-RECORDS-USERID-HANDLE-X-USER-ID-HEADER-NEVE",
-    "type": "BUG",
-    "title": "Access log never records userId/handle (x-user-id header never set)",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
-  },
-  "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
-    "hash": "f27472d",
-    "git_issue": "f27472d",
-    "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
-    "type": "BUG",
-    "title": "ActivityPub actor signing keys and rotation undefined; no crypto-epic link",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md"
-  },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
     "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
@@ -100,18 +64,6 @@
     "git_issue": "20354a1",
     "status": "done"
   },
-  "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
-    "hash": "64464bf",
-    "extid": "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA",
-    "type": "BUG",
-    "title": "Asset link/share handlers and gallery grid param lack validation and access checks",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-asset-link-share-handlers-and-gallery-grid-param-lack-valida.md",
-    "git_issue": "64464bf"
-  },
   "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU": {
     "hash": "c78e5466",
     "extid": "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU",
@@ -123,18 +75,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md",
     "git_issue": "80e07be"
-  },
-  "BUG-ASSET-SERVE-PUBLIC-IMMUTABLE-CACHE-INLINE-SVG-EXPOSURE": {
-    "hash": "4961df8",
-    "extid": "BUG-ASSET-SERVE-PUBLIC-IMMUTABLE-CACHE-INLINE-SVG-EXPOSURE",
-    "type": "BUG",
-    "title": "Asset serve: public immutable cache + inline SVG exposure",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md",
-    "git_issue": "4961df8"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "hash": "pending",
@@ -159,18 +99,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md",
     "git_issue": "821e0d1"
-  },
-  "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-": {
-    "hash": "a877274",
-    "git_issue": "a877274",
-    "extid": "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-",
-    "type": "BUG",
-    "title": "Auth rate-limiter tests seed per-IP buckets via getClientIp internals — no direct bucket isolation",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-.md"
   },
   "BUG-AUTHOR-NOTE-SECTION-DUPLICATES-POST-HISTORY-INSTRUCTIONS-SAM": {
     "hash": "1bc8ffd",
@@ -265,18 +193,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
   },
-  "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED": {
-    "hash": "9191c2f",
-    "git_issue": "9191c2f",
-    "extid": "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED",
-    "type": "BUG",
-    "title": "Backfill of historical posts on new follower unspecified",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
-  },
   "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
     "hash": "d0d3739",
     "extid": "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0",
@@ -287,8 +203,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md",
-    "git_issue": "d0d3739",
-    "status": "done"
+    "git_issue": "d0d3739"
   },
   "BUG-BATCH-CHAT-DELETE-LACKS-TRANSACTION-ORPHANED-ROWS-ON-PARTIAL": {
     "hash": "bc5de16",
@@ -314,18 +229,6 @@
     "source": ".plan/tickets/BUG-cancellation-lifecycle-db-failure-permanently-marks-chat-gen.md",
     "git_issue": "cfc029f"
   },
-  "BUG-CAPTION-ROUTE-HAS-NO-OWNERSHIP-CHECK-AND-OVERWRITES-FOREIGN-": {
-    "hash": "07a1ef2",
-    "extid": "BUG-CAPTION-ROUTE-HAS-NO-OWNERSHIP-CHECK-AND-OVERWRITES-FOREIGN-",
-    "type": "BUG",
-    "title": "Caption route has no ownership check and overwrites foreign alt_text",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md",
-    "git_issue": "07a1ef2"
-  },
   "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-": {
     "hash": "d2861ca",
     "extid": "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-",
@@ -338,18 +241,6 @@
     "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md",
     "git_issue": "d2861ca"
   },
-  "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE": {
-    "hash": "beff3bd",
-    "git_issue": "beff3bd",
-    "extid": "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE",
-    "type": "BUG",
-    "title": "Character federation lacks owner consent or NSFW gate",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md"
-  },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
     "hash": "d6c64be",
     "extid": "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED",
@@ -361,18 +252,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-character-internal-traits-idor-actor-ownership-never-checked.md",
     "git_issue": "d6c64be"
-  },
-  "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-CROSS-USER-READ-WRITE-DELETE": {
-    "hash": "32ab55e",
-    "git_issue": "32ab55e",
-    "extid": "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-CROSS-USER-READ-WRITE-DELETE",
-    "type": "BUG",
-    "title": "character internal traits IDOR cross-user read write delete",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-character-internal-traits-idor-cross-user-read-write-delete.md"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -551,18 +430,6 @@
     "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md",
     "git_issue": "31e8676"
   },
-  "BUG-CHAT-REUNITE-SECONDARY-OWNERSHIP-CHECK-MISSING": {
-    "hash": "a27d730",
-    "git_issue": "a27d730",
-    "extid": "BUG-CHAT-REUNITE-SECONDARY-OWNERSHIP-CHECK-MISSING",
-    "type": "BUG",
-    "title": "chat reunite secondary ownership check missing",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md"
-  },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
     "extid": "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE",
@@ -609,18 +476,6 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
-  },
-  "BUG-CHAT-VN-CHOICES-IDOR-CROSS-USER-READ-AND-SELECT": {
-    "hash": "8d91314",
-    "git_issue": "8d91314",
-    "extid": "BUG-CHAT-VN-CHOICES-IDOR-CROSS-USER-READ-AND-SELECT",
-    "type": "BUG",
-    "title": "chat vn-choices IDOR cross-user read and select",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-chat-vn-choices-idor-cross-user-read-and-select.md"
   },
   "BUG-CHATFORMATS-TEMPLATE-CONFIG-DEFINED-BUT-UNUSED-DEAD-STANDARD": {
     "hash": "6730c8b",
@@ -730,42 +585,6 @@
     "source": ".plan/tickets/BUG-crafting-station-instances-scoped-across-worlds-cross-world-.md",
     "git_issue": "7bde6bd"
   },
-  "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-": {
-    "hash": "26741b8",
-    "git_issue": "26741b8",
-    "extid": "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-",
-    "type": "BUG",
-    "title": "CRDT conflict policy missing leader-vs-swarm precedence and deletes",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-crdt-conflict-policy-missing-leader-vs-swarm-precedence-and-.md"
-  },
-  "BUG-CSP-UNSAFE-INLINE-DEFEATS-PER-REQUEST-NONCE": {
-    "hash": "b2fa212",
-    "git_issue": "b2fa212",
-    "extid": "BUG-CSP-UNSAFE-INLINE-DEFEATS-PER-REQUEST-NONCE",
-    "type": "BUG",
-    "title": "CSP unsafe-inline defeats per-request nonce",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md"
-  },
-  "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
-    "hash": "63f8f29",
-    "git_issue": "63f8f29",
-    "extid": "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER",
-    "type": "BUG",
-    "title": "Demo login endpoint bypasses rate limiter",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
-  },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
     "extid": "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION",
@@ -777,18 +596,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
   },
-  "BUG-DHRATCHETDECRYPT-DH-STEP-BRANCH-DERIVES-MESSAGE-KEY-FROM-STA": {
-    "hash": "ecf20e4",
-    "git_issue": "ecf20e4",
-    "extid": "BUG-DHRATCHETDECRYPT-DH-STEP-BRANCH-DERIVES-MESSAGE-KEY-FROM-STA",
-    "type": "BUG",
-    "title": "dhRatchetDecrypt DH-step branch derives message key from stale previous-epoch chain (f69d0229 regression)",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-sta.md"
-  },
   "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
     "hash": "6fb9cbd",
     "extid": "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD",
@@ -799,44 +606,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md",
-    "git_issue": "6fb9cbd",
-    "status": "done"
-  },
-  "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI": {
-    "hash": "fbd71df",
-    "extid": "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI",
-    "type": "BUG",
-    "title": "Duplicate openAssetPreview definitions with divergent behavior",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-duplicate-openassetpreview-definitions-with-divergent-behavi.md",
-    "git_issue": "fbd71df"
-  },
-  "BUG-DYNAMIC-RESPONSE-ACCEPT-ENCODING-NEGOTIATION-USES-SUBSTRING-": {
-    "hash": "ed020f4",
-    "git_issue": "ed020f4",
-    "extid": "BUG-DYNAMIC-RESPONSE-ACCEPT-ENCODING-NEGOTIATION-USES-SUBSTRING-",
-    "type": "BUG",
-    "title": "dynamic-response Accept-Encoding negotiation uses substring match, ignores q-values",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
-  },
-  "BUG-E2E-ACTOR-IMPORT-AND-ASSET-ENDPOINTS-RETURN-500-WHERE-4XX-VA": {
-    "hash": "2e964d4",
-    "git_issue": "2e964d4",
-    "extid": "BUG-E2E-ACTOR-IMPORT-AND-ASSET-ENDPOINTS-RETURN-500-WHERE-4XX-VA",
-    "type": "BUG",
-    "title": "E2E: actor-import and asset endpoints return 500 where 4xx validation expected",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
+    "git_issue": "6fb9cbd"
   },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
@@ -921,18 +691,6 @@
     "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md",
     "git_issue": "6b6c898"
   },
-  "BUG-EXECUTEREVERSAL-AND-REVIEWAPPEAL-DO-NOT-EXCLUDE-SOFT-DELETED": {
-    "hash": "0eb6b9d",
-    "git_issue": "0eb6b9d",
-    "extid": "BUG-EXECUTEREVERSAL-AND-REVIEWAPPEAL-DO-NOT-EXCLUDE-SOFT-DELETED",
-    "type": "BUG",
-    "title": "executeReversal and reviewAppeal do not exclude soft-deleted moderation_actions — deleted actions can be reinstated or re-appealed",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/BUG-executereversal-and-reviewappeal-do-not-exclude-soft-deleted.md"
-  },
   "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-": {
     "hash": "dc5a8b8",
     "extid": "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-",
@@ -945,90 +703,6 @@
     "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md",
     "git_issue": "dc5a8b8"
   },
-  "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN": {
-    "hash": "4a8525b",
-    "git_issue": "4a8525b",
-    "extid": "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN",
-    "type": "BUG",
-    "title": "FEAT-radicle-integration acceptance criteria too thin",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-feat-radicle-integration-acceptance-criteria-too-thin.md"
-  },
-  "BUG-FEDERATED-DELETE-AND-GDPR-RIGHT-TO-BE-FORGOTTEN-UNHANDLED": {
-    "hash": "32066c5",
-    "git_issue": "32066c5",
-    "extid": "BUG-FEDERATED-DELETE-AND-GDPR-RIGHT-TO-BE-FORGOTTEN-UNHANDLED",
-    "type": "BUG",
-    "title": "Federated delete and GDPR right-to-be-forgotten unhandled",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-federated-delete-and-gdpr-right-to-be-forgotten-unhandled.md"
-  },
-  "BUG-FEDERATION-AUTHORIZATION-WHO-MAY-PUBLISH-AN-ACTOR-UNDEFINED": {
-    "hash": "d50cdb6",
-    "git_issue": "d50cdb6",
-    "extid": "BUG-FEDERATION-AUTHORIZATION-WHO-MAY-PUBLISH-AN-ACTOR-UNDEFINED",
-    "type": "BUG",
-    "title": "Federation authorization (who may publish an actor) undefined",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
-  },
-  "BUG-FEDERATION-DELIVERY-RELIABILITY-QUEUE-RETRY-IDEMPOTENCY-UNDE": {
-    "hash": "d07462c",
-    "git_issue": "d07462c",
-    "extid": "BUG-FEDERATION-DELIVERY-RELIABILITY-QUEUE-RETRY-IDEMPOTENCY-UNDE",
-    "type": "BUG",
-    "title": "Federation delivery reliability (queue, retry, idempotency) undefined",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-federation-delivery-reliability-queue-retry-idempotency-unde.md"
-  },
-  "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED": {
-    "hash": "d6f2a94",
-    "git_issue": "d6f2a94",
-    "extid": "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED",
-    "type": "BUG",
-    "title": "Federation identity mapping to local users undefined",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-federation-identity-mapping-to-local-users-undefined.md"
-  },
-  "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES": {
-    "hash": "9e5d529",
-    "git_issue": "9e5d529",
-    "extid": "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES",
-    "type": "BUG",
-    "title": "Federation test harness needs in-process fixtures",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-federation-test-harness-needs-in-process-fixtures.md"
-  },
-  "BUG-FRONTEND-DEAD-CSRF-BEARER-HEADER-MACHINERY": {
-    "hash": "0fea62e",
-    "git_issue": "0fea62e",
-    "extid": "BUG-FRONTEND-DEAD-CSRF-BEARER-HEADER-MACHINERY",
-    "type": "BUG",
-    "title": "frontend dead CSRF bearer header machinery",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
-  },
   "BUG-FRONTEND-MINOR-BUGS-BATCH": {
     "hash": "aae9870",
     "extid": "BUG-FRONTEND-MINOR-BUGS-BATCH",
@@ -1038,8 +712,7 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md",
-    "git_issue": "aae9870"
+    "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -1054,18 +727,6 @@
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
   },
-  "BUG-GALLERY-GRID-EXPOSES-OTHER-USERS-PRIVATE-ASSETS": {
-    "hash": "53398da",
-    "extid": "BUG-GALLERY-GRID-EXPOSES-OTHER-USERS-PRIVATE-ASSETS",
-    "type": "BUG",
-    "title": "Gallery grid exposes other users' private assets",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-gallery-grid-exposes-other-users-private-assets.md",
-    "git_issue": "53398da"
-  },
   "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY": {
     "hash": "pending",
     "extid": "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY",
@@ -1076,30 +737,6 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
-  },
-  "BUG-GENERATED-IMAGES-OWNED-BY-SYSTEM-ARE-INVISIBLE-TO-THE-REQUES": {
-    "hash": "5d355aa",
-    "extid": "BUG-GENERATED-IMAGES-OWNED-BY-SYSTEM-ARE-INVISIBLE-TO-THE-REQUES",
-    "type": "BUG",
-    "title": "Generated images owned by 'system' are invisible to the requesting user",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-generated-images-owned-by-system-are-invisible-to-the-reques.md",
-    "git_issue": "5d355aa"
-  },
-  "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
-    "hash": "8d307ae",
-    "git_issue": "8d307ae",
-    "extid": "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC",
-    "type": "BUG",
-    "title": "getClientIp is untestable without a live Bun server — IP source not injectable",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourc.md"
   },
   "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY": {
     "hash": "f52b255",
@@ -1222,18 +859,6 @@
     "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md",
     "git_issue": "103e372"
   },
-  "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
-    "hash": "df90721",
-    "git_issue": "df90721",
-    "extid": "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B",
-    "type": "BUG",
-    "title": "hashReporterId uses hardcoded default secret in production — breaks PII pseudonymous projection",
-    "label": "bug",
-    "priority": "high",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/BUG-hashreporterid-uses-hardcoded-default-secret-in-production-b.md"
-  },
   "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
     "hash": "106844a",
     "extid": "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C",
@@ -1244,20 +869,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md",
-    "git_issue": "106844a",
-    "status": "done"
-  },
-  "BUG-HSTS-HEADER-MISSING-FROM-RESPONSE-POLICY": {
-    "hash": "f599e16",
-    "git_issue": "f599e16",
-    "extid": "BUG-HSTS-HEADER-MISSING-FROM-RESPONSE-POLICY",
-    "type": "BUG",
-    "title": "HSTS header missing from response policy",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    "git_issue": "106844a"
   },
   "BUG-HTML-LANG-HARDCODED-NO-DIR-HANDLING-FOR-I18N": {
     "hash": "f835588",
@@ -1268,20 +880,7 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md",
-    "git_issue": "f835588"
-  },
-  "BUG-HTTP1HANDLER-SEND-IS-A-SILENT-NO-OP": {
-    "hash": "c722708",
-    "git_issue": "c722708",
-    "extid": "BUG-HTTP1HANDLER-SEND-IS-A-SILENT-NO-OP",
-    "type": "BUG",
-    "title": "Http1Handler.send is a silent no-op",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md"
+    "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
@@ -1305,30 +904,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-impersonate-commands-register-empty-callback.md"
   },
-  "BUG-IN-MEMORY-LIMITER-NOT-SHARED-ACROSS-INSTANCES-NO-SHUTDOWN-CL": {
-    "hash": "8a630ce",
-    "git_issue": "8a630ce",
-    "extid": "BUG-IN-MEMORY-LIMITER-NOT-SHARED-ACROSS-INSTANCES-NO-SHUTDOWN-CL",
-    "type": "BUG",
-    "title": "In-memory limiter not shared across instances; no shutdown cleanup",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
-  },
-  "BUG-INBOUND-FEDERATION-CONTENT-NOT-MODERATED-BEFORE-DISPLAY": {
-    "hash": "9f5c23f",
-    "git_issue": "9f5c23f",
-    "extid": "BUG-INBOUND-FEDERATION-CONTENT-NOT-MODERATED-BEFORE-DISPLAY",
-    "type": "BUG",
-    "title": "Inbound federation content not moderated before display",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
-  },
   "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ": {
     "hash": "86a2a1b",
     "extid": "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ",
@@ -1339,8 +914,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
-    "git_issue": "86a2a1b",
-    "status": "done"
+    "git_issue": "86a2a1b"
   },
   "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
     "hash": "f254f7a",
@@ -1351,8 +925,7 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md",
-    "git_issue": "f254f7a"
+    "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "hash": "c31f487",
@@ -1403,18 +976,6 @@
     "git_issue": "966f256",
     "status": "done"
   },
-  "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT": {
-    "hash": "b760e48",
-    "git_issue": "b760e48",
-    "extid": "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT",
-    "type": "BUG",
-    "title": "Leader and swarm topologies lack simultaneous-write arbitration",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-leader-and-swarm-topologies-lack-simultaneous-write-arbitrat.md"
-  },
   "BUG-LEGACY-SHA256-TOKEN-HASH-FALLBACK-AUTHENTICATES-WHEN-JWT-SEC": {
     "hash": "d489199",
     "extid": "BUG-LEGACY-SHA256-TOKEN-HASH-FALLBACK-AUTHENTICATES-WHEN-JWT-SEC",
@@ -1427,30 +988,6 @@
     "source": ".plan/tickets/BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec.md",
     "git_issue": "d489199"
   },
-  "BUG-LIMITER-IS-FIXED-WINDOW-BUT-MISLABELED-SLIDING-WINDOW-2X-BOU": {
-    "hash": "85a5418",
-    "git_issue": "85a5418",
-    "extid": "BUG-LIMITER-IS-FIXED-WINDOW-BUT-MISLABELED-SLIDING-WINDOW-2X-BOU",
-    "type": "BUG",
-    "title": "Limiter is fixed-window but mislabeled sliding-window (2x boundary burst)",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou.md"
-  },
-  "BUG-LISTASSETS-TREATS-SHARED-VISIBILITY-AS-WORLD-READABLE": {
-    "hash": "72706d2",
-    "extid": "BUG-LISTASSETS-TREATS-SHARED-VISIBILITY-AS-WORLD-READABLE",
-    "type": "BUG",
-    "title": "listAssets treats Shared visibility as world-readable",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md",
-    "git_issue": "72706d2"
-  },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
     "hash": "fafb5a9",
     "extid": "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK",
@@ -1462,18 +999,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md",
     "git_issue": "fafb5a9"
-  },
-  "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
-    "hash": "1fbe78c",
-    "extid": "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH",
-    "type": "BUG",
-    "title": "Message attachments link arbitrary asset ids without ownership check",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md",
-    "git_issue": "1fbe78c"
   },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "hash": "6ca8fad",
@@ -1675,19 +1200,6 @@
     "git_issue": "b3c47b2",
     "status": "open"
   },
-  "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
-    "hash": "b8f7ad2",
-    "git_issue": "b8f7ad2",
-    "extid": "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA",
-    "type": "BUG",
-    "title": "NsfwModerationService missing getOrCreateOwn wiring — block/ban/shadow all return 400",
-    "label": "bug",
-    "priority": "high",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba.md",
-    "status": "done"
-  },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "hash": "b91c284",
     "extid": "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES",
@@ -1697,20 +1209,7 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md",
-    "git_issue": "b91c284"
-  },
-  "BUG-PARSEACCEPTLANGUAGE-IGNORES-QUALITY-VALUES-RETURNS-HEADER-OR": {
-    "hash": "d810266",
-    "git_issue": "d810266",
-    "extid": "BUG-PARSEACCEPTLANGUAGE-IGNORES-QUALITY-VALUES-RETURNS-HEADER-OR",
-    "type": "BUG",
-    "title": "parseAcceptLanguage ignores quality values (returns header order, not preference)",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
+    "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md"
   },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "a83a310",
@@ -1761,66 +1260,6 @@
     "git_issue": "bc54f30",
     "status": "done"
   },
-  "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
-    "hash": "ab71933",
-    "git_issue": "ab71933",
-    "extid": "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-",
-    "type": "BUG",
-    "title": "Rate limiter collapses to global bucket (getClientIp returns 'unknown')",
-    "label": "bug",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
-  },
-  "BUG-RATE-LIMITER-MODULE-SINGLETONS-SHARED-ACROSS-TEST-FILES-CAUS": {
-    "hash": "2e25526",
-    "git_issue": "2e25526",
-    "extid": "BUG-RATE-LIMITER-MODULE-SINGLETONS-SHARED-ACROSS-TEST-FILES-CAUS",
-    "type": "BUG",
-    "title": "Rate-limiter module singletons shared across test files cause cross-file flakiness",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md"
-  },
-  "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
-    "hash": "550802a",
-    "git_issue": "550802a",
-    "extid": "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT",
-    "type": "BUG",
-    "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
-  },
-  "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT": {
-    "hash": "9c4390c",
-    "git_issue": "9c4390c",
-    "extid": "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT",
-    "type": "BUG",
-    "title": "resolveFlagBody schema allows upheld but service type expects confirmed — status mismatch",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/BUG-resolveflagbody-schema-allows-upheld-but-service-type-expect.md"
-  },
-  "BUG-RESOLVEUSERIDFROMREQUEST-MISSING-USER-STATUS-CHECK": {
-    "hash": "5d85aba",
-    "git_issue": "5d85aba",
-    "extid": "BUG-RESOLVEUSERIDFROMREQUEST-MISSING-USER-STATUS-CHECK",
-    "type": "BUG",
-    "title": "resolveUserIdFromRequest missing user status check",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
-  },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
     "extid": "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-",
@@ -1845,20 +1284,7 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md",
-    "git_issue": "df71725"
-  },
-  "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
-    "hash": "3ba1095",
-    "git_issue": "3ba1095",
-    "extid": "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED",
-    "type": "BUG",
-    "title": "Signal bridge activation trigger undefined",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-signal-bridge-activation-trigger-undefined.md"
+    "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
   },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
@@ -1916,8 +1342,7 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md",
-    "git_issue": "a1385db"
+    "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md"
   },
   "BUG-STANDARD-TIER-AT-REST-ENCRYPTION-SILENTLY-STORES-PLAINTEXT-W": {
     "hash": "566d06c",
@@ -1930,30 +1355,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-standard-tier-at-rest-encryption-silently-stores-plaintext-w.md",
     "git_issue": "566d06c"
-  },
-  "BUG-STATIC-ASSET-CACHING-UNCONDITIONAL-VARY-IMMUTABLE-ON-SHORT-T": {
-    "hash": "f0bd959",
-    "git_issue": "f0bd959",
-    "extid": "BUG-STATIC-ASSET-CACHING-UNCONDITIONAL-VARY-IMMUTABLE-ON-SHORT-T",
-    "type": "BUG",
-    "title": "static asset caching: unconditional Vary + immutable on short-TTL hashed assets",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
-  },
-  "BUG-STATIC-FILES-304-ONLY-MATCHES-A-SINGLE-EXACT-IF-NONE-MATCH-E": {
-    "hash": "6df02ea",
-    "git_issue": "6df02ea",
-    "extid": "BUG-STATIC-FILES-304-ONLY-MATCHES-A-SINGLE-EXACT-IF-NONE-MATCH-E",
-    "type": "BUG",
-    "title": "static-files 304 only matches a single exact If-None-Match ETag",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-static-files-304-only-matches-a-single-exact-if-none-match-e.md"
   },
   "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE": {
     "hash": "7a293c3",
@@ -1968,18 +1369,6 @@
     "git_issue": "7a293c3",
     "status": "done"
   },
-  "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
-    "hash": "0ffc5e5",
-    "git_issue": "0ffc5e5",
-    "extid": "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY",
-    "type": "BUG",
-    "title": "story-items cross-world IDOR read transfer destroy",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
-  },
   "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT": {
     "hash": "pending",
     "extid": "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT",
@@ -1991,19 +1380,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md",
     "git_issue": "879fa11"
-  },
-  "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS": {
-    "hash": "efdee47",
-    "git_issue": "efdee47",
-    "extid": "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS",
-    "type": "BUG",
-    "title": "stray-input-close-tags-corrupt-three-planning-docs",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-stray-input-close-tags-corrupt-three-planning-docs.md",
-    "status": "done"
   },
   "BUG-STREAM-CANCEL-LEAVES-ATTEMPT-STUCK-PROCESSING-FOREVER-NO-CLE": {
     "hash": "268fdae",
@@ -2038,8 +1414,7 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-tautological-browser-test-assertions.md",
-    "git_issue": "c8bad7f"
+    "source": ".plan/tickets/BUG-tautological-browser-test-assertions.md"
   },
   "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
     "hash": "pending",
@@ -2115,18 +1490,6 @@
     "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md",
     "git_issue": "d88ff7f"
   },
-  "BUG-TRANSPORT-NEGOTIATION-PARSERS-DO-NOT-EXCLUDE-Q-0-OR-VALIDATE": {
-    "hash": "5bb8566",
-    "git_issue": "5bb8566",
-    "extid": "BUG-TRANSPORT-NEGOTIATION-PARSERS-DO-NOT-EXCLUDE-Q-0-OR-VALIDATE",
-    "type": "BUG",
-    "title": "transport negotiation parsers do not exclude q=0 or validate q-values",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
-  },
   "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
     "hash": "02abf8a",
     "extid": "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN",
@@ -2148,21 +1511,7 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md",
-    "git_issue": "6c5ec87"
-  },
-  "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
-    "hash": "0cd09d6",
-    "git_issue": "0cd09d6",
-    "extid": "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT",
-    "type": "BUG",
-    "title": "use multiple -l flags instead - potential DX improvement",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-use-multiple-l-flags-instead-potential-dx-improvement.md",
-    "status": "done"
+    "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -2214,18 +1563,6 @@
     "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md",
     "git_issue": "ca69118"
   },
-  "BUG-WORLD-TIMELINES-UNAUTHENTICATED-READ-AND-CREATE": {
-    "hash": "dae8112",
-    "git_issue": "dae8112",
-    "extid": "BUG-WORLD-TIMELINES-UNAUTHENTICATED-READ-AND-CREATE",
-    "type": "BUG",
-    "title": "world timelines unauthenticated read and create",
-    "label": "bug",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
-  },
   "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING": {
     "hash": "7664314",
     "extid": "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING",
@@ -2235,8 +1572,7 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md",
-    "git_issue": "7664314"
+    "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
   },
   "BUG-XSS-IN-MUSIC-EMBED-FALLBACK-RENDERING": {
     "hash": "6e96aea",
@@ -2247,8 +1583,7 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md",
-    "git_issue": "6e96aea"
+    "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -3115,7 +2450,7 @@
     "git_issue": "8f9281e"
   },
   "FEAT-065-TEMPLATE-SYSTEM": {
-    "hash": "dc95659",
+    "hash": "9aefe593",
     "extid": "FEAT-065-TEMPLATE-SYSTEM",
     "type": "FEAT",
     "title": "# Template System — Unified Architecture Spec",
@@ -3713,30 +3048,6 @@
     "source": ".plan/tickets/FEAT-chat-lifecycle-moderation.md",
     "git_issue": "d33a823"
   },
-  "FEAT-CHAT-OUTPUT-STYLING-RESOLVER-STYLESECTION-BINDING": {
-    "hash": "7d16ada",
-    "git_issue": "7d16ada",
-    "extid": "FEAT-CHAT-OUTPUT-STYLING-RESOLVER-STYLESECTION-BINDING",
-    "type": "FEAT",
-    "title": "Chat output styling: resolver + styleSection binding",
-    "label": "feat",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-chat-output-styling-resolver-stylesection-binding.md"
-  },
-  "FEAT-CHAT-SETTINGS-MODAL-OUTPUT-STYLING-CONTROL": {
-    "hash": "998d3da",
-    "git_issue": "998d3da",
-    "extid": "FEAT-CHAT-SETTINGS-MODAL-OUTPUT-STYLING-CONTROL",
-    "type": "FEAT",
-    "title": "Chat settings modal: output styling control",
-    "label": "feat",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
-  },
   "FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE": {
     "hash": "77c026e",
     "extid": "FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE",
@@ -3872,18 +3183,6 @@
     "status": "done",
     "git_issue": "441a05e"
   },
-  "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT": {
-    "hash": "9c1c458",
-    "git_issue": "9c1c458",
-    "extid": "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT",
-    "type": "FEAT",
-    "title": "Federate blog system via ActivityPub (Lemmy/Mastodon/Reddit)",
-    "label": "feat",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit.md"
-  },
   "FEAT-FILTERING-PAGINATION": {
     "hash": "0154377",
     "extid": "FEAT-FILTERING-PAGINATION",
@@ -3921,18 +3220,6 @@
     "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md",
     "status": "done",
     "git_issue": "fef7e3b"
-  },
-  "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {
-    "hash": "eed7cfa",
-    "git_issue": "eed7cfa",
-    "extid": "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT",
-    "type": "FEAT",
-    "title": "IRC integration: channels as group-chat, PM as chat",
-    "label": "feat",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-irc-integration-channels-as-group-chat-pm-as-chat.md"
   },
   "FEAT-ITEM-SYSTEM-EXTENSIONS": {
     "hash": "4a1f830",
@@ -4064,18 +3351,6 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-origin-capture-generation-seeding.md",
     "git_issue": "e7cc2b6"
-  },
-  "FEAT-OUTPUT-STYLING-CUSTOM-GENRES-VIA-ECE": {
-    "hash": "a897ef0",
-    "git_issue": "a897ef0",
-    "extid": "FEAT-OUTPUT-STYLING-CUSTOM-GENRES-VIA-ECE",
-    "type": "FEAT",
-    "title": "Output styling: custom genres via ECE",
-    "label": "feat",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-output-styling-custom-genres-via-ece.md"
   },
   "FEAT-PLUGIN-SYSTEM-EXTENSIBILITY-DELAYED": {
     "hash": "42d36a1",
@@ -4239,18 +3514,6 @@
     "epic": "epic-time-scale",
     "tags": [],
     "source": ".plan/tickets/FEAT-time-scale.md"
-  },
-  "FEAT-UNIFIED-DATE-REPRESENTATION-UTIL-LOCALE-REGION-IANA-TIMEZONE": {
-    "hash": "7118f58",
-    "git_issue": "7118f58",
-    "extid": "FEAT-UNIFIED-DATE-REPRESENTATION-UTIL-LOCALE-REGION-IANA-TIMEZONE",
-    "type": "FEAT",
-    "title": "Unified date representation util: locale/region + IANA timezone (backend + frontend)",
-    "label": "feat",
-    "priority": "medium",
-    "epic": "epic-i18n",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
   },
   "FEAT-WORLD-LOCATIONS": {
     "hash": "0144015",
@@ -5507,18 +4770,6 @@
     "source": ".plan/tickets/TASK-add-response-schemas-remaining-routes.md",
     "git_issue": "33d4b6c"
   },
-  "TASK-ADD-SCRIPTS-DIR-TO-TYPECHECK-AND-LINT-COVERAGE": {
-    "hash": "aa05396",
-    "git_issue": "aa05396",
-    "extid": "TASK-ADD-SCRIPTS-DIR-TO-TYPECHECK-AND-LINT-COVERAGE",
-    "type": "TASK",
-    "title": "Add scripts/ dir to typecheck and lint coverage",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-add-scripts-dir-to-typecheck-and-lint-coverage.md"
-  },
   "TASK-ADD-SECURITY-REGRESSION-TESTS-FOR-CRITICAL-HIGH-BUGS": {
     "hash": "e9c30c5",
     "extid": "TASK-ADD-SECURITY-REGRESSION-TESTS-FOR-CRITICAL-HIGH-BUGS",
@@ -6011,7 +5262,7 @@
     "git_issue": "6df69d5"
   },
   "TASK-ASSISTANT-COMMANDS-EXTENSION": {
-    "hash": "8ca33ef",
+    "hash": "eb2d50b",
     "extid": "TASK-ASSISTANT-COMMANDS-EXTENSION",
     "type": "TASK",
     "title": "Assistant Commands Extension",
@@ -6334,7 +5585,7 @@
     "git_issue": "edf93cf"
   },
   "TASK-AUX-GM-TOOL-DETECTION": {
-    "hash": "4c12c84",
+    "hash": "fac4c45d",
     "extid": "TASK-AUX-GM-TOOL-DETECTION",
     "type": "TASK",
     "title": "AUX LLM — GM Tool Detection",
@@ -6765,7 +6016,7 @@
     "git_issue": "2108e81"
   },
   "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION": {
-    "hash": "83bde8b",
+    "hash": "bdea77f8",
     "extid": "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION",
     "type": "TASK",
     "title": "# TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION: Browser e2e coverage expansion — Playwright integration",
@@ -6822,18 +6073,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-byok-api-keys.md",
     "git_issue": "e665ded"
-  },
-  "TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO": {
-    "hash": "bba2547",
-    "extid": "TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO",
-    "type": "TASK",
-    "title": "Caption variants: create/recreate/pick-best scenario",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-caption-variants-create-recreate-pick-best-scenario.md",
-    "git_issue": "bba2547"
   },
   "TASK-CHAR-EDITOR-DB-STORAGE-SYNC": {
     "hash": "pending",
@@ -7581,7 +6820,7 @@
     "git_issue": "54abd35"
   },
   "TASK-CHAT-FLOW-SECTION-NAVIGATION": {
-    "hash": "26eb01e",
+    "hash": "c5270239",
     "extid": "TASK-CHAT-FLOW-SECTION-NAVIGATION",
     "type": "TASK",
     "title": "Chat Flow — Section Navigation & Story Spanning",
@@ -8099,18 +7338,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-consent-schema.md"
   },
-  "TASK-CONSOLIDATE-CHAT-IM-ADAPTER-ABSTRACTION-ABOVE-PROTOCOLHANDLE": {
-    "hash": "7768a28",
-    "git_issue": "7768a28",
-    "extid": "TASK-CONSOLIDATE-CHAT-IM-ADAPTER-ABSTRACTION-ABOVE-PROTOCOLHANDLE",
-    "type": "TASK",
-    "title": "Consolidate chat/IM adapter abstraction above ProtocolHandler",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle.md"
-  },
   "TASK-CONSOLIDATE-QUEST-ENGINES": {
     "hash": "51a7bc01",
     "extid": "TASK-CONSOLIDATE-QUEST-ENGINES",
@@ -8121,18 +7348,6 @@
     "epic": "epic-quests-encounters",
     "tags": [],
     "source": ".plan/tickets/TASK-consolidate-quest-engines.md"
-  },
-  "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS": {
-    "hash": "ad8bb7e",
-    "git_issue": "ad8bb7e",
-    "extid": "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS",
-    "type": "TASK",
-    "title": "Consolidate unsafe Date/Buffer/JSON usage into shared utils",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-code-quality",
-    "tags": [],
-    "source": ".plan/tickets/TASK-consolidate-unsafe-date-buffer-json-usage-into-shared-utils.md"
   },
   "TASK-CONTEXT-CUT-MEMORY-PROMOTION": {
     "hash": "90f0396",
@@ -8725,18 +7940,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-content-versioning.md",
     "git_issue": "59efcd3"
-  },
-  "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO": {
-    "hash": "2abec61",
-    "git_issue": "2abec61",
-    "extid": "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO",
-    "type": "TASK",
-    "title": "Dead rejectBodyImpersonation guard never fires — Elysia TypeBox parser strips performedBy before beforeHandle",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/TASK-dead-rejectbodyimpersonation-guard-never-fires-elysia-typebo.md"
   },
   "TASK-DEDUPE-CONTEXT-WINDOW": {
     "hash": "pending",
@@ -9618,18 +8821,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-file-split-routes.md"
   },
-  "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING": {
-    "hash": "3bf85e0",
-    "git_issue": "3bf85e0",
-    "extid": "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING",
-    "type": "TASK",
-    "title": "Finalize notification bell header wiring",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
-  },
   "TASK-FIX-ACTOR-ITEM-VALUE-TYPE": {
     "hash": "a97459f",
     "extid": "TASK-FIX-ACTOR-ITEM-VALUE-TYPE",
@@ -9790,18 +8981,6 @@
     "git_issue": "c02be17",
     "status": "done"
   },
-  "TASK-FLAGBODY-FLAGQUERY-RESOLVEFLAGBODY-SCHEMAS-LACK-CLOSED-POSTU": {
-    "hash": "4317173",
-    "git_issue": "4317173",
-    "extid": "TASK-FLAGBODY-FLAGQUERY-RESOLVEFLAGBODY-SCHEMAS-LACK-CLOSED-POSTU",
-    "type": "TASK",
-    "title": "flagBody, flagQuery, resolveFlagBody schemas lack CLOSED posture (additionalProperties: false) — unlike blockBody/modBody/unblockBody",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/TASK-flagbody-flagquery-resolveflagbody-schemas-lack-closed-postu.md"
-  },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
     "extid": "TASK-FORMAT-VERSION-MIGRATION",
@@ -9827,7 +9006,7 @@
     "git_issue": "372be44"
   },
   "TASK-FRONTEND-CHARACTERS-PAGE-SPEC": {
-    "hash": "ec5148d",
+    "hash": "pending",
     "extid": "TASK-FRONTEND-CHARACTERS-PAGE-SPEC",
     "type": "TASK",
     "title": "Frontend Characters Page Implementation",
@@ -9839,7 +9018,7 @@
     "git_issue": "ec5148d"
   },
   "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC": {
-    "hash": "273bcfa",
+    "hash": "pending",
     "extid": "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Commands & Extras Implementation",
@@ -9851,7 +9030,7 @@
     "git_issue": "273bcfa"
   },
   "TASK-FRONTEND-CHAT-GENERATION-SPEC": {
-    "hash": "d18c94e",
+    "hash": "pending",
     "extid": "TASK-FRONTEND-CHAT-GENERATION-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Generation & Streaming Implementation",
@@ -9863,7 +9042,7 @@
     "git_issue": "d18c94e"
   },
   "TASK-FRONTEND-CHAT-MEMORIES-SPEC": {
-    "hash": "2f6424b",
+    "hash": "pending",
     "extid": "TASK-FRONTEND-CHAT-MEMORIES-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Memory Panel Implementation",
@@ -9875,7 +9054,7 @@
     "git_issue": "2f6424b"
   },
   "TASK-FRONTEND-CHAT-MESSAGES-SPEC": {
-    "hash": "710b94e",
+    "hash": "pending",
     "extid": "TASK-FRONTEND-CHAT-MESSAGES-SPEC",
     "type": "TASK",
     "title": "Frontend Chat Messages Bubble & Detail Levels",
@@ -10013,18 +9192,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-tree-shake.md"
   },
-  "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION": {
-    "hash": "7532037",
-    "extid": "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION",
-    "type": "TASK",
-    "title": "Gallery asset reuse picker for world/location/item creation",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-gallery-asset-reuse-picker-for-world-location-item-creation.md",
-    "git_issue": "7532037"
-  },
   "TASK-GALLERY-EDITOR-STRUCTURED-UI": {
     "hash": "pending",
     "extid": "TASK-GALLERY-EDITOR-STRUCTURED-UI",
@@ -10060,18 +9227,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-gallery-review-approval-queue.md",
     "git_issue": "69e421f"
-  },
-  "TASK-GALLERY-REVIEW-MINORS-SWEEP-PAGINATION-SYNC-IO-FORMATSIZE-DE": {
-    "hash": "e5b72c2",
-    "git_issue": "e5b72c2",
-    "extid": "TASK-GALLERY-REVIEW-MINORS-SWEEP-PAGINATION-SYNC-IO-FORMATSIZE-DE",
-    "type": "TASK",
-    "title": "gallery-review minors sweep (pagination, sync IO, formatSize dedupe, any-typing)",
-    "label": "task",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-gallery-review-minors-sweep-pagination-sync-io-formatsize-de.md"
   },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
@@ -10614,18 +9769,6 @@
     "status": "done",
     "git_issue": "ab3dad5"
   },
-  "TASK-IMPLEMENT-PER-CONNECTION-IP-SOURCING-FOR-AUTH-RATE-LIMITERS": {
-    "hash": "5353f07",
-    "git_issue": "5353f07",
-    "extid": "TASK-IMPLEMENT-PER-CONNECTION-IP-SOURCING-FOR-AUTH-RATE-LIMITERS",
-    "type": "TASK",
-    "title": "Implement per-connection IP sourcing for auth rate limiters",
-    "label": "task",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md"
-  },
   "TASK-IMPLEMENT-TRADE": {
     "hash": "f71d103",
     "extid": "TASK-IMPLEMENT-TRADE",
@@ -10772,7 +9915,7 @@
     "git_issue": "532218b"
   },
   "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS": {
-    "hash": "bcd9a39",
+    "hash": "44e22069",
     "extid": "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS",
     "type": "TASK",
     "title": "Internal Traits Visibility Tiers",
@@ -11639,54 +10782,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-native-aws-bedrock-adapter.md",
     "git_issue": "30fd582"
-  },
-  "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL": {
-    "hash": "9041d6f",
-    "git_issue": "9041d6f",
-    "extid": "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL",
-    "type": "TASK",
-    "title": "No browser test: admin subpages, settings tabs, i18n/theme application",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-no-browser-test-admin-subpages-settings-tabs-i18n-theme-appl.md"
-  },
-  "TASK-NO-BROWSER-TEST-CHAT-PANELS-MOOD-AVATARS": {
-    "hash": "e464b39",
-    "git_issue": "e464b39",
-    "extid": "TASK-NO-BROWSER-TEST-CHAT-PANELS-MOOD-AVATARS",
-    "type": "TASK",
-    "title": "No browser test: chat panels + mood avatars",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-no-browser-test-chat-panels-mood-avatars.md"
-  },
-  "TASK-NO-BROWSER-TEST-CHAT-STREAMING-MESSAGE-LIFECYCLE": {
-    "hash": "a168030",
-    "git_issue": "a168030",
-    "extid": "TASK-NO-BROWSER-TEST-CHAT-STREAMING-MESSAGE-LIFECYCLE",
-    "type": "TASK",
-    "title": "No browser test: chat streaming + message lifecycle",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-no-browser-test-chat-streaming-message-lifecycle.md"
-  },
-  "TASK-NO-BROWSER-TEST-VN-SCENE-VIEW-BATTLE-UI-COMMAND-PALETTE": {
-    "hash": "8918822",
-    "git_issue": "8918822",
-    "extid": "TASK-NO-BROWSER-TEST-VN-SCENE-VIEW-BATTLE-UI-COMMAND-PALETTE",
-    "type": "TASK",
-    "title": "No browser test: VN scene view, battle UI, command palette",
-    "label": "task",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-no-browser-test-vn-scene-view-battle-ui-command-palette.md"
   },
   "TASK-NON-ISOLATED-BUN-TEST-SRC-RED-SHARED-STATE-CONTAMINATION": {
     "hash": "70c23fb",
@@ -13326,18 +12421,6 @@
     "source": ".plan/tickets/TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative.md",
     "git_issue": "2129b97"
   },
-  "TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER": {
-    "hash": "5c2b987",
-    "git_issue": "5c2b987",
-    "extid": "TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER",
-    "type": "TASK",
-    "title": "Real LLM/Sd e2e fixture (llama.cpp + llama-swap + sd-server)",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "epic-e2e-integration-testing.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
-  },
   "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
     "hash": "pending",
     "extid": "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES",
@@ -13812,7 +12895,7 @@
     "git_issue": "9621690"
   },
   "TASK-RESOLVE-WIRING-CLOSE-OUT-REVIEW-FOLLOW-UPS-TYPECHECK-RED-QUE": {
-    "hash": "13aa632",
+    "hash": "db80bec9",
     "extid": "TASK-RESOLVE-WIRING-CLOSE-OUT-REVIEW-FOLLOW-UPS-TYPECHECK-RED-QUE",
     "type": "TASK",
     "title": "Resolve wiring-close-out review follow-ups: typecheck red + quest test gap + gate caveats",
@@ -14358,18 +13441,6 @@
     "status": "done",
     "git_issue": "754a395"
   },
-  "TASK-SHOW-ASSETS-SCENES-WORLDS-ITEMS-TO-CHARACTER-VIA-CHAT-CONTEX": {
-    "hash": "afe0589",
-    "git_issue": "afe0589",
-    "extid": "TASK-SHOW-ASSETS-SCENES-WORLDS-ITEMS-TO-CHARACTER-VIA-CHAT-CONTEX",
-    "type": "TASK",
-    "title": "Show assets, scenes, worlds, items to character via chat-context injection",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-context-injection-templates",
-    "tags": [],
-    "source": ".plan/tickets/TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex.md"
-  },
   "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS": {
     "hash": "4396076",
     "extid": "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS",
@@ -14722,17 +13793,6 @@
     "source": ".plan/tickets/TASK-svg-upload-leads-to-stored-xss.md",
     "git_issue": "962618b"
   },
-  "TASK-SWARM-SUPERVISOR": {
-    "hash": "pending",
-    "extid": "TASK-SWARM-SUPERVISOR",
-    "type": "TASK",
-    "title": "Swarm Supervisor — generalize ServerExternalManager",
-    "label": "task",
-    "priority": "High",
-    "epic": "epic-local-process-swarm",
-    "tags": [],
-    "source": ".plan/tickets/TASK-swarm-supervisor.md"
-  },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
     "hash": "pending",
     "extid": "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY",
@@ -14756,18 +13816,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-telemetry-endpoint-trusts-userid-from-request-body.md",
     "git_issue": "fcdcefc"
-  },
-  "TASK-TELEMETRY-SCHEMA-COMMENT-CLAIMS-ADDITIONALPROPERTIES-FALSE-R": {
-    "hash": "12a153e",
-    "git_issue": "12a153e",
-    "extid": "TASK-TELEMETRY-SCHEMA-COMMENT-CLAIMS-ADDITIONALPROPERTIES-FALSE-R",
-    "type": "TASK",
-    "title": "Telemetry schema comment claims additionalProperties: false rejects unknown fields — actually silently strips them",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-nsfw-moderation-priority",
-    "tags": [],
-    "source": ".plan/tickets/TASK-telemetry-schema-comment-claims-additionalproperties-false-r.md"
   },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
     "hash": "pending",
@@ -14989,18 +14037,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-tier-1-openai-compatible-platform-catalog.md",
     "git_issue": "d0ba5cb"
-  },
-  "TASK-TIGHTEN-SAFEPARSEINT-TO-STRICT-BASE-10-CONTRACT": {
-    "hash": "e2f734c",
-    "git_issue": "e2f734c",
-    "extid": "TASK-TIGHTEN-SAFEPARSEINT-TO-STRICT-BASE-10-CONTRACT",
-    "type": "TASK",
-    "title": "tighten safeParseInt to strict base-10 contract",
-    "label": "task",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-tighten-safeparseint-to-strict-base-10-contract.md"
   },
   "TASK-TIME-SCALE": {
     "hash": "bf194ee",

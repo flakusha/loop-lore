@@ -30,7 +30,7 @@ ComfyUI is first-class citizen. Finalized workflow files are the API contract.
 - [ ] `WorkflowTemplate` interface defined with `build()` function
 - [ ] Template registry supports add/remove/list/get operations
 - [ ] Parameter schema with type validation + defaults
-- [ ] Templates stored as JSON files in `src/plugins/comfyui/templates/`
+- [ ] Templates implemented as TS `WorkflowTemplate`s in `src/image-edit/templates/builtin/` (+ on-disk JSON in `configs/workflows/`); `src/plugins/comfyui/` was the original proposal but was never created
 - [ ] Unit tests for template builder functions
 - [ ] Unit tests for parameter validation
 
