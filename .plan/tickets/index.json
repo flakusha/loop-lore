@@ -3597,7 +3597,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/FEAT-comfyui-plugin-workflow-templates.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "989166a"
   },
   "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION": {
@@ -5305,7 +5305,7 @@
     "epic": "epic-logic-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-add-ownership-checks-characters.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "60c2d8f"
   },
   "TASK-ADD-RESPONSE-SCHEMAS-REMAINING-ROUTES": {
@@ -5319,6 +5319,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-add-response-schemas-remaining-routes.md",
     "git_issue": "33d4b6c"
+  },
+  "TASK-ADD-SCRIPTS-DIR-TO-TYPECHECK-AND-LINT-COVERAGE": {
+    "hash": "aa05396",
+    "git_issue": "aa05396",
+    "extid": "TASK-ADD-SCRIPTS-DIR-TO-TYPECHECK-AND-LINT-COVERAGE",
+    "type": "TASK",
+    "title": "Add scripts/ dir to typecheck and lint coverage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-scripts-dir-to-typecheck-and-lint-coverage.md"
   },
   "TASK-ADD-SECURITY-REGRESSION-TESTS-FOR-CRITICAL-HIGH-BUGS": {
     "hash": "e9c30c5",
@@ -7023,7 +7035,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-core-system.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "90e9eda"
   },
   "TASK-CHARACTER-CREATOR-PREROGATIVE": {
@@ -7152,7 +7164,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-mood-swings-happiness-meter.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "cd7794e"
   },
   "TASK-CHARACTER-MULTI-AVATAR": {
@@ -7187,7 +7199,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-multi-personality-system.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "735e6a6"
   },
   "TASK-CHARACTER-PERSONALITY-INTEGRITY": {
@@ -7742,7 +7754,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-node-discovery.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "e2c1866"
   },
   "TASK-COMFYUI-TEMPLATE-REGISTRY": {
@@ -7755,7 +7767,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-template-registry.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "1d50bac"
   },
   "TASK-COMPANION-BONDING-QUESTS": {
@@ -9082,7 +9094,7 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/TASK-encryption-asset-encryption-update.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "f618cfa"
   },
   "TASK-ENCRYPTION-AUTO-KEY-ROTATION": {
@@ -9204,7 +9216,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-epic-36-lint-cognitive-complexity-misc.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "d20d31f"
   },
   "TASK-EPIC-36-LINT-FIX-ARRAY-METHOD-WARNINGS": {
@@ -9575,7 +9587,7 @@
     "epic": "epic-logic-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-fix-turn-number-double-count.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "bb2423e"
   },
   "TASK-FIX-WORKTREE-CLI-REPO-ROOT-TREE-DIR-ENV-VAR-REQUIREMENT-WHEN": {
@@ -10253,7 +10265,7 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-i18n-locale-completion.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "270c4fb"
   },
   "TASK-I18N-RECONCILIATION-SCRIPT": {
@@ -10400,7 +10412,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-implement-memory-decay-logic.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "ab3dad5"
   },
   "TASK-IMPLEMENT-PER-CONNECTION-IP-SOURCING-FOR-AUTH-RATE-LIMITERS": {
@@ -11947,7 +11959,7 @@
     "epic": "epic-nsfw-game-mechanics",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-gate-moderation-events.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "acdae7a"
   },
   "TASK-NSFW-HEAT-CYCLES": {
@@ -12875,7 +12887,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-quest-state-management.md",
     "git_issue": "66dda71",
-    "status": "open"
+    "status": "done"
   },
   "TASK-QUEST-STATUS-TRANSITIONS-BYPASS-STATE-MACHINE": {
     "hash": "208ef9b",
@@ -13657,7 +13669,7 @@
     "epic": "epic-battle-action-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-battle-action-systems.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "95cf0da"
   },
   "TASK-RPG-CHAT-QUESTIONS": {
@@ -13682,7 +13694,7 @@
     "epic": "epic-companion-pet-mount",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-companion-pet-mount.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "d34a475"
   },
   "TASK-RPG-CORE-DICE-STATS-D20-ONLY": {
@@ -13708,7 +13720,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-crafting-professions.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "daf7896"
   },
   "TASK-RPG-DISEASE-POISON": {
@@ -13721,7 +13733,7 @@
     "epic": "epic-disease-poison",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-disease-poison.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "a394fd2"
   },
   "TASK-RPG-ECONOMY-TRADING": {
@@ -13734,7 +13746,7 @@
     "epic": "epic-economy-trading",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-economy-trading.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "d4d8eea"
   },
   "TASK-RPG-EMERGENT-NARRATIVE-DESIGN": {
@@ -13747,7 +13759,7 @@
     "epic": "epic-emergent-narrative-design",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-emergent-narrative-design.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "c1cdd67"
   },
   "TASK-RPG-EXPLORATION-DISCOVERY": {
@@ -13760,7 +13772,7 @@
     "epic": "epic-exploration-discovery",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-exploration-discovery.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "71ee2c8"
   },
   "TASK-RPG-FACTION-REPUTATION": {
@@ -13773,7 +13785,7 @@
     "epic": "epic-faction-reputation",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-faction-reputation.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "e06dba6"
   },
   "TASK-RPG-HOUSING-BASE-BUILDING": {
@@ -13786,7 +13798,7 @@
     "epic": "epic-housing-base-building",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-housing-base-building.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "4398db2"
   },
   "TASK-RPG-MAGIC-SPELL-SYSTEMS": {
@@ -13799,7 +13811,7 @@
     "epic": "epic-magic-spell-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-magic-spell-systems.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "3054c11"
   },
   "TASK-RPG-MECHANICS": {
@@ -13888,7 +13900,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-quest-system.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "bc688a1"
   },
   "TASK-RPG-RESOLUTION-SYSTEM": {
@@ -13901,7 +13913,7 @@
     "epic": "epic-resolution-system",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-resolution-system.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "2e640bb"
   },
   "TASK-RPG-SOCIAL-INTERACTION": {
@@ -13914,7 +13926,7 @@
     "epic": "epic-social-interaction",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-social-interaction.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "f21d739"
   },
   "TASK-RPG-STATS-FRONTEND-WIRING": {
@@ -13939,7 +13951,7 @@
     "epic": "epic-stealth-crime",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-stealth-crime.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "0ee8def"
   },
   "TASK-RPG-WEATHER-ENVIRONMENT": {
@@ -13952,7 +13964,7 @@
     "epic": "epic-weather-environment",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-weather-environment.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "9bd0f42"
   },
   "TASK-RPG-XP-INTIMACY-READ-MODIFY-WRITE-LOST-UPDATES-UNDER-CONCURR": {
@@ -14718,7 +14730,7 @@
     "epic": "epic-testing-qa",
     "tags": [],
     "source": ".plan/tickets/TASK-testing-unit-test-expansion-priority.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "7081fd2"
   },
   "TASK-TEXT-EFFECTS-OVERLAYS": {
@@ -15229,7 +15241,7 @@
     "epic": "epic-visual-novel-mode.md",
     "tags": [],
     "source": ".plan/tickets/TASK-vn-qa-mode.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "0f9d87d"
   },
   "TASK-VN-SCENE-TEMPLATE-SYSTEM": {
@@ -15361,7 +15373,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "012232a"
   },
   "TASK-WIRE-MEMORY-PROVISION-CONTEXT": {
@@ -15374,7 +15386,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-memory-provision-context.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "150fd6b"
   },
   "TASK-WIRE-NPC-NAVIGATION-ROUTES": {
@@ -15431,7 +15443,7 @@
     "epic": "epic-logic-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-transitions.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "a4044bc"
   },
   "TASK-WIRE-TRUST-MODIFIER-TO-RELATIONSHIPS": {
