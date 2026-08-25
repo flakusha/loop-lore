@@ -362,6 +362,18 @@
     "source": ".plan/tickets/BUG-character-internal-traits-idor-actor-ownership-never-checked.md",
     "git_issue": "d6c64be"
   },
+  "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-CROSS-USER-READ-WRITE-DELETE": {
+    "hash": "32ab55e",
+    "git_issue": "32ab55e",
+    "extid": "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-CROSS-USER-READ-WRITE-DELETE",
+    "type": "BUG",
+    "title": "character internal traits IDOR cross-user read write delete",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-internal-traits-idor-cross-user-read-write-delete.md"
+  },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
     "extid": "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED",
@@ -539,6 +551,18 @@
     "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md",
     "git_issue": "31e8676"
   },
+  "BUG-CHAT-REUNITE-SECONDARY-OWNERSHIP-CHECK-MISSING": {
+    "hash": "a27d730",
+    "git_issue": "a27d730",
+    "extid": "BUG-CHAT-REUNITE-SECONDARY-OWNERSHIP-CHECK-MISSING",
+    "type": "BUG",
+    "title": "chat reunite secondary ownership check missing",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md"
+  },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
     "extid": "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE",
@@ -585,6 +609,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
+  },
+  "BUG-CHAT-VN-CHOICES-IDOR-CROSS-USER-READ-AND-SELECT": {
+    "hash": "8d91314",
+    "git_issue": "8d91314",
+    "extid": "BUG-CHAT-VN-CHOICES-IDOR-CROSS-USER-READ-AND-SELECT",
+    "type": "BUG",
+    "title": "chat vn-choices IDOR cross-user read and select",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-vn-choices-idor-cross-user-read-and-select.md"
   },
   "BUG-CHATFORMATS-TEMPLATE-CONFIG-DEFINED-BUT-UNUSED-DEAD-STANDARD": {
     "hash": "6730c8b",
@@ -705,6 +741,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-crdt-conflict-policy-missing-leader-vs-swarm-precedence-and-.md"
+  },
+  "BUG-CSP-UNSAFE-INLINE-DEFEATS-PER-REQUEST-NONCE": {
+    "hash": "b2fa212",
+    "git_issue": "b2fa212",
+    "extid": "BUG-CSP-UNSAFE-INLINE-DEFEATS-PER-REQUEST-NONCE",
+    "type": "BUG",
+    "title": "CSP unsafe-inline defeats per-request nonce",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md"
   },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
@@ -969,6 +1017,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-federation-test-harness-needs-in-process-fixtures.md"
   },
+  "BUG-FRONTEND-DEAD-CSRF-BEARER-HEADER-MACHINERY": {
+    "hash": "0fea62e",
+    "git_issue": "0fea62e",
+    "extid": "BUG-FRONTEND-DEAD-CSRF-BEARER-HEADER-MACHINERY",
+    "type": "BUG",
+    "title": "frontend dead CSRF bearer header machinery",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
+  },
   "BUG-FRONTEND-MINOR-BUGS-BATCH": {
     "hash": "aae9870",
     "extid": "BUG-FRONTEND-MINOR-BUGS-BATCH",
@@ -1186,6 +1246,18 @@
     "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md",
     "git_issue": "106844a",
     "status": "done"
+  },
+  "BUG-HSTS-HEADER-MISSING-FROM-RESPONSE-POLICY": {
+    "hash": "f599e16",
+    "git_issue": "f599e16",
+    "extid": "BUG-HSTS-HEADER-MISSING-FROM-RESPONSE-POLICY",
+    "type": "BUG",
+    "title": "HSTS header missing from response policy",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
   },
   "BUG-HTML-LANG-HARDCODED-NO-DIR-HANDLING-FOR-I18N": {
     "hash": "f835588",
@@ -1737,6 +1809,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-resolveflagbody-schema-allows-upheld-but-service-type-expect.md"
   },
+  "BUG-RESOLVEUSERIDFROMREQUEST-MISSING-USER-STATUS-CHECK": {
+    "hash": "5d85aba",
+    "git_issue": "5d85aba",
+    "extid": "BUG-RESOLVEUSERIDFROMREQUEST-MISSING-USER-STATUS-CHECK",
+    "type": "BUG",
+    "title": "resolveUserIdFromRequest missing user status check",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
+  },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
     "extid": "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-",
@@ -1883,6 +1967,18 @@
     "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md",
     "git_issue": "7a293c3",
     "status": "done"
+  },
+  "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
+    "hash": "0ffc5e5",
+    "git_issue": "0ffc5e5",
+    "extid": "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY",
+    "type": "BUG",
+    "title": "story-items cross-world IDOR read transfer destroy",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
   },
   "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT": {
     "hash": "pending",
@@ -2117,6 +2213,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md",
     "git_issue": "ca69118"
+  },
+  "BUG-WORLD-TIMELINES-UNAUTHENTICATED-READ-AND-CREATE": {
+    "hash": "dae8112",
+    "git_issue": "dae8112",
+    "extid": "BUG-WORLD-TIMELINES-UNAUTHENTICATED-READ-AND-CREATE",
+    "type": "BUG",
+    "title": "world timelines unauthenticated read and create",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
   },
   "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING": {
     "hash": "7664314",
