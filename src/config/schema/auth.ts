@@ -24,4 +24,12 @@ export interface AuthConfig {
   jwtSecret?: string;
   /** JWT token expiry in seconds (default: 86400 = 24h) */
   jwtExpiresIn?: number;
+  /**
+   * Permit the sha256(token) lookup as a fallback when JWT verification fails.
+   * Off by default — the opaque-token table is a pre-JWT-era compat surface
+   * that authenticates any pre-existing token_hash row even when jwtSecret is
+   * empty. Enable only for one-shot legacy migrations, then disable.
+   * Env: AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1
+   */
+  legacyOpaqueTokenFallback?: boolean;
 }

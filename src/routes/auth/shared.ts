@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { Config, } from "../../config/schema";
 import { createRateLimiter, } from "../../middleware/rate-limit";
 import { LL_TOKEN, } from "../../regex/cookies";
 
@@ -46,15 +47,24 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
 
 // ── Helpers ───────────────────────────────────────────────────
 
-function getClientIp(request: Request,): string {
-  const directIp = (request as { remoteAddress?: string }).remoteAddress;
-  if (directIp) { return directIp; }
+function getClientIp(request: Request, config: Config,): string {
+  const remoteAddr = hasRemoteAddress(request,) ? request.remoteAddress : undefined;
+  if (remoteAddr) { return remoteAddr; }
+  // SECURITY (BUG-getclientip-trusts-spoofable-proxy-headers): the headers
+  // below are attacker-controlled unless the server sits behind a reverse
+  // proxy that overwrites them on every request. Default deny — only
+  // honor them when explicitly opted in via `server.trustProxy`.
+  if (!config.server?.trustProxy) { return "unknown"; }
   return (
     request.headers.get("X-Forwarded-For",)?.split(",", 1,)[0]?.trim() ??
       request.headers.get("x-real-ip",) ??
       request.headers.get("CF-Connecting-IP",) ??
       "unknown"
   );
+}
+
+function hasRemoteAddress(req: Request,): req is Request & { remoteAddress: string } {
+  return typeof (req as { remoteAddress?: unknown }).remoteAddress === "string";
 }
 
 function escapeHtml(str: string,): string {

@@ -19,9 +19,15 @@ export const MAX_TOOL_ROUNDS = 5;
 /**
  * Gate plugin tools by the actor's assigned agent role.
  *
- * When `agentRole` is set and a matching plugin role is registered, only the
- * tools the role declares are exposed to the model. When no role is assigned
- * (or the role declares no tools), all registered plugin tools are exposed.
+ * Policy:
+ * - `agentRole === null` (no role assigned) → all plugin tools are exposed.
+ *   This matches the prior "unassigned = unrestricted" baseline so existing
+ *   single-user / demo deployments don't suddenly lose tools.
+ * - Role registered but `tools: []` → zero plugin tools (explicit deny).
+ *   SECURITY (BUG-plugin-tool-gating-empty-role-bypass): an empty allowlist
+ *   MUST NOT fall through to "all tools" — that's a privilege escalation vs
+ *   the unassigned baseline, because role assignment implies intent.
+ * - Role registered with named tools → only those.
  *
  * @param agentRole - The actor's assigned plugin agent role id (or null)
  * @returns The filtered list of plugin tool definitions
@@ -31,11 +37,13 @@ export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition
   if (!agentRole) { return pluginTools; }
 
   const role = registry.getAgentRole(agentRole,);
-  if (!role?.tools?.length) { return pluginTools; }
+  if (!role) { return pluginTools; }
+  if (!role.tools?.length) { return []; }
 
-  const allowed = new Set(role.tools,);
+  const allowed: Record<string, true> = {};
+  for (const name of role.tools) { allowed[name] = true; }
   const out: ToolDefinition[] = [];
-  for (const t of pluginTools) { if (allowed.has(t.name,)) { out.push(t,); } }
+  for (const t of pluginTools) { if (allowed[t.name]) { out.push(t,); } }
   return out;
 }
 
