@@ -19,6 +19,8 @@ import {
   GM_TOOL_DETECTION_PROMPT,
   INTENT_CLASSIFIER_PROMPT,
   MEMORY_EXTRACTION_PROMPT,
+  NSFW_POLICY_LEVELS_PROMPT,
+  NSFW_POLICY_PROMPT,
   TRANSITION_CLASSIFIER_PROMPT,
 } from "../aux-pipeline/prompts";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
@@ -26,59 +28,22 @@ import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
 import type { PromptPurpose, } from "./purposes";
 import { VN_CHOICES_PROMPT, VN_STORY_PROMPT, } from "./vn";
 
+// Re-export the NSFW prompts so the public API of `src/prompts/registry.ts`
+// (and therefore `src/prompts`) is unchanged: callers that imported
+// NSFW_POLICY_PROMPT / NSFW_POLICY_LEVELS_PROMPT from `./registry` keep working.
+// The definitions now live in `src/aux-pipeline/prompts.ts` (the AUX barrel's home).
+export { NSFW_POLICY_LEVELS_PROMPT, NSFW_POLICY_PROMPT, };
+
 /** Default GM system prompt (used when neither chat config nor template set). */
 export const GM_SYSTEM_PROMPT =
   "You are the Game Master for an RPG story. Narrate the scene, control NPCs, and advance the plot in character.";
 
 /**
- * Default NSFW content-rating classification prompt.
- *
- * Ready for wiring into an LLM-based NSFW policy path; currently no in-tree
- * consumer calls the LLM for NSFW classification (moderation is external /
- * keyword-based), but users can already override or extend it via config.
- */
-export const NSFW_POLICY_PROMPT =
-  `You are a content rating classifier. Analyze the user message and reply with ONLY a JSON object:
-{
-  "rating": "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme",
-  "categories": ["violence" | "sexual" | "drugs" | "profanity" | null],
-  "confidence": 0.0-1.0
-}
-
-Rules:
-- "sfw" = safe for all audiences
-- "nsfw_mild" = light innuendo, mild profanity, non-graphic violence
-- "nsfw_moderate" = implied sexual content, moderate violence
-- "nsfw_intense" = explicit sexual content, graphic violence
-- "nsfw_extreme" = extreme sexual or violent content
-- Return only the JSON object, no commentary`;
-
-/**
- * Default NSFW policy system message — the SFW/NSFW level taxonomy injected
- * into a chat's generation system prompt so the model writes within the
- * allowed rating. Distinct from {@link NSFW_POLICY_PROMPT} (a classifier):
- * this is guidance the model follows, not JSON it emits. Config-overridable
- * via `configs/templates/llm.yaml` `systemPrompts.nsfwPolicy`.
- */
-export const NSFW_POLICY_LEVELS_PROMPT = `Content rating policy. The chat is configured with a maximum allowed rating:
-- sfw: safe for all audiences — no sexual content, mild violence, no profanity.
-- nsfw_mild: light innuendo, mild profanity, non-graphic romance.
-- nsfw_moderate: implied sexual content, moderate romantic/sexual tension.
-- nsfw_intense: explicit sexual content, graphic descriptions.
-- nsfw_extreme: extreme sexual or violent content, hard kink.
-
-Rules:
-- Stay at or below the chat's maximum allowed rating at all times.
-- Never escalate beyond the allowed level; fade to black at the boundary.
-- Respect the character's hard limits and the user's stated boundaries.
-- Keep in-character; do not break the fourth wall about this policy.`;
-
-/**
- * SFW-only variant of {@link NSFW_POLICY_LEVELS_PROMPT} — injected when NSFW
- * is disallowed (config, chat scope, or admin runtime toggle) so the model
- * gets an explicit restriction instead of the full rating taxonomy.
- * Config-overridable via `configs/templates/llm.yaml`
- * `systemPrompts.nsfwPolicySfw`.
+ * SFW-only variant of {@link NSFW_POLICY_LEVELS_PROMPT} (defined in
+ * `../aux-pipeline/prompts.ts`) — injected when NSFW is disallowed (config,
+ * chat scope, or admin runtime toggle) so the model gets an explicit
+ * restriction instead of the full rating taxonomy. Config-overridable via
+ * `configs/templates/llm.yaml` `systemPrompts.nsfwPolicySfw`.
  */
 export const NSFW_POLICY_SFW_PROMPT = `Content rating policy. This chat is strictly SFW (safe for work):
 - No sexual or romantic-intimate content of any kind.
