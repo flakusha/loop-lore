@@ -29,3 +29,7 @@ Dual failure mode:
 2. trustProxy=true (behind a proxy): getClientIp trusts client-supplied X-Forwarded-For / X-Real-IP / CF-Connecting-IP first -> an attacker rotates XFF per request and bypasses the limiter entirely.
 
 Correct fix: source the peer address from the Bun server connection (server.requestIP(request)), threaded into getClientIp; only consult proxy headers when the connection originates from a configured trusted proxy (strip client-supplied XFF first). Add a regression test asserting getClientIp returns a distinct, real per-connection IP.
+
+## Blast radius (beyond rate limiting)
+
+getClientIp is the single IP source for session creation, not just the limiter. login.ts (handleLogin L64, createSessionAndCookie L97), register.ts L118, and login.ts handleDemoLogin (L142-153) all pass getClientIp(request) into createSessionAndCookie, which stores it in the sessions.ip column. Because getClientIp always returns "unknown" (proven above), EVERY session row records ip="unknown" — destroying IP-based audit/forensics and any downstream IP logic. The regression is also invisible to tests: auth/login.test.ts L144-145 asserts user_id/token_hash but never asserts sessions.ip, so the bug is uncaught.
