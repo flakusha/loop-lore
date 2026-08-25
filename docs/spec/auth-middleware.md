@@ -55,8 +55,10 @@ into the Elysia context for every downstream route.
 > **Note:** Auth runs as an inline Elysia `.derive()`, **not** a `.use()` plugin.
 > Reason: Elysia child plugins don't share derived values with sibling route
 > plugins — inlining on the root app ensures `userId` propagates everywhere.
-> `src/middleware/elysia-auth.ts` exports an `authGuard()` plugin for backward
-> compatibility / unit tests, but production wiring is inline in `elysia-app.ts`.
+> `src/middleware/elysia-auth.ts` was a thin `authGuard()` plugin kept for
+> backward compatibility with old unit tests; it was deleted (see
+> `BUG-elysia-auth-ts-dead-shim-duplicate-logic.md` resolution). The auth
+> derive lives only inline in `elysia-app.ts`.
 
 ## Token Format
 
