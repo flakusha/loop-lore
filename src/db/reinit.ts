@@ -3,13 +3,14 @@
 
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { existsSync, unlinkSync, } from "node:fs";
+import { existsSync, mkdirSync, renameSync, unlinkSync, } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import { createLogger, getLogger, } from "../logger";
+import type { DB, } from "./schema";
+import type { Logger, } from "../logger";
 import { createSqliteDialect, getDatabase, } from "./index";
 import { runMigrations, } from "./migrate";
-import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
 
 async function reinit(): Promise<void> {
@@ -17,14 +18,14 @@ async function reinit(): Promise<void> {
   const log = getLogger().child({ module: "reinit", },);
 
   const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
-  const walPath = dbPath + "-wal";
-  const shmPath = dbPath + "-shm";
+  const walPath = `${dbPath}-wal`;
+  const shmPath = `${dbPath}-shm`;
 
   // Clean up old mangled path (pre-fix: path.join with absolute DATA_DIR)
   const oldPath = path.join(process.cwd(), DATA_DIR, "loop-lore.db",);
   if (oldPath !== dbPath) {
-    for (const p of [oldPath, oldPath + "-wal", oldPath + "-shm",]) {
-      if (existsSync(p,)) { unlinkSync(p,); }
+    for (const p of [oldPath, `${oldPath}-wal`, `${oldPath}-shm`,]) {
+      if (existsSync(p,)) { archiveFile(p, log,); }
     }
   }
 
@@ -35,7 +36,7 @@ async function reinit(): Promise<void> {
 
   for (const p of [dbPath, walPath, shmPath,]) {
     if (existsSync(p,)) {
-      unlinkSync(p,);
+      archiveFile(p, log,);
     }
   }
 
@@ -52,3 +53,17 @@ async function reinit(): Promise<void> {
 }
 
 await reinit();
+
+/** Move a DB file into the timestamped backup dir; fall back to unlink on cross-device rename. */
+function archiveFile(p: string, log: Logger,): void {
+  const backupDir = process.env.LOOP_LORE_BACKUP_DIR
+    ?? path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
+  mkdirSync(backupDir, { recursive: true, },);
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-",);
+  try {
+    renameSync(p, path.join(backupDir, `${stamp}-${path.basename(p,)}`,),);
+  } catch (err) {
+    log.warn(`Could not archive ${p} (${String(err)}); removing instead`,);
+    unlinkSync(p,);
+  }
+}
