@@ -17,4 +17,5 @@ export const GENERATION_DEFAULTS = {
   defaultProvider: "",
   defaultModels: {} as Record<string, string>,
   modelRoles: {} as Record<string, ModelRoleAssignment>,
+  chatDefaults: { outputStyle: null, },
 } satisfies GenerationConfig;

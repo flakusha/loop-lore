@@ -113,6 +113,8 @@ export interface UpdateChatParams {
   thinkingVisibility?: string;
   promptOverride?: string | null;
   quickReplies?: QuickReplyButton[] | null;
+  /** Chat-level output-style preset ("" / null clears the override). */
+  outputStylePreset?: string | null;
 }
 
 export interface ListMessagesParams {
