@@ -1608,6 +1608,7 @@ export const ModerationActionsSchema = t.Object({
 superseded_by: t.Optional(t.String(),),
   deleted_at: t.Optional(t.String(),),
   deleted_by: t.Optional(t.String(),),
+  superseded_by: t.Optional(t.String(),),
 },);
 
 // ── message_translations ────────────────────────────────────────────
