@@ -67,8 +67,8 @@ export interface ModerationActions {
 superseded_by: string | null;
   deleted_at: string | null;
   deleted_by: string | null;
+  superseded_by: string | null;
 }
-
 // ── moderation_appeals ────────────────────────────────────────────
 export interface ModerationAppeals {
   id: Generated<string>;
