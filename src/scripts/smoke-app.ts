@@ -7,6 +7,9 @@ import { createApp, } from "../elysia-app";
 import { createSqliteDialect, } from "../db/index";
 import { loadConfig, } from "../config/load";
 import { up, } from "../db/migrations/001_init";
+import type { DB, } from "../db/schema";
+import { createApp, } from "../elysia-app";
+import { safeFetch, } from "../utils";
 
 const sqlite = new Database(":memory:",);
 sqlite.run("PRAGMA foreign_keys = ON",);
@@ -29,8 +32,8 @@ console.log("createApp succeeded",);
 
 const server = Bun.serve({ port: 0, fetch: app.fetch, },);
 console.log("Bun.serve started on port", server.port,);
-const res = await fetch(`http://localhost:${server.port}/api/health`,);
-console.log("Health check:", res.status,);
+const result = await safeFetch(`http://localhost:${server.port}/api/health`,);
+console.log("Health check:", result.ok ? result.status : result.error.message,);
 server.stop();
 console.log("Server stopped",);
 process.exit(0,);

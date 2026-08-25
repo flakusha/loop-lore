@@ -10,6 +10,7 @@
  */
 import { jsonBody, } from "../alpine/json";
 import type { feFetch, } from "../fe-fetch";
+import { parseFloatOr, } from "../utils/parse-number";
 
 // Shared feFetch — caller passes it in to avoid circular import
 let _feFetch: typeof feFetch;
@@ -86,9 +87,8 @@ export function renderAspirations() {
 
 function sliderVal(id: string,): number {
   const el = document.querySelector<HTMLInputElement>(`#${id}`,);
-  return el ? parseFloat(el.value,) : 0;
+  return el ? parseFloatOr(el.value, 0,) : 0;
 }
-
 function textVal(id: string,): string {
   const el = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`,);
   return el?.value ?? "";

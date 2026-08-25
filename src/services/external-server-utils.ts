@@ -8,6 +8,7 @@
  */
 
 import { platform, } from "node:process";
+import { safeFetch, } from "../utils";
 
 // ── Binary discovery ──────────────────────────────────────
 
@@ -75,12 +76,8 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
   const intervalMs = opts.intervalMs ?? 500;
   const deadline = Date.now() + opts.timeoutMs;
   while (Date.now() < deadline) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(2000,), },);
-      if (res.ok) { return true; }
-    } catch {
-      // Still starting
-    }
+    const result = await safeFetch(url, { timeout: 2_000, },);
+    if (result.ok) { return true; }
     await new Promise((r,) => setTimeout(r, intervalMs,));
   }
   return false;
@@ -89,12 +86,10 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
 export async function waitForPort(port: number, opts: WaitForPortOptions,): Promise<boolean> {
   const deadline = Date.now() + opts.timeoutMs;
   while (Date.now() < deadline) {
-    try {
-      await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000,), },);
-      return true;
-    } catch {
-      await new Promise((r,) => setTimeout(r, 500,));
-    }
+    const result = await safeFetch(`http://127.0.0.1:${port}/`, { timeout: 2_000, },);
+    // Any HTTP response (any status) means the port is serving.
+    if (result.ok || result.status !== undefined) { return true; }
+    await new Promise((r,) => setTimeout(r, 500,));
   }
   return false;
 }
