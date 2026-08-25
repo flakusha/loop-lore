@@ -764,6 +764,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
   },
+  "BUG-E2E-ACTOR-IMPORT-AND-ASSET-ENDPOINTS-RETURN-500-WHERE-4XX-VA": {
+    "hash": "2e964d4",
+    "git_issue": "2e964d4",
+    "extid": "BUG-E2E-ACTOR-IMPORT-AND-ASSET-ENDPOINTS-RETURN-500-WHERE-4XX-VA",
+    "type": "BUG",
+    "title": "E2E: actor-import and asset endpoints return 500 where 4xx validation expected",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
+  },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
     "extid": "BUG-E2E-TEST-INFRASTRUCTURE-FIXES",
@@ -2023,7 +2035,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-use-multiple-l-flags-instead-potential-dx-improvement.md"
+    "source": ".plan/tickets/BUG-use-multiple-l-flags-instead-potential-dx-improvement.md",
+    "status": "done"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
