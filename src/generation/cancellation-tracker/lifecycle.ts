@@ -17,6 +17,18 @@ import type {
   StartGenerationTrackingOpts,
 } from "./types";
 
+/**
+ * Thrown by `startGenerationTracking` when a generation with the same
+ * `idempotencyKey` is already registered in-memory. Closes the TOCTOU window
+ * left by the DB-only pre-check in the generate route.
+ */
+export class IdempotencyKeyConflictError extends Error {
+  constructor(public readonly existingAttemptId: string,) {
+    super("A generation with this idempotencyKey is already in flight",);
+    this.name = "IdempotencyKeyConflictError";
+  }
+}
+
 // ── Start generation tracking ─────────────────────────────
 
 /**
@@ -43,6 +55,7 @@ export async function startGenerationTracking({ options, db, events, }: StartGen
     chatId: options.chatId,
     parentMessageId: options.parentMessageId,
     actorId: options.actorId,
+    idempotencyKey: options.idempotencyKey,
     abortController,
     startedAt: Date.now(),
     repetitionDetector: new StreamingRepetitionDetector(repetitionConfig,),
@@ -67,6 +80,15 @@ export async function startGenerationTracking({ options, db, events, }: StartGen
     stepIndex,
     totalSteps,
   };
+
+  // Idempotency guard — closes the TOCTOU window left by the DB-only pre-check.
+  // The in-memory map is mutated synchronously below, so a registered key is
+  // immediately visible to any concurrent call.
+  for (const existing of activeGenerations.values()) {
+    if (existing.idempotencyKey && existing.idempotencyKey === options.idempotencyKey) {
+      throw new IdempotencyKeyConflictError(existing.attemptId,);
+    }
+  }
 
   // Fully detach any existing generation for this chat before registering new one.
   // This prevents orphaned generations and the race where an old error handler

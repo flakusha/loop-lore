@@ -29,6 +29,7 @@ export { updateAttemptStatus, } from "./persistence";
 export {
   completeGeneration,
   failGeneration,
+  IdempotencyKeyConflictError,
   startGenerationTracking,
 } from "./lifecycle";
 
