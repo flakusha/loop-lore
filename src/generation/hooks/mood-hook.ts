@@ -4,9 +4,10 @@
 /**
  * Mood Hook — Detects mood shifts in content and fires mood delta events.
  *
- * Uses the LLM to analyze content for mood indicators and emits
- * mood shift events that downstream systems (emotion avatar, mood UI)
- * can react to.
+ * Uses keyword matching (positive / negative / neutral word lists) to
+ * score content mood and emits mood-shift events that downstream systems
+ * (mood UI, post-store persistence) can react to. LLM-based classification
+ * is planned (see TASK-aux-mood-classification.md).
  */
 
 import { getLogger, } from "../../logger";
