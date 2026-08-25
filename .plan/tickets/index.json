@@ -13127,6 +13127,18 @@
     "source": ".plan/tickets/TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative.md",
     "git_issue": "2129b97"
   },
+  "TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER": {
+    "hash": "5c2b987",
+    "git_issue": "5c2b987",
+    "extid": "TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER",
+    "type": "TASK",
+    "title": "Real LLM/Sd e2e fixture (llama.cpp + llama-swap + sd-server)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-e2e-integration-testing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
+  },
   "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
     "hash": "pending",
     "extid": "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES",
