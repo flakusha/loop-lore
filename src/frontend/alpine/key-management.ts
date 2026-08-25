@@ -8,6 +8,7 @@
  * Renders in the settings modal under the "keys" tab.
  */
 
+import { formatDisplayDate, } from "./chat-utils/time";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -132,13 +133,7 @@ export interface ActorKeyMeta {
 
     formatDate(dateStr: string | null,): string {
       if (!dateStr) { return "—"; }
-      return new Date(dateStr,).toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      },);
+      return formatDisplayDate(dateStr, "datetime",);
     },
 
     statusColor(status: string,): string {
