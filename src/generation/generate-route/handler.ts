@@ -15,7 +15,7 @@ import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { jsonError, } from "../../routes/http-utils";
-import { startGenerationTracking, } from "../cancellation-manager";
+import { hasInFlightGeneration, startGenerationTracking, } from "../cancellation-manager";
 import {
   buildFailoverList,
   resolveProvider,
@@ -154,7 +154,16 @@ export async function handleGenerate({
     totalSteps: input.totalSteps,
   };
 
-  // ── Track generation attempt ─────────────────────────
+  // Idempotency check — without this, concurrent POSTs for the same
+  // idempotencyKey race: the second `startGenerationTracking` would silently
+  // abort the first one mid-stream, leaving the original client with a dead
+  // stream. The helper already exists at cancellation-actions/inflight.ts:12.
+  if (await hasInFlightGeneration(database, input.idempotencyKey,)) {
+    return jsonError({
+      message: "A generation with this idempotencyKey is already in flight",
+      status: 409,
+    },);
+  }
 
   const { attemptId, abortSignal, } = await startGenerationTracking({ options: genOptions, db: database, },);
 
