@@ -19,11 +19,13 @@ import type { Config, } from "../../config/schema";
 import { AssetType, AssetVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { assetRoutes, } from "./routes";
+import { signAssetUrl, } from "./signed-url";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
-import { assetRoutes, } from "./routes";
 
 const OWNER = "owner-pol-1";
+const POLICY_SECRET = "policy-test-secret";
 const PNG_ID = "b1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 const SVG_ID = "c2b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 
@@ -34,7 +36,7 @@ function makeConfig(uploadDir: string,): Config {
       uploadDir,
       maxFileSize: 10_485_760,
       compression: true,
-      signedUrlSecret: undefined,
+      signedUrlSecret: POLICY_SECRET,
       signedUrlExpirySeconds: 900,
     },
     auth: { jwtSecret: "test-secret", },
@@ -96,5 +98,28 @@ describe("asset serve policy (handler-level)", () => {
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-disposition",),).toContain("attachment",);
     expect(res.headers.get("x-content-type-options",),).toBe("nosniff",);
+  });
+
+  test("private PNG download: attachment + private cache-control", async () => {
+    const res = await app.handle(new Request(`http://local/api/assets/${PNG_ID}/download`,),);
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("content-disposition",),).toContain("attachment",);
+    expect(res.headers.get("cache-control",),).toBe("private, max-age=3600",);
+    expect(res.headers.get("x-content-type-options",),).toBe("nosniff",);
+  });
+
+  test("signed URL on private asset: private cache-control (no shared-cache replay)", async () => {
+    const signed = await signAssetUrl({
+      secret: POLICY_SECRET,
+      assetId: PNG_ID,
+      action: "raw",
+      expiresInSeconds: 900,
+    },);
+    const url = new URL(`http://local/api/assets/${PNG_ID}/raw`,);
+    url.searchParams.set("expires", String(signed.expiresAt,),);
+    url.searchParams.set("sig", signed.token,);
+    const res = await app.handle(new Request(url,),);
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("cache-control",),).toBe("private, max-age=3600",);
   });
 });
