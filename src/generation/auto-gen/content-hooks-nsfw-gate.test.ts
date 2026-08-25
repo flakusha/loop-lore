@@ -49,7 +49,7 @@ function makeConfig(): Config {
 
 async function seedUser(
   db: Kysely<DB>,
-  opts: { birthDate?: string; ageGateAcceptedAt?: string | null } = {},
+  opts: { birthDate?: string | null; ageGateAcceptedAt?: string | null } = {},
 ): Promise<string> {
   const userId = uid();
   await db
@@ -128,20 +128,30 @@ describe("runContentHooks NSFW age-gate precheck", () => {
 
   // ── SFW actor branch (the negative-space branch) ────────────────
 
-  test("SFW actor skips canAccessNsfw (no DB user lookup needed)", async () => {
+  test("SFW actor short-circuits before canAccessNsfw (no DB user lookup)", async () => {
+    // Use a user WITHOUT age-gate accept. If the short-circuit at
+    // isNsfwRating is removed and canAccessNsfw runs, it returns
+    // {allowed: false, reason: "age_gate_not_accepted"}. Asserting
+    // allowed=true here proves the SFW short-circuit is in effect.
+    const noGateUserId = await seedUser(db, {
+      birthDate: null,
+      ageGateAcceptedAt: null,
+    },);
     const actorId = await createAiActor(db, ContentRating.Sfw,);
-    const chatId = await createChat(db, userId,);
+    const chatId = await createChat(db, noGateUserId,);
 
     const result = await runContentHooks({
       database: db,
       config: makeConfig(),
       chatId,
       actorId,
-      userId,
+      userId: noGateUserId,
       content: "harmless text",
     },);
 
-    // SFW actor: gate skipped entirely, hook chain runs unconditionally.
+    // SFW actor: gate skipped entirely (canAccessNsfw would have
+    // returned allowed=false for this user; allowed=true here is
+    // proof the short-circuit is intact).
     expect(result.allowed,).toBe(true,);
     expect(result.dominantEmotion,).toBeUndefined();
     expect(result.moodShiftDelta,).toBeUndefined();
