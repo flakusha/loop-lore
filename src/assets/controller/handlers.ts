@@ -117,6 +117,11 @@ export async function handleDeleteAsset({ database, config, ctx, }: RouteDeps & 
 export async function handleListLinks({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
+  const userRole = ctx.userRole ?? null;
+
+  // Link metadata can reveal where an asset is used — same access gate as reading the asset.
+  const resolved = await resolveAsset(database, ctx.params.id!, userId, userRole,);
+  if (resolved instanceof Response) { return resolved; }
 
   const links = await getAssetLinks(database, ctx.params.id!,);
   return jsonResponse(links,);
@@ -146,11 +151,14 @@ export async function handleDeleteLink({ database, ctx, }: RouteDeps & { ctx: Ro
   if (owned instanceof Response) { return owned; }
 
   const body = ctx.body as { entityType?: string; entityId?: string };
+  if (!body.entityType || !body.entityId) {
+    return badRequestResponse("entityType and entityId are required",);
+  }
   await unlinkAsset({
     database,
     assetId: ctx.params.id!,
-    entityType: (body.entityType ?? "") as AssetLinkEntity,
-    entityId: body.entityId ?? "",
+    entityType: body.entityType as AssetLinkEntity,
+    entityId: body.entityId,
   },);
   return jsonNoContent();
 }
@@ -195,6 +203,11 @@ export async function handleDeleteShare({ database, ctx, }: RouteDeps & { ctx: R
 export async function handleListShares({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
+  const userRole = ctx.userRole ?? null;
+
+  // Share lists reveal who an asset is shared with — owner/admin only.
+  const resolved = await resolveAsset(database, ctx.params.id!, userId, userRole,);
+  if (resolved instanceof Response) { return resolved; }
 
   const shares = await getAssetShares(database, ctx.params.id!,);
   return jsonResponse(shares,);

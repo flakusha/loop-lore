@@ -8,6 +8,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
+import { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { notFoundResponse, } from "../../routes/http-utils";
 import {
@@ -31,7 +32,11 @@ import {
 import type { RouteCtx, } from "./types";
 
 const PatchAssetBody = t.Object({ visibility: t.String(), },);
-const CreateLinkBody = t.Object({ entityType: t.String(), entityId: t.String(), label: t.Optional(t.String(),), },);
+const CreateLinkBody = t.Object({
+  entityType: t.Union(Object.values(AssetLinkEntity,).map((v,) => t.Literal(v,)),),
+  entityId: t.String(),
+  label: t.Optional(t.String(),),
+},);
 const DeleteLinkBody = t.Object({ entityType: t.Optional(t.String(),), entityId: t.Optional(t.String(),), },);
 const ShareBody = t.Object({ actor_id: t.String(), },);
 
