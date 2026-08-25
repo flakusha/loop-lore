@@ -16,13 +16,18 @@
 import { HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
-import { templateRegistry, } from "./template-registry";
+import { registerBuiltinTemplates, registerConfigWorkflows, templateRegistry, } from "./template-registry";
 import type {
   ImageEditBackend,
   ImageEditProvider,
   ImageEditRequest,
   WorkflowTemplate,
 } from "./types";
+
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import { loadConfig, } from "../config/load";
+import type { DB, } from "../db/schema";
 
 // ── Provider instances ───────────────────────────────────────
 
@@ -177,4 +182,30 @@ export async function handleHealth(): Promise<Response> {
     comfyui: comfyuiHealthy.status === "fulfilled" ? comfyuiHealthy.value : false,
     "sd-server": sdServerHealthy.status === "fulfilled" ? sdServerHealthy.value : false,
   },);
+}
+
+/**
+ * Mount the image-edit routes as an Elysia group.
+ *
+ * Registers built-in + config-driven workflow templates on first mount, then
+ * exposes the unified ComfyUI / sd-server image-edit endpoints.
+ */
+export function imageEditRoutes(_opts: { database: Kysely<DB> },) {
+  registerBuiltinTemplates();
+
+  try {
+    const cfg = loadConfig().templates.imageEdit;
+    if (cfg?.workflows && Object.keys(cfg.workflows,).length > 0) {
+      registerConfigWorkflows(cfg,);
+    }
+  } catch {
+    // config absent — built-in templates remain available
+  }
+
+  return new Elysia({ name: "image-edit", },)
+    .get("/api/image-edit/templates", ({ request, },) => handleTemplates(request,),)
+    .get("/api/image-edit/nodes", () => handleNodes(),)
+    .get("/api/image-edit/capabilities", () => handleCapabilities(),)
+    .get("/api/image-edit/health", () => handleHealth(),)
+    .post("/api/image-edit/run", async ({ request, },) => handleRun(request,),);
 }
