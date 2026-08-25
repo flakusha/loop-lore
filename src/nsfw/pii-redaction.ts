@@ -49,7 +49,7 @@ export type NsfwGateReason = typeof NSFW_GATE_REASONS[number];
 
 /** Type guard for `NsfwGateReason`. */
 export function isNsfwGateReason(value: unknown,): value is NsfwGateReason {
-  return typeof value === "string" && (NSFW_GATE_REASONS as readonly string[]).includes(value);
+  return typeof value === "string" && (NSFW_GATE_REASONS as readonly string[]).includes(value,);
 }
 
 /**
@@ -126,8 +126,8 @@ export async function hashId(value: string,): Promise<string> {
     toBufferSource(new TextEncoder().encode(value,),),
   );
   return [...new Uint8Array(signature,),]
-    .map((b,) => b.toString(16,).padStart(2, "0",),)
-    .join("");
+    .map((b,) => b.toString(16,).padStart(2, "0",))
+    .join("",);
 }
 
 /** Metadata keys that must NEVER land in the audit `meta` column. */
@@ -139,7 +139,7 @@ const PII_METADATA_KEYS = new Set<string>([
   "userContent",
   "chatContent",
   "messageBody",
-]);
+],);
 
 /**
  * Strip known-PII keys from a metadata record; allowlist everything else.
@@ -154,15 +154,15 @@ export function applyNsfwMetadataRedaction(
 ): Record<string, unknown> {
   if (!metadata || typeof metadata !== "object") { return {}; }
   const out: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(metadata)) {
-    if (PII_METADATA_KEYS.has(key)) { continue; }
-    if (/(Content|Message|Text)$/i.test(key)) { continue; }
+  for (const [key, value,] of Object.entries(metadata,)) {
+    if (PII_METADATA_KEYS.has(key,)) { continue; }
+    if (/(Content|Message|Text)$/i.test(key,)) { continue; }
     if (typeof value === "string" && value.length > 256) { continue; }
     out[key] = value;
   }
-  const serialized = jsonStringifyOr(out);
+  const serialized = jsonStringifyOr(out,);
   if (serialized.length <= NSFW_METADATA_MAX_BYTES) { return out; }
-  return { _truncated: true, originalKeys: Object.keys(out) };
+  return { _truncated: true, originalKeys: Object.keys(out,), };
 }
 
 /**

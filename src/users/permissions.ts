@@ -45,6 +45,7 @@ export type Permission =
   | "admin.character"
   | "admin.chat"
   | "admin.world"
+  | "admin.audit.nsfw"
   | "export.own"
   | "export.any"
   | "import.own"

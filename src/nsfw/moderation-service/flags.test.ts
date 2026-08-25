@@ -10,7 +10,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
-import { flagContent, getFlagQueue, resolveFlag, } from "./flags";
+import { clampFlagLimit, flagContent, getFlagQueue, resolveFlag, } from "./flags";
 import type { NsfwModerationServiceContext, } from "./types";
 
 let db: Kysely<DB>;
@@ -164,6 +164,28 @@ describe("flagContent", () => {
       params: { reporterId: REPORTER, contentType: "message", contentId: "warn-4", flagReason: "a", },
     },);
     expect(warn,).toHaveBeenCalledTimes(1,);
+  });
+
+  test("throws when description exceeds 1000 chars", async () => {
+    const ctx = makeCtx();
+    await expect(flagContent({
+      thisL: ctx,
+      params: {
+        reporterId: REPORTER,
+        contentType: "message",
+        contentId: "long-1",
+        flagReason: "spam",
+        description: "x".repeat(1001,),
+      },
+    },),).rejects.toThrow("Description too long",);
+  });
+
+  test("clampFlagLimit caps at 100 and defaults to 50", () => {
+    expect(clampFlagLimit(undefined,),).toBe(50,);
+    expect(clampFlagLimit(0,),).toBe(50,);
+    expect(clampFlagLimit(50,),).toBe(50,);
+    expect(clampFlagLimit(500,),).toBe(100,);
+    expect(clampFlagLimit(100,),).toBe(100,);
   });
 });
 
