@@ -78,9 +78,25 @@ function computeEtag(filePath: string,): string {
   return `W/"${stat.mtimeMs}-${stat.size}"`;
 }
 
-// Dev cache TTL. Prod: bump hashed files to IMMUTABLE_CACHE_MAX_AGE + immutable,
-// non-hashed to 3600 (or no-cache). See injectContentHashes in build/compress.ts.
-const STATIC_CACHE_MAX_AGE = 60;
+/**
+ * Detect whether a file path contains a content hash (build output).
+ * Hash format: filename.HASH.ext where HASH is ~8+ hex chars.
+ */
+function isHashedAsset(filePath: string,): boolean {
+  const name = filePath.split("/",).pop() ?? "";
+  // Match segments that look like content hashes (8+ hex chars).
+  return /\.[0-9a-f]{8,}\.[a-z0-9]+$/i.test(name,);
+}
+
+/**
+ * Build the Cache-Control header value for a static file response.
+ * Hashed assets (content-hashed filenames) get long-lived immutable caching.
+ */
+function buildCacheControl(filePath: string, maxAge: number,): string {
+  if (maxAge <= 0) { return "no-store"; }
+  if (isHashedAsset(filePath,)) { return "public, max-age=31536000, immutable"; }
+  return `public, max-age=${maxAge}`;
+}
 
 /**
  * Serve a static file with optional compressed variant, cache headers, and ETag.
@@ -94,20 +110,18 @@ function respondWithFile(
 ): Response {
   const headers: Record<string, string> = {
     "Content-Type": getContentType(fullPath,),
-    Vary: "Accept-Encoding",
   };
 
-  // Dev-friendly 1-min cache. Prod: see STATIC_CACHE_MAX_AGE comment.
-  if (cacheMaxAge > 0) {
-    headers["Cache-Control"] = `public, max-age=${cacheMaxAge}`;
-  }
+  // Only set Vary when a compressed variant may be served (RFC 7231).
+  const variant = findCompressedVariant(fullPath, acceptEncoding,);
+  if (variant) { headers["Vary"] = "Accept-Encoding"; }
+  headers["Cache-Control"] = buildCacheControl(fullPath, cacheMaxAge,);
 
   // Determine the actual serving path (compressed variant takes precedence)
-  const variant = findCompressedVariant(fullPath, acceptEncoding,);
   const servePath = variant ? variant.path : fullPath;
 
   const etag = computeEtag(servePath,);
-  headers.ETag = etag;
+  headers["ETag"] = etag;
 
   // Short-circuit 304 when the client's cached representation matches.
   // RFC 7232: If-None-Match may be a comma-separated ETag list or "*".
