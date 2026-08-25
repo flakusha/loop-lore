@@ -4169,6 +4169,18 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-replayability.md"
   },
+  "FEAT-RESOLVERESPONSELENGTH-WIRED-BUT-GENERATION-MAXTOKENS-NOT-BOU": {
+    "hash": "a2b4d03",
+    "git_issue": "a2b4d03",
+    "extid": "FEAT-RESOLVERESPONSELENGTH-WIRED-BUT-GENERATION-MAXTOKENS-NOT-BOU",
+    "type": "FEAT",
+    "title": "resolveResponseLength wired but generation maxTokens not bound",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-resolveresponselength-wired-but-generation-maxtokens-not-bou.md"
+  },
   "FEAT-SEED-DEFAULT-CHARACTERS-AVATAR": {
     "hash": "82f1de4",
     "extid": "FEAT-SEED-DEFAULT-CHARACTERS-AVATAR",
