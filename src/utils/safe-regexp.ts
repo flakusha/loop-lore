@@ -46,8 +46,12 @@ export function compileSafeRegExp(
  * empty alternation branch.
  */
 export function hasSafeShape(pattern: string,): boolean {
-  const groupStack: string[] = [];
+  // Per-group frame: accumulated body text + whether any alternation branch
+  // (at any depth) can match empty. The flag propagates through group
+  // wrappers — reconstruction alone hides `((a|))+`-style shapes.
+  const groupStack: Array<{ body: string; emptyBranch: boolean }> = [];
   let body = "";
+  let emptyBranch = false;
 
   for (let i = 0; i < pattern.length; i++) {
     const ch = pattern[i]!;
@@ -57,23 +61,31 @@ export function hasSafeShape(pattern: string,): boolean {
       continue;
     }
     if (ch === "(") {
-      groupStack.push(body);
+      groupStack.push({ body, emptyBranch, },);
       body = "";
+      emptyBranch = false;
+      continue;
+    }
+    if (ch === "|") {
+      // Empty branch when nothing precedes this "|" (start or after "|").
+      if (body.length === 0 || body.endsWith("|")) { emptyBranch = true; }
+      body += "|";
       continue;
     }
     if (ch === ")") {
+      // Empty trailing branch: body ends with "|" (e.g. "(a|)").
+      if (body.length === 0 || body.endsWith("|")) { emptyBranch = true; }
       const closedBody = body;
-      const outer = groupStack.pop() ?? "";
+      const closedEmpty = emptyBranch;
+      const outer = groupStack.pop() ?? { body: "", emptyBranch: false };
       const next = pattern[i + 1];
-      const groupQuantified = next !== undefined && ATOM_QUANTIFIER.test(next,);
+      const groupQuantified = next !== undefined && ATOM_QUANTIFIER.test(next);
       // Escaped sequences (\+, \{) are inert — mask them before scanning.
-      const unescaped = closedBody.replace(/\\./g, "ES",);
-      const hasEmptyAltBranch = unescaped.includes("|",) &&
-        unescaped.split("|",).some((branch,) => branch.length === 0,);
-      if (groupQuantified && (GROUP_BODY_QUANTIFIER.test(unescaped,) || hasEmptyAltBranch)) {
+      const unescaped = closedBody.replace(/\\./g, "ES");
+      if (groupQuantified && (GROUP_BODY_QUANTIFIER.test(unescaped) || closedEmpty)) {
         return false;
       }
-      body = `${outer}(${closedBody})`;
+      emptyBranch = outer.emptyBranch || closedEmpty;
       continue;
     }
     body += ch;
