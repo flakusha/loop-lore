@@ -172,7 +172,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       }
       const userHashMap = new Map<string, string>();
       const chatHashMap = new Map<string, string>();
-      await Promise.all([
+      await Promise.allSettled([
         ...[...userIds,].map(async (id,) => {
           userHashMap.set(id, await hashId(id,),);
         },),

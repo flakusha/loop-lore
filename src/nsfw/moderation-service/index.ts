@@ -69,8 +69,6 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
     getOrCreateOwn({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
   updatePreferences = (userId: string, updates: Parameters<NsfwModerationServiceIface["updatePreferences"]>[1],) =>
     updatePreferences({ thisL: this as unknown as NsfwModerationServiceContext, userId, updates, },);
-  getOrCreateOwn = (userId: string,) =>
-    getOrCreateOwn({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
   blockUser = (targetUserId: string, performedBy: string, reason: string,) =>
     blockUser({ thisL: this as unknown as NsfwModerationServiceContext, targetUserId, performedBy, reason, },);
   unblockUser = (targetUserId: string, performedBy: string, reason: string,) =>
