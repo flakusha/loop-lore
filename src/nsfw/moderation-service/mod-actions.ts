@@ -25,8 +25,10 @@ export interface BlockUserArgs {
 /** Apply a block to a user (records a "block" action). */
 export async function blockUser({ thisL, targetUserId, performedBy, reason, }: BlockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
-  const prefs = await thisL.getPreferences(targetUserId,);
-  if (!prefs) { throw new Error(`No NSFW preferences found for user ${targetUserId}.`,); }
+  // BUG-nsfw-preferences-admin-read-materializes-row: block mutates the row,
+  // so it MUST use `getOrCreateOwn` (write semantics). Plain `get` would
+  // throw on a freshly-registered user.
+  const prefs = await thisL.getOrCreateOwn(targetUserId,);
   if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "blocked",)) {
     throw new Error(`Cannot block user in state ${prefs.accessStatus}.`,);
   }
@@ -82,7 +84,7 @@ export interface BanUserArgs {
 /** Ban a user from NSFW content (records a "ban" action). */
 export async function banUser({ thisL, targetUserId, performedBy, reason, }: BanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
-  const prefs = await thisL.getPreferences(targetUserId,);
+  const prefs = await thisL.getOrCreateOwn(targetUserId,);
   if (!prefs) { throw new Error(`No NSFW preferences found for user ${targetUserId}.`,); }
   if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "banned",)) {
     throw new Error(`Cannot ban user in state ${prefs.accessStatus}.`,);
