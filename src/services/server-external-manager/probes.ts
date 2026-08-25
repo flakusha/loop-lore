@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { safeFetch, } from "../../utils";
+
 import type { ServerExternalHost, ServerInstance, } from "./types";
 
 /**
@@ -50,23 +52,24 @@ export async function checkAllLiveliness(host: ServerExternalHost,): Promise<voi
 async function probeInstance(instance: ServerInstance,): Promise<boolean> {
   try {
     if (instance.type === "llama-cpp") {
-      const res = await fetch(`http://127.0.0.1:${instance.port}/health`, {
-        signal: AbortSignal.timeout(5000,),
+      const result = await safeFetch(`http://127.0.0.1:${instance.port}/health`, {
+        timeout: 5_000,
       },);
-      return res.ok;
+      return result.ok;
     }
     if (instance.type === "llama-swap") {
       // No guaranteed /health route; probe the OpenAI models endpoint.
-      await fetch(`http://127.0.0.1:${instance.port}/v1/models`, {
-        signal: AbortSignal.timeout(5000,),
+      const result = await safeFetch(`http://127.0.0.1:${instance.port}/v1/models`, {
+        timeout: 5_000,
       },);
-      return true;
+      // Any HTTP response (any status) means the server is alive.
+      return result.ok || result.status !== undefined;
     }
     // sd-cpp: any TCP response = alive
-    await fetch(`http://127.0.0.1:${instance.port}/`, {
-      signal: AbortSignal.timeout(5000,),
+    const result = await safeFetch(`http://127.0.0.1:${instance.port}/`, {
+      timeout: 5_000,
     },);
-    return true;
+    return result.ok || result.status !== undefined;
   } catch {
     return false;
   }

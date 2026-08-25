@@ -15,6 +15,7 @@
 import type { ImageProviderConfig, } from "../config/schema";
 import type { ImageApiFamily, } from "../db/enums-config";
 import { getLogger, } from "../logger";
+import { safeFetch, } from "../utils";
 
 /** Lazy logger — avoids top-level init-order crash */
 function log() {
@@ -59,15 +60,9 @@ async function probeBackend(
   healthPath: string,
   timeoutMs: number,
 ): Promise<boolean> {
-  try {
-    const url = `${baseUrl}${healthPath}`;
-    const res = await fetch(url, {
-      signal: AbortSignal.timeout(timeoutMs,),
-    },);
-    return res.ok;
-  } catch {
-    return false;
-  }
+  const url = `${baseUrl}${healthPath}`;
+  const result = await safeFetch(url, { timeout: timeoutMs, },);
+  return result.ok;
 }
 
 /**

@@ -8,7 +8,7 @@ import { createAsset, getAsset, linkAsset, } from "../../assets/service";
 import { loadConfig, } from "../../config/load";
 import { pickSdProvider, } from "../../config/schema";
 import { AssetLinkEntity, } from "../../db/enums";
-import { jsonStringifyOr, } from "../../utils";
+import { jsonStringifyOr, safeFetch, } from "../../utils";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import type { EditTemplate, ParsedCommand, } from "../image-edit-commands";
 import type { ImageEditServiceContext, } from "./types";
@@ -81,25 +81,21 @@ export async function applyEdit(
         height: sdConfig.defaults.height,
       },);
 
-      const resp = await fetch(url, {
+      // Base64 image payloads can exceed safeFetch's default size cap.
+      const result = await safeFetch<{ images: string[] }>(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: payload,
-        signal: AbortSignal.timeout(sdConfig.generationTimeout ?? 120_000,),
+        timeout: sdConfig.generationTimeout ?? 120_000,
+        maxSize: Number.MAX_SAFE_INTEGER,
+        handle401: false,
       },);
 
-      if (!resp.ok) {
-        let errText = "unknown";
-        try {
-          errText = await resp.text();
-        } catch {
-          // Error body read failed — keep "unknown" fallback
-        }
-        throw new Error(`img2img generation failed: ${errText}`,);
+      if (!result.ok) {
+        throw new Error(`img2img generation failed: ${result.error.message}`,);
       }
 
-      const data = (await resp.json()) as { images: string[] };
-      resultImages = Array.from(data.images, (b64,) => Buffer.from(b64, "base64",),);
+      resultImages = Array.from(result.data.images, (b64,) => Buffer.from(b64, "base64",),);
       break;
     }
     case "openai": {
@@ -132,25 +128,20 @@ export async function applyEdit(
         headers.Authorization = `Bearer ${sdConfig.apiKey}`;
       }
 
-      const resp = await fetch(url, {
+      const result = await safeFetch<{ data: { b64_json: string }[] }>(url, {
         method: "POST",
         headers,
         body: formData,
-        signal: AbortSignal.timeout(sdConfig.generationTimeout ?? 60_000,),
+        timeout: sdConfig.generationTimeout ?? 60_000,
+        maxSize: Number.MAX_SAFE_INTEGER,
+        handle401: false,
       },);
 
-      if (!resp.ok) {
-        let errText = "unknown";
-        try {
-          errText = await resp.text();
-        } catch {
-          // Error body read failed — keep "unknown" fallback
-        }
-        throw new Error(`Image edit failed: ${errText}`,);
+      if (!result.ok) {
+        throw new Error(`Image edit failed: ${result.error.message}`,);
       }
 
-      const data = (await resp.json()) as { data: { b64_json: string }[] };
-      resultImages = Array.from(data.data, (d,) => Buffer.from(d.b64_json, "base64",),);
+      resultImages = Array.from(result.data.data, (d,) => Buffer.from(d.b64_json, "base64",),);
       break;
     }
     case "sdcpp":

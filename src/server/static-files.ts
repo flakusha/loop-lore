@@ -31,6 +31,8 @@ const PUBLIC_DIR = join(import.meta.dir, "..", "..", "dist", "public",);
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 
+const STATIC_CACHE_MAX_AGE = 3600;
+
 function isCompressible(filePath: string,): boolean {
   const extension = filePath.split(".",).pop()?.toLowerCase();
   return extension ? COMPRESSIBLE_EXTS.has(`.${extension}`,) : false;
