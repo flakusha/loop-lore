@@ -3,6 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { can, } from "../../users/permissions";
+import { safeFetch, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
@@ -26,16 +27,14 @@ export function sdStatusRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         let status: "running" | "stopped" | "unknown";
         let latencyMs: number | null = null;
 
-        try {
-          const start = Date.now();
-          const res = await fetch(`http://127.0.0.1:${String(sdPort,)}/`, {
-            signal: AbortSignal.timeout(5000,),
-          },);
+        const start = Date.now();
+        const result = await safeFetch(`http://127.0.0.1:${String(sdPort,)}/`, {
+          timeout: 5_000,
+        },);
+        if (result.ok || result.status !== undefined) {
           latencyMs = Date.now() - start;
-          status = res.ok ? "running" : "stopped";
-        } catch {
-          status = "stopped";
         }
+        status = result.ok ? "running" : "stopped";
 
         return jsonResponse({
           status,

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { parseIntOr, } from "../../../utils/parse-number";
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import { log, } from "./shared";
@@ -12,8 +13,7 @@ function applySdConfigEntry(
   key: string,
   value: string,
 ): void {
-  if (key === "sd_server_port") { state.sdConfig.port = parseInt(value, 10,) || 9010; }
-  if (key === "sd_model_path") { state.sdConfig.modelPath = value; }
+  if (key === "sd_server_port") { state.sdConfig.port = parseIntOr(value, 9010,); }
   if (key === "sd_model_type") { state.sdConfig.modelType = value; }
   if (key === "sd_llm_path") { state.sdConfig.llmPath = value; }
   if (key === "sd_enabled") { state.sdConfig.enabled = value === "true"; }

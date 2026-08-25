@@ -3,6 +3,7 @@
 
 import { jsonError, } from "../../routes/http-utils";
 import { safeJsonStringify, } from "../../utils";
+import { parseIntOr, } from "../../utils/parse-number";
 import { getBuffer, } from "../index";
 
 /**
@@ -21,7 +22,8 @@ export function handleGenerationStream(chatId: string, headers?: Headers,): Resp
 
   // Parse Last-Event-ID for SSE reconnect
   const lastEventId = headers?.get("Last-Event-ID",);
-  const replayFrom = lastEventId ? parseInt(lastEventId, 10,) : 0;
+
+  const replayFrom = lastEventId ? parseIntOr(lastEventId, 0,) : 0;
 
   let cleanup: (() => void) | undefined;
 

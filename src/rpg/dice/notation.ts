@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { parseIntOr, } from "../../utils/parse-number";
 import { rollDice, } from "./roll.js";
 import {
   ADVANTAGE_NOTATION,
@@ -32,14 +33,14 @@ export function parseDiceNotation(notation: string,): ParsedDice | null {
     return null;
   }
 
-  const count = match[1] !== undefined && match[1] !== "" ? parseInt(match[1], 10,) : 1;
+  const count = match[1] !== undefined && match[1] !== "" ? parseIntOr(match[1], 1,) : 1;
   const sides = Number(match[2] ?? "20",) as DiceSides;
 
   if (![4, 6, 8, 10, 12, 20, 100,].includes(sides,)) {
     return null;
   }
 
-  const modifier = match[3] ? parseInt(match[3], 10,) : 0;
+  const modifier = match[3] ? parseIntOr(match[3], 0,) : 0;
   const advantage: AdvantageMode = ADVANTAGE_NOTATION[match[4] ?? ""] ?? AdvantageMode.Normal;
 
   return { count, sides, modifier, advantage, };
