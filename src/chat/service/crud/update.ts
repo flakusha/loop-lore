@@ -124,5 +124,8 @@ function buildChatUpdates(
   if (params.quickReplies !== undefined) {
     updates.quick_replies = params.quickReplies ? jsonStringifyOr(params.quickReplies,) : null;
   }
+  if (params.outputStylePreset !== undefined) {
+    updates.output_style_preset = params.outputStylePreset || null;
+  }
   return updates;
 }

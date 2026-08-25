@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { OutputStylePreset, } from "../../chat/output-style";
 import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { personaActions, } from "./chat-settings/persona";
 import { syncVnRenderer, } from "./chat-settings/vn";
@@ -43,6 +44,9 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   // Response length settings
   _responseLengthPreset: "medium" as "short" | "medium" | "long" | "custom",
   _responseLengthCustom: 1000,
+  // Output styling (genre/register/tone)
+  _outputStylePreset: "" as "" | OutputStylePreset,
+  _outputStyleIntensity: 0.5,
 
   toggleDebugView() {
     this._debugView = !this._debugView;
@@ -79,6 +83,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._gmMaxTokens = fields.gmMaxTokens;
     this._responseLengthPreset = fields.responseLengthPreset;
     this._responseLengthCustom = fields.responseLengthCustom;
+    this._outputStylePreset = fields.outputStylePreset;
+    this._outputStyleIntensity = fields.outputStyleIntensity;
     // Seed per-actor model overrides from saved config (or empty defaults)
     // so the modal bindings have a stable object per participant.
     const actorModels: Record<string, { model: string; provider: string }> = {};
@@ -139,11 +145,14 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         gmMaxTokens: this._gmMaxTokens,
         responseLengthPreset: this._responseLengthPreset,
         responseLengthCustom: this._responseLengthCustom,
+        outputStylePreset: this._outputStylePreset,
+        outputStyleIntensity: this._outputStyleIntensity,
       }, this._actorModels,);
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),
         isPaused: this._groupPaused,
         thinkingVisibility: this._chatSettingsThinkingVisibility,
+        outputStylePreset: this._outputStylePreset,
       };
       // Key mechanics are immutable once the chat is online — the backend rejects
       // them with 409, so only send them for draft (offline) chats.
