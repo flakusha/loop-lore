@@ -34,7 +34,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md",
+    "git_issue": "3703291"
   },
   "BUG-ACCESS-LOG-NEVER-RECORDS-USERID-HANDLE-X-USER-ID-HEADER-NEVE": {
     "hash": "114a27f",
@@ -45,7 +46,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md",
+    "git_issue": "114a27f"
   },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
@@ -652,7 +654,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
+    "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md",
+    "git_issue": "63f8f29"
   },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
@@ -698,7 +701,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
+    "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md",
+    "git_issue": "ed020f4"
   },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
@@ -1009,7 +1013,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md"
+    "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md",
+    "git_issue": "c722708"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
@@ -1042,7 +1047,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
+    "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md",
+    "git_issue": "8a630ce"
   },
   "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ": {
     "hash": "86a2a1b",
@@ -1138,7 +1144,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou.md"
+    "source": ".plan/tickets/BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou.md",
+    "git_issue": "85a5418"
   },
   "BUG-LISTASSETS-TREATS-SHARED-VISIBILITY-AS-WORLD-READABLE": {
     "hash": "72706d2",
@@ -1397,7 +1404,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
+    "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md",
+    "git_issue": "d810266"
   },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "a83a310",
@@ -1457,7 +1465,20 @@
     "priority": "critical",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md",
+    "git_issue": "ab71933"
+  },
+  "BUG-RATE-LIMITER-MODULE-SINGLETONS-SHARED-ACROSS-TEST-FILES-CAUS": {
+    "hash": "2e25526",
+    "extid": "BUG-RATE-LIMITER-MODULE-SINGLETONS-SHARED-ACROSS-TEST-FILES-CAUS",
+    "type": "BUG",
+    "title": "Rate-limiter module singletons shared across test files cause cross-file flakiness",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md",
+    "git_issue": "2e25526"
   },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
@@ -1566,7 +1587,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
+    "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md",
+    "git_issue": "f0bd959"
   },
   "BUG-STATIC-FILES-304-ONLY-MATCHES-A-SINGLE-EXACT-IF-NONE-MATCH-E": {
     "hash": "6df02ea",
@@ -1577,7 +1599,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-static-files-304-only-matches-a-single-exact-if-none-match-e.md"
+    "source": ".plan/tickets/BUG-static-files-304-only-matches-a-single-exact-if-none-match-e.md",
+    "git_issue": "6df02ea"
   },
   "BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE": {
     "hash": "7a293c3",
@@ -1723,7 +1746,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
+    "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md",
+    "git_issue": "5bb8566"
   },
   "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
     "hash": "02abf8a",
@@ -3762,7 +3786,8 @@
     "priority": "medium",
     "epic": "epic-i18n",
     "tags": [],
-    "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
+    "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md",
+    "git_issue": "7118f58"
   },
   "FEAT-WORLD-LOCATIONS": {
     "hash": "0144015",
