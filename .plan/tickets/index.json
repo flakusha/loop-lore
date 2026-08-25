@@ -5767,6 +5767,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-danger-zone.md"
   },
+  "TASK-ADMIN-GENERATION-CONTROLS-RUNTIME-SURFACE": {
+    "hash": "e8420a0",
+    "git_issue": "e8420a0",
+    "extid": "TASK-ADMIN-GENERATION-CONTROLS-RUNTIME-SURFACE",
+    "type": "TASK",
+    "title": "Admin generation controls runtime surface",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-generation-flow-control.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-generation-controls-runtime-surface.md"
+  },
   "TASK-ADMIN-HANDLERS-LACK-EXPLICIT-REQUIREUSERID-FAIL-OPEN-STRUCTU": {
     "hash": "67ed226",
     "extid": "TASK-ADMIN-HANDLERS-LACK-EXPLICIT-REQUIREUSERID-FAIL-OPEN-STRUCTU",
@@ -10415,6 +10427,18 @@
     "source": ".plan/tickets/TASK-generation-mock-scenario-provider.md",
     "git_issue": "5ff5952"
   },
+  "TASK-GENERATION-RATE-LIMITING-AND-CONCURRENCY-LIMITS": {
+    "hash": "b43d738",
+    "git_issue": "b43d738",
+    "extid": "TASK-GENERATION-RATE-LIMITING-AND-CONCURRENCY-LIMITS",
+    "type": "TASK",
+    "title": "Generation rate limiting and concurrency limits",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-generation-flow-control.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
+  },
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "hash": "7a1b009",
     "extid": "TASK-GITHUB-PAGES-VITEPRESS",
@@ -10426,6 +10450,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-github-pages-vitepress.md",
     "git_issue": "7a1b009"
+  },
+  "TASK-GLOBAL-GENERATION-PAUSE-KILL-SWITCH": {
+    "hash": "a4151b4",
+    "git_issue": "a4151b4",
+    "extid": "TASK-GLOBAL-GENERATION-PAUSE-KILL-SWITCH",
+    "type": "TASK",
+    "title": "Global generation pause kill switch",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-generation-flow-control.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-global-generation-pause-kill-switch.md"
   },
   "TASK-GM-CONFIG-UI-AUTHORING": {
     "hash": "pending",
@@ -15650,6 +15686,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-typescript-mjs-reconciliation.md",
     "git_issue": "728c3ff"
+  },
+  "TASK-UNIFIED-HOLD-SEMANTICS-PER-CHAT-PAUSE-GATES-PRIMARY-GENERATE": {
+    "hash": "2da6399",
+    "git_issue": "2da6399",
+    "extid": "TASK-UNIFIED-HOLD-SEMANTICS-PER-CHAT-PAUSE-GATES-PRIMARY-GENERATE",
+    "type": "TASK",
+    "title": "Unified hold semantics — per-chat pause gates primary generate route",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-generation-flow-control.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-hold-semantics-per-chat-pause-gates-primary-generate.md"
   },
   "TASK-UNIFY-401-GUARD-HELPERS": {
     "hash": "c99704c1",
