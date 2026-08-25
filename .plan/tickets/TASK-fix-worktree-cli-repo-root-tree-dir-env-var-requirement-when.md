@@ -53,11 +53,11 @@ Verified (worktree `tree/fix-worktree-cli-repo-root-detect`):
 - `cd <main-repo> && bun run scripts/worktree/ finalize <branch>` still
   works (regression check via existing 47-test suite).
 - 5 new integration tests added in `tests/worktree-flow.test.ts`:
-  - 48. issues — runs without REPO_ROOT env var
-  - 49. status — works from inside a linked worktree without env vars
-  - 50. REPO_ROOT env var still works as escape hatch
-  - 51. REPO_ROOT pointing at a different repo errors clearly
-  - 52. findRepoRoot — resolves to main repo from worktree cwd
+  - `issues` — runs without REPO_ROOT env var
+  - `status` — works from inside a linked worktree without env vars
+  - `REPO_ROOT` env var still works as escape hatch
+  - `REPO_ROOT` pointing at a different repo errors clearly
+  - `findRepoRoot` — resolves to main repo from worktree cwd
 - All 5 new tests pass; baseline 47-test suite unchanged (same 16 pre-existing
   `master`-vs-`dev` setup failures, no regressions).
 - typecheck-backend, typecheck-frontend, typecheck-coverage, typecheck-coverage-frontend,

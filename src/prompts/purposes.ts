@@ -23,6 +23,7 @@ export const PROMPT_PURPOSES = [
   "gm",
   "nsfw",
   "nsfwPolicy",
+  "nsfwPolicySfw", // SFW-only variant injected when NSFW is disallowed
   "vn",
   "vnChoices", // generation domains
   "transition",

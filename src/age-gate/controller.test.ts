@@ -1,7 +1,7 @@
 /**
  * Tests for age-gate controller.
  */
-/* eslint-disable sonarjs/no-nested-functions */
+
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
