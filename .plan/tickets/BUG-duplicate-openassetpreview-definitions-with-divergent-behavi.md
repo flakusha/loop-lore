@@ -1,6 +1,6 @@
 # BUG: Duplicate openAssetPreview definitions with divergent behavior
 
-**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 641f566, 0b41aa0)
+**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 69222c34, 0b41aa0)
 **Priority:** high
 **Effort:** Medium
 
