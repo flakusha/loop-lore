@@ -703,6 +703,17 @@
     "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md",
     "git_issue": "dc5a8b8"
   },
+  "BUG-FRONTEND-MINOR-BUGS-BATCH": {
+    "hash": "aae9870",
+    "extid": "BUG-FRONTEND-MINOR-BUGS-BATCH",
+    "type": "BUG",
+    "title": "Frontend minor bugs batch",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
+  },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
     "extid": "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID",
@@ -860,6 +871,17 @@
     "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md",
     "git_issue": "106844a"
   },
+  "BUG-HTML-LANG-HARDCODED-NO-DIR-HANDLING-FOR-I18N": {
+    "hash": "f835588",
+    "extid": "BUG-HTML-LANG-HARDCODED-NO-DIR-HANDLING-FOR-I18N",
+    "type": "BUG",
+    "title": "html lang hardcoded, no dir handling for i18n",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md"
+  },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
     "extid": "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR",
@@ -893,6 +915,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
     "git_issue": "86a2a1b"
+  },
+  "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
+    "hash": "f254f7a",
+    "extid": "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING",
+    "type": "BUG",
+    "title": "isGenerating stuck true bricks chat switching",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "hash": "c31f487",
@@ -1167,6 +1200,17 @@
     "git_issue": "b3c47b2",
     "status": "open"
   },
+  "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
+    "hash": "b91c284",
+    "extid": "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES",
+    "type": "BUG",
+    "title": "Out-of-order fetch race in loadMessages",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md"
+  },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "a83a310",
     "extid": "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD",
@@ -1231,6 +1275,17 @@
     "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md",
     "git_issue": "82e8395"
   },
+  "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-": {
+    "hash": "df71725",
+    "extid": "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-",
+    "type": "BUG",
+    "title": "selectChat resets freshly loaded state and lacks reentrancy guard",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
+  },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
     "extid": "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH",
@@ -1277,6 +1332,17 @@
     "epic": "epic-aux-enrichment-pipeline",
     "tags": [],
     "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+  },
+  "BUG-STALE-SSE-STREAM-WRITES-RENDER-INTO-WRONG-CHAT": {
+    "hash": "a1385db",
+    "extid": "BUG-STALE-SSE-STREAM-WRITES-RENDER-INTO-WRONG-CHAT",
+    "type": "BUG",
+    "title": "Stale SSE stream writes render into wrong chat",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md"
   },
   "BUG-STANDARD-TIER-AT-REST-ENCRYPTION-SILENTLY-STORES-PLAINTEXT-W": {
     "hash": "566d06c",
@@ -1336,7 +1402,19 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md"
+    "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md",
+    "git_issue": "8be98b3"
+  },
+  "BUG-TAUTOLOGICAL-BROWSER-TEST-ASSERTIONS": {
+    "hash": "c8bad7f",
+    "extid": "BUG-TAUTOLOGICAL-BROWSER-TEST-ASSERTIONS",
+    "type": "BUG",
+    "title": "Tautological browser test assertions",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tautological-browser-test-assertions.md"
   },
   "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
     "hash": "pending",
@@ -1424,6 +1502,17 @@
     "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md",
     "git_issue": "02abf8a"
   },
+  "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING": {
+    "hash": "6c5ec87",
+    "extid": "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING",
+    "type": "BUG",
+    "title": "Undefined CSS custom properties break rendering",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md"
+  },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
     "extid": "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC",
@@ -1446,7 +1535,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-validation-middleware-leaks-raw-err-message-in-500-envelope.md"
+    "source": ".plan/tickets/BUG-validation-middleware-leaks-raw-err-message-in-500-envelope.md",
+    "git_issue": "50af91c"
   },
   "BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED": {
     "hash": "2021fbd",
@@ -1472,6 +1562,28 @@
     "tags": [],
     "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md",
     "git_issue": "ca69118"
+  },
+  "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING": {
+    "hash": "7664314",
+    "extid": "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING",
+    "type": "BUG",
+    "title": "XSS fail-open when DOMPurify missing",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
+  },
+  "BUG-XSS-IN-MUSIC-EMBED-FALLBACK-RENDERING": {
+    "hash": "6e96aea",
+    "extid": "BUG-XSS-IN-MUSIC-EMBED-FALLBACK-RENDERING",
+    "type": "BUG",
+    "title": "XSS in music embed fallback rendering",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -9293,7 +9405,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-guard-sql-ref-identifier-construction-in-optimistic-locking.md"
+    "source": ".plan/tickets/TASK-guard-sql-ref-identifier-construction-in-optimistic-locking.md",
+    "git_issue": "b14a507"
   },
   "TASK-HARMONIZE-QUEST-TYPE-TAXONOMY": {
     "hash": "51a7bc01",
@@ -13217,7 +13330,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-schema-constraint-hardening-sweep-bounds-dead-schemas-additi.md"
+    "source": ".plan/tickets/TASK-schema-constraint-hardening-sweep-bounds-dead-schemas-additi.md",
+    "git_issue": "48f3483"
   },
   "TASK-SCHEMA-MIGRATION": {
     "hash": "pending",

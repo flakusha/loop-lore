@@ -54,6 +54,9 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
 
     try {
       const configsRes = await apiFetch(`/api/proactive-messaging/configs?chatId=${chatId}`,);
+      // The user may have switched chats while the fetch was in flight — a
+      // tick must never fire against an abandoned chat.
+      if (this.activeChat !== chatId) { return; }
       if (!configsRes.ok) { return; }
       const configs = (await configsRes.json()) as ProactiveConfigRow[];
 
@@ -62,6 +65,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
         const checkRes = await apiFetch(
           `/api/proactive-messaging/check?chatId=${chatId}&actorId=${cfg.actorId}`,
         );
+        if (this.activeChat !== chatId) { return; }
         if (!checkRes.ok) { continue; }
         const result = (await checkRes.json()) as { shouldMessage: boolean };
         if (!result.shouldMessage) { continue; }
