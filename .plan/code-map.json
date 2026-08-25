@@ -18753,6 +18753,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-swarm-supervisor.md"
     }
   ],
   "src/services/server-external-manager/start-llama.ts": [
