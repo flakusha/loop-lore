@@ -13,3 +13,14 @@ src/middleware/rate-limit.ts check() (L37-50): bucket stores windowStart and res
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Verification (reproduced 2026-08-25)
+
+Reproduction with createRateLimiter({ windowMs: 1000, maxRequests: 3 }) driving check() across the window boundary (Date.now overridden in the repro):
+
+  r1 t=0 ALLOW; r2 ALLOW; r3 ALLOW; r4 BLOCK; r5 t=999 BLOCK;
+  r6 t=1001 ALLOW; r7 ALLOW; r8 ALLOW; r9 BLOCK
+
+=> 6 allowed within a ~1000ms span (limit 3/window) = 2x burst.
+
+Confirms fixed-window semantics: the entire counter resets at windowStart+windowMs, so a client spends the full budget at the end of one window and again at the start of the next. The docstring (src/middleware/rate-limit.ts L7) and the test header (rate-limit.test.ts L2) falsely claim "sliding-window".
