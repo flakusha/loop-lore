@@ -59,6 +59,7 @@ export async function executeReversal(
   const action = await thisL.db.selectFrom("moderation_actions",)
     .select(["id", "action_type", "target_user_id", "performed_by", "superseded_by",],)
     .where("id", "=", appeal.action_id,)
+    .where("deleted_at", "is", null,)
     .executeTakeFirst();
 
   if (!action) { throw new Error(`executeReversal: action ${appeal.action_id} not found.`,); }
