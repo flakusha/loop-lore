@@ -1448,7 +1448,7 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
-    superseded_by: col("text",),
+superseded_by: col("text",),
     deleted_at: col("text",),
     deleted_by: col("text",),
   },)

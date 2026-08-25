@@ -43,7 +43,7 @@ describe("Telemetry Service", () => {
     const { db, sqlite, } = await createTestDb();
     sqlite.close();
     // The assertion is that this resolves — record() must swallow the insert error.
-    await record(db, { eventType: "boom", },);
+    await record(db, { eventType: "boom", data: {}, },);
   });
 
   it("exposes enabled + retention getters", () => {

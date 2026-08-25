@@ -52,7 +52,7 @@ describe("content flag routes", () => {
     expect(res.status,).toBe(401,);
   });
 
-  test("POST derives reporterId from the session, not the body", async () => {
+  test("POST derives reporterId from the session, not the body — response is redacted (no reporterId)", async () => {
     const sessionUser = uid();
     const app = createApp(db, sessionUser,);
     // Body cannot carry reporterId (schema rejects it); session user is used.
@@ -62,9 +62,17 @@ describe("content flag routes", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json();
     const flag = body.data;
-    expect(flag.reporterId,).toBe(sessionUser,);
-    expect(flag.contentType,).toBe("message",);
-    expect(flag.flagReason,).toBe("spam",);
+    // Response MUST NOT include reporterId or contentIds (PII guard).
+    expect(flag.reporterId,).toBeUndefined();
+    expect(flag.contentId,).toBeUndefined();
+    expect(flag.chatId,).toBeUndefined();
+    expect(flag.worldId,).toBeUndefined();
+    expect(flag.description,).toBeUndefined();
+    // DB row records the session user as the reporter.
+    const row = await db.selectFrom("content_flags",).selectAll().where("id", "=", flag.id,).executeTakeFirst();
+    expect(row?.reporter_id,).toBe(sessionUser,);
+    // Redacted view surfaces a stable hash.
+    expect(flag.reporterHash,).toMatch(/^rh_[a-f0-9]{32}$/,);
   });
 
   test("POST ignores a spoofed reporterId in the body — session user wins", async () => {
@@ -73,10 +81,14 @@ describe("content flag routes", () => {
     const res = await app.handle(
       flagRequest({ reporterId: "victim-user", contentType: "message", contentId: "x", flagReason: "spam", },),
     );
+    // Schema strips unknown `reporterId` — request succeeds with session user as reporter.
     expect(res.status,).toBe(200,);
     const body = await res.json();
     const flag = body.data;
-    expect(flag.reporterId,).toBe(sessionUser,);
+    const row = await db.selectFrom("content_flags",).selectAll().where("id", "=", flag.id,).executeTakeFirst();
+    expect(row?.reporter_id,).toBe(sessionUser,);
+    expect(row?.reporter_id,).not.toBe("victim-user",);
+    expect(flag.reporterId,).toBeUndefined();
   });
 
   test("GET queue requires admin", async () => {

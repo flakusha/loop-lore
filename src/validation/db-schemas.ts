@@ -1605,7 +1605,7 @@ export const ModerationActionsSchema = t.Object({
   metadata: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
-  superseded_by: t.Optional(t.String(),),
+superseded_by: t.Optional(t.String(),),
   deleted_at: t.Optional(t.String(),),
   deleted_by: t.Optional(t.String(),),
 },);

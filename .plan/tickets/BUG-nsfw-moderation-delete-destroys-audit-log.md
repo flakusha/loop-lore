@@ -3,7 +3,7 @@
 
 # BUG: NSFW `deleteUserData` hard-deletes `moderation_actions` rows — destroys auditability
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Resolved
 **Severity:** Critical
 **Priority:** critical
 **Effort:** Small
