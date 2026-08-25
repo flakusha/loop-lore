@@ -1,6 +1,6 @@
 # BUG: Asset serve: public immutable cache + inline SVG exposure
 
-**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 69222c34, 0b41aa0)
+**Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium
 
