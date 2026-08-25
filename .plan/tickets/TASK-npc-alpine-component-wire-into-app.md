@@ -15,3 +15,6 @@ Create src/frontend/alpine/npc.ts Alpine.js component registering all NPC sub-pa
 - [x] Implementation complete
 - [x] Tests passing (unit + e2e gates green)
 - [x] Documentation updated (epic status updated)
+
+
+git issue: ddbc8a8

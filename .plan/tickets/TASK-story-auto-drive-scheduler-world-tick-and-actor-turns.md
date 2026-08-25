@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-actor-autonomy-story-drive.md
 
 ## Summary
 
@@ -31,8 +32,3 @@ The autonomy loop: world-tick scheduler selecting due actors and dispatching the
 - [ ] Pause/resume/step verified end-to-end; user message pre-empts in-flight tick.
 - [ ] LLM GM beats flow through the same governed dispatch as NPC actions.
 
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated

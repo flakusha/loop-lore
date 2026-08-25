@@ -4264,6 +4264,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-certificate-and-tls-management.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
@@ -4836,6 +4840,10 @@
     }
   ],
   "src/config/sections/server.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-certificate-and-tls-management.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
@@ -14431,6 +14439,10 @@
   ],
   "src/routes/admin/aux-telemetry.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md"
     }
@@ -18900,6 +18912,10 @@
   "src/server/start.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-certificate-and-tls-management.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-cross-platform-portability.md"
     },
     {
@@ -19686,6 +19702,10 @@
     }
   ],
   "src/transport/factory.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-certificate-and-tls-management.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"

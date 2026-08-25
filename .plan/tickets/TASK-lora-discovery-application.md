@@ -103,3 +103,6 @@ const loraPrefix = `[lora:${config.name}:${config.strength}]`;
 - `epic-lora-discovery-application.md` — full epic spec
 - `epic-comfyui-plugin.md` — ComfyUI workflow templates (Phase 2 includes LoRA)
 - `epic-assistant-generation-extensions.md` — `/image` command (Phase 2 includes LoRA)
+
+
+git issue: b3764b1
