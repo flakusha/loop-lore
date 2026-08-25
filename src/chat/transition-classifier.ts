@@ -51,8 +51,11 @@ const REGEX_PATTERNS: { pattern: RegExp; type: TransitionType }[] = [
   { pattern: SCENE_CHANGE, type: "location_change", },
   // Location change: movement phrases
   { pattern: TRANSITION_PHRASES, type: "location_change", },
-  // Location change: prepositional movement (check last - too broad)
-  { pattern: /\b(to|into|toward|inside|outside|through|across|over)\s+(the\s+)?[a-z]+\b/i, type: "location_change", },
+  // NOTE (audit B1, 2026-08-25): the previous bare-preposition pattern
+  // (/(to|into|toward|inside|outside|through|across|over)s+(thes+)?[a-z]+/i)
+  // over-triggered on ordinary narration ("to the store", "into the night"),
+  // producing false location_change transitions. Removed; implicit and
+  // third-person movement is handled by the AUX-LLM fallback (regex-first).
 ];
 
 // ─── Regex-First Classification ───────────────────────────────

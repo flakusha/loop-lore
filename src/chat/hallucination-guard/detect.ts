@@ -40,11 +40,17 @@ export async function detectHallucinations(
   // Load known entities from DB
   const knownEntities = await loadKnownEntities(db, worldId,);
 
+  // Transient/dynamic entities that exist this session but not in the static
+  // snapshot (B2, 2026-08-25). Treated as known to avoid false positives.
+  const allowedNames = new Set(
+    (opts.knownEntityNames ?? []).map((n,) => n.toLowerCase()),
+  );
+
   const flags: HallucinationFlag[] = [];
 
   for (const entity of entities) {
-    // Skip if entity is a known participant
-    if (isKnownEntity(entity.name, knownEntities, knownActorIds, knownLocationIds,)) {
+    // Skip if entity is a known participant or a transient/dynamic entity
+    if (isKnownEntity(entity.name, knownEntities, knownActorIds, knownLocationIds, allowedNames,)) {
       continue;
     }
 
