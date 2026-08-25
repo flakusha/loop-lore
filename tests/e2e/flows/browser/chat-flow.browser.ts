@@ -183,10 +183,19 @@ describe("Chat list panel", () => {
       await gotoChat(page,);
       const chatListPanel = page.locator("[data-testid='chat-list-panel']",);
       await chatListPanel.waitFor({ state: "attached", timeout: 10_000, },);
-      // Chat list uses x-for template; verify the template structure exists
-      const panelHtml = await chatListPanel.innerHTML();
-      expect(panelHtml,).toContain("filteredChats",);
-      expect(panelHtml,).toContain("selectChat",);
+      // Behavioral: after Alpine evaluates, the list must show either the
+      // rendered empty state or rendered chat entries — template source
+      // strings ('filteredChats'/'selectChat') prove nothing about x-for
+      // evaluation. Known blocker: BUG-alpine-init-crash-chat-view-store-undefined
+      // (Alpine init crash leaves #chat-list unrendered — this test fails
+      // until that root cause is fixed).
+      await page.waitForFunction(() => {
+        const list = document.querySelector("#chat-list",);
+        if (!list) { return false; }
+        const hasEmptyState = list.textContent?.includes("No chats yet",) ?? false;
+        const hasRenderedItems = list.querySelectorAll("a.nav-item",).length > 0;
+        return hasEmptyState || hasRenderedItems;
+      }, { timeout: 10_000, },);
     } finally {
       errors.assert();
       errors.detach();
