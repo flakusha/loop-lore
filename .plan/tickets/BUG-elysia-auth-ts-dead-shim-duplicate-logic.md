@@ -3,7 +3,7 @@
 
 # BUG: `src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic
 
-**Status:** 🔴 Open
+**Status:** ✅ Resolved (2026-08-25)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-architecture
@@ -29,12 +29,14 @@ will drift further over time.
 
 ## Acceptance Criteria
 
-- [ ] Decide: either delete `elysia-auth.ts` (preferred) or make it a thin re-export of the `elysia-app.ts` derive logic with identical failure-path behavior.
-- [ ] If deleted: migrate/remove any remaining importers + update/keep only the unit test that legitimately covers the shared `authenticate()` function.
-- [ ] If kept: align `authGuard()` failure path to also populate `i18n` context, and add a test asserting parity with `elysia-app.ts`.
-- [ ] No duplicate auth-derivation logic remains.
+- [x] Delete `elysia-auth.ts` (preferred path chosen).
+- [x] Verified no route/plugin imports `authGuard()` (`grep` confirmed only the trivial-shape test referenced it; deleted with the file).
+- [x] No duplicate auth-derivation logic remains. The shared `authenticate()` function in `src/middleware/auth/authenticate.ts` is exercised by `bun run test:e2e` and the existing `src/middleware/auth.test.ts` covers its token-resolution helpers; no new unit test was added because no behavior was lost — the deleted test was purely a "is a function, returns plugin" smoke check.
 
 ## Notes
 
 - The production wiring is correctly in `elysia-app.ts`; this shim is technical debt, not a live regression in the running app (unless a route mounts `authGuard()`).
-- Verify no route/plugin currently calls `authGuard()` before deleting.
+
+## Resolution
+
+Deleted `src/middleware/elysia-auth.ts` and `src/middleware/elysia-auth.test.ts`; updated cross-references in `docs/spec/auth-middleware.md`, `.plan/epics/epic-architecture.md`, `.plan/backlog/security-review-2026-08-25.md`, and `.plan/tickets/TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt.md` to point at the deletion.
