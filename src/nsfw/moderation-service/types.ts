@@ -134,6 +134,7 @@ export interface NsfwModerationService {
     limit?: number,
   ): Promise<Array<{ id: string; userId: string; actionId: string; reason: string; createdAt: string }>>;
   reviewAppeal(appealId: string, reviewedBy: string, status: "approved" | "denied", reviewNote: string,): Promise<void>;
+  executeReversal(appealId: string, executedBy: string,): Promise<void>;
 }
 
 /**
