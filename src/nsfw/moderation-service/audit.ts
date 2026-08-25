@@ -58,6 +58,8 @@ export async function recordAction({ thisL, params, }: RecordActionArgs,): Promi
     metadata: {},
     expiresAt: null,
     createdAt: now,
+    deletedAt: null,
+    deletedBy: null,
   };
 }
 
@@ -67,14 +69,18 @@ export interface GetAuditLogArgs {
   options?: { limit?: number; offset?: number };
 }
 
-/** Read the moderation action audit trail for a user (newest first). */
+/** Read the moderation action audit trail for a user (newest first). Soft-deleted rows are excluded. */
 export async function getAuditLog({ thisL, targetUserId, options, }: GetAuditLogArgs,): Promise<ModAction[]> {
   const limit = options?.limit ?? 100;
   const offset = options?.offset ?? 0;
-  const rows = await thisL.db.selectFrom("moderation_actions",).where("target_user_id", "=", targetUserId,).orderBy(
-    "created_at",
-    "desc",
-  ).limit(limit,).offset(offset,).selectAll().execute();
+  const rows = await thisL.db.selectFrom("moderation_actions",)
+    .where("target_user_id", "=", targetUserId,)
+    .where("deleted_at", "is", null,)
+    .orderBy("created_at", "desc",)
+    .limit(limit,)
+    .offset(offset,)
+    .selectAll()
+    .execute();
   return Array.from(rows, (r,) => mapAction(r,),);
 }
 
@@ -130,6 +136,8 @@ export function mapAction(
     metadata: string;
     expires_at: string | null;
     created_at: string;
+    deleted_at?: string | null;
+    deleted_by?: string | null;
   },
 ): ModAction {
   return {
@@ -143,5 +151,7 @@ export function mapAction(
     metadata: jsonParseOr<Record<string, unknown>>(row.metadata, {},),
     expiresAt: row.expires_at,
     createdAt: row.created_at,
+    deletedAt: row.deleted_at ?? null,
+    deletedBy: row.deleted_by ?? null,
   };
 }
